@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBa
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.control.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingCommunicatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.remotecontrol.LoadBalancingRemoteControlCommunicator;
 
 /**
  * Console with debug commands for active LoadBalancing.
@@ -184,6 +185,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("   Control LoadBalancing\n");
 		sb.append("     initLB <strategyname>						- Initiate Loadbalancing with load balancing strategy <strategyname>\n");
 		sb.append("     stopLB                            			- Stops the Load Balancing\n");
+		sb.append("     initLBRemote <strategyname>					- Start Strategy on all known peers.\n");
+		sb.append("     initLBRemoteL <strategyname>					- Start Strategy and Load Logging on all known peers.\n");
 		sb.append("   Debug LoadBalancing\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername>   - Tries to copy and install a Sender\n");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver\n");
@@ -212,6 +215,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			ci.println(sb.toString());
 		}
 	}
+	
 	
 	public void _testCommunicator(CommandInterpreter ci) {
 
@@ -380,6 +384,91 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		loadBalancingControl.startLoadBalancing();
 
 	}
+	
+	
+
+	/**
+	 * Initializes the load balancing process for the peer by calling a given
+	 * {@link ILoadBalancingStrategy} with a given
+	 * {@link ILoadBalancingAllocator}.
+	 * 
+	 * @param ci
+	 *            The {@link CommandInterpreter} instance.
+	 */
+	public void _initLBRemote(CommandInterpreter ci) {
+
+		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
+
+		final String ERROR_USAGE = "usage: initLBRemote <strategyname>";
+		final String ERROR_STRATEGY = "No load balancing strategy found with the name ";
+
+		final String ERROR_NO_CONTROLLER = "No Load Balancing controller bound.";
+		
+		if(loadBalancingControl==null) {
+			ci.println(ERROR_NO_CONTROLLER);
+			return;
+		}			
+		
+		String strategyName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(strategyName)) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		if (!loadBalancingControl.setLoadBalancingStrategy(strategyName)) {
+			ci.println(ERROR_STRATEGY + strategyName);
+			return;
+
+		}
+
+		
+		loadBalancingControl.startLoadBalancing();
+		LoadBalancingRemoteControlCommunicator.getInstance().notifyListOfPeers(peerDictionary.getRemotePeerIDs(), strategyName, false);
+		
+
+	}
+	
+	/**
+	 * Initializes the load balancing process for the peer by calling a given
+	 * {@link ILoadBalancingStrategy} with a given
+	 * {@link ILoadBalancingAllocator}.
+	 * 
+	 * @param ci
+	 *            The {@link CommandInterpreter} instance.
+	 */
+	public void _initLBRemoteL(CommandInterpreter ci) {
+
+		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
+
+		final String ERROR_USAGE = "usage: initLBRemote <strategyname>";
+		final String ERROR_STRATEGY = "No load balancing strategy found with the name ";
+
+		final String ERROR_NO_CONTROLLER = "No Load Balancing controller bound.";
+		
+		if(loadBalancingControl==null) {
+			ci.println(ERROR_NO_CONTROLLER);
+			return;
+		}			
+		
+		String strategyName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(strategyName)) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		if (!loadBalancingControl.setLoadBalancingStrategy(strategyName)) {
+			ci.println(ERROR_STRATEGY + strategyName);
+			return;
+
+		}
+
+		
+		loadBalancingControl.startLoadBalancing();
+		LoadBalancingRemoteControlCommunicator.getInstance().notifyListOfPeers(peerDictionary.getRemotePeerIDs(), strategyName, true);
+		
+
+	}
+
 
 	/**
 	 * Stops Loadbalancing Monitoring.
