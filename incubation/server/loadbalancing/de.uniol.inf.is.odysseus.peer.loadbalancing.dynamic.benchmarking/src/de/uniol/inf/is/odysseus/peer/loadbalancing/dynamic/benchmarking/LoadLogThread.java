@@ -183,12 +183,13 @@ public class LoadLogThread extends Thread {
 		Collection<Integer> runningQueries = executor.getLogicalQueryIds(getActiveSession());
 		int queryCount = runningQueries.size();
 		
+		
 		StringBuilder builder = new StringBuilder();
 		Iterator<Integer> iter = runningQueries.iterator();
 		builder.append("{");
 		while(iter.hasNext()) {
 			int nextQueryId = iter.next();
-			builder.append(nextQueryId);
+			builder.append(executor.getLogicalQueryById(nextQueryId, getActiveSession()).getName());
 			if(iter.hasNext()) {
 				builder.append(SEPERATOR_QUERY_IDS);
 			}
