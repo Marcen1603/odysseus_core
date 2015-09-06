@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.badast;
 
-import org.apache.zookeeper.KeeperException.BadArgumentsException;
-
 /**
  * An {@code IPublisher} uses {@code IRecords} to publish a given message with a
  * given topic to the used publish subscribe system.
@@ -21,6 +19,6 @@ public interface IPublisher<Message> extends AutoCloseable {
 	 * @throws BaDaStException
 	 *             if any error occurs.
 	 */
-	public void publish(Record<Message> record) throws BadArgumentsException;
+	public void publish(Record<Message> record) throws BaDaStException;
 
 }

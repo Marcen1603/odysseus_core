@@ -4,8 +4,8 @@ import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.zookeeper.KeeperException.BadArgumentsException;
 
+import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.badast.IPublisher;
 import de.uniol.inf.is.odysseus.badast.Record;
 
@@ -37,7 +37,7 @@ public class StringKafkaPublisher implements IPublisher<String> {
 	}
 
 	@Override
-	public void publish(Record<String> record) throws BadArgumentsException {
+	public void publish(Record<String> record) throws BaDaStException {
 		this.mProducer.send(new ProducerRecord<String, String>(record.getTopic(), record.getMessage()));
 	}
 
