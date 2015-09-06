@@ -25,5 +25,5 @@ Export-Package: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic,
  de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces
 Import-Package: de.uniol.inf.is.odysseus.peer.distribute.util,
  de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication
-Service-Component: OSGI-INF/LoadBalancingCommunicatorRegistry.xml,OSGI-INF/LoadBalancingStrategyRegistry.xml,OSGI-INF/LoadBalancingAllocatorRegistry.xml,OSGI-INF/LoadBalancingConsole.xml,OSGI-INF/LoadBalancingController.xml,OSGI-INF/ExcludedQueryRegistry.xml,OSGI-INF/LoadBalancingTriggerRegistry.xml,OSGI-INF/CommunicatorChooserRegistry.xml,OSGI-INF/QueryTransmissionHandlerRegistry.xml,
- OSGI-INF/QuerySelectorRegistry.xml
+Service-Component: OSGI-INF/LoadBalancingCommunicatorRegistry.xml,OSGI-INF/LoadBalancingStrategyRegistry.xml,OSGI-INF/LoadBalancingAllocatorRegistry.xml,OSGI-INF/LoadBalancingController.xml,OSGI-INF/ExcludedQueryRegistry.xml,OSGI-INF/LoadBalancingTriggerRegistry.xml,OSGI-INF/CommunicatorChooserRegistry.xml,OSGI-INF/QueryTransmissionHandlerRegistry.xml,
+ OSGI-INF/QuerySelectorRegistry.xml,OSGI-INF/LoadBalancingConsole.xml
