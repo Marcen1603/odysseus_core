@@ -115,7 +115,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
 			return;
 		}
-
+		trigger.removeListener(this);
 		trigger.setInactive();
 
 		firstAllocationTry = true;
@@ -417,6 +417,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 
 	@Override
 	public void startMonitoring() throws LoadBalancingException {
+		Preconditions.checkNotNull(trigger,"Trigger must not be null!");
 		strategyIsRunning = true;
 		restartMonitoring();
 	}
@@ -424,12 +425,14 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 	@Override
 	public void stopMonitoring() {
 		strategyIsRunning = false;
+		trigger.removeListener(this);
 		trigger.setInactive();
 	}
 	
 	private void restartMonitoring() {
 		Preconditions.checkNotNull(trigger,"Trigger is null");
 		if(strategyIsRunning) {
+			trigger.addListener(this);
 			trigger.start();
 		}
 		else {
