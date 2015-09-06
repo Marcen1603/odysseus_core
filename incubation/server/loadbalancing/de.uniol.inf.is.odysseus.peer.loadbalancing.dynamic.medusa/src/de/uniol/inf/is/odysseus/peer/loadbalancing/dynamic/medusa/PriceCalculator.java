@@ -30,6 +30,9 @@ public class PriceCalculator {
 	}
 	
 	public static double getPrice() {
+		if(usageManager==null) {
+			return Double.POSITIVE_INFINITY;
+		}
 		if(getCurrentLoad()<LOWER_BOUND) {
 			return calcMarginCost(LOWER_BOUND);
 		}
@@ -47,6 +50,9 @@ public class PriceCalculator {
 	}
 
 	public static double getCurrentCosts() {
+		if(usageManager==null) {
+			return Double.NEGATIVE_INFINITY;
+		}
 		double absoluteUsage = usageManager.getLocalResourceUsage().getCpuMax()-usageManager.getLocalResourceUsage().getCpuFree();
 		double relativeUsageInPercent = (absoluteUsage/usageManager.getLocalResourceUsage().getCpuMax())*100.0;
 		return calculateLocalCosts(relativeUsageInPercent);
@@ -58,12 +64,22 @@ public class PriceCalculator {
 	
 	
 	public static double getCurrentLoad() {
+		if(usageManager==null) {
+			return Double.POSITIVE_INFINITY;
+		}
 		return (usageManager.getLocalResourceUsage().getCpuMax()-usageManager.getLocalResourceUsage().getCpuFree())*100;
 	}
 	
 	
 	public static double calculateLocalCosts(double cpuLoad) {
 		return Math.pow(cpuLoad, 2.0);
+	}
+	
+	public static boolean isUsageManagerBound() {
+		if(usageManager!=null) {
+			return true;
+		}
+		return false;
 	}
 	
 	

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.communication
 
 import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.PriceCalculator;
 
 public class PriceUpdaterThread extends Thread {
 	
@@ -25,8 +26,11 @@ public class PriceUpdaterThread extends Thread {
 	public void run() {
 		isActive = true;
 		while(isActive) {
-			for(PeerID peer : peerDictionary.getRemotePeerIDs()) {
-				PeerContractCommunicator.sendContractToPeer(peer);
+			//No usage manager? Don't do anything...
+			if(PriceCalculator.isUsageManagerBound()) {
+				for(PeerID peer : peerDictionary.getRemotePeerIDs()) {
+					PeerContractCommunicator.sendContractToPeer(peer);
+				}
 			}
 			
 			
