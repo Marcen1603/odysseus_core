@@ -174,7 +174,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 	}
 	
 	public List<Integer> getFailedTransmissions() {
-		return failedTransmissionQueryIDs;
+		return new ArrayList<Integer>(failedTransmissionQueryIDs);
 	}
 	
 
