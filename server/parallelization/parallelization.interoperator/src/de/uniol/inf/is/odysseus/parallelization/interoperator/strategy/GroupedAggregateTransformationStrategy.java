@@ -123,7 +123,7 @@ public class GroupedAggregateTransformationStrategy extends
 		AggregateAO newAggregateOperator = operator.clone();
 		newAggregateOperator.setName(operator.getName() + "_" + i);
 		newAggregateOperator.setUniqueIdentifier(UUID.randomUUID().toString());
-		newAggregateOperator.setDrainAtClose(true);
+		newAggregateOperator.setDrainAtClose(false);
 		return newAggregateOperator;
 	}
 

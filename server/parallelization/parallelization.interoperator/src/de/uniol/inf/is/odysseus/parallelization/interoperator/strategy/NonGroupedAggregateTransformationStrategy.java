@@ -175,7 +175,6 @@ public class NonGroupedAggregateTransformationStrategy extends
 		combinePAAggregateOperator
 				.setAggregationItems(renamedCombineAggregationItems);
 		combinePAAggregateOperator.setDrainAtClose(false);
-		//combinePAAggregateOperator.setDebug(true);
 		return combinePAAggregateOperator;
 	}
 
@@ -216,7 +215,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 		newAggregateOperator.clearAggregations();
 		// use renamed output name of attributes
 		newAggregateOperator.setAggregationItems(renamedPAAggregationItems);
-		newAggregateOperator.setDrainAtClose(true);
+		newAggregateOperator.setDrainAtClose(false);
 		return newAggregateOperator;
 	}
 
