@@ -20,6 +20,12 @@ public class Setting<E> implements ISetting<E> {
 	 * Value of the setting.
 	 */
 	private E value = null;
+	
+	/**
+	 * Empty default constructor.
+	 */
+	protected Setting() {
+	}
 
 	/**
 	 * Creates a new execution setting.

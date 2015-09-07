@@ -8,6 +8,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class ParameterMaxSheddingFactor extends Setting<Integer> implements IQueryBuildSetting<Integer>, Serializable {
 
 	private static final long serialVersionUID = 5085574251441271192L;
+	
+	public ParameterMaxSheddingFactor() {
+		super(null);
+	}
 
 	public ParameterMaxSheddingFactor(Integer value) {
 		super(value);
