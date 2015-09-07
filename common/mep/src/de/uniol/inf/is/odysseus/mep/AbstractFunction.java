@@ -15,6 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.mep;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,30 +52,25 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	private List<ISession> sessions;
 
-	public AbstractFunction(String symbol, int arity,
-			SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
+	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
 		this(symbol, arity, acceptedTypes, returnType, true);
 		if (optimizeConstantParameter == true && arity == 0) {
 			LOG.warn("This function will be precompiled and creates the same value in each run.");
 		}
 	}
 
-	public AbstractFunction(String symbol, int arity,
-			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
+	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
 			boolean optimizeConstantParameter) {
-		this(symbol, arity, acceptedTypes, returnType,
-				optimizeConstantParameter, 9, 9);
+		this(symbol, arity, acceptedTypes, returnType, optimizeConstantParameter, 9, 9);
 	}
-	
 
-    public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType, int timeComplexity, int spaceComplexity) {
-        this(symbol, arity, acceptedTypes, returnType, true, timeComplexity, spaceComplexity);
-    }
-    
-	public AbstractFunction(String symbol, int arity,
-			SDFDatatype[][] acceptedTypes, 
-			SDFDatatype returnType, boolean optimizeConstantParameter,
+	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
 			int timeComplexity, int spaceComplexity) {
+		this(symbol, arity, acceptedTypes, returnType, true, timeComplexity, spaceComplexity);
+	}
+
+	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
+			boolean optimizeConstantParameter, int timeComplexity, int spaceComplexity) {
 		this.symbol = symbol;
 		this.arity = arity;
 		this.optimizeConstantParameter = optimizeConstantParameter;
@@ -83,8 +81,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			this.acceptedTypes = acceptedTypes;
 			if (acceptedTypes.length != arity) {
 				throw new IllegalArgumentException(
-						"Error: arity and types do not fit for " + symbol + " "
-								+ this.getClass());
+						"Error: arity and types do not fit for " + symbol + " " + this.getClass());
 			}
 		} else {
 			this.acceptedTypes = getAllTypes(arity);
@@ -94,6 +91,23 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			this.returnType = returnType;
 		} else {
 			this.returnType = determineReturnType();
+		}
+	}
+
+	protected AbstractFunction(AbstractFunction<T> other) {
+		// Remark: Arguments cannot be copied here! Must be done
+		// external, else Variables are not correctly cloned
+
+		this.baseTimeUnit = other.baseTimeUnit;
+		this.symbol = other.symbol;
+		this.arity = other.arity;
+		this.acceptedTypes = other.acceptedTypes;
+		this.returnType = other.returnType;
+		this.optimizeConstantParameter = other.optimizeConstantParameter;
+		this.timeComplexity = other.timeComplexity;
+		this.spaceComplexity = other.spaceComplexity;
+		if (other.sessions != null) {
+			this.sessions = new ArrayList<>(other.sessions);
 		}
 	}
 
@@ -112,12 +126,10 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	@Override
 	final public SDFDatatype[] getAcceptedTypes(int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > arity) {
-			throw new IllegalArgumentException(symbol + " has only " + arity
-					+ " argument(s).");
+			throw new IllegalArgumentException(symbol + " has only " + arity + " argument(s).");
 		}
 		return acceptedTypes[argPos];
 	}
@@ -141,8 +153,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		int complexity = this.timeComplexity;
 		for (int i = 0; i < getArity(); ++i) {
 			if (getArguments()[i].isFunction()) {
-				complexity += getArguments()[i].toFunction()
-						.getTimeComplexity();
+				complexity += getArguments()[i].toFunction().getTimeComplexity();
 			}
 		}
 		return complexity;
@@ -157,8 +168,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		int complexity = this.spaceComplexity;
 		for (int i = 0; i < getArity(); ++i) {
 			if (getArguments()[i].isFunction()) {
-				complexity += getArguments()[i].toFunction()
-						.getSpaceComplexity();
+				complexity += getArguments()[i].toFunction().getSpaceComplexity();
 			}
 		}
 		return complexity;
@@ -182,8 +192,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	@Override
 	final public void setArguments(IExpression<?>... arguments) {
 		if (arguments.length != getArity()) {
-			throw new IllegalArgumentException(
-					"illegal number of arguments for function " + getSymbol());
+			throw new IllegalArgumentException("illegal number of arguments for function " + getSymbol());
 		}
 
 		this.arguments = new IExpression<?>[getArity()];
@@ -206,7 +215,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public List<ISession> getSessions() {
 		return sessions;
 	}
-	
+
 	@Override
 	public void setSessions(List<ISession> sessions) {
 		this.sessions = sessions;
@@ -223,15 +232,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	final protected Double getNumericalInputValue(int argumentPos) {
 		try {
-			double val = ((Number) arguments[argumentPos].getValue())
-					.doubleValue();
+			double val = ((Number) arguments[argumentPos].getValue()).doubleValue();
 			return val;
 		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("Input \""
-					+ arguments[argumentPos].getValue() + "\" is not a number!");
+			throw new IllegalArgumentException("Input \"" + arguments[argumentPos].getValue() + "\" is not a number!");
 		}
 	}
-
 
 	@Override
 	public void propagateSessionReference(final List<ISession> sessions) {
@@ -364,29 +370,45 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	@Override
 	public SDFDatatype determineType(IExpression<?>[] args) {
-		throw new RuntimeException("Function " + this
-				+ " must implement determineType function");
+		throw new RuntimeException("Function " + this + " must implement determineType function");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IExpression<T> clone(Map<Variable, Variable> vars) {
 		// Remark: stateful functions must override this method!
 		try {
-			@SuppressWarnings("unchecked")
-			AbstractFunction<T> newFunction = getClass().newInstance();
+			AbstractFunction<T> newFunction = null;
+			try {
+				Constructor<?> cons = getClass().getConstructor(this.getClass());
+				newFunction = (AbstractFunction<T>) cons.newInstance(this);
+			} catch (NoSuchMethodException | SecurityException | IllegalArgumentException
+					| InvocationTargetException e) {
+				if (LOG.isDebugEnabled()){	
+					LOG.debug("No CC for "+this.getClass());
+				}
+			}
+			// Fallback when calling copy constructor fails
+			if (newFunction == null) {
+				newFunction = getClass().newInstance();
+				newFunction.baseTimeUnit = this.baseTimeUnit;
+				if (this.sessions != null){
+					newFunction.sessions = new ArrayList<>(this.sessions);
+				}
+			}
+			// Important: Arguments cannot be set in constructor else there is
+			// no chance, that each occurrence of the same variable is the 
+			// same Java instance in this expression
 			newFunction.arguments = new IExpression<?>[this.arguments.length];
 			for (int i = 0; i < arguments.length; i++) {
 				newFunction.arguments[i] = arguments[i].clone(vars);
 			}
-			
-			// TODO?
-//			private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
-//			private List<ISession> sessions;
-			return newFunction;			
+
+			return newFunction;
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 }

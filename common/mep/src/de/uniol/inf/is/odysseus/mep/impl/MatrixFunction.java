@@ -42,6 +42,10 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
         setArguments(lines);
     }
 
+    public MatrixFunction(MatrixFunction other){
+    	super(other);
+    }
+    
     @Override
     public double[][] getValue() {
         int arity = getArity();
