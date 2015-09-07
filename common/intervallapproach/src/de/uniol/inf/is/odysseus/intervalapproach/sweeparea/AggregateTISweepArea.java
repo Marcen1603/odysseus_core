@@ -35,7 +35,7 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 
 	public AggregateTISweepArea() {
 		// elements = new PriorityQueue<T>(11, new QueueComparator());
-		elements = new LinkedList<T>();
+		elements = new ArrayList<T>();
 	}
 
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
@@ -103,15 +103,12 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 
 	public void insert(T value) {
 		synchronized (elements) {
-//			int pos = Collections.binarySearch(elements, value, comp);
-//			if (pos < 0){
-//				elements.add((-(pos) - 1), value);
-//			}else{
-//				elements.add(pos,value);
-//			}			
-			elements.add(value);
-			// TODO: Maybe, this could be optimized. But mostly the collections are very small ...
-			Collections.sort(elements, comp);
+			int pos = Collections.binarySearch(elements, value, comp);
+			if (pos < 0){
+				elements.add((-(pos) - 1), value);
+			}else{
+				elements.add(pos,value);
+			}			
 		}
 	}
 
@@ -140,10 +137,13 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+		builder.append(this.hashCode()).append("\n");
 		for (int i = 0; i < elements.size(); i++) {
-			builder.append(elements.get(i)+" "+elements.get(i).getMetadata()+" \n");
+			builder.append(elements.get(i)+" "+elements.get(i).getMetadata()+" "+elements.get(i).hashCode()+" \n");
 		}
 		return builder.toString();
 
 	}
+	
+	
 }

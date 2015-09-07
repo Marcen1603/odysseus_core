@@ -72,7 +72,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		}
 
 	}
-	
+
 	private final OutputQueueComparator outputQueueComp = new OutputQueueComparator();
 
 	static final transient Logger logger = LoggerFactory.getLogger(TITransferArea.class);
@@ -164,8 +164,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			} else {
 				if (!isAllDone()) {
 					if (!object.isPunctuation()) {
-						logger.warn("Removed out of order element!" + object + " - (" + this.po + "("
-								+ this.po.getName() + ")) watermark is " + watermark + " d=" + isDone);
+						logger.warn("Removed out of order element!" + object + " (" + object.hashCode() + ")" + " - ("
+								+ this.po + "(" + this.po.getName() + ")) watermark is " + watermark + " d=" + isDone);
 					}
 				}
 			}
@@ -189,8 +189,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				}
 			} else {
 				if (!isAllDone()) {
-					logger.warn("Out of order element read " + object + " before last send element " + watermark
-							+ " ! Ignoring" + " - (" + this.po + "(" + po.getName() + ")) d=" + isDone);
+					logger.warn("Out of order element read " + object + " (" + object.hashCode() + ")"
+							+ " before last send element " + watermark + " ! Ignoring" + " - (" + this.po + "("
+							+ po.getName() + ")) d=" + isDone);
 				}
 			}
 		}
@@ -213,10 +214,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				outputQueue.add(new SerializablePair<IStreamable, Integer>(punctuation, toPort));
 				sendData();
 			} else {
-				// logger.warn("Out of order element read " + punctuation
-				// + " before last send element " + watermark
-				// + " ! Ignoring" + " - (" + this.po + "(" + po.getName()
-				// + "))");
+				logger.warn("Out of order element read " + punctuation + " before last send element " + watermark
+						+ " ! Ignoring" + " - (" + this.po + "(" + po.getName() + "))");
 			}
 		}
 	}

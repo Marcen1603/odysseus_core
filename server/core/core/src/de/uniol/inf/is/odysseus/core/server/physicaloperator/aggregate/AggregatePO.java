@@ -184,6 +184,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 	protected synchronized PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> calcMerge(
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toMerge,
 			R element, boolean createNew) {
+		
 		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> ret = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>();
 
 		// Jedes Element in toMerge mit element mergen
