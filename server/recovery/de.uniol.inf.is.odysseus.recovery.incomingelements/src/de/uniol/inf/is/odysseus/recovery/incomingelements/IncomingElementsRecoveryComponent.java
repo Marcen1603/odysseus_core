@@ -157,7 +157,7 @@ public class IncomingElementsRecoveryComponent
 				// XXX Works only with AbstractAccessAO, not with StreamAO,
 				// because I need the protocol and data handler
 				if (AbstractAccessAO.class.isInstance(operator) && this.mRecordedSources
-						.contains(((AbstractAccessAO) operator).getAccessAOName().getResourceName())) {
+						.contains(((AbstractAccessAO) operator).getAccessAOName().toString())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
 					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(sourceAccess, recoveryMode,
 							ProtectionPointManagerRegistry.getInstance(query.getID()));
@@ -223,15 +223,8 @@ public class IncomingElementsRecoveryComponent
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		// name is user.sourcename
-		String sourcename = name;
-		int dotIndex = name.indexOf('.');
-		if (dotIndex != -1) {
-			sourcename = name.substring(dotIndex + 1);
-		}
-
 		// Stop the BaDaSt recorder
-		String recorder = BaDaStRecorderRegistry.getRecorder(sourcename);
+		String recorder = BaDaStRecorderRegistry.getRecorder(name);
 		if (recorder != null) {
 			BaDaStSender.sendCloseCommand(recorder);
 		}

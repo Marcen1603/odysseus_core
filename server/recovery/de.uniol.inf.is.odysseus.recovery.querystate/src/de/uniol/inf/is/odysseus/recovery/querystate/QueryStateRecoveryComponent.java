@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.querystate;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,26 +16,25 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractCreateStreamOrViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractDropStreamOrViewCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateSinkCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropStreamCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.AbstractQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.PartialQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.RemoveQueryCommand;
@@ -50,6 +47,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterRecoveryConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
@@ -58,7 +57,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ISystemStateEventListener;
-import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
 
 /**
  * The query state recovery component handles the backup and recovery of queries
@@ -158,7 +156,8 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		// Is done by executorCommandEvent
+		backupExecutorCommand(new DropStreamCommand(name, true, getSessionForDD(sender).get()),
+				System.currentTimeMillis());
 	}
 
 	@Override
@@ -372,6 +371,13 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 	}
 
 	/**
+	 * The identifier to set for an {@code AddQueryCommand}. This is the query
+	 * name, source name or sink name of the CreateCommand, which is executed
+	 * immediately before the {@code AddQueryCommand}.
+	 */
+	private String mIdentifierForAddQueryCommand = null;
+
+	/**
 	 * Backups a new {@code IExecutorCommand}, which can be an added source,
 	 * sink or query, or a removed source or sink, or the change of a query
 	 * state.
@@ -390,34 +396,44 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 		}
 
 		QueryStateLogTag tag = null;
-		if (AbstractDropStreamOrViewCommand.class.isInstance(command)) {
+		if (AbstractCreateStreamOrViewCommand.class.isInstance(command)) {
+			// New source.
+			String sourceName = new Resource(command.getCaller().getUser(),
+					((AbstractCreateStreamOrViewCommand) command).getName()).toString();
+			tag = QueryStateLogTag.SOURCE_ADDED;
+			this.mIdentifierForAddQueryCommand = sourceName;
+		} else if (AbstractDropStreamOrViewCommand.class.isInstance(command)) {
 			// Source dropped
 			tag = QueryStateLogTag.SOURCE_REMOVED;
-		} else if (CreateQueryCommand.class.isInstance(command)) {
-			// New query
-			// Note: There is also an AddQueryCommand, but the
-			// CreateQueryCommand is the one returned by the parsers.
-			tag = QueryStateLogTag.QUERY_ADDED;
 		} else if (CreateSinkCommand.class.isInstance(command)) {
-			// New sink
-			tag = QueryStateLogTag.SINK_ADDED;
-			String sinkName = ((CreateSinkCommand) command).getName();
+			// New sink.
+			String sinkName = new Resource(command.getCaller().getUser(), ((CreateSinkCommand) command).getName())
+					.toString();
 			if (cKnownSinks.containsKey(caller)) {
 				cKnownSinks.get(caller).add(sinkName);
 			} else {
 				cKnownSinks.put(caller, Sets.newHashSet(sinkName));
 			}
-		} else if (CreateStreamCommand.class.isInstance(command) || CreateViewCommand.class.isInstance(command)) {
-			// New source
-			tag = QueryStateLogTag.SOURCE_ADDED;
+			tag = QueryStateLogTag.SINK_ADDED;
+			this.mIdentifierForAddQueryCommand = sinkName;
 		} else if (DropSinkCommand.class.isInstance(command)) {
 			// Sink dropped
 			tag = QueryStateLogTag.SINK_REMOVED;
+		} else if (CreateQueryCommand.class.isInstance(command)) {
+			// New query.
+			String queryName = ((CreateQueryCommand) command).getQuery().getName();
+			tag = QueryStateLogTag.QUERY_ADDED;
+			this.mIdentifierForAddQueryCommand = queryName;
 		} else if (PartialQueryCommand.class.isInstance(command) || RemoveQueryCommand.class.isInstance(command)
 				|| ResumeQueryCommand.class.isInstance(command) || StartQueryCommand.class.isInstance(command)
 				|| StopQueryCommand.class.isInstance(command) || SuspendQueryCommand.class.isInstance(command)) {
 			// Query state changed
 			tag = QueryStateLogTag.QUERYSTATE_CHANGED;
+		} else if (AddQueryCommand.class.isInstance(command)) {
+			// New Odysseus Script.
+			((AddQueryCommand) command).setIdentifier(this.mIdentifierForAddQueryCommand);
+			tag = QueryStateLogTag.SCRIPT_ADDED;
+			this.mIdentifierForAddQueryCommand = null;
 		}
 
 		if (tag != null) {
@@ -443,35 +459,10 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 					.getUsermanagement(true);
 			ISession newSession = userManagement.getSessionManagement().loginAs(command.getCaller().getUser().getName(),
 					command.getCaller().getTenant(), userManagement.getSessionManagement().loginSuperUser(null));
-
-			if (CreateQueryCommand.class.isInstance(command)) {
-				// it is not allowed to execute them directly
-				recoverCreateQueryCommand((CreateQueryCommand) command, newSession, executor);
-			} else {
-				command.setCaller(newSession);
-				command.execute(
-						(IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(newSession.getTenant()),
-						(IUserManagementWritable) UserManagementProvider.getUsermanagement(true), executor);
-			}
+			command.setCaller(newSession);
+			command.execute((IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(newSession.getTenant()),
+					(IUserManagementWritable) UserManagementProvider.getUsermanagement(true), executor);
 		}
-	}
-
-	/**
-	 * Recovers a {@code CreateQueryCommand}. <br />
-	 * It needs to be handled in a special way, because it is not allowed to
-	 * execute it direct.
-	 * 
-	 * @param command
-	 *            The {@code CreateQueryCommand} to execute.
-	 * @param caller
-	 *            The new caller object for the command.
-	 * @param executor
-	 *            A present executor.
-	 */
-	private static void recoverCreateQueryCommand(CreateQueryCommand command, ISession caller,
-			IServerExecutor executor) {
-		String queryText = insertRecoveryNeededArgument(command.getQuery().getQueryText());
-		executor.addQuery(queryText, command.getQuery().getParserId(), caller, Context.empty());
 	}
 
 	/**
@@ -486,13 +477,10 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 	private static List<IExecutorCommand> determineExecutionOrder(List<ISysLogEntry> log) {
 		/*
 		 * Not all events have to be recovered, e.g., several state changes of
-		 * the same query. Sort commands for each query, source, sink. Key =
-		 * related query Value.e1 = first command (creation of query) Value.e2 =
-		 * last command (last state change)
+		 * the same query. Sort commands for each query, source, sink.
 		 */
-		Map<ILogicalQuery, Pair<IExecutorCommand, IExecutorCommand>> commandsPerQuery = Maps.newHashMap();
-		Map<String, IExecutorCommand> commandPerSource = Maps.newHashMap();
-		Map<String, IExecutorCommand> commandPerSink = Maps.newHashMap();
+		Map<String, AddQueryCommand> addQueryCommands = Maps.newHashMap();
+		Map<String, IExecutorCommand> commandsPerQuery = Maps.newHashMap();
 		List<IExecutorCommand> executionOrder = Lists.newArrayList();
 		for (ISysLogEntry entry : log) {
 			if (QueryStateLogTag.containsTag(entry.getTag())) {
@@ -501,75 +489,41 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 					continue;
 				}
 				IExecutorCommand command = executorCommandFromBase64Binary(entry.getInformation().get());
-				if (AbstractDropStreamOrViewCommand.class.isInstance(command)) {
+				QueryStateLogTag tag = QueryStateLogTag.fromString(entry.getTag()).get();
+				switch (tag) {
+				case SOURCE_REMOVED:
 					// Source dropped -> No command needs to be recovered for
 					// that source
-					String sourcename = ((AbstractDropStreamOrViewCommand) command).getName();
-					IExecutorCommand commandToRemove = commandPerSource.get(sourcename);
-					commandPerSource.remove(sourcename);
-					executionOrder.remove(commandToRemove);
-				} else if (CreateQueryCommand.class.isInstance(command)) {
-					// New query -> First command for that query
-					// Note: There is also an AddQueryCommand, but the
-					// CreateQueryCommand is the one returned by the parsers.
-					commandsPerQuery.put(((CreateQueryCommand) command).getQuery(),
-							new Pair<IExecutorCommand, IExecutorCommand>(command, null));
-					executionOrder.add(command);
-				} else if (CreateSinkCommand.class.isInstance(command)) {
-					// New sink -> First command for that sink
-					commandPerSink.put(((CreateSinkCommand) command).getName(), command);
-					executionOrder.add(command);
-				} else if (CreateStreamCommand.class.isInstance(command)) {
-					// New source -> First command for that source
-					LinkedList<IExecutorCommand> cmds = new LinkedList<>();
-					cmds.add(command);
-					commandPerSource.put(((CreateStreamCommand) command).getName(), command);
-					executionOrder.add(command);
-				} else if (CreateViewCommand.class.isInstance(command)) {
-					// New source -> First command for that source
-					LinkedList<IExecutorCommand> cmds = new LinkedList<>();
-					cmds.add(command);
-					commandPerSource.put(((CreateViewCommand) command).getName(), command);
-					executionOrder.add(command);
-				} else if (DropSinkCommand.class.isInstance(command)) {
+					executionOrder.remove(addQueryCommands.get(((AbstractDropStreamOrViewCommand) command).getName()));
+					break;
+				case SINK_REMOVED:
 					// Sink dropped -> No command needs to be recovered for that
 					// sink
-					String sinkname = ((DropSinkCommand) command).getName();
-					IExecutorCommand commandToRemove = commandPerSink.get(sinkname);
-					commandPerSink.remove(sinkname);
-					executionOrder.remove(commandToRemove);
-				} else if (RemoveQueryCommand.class.isInstance(command)) {
-					// Query removed -> No command needs to be recovered for
-					// that
-					// query
-					Optional<ILogicalQuery> removedQuery = findQueryByName(commandsPerQuery.keySet(),
-							((RemoveQueryCommand) command).getQueryName());
-					if (removedQuery.isPresent()) {
-						Optional<IExecutorCommand> firstCommand = Optional
-								.fromNullable(commandsPerQuery.get(removedQuery.get()).getE1());
-						if (firstCommand.isPresent()) {
-							executionOrder.remove(firstCommand.get());
-						}
-						Optional<IExecutorCommand> lastCommand = Optional
-								.fromNullable(commandsPerQuery.get(removedQuery.get()).getE2());
-						if (lastCommand.isPresent()) {
-							executionOrder.remove(lastCommand.get());
-						}
-						commandsPerQuery.remove(removedQuery.get());
-					}
-				} else if (AbstractQueryCommand.class.isInstance(command)) {
-					// Query state changed
-					Optional<ILogicalQuery> modifiedQuery = findQueryByName(commandsPerQuery.keySet(),
-							((AbstractQueryCommand) command).getQueryName());
-					if (modifiedQuery.isPresent()) {
-						Optional<IExecutorCommand> lastCommand = Optional
-								.fromNullable(commandsPerQuery.get(modifiedQuery.get()).getE2());
-						if (lastCommand.isPresent()) {
-							executionOrder.remove(lastCommand.get());
-						}
-						commandsPerQuery.get(modifiedQuery.get()).setE2(command);
+					executionOrder.remove(addQueryCommands.get(((DropSinkCommand) command).getName()));
+					break;
+				case QUERYSTATE_CHANGED:
+					String queryName = ((AbstractQueryCommand) command).getQueryName();
+					if (RemoveQueryCommand.class.isInstance(command)) {
+						// Query removed -> No command needs to be recovered for
+						// that query
+						executionOrder.remove(addQueryCommands.remove(queryName));
+						executionOrder.remove(commandsPerQuery.remove(queryName));
+					} else {
+						// Query state changed
+						executionOrder.remove(commandsPerQuery.get(queryName));
+						commandsPerQuery.put(queryName, command);
 						executionOrder.add(command);
 					}
+					break;
+				case SCRIPT_ADDED:
+					AddQueryCommand cmd = insertRecoveryNeededArgument((AddQueryCommand) command);
+					addQueryCommands.put(cmd.getIdentifier(), cmd);
+					executionOrder.add(cmd);
+					break;
+				default:
+					// SOURCE_ADDED, SINK_ADDED, QUERY_ADDED
+					// Nothing to do
+					break;
 				}
 			}
 		}
@@ -577,49 +531,26 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 	}
 
 	/**
-	 * Find a query by its name.
-	 * 
-	 * @param queries
-	 *            A collection of queries to search within.
-	 * @param queryName
-	 *            The name of the wanted query.
-	 * @return An {@code Optional} of a query, which is within {@code queries}
-	 *         and which's name is {@code queryName}, or
-	 *         {@code Optional#absent()}, if there is none.
-	 */
-	private static Optional<ILogicalQuery> findQueryByName(Collection<ILogicalQuery> queries, String queryName) {
-		for (ILogicalQuery query : queries) {
-			if (query.getName().equals(queryName)) {
-				return Optional.of(query);
-			}
-		}
-		return Optional.absent();
-	}
-
-	/**
 	 * Inserts "recoveryneeded=true" as key value argument for the used recovery
 	 * executor into the script to be executed.
 	 * 
-	 * @param queryText
-	 *            The script.
-	 * @return A modified script.
+	 * @param command
+	 *            The {@code AddQueryCommand} to be executed.
+	 * @return A modified command.
 	 */
-	private static String insertRecoveryNeededArgument(String queryText) {
-		String toInsert = " " + AbstractRecoveryExecutor.RECOVERY_NEEDED_KEY + "=true";
-		int keywordIndex = -1;
-		String modifiedQueryText = queryText;
-		while ((keywordIndex = modifiedQueryText.indexOf(RecoveryConfigKeyword.getName(), keywordIndex + 1)) != -1) {
-			int endLineIndex = modifiedQueryText.indexOf("\n", keywordIndex) - 1;
-			if (endLineIndex <= keywordIndex) {
+	private static AddQueryCommand insertRecoveryNeededArgument(AddQueryCommand command) {
+		List<IQueryBuildSetting<?>> addSettings = Lists.newArrayList(command.getAddSettings());
+		for (IQueryBuildSetting<?> setting : addSettings) {
+			if (ParameterRecoveryConfiguration.class.isInstance(setting)) {
+				ParameterRecoveryConfiguration recoveryParameter = (ParameterRecoveryConfiguration) setting;
+				recoveryParameter.addConfiguration(AbstractRecoveryExecutor.RECOVERY_NEEDED_KEY, "true");
 				break;
 			}
-			StringBuffer out = new StringBuffer();
-			out.append(modifiedQueryText.substring(0, endLineIndex));
-			out.append(toInsert);
-			out.append(modifiedQueryText.substring(endLineIndex));
-			modifiedQueryText = out.toString();
 		}
-		return modifiedQueryText;
+		AddQueryCommand out = new AddQueryCommand(command.getQueryText(), command.getParserId(), command.getCaller(),
+				command.getTransCfgName(), command.getContext(), addSettings, command.startQueries());
+		out.setIdentifier(command.getIdentifier());
+		return out;
 	}
 
 }

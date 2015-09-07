@@ -101,8 +101,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		// offset should be loaded as operator state
 		this.mNeedToAdjustOffset = false;
 		this.mRecoverySubscriberController = SubscriberControllerFactory.createController(
-				this.mSourceAccess.getAccessAOName().getResourceName(), this.mRecoverySubscriber,
-				this.mOffset.longValue());
+				this.mSourceAccess.getAccessAOName(), this.mRecoverySubscriber, this.mOffset.longValue());
 		this.mRecoverySubscriberController.start();
 		super.process_open();
 	}

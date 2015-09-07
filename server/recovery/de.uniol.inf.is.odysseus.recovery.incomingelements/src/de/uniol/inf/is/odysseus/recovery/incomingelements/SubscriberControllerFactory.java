@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.incomingelements;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.kafka.KafkaSubscriberController;
 
 /**
@@ -13,8 +14,8 @@ public class SubscriberControllerFactory {
 	/**
 	 * Creates a new controller.
 	 * 
-	 * @param topic
-	 *            Topic to read from (source name).
+	 * @param source
+	 *            Source to read from.
 	 * @param partition
 	 *            Partition to read from (default 0).
 	 * @param consumer
@@ -22,50 +23,50 @@ public class SubscriberControllerFactory {
 	 * @param offset
 	 *            The offset from where to read.
 	 */
-	public static ISubscriberController createController(String topic, int partition, ISubscriber consumer,
+	public static ISubscriberController createController(Resource source, int partition, ISubscriber consumer,
 			long offset) {
-		return new KafkaSubscriberController(topic, partition, consumer, offset);
+		return new KafkaSubscriberController(source.toString(), partition, consumer, offset);
 	}
 
 	/**
 	 * Creates a new controller with default partition.
 	 * 
-	 * @param topic
-	 *            Topic to read from (source name).
+	 * @param source
+	 *            Source to read from.
 	 * @param consumer
 	 *            The consumer to be updated while reading.
 	 * @param offset
 	 *            The offset from where to read.
 	 */
-	public static ISubscriberController createController(String topic, ISubscriber consumer, long offset) {
-		return new KafkaSubscriberController(topic, consumer, offset);
+	public static ISubscriberController createController(Resource source, ISubscriber consumer, long offset) {
+		return new KafkaSubscriberController(source.toString(), consumer, offset);
 	}
 
 	/**
 	 * Creates a new controller access with earliest possible offset to use.
 	 * 
-	 * @param topic
-	 *            Topic to read from (source name).
+	 * @param source
+	 *            Source to read from.
 	 * @param partition
 	 *            Partition to read from (default 0).
 	 * @param consumer
 	 *            The consumer to be updated while reading.
 	 */
-	public static ISubscriberController createController(String topic, int partition, ISubscriber consumer) {
-		return new KafkaSubscriberController(topic, partition, consumer);
+	public static ISubscriberController createController(Resource source, int partition, ISubscriber consumer) {
+		return new KafkaSubscriberController(source.toString(), partition, consumer);
 	}
 
 	/**
 	 * Creates a new controller with default partition and earliest possible
 	 * offset to use.
 	 * 
-	 * @param topic
-	 *            Topic to read from (source name).
+	 * @param source
+	 *            Source to read from.
 	 * @param consumer
 	 *            The consumer to be updated while reading.
 	 */
-	public static ISubscriberController createController(String topic, ISubscriber consumer) {
-		return new KafkaSubscriberController(topic, consumer);
+	public static ISubscriberController createController(Resource source, ISubscriber consumer) {
+		return new KafkaSubscriberController(source.toString(), consumer);
 	}
 
 }
