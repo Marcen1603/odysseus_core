@@ -39,6 +39,12 @@ public abstract class AbstractBaDaStRecorder implements IBaDaStRecorder {
 	 * The configuration as a key value store.
 	 */
 	private Properties mCfg;
+	
+	/**
+	 * True, if the recorder should continue reading; false, if {@link #close()}
+	 * is called.
+	 */
+	protected boolean mContinueReading;
 
 	@Override
 	public String getName() {
@@ -119,5 +125,10 @@ public abstract class AbstractBaDaStRecorder implements IBaDaStRecorder {
 	 *             missing.
 	 */
 	protected abstract void validate_internal() throws BaDaStException;
+	
+	@Override
+	public void close() throws Exception {
+		this.mContinueReading = false;
+	}
 
 }

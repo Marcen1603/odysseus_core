@@ -54,31 +54,6 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 	 */
 	public static final String BUFFERSIZE_DEFAULT = "1024";
 
-	/**
-	 * True, if the recorder should continue reading; false, if {@link #close()}
-	 * is called.
-	 */
-	private boolean mContinueReading;
-
-	/**
-	 * The publisher for the used publish subscribe system.
-	 */
-	private IPublisher<byte[]> mPublisher;
-
-	@Override
-	public void close() throws Exception {
-		if (this.mPublisher != null) {
-			this.mPublisher.close();
-		}
-		this.mContinueReading = false;
-	}
-
-	@Override
-	protected void initialize(Properties cfg) throws BaDaStException {
-		super.initialize(cfg);
-		this.mPublisher = PublisherFactory.createStringByteArrayPublisher(getName());
-	}
-
 	@Override
 	public void start() throws BaDaStException {
 		this.mContinueReading = true;
@@ -86,11 +61,12 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 		final String topic = this.getConfig().getProperty(SOURCENAME_CONFIG);
 		try (Socket clientSocket = new Socket(this.getConfig().getProperty(HOST_CONFIG),
 				Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG)));
-				BufferedInputStream inStream = new BufferedInputStream(clientSocket.getInputStream(), buffersize)) {
+				BufferedInputStream inStream = new BufferedInputStream(clientSocket.getInputStream(), buffersize);
+				IPublisher<byte[]> publisher = PublisherFactory.createStringByteArrayPublisher(getName())) {
 			while (this.mContinueReading) {
 				byte[] readBytes = new byte[buffersize];
 				inStream.read(readBytes);
-				this.mPublisher.publish(new Record<>(topic, readBytes));
+				publisher.publish(new Record<>(topic, readBytes));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from server!", e);
