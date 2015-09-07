@@ -59,6 +59,18 @@ public class ParameterRecoveryConfiguration extends Setting<Object>implements IQ
 	}
 
 	/**
+	 * Adds an entry to the configuration.
+	 * 
+	 * @param key
+	 *            The key for the entry.
+	 * @param value
+	 *            The value for the entry.
+	 */
+	public void addConfiguration(String key, String value) {
+		this.mConfig.put(key, value);
+	}
+
+	/**
 	 * Creates a new parameter for recovery configurations
 	 * 
 	 * @param recoveryExecutor
