@@ -231,9 +231,10 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		QueryCostMap chosenResult=null;
 		for(IQuerySelector selector : selectors) {
 			QueryCostMap result = selector.selectQueries(new QueryCostMap(allQueries), cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
+			if(result!=null) {
 			LOG.debug("Result of Selector: {}",selector.getName());
 			LOG.debug(result.toString());
-			if(result!=null) {
+			
 				results.add(result);
 			}
 			if(chosenResult==null || chosenResult.getCosts()>result.getCosts()) {

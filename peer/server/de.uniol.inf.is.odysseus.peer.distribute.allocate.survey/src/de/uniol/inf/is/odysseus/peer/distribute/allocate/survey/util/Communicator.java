@@ -179,21 +179,27 @@ public class Communicator implements IAdvertisementDiscovererListener {
 
 			LOG.debug("Received query to bid to auction {}", adv.getAuctionId());
 			LOG.debug("PQL-Statement is \n{}", adv.getPqlStatement());
-
-			ILogicalQuery query = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
-
-			String bidProviderName = adv.getBidProviderName();
-			
-			if(!BidProviderRegistry.getInstance().contains(bidProviderName)) {
-				LOG.debug("Offering no bid to auction {} of peer {}", adv.getAuctionId(), adv.getOwnerPeerId().toString());
-				LOG.error("Bid Provider {} not found.",adv.getBidProviderName());
-				return;
+			Optional<Double> optBidValue = Optional.absent();
+			try {
+				ILogicalQuery query = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
+	
+				String bidProviderName = adv.getBidProviderName();
+				
+				if(!BidProviderRegistry.getInstance().contains(bidProviderName)) {
+					LOG.debug("Offering no bid to auction {} of peer {}", adv.getAuctionId(), adv.getOwnerPeerId().toString());
+					LOG.error("Bid Provider {} not found.",adv.getBidProviderName());
+					return;
+				}
+				
+				IBidProvider bidProvider = BidProviderRegistry.getInstance().get(bidProviderName);
+				
+				optBidValue = bidProvider.calculateBid(query, adv.getTransCfgName());
+			}
+			catch (Exception e) {
+				LOG.error("Exception during Bid Calculation: {}",e.getMessage());
 			}
 			
-			IBidProvider bidProvider = BidProviderRegistry.getInstance().get(bidProviderName);
 			
-			Optional<Double> optBidValue = bidProvider.calculateBid(query, adv.getTransCfgName());
-
 			if (optBidValue.isPresent()) {
 				double bidValue = optBidValue.get();
 
