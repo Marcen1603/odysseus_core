@@ -29,6 +29,7 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 	private Context context;
 	private List<IQueryBuildSetting<?>> addSettings;
 	private boolean startQueries;
+	private String identifier;
 
 	public AddQueryCommand(String queryText, String parserID, ISession caller,
 			String transCfgName, Context context,
@@ -53,6 +54,34 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 			}
 		}
 		addCreatedQueryIds(queries);
+	}
+	
+	public String getParserId() {
+		return this.parserID;
+	}
+	
+	public String getTransCfgName() {
+		return this.transCfgName;
+	}
+	
+	public Context getContext() {
+		return this.context;
+	}
+	
+	public List<IQueryBuildSetting<?>> getAddSettings() {
+		return this.addSettings;
+	}
+	
+	public boolean startQueries() {
+		return this.startQueries;
+	}
+	
+	public String getIdentifier() {
+		return this.identifier;
+	}
+	
+	public void setIdentifier(String id) {
+		this.identifier = id;
 	}
 
 }
