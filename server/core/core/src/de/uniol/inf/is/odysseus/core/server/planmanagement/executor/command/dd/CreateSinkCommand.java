@@ -12,7 +12,7 @@ public class CreateSinkCommand extends AbstractExecutorCommand {
 
 	private static final long serialVersionUID = 3174837187255297524L;
 	
-	final private String name;
+	private String name;
 	final private ILogicalOperator sinkAO;
 
 	public CreateSinkCommand(String name, ILogicalOperator sinkAO, ISession caller) {
@@ -28,6 +28,10 @@ public class CreateSinkCommand extends AbstractExecutorCommand {
 
 	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }
