@@ -106,6 +106,9 @@ public class ReceivingDataThread extends Thread {
 	public void stopRunning() {
 		isRunning = false;
 		tryCloseSocket(socket);
+		if(listener!=null) {
+			listener.onFinish();
+		}
 	}
 
 	private static void tryCloseSocket(Socket socket) {
