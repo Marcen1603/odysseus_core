@@ -30,8 +30,5 @@ public class CreateSinkCommand extends AbstractExecutorCommand {
 		return name;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
-	}
 	
 }
