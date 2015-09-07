@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting;
@@ -15,7 +16,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
  * @author Michael Brand
  *
  */
-public class ParameterRecoveryConfiguration extends Setting<Object>implements IQueryBuildSetting<Object> {
+public class ParameterRecoveryConfiguration extends Setting<Object>implements IQueryBuildSetting<Object>, Serializable {
+
+	/**
+	 * The version of this class for serialization.
+	 */
+	private static final long serialVersionUID = -6598635712941002028L;
 
 	/**
 	 * The default is not to do any recovery.
