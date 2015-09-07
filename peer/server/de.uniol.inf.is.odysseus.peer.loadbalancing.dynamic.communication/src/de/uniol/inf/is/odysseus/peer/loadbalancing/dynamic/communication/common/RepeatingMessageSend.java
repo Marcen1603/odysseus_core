@@ -156,6 +156,8 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 				LOG.error("RepeatingMessageThread runs now more than "
 						+ ABORT_MILLIS + " ms now. Abort sending message {}",
 						message.getClass().getName());
+				
+				
 				notifyListeners();
 				stopRunning();
 
