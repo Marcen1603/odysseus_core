@@ -90,7 +90,7 @@ public class FastAuctionCommunicator implements IPeerCommunicatorListener, IFast
 					
 					IBidProvider bidProvider = BidProviderCollector.getBidProvider(bidProviderName);
 					
-					Optional<Double> optBidValue = bidProvider.calculateBid(query,auctionMessage.getBidProviderName());
+					Optional<Double> optBidValue = bidProvider.calculateBid(query,auctionMessage.getTransCfgName());
 					
 					if(optBidValue.isPresent()) {
 						LOG.info("Bidding with bid of {}",optBidValue.get());
