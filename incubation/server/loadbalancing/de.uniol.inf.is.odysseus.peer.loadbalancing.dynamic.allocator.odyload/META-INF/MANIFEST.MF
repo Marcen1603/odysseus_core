@@ -14,7 +14,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute.allocate.survey,
  de.uniol.inf.is.odysseus.costmodel;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic,
- Jxta_2.6_Source
+ Jxta_2.6_Source,
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.fastauction
 Import-Package: org.slf4j
 Service-Component: OSGI-INF/OdyLoadAllocator.xml,
  OSGI-INF/OdyLoadBidProvider.xml

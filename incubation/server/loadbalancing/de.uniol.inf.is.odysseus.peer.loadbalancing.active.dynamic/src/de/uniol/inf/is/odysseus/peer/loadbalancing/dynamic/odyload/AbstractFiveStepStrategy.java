@@ -234,6 +234,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 			double memLoadToRemove, double netLoadToRemove)
 			throws LoadBalancingException {
 		QueryCostMap allQueries = CostEstimationHelper.generateCostMapForAllQueries();
+		
 		List<QueryCostMap> results = Lists.newArrayList();
 
 		QueryCostMap chosenResult=null;

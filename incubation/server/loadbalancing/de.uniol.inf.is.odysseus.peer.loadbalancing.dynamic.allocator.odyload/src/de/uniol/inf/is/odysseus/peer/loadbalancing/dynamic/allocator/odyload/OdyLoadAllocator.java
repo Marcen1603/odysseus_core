@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.odyload;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,15 +22,19 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.fastauction.Bid;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.fastauction.IFastAuctionCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.OdyLoadConstants;
 
 public class OdyLoadAllocator implements ILoadBalancingAllocator {
 	
+	private final boolean FAST_AUCTION = true;
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdyLoadAllocator.class);
 	
 	IQueryPartAllocator surveyAllocator;
 	IServerExecutor executor;
+	IFastAuctionCommunicator fastAuctionCommunicator;
 	
 	public void bindSurveyAllocator(IQueryPartAllocator serv) {
 		if(serv instanceof SurveyBasedAllocator) {
@@ -42,6 +47,16 @@ public class OdyLoadAllocator implements ILoadBalancingAllocator {
 		if(this.surveyAllocator == serv) {
 			this.surveyAllocator = null;
 			LOG.debug("Survey Based Allocator unbound.");
+		}
+	}
+	
+	public void bindFastAuctionCommunicator(IFastAuctionCommunicator serv) {
+		fastAuctionCommunicator = serv;
+	}
+	
+	public void unbindFastAuctionCommunicator(IFastAuctionCommunicator serv) {
+		if(serv==fastAuctionCommunicator) {
+			fastAuctionCommunicator = null;
 		}
 	}
 	
@@ -66,30 +81,79 @@ public class OdyLoadAllocator implements ILoadBalancingAllocator {
 			Collection<PeerID> knownRemotePeers, PeerID localPeerID)
 			throws QueryPartAllocationException {
 		
-		Preconditions.checkNotNull(surveyAllocator,"Survey Allocator not bound.");
-		Preconditions.checkNotNull(executor, "No executor bound.");
-		
-		if(surveyAllocator==null) {
-			throw new QueryPartAllocationException("Survey Allocator not bound.");
+		if(FAST_AUCTION) {
+			Preconditions.checkNotNull(fastAuctionCommunicator,"Fast Auction Communicator not bound.");
+			Preconditions.checkNotNull(executor, "No executor bound.");
+			
+			QueryBuildConfiguration config = executor.getBuildConfigForQuery(query);
+			
+			if(config==null) {
+				LOG.error("No Query Build Configuration defined.");
+				throw new QueryPartAllocationException("No QueryBuildConfiguration defined.");
+			}
+			
+			if(knownRemotePeers.contains(localPeerID)) {
+				knownRemotePeers.remove(localPeerID);
+			}
+			
+			HashMap<Integer,ILogicalQueryPart> auctionIDs = new HashMap<Integer,ILogicalQueryPart>();
+			for(ILogicalQueryPart part : queryParts) {
+				auctionIDs.put(fastAuctionCommunicator.sendAuctionToMultiplePeers(knownRemotePeers, part, config, OdyLoadConstants.BID_PROVIDER_NAME),part);
+			}
+			
+			try {
+				Thread.sleep(20000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			HashMap<ILogicalQueryPart,PeerID> resultMap = new HashMap<ILogicalQueryPart,PeerID>();
+			
+			for(int auctionID : auctionIDs.keySet()) {
+				List<Bid> bids = fastAuctionCommunicator.getBids(auctionID);
+				
+				double maxBid = Double.NEGATIVE_INFINITY;
+				PeerID peerWithMaxBid = localPeerID;
+				
+				for(Bid bid : bids) {
+					if(bid.getBid()>maxBid) {
+						maxBid = bid.getBid();
+						peerWithMaxBid = bid.getPeerID();
+					}
+				}
+				
+				resultMap.put(auctionIDs.get(auctionID), peerWithMaxBid);
+				
+			}
+			return resultMap;
 		}
-		
-		List<String> allocatorParameters = createAllocationParameters();
-		
-		
-		QueryBuildConfiguration config = executor.getBuildConfigForQuery(query);
-		
-		if(config==null) {
-			LOG.error("No Query Build Configuration defined.");
-			throw new QueryPartAllocationException("No QueryBuildConfiguration defined.");
+		else {
+			Preconditions.checkNotNull(surveyAllocator,"Survey Allocator not bound.");
+			Preconditions.checkNotNull(executor, "No executor bound.");
+			
+			if(surveyAllocator==null) {
+				throw new QueryPartAllocationException("Survey Allocator not bound.");
+			}
+			
+			List<String> allocatorParameters = createAllocationParameters();
+			
+			
+			QueryBuildConfiguration config = executor.getBuildConfigForQuery(query);
+			
+			if(config==null) {
+				LOG.error("No Query Build Configuration defined.");
+				throw new QueryPartAllocationException("No QueryBuildConfiguration defined.");
+			}
+			
+			if(knownRemotePeers.contains(localPeerID)) {
+				knownRemotePeers.remove(localPeerID);
+			}
+			
+			Map<ILogicalQueryPart,PeerID> allocationResult = surveyAllocator.allocate(queryParts, query, knownRemotePeers, localPeerID, config, allocatorParameters);
+			
+			return allocationResult;
 		}
-		
-		if(knownRemotePeers.contains(localPeerID)) {
-			knownRemotePeers.remove(localPeerID);
-		}
-		
-		Map<ILogicalQueryPart,PeerID> allocationResult = surveyAllocator.allocate(queryParts, query, knownRemotePeers, localPeerID, config, allocatorParameters);
-		
-		return allocationResult;
 	}
 
 	
