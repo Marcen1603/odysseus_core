@@ -31,6 +31,7 @@ public class MonitoringThread extends Thread {
 	}
 	
 	public MonitoringThread(IMonitoringThreadListener listener) {
+		this.setName("LoadBalancing Monitoring Thread.");
 		this.listenerList.add(listener);
 	}
 	

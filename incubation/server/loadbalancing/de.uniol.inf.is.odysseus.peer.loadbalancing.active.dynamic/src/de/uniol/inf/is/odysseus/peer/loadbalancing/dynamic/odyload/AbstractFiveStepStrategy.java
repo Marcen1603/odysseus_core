@@ -48,6 +48,8 @@ import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy,ILoadBalancingTriggerListener, IQueryTransmissionHandlerListener {
 
+	private static final int WAIT_TIME_MILLIS_AFTER_LB_ATTEMPT = 30000;
+	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractFiveStepStrategy.class);
 
@@ -144,7 +146,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		} catch (Exception e) {
 			LOG.error("Exception in Selection: {}", e.getMessage());
 			e.printStackTrace();
-			restartMonitoring();
+			restartMonitoring(true);
 			return;
 		}
 
@@ -212,7 +214,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 
 		if (chosenResult.getQueryIds().size() == 0) {
 			LOG.error("No Queries to remove.");
-			restartMonitoring();
+			restartMonitoring(true);
 			return;
 		}
 
@@ -365,7 +367,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 			reallocateAndTransmitQueries(queriesToReprocess);
 		} else {
 			LOG.info("Load Balancing Process finished. Restarting Monitoring.");
-			restartMonitoring();
+			restartMonitoring(true);
 		}
 
 	}
@@ -427,7 +429,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 	public void startMonitoring() throws LoadBalancingException {
 		Preconditions.checkNotNull(trigger,"Trigger must not be null!");
 		strategyIsRunning = true;
-		restartMonitoring();
+		restartMonitoring(false);
 	}
 
 	@Override
@@ -437,7 +439,15 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		trigger.setInactive();
 	}
 	
-	private void restartMonitoring() {
+	private void restartMonitoring(boolean waitBeforeRestart) {
+		if(waitBeforeRestart) {
+			try {
+				Thread.sleep(WAIT_TIME_MILLIS_AFTER_LB_ATTEMPT);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		Preconditions.checkNotNull(trigger,"Trigger is null");
 		if(strategyIsRunning) {
 			trigger.addListener(this);

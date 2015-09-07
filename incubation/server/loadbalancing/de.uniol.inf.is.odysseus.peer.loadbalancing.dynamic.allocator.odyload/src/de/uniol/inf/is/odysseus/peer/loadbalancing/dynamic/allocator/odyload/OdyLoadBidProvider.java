@@ -102,7 +102,7 @@ public class OdyLoadBidProvider implements IBidProvider {
 		
 		
 		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
-			LOG.info("Counting Jxta Operators to remote Peers for network Costs.");
+			//LOG.info("Counting Jxta Operators to remote Peers for network Costs.");
 			neededNetLoad = CostEstimationHelper.estimateNetloadFromJxtaOperatorCount(physicalQuery
 			.getAllOperators());
 		}
@@ -127,13 +127,13 @@ public class OdyLoadBidProvider implements IBidProvider {
 
 		if (freeCpuAfterLoadBalancing <= (1.0-OdyLoadConstants.CPU_THRESHOLD) || freeMemAfterLoadBalancing <=  (1.0-OdyLoadConstants.MEM_THRESHOLD)
 				|| freeNetAfterLoadBalancing <= (1.0-OdyLoadConstants.NET_THRESHOLD)) {
-			LOG.debug("Not bidding to QueryPart is this would overload Peer:");
+			LOG.info("Not bidding to QueryPart {} is this would overload Peer.", query.getName());
 			return Optional.absent();
 		}
 
 		double bid = freeCpuAfterLoadBalancing + freeMemAfterLoadBalancing
 				+ freeNetAfterLoadBalancing;
-		LOG.debug("Bidding to QueryPart with Bid of {}", bid);
+		LOG.info("Bidding to QueryPart {} with Bid of {}",query.getName(), bid);
 		return Optional.of(bid);
 
 	}
