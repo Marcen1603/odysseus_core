@@ -71,6 +71,7 @@ public class FastAuctionCommunicator implements IPeerCommunicatorListener, IFast
 				synchronized(bidsForAuction) {
 					bidsForAuction.add(new Bid(bidMsg.getAuctionID(),senderPeer,bidMsg.getBid()));
 				}
+				collectedBids.put(bidMsg.getAuctionID(), bidsForAuction);
 			}
 		}
 		
