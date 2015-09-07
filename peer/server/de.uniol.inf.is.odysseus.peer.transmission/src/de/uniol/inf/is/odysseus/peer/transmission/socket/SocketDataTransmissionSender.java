@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.transmission.socket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -169,9 +170,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 			globalBuffer.add(rawData);
 			return;
 		}
-		
+			List<PeerID> openCallerCopy = new ArrayList<PeerID>(openCallers);
 			toRemoveList.clear();
-			for (PeerID pid : openCallers) {
+			for (PeerID pid : openCallerCopy) {
 	
 				if (clientSocketMap.containsKey(pid)) {
 	
@@ -193,7 +194,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 						cs.write(rawData);
 						
 					} catch (IOException e) {
-						LOG.error("Could not send data", e);
+						LOG.error("Could not send data", e.getMessage());
 						toRemoveList.add(pid);
 					}
 				} else {

@@ -141,8 +141,8 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		try {
 			chosenResult = selectQueriesToRemove(cpuLoadToRemove,
 					memLoadToRemove, netLoadToRemove);
-		} catch (LoadBalancingException e) {
-			LOG.error("Exception in Allocation: {}", e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Exception in Selection: {}", e.getMessage());
 			e.printStackTrace();
 			restartMonitoring();
 			return;
@@ -255,13 +255,13 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 				.getPeerDictionary();
 
 		failedAllocationQueryIDs = Lists.newArrayList();
-
+		
 		int firstQueryId = chosenResult.getQueryIds().get(0);
 
 		// Parameter Query is used to get Build Configuration...
 		ILogicalQuery query = executor.getLogicalQueryById(firstQueryId,
 				getActiveSession());
-
+		
 		try {
 			Map<ILogicalQueryPart, PeerID> allocationMap = allocator.allocate(
 					queryPartIDMapping.keySet(), query, knownRemotePeers,

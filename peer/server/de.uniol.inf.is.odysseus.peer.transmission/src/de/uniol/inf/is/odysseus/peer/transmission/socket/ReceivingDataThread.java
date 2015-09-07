@@ -65,7 +65,7 @@ public class ReceivingDataThread extends Thread {
 		} catch (SocketException e) {
 			tryCloseSocket(socket);
 			if (!e.getMessage().equals("socket closed")) {
-				LOG.error("Exception while reading socket data", e);
+				LOG.error("Exception while reading socket data", e.getMessage());
 			}
 
 		} catch (IOException e) {

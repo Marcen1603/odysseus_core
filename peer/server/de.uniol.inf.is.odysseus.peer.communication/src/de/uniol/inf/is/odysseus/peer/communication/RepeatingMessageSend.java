@@ -31,7 +31,7 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	private boolean quietOnError;
 	
 	public RepeatingMessageSend( IPeerCommunicator communicator, IMessage message, PeerID destination ) {
-		this(communicator, message, destination, false);
+		this(communicator, message, destination, true);
 	}
 	
 	public RepeatingMessageSend( IPeerCommunicator communicator, IMessage message, PeerID destination, boolean quietOnError ) {
