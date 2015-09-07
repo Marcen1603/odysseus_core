@@ -80,5 +80,11 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	void resume(IOperatorOwner id);
 	
 	void partial(IOperatorOwner id, int sheddingFactor);
+
+	/**
+	 * How many input ports are available
+	 * @return
+	 */
+	int getInputPortCount();
 	
 }

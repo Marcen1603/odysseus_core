@@ -146,6 +146,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		return true;
 	}
 
+	@Override
 	final public int getInputPortCount() {
 		return this.delegateSink.noInputPorts;
 	}

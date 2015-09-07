@@ -642,4 +642,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		return null;
 	}
 
+	@Override
+	public int getInputPortCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

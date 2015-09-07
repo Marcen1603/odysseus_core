@@ -196,7 +196,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		}
 	}
 
-	public int getInputPortCount() {
+	@Override
+	final public int getInputPortCount() {
 		return this.noInputPorts;
 	}
 
