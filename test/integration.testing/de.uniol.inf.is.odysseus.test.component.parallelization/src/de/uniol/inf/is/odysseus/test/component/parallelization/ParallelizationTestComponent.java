@@ -53,10 +53,10 @@ public class ParallelizationTestComponent
 				"test/interoperator/aggregate/expected_output.csv", true));
 		tests.add(new ParallelizationTest(
 				"test/interoperator/aggregate/AggregateNonGroupedStrategyRoundRobin.qry",
-				"test/interoperator/aggregate/expected_output.csv", false));
+				"test/interoperator/aggregate/expected_output.csv", true));
 		tests.add(new ParallelizationTest(
 				"test/interoperator/aggregate/AggregateNonGroupedStrategyShuffle.qry",
-				"test/interoperator/aggregate/expected_output.csv", false));
+				"test/interoperator/aggregate/expected_output.csv", true));
 
 		// fastmedian
 		tests.add(new ParallelizationTest(

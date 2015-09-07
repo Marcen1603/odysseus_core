@@ -114,7 +114,9 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 		// start worker threads
 		for (ThreadedAggregateTIPOWorker<Q, R, W> worker : threadMap.values()) {
-			worker.start();
+			if (worker.getState() == Thread.State.NEW){
+				worker.start();				
+			}
 		}
 	}
 
