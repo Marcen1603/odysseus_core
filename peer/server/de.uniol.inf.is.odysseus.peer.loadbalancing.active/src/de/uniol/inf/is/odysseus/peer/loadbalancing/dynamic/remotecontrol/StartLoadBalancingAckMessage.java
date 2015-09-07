@@ -64,7 +64,7 @@ public class StartLoadBalancingAckMessage implements IMessage {
 		int strategyNameSize = bb.getInt();
 		byte[] strategyNameAsBytes = new byte[strategyNameSize];
 		bb.get(strategyNameAsBytes);
-		strategyName = strategyNameAsBytes.toString();
+		strategyName = new String(strategyNameAsBytes);
 		if(startLogLoadInt==1) {
 			startLogLoad=true;
 		}
