@@ -14,8 +14,10 @@ import com.google.common.collect.Maps;
 import com.sun.xml.internal.bind.AnyTypeAdapter;
 
 @XmlJavaTypeAdapter(AnyTypeAdapter.class)
-public class Context {
+public class Context implements Serializable {
 
+	private static final long serialVersionUID = 5200675232639616018L;
+	
 	private final Map<String, Serializable> contextMap = Maps.newHashMap();
 		
 	// for readability
