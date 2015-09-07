@@ -183,6 +183,12 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 							networkManager.getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueriesRegistry(),OsgiServiceProvider.getQueryPartController());
 				}
 			}
+			
+			//If it still has CalcLatency or Datarate -> Probably a sender/receiver next to it. We don't want to move it nonetheless.
+			if (TransformationHelper.hasCalclatencyPOs(queryID,OsgiServiceProvider.getExecutor()) || TransformationHelper.hasDataratePOs(queryID,OsgiServiceProvider.getExecutor())) {
+				LOG.debug("Query still has evaluation Operators. Excluding from Load Balancing.");
+				OsgiServiceProvider.getExcludedQueriesRegistry().excludeQueryIdFromLoadBalancing(queryID);
+			}
 		}
 	}
 
@@ -236,11 +242,12 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 			LOG.debug(result.toString());
 			
 				results.add(result);
-			}
-			if(chosenResult==null || chosenResult.getCosts()>result.getCosts()) {
+				if(chosenResult==null || chosenResult.getCosts()>result.getCosts()) {
 				LOG.debug("Setting last result as best result.");
 				//TODO Feasability!
 				chosenResult = result;
+
+			}
 			}
 		}
 		return chosenResult;
@@ -261,31 +268,30 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		// Parameter Query is used to get Build Configuration...
 		ILogicalQuery query = executor.getLogicalQueryById(firstQueryId,
 				getActiveSession());
-		
+
+		transmissionHandler.clear();
 		try {
+			
 			Map<ILogicalQueryPart, PeerID> allocationMap = allocator.allocate(
 					queryPartIDMapping.keySet(), query, knownRemotePeers,
 					localPeerID);
 
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Allocation finished.");
-				LOG.debug("Local PID is {}", localPeerID.toString());
-				for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
+			LOG.debug("Allocation finished.");
+			LOG.debug("Local PID is {}", localPeerID.toString());
+			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
 					if (allocationMap.get(queryPart).equals(localPeerID)) {
 						LOG.warn("No other Peer wanted to take Query {}.",
 								queryPartIDMapping.get(queryPart));
 						failedAllocationQueryIDs.add(queryPartIDMapping
 								.get(queryPart));
 
-					} else {
+				} else {
 						LOG.debug("({} goes to Peer {}", queryPartIDMapping
 								.get(queryPart),
 								peerDictionary.getRemotePeerName(allocationMap
 										.get(queryPart)));
-					}
 				}
 			}
-			transmissionHandler.clear();
 			transmissionHandler.setCommunicatorChooser(communicatorChooser);
 			
 
@@ -302,7 +308,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 
 		} catch (QueryPartAllocationException e) {
 			LOG.error("Could not allocate Query Parts: {}", e.getMessage());
-			e.printStackTrace();
+			failedAllocationQueryIDs.addAll(chosenResult.getQueryIds());
 		}
 
 	}

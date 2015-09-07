@@ -230,13 +230,13 @@ public class CostEstimationHelper {
 		Collection<IPhysicalOperator> operatorsInQuery = operatorList;
 		IPhysicalCost queryCost = physicalCostModel.estimateCost(operatorsInQuery);
 		
+		
 		double cpuLoad = queryCost.getCpuSum()/(cpuMax*OdyLoadConstants.CPU_LOAD_COSTMODEL_FACTOR);
 		double netLoad = queryCost.getNetworkSum()/netMax;
 		double memLoad = queryCost.getMemorySum()/memMax;
 		
 		//Workaround, as Cost Model does not provide real usage data for network :(
 		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
-			LOG.info("Using JxtaOperators to estimate NetLoad instead of using value from CostModel.");
 			netLoad = estimateNetloadFromJxtaOperatorCount(operatorList);
 		}
 			

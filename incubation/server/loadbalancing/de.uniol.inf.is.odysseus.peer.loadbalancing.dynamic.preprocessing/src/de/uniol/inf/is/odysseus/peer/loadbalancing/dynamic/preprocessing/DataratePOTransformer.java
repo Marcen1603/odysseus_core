@@ -49,7 +49,7 @@ public class DataratePOTransformer {
 	public static void replaceDataratePOs(int queryID, PeerID localPeerID, ISession session,IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry,IQueryPartController queryPartController) {
 		
 		
-		LOG.debug("Replacing Sources for Query {}", queryID);
+		LOG.debug("Replacing DataratePOs for Query {}", queryID);
 		List<ISource> sources = Lists.newArrayList();
 		Collection<IPhysicalOperator> operatorsInQuery = executor
 				.getExecutionPlan().getQueryById(queryID).getAllOperators();
