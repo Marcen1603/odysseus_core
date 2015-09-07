@@ -9,30 +9,17 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class CreateViewCommand extends AbstractExecutorCommand {
+public class CreateViewCommand extends AbstractCreateStreamOrViewCommand {
 
 	private static final long serialVersionUID = 8887521233288850027L;
-	
-	private ILogicalOperator rootAO;
-	private String name;
 
 	public CreateViewCommand(String name, ILogicalOperator rootAO,
 			ISession caller) {
-		super(caller);
-		this.rootAO = rootAO;
-		this.name = name;
-		if (!rootAO.isSourceOperator()){
-			throw new TransformationException("Can only create a view on sources not on sinks");
-		}
-		if (name.contains("-")){
-			throw new TransformationException("'-' is not allowed in view names");
-		}
+		super(name, rootAO, caller);
 	}
 
 	@Override
@@ -57,15 +44,5 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 //				attributes));
 		dd.setView(name, rename, getCaller());
 	}
-
-	@Override
-	public String toString() {
-		return "Create VIEW " + name;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
 
 }
