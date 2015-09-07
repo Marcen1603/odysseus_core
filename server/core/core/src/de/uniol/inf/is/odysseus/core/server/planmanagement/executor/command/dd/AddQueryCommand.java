@@ -13,7 +13,8 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritab
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
- * This command is used to call addQuery on the executor. This is typically created from Odysseus Script
+ * This command is used to call addQuery on the executor. This is typically
+ * created from Odysseus Script
  * 
  * @author Marco Grawunder
  *
@@ -22,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class AddQueryCommand extends AbstractExecutorCommand {
 
 	private static final long serialVersionUID = -161042295238718034L;
-	
+
 	private String queryText;
 	private String parserID;
 	private String transCfgName;
@@ -31,8 +32,7 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 	private boolean startQueries;
 	private String identifier;
 
-	public AddQueryCommand(String queryText, String parserID, ISession caller,
-			String transCfgName, Context context,
+	public AddQueryCommand(String queryText, String parserID, ISession caller, String transCfgName, Context context,
 			List<IQueryBuildSetting<?>> addSettings, boolean startQueries) {
 		super(caller);
 		this.queryText = queryText;
@@ -44,10 +44,9 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public void execute(IDataDictionaryWritable dd,
-			IUserManagementWritable um, IServerExecutor executor) {
-		Collection<Integer> queries = executor.addQuery(queryText, parserID,
-				getCaller(), transCfgName, context, addSettings);
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+		Collection<Integer> queries = executor.addQuery(queryText, parserID, getCaller(), transCfgName, context,
+				addSettings);
 		if (startQueries) {
 			for (Integer q : queries) {
 				executor.startQuery(q, getCaller());
@@ -55,31 +54,35 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 		}
 		addCreatedQueryIds(queries);
 	}
-	
+
+	public String getQueryText() {
+		return this.queryText;
+	}
+
 	public String getParserId() {
 		return this.parserID;
 	}
-	
+
 	public String getTransCfgName() {
 		return this.transCfgName;
 	}
-	
+
 	public Context getContext() {
 		return this.context;
 	}
-	
+
 	public List<IQueryBuildSetting<?>> getAddSettings() {
 		return this.addSettings;
 	}
-	
+
 	public boolean startQueries() {
 		return this.startQueries;
 	}
-	
+
 	public String getIdentifier() {
 		return this.identifier;
 	}
-	
+
 	public void setIdentifier(String id) {
 		this.identifier = id;
 	}
