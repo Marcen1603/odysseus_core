@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform.join;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -35,13 +37,18 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 
 	@Override
-	public void execute(JoinAO joinAO,
-			TransformationConfiguration transformConfig) throws RuleException {
-		
-		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
-				.getMergeFunction(joinAO.getInputSchema(0).getMetaAttributeNames(),
-						joinAO.getInputSchema(1).getMetaAttributeNames());
-		
+	public void execute(JoinAO joinAO, TransformationConfiguration transformConfig) throws RuleException {
+
+		List<String> leftMeta = joinAO.getInputSchema(0).getMetaAttributeNames();
+		List<String> rightMeta = joinAO.getInputSchema(1).getMetaAttributeNames();
+
+		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry.getMergeFunction(leftMeta, rightMeta);
+
+		if (metaDataMerge == null) {
+			throw new RuntimeException(
+					"Cannot find a meta data merge function for left=" + leftMeta + " and right=" + rightMeta);
+		}
+
 		JoinTIPO joinPO = new JoinTIPO(metaDataMerge);
 		boolean isCross = false;
 		IPredicate pred = joinAO.getPredicate();
@@ -53,7 +60,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		}
 		joinPO.setCardinalities(joinAO.getCard());
 		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
-		
+
 		// This is "bullsh*" The is no need for a window. The elements could
 		// already have start and end timestamps!
 
@@ -91,8 +98,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 	}
 
 	@Override
-	public boolean isExecutable(JoinAO operator,
-			TransformationConfiguration transformConfig) {
+	public boolean isExecutable(JoinAO operator, TransformationConfiguration transformConfig) {
 		if (super.isExecutable(operator, transformConfig)) {
 			return !(operator instanceof LeftJoinAO);
 		}
