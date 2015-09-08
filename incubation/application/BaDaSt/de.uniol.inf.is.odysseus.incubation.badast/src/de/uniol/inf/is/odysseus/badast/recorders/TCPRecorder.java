@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.badast.Record;
  * <br />
  * This recorder is for sources, which send data by TCP. It needs
  * {@link #SOURCENAME_CONFIG}, {@link #HOST_CONFIG} and {@link #PORT_CONFIG} as
- * entries of the configuration. {@link #BUFFERSIZE_CONFIG} can optionally be
+ * entries of the configuration. {@link #BUFFERSIZE_CONFIG} must also be
  * set. The recorder publishes the read bytes as byte arrays to the used publish
  * subscribe system.
  * 
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.badast.Record;
  */
 @SuppressWarnings(value = { "nls" })
 @ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG,
-		TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })
+		TCPRecorder.BUFFERSIZE_CONFIG })
 public class TCPRecorder extends AbstractBaDaStRecorder {
 
 	/**
@@ -49,15 +49,10 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 	 */
 	public static final String BUFFERSIZE_CONFIG = "buffersize";
 
-	/**
-	 * The default value for {@link #BUFFERSIZE_CONFIG}.
-	 */
-	public static final String BUFFERSIZE_DEFAULT = "1024";
-
 	@Override
 	public void start() throws BaDaStException {
 		this.mContinueReading = true;
-		final int buffersize = Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT));
+		final int buffersize = Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG));
 		final String topic = this.getConfig().getProperty(SOURCENAME_CONFIG);
 		try (Socket clientSocket = new Socket(this.getConfig().getProperty(HOST_CONFIG),
 				Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG)));
@@ -84,6 +79,7 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 	protected void validate_internal() throws BaDaStException {
 		validate(HOST_CONFIG);
 		validate(PORT_CONFIG);
+		validate(BUFFERSIZE_CONFIG);
 
 		// Check, if the port is an integer
 		try {
@@ -94,9 +90,9 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 
 		// Check, if the buffer size is an integer
 		try {
-			Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT));
+			Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG));
 		} catch (NumberFormatException e) {
-			throw new BaDaStException(this.getConfig().getProperty(BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT)
+			throw new BaDaStException(this.getConfig().getProperty(BUFFERSIZE_CONFIG)
 					+ " is not a valid buffer size!", e);
 		}
 	}
