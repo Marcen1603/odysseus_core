@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscripti
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
@@ -133,7 +134,11 @@ public class LoadBalancingHelper {
 		LOG.debug("Deleting Query " + queryId);
 		ISession session = OsgiServiceManager.getActiveSession();
 		IServerExecutor executor = OsgiServiceManager.getExecutor();
-		executor.removeQuery(queryId, session);
+		try {
+			executor.removeQuery(queryId, session);
+		} catch(PlanManagementException e) {
+			LOG.error("Could not remove Query {}. Exception: {}",queryId,e.getMessage());
+		}
 	}
 
 	/**

@@ -197,25 +197,15 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	}
 
 	private void registerWithPeerCommunicator() {
-		communicator.registerMessageType(LockDeniedMessage.class);
 		communicator.addListener(this, LockDeniedMessage.class);
-
-		communicator.registerMessageType(LockGrantedMessage.class);
 		communicator.addListener(this, LockGrantedMessage.class);
-
-		communicator.registerMessageType(LockReleasedMessage.class);
 		communicator.addListener(this, LockReleasedMessage.class);
 	}
 
 	private void unregisterFromPeerCommunicator() {
 		communicator.removeListener(this, LockReleasedMessage.class);
-		communicator.unregisterMessageType(LockReleasedMessage.class);
-
 		communicator.removeListener(this, LockGrantedMessage.class);
-		communicator.unregisterMessageType(LockGrantedMessage.class);
-
 		communicator.removeListener(this, LockDeniedMessage.class);
-		communicator.unregisterMessageType(LockDeniedMessage.class);
 	}
 
 }
