@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy,ILoadBalancingTriggerListener, IQueryTransmissionHandlerListener {
 
-	private static final int WAIT_TIME_MILLIS_AFTER_LB_ATTEMPT = 30000;
+	private static final int WAIT_TIME_MILLIS_AFTER_LB_ATTEMPT = 0;
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractFiveStepStrategy.class);

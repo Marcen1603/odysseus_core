@@ -82,7 +82,8 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 			locks.requestLocks();
 		} 
 		else {
-			LOG.debug("{} - No local lock acquired.",queryId);
+			LOG.info("{} - No local lock acquired.",queryId);
+			notifyLockingFailed();
 		}
 		
 	}
