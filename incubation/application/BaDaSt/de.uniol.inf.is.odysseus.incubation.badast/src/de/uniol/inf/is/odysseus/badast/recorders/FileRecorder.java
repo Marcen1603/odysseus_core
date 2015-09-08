@@ -23,8 +23,7 @@ import de.uniol.inf.is.odysseus.badast.Record;
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = FileRecorder.TYPE, parameters = { AbstractBaDaStRecorder.SOURCENAME_CONFIG,
-		FileRecorder.FILENAME_CONFIG })
+@ABaDaStRecorder(type = FileRecorder.TYPE, parameters = { FileRecorder.FILENAME_CONFIG })
 public class FileRecorder extends AbstractBaDaStRecorder {
 
 	/**

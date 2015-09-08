@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.badast.Record;
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = { AbstractBaDaStRecorder.SOURCENAME_CONFIG,
-		TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG, TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })
+@ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG,
+		TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })
 public class TCPRecorder extends AbstractBaDaStRecorder {
 
 	/**
