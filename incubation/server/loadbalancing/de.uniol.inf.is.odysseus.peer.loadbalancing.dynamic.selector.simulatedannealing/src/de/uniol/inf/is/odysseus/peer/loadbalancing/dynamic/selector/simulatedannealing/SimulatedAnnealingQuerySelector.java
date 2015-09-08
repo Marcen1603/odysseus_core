@@ -116,8 +116,12 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelector {
 
 	private QueryCostMap chooseRandomNeighbor(QueryCostMap current,
 			QueryCostMap allQueries) {
+		
 		QueryCostMap neighbor = current.clone();
 		List<Integer> queryIds = allQueries.getQueryIds();
+		if(queryIds.size()==0) {
+			return null;
+		}
 		int randomNum = rand.nextInt(queryIds.size());
 		int randomlyChoosenQueryId = queryIds.get(randomNum);
 
