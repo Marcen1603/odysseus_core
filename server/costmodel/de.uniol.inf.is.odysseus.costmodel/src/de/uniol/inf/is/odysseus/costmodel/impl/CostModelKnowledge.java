@@ -96,17 +96,21 @@ public class CostModelKnowledge implements ICostModelKnowledge,
 	}
 
 	private void processQueryAddEvent(IPhysicalQuery query) {
+		LOG.debug("Query added.");
 		Collection<ISource<? extends IStreamObject<?>>> sources = determineSources(query
 				.getPhysicalChilds());
 		for (ISource<? extends IStreamObject<?>> source : sources) {
+			LOG.debug("Adding source {} to dataSourceManager.",source.getName());
 			dataSourceManager.addSource(source);
 		}
 	}
 
 	private void processQueryRemoveEvent(IPhysicalQuery query) {
+		LOG.debug("Query removed.");
 		Collection<ISource<? extends IStreamObject<?>>> sources = determineSources(query
 				.getPhysicalChilds());
 		for (ISource<? extends IStreamObject<?>> source : sources) {
+			LOG.debug("Removing source {} from dataSourceManager.",source.getName());
 			dataSourceManager.removeSource(source);
 		}
 

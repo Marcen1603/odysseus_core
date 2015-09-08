@@ -30,6 +30,9 @@ public class DataSourceManager {
 
 	private final Map<ISource<? extends IStreamObject<?>>, DefaultStreamConnection<IStreamObject<?>>> connectionMap = Maps.newHashMap();
 	private final Map<ISource<? extends IStreamObject<?>>, Integer> sourceUsageMap = Maps.newHashMap();
+	
+	//To avoid Problems with JxtaSources that have identical Attributes.
+	private final Map<SDFAttribute,Integer> attributeUsageMap = Maps.newHashMap();
 
 	private final SamplingContainer samplingContainer;
 	private final DatarateContainer datarateContainer;
@@ -45,10 +48,10 @@ public class DataSourceManager {
 	public void addSource(ISource<? extends IStreamObject<?>> source) {
 		Preconditions.checkNotNull(source, "Source to register must not be null!");
 
-		LOG.debug("Registering source {}", source);
+		LOG.debug("Registering source {}", source.getName());
 		if (!connectionMap.containsKey(source)) {
 			LOG.debug("Source {} is new", source);
-
+			
 			SDFSchema outputSchema = source.getOutputSchema();
 			if( outputSchema == null ) {
 				LOG.warn("Operator {} has no output schema.", source);
@@ -61,10 +64,20 @@ public class DataSourceManager {
 				SDFAttribute attribute = source.getOutputSchema().get(index);
 
 				if (isNumeric(attribute)) {
-					samplers[index] = new CombinedSampling(SAMPLING_SIZE_TUPLES);
-					samplingContainer.addSampler(attribute, samplers[index]);
-
-					validIndicesList.add(index);
+					if(attributeUsageMap.containsKey(attribute)) {
+						attributeUsageMap.put(attribute, attributeUsageMap.get(attribute)+1);
+						LOG.debug("Attribute {} is already known not sampling again. Usage is now: {}",attribute,attributeUsageMap.get(attribute));
+						samplers[index] = samplingContainer.getSampler(attribute).get();
+						validIndicesList.add(index);
+					}
+					else {
+						samplers[index] = new CombinedSampling(SAMPLING_SIZE_TUPLES);
+						samplingContainer.addSampler(attribute, samplers[index]);
+						attributeUsageMap.put(attribute, 1);
+						LOG.debug("Attribute {} is new.",attribute);
+						validIndicesList.add(index);
+					}
+					
 				}
 			}
 
@@ -153,7 +166,20 @@ public class DataSourceManager {
 				connection.disconnect();
 
 				for (SDFAttribute attribute : source.getOutputSchema()) {
-					samplingContainer.removeSampler(attribute);
+					if(attributeUsageMap.containsKey(attribute)) {
+						int attributeUsage = attributeUsageMap.get(attribute);
+						if(attributeUsage<=1) {
+							LOG.debug("Attribute {} is not used anymore. Removing...",attribute);
+							samplingContainer.removeSampler(attribute);
+							attributeUsageMap.remove(attribute);
+						}
+						else {
+							attributeUsageMap.put(attribute,attributeUsageMap.get(attribute)-1);
+							LOG.debug("Can not remove Attribute {}, as it is used by other sources.",attribute,attributeUsageMap.get(attribute));
+						}
+					} else {
+						LOG.debug("Attribute {} is not in Usage Map", attribute);
+					}
 				}
 				
 				datarateContainer.save();
