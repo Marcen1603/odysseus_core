@@ -75,6 +75,11 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 		Long groupID = groupProcessor.getGroupID(object);
 		process_next(object, port, groupID);
 	}
+	
+	@Override
+	protected void process_done(int port) {
+		transfer.done(port);
+	}
 
 	abstract protected void process_next(Tuple<? extends ITimeInterval> object,
 			int port, Long groupID);
