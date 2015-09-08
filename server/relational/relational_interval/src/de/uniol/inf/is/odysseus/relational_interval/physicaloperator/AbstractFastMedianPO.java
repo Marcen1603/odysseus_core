@@ -60,6 +60,7 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	protected void process_open() throws OpenFailedException {
 		groupProcessor.init();
 		transfer.init(this, 1);
+		lastCreatedElement = null;
 	}
 
 	@Override

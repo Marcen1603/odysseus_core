@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 		extends
@@ -19,6 +20,12 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 		this.roundfactor = roundfactor;
 	}
 
+	@Override
+	protected void process_open() throws OpenFailedException {
+		elements.clear();
+		super.process_open();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> object, int port, Long groupID) {

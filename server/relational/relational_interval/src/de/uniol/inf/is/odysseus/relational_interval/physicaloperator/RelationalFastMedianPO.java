@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 public class RelationalFastMedianPO<T extends Comparable<T>> extends
 		AbstractFastMedianPO<T> {
@@ -19,6 +20,13 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 
 	public RelationalFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		super(medianAttrPos, numericalMedian);
+	}
+
+	
+	@Override
+	protected void process_open() throws OpenFailedException {
+		elements.clear();
+		super.process_open();
 	}
 
 	@Override
