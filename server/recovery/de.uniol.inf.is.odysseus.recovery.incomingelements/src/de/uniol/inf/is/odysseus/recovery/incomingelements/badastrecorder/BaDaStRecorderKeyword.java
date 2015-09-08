@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.badast.ABaDaStRecorder;
-import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
-import de.uniol.inf.is.odysseus.badast.IBaDaStRecorder;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -24,6 +21,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.recovery.badast.ABaDaStRecorder;
+import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.BaDaStSender;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -98,12 +97,12 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 	/**
 	 * The key for the recorder type key value pair.
 	 */
-	private static final String KEY_TYPE = AbstractBaDaStRecorder.TYPE_CONFIG;
+	private static final String KEY_TYPE = "type";
 
 	/**
 	 * The key for the source name key value pair.
 	 */
-	private static final String KEY_SOURCENAME = AbstractBaDaStRecorder.SOURCENAME_CONFIG;
+	private static final String KEY_SOURCENAME = "sourcename";
 
 	/**
 	 * Parses the Odysseus Script parameter.
