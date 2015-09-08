@@ -28,6 +28,10 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelector {
 	public QueryCostMap selectQueries(QueryCostMap allQueries,
 			double minCpuLoad, double minMemLoad, double minNetLoad) {
 
+		if(allQueries.getQueryIds().size()<=1) {
+			return allQueries;
+		}
+		
 		rand = new Random();
 		rand.setSeed(System.currentTimeMillis());
 		QueryCostMap currentSolution;

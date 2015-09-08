@@ -248,7 +248,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 					LOG.info("Setting last result as best result.");
 					//TODO Feasability!
 					chosenResult = result;
-			}
+					}
 			}
 		}
 		return chosenResult;
