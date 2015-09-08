@@ -37,6 +37,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 
 		if (message instanceof RequestLockMessage) {
+			LOG.debug("Got RequestLock message.");
 			if (modifyLock(true, senderPeer)) {
 				sendLockGranted(senderPeer);
 			} else {
@@ -45,6 +46,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		}
 
 		if (message instanceof ReleaseLockMessage) {
+			LOG.debug("Got ReleaseLock message.");
 			if (modifyLock(false, senderPeer)) {
 				sendLockReleased(senderPeer);
 			} else {
@@ -135,7 +137,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		try {
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send LockReleased message.");
+			LOG.error("Could not send LockReleased message: {}",e.getMessage());
 		}
 	}
 
@@ -144,7 +146,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		try {
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send LockNotReleasedMessage.");
+			LOG.error("Could not send LockNotReleasedMessage: {}",e.getMessage());
 		}
 	}
 
@@ -164,18 +166,19 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	}
 
 	public void unbindPeerCommunicator(IPeerCommunicator communicator) {
-		communicator.removeListener(this, ReleaseLockMessage.class);
-		communicator.unregisterMessageType(ReleaseLockMessage.class);
-
-		communicator.removeListener(this, RequestLockMessage.class);
-		communicator.unregisterMessageType(RequestLockMessage.class);
-
-		communicator.unregisterMessageType(LockReleasedMessage.class);
-		communicator.unregisterMessageType(LockGrantedMessage.class);
-		communicator.unregisterMessageType(LockNotReleasedMessage.class);
-		communicator.unregisterMessageType(LockDeniedMessage.class);
 
 		if (this.communicator == communicator) {
+			communicator.removeListener(this, ReleaseLockMessage.class);
+			communicator.unregisterMessageType(ReleaseLockMessage.class);
+	
+			communicator.removeListener(this, RequestLockMessage.class);
+			communicator.unregisterMessageType(RequestLockMessage.class);
+	
+			communicator.unregisterMessageType(LockReleasedMessage.class);
+			communicator.unregisterMessageType(LockGrantedMessage.class);
+			communicator.unregisterMessageType(LockNotReleasedMessage.class);
+			communicator.unregisterMessageType(LockDeniedMessage.class);
+
 			this.communicator = null;
 		}
 	}

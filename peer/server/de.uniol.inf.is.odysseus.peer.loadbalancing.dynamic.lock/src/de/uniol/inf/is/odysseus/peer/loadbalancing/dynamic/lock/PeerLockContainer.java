@@ -94,7 +94,10 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	public void update(IMessage message, PeerID peerID) {
 		// At least one Message failed to deliver.
 		if (message instanceof RequestLockMessage) {
-
+			LOG.error("Timeout while trying to lock Peer with PeerID {}",peerID);
+			if (!rollback) {
+				initiateRollback();
+			}
 		}
 		if (message instanceof ReleaseLockMessage) {
 			// Timeout while releasing locks (maybe after an error).
@@ -162,6 +165,23 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				}
 			}
 		}
+		
+		if(message instanceof LockNotReleasedMessage) {
+			LOG.error("Could not release Lock on Peer {}",senderPeer);
+			if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
+				locks.put(senderPeer, LOCK_STATE.timed_out);
+				jobs.get(senderPeer).stopRunning();
+				jobs.remove(senderPeer);
+
+				// All Peers unlocked?
+				if (getNumberOfUnlockedPeers() == locks.size()) {
+					LOG.debug("No more peers to unlock.");
+					for (IPeerLockContainerListener listener : listeners) {
+						listener.notifyReleasingFinished();
+					}
+				}
+			}
+		}
 
 	}
 
@@ -197,15 +217,19 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	}
 
 	private void registerWithPeerCommunicator() {
+		LOG.info("Registering PeerLock Container");
 		communicator.addListener(this, LockDeniedMessage.class);
 		communicator.addListener(this, LockGrantedMessage.class);
 		communicator.addListener(this, LockReleasedMessage.class);
+		communicator.addListener(this, LockNotReleasedMessage.class);
 	}
 
 	private void unregisterFromPeerCommunicator() {
+		LOG.info("Unregistering PeerLock Container");
 		communicator.removeListener(this, LockReleasedMessage.class);
 		communicator.removeListener(this, LockGrantedMessage.class);
 		communicator.removeListener(this, LockDeniedMessage.class);
+		communicator.removeListener(this, LockNotReleasedMessage.class);
 	}
 
 }
