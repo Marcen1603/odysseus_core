@@ -116,7 +116,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		try {
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send LockGranted message.");
+			LOG.error("Could not send LockGranted message: {}",e.getMessage());
 		}
 
 	}
@@ -126,7 +126,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		try {
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
-			LOG.error("Could not send LockGranted message.");
+			LOG.error("Could not send LockDenied message: {}",e.getMessage());
 		}
 	}
 
