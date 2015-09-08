@@ -24,7 +24,7 @@ windowBid = TIMEWINDOW({SIZE = [1, 'MINUTES'],
  
 out = AGGREGATE({ID = 'aggregateId',
                               aggregations = [
-                                ['SUM', 'price', 'sum_price_bidder']
+                                ['COUNT', 'price', 'sum_price_bidder']
                               ],                                                                  
                             GROUP_BY = ['bidder'],
                               FASTGROUPING = true                                                                   

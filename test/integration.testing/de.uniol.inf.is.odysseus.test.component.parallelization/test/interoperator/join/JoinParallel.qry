@@ -1,7 +1,7 @@
 #PARSER PQL
 #PARALLELIZATION (degree=AUTO) (type=INTER_OPERATOR) (optimization=true) (buffersize=10000000) (threadedbuffer=true) 
 #INTEROPERATOR (strategy=JoinTransformationStrategy) (fragment=HashFragmentAO) (buffersize=10000000) (id=joinId) (degree=8)
-#RUNQUERY
+#ADDQUERY
 
 bid = ACCESS({source='bid',
 		wrapper='GenericPull',

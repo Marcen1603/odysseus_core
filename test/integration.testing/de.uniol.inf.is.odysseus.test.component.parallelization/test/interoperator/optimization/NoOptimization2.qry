@@ -1,7 +1,7 @@
 #PARSER PQL
 #PARALLELIZATION (degree=8) (type=INTER_OPERATOR) (threadedbuffer=true) (buffersize=AUTO) (optimization=false) 
 #DOREWRITE false
-#RUNQUERY
+#ADDQUERY
 
 bid = ACCESS({source='bid',
 		wrapper='GenericPull',

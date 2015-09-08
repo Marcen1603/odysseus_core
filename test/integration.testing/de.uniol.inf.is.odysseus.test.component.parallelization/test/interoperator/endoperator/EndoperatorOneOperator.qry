@@ -2,7 +2,7 @@
 #PARALLELIZATION (degree=AUTO) (type=INTER_OPERATOR) (threadedbuffer=true) (buffersize=AUTO) (optimization=false) 
 #INTEROPERATOR (id=(aggregateId:selectId)) (degree=8) (buffersize=GLOBAL) (strategy=GroupedAggregateTransformationStrategy) (useParallelOp=false) (fragment=HashFragmentAO) 
 #DOREWRITE false
-#RUNQUERY
+#ADDQUERY
  
  
 bid = ACCESS({source='bid',

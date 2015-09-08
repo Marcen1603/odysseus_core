@@ -43,6 +43,7 @@ public class ParallelizationTestComponent
 
 	private List<ParallelizationTest> getTests() {
 		List<ParallelizationTest> tests = new ArrayList<ParallelizationTest>();
+		
 		// INTER-OPERATOR PARALLELIZATION
 		// Aggregate
 		tests.add(new ParallelizationTest(

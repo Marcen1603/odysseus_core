@@ -1,7 +1,7 @@
 #PARSER PQL
 #PARALLELIZATION (type=INTER_OPERATOR) (degree=AUTO) (buffersize=AUTO) (optimization=true)
 #INTEROPERATOR (id=aggregateId) (degree=8) (buffersize=GLOBAL) (strategy=NonGroupedAggregateTransformationStrategy) (fragment=ShuffleFragmentAO)
-#RUNQUERY
+#ADDQUERY
  
  
 bid = ACCESS({source='bid',
