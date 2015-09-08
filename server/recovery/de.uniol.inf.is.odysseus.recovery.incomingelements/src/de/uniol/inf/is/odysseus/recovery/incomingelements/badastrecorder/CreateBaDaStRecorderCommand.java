@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritab
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.BaDaStSender;
 
-// FIXME Interface IBaDaStRecorder is known, but no concrete implementation. They are within the BaDaSt application bundle.
 /**
  * {@code IExecutorCommand} to create and start an {@code IBaDaStRecorder} for a
  * given source.
