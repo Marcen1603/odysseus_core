@@ -101,7 +101,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * are written, when a close call from the output operator arrives
 	 */
 	private boolean drainAtClose = false;
-
+	
 	/**
 	 * Aggreation can create out of order elements. The transferArea is used to
 	 * assure the right out order
@@ -824,6 +824,14 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> getSweepAreaForGroup(
 			Long groupId) {
 		return groups.get(groupId);
+	}
+	
+	public boolean isDrainAtDone(){
+		return drainAtDone;
+	}
+	
+	public boolean isDrainAtClose(){
+		return drainAtClose;
 	}
 
 }

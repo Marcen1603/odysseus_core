@@ -42,6 +42,8 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	private ArrayBlockingQueue<Pair<Long, R>> queue;
 	private LinkedList<Pair<Long, R>> lastElementsQueue;
 	private int threadNumber;
+	private boolean tipoIsDone = false;
+	private boolean tipoIsClosed = false;
 
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
 			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
@@ -66,20 +68,28 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 				interrupt();
 				continue;
 			}
-			processElement(pair);	
+			processElement(pair);
 		}
-		
-		// process last elements of queue
-		if (!queue.isEmpty()){
-			lastElementsQueue = new LinkedList<Pair<Long, R>>(queue);
-			queue.clear();
-			for (Pair<Long, R> pair : lastElementsQueue) {
-				processElement(pair);
+
+		// process last elements of queue only if process_close or process_done
+		// is called
+		if (tipoIsDone || tipoIsClosed) {
+			// only drain the buffer if it is set in configuration
+			if ((tipoIsDone && tipo.isDrainAtDone())
+					|| (tipoIsClosed && tipo.isDrainAtClose())) {
+				// draining the buffer is only needed if elements exists
+				if (!queue.isEmpty()) {
+					lastElementsQueue = new LinkedList<Pair<Long, R>>(queue);
+					queue.clear();
+					for (Pair<Long, R> pair : lastElementsQueue) {
+						processElement(pair);
+					}
+				}
 			}
 		}
 	}
-	
-	private void processElement(Pair<Long, R> pair){
+
+	private void processElement(Pair<Long, R> pair) {
 		Long groupId = pair.getE1();
 		R object = pair.getE2();
 
@@ -93,12 +103,25 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 				synchronized (sa) {
 					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
 							.updateSA(sa, object, tipo.isOutputPA());
-					tipo.createOutput(results, groupId, object
-							.getMetadata().getStart(), threadNumber);
+					tipo.createOutput(results, groupId, object.getMetadata()
+							.getStart(), threadNumber);
 				}
-			}else{
-				throw new RuntimeException("No sweep area for "+pair+" found!");
+			} else {
+				throw new RuntimeException("No sweep area for " + pair
+						+ " found!");
 			}
 		}
+	}
+
+	public void interruptOnDone() {
+		tipoIsDone = true;
+		tipoIsClosed = false;
+		interrupt();
+	}
+
+	public void interruptOnClose() {
+		tipoIsClosed = true;
+		tipoIsDone = false;
+		interrupt();
 	}
 }

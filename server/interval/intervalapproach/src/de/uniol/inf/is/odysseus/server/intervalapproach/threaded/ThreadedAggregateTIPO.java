@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
  * @author ChrisToenjesDeye
  */
 public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
-		extends AggregateTIPO<Q, R, W>implements IThreadedPO {
+		extends AggregateTIPO<Q, R, W> implements IThreadedPO {
 
 	private int degree;
 	private int maxBufferSize;
@@ -55,7 +55,14 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 	// concurrent map which contains blocking queues for each worker thread
 	private Map<Integer, ArrayBlockingQueue<Pair<Long, R>>> queueMap = new ConcurrentHashMap<Integer, ArrayBlockingQueue<Pair<Long, R>>>();
+
 	private boolean useRoundRobinAllocation;
+
+	// worker allocation is needed for roundRobin because we want to assign the
+	// groups and not the elements in roundRobin
+	private Map<Long, Integer> workerAllocation = new ConcurrentHashMap<Long, Integer>();
+
+	private Object monitor = new Object();
 
 	/**
 	 * Constructor for physical aggregate operator (threaded)
@@ -70,23 +77,29 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	 * @param buffersize
 	 * @param useRoundRobinAllocation
 	 */
-	public ThreadedAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping,
-			IMetadataMergeFunction<Q> metadataMerge, int degree, int buffersize, boolean useRoundRobinAllocation) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations, fastGrouping, metadataMerge);
+	public ThreadedAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
+			List<SDFAttribute> groupingAttributes,
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
+			boolean fastGrouping, IMetadataMergeFunction<Q> metadataMerge,
+			int degree, int buffersize, boolean useRoundRobinAllocation) {
+		super(inputSchema, outputSchema, groupingAttributes, aggregations,
+				fastGrouping, metadataMerge);
 		this.maxBufferSize = buffersize;
 		this.degree = degree;
 		this.useRoundRobinAllocation = useRoundRobinAllocation;
 		// create threadgroup for grouping of worker threads
-		workerThreadGroup = new ThreadGroup("ThreadedAggregateTIPO worker threads " + UUID.randomUUID().toString());
+		workerThreadGroup = new ThreadGroup(
+				"ThreadedAggregateTIPO worker threads "
+						+ UUID.randomUUID().toString());
 
 	}
 
 	private void initWorker(int degree) {
 		for (int i = 0; i < degree; i++) {
-			ArrayBlockingQueue<Pair<Long, R>> blockingQueue = new ArrayBlockingQueue<Pair<Long, R>>(maxBufferSize);
-			ThreadedAggregateTIPOWorker<Q, R, W> worker = new ThreadedAggregateTIPOWorker<Q, R, W>(workerThreadGroup,
-					this, i, blockingQueue);
+			ArrayBlockingQueue<Pair<Long, R>> blockingQueue = new ArrayBlockingQueue<Pair<Long, R>>(
+					maxBufferSize);
+			ThreadedAggregateTIPOWorker<Q, R, W> worker = new ThreadedAggregateTIPOWorker<Q, R, W>(
+					workerThreadGroup, this, i, blockingQueue);
 			queueMap.put(i, blockingQueue);
 			threadMap.put(i, worker);
 		}
@@ -149,7 +162,8 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 			// put element into queue, if queue is full this thread need to wait
 			// until worker thread takes elements out of it
-			ArrayBlockingQueue<Pair<Long, R>> queue = queueMap.get(threadNumber);
+			ArrayBlockingQueue<Pair<Long, R>> queue = queueMap
+					.get(threadNumber);
 			try {
 				// put object and groupId into queue
 				Pair<Long, R> pair = new Pair<Long, R>(groupID, object);
@@ -162,14 +176,21 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 	private int getThreadNumber(Long groupID) {
 		if (useRoundRobinAllocation) {
+			if (workerAllocation.containsKey(groupID)) {
+				return workerAllocation.get(groupID);
+			} else {
+				int threadNumber = counter;
+				workerAllocation.put(groupID, threadNumber);
+
+				counter++;
+				if (counter == degree) {
+					counter = 0;
+				}
+				return threadNumber;
+			}
+
 			// if we use roundRobin allocation, we are counting until the
 			// maximum value is reached and start with 0
-			int threadNumber = counter;
-			counter++;
-			if (counter == degree) {
-				counter = 0;
-			}
-			return threadNumber;
 		} else {
 			// if no round robin is used, the thread number is the hash value of
 			// the group
@@ -182,34 +203,41 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	 */
 	@Override
 	protected void process_done(int port) {
-		// interrupt worker threads to finish work
-		workerThreadGroup.interrupt();
+		// done need to be synchronized with close
+		synchronized (monitor) {
 
-		for (ThreadedAggregateTIPOWorker<Q, R, W> thread : threadMap.values()) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			// interrupt worker threads to finish work
+			for (ThreadedAggregateTIPOWorker<Q, R, W> worker : threadMap.values()) {
+				worker.interruptOnDone();
 			}
-		}
 
-		// has only one port, so process_done can be called when first input
-		// port calls done
-		IGroupProcessor<R, W> g = getGroupProcessor();
-		synchronized (g) {
-			if (drainAtDone) {
-				// Drain all groups
-				drainGroups();
+			for (ThreadedAggregateTIPOWorker<Q, R, W> thread : threadMap
+					.values()) {
+				try {
+					thread.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-		// Send information to transfer area that no more elements will be
-		// delivered on port 0, so all data can be written
-		if (debug) {
-			System.err.println(this + " done");
-		}
 
-		for (int i = 0; i < degree; i++) {
-			transferArea.done(i);
+			// has only one port, so process_done can be called when first input
+			// port calls done
+			IGroupProcessor<R, W> g = getGroupProcessor();
+			synchronized (g) {
+				if (drainAtDone) {
+					// Drain all groups
+					drainGroups();
+				}
+			}
+			// Send information to transfer area that no more elements will be
+			// delivered on port 0, so all data can be written
+			if (debug) {
+				System.err.println(this + " done");
+			}
+
+			for (int i = 0; i < degree; i++) {
+				transferArea.done(i);
+			}
 		}
 	}
 
@@ -218,30 +246,37 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	 */
 	@Override
 	protected void process_close() {
-		// interrupt worker threads to finish work
-		workerThreadGroup.interrupt();
-
-		for (ThreadedAggregateTIPOWorker<Q, R, W> thread : threadMap.values()) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		// close need to be synchronized with done
+		synchronized (monitor) {
+			// interrupt worker threads to finish work
+			for (ThreadedAggregateTIPOWorker<Q, R, W> worker : threadMap.values()) {
+				worker.interruptOnClose();
 			}
-		}
 
-		super.process_close();
+			for (ThreadedAggregateTIPOWorker<Q, R, W> thread : threadMap
+					.values()) {
+				try {
+					thread.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			super.process_close();
+		}
 	}
 
 	@Override
-	public void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Long groupID,
-			PointInTime timestamp, int inPort) {
+	public void createOutput(
+			List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults,
+			Long groupID, PointInTime timestamp, int inPort) {
 		super.createOutput(existingResults, groupID, timestamp, inPort);
 	}
 
 	@Override
 	public List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
-			boolean outputPA) {
+			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			R elemToAdd, boolean outputPA) {
 		return super.updateSA(sa, elemToAdd, outputPA);
 	}
 
@@ -263,7 +298,8 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		map.putAll(super.getKeyValues());
 		map.put("Number of threads", String.valueOf(degree));
 		map.put("Buffersize", String.valueOf(maxBufferSize));
-		map.put("Use RoundRobin allocation", String.valueOf(useRoundRobinAllocation));
+		map.put("Use RoundRobin allocation",
+				String.valueOf(useRoundRobinAllocation));
 		return map;
 
 	}
