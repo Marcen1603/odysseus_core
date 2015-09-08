@@ -65,7 +65,7 @@ public class ParallelizationTestComponent
 				"test/interoperator/fastmedian/expected_output.csv", true));
 		tests.add(new ParallelizationTest(
 				"test/interoperator/fastmedian/FastMedianParallel.qry",
-				"test/interoperator/fastmedian/expected_output.csv", false));
+				"test/interoperator/fastmedian/expected_output.csv", true));
 
 		// join
 		tests.add(new ParallelizationTest(
