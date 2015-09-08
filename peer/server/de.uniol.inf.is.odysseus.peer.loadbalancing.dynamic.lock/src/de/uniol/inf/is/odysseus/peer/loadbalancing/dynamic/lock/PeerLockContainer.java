@@ -161,6 +161,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 					LOG.debug("No more peers to unlock.");
 					for (IPeerLockContainerListener listener : listeners) {
 						listener.notifyReleasingFinished();
+						unregisterFromPeerCommunicator();
 					}
 				}
 			}
