@@ -14,11 +14,13 @@ import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
+
 
 
 
@@ -84,9 +86,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	public QDLTemplateProposalProvider(TemplateStore templateStore,
 			ContextTypeRegistry registry, ContextTypeIdHelper helper, IQDLExpressionEvaluator exprEvaluator, IQDLTypeDictionary typeDictionary, IQDLLookUp lookUp, IQDLScopeProvider scopeProvider, IQDLTypeUtils typeUtils) {
 		super(templateStore, registry, helper, exprEvaluator, typeDictionary, lookUp, scopeProvider, typeUtils);
-	}
-	
-	
+	}	
 
 	@Override
 	protected void createIQLMetadataProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -94,8 +94,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		if (query != null) {
 			for (IPreParserKeywordProvider provider : QDLServiceBinding.getPreParserKeywordProviders()) {
 				for (Entry<String, Class<? extends IPreParserKeyword>> entry : provider.getKeywords().entrySet()) {
-					createMetadataTemplate(true, entry.getKey(), templateContext, context, acceptor);
-					createMetadataTemplate(false, entry.getKey(), templateContext, context, acceptor);
+					createMetadataTemplate(entry.getKey(), templateContext, context, acceptor);
 				}
 			}
 		}
@@ -165,16 +164,11 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		}
 	}
 	
-	protected void createMetadataTemplate(boolean equals, String name, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		String desc = name.toLowerCase();
-		if (equals) {
-			desc = desc+ " = " + name.toLowerCase();
-		}
-		String pattern = name.toLowerCase(); 
-		if (equals) {
-			pattern = pattern +" = ${"+name.toLowerCase()+"}"; 
-		}
-		String id = name+equals;
+	protected void createMetadataTemplate(String name, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		String desc = name.toLowerCase()+ " = " + name.toLowerCase();
+	
+		String pattern = name.toLowerCase() +" = ${"+name.toLowerCase()+"}"; 
+		String id = name;
 		Template template = createTemplate(desc, "", id, pattern);
 		finishTemplate(template, templateContext, context, acceptor);
 	}
@@ -239,7 +233,8 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		patternBuilder.append("}");	
 	
 		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
-		finishTemplate(template, templateContext, context, acceptor);
+		Image image = imageHelper.getImage("java_file.gif");
+		finishTemplate(template, templateContext, context,image, acceptor);
 	}
 
 }

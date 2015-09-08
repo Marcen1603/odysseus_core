@@ -3,8 +3,12 @@
  */
 package de.uniol.inf.is.odysseus.iql.odl.formatting;
 
-import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
+import javax.inject.Inject;
+
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
+
+import de.uniol.inf.is.odysseus.iql.basic.formatting.AbstractIQLFormatter;
+import de.uniol.inf.is.odysseus.iql.odl.services.ODLGrammarAccess;
 
 /**
  * This class contains custom formatting description.
@@ -14,16 +18,17 @@ import org.eclipse.xtext.formatting.impl.FormattingConfig;
  * 
  * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  */
-public class ODLFormatter extends AbstractDeclarativeFormatter {
+public class ODLFormatter extends AbstractIQLFormatter {
 	
 
+	@Inject
+	ODLGrammarAccess odl;
+	
 	
 	@Override
 	protected void configureFormatting(FormattingConfig c) {
-// It's usually a good idea to activate the following three statements.
-// They will add and preserve newlines around comments
-//		c.setLinewrap(0, 1, 2).before(grammarAccess.getSL_COMMENTRule());
-//		c.setLinewrap(0, 1, 2).before(grammarAccess.getML_COMMENTRule());
-//		c.setLinewrap(0, 1, 1).after(grammarAccess.getML_COMMENTRule());
+		super.configureFormatting(c);
+		c.setLinewrap(2, 2, 10).after(odl.getODLModelAccess().getNamespacesIQLNamespaceParserRuleCall_0_0());
+
 	}
 }

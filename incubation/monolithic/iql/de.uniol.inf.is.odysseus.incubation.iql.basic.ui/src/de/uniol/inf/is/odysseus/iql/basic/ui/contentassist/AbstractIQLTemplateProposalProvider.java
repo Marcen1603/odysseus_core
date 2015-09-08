@@ -11,14 +11,18 @@ import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
@@ -49,6 +53,11 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	@Inject
 	protected IIQLMethodFinder methodFinder;
 	
+	@Inject
+	protected IImageHelper imageHelper;
+		
+	@Inject
+	protected ILabelProvider labelProvider;
 	
 	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprEvaluator, F typeDictionary, L lookUp, S scopeProvider, U typeUtils) {
 		super(templateStore, registry, helper);
@@ -82,13 +91,28 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		} else if (node instanceof IQLArgumentsMapKeyValue && rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLExpression")) {
 			createIQLArgumentsMapKeyValueExprProposals((IQLArgumentsMapKeyValue) node, templateContext, context, acceptor);
 		} else if (node instanceof IQLNamespace) {
-			createIQLNamespaceProposals(node, templateContext, context, acceptor);
+			createIQLNamespaceProposals((IQLNamespace) node, templateContext, context, acceptor);
 		}     	
 	}
 	
-	protected void createIQLNamespaceProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		for (String namespace : lookUp.getAllNamespaces()) {
-			createNamespaceTemplate(namespace, templateContext, context, acceptor);
+	protected void createIQLNamespaceProposals(IQLNamespace node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		if (node.isStatic()) {
+			for (IEObjectDescription type : scopeProvider.getTypes(node)) {
+				EObject obj = type.getEObjectOrProxy();
+				if (obj instanceof JvmGenericType) {
+					createTypeTemplate((JvmGenericType)obj, templateContext, context, acceptor);
+				}
+			}
+		} else {
+			for (String namespace : lookUp.getAllNamespaces()) {
+				createNamespaceTemplate(namespace, templateContext, context, acceptor);
+			}
+			for (IEObjectDescription type : scopeProvider.getTypes(node)) {
+				EObject obj = type.getEObjectOrProxy();
+				if (obj instanceof JvmGenericType) {
+					createTypeTemplate((JvmGenericType)obj, templateContext, context, acceptor);
+				}
+			}
 		}
 	}
 
@@ -118,7 +142,6 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	
 	protected void createIQLJvmElementCallExpressionProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		Collection<IEObjectDescription> elements = scopeProvider.getScopeIQLJvmElementCallExpression(node);
-
 		for (IEObjectDescription desc : elements) {
 			EObject el = desc.getEObjectOrProxy();
 			if (el instanceof IQLVariableDeclaration) {
@@ -169,7 +192,8 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 				
 		String id = name;
 		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
-		finishTemplate(template, templateContext, context, acceptor);	
+		Image image = imageHelper.getImage("package_obj.gif");
+		finishTemplate(template, templateContext, context, image, acceptor);	
 	}
 	
 	protected void createMapEntryTemplate(IEObjectDescription element, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -197,7 +221,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
 		finishTemplate(template, templateContext, context, acceptor);	
 	}
-	
+
 	
 	protected void createTypeTemplate(JvmType type, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		String simpleName = typeUtils.getShortName(type, false);
@@ -209,7 +233,8 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		String pattern = patternBuilder.toString();
 		String id = longName;
 		Template template = createTemplate(simpleName, longName, id, pattern);
-		finishTemplate(template, templateContext, context, acceptor);	
+		Image image = labelProvider.getImage(type);
+		finishTemplate(template, templateContext, context,image, acceptor);	
 	}
 	
 	protected void createMethodTemplate(String name, JvmOperation op,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -247,7 +272,8 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 			id = id+methodFinder.createExecutableID(op);
 		}
 		Template template = createTemplate(descBuilder.toString(), declaredType.getSimpleName(), id, patternBuilder.toString());
-		finishTemplate(template, templateContext, context, acceptor);
+		Image image = labelProvider.getImage(op);
+		finishTemplate(template, templateContext, context, image, acceptor);
 	}
 	
 	protected void createVariableTemplate(String name, JvmDeclaredType declaredType, JvmTypeReference typeRef,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -261,7 +287,8 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 
 		String id = name;
 		Template template = createTemplate(descBuilder.toString(), declaredType.getSimpleName(), id, patternBuilder.toString());
-		finishTemplate(template, templateContext, context, acceptor);
+		Image image = imageHelper.getImage("localvariable_obj.gif");
+		finishTemplate(template, templateContext, context, image, acceptor);
 	}
 		
 	
@@ -280,6 +307,11 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	
 	protected void finishTemplate(Template template, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		TemplateProposal tp = createProposal(template, templateContext,	context, getImage(template), getRelevance(template));
+		acceptor.accept(tp);
+	}
+	
+	protected void finishTemplate(Template template, TemplateContext templateContext,ContentAssistContext context, Image image, ITemplateAcceptor acceptor) {
+		TemplateProposal tp = createProposal(template, templateContext,	context, image, getRelevance(template));
 		acceptor.accept(tp);
 	}
 	

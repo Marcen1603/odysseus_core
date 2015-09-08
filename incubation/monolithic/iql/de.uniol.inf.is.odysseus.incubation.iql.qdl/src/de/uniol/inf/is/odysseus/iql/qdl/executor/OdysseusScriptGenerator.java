@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.iql.basic.typing.ParameterFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.IQLSubscription;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
@@ -46,7 +45,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 public class OdysseusScriptGenerator {
 	
 	@Inject
-	private IQDLTypeDictionary factory;
+	private IQDLTypeDictionary typeDictionary;
 
 	public ILogicalQuery createLogicalQuery(IQDLQuery query, IDataDictionary dd, ISession session) {
 		
@@ -131,7 +130,7 @@ public class OdysseusScriptGenerator {
 	
 	@SuppressWarnings({ "unchecked" })
 	private void setParameters(IQDLOperator operator, ILogicalOperator logicalOp, ISession session, IDataDictionary dd) {		
-		Class<? extends ILogicalOperator> opClass = factory.getOperatorBuilder(logicalOp.getName()).getOperatorClass();
+		Class<? extends ILogicalOperator> opClass = typeDictionary.getOperatorBuilder(logicalOp.getName()).getOperatorClass();
 		BeanInfo beanInfo = null;
 		try {
 			beanInfo = Introspector.getBeanInfo(opClass, Object.class);
@@ -159,11 +158,11 @@ public class OdysseusScriptGenerator {
 				boolean isList = parameterAnnotation.isList();
 				boolean isMap = parameterAnnotation.isMap();
 		
-				Class<?> valueType = ParameterFactory.getParameterValue(valueParameterType);
+				Class<?> valueType = typeDictionary.getParameterValue(valueParameterType);
 				Class<?> keyType = null;
 
 				if (isMap) {
-					keyType = ParameterFactory.getParameterValue(keyParameterType);
+					keyType = typeDictionary.getParameterValue(keyParameterType);
 				}
 				
 				Object parameterValue = getParameterValue(parameters.get(parameterName.toLowerCase()), valueParameterType, valueType, keyParameterType, keyType, isList, isMap, logicalOp, session, dd);
@@ -182,7 +181,7 @@ public class OdysseusScriptGenerator {
 		if (isList) {
 			List<Object> result = new ArrayList<>();
 			for (Object element : (List<?>) parameterValue) {
-				if (ParameterFactory.isComplexParameterType(valueParameterType)) {
+				if (isComplexParameterType(valueType)) {
 					result.add(toParameter(element, valueParameterType, operator, session, dd));
 				} else {
 					result.add(element);
@@ -194,12 +193,12 @@ public class OdysseusScriptGenerator {
 			for (Entry<Object, Object> e : ((Map<Object, Object>) parameterValue).entrySet()) {
 				Object key = null;
 				Object value = null;
-				if (ParameterFactory.isComplexParameterType(keyParameterType)) {
+				if (isComplexParameterType(keyType)) {
 					key = toParameter(e.getKey(), keyParameterType, operator, session, dd);
 				} else {
 					key = e.getKey();
 				}
-				if (ParameterFactory.isComplexParameterType(valueParameterType)) {
+				if (isComplexParameterType(valueType)) {
 					value = toParameter(e.getValue(), valueParameterType, operator, session, dd);
 				} else {
 					value = e.getValue();
@@ -210,6 +209,33 @@ public class OdysseusScriptGenerator {
 		} else {
 			return toParameter(parameterValue, valueParameterType, operator, session, dd);
 		}		
+	}
+	
+	private boolean isComplexParameterType(Class<?> parameterValue) {
+		if (parameterValue != null) {
+			if (parameterValue == Byte.class) {
+				return false;
+			} else if (parameterValue == Short.class) {
+				return false;
+			} else if (parameterValue == Integer.class) {
+				return false;
+			} else if (parameterValue == Long.class) {
+				return false;
+			} else if (parameterValue == Float.class) {
+				return false;
+			} else if (parameterValue == Double.class) {
+				return false;
+			} else if (parameterValue == Boolean.class) {
+				return false;
+			} else if (parameterValue == Character.class) {
+				return false;
+			} else if (parameterValue == String.class) {
+				return false;
+			} else if (parameterValue.isPrimitive()) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private Object toParameter(Object parameterValue,	Class<? extends IParameter<?>> parameterType, ILogicalOperator operator, ISession session, IDataDictionary dd) {

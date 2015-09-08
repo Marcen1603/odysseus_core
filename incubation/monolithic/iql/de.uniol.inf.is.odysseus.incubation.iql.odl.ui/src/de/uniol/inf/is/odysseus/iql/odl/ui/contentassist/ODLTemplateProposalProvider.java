@@ -11,8 +11,10 @@ import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
@@ -45,7 +47,7 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		super.createTemplates(rule, node, templateContext, context, acceptor);
 		if (node instanceof ODLParameter && rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.JvmTypeReference")) {
-			createODLParameterProposals(templateContext, context, acceptor);
+			createODLParameterProposals(node, templateContext, context, acceptor);
 		}  else if (node instanceof ODLMethod) {
 			createODLMethodProposals((ODLMethod) node, templateContext, context, acceptor);
 		}		
@@ -65,8 +67,7 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 			for (String str : lookUp.getOperatorMetadataKeys()) {
 				createMetadataTemplate(str, templateContext, context, acceptor);
 			}
-		}
-		
+		}		
 		super.createIQLMetadataProposals(node, templateContext, context, acceptor);
 	}
 	
@@ -77,7 +78,7 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
 			if (metadata != null) {
 				if (metadata.getName().equals(IODLTypeDictionary.PARAMETER_TYPE)) {
-					for (JvmTypeReference typeRef : typeDictionary.getAllParameterTypes()) {
+					for (JvmTypeReference typeRef : typeDictionary.getAllParameterTypes(node)) {
 						createTypeTemplate(typeUtils.getInnerType(typeRef, false), templateContext, context, acceptor);
 					}
 				}
@@ -196,14 +197,14 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	}
 	
 	
-	protected void createODLParameterProposals(TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		for (JvmTypeReference typeRef : typeDictionary.getAllParameterValues()) {
-			createParameterTemplate(typeRef, templateContext, context, acceptor);
+	protected void createODLParameterProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		for (JvmTypeReference typeRef : typeDictionary.getAllParameterValues(node)) {
+			createParameterTemplate(node, typeRef, templateContext, context, acceptor);
 		}		
 	}
 	
-	protected void createParameterTemplate(JvmTypeReference typeRef, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		JvmTypeReference parameterType = typeDictionary.getParameterType(typeRef);
+	protected void createParameterTemplate(EObject node, JvmTypeReference typeRef, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		JvmTypeReference parameterType = typeDictionary.getParameterType(typeRef, node);
 		String parameterTypeName = typeUtils.getShortName(parameterType, false);
 		
 		String simpleName = typeUtils.getShortName(typeRef, false);
@@ -215,7 +216,9 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		String pattern = patternBuilder.toString();
 		String id = longName;
 		Template template = createTemplate(simpleName, parameterTypeName, id, pattern);
-		finishTemplate(template, templateContext, context, acceptor);	
+		JvmType innerType = typeUtils.getInnerType(typeRef, false);
+		Image image = labelProvider.getImage(innerType);
+		finishTemplate(template, templateContext, context, image, acceptor);	
 	}
 	
 	protected void createMetadataTemplate(String name, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.qdl.typing.builder;
 
 
-import java.awt.List;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -9,6 +8,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,14 +22,12 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
-import de.uniol.inf.is.odysseus.iql.basic.typing.ParameterFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.AbstractIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
@@ -84,7 +82,6 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 	}
 	
 	@Override
-	@SuppressWarnings({ "unchecked" })
 	public void createOperator(IOperatorBuilder opBuilder) {
 		String name = firstCharUpperCase(opBuilder.getName().toLowerCase());		
 		String operatorClassName = opBuilder.getOperatorClass().getSimpleName();
@@ -131,15 +128,12 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 					parameterName = curProperty.getName();
 				}
 				
-				Class<? extends IParameter<?>> parameterType = (Class<? extends IParameter<?>>) parameterAnnotation.type();
-				Class<?> parameterValueType = null;
+				Class<?> parameterValueType = readMethod.getReturnType();
 				boolean isList = parameterAnnotation.isList();
 				boolean isMap = parameterAnnotation.isMap();
 				
-				if (ParameterFactory.isComplexParameterType(parameterType)) {
+				if (isComplexParameterType(parameterValueType)) {
 					parameterValueType = Object.class;
-				} else {
-					parameterValueType = ParameterFactory.getParameterValue(parameterType);
 				}
 				
 				parameterTypes.put(parameterName.toLowerCase(), parameterAnnotation);
@@ -190,6 +184,37 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		typeDictionary.setParameterValueTypes(parameterValueTypes);
 	}
 		
+	private boolean isComplexParameterType(Class<?> parameterValue) {
+		if (parameterValue != null) {
+			if (parameterValue == Byte.class) {
+				return false;
+			} else if (parameterValue == Short.class) {
+				return false;
+			} else if (parameterValue == Integer.class) {
+				return false;
+			} else if (parameterValue == Long.class) {
+				return false;
+			} else if (parameterValue == Float.class) {
+				return false;
+			} else if (parameterValue == Double.class) {
+				return false;
+			} else if (parameterValue == Boolean.class) {
+				return false;
+			} else if (parameterValue == Character.class) {
+				return false;
+			} else if (parameterValue == String.class) {
+				return false;
+			} else if (List.class.isAssignableFrom(parameterValue)) {
+				return false;
+			} else if (Map.class.isAssignableFrom(parameterValue)) {
+				return false;
+			} else if (parameterValue.isPrimitive()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	private IQLAttribute createParameterAttribute(String parameterName, Class<?> parameterValue, boolean isList, boolean isMap) {
 		JvmTypeReference typeRef = createType(parameterValue, isList, isMap);
 		

@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 
@@ -32,17 +33,23 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	@Override
 	public String getFirstLine(EObject object) {
 		if (object instanceof JvmField) {
-			return getFirstLineJvmField((JvmField) object);
+			return getFirstLine((JvmField) object);
 		} else if (object instanceof JvmOperation) {
-			return getFirstLineJvmField((JvmOperation) object);
-		}else if (object instanceof IQLArgumentsMapKeyValue) {
-			return getFirstLineIQLArgumentsMapKeyValue((IQLArgumentsMapKeyValue) object);
-		}else {
+			return getFirstLine((JvmOperation) object);
+		} else if (object instanceof IQLArgumentsMapKeyValue) {
+			return getFirstLine((IQLArgumentsMapKeyValue) object);
+		} else if (object instanceof JvmType) {
+			return getFirstLine((JvmType) object);
+		} else {
 			return super.getFirstLine(object);
 		}
 	}
 	
-	protected String getFirstLineIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue) {		
+	protected String getFirstLine(JvmType type) {
+		return typeUtils.getLongName(type, false);
+	}
+	
+	protected String getFirstLine(IQLArgumentsMapKeyValue keyValue) {		
 		if (keyValue.getKey() instanceof JvmField) {
 			return keyValue.getKey().getSimpleName() + " : "+toString(((JvmField) keyValue.getKey()).getType());
 		} else {
@@ -51,11 +58,11 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 		}
 	}
 	
-	protected String getFirstLineJvmField(JvmField attr) {
+	protected String getFirstLine(JvmField attr) {
 		return attr.getSimpleName()+ " : "+toString(attr.getType());
 	}
 	
-	protected String getFirstLineJvmField(JvmOperation op) {
+	protected String getFirstLine(JvmOperation op) {
 		StringBuilder b = new StringBuilder();
 		b.append(op.getSimpleName());
 		b.append("(");

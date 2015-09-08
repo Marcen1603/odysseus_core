@@ -7,6 +7,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.iql.odl;singleton:=true
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.odl.Activator
 Eclipse-RegisterBuddy: de.uniol.inf.is.odysseus.iql.basic
+Eclipse-BuddyPolicy: registered
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.generator;resolution:=optional,
  org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
@@ -56,7 +57,6 @@ Export-Package: de.uniol.inf.is.odysseus.iql.odl,
  de.uniol.inf.is.odysseus.iql.odl.service,
  de.uniol.inf.is.odysseus.iql.odl.services,
  de.uniol.inf.is.odysseus.iql.odl.types,
- de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator,
  de.uniol.inf.is.odysseus.iql.odl.types.useroperator,
  de.uniol.inf.is.odysseus.iql.odl.typing,
  de.uniol.inf.is.odysseus.iql.odl.typing.dictionary,

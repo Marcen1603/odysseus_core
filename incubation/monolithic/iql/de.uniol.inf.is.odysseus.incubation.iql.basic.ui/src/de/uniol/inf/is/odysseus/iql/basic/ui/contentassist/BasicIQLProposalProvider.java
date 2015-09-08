@@ -44,6 +44,7 @@ import org.eclipse.xtext.ui.editor.contentassist.ReplacementTextApplier;
 import org.eclipse.xtext.util.ReplaceRegion;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
@@ -73,7 +74,11 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	
 	@Override
 	public void completeIQLSimpleTypeRef_Type(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		if (!(model instanceof IQLNewExpression)) {
+		if (model instanceof IQLNewExpression) {
+		
+		} else if (model instanceof IQLMetadata) {
+			
+		} else {
 			createTypeProposals(model, context, acceptor);
 		}
 	}
@@ -86,7 +91,12 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	@Override
 	public void completeIQLMemberSelection_Member(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 
+	}	
+
+	@Override
+	public void completeIQLArgumentsMapKeyValue_Key(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 	}
+		
 
 	@Override
 	public void completeIQLOtherExpressions_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
@@ -132,7 +142,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 		displayStringBuilder.append(")");
 		displayStringBuilder.append(" - ");
 		displayStringBuilder.append(converter.toString(obj.getQualifiedName()));
-		ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr, displayStringBuilder.toString(), getImage(model), context);
+		ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr, displayStringBuilder.toString(), getImage(obj.getEObjectOrProxy()), context);
 		if (proposal != null) {
 			proposal.setAdditionalProposalInfo(obj.getQualifiedName());
 			proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));
@@ -146,7 +156,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 			String proposalStr = obj.getQualifiedName().getLastSegment();
 			String displayString = obj.getQualifiedName().getLastSegment()+ " - " +converter.toString(obj.getQualifiedName());
 			
-			ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(model), context);
+			ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(obj.getEObjectOrProxy()), context);
 			if (proposal != null) {
 				proposal.setAdditionalProposalInfo(obj.getQualifiedName());
 				proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));

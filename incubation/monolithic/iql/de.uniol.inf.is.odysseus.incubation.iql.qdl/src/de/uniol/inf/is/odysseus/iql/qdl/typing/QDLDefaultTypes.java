@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 public class QDLDefaultTypes {
 	
@@ -25,6 +26,11 @@ public class QDLDefaultTypes {
 		Collection<Class<?>> types = new HashSet<>();
 		types.add(System.class);
 		return types;
+	}
+
+	public static Collection<IIQLTypeExtensions> getTypeOperators() {
+		Collection<IIQLTypeExtensions> result = new HashSet<>();
+		return result;		
 	}
 
 }

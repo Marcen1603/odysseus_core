@@ -31,6 +31,8 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.BasicIQLUiScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.ui.service.BasicIQLUiServiceObserver;
+import de.uniol.inf.is.odysseus.iql.basic.ui.service.IIQLUiServiceObserver;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -48,6 +50,10 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 		return BasicIQLUiGenerator.class;
 	}
 
+	
+	public Class<? extends IIQLUiServiceObserver> bindIQLUiServiceObserver() {
+		return BasicIQLUiServiceObserver.class;
+	}	
 	
 	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
 		return BasicIQLAntlrTokenToAttributeIdMapper.class ;

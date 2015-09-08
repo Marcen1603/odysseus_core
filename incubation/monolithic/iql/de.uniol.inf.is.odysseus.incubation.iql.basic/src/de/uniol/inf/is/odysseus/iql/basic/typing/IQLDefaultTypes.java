@@ -15,8 +15,7 @@ import de.uniol.inf.is.odysseus.iql.basic.types.extension.ObjectExtensions;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 public class IQLDefaultTypes {
-	
-	
+
 	public static Collection<Class<?>> getVisibleTypes() {
 		Collection<Class<?>> types = new HashSet<>();
 		types.add(Object.class);
@@ -30,7 +29,7 @@ public class IQLDefaultTypes {
 
 		return types;
 	}
-	
+
 	public static Collection<String> getImplicitImports() {
 		Collection<String> implicitImports = new HashSet<>();
 		implicitImports.add("java.util.*");
@@ -40,7 +39,7 @@ public class IQLDefaultTypes {
 
 		return implicitImports;
 	}
-	
+
 	public static Collection<IIQLTypeExtensions> getTypeExtensions() {
 		Collection<IIQLTypeExtensions> result = new HashSet<>();
 		result.add(new CollectionExtensions());

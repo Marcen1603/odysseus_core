@@ -6,9 +6,13 @@ import javax.inject.Singleton;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
+import de.uniol.inf.is.odysseus.iql.basic.service.IIQLService;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.AbstractIQLTypeExtensionsDictionary;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLDefaultTypes;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
@@ -18,6 +22,17 @@ public class QDLTypeExtensionsDictionary extends AbstractIQLTypeExtensionsDictio
 	@Inject
 	public QDLTypeExtensionsDictionary(IQDLTypeDictionary typeDictionary, IQDLTypeUtils typeUtils) {
 		super(typeDictionary, typeUtils);
+		init();
+	}
+	
+	private void init() {
+		for (IIQLTypeExtensions operators : QDLDefaultTypes.getTypeOperators()) {
+			this.addTypeExtensions(operators);
+		}
+		QDLServiceBinding.getInstance().addListener(this);
+		for (IIQLService service : QDLServiceBinding.getInstance().getServices()) {
+			onServiceAdded(service);
+		}
 	}
 	
 	

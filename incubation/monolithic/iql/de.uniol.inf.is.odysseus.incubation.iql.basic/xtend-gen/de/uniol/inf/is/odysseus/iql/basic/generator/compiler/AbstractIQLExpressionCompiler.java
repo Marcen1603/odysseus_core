@@ -2509,13 +2509,21 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       String _xifexpression = null;
       boolean _and = false;
       boolean _and_1 = false;
+      boolean _and_2 = false;
       String _simpleName = method.getSimpleName();
       boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(left, _simpleName, list);
       if (!_hasTypeExtensions) {
-        _and_1 = false;
+        _and_2 = false;
       } else {
         JvmTypeReference _returnType = method.getReturnType();
-        boolean _isJvmArray = this.helper.isJvmArray(_returnType);
+        boolean _notEquals_1 = (!Objects.equal(_returnType, null));
+        _and_2 = _notEquals_1;
+      }
+      if (!_and_2) {
+        _and_1 = false;
+      } else {
+        JvmTypeReference _returnType_1 = method.getReturnType();
+        boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
         _and_1 = _isJvmArray;
       }
       if (!_and_1) {
@@ -2617,11 +2625,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _xifexpression_1 = _xblockexpression_2;
         } else {
           String _xifexpression_2 = null;
-          boolean _and_2 = false;
-          JvmTypeReference _returnType_1 = method.getReturnType();
-          boolean _isJvmArray_2 = this.helper.isJvmArray(_returnType_1);
+          boolean _and_3 = false;
+          JvmTypeReference _returnType_2 = method.getReturnType();
+          boolean _isJvmArray_2 = this.helper.isJvmArray(_returnType_2);
           if (!_isJvmArray_2) {
-            _and_2 = false;
+            _and_3 = false;
           } else {
             boolean _or_1 = false;
             JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
@@ -2634,9 +2642,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               boolean _not_1 = (!_isJvmArray_3);
               _or_1 = _not_1;
             }
-            _and_2 = _or_1;
+            _and_3 = _or_1;
           }
-          if (_and_2) {
+          if (_and_3) {
             String _xblockexpression_3 = null;
             {
               String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -3213,9 +3221,17 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           c.addImport(_canonicalName);
           String _xifexpression_1 = null;
           boolean _and_1 = false;
+          boolean _and_2 = false;
           JvmTypeReference _returnType = method.getReturnType();
-          boolean _isJvmArray = this.helper.isJvmArray(_returnType);
-          if (!_isJvmArray) {
+          boolean _notEquals_2 = (!Objects.equal(_returnType, null));
+          if (!_notEquals_2) {
+            _and_2 = false;
+          } else {
+            JvmTypeReference _returnType_1 = method.getReturnType();
+            boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
+            _and_2 = _isJvmArray;
+          }
+          if (!_and_2) {
             _and_1 = false;
           } else {
             boolean _or = false;
@@ -3301,9 +3317,17 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             JvmTypeReference typeRef = this.typeUtils.createTypeRef(containerType);
             String _xifexpression_2 = null;
             boolean _and_1 = false;
+            boolean _and_2 = false;
             JvmTypeReference _returnType = method.getReturnType();
-            boolean _isJvmArray = this.helper.isJvmArray(_returnType);
-            if (!_isJvmArray) {
+            boolean _notEquals_2 = (!Objects.equal(_returnType, null));
+            if (!_notEquals_2) {
+              _and_2 = false;
+            } else {
+              JvmTypeReference _returnType_1 = method.getReturnType();
+              boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
+              _and_2 = _isJvmArray;
+            }
+            if (!_and_2) {
               _and_1 = false;
             } else {
               boolean _or = false;
@@ -3363,9 +3387,17 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         } else {
           String _xifexpression_2 = null;
           boolean _and_1 = false;
+          boolean _and_2 = false;
           JvmTypeReference _returnType = method.getReturnType();
-          boolean _isJvmArray = this.helper.isJvmArray(_returnType);
-          if (!_isJvmArray) {
+          boolean _notEquals_2 = (!Objects.equal(_returnType, null));
+          if (!_notEquals_2) {
+            _and_2 = false;
+          } else {
+            JvmTypeReference _returnType_1 = method.getReturnType();
+            boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
+            _and_2 = _isJvmArray;
+          }
+          if (!_and_2) {
             _and_1 = false;
           } else {
             boolean _or = false;
@@ -3395,8 +3427,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _builder.append("(");
               {
                 IQLArgumentsList _args_2 = m.getArgs();
-                boolean _notEquals_2 = (!Objects.equal(_args_2, null));
-                if (_notEquals_2) {
+                boolean _notEquals_3 = (!Objects.equal(_args_2, null));
+                if (_notEquals_3) {
                   IQLArgumentsList _args_3 = m.getArgs();
                   EList<JvmFormalParameter> _parameters = method.getParameters();
                   String _compile = this.compile(_args_3, _parameters, c);
@@ -3414,8 +3446,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             _builder.append("(");
             {
               IQLArgumentsList _args_2 = m.getArgs();
-              boolean _notEquals_2 = (!Objects.equal(_args_2, null));
-              if (_notEquals_2) {
+              boolean _notEquals_3 = (!Objects.equal(_args_2, null));
+              if (_notEquals_3) {
                 IQLArgumentsList _args_3 = m.getArgs();
                 EList<JvmFormalParameter> _parameters = method.getParameters();
                 String _compile = this.compile(_args_3, _parameters, c);

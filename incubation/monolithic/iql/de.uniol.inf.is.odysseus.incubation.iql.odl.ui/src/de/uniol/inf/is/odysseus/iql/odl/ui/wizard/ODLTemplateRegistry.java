@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.iql.odl.ui.internal.ODLActivator;
+
 
 public class ODLTemplateRegistry {
 	public static final String EMPTY_TEMPLATE_NAME = "<empty>";
@@ -28,7 +30,7 @@ public class ODLTemplateRegistry {
 	}
 	
 	private void insertDefaultTemplate() {
-		for (IODLTemplate template : ODLTemplateReader.readTemplates()) {
+		for (IODLTemplate template : ODLTemplateReader.readTemplates(ODLActivator.getInstance().getBundle())) {
 			register(template);
 		}
 	}

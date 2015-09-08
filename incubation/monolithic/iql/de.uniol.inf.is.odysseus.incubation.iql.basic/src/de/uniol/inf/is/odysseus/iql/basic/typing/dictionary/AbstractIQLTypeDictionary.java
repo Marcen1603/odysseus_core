@@ -1,18 +1,25 @@
 package de.uniol.inf.is.odysseus.iql.basic.typing.dictionary;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.osgi.framework.internal.core.AbstractBundle;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmGenericType;
@@ -20,6 +27,7 @@ import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.packageadmin.ExportedPackage;
@@ -48,6 +56,19 @@ import org.reflections.scanners.SubTypesScanner;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
@@ -58,6 +79,7 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLDefaultTypes;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
+import de.uniol.inf.is.odysseus.iql.basic.typing.ParameterFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
@@ -76,6 +98,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	
 	protected I serviceObserver;
 
+	private Map<String, Collection<Class<?>>> visibleBundleTypes = new HashMap<>();
 
 	@Inject
 	IIQLTypingEntryPoint entryPoint;
@@ -93,6 +116,14 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	private Map<String, IQLSystemType> systemTypes= new HashMap<>();
 
 	
+	@Override
+	public Class<?> getParameterValue(Class<? extends IParameter<?>> parameterType) {
+		Class<?> result =  ParameterFactory.getParameterValue(parameterType);
+		if (result == null) {
+			result = serviceObserver.getParameters().get(parameterType);
+		}
+		return result;
+	}
 	
 	@Override
 	public Collection<JvmTypeReference> getStaticImports(EObject obj) {
@@ -216,6 +247,21 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 			result.add(getType(c.getCanonicalName(), context));
 		}
 		
+		for (Bundle bundle : getVisibleTypesFromBundle()) {
+			Collection<Class<?>> types = visibleBundleTypes.get(bundle.getSymbolicName());
+			
+			if (types == null) {
+				types = getTypesOfBundle(bundle);
+				visibleBundleTypes.put(bundle.getSymbolicName(), types);
+			}
+			for (Class<?> c : types) {
+				JvmType type = getType(c.getCanonicalName(), context);
+				if (type != null) {
+					result.add(type);
+				}
+			}
+		}
+		
 		for (String namespace : usedNamespaces) {
 			if (namespace.endsWith("*")) {
 				String packageName = namespace.substring(0, namespace.length()-2);
@@ -229,11 +275,85 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		}
 		
 		return result;
-	}	
+	}
+	
+	
+	private Collection<Class<?>> getTypesOfBundle(Bundle bundle) {
+		Collection<Class<?>> result = new HashSet<>();
+		result.addAll(findTypesOfBundle(bundle));
+		
+		if (bundle instanceof AbstractBundle) {
+			try {
+				String[] classPathEntries = ((AbstractBundle) bundle).getBundleData().getClassPath();
+				for (String entry : classPathEntries) {
+					result.addAll(getTypesOfJar(entry, bundle));
+				}
+			} catch (BundleException e) {
+			}								
+		}
+		return result;
+	}
+	
+	
+	
+	private Collection<Class<?>> findTypesOfBundle(Bundle bundle) {
+		Collection<Class<?>> result = new HashSet<>();
+		
+		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+		Collection<String> resources = bundleWiring.listResources("/", "*.class", BundleWiring.LISTRESOURCES_RECURSE);
+		
+		for (String resource : resources) {
+		    URL localResource = bundle.getEntry(resource);
+		    if (localResource != null) {
+		        String className = resource.replaceAll("/", ".").replace(".class", "").replace("bin.", "");
+		        try {
+					result.add(Class.forName(className));
+				} catch (ClassNotFoundException e) {
+				}
+		    }
+		}		
+		return result;
+	}
+	
+	private Collection<Class<?>> getTypesOfJar(String jarName, Bundle bundle) {
+		File bundleDir = getBundleDir(bundle);
+		File jarFile = new File(bundleDir, jarName);
+		Collection<Class<?>> result = new HashSet<>();
+		try(ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile))) {
+			for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+			    if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+			        String className = entry.getName().replace('/', '.');
+			        className=className.substring(0, className.length() - ".class".length());
+			        try {
+				        Class<?> c = Class.forName(className);
+				        if (c != null) {
+				        	result.add(c);
+				        }
+			        } catch (Exception e1) {
+			        }
+			    }
+			}
+		} catch (Exception e) {
+		}
+		return result;
+	}
+	
+	private File getBundleDir(Bundle bundle) {
+		try {
+			URL url = FileLocator.toFileURL(FileLocator.find(bundle, new Path(""), null));
+			return new File(url.toURI());
+		} catch (Exception e) {
+		}
+		return null;
+	}
 	
 	public JvmType getType(String name, Notifier context) {
 		ResourceSet set = EcoreUtil2.getResourceSet(context);
-		return typeProviderFactory.findOrCreateTypeProvider(set).findTypeByName(name);
+		try {
+			return typeProviderFactory.findOrCreateTypeProvider(set).findTypeByName(name);
+		}catch (Exception e) {			
+		}
+		return null;
 	}
 		
 	public Collection<JvmType> getTypesOfPackage(String packageName, Resource context) {
@@ -248,23 +368,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		}
 		return result;
 	}
-	
-	public Collection<JvmType> getTypesOfBundle(Bundle bundle, Resource context) {
-		Collection<JvmType> result = new HashSet<>();
-
-		BundleWiring bundleWiring = Activator.getContext().getBundle().adapt(BundleWiring.class);
-		Collection<String> resources = bundleWiring.listResources("/", "*.class", BundleWiring.LISTRESOURCES_RECURSE);
-
-		for (String resource : resources) {
-		    URL localResource = bundle.getEntry(resource);
-		    if (localResource != null) {
-		        String className = resource.replaceAll("/", ".").replace(".class", "").replace("bin.", "");
-		        result.add(getType(className, context));
-		    }
-		}
-		return result;
-	}
-	
+		
 	
 	private Collection<JvmType> getPrimitives(Resource context) {
 		Collection<JvmType> result = new HashSet<>();
@@ -323,6 +427,14 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.slf4j"));
 		bundles.addAll(this.serviceObserver.getDependencies());
+		return bundles;
+	}
+	
+	protected Collection<Bundle> getVisibleTypesFromBundle() {
+		Collection<Bundle> bundles = new HashSet<>();
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
+		bundles.addAll(this.serviceObserver.getVisibleTypesFromBundle());		
 		return bundles;
 	}
 

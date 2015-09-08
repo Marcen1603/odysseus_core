@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.ui.service.IIQLUiServiceObserver;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist.QDLProposalProvider;
@@ -34,6 +35,8 @@ import de.uniol.inf.is.odysseus.iql.qdl.ui.highlighting.QDLSemanticHighlightingC
 import de.uniol.inf.is.odysseus.iql.qdl.ui.hover.QDLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.hover.QDLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.scoping.QDLUiScopeProvider;
+import de.uniol.inf.is.odysseus.iql.qdl.ui.service.IQDLUiServiceObserver;
+import de.uniol.inf.is.odysseus.iql.qdl.ui.service.QDLUiServiceObserver;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -42,6 +45,14 @@ import de.uniol.inf.is.odysseus.iql.qdl.ui.scoping.QDLUiScopeProvider;
 public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDLUiModule {
 	public QDLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	public Class<? extends IIQLUiServiceObserver> bindIQLUiServiceObserver() {
+		return QDLUiServiceObserver.class;
+	}
+	
+	public Class<? extends IQDLUiServiceObserver> bindQDLUiServiceObserver() {
+		return QDLUiServiceObserver.class;
 	}
 	
 	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {

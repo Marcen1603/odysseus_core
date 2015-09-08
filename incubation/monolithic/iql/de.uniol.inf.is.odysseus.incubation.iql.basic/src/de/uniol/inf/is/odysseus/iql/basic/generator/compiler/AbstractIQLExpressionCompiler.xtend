@@ -545,7 +545,7 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		} else {
 			list = new ArrayList();
 		}
-		if (typeExtensionsDictionary.hasTypeExtensions(left, method.simpleName,list) && helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))){
+		if (typeExtensionsDictionary.hasTypeExtensions(left, method.simpleName,list) && method.returnType != null &&helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))){
 			var typeOps = typeExtensionsDictionary.getTypeExtensions(left, method.simpleName, list);
 			c.addImport(typeOps.class.canonicalName)
 			c.addImport(IQLUtils.canonicalName)
@@ -688,7 +688,7 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		if (typeDef != null && typeExtensionsDictionary.hasTypeExtensions(typeDef, method.simpleName, list)){
 			var typeOps = typeExtensionsDictionary.getTypeExtensions(typeDef, method.simpleName, list);
 			c.addImport(typeOps.class.canonicalName)
-			if (helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))) {
+			if (method.returnType != null && helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))) {
 				c.addImport(IQLUtils.canonicalName)
 				'''«IQLUtils.simpleName».toList(«typeOps.class.simpleName».«method.simpleName»(this«IF method.parameters.size > 0», «ENDIF»«compile(m.args, method.parameters, c)»))'''
 			} else {
@@ -697,14 +697,14 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		} else if (method.isStatic) {
 			var containerType = method.eContainer as JvmDeclaredType
 			var typeRef = typeUtils.createTypeRef(containerType)
-			if (helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))) {
+			if (method.returnType != null && helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))) {
 				c.addImport(IQLUtils.canonicalName)
 				'''«IQLUtils.simpleName».toList(«typeCompiler.compile(typeRef, c, true)».«method.simpleName»(«compile(m.args,method.parameters, c)»))'''
 			} else {
 				'''«typeCompiler.compile(typeRef, c, true)».«method.simpleName»(«compile(m.args,method.parameters, c)»)'''			
 			}
 		} else {
-			if (helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))) {
+			if (method.returnType != null && helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))) {
 				c.addImport(IQLUtils.canonicalName)
 				'''«IQLUtils.simpleName».toList(«method.simpleName»(«IF m.args != null»«compile(m.args,method.parameters, c)»«ENDIF»))'''
 			} else {

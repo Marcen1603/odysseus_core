@@ -4,7 +4,6 @@
 package de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist;
 
 
-
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
  */

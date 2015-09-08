@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter
-import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAORule
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter
 import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils
@@ -32,6 +31,10 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils
 import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
 import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary
+import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule
+import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLAORule
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup
 
 class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeDictionary, IODLTypeUtils> implements IODLCompiler{
 	
@@ -76,8 +79,12 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 	override String compileAORule(ODLOperator o, IODLGeneratorContext context) {	
 		var builder = new StringBuilder()
 		builder.append(compileAORuleIntern(o, context))
-		context.addImport(AbstractODLAORule.canonicalName)	
+		context.addImport(AbstractTransformationRule.canonicalName)
+		context.addImport(IRuleFlowGroup.canonicalName)	
+		context.addImport(TransformRuleFlowGroup.canonicalName)	
 		context.addImport(TransformationConfiguration.canonicalName)	
+		context.addImport(IODLAORule.canonicalName)	
+			
 		for (String i : context.getImports) {
 			builder.insert(0, "import "+ i+ ";"+System.lineSeparator)
 		}
@@ -226,18 +233,29 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 	
 	def String compileAORuleIntern(ODLOperator o, IODLGeneratorContext context) {	
 		var name = o.simpleName+IODLCompilerHelper.AO_RULE_OPERATOR
-		var superClass = AbstractODLAORule.simpleName;
+		var superClass = AbstractTransformationRule.simpleName;
 		var aoName = o.simpleName+IODLCompilerHelper.AO_OPERATOR
 		var poName = o.simpleName+IODLCompilerHelper.PO_OPERATOR		
 		var transform = TransformationConfiguration.simpleName
 		'''
 		
 		@SuppressWarnings("all")
-		public class «name» extends «superClass»<«aoName»> {
+		public class «name» extends «superClass»<«aoName»> implements «IODLAORule.simpleName»<«aoName»> {
 			
 			@Override
 			public void execute(«aoName» operator, «transform» config) {
 				defaultExecute(operator, new «poName»(operator), config, true, true);
+			}
+			
+			
+			@Override
+			public boolean isExecutable(«aoName» operator,TransformationConfiguration config) {
+				return operator.isAllPhysicalInputSet();
+			}
+
+			@Override
+			public IRuleFlowGroup getRuleFlowGroup() {
+				return TransformRuleFlowGroup.TRANSFORMATION;
 			}
 		}
 		'''

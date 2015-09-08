@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.iql.qdl;singleton:=true
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.qdl.Activator
+Eclipse-BuddyPolicy: registered
 Eclipse-RegisterBuddy: de.uniol.inf.is.odysseus.iql.basic
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.generator;resolution:=optional,

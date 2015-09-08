@@ -382,16 +382,20 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 
 	@Override
 	public void onServiceAdded(IIQLService service) {
-		for (IIQLTypeExtensions typeExt : service.getTypeExtensions()) {
-			this.addTypeExtensions(typeExt);
+		if (service.getTypeExtensions() != null) {
+			for (IIQLTypeExtensions typeExt : service.getTypeExtensions()) {
+				this.addTypeExtensions(typeExt);
+			}
 		}
 	}
 
 
 	@Override
 	public void onServiceRemoved(IIQLService service) {
-		for (IIQLTypeExtensions typeExt : service.getTypeExtensions()) {
-			this.removeTypeExtensions(typeExt);
+		if (service.getTypeExtensions() != null) {
+			for (IIQLTypeExtensions typeExt : service.getTypeExtensions()) {
+				this.removeTypeExtensions(typeExt);
+			}
 		}
 	}
 

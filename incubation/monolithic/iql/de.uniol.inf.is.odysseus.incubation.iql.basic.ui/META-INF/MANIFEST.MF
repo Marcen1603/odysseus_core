@@ -30,7 +30,10 @@ Export-Package: de.uniol.inf.is.odysseus.iql.basic.ui,
  de.uniol.inf.is.odysseus.iql.basic.ui.highlighting,
  de.uniol.inf.is.odysseus.iql.basic.ui.hover,
  de.uniol.inf.is.odysseus.iql.basic.ui.internal,
+ de.uniol.inf.is.odysseus.iql.basic.ui.labeling,
  de.uniol.inf.is.odysseus.iql.basic.ui.outline,
  de.uniol.inf.is.odysseus.iql.basic.ui.quickfix,
- de.uniol.inf.is.odysseus.iql.basic.ui.scoping
+ de.uniol.inf.is.odysseus.iql.basic.ui.scoping,
+ de.uniol.inf.is.odysseus.iql.basic.ui.service
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.basic.ui.internal.BasicIQLActivator
+Service-Component: OSGI-INF/IQLUiServiceBinding.xml

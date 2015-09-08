@@ -38,5 +38,4 @@ public interface IQDLTypeDictionary extends IIQLTypeDictionary {
 	String getParameterSetterName(String parameter, String operatorName);
 	boolean isParameter(String parameter, String operatorName);
 	void setParameterValueTypes(Set<Class<?>> parameterValueTypes);
-
 }

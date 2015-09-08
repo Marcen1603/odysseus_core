@@ -88,10 +88,10 @@ public class ParameterFactory {
 		addParameter(SourceParameter.class, AccessAO.class);
 		addParameter(TimeParameter.class, TimeValueItem.class);
 		//addParameter(UncheckedExpressionParamter.class, String[].class);
-		//addParameter(VectorParameter.class, double[]);
+		//addParameter(VectorParameter.class, Double[].class);
 	}
 		
-	public static void addParameter(Class<? extends IParameter<?>> parameterType, Class<?> valueType) {
+	private static void addParameter(Class<? extends IParameter<?>> parameterType, Class<?> valueType) {
 		parameters.add(parameterType);
 		parametersByType.put(parameterType, valueType);
 		
@@ -111,29 +111,4 @@ public class ParameterFactory {
 		return parametersByType.get(parameterType);
 	}
 	
-	public static boolean isComplexParameterType(Class<? extends IParameter<?>> parameterType) {
-		Class<?> parameterValue = getParameterValue(parameterType);
-		if (parameterValue != null) {
-			if (parameterValue == Byte.class) {
-				return false;
-			} else if (parameterValue == Short.class) {
-				return false;
-			} else if (parameterValue == Integer.class) {
-				return false;
-			} else if (parameterValue == Long.class) {
-				return false;
-			} else if (parameterValue == Float.class) {
-				return false;
-			} else if (parameterValue == Double.class) {
-				return false;
-			} else if (parameterValue == Boolean.class) {
-				return false;
-			} else if (parameterValue == Character.class) {
-				return false;
-			} else if (parameterValue == String.class) {
-				return false;
-			}
-		}
-		return true;
-	}
 }

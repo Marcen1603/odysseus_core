@@ -144,23 +144,25 @@ public class IQLLinkingService extends DefaultLinkingService{
 		}
 
 		EObject result = null;
-		for (IEObjectDescription desc : eObjectDescriptions) {
-			if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
-				EObject obj = desc.getEObjectOrProxy();
-				if (obj instanceof IQLVariableDeclaration) {
-					result = obj;
-					break;
-				} else if (obj instanceof JvmFormalParameter) {
-					result = obj;
-					break;
-				} else if (obj instanceof JvmField) {
-					JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
-					if (type == null) {
+		if (expr.getArgs() == null) {
+			for (IEObjectDescription desc : eObjectDescriptions) {
+				if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
+					EObject obj = desc.getEObjectOrProxy();
+					if (obj instanceof IQLVariableDeclaration) {
 						result = obj;
-					} else if (type != null && declaredType.getSimpleName().equalsIgnoreCase(type)) {
+						break;
+					} else if (obj instanceof JvmFormalParameter) {
 						result = obj;
-					}
-				} 
+						break;
+					} else if (obj instanceof JvmField) {
+						JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
+						if (type == null) {
+							result = obj;
+						} else if (type != null && declaredType.getSimpleName().equalsIgnoreCase(type)) {
+							result = obj;
+						}
+					} 
+				}
 			}
 		}
 		if (result == null) {

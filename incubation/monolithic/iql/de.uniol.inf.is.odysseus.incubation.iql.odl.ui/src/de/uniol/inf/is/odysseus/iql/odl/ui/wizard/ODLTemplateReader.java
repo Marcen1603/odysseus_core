@@ -7,6 +7,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.osgi.framework.Bundle;
 
 import de.uniol.inf.is.odysseus.iql.odl.ui.internal.ODLActivator;
 
@@ -29,9 +30,9 @@ public class ODLTemplateReader {
 		return "";
 	}
 	
-	public static List<IODLTemplate> readTemplates() {
+	public static List<IODLTemplate> readTemplates(Bundle bundle) {
 		List<IODLTemplate> result = new ArrayList<>();
-		Enumeration<URL> entries = ODLActivator.getInstance().getBundle().findEntries("/templates/", "*.odl", true);
+		Enumeration<URL> entries = bundle.findEntries("/odl_templates/", "*.odl", true);
 		while(entries.hasMoreElements()) {
 			URL url = entries.nextElement();
 			final String text = readTemplate(url);

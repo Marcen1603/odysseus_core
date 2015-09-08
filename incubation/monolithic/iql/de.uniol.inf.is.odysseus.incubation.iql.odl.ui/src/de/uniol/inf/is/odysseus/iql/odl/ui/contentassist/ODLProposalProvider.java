@@ -3,10 +3,24 @@
  */
 package de.uniol.inf.is.odysseus.iql.odl.ui.contentassist;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
+import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+
+import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
+
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
  */
 public class ODLProposalProvider extends AbstractODLProposalProvider {
 
+	@Override
+	public void completeIQLSimpleTypeRef_Type(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		if (model instanceof ODLParameter) {
+		} else {
+			super.completeIQLSimpleTypeRef_Type(model, assignment, context, acceptor);
+		}
+	}
 }

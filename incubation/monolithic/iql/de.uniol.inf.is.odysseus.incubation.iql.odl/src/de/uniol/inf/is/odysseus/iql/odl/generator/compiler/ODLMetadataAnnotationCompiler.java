@@ -121,7 +121,7 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 			}
 		}
 		if (!elements.containsKey("type")) {
-			JvmTypeReference parameterType = typeDictionary.getParameterType(parameter.getType());
+			JvmTypeReference parameterType = typeDictionary.getParameterType(parameter.getType(), parameter);
 			if (parameterType != null) {
 				elements.put("type", typeCompiler.compile(parameterType, context,  true)+".class");
 			}

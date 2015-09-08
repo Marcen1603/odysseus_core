@@ -10,6 +10,7 @@ import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.osgi.framework.Bundle;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 
@@ -42,4 +43,7 @@ public interface IIQLTypeDictionary {
 	Collection<JvmTypeReference> getStaticImports(EObject obj);	
 	Collection<String> getJavaPackages();	
 	boolean isImportNeeded(JvmType type, String text);
+	
+	Class<?> getParameterValue(Class<? extends IParameter<?>> parameterType);
+
 }

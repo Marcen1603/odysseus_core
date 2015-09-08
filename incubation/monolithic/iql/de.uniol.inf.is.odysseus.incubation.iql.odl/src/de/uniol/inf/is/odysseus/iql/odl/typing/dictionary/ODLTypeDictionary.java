@@ -1,16 +1,14 @@
 package de.uniol.inf.is.odysseus.iql.odl.typing.dictionary;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -35,23 +33,8 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	public ODLTypeDictionary(IODLTypeUtils typeUtils,ODLServiceObserver serviceObserver,XtextResourceSet systemResourceSet,
 			IQLClasspathTypeProviderFactory typeProviderFactory,IQLQualifiedNameConverter converter) {
 		super(typeUtils, serviceObserver, systemResourceSet, typeProviderFactory,converter);
-		this.initParameters();
 	}
 
-	private Map<String, JvmTypeReference> parametersByType = new HashMap<>();
-	private Map<String, List<JvmTypeReference>> parametersByValue = new HashMap<>();
-	
-
-	
-	
-	private void initParameters() {
-		for (Class<? extends IParameter<?>> element : ParameterFactory.getParameters()) {
-			Class<?> value = ParameterFactory.getParameterValue(element);			
-			JvmTypeReference pType = typeUtils.createTypeRef(element, getSystemResourceSet());
-			JvmTypeReference vType = typeUtils.createTypeRef(value, getSystemResourceSet());
-			addParameter(pType, vType);
-		}		
-	}
 	
 	@Override
 	public String getFileExtension() {
@@ -72,18 +55,27 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 		return bundles;
 	}
 	
+	@Override
+	protected Collection<Bundle> getVisibleTypesFromBundle() {
+		Collection<Bundle> bundles = super.getVisibleTypesFromBundle();
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.mep"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.sweeparea"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.server.intervalapproach"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.relational.base"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.intervalapproach"));	
+		return bundles;
+	}
+	
 	
 	@Override
 	public Collection<JvmType> createVisibleTypes(Collection<String> usedNamespaces, Resource context) {
 		Collection<JvmType> types = super.createVisibleTypes(usedNamespaces, context);
-		for (JvmTypeReference parameterValueType : parametersByType.values()) {
-			types.add(typeUtils.getInnerType(parameterValueType, false));
+
+		for (JvmTypeReference typeRef : getAllParameterTypes(context)) {
+			types.add(typeUtils.getInnerType(typeRef, false));
 		}
-		
-		for (List<JvmTypeReference> parameterTypes : parametersByValue.values()) {
-			for (JvmTypeReference parameterType : parameterTypes) {
-				types.add(typeUtils.getInnerType(parameterType, false));
-			}
+		for (JvmTypeReference typeRef : getAllParameterValues(context)) {
+			types.add(typeUtils.getInnerType(typeRef, false));
 		}
 		for (Class<?> c : ODLDefaultTypes.getVisibleTypes()) {
 			JvmType t = getType(c.getCanonicalName(), context);
@@ -95,15 +87,16 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	@Override
 	public Collection<String> createImplicitImports() {
 		Collection<String> implicitImports = super.createImplicitImports();
-		for (JvmTypeReference parameterValueType : parametersByType.values()) {
-			implicitImports.add(typeUtils.getLongName(parameterValueType, false));
+		for (Class<? extends IParameter<?>> parameterType : ParameterFactory.getParameters()) {
+			Class<?> valueType = ParameterFactory.getParameterValue(parameterType);
+			implicitImports.add(parameterType.getCanonicalName());
+			implicitImports.add(valueType.getCanonicalName());
+		}
+		for (Entry<Class<? extends IParameter<?>>, Class<?>> entry : serviceObserver.getParameters().entrySet()) {
+			implicitImports.add(entry.getKey().getCanonicalName());
+			implicitImports.add(entry.getValue().getCanonicalName());
 		}
 		
-		for (List<JvmTypeReference> parameterTypes : parametersByValue.values()) {
-			for (JvmTypeReference parameterType : parameterTypes) {
-				implicitImports.add(typeUtils.getLongName(parameterType, false));
-			}
-		}
 		implicitImports.addAll(ODLDefaultTypes.getImplicitImports());	
 		return implicitImports;
 	}
@@ -117,39 +110,56 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 		return implicitStaticImports;
 	}
 
-	private void addParameter(JvmTypeReference parameterType, JvmTypeReference parameterValueType) {	
-		parametersByType.put(typeUtils.getLongName(parameterType, true),parameterValueType);
-		
-		List<JvmTypeReference> parameterTypes = parametersByValue.get(typeUtils.getLongName(parameterValueType, true));
-		if (parameterTypes == null) {
-			parameterTypes = new ArrayList<>();
-			parametersByValue.put(typeUtils.getLongName(parameterValueType, true), parameterTypes);
-		}
-		parameterTypes.add(parameterType);
-		
-	}
 	
 	@Override
-	public JvmTypeReference getParameterType(JvmTypeReference valueType) {
+	public JvmTypeReference getParameterType(JvmTypeReference valueType, Notifier context) {
 		String qName = typeUtils.getLongName(valueType, false);
-		List<JvmTypeReference> parameters = parametersByValue.get(qName);
-		if (parameters != null && !parameters.isEmpty()) {
-			return parameters.get(0);
+		for (Class<? extends IParameter<?>> parameterType : ParameterFactory.getParameters()) {
+			Class<?> valueTypeClass = ParameterFactory.getParameterValue(parameterType);
+			if (qName.equalsIgnoreCase(valueTypeClass.getCanonicalName())) {
+				return typeUtils.createTypeRef(parameterType, context);
+			}			
+		}
+		for (Entry<Class<? extends IParameter<?>>, Class<?>> entry : serviceObserver.getParameters().entrySet()) {
+			if (qName.equalsIgnoreCase(entry.getValue().getCanonicalName())) {
+				return typeUtils.createTypeRef(entry.getKey(), context);
+			}
 		}
 		return null;
 	}
 
 
 	@Override
-	public Collection<JvmTypeReference> getAllParameterValues() {
-		return parametersByType.values();
+	public Collection<JvmTypeReference> getAllParameterValues(Notifier context) {
+		Collection<JvmTypeReference> result = new HashSet<>();
+		for (Class<? extends IParameter<?>> parameterType : ParameterFactory.getParameters()) {
+			Class<?> valueType = ParameterFactory.getParameterValue(parameterType);
+			JvmTypeReference typeRef = typeUtils.createTypeRef(valueType, context);
+			if (typeRef != null) {
+				result.add(typeRef);
+			}
+		}
+		for (Entry<Class<? extends IParameter<?>>, Class<?>> entry : serviceObserver.getParameters().entrySet()) {
+			JvmTypeReference typeRef = typeUtils.createTypeRef(entry.getValue(), context);
+			if (typeRef != null) {
+				result.add(typeRef);
+			}
+		}
+		return result;
 	}
 
 	@Override
-	public Collection<JvmTypeReference> getAllParameterTypes() {
+	public Collection<JvmTypeReference> getAllParameterTypes(Notifier context) {
 		Collection<JvmTypeReference> result = new HashSet<>();
-		for (List<JvmTypeReference> list : parametersByValue.values()) {
-			for (JvmTypeReference typeRef : list) {
+		for (Class<? extends IParameter<?>> parameterType : ParameterFactory.getParameters()) {
+			JvmTypeReference typeRef = typeUtils.createTypeRef(parameterType, context);
+			if (typeRef != null) {
+				result.add(typeRef);
+			}
+		}
+		for (Entry<Class<? extends IParameter<?>>, Class<?>> entry : serviceObserver.getParameters().entrySet()) {
+			JvmTypeReference typeRef = typeUtils.createTypeRef(entry.getKey(), context);
+			if (typeRef != null) {
 				result.add(typeRef);
 			}
 		}

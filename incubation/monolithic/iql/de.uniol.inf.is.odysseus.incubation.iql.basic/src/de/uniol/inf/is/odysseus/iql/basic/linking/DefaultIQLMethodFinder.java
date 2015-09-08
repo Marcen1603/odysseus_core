@@ -24,7 +24,11 @@ public class DefaultIQLMethodFinder implements IIQLMethodFinder {
 	
 	@Override
 	public String createExecutableID(JvmExecutable exe){
-		return exe.getSimpleName()+"_"+exe.getParameters().size();
+		if (exe.getSimpleName() != null) {
+			return exe.getSimpleName()+"_"+exe.getParameters().size();
+		} else {
+			return "_"+exe.getParameters().size();
+		}
 	}	
 
 	@Override
