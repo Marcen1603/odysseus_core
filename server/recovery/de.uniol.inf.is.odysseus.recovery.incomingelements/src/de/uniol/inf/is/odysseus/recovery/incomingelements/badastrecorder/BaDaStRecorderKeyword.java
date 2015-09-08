@@ -29,8 +29,7 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.BaDaStSender;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-// TODO use complete sourcename (user.source)
-// TODO Keyword should be executed after the source definition and only with type and sourcename. Then check the dd, read out other information about the source and create an IExecutorCommand.
+// XXX Don't know, why it is necessary to give the buffersize to TCPRecorders. Not nice.
 /**
  * Keyword to create a BaDaSt recorder for a given source. <br />
  * Parameters are key value pairs with exactly two given keys:
@@ -277,8 +276,8 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 		String[] recorderParameters = cRecorders.get(typeAndSourcename.getE1()).getClass()
 				.getAnnotation(ABaDaStRecorder.class).parameters();
 		Map<String, String> sourceAccessParameters = sourceAccess.getOptionsMap();
-		Properties config = createRecorderConfig(typeAndSourcename.getE1(), typeAndSourcename.getE2(),
-				recorderParameters, sourceAccessParameters);
+		Properties config = createRecorderConfig(typeAndSourcename.getE1(), fullSourcename, recorderParameters,
+				sourceAccessParameters);
 		recorderName = BaDaStSender.sendCreateCommand(config);
 		if (recorderName == null) {
 			throw new OdysseusScriptException("BaDaStRecorderKeyword: Could not create BaDaSt recorder!");

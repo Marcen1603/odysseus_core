@@ -227,6 +227,7 @@ public class IncomingElementsRecoveryComponent
 		String recorder = BaDaStRecorderRegistry.getRecorder(name);
 		if (recorder != null) {
 			BaDaStSender.sendCloseCommand(recorder);
+			BaDaStRecorderRegistry.unregister(name);
 		}
 	}
 
