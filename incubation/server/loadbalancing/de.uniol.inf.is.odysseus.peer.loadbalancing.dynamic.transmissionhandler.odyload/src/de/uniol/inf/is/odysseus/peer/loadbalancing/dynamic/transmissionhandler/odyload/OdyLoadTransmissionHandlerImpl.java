@@ -103,9 +103,11 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 		transmissionHandlerList.remove(transmission);
 		failedTransmissionQueryIDs.add(transmission.getQueryId());
 		LOG.error("Transmission of Query {} to Peer {} failed.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
+		
 		if(transmissionHandlerList.size()>0) {
 
 			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
+			LOG.info("Starting Transmission of QueryID {} to Peer {}",nextTransmission.getQueryId(),peerDictionary.getRemotePeerName(nextTransmission.getSlavePeerID()));
 			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
 		}
 		else {
@@ -131,6 +133,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 		if(transmissionHandlerList.size()>0) {
 
 			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
+			LOG.info("Starting Transmission of QueryID {} to Peer {}",nextTransmission.getQueryId(),peerDictionary.getRemotePeerName(nextTransmission.getSlavePeerID()));
 			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
 		}
 		else {
@@ -166,6 +169,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 		
 		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
 			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
+			LOG.info("Starting Transmission of QueryID {} to Peer {}",nextTransmission.getQueryId(),peerDictionary.getRemotePeerName(nextTransmission.getSlavePeerID()));
 			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
 		}
 		else {

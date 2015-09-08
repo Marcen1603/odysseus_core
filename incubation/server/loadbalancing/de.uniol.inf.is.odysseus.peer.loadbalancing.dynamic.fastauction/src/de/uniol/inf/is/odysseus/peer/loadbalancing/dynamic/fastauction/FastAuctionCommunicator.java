@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
@@ -94,16 +95,17 @@ public class FastAuctionCommunicator implements IPeerCommunicatorListener, IFast
 					Optional<Double> optBidValue = bidProvider.calculateBid(query,auctionMessage.getTransCfgName());
 					
 					if(optBidValue.isPresent()) {
-						LOG.info("Bidding with bid of {}",optBidValue.get());
 						sendBid(senderPeer,auctionID,optBidValue.get());
-					}
-					else {
-						LOG.info("Not biddind.");
 					}
 					
 				}
 				catch (Exception e) {
-					LOG.error("Exception during Bid Calculation: {}",e.getMessage());
+					if(e instanceof ValidationException) {
+						LOG.info("Could not install Query. No Bid.");
+					}
+					else {
+						LOG.error("Exception during Bid Calculation: {}",e.getMessage());
+					}
 				}
 				
 			

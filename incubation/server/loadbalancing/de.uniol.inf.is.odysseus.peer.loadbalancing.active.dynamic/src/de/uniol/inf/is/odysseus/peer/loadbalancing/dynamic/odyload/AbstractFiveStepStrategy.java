@@ -151,6 +151,13 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		}
 
 		firstAllocationTry = true;
+		
+		if(chosenResult==null || chosenResult.getQueryIds().size()==0) {
+				LOG.error("No Queries to remove.");
+				restartMonitoring(true);
+				return;
+		}
+		
 		allocateAndTransferQueries(chosenResult);
 	}
 
@@ -212,19 +219,11 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 			queryPartIDMapping.put(new LogicalQueryPart(operators), queryId);
 		}
 
-		if (chosenResult.getQueryIds().size() == 0) {
-			LOG.error("No Queries to remove.");
-			restartMonitoring(true);
-			return;
-		}
-
 		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
 
 		allocateQueries(networkManager.getLocalPeerID(), chosenResult,
 				queryPartIDMapping, knownRemotePeers);
 
-		
-		
 		transmissionHandler.addListener(this);
 		transmissionHandler.startTransmissions();
 	}
@@ -241,15 +240,14 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		for(IQuerySelector selector : selectors) {
 			QueryCostMap result = selector.selectQueries(new QueryCostMap(allQueries), cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
 			if(result!=null) {
-			LOG.debug("Result of Selector: {}",selector.getName());
-			LOG.debug(result.toString());
-			
-				results.add(result);
-				if(chosenResult==null || chosenResult.getCosts()>result.getCosts()) {
-				LOG.debug("Setting last result as best result.");
-				//TODO Feasability!
-				chosenResult = result;
-
+				LOG.info("Result of Selector: {}",selector.getName());
+				LOG.info(result.toString());
+				
+					results.add(result);
+					if(chosenResult==null || chosenResult.getCosts()>result.getCosts()) {
+					LOG.info("Setting last result as best result.");
+					//TODO Feasability!
+					chosenResult = result;
 			}
 			}
 		}
@@ -346,6 +344,8 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 
 	@Override
 	public void transmissionsFinished() {
+		
+		LOG.info("All Transmission Finished");
 
 		List<Integer> queriesToReprocess = Lists.newArrayList();
 
@@ -391,6 +391,11 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 					queryID, operatorsInQuery);
 		}
 
+		if(costMapOfFailedQueries==null || costMapOfFailedQueries.getQueryIds().size()==0) {
+			LOG.info("No more Queries for second try. Restarting Monitoring.");
+			restartMonitoring(true);
+			return;
+		}
 		// And allocate another time...
 		allocateAndTransferQueries(costMapOfFailedQueries);
 
