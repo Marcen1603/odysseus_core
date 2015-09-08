@@ -96,8 +96,9 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 					tipo.createOutput(results, groupId, object
 							.getMetadata().getStart(), threadNumber);
 				}
+			}else{
+				throw new RuntimeException("No sweep area for "+pair+" found!");
 			}
 		}
-		
 	}
 }
