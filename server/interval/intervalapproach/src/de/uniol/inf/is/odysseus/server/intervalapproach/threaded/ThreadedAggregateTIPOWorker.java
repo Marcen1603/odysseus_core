@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.PairMap;
@@ -45,6 +46,8 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	private int threadNumber;
 	private boolean tipoIsDone = false;
 	private boolean tipoIsClosed = false;
+
+	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
 
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
 			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
@@ -94,22 +97,21 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		Long groupId = pair.getE1();
 		R object = pair.getE2();
 
-		// FIXME!
-		Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = null;
-		
 		if (groupId != null && object != null) {
 			// get sweep area from groupId
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = tipo
-					.getSweepAreaForGroup(groupId);
+			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
+			synchronized (groupsToProcess) {
+				sa = groupsToProcess.get(groupId);
+			}
 
 			// if sweep area is found, process aggregation
 			if (sa != null) {
-				synchronized (sa) {
-					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
-							.updateSA(sa, object, tipo.isOutputPA());
-					tipo.createOutput(results, groupId, object.getMetadata()
-							.getStart(), threadNumber, groupsToProcess);
-				}
+				List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
+						.updateSA(sa, object, tipo.isOutputPA());
+
+				tipo.createOutput(results, groupId, object.getMetadata()
+						.getStart(), threadNumber, groupsToProcess);
+
 			} else {
 				throw new RuntimeException("No sweep area for " + pair
 						+ " found!");
@@ -127,5 +129,9 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		tipoIsClosed = true;
 		tipoIsDone = false;
 		interrupt();
+	}
+
+	public Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroupsToProcess() {
+		return groupsToProcess;
 	}
 }

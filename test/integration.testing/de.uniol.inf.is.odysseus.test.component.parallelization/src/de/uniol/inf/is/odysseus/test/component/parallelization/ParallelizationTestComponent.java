@@ -113,10 +113,11 @@ public class ParallelizationTestComponent
 		// Aggregate
 		tests.add(new ParallelizationTest(
 				"test/intraoperator/aggregate/ThreadedAggregateHash.qry",
-				"test/intraoperator/aggregate/expected_output.csv", false));
+				"test/intraoperator/aggregate/expected_output.csv", true));
 		tests.add(new ParallelizationTest(
 				"test/intraoperator/aggregate/ThreadedAggregateRoundRobin.qry",
-				"test/intraoperator/aggregate/expected_output.csv", false));
+				"test/intraoperator/aggregate/expected_output.csv", true));
+		
 		return tests;
 	}
 

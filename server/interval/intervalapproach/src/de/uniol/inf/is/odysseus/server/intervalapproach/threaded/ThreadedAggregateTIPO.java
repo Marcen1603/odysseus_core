@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -154,6 +155,14 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			// load on the different cores
 			int threadNumber = getThreadNumber(groupID);
 
+			ThreadedAggregateTIPOWorker<Q,R,W> worker = threadMap.get(threadNumber);
+			if (!worker.getGroupsToProcess().containsKey(groupID)){
+				Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = worker.getGroupsToProcess();
+				synchronized (groupsToProcess) {
+					groupsToProcess.put(groupID, sa);
+				}
+			}
+			
 			// put element into queue, if queue is full this thread need to wait
 			// until worker thread takes elements out of it
 			ArrayBlockingQueue<Pair<Long, R>> queue = queueMap.get(threadNumber);
@@ -280,6 +289,15 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		this.degree = degree;
 	}
 
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+
+		// Keep punctuation order by sending to transfer area
+		//transferArea.sendPunctuation(punctuation, port);
+		// Maybe new output can be created because of time progress
+		//createOutput(null, null, punctuation.getTime(), port);
+	}
+	
 	/**
 	 * add additional informations for multithreading
 	 */
