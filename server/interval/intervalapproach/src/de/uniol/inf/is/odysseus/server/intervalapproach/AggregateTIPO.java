@@ -494,7 +494,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
 		assert(elemToAdd != null);
 
-		Q t_probe = elemToAdd.getMetadata();
+		@SuppressWarnings("unchecked")
+		Q t_probe = (Q)elemToAdd.getMetadata().clone();
 
 		// Extract elements in this sweep area that overlaps the time interval
 		// of elem
