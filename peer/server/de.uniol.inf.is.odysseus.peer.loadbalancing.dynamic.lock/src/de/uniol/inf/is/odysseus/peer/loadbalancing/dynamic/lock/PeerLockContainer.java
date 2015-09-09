@@ -94,7 +94,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	public void update(IMessage message, PeerID peerID) {
 		// At least one Message failed to deliver.
 		if (message instanceof RequestLockMessage) {
-			LOG.error("Timeout while trying to lock Peer with PeerID {}",peerID);
+			LOG.error("Timeout while trying to lock Peer with PeerID {}", peerID);
 			if (!rollback) {
 				initiateRollback();
 			}
@@ -186,7 +186,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	}
 
-	private int getNumberOfLockedPeers() {
+	private synchronized int getNumberOfLockedPeers() {
 		int i = 0;
 		for (LOCK_STATE state : locks.values()) {
 			if (state == LOCK_STATE.locked)
@@ -195,7 +195,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		return i;
 	}
 
-	private int getNumberOfUnlockedPeers() {
+	private synchronized int getNumberOfUnlockedPeers() {
 		int i = 0;
 		for (LOCK_STATE state : locks.values()) {
 			// Count timed_out as unlocked too, to avoid deadlock.
@@ -208,6 +208,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	private void initiateRollback() {
 		// Stop all running Jobs.
+		
+		LOG.error("Initiating Peer Lock Rollback.");
+		
 		rollback = true;
 		for (RepeatingMessageSend job : jobs.values()) {
 			job.stopRunning();

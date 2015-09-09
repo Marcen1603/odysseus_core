@@ -101,6 +101,21 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 				lockedForPeer = null;
 				return true;
 			}
+			if(LOG.isDebugEnabled()) {
+				if(requestingPeer==networkManager.getLocalPeerID()) {
+					LOG.debug("Could not unlock for local Peer");
+				}
+				else {
+					LOG.debug("Could not unlock for Peer {}",requestingPeer);
+				}
+				if(lockedForPeer==networkManager.getLocalPeerID()) {
+					LOG.debug("Still locked for local Peer.");
+				}
+				else {
+					LOG.debug("Still locked for {}",peerDictionary.getRemotePeerName(lockedForPeer));
+				}
+			}
+			
 			return false;
 		}
 		// Currently unlocked.
