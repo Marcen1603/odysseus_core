@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.estimators;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 
@@ -32,6 +33,17 @@ public class JxtaSenderPOEstimator extends StandardPhysicalOperatorEstimator<Jxt
 		return op.getUploadRateBytesPerSecond();
 	}
 	
+	@Override
+	public double getDatarate() {
+		if( !getPrevCostMap().isEmpty() ) {
+			double datarate = 0.0;
+			for( IPhysicalOperator prevOperator : getPrevCostMap().keySet() ) {
+				datarate += getPrevCostMap().get(prevOperator).getDatarate();
+			}
+			return datarate;
+		}
+		return DEFAULT_DATARATE;
+	}
 
 	
 
