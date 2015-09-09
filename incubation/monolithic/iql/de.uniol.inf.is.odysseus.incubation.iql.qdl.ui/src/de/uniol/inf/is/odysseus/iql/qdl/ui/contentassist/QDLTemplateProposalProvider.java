@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -73,12 +72,9 @@ import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
-import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
+
 
 public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<IQDLExpressionEvaluator, IQDLTypeDictionary, IQDLLookUp, IQDLScopeProvider, IQDLTypeUtils> {
 
@@ -92,10 +88,8 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	protected void createIQLMetadataProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		QDLQuery query = EcoreUtil2.getContainerOfType(node, QDLQuery.class);
 		if (query != null) {
-			for (IPreParserKeywordProvider provider : QDLServiceBinding.getPreParserKeywordProviders()) {
-				for (Entry<String, Class<? extends IPreParserKeyword>> entry : provider.getKeywords().entrySet()) {
-					createMetadataTemplate(entry.getKey(), templateContext, context, acceptor);
-				}
+			for (String metadataKey : lookUp.getMetadataKeys()) {
+				createMetadataTemplate(metadataKey, templateContext, context, acceptor);
 			}
 		}
 		super.createIQLMetadataProposals(node, templateContext, context, acceptor);
@@ -107,13 +101,11 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		if (query != null) {
 			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
 			if (metadata != null) {
-				for (IPreParserKeywordProvider provider : QDLServiceBinding.getPreParserKeywordProviders()) {
-					for (Entry<String, Class<? extends IPreParserKeyword>> entry : provider.getKeywords().entrySet()) {
-						if (metadata.getName().equalsIgnoreCase(entry.getKey())) {
-							createMetadataValueTemplate(entry.getValue(), templateContext, context, acceptor);
-						}
-					}
+				Collection<String> values = lookUp.getMetadataValues(metadata.getName());
+				for (String value : values) {
+					createMetadataValueTemplate(value, templateContext, context, acceptor);
 				}
+				
 			}
 		}
 		super.createIQLMetadataValueProposals(node, templateContext, context, acceptor);
@@ -173,17 +165,10 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		finishTemplate(template, templateContext, context, acceptor);
 	}
 	
-	protected void createMetadataValueTemplate(Class<? extends IPreParserKeyword> preParserKeyword, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		try {
-			Collection<String> parameters = preParserKeyword.newInstance().getAllowedParameters(OdysseusRCPPlugIn.getActiveSession());
-			for (String parameter : parameters) {
-				String id = parameter;
-				Template template = createTemplate(parameter, "", id, parameter);
-				finishTemplate(template, templateContext, context, acceptor);
-			}
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}		
+	protected void createMetadataValueTemplate(String value, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		String id =  value;
+		Template template = createTemplate(value, "", id,  value);
+		finishTemplate(template, templateContext, context, acceptor);		
 	}
 	
 	protected void createOperatorBuilderTemplate(IOperatorBuilder builder, IQLClass operatorType, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {

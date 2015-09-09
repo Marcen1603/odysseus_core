@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -14,8 +14,8 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.ui.editor.model.edit.IModification;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
-import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.model.edit.IssueModificationContext;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
@@ -24,11 +24,8 @@ import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Inject;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 
@@ -97,16 +94,14 @@ public abstract class AbstractIQLQuickfixProvider extends org.eclipse.xtext.ui.e
 					}
 					String importString = "Import '"+issueString+"' ("+builder.toString()+")";
 
-					acceptor.accept(issue, importString, importString, "imp_obj.gif", new ISemanticModification() {
+					acceptor.accept(issue, importString, importString, "imp_obj.gif", new IModification() {
 						
 						@Override
-						public void apply(EObject element, IModificationContext context)
-								throws Exception {
-							IQLNamespace namespace = BasicIQLFactory.eINSTANCE.createIQLNamespace();								
-							namespace.setImportedNamespace(builder.toString());
-							IQLModel model = EcoreUtil2.getContainerOfType(obj, IQLModel.class);
-							model.getNamespaces().add(namespace);
-							
+						public void apply(IModificationContext context) throws Exception {
+							IXtextDocument xtextDocument = context.getXtextDocument();
+							String str = "use "+builder.toString()+"; "+System.lineSeparator();
+							InsertEdit edit = new InsertEdit(0, str);
+							edit.apply(xtextDocument);
 						}
 					});
 				}

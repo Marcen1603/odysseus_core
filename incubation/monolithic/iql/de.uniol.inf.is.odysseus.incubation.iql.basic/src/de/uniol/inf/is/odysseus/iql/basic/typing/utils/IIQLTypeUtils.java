@@ -58,5 +58,6 @@ public interface IIQLTypeUtils {
 	
 	String getNameWithoutSetterPrefix(JvmOperation method);
 	String getNameWithoutGetterPrefix(JvmOperation method);
+	JvmTypeReference getComponentType(JvmTypeReference arrayTypeRef);
 
 }

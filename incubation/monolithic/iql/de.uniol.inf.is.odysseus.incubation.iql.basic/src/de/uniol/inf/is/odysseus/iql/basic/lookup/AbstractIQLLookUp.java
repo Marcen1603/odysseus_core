@@ -12,15 +12,18 @@ import javax.inject.Inject;
 import org.apache.commons.lang.ClassUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmArrayType;
 import org.eclipse.xtext.common.types.JvmConstructor;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
@@ -278,35 +281,57 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 	public Collection<JvmExecutable> getPublicConstructors(JvmTypeReference typeRef) {
 		Map<String, JvmExecutable> constructors = new HashMap<>();
 		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
-		findConstructors(typeRef, constructors, visibilities, true);
+		findConstructors(typeRef, constructors, visibilities);
+		return constructors.values();
+	}
+	
+	@Override
+	public Collection<JvmExecutable> getDeclaredConstructors(JvmTypeReference typeRef) {
+		Map<String, JvmExecutable> constructors = new HashMap<>();
+		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE, JvmVisibility.DEFAULT_VALUE, JvmVisibility.PROTECTED_VALUE, JvmVisibility.PRIVATE_VALUE};
+		findConstructors(typeRef, constructors, visibilities);
+		return constructors.values();
+	}
+	
+	@Override
+	public Collection<JvmExecutable> getSuperConstructors(JvmTypeReference typeRef) {
+		Map<String, JvmExecutable> constructors = new HashMap<>();
+		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE, JvmVisibility.PROTECTED_VALUE};
+		
+		JvmType innerType = typeUtils.getInnerType(typeRef, true);
+		if (innerType instanceof JvmGenericType) {
+			findConstructors(((JvmGenericType) innerType).getExtendedClass(), constructors, visibilities);
+		}
 		return constructors.values();
 	}
 	
 	@Override
 	public JvmExecutable findPublicConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments) {
-		Map<String, JvmExecutable> constructors = new HashMap<>();
-		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
-		findConstructors(typeRef, constructors, visibilities, true);
-		return methodFinder.findConstructor(constructors.values(), arguments);
+		Collection<JvmExecutable> constructors = getPublicConstructors(typeRef);
+		return methodFinder.findConstructor(constructors, arguments);
 	}
 	
 	@Override
-	public JvmExecutable findConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments) {
-		Map<String, JvmExecutable> constructors = new HashMap<>();
-		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE, JvmVisibility.PROTECTED_VALUE, JvmVisibility.DEFAULT_VALUE};
-		findConstructors(typeRef, constructors, visibilities, true);
-		return methodFinder.findConstructor(constructors.values(), arguments);
+	public JvmExecutable findDeclaredConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments) {
+		Collection<JvmExecutable> constructors = getDeclaredConstructors(typeRef);
+		return methodFinder.findConstructor(constructors, arguments);
+	}
+	
+	@Override
+	public JvmExecutable findSuperConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments) {
+		Collection<JvmExecutable> constructors = getSuperConstructors(typeRef);
+		return methodFinder.findConstructor(constructors, arguments);
 	}
 
 	
-	protected void findConstructors(JvmTypeReference typeRef, Map<String, JvmExecutable> constructors,int[] visibilities,  boolean deep) {
+	protected void findConstructors(JvmTypeReference typeRef, Map<String, JvmExecutable> constructors,int[] visibilities) {
 		JvmType type = typeUtils.getInnerType(typeRef, true);
 		if (type instanceof JvmDeclaredType) {
-			findConstructors((JvmDeclaredType)type,constructors, visibilities,deep);
+			findConstructors((JvmDeclaredType)type,constructors, visibilities);
 		} 
 	}
 	
-	protected void findConstructors(JvmDeclaredType type, Map<String, JvmExecutable> constructors,int[] visibilities, boolean deep) {	
+	protected void findConstructors(JvmDeclaredType type, Map<String, JvmExecutable> constructors,int[] visibilities) {	
 		for (JvmConstructor constructor : type.getDeclaredConstructors()) {
 			boolean success = false;
 			int visibility = constructor.getVisibility().getValue();
@@ -333,9 +358,6 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 				}
 			}
 		}
-		if (deep && type.getExtendedClass()!= null && type != type.getExtendedClass()) {
-			findConstructors(type.getExtendedClass(), constructors, visibilities, deep);
-		}	
 	}
 
 	
@@ -418,9 +440,16 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 	
 	@Override
 	public boolean isAssignable(JvmTypeReference targetRef, JvmTypeReference typeRef) {
-		if (!isArraySizeEqual(targetRef, typeRef)) {
+		if (typeUtils.isArray(targetRef) && typeUtils.isArray(typeRef) && !isArraySizeEqual(targetRef, typeRef)) {
 			return false;
-		}	
+		} else if(typeUtils.isArray(targetRef) && isList(typeRef)) {
+			return true;
+		} else if(typeUtils.isArray(typeRef) && isCollection(targetRef)) {
+			return true;
+		} else if (typeUtils.isArray(targetRef) || typeUtils.isArray(typeRef)) {
+			return false;
+		}
+		
 		String targetName = typeUtils.getLongName(targetRef, false);
 		String typeName = typeUtils.getLongName(typeRef, false);
 		
@@ -433,7 +462,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 			return ClassUtils.isAssignable(getWrapper(typeName), getPrimitive(targetName), true);
 		} else if (isWrapper(targetName) && isPrimitive(typeName)) {
 			return ClassUtils.isAssignable(getPrimitive(typeName), getWrapper(targetName), true);
-		}
+		} 
 		
 		JvmType innerType = typeUtils.getInnerType(typeRef, false);
 		if (innerType instanceof JvmDeclaredType) {
@@ -552,6 +581,33 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 		result.addAll(typeDictionary.getJavaPackages());
 		return result;
 	}
+	
+	@Override
+	public boolean isMap(JvmTypeReference typeRef) {
+		return isAssignable(typeUtils.createTypeRef(Map.class, typeDictionary.getSystemResourceSet()), typeRef);
+	}
+		
+	@Override
+	public boolean isList(JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(typeRef, true) instanceof IQLArrayType) {
+			return true;
+		} else if (typeUtils.getInnerType(typeRef, true) instanceof JvmArrayType) {
+			return true;
+		} else {
+			return isAssignable(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), typeRef);
+		}
+	}
+	
+	protected boolean isCollection(JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(typeRef, true) instanceof IQLArrayType) {
+			return true;
+		} else if (typeUtils.getInnerType(typeRef, true) instanceof JvmArrayType) {
+			return true;
+		} else {
+			return isAssignable(typeUtils.createTypeRef(Collection.class, typeDictionary.getSystemResourceSet()), typeRef);
+		}
+	}
+
 
 
 }

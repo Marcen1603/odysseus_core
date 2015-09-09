@@ -6,9 +6,9 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQueryExecutor;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort;
 
 
@@ -17,7 +17,47 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	
 	private List<IPair<String, Object>> metadata = new ArrayList<>();
 	
+	private IQDLQueryExecutor executor;
 
+		
+	@Override
+	public void setExecutor(IQDLQueryExecutor executor) {
+		this.executor = executor;
+	}
+	
+	public void create(IQDLOperator operator) {
+		executor.create(operator);
+	}	
+	
+	protected void create(List<IQDLOperator> operators) {
+		executor.createWithMultipleSinks(operators);
+	}
+	
+	protected void start(IQDLOperator operator) {
+		executor.start(operator);
+	}
+	
+	protected void start(List<IQDLOperator> operators) {
+		executor.startWithMultipleSinks(operators);
+	}
+	
+	public void create(String name,IQDLOperator operator) {
+		executor.create(name, operator);
+	}	
+	
+	protected void create(String name,List<IQDLOperator> operators) {
+		executor.createWithMultipleSinks(name, operators);
+	}
+	
+	protected void start(String name,IQDLOperator operator) {
+		executor.start(name, operator);
+	}
+	
+	protected void start(String name, List<IQDLOperator> operators) {
+		executor.startWithMultipleSinks(name, operators);
+	}
+	
+	
 	@Override
 	public List<IPair<String, Object>> getMetadata() {
 		return metadata;
@@ -26,10 +66,9 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	protected void addMetadata(String key, Object value) {
 		metadata.add(new Pair<String, Object>(key, value));
 	}
-	
-	
+		
 
-	public List<IQDLOperator> subscribeToSource(Collection<?> sinks, Collection<?> sources) {
+	protected List<IQDLOperator> subscribeToSource(Collection<?> sinks, Collection<?> sources) {
 		List<IQDLOperator> result = new ArrayList<>();
 		for (Object sink : sinks) {			
 			for (Object source : sources) {
@@ -48,7 +87,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 	
 	
-	public List<IQDLOperator> subscribeToSource(IQDLOperator sink, Collection<?> sources) {
+	protected List<IQDLOperator> subscribeToSource(IQDLOperator sink, Collection<?> sources) {
 		List<IQDLOperator> result = new ArrayList<>();
 		for (Object source : sources) {
 			if (source instanceof Collection) {
@@ -60,7 +99,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return result;
 	}
 	
-	public IQDLOperator subscribeToSource(Collection<?> sinks, Object source) {
+	protected IQDLOperator subscribeToSource(Collection<?> sinks, Object source) {
 		for (Object sink : sinks) {
 			if (sink instanceof Collection) {
 				subscribeToSource((Collection<?>) sink, source);
@@ -77,7 +116,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		}
 	}
 	
-	public IQDLOperator subscribeToSource(IQDLOperator sink, Object sourceObj) {
+	protected IQDLOperator subscribeToSource(IQDLOperator sink, Object sourceObj) {
 		IQDLOperator source = null;
 		int sourceOutPort = DEFAULT_SOURCE_OUT_PORT;
 
@@ -91,7 +130,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return source;
 	}
 	
-	public List<IQDLOperator> subscribeSink(Collection<?> sources, Collection<?> sinks) {
+	protected List<IQDLOperator> subscribeSink(Collection<?> sources, Collection<?> sinks) {
 		List<IQDLOperator> result = new ArrayList<>();
 		for (Object source : sources) {			
 			for (Object sink : sinks) {
@@ -110,7 +149,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 	
 	
-	public IQDLOperator subscribeSink(Collection<?> sources, IQDLOperator sink) {
+	protected IQDLOperator subscribeSink(Collection<?> sources, IQDLOperator sink) {
 		for (Object obj : sources) {
 			if (obj instanceof Collection) {
 				subscribeSink((Collection<?>)obj, sink);
@@ -121,7 +160,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return sink;
 	}
 	
-	public List<IQDLOperator> subscribeSink(Object source, Collection<?> sinks) {
+	protected List<IQDLOperator> subscribeSink(Object source, Collection<?> sinks) {
 		List<IQDLOperator> result = new ArrayList<>();
 		for (Object sink : sinks) {
 			if (sink instanceof Collection) {
@@ -133,7 +172,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return result;
 	}
 	
-	public IQDLOperator subscribeSink(Object sourceObj, IQDLOperator sink) {
+	protected IQDLOperator subscribeSink(Object sourceObj, IQDLOperator sink) {
 		IQDLOperator source = null;
 		int sourceOutPort = DEFAULT_SOURCE_OUT_PORT;
 		

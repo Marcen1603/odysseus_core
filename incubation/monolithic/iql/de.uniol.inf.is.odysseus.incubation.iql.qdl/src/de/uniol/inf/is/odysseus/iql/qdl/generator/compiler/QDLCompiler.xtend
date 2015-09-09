@@ -70,6 +70,11 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 				«ENDIF»
 			}
 			
+			@Override
+			public String getName() {
+				return "«q.simpleName»";
+			}
+			
 			public «Collection.simpleName»<«IQDLOperator.simpleName»> execute() {
 				«Collection.simpleName»<«IQDLOperator.simpleName»> operators = new «ArrayList.simpleName»<>();
 			 	«FOR source : typeDictionary.sources»

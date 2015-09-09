@@ -8,6 +8,7 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
@@ -32,9 +33,15 @@ public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLType
 			return getDocumentationJvmOperation((JvmOperation) object);
 		} else if (object instanceof JvmDeclaredType) {
 			return getDocumentationJvmDeclaredType((JvmDeclaredType) object);
+		} else if (object instanceof IQLNewExpression) {
+			return getDocumentationJvmDeclaredType((IQLNewExpression) object);
 		}else {
 			return super.getDocumentation(object);
 		}
+	}
+	
+	protected String getDocumentationJvmDeclaredType(IQLNewExpression expr) {		
+		return "";
 	}
 	
 	protected String getDocumentationJvmDeclaredType(JvmDeclaredType type) {		

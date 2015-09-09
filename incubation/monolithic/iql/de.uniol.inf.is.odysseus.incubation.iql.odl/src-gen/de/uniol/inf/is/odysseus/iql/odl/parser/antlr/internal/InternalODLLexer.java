@@ -1525,10 +1525,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = T__81;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:78:7: ( 'super' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:78:9: 'super'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:78:7: ( 'this' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:78:9: 'this'
             {
-            match("super"); 
+            match("this"); 
 
 
             }
@@ -1546,10 +1546,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = T__82;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:79:7: ( 'this' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:79:9: 'this'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:79:7: ( 'super' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:79:9: 'super'
             {
-            match("this"); 
+            match("super"); 
 
 
             }
@@ -3716,8 +3716,8 @@ public class InternalODLLexer extends Lexer {
         "\10\uffff\1\113\1\114\1\54\1\uffff\1\53\1\56\1\55\23\uffff\1\74"+
         "\1\uffff\1\77\16\uffff\1\144\12\uffff\1\60\1\57\1\uffff\1\112\1"+
         "\uffff\1\65\23\uffff\1\100\5\uffff\1\141\20\uffff\1\64\7\uffff\1"+
-        "\103\4\uffff\1\75\1\124\10\uffff\1\105\2\uffff\1\145\4\uffff\1\127"+
-        "\16\uffff\1\104\1\uffff\1\67\1\122\1\uffff\1\123\5\uffff\1\76\2"+
+        "\103\4\uffff\1\75\1\124\10\uffff\1\104\2\uffff\1\145\4\uffff\1\127"+
+        "\16\uffff\1\105\1\uffff\1\67\1\122\1\uffff\1\123\5\uffff\1\76\2"+
         "\uffff\1\125\1\uffff\1\136\1\uffff\1\106\12\uffff\1\134\2\uffff"+
         "\1\131\1\66\1\uffff\1\101\4\uffff\1\130\4\uffff\1\137\1\uffff\1"+
         "\110\1\uffff\1\121\4\uffff\1\117\1\132\6\uffff\1\70\3\uffff\1\102"+

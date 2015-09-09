@@ -1285,7 +1285,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLConstructorCallStatement returns IQLStatement:
-	//	{IQLConstructorCallStatement} (this?="super" | super?="this") args=IQLArgumentsList ";";
+	//	{IQLConstructorCallStatement} (this?="this" | super?="super") args=IQLArgumentsList ";";
 	public BasicIQLGrammarAccess.IQLConstructorCallStatementElements getIQLConstructorCallStatementAccess() {
 		return gaBasicIQL.getIQLConstructorCallStatementAccess();
 	}

@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.iql.odl.lookup;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -17,16 +15,15 @@ import javax.inject.Inject;
 
 
 
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.common.types.JvmArrayType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
@@ -38,6 +35,17 @@ public class ODLLookUp extends AbstractIQLLookUp<IODLTypeDictionary, IODLTypeExt
 	@Inject
 	public ODLLookUp(IODLTypeDictionary typeDictionary, IODLTypeExtensionsDictionary typeExtensionsDictionary,IODLTypeUtils typeUtils) {
 		super(typeDictionary, typeExtensionsDictionary, typeUtils);
+	}
+	
+	@Override
+	public boolean isAssignable(JvmTypeReference targetRef, JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(targetRef, true) instanceof ODLOperator) {
+			return super.isAssignable(typeUtils.createTypeRef(AbstractPipe.class, typeDictionary.getSystemResourceSet()), typeRef);
+		} else if (typeUtils.getInnerType(typeRef, true) instanceof ODLOperator) {
+			return super.isAssignable(targetRef, typeUtils.createTypeRef(AbstractPipe.class, typeDictionary.getSystemResourceSet()));
+		} else {
+			return super.isAssignable(targetRef, typeRef);
+		}
 	}
 	
 	@Override
@@ -61,6 +69,20 @@ public class ODLLookUp extends AbstractIQLLookUp<IODLTypeDictionary, IODLTypeExt
 		return result;
 	}
 	
+	@Override
+	public Collection<String> getOperatorMetadataValues(String key) {
+		Collection<String> result = new HashSet<>();
+		if (key.equalsIgnoreCase(IODLTypeDictionary.OPERATOR_OUTPUT_MODE)) {
+			for (OutputMode mode : getOutputModeValues()) {
+				result.add("\""+mode.toString()+"\"");
+			}
+		} else if (key.equalsIgnoreCase(IODLTypeDictionary.OPERATOR_PERSISTENT)) {
+			result.add("true");
+			result.add("false");
+		}
+		return result;
+	}
+	
 
 	@Override
 	public Collection<String> getParameterMetadataKeys() {
@@ -70,6 +92,12 @@ public class ODLLookUp extends AbstractIQLLookUp<IODLTypeDictionary, IODLTypeExt
 		}
 		return result;
 	}
+	
+	@Override
+	public Collection<String> getParameterMetadataValues(String key) {
+		Collection<String> result = new HashSet<>();		
+		return result;
+	}
 
 	@Override
 	public OutputMode[] getOutputModeValues() {
@@ -77,24 +105,8 @@ public class ODLLookUp extends AbstractIQLLookUp<IODLTypeDictionary, IODLTypeExt
 	}
 	
 	@Override
-	public boolean isMap(JvmTypeReference typeRef) {
-		return isAssignable(typeUtils.createTypeRef(Map.class, typeDictionary.getSystemResourceSet()), typeRef);
-	}
-	
-	@Override
 	public boolean isClonable(JvmTypeReference typeRef) {
 		return methodFinder.findMethod(getPublicMethods(typeRef, false), "clone", 0, true) != null;
 	}
 	
-	@Override
-	public boolean isList(JvmTypeReference typeRef) {
-		if (typeUtils.getInnerType(typeRef, true) instanceof IQLArrayType) {
-			return true;
-		} else if (typeUtils.getInnerType(typeRef, true) instanceof JvmArrayType) {
-			return true;
-		} else {
-			return isAssignable(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), typeRef);
-		}
-	}
-
 }

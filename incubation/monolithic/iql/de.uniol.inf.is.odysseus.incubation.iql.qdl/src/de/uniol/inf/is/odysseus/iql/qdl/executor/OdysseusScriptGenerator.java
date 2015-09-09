@@ -36,23 +36,59 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.IQLSubscription;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQueryExecutor;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
 public class OdysseusScriptGenerator {
+	private static final String QUERY_COMMAND = "queryCmd";
 	
 	@Inject
 	private IQDLTypeDictionary typeDictionary;
 
-	public ILogicalQuery createLogicalQuery(IQDLQuery query, IDataDictionary dd, ISession session) {
-		
+	
+	public List<ILogicalQuery> createLogicalQueries(IQDLQuery query,IDataDictionary dd, ISession session) {
+		QDLQueryExecutor executor = new QDLQueryExecutor(dd, session);
+		query.setExecutor(executor);
 		Collection<IQDLOperator> operators = query.execute();
+		List<ILogicalQuery> result = new ArrayList<>();
+		result.addAll(executor.getQueries());
+		if (isAutoCreate(query)) {
+			Collection<IQDLOperator> roots = getRoots(operators);
+			ILogicalQuery logQuery = createLogicalQuery(roots, dd, session);
+			logQuery.setName(query.getName());
+			result.add(logQuery);
+		}
+		return result;
+	}
+	
+	private boolean isAutoCreate(IQDLQuery query) {
+		for (IPair<String, Object> pair: query.getMetadata()) {
+			if (pair.getE1().equalsIgnoreCase(IQDLLookUp.AUTO_CREATE)) {
+				return (boolean) pair.getE2();
+			}
+		}
+		return true;
+ 	}
+	
+	public ILogicalQuery createLogicalQuery(IQDLOperator root, IDataDictionary dd, ISession session) {
+		Collection<IQDLOperator> roots = new HashSet<>();
+		roots.add(root);
+		return createLogicalQuery(roots, dd, session);
+	}
+	
+	public ILogicalQuery createLogicalQuery(Collection<IQDLOperator> roots, IDataDictionary dd, ISession session) {	
 		Map<IQDLOperator, ILogicalOperator> operatorsMap = new HashMap<>();
 		Map<String, StreamAO> sourcesMap = new HashMap<>();
-
+		
+		Collection<IQDLOperator> operators = getOperators(roots);
+		
 		for (IQDLOperator operator : operators) {
 			if (operator.isSource()) {
 				operatorsMap.put(operator, getSource(operator.getName(), sourcesMap, dd , session));
@@ -61,7 +97,6 @@ public class OdysseusScriptGenerator {
 			}
 		}
 		
-		Collection<IQDLOperator> roots = getRoots(operators);
 		Collection<IQDLOperator> visitedOperators = new HashSet<>();
 		for (IQDLOperator root : roots) {
 			createLogicalGraph(root, operatorsMap,visitedOperators, dd , session);
@@ -71,16 +106,68 @@ public class OdysseusScriptGenerator {
 		
 		ILogicalQuery result = new LogicalQuery();
 		result.setLogicalPlan(topAO, true);
+		
 		return result;
 	}
-	
+
 	public String createOdysseusScript(IQDLQuery query, IDataDictionary dd, ISession session) {
-		ILogicalQuery logQuery = createLogicalQuery(query, dd, session);
-		String pql = QDLServiceBinding.getPQLGenerator().generatePQLStatement(logQuery.getLogicalPlan());	
-		String script = setPreParserKeywords(query, pql);
-		return script;
+		List<ILogicalQuery> queries = createLogicalQueries(query, dd, session);
+		if (queries.size() == 0) {
+			return "";
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append("#PARSER "+"PQL"+System.lineSeparator());
+		List<String> singleMetadata = new ArrayList<>();
+		String queryCmd = null;
+		for (IPair<String, Object> metadata : query.getMetadata()) {
+			if (isPreParserKeyword(metadata.getE1())) {
+				if (metadata.getE2() != null) {
+					builder.append("#"+metadata.getE1().toUpperCase() +" "+getPreParserKeywordValue(metadata.getE2())+System.lineSeparator());
+				} else {
+					if (metadata.getE1().equalsIgnoreCase("query")) {
+						queryCmd = "query";
+					} else if (metadata.getE1().equalsIgnoreCase("addquery")) {
+						queryCmd = "addquery";
+					} else if (metadata.getE1().equalsIgnoreCase("runquery")) {
+						queryCmd = "runquery";
+					} else {
+						singleMetadata.add("#"+metadata.getE1().toUpperCase() +System.lineSeparator());
+					}
+				}
+			}
+		}
+		for (ILogicalQuery logQuery : queries) {
+			if (logQuery.getName() != null) {
+				builder.append("#QNAME "+logQuery.getName()+System.lineSeparator());
+			}
+			for (String metadata : singleMetadata) {
+				builder.append(metadata);
+			}
+			Object queryCommand = logQuery.getParameter(QUERY_COMMAND);
+			if (queryCommand != null) {
+				builder.append(queryCommand+System.lineSeparator());	
+			} else if(queryCmd != null) {
+				builder.append(queryCmd+System.lineSeparator());	
+			} else {
+				builder.append("#ADDQUERY"+System.lineSeparator());	
+			}
+			builder.append(QDLServiceBinding.getPQLGenerator().generatePQLStatement(logQuery.getLogicalPlan()));
+		}	
+		System.out.println(builder.toString());
+		return builder.toString();
 	}
 	
+	private boolean isPreParserKeyword(String key) {
+		for (IPreParserKeywordProvider provider : QDLServiceBinding.getPreParserKeywordProviders()) {
+			for (Entry<String, Class<? extends IPreParserKeyword>> entry : provider.getKeywords().entrySet()) {
+				if (entry.getKey().equalsIgnoreCase(key)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	private ILogicalOperator getSource(String name, Map<String, StreamAO> sourcesMap, IDataDictionary dd, ISession session) {
 		String sourceName = name.toLowerCase();
 		StreamAO streamAO = sourcesMap.get(sourceName);
@@ -262,38 +349,13 @@ public class OdysseusScriptGenerator {
 		int i = 0; 
 		for (IQDLOperator op : roots) {
 			ILogicalOperator root = operatorsMap.get(op);
-			root.subscribeSink(topAO, i++, 0, root.getOutputSchema());
+			topAO.subscribeToSource(root, i++, 0, root.getOutputSchema());
 		}
 		return topAO;
 	}
 	
 	
-	private String setPreParserKeywords(IQDLQuery query, String pql) {
-		StringBuilder b = new StringBuilder();
-		b.append("#PARSER "+"PQL"+System.lineSeparator());	
-		boolean queryCmd = false;
-		for (IPair<String, Object> metadata : query.getMetadata()) {
-			if (metadata.getE1().equalsIgnoreCase("query")) {
-				queryCmd = true;
-			} else if (metadata.getE1().equalsIgnoreCase("addquery")) {
-				queryCmd = true;
-			} else if (metadata.getE1().equalsIgnoreCase("runquery")) {
-				queryCmd = true;
-			}
-			b.append("#"+metadata.getE1().toUpperCase() +" ");		
-			if (metadata.getE2() != null) {
-				b.append(getPreParserKeywordValue(metadata.getE2())+System.lineSeparator());		
-			} else {
-				b.append(System.lineSeparator());		
-			}
-		}
-		if (!queryCmd) {
-			b.append("#ADDQUERY"+System.lineSeparator());	
-		}
-		b.append(pql);
-		System.out.println(b.toString());
-		return b.toString();
-	}
+	
 	
 	@SuppressWarnings("unchecked")
 	private String getPreParserKeywordValue(Object obj) {
@@ -319,6 +381,129 @@ public class OdysseusScriptGenerator {
 			return obj.toString();
 		}
 	}
+	
+	private Collection<IQDLOperator> getOperators(Collection<IQDLOperator> roots) {
+		Collection<IQDLOperator> operators = new HashSet<>();
+		for (IQDLOperator root : roots) {
+			collectOperators(root, operators);
+		}
+		return operators;
+	}
+	
+	private void collectOperators(IQDLOperator operator, Collection<IQDLOperator> visitedOperators) {
+		visitedOperators.add(operator);
+		for (IQLSubscription subs : operator.getSubscriptionsToSource()) {
+			if (!visitedOperators.contains(subs.getSource())) {
+				collectOperators(subs.getSource(), visitedOperators);
+			}
+		}
+	}
+	
+	private class QDLQueryExecutor implements IQDLQueryExecutor {
+		private List<ILogicalQuery> queries = new ArrayList<>();
+		private IDataDictionary dd;
+		private ISession session;
+
+		public QDLQueryExecutor(IDataDictionary dd, ISession session) {
+			this.dd = dd;
+			this.session = session;
+		}
+		
+		@Override
+		public void create(IQDLOperator operator) {
+			ILogicalQuery query = createLogicalQuery(operator, dd, session);
+			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
+			queries.add(query);
+		}
+
+		@Override
+		public void createWithMultipleSinks(List<IQDLOperator> operators) {
+			ILogicalQuery query = createLogicalQuery(operators, dd, session);
+			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
+			queries.add(query);
+		}
+
+		@Override
+		public void start(IQDLOperator operator) {
+			ILogicalQuery query = createLogicalQuery(operator, dd, session);
+			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
+			queries.add(query);
+		}
+
+		@Override
+		public void startWithMultipleSinks(List<IQDLOperator> operators) {
+			ILogicalQuery query = createLogicalQuery(operators, dd, session);
+			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
+			queries.add(query);
+		}
+		
+		public List<ILogicalQuery> getQueries() {
+			return this.queries;
+		}
+
+		@Override
+		public void create(String name, IQDLOperator operator) {
+			ILogicalQuery query = createLogicalQuery(operator, dd, session);
+			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
+			query.setName(name);
+			queries.add(query);			
+		}
+
+		@Override
+		public void createWithMultipleSinks(String name,List<IQDLOperator> operators) {
+			ILogicalQuery query = createLogicalQuery(operators, dd, session);
+			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
+			query.setName(name);
+			queries.add(query);			
+		}
+
+		@Override
+		public void start(String name, IQDLOperator operator) {
+			ILogicalQuery query = createLogicalQuery(operator, dd, session);
+			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
+			query.setName(name);
+			queries.add(query);			
+		}
+
+		@Override
+		public void startWithMultipleSinks(String name,	List<IQDLOperator> operators) {
+			ILogicalQuery query = createLogicalQuery(operators, dd, session);
+			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
+			query.setName(name);
+			queries.add(query);			
+		}		
+	}
+	
+	
+	
+//	
+//	private String setPreParserKeywords(IQDLQuery query, String pql) {
+//		StringBuilder b = new StringBuilder();
+//		b.append("#PARSER "+"PQL"+System.lineSeparator());	
+//		boolean queryCmd = false;
+//		b.append("#QNAME "+query.getName()+System.lineSeparator());	
+//		for (IPair<String, Object> metadata : query.getMetadata()) {
+//			if (metadata.getE1().equalsIgnoreCase("query")) {
+//				queryCmd = true;
+//			} else if (metadata.getE1().equalsIgnoreCase("addquery")) {
+//				queryCmd = true;
+//			} else if (metadata.getE1().equalsIgnoreCase("runquery")) {
+//				queryCmd = true;
+//			}
+//			b.append("#"+metadata.getE1().toUpperCase() +" ");		
+//			if (metadata.getE2() != null) {
+//				b.append(getPreParserKeywordValue(metadata.getE2())+System.lineSeparator());		
+//			} else {
+//				b.append(System.lineSeparator());		
+//			}
+//		}
+//		if (!queryCmd) {
+//			b.append("#ADDQUERY"+System.lineSeparator());	
+//		}
+//		b.append(pql);
+//		System.out.println(b.toString());
+//		return b.toString();
+//	}
 	
 
 }

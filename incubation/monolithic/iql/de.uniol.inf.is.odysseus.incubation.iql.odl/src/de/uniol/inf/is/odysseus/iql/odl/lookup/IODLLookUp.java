@@ -14,10 +14,11 @@ public interface IODLLookUp extends IIQLLookUp{
 
 	OutputMode[] getOutputModeValues();
 
-	boolean isMap(JvmTypeReference typeRef);
 
 	boolean isClonable(JvmTypeReference typeRef);
+		
+	Collection<String> getParameterMetadataValues(String key);
 
-	boolean isList(JvmTypeReference typeRef);
+	Collection<String> getOperatorMetadataValues(String key);
 
 }

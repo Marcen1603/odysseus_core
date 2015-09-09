@@ -354,6 +354,18 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 		}
 	}
 	
+	
+	@Override
+	public JvmTypeReference getComponentType(JvmTypeReference arrayTypeRef) {
+		if (getInnerType(arrayTypeRef, true) instanceof JvmArrayType) {
+			return createTypeRef(((JvmArrayType)getInnerType(arrayTypeRef, true)).getComponentType());
+		} else if (getInnerType(arrayTypeRef, true) instanceof IQLArrayType) {
+			return createTypeRef(((IQLArrayType)getInnerType(arrayTypeRef, true)).getComponentType());
+		} else {
+			return null;
+		}
+	}
+	
 	@Override
 	public boolean isUserDefinedType(JvmTypeReference typeRef, boolean array) {
 		return isUserDefinedType(getInnerType(typeRef, array), array);

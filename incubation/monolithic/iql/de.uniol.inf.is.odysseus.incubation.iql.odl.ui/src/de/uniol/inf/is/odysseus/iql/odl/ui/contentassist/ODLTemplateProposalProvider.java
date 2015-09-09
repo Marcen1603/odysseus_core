@@ -20,7 +20,6 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.IODLExpressionEvaluator;
@@ -77,6 +76,9 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		if (parameter != null) {
 			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
 			if (metadata != null) {
+				for (String value : lookUp.getParameterMetadataValues(metadata.getName())) {
+					createMetadataValueTemplate(value, templateContext, context, acceptor);
+				}				
 				if (metadata.getName().equals(IODLTypeDictionary.PARAMETER_TYPE)) {
 					for (JvmTypeReference typeRef : typeDictionary.getAllParameterTypes(node)) {
 						createTypeTemplate(typeUtils.getInnerType(typeRef, false), templateContext, context, acceptor);
@@ -89,10 +91,8 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		if (operator != null) {
 			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
 			if (metadata != null) {
-				if (metadata.getName().equals(IODLTypeDictionary.OPERATOR_OUTPUT_MODE)) {
-					for (OutputMode mode : lookUp.getOutputModeValues()) {
-						createMetadataValueTemplate("\""+mode.toString()+"\"", templateContext, context, acceptor);
-					}
+				for (String value : lookUp.getOperatorMetadataValues(metadata.getName())) {
+					createMetadataValueTemplate(value, templateContext, context, acceptor);
 				}
 			}
 		}

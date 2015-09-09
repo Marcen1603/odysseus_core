@@ -1502,10 +1502,10 @@ public class InternalQDLLexer extends Lexer {
         try {
             int _type = T__80;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:77:7: ( 'super' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:77:9: 'super'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:77:7: ( 'this' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:77:9: 'this'
             {
-            match("super"); 
+            match("this"); 
 
 
             }
@@ -1523,10 +1523,10 @@ public class InternalQDLLexer extends Lexer {
         try {
             int _type = T__81;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:78:7: ( 'this' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:78:9: 'this'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:78:7: ( 'super' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.qdl/src-gen/de/uniol/inf/is/odysseus/iql/qdl/parser/antlr/internal/InternalQDL.g:78:9: 'super'
             {
-            match("this"); 
+            match("super"); 
 
 
             }
@@ -3652,7 +3652,7 @@ public class InternalQDLLexer extends Lexer {
         "\1\112\1\52\1\51\3\uffff\1\50\1\uffff\1\47\17\uffff\1\76\23\uffff"+
         "\1\142\6\uffff\1\110\1\uffff\1\54\1\53\1\64\20\uffff\1\77\5\uffff"+
         "\1\137\20\uffff\1\10\7\uffff\1\102\4\uffff\1\74\1\122\5\uffff\1"+
-        "\104\2\uffff\1\143\10\uffff\1\125\1\uffff\1\1\10\uffff\1\103\1\uffff"+
+        "\103\2\uffff\1\143\10\uffff\1\125\1\uffff\1\1\10\uffff\1\104\1\uffff"+
         "\1\66\1\120\1\uffff\1\121\2\uffff\1\75\2\uffff\1\123\1\uffff\1\134"+
         "\1\uffff\1\105\13\uffff\1\126\1\127\1\65\1\uffff\1\100\6\uffff\1"+
         "\135\1\uffff\1\107\3\uffff\1\132\1\uffff\1\117\7\uffff\1\67\1\uffff"+

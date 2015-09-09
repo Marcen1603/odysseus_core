@@ -251,7 +251,7 @@ IQLVariableStatement returns IQLStatement:
 
 IQLConstructorCallStatement returns IQLStatement:
 	{IQLConstructorCallStatement}
-	(this?='super' | super?='this') args=IQLArgumentsList ';'
+	(this?='this' | super?='super') args=IQLArgumentsList ';'
 ;
 
 IQLBreakStatement returns IQLStatement:

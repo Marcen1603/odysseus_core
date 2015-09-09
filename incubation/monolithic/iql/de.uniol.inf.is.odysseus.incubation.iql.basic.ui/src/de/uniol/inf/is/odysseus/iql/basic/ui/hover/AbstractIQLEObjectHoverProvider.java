@@ -25,6 +25,7 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	@Inject
 	private IQLQualifiedNameConverter converter;
 	
+	
 	public AbstractIQLEObjectHoverProvider(U typeUtils, L lookUp) {
 		this.typeUtils = typeUtils;
 		this.lookUp = lookUp;
@@ -40,7 +41,7 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 			return getFirstLine((IQLArgumentsMapKeyValue) object);
 		} else if (object instanceof JvmType) {
 			return getFirstLine((JvmType) object);
-		} else {
+		}else {
 			return super.getFirstLine(object);
 		}
 	}
@@ -61,6 +62,7 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	protected String getFirstLine(JvmField attr) {
 		return attr.getSimpleName()+ " : "+toString(attr.getType());
 	}
+
 	
 	protected String getFirstLine(JvmOperation op) {
 		StringBuilder b = new StringBuilder();

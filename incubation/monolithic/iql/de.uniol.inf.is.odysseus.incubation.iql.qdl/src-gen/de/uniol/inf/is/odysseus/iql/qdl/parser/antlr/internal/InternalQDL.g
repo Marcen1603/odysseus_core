@@ -4146,32 +4146,32 @@ ruleIQLConstructorCallStatement returns [EObject current=null]
     }
 )((
 (
-		lv_this_1_0=	'super' 
+		lv_this_1_0=	'this' 
     {
-        newLeafNode(lv_this_1_0, grammarAccess.getIQLConstructorCallStatementAccess().getThisSuperKeyword_1_0_0());
+        newLeafNode(lv_this_1_0, grammarAccess.getIQLConstructorCallStatementAccess().getThisThisKeyword_1_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getIQLConstructorCallStatementRule());
 	        }
-       		setWithLastConsumed($current, "this", true, "super");
+       		setWithLastConsumed($current, "this", true, "this");
 	    }
 
 )
 )
     |(
 (
-		lv_super_2_0=	'this' 
+		lv_super_2_0=	'super' 
     {
-        newLeafNode(lv_super_2_0, grammarAccess.getIQLConstructorCallStatementAccess().getSuperThisKeyword_1_1_0());
+        newLeafNode(lv_super_2_0, grammarAccess.getIQLConstructorCallStatementAccess().getSuperSuperKeyword_1_1_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getIQLConstructorCallStatementRule());
 	        }
-       		setWithLastConsumed($current, "super", true, "this");
+       		setWithLastConsumed($current, "super", true, "super");
 	    }
 
 )

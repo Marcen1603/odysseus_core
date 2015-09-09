@@ -180,21 +180,10 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 	}
 
 	@Override
-	public IIQLTypeExtensions getTypeExtensions(JvmTypeReference typeRef,String method, int args) {
-		return findTypeExtensions(typeRef, method, args);
-	}
-
-	
-	@Override
 	public boolean hasTypeExtensions(JvmTypeReference typeRef, String attribute) {
 		return getTypeExtensions(typeRef, attribute) != null;
 	}
 
-	@Override
-	public boolean hasTypeExtensions(JvmTypeReference typeRef, String method,int args) {
-		return getTypeExtensions(typeRef, method, args) != null;
-	}
-	
 	
 	protected JvmTypeReference getExtendedType(JvmDeclaredType declaredType) {
 		return declaredType.getExtendedClass();
@@ -242,49 +231,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 		}
 		return null;
 	}
-	
-	private IIQLTypeExtensions findTypeExtensions(JvmTypeReference typeRef, String method, int args) {
-		if (typeUtils.isArray(typeRef)) {
-			typeRef = typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet());
-		}
 		
-		JvmType innerType = typeUtils.getInnerType(typeRef, true);
-
-		String name = typeUtils.getLongName(innerType, true);
-		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
-
-		if (col != null) {
-			for (IIQLTypeExtensions extensions : col) {
-				JvmTypeReference typeExtRef = typeExtensionsRefs.get(extensions);
-				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeExtRef, true);
-				JvmOperation op = methodFinder.findMethod(methods, method, args);
-				if (op != null) {
-					return extensions;
-				}
-			}
-		}
-
-		if (innerType instanceof JvmDeclaredType) {
-			JvmDeclaredType declaredType = (JvmDeclaredType) innerType;
-			for (JvmTypeReference interf : declaredType.getExtendedInterfaces()) {
-				IIQLTypeExtensions extensions = findTypeExtensions(interf, method, args);
-				if (extensions != null) {
-					return extensions;
-				}
-			}
-			JvmTypeReference extendedType = getExtendedType(declaredType);
-			if (extendedType!= null) {
-				return findTypeExtensions(extendedType, method, args);
-			}
-
-			boolean isObject = typeUtils.getLongName(declaredType, true).equals(Object.class.getCanonicalName());
-			if (!isObject && declaredType.getExtendedClass() == null && !declaredType.getExtendedInterfaces().iterator().hasNext()) {
-				return findTypeExtensions(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()), method, args);
-			}
-		}
-		return null;
-	}
-	
 	private IIQLTypeExtensions findTypeExtensions(JvmTypeReference typeRef, String methodName, List<IQLExpression> arguments) {
 		if (typeUtils.isArray(typeRef)) {
 			typeRef = typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet());
@@ -351,18 +298,6 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 		return getTypeExtensions(typeRef, method, Collections.singletonList(argument));
 	}
 
-
-	@Override
-	public JvmOperation getMethod(JvmTypeReference typeRef, String method, int args) {
-		JvmTypeReference ext = typeExtensionsRefs.get(findTypeExtensions(typeRef, method, args));
-		JvmDeclaredType type = (JvmDeclaredType)  typeUtils.getInnerType(ext, false);
-		for (JvmOperation op : type.getDeclaredOperations()) {
-			if (op.getSimpleName().equalsIgnoreCase(method) && op.getParameters().size() == args) {
-				return op;
-			}
-		}
-		return null;
-	}
 
 
 	@Override

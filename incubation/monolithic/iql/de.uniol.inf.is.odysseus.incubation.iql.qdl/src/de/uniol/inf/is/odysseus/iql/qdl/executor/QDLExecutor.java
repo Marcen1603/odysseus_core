@@ -75,9 +75,11 @@ public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTyp
 			IQDLQuery qdlQuery = loadQuery(query,resources);
 				
 			if (query.getMetadataList() == null || query.getMetadataList().getElements().size() == 0) {
-				ILogicalQuery logicalQuery = generator.createLogicalQuery(qdlQuery, dd, session);
-				IExecutorCommand exeCommand = new CreateQueryCommand(logicalQuery,session);
-				result.add(exeCommand);
+				Collection<ILogicalQuery> queries = generator.createLogicalQueries(qdlQuery, dd, session);
+				for (ILogicalQuery logQuery : queries) {
+					IExecutorCommand exeCommand = new CreateQueryCommand(logQuery,session);
+					result.add(exeCommand);
+				}
 			} else {
 				String script = generator.createOdysseusScript(qdlQuery, dd, session);
 				QDLServiceBinding.getExecutor().addQuery(script, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), Context.empty());

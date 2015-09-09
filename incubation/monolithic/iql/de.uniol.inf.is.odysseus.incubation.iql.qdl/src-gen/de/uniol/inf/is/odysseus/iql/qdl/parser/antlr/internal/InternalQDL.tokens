@@ -78,10 +78,10 @@
 'return'=84
 'static'=66
 'strictfp'=110
-'super'=80
+'super'=81
 'switch'=77
 'synchronized'=104
-'this'=81
+'this'=80
 'throw'=105
 'throws'=106
 'transient'=107

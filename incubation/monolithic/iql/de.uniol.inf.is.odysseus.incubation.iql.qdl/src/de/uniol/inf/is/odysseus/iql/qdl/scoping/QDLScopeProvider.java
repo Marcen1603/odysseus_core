@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.scoping;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -20,9 +21,13 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.AbstractIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
@@ -38,6 +43,33 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeDictionar
 	@Inject
 	public QDLScopeProvider(IQDLTypeDictionary typeDictionary, IQDLLookUp lookUp,IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils) {
 		super(typeDictionary, lookUp, exprEvaluator, typeUtils);
+	}
+	
+	
+	@Override
+	public Collection<IEObjectDescription> getScopeIQLMemberSelection(IQLMemberSelectionExpression expr) {
+		Collection<IEObjectDescription> result = new HashSet<>();
+		TypeResult typeResult = exprEvaluator.eval(expr.getLeftOperand());
+		if (!typeResult.isNull() && typeUtils.isArray(typeResult.getRef())) {
+			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
+
+		} else if(!typeResult.isNull()){
+			boolean isThis = expr.getLeftOperand() instanceof IQLThisExpression;
+			boolean isSuper = expr.getLeftOperand() instanceof IQLSuperExpression;
+			
+			result.addAll(getScopeIQLAttributeSelection(typeResult.getRef(),isThis, isSuper));
+			result.addAll(getScopeIQLMethodSelection(typeResult.getRef(),isThis, isSuper));
+			
+			QDLQuery query  = EcoreUtil2.getContainerOfType(expr, QDLQuery.class);
+
+			if (query != null && isThis) {
+				result.addAll(getScopeIQLAttributeSelection(lookUp.getSuperType(expr),false, true));
+				result.addAll(getScopeIQLMethodSelection(lookUp.getSuperType(expr),false, true));
+			}
+
+		}
+		return result;
 	}
 
 
@@ -96,11 +128,30 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeDictionar
 			}
 			
 			Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(expr);
-			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(query), importedTypes, true));
-			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(query), importedTypes, true));
-		
-			elements.addAll(lookUp.getPublicMethods(typeUtils.createTypeRef(query), importedTypes,true));
-			elements.addAll(lookUp.getProtectedMethods(typeUtils.createTypeRef(query), importedTypes,true));
+			
+			JvmTypeReference thisType = typeUtils.createTypeRef(query);
+
+			elements.addAll(lookUp.getPublicAttributes(thisType, importedTypes, true));
+			elements.addAll(lookUp.getProtectedAttributes(thisType, importedTypes, true));
+			
+			elements.addAll(lookUp.getPublicMethods(thisType, importedTypes,true));
+			elements.addAll(lookUp.getProtectedMethods(thisType, importedTypes,true));
+			
+			JvmTypeReference superType = lookUp.getSuperType(expr);
+
+			elements.addAll(lookUp.getPublicAttributes(superType, importedTypes, true));
+			elements.addAll(lookUp.getProtectedAttributes(superType, importedTypes, true));
+			
+			elements.addAll(lookUp.getPublicMethods(superType, importedTypes,true));
+			elements.addAll(lookUp.getProtectedMethods(superType, importedTypes,true));
+
+	
+			
+//			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(query), importedTypes, true));
+//			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(query), importedTypes, true));
+//		
+//			elements.addAll(lookUp.getPublicMethods(typeUtils.createTypeRef(query), importedTypes,true));
+//			elements.addAll(lookUp.getProtectedMethods(typeUtils.createTypeRef(query), importedTypes,true));
 
 			for (IQLClass source : typeDictionary.getSourceTypes()) {
 				for (JvmField attr : lookUp.getPublicAttributes(typeUtils.createTypeRef(source), false)) {

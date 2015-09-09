@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -14,8 +16,11 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
@@ -135,6 +140,32 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	public IQLClass getClass(IQLStatement stmt) {
 		IQLClass clazz =  EcoreUtil2.getContainerOfType(stmt, IQLClass.class);
 		return clazz;
+	}
+	
+	@Override
+	public List<IQLExpression> createGetterArguments(EList<IQLExpression> expressions) {
+		List<IQLExpression> result = new ArrayList<>();
+		if (expressions.size() == 1) {
+			result.add(expressions.get(0));
+		} else {
+			IQLLiteralExpressionList list = BasicIQLFactory.eINSTANCE.createIQLLiteralExpressionList();
+			result.add(list);
+		}
+		return result;
+	}
+	
+	
+	@Override
+	public List<IQLExpression> createSetterArguments(IQLExpression expr, EList<IQLExpression> expressions) {
+		List<IQLExpression> result = new ArrayList<>();
+		result.add(expr);
+		if (expressions.size() == 1) {
+			result.add(expressions.get(0));
+		} else {
+			IQLLiteralExpressionList list = BasicIQLFactory.eINSTANCE.createIQLLiteralExpressionList();
+			result.add(list);
+		}
+		return result;
 	}
 
 }

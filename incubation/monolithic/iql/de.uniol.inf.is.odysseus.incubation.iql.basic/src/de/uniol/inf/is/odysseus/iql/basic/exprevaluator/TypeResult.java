@@ -6,7 +6,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 
 public class TypeResult {
 	private final JvmTypeReference ref;
-	private String diagnostic = "";
+	private String diagnostic;
 
 
 	public TypeResult(JvmTypeReference ref) {
@@ -36,6 +36,10 @@ public class TypeResult {
 
 	public String getDiagnostic() {
 		return diagnostic;
+	}
+	
+	public boolean hasError() {
+		return this.diagnostic!=null;
 	}
 
 	public void setDiagnostic(String diagnostic) {

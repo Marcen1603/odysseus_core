@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmGenericType;
@@ -92,7 +93,24 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 			createIQLArgumentsMapKeyValueExprProposals((IQLArgumentsMapKeyValue) node, templateContext, context, acceptor);
 		} else if (node instanceof IQLNamespace) {
 			createIQLNamespaceProposals((IQLNamespace) node, templateContext, context, acceptor);
+		} else if (rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLConstructorCallStatement")) {
+			createIQLConstructorCallStatementProposals(node, templateContext, context, acceptor);
 		}     	
+	}
+	
+	protected void createIQLConstructorCallStatementProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		JvmGenericType type = EcoreUtil2.getContainerOfType(node, JvmGenericType.class);
+		JvmTypeReference typeRef = typeUtils.createTypeRef(type);
+
+		if (type.getExtendedClass() != null) {
+			for (JvmExecutable constructor : lookUp.getSuperConstructors(typeRef)) {
+				createConstructorTemplate("super",constructor.getParameters(), templateContext, context, acceptor);
+			}
+		}		
+		for (JvmExecutable constructor : lookUp.getDeclaredConstructors(typeRef)) {
+			createConstructorTemplate("this",constructor.getParameters(), templateContext, context, acceptor);
+		}
+		
 	}
 	
 	protected void createIQLNamespaceProposals(IQLNamespace node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -274,6 +292,34 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		Template template = createTemplate(descBuilder.toString(), declaredType.getSimpleName(), id, patternBuilder.toString());
 		Image image = labelProvider.getImage(op);
 		finishTemplate(template, templateContext, context, image, acceptor);
+	}
+	
+	protected void createConstructorTemplate(String prefix, EList<JvmFormalParameter> parameters,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		
+		StringBuilder descBuilder = new StringBuilder();
+		descBuilder.append(prefix);
+		descBuilder.append("(");
+		if (parameters != null) {
+			descBuilder.append(toDescString(parameters));
+		}		
+		descBuilder.append(")");
+
+		
+		StringBuilder patternBuilder = new StringBuilder();
+		patternBuilder.append(prefix);
+		patternBuilder.append("(");
+		if (parameters != null) {
+			patternBuilder.append(toPattern(parameters));
+		}
+		patternBuilder.append(")");
+		
+		String id = prefix;
+		if (parameters != null) {
+			prefix = prefix+parameters.size();
+		}
+
+		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
+		finishTemplate(template, templateContext, context,  acceptor);
 	}
 	
 	protected void createVariableTemplate(String name, JvmDeclaredType declaredType, JvmTypeReference typeRef,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {

@@ -18,7 +18,7 @@ public class ListExtensions extends CollectionExtensions {
 		return col.get(index);
 	}
 	
-	public static <T> List<T> get(List<T> col, Object ... indices) {
+	public static <T> List<T> get(List<T> col, List<Object> indices) {
 		List<T> result = new ArrayList<>();
 		for (Object index : indices) {
 			if (index instanceof Range) {
@@ -44,7 +44,7 @@ public class ListExtensions extends CollectionExtensions {
 	}
 	
 	
-	public static <T> void set(List<T> col, Collection<T> elements, Object ... indices) {
+	public static <T> void set(List<T> col, Collection<T> elements, List<Object> indices) {
 		Iterator<T> it = elements.iterator();
 		for (Object index : indices) {
 			if (index instanceof Range) {

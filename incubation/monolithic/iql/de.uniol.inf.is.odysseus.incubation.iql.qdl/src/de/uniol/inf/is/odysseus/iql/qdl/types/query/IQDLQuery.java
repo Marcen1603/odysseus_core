@@ -13,4 +13,8 @@ public interface IQDLQuery {
 	
 	public List<IPair<String, Object>> getMetadata();
 	
+	public void setExecutor(IQDLQueryExecutor executor);
+	
+	public String getName();
+
 }

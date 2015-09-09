@@ -14,16 +14,13 @@ public interface IIQLTypeExtensionsDictionary {
 	Collection<JvmOperation> getAllExtensionMethods(JvmTypeReference typeRef, int[] visibilities);
 
 	boolean hasTypeExtensions(JvmTypeReference typeRef, String attribute);
-	boolean hasTypeExtensions(JvmTypeReference typeRef, String method, int args);
 	boolean hasTypeExtensions(JvmTypeReference typeRef, String method, IQLExpression argument);
 	boolean hasTypeExtensions(JvmTypeReference typeRef, String method, List<IQLExpression> arguments);
 
 	IIQLTypeExtensions getTypeExtensions(JvmTypeReference typeRef, String attribute);
-	IIQLTypeExtensions getTypeExtensions(JvmTypeReference typeRef, String method, int args);
 	IIQLTypeExtensions getTypeExtensions(JvmTypeReference typeRef, String method, IQLExpression argument);
 	IIQLTypeExtensions getTypeExtensions(JvmTypeReference typeRef, String method, List<IQLExpression> arguments);
 
-	JvmOperation getMethod(JvmTypeReference typeRef, String method, int args);
 	JvmOperation getMethod(JvmTypeReference typeRef, String method, IQLExpression argument);
 	JvmOperation getMethod(JvmTypeReference typeRef, String method, List<IQLExpression> arguments);
 

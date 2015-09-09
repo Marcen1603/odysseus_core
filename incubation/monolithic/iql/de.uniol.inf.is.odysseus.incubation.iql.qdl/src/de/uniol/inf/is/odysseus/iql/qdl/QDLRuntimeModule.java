@@ -22,11 +22,11 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLStatementCompil
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.basic.linking.DefaultIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingService;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
+import de.uniol.inf.is.odysseus.iql.basic.linking.SimpleIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
@@ -264,7 +264,7 @@ public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQ
 	}
 	
 	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
-		return DefaultIQLMethodFinder.class;
+		return SimpleIQLMethodFinder.class;
 	}	
 	
 	public Class<? extends IIQLServiceObserver> bindIQLServiceObserver() {

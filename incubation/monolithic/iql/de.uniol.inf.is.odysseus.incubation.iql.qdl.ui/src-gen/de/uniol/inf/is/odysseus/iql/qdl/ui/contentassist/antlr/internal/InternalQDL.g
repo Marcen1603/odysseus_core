@@ -18351,16 +18351,16 @@ rule__IQLConstructorCallStatement__ThisAssignment_1_0
     }
 :
 (
-{ before(grammarAccess.getIQLConstructorCallStatementAccess().getThisSuperKeyword_1_0_0()); }
+{ before(grammarAccess.getIQLConstructorCallStatementAccess().getThisThisKeyword_1_0_0()); }
 (
-{ before(grammarAccess.getIQLConstructorCallStatementAccess().getThisSuperKeyword_1_0_0()); }
+{ before(grammarAccess.getIQLConstructorCallStatementAccess().getThisThisKeyword_1_0_0()); }
 
-	'super' 
+	'this' 
 
-{ after(grammarAccess.getIQLConstructorCallStatementAccess().getThisSuperKeyword_1_0_0()); }
+{ after(grammarAccess.getIQLConstructorCallStatementAccess().getThisThisKeyword_1_0_0()); }
 )
 
-{ after(grammarAccess.getIQLConstructorCallStatementAccess().getThisSuperKeyword_1_0_0()); }
+{ after(grammarAccess.getIQLConstructorCallStatementAccess().getThisThisKeyword_1_0_0()); }
 )
 
 ;
@@ -18374,16 +18374,16 @@ rule__IQLConstructorCallStatement__SuperAssignment_1_1
     }
 :
 (
-{ before(grammarAccess.getIQLConstructorCallStatementAccess().getSuperThisKeyword_1_1_0()); }
+{ before(grammarAccess.getIQLConstructorCallStatementAccess().getSuperSuperKeyword_1_1_0()); }
 (
-{ before(grammarAccess.getIQLConstructorCallStatementAccess().getSuperThisKeyword_1_1_0()); }
+{ before(grammarAccess.getIQLConstructorCallStatementAccess().getSuperSuperKeyword_1_1_0()); }
 
-	'this' 
+	'super' 
 
-{ after(grammarAccess.getIQLConstructorCallStatementAccess().getSuperThisKeyword_1_1_0()); }
+{ after(grammarAccess.getIQLConstructorCallStatementAccess().getSuperSuperKeyword_1_1_0()); }
 )
 
-{ after(grammarAccess.getIQLConstructorCallStatementAccess().getSuperThisKeyword_1_1_0()); }
+{ after(grammarAccess.getIQLConstructorCallStatementAccess().getSuperSuperKeyword_1_1_0()); }
 )
 
 ;

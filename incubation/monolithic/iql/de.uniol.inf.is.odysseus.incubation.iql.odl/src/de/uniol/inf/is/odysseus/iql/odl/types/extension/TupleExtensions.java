@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -13,16 +14,23 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 public class TupleExtensions implements IIQLTypeExtensions {
 
+	@SuppressWarnings("rawtypes")
 	@ExtensionMethod(ignoreFirstParameter=false)
-	public static <T extends IMetaAttribute> Tuple<T> listToType(Object ... attributes) {
+	public static <T extends IMetaAttribute> Tuple<T> listToType(List attributes) {
+		return new Tuple<>(attributes.toArray(), false);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@ExtensionMethod(ignoreFirstParameter=false)
+	public static <T extends IMetaAttribute> Tuple<T> mapToType(Map attributes) {
 		return new Tuple<>(attributes, false);
 	}
 	
 	@ExtensionMethod(ignoreFirstParameter=false)
-	public static <T extends IMetaAttribute> Tuple<T> rangeToType(int from, int to) {
+	public static <T extends IMetaAttribute> Tuple<T> rangeToType(Range range) {
 		List<Object> attributes = new ArrayList<>();
-		int counter = from;
-		while (counter<= to) {
+		int counter = range.getFrom();
+		while (counter<= range.getTo()) {
 			attributes.add(counter);
 			counter++;
 		}
@@ -53,7 +61,7 @@ public class TupleExtensions implements IIQLTypeExtensions {
 		return tuple.getAttribute(index);
 	}
 	
-	public static <T extends IMetaAttribute> List<Object> get(Tuple<T> tuple, Object ... indices) {
+	public static <T extends IMetaAttribute> List<Object> get(Tuple<T> tuple, List<Object> indices) {
 		List<Object> result = new ArrayList<>();
 		for (Object index : indices) {
 			if (index instanceof Range) {
@@ -74,7 +82,7 @@ public class TupleExtensions implements IIQLTypeExtensions {
 		tuple.setAttribute(index, value);
 	}
 	
-	public static <T extends IMetaAttribute> void set(Tuple<T> tuple, Collection<Object> values,  Object ... indices) {
+	public static <T extends IMetaAttribute> void set(Tuple<T> tuple, Collection<Object> values,  List<Object> indices) {
 		Iterator<Object> it = values.iterator();
 		for (Object index : indices) {
 			if (index instanceof Range) {

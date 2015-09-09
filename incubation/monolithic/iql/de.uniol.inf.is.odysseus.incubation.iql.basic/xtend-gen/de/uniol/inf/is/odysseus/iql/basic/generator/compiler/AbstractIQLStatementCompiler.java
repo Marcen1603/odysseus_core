@@ -515,14 +515,19 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         String _xblockexpression_1 = null;
         {
           JvmTypeReference typeRef = this.typeUtils.createTypeRef(type);
+          JvmExecutable constructor = null;
           boolean _isSuper = s.isSuper();
           if (_isSuper) {
-            JvmTypeReference _extendedClass = type.getExtendedClass();
-            typeRef = _extendedClass;
+            IQLArgumentsList _args = s.getArgs();
+            EList<IQLExpression> _elements = _args.getElements();
+            JvmExecutable _findSuperConstructor = this.lookUp.findSuperConstructor(typeRef, _elements);
+            constructor = _findSuperConstructor;
+          } else {
+            IQLArgumentsList _args_1 = s.getArgs();
+            EList<IQLExpression> _elements_1 = _args_1.getElements();
+            JvmExecutable _findDeclaredConstructor = this.lookUp.findDeclaredConstructor(typeRef, _elements_1);
+            constructor = _findDeclaredConstructor;
           }
-          IQLArgumentsList _args = s.getArgs();
-          EList<IQLExpression> _elements = _args.getElements();
-          JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _elements);
           String _xifexpression_1 = null;
           boolean _and = false;
           boolean _notEquals_1 = (!Objects.equal(constructor, null));
@@ -536,12 +541,12 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
             StringConcatenation _builder = new StringConcatenation();
             _builder.append("super(");
             {
-              IQLArgumentsList _args_1 = s.getArgs();
-              boolean _notEquals_2 = (!Objects.equal(_args_1, null));
+              IQLArgumentsList _args_2 = s.getArgs();
+              boolean _notEquals_2 = (!Objects.equal(_args_2, null));
               if (_notEquals_2) {
-                IQLArgumentsList _args_2 = s.getArgs();
+                IQLArgumentsList _args_3 = s.getArgs();
                 EList<JvmFormalParameter> _parameters = constructor.getParameters();
-                String _compile = this.exprCompiler.compile(_args_2, _parameters, c);
+                String _compile = this.exprCompiler.compile(_args_3, _parameters, c);
                 _builder.append(_compile, "");
               }
             }
@@ -554,12 +559,12 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
               StringConcatenation _builder_1 = new StringConcatenation();
               _builder_1.append("this(");
               {
-                IQLArgumentsList _args_3 = s.getArgs();
-                boolean _notEquals_4 = (!Objects.equal(_args_3, null));
+                IQLArgumentsList _args_4 = s.getArgs();
+                boolean _notEquals_4 = (!Objects.equal(_args_4, null));
                 if (_notEquals_4) {
-                  IQLArgumentsList _args_4 = s.getArgs();
+                  IQLArgumentsList _args_5 = s.getArgs();
                   EList<JvmFormalParameter> _parameters_1 = constructor.getParameters();
-                  String _compile_1 = this.exprCompiler.compile(_args_4, _parameters_1, c);
+                  String _compile_1 = this.exprCompiler.compile(_args_5, _parameters_1, c);
                   _builder_1.append(_compile_1, "");
                 }
               }

@@ -1,13 +1,16 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper;
 
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
@@ -38,5 +41,9 @@ public interface IIQLCompilerHelper {
 	IQLClass getClass(IQLStatement stmt);
 	
 	boolean isJvmArray(JvmTypeReference typeRef);
+
+	List<IQLExpression> createGetterArguments(EList<IQLExpression> expressions);
+
+	List<IQLExpression> createSetterArguments(IQLExpression expr,EList<IQLExpression> expressions);
 
 }

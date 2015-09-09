@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.linking;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
@@ -110,12 +112,15 @@ public class IQLLinkingService extends DefaultLinkingService{
 			if (expr.getArgs() != null) {				
 				result = methodFinder.findMethod(methods, crossRefString, expr.getArgs().getElements());
 			} else if (!isAssignment(expr)) {
-				result = methodFinder.findMethod(methods, "get"+crossRefString, 0);
+				result = methodFinder.findMethod(methods, "get"+crossRefString);
 				if (result == null) {
-					result = methodFinder.findMethod(methods, "is"+crossRefString, 0);
+					result = methodFinder.findMethod(methods, "is"+crossRefString);
 				}
 			} else if (isAssignment(expr)) {
-				result = methodFinder.findMethod(methods, "set"+crossRefString,1 );
+				IQLAssignmentExpression assignmentExpr = getAssignmentExpr(expr);
+				List<IQLExpression> parameters = new ArrayList<>();
+				parameters.add(assignmentExpr.getRightOperand());
+				result = methodFinder.findMethod(methods, "set"+crossRefString,parameters);
 			} 
 			if (result == null) {
 				result = methodFinder.findMethod(methods, crossRefString);
@@ -131,6 +136,11 @@ public class IQLLinkingService extends DefaultLinkingService{
 	private boolean isAssignment(EObject obj) {
 		IQLAssignmentExpression expr = EcoreUtil2.getContainerOfType(obj, IQLAssignmentExpression.class);
 		return expr != null;
+	}
+	
+	private IQLAssignmentExpression getAssignmentExpr(EObject obj) {
+		IQLAssignmentExpression expr = EcoreUtil2.getContainerOfType(obj, IQLAssignmentExpression.class);
+		return expr;
 	}
 	
 	
@@ -182,12 +192,15 @@ public class IQLLinkingService extends DefaultLinkingService{
 			if (expr.getArgs() != null) {				
 				result = methodFinder.findMethod(methods, crossRefString, expr.getArgs().getElements());
 			} else if (!isAssignment(expr)) {
-				result = methodFinder.findMethod(methods, "get"+crossRefString, 0);
+				result = methodFinder.findMethod(methods, "get"+crossRefString);
 				if (result == null) {
-					result = methodFinder.findMethod(methods, "is"+crossRefString, 0);
+					result = methodFinder.findMethod(methods, "is"+crossRefString);
 				}
 			} else if (isAssignment(expr)) {
-				result = methodFinder.findMethod(methods, "set"+crossRefString, 1);
+				IQLAssignmentExpression assignmentExpr = getAssignmentExpr(expr);
+				List<IQLExpression> parameters = new ArrayList<>();
+				parameters.add(assignmentExpr.getRightOperand());
+				result = methodFinder.findMethod(methods, "set"+crossRefString, parameters);
 			}
 			if (result == null) {
 				result = methodFinder.findMethod(methods, crossRefString);

@@ -28,7 +28,11 @@ public interface IIQLLookUp {
 	Collection<JvmOperation> getDeclaredPublicMethods(JvmTypeReference typeRef,	boolean onlyStatic);
 
 	Collection<JvmExecutable> getPublicConstructors(JvmTypeReference typeRef);
-	JvmExecutable findConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
+	Collection<JvmExecutable> getDeclaredConstructors(JvmTypeReference typeRef);
+	Collection<JvmExecutable> getSuperConstructors(JvmTypeReference typeRef);
+
+	JvmExecutable findSuperConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
+	JvmExecutable findDeclaredConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
 	JvmExecutable findPublicConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
 
 	Collection<String> getAllNamespaces();
@@ -42,5 +46,9 @@ public interface IIQLLookUp {
 	
 	boolean isInstantiateable(JvmDeclaredType declaredType);
 	Collection<JvmOperation> getPublicSetters(JvmTypeReference typeRef);
+	
+	boolean isMap(JvmTypeReference typeRef);
+
+	boolean isList(JvmTypeReference typeRef);
 
 }

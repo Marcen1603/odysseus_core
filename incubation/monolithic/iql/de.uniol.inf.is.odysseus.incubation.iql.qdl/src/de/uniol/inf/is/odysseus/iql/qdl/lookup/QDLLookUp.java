@@ -1,14 +1,39 @@
 package de.uniol.inf.is.odysseus.iql.qdl.lookup;
 
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
 public class QDLLookUp extends AbstractIQLLookUp<IQDLTypeDictionary, IQDLTypeExtensionsDictionary, IQDLTypeUtils> implements IQDLLookUp{
 
@@ -16,6 +41,52 @@ public class QDLLookUp extends AbstractIQLLookUp<IQDLTypeDictionary, IQDLTypeExt
 	@Inject
 	public QDLLookUp(IQDLTypeDictionary typeDictionary, IQDLTypeExtensionsDictionary typeExtensionsDictionary, IQDLTypeUtils typeUtils) {
 		super(typeDictionary, typeExtensionsDictionary, typeUtils);
+	}
+	
+	@Override
+	public JvmTypeReference getSuperType(EObject obj) {
+		QDLQuery query = EcoreUtil2.getContainerOfType(obj, QDLQuery.class);
+		if (query != null) {
+			return typeUtils.createTypeRef(AbstractQDLQuery.class, typeDictionary.getSystemResourceSet());
+		} else {
+			return super.getSuperType(obj);
+		}
+	}
+
+	@Override
+	public Collection<String> getMetadataKeys() {
+		Collection<String> result = new HashSet<>();
+		for (IPreParserKeywordProvider provider : QDLServiceBinding.getPreParserKeywordProviders()) {
+			for (Entry<String, Class<? extends IPreParserKeyword>> entry : provider.getKeywords().entrySet()) {
+				result.add(entry.getKey());
+			}
+		}
+		result.add(IQDLLookUp.AUTO_CREATE);
+		return result;
+	}
+
+	@Override
+	public Collection<String> getMetadataValues(String key) {
+		Collection<String> result = new HashSet<>();
+		if (key.equalsIgnoreCase(IQDLLookUp.AUTO_CREATE)) {
+			result.add("true");
+			result.add("false");
+		} else {
+			for (IPreParserKeywordProvider provider : QDLServiceBinding.getPreParserKeywordProviders()) {
+				for (Entry<String, Class<? extends IPreParserKeyword>> entry : provider.getKeywords().entrySet()) {
+					if (key.equalsIgnoreCase(entry.getKey())) {
+						try {
+							Collection<String> parameters = entry.getValue().newInstance().getAllowedParameters(OdysseusRCPPlugIn.getActiveSession());
+							if (parameters != null) {
+								result.addAll(parameters);
+							}
+						} catch (InstantiationException	| IllegalAccessException e) {
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 //	@Override

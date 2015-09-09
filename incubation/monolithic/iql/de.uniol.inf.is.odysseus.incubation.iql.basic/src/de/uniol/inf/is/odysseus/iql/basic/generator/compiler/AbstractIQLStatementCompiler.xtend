@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator
+import org.eclipse.xtext.common.types.JvmExecutable
 
 abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionEvaluator, L extends IIQLLookUp> implements IIQLStatementCompiler<G>{
 	protected H helper;
@@ -200,11 +201,13 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	def String compile(IQLConstructorCallStatement s, G c) {
 		var type = helper.getClass(s);
 		if (type != null) {
-			var typeRef = typeUtils.createTypeRef(type)
+			var typeRef = typeUtils.createTypeRef(type) 
+			var JvmExecutable constructor = null;
 			if (s.isSuper) {
-				typeRef = type.extendedClass
-			} 
-			var constructor = lookUp.findConstructor(typeRef, s.args.elements);
+				constructor = lookUp.findSuperConstructor(typeRef, s.args.elements);
+			} else {
+				constructor = lookUp.findDeclaredConstructor(typeRef, s.args.elements);
+			}
 			if (constructor != null && s.isSuper) {
 				'''super(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
 			} else if (constructor != null) {

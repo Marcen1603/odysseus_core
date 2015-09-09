@@ -31,11 +31,6 @@ public class DefaultIQLMethodFinder implements IIQLMethodFinder {
 		}
 	}	
 
-	@Override
-	public boolean isMethod(JvmOperation op, String name, List<IQLExpression> arguments) {
-		return op.getSimpleName().equalsIgnoreCase(name) && op.getParameters().size() == arguments.size();
-	}
-	
 
 	@Override
 	public JvmExecutable findConstructor(Collection<JvmExecutable> constructors, List<IQLExpression> arguments) {
@@ -56,7 +51,7 @@ public class DefaultIQLMethodFinder implements IIQLMethodFinder {
 		}
 		return null;
 	}
-
+	
 	@Override
 	public JvmOperation findMethod(Collection<JvmOperation> methods, String name) {
 		for (JvmOperation op : methods) {
@@ -66,17 +61,7 @@ public class DefaultIQLMethodFinder implements IIQLMethodFinder {
 		}
 		return null;
 	}
-	
 
-	@Override
-	public JvmOperation findMethod(Collection<JvmOperation> methods, String name, int args) {
-		for (JvmOperation op : methods) {
-			if (op.getSimpleName().equalsIgnoreCase(name) && op.getParameters().size() == args) {
-				return op;
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public JvmOperation findMethod(Collection<JvmOperation> methods, String name, int args, boolean hasReturnType) {

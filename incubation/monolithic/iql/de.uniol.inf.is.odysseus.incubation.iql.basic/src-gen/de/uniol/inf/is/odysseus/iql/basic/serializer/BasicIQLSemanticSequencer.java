@@ -1208,7 +1208,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     ((this?='super' | super?='this') args=IQLArgumentsList)
+	 *     ((this?='this' | super?='super') args=IQLArgumentsList)
 	 */
 	protected void sequence_IQLConstructorCallStatement(EObject context, IQLConstructorCallStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

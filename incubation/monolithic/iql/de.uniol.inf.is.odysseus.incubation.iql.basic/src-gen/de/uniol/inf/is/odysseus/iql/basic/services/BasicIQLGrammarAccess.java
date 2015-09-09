@@ -1910,37 +1910,37 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cIQLConstructorCallStatementAction_0 = (Action)cGroup.eContents().get(0);
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
 		private final Assignment cThisAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final Keyword cThisSuperKeyword_1_0_0 = (Keyword)cThisAssignment_1_0.eContents().get(0);
+		private final Keyword cThisThisKeyword_1_0_0 = (Keyword)cThisAssignment_1_0.eContents().get(0);
 		private final Assignment cSuperAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final Keyword cSuperThisKeyword_1_1_0 = (Keyword)cSuperAssignment_1_1.eContents().get(0);
+		private final Keyword cSuperSuperKeyword_1_1_0 = (Keyword)cSuperAssignment_1_1.eContents().get(0);
 		private final Assignment cArgsAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cArgsIQLArgumentsListParserRuleCall_2_0 = (RuleCall)cArgsAssignment_2.eContents().get(0);
 		private final Keyword cSemicolonKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//IQLConstructorCallStatement returns IQLStatement:
-		//	{IQLConstructorCallStatement} (this?="super" | super?="this") args=IQLArgumentsList ";";
+		//	{IQLConstructorCallStatement} (this?="this" | super?="super") args=IQLArgumentsList ";";
 		public ParserRule getRule() { return rule; }
 
-		//{IQLConstructorCallStatement} (this?="super" | super?="this") args=IQLArgumentsList ";"
+		//{IQLConstructorCallStatement} (this?="this" | super?="super") args=IQLArgumentsList ";"
 		public Group getGroup() { return cGroup; }
 
 		//{IQLConstructorCallStatement}
 		public Action getIQLConstructorCallStatementAction_0() { return cIQLConstructorCallStatementAction_0; }
 
-		//this?="super" | super?="this"
+		//this?="this" | super?="super"
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//this?="super"
+		//this?="this"
 		public Assignment getThisAssignment_1_0() { return cThisAssignment_1_0; }
 
-		//"super"
-		public Keyword getThisSuperKeyword_1_0_0() { return cThisSuperKeyword_1_0_0; }
+		//"this"
+		public Keyword getThisThisKeyword_1_0_0() { return cThisThisKeyword_1_0_0; }
 
-		//super?="this"
+		//super?="super"
 		public Assignment getSuperAssignment_1_1() { return cSuperAssignment_1_1; }
 
-		//"this"
-		public Keyword getSuperThisKeyword_1_1_0() { return cSuperThisKeyword_1_1_0; }
+		//"super"
+		public Keyword getSuperSuperKeyword_1_1_0() { return cSuperSuperKeyword_1_1_0; }
 
 		//args=IQLArgumentsList
 		public Assignment getArgsAssignment_2() { return cArgsAssignment_2; }
@@ -4479,7 +4479,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLConstructorCallStatement returns IQLStatement:
-	//	{IQLConstructorCallStatement} (this?="super" | super?="this") args=IQLArgumentsList ";";
+	//	{IQLConstructorCallStatement} (this?="this" | super?="super") args=IQLArgumentsList ";";
 	public IQLConstructorCallStatementElements getIQLConstructorCallStatementAccess() {
 		return pIQLConstructorCallStatement;
 	}
