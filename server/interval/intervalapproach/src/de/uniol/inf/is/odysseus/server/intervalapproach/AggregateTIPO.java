@@ -494,8 +494,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
 		assert(elemToAdd != null);
 
-		@SuppressWarnings("unchecked")
-		Q t_probe = (Q)elemToAdd.getMetadata().clone();
+		Q t_probe = elemToAdd.getMetadata();
 
 		// Extract elements in this sweep area that overlaps the time interval
 		// of elem
@@ -706,7 +705,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			@SuppressWarnings("unchecked")
 			Q newMeta = (Q) p1.getLoad().getMetadata().clone();
 			newMeta.setStartAndEnd(p1.getPoint(), p2.getPoint());
-			saInsert(sa, p1.getLoad(), newMeta);
+			saInsert(sa, p1.getLoad().clone(), newMeta);
 		}
 		return lastPartialAggregate;
 	}
@@ -757,8 +756,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			Q meta = element_agg.getMetadata();
 			if (meta.getStart().before(splitPoint)) {
 				PairMap<SDFSchema, AggregateFunction, W, Q> e = calcEval(element_agg, false);
-				e.setMetadata((Q) meta.clone());
-				e.getMetadata().setEnd(splitPoint);
+				Q outputMeta = (Q) meta.clone();
+				outputMeta.setEnd(splitPoint);
+				e.setMetadata(outputMeta);
 				meta.setStart(splitPoint);
 				returnValues.add(e);
 			}
