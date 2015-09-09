@@ -25,20 +25,26 @@ public class ElementWindowTIPOEstimator extends StandardPhysicalOperatorEstimato
 
 	@Override
 	public double getWindowSize() {
-
-		double inputDataRate = getInputDataRate();
+		//TODO I guess this should calculate Window Size per Second, but imho this is inconsistent and leads to strage results.
+		
+		//double inputDataRate = getInputDataRate();
 
 		
-		long windowAdvanceElements = getOperator().getWindowAdvanceMillis();
+		//long windowAdvanceElements = getOperator().getWindowAdvanceMillis();
 		long windowSizeElements = getOperator().getWindowSizeMillis();
 
+		/*
 		if (windowAdvanceElements == 1) {
 			return windowSizeElements / (inputDataRate / 1000.0);
 		}
-
-		return windowSizeElements / ( 2.0 * (inputDataRate / 1000.0));
+		*/
+		
+		//return windowSizeElements / ( 2.0 * (inputDataRate / 1000.0));
+		
+		return windowSizeElements;
 	}
 
+	@SuppressWarnings("unused")
 	private double getInputDataRate() {
 		for (IPhysicalOperator operator : getPrevCostMap().keySet()) {
 
