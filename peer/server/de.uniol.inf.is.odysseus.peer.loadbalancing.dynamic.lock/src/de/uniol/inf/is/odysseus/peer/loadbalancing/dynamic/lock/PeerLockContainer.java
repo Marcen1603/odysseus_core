@@ -109,12 +109,13 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			if (getNumberOfUnlockedPeers() == locks.size()) {
 				LOG.debug("No more peers to unlock.");
 				for (IPeerLockContainerListener listener : listeners) {
+					unregisterFromPeerCommunicator();
 					if (rollback) {
 						listener.notifyLockingFailed();
 					} else {
 						listener.notifyReleasingFinished();
 					}
-					unregisterFromPeerCommunicator();
+					
 				}
 			}
 		}
@@ -160,8 +161,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				if (getNumberOfUnlockedPeers() == locks.size()) {
 					LOG.debug("No more peers to unlock.");
 					for (IPeerLockContainerListener listener : listeners) {
-						listener.notifyReleasingFinished();
+
 						unregisterFromPeerCommunicator();
+						listener.notifyReleasingFinished();
 					}
 				}
 			}
@@ -178,8 +180,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				if (getNumberOfUnlockedPeers() == locks.size()) {
 					LOG.debug("No more peers to unlock.");
 					for (IPeerLockContainerListener listener : listeners) {
-						listener.notifyReleasingFinished();
+
 						unregisterFromPeerCommunicator();
+						listener.notifyReleasingFinished();
 					}
 				}
 			}
