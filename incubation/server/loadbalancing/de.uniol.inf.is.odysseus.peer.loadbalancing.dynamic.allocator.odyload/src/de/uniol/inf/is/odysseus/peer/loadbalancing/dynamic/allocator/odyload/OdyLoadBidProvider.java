@@ -127,7 +127,7 @@ public class OdyLoadBidProvider implements IBidProvider {
 
 		if (freeCpuAfterLoadBalancing <= (1.0-OdyLoadConstants.CPU_THRESHOLD) || freeMemAfterLoadBalancing <=  (1.0-OdyLoadConstants.MEM_THRESHOLD)
 				|| freeNetAfterLoadBalancing <= (1.0-OdyLoadConstants.NET_THRESHOLD)) {
-			LOG.info("Not bidding to QueryPart {} is this would overload Peer.", query.getName());
+			LOG.debug("Not bidding to QueryPart {} is this would overload Peer.", query.getName());
 			return Optional.absent();
 		}
 

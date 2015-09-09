@@ -347,27 +347,33 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		
 		LOG.info("All Transmission Finished");
 
-		List<Integer> queriesToReprocess = Lists.newArrayList();
-
-		transmissionHandler.removeListener(this);
-		
-		List<Integer> failedTransmissions = transmissionHandler
-				.getFailedTransmissions();
-		
-		transmissionHandler.clear();
-
-		if (failedTransmissions != null) {
-			queriesToReprocess.addAll(failedTransmissions);
+		try {
+			List<Integer> queriesToReprocess = Lists.newArrayList();
+	
+			transmissionHandler.removeListener(this);
+			
+			List<Integer> failedTransmissions = transmissionHandler
+					.getFailedTransmissions();
+			
+			transmissionHandler.clear();
+	
+			if (failedTransmissions != null) {
+				queriesToReprocess.addAll(failedTransmissions);
+			}
+			if (failedAllocationQueryIDs != null) {
+				queriesToReprocess.addAll(failedAllocationQueryIDs);
+			}
+	
+			if (firstAllocationTry && queriesToReprocess.size() > 0) {
+				LOG.debug("Second try.");
+				reallocateAndTransmitQueries(queriesToReprocess);
+			} else {
+				LOG.info("Load Balancing Process finished. Restarting Monitoring.");
+				restartMonitoring(true);
+			}
 		}
-		if (failedAllocationQueryIDs != null) {
-			queriesToReprocess.addAll(failedAllocationQueryIDs);
-		}
-
-		if (firstAllocationTry && queriesToReprocess.size() > 0) {
-			LOG.debug("Second try.");
-			reallocateAndTransmitQueries(queriesToReprocess);
-		} else {
-			LOG.info("Load Balancing Process finished. Restarting Monitoring.");
+		catch(Exception e) {
+			LOG.error("Uncaught Exception when processing failed Transmissions: {}",e.getMessage());
 			restartMonitoring(true);
 		}
 
