@@ -264,8 +264,8 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 					this.mBackupSubscriberController.interrupt();
 					this.mBackupSubscriberController = null;
 				}
-				this.mBackupSubscriberController = SubscriberControllerFactory
-						.createController(this.mSourceAccess.getAccessAOName(), this.mBackupSubscriber);
+				this.mBackupSubscriberController = SubscriberControllerFactory.createController(
+						this.mSourceAccess.getAccessAOName(), this.mBackupSubscriber, this.mOffset.longValue());
 				this.mBackupSubscriberController.start();
 			}
 		}
