@@ -20,7 +20,9 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 	public static final double DEFAULT_CPU_COST = 0.0005;
 	public static final double DEFAULT_NETWORK_COST_BYTES = 0;
 	public static final double DEFAULT_SELECTIVITY = 1.0;
-	public static final double DEFAULT_DATARATE = 20;
+	
+	//TODO Changed for Loadbalancing, was 20 before ( is too high for Rasperry Pis)
+	public static final double DEFAULT_DATARATE = 4;
 	public static final double DEFAULT_WINDOW_SIZE = Double.POSITIVE_INFINITY;
 	
 	private Map<IPhysicalOperator, DetailCost> prevCostMap;
@@ -119,4 +121,5 @@ public abstract class StandardPhysicalOperatorEstimator<T extends IPhysicalOpera
 		}
 		return DEFAULT_WINDOW_SIZE;
 	}
+	
 }
