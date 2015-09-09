@@ -34,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 
 	private Connection jdbcConnection;
 	private String preparedStatementString;
-	private PreparedStatement preparedStatement;
+	final private PreparedStatementHandler preparedStatementHandler;
 	List<Tuple<?>> toStore = new ArrayList<Tuple<?>>();
 	private IDataTypeMappingHandler<?>[] dtMappings;
 
@@ -113,6 +112,11 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		this.truncate = truncate;
 		this.drop = drop;
 		this.batchSize = batchSize;
+		if (batchSize == -1){
+			preparedStatementHandler = new PreparedStatementHandler(false);
+		}else{
+			preparedStatementHandler = new PreparedStatementHandler(true);
+		}
 		this.batchTimeout = batchTimeout;
 		this.tableSchema = tableSchema;
 		this.preparedStatementString = preparedStatement;
@@ -222,11 +226,11 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 				}
 				if ((this.preparedStatementString == null)
 						|| ("".equals(this.preparedStatementString))) {
-					this.preparedStatement = this.jdbcConnection
-							.prepareStatement(createInsertPreparedStatement());
+					this.preparedStatementHandler.setPreparedStatement(this.jdbcConnection
+							.prepareStatement(createInsertPreparedStatement()));
 				} else {
-					this.preparedStatement = this.jdbcConnection
-							.prepareStatement(this.preparedStatementString);
+					this.preparedStatementHandler.setPreparedStatement(this.jdbcConnection
+							.prepareStatement(this.preparedStatementString));
 				}
 				this.jdbcConnection.setAutoCommit(false);
 			}
@@ -333,10 +337,11 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		for (int i = 0; i < this.getOutputSchema().size(); i++) {
 			Object attributeValue = tuple.getAttribute(i);
 			if (attributeValue != null) {
-				dtMappings[i + 1].setValue(this.preparedStatement, i + 1,
+				// ToDo: 
+				dtMappings[i + 1].setValue(this.preparedStatementHandler.getPreparedStatement(), i + 1,
 						attributeValue);
 			} else {
-				preparedStatement.setNull(i + 1, Types.NULL);
+				this.preparedStatementHandler.setNull(i + 1, Types.NULL);
 			}
 		}
 	}
@@ -363,16 +368,15 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 				}
 				for (int i = 0; i < toStore.size(); i++) {
 					prepare(toStore.get(i));
-					this.preparedStatement.addBatch();
+					this.preparedStatementHandler.addBatch();
 				}
 
-				int[] out;
+				
 				boolean batchProcessingFailed = false;
 				try {
-					out = this.preparedStatement.executeBatch();
-					count = out.length;
+					count = this.preparedStatementHandler.executeBatch();
 				} catch (BatchUpdateException e) {
-					preparedStatement.clearBatch();
+					preparedStatementHandler.clearBatch();
 					e.printStackTrace();
 					INFO.warning("Error inserting elements", e);
 					batchProcessingFailed = true;
@@ -385,7 +389,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 					for (int i = 0; i < toStore.size(); i++) {
 						try {
 							prepare(toStore.get(i));
-							this.preparedStatement.executeUpdate();
+							this.preparedStatementHandler.executeUpdate();
 							count++;
 						} catch (SQLException e) {
 							INFO.warning("Insertion of "+toStore.get(i)+" failed",e);
