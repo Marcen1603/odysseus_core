@@ -61,6 +61,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 	private boolean drop;
 	private long batchSize = 10;
 	private int batchTimeout = 0;
+	private boolean jdbcAllowsBatch = true;
     private String preparedStatement = "";
 	private List<String> tableSchema;
 	private List<String> primaryKeys;
@@ -96,6 +97,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
         if (other.primaryKeys != null){
         	this.primaryKeys = new ArrayList<String>(other.primaryKeys);
         }
+        this.jdbcAllowsBatch = other.jdbcAllowsBatch;
 	}
 
 	@Override
@@ -162,6 +164,15 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 		return batchTimeout;
 	}
 
+	@Parameter(name = "UseJDBCBatch", type = BooleanParameter.class, optional = true, doc = "Set to false if driver does not support addBatch (e.g. HIVE)")
+	public void setJdbcAllowsBatch(boolean jdbcAllowsBatch) {
+		this.jdbcAllowsBatch = jdbcAllowsBatch;
+	}
+	
+	public boolean isJdbcAllowsBatch() {
+		return jdbcAllowsBatch;
+	}
+	
 	@Parameter(name = "Tableschema", type = StringParameter.class, optional = true, isList = true, doc = "The types of the target database that should be used to create the target table. Order must be the same as the output schema.")
 	public void setTableSchema(List<String> tableSchema) {
 		this.tableSchema = tableSchema;

@@ -103,7 +103,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
 			boolean drop, boolean truncate, long batchSize, int batchTimeout,
 			List<String> tableSchema, List<String> primaryKeys,
-			String preparedStatement) {
+			String preparedStatement, boolean jdcbSupportsBatch) {
 		if (connection == null) {
 			throw new IllegalArgumentException("Connection must not be null");
 		}
@@ -112,7 +112,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		this.truncate = truncate;
 		this.drop = drop;
 		this.batchSize = batchSize;
-		if (batchSize == -1){
+		if (batchSize == -1 || !jdcbSupportsBatch){
 			preparedStatementHandler = new PreparedStatementHandler(false);
 		}else{
 			preparedStatementHandler = new PreparedStatementHandler(true);
