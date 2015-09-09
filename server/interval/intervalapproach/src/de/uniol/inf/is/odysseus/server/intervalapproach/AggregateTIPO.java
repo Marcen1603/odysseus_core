@@ -311,12 +311,12 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			if (debug) {
 				System.err.println(sa);
 			}
-			createOutput(results, groupID, object.getMetadata().getStart(), port);
+			createOutput(results, groupID, object.getMetadata().getStart(), port, groups);
 		}
 	}
 
 	protected void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Long groupID,
-			PointInTime timestamp, int inPort) {
+			PointInTime timestamp, int inPort, Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess) {
 
 		// Check if additional output should be created
 		// Allow to create additional output by cutting all current partial
@@ -346,7 +346,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				produceResults(existingResults, groupID);
 			}
 
-			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
 					.entrySet()) {
 
 				AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
@@ -395,7 +395,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// Keep punctuation order by sending to transfer area
 		transferArea.sendPunctuation(punctuation, port);
 		// Maybe new output can be created because of time progress
-		createOutput(null, null, punctuation.getTime(), port);
+		createOutput(null, null, punctuation.getTime(), port, groups);
 	}
 
 	/**

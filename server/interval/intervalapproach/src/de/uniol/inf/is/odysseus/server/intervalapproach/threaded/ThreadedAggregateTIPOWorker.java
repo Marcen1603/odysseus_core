@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.threaded;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -93,6 +94,9 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		Long groupId = pair.getE1();
 		R object = pair.getE2();
 
+		// FIXME!
+		Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = null;
+		
 		if (groupId != null && object != null) {
 			// get sweep area from groupId
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = tipo
@@ -104,7 +108,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
 							.updateSA(sa, object, tipo.isOutputPA());
 					tipo.createOutput(results, groupId, object.getMetadata()
-							.getStart(), threadNumber);
+							.getStart(), threadNumber, groupsToProcess);
 				}
 			} else {
 				throw new RuntimeException("No sweep area for " + pair
