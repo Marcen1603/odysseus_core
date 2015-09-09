@@ -68,6 +68,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	
 	public void initiateTransmission(IQueryTransmissionListener callback,ILoadBalancingCommunicator communicator) {
 		
+		registerListener(callback);
 		this.communicator = communicator;
 		LOG.debug("{} - Initiated Transmission.",queryId);
 		if(lock.requestLocalLock()) {
@@ -78,7 +79,6 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 			}
 			
 			LOG.debug("{} - Local lock acquired. Requesting other locks.",queryId);
-			registerListener(callback);
 			locks = new PeerLockContainer(peerCommunicator,involvedPeers,this);
 			locks.requestLocks();
 		} 
