@@ -44,7 +44,7 @@ public class DefaultGraphView<C> implements IGraphView<C> {
 			connections.add( connection );
 			((DefaultNodeView<C>)connection.getViewedEndNode()).addConnection( connection );
 			((DefaultNodeView<C>)connection.getViewedStartNode()).addConnection( connection );
-			logger.debug( "Inserted ConnectionDisplay " + connection );
+			logger.trace( "Inserted ConnectionDisplay " + connection );
 		}
 	}
 
@@ -54,7 +54,7 @@ public class DefaultGraphView<C> implements IGraphView<C> {
 			connections.remove( connection );
 			((DefaultNodeView<C>)connection.getViewedEndNode()).removeConnection( connection );
 			((DefaultNodeView<C>)connection.getViewedStartNode()).removeConnection( connection );
-			logger.debug( "Removed ConnectionDisplay " + connection  );
+			logger.trace( "Removed ConnectionDisplay " + connection  );
 		}
 	}
 
@@ -66,7 +66,7 @@ public class DefaultGraphView<C> implements IGraphView<C> {
 			for( IConnectionView<C> conn : node.getAllConnections().toArray( new IConnectionView[0] ) ) {
 				removeViewedConnection( conn );
 			}
-			logger.debug( "Removed NodeDisplay " + node  );
+			logger.trace( "Removed NodeDisplay " + node  );
 		}
 	}
 
@@ -74,7 +74,7 @@ public class DefaultGraphView<C> implements IGraphView<C> {
 	public void insertViewedNode( INodeView<C> node ) {
 		if( !nodes.contains( node )) {
 			nodes.add( node );
-			logger.debug( "NodeDisplay inserted " + node );
+			logger.trace( "NodeDisplay inserted " + node );
 		}
 	}
 	
