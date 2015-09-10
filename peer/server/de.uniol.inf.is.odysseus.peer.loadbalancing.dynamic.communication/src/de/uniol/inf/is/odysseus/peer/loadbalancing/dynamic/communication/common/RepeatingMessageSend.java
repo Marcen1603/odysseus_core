@@ -106,7 +106,9 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	 * @param listener
 	 */
 	public void addListener(IMessageDeliveryFailedListener listener) {
-		this.listeners.add(listener);
+		if(!listeners.contains(listener)) {
+			this.listeners.add(listener);
+		}
 	}
 
 	/**
