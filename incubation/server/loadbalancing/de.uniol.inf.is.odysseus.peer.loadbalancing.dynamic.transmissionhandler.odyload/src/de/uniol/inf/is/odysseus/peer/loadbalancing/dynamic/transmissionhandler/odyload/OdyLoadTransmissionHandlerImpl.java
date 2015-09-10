@@ -137,7 +137,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 		transmission.removeListener(this);
 		transmissionHandlerList.remove(transmission);
 
-		LOG.error("Transmission of Query {} to Peer {} successful.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
+		LOG.info("Transmission of Query {} to Peer {} successful.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
 		if(transmissionHandlerList.size()>0) {
 
 			QueryTransmission nextTransmission = transmissionHandlerList.get(0);

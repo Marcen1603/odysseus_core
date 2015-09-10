@@ -72,19 +72,30 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 		this.communicator = communicator;
 		LOG.debug("{} - Initiated Transmission.",queryId);
 		if(lock.requestLocalLock()) {
-
-			this.involvedPeers = communicator.getInvolvedPeers(queryId);
-			if(!involvedPeers.contains(slavePeerId)) {
-				involvedPeers.add(slavePeerId);
-			}
 			
-			LOG.debug("{} - Local lock acquired. Requesting other locks.",queryId);
-			locks = new PeerLockContainer(peerCommunicator,involvedPeers,this);
-			locks.requestLocks();
+			try {
+				
+			
+				LOG.debug("Got local Lock.");
+				this.involvedPeers = communicator.getInvolvedPeers(queryId);
+				LOG.debug("Got list of involved Peers");
+				if(!involvedPeers.contains(slavePeerId)) {
+					involvedPeers.add(slavePeerId);
+				}
+				
+				LOG.debug("{} - Local lock acquired. Requesting other locks.",queryId);
+				
+				locks = new PeerLockContainer(peerCommunicator,involvedPeers,this);
+				locks.requestLocks();
+			}
+			catch(Exception e) {
+				LOG.error("Uncaught Exception in Locking Process: {}",e.getMessage());
+				tellListeners(false);
+			}
 		} 
 		else {
 			LOG.warn("{} - No local lock acquired.",queryId);
-			notifyLockingFailed();
+			tellListenersLocalLockFailed();
 		}
 		
 	}
@@ -104,12 +115,20 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 
 	@Override
 	public void notifyReleasingFinished() {
-		LOG.debug("{} - Releasing other peers done.",queryId);
+		LOG.info("{} - Releasing other peers done.",queryId);
 		tellListeners(lbResult);
 		
 	}
 	
-	private synchronized void tellListeners(boolean success) {
+	private void tellListenersLocalLockFailed() {
+		List<IQueryTransmissionListener> listenerCopy = new ArrayList<IQueryTransmissionListener>(listeners);
+		
+		for(IQueryTransmissionListener listener : listenerCopy) {
+			listener.localLockFailed(this);	
+		}
+	}
+	
+	private void tellListeners(boolean success) {
 		List<IQueryTransmissionListener> listenerCopy = new ArrayList<IQueryTransmissionListener>(listeners);
 		
 		for(IQueryTransmissionListener listener : listenerCopy) {
