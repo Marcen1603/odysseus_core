@@ -110,6 +110,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	public void notifyLockingSuccessfull() {
 		LOG.debug("{} - Locking other peers successful. Starting transmission.",queryId);
 		communicator.registerLoadBalancingListener(this);
+		LOG.info("Starting Communicator {}",communicator.getName());
 		communicator.initiateLoadBalancing(slavePeerId, queryId);
 	}
 
@@ -145,6 +146,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 
 	@Override
 	public void notifyLoadBalancingFinished(boolean successful) {
+		LOG.info("Communicator is finished.");
 		communicator.removeLoadBalancingListener(this);
 		this.lbResult = successful;
 		if(successful) {

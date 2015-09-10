@@ -158,6 +158,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 	@Override
 	public void localLockFailed(QueryTransmission transmission) {
 		try {
+			transmission.removeListener(this);
 			LOG.warn("Acquiring Local Lock failed. Waiting for {} milliseconds.",OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			Thread.sleep(OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			transmission.initiateTransmission(this,communicatorChooser.chooseCommunicator(transmission.getQueryId(), getActiveSession()));
