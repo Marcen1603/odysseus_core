@@ -375,10 +375,10 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	@Override
 	public void removeQuery(IPhysicalQuery affectedQuery) {
-		logger.debug("RemoveQuery " + affectedQuery);
-		this.activeScheduler.removePartialPlan(affectedQuery);
-		List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
-		this.activeScheduler.removeLeafSources(toRemove);
+//		logger.debug("RemoveQuery " + affectedQuery);
+//		this.activeScheduler.removePartialPlan(affectedQuery);
+//		List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
+//		this.activeScheduler.removeLeafSources(toRemove);
 	}
 
 	@Override
@@ -391,7 +391,10 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	@Override
 	public void stoppedQuery(IPhysicalQuery affectedQuery) {
-		// TODO: Is there anything that needs to be done?
+		logger.debug("Stop Query " + affectedQuery);
+		this.activeScheduler.removePartialPlan(affectedQuery);
+		List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
+		this.activeScheduler.removeLeafSources(toRemove);
 	}
 
 	/*
