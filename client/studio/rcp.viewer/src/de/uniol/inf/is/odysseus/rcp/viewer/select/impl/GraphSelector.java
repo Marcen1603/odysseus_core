@@ -118,8 +118,8 @@ public class GraphSelector<C> extends DefaultSelector<INodeView<C>> {
 			if( !disp.isVisible() )
 				continue;
 			
-			if( logger.isDebugEnabled() )
-				logger.debug( "Node selected: " + disp );
+			if( logger.isTraceEnabled() )
+				logger.trace( "Node selected: " + disp );
 			super.select( disp );
 			nodesSelected.add( disp );
 		}
