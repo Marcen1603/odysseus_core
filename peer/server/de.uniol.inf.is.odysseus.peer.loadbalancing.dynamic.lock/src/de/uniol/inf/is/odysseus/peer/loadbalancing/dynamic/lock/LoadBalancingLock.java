@@ -68,6 +68,9 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	public boolean releaseLocalLock() {
 		PeerID localPeerID = networkManager.getLocalPeerID();
 		boolean lockResult =  modifyLock(false, localPeerID);
+		if(lockResult==false) {
+			LOG.debug("Locked for Peer {}",peerDictionary.getRemotePeerName(lockedForPeer));
+		}
 		notifyListeners();
 		return lockResult;
 	}
@@ -90,6 +93,18 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 					LOG.debug("Peer locked.");
 					lockedForPeer = requestingPeer;
 					return true;
+				}
+				if(requestingPeer==networkManager.getLocalPeerID()) {
+					LOG.debug("Could not lock for local Peer");
+				}
+				else {
+					LOG.debug("Could not lock for Peer {}",requestingPeer);
+				}
+				if(lockedForPeer==networkManager.getLocalPeerID()) {
+					LOG.debug("Still locked for local Peer.");
+				}
+				else {
+					LOG.debug("Still locked for {}",peerDictionary.getRemotePeerName(lockedForPeer));
 				}
 				return false;
 			}
@@ -145,6 +160,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	private void sendLockGranted(PeerID peerID) {
 		LockGrantedMessage message = new LockGrantedMessage();
 		try {
+			LOG.debug("Sending Lock Granted to Peer {}",peerDictionary.getRemotePeerName(peerID));
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
 			LOG.error("Could not send LockGranted message: {}",e.getMessage());
@@ -154,6 +170,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 
 	private void sendLockDenied(PeerID peerID) {
 		LockDeniedMessage message = new LockDeniedMessage();
+		LOG.debug("Sending Lock Denied to Peer {}",peerDictionary.getRemotePeerName(peerID));
 		try {
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
@@ -164,6 +181,8 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	private void sendLockReleased(PeerID peerID) {
 		LockReleasedMessage message = new LockReleasedMessage();
 		try {
+
+			LOG.debug("Sending LockReleased to Peer {}",peerDictionary.getRemotePeerName(peerID));
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
 			LOG.error("Could not send LockReleased message: {}",e.getMessage());
@@ -171,6 +190,8 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	}
 
 	private void sendLockNotReleased(PeerID peerID) {
+
+		LOG.debug("Sending LockNotReleased to Peer {}",peerDictionary.getRemotePeerName(peerID));
 		LockNotReleasedMessage message = new LockNotReleasedMessage();
 		try {
 			communicator.send(peerID, message);

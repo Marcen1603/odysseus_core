@@ -134,8 +134,12 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		if (!locks.containsKey(senderPeer))
 			return;
 
+		
+		
 		if (message instanceof LockGrantedMessage) {
+			LOG.debug("Got Lock granted Message from Peer {}",senderPeer);
 			if (locks.get(senderPeer) == LOCK_STATE.lock_requested) {
+				LOG.debug("Marked as Locked.");
 				locks.put(senderPeer, LOCK_STATE.locked);
 				jobs.get(senderPeer).clearListeners();
 				jobs.get(senderPeer).stopRunning();
@@ -180,6 +184,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 					}
 				}
 			}
+			
 		}
 		
 		if(message instanceof LockNotReleasedMessage) {

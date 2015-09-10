@@ -255,9 +255,16 @@ public class MovingStateHelper {
 			for (IStatefulPO statefulPO : statefulOperators) {
 	
 				// Installing a new State Sender
-				String stateSenderPipe = manager.addSender(status.getVolunteeringPeer().toString());
-				LOG.debug("Adding stateSenderPipe {} to status.",stateSenderPipe);
-				status.addSender(stateSenderPipe, statefulPO);
+				try {
+					String stateSenderPipe = manager.addSender(status.getVolunteeringPeer().toString());
+					LOG.debug("Adding stateSenderPipe {} to status.",stateSenderPipe);
+					status.addSender(stateSenderPipe, statefulPO);
+				}
+				catch(Exception e) {
+					LOG.error("Uncaught Exception when trying to create state Senders:{}",e.getMessage());
+					LOG.error("Can probably not send State for Operator {}",((IPhysicalOperator)statefulPO).getName());
+					continue;
+				}
 				
 			}
 		}
