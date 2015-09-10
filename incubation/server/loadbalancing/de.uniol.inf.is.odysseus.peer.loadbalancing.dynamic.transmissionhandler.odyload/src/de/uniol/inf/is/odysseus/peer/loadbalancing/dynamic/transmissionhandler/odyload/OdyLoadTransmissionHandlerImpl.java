@@ -167,7 +167,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 
 
 	public void addTransmission(int queryId, PeerID slavePeerId) {
-		this.transmissionHandlerList.add(new QueryTransmission(queryId, slavePeerId, peerCommunicator, lock));
+		this.transmissionHandlerList.add(new QueryTransmission(queryId, slavePeerId, peerCommunicator,peerDictionary, lock));
 	}
 	
 

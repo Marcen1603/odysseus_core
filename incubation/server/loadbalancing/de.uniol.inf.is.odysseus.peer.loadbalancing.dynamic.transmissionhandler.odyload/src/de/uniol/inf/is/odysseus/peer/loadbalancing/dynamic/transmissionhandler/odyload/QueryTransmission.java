@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
@@ -33,6 +34,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	private PeerLockContainer locks;
 	private ILoadBalancingLock lock;
 	private IPeerCommunicator peerCommunicator;
+	private IPeerDictionary peerDictionary;
 	private boolean transmissionFinished = false;
 	
 	private ILoadBalancingCommunicator communicator;
@@ -49,12 +51,13 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 		return slavePeerId;
 	}
 
-	public QueryTransmission(int queryIdToTransmit, PeerID destinationPeerId, IPeerCommunicator peerCommunicator, ILoadBalancingLock lock) {
+	public QueryTransmission(int queryIdToTransmit, PeerID destinationPeerId, IPeerCommunicator peerCommunicator, IPeerDictionary peerDictionary,ILoadBalancingLock lock) {
 		LOG.debug("New Transmission Handler for Query Id {}",queryIdToTransmit);
 		this.queryId = queryIdToTransmit;
 		this.slavePeerId = destinationPeerId;
 		this.lock = lock;
 		this.peerCommunicator = peerCommunicator;
+		this.peerDictionary = peerDictionary;
 	}
 	
 	public void registerListener(IQueryTransmissionListener listener) {
@@ -87,17 +90,18 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 				
 				LOG.debug("{} - Local lock acquired. Requesting other locks.",queryId);
 				
-				locks = new PeerLockContainer(peerCommunicator,involvedPeers,this);
+				locks = new PeerLockContainer(peerCommunicator,peerDictionary,involvedPeers,this);
 				locks.requestLocks();
 			}
 			catch(Exception e) {
 				LOG.error("Uncaught Exception in Locking Process: {}",e.getMessage());
 				tellListeners(false);
+				lock.releaseLocalLock();
 			}
 		} 
 		else {
 			LOG.warn("{} - No local lock acquired.",queryId);
-			notifyLockingFailed();
+			tellListeners(false);
 		}
 		
 	}
@@ -105,6 +109,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	@Override
 	public void notifyLockingFailed() {
 		LOG.debug("{} - Locking other peers failed.",queryId);
+		lock.releaseLocalLock();
 		tellListeners(false);
 	}
 
@@ -144,6 +149,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	}
 	
 	private void tellListeners(boolean success) {
+		
 		List<IQueryTransmissionListener> listenerCopy = new ArrayList<IQueryTransmissionListener>(listeners);
 		
 		for(IQueryTransmissionListener listener : listenerCopy) {
