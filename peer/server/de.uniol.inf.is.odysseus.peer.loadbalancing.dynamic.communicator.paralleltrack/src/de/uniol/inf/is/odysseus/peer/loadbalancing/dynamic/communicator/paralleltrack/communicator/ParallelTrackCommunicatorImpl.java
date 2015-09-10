@@ -150,20 +150,26 @@ public class ParallelTrackCommunicatorImpl implements IPeerCommunicatorListener,
 	 * @param message Received Message.
 	 */
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-
-		if (message instanceof ParallelTrackResponseMessage) {
-			ParallelTrackResponseMessage response = (ParallelTrackResponseMessage) message;
-			ResponseHandler.handlePeerResonse(response, senderPeer);
+		try {
+			if (message instanceof ParallelTrackResponseMessage) {
+				ParallelTrackResponseMessage response = (ParallelTrackResponseMessage) message;
+				ResponseHandler.handlePeerResonse(response, senderPeer);
+			}
+	
+			if (message instanceof ParallelTrackInstructionMessage) {
+				ParallelTrackInstructionMessage instruction = (ParallelTrackInstructionMessage) message;
+				InstructionHandler.handleInstruction(instruction, senderPeer);
+			}
+	
+			if (message instanceof ParallelTrackAbortMessage) {
+				ParallelTrackAbortMessage abortMessage = (ParallelTrackAbortMessage) message;
+				AbortHandler.handleAbort(abortMessage, senderPeer);
+			}
 		}
-
-		if (message instanceof ParallelTrackInstructionMessage) {
-			ParallelTrackInstructionMessage instruction = (ParallelTrackInstructionMessage) message;
-			InstructionHandler.handleInstruction(instruction, senderPeer);
-		}
-
-		if (message instanceof ParallelTrackAbortMessage) {
-			ParallelTrackAbortMessage abortMessage = (ParallelTrackAbortMessage) message;
-			AbortHandler.handleAbort(abortMessage, senderPeer);
+		catch(Exception e) {
+			LOG.error("Uncaught Exception in Moving State Receiver: {}",e.getMessage());
+			e.printStackTrace();
+			notifyFinished(false);
 		}
 
 	}
@@ -179,14 +185,21 @@ public class ParallelTrackCommunicatorImpl implements IPeerCommunicatorListener,
 	 */
 	@Override
 	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
-		ILogicalQueryPart partToCopy = LoadBalancingHelper.getInstalledQueryPart(queryId);
-		ParallelTrackMasterStatus status = new ParallelTrackMasterStatus();
-		status.setOriginalPart(partToCopy);
-		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().storeLocalProcess(status);
-		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
-		status.setLogicalQuery(queryId);
-		status.setMessageDispatcher(new ParallelTrackMessageDispatcher(peerCommunicator, lbProcessIdentifier));
-		status.getMessageDispatcher().sendInitiate(otherPeer, this);
+		try {
+			ILogicalQueryPart partToCopy = LoadBalancingHelper.getInstalledQueryPart(queryId);
+			ParallelTrackMasterStatus status = new ParallelTrackMasterStatus();
+			status.setOriginalPart(partToCopy);
+			int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().storeLocalProcess(status);
+			LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
+			status.setLogicalQuery(queryId);
+			status.setMessageDispatcher(new ParallelTrackMessageDispatcher(peerCommunicator, lbProcessIdentifier));
+			status.getMessageDispatcher().sendInitiate(otherPeer, this);
+		}
+		catch(Exception e) {
+			LOG.error("Uncaught Exception in Moving State Receiver: {}",e.getMessage());
+			e.printStackTrace();
+			notifyFinished(false);
+		}
 	}
 
 	/**

@@ -144,20 +144,26 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener, I
 	 * @param message Received Message.
 	 */
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
-
-		if (message instanceof MovingStateResponseMessage) {
-			MovingStateResponseMessage response = (MovingStateResponseMessage) message;
-			ResponseHandler.handlePeerResonse(response, senderPeer);
+		try {
+			if (message instanceof MovingStateResponseMessage) {
+				MovingStateResponseMessage response = (MovingStateResponseMessage) message;
+				ResponseHandler.handlePeerResonse(response, senderPeer);
+			}
+	
+			if (message instanceof MovingStateInstructionMessage) {
+				MovingStateInstructionMessage instruction = (MovingStateInstructionMessage) message;
+				InstructionHandler.handleInstruction(instruction, senderPeer);
+			}
+	
+			if (message instanceof MovingStateAbortMessage) {
+				MovingStateAbortMessage abortMessage = (MovingStateAbortMessage) message;
+				AbortHandler.handleAbort(abortMessage, senderPeer);
+			}
 		}
-
-		if (message instanceof MovingStateInstructionMessage) {
-			MovingStateInstructionMessage instruction = (MovingStateInstructionMessage) message;
-			InstructionHandler.handleInstruction(instruction, senderPeer);
-		}
-
-		if (message instanceof MovingStateAbortMessage) {
-			MovingStateAbortMessage abortMessage = (MovingStateAbortMessage) message;
-			AbortHandler.handleAbort(abortMessage, senderPeer);
+		catch(Exception e) {
+			LOG.error("Uncaught Exception in Moving State Communicator: {}",e.getMessage());
+			e.printStackTrace();
+			notifyFinished(false);
 		}
 
 	}
@@ -173,17 +179,24 @@ public class MovingStateCommunicatorImpl implements IPeerCommunicatorListener, I
 	 */
 	@Override
 	public void initiateLoadBalancing(PeerID otherPeer, int queryId) {
-		ILogicalQueryPart partToCopy = LoadBalancingHelper.getInstalledQueryPart(queryId);
-
-		MovingStateMasterStatus status = new MovingStateMasterStatus();
-		status.setOriginalPart(partToCopy);
-
-		int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().storeLocalProcess(status);
-
-		LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
-		status.setLogicalQuery(queryId);
-		status.setMessageDispatcher(new MovingStateMessageDispatcher(peerCommunicator, lbProcessIdentifier));
-		status.getMessageDispatcher().sendInitiate(otherPeer, this);
+		try {
+			ILogicalQueryPart partToCopy = LoadBalancingHelper.getInstalledQueryPart(queryId);
+	
+			MovingStateMasterStatus status = new MovingStateMasterStatus();
+			status.setOriginalPart(partToCopy);
+	
+			int lbProcessIdentifier = LoadBalancingStatusCache.getInstance().storeLocalProcess(status);
+	
+			LOG.debug("New LoadBalancing Status created. LoadBalancing Process Id " + lbProcessIdentifier);
+			status.setLogicalQuery(queryId);
+			status.setMessageDispatcher(new MovingStateMessageDispatcher(peerCommunicator, lbProcessIdentifier));
+			status.getMessageDispatcher().sendInitiate(otherPeer, this);
+		}
+		catch(Exception e) {
+			LOG.error("Uncaught Exception in Moving State Comunicator: {}",e.getMessage());
+			e.printStackTrace();
+			notifyFinished(false);
+		}
 	}
 
 	/**

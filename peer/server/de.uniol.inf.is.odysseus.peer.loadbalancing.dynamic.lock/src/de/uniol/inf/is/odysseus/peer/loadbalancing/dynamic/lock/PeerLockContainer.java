@@ -134,74 +134,76 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		if (!locks.containsKey(senderPeer))
 			return;
 
+		synchronized(locks) {
 		
-		
-		if (message instanceof LockGrantedMessage) {
-			LOG.debug("Got Lock granted Message from Peer {}",senderPeer);
-			if (locks.get(senderPeer) == LOCK_STATE.lock_requested) {
-				LOG.debug("Marked as Locked.");
-				locks.put(senderPeer, LOCK_STATE.locked);
-				jobs.get(senderPeer).clearListeners();
-				jobs.get(senderPeer).stopRunning();
+			if (message instanceof LockGrantedMessage) {
+				LOG.debug("Got Lock granted Message from Peer {}",senderPeer);
+				if (locks.get(senderPeer) == LOCK_STATE.lock_requested) {
+					LOG.debug("Marked as Locked.");
+					locks.put(senderPeer, LOCK_STATE.locked);
+					jobs.get(senderPeer).clearListeners();
+					jobs.get(senderPeer).stopRunning();
+					
+					jobs.remove(senderPeer);
+	
+					// All peers locked?
+					if (getNumberOfLockedPeers() == locks.size()) {
+						LOG.debug("All affected Peers locked.");
+						for (IPeerLockContainerListener listener : listeners) {
+							LOG.debug("Notifying listener");
+							listener.notifyLockingSuccessfull();
+						}
+					}
+				}
+			}
+	
+			if (message instanceof LockDeniedMessage) {
+				if(locks.get(senderPeer) == LOCK_STATE.lock_requested) {
+					jobs.get(senderPeer).clearListeners();
+					jobs.get(senderPeer).stopRunning();
+					jobs.remove(senderPeer);
+					if (!rollback) {
+						initiateRollback();
+					}
+				}
+			}
+	
+			if (message instanceof LockReleasedMessage) {
+				if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
+					locks.put(senderPeer, LOCK_STATE.unlocked);
+					jobs.get(senderPeer).clearListeners();
+					jobs.get(senderPeer).stopRunning();
+					jobs.remove(senderPeer);
+	
+					// All Peers unlocked?
+					if (getNumberOfUnlockedPeers() == locks.size()) {
+						LOG.debug("No more peers to unlock.");
+	
+						unregisterFromPeerCommunicator();
+						for (IPeerLockContainerListener listener : listeners) {
+							listener.notifyReleasingFinished();
+						}
+					}
+				}
 				
-				jobs.remove(senderPeer);
-
-				// All peers locked?
-				if (getNumberOfLockedPeers() == locks.size()) {
-					LOG.debug("All affected Peers locked.");
-					for (IPeerLockContainerListener listener : listeners) {
-						listener.notifyLockingSuccessfull();
-					}
-				}
-			}
-		}
-
-		if (message instanceof LockDeniedMessage) {
-			if(locks.get(senderPeer) == LOCK_STATE.lock_requested) {
-				jobs.get(senderPeer).clearListeners();
-				jobs.get(senderPeer).stopRunning();
-				jobs.remove(senderPeer);
-				if (!rollback) {
-					initiateRollback();
-				}
-			}
-		}
-
-		if (message instanceof LockReleasedMessage) {
-			if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
-				locks.put(senderPeer, LOCK_STATE.unlocked);
-				jobs.get(senderPeer).clearListeners();
-				jobs.get(senderPeer).stopRunning();
-				jobs.remove(senderPeer);
-
-				// All Peers unlocked?
-				if (getNumberOfUnlockedPeers() == locks.size()) {
-					LOG.debug("No more peers to unlock.");
-
-					unregisterFromPeerCommunicator();
-					for (IPeerLockContainerListener listener : listeners) {
-						listener.notifyReleasingFinished();
-					}
-				}
 			}
 			
-		}
-		
-		if(message instanceof LockNotReleasedMessage) {
-			LOG.error("Could not release Lock on Peer {}",senderPeer);
-			if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
-				locks.put(senderPeer, LOCK_STATE.timed_out);
-				jobs.get(senderPeer).clearListeners();
-				jobs.get(senderPeer).stopRunning();
-				jobs.remove(senderPeer);
-
-				// All Peers unlocked?
-				if (getNumberOfUnlockedPeers() == locks.size()) {
-					LOG.debug("No more peers to unlock.");
-
-					unregisterFromPeerCommunicator();
-					for (IPeerLockContainerListener listener : listeners) {
-						listener.notifyReleasingFinished();
+			if(message instanceof LockNotReleasedMessage) {
+				LOG.error("Could not release Lock on Peer {}",senderPeer);
+				if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
+					locks.put(senderPeer, LOCK_STATE.timed_out);
+					jobs.get(senderPeer).clearListeners();
+					jobs.get(senderPeer).stopRunning();
+					jobs.remove(senderPeer);
+	
+					// All Peers unlocked?
+					if (getNumberOfUnlockedPeers() == locks.size()) {
+						LOG.debug("No more peers to unlock.");
+	
+						unregisterFromPeerCommunicator();
+						for (IPeerLockContainerListener listener : listeners) {
+							listener.notifyReleasingFinished();
+						}
 					}
 				}
 			}
