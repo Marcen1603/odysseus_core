@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.PeerLockContaine
 
 public class QueryTransmission implements IPeerLockContainerListener, ILoadBalancingListener {
 	
-	private static final int COMMUNICATOR_TIMEOUT = 120*1000;
+	private static final int COMMUNICATOR_TIMEOUT = 5*60*1000;
 
 	/**
 	 * The logger for this class.
@@ -61,7 +61,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	}
 	
 	public void registerListener(IQueryTransmissionListener listener) {
-		if(this.listeners.contains(listener))
+		if(listeners.contains(listener))
 			return;
 		listeners.add(listener);
 	}

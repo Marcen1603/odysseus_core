@@ -83,7 +83,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 			LOG.warn("Called removeListener with uninitialized List!");
 			listeners = Lists.newArrayList();
 		}
-		if(listeners.contains(listener))
+		if(!listeners.contains(listener))
 			return;
 		listeners.add(listener);
 	}
@@ -98,7 +98,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 		listeners.remove(listener);
 	}
 	
-	public synchronized void notifyListeners() {
+	public void notifyListeners() {
 		List<IQueryTransmissionHandlerListener> listenersCopy = new ArrayList<IQueryTransmissionHandlerListener>(listeners);
 		for(IQueryTransmissionHandlerListener listener : listenersCopy) {
 			listener.transmissionsFinished();
