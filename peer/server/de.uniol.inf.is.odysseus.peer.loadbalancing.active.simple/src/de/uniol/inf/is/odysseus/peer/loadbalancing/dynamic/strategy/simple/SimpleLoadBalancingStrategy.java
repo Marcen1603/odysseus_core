@@ -102,6 +102,19 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 	 */
 	private volatile long startTime;
 
+	private static IPeerDictionary peerDictionary;
+	
+	
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+	
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if(peerDictionary==serv) {
+			peerDictionary = null;
+		}
+	}
+	
 	/**
 	 * The {@link Thread} to look up the current resource usage. <br />
 	 * It will call
@@ -349,7 +362,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 						this.queryID = queryAndID.getE2();
 
 						// Acquire Locks for other peers
-						PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator, otherPeers, this);
+						PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator, peerDictionary,otherPeers, this);
 						peerLocks.requestLocks();
 						this.lockContainer = peerLocks;
 					} catch (Exception e) {
