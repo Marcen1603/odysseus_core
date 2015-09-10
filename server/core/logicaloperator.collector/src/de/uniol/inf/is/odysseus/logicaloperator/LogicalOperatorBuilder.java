@@ -233,7 +233,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 					}
 				}
 			}
-			logger.debug("Create GenericOperatorBuilder Builder for " + curOp + " with parameters " + parameters);
+			logger.debug("Create GenericOperatorBuilder Builder for " + curOp );//+ " with parameters " + parameters);
 			String doc = logicalOperatorAnnotation.doc();
 			if (doc == null || doc.isEmpty()) {
 				logger.warn("Documentation for {} not available!", logicalOperatorAnnotation.name());
