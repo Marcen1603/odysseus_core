@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.recommendation.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractEnrichAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
  * @author Christopher Schwarz
