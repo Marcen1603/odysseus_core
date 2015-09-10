@@ -60,6 +60,14 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		}
 	}
 
+	private void clearJobs() {
+		for(RepeatingMessageSend job : jobs.values()) {
+			job.stopRunning();
+			job.clearListeners();
+		}
+		jobs.clear();
+	}
+	
 	public void requestLocks() {
 
 		registerWithPeerCommunicator();
@@ -206,6 +214,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		if (getNumberOfLockedPeers() == locks.size()) {
 			allPeersLocked = true;
 			LOG.debug("All affected Peers locked.");
+			clearJobs();
 			for (IPeerLockContainerListener listener : listeners) {
 				listener.notifyLockingSuccessfull();
 			}
@@ -221,7 +230,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		if (getNumberOfUnlockedPeers() == locks.size()) {
 			allPeersReleased = true;
 			LOG.debug("No more peers to unlock.");
-
+			clearJobs();
 			unregisterFromPeerCommunicator();
 			for (IPeerLockContainerListener listener : listeners) {
 				if (rollback) {
@@ -260,11 +269,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		LOG.error("Initiating Peer Lock Rollback.");
 		
 		rollback = true;
-		for (RepeatingMessageSend job : jobs.values()) {
-			job.stopRunning();
-			job.clearListeners();
-			jobs.remove(job);
-		}
+		clearJobs();
 		releaseLocks();
 
 	}
