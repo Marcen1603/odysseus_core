@@ -335,8 +335,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 
 		PointInTime border = timestamp;
-		IGroupProcessor<R, W> g = getGroupProcessor();
-		synchronized (g) {
+
+		synchronized (groupsToProcess) {
 			// Keep group order in output --> so first create output of group 1,
 			// then group etc.
 			// for group groupID use the existings results derived from updating

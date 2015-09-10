@@ -102,19 +102,19 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 			synchronized (groupsToProcess) {
 				sa = groupsToProcess.get(groupId);
-			}
 
-			// if sweep area is found, process aggregation
-			if (sa != null) {
-				List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
-						.updateSA(sa, object, tipo.isOutputPA());
-
-				tipo.createOutput(results, groupId, object.getMetadata()
-						.getStart(), threadNumber, groupsToProcess);
-
-			} else {
-				throw new RuntimeException("No sweep area for " + pair
-						+ " found!");
+				// if sweep area is found, process aggregation
+				if (sa != null) {
+					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
+							.updateSA(sa, object, tipo.isOutputPA());
+	
+					tipo.createOutput(results, groupId, object.getMetadata()
+							.getStart(), threadNumber, groupsToProcess);
+	
+				} else {
+					throw new RuntimeException("No sweep area for " + pair
+							+ " found!");
+				}
 			}
 		}
 	}
