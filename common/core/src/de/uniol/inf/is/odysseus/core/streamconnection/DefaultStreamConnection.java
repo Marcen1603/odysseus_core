@@ -362,7 +362,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	}
 
 	protected final void notifyListeners(In element, int port) {
-		LOG.debug("Receiving element from port {}: {}", port, element);
+		LOG.trace("Receiving element from port {}: {}", port, element);
 		IPhysicalOperator senderOperator = portOperatorMap.get(port);
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
