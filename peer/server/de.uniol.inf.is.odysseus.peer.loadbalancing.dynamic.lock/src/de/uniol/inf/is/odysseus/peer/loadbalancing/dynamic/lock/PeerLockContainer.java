@@ -133,7 +133,6 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		// Ignore if Peer is not known.
 		if (!locks.containsKey(senderPeer))
 			return;
-		
 			if (message instanceof LockGrantedMessage) {
 				LOG.debug("Got Lock granted Message from Peer {}",peerDictionary.getRemotePeerName(senderPeer));
 				if (locks.get(senderPeer) == LOCK_STATE.lock_requested) {
@@ -163,9 +162,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 					}
 				}
 			}
-	
+			
 			if (message instanceof LockReleasedMessage) {
-				if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
+				if ((locks.get(senderPeer) == LOCK_STATE.release_requested) || (locks.get(senderPeer) == LOCK_STATE.locked)) {
 					locks.put(senderPeer, LOCK_STATE.unlocked);
 
 					LOG.debug("Lock on peer {} released (Msg. received).",peerDictionary.getRemotePeerName(senderPeer));
@@ -176,6 +175,10 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	
 					checkIfAllPeersUnlocked();
 				}
+				else {
+					LOG.debug("Got LockReleaseMessage from Peer {} but LOCK_STATE is {}",peerDictionary.getRemotePeerName(senderPeer),locks.get(senderPeer));
+				}
+				
 				
 			}
 			
