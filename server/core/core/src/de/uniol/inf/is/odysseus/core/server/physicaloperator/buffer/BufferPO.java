@@ -15,7 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
@@ -36,8 +39,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePip
  * 
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class BufferPO<T extends IStreamObject<?>> extends
-		AbstractIterablePipe<T, T> implements IBuffer<T> {
+public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T, T>
+		implements IBuffer<T>, IPhysicalOperatorKeyValueProvider {
 
 	volatile protected static Logger _logger = null;
 
@@ -50,6 +53,10 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	protected LinkedList<IStreamable> buffer = new LinkedList<>();
 	private String buffername;
+	private int puncWritten;
+	private int elementWritten;
+	private int elementsRead;
+	private int puncRead;
 
 	public BufferPO() {
 		super();
@@ -77,6 +84,10 @@ public class BufferPO<T extends IStreamObject<?>> extends
 	final protected void process_open() throws OpenFailedException {
 		// super.process_open();
 		this.buffer.clear();
+		puncWritten = 0;
+		puncRead = 0;
+		elementWritten = 0;
+		elementsRead = 0;
 	}
 
 	@Override
@@ -97,8 +108,10 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 			if (element.isPunctuation()) {
 				sendPunctuation((IPunctuation) element);
+				puncWritten++;
 			} else {
 				transfer((T) element);
+				elementWritten++;
 			}
 
 			// the top element of a buffer must always be
@@ -132,14 +145,15 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_next(T object, int port) {
+		elementsRead++;
 		synchronized (buffer) {
 			this.buffer.add(object);
 		}
 	}
 
-
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+		puncRead++;
 		boolean sendDirectly = false;
 		synchronized (buffer) {
 			// Punctuations on top of buffer should be send immediately
@@ -172,7 +186,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		if (!(ipo instanceof BufferPO)) {
 			return false;
 		}
-		if (!ipo.getName().equals(this.getName())){
+		if (!ipo.getName().equals(this.getName())) {
 			return false;
 		}
 		BufferPO bp = (BufferPO) ipo;
@@ -205,7 +219,6 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		return meta;
 	}
 
-	
 	public void dumpBuffer() {
 		getLogger().debug("Dumping Buffer {}", getName());
 		synchronized (this.buffer) {
@@ -214,4 +227,16 @@ public class BufferPO<T extends IStreamObject<?>> extends
 			}
 		}
 	}
+
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.put("Elements read", elementsRead+ "");
+		map.put("Elements send", elementWritten+ "");
+		map.put("Punctuations read", puncRead+ "");
+		map.put("Punctuations send", puncWritten + "");
+		map.put("CurrentSize", size() + "");
+		return map;
+	}
+
 }
