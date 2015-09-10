@@ -123,8 +123,6 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 				for(Integer queryID : failedTransmissionQueryIDs) {
 					LOG.warn("Query ID {} failed to transmit.",queryID);
 				}
-
-				lock.releaseLocalLock();
 				notifyListeners();
 			}
 	}
@@ -149,7 +147,6 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 				for(Integer queryID : failedTransmissionQueryIDs) {
 					LOG.warn("Query ID {} failed to transmit.",queryID);
 				}
-				lock.releaseLocalLock();
 				notifyListeners();
 			}
 	}

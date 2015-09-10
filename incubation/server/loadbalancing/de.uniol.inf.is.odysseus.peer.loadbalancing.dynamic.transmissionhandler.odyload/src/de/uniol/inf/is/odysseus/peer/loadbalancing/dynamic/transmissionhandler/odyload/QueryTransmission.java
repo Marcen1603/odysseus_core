@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.PeerLockContaine
 
 public class QueryTransmission implements IPeerLockContainerListener, ILoadBalancingListener {
 	
+	private static final int COMMUNICATOR_TIMEOUT = 120*1000;
 
 	/**
 	 * The logger for this class.
@@ -32,6 +33,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	private PeerLockContainer locks;
 	private ILoadBalancingLock lock;
 	private IPeerCommunicator peerCommunicator;
+	private boolean transmissionFinished = false;
 	
 	private ILoadBalancingCommunicator communicator;
 	
@@ -95,7 +97,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 		} 
 		else {
 			LOG.warn("{} - No local lock acquired.",queryId);
-			tellListenersLocalLockFailed();
+			notifyLockingFailed();
 		}
 		
 	}
@@ -112,15 +114,27 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 		communicator.registerLoadBalancingListener(this);
 		LOG.info("Starting Communicator {}",communicator.getName());
 		communicator.initiateLoadBalancing(slavePeerId, queryId);
+		try {
+			Thread.sleep(COMMUNICATOR_TIMEOUT);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(!transmissionFinished) {
+			LOG.error("Communicator did not finish within {} millisecons.",COMMUNICATOR_TIMEOUT);
+			LOG.error("To avoid Deadlock this Transmission is regarded as failed.");
+			notifyLoadBalancingFinished(false);
+		}
 	}
 
 	@Override
 	public void notifyReleasingFinished() {
-		LOG.info("{} - Releasing other peers done.",queryId);
+		LOG.info("{} - Releasing other peers done. Releasing Local Peer.",queryId);
+		lock.releaseLocalLock();
 		tellListeners(lbResult);
-		
 	}
 	
+	@SuppressWarnings("unused")
 	private void tellListenersLocalLockFailed() {
 		List<IQueryTransmissionListener> listenerCopy = new ArrayList<IQueryTransmissionListener>(listeners);
 		
@@ -146,6 +160,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 
 	@Override
 	public void notifyLoadBalancingFinished(boolean successful) {
+		this.transmissionFinished = true;
 		LOG.info("Communicator is finished.");
 		communicator.removeLoadBalancingListener(this);
 		this.lbResult = successful;
