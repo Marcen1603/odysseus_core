@@ -73,6 +73,14 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	}
 
 	private synchronized boolean modifyLock(boolean newLock, PeerID requestingPeer) {
+		if(LOG.isDebugEnabled()) {
+			if(newLock) {
+				LOG.debug("Peer {} is requesting Lock",peerDictionary.getRemotePeerName(requestingPeer));
+			}
+			else {
+				LOG.debug("Peer {} is requesting Release of Lock",peerDictionary.getRemotePeerName(requestingPeer));
+			}
+		}
 		// Trying to lock
 		if (newLock) {
 			// Currently locked.
@@ -101,6 +109,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 				lockedForPeer = null;
 				return true;
 			}
+			
 			if(LOG.isDebugEnabled()) {
 				if(requestingPeer==networkManager.getLocalPeerID()) {
 					LOG.debug("Could not unlock for local Peer");
@@ -123,8 +132,13 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	}
 	
 	private void notifyListeners() {
-		for(ILoadBalancingLockListener listener : listeners) {
-			listener.notifyLockStatusChanged(isLocked());
+		try {
+			for(ILoadBalancingLockListener listener : listeners) {
+				listener.notifyLockStatusChanged(isLocked());
+			}
+		}
+		catch(Exception e) {
+			LOG.error("Uncaught Exception when trying to notify listeners: {}",e.getMessage());
 		}
 	}
 

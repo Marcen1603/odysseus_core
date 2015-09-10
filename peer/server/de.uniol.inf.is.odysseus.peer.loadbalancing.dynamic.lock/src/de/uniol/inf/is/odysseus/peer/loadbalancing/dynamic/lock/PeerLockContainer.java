@@ -60,6 +60,8 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				RepeatingMessageSend job = createLockRequest(peer);
 				jobs.put(peer, job);
 				job.start();
+
+				LOG.debug("Sending Lock Request to Peer with ID {}",peer);
 			}
 		}
 
@@ -72,6 +74,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				RepeatingMessageSend job = createReleaseRequest(peer);
 				jobs.put(peer, job);
 				job.start();
+				
+
+				LOG.debug("Sending Release Lock Request to Peer with ID {}, current Lock status is {}",peer,locks.get(peer).toString());
 			}
 		}
 	}
@@ -132,7 +137,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		if (message instanceof LockGrantedMessage) {
 			if (locks.get(senderPeer) == LOCK_STATE.lock_requested) {
 				locks.put(senderPeer, LOCK_STATE.locked);
+				jobs.get(senderPeer).clearListeners();
 				jobs.get(senderPeer).stopRunning();
+				
 				jobs.remove(senderPeer);
 
 				// All peers locked?
@@ -146,23 +153,29 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		}
 
 		if (message instanceof LockDeniedMessage) {
-			if (!rollback) {
-				initiateRollback();
+			if(locks.get(senderPeer) == LOCK_STATE.lock_requested) {
+				jobs.get(senderPeer).clearListeners();
+				jobs.get(senderPeer).stopRunning();
+				jobs.remove(senderPeer);
+				if (!rollback) {
+					initiateRollback();
+				}
 			}
 		}
 
 		if (message instanceof LockReleasedMessage) {
 			if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
 				locks.put(senderPeer, LOCK_STATE.unlocked);
+				jobs.get(senderPeer).clearListeners();
 				jobs.get(senderPeer).stopRunning();
 				jobs.remove(senderPeer);
 
 				// All Peers unlocked?
 				if (getNumberOfUnlockedPeers() == locks.size()) {
 					LOG.debug("No more peers to unlock.");
-					for (IPeerLockContainerListener listener : listeners) {
 
-						unregisterFromPeerCommunicator();
+					unregisterFromPeerCommunicator();
+					for (IPeerLockContainerListener listener : listeners) {
 						listener.notifyReleasingFinished();
 					}
 				}
@@ -173,15 +186,16 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			LOG.error("Could not release Lock on Peer {}",senderPeer);
 			if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
 				locks.put(senderPeer, LOCK_STATE.timed_out);
+				jobs.get(senderPeer).clearListeners();
 				jobs.get(senderPeer).stopRunning();
 				jobs.remove(senderPeer);
 
 				// All Peers unlocked?
 				if (getNumberOfUnlockedPeers() == locks.size()) {
 					LOG.debug("No more peers to unlock.");
-					for (IPeerLockContainerListener listener : listeners) {
 
-						unregisterFromPeerCommunicator();
+					unregisterFromPeerCommunicator();
+					for (IPeerLockContainerListener listener : listeners) {
 						listener.notifyReleasingFinished();
 					}
 				}
@@ -217,6 +231,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		
 		rollback = true;
 		for (RepeatingMessageSend job : jobs.values()) {
+			job.clearListeners();
 			job.stopRunning();
 		}
 		jobs.clear();
