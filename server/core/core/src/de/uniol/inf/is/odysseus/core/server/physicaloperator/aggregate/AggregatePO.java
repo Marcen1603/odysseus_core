@@ -55,7 +55,6 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 	private final List<SDFAttribute> groupingAttributes;
 	private final boolean fastGrouping;
 
-	// private AggregateAO algebraOp;
 
 	public IGroupProcessor<R, W> getGroupProcessor() {
 		return groupProcessor;
@@ -63,17 +62,6 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 
 	public void setGroupProcessor(IGroupProcessor<R, W> groupProcessor) {
 		this.groupProcessor = groupProcessor;
-	}
-
-	public AggregatePO(SDFSchema inputSchema, SDFSchema outputSchema,
-			List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			boolean fastGrouping) {
-		this.inputSchema = inputSchema;
-		this.internalOutputSchema = outputSchema;
-		this.aggregations = aggregations;
-		this.groupingAttributes = groupingAttributes;
-		this.fastGrouping = fastGrouping;
 	}
 
 	public SDFSchema getInputSchema() {
