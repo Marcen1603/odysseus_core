@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
@@ -58,7 +59,10 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 		try {
 			for (Integer queryId : ids) {
 				IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryId);
-				executor.stopQuery(queryId, session);
+				if (physicalQuery.getState() == QueryState.RUNNING){
+					executor.stopQuery(queryId, session);
+					LOG.warn("Query manually stopped! Test component queries are not allowed to start!");
+				}
 				List<IPhysicalOperator> roots = new ArrayList<>();
 				for (IPhysicalOperator operator : physicalQuery.getRoots()) {
 					// TODO: this assumes same output for all sinks -> maybe
