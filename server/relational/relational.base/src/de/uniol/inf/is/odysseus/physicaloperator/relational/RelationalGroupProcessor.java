@@ -280,7 +280,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 	}
 
 	@Override
-	public RelationalGroupProcessor<T> clone() {
+	public IGroupProcessor<Tuple<T>, Tuple<T>> clone() {
 		return new RelationalGroupProcessor<T>(this);
 	}
 

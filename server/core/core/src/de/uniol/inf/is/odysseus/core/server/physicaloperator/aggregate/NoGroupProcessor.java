@@ -44,7 +44,7 @@ public class NoGroupProcessor<R,W extends IClone> implements IGroupProcessor<R, 
 	}
 	
 	@Override
-	public NoGroupProcessor<R,W> clone() {
+	public IGroupProcessor<R,W> clone() {
 		return this;
 	}
 

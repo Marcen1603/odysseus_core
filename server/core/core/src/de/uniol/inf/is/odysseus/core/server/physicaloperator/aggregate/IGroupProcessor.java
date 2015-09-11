@@ -84,7 +84,7 @@ public interface IGroupProcessor<R, W extends IClone> extends IClone{
 	 * 
 	 */
 	@Override
-	IClone clone();
+	IGroupProcessor<R, W> clone();
 	
 
 }

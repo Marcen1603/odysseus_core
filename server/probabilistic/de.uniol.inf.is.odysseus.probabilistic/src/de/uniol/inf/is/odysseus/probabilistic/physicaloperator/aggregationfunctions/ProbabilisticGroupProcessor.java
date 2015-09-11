@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDoubl
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends RelationalGroupProcessor<T> {
+public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends RelationalGroupProcessor<T>  {
     public ProbabilisticGroupProcessor(final SDFSchema inputSchema, final SDFSchema outputSchema, final List<SDFAttribute> groupingAttributes,
             final Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations, final boolean fast) {
         super(inputSchema, outputSchema, groupingAttributes, aggregations, fast);
@@ -83,4 +83,5 @@ public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends Relat
         this.addGroupingAttributes(groupID, returnTuple);
         return returnTuple;
     }
+    
 }
