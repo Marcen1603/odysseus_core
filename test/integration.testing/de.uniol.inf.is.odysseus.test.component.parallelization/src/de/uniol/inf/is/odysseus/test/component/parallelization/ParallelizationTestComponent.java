@@ -53,7 +53,13 @@ public class ParallelizationTestComponent
 				"test/interoperator/aggregate/AggregateGroupedStrategy.qry",
 				"test/interoperator/aggregate/expected_output.csv", true));
 		tests.add(new ParallelizationTest(
-				"test/interoperator/aggregate/AggregateNonGroupedStrategyRoundRobin.qry",
+				"test/interoperator/aggregate/AggregateGroupedStrategyThreaded.qry",
+				"test/interoperator/aggregate/expected_output.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/aggregate/AggregateNonGroupedStrategyRR.qry",
+				"test/interoperator/aggregate/expected_output.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/aggregate/AggregateNonGroupedStrategyRRThreaded.qry",
 				"test/interoperator/aggregate/expected_output.csv", true));
 		tests.add(new ParallelizationTest(
 				"test/interoperator/aggregate/AggregateNonGroupedStrategyShuffle.qry",
