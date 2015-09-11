@@ -1069,13 +1069,13 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op) {
+			ILogicalOperator op, boolean isView, ISession session) {
 		fireDataDictionaryEvent(sender);
 	}
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op) {
+			ILogicalOperator op, boolean isView, ISession session) {
 		fireDataDictionaryEvent(sender);
 	}
 

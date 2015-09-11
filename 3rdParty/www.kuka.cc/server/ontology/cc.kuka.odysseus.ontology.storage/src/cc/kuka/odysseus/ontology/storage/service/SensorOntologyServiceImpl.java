@@ -299,7 +299,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
-    public void addedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
+    public void addedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op, boolean isView, ISession session) {
         SensorOntologyServiceImpl.LOG.debug("Add view " + name + " to ontology");
         this.createSensingDevice(name, op.getOutputSchema());
 
@@ -309,7 +309,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
-    public void removedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
+    public void removedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op, boolean isView, ISession session) {
         final SDFSchema schema = op.getOutputSchema();
         SensorOntologyServiceImpl.LOG.debug("Remove view: " + name + " " + schema);
 

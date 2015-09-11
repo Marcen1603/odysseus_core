@@ -410,7 +410,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			// viewname.getShortString(caller.getUser().getName()));
 			// topOperator.setOutputSchema(newSchema);
 			// }
-			fireViewAddEvent(viewname, topOperator);
+			fireViewAddEvent(viewname, topOperator, true, caller);
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName()
 					+ " has no permission to add a view.");
@@ -465,7 +465,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 				GenericGraphWalker walker = new GenericGraphWalker();
 				walker.prefixWalk(op, visitor);
 				removeEntityForPlan(op, viewname, EntityType.VIEW, caller);
-				fireViewRemoveEvent(viewname, op);
+				fireViewRemoveEvent(viewname, op, true, caller);
 				fireDataDictionaryChangedEvent();
 			}
 		}
@@ -506,7 +506,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 					throw new RuntimeException(e);
 				}
 			}
-			fireViewAddEvent(streamname, plan);
+			fireViewAddEvent(streamname, plan, false ,caller);
 			fireDataDictionaryChangedEvent();
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName()
@@ -598,7 +598,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			GenericGraphWalker walker = new GenericGraphWalker();
 			walker.prefixWalk(op, visitor);
 			removeEntityForPlan(op, stream, EntityType.STREAM, caller);
-			fireViewRemoveEvent(stream, op);
+			fireViewRemoveEvent(stream, op, false, caller);
 		}
 		return op;
 	}
@@ -1002,11 +1002,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		}
 	}
 
-	protected final void fireViewAddEvent(Resource name, ILogicalOperator op) {
+	protected final void fireViewAddEvent(Resource name, ILogicalOperator op, boolean isView, ISession caller) {
 		synchronized (listeners) {
 			for (IDataDictionaryListener listener : listeners) {
 				try {
-					listener.addedViewDefinition(this, name.toString(), op);
+					listener.addedViewDefinition(this, name.toString(), op, isView, caller);
 				} catch (Throwable ex) {
 					LOG.error("Error during executing listener", ex);
 				}
@@ -1014,11 +1014,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		}
 	}
 
-	protected final void fireViewRemoveEvent(Resource name, ILogicalOperator op) {
+	protected final void fireViewRemoveEvent(Resource name, ILogicalOperator op, boolean isView, ISession caller) {
 		synchronized (listeners) {
 			for (IDataDictionaryListener listener : listeners) {
 				try {
-					listener.removedViewDefinition(this, name.toString(), op);
+					listener.removedViewDefinition(this, name.toString(), op, isView, caller);
 				} catch (Throwable ex) {
 					LOG.error("Error during executing listener", ex);
 				}

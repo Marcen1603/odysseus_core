@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
@@ -694,13 +695,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	// called by DataDictionary
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		// do nothing
 	}
 
 	// called by DataDictionary
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		final String realSourceName = removeUserFromName(name);
 
 		Optional<SourceAdvertisement> optImportedSrcAdvertisement = getImportedSource(realSourceName);

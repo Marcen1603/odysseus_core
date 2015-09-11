@@ -16,12 +16,13 @@
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 // TODO should be renamed in IDataDictionarySourceListener
 public interface IDataDictionaryListener {
 
-	public void addedViewDefinition( IDataDictionary sender, String name, ILogicalOperator op );
-	public void removedViewDefinition( IDataDictionary sender, String name, ILogicalOperator op );
+	public void addedViewDefinition( IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session );
+	public void removedViewDefinition( IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session );
 	
 	public void dataDictionaryChanged(IDataDictionary sender);
 	

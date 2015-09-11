@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.AbstractIQLTypingEntryPoint;
@@ -102,13 +103,13 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op) {
+	public void addedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op, boolean isView, ISession session) {
 		builder.createSource(name, op);
 		refresProjects();
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op, boolean isView, ISession session) {
 		builder.removeSource(name, op);
 		refresProjects();
 	}

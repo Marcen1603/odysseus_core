@@ -150,12 +150,12 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		// Is done by executorCommandEvent
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		backupExecutorCommand(new DropStreamCommand(name, true, getSessionForDD(sender).get()),
 				System.currentTimeMillis());
 	}

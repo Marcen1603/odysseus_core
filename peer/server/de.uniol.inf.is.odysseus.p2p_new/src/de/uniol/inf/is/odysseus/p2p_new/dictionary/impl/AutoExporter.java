@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 
@@ -23,7 +24,7 @@ public class AutoExporter implements IDataDictionaryListener {
 	}
 	
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		if( !dictionary.isExported(name) && !dictionary.isImported(name)) {
 			try {
 				dictionary.exportSource(name);
@@ -34,7 +35,7 @@ public class AutoExporter implements IDataDictionaryListener {
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		if( dictionary.isExported(name)) {
 			dictionary.removeSourceExport(name);
 		}
