@@ -333,11 +333,12 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	@Override
 	public void addQuery(IPhysicalQuery affectedQuery) {
-		logger.debug("AddQuery " + affectedQuery);
-		increaseSourceUsage(affectedQuery);
-		this.activeScheduler.addLeafSources(affectedQuery
-				.getIteratableLeafSources());
-		this.activeScheduler.addPartialPlan(affectedQuery);
+		// "Moved" to startQuery
+		//		logger.debug("AddQuery " + affectedQuery);
+//		increaseSourceUsage(affectedQuery);
+//		this.activeScheduler.addLeafSources(affectedQuery
+//				.getIteratableLeafSources());
+//		this.activeScheduler.addPartialPlan(affectedQuery);
 	}
 
 	private void increaseSourceUsage(IPhysicalQuery affectedQuery) {
@@ -375,7 +376,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	@Override
 	public void removeQuery(IPhysicalQuery affectedQuery) {
-//		logger.debug("RemoveQuery " + affectedQuery);
+		// "Move" to stopp query
+		//		logger.debug("RemoveQuery " + affectedQuery);
 //		this.activeScheduler.removePartialPlan(affectedQuery);
 //		List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
 //		this.activeScheduler.removeLeafSources(toRemove);
@@ -384,6 +386,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	@Override
 	public void startedQuery(IPhysicalQuery affectedQuery) {
 		logger.debug("StartedQuery " + affectedQuery);
+		increaseSourceUsage(affectedQuery);
 		this.activeScheduler.addLeafSources(affectedQuery
 				.getIteratableLeafSources());
 		this.activeScheduler.addPartialPlan(affectedQuery);
@@ -392,8 +395,11 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	@Override
 	public void stoppedQuery(IPhysicalQuery affectedQuery) {
 		logger.debug("Stop Query " + affectedQuery);
+		logger.debug("Remove partial plans");
 		this.activeScheduler.removePartialPlan(affectedQuery);
+		logger.debug("decrease Source usage");
 		List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
+		logger.debug("Remove Leaf Sources");
 		this.activeScheduler.removeLeafSources(toRemove);
 	}
 

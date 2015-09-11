@@ -22,6 +22,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
@@ -42,8 +45,10 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractScheduler implements
-		IScheduler {
+public abstract class AbstractScheduler implements IScheduler {
+
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractScheduler.class);
+
 	/**
 	 * Indicates if the scheduling is started.
 	 */
@@ -52,8 +57,7 @@ public abstract class AbstractScheduler implements
 	/**
 	 * Maximum time each strategy can use (no garantee if strategy)
 	 */
-	protected volatile long timeSlicePerStrategy = OdysseusConfiguration.getLong(
-			"scheduler_TimeSlicePerStrategy", 10);
+	protected volatile long timeSlicePerStrategy = OdysseusConfiguration.getLong("scheduler_TimeSlicePerStrategy", 10);
 
 	/**
 	 * The {@link ISchedulingFactory} which will be used for scheduling. Each
@@ -68,27 +72,24 @@ public abstract class AbstractScheduler implements
 
 	// --- Events
 
-	private SchedulingEvent schedulingStarted = new SchedulingEvent(this,
-			SchedulingEventType.SCHEDULING_STARTED, "");
-	private SchedulingEvent schedulingStopped = new SchedulingEvent(this,
-			SchedulingEventType.SCHEDULING_STOPPED, "");
+	private SchedulingEvent schedulingStarted = new SchedulingEvent(this, SchedulingEventType.SCHEDULING_STARTED, "");
+	private SchedulingEvent schedulingStopped = new SchedulingEvent(this, SchedulingEventType.SCHEDULING_STOPPED, "");
 
 	// ---- Evaluations ----
-	final boolean outputDebug = Boolean.parseBoolean(OdysseusConfiguration
-			.get("debug_Scheduler"));
+	final boolean outputDebug = Boolean.parseBoolean(OdysseusConfiguration.get("debug_Scheduler"));
 
 	FileWriter file;
-	final long limitDebug = OdysseusConfiguration.getLong(
-			"debug_Scheduler_maxLines", 1048476);
+	final long limitDebug = OdysseusConfiguration.getLong("debug_Scheduler_maxLines", 1048476);
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
 
 	// This is the list of sources that should be scheduled
 	final protected List<IIterableSource<?>> sources = new ArrayList<>();
 
-	// This ist the list of partial plans (without sources) that should be scheduled
+	// This ist the list of partial plans (without sources) that should be
+	// scheduled
 	final protected Collection<IPhysicalQuery> partialPlans = new ArrayList<>();
-	
+
 	private final EventHandler eventHandler;
 
 	/**
@@ -104,37 +105,37 @@ public abstract class AbstractScheduler implements
 		this.schedulingFactory = schedulingFactory;
 	}
 
-//	@SuppressWarnings("rawtypes")
-//	public int print(IScheduling s) {
-//		List<IQuery> queries = s.getPlan().getQueries();
-//		int linesPrinted = queries.size();
-//		for (IQuery q : queries) {
-//			toPrint.append(System.currentTimeMillis()).append(";");
-//			toPrint.append(s.getPlan().getId())
-//					.append(";")
-//					.append(q.getID() + 1)
-//					// sieht besser aus :-)
-//					.append(";").append(s.getPlan().getCurrentPriority())
-//					.append(";")
-//					.append(("" + q.getPenalty()).replace('.', ','))
-//					.append(";");
-//			// Written Objects
-//			IPlanMonitor mon = q.getPlanMonitor("Root Monitor");
-//			if (mon != null) {
-//				toPrint.append(((ProcessCallsMonitor) mon)
-//						.getOverallProcessCallCount());
-//			} else {
-//				toPrint.append("-1");
-//			}
-//			toPrint.append(";");
-//			ScheduleMeta h = s.getPlan().getScheduleMeta();
-//			if (h != null) {
-//				h.csvPrint(toPrint);
-//			}
-//			toPrint.append("\n");
-//		}
-//		return linesPrinted;
-//	}
+	// @SuppressWarnings("rawtypes")
+	// public int print(IScheduling s) {
+	// List<IQuery> queries = s.getPlan().getQueries();
+	// int linesPrinted = queries.size();
+	// for (IQuery q : queries) {
+	// toPrint.append(System.currentTimeMillis()).append(";");
+	// toPrint.append(s.getPlan().getId())
+	// .append(";")
+	// .append(q.getID() + 1)
+	// // sieht besser aus :-)
+	// .append(";").append(s.getPlan().getCurrentPriority())
+	// .append(";")
+	// .append(("" + q.getPenalty()).replace('.', ','))
+	// .append(";");
+	// // Written Objects
+	// IPlanMonitor mon = q.getPlanMonitor("Root Monitor");
+	// if (mon != null) {
+	// toPrint.append(((ProcessCallsMonitor) mon)
+	// .getOverallProcessCallCount());
+	// } else {
+	// toPrint.append("-1");
+	// }
+	// toPrint.append(";");
+	// ScheduleMeta h = s.getPlan().getScheduleMeta();
+	// if (h != null) {
+	// h.csvPrint(toPrint);
+	// }
+	// toPrint.append("\n");
+	// }
+	// return linesPrinted;
+	// }
 
 	public void savePrint() {
 		try {
@@ -177,17 +178,20 @@ public abstract class AbstractScheduler implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#startScheduling()
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#startScheduling
+	 * ()
 	 */
 	@Override
 	public void startScheduling() {
 		this.isRunning = true;
 		if (outputDebug) {
 			try {
-				file = new FileWriter(OdysseusConfiguration.getHomeDir()
-						+ OdysseusConfiguration.get("scheduler_DebugFileName") + "_"
-						+ System.currentTimeMillis() + ".csv");
-				file.write("Timestamp;PartialPlan;Query;Priority;Penalty;ObjectsWritten;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
+				file = new FileWriter(
+						OdysseusConfiguration.getHomeDir() + OdysseusConfiguration.get("scheduler_DebugFileName") + "_"
+								+ System.currentTimeMillis() + ".csv");
+				file.write(
+						"Timestamp;PartialPlan;Query;Priority;Penalty;ObjectsWritten;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
 				linesWritten = 1; // Header!
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -196,17 +200,20 @@ public abstract class AbstractScheduler implements
 		} else {
 			file = null;
 		}
-		
+
 		fire(schedulingStarted);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#stopScheduling()
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#stopScheduling(
+	 * )
 	 */
 	@Override
 	public void stopScheduling() {
+		LOG.debug("Stopping scheduling");
 		this.isRunning = false;
 		if (outputDebug) {
 			try {
@@ -222,7 +229,8 @@ public abstract class AbstractScheduler implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#isRunning()
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#isRunning()
 	 */
 	@Override
 	public boolean isRunning() {
@@ -232,9 +240,8 @@ public abstract class AbstractScheduler implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setTimeSlicePerStrategy
-	 * (long)
+	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#
+	 * setTimeSlicePerStrategy (long)
 	 */
 	@Override
 	public void setTimeSlicePerStrategy(long time) {
@@ -244,8 +251,8 @@ public abstract class AbstractScheduler implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler#addErrorEventListener
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler#
+	 * addErrorEventListener
 	 * (de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener)
 	 */
 	@Override
@@ -280,21 +287,20 @@ public abstract class AbstractScheduler implements
 	}
 
 	@Override
-	public void removeLeafSources(List<IIterableSource<?>> sources) {		
-		this.sources.removeAll(sources);		
+	public void removeLeafSources(List<IIterableSource<?>> sources) {
+		this.sources.removeAll(sources);
 		process_setLeafSources(this.sources);
 	}
 
 	@Override
 	final public List<IIterableSource<?>> getLeafSources() {
-		if (sources != null){
+		if (sources != null) {
 			return Collections.unmodifiableList(sources);
 		}
 		return null;
 	}
 
-	abstract protected void process_setLeafSources(
-			List<IIterableSource<?>> sources);
+	abstract protected void process_setLeafSources(List<IIterableSource<?>> sources);
 
 	@Override
 	final public void setPartialPlans(Collection<IPhysicalQuery> partialPlans) {
@@ -302,42 +308,40 @@ public abstract class AbstractScheduler implements
 		process_setPartialPlans(partialPlans);
 	}
 
-	abstract protected void process_setPartialPlans(
-			Collection<IPhysicalQuery> partialPlans);
+	abstract protected void process_setPartialPlans(Collection<IPhysicalQuery> partialPlans);
 
 	@Override
 	final public Collection<IPhysicalQuery> getPartialPlans() {
-		if (partialPlans != null){
+		if (partialPlans != null) {
 			return Collections.unmodifiableCollection(partialPlans);
 		}
-		
+
 		return null;
 	}
 
 	@Override
-    public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(this,listener, type);
+	public void subscribe(IEventListener listener, IEventType type) {
+		eventHandler.subscribe(this, listener, type);
 	}
 
 	@Override
-    public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(this,listener, type);
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		eventHandler.unsubscribe(this, listener, type);
 	}
 
 	@Override
-    public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(this,listener);
+	public void subscribeToAll(IEventListener listener) {
+		eventHandler.subscribeToAll(this, listener);
 	}
 
 	@Override
-    public void unSubscribeFromAll(IEventListener listener) {
+	public void unSubscribeFromAll(IEventListener listener) {
 		eventHandler.unSubscribeFromAll(this, listener);
 	}
 
 	@Override
-    public final void fire(IEvent<?, ?> event) {
+	public final void fire(IEvent<?, ?> event) {
 		eventHandler.fire(this, event);
 	}
-	
-	
+
 }

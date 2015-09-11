@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.test.StatusCode;
@@ -48,6 +49,8 @@ public abstract class AbstractCompareSink<T extends IStreamObject<? extends ITim
     protected List<T> inputdata = new ArrayList<>();
     protected List<ICompareSinkListener> listeners = new ArrayList<>();
 
+	private int elementsRead;
+
 	public AbstractCompareSink(List<Pair<String, String>> expected, String dataHandler) {
 		this.expectedOriginals = new ArrayList<>(expected);
 		this.dataHandler = dataHandler;
@@ -61,7 +64,13 @@ public abstract class AbstractCompareSink<T extends IStreamObject<? extends ITim
 	}
 
 	@Override
+	protected void process_open() throws OpenFailedException {
+		elementsRead = 0;
+	}
+	
+	@Override
 	protected void process_next(T object, int port) {
+		elementsRead++;
 		synchronized (expected) {
 			if(tracing){
 				System.out.println("Process next: "+object);

@@ -130,13 +130,16 @@ abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler im
 			throw new SchedulingException("scheduler isn't running");
 		}
 		// stop the scheduler threads
+		logger.debug("Stopping source treads");
 		for (ISourceExecutor sourceThread : sourceThreads) {
 			sourceThread.interrupt();
 			removeSourceThread(sourceThread);
 		}
+		logger.debug("Stopping scheduler executors");
 		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].interrupt();
 		}
+		
 		super.stopScheduling();
 		// to allow restart of processing init threads again
 		setPartialPlans(partialPlans);

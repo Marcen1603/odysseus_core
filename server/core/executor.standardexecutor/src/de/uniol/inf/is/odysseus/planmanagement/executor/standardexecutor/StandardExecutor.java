@@ -1219,6 +1219,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				} finally {
 					this.executionPlanLock.unlock();
 				}
+			}else{
+				LOG.debug("Query already marked for stopping");
 			}
 		}else{
 			LOG.warn("Cannot stop a non running query");
