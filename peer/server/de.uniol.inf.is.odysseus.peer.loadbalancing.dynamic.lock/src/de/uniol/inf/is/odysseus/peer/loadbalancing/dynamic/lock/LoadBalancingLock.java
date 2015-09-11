@@ -90,7 +90,11 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		if (newLock) {
 			// Currently locked.
 			if (lock) {
-				if (requestingPeer == lockedForPeer || !isPeerKnown(lockedForPeer)) {
+				if (requestingPeer == lockedForPeer) {
+					LOG.debug("Still locked.");
+					return true;
+				}
+				if(!isPeerKnown(lockedForPeer)) {
 					synchronized(lockModificationLock) {
 						lock = true;
 						lockedForPeer = requestingPeer;
