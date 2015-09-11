@@ -121,7 +121,13 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 
 			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
 			LOG.info("Starting Transmission of QueryID {} to Peer {}",nextTransmission.getQueryId(),peerDictionary.getRemotePeerName(nextTransmission.getSlavePeerID()));
-			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
+			try {
+				nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
+			}
+			catch(Exception e) {
+				LOG.error("Uncaught Exception in transmission!");
+				tranmissionFailed(nextTransmission);
+			}
 		}
 		else {
 				LOG.info("Tried to transfer all Queries.");
@@ -145,7 +151,13 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 
 			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
 			LOG.info("Starting Transmission of QueryID {} to Peer {}",nextTransmission.getQueryId(),peerDictionary.getRemotePeerName(nextTransmission.getSlavePeerID()));
-			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
+			try {
+				nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
+			}
+			catch(Exception e) {
+				LOG.error("Uncaught Exception in transmission!");
+				tranmissionFailed(nextTransmission);
+			}
 		}
 		else {
 				LOG.info("Tried to transfer all Queries.");
