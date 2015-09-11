@@ -16,6 +16,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.wizard.IProjectCreator;
 
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
@@ -33,6 +34,7 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.BasicIQLUiScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLUiCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.service.BasicIQLUiServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.ui.service.IIQLUiServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.ui.typing.BasicIQLUiTypeUtils;
@@ -48,6 +50,10 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 
 	public BasicIQLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	public Class<? extends IIQLCrossReferenceValidator> bindCrossReferenceValidator() {
+		return IQLUiCrossReferenceValidator.class;
 	}
 
 	public Class<? extends IIQLTypeUtils> bindIQLTypeUtils() {

@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentRewriteSession;
@@ -102,14 +103,21 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	public void completeIQLOtherExpressions_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		if (model instanceof IQLNewExpression) {
 			IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleTypeRef_Type());
-			for (IEObjectDescription obj :  scopeProvider.getTypes(model)) {
-				EObject resolved = EcoreUtil2.resolve(obj.getEObjectOrProxy(), EcoreUtil2.getResourceSet(model.eResource()));
-				if (resolved instanceof JvmDeclaredType) {
-					JvmDeclaredType declaredType = (JvmDeclaredType) resolved;
+			ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
+			for (IEObjectDescription desc :  scopeProvider.getTypes(model)) {
+				EObject object = desc.getEObjectOrProxy();
+				if (object.eIsProxy()) {
+					object = EcoreUtil.resolve(object,resourceSet);
+				}
+				if (object.eIsProxy()) {
+					continue;
+				}
+				if (object instanceof JvmDeclaredType) {
+					JvmDeclaredType declaredType = (JvmDeclaredType) object;
 					if (lookUp.isInstantiateable(declaredType)) {
-						createConstructorProposal(null, obj, scope, model, context, acceptor);
+						createConstructorProposal(null, desc, declaredType,scope, model, context, acceptor);
 						for (JvmExecutable constructor : lookUp.getPublicConstructors(typeUtils.createTypeRef(declaredType))) {
-							createConstructorProposal(constructor, obj, scope, model, context, acceptor);
+							createConstructorProposal(constructor, desc,declaredType, scope, model, context, acceptor);
 						}
 					} 
 				} 
@@ -123,10 +131,10 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	public void completeIQLOtherExpressions_Element(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 	}
 	
-	protected void createConstructorProposal(JvmExecutable constructor, IEObjectDescription obj,IScope scope, EObject model, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		String proposalStr = obj.getQualifiedName().getLastSegment();
+	protected void createConstructorProposal(JvmExecutable constructor, IEObjectDescription desc, JvmDeclaredType declaredType, IScope scope, EObject model, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		String proposalStr = desc.getQualifiedName().getLastSegment();
 		StringBuilder displayStringBuilder = new StringBuilder();
-		displayStringBuilder.append(obj.getQualifiedName().getLastSegment());
+		displayStringBuilder.append(desc.getQualifiedName().getLastSegment());
 		displayStringBuilder.append("(");
 		if (constructor != null) {
 			int i = 0;
@@ -141,10 +149,10 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 		}
 		displayStringBuilder.append(")");
 		displayStringBuilder.append(" - ");
-		displayStringBuilder.append(converter.toString(obj.getQualifiedName()));
-		ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr, displayStringBuilder.toString(), getImage(obj.getEObjectOrProxy()), context);
+		displayStringBuilder.append(converter.toString(desc.getQualifiedName()));
+		ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr, displayStringBuilder.toString(), getImage(declaredType), context);
 		if (proposal != null) {
-			proposal.setAdditionalProposalInfo(converter.toString(obj.getQualifiedName()));
+			proposal.setAdditionalProposalInfo(converter.toString(desc.getQualifiedName()));
 			proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));
 			acceptor.accept(proposal);
 		}
@@ -152,13 +160,21 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	
 	public void createTypeProposals(EObject model, ContentAssistContext context,  ICompletionProposalAcceptor acceptor) {
 		IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleTypeRef_Type());
-		for (IEObjectDescription obj :  scopeProvider.getTypes(model)) {
-			String proposalStr = obj.getQualifiedName().getLastSegment();
-			String displayString = obj.getQualifiedName().getLastSegment()+ " - " +converter.toString(obj.getQualifiedName());
+		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
+		for (IEObjectDescription desc :  scopeProvider.getTypes(model)) {
+			EObject object = desc.getEObjectOrProxy();		
+			if (object.eIsProxy()) {
+				object = EcoreUtil.resolve(object,resourceSet);
+			}
+			if (object.eIsProxy()) {
+				continue;
+			}
+			String proposalStr = desc.getQualifiedName().getLastSegment();
+			String displayString = desc.getQualifiedName().getLastSegment()+ " - " +converter.toString(desc.getQualifiedName());
 			
-			ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(obj.getEObjectOrProxy()), context);
+			ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(object), context);
 			if (proposal != null) {
-				proposal.setAdditionalProposalInfo(converter.toString(obj.getQualifiedName()));
+				proposal.setAdditionalProposalInfo(converter.toString(desc.getQualifiedName()));
 				proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));
 				acceptor.accept(proposal);
 			}

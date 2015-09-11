@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.junit4.util.ParseHelper;
@@ -95,19 +94,16 @@ public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTyp
 	@SuppressWarnings("unchecked")
 	protected IQDLQuery loadQuery(QDLQuery query, Collection<Resource> resources) {
 		Collection<URL> urls = new HashSet<>();
-		for (Resource res : resources) {
-			URI uri = res.getURI();
-			uri = uri.trimSegments(1);		
-			String outputPath = uri.toFileString();
-			try {
-				urls.add(new File(outputPath).toURI().toURL());
-			} catch (MalformedURLException e) {
-				throw new QueryParseException("error while loading query " +query.getSimpleName()+": "+e.getMessage(),e);
-			}
+		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+QUERIES_DIR+File.separator+query.getSimpleName();
+		File file = new File(outputPath);
+		try {
+			urls.add(file.toURI().toURL());
+		} catch (MalformedURLException e1) {
 		}			
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), QDLExecutor.class.getClassLoader());
 		try {
-			Class<? extends IQDLQuery> queryClass = (Class<? extends IQDLQuery>) Class.forName(query.getSimpleName(), true, classLoader);
+			String queryName = converter.toJavaString(typeUtils.getLongName(query, false));
+			Class<? extends IQDLQuery> queryClass = (Class<? extends IQDLQuery>) Class.forName(queryName, true, classLoader);
 			return queryClass.newInstance();
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			throw new QueryParseException("error while loading query " +query.getSimpleName()+": "+e.getMessage(),e);

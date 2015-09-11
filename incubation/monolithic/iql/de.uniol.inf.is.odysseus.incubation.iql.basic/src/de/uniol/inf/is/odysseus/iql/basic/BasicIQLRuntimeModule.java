@@ -42,9 +42,11 @@ import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLResourceDescriptionStrategy;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLNullJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.BasicIQLServiceObserver;
@@ -69,6 +71,11 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 	public Class<? extends IDefaultResourceDescriptionStrategy> bindResourceDescriptionStrategy() {
 		return BasicIQLResourceDescriptionStrategy.class;
 	}
+	
+	public Class<? extends IIQLCrossReferenceValidator> bindCrossReferenceValidator() {
+		return IQLCrossReferenceValidator.class;
+	}
+	
 	
 	
 	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {

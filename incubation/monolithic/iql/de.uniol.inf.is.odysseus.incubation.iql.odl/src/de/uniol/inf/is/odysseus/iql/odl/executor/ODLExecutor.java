@@ -157,7 +157,8 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 		}
 		
 		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operator.getSimpleName();
+			String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));
+			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operatorName;
 			
 			cleanUpDir(outputPath);
 			
@@ -181,7 +182,8 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 	@SuppressWarnings("unchecked")
 	protected void loadOperator(ODLOperator operator, Collection<Resource> resources) {
 		Collection<URL> urls = new HashSet<>();
-		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operator.getSimpleName();
+		String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));		
+		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operatorName;
 		File file = new File(outputPath);
 		try {
 			urls.add(file.toURI().toURL());
@@ -189,7 +191,6 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 		}			
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
 		try {
-			String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));
 			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operatorName+IODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
 			Class<?> rule = Class.forName(operatorName+IODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
@@ -259,15 +260,14 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void loadPersistentOperator(File folder) {
-		String operatorName = folder.getName();
-		Collection<URL> urls = getURLs(folder, operatorName);
+	public static void loadPersistentOperator(File folder) {				
+		Collection<URL> urls = new HashSet<>();
 		try {
 			urls.add(folder.toURI().toURL());
-		} catch (MalformedURLException e) {
-			throw new QueryParseException("error while loading operator "+operatorName+": "+e.getMessage(),e);
-		}
+		} catch (MalformedURLException e1) {
+		}			
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
+		String operatorName = folder.getName();
 		try {
 			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operatorName+IODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
@@ -277,25 +277,5 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 			throw new QueryParseException("error while loading operator "+operatorName+": "+e.getMessage(),e);
 		}
 	}
-
-
-
-	private static Collection<URL> getURLs(File folder, String operatorName) {
-		Collection<URL> urls = new HashSet<>();
-		for (File file : folder.listFiles()) {
-			if (file.isDirectory()) {
-				try {
-					urls.add(file.toURI().toURL());
-				} catch (MalformedURLException e) {
-					throw new QueryParseException("error while loading operator "+operatorName+": "+e.getMessage(),e);
-				}
-				urls.addAll(getURLs(file, operatorName));
-			}
-		}
-		return urls;
-	}
-	
-	
-
 
 }

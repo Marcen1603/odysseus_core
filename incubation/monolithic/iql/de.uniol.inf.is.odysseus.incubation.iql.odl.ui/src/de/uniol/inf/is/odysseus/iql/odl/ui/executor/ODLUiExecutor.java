@@ -19,6 +19,7 @@ import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 
 
 
+
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
@@ -53,8 +54,9 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
 
 		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operator.getSimpleName();
-			
+			String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));
+			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operatorName;
+						
 			cleanUpDir(outputPath);
 			
 			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,operator);

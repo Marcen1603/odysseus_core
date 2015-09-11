@@ -17,7 +17,6 @@ import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
@@ -32,8 +31,7 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceDescriptions;
+import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
@@ -44,7 +42,6 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
@@ -87,9 +84,12 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 	protected IQLClasspathTypeProviderFactory factory;
 	
 	@Inject
-	protected IResourceDescriptions resources;
-	
+	protected IIQLCrossReferenceValidator validator;
+		
 	protected T typeDictionary;
+	
+	@Inject
+	private ResourceDescriptionsProvider resourceDescriptionsProvider;
 	
 	public AbstractIQLScopeProvider(T typeDictionary, L lookUp, P exprEvaluator, U typeUtils) {
 		this.typeDictionary = typeDictionary;
@@ -104,12 +104,12 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 	
 	public IScope scope_IQLSimpleTypeRef_type(IQLModel model, EReference type) {	
 		Collection<JvmType> types = getAllTypes(model);
-		
+				
 		IQLClasspathTypeProvider provider = (IQLClasspathTypeProvider) factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(model));
 		IScope jdtTypeScope = getJdtScope(EcoreUtil2.getResourceSet(model), provider.getJdtTypeProvider());
-		
+	
 		IScope parentScope =  Scopes.scopeFor(types, qualifiedNameProvider, IScope.NULLSCOPE);
-		IScope scope = new IQLClasspathBasedTypeScope(provider,parentScope,jdtTypeScope, converter, null);
+		IScope scope = new IQLClasspathBasedTypeScope(provider,parentScope,jdtTypeScope, converter,resourceDescriptionsProvider, validator, model.eResource(), null);
 		return new IQLImportScope(createImportNormalizers(model), scope, null, type.getEReferenceType(), true);
 	}
 	
@@ -121,46 +121,25 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		IScope jdtTypeScope = getJdtScope(EcoreUtil2.getResourceSet(model), provider.getJdtTypeProvider());
 		IScope parentScope =  Scopes.scopeFor(types, qualifiedNameProvider, IScope.NULLSCOPE);
 		
-		IScope scope = new IQLClasspathBasedTypeScope(provider, parentScope,jdtTypeScope, converter, null);
+		IScope scope = new IQLClasspathBasedTypeScope(provider, parentScope,jdtTypeScope, converter,resourceDescriptionsProvider, validator, model.eResource(), null);
 		return new IQLImportScope(createImportNormalizers(model), scope, null, type.getEReferenceType(), true);
 	}
 	
 	private Collection<JvmType> getAllTypes(EObject node) {
 		IQLModel model =  EcoreUtil2.getContainerOfType(node, IQLModel.class);		
-		Collection<JvmType> types = new HashSet<>();
-		Collection<IQLModel> files = getAllFiles(node.eResource());
-		for (IQLModel file : files) {
-			types.addAll(EcoreUtil2.getAllContentsOfType(file, IQLClass.class));	
-			types.addAll(EcoreUtil2.getAllContentsOfType(file, IQLInterface.class));	
-		}
+		Collection<JvmType> types = new HashSet<>();		
 		types.addAll(typeDictionary.getVisibleTypes(getUsedNamespaces(model), model.eResource()));
 		return types;
 	}
 	
-	protected Collection<IQLModel> getAllFiles(Resource context) {
-		Collection<IQLModel> files = new HashSet<>();
-		try {
-			for (IResourceDescription res : resources.getAllResourceDescriptions()) {
-				Resource r = EcoreUtil2.getResource(context, res.getURI().toString());
-				if (r.getContents().size() > 0) {
-					EObject obj = r.getContents().get(0);
-					if (obj instanceof IQLModel) {
-						files.add((IQLModel)obj);
-					}
-				}
-			}
-		}catch (Exception e) {		
-		}
-		return files;
-	}
 
 
 	@Override
 	public Collection<IEObjectDescription> getTypes(EObject node) {
 		IQLClasspathTypeProvider provider = (IQLClasspathTypeProvider) factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(node));
 		IScope jdtTypeScope = getJdtScope(EcoreUtil2.getResourceSet(node), provider.getJdtTypeProvider());
-
-		IScope scope = new IQLClasspathBasedTypeScope(provider, IScope.NULLSCOPE, jdtTypeScope, converter, null);
+				
+		IScope scope = new IQLClasspathBasedTypeScope(provider, IScope.NULLSCOPE, jdtTypeScope, converter,resourceDescriptionsProvider, validator, node.eResource(),null);
 		Map<QualifiedName, IEObjectDescription> result = new HashMap<>();
 		for (IEObjectDescription e : scope.getAllElements()) {
 			result.put(e.getQualifiedName(), e);

@@ -38,7 +38,7 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 		super(creator);	
 		initOperators();
 		initSources();
-		refresProjects();
+		//refresProjects();
 	}
 	
 

@@ -28,8 +28,10 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingService;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.linking.SimpleIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLNullJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
@@ -85,6 +87,10 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.QDLTypeUtils;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQDLRuntimeModule {
 
+	public Class<? extends IIQLCrossReferenceValidator> bindCrossReferenceValidator() {
+		return IQLCrossReferenceValidator.class;
+	}
+	
 	public Class<? extends IDefaultResourceDescriptionStrategy> bindResourceDescriptionStrategy() {
 		return QDLResourceDescriptionStrategy.class;
 	}

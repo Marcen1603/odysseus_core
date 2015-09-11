@@ -34,14 +34,15 @@ public class QDLUiGenerator extends QDLGenerator{
 		return packageName;
 	}
 
-
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
-		URI outputFolder = BasicIQLUiTypeUtils.getOutputPath(input);
+		URI outputFolder = null;
 		if (fsa instanceof EclipseResourceFileSystemAccess2) {
+			outputFolder = BasicIQLUiTypeUtils.getOutputPath(input);
 			BasicIQLUiGenerator.createEditFolder(input);
 		}
 		doGenerate(input, fsa, outputFolder);
 	}
+
 
 }
