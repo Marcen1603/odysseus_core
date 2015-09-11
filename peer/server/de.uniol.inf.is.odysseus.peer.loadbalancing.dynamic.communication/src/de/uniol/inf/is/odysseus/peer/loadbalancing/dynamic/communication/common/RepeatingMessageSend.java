@@ -52,7 +52,7 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	/**
 	 * Interval between repeating send attempts.
 	 */
-	private static final int REPEAT_SEND_INTERVAL_MILLIS = 1000;
+	private static final int REPEAT_SEND_INTERVAL_MILLIS = 3000;
 
 	/***
 	 * PeerCommunicator

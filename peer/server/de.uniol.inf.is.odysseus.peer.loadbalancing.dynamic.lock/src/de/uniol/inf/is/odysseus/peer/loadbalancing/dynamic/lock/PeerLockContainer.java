@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener;
@@ -26,13 +27,15 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	private List<IPeerLockContainerListener> listeners;
 	private ConcurrentHashMap<PeerID, LOCK_STATE> locks;
 	private ConcurrentHashMap<PeerID, RepeatingMessageSend> jobs;
+	
 
 	private IPeerCommunicator communicator;
 	private IPeerDictionary peerDictionary;
 	
 	
-	private boolean allPeersLocked = false;
-	private boolean allPeersReleased = false;
+	private boolean lockingPhaseFinished = false;
+	private boolean rleasingPhaseFinished = false;
+	
 	
 	private Object rollbackLock = new Object();
 	
@@ -85,6 +88,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	}
 
 	public void releaseLocks() {
+		lockingPhaseFinished = true;
 		for (PeerID peer : locks.keySet()) {
 			if (locks.get(peer) != LOCK_STATE.unlocked) {
 				locks.put(peer, LOCK_STATE.release_requested);
@@ -139,15 +143,14 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 
 		// Ignore if Peer is not known.
-		if (!locks.containsKey(senderPeer))
+		if (!jobs.containsKey(senderPeer))
 			return;
+				
+		if(!lockingPhaseFinished) {
 			if (message instanceof LockGrantedMessage) {
 				LOG.debug("Got Lock granted Message from Peer {}",peerDictionary.getRemotePeerName(senderPeer));
 				if (locks.get(senderPeer) == LOCK_STATE.lock_requested) {
-					LOG.debug("Marked as Locked.");
 					locks.put(senderPeer, LOCK_STATE.locked);
-					
-
 					jobs.get(senderPeer).stopRunning();
 					jobs.get(senderPeer).clearListeners();
 					jobs.remove(senderPeer);
@@ -170,6 +173,8 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 					}
 				}
 			}
+		}
+		if(lockingPhaseFinished && !rleasingPhaseFinished) {
 			
 			if (message instanceof LockReleasedMessage) {
 				if ((locks.get(senderPeer) == LOCK_STATE.release_requested) || (locks.get(senderPeer) == LOCK_STATE.locked)) {
@@ -202,17 +207,18 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				}
 			
 		}
+		}
 
 	}
 
 	private synchronized void checkIfAllPeersLocked() {
 		//If Peers already locked... This is a late message.
-		if(allPeersLocked) {
+		if(lockingPhaseFinished) {
 			return;
 		}
 		
 		if (getNumberOfLockedPeers() == locks.size()) {
-			allPeersLocked = true;
+			lockingPhaseFinished = true;
 			LOG.debug("All affected Peers locked.");
 			clearJobs();
 			for (IPeerLockContainerListener listener : listeners) {
@@ -223,12 +229,12 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	private synchronized void checkIfAllPeersUnlocked() {
 		// All Peers already unlocked?
-		if(allPeersReleased) {
+		if(rleasingPhaseFinished) {
 			return;
 		}
 		
 		if (getNumberOfUnlockedPeers() == locks.size()) {
-			allPeersReleased = true;
+			rleasingPhaseFinished = true;
 			LOG.debug("No more peers to unlock.");
 			clearJobs();
 			unregisterFromPeerCommunicator();
@@ -243,7 +249,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		}
 	}
 
-	private synchronized int getNumberOfLockedPeers() {
+	private int getNumberOfLockedPeers() {
 		int i = 0;
 		for (LOCK_STATE state : locks.values()) {
 			if (state == LOCK_STATE.locked)
@@ -252,7 +258,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		return i;
 	}
 
-	private synchronized int getNumberOfUnlockedPeers() {
+	private int getNumberOfUnlockedPeers() {
 		int i = 0;
 		for (LOCK_STATE state : locks.values()) {
 			// Count timed_out as unlocked too, to avoid deadlock.
@@ -265,11 +271,10 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	private void initiateRollback() {
 		// Stop all running Jobs.
-		
-		LOG.error("Initiating Peer Lock Rollback.");
-		
-		rollback = true;
 		clearJobs();
+		lockingPhaseFinished=true;
+		LOG.error("Initiating Peer Lock Rollback.");
+		rollback = true;
 		releaseLocks();
 
 	}

@@ -28,7 +28,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	private IPeerCommunicator communicator;
 	private IPeerDictionary peerDictionary;
 	private IP2PNetworkManager networkManager;
-
+	
 	private PeerID lockedForPeer = null;
 	
 	private ArrayList<ILoadBalancingLockListener> listeners = Lists.newArrayList();
