@@ -29,6 +29,8 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	private IPeerDictionary peerDictionary;
 	private IP2PNetworkManager networkManager;
 	
+	private final Object lockModificationLock = new Object();
+	
 	private PeerID lockedForPeer = null;
 	
 	private ArrayList<ILoadBalancingLockListener> listeners = Lists.newArrayList();
@@ -75,7 +77,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		return lockResult;
 	}
 
-	private synchronized boolean modifyLock(boolean newLock, PeerID requestingPeer) {
+	private boolean modifyLock(boolean newLock, PeerID requestingPeer) {
 		if(LOG.isDebugEnabled()) {
 			if(newLock) {
 				LOG.debug("Peer {} is requesting Lock",peerDictionary.getRemotePeerName(requestingPeer));
@@ -89,9 +91,11 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 			// Currently locked.
 			if (lock) {
 				if (requestingPeer == lockedForPeer || !isPeerKnown(lockedForPeer)) {
-					lock = true;
+					synchronized(lockModificationLock) {
+						lock = true;
+						lockedForPeer = requestingPeer;
+					}
 					LOG.debug("Peer locked.");
-					lockedForPeer = requestingPeer;
 					return true;
 				}
 				if(requestingPeer==networkManager.getLocalPeerID()) {
@@ -109,9 +113,11 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 				return false;
 			}
 			// Currently unlocked.
-
-			lock = true;
-			lockedForPeer = requestingPeer;
+			synchronized(lockModificationLock) {
+				lock = true;
+				lockedForPeer = requestingPeer;
+			}
+			LOG.debug("Peer locked.");
 			return true;
 		}
 
@@ -119,9 +125,11 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		// Currently locked.
 		if (lock) {
 			if (requestingPeer == lockedForPeer || !isPeerKnown(lockedForPeer)) {
+				synchronized(lockModificationLock) {
+					lock = false;
+					lockedForPeer = null;
+				}
 				LOG.debug("Lock released.");
-				lock = false;
-				lockedForPeer = null;
 				return true;
 			}
 			
