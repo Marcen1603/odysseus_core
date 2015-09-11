@@ -179,13 +179,11 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			if (message instanceof LockReleasedMessage) {
 				if ((locks.get(senderPeer) == LOCK_STATE.release_requested) || (locks.get(senderPeer) == LOCK_STATE.locked)) {
 					locks.put(senderPeer, LOCK_STATE.unlocked);
-
-					LOG.debug("Lock on peer {} released (Msg. received).",peerDictionary.getRemotePeerName(senderPeer));
-
 					jobs.get(senderPeer).stopRunning();
 					jobs.get(senderPeer).clearListeners();
 					jobs.remove(senderPeer);
-	
+					LOG.debug("Lock on peer {} released (Msg. received).",peerDictionary.getRemotePeerName(senderPeer));
+
 					checkIfAllPeersUnlocked();
 				}
 				else {
@@ -211,40 +209,44 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	}
 
-	private synchronized void checkIfAllPeersLocked() {
+	private void checkIfAllPeersLocked() {
 		//If Peers already locked... This is a late message.
 		if(lockingPhaseFinished) {
 			return;
 		}
 		
 		if (getNumberOfLockedPeers() == locks.size()) {
-			lockingPhaseFinished = true;
-			LOG.debug("All affected Peers locked.");
-			clearJobs();
-			for (IPeerLockContainerListener listener : listeners) {
-				listener.notifyLockingSuccessfull();
+			if(!lockingPhaseFinished) {
+				lockingPhaseFinished = true;
+				LOG.debug("All affected Peers locked.");
+				clearJobs();
+				for (IPeerLockContainerListener listener : listeners) {
+					listener.notifyLockingSuccessfull();
+				}
 			}
 		}
 	}
 
-	private synchronized void checkIfAllPeersUnlocked() {
+	private void checkIfAllPeersUnlocked() {
 		// All Peers already unlocked?
 		if(rleasingPhaseFinished) {
 			return;
 		}
 		
 		if (getNumberOfUnlockedPeers() == locks.size()) {
-			rleasingPhaseFinished = true;
-			LOG.debug("No more peers to unlock.");
-			clearJobs();
-			unregisterFromPeerCommunicator();
-			for (IPeerLockContainerListener listener : listeners) {
-				if (rollback) {
-					listener.notifyLockingFailed();
-				} else {
-					listener.notifyReleasingFinished();
+			if(!rleasingPhaseFinished) {
+				rleasingPhaseFinished = true;
+				LOG.debug("No more peers to unlock.");
+				clearJobs();
+				unregisterFromPeerCommunicator();
+				for (IPeerLockContainerListener listener : listeners) {
+					if (rollback) {
+						listener.notifyLockingFailed();
+					} else {
+						listener.notifyReleasingFinished();
+					}
+					
 				}
-				
 			}
 		}
 	}
