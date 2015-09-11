@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.iql.odl.generator;
 
+import java.net.URI;
+
 import javax.inject.Inject;
 
 import org.eclipse.xtext.generator.IFileSystemAccess;
+
+
 
 
 
@@ -25,12 +29,12 @@ public class ODLGenerator extends AbstractIQLGenerator<IODLGeneratorContext, IOD
 	}
 
 	
-	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, String outputFolder) {
+	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, URI outputFolder) {
 		if (element.getInner() instanceof ODLOperator) {
-			ODLOperator op = (ODLOperator) element.getInner();
-			fsa.generateFile(outputFolder+op.getSimpleName() + IODLCompilerHelper.AO_OPERATOR + ".java", compiler.compileAO(op,(IODLGeneratorContext) context.cleanCopy()));
-			fsa.generateFile(outputFolder+op.getSimpleName() + IODLCompilerHelper.PO_OPERATOR+ ".java", compiler.compilePO(op, (IODLGeneratorContext) context.cleanCopy()));
-			fsa.generateFile(outputFolder+op.getSimpleName() + IODLCompilerHelper.AO_RULE_OPERATOR+".java", compiler.compileAORule(op,(IODLGeneratorContext) context.cleanCopy()));
+			ODLOperator op = (ODLOperator) element.getInner();			
+			generateJavaFile(element, fsa, outputFolder, op.getSimpleName() + IODLCompilerHelper.AO_OPERATOR, compiler.compileAO(op,(IODLGeneratorContext) context.cleanCopy()));
+			generateJavaFile(element, fsa, outputFolder,op.getSimpleName() + IODLCompilerHelper.AO_RULE_OPERATOR, compiler.compileAORule(op,(IODLGeneratorContext) context.cleanCopy()));
+			generateJavaFile(element, fsa, outputFolder,op.getSimpleName() + IODLCompilerHelper.PO_OPERATOR, compiler.compilePO(op,(IODLGeneratorContext) context.cleanCopy()));
 		} else {
 			super.doGenerate(element, fsa, outputFolder);			
 		}

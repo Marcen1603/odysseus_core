@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.iql.basic.ui.generator;
 
-import java.io.File;
+import java.net.URI;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -13,10 +14,13 @@ import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.ui.util.ResourceUtil;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.BasicIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.BasicIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.BasicIQLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
+import de.uniol.inf.is.odysseus.iql.basic.ui.typing.BasicIQLUiTypeUtils;
 
 public class BasicIQLUiGenerator extends BasicIQLGenerator{
 
@@ -27,23 +31,24 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
-		String outputFolder = "";
+		URI outputFolder = BasicIQLUiTypeUtils.getOutputPath(input);
 		if (fsa instanceof EclipseResourceFileSystemAccess2) {
-			outputFolder = getOutputFolder(input);
 			createEditFolder(input);
 		}
 		doGenerate(input, fsa, outputFolder);
 	}
 	
-	private String getOutputFolder(Resource res) {
-		StringBuilder b = new StringBuilder();
-		for (int i = 2; i < res.getURI().segmentCount()-1; i++) {
-			b.append(res.getURI().segment(i));
+	@Override
+	protected String getPackage(IQLModelElement element) {
+		String packageName = BasicIQLUiTypeUtils.getPackage(element.eResource());
+		if (packageName != null && packageName.length() > 0) {
+			return packageName.replace(IQLQualifiedNameConverter.DELIMITER, ".");
 		}
-		return b.toString()+File.separator;
+		return packageName;
 	}
+
 	
-	private void createEditFolder(Resource input) {
+	public static void createEditFolder(Resource input) {		
 		IFile file = ResourceUtil.getFile(input);
 		if (file.exists()) {
 			IProject project = file.getProject();
@@ -53,25 +58,27 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 					try {
 						folder.create(false, true, null);
 					} catch (CoreException e) {
-						e.printStackTrace();
 					}
 				}
-				for (int i = 2; i < input.getURI().segmentCount()-1; i++) {
-					String seg = input.getURI().segment(i);
-					folder = folder.getFolder(seg);
-					if (!folder.exists()) {
-						try {
-							folder.create(false, true, null);
-						} catch (CoreException e) {
-							e.printStackTrace();
-						}
+				String outputFolder = BasicIQLUiTypeUtils.getOutputFolder(input);
+				folder = folder.getFolder(outputFolder);
+				if (!folder.exists()) {
+					try {
+						mkdirs(folder);
+						folder.create(false, true, null);
+					} catch (CoreException e) {
 					}
-				}
+				}				
 			}
 		}
 	}
-
 	
-
+	public static void mkdirs(IFolder folder) throws CoreException {
+		IContainer container = folder.getParent();
+		if (!container.exists()) {
+			mkdirs((IFolder) container);
+		}
+		folder.create(false, true, null);
+	}
 
 }

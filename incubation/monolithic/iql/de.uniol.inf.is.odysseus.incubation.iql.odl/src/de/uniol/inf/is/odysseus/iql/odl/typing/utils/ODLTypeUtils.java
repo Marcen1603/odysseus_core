@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.iql.odl.typing.utils;
 
 
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmType;
+
 
 
 
@@ -16,7 +18,16 @@ public class ODLTypeUtils extends AbstractIQLTypeUtils implements IODLTypeUtils 
 	@Override
 	public boolean isUserDefinedType(JvmType type, boolean array) {
 		JvmType innerType = getInnerType(type, array);
-		return innerType instanceof IQLClass | innerType instanceof IQLInterface | innerType instanceof ODLOperator; 
+		if (innerType instanceof JvmGenericType) {
+			JvmGenericType genericType = (JvmGenericType) innerType;
+			if (genericType.getPackageName() == null) {
+				return innerType instanceof IQLClass | innerType instanceof IQLInterface | innerType instanceof ODLOperator; 
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 }

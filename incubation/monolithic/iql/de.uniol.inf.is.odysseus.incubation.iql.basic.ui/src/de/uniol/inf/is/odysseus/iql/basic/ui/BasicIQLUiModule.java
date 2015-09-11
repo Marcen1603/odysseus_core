@@ -14,10 +14,12 @@ import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.wizard.IProjectCreator;
 
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.BasicIQLUiExecutor;
@@ -33,6 +35,8 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.BasicIQLUiScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.ui.service.BasicIQLUiServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.ui.service.IIQLUiServiceObserver;
+import de.uniol.inf.is.odysseus.iql.basic.ui.typing.BasicIQLUiTypeUtils;
+import de.uniol.inf.is.odysseus.iql.basic.ui.wizard.IQLProjectCreator;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -45,11 +49,20 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 	public BasicIQLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
+
+	public Class<? extends IIQLTypeUtils> bindIQLTypeUtils() {
+		return BasicIQLUiTypeUtils.class;
+	}
+
 	
 	public Class<? extends IGenerator> bindGenerator() {
 		return BasicIQLUiGenerator.class;
 	}
 
+	public Class<? extends IProjectCreator> bindIProjectCreator() {
+		return IQLProjectCreator.class;
+	}	
+	
 	
 	public Class<? extends IIQLUiServiceObserver> bindIQLUiServiceObserver() {
 		return BasicIQLUiServiceObserver.class;

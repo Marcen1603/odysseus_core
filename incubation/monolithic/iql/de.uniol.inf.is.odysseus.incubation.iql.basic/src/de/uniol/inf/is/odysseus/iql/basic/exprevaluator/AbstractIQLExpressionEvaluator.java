@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
@@ -48,6 +50,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsDictionary;
@@ -62,6 +65,9 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeDictionar
 	protected C exprEvaluatorContext;
 	protected U typeUtils;
 	protected E typeExtensionsDictionary;
+	
+	@Inject
+	protected IQLQualifiedNameConverter converter;
 
 	public AbstractIQLExpressionEvaluator(T typeDictionary, L lookUp, C exprEvaluatorContext, U typeUtils, E typeExtensionsDictionary) {
 		this.typeDictionary = typeDictionary;
@@ -247,7 +253,7 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeDictionar
 	
 	private boolean isRange(IQLExpression expr, C context) {
 		TypeResult result = getType(expr, context);
-		if (!result.isNull() && typeUtils.getLongName(result.getRef(), true).equalsIgnoreCase(Range.class.getCanonicalName())) {
+		if (!result.isNull() && converter.toJavaString(typeUtils.getLongName(result.getRef(), true)).equalsIgnoreCase(Range.class.getCanonicalName())) {
 			return true;
 		}
 		return false;

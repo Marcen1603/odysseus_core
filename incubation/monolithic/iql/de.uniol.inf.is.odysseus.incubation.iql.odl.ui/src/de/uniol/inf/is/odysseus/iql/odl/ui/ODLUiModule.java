@@ -30,15 +30,20 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 
 
 
+import org.eclipse.xtext.ui.wizard.IProjectCreator;
+
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.ui.service.IIQLUiServiceObserver;
+import de.uniol.inf.is.odysseus.iql.basic.ui.wizard.IQLProjectCreator;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.IODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.ODLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.ODLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.executor.ODLUiExecutor;
@@ -51,6 +56,7 @@ import de.uniol.inf.is.odysseus.iql.odl.ui.hover.ODLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.scoping.ODLUiScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.service.IODLUiServiceObserver;
 import de.uniol.inf.is.odysseus.iql.odl.ui.service.ODLUiServiceObserver;
+import de.uniol.inf.is.odysseus.iql.odl.ui.typing.ODLUiTypeUtils;
 
 
 /**
@@ -60,6 +66,19 @@ import de.uniol.inf.is.odysseus.iql.odl.ui.service.ODLUiServiceObserver;
 public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODLUiModule {
 	public ODLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	public Class<? extends IODLTypeUtils> bindODLTypeUtils() {
+		return ODLUiTypeUtils.class;
+	}
+	
+	public Class<? extends IIQLTypeUtils> bindIQLTypeUtils() {
+		return ODLUiTypeUtils.class;
+	}
+
+	
+	public Class<? extends IProjectCreator> bindIProjectCreator() {
+		return IQLProjectCreator.class;
 	}
 	
 	public Class<? extends IIQLUiServiceObserver> bindIQLUiServiceObserver() {

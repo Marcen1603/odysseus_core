@@ -49,7 +49,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	protected U typeUtils;
 	
 	@Inject
-	private IQLQualifiedNameConverter converter;
+	protected IQLQualifiedNameConverter converter;
 	
 	@Inject
 	protected IIQLMethodFinder methodFinder;
@@ -194,7 +194,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 				createVariableTemplate(attribute.getSimpleName(), declaredType, attribute.getType(),templateContext, context, acceptor);
 			} else {
 				JvmOperation method = (JvmOperation) obj;
-				String name = desc.getQualifiedName().toString();
+				String name = converter.toString(desc.getQualifiedName());
 				createMethodTemplate(name, method,templateContext, context, acceptor);
 
 			}
@@ -235,7 +235,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		patternBuilder.append(" = ");
 		patternBuilder.append("${"+name+"}");
 				
-		String id = name;
+		String id = name+typeUtils.getLongName(typeRef, true);
 		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
 		finishTemplate(template, templateContext, context, acceptor);	
 	}
@@ -374,7 +374,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	
 	protected String toDescString(JvmTypeReference typeRef) {		
 		StringBuilder b = new StringBuilder();
-		b.append(converter.toDisplayString(typeUtils.getShortName(typeRef, true)));
+		b.append(typeUtils.getShortName(typeRef, true));
 		return b.toString();
 	}
 	

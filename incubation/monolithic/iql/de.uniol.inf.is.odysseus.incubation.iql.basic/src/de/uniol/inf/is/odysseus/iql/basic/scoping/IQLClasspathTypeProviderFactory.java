@@ -14,13 +14,16 @@ public class IQLClasspathTypeProviderFactory extends ClasspathTypeProviderFactor
 	private IIQLJdtTypeProviderFactory jdtTypeProviderFactory;
 	
 	@Inject
+	private IQLQualifiedNameConverter converter;
+	
+	@Inject
 	public IQLClasspathTypeProviderFactory(ClassLoader classLoader) {
 		super(IQLClasspathTypeProviderFactory.class.getClassLoader());
 	}
 	
 	@Override
 	protected ClasspathTypeProvider createClasspathTypeProvider(ResourceSet resourceSet) {
-		return new IQLClasspathTypeProvider(jdtTypeProviderFactory.createJdtTypeProvider(resourceSet), IQLClasspathTypeProviderFactory.class.getClassLoader(), resourceSet, getIndexedJvmTypeAccess());
+		return new IQLClasspathTypeProvider(jdtTypeProviderFactory.createJdtTypeProvider(resourceSet), IQLClasspathTypeProviderFactory.class.getClassLoader(), resourceSet, converter, getIndexedJvmTypeAccess());
 	}
 	
 }

@@ -53,5 +53,21 @@ public class IQLDefaultTypes {
 		types.add(System.class);
 		return types;
 	}
+	
+	public static Collection<String> getDependencies() {
+		Collection<String> bundles = new HashSet<>();
+		bundles.add("de.uniol.inf.is.odysseus.iql.basic");
+		bundles.add("de.uniol.inf.is.odysseus.core");
+		bundles.add("de.uniol.inf.is.odysseus.core.server");
+		bundles.add("de.uniol.inf.is.odysseus.slf4j");	
+		return bundles;
+	}
+	
+	public static Collection<String> getVisibleTypesFromBundle() {
+		Collection<String> bundles = new HashSet<>();
+		bundles.add("de.uniol.inf.is.odysseus.core");
+		bundles.add("de.uniol.inf.is.odysseus.core.server");
+		return bundles;
+	}
 
 }

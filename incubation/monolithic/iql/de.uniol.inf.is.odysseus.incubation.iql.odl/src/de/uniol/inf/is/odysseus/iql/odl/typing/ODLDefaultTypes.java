@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.iql.odl.typing;
 import java.util.Collection;
 import java.util.HashSet;
 
+
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -113,6 +114,30 @@ public class ODLDefaultTypes {
 		types.add(SDFDatatype.class);
 		types.add(ODLUtils.class);
 		return types;
+	}
+	
+	public static Collection<String> getDependencies() {
+		Collection<String> bundles = new HashSet<>();
+		bundles.add("de.uniol.inf.is.odysseus.transform");
+		bundles.add("de.uniol.inf.is.odysseus.ruleengine");
+		bundles.add("de.uniol.inf.is.odysseus.rewrite");
+		bundles.add("de.uniol.inf.is.odysseus.mep");
+		bundles.add("de.uniol.inf.is.odysseus.iql.odl");
+		bundles.add("de.uniol.inf.is.odysseus.sweeparea");
+		bundles.add("de.uniol.inf.is.odysseus.server.intervalapproach");
+		bundles.add("de.uniol.inf.is.odysseus.relational.base");
+		bundles.add("de.uniol.inf.is.odysseus.intervalapproach");
+		return bundles;
+	}
+	
+	public static Collection<String> getVisibleTypesFromBundle() {
+		Collection<String> bundles = new HashSet<>();
+		bundles.add("de.uniol.inf.is.odysseus.mep");
+		bundles.add("de.uniol.inf.is.odysseus.sweeparea");
+		bundles.add("de.uniol.inf.is.odysseus.server.intervalapproach");
+		bundles.add("de.uniol.inf.is.odysseus.relational.base");
+		bundles.add("de.uniol.inf.is.odysseus.intervalapproach");	
+		return bundles;
 	}
 
 

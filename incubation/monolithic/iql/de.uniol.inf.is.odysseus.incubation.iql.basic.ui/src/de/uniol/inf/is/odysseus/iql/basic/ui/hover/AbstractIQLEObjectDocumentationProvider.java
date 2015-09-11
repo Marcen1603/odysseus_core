@@ -1,10 +1,17 @@
 package de.uniol.inf.is.odysseus.iql.basic.ui.hover;
 
 
+import javax.inject.Inject;
+
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.util.jdt.IJavaElementFinder;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -12,12 +19,16 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
+import org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2;
 
+@SuppressWarnings("restriction")
 public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLTypeDictionary, U extends IIQLTypeUtils> extends MultiLineCommentDocumentationProvider {
 
 	protected U typeUtils;
 	protected F typeDictionary;
-
+	@Inject
+	protected IJavaElementFinder javaElementFinder;
+	
 	public AbstractIQLEObjectDocumentationProvider(F typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
@@ -45,19 +56,33 @@ public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLType
 	}
 	
 	protected String getDocumentationJvmDeclaredType(JvmDeclaredType type) {		
-		return "";
+		return getJavaDoc(type);
 	}
 	
 	
 	protected String getDocumentationJvmField(JvmField attr) {		
-		return "";
+		return getJavaDoc(attr);
+
 	}
 	
-	protected String getDocumentationJvmOperation(JvmOperation method) {		
-		return "";
+	protected String getDocumentationJvmOperation(JvmOperation method) {
+		return getJavaDoc(method);
 	}
 	
 	protected String getDocumentationIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue) {		
+		return "";
+	}
+	
+	private String getJavaDoc(JvmIdentifiableElement object) {
+		IJavaElement element = javaElementFinder.findElementFor(object);
+		if (element instanceof IMember && element.exists()) {
+			try {
+				return JavadocContentAccess2.getHTMLContent((IMember) element,
+						true);
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
+		}
 		return "";
 	}
 }

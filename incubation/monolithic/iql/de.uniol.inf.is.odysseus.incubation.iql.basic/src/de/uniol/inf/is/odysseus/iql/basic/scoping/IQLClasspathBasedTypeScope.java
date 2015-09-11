@@ -15,6 +15,9 @@ import org.eclipse.xtext.scoping.IScope;
 
 import com.google.common.base.Predicate;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
+
 @SuppressWarnings("restriction")
 public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 
@@ -48,11 +51,16 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	
 	@Override
 	public IEObjectDescription getSingleElement(EObject object) {
-		IEObjectDescription result = jdtScope.getSingleElement(object);
+		IEObjectDescription result = null;
+
+		if (!(object instanceof IQLClass || object instanceof IQLInterface)) {
+			result = jdtScope.getSingleElement(object);
+		}
+		
 		if (result == null) {
 			result = parentScope.getSingleElement(object);
 		}
-		if (result == null) {
+		if (result == null && !(object instanceof IQLClass || object instanceof IQLInterface)) {
 			result = super.getSingleElement(object);
 		}
 		return result;
@@ -84,9 +92,12 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	public Iterable<IEObjectDescription> getElements(EObject object) {
 		Map<QualifiedName, IEObjectDescription> result = new HashMap<>();
 		
-		for (IEObjectDescription obj : jdtScope.getElements(object)) {
-			result.put(obj.getQualifiedName(), obj);
+		if (!(object instanceof IQLClass || object instanceof IQLInterface)) {
+			for (IEObjectDescription obj : jdtScope.getElements(object)) {
+				result.put(obj.getQualifiedName(), obj);
+			}
 		}
+
 		
 		for (IEObjectDescription obj : parentScope.getElements(object)) {
 			if (!result.containsKey(obj.getQualifiedName())) {
@@ -94,9 +105,11 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 			}
 		}
 		
-		for (IEObjectDescription obj : super.getElements(object)) {
-			if (!result.containsKey(obj.getQualifiedName())) {
-				result.put(obj.getQualifiedName(), obj);
+		if (!(object instanceof IQLClass || object instanceof IQLInterface)) {
+			for (IEObjectDescription obj : super.getElements(object)) {
+				if (!result.containsKey(obj.getQualifiedName())) {
+					result.put(obj.getQualifiedName(), obj);
+				}
 			}
 		}
 		return result.values();

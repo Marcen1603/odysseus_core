@@ -32,5 +32,16 @@ public class QDLDefaultTypes {
 		Collection<IIQLTypeExtensions> result = new HashSet<>();
 		return result;		
 	}
+	
+	public static Collection<String> getDependencies() {
+		Collection<String> bundles = new HashSet<>();
+		bundles.add("de.uniol.inf.is.odysseus.iql.qdl");
+		return bundles;
+	}
+	
+	public static Collection<String> getVisibleTypesFromBundle() {
+		Collection<String> bundles = new HashSet<>();
+		return bundles;
+	}
 
 }

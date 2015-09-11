@@ -129,16 +129,19 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 				operators.add(type);
 				«IF map != null»
 					«FOR el :map.elements»
-						«var attrName = el.key.simpleName»
-						«IF helper.isParameter(attrName, typeRef)»
-							type.setParameter("«attrName»", «attrName»);
-						«ELSE»	
-							«IF el.key instanceof JvmOperation»
-								type.«el.key.simpleName»(«el.key.simpleName»);				
+						«IF el.key instanceof JvmOperation»
+							«IF helper.isParameter(el.key.simpleName.substring(3), typeRef)»
+								type.setParameter("«el.key.simpleName.substring(3)»", «el.key.simpleName»);
+							«ELSE»
+								type.«el.key.simpleName»(«el.key.simpleName»);
+							«ENDIF»	
+						«ELSE»
+							«IF helper.isParameter(el.key.simpleName, typeRef)»
+								type.setParameter("«el.key.simpleName»", «el.key.simpleName»);
 							«ELSE»
 								type.«el.key.simpleName» = «el.key.simpleName»;
-							«ENDIF»			
-						«ENDIF»
+							«ENDIF»	
+						«ENDIF»	
 					«ENDFOR»
 				«ENDIF»
 				return type;

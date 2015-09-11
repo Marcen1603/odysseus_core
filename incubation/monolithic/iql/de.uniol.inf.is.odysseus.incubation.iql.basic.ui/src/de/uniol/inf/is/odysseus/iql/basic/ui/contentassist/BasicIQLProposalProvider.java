@@ -144,7 +144,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 		displayStringBuilder.append(converter.toString(obj.getQualifiedName()));
 		ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr, displayStringBuilder.toString(), getImage(obj.getEObjectOrProxy()), context);
 		if (proposal != null) {
-			proposal.setAdditionalProposalInfo(obj.getQualifiedName());
+			proposal.setAdditionalProposalInfo(converter.toString(obj.getQualifiedName()));
 			proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));
 			acceptor.accept(proposal);
 		}
@@ -158,7 +158,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 			
 			ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(obj.getEObjectOrProxy()), context);
 			if (proposal != null) {
-				proposal.setAdditionalProposalInfo(obj.getQualifiedName());
+				proposal.setAdditionalProposalInfo(converter.toString(obj.getQualifiedName()));
 				proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));
 				acceptor.accept(proposal);
 			}

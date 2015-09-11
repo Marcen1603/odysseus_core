@@ -441,45 +441,68 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
           {
             EList<IQLArgumentsMapKeyValue> _elements_2 = map.getElements();
             for(final IQLArgumentsMapKeyValue el : _elements_2) {
-              _builder.append("\t");
-              JvmIdentifiableElement _key = el.getKey();
-              String attrName = _key.getSimpleName();
-              _builder.newLineIfNotEmpty();
               {
-                boolean _isParameter = this.helper.isParameter(attrName, typeRef);
-                if (_isParameter) {
-                  _builder.append("\t");
-                  _builder.append("type.setParameter(\"");
-                  _builder.append(attrName, "\t");
-                  _builder.append("\", ");
-                  _builder.append(attrName, "\t");
-                  _builder.append(");");
-                  _builder.newLineIfNotEmpty();
-                } else {
+                JvmIdentifiableElement _key = el.getKey();
+                if ((_key instanceof JvmOperation)) {
                   {
                     JvmIdentifiableElement _key_1 = el.getKey();
-                    if ((_key_1 instanceof JvmOperation)) {
+                    String _simpleName_2 = _key_1.getSimpleName();
+                    String _substring = _simpleName_2.substring(3);
+                    boolean _isParameter = this.helper.isParameter(_substring, typeRef);
+                    if (_isParameter) {
                       _builder.append("\t");
-                      _builder.append("type.");
+                      _builder.append("type.setParameter(\"");
                       JvmIdentifiableElement _key_2 = el.getKey();
-                      String _simpleName_2 = _key_2.getSimpleName();
-                      _builder.append(_simpleName_2, "\t");
-                      _builder.append("(");
+                      String _simpleName_3 = _key_2.getSimpleName();
+                      String _substring_1 = _simpleName_3.substring(3);
+                      _builder.append(_substring_1, "\t");
+                      _builder.append("\", ");
                       JvmIdentifiableElement _key_3 = el.getKey();
-                      String _simpleName_3 = _key_3.getSimpleName();
-                      _builder.append(_simpleName_3, "\t");
-                      _builder.append(");\t\t\t\t");
+                      String _simpleName_4 = _key_3.getSimpleName();
+                      _builder.append(_simpleName_4, "\t");
+                      _builder.append(");");
                       _builder.newLineIfNotEmpty();
                     } else {
                       _builder.append("\t");
                       _builder.append("type.");
                       JvmIdentifiableElement _key_4 = el.getKey();
-                      String _simpleName_4 = _key_4.getSimpleName();
-                      _builder.append(_simpleName_4, "\t");
-                      _builder.append(" = ");
-                      JvmIdentifiableElement _key_5 = el.getKey();
-                      String _simpleName_5 = _key_5.getSimpleName();
+                      String _simpleName_5 = _key_4.getSimpleName();
                       _builder.append(_simpleName_5, "\t");
+                      _builder.append("(");
+                      JvmIdentifiableElement _key_5 = el.getKey();
+                      String _simpleName_6 = _key_5.getSimpleName();
+                      _builder.append(_simpleName_6, "\t");
+                      _builder.append(");");
+                      _builder.newLineIfNotEmpty();
+                    }
+                  }
+                } else {
+                  {
+                    JvmIdentifiableElement _key_6 = el.getKey();
+                    String _simpleName_7 = _key_6.getSimpleName();
+                    boolean _isParameter_1 = this.helper.isParameter(_simpleName_7, typeRef);
+                    if (_isParameter_1) {
+                      _builder.append("\t");
+                      _builder.append("type.setParameter(\"");
+                      JvmIdentifiableElement _key_7 = el.getKey();
+                      String _simpleName_8 = _key_7.getSimpleName();
+                      _builder.append(_simpleName_8, "\t");
+                      _builder.append("\", ");
+                      JvmIdentifiableElement _key_8 = el.getKey();
+                      String _simpleName_9 = _key_8.getSimpleName();
+                      _builder.append(_simpleName_9, "\t");
+                      _builder.append(");");
+                      _builder.newLineIfNotEmpty();
+                    } else {
+                      _builder.append("\t");
+                      _builder.append("type.");
+                      JvmIdentifiableElement _key_9 = el.getKey();
+                      String _simpleName_10 = _key_9.getSimpleName();
+                      _builder.append(_simpleName_10, "\t");
+                      _builder.append(" = ");
+                      JvmIdentifiableElement _key_10 = el.getKey();
+                      String _simpleName_11 = _key_10.getSimpleName();
+                      _builder.append(_simpleName_11, "\t");
                       _builder.append(";");
                       _builder.newLineIfNotEmpty();
                     }

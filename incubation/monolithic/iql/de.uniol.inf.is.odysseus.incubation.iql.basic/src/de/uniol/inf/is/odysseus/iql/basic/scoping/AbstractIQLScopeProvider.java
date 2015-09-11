@@ -383,7 +383,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 			typeRef = ((IQLVariableDeclaration)stmt.getVar()).getRef();
 		}
 				
-		Collection<IEObjectDescription> result = new HashSet<>();
+		Collection<IEObjectDescription> result = new ArrayList<>();
 		if (typeRef != null) {
 			Collection<JvmField> attributes = lookUp.getPublicAttributes(typeRef, false);
 			for (JvmField attr : attributes) {
@@ -410,7 +410,6 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		namespaces.addAll(typeDictionary.getImplicitImports());
 		for (IQLNamespace namespace : model.getNamespaces()) {
 			String name = namespace.getImportedNamespace();
-			name = name.replaceAll(IQLQualifiedNameConverter.DELIMITER, ".");
 			namespaces.add(name);
 		}
 		return namespaces;
@@ -419,8 +418,8 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 	protected List<ImportNormalizer> createImportNormalizers(EObject obj) {
 		IQLModel model = EcoreUtil2.getContainerOfType(obj, IQLModel.class);
 		List<ImportNormalizer> result = new ArrayList<>();	
-		Set<QualifiedName > imports = new HashSet<>();	
-		Set<QualifiedName > wildCards = new TreeSet<>();	
+		Set<QualifiedName> imports = new HashSet<>();	
+		Set<QualifiedName> wildCards = new TreeSet<>();	
 		for (IQLNamespace namespace : model.getNamespaces()) {
 			String name = namespace.getImportedNamespace();
 			boolean wildcard = name.endsWith("*");
@@ -432,10 +431,11 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 			}
 		}
 		
-		for (String name : typeDictionary.getImplicitImports()) {
+		Collection<String> implicitImports = getImplicitImports(obj);
+		for (String name : implicitImports) {
 			boolean wildcard = name.endsWith("*");
 			if (wildcard) {
-				name = name.substring(0, name.lastIndexOf(".*"));
+				name = name.substring(0, name.lastIndexOf(IQLQualifiedNameConverter.DELIMITER+"*"));
 				wildCards.add(converter.toQualifiedName(name));
 			} else {
 				imports.add(converter.toQualifiedName(name));
@@ -454,4 +454,10 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		
 		return result;
 	} 
+	
+	protected Collection<String> getImplicitImports(EObject obj) {
+		Collection<String> result = new HashSet<>();
+		result.addAll(typeDictionary.getImplicitImports());
+		return result;
+	}
 }

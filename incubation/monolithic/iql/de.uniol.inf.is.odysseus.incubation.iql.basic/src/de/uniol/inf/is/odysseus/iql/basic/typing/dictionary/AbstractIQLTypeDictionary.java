@@ -68,6 +68,7 @@ import org.reflections.scanners.SubTypesScanner;
 
 
 
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
@@ -132,7 +133,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		IQLModel model = EcoreUtil2.getContainerOfType(obj, IQLModel.class);
 		for (IQLNamespace namespace : model.getNamespaces()) {
 			if (namespace.isStatic()) {
-				imports.add(namespace.getImportedNamespace().replace(IQLQualifiedNameConverter.DELIMITER, "."));
+				imports.add(namespace.getImportedNamespace());
 			}
 		}
 		
@@ -175,12 +176,14 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	public Collection<String> createImplicitImports() {
 		Collection<String> implicitImports = new HashSet<>();
 		for (JvmDeclaredType systemType : getSystemTypes()) {
-			implicitImports.add(systemType.getPackageName()+"."+systemType.getSimpleName());
+			implicitImports.add(systemType.getPackageName()+IQLQualifiedNameConverter.DELIMITER+systemType.getSimpleName());
 		}
-		
-		implicitImports.addAll(IQLDefaultTypes.getImplicitImports());		
-		implicitImports.addAll(serviceObserver.getImplicitImports());		
-
+		for (String i : IQLDefaultTypes.getImplicitImports()) {
+			implicitImports.add(converter.toIQLString(i));
+		}
+		for (String i : serviceObserver.getImplicitImports()) {
+			implicitImports.add(converter.toIQLString(i));
+		}
 		return implicitImports;
 	}
 	
@@ -188,10 +191,10 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		Collection<String> implicitStaticImports = new HashSet<>();
 		
 		for (Class<?> c : IQLDefaultTypes.getImplicitStaticImports()) {
-			implicitStaticImports.add(c.getCanonicalName());
+			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
 		}
 		for (Class<?> c : serviceObserver.getImplicitStaticImports()) {
-			implicitStaticImports.add(c.getCanonicalName());
+			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
 		}
 		return implicitStaticImports;
 	}
@@ -205,7 +208,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	@Override
 	public IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType) {
 		IQLSystemType systemType=  new IQLSystemType(type, javaType);
-		systemTypes.put(systemType.getType().getPackageName()+"."+systemType.getType().getSimpleName(), systemType);		
+		systemTypes.put(systemType.getType().getPackageName()+IQLQualifiedNameConverter.DELIMITER+systemType.getType().getSimpleName(), systemType);		
 		String packageName = type.getPackageName();
 		IQLModel systemFile = systemFiles.get(packageName);
 		if (systemFile == null) {
@@ -422,18 +425,19 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	@Override
 	public Collection<Bundle> getDependencies() {
 		Collection<Bundle> bundles = new HashSet<>();
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.basic"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.slf4j"));
+		for (String bundleName : IQLDefaultTypes.getDependencies()) {
+			bundles.add(Platform.getBundle(bundleName));
+		}
 		bundles.addAll(this.serviceObserver.getDependencies());
 		return bundles;
 	}
 	
-	protected Collection<Bundle> getVisibleTypesFromBundle() {
+	@Override
+	public Collection<Bundle> getVisibleTypesFromBundle() {
 		Collection<Bundle> bundles = new HashSet<>();
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
+		for (String bundleName : IQLDefaultTypes.getVisibleTypesFromBundle()) {
+			bundles.add(Platform.getBundle(bundleName));
+		}
 		bundles.addAll(this.serviceObserver.getVisibleTypesFromBundle());		
 		return bundles;
 	}
@@ -448,7 +452,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 			Class<?> javaType = systemType.getJavaType();
 			return javaType.getCanonicalName();
 		} else {
-			return name;	
+			return converter.toJavaString(name);	
 		}
 	}
 	
@@ -458,8 +462,8 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 			JvmDeclaredType declaredType = (JvmDeclaredType) type;
 			if (isSystemType(typeUtils.getLongName(type, false))) {
 				return true;
-			} else if (typeUtils.isUserDefinedType(declaredType, false)) {
-				return false;
+			} else if (typeUtils.isUserDefinedType(declaredType, false) && !typeUtils.getShortName(type, false).equalsIgnoreCase(typeUtils.getLongName(type, false))) {
+				return true;
 			} else if (typeUtils.isPrimitive(declaredType)) {
 				return false;
 			} else if (declaredType.getPackageName() == null) {
@@ -493,7 +497,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		} else {
 			Class<?> javaType = null;
 			try {
-				javaType =  Class.forName(qualifiedName);
+				javaType =  Class.forName(converter.toJavaString(qualifiedName));
 			} catch (ClassNotFoundException e) {
 			}
 			if (wrapper && typeUtils.isPrimitive(type)) {

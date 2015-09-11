@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator;
 
 
+import java.io.File;
+import java.net.URI;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
@@ -30,10 +33,10 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
-		doGenerate(input, fsa, "");
+		doGenerate(input, fsa, null);
 	}
 	
-	protected void doGenerate(Resource input, IFileSystemAccess fsa, String outputFolder) {
+	protected void doGenerate(Resource input, IFileSystemAccess fsa, URI outputFolder) {
 		try {
 			for (EObject obj : input.getContents()) {
 				if (obj instanceof IQLModel) {
@@ -45,7 +48,7 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 		}
 	}
 	
-	protected void doGenerate(IQLModel model, IFileSystemAccess fsa, String outputFolder) {
+	protected void doGenerate(IQLModel model, IFileSystemAccess fsa, URI outputFolder) {
 		for (IQLModelElement element : EcoreUtil2.getAllContentsOfType(model, IQLModelElement.class)) {
 			doGenerate(element, fsa, outputFolder);
 			
@@ -53,13 +56,32 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, String outputFolder) {
+	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, URI outputFolder) {
 		if (element.getInner() instanceof IQLClass) {
 			IQLClass clazz = (IQLClass) element.getInner();
-			fsa.generateFile(outputFolder+clazz.getSimpleName() + ".java", compiler.compile(clazz, (G)context.cleanCopy()));
+			generateJavaFile(element, fsa, outputFolder, clazz.getSimpleName(), compiler.compile(clazz, (G)context.cleanCopy()));
 		} else if (element.getInner() instanceof IQLInterface) {
 			IQLInterface interf = (IQLInterface) element.getInner();
-			fsa.generateFile(outputFolder+interf.getSimpleName() + ".java", compiler.compile(interf, (G)context.cleanCopy()));
+			generateJavaFile(element, fsa, outputFolder, interf.getSimpleName(), compiler.compile(interf, (G)context.cleanCopy()));
 		}
 	}
+	
+	protected void generateJavaFile(IQLModelElement element, IFileSystemAccess fsa, URI outputFolder, String fileName, String content) {	
+		String packageName = getPackage(element);
+		if (packageName != null && packageName.length() > 0) {
+			String packageLine = "package "+ packageName+"; "+System.lineSeparator();
+			content = packageLine+content;
+		}
+		if (outputFolder != null && outputFolder.toString().length() > 0) {
+			fsa.generateFile(outputFolder.toString()+File.separator+fileName+ ".java", content);
+		} else {
+			fsa.generateFile(fileName+ ".java", content);
+		}
+	}
+	
+	protected String getPackage(IQLModelElement element) {
+		return "";
+	}
+
+
 }

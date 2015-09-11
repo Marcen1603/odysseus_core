@@ -21,19 +21,11 @@ public class QDLServiceObserver extends AbstractIQLServiceObserver{
 	
 	@Override
 	public void onServiceAdded(IIQLService service) {
-		if (service instanceof IQDLService) {
-			IQDLService qdlService = (IQDLService) service;
-			System.out.println(qdlService);
-		}
 		super.onServiceAdded(service);
 	}
 
 	@Override
 	public void onServiceRemoved(IIQLService service) {
-		if (service instanceof IQDLService) {
-			IQDLService qdlService = (IQDLService) service;
-			System.out.println(qdlService);
-		}
 		super.onServiceRemoved(service);
 	}
 	

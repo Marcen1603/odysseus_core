@@ -58,9 +58,11 @@ import java.util.Map;
 
 
 
+
+
+
 import javax.inject.Inject;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 
 
@@ -102,6 +104,9 @@ import org.eclipse.xtext.junit4.util.ParseHelper;
 
 
 
+
+
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -117,8 +122,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
+import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLAO;
 import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
@@ -150,7 +157,7 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 		}
 		
 		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
+			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operator.getSimpleName();
 			
 			cleanUpDir(outputPath);
 			
@@ -174,21 +181,18 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 	@SuppressWarnings("unchecked")
 	protected void loadOperator(ODLOperator operator, Collection<Resource> resources) {
 		Collection<URL> urls = new HashSet<>();
-		for (Resource res : resources) {
-			URI uri = res.getURI();
-			uri = uri.trimSegments(1);		
-			String outputPath = uri.toFileString();
-			try {
-				urls.add(new File(outputPath).toURI().toURL());
-			} catch (MalformedURLException e) {
-				throw new QueryParseException("error while loading operator "+operator.getSimpleName()+": "+e.getMessage(),e);
-			}
+		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operator.getSimpleName();
+		File file = new File(outputPath);
+		try {
+			urls.add(file.toURI().toURL());
+		} catch (MalformedURLException e1) {
 		}			
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
 		try {
-			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operator.getSimpleName()+IODLCompilerHelper.AO_OPERATOR, true, classLoader);
+			String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));
+			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operatorName+IODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
-			Class<?> rule = Class.forName(operator.getSimpleName()+IODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
+			Class<?> rule = Class.forName(operatorName+IODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
 			TransformationInventory.getInstance().addRule((IRule<?, ?>) rule.newInstance());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			throw new QueryParseException("error while loading operator "+operator.getSimpleName()+": "+e.getMessage(),e);
@@ -214,21 +218,22 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 		String doc = logicalOperatorAnnotation.doc();
         String url = logicalOperatorAnnotation.url();
         GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(),logicalOperatorAnnotation.maxInputPorts(), doc, url, logicalOperatorAnnotation.category());
-        if (OperatorBuilderFactory.containsOperatorBuilderType(builder.getName()) && !isODLOperator(OperatorBuilderFactory.getOperatorBuilderType(builder.getName()))) {
+        if (!isOverridingAllowed(builder.getName())) {
         	throw new RuntimeException("Overriding system operators is not possible");
         }
         OperatorBuilderFactory.removeOperatorBuilderByName(builder.getName());
         OperatorBuilderFactory.addOperatorBuilder(builder);
         OperatorsObservable.newOperatorBuilder(builder);
 	}
-
-	private static boolean isODLOperator(IOperatorBuilder operatorBuilderType) {
-		return operatorBuilderType.getOperatorClass().getPackage()==null;
+	
+	private static boolean isOverridingAllowed(String opName) {
+		IOperatorBuilder builder = OperatorBuilderFactory.getOperatorBuilderType(opName);
+		if (builder != null) {
+			return IODLAO.class.isAssignableFrom(builder.getOperatorClass());
+		}
+		return true;
 	}
 
-
-
-	
 	protected boolean isPersistent(ODLOperator operator) {
 		if (operator.getMetadataList() != null) {
 			for (IQLMetadata m : operator.getMetadataList().getElements()) {
@@ -242,7 +247,7 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 	
 	
 	public static void loadPersistentOperators() {
-		String outputPath = getIQLOutputPath()+OPERATORS_DIR;
+		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR;
 		File folder = new File(outputPath);
 		if (folder.exists()) {
 		    for (File file : folder.listFiles()) {

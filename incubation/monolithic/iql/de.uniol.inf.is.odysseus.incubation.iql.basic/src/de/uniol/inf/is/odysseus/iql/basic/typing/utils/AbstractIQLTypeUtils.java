@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmLowerBound;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
@@ -15,6 +16,9 @@ import org.eclipse.xtext.common.types.JvmTypeParameter;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUpperBound;
 
+
+
+
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
@@ -22,6 +26,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
@@ -30,6 +35,8 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	@Inject
 	protected IQLClasspathTypeProviderFactory typeProviderFactory;
 
+	@Inject
+	protected IQLQualifiedNameConverter converter;
 	
 	
 	@Override
@@ -44,7 +51,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
 	@Override
 	public JvmTypeReference createTypeRef(String name, Notifier context) {
-		JvmType type = typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(name);
+		JvmType type = typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(converter.toJavaString(name));
 		if (type != null) {
 			return createTypeRef(type);
 		}
@@ -87,6 +94,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
 	@Override
 	public String getLongName(JvmType type, boolean array) {
+		String result = "";
 		try {
 			if (type instanceof IQLArrayType && array) {
 				IQLArrayType arrayType = (IQLArrayType) type;				
@@ -95,13 +103,13 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 				for (int i = 0; i < arrayType.getDimensions().size(); i++) {
 					b.append("[]");
 				}
-				return b.toString();	
+				result = b.toString();	
 			} else if (type instanceof IQLArrayType) {
 				IQLArrayType arrayType = (IQLArrayType) type;	
-				return getLongName(arrayType.getComponentType(), array);
+				result = getLongName(arrayType.getComponentType(), array);
 			} else if (type instanceof JvmArrayType && !array) {
 				JvmArrayType arrayType = (JvmArrayType) type;	
-				return getLongName(arrayType.getComponentType(), array);
+				result = getLongName(arrayType.getComponentType(), array);
 			} else if (type instanceof JvmTypeParameter) {
 				JvmTypeParameter typeParameter = (JvmTypeParameter) type;
 				for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
@@ -113,16 +121,23 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 						return getLongName(lowerBound.getTypeReference(), array);
 					}
 				}
-				return type.getIdentifier();
+				result = type.getIdentifier();
+			} else if (isUserDefinedType(type, array)) {				
+				result = getLongNameOfUserDefinedType((JvmGenericType) type);
 			} else {
-				return type.getIdentifier();
+				result = type.getIdentifier();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "";
+		return converter.toIQLString(result);
 		
 	}
+	
+	protected String getLongNameOfUserDefinedType(JvmGenericType type) {
+		return type.getIdentifier();
+	}
+
 	
 	@Override
 	public String getShortName(JvmTypeReference typeRef, boolean array) {
@@ -241,104 +256,104 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
 	@Override
 	public boolean isByte(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
-		return name.equals(Long.class.getCanonicalName()) || name.equals("byte");
+		String name = converter.toJavaString(getLongName(typeRef, true));		
+		return name.equals(Byte.class.getCanonicalName()) || name.equals("byte");
 	}
 	
 	@Override
 	public boolean isShort(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
-		return name.equals(Long.class.getCanonicalName()) || name.equals("short");
+		String name = converter.toJavaString(getLongName(typeRef, true));		
+		return name.equals(Short.class.getCanonicalName()) || name.equals("short");
 	}
 	
 	@Override
 	public boolean isInt(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
-		return name.equals(Long.class.getCanonicalName()) || name.equals("int");
+		String name = converter.toJavaString(getLongName(typeRef, true));		
+		return name.equals(Integer.class.getCanonicalName()) || name.equals("int");
 	}
 
 	@Override
 	public boolean isLong(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return name.equals(Long.class.getCanonicalName()) || name.equals("long");
 	}
 
 	@Override
 	public boolean isFloat(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return name.equals(Float.class.getCanonicalName()) || name.equals("float");
 	}
 	
 	@Override
 	public boolean isCharacter(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return name.equals(Character.class.getCanonicalName()) || name.equals("char");
 	}
 
 	@Override
 	public boolean isDouble(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return name.equals(Double.class.getCanonicalName()) || name.equals("double");
 	}
 
 	@Override
 	public boolean isByte(JvmTypeReference typeRef, boolean wrapper) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return (wrapper && name.equals(Byte.class.getCanonicalName())) || (!wrapper && name.equals("byte"));
 	}
 	
 	@Override
 	public boolean isCharacter(JvmTypeReference typeRef, boolean wrapper) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return (wrapper && name.equals(Character.class.getCanonicalName())) || (!wrapper && name.equals("char"));
 	}
 	
 	
 	@Override
 	public boolean isShort(JvmTypeReference typeRef, boolean wrapper) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return (wrapper && name.equals(Short.class.getCanonicalName())) ||  (!wrapper && name.equals("short"));
 	}
 	
 	@Override
 	public boolean isInt(JvmTypeReference typeRef, boolean wrapper) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return (wrapper && name.equals(Integer.class.getCanonicalName())) ||  (!wrapper && name.equals("int"));
 	}
 
 	@Override
 	public boolean isLong(JvmTypeReference typeRef, boolean wrapper) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return (wrapper && name.equals(Long.class.getCanonicalName())) ||  (!wrapper && name.equals("long"));
 	}
 
 	@Override
 	public boolean isFloat(JvmTypeReference typeRef, boolean wrapper) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return (wrapper && name.equals(Float.class.getCanonicalName())) ||  (!wrapper && name.equals("float"));
 	}
 
 	@Override
 	public boolean isDouble(JvmTypeReference typeRef, boolean wrapper) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return (wrapper && name.equals(Double.class.getCanonicalName())) ||  (!wrapper && name.equals("double"));
 	}
 	
 	@Override
 	public boolean isBoolean(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return name.equals(Boolean.class.getCanonicalName()) || name.equals("boolean");
 	}
 	
 	@Override
 	public boolean isVoid(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return name.equals(Void.class.getCanonicalName()) || name.equals("void");
 	}
 	
 	@Override
 	public boolean isString(JvmTypeReference typeRef) {
-		String name = getLongName(typeRef, true);		
+		String name = converter.toJavaString(getLongName(typeRef, true));		
 		return name.equals(String.class.getCanonicalName());
 	}	
 	
@@ -373,7 +388,17 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
 	@Override
 	public boolean isUserDefinedType(JvmType type, boolean array) {
-		return getInnerType(type, array) instanceof IQLClass | getInnerType(type, array) instanceof IQLInterface;
+		JvmType innerType = getInnerType(type, array);
+		if (innerType instanceof JvmGenericType) {
+			JvmGenericType genericType = (JvmGenericType) innerType;
+			if (genericType.getPackageName() == null) {
+				return innerType instanceof IQLClass | innerType instanceof IQLInterface; 
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	@Override

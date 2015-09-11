@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.iql.basic.scoping;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
 
+
 public class IQLImportNormalizer extends ImportNormalizer {
 
 	public IQLImportNormalizer(QualifiedName importedNamespace,	boolean wildCard, boolean ignoreCase) {
@@ -10,7 +11,7 @@ public class IQLImportNormalizer extends ImportNormalizer {
 	}
 	
 	@Override
-	public QualifiedName resolve(QualifiedName relativeName) {
+	public QualifiedName resolve(QualifiedName relativeName) {		
 		if (relativeName.isEmpty())
 			return null;
 		if (hasWildCard()) {

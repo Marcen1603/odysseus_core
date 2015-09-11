@@ -1,15 +1,11 @@
 package de.uniol.inf.is.odysseus.iql.odl.ui.executor;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -20,16 +16,17 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
-import org.eclipse.xtext.ui.util.ResourceUtil;
 
-import com.google.common.io.Files;
+
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.basic.ui.executor.BasicIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
+import de.uniol.inf.is.odysseus.iql.basic.ui.typing.BasicIQLUiTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.executor.ODLExecutor;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
@@ -44,13 +41,19 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 	public ODLUiExecutor(IODLTypeDictionary typeDictionary, IODLTypeUtils typeUtils) {
 		super(typeDictionary, typeUtils);
 	}
+	
+
+	@Override
+	protected String getFolder(IQLModel file) {
+		return BasicIQLUiTypeUtils.getOutputFolder(file.eResource());
+	}
 
 	@Override
 	public void parse(IQLModel model) {	
 		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
 
 		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
+			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operator.getSimpleName();
 			
 			cleanUpDir(outputPath);
 			
@@ -69,36 +72,18 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 	}
 	
 	protected void copyAndMoveUserEditiedFiles(ODLOperator operator, String path) {
-		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AO");
-		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AORule");
-		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"PO");
+		BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AO");
+		BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AORule");
+		BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"PO");
 		for (EObject obj : getUserDefinedTypes(operator)) {
 			if (obj instanceof IQLClass) {
-				copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
+				BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
 			} else if (obj instanceof IQLInterface) {
-				copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
+				BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
 			}
 		}
 	}
 	
-	protected void copyAndMoveUserEditiedFiles(EObject obj, String path, String name) {
-		IFile file = ResourceUtil.getFile(obj.eResource());
-		if (file != null && file.exists()) {
-			IProject project = file.getProject();
-			if (project != null && project.exists()) {
-				URI uri = project.getLocationURI().relativize(file.getParent().getLocationURI());
-				File from = new File(project.getLocation().toString()+File.separator+BasicIQLUiModule.EDIT_FOLDER+File.separator+uri.toString()+File.separator+name+".java");
-				File to = new File(path+File.separator+uri.toString()+File.separator+name+".java");
-				if (from.exists() && to.exists()) {
-					try {
-						Files.copy(from, to);
-					} catch (IOException e) {
-						throw new QueryParseException("error while moving user edited files : " +e.getMessage(),e);
-					}
-				}
-			}
-		}
-	}
 
 
 	

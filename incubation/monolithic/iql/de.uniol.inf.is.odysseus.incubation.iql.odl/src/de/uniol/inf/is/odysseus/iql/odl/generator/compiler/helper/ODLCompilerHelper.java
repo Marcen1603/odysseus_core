@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.AbstractIQLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
@@ -26,6 +27,9 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IODLTypeDictionary, IODLTypeUtils> implements IODLCompilerHelper {
 
+	@Inject
+	private IQLQualifiedNameConverter converter;
+	
 	@Inject
 	public ODLCompilerHelper(IODLLookUp lookUp, IODLTypeDictionary typeDictionary, IODLTypeUtils typeUtils) {
 		super(lookUp, typeDictionary, typeUtils);
@@ -89,7 +93,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IOD
 	public Collection<String> getPredicates(ODLOperator operator) {
 		Collection<String> predicates = new HashSet<>();
 		for (ODLParameter parameter : EcoreUtil2.getAllContentsOfType(operator, ODLParameter.class)) {
-			if (typeUtils.getLongName(parameter.getType(), true).equals(IPredicate.class.getCanonicalName())) {
+			if (converter.toJavaString(typeUtils.getLongName(parameter.getType(), true)).equals(IPredicate.class.getCanonicalName())) {
 				predicates.add(parameter.getSimpleName());
 			}
 		}
@@ -101,7 +105,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IOD
 		Collection<String> predicates = new HashSet<>();
 		for (ODLParameter parameter : EcoreUtil2.getAllContentsOfType(operator, ODLParameter.class)) {
 			if (typeUtils.isArray(parameter.getType())) {
-				if (typeUtils.getLongName(parameter.getType(), false).equals(IPredicate.class.getCanonicalName())) {
+				if (converter.toJavaString(typeUtils.getLongName(parameter.getType(), false)).equals(IPredicate.class.getCanonicalName())) {
 					predicates.add(parameter.getSimpleName());
 				}
 

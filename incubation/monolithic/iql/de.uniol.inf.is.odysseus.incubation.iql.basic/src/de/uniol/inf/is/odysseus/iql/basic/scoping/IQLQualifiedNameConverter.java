@@ -35,14 +35,13 @@ public class IQLQualifiedNameConverter implements IQualifiedNameConverter {
 		}
 	}
 
-
-	public String toDisplayString(String s) {
-		return s.replace("\\.", DELIMITER);
+	public String toJavaString(String text) {
+		return text.replace(DELIMITER, ".");
 	}
 
 
-	public String toJavaString(String text) {
-		return text.replace(DELIMITER, ".");
+	public String toIQLString(String text) {
+		return text.replace(".", DELIMITER);
 	}
 
 }

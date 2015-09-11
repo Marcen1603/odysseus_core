@@ -45,5 +45,6 @@ public interface IIQLTypeDictionary {
 	boolean isImportNeeded(JvmType type, String text);
 	
 	Class<?> getParameterValue(Class<? extends IParameter<?>> parameterType);
+	Collection<Bundle> getVisibleTypesFromBundle();
 
 }

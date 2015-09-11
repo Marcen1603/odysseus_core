@@ -36,6 +36,6 @@ Export-Package: de.uniol.inf.is.odysseus.iql.odl.ui.contentassist,
  de.uniol.inf.is.odysseus.iql.odl.ui.service,
  de.uniol.inf.is.odysseus.iql.odl.ui.wizard
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.odl.ui.internal.ODLActivator
-Service-Component: OSGI-INF/ODLFileExecutor.xml,
- OSGI-INF/ODLUiServiceBinding.xml
+Service-Component: OSGI-INF/ODLFileExecutor.xml,OSGI-INF/ODLUiServiceBinding.xml,
+ OSGI-INF/QDLDependenciesProvider.xml
 

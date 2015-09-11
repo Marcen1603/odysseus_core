@@ -26,6 +26,7 @@ import org.eclipse.xtext.common.types.JvmVisibility;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
@@ -36,6 +37,10 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 	protected U typeUtils;
 
 	protected F typeExtensionsDictionary;
+	
+	@Inject
+	protected IQLQualifiedNameConverter converter;
+
 	
 	@Inject
 	protected IIQLMethodFinder methodFinder;
@@ -152,8 +157,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 				}
 			}	
 		}
-		boolean isObject = typeUtils.getLongName(type, true).equals(Object.class.getCanonicalName());
-		if (!isObject && deep && !visitedTypes.contains(Object.class.getCanonicalName())) {
+		boolean isObject = converter.toJavaString(typeUtils.getLongName(type, true)).equals(Object.class.getCanonicalName());
+		if (!isObject && deep && !visitedTypes.contains(converter.toIQLString(Object.class.getCanonicalName()))) {
 			findAttributes(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()),visitedTypes,attributes, deep, visibilities, onlyStatic,  extensionAttributes);
 		}
 	}
@@ -270,8 +275,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 			}
 		}
 		
-		boolean isObject = typeUtils.getLongName(type, true).equals(Object.class.getCanonicalName());
-		if (!isObject && deep && !visitedTypes.contains(Object.class.getCanonicalName())) {
+		boolean isObject = converter.toJavaString(typeUtils.getLongName(type, true)).equals(Object.class.getCanonicalName());
+		if (!isObject && deep && !visitedTypes.contains(converter.toIQLString(Object.class.getCanonicalName()))) {
 			findMethods(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()), visitedTypes, methods, deep, visibilities,onlyStatic,  extensionMethods);
 		}
 	}
@@ -396,8 +401,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 		if (!isArraySizeEqual(targetRef, typeRef)) {
 			return false;
 		}
-		String targetName = typeUtils.getLongName(targetRef, false);
-		String typeName = typeUtils.getLongName(typeRef, false);
+		String targetName = converter.toJavaString(typeUtils.getLongName(targetRef, false));
+		String typeName = converter.toJavaString(typeUtils.getLongName(typeRef, false));
 		
 		if (targetName.equalsIgnoreCase(typeName)) {
 			return true;
@@ -428,7 +433,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 			}
 		}
 		
-		boolean isObject = typeUtils.getLongName(targetRef, true).equals(Object.class.getCanonicalName());
+		boolean isObject = converter.toJavaString(typeUtils.getLongName(targetRef, true)).equals(Object.class.getCanonicalName());
 		if (!isObject) {
 			boolean result = isCastable(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()), typeRef);
 			if (result) {
@@ -450,8 +455,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 			return false;
 		}
 		
-		String targetName = typeUtils.getLongName(targetRef, false);
-		String typeName = typeUtils.getLongName(typeRef, false);
+		String targetName = converter.toJavaString(typeUtils.getLongName(targetRef, false));
+		String typeName = converter.toJavaString(typeUtils.getLongName(typeRef, false));
 		
 		if (targetName.equalsIgnoreCase(typeName)) {
 			return true;
@@ -481,7 +486,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 			}
 		}
 		
-		boolean isObject = typeUtils.getLongName(typeRef, true).equals(Object.class.getCanonicalName());
+		boolean isObject = converter.toJavaString(typeUtils.getLongName(typeRef, true)).equals(Object.class.getCanonicalName());
 		if (!isObject) {
 			boolean result = isAssignable(targetRef, typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()));
 			if (result) {
@@ -495,7 +500,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 	public Collection<JvmOperation> getPublicSetters(JvmTypeReference typeRef) {
 		Collection<JvmOperation> result = new HashSet<>();
 		for (JvmOperation op : getPublicMethods(typeRef, false)) {
-			if (op.getSimpleName().startsWith("set") && op.getParameters().size() == 1 && (op.getReturnType() == null || typeUtils.isVoid(typeRef))){
+			if (op.getSimpleName().startsWith("set") && op.getParameters().size() == 1 && (op.getReturnType() == null || typeUtils.isVoid(op.getReturnType()))){
 				result.add(op);
 			}
 		}

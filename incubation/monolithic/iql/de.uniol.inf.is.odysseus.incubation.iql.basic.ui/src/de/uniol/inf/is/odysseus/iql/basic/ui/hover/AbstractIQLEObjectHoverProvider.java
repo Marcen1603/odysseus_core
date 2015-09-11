@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.iql.basic.ui.hover;
 
 
 
-import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmField;
@@ -14,7 +13,6 @@ import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L extends IIQLLookUp> extends DefaultEObjectHoverProvider {
@@ -22,9 +20,6 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	protected L lookUp;
 	protected U typeUtils;
 
-	@Inject
-	private IQLQualifiedNameConverter converter;
-	
 	
 	public AbstractIQLEObjectHoverProvider(U typeUtils, L lookUp) {
 		this.typeUtils = typeUtils;
@@ -87,7 +82,7 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	
 	private String toString(JvmTypeReference typeRef) {
 		StringBuilder b = new StringBuilder();
-		b.append(converter.toDisplayString(typeUtils.getShortName(typeRef, true)));
+		b.append(typeUtils.getShortName(typeRef, true));
 		return b.toString();
 	}
 

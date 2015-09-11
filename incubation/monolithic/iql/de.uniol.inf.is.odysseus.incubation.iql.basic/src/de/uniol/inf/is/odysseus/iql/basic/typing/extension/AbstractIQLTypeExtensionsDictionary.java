@@ -24,6 +24,7 @@ import org.eclipse.xtext.common.types.JvmVisibility;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLService;
 import de.uniol.inf.is.odysseus.iql.basic.service.IQLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLDefaultTypes;
@@ -42,6 +43,9 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 	
 	@Inject
 	protected IIQLLookUp lookUp;
+	
+	@Inject
+	protected IQLQualifiedNameConverter converter;
 
 	public AbstractIQLTypeExtensionsDictionary(F typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;
@@ -106,7 +110,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 	
 	@Override
 	public Collection<JvmField> getAllExtensionAttributes(JvmTypeReference typeRef, int[] visibilities) {
-		String name = typeUtils.getLongName(typeRef, true);
+		String name = converter.toJavaString(typeUtils.getLongName(typeRef, true));
 		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
 		Collection<JvmField> result = new HashSet<>();
 		for (IIQLTypeExtensions extensions : col) {
@@ -131,7 +135,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 
 	@Override
 	public Collection<JvmOperation> getAllExtensionMethods(JvmTypeReference typeRef, int[] visibilities) {
-		String name = typeUtils.getLongName(typeRef, true);
+		String name = converter.toJavaString(typeUtils.getLongName(typeRef, true));
 		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
 		Collection<JvmOperation> result = new HashSet<>();		
 		for (IIQLTypeExtensions extensions : col) {
@@ -162,7 +166,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 	
 	@Override
 	public IIQLTypeExtensions getTypeExtensions(JvmTypeReference typeRef) {
-		String name = typeUtils.getLongName(typeRef, true);
+		String name = converter.toJavaString(typeUtils.getLongName(typeRef, true));
 		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
@@ -196,8 +200,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 		
 		JvmType innerType = typeUtils.getInnerType(typeRef, true);
 
-		String name = typeUtils.getLongName(innerType, true);
-		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
+		Collection<IIQLTypeExtensions> col = typeExtensions.get(converter.toJavaString(typeUtils.getLongName(innerType, true)));
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
 				try {
@@ -224,7 +227,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 				return findTypeExtensions(extendedType, attribute);
 			}
 			
-			boolean isObject = typeUtils.getLongName(declaredType, true).equals(Object.class.getCanonicalName());
+			boolean isObject = converter.toJavaString(typeUtils.getLongName(declaredType, true)).equals(Object.class.getCanonicalName());
 			if (!isObject && declaredType.getExtendedClass() == null && !declaredType.getExtendedInterfaces().iterator().hasNext()) {
 				return findTypeExtensions(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()), attribute);
 			}
@@ -239,8 +242,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 		
 		JvmType innerType = typeUtils.getInnerType(typeRef, true);
 		
-		String name = typeUtils.getLongName(innerType, true);
-		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
+		Collection<IIQLTypeExtensions> col = typeExtensions.get(converter.toJavaString(typeUtils.getLongName(innerType, true)));
 
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
@@ -266,7 +268,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 				return findTypeExtensions(extendedType, methodName, arguments);
 			}
 			
-			boolean isObject = typeUtils.getLongName(declaredType, true).equals(Object.class.getCanonicalName());
+			boolean isObject = converter.toJavaString(typeUtils.getLongName(declaredType, true)).equals(Object.class.getCanonicalName());
 			if (!isObject && declaredType.getExtendedClass() == null && !declaredType.getExtendedInterfaces().iterator().hasNext()) {
 				return findTypeExtensions(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()), methodName, arguments);
 			}

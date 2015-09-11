@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.C
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
@@ -63,7 +64,7 @@ public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTyp
 		}
 		
 		for (QDLQuery query : EcoreUtil2.getAllContentsOfType(model, QDLQuery.class)) {
-			String outputPath = getIQLOutputPath()+QUERIES_DIR+File.separator+query.getSimpleName();
+			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+QUERIES_DIR+File.separator+query.getSimpleName();
 			cleanUpDir(outputPath);
 			
 			Collection<Resource> resources = createNecessaryIQLFiles(EcoreUtil2.getResourceSet(model), outputPath,query);

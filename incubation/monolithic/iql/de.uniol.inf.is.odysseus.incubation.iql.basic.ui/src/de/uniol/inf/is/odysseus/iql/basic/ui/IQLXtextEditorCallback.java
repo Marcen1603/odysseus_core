@@ -18,8 +18,6 @@ public class IQLXtextEditorCallback extends ValidatingEditorCallback implements 
 	@Inject
 	private ToggleXtextNatureAction toggleNature;
 
-
-
 	@Override
 	public void afterCreatePartControl(XtextEditor editor) {
 		super.afterCreatePartControl(editor);
@@ -28,10 +26,12 @@ public class IQLXtextEditorCallback extends ValidatingEditorCallback implements 
 			IProject project = resource.getProject();
 			if (project != null && project.isAccessible() && !project.isHidden() && !toggleNature.hasNature(project)) {
 				toggleNature.toggleNature(project);
-			}
+			}			
 		}
 	}
 	
+
+
 	@Override
 	public void beforeSetInput(XtextEditor xtextEditor) {
 		super.beforeSetInput(xtextEditor);

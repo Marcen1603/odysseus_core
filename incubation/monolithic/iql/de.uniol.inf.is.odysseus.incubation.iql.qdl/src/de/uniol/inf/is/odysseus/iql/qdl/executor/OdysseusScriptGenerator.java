@@ -472,38 +472,6 @@ public class OdysseusScriptGenerator {
 			query.setName(name);
 			queries.add(query);			
 		}		
-	}
-	
-	
-	
-//	
-//	private String setPreParserKeywords(IQDLQuery query, String pql) {
-//		StringBuilder b = new StringBuilder();
-//		b.append("#PARSER "+"PQL"+System.lineSeparator());	
-//		boolean queryCmd = false;
-//		b.append("#QNAME "+query.getName()+System.lineSeparator());	
-//		for (IPair<String, Object> metadata : query.getMetadata()) {
-//			if (metadata.getE1().equalsIgnoreCase("query")) {
-//				queryCmd = true;
-//			} else if (metadata.getE1().equalsIgnoreCase("addquery")) {
-//				queryCmd = true;
-//			} else if (metadata.getE1().equalsIgnoreCase("runquery")) {
-//				queryCmd = true;
-//			}
-//			b.append("#"+metadata.getE1().toUpperCase() +" ");		
-//			if (metadata.getE2() != null) {
-//				b.append(getPreParserKeywordValue(metadata.getE2())+System.lineSeparator());		
-//			} else {
-//				b.append(System.lineSeparator());		
-//			}
-//		}
-//		if (!queryCmd) {
-//			b.append("#ADDQUERY"+System.lineSeparator());	
-//		}
-//		b.append(pql);
-//		System.out.println(b.toString());
-//		return b.toString();
-//	}
-	
+	}	
 
 }

@@ -8,6 +8,8 @@ import org.eclipse.xtext.common.types.util.TypeReferences;
 
 
 
+
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
@@ -38,7 +40,7 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeDictionary, U ext
 		StringBuilder b = new StringBuilder();
 		for (int i = 0; i< namespaceSegments.length; i++) {
 			if (i > 0) {
-				b.append(".");
+				b.append(IQLQualifiedNameConverter.DELIMITER);
 			}
 			b.append(namespaceSegments[i]);
 		}
@@ -49,12 +51,12 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeDictionary, U ext
 		StringBuilder b = new StringBuilder();
 		for (int i = 0; i< namespaceSegments.length; i++) {
 			if (i > 0) {
-				b.append(".");
+				b.append(IQLQualifiedNameConverter.DELIMITER);
 			}
 			b.append(namespaceSegments[i]);
 		}
 		if (namespaceSegments.length > 0) {
-			b.append(".");
+			b.append(IQLQualifiedNameConverter.DELIMITER);
 		}
 		b.append(simpleName);
 		return b.toString();
@@ -62,7 +64,7 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeDictionary, U ext
 	
 	
 	protected String createClassName(String packageName, String simpeName) {
-		return packageName + "." + simpeName;
+		return packageName + IQLQualifiedNameConverter.DELIMITER + simpeName;
 	}
 	
 	protected String firstCharUpperCase(String s) {

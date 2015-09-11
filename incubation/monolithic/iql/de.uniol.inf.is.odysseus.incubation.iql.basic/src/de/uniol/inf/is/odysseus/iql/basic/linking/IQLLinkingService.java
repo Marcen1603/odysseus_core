@@ -60,10 +60,9 @@ public class IQLLinkingService extends DefaultLinkingService{
 			result =  getLinkedObjectsIQLArgumentsMapKeyValue((IQLArgumentsMapKeyValue)context, ref, node);
 		}
 		if (result == null || result.isEmpty()) {
-			return super.getLinkedObjects(context, ref, node);
-		} else {
-			return result;
-		}
+			result =  super.getLinkedObjects(context, ref, node);
+		} 
+		return result;		
 	}
 	
 	protected List<EObject> getLinkedObjectsIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue, EReference ref, INode node) throws IllegalNodeException {

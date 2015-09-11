@@ -44,25 +44,18 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	@Override
 	public Collection<Bundle> getDependencies() {
 		Collection<Bundle> bundles = super.getDependencies();
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.transform"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.ruleengine"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.mep"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.odl"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.sweeparea"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.server.intervalapproach"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.relational.base"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.intervalapproach"));
+		for (String bundleName : ODLDefaultTypes.getDependencies()) {
+			bundles.add(Platform.getBundle(bundleName));
+		}
 		return bundles;
 	}
 	
 	@Override
-	protected Collection<Bundle> getVisibleTypesFromBundle() {
+	public Collection<Bundle> getVisibleTypesFromBundle() {
 		Collection<Bundle> bundles = super.getVisibleTypesFromBundle();
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.mep"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.sweeparea"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.server.intervalapproach"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.relational.base"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.intervalapproach"));	
+		for (String bundleName : ODLDefaultTypes.getVisibleTypesFromBundle()) {
+			bundles.add(Platform.getBundle(bundleName));
+		}
 		return bundles;
 	}
 	
@@ -89,15 +82,18 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 		Collection<String> implicitImports = super.createImplicitImports();
 		for (Class<? extends IParameter<?>> parameterType : ParameterFactory.getParameters()) {
 			Class<?> valueType = ParameterFactory.getParameterValue(parameterType);
-			implicitImports.add(parameterType.getCanonicalName());
-			implicitImports.add(valueType.getCanonicalName());
+			implicitImports.add(converter.toIQLString(parameterType.getCanonicalName()));
+			implicitImports.add(converter.toIQLString(valueType.getCanonicalName()));
 		}
 		for (Entry<Class<? extends IParameter<?>>, Class<?>> entry : serviceObserver.getParameters().entrySet()) {
-			implicitImports.add(entry.getKey().getCanonicalName());
-			implicitImports.add(entry.getValue().getCanonicalName());
+			implicitImports.add(converter.toIQLString(entry.getKey().getCanonicalName()));
+			implicitImports.add(converter.toIQLString(entry.getValue().getCanonicalName()));
 		}
 		
-		implicitImports.addAll(ODLDefaultTypes.getImplicitImports());	
+		for (String i : ODLDefaultTypes.getImplicitImports()) {
+			implicitImports.add(converter.toIQLString(i));
+		}
+	
 		return implicitImports;
 	}
 	
@@ -105,7 +101,7 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	public Collection<String> createImplicitStaticImports() {
 		Collection<String> implicitStaticImports = super.createImplicitStaticImports();
 		for (Class<?> c : ODLDefaultTypes.getImplicitStaticImports()) {
-			implicitStaticImports.add(c.getCanonicalName());
+			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
 		}
 		return implicitStaticImports;
 	}
@@ -113,7 +109,7 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	
 	@Override
 	public JvmTypeReference getParameterType(JvmTypeReference valueType, Notifier context) {
-		String qName = typeUtils.getLongName(valueType, false);
+		String qName = converter.toJavaString(typeUtils.getLongName(valueType, false));
 		for (Class<? extends IParameter<?>> parameterType : ParameterFactory.getParameters()) {
 			Class<?> valueTypeClass = ParameterFactory.getParameterValue(parameterType);
 			if (qName.equalsIgnoreCase(valueTypeClass.getCanonicalName())) {

@@ -57,7 +57,18 @@ public class QDLTypeDictionary extends AbstractIQLTypeDictionary<IQDLTypeUtils, 
 	@Override
 	public Collection<Bundle> getDependencies() {
 		Collection<Bundle> bundles =super.getDependencies();
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.qdl"));
+		for (String bundleName : QDLDefaultTypes.getDependencies()) {
+			bundles.add(Platform.getBundle(bundleName));
+		}
+		return bundles;
+	}
+	
+	@Override
+	public Collection<Bundle> getVisibleTypesFromBundle() {
+		Collection<Bundle> bundles =super.getVisibleTypesFromBundle();
+		for (String bundleName : QDLDefaultTypes.getVisibleTypesFromBundle()) {
+			bundles.add(Platform.getBundle(bundleName));
+		}
 		return bundles;
 	}
 	
@@ -86,9 +97,11 @@ public class QDLTypeDictionary extends AbstractIQLTypeDictionary<IQDLTypeUtils, 
 	public Collection<String> createImplicitImports() {
 		Collection<String> implicitImports = super.createImplicitImports();
 		for (Class<?> parameterValueType : parameterValueTypes) {
-			implicitImports.add(parameterValueType.getCanonicalName());
-		}	
-		implicitImports.addAll(QDLDefaultTypes.getImplicitImports());	
+			implicitImports.add(converter.toIQLString(parameterValueType.getCanonicalName()));
+		}
+		for (String i : QDLDefaultTypes.getImplicitImports()) {
+			implicitImports.add(converter.toIQLString(i));
+		}
 		return implicitImports;
 	}
 	
@@ -96,7 +109,7 @@ public class QDLTypeDictionary extends AbstractIQLTypeDictionary<IQDLTypeUtils, 
 	public Collection<String> createImplicitStaticImports() {
 		Collection<String> implicitStaticImports = super.createImplicitStaticImports();
 		for (Class<?> c : QDLDefaultTypes.getImplicitStaticImports()) {
-			implicitStaticImports.add(c.getCanonicalName());
+			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
 		}
 		return implicitStaticImports;
 	}

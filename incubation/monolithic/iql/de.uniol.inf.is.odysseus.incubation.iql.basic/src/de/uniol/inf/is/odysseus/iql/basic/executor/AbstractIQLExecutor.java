@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 import org.eclipse.osgi.framework.internal.core.AbstractBundle;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
@@ -36,19 +37,16 @@ import org.osgi.framework.BundleException;
 
 import com.google.inject.Provider;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLExecutor{
 	
-	protected static final String IQL_DIR = "iql";
 	protected static final String JAVA_VERSION = "1.7";
 	
 	
@@ -64,16 +62,16 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 	@Inject
 	protected IOutputConfigurationProvider outputConfigurationProvider;
 	
+	
+	@Inject
+	protected IQLQualifiedNameConverter converter;
+	
 	protected U typeUtils;
 	protected F typeDictionary;
 
 	public AbstractIQLExecutor(F typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
-	}
-
-	protected static String getIQLOutputPath() {
-		return OdysseusConfiguration.getHomeDir()+IQL_DIR+File.separator;
 	}
 	
 	
@@ -112,23 +110,26 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		Collection<Resource> resources = new HashSet<>();
 		for (Entry<IQLModel, StringBuilder> entry : fileBuilders.entrySet()) {
 			String text = entry.getValue().toString();
-			String path = outputPath+getFilePath(entry.getKey());
-			resources.add(createIQLFile(path, text, resourceSet));
+			String fileName = getFileName(entry.getKey());
+			String folder = getFolder(entry.getKey());
+			StringBuilder pathBuilder = new StringBuilder();
+			pathBuilder.append(outputPath);
+			if (folder != null && folder.length() > 0) {
+				pathBuilder.append(File.separator+folder);
+			}
+			pathBuilder.append(File.separator+fileName);
+			resources.add(createIQLFile(pathBuilder.toString(), text, resourceSet));
 		}
 		return resources;
 	}
 	
-	private String getFilePath(IQLModel file) {
-		URI uri = file.eResource().getURI();
-		if (uri.segmentCount() == 1) {
-			return File.separator+uri.segments()[0];
-		} else {
-			StringBuilder builder = new StringBuilder();
-			for (int i = 2; i< uri.segmentCount(); i++) {
-				builder.append(File.separator+uri.segments()[i]);
-			}
-			return builder.toString();
-		}
+	protected String getFolder(IQLModel file) {
+		return "";
+	}
+	
+	protected String getFileName(IQLModel file) {
+		URI uri = file.eResource().getURI();		
+		return uri.lastSegment();
 	}
 	
 	private String getNodeText(EObject object) {
@@ -139,46 +140,15 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 	protected Set<EObject> getUserDefinedTypes(EObject element) {
 		Set<EObject> userDefinedTypes = new HashSet<>();
 		for (JvmTypeReference typeRef : EcoreUtil2.getAllContentsOfType(element, JvmTypeReference.class)) {
-			if (typeUtils.getInnerType(typeRef, false) instanceof IQLClass) {
-				userDefinedTypes.addAll(getUserDefinedTypes((IQLClass)typeUtils.getInnerType(typeRef, false) ));
-			} else if (typeUtils.getInnerType(typeRef, false) instanceof IQLInterface) {
-				userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeUtils.getInnerType(typeRef, false) ));
-			}
+			JvmType type = typeUtils.getInnerType(typeRef, false);			
+			if (typeUtils.isUserDefinedType(type, false)) {
+				userDefinedTypes.add(type);
+				userDefinedTypes.addAll(getUserDefinedTypes(type));
+			} 
 		}
 		return userDefinedTypes;
 	}
 	
-	private Set<EObject> getUserDefinedTypes(IQLClass c) {
-		Set<EObject> userDefinedTypes = new HashSet<>();
-		IQLModel file = EcoreUtil2.getContainerOfType(c, IQLModel.class);
-		if (file.getName() == null) {
-			userDefinedTypes.add(c);
-			JvmTypeReference extendedClass = c.getExtendedClass();
-			if (extendedClass != null && typeUtils.getInnerType(extendedClass, false) instanceof IQLClass) {
-				userDefinedTypes.addAll(getUserDefinedTypes((IQLClass)typeUtils.getInnerType(extendedClass, false)));
-			}
-			for (JvmTypeReference extendedClassInterf : c.getExtendedInterfaces()) {
-				if (typeUtils.getInnerType(extendedClassInterf, false) instanceof IQLInterface) {
-					userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeUtils.getInnerType(extendedClassInterf, false)));
-				}
-			}
-		}
-		return userDefinedTypes;
-	}
-	
-	private Set<EObject> getUserDefinedTypes(IQLInterface i) {
-		Set<EObject> userDefinedTypes = new HashSet<>();
-		IQLModel file = EcoreUtil2.getContainerOfType(i, IQLModel.class);
-		if (file.getName() == null) {
-			userDefinedTypes.add(i);
-			for (JvmTypeReference extendedClassInterf : i.getExtendedInterfaces()) {
-				if (typeUtils.getInnerType(extendedClassInterf, false) instanceof IQLInterface) {
-					userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeUtils.getInnerType(extendedClassInterf, false)));
-				}				
-			}
-		}
-		return userDefinedTypes;
-	}
 	
 	private Resource createIQLFile(String path, String text, ResourceSet resourceSet) {
 		File file = new File(path);

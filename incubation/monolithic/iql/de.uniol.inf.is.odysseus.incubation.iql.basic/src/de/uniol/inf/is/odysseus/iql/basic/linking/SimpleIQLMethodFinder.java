@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 public class SimpleIQLMethodFinder implements IIQLMethodFinder {
@@ -29,6 +30,9 @@ public class SimpleIQLMethodFinder implements IIQLMethodFinder {
 	
 	@Inject
 	private IIQLExpressionEvaluator evaluator;
+	
+	@Inject
+	private IQLQualifiedNameConverter converter;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleIQLMethodFinder.class);
 
@@ -125,7 +129,7 @@ public class SimpleIQLMethodFinder implements IIQLMethodFinder {
 				if (typeResult.hasError()) {
 					LOG.error("Could not evaluate expression. "+typeResult.getDiagnostic());
 					return false;
-				} else if (!typeResult.isNull() && !lookUp.isCastable(parameter.getParameterType(), typeResult.getRef())) {
+				} else if (!typeResult.isNull() && !lookUp.isAssignable(parameter.getParameterType(), typeResult.getRef()) && !lookUp.isCastable(parameter.getParameterType(), typeResult.getRef())) {
 					return false;
 				}
 			}
@@ -192,9 +196,9 @@ public class SimpleIQLMethodFinder implements IIQLMethodFinder {
 		
 		for (JvmOperation method : methods) {			
 			if (method.getSimpleName().equalsIgnoreCase(name) && method.getParameters().size() == args) {
-				if (hasReturnType && method.getReturnType() != null && !typeUtils.getLongName(method.getReturnType(), false).equalsIgnoreCase(Void.class.getCanonicalName())) {
+				if (hasReturnType && method.getReturnType() != null && !(converter.toJavaString(typeUtils.getLongName(method.getReturnType(), false)).equalsIgnoreCase(Void.class.getCanonicalName()))) {
 					matches.add(method);				
-				} else if (!hasReturnType && (method.getReturnType() == null || typeUtils.getLongName(method.getReturnType(), false).equalsIgnoreCase(Void.class.getCanonicalName()))) {
+				} else if (!hasReturnType && (method.getReturnType() == null || converter.toJavaString(typeUtils.getLongName(method.getReturnType(), false)).equalsIgnoreCase(Void.class.getCanonicalName()))) {
 					matches.add(method);				
 				}
 			}

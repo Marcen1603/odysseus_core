@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.common.types.TypesFactory;
 
 import com.google.common.base.Strings;
@@ -46,8 +47,8 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 	}
 
 	@Override
-	public void createSource(ILogicalOperator source) {
-		String name = getSourceName(source);
+	public void createSource(String sourceName, ILogicalOperator source) {
+		String name = getSourceName(sourceName);
 		JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLSource.class, typeDictionary.getSystemResourceSet());
 
 		IQLClass sourceClass = BasicIQLFactory.eINSTANCE.createIQLClass();
@@ -59,10 +60,12 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 			IQLAttribute attribute= BasicIQLFactory.eINSTANCE.createIQLAttribute();
 			attribute.setSimpleName(attr.getAttributeName().toUpperCase());
 			attribute.setType(typeUtils.createTypeRef(String.class, typeDictionary.getSystemResourceSet()));
+			attribute.setVisibility(JvmVisibility.PUBLIC);
 			sourceClass.getMembers().add(attribute);
 		}
 		IQLAttribute sourceAttr = BasicIQLFactory.eINSTANCE.createIQLAttribute();
 		sourceAttr.setSimpleName(firstCharLowerCase(name));
+		sourceAttr.setVisibility(JvmVisibility.PUBLIC);
 		sourceAttr.setType(typeUtils.createTypeRef(sourceClass));
 		sourceClass.getMembers().add(sourceAttr);
 		
@@ -71,14 +74,19 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 	}
 	
 	@Override
-	public void removeSource(ILogicalOperator source) {
-		String name = firstCharUpperCase(source.getName().toLowerCase());
+	public void removeSource(String sourceName,ILogicalOperator source) {
+		String name = getSourceName(sourceName);
 		removeSystemType(SOURCES_NAMESPACE, name);
-		typeDictionary.removeSource(getSourceName(source));
+		typeDictionary.removeSource(name);
 	}
 	
-	private String getSourceName(ILogicalOperator source) {
-		return source.getName();
+	private String getSourceName(String name) {
+		if (name.contains(".")) {
+			String[] splits = name.split("\\.");
+			return splits[splits.length-1];
+		} else {
+			return name;
+		}
 	}
 	
 	@Override
@@ -132,19 +140,12 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 				boolean isList = parameterAnnotation.isList();
 				boolean isMap = parameterAnnotation.isMap();
 				
-				if (isComplexParameterType(parameterValueType)) {
-					parameterValueType = Object.class;
-				}
-				
 				parameterTypes.put(parameterName.toLowerCase(), parameterAnnotation);
 				parameters.put(parameterName.toLowerCase(), new String[]{curProperty.getName(), readMethod.getName(), writeMethod.getName()});
+				
 				parameterValueTypes.add(parameterValueType);
 								
-				IQLAttribute attribute = createParameterAttribute(parameterName,parameterValueType, isList, isMap);
-				if (attribute != null) {
-					opClass.getMembers().add(attribute);			
-				}
-				
+						
 				IQLMethod pqlSetter = createParameterSetter(parameterName,parameterValueType, isList, isMap);
 				if (pqlSetter != null) {
 					opClass.getMembers().add(pqlSetter);
@@ -154,11 +155,28 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 				if (pqlGetter != null) {
 					opClass.getMembers().add(pqlGetter);
 				}
+				
+				if (!isList && !isMap && isComplexParameterType(parameterValueType)) {
+					parameterValueType = Object.class;
+					
+					parameterValueTypes.add(parameterValueType);
+				
+					IQLMethod pqlSetter1 = createParameterSetter(parameterName,parameterValueType, isList, isMap);
+					if (pqlSetter1 != null) {
+						opClass.getMembers().add(pqlSetter1);
+					}
+					
+					IQLMethod pqlGetter1 = createParameterGetter(parameterName,parameterValueType, isList, isMap);
+					if (pqlGetter1 != null) {
+						opClass.getMembers().add(pqlGetter1);
+					}
+				}
 			}				
 		}
 				
 		IQLMethod constructor1 = BasicIQLFactory.eINSTANCE.createIQLMethod();
 		constructor1.setSimpleName(name);
+		constructor1.setVisibility(JvmVisibility.PUBLIC);
 		
 		JvmFormalParameter constructor1Arg = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor1Arg.setName("source");
@@ -168,7 +186,8 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		
 		IQLMethod constructor2 = BasicIQLFactory.eINSTANCE.createIQLMethod();
 		constructor2.setSimpleName(name);
-		
+		constructor2.setVisibility(JvmVisibility.PUBLIC);
+
 		JvmFormalParameter constructor2Arg1 = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor2Arg1.setName("source1");
 		constructor2Arg1.setParameterType(typeUtils.createTypeRef(IQDLOperator.class, typeDictionary.getSystemResourceSet()));
@@ -204,27 +223,11 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 				return false;
 			} else if (parameterValue == String.class) {
 				return false;
-			} else if (List.class.isAssignableFrom(parameterValue)) {
-				return false;
-			} else if (Map.class.isAssignableFrom(parameterValue)) {
-				return false;
 			} else if (parameterValue.isPrimitive()) {
 				return false;
 			}
 		}
 		return true;
-	}
-	
-	private IQLAttribute createParameterAttribute(String parameterName, Class<?> parameterValue, boolean isList, boolean isMap) {
-		JvmTypeReference typeRef = createType(parameterValue, isList, isMap);
-		
-		if (typeRef != null) {
-			IQLAttribute attribute= BasicIQLFactory.eINSTANCE.createIQLAttribute();
-			attribute.setSimpleName(parameterName.toLowerCase());
-			attribute.setType(typeRef);
-			return attribute;
-		}
-		return null;
 	}
 	
 	private IQLMethod createParameterSetter(String parameterName, Class<?> parameterValue, boolean isList, boolean isMap) {
@@ -233,7 +236,8 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		if (typeRef != null) {
 			IQLMethod method = BasicIQLFactory.eINSTANCE.createIQLMethod();
 			method.setSimpleName("set"+firstCharUpperCase(parameterName.toLowerCase()));
-			
+			method.setVisibility(JvmVisibility.PUBLIC);
+
 			JvmFormalParameter arg = TypesFactory.eINSTANCE.createJvmFormalParameter();
 			arg.setName(parameterName.toLowerCase());
 			arg.setParameterType(typeRef);
@@ -256,7 +260,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 			} else {
 				method.setSimpleName("get"+firstCharUpperCase(parameterName.toLowerCase()));
 			}
-					
+			method.setVisibility(JvmVisibility.PUBLIC);					
 			method.setReturnType(typeRef);
 			return method;
 
