@@ -17,6 +17,12 @@ public class MovingStateAbortMessage implements IMessage {
 	public static final int ABORT_INSTRUCTION = 0;
 	public static final int ABORT_RESPONSE = 1;
 
+	@Override
+	public String toString() {
+		if(msgType==0) 
+			return "ABORT_INSTRUCTION for Process " + loadBalancingProcessId;
+		return "ABORT_RESPONSE for Process " + loadBalancingProcessId;
+	}
 	/**
 	 * ID to identify current load Balancing process (is reused in different stages of negotiation between clients)
 	 */

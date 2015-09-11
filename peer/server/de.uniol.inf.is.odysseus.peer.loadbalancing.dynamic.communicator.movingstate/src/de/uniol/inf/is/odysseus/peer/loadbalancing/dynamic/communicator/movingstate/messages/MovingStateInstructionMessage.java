@@ -28,6 +28,33 @@ public class MovingStateInstructionMessage implements IMessage {
 	public static final int STOP_BUFFERING = 7;
 	public static final int MESSAGE_RECEIVED = 8;
 	public static final int PIPE_SUCCCESS_RECEIVED = 9;
+	
+	@Override
+	public String toString() {
+		switch(msgType) {
+		case INITIATE_LOADBALANCING:
+			return "INITIATE_LOADBALANCING for Process "+loadBalancingProcessId;
+		case ADD_QUERY:
+			return "ADD_QUERY for Process "+loadBalancingProcessId;
+		case REPLACE_RECEIVER:
+			return "REPLACE_RECEIVER for Process "+loadBalancingProcessId;
+		case INSTALL_BUFFER_AND_REPLACE_SENDER:
+			return "INSTALL_BUFFER_AND_REPLACE_SENDER for Process "+loadBalancingProcessId;
+		case INITIATE_STATE_COPY:
+			return "INITIATE_STATE_COPY for Process "+loadBalancingProcessId;
+		case INJECT_STATE:
+			return "INJECT_STATE for Process "+loadBalancingProcessId;
+		case FINISHED_COPYING_STATES:
+			return "FINISHED_COPYING_STATES for Process "+loadBalancingProcessId;
+		case STOP_BUFFERING:
+			return "STOP_BUFFERING for Process "+loadBalancingProcessId;
+		case MESSAGE_RECEIVED:
+			return "MESSAGE_RECEIVED for Process "+loadBalancingProcessId;
+		case PIPE_SUCCCESS_RECEIVED:
+			return "PIPE_SUCCCESS_RECEIVED for Process "+loadBalancingProcessId;
+		}
+		return "<unknown>";
+	}
 
 	private int loadBalancingProcessId;
 	private int msgType;

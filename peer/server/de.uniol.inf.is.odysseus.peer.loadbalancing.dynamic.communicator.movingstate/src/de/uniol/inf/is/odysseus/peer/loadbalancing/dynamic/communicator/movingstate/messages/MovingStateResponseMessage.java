@@ -27,6 +27,35 @@ public class MovingStateResponseMessage implements IMessage {
 	public static final int ACK_ALL_STATE_COPIES_FINISHED = 9;
 	public static final int STOP_BUFFERING_FINISHED = 10;
 
+	@Override
+	public String toString() {
+		switch (msgType) {
+		case ACK_LOADBALANCING:
+			return "ACK_LOADBALANCING for Process " + loadBalancingProcessId;
+		case SUCCESS_INSTALL_QUERY:
+			return "SUCCESS_INSTALL_QUERY for Process " + loadBalancingProcessId;
+		case FAILURE_INSTALL_QUERY:
+			return "FAILURE_INSTALL_QUERY for Process " + loadBalancingProcessId;
+		case SUCCESS_DUPLICATE_SENDER:
+			return "SUCCESS_DUPLICATE_SENDER for Process " + loadBalancingProcessId;
+		case SUCCESS_DUPLICATE_RECEIVER:
+			return "SUCCESS_DUPLICATE_RECEIVER for Process " + loadBalancingProcessId;
+		case FAILURE_DUPLICATE_RECEIVER:
+			return "FAILURE_DUPLICATE_RECEIVER for Process " + loadBalancingProcessId;
+		case ACK_INIT_STATE_COPY:
+			return "ACK_INIT_STATE_COPY for Process " + loadBalancingProcessId;
+		case FAIL_INIT_STATE_COPY:
+			return "FAIL_INIT_STATE_COPY for Process " + loadBalancingProcessId;
+		case STATE_COPY_FINISHED:
+			return "STATE_COPY_FINISHED for Process " + loadBalancingProcessId;
+		case ACK_ALL_STATE_COPIES_FINISHED:
+			return "ACK_ALL_STATE_COPIES_FINISHED for Process " + loadBalancingProcessId;
+		case STOP_BUFFERING_FINISHED:
+			return "STOP_BUFFERING_FINISHED for Process " + loadBalancingProcessId;
+		}
+		return "<unknown";
+	}
+
 	/**
 	 * ID to identify current load Balancing process (is reused in different
 	 * stages of negotiation between clients)
@@ -61,7 +90,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            LoadBalancing Process Id
 	 * @return Message with msgType ACK_LOADBALANCING
 	 */
-	public static MovingStateResponseMessage createAckLoadbalancingMessage(int loadBalancingProcessId) {
+	public static MovingStateResponseMessage createAckLoadbalancingMessage(
+			int loadBalancingProcessId) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(ACK_LOADBALANCING);
@@ -77,7 +107,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            Pipe Id
 	 * @return Message with STATE_COPY_FINISHED msgType
 	 */
-	public static MovingStateResponseMessage createStateCopyFinishedMessage(int lbProcessId, String pipe) {
+	public static MovingStateResponseMessage createStateCopyFinishedMessage(
+			int lbProcessId, String pipe) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setPipeID(pipe);
@@ -94,7 +125,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            Pipe Id
 	 * @return Message with msgType ACK_INIT_STATE_COPY
 	 */
-	public static MovingStateResponseMessage createAckInitStateCopyMessage(int lbProcessId, String pipe) {
+	public static MovingStateResponseMessage createAckInitStateCopyMessage(
+			int lbProcessId, String pipe) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setPipeID(pipe);
@@ -109,7 +141,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            load balancing process id
 	 * @return Message with SUCCESS_INSTALL_QUERY as msgType
 	 */
-	public static MovingStateResponseMessage createInstallSuccessMessage(int loadBalancingProcessId) {
+	public static MovingStateResponseMessage createInstallSuccessMessage(
+			int loadBalancingProcessId) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(SUCCESS_INSTALL_QUERY);
@@ -125,7 +158,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            Pipe ID
 	 * @return Message with msgType SUCCESS_DUPLICATE_SENDER
 	 */
-	public static MovingStateResponseMessage createDuplicateSenderSuccessMessage(int loadBalancingProcessId, String pipeID) {
+	public static MovingStateResponseMessage createDuplicateSenderSuccessMessage(
+			int loadBalancingProcessId, String pipeID) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
@@ -142,7 +176,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            Pipe ID
 	 * @return Message with msgType SUCCESS_DUPLICATE_RECEIVER
 	 */
-	public static MovingStateResponseMessage createDuplicateReceiverSuccessMessage(int loadBalancingProcessId, String pipeID) {
+	public static MovingStateResponseMessage createDuplicateReceiverSuccessMessage(
+			int loadBalancingProcessId, String pipeID) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setPipeID(pipeID);
@@ -157,7 +192,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            loadBalancing Process Id
 	 * @return Message with msgType FAILURE_DUPLICATE_RECEIVER
 	 */
-	public static MovingStateResponseMessage createDuplicateFailureMessage(int loadBalancingProcessId) {
+	public static MovingStateResponseMessage createDuplicateFailureMessage(
+			int loadBalancingProcessId) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_DUPLICATE_RECEIVER);
@@ -171,7 +207,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            LoadBalancing Process iD
 	 * @return Message with msgType FAILURE_INSTALL_QUERY
 	 */
-	public static MovingStateResponseMessage createInstallFailureMessage(int loadBalancingProcessId) {
+	public static MovingStateResponseMessage createInstallFailureMessage(
+			int loadBalancingProcessId) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(loadBalancingProcessId);
 		message.setMsgType(FAILURE_INSTALL_QUERY);
@@ -338,7 +375,8 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            LoadBalancingProcess ID
 	 * @return Message with msgType ACK_ALL_STATE_COPIES_FINISHED
 	 */
-	public static MovingStateResponseMessage createAckCopyingFinishedMsg(int lbProcessId) {
+	public static MovingStateResponseMessage createAckCopyingFinishedMsg(
+			int lbProcessId) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setMsgType(ACK_ALL_STATE_COPIES_FINISHED);
@@ -352,14 +390,16 @@ public class MovingStateResponseMessage implements IMessage {
 	 *            loadBalancing Process ID
 	 * @return Message with msgType STOP_BUFFERING_FINISHED
 	 */
-	public static MovingStateResponseMessage createStopBufferingFinishedMsg(int lbProcessId) {
+	public static MovingStateResponseMessage createStopBufferingFinishedMsg(
+			int lbProcessId) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setMsgType(STOP_BUFFERING_FINISHED);
 		return message;
 	}
 
-	public static MovingStateResponseMessage createInitStateCopyFail(int lbProcessId, String pipeId) {
+	public static MovingStateResponseMessage createInitStateCopyFail(
+			int lbProcessId, String pipeId) {
 		MovingStateResponseMessage message = new MovingStateResponseMessage();
 		message.setLoadBalancingProcessId(lbProcessId);
 		message.setPipeID(pipeId);

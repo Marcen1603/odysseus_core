@@ -153,12 +153,17 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 								+ WARNING_TIME_INTERVAL_MILLIS
 								+ " ms now! Message: {}", message.getClass()
 								.getName());
+				LOG.error(
+						"toString: "
+								+ message.toString());
 				warned = true;
 			} else if (sendingTime > ABORT_MILLIS) {
 				LOG.error("RepeatingMessageThread runs now more than "
 						+ ABORT_MILLIS + " ms now. Abort sending message {}",
 						message.getClass().getName());
-				
+				LOG.error(
+						"toString: "
+								+ message.toString());
 				
 				notifyListeners();
 				stopRunning();
