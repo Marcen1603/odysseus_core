@@ -76,9 +76,10 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 				pair = queue.take();
 			} catch (InterruptedException e) {
 				interrupt();
-				continue;
 			}
-			processElement(pair);
+			if (pair != null){
+				processElement(pair);				
+			}
 		}
 
 		// process last elements of queue only if process_close or process_done

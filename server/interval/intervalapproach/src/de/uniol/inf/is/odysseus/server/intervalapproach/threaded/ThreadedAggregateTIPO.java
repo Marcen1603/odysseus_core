@@ -205,6 +205,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	 */
 	@Override
 	protected void process_done(int port) {
+		System.out.println("Done started in ThreadedAggregateTIPO");
 		// done need to be synchronized with close
 		synchronized (monitor) {
 
