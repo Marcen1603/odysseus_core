@@ -138,7 +138,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 
 		Long groupID = null;
-		synchronized (g) {
+		synchronized (groups) {
 			// Determine group ID from input object
 			groupID = g.getGroupID(object);
 			// Find or create sweep area for group
@@ -221,15 +221,6 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 				}
 			}
 
-			// has only one port, so process_done can be called when first input
-			// port calls done
-			IGroupProcessor<R, W> g = getGroupProcessor();
-			synchronized (g) {
-				if (drainAtDone) {
-					// Drain all groups
-					drainGroups();
-				}
-			}
 			// Send information to transfer area that no more elements will be
 			// delivered on port 0, so all data can be written
 			if (debug) {

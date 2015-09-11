@@ -52,7 +52,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
 			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
 			int threadNumber, ArrayBlockingQueue<Pair<Long, R>> queue) {
-		super(threadGroup, "Threaded aggregate worker thread" + threadNumber);
+		super(threadGroup, "Threaded aggregate worker thread " + threadNumber);
 		super.setDaemon(true);
 		this.threadNumber = threadNumber;
 		this.tipo = threadedAggregateTIPO;

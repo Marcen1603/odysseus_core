@@ -208,7 +208,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		IGroupProcessor<R, W> g = getGroupProcessor();
-		synchronized (g) {
+		synchronized (groups) {
 			g.init();
 			transferArea.init(this, getSubscribedToSource().size());
 			groups.clear();
@@ -220,8 +220,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	protected void process_done(int port) {
 		// has only one port, so process_done can be called when first input
 		// port calls done
-		IGroupProcessor<R, W> g = getGroupProcessor();
-		synchronized (g) {
+		synchronized (groups) {
 			if (drainAtDone) {
 				// Drain all groups
 				drainGroups();
@@ -239,8 +238,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
 	protected void drainGroups() {
-		IGroupProcessor<R, W> g = getGroupProcessor();
-		synchronized (g) {
+		synchronized (groups) {
 			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
 				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
@@ -253,8 +251,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@Override
 	protected void process_close() {
-		IGroupProcessor<R, W> g = getGroupProcessor();
-		synchronized (g) {
+		synchronized (groups) {
 			logger.debug("closing " + this.getName());
 			if (drainAtClose) {
 				drainGroups();
@@ -286,11 +283,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		Long groupID;
-		synchronized (g) {
+		synchronized (groups) {
 			// Determine group ID from input object
 			groupID = g.getGroupID(object);
-		}
-		synchronized (groups) {
 			// Find or create sweep area for group
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 					.get(groupID);
