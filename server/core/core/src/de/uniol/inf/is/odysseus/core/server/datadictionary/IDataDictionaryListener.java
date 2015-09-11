@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
+// TODO should be renamed in IDataDictionarySourceListener
 public interface IDataDictionaryListener {
 
 	public void addedViewDefinition( IDataDictionary sender, String name, ILogicalOperator op );

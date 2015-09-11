@@ -161,6 +161,10 @@ public interface IDataDictionary {
 	void addListener(IDataDictionaryListener listener);
 
 	void removeListener(IDataDictionaryListener listener);
+	
+	void addSinkListener(IDataDictionarySinkListener listener);
+
+	void removeSinkListener(IDataDictionarySinkListener listener);
 
 	// -------------------------------------------------------------------------
 	// Stored Procedure Management

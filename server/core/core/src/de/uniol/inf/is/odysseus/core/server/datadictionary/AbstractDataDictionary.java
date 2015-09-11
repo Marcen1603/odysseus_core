@@ -75,6 +75,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 	private final List<IDataDictionaryListener> listeners = Lists
 			.newArrayList();
+	private final List<IDataDictionarySinkListener> sinkListeners = Lists
+			.newArrayList();
 	private IStore<Resource, ILogicalOperator> streamDefinitions;
 	// private IStore<Resource, IUser> viewOrStreamFromUser;
 	private IStore<Resource, ILogicalOperator> viewDefinitions;
@@ -844,6 +846,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		if (!this.sinkDefinitions.containsKey(sinkname)) {
 			this.sinkDefinitions.put(sinkname, sink);
 			// this.sinkFromUser.put(sinkname, caller.getUser());
+			fireSinkAddEvent(sinkname, sink, caller);
 			fireDataDictionaryChangedEvent();
 		} else {
 			throw new DataDictionaryException("Sink name already used");
@@ -906,6 +909,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	@Override
 	public ILogicalOperator removeSink(Resource name, ISession caller) {
 		ILogicalOperator op = this.sinkDefinitions.remove(name);
+		fireSinkRemoveEvent(name, op, caller);
 		fireDataDictionaryChangedEvent();
 		return op;
 	}
@@ -1034,6 +1038,49 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 				} catch (Throwable throwable) {
 					LOG.error("Exception in listener of data dictionary",
 							throwable);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void addSinkListener(IDataDictionarySinkListener listener) {
+		Preconditions.checkNotNull(listener,
+				"Sink listener to add to data dictionary must not be null!");
+
+		synchronized (sinkListeners) {
+			if (!sinkListeners.contains(listener)) {
+				sinkListeners.add(listener);
+			}
+		}
+	}
+
+	@Override
+	public void removeSinkListener(IDataDictionarySinkListener listener) {
+		synchronized (sinkListeners) {
+			sinkListeners.remove(listener);
+		}
+	}
+
+	protected final void fireSinkAddEvent(Resource name, ILogicalOperator op, ISession caller) {
+		synchronized (sinkListeners) {
+			for (IDataDictionarySinkListener listener : sinkListeners) {
+				try {
+					listener.addedSinkDefinition(this, name.toString(), op,caller);
+				} catch (Throwable ex) {
+					LOG.error("Error during executing sink listener", ex);
+				}
+			}
+		}
+	}
+
+	protected final void fireSinkRemoveEvent(Resource name, ILogicalOperator op, ISession caller) {
+		synchronized (sinkListeners) {
+			for (IDataDictionarySinkListener listener : sinkListeners) {
+				try {
+					listener.removedSinkDefinition(this, name.toString(), op, caller);
+				} catch (Throwable ex) {
+					LOG.error("Error during executing sink listener", ex);
 				}
 			}
 		}
