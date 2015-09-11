@@ -175,6 +175,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 		combinePAAggregateOperator
 				.setAggregationItems(renamedCombineAggregationItems);
 		combinePAAggregateOperator.setDrainAtClose(false);
+		combinePAAggregateOperator.setNumberOfThreads(1);
 		return combinePAAggregateOperator;
 	}
 
