@@ -82,20 +82,23 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 			}
 		}
 
+		// draining the buffer is only needed if elements exists
+		if (!queue.isEmpty()) {
+			lastElementsQueue = new LinkedList<Pair<Long, R>>(queue);
+			queue.clear();
+			for (Pair<Long, R> pair : lastElementsQueue) {
+				processElement(pair);
+			}
+		}
+
+		
 		// process last elements of queue only if process_close or process_done
 		// is called
 		if (tipoIsDone || tipoIsClosed) {
 			// only drain the buffer if it is set in configuration
 			if ((tipoIsDone && tipo.isDrainAtDone())
 					|| (tipoIsClosed && tipo.isDrainAtClose())) {
-				// draining the buffer is only needed if elements exists
-				if (!queue.isEmpty()) {
-					lastElementsQueue = new LinkedList<Pair<Long, R>>(queue);
-					queue.clear();
-					for (Pair<Long, R> pair : lastElementsQueue) {
-						processElement(pair);
-					}
-				}
+				tipo.drainGroups(g, groupsToProcess);
 			}
 		}
 	}
