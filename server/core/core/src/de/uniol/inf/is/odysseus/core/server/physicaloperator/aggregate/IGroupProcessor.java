@@ -16,9 +16,8 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.collection.PairMap;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 /**
@@ -32,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @param <R> Elements that should be group
  * @param <W> Outputs that should be created
  */
-public interface IGroupProcessor<R, W extends IClone> {
+public interface IGroupProcessor<R, W extends IClone> extends IClone{
 
 	/**
 	 * Group processors must be inialized (typically in open phase)
@@ -80,5 +79,12 @@ public interface IGroupProcessor<R, W extends IClone> {
 	 * @return
 	 */
 	String toGroupString(R elem);
+	
+	/**
+	 * 
+	 */
+	@Override
+	IClone clone();
+	
 
 }

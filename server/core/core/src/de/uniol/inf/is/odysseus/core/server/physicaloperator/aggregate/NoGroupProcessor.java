@@ -42,5 +42,10 @@ public class NoGroupProcessor<R,W extends IClone> implements IGroupProcessor<R, 
 	public String toGroupString(R elem) {
 		return elem.toString();
 	}
+	
+	@Override
+	public NoGroupProcessor<R,W> clone() {
+		return this;
+	}
 
 }
