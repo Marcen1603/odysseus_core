@@ -49,7 +49,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	private boolean tipoIsClosed = false;
 
 	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
-	IGroupProcessor<R, W> g = null;
+	private IGroupProcessor<R, W> g = null;
 	
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
 			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
@@ -63,6 +63,10 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 	@Override
 	public void run() {
+		// create a single group processor for every worker
+		this.g = tipo.getGroupProcessor().clone();
+		this.g.init();
+		
 		// process every element
 		while (!Thread.currentThread().isInterrupted()) {
 			// get values from queue
@@ -100,6 +104,9 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		R object = pair.getE2();
 
 		if (groupId != null && object != null) {
+			// the grouping processor needs to know this object and group
+			this.g.getGroupID(object);
+			
 			// get sweep area from groupId
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 			synchronized (groupsToProcess) {
