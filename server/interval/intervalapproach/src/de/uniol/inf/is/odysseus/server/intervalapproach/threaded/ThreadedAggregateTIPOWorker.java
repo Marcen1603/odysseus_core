@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
 
@@ -48,7 +49,8 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	private boolean tipoIsClosed = false;
 
 	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
-
+	IGroupProcessor<R, W> g = null;
+	
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
 			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
 			int threadNumber, ArrayBlockingQueue<Pair<Long, R>> queue) {
@@ -108,8 +110,10 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
 							.updateSA(sa, object, tipo.isOutputPA());
 	
+					
+					
 					tipo.createOutput(results, groupId, object.getMetadata()
-							.getStart(), threadNumber, groupsToProcess);
+							.getStart(), threadNumber, groupsToProcess, g);
 	
 				} else {
 					throw new RuntimeException("No sweep area for " + pair

@@ -260,8 +260,8 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	@Override
 	public void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Long groupID,
 			PointInTime timestamp, int inPort,
-			Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess) {
-		super.createOutput(existingResults, groupID, timestamp, inPort, groupsToProcess);
+			Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess, IGroupProcessor<R, W> g ) {
+		super.createOutput(existingResults, groupID, timestamp, inPort, groupsToProcess, g);
 	}
 
 	@Override

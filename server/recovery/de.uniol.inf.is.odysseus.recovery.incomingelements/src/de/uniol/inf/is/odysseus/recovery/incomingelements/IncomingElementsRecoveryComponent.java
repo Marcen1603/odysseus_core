@@ -222,7 +222,7 @@ public class IncomingElementsRecoveryComponent
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		// Stop the BaDaSt recorder
 		String recorder = BaDaStRecorderRegistry.getRecorder(name);
 		if (recorder != null) {
@@ -232,7 +232,7 @@ public class IncomingElementsRecoveryComponent
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		// Nothing to do
 	}
 

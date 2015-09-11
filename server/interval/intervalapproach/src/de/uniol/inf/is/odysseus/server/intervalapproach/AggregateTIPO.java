@@ -223,7 +223,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		synchronized (groups) {
 			if (drainAtDone) {
 				// Drain all groups
-				drainGroups();
+				drainGroups(getGroupProcessor());
 			}
 		}
 		// Send information to transfer area that no more elements will be
@@ -237,13 +237,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	/**
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
-	protected void drainGroups() {
+	protected void drainGroups(IGroupProcessor<R, W> g) {
 		synchronized (groups) {
 			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
 				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 						.getValue().iterator();
-				produceResults(results, entry.getKey());
+				produceResults(results, entry.getKey(), g);
 				entry.getValue().clear();
 			}
 		}
@@ -254,7 +254,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		synchronized (groups) {
 			logger.debug("closing " + this.getName());
 			if (drainAtClose) {
-				drainGroups();
+				drainGroups(getGroupProcessor());
 			}
 			logger.debug("closing " + this.getName() + " done");
 		}
@@ -309,7 +309,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				System.err.println(sa);
 			}
 			createOutput(results, groupID, object.getMetadata().getStart(),
-					port, groups);
+					port, groups, g);
 		}
 	}
 
@@ -318,7 +318,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			Long groupID,
 			PointInTime timestamp,
 			int inPort,
-			Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess) {
+			Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess, IGroupProcessor<R, W> g) {
 
 		// Check if additional output should be created
 		// Allow to create additional output by cutting all current partial
@@ -345,7 +345,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			// sweep area
 
 			if (existingResults != null) {
-				produceResults(existingResults, groupID);
+				produceResults(existingResults, groupID, g);
 			}
 
 			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
@@ -360,13 +360,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					System.err.println("AREA FOR GROUP " + entry.getKey());
 					System.err.println(entry.getValue().toString());
 				}
-				produceResults(results, entry.getKey());
+				produceResults(results, entry.getKey(), g);
 
 				if (createAdditionalOutput) {
 					List<PairMap<SDFSchema, AggregateFunction, W, Q>> addResults = updateSA(
 							entry.getValue(), timestamp);
 					if (addResults.size() > 0) {
-						produceResults(addResults, entry.getKey());
+						produceResults(addResults, entry.getKey(),g);
 					}
 				}
 
@@ -397,7 +397,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// Keep punctuation order by sending to transfer area
 		transferArea.sendPunctuation(punctuation, port);
 		// Maybe new output can be created because of time progress
-		createOutput(null, null, punctuation.getTime(), port, groups);
+		createOutput(null, null, punctuation.getTime(), port, groups, getGroupProcessor());
 	}
 
 	/**
@@ -410,12 +410,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 *            The calculated aggregation values
 	 * @param groupID
 	 *            for which group should the output
+	 * @param g 
 	 */
 	private void produceResults(
 			List<PairMap<SDFSchema, AggregateFunction, W, Q>> results,
-			Long groupID) {
+			Long groupID, IGroupProcessor<R, W> g) {
 		for (PairMap<SDFSchema, AggregateFunction, W, Q> e : results) {
-			W out = getGroupProcessor().createOutputElement(groupID, e);
+			W out = g.createOutputElement(groupID, e);
 			@SuppressWarnings("unchecked")
 			Q newMeta = (Q) e.getMetadata().clone();
 			out.setMetadata(newMeta);
@@ -436,17 +437,17 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 */
 	private void produceResults(
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
-			Long groupID) {
+			Long groupID,IGroupProcessor<R, W> g) {
 		while (results.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
 			W out = null;
 			if (outputPA) {
-				out = getGroupProcessor().createOutputElement2(groupID, e);
+				out = g.createOutputElement2(groupID, e);
 			} else {
 				PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(
 						e, true);
-				out = getGroupProcessor().createOutputElement(groupID, r);
+				out = g.createOutputElement(groupID, r);
 			}
 			@SuppressWarnings("unchecked")
 			Q newMeta = (Q) e.getMetadata().clone();
