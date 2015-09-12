@@ -102,7 +102,7 @@ public class OdyLoadAllocator implements ILoadBalancingAllocator {
 			}
 			
 			try {
-				Thread.sleep(20000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

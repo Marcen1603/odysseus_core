@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.CostEstimationHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
@@ -26,6 +27,7 @@ public class OdyLoadBidProvider implements IBidProvider {
 	
 	private IPhysicalCostModel costModel;
 	private IPeerResourceUsageManager usageManager;
+	private ILoadBalancingLock lock;
 	
 	
 	public void bindPhysicalCostModel(IPhysicalCostModel serv) {
@@ -47,6 +49,16 @@ public class OdyLoadBidProvider implements IBidProvider {
 			usageManager = null;
 		}
 	}
+	
+	public void bindLoadBalancingLock(ILoadBalancingLock serv) {
+		lock = serv;
+	}
+	
+	public void unbindLoadBalancingLock(ILoadBalancingLock serv) {
+		if(lock==serv) {
+			lock = null;
+		}
+	}
 
 	
 	@Override
@@ -56,6 +68,12 @@ public class OdyLoadBidProvider implements IBidProvider {
 
 	@Override
 	public Optional<Double> calculateBid(ILogicalQuery query, String configName) {
+		
+		//No bid if peer is locked (As we can not predict how much load we will get from current Load balancing)
+		if(lock.isLocked()) {
+			return Optional.absent();
+		}
+		
 		
 		IPhysicalQuery physicalQuery = Helper.getPhysicalQuery(query,
 				configName);
