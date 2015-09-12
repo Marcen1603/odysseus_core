@@ -167,7 +167,7 @@ public class ParallelTrackCommunicatorImpl implements IPeerCommunicatorListener,
 			}
 		}
 		catch(Exception e) {
-			LOG.error("Uncaught Exception in Moving State Receiver: {}",e.getMessage());
+			LOG.error("Uncaught Exception in ParallelTrack Comm: {}",e.getMessage());
 			e.printStackTrace();
 			notifyFinished(false);
 		}
@@ -196,7 +196,7 @@ public class ParallelTrackCommunicatorImpl implements IPeerCommunicatorListener,
 			status.getMessageDispatcher().sendInitiate(otherPeer, this);
 		}
 		catch(Exception e) {
-			LOG.error("Uncaught Exception in Moving State Receiver: {}",e.getMessage());
+			LOG.error("Uncaught Exception in ParallelTrack Comm: {}",e.getMessage());
 			e.printStackTrace();
 			notifyFinished(false);
 		}
