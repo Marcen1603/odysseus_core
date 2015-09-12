@@ -153,7 +153,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 				// set message counter to zero and initialize array
 				messagePartCounter = 0;
 				stateBytes = new byte[announcement.getArrayLenght()];
-				LOG.error(String.format("State Transmission: StateAnnouncement received. %d messages need to be processed.", announcement.getNumberOfMessages()));
+				LOG.debug(String.format("State Transmission: StateAnnouncement received. %d messages need to be processed.", announcement.getNumberOfMessages()));
 			}
 			return;
 		}
@@ -192,7 +192,7 @@ public class MovingStateReceiver implements ITransmissionReceiverListener {
 					receivedState = convertBytesToSerializable(stateBytes);
 
 					if (receivedState instanceof IOperatorState) {
-						LOG.error("State Transmission: Received object is an instance of IOperatorState. Transmission completed");
+						LOG.debug("State Transmission: Received object is an instance of IOperatorState. Transmission completed");
 						stateReceived = true;
 						notifyListeners();
 					} else {

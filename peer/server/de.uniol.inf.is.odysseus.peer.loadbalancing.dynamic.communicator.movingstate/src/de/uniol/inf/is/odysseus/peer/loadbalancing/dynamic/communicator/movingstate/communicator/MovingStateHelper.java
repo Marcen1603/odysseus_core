@@ -42,8 +42,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.UpstreamConnection;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicator.movingstate.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicator.movingstate.status.MovingStateMasterStatus;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicator.movingstate.status.MovingStateSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicator.movingstate.status.MovingStateMasterStatus.LB_PHASES;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicator.movingstate.status.MovingStateSlaveStatus;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
@@ -568,6 +568,7 @@ public class MovingStateHelper {
 	public static void replaceSender(String newPeerId, String oldPipeId,
 			String newPipeId, ILogicalOperator logicalOriginal,MovingStateSlaveStatus status)
 			throws DataTransmissionException, LoadBalancingException {
+		
 		JxtaSenderAO logicalSender = (JxtaSenderAO) logicalOriginal;
 		JxtaSenderAO copy = (JxtaSenderAO) logicalSender.clone();
 		
@@ -586,6 +587,14 @@ public class MovingStateHelper {
 		physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema());
 		physicalCopy.setName(physicalOriginal.getName());
 		physicalCopy.addOwner(physicalOriginal.getOwner());
+		
+		List<IOperatorOwner> ownerList = physicalOriginal.getOwner();
+		for(IOperatorOwner owner : ownerList) {
+			physicalCopy.open(owner);
+		}
+		
+		physicalOriginal.removeAllOwners();
+		
 		
 		replaceSender(physicalOriginal,physicalCopy);
 		

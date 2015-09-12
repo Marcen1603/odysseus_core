@@ -187,7 +187,7 @@ public class InstructionHandler {
 					MovingStateHelper.addChangeInformation(pipe, status, true);
 					MovingStateHelper.startBuffering(pipe);
 
-					Thread.sleep(1000);
+					///Thread.sleep(1000);
 
 					MovingStateHelper.setNewPipe(status, pipe, newPipe, peer, true);
 					status.addPipeMapping(pipe, newPipe);
