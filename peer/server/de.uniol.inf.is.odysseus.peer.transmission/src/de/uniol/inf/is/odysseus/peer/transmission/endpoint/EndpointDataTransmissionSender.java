@@ -27,6 +27,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 	private static final Logger LOG = LoggerFactory.getLogger(EndpointDataTransmissionSender.class);
 
 	private final Collection<PeerID> pids = Lists.newLinkedList();
+	private boolean isOpen = false;
 	private final int idHash;
 	private final IPeerCommunicator communicator;
 
@@ -115,17 +116,24 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 		LOG.debug("Got open message from '{}'", senderPeer);
 
 		trySend(senderPeer, new OpenAckMessage(idHash));
-
+		
+		//To avoid overcrowded synch section
+		if(isOpen && pids.contains(senderPeer)) {
+			return;
+		}
+		
 		synchronized (pids) {
 			if (pids.size() == 1 && pids.contains(senderPeer)) {
 				LOG.debug("Call open event");
 				fireOpenEvent();
+				isOpen = true;
 			} else if (!pids.contains(senderPeer)) {
 				pids.add(senderPeer);
 
 				if (pids.size() == 1) {
 					LOG.debug("Call open event");
 					fireOpenEvent();
+					isOpen = true;
 				}
 			}
 		}
@@ -136,6 +144,11 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 		trySend(senderPeer, new CloseAckMessage(idHash));
 		
+		//To avoid overcrowded synch section
+		if(!isOpen && !pids.contains(senderPeer)) {
+			return;
+		}
+		
 		synchronized (pids) {
 			if (pids.contains(senderPeer)) {
 				pids.remove(senderPeer);
@@ -143,6 +156,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 				if (pids.isEmpty()) {
 					LOG.debug("Call close event");
 					fireCloseEvent();
+					isOpen = false;
 				}
 			}
 		}
