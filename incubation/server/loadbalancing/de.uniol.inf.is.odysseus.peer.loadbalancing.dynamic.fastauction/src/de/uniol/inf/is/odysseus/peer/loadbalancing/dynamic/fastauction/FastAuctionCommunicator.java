@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
@@ -100,8 +99,8 @@ public class FastAuctionCommunicator implements IPeerCommunicatorListener, IFast
 					
 				}
 				catch (Exception e) {
-					if(e instanceof ValidationException) {
-						LOG.info("Could not install Query. No Bid.");
+					if(e.getMessage().equals("illegal Value for parameter SOURCE")) {
+						LOG.debug("Could not find source. no bid.");
 					}
 					else {
 						LOG.error("Exception during Bid Calculation: {}",e.getMessage());

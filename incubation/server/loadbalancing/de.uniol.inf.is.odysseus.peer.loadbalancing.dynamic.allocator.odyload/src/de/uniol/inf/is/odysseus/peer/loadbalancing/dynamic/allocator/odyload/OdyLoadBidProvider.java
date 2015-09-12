@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 public class OdyLoadBidProvider implements IBidProvider {
 
+	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(OdyLoadBidProvider.class);
 	
