@@ -57,6 +57,11 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	protected void processOpenMessage(final PeerID senderPeer, OpenMessage message) {
 		super.processOpenMessage(senderPeer, message);
 
+		//Do not open a second accept Thread/ Add Duplicate open callers
+		if(openCallers.contains(senderPeer)) {
+			return;
+		}
+		
 		openCallers.add(senderPeer);
 		waitingBuffer.put(senderPeer, Lists.<byte[]> newArrayList());
 
