@@ -40,17 +40,24 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
  */
 public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
 		extends Thread {
+	// number of this thread, needed for identification and for createOutput
+	private int threadNumber;
 
 	private ThreadedAggregateTIPO<Q, R, W> tipo;
+	// queue for elements, needed for decoupling
 	private ArrayBlockingQueue<Pair<Long, R>> queue;
+	// queue for last elements after done or close is called
 	private LinkedList<Pair<Long, R>> lastElementsQueue;
-	private int threadNumber;
+
+	// flags if the tipo is done or closed
 	private boolean tipoIsDone = false;
 	private boolean tipoIsClosed = false;
 
+	// every worker need own groups and an own groupProcessor (no
+	// synchronization needed)
 	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
 	private IGroupProcessor<R, W> g = null;
-	
+
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
 			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
 			int threadNumber, ArrayBlockingQueue<Pair<Long, R>> queue) {
@@ -66,19 +73,19 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		// create a single group processor for every worker
 		this.g = tipo.getGroupProcessor().clone();
 		this.g.init();
-		
+
 		// process every element
 		while (!Thread.currentThread().isInterrupted()) {
-			// get values from queue
 			Pair<Long, R> pair = null;
 
+			// get values from queue
 			try {
 				pair = queue.take();
 			} catch (InterruptedException e) {
 				interrupt();
 			}
-			if (pair != null){
-				processElement(pair);				
+			if (pair != null) {
+				processElement(pair);
 			}
 		}
 
@@ -91,7 +98,6 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 			}
 		}
 
-		
 		// process last elements of queue only if process_close or process_done
 		// is called
 		if (tipoIsDone || tipoIsClosed) {
@@ -110,7 +116,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		if (groupId != null && object != null) {
 			// the grouping processor needs to know this object and group
 			this.g.getGroupID(object);
-			
+
 			// get sweep area from groupId
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 			synchronized (groupsToProcess) {
@@ -120,12 +126,10 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 				if (sa != null) {
 					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
 							.updateSA(sa, object, tipo.isOutputPA());
-	
-					
-					
+
 					tipo.createOutput(results, groupId, object.getMetadata()
 							.getStart(), threadNumber, groupsToProcess, g);
-	
+
 				} else {
 					throw new RuntimeException("No sweep area for " + pair
 							+ " found!");
@@ -134,18 +138,29 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		}
 	}
 
+	/**
+	 * if process_done is called on tipo, this method is invoked
+	 */
 	public void interruptOnDone() {
 		tipoIsDone = true;
 		tipoIsClosed = false;
 		interrupt();
 	}
 
+	/**
+	 * if process_close is called on tipo, this method is invoked
+	 */
 	public void interruptOnClose() {
 		tipoIsClosed = true;
 		tipoIsDone = false;
 		interrupt();
 	}
 
+	/**
+	 * returns the groups this worker processes
+	 * 
+	 * @return
+	 */
 	public Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroupsToProcess() {
 		return groupsToProcess;
 	}
