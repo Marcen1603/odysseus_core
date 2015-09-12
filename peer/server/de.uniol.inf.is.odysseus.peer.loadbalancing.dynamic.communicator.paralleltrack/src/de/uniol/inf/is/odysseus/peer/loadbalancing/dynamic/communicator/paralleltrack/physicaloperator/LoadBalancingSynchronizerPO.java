@@ -62,7 +62,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 	 * The default threshold for the synchronization process.
 	 */
 	private static final TimeValueItem default_threshold = new TimeValueItem(
-			1, TimeUnit.MINUTES);
+			30, TimeUnit.SECONDS);
 
 	/**
 	 * The threshold for the synchronization process.
