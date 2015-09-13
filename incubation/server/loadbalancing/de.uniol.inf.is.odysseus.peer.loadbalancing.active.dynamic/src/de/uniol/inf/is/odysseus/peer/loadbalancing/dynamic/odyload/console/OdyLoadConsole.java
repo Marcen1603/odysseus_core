@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ICommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.IQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking.ILogLoadService;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.common.QueryCostMap;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
@@ -183,12 +184,9 @@ public class OdyLoadConsole implements CommandProvider {
 		ci.println("Done.");
 	}
 	
-	/**
 	public void _selectGreedy(CommandInterpreter ci) {
 
-		
-		ILoadBalancingStrategyRegistry strategyRegistry = OsgiServiceProvider.getStrategyRegistry();
-		
+			
 		final String ERROR_USAGE = "Usage: selectGreedy <cpuToRemove> <memToRemove> <netToRemove>";
 		
 		Double cpuToRemove = getDoubleParameter(ci, ERROR_USAGE);
@@ -198,10 +196,9 @@ public class OdyLoadConsole implements CommandProvider {
 		if(cpuToRemove==null||memToRemove==null||netToRemove==null) {
 			return;
 		}
-		//TODO Fixme!
-		AbstractFiveStepStrategy strategy = (AbstractFiveStepStrategy) strategyRegistry.getStrategy(OdyLoadConstants.STRATEGY_NAME);
-		QueryCostMap allQueries = strategy.generateCostMapForAllQueries();
-		IQuerySelector selector = O
+		
+		QueryCostMap allQueries = CostEstimationHelper.generateCostMapForAllQueries();
+		IQuerySelector selector = OsgiServiceProvider.getSelectorRegistry().getSelector("Greedy");
 		QueryCostMap result = selector.selectQueries(allQueries, cpuToRemove, memToRemove, netToRemove);
 		ci.println("=== RESUlT: ====");
 		ci.println(result.toString());
@@ -209,8 +206,6 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	public void _selectAnnealing(CommandInterpreter ci) {
 		
-
-		ILoadBalancingStrategyRegistry strategyRegistry = OsgiServiceProvider.getStrategyRegistry();
 		
 		final String ERROR_USAGE = "Usage: selectAnnealing <cpuToRemove> <memToRemove> <netToRemove>";
 		
@@ -221,18 +216,18 @@ public class OdyLoadConsole implements CommandProvider {
 		if(cpuToRemove==null||memToRemove==null||netToRemove==null) {
 			return;
 		}
-		AbstractFiveStepStrategy strategy = (AbstractFiveStepStrategy) strategyRegistry.getStrategy(OdyLoadConstants.STRATEGY_NAME);
-		QueryCostMap allQueries = strategy.generateCostMapForAllQueries();
-		IQuerySelector selector = new SimulatedAnnealingQuerySelector();
+		
+		QueryCostMap allQueries = CostEstimationHelper.generateCostMapForAllQueries();
+		IQuerySelector selector = OsgiServiceProvider.getSelectorRegistry().getSelector("Greedy");
 		QueryCostMap result = selector.selectQueries(allQueries, cpuToRemove, memToRemove, netToRemove);
 		ci.println("=== RESUlT: ====");
 		ci.println(result.toString());
 	}
 	
+	
 	public void _selectCombination(CommandInterpreter ci) {
 
 
-		ILoadBalancingStrategyRegistry strategyRegistry = OsgiServiceProvider.getStrategyRegistry();
 		
 		final String ERROR_USAGE = "Usage: selectCombination <cpuToRemove> <memToRemove> <netToRemove>";
 		
@@ -243,19 +238,28 @@ public class OdyLoadConsole implements CommandProvider {
 		if(cpuToRemove==null||memToRemove==null||netToRemove==null) {
 			return;
 		}
-		AbstractFiveStepStrategy strategy = (AbstractFiveStepStrategy) strategyRegistry.getStrategy(OdyLoadConstants.STRATEGY_NAME);
-		QueryCostMap allQueries = strategy.generateCostMapForAllQueries();
-		IQuerySelector selector = new GreedyQuerySelector();
-		QueryCostMap result = selector.selectQueries(allQueries, cpuToRemove, memToRemove, netToRemove);
-		ci.println("=== Greedy Result: ====");
+		
+		QueryCostMap allQueries = CostEstimationHelper.generateCostMapForAllQueries();
+		IQuerySelector greedySelector = OsgiServiceProvider.getSelectorRegistry().getSelector("Greedy");
+		IQuerySelector annealingSelector = OsgiServiceProvider.getSelectorRegistry().getSelector("SimulatedAnnealing");
+		QueryCostMap greedyResult = greedySelector.selectQueries(allQueries, cpuToRemove, memToRemove, netToRemove);
+		QueryCostMap annealingResult = annealingSelector.selectQueries(allQueries, cpuToRemove, memToRemove, netToRemove);
+		QueryCostMap result = null;
+		if(annealingResult==null) {
+			result = greedyResult;
+		}
+		else {
+			if(annealingResult.getCosts()<=greedyResult.getCosts()) {
+				result = annealingResult;
+			}
+			else {
+				result = greedyResult;
+			}
+		}
+		ci.println("=== RESUlT: ====");
 		ci.println(result.toString());
-		selector = new SimulatedAnnealingQuerySelector(result);
-		QueryCostMap simulatedAnnealingResult = selector.selectQueries(allQueries, cpuToRemove, memToRemove, netToRemove);
-		ci.println("=== Simulated Annealing Result: ====");
-		ci.println(simulatedAnnealingResult.toString());
 	}
 	
-	**/
 	public void _allocate(CommandInterpreter ci) {
 		
 		
@@ -378,7 +382,6 @@ public class OdyLoadConsole implements CommandProvider {
 		return paramAsInt;
 	}
 	
-	@SuppressWarnings("unused")
 	private Double getDoubleParameter(CommandInterpreter ci,String errorMessage) {
 		String parameterAsString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(parameterAsString)) {
