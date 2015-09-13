@@ -231,7 +231,7 @@ public class CostEstimationHelper {
 		IPhysicalCost queryCost = physicalCostModel.estimateCost(operatorsInQuery);
 		
 		
-		double cpuLoad = queryCost.getCpuSum()/(cpuMax*OdyLoadConstants.CPU_LOAD_COSTMODEL_FACTOR);
+		double cpuLoad = queryCost.getCpuSum()/cpuMax;
 		double netLoad = queryCost.getNetworkSum()/netMax;
 		double memLoad = queryCost.getMemorySum()/memMax;
 		

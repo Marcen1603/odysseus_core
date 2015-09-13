@@ -26,11 +26,6 @@ public class OdyLoadConstants {
 			public static final int SURVEY_BID_WEIGHT = 1;
 			public static final String SURVEY_USE_OWN_BID = "notlocal";
 			
-			
-			//Load-Model weights and calculation factors
-			//In Costmodel Load is measured in %, we need it between 0 and 1
-			public static final double CPU_LOAD_COSTMODEL_FACTOR = 100.0;
-			
 			public static final double WEIGHT_SENDERS = 0.1;
 			public static final double WEIGHT_RECEIVERS = 0.1;
 			public static final double WEIGHT_STATE = 0.8;

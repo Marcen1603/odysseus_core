@@ -398,6 +398,8 @@ public class OdyLoadConsole implements CommandProvider {
 			return null;
 		}
 		
+		
+		
 		return paramAsDouble;
 	}
 	
