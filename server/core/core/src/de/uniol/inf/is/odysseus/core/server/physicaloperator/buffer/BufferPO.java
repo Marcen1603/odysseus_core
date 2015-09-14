@@ -92,16 +92,15 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 
 	@Override
 	public boolean hasNext() {
-		return !buffer.isEmpty();
+		return !isEmpty();
 	}
 
 	@Override
 	public void transferNext() {
-		if (!this.buffer.isEmpty()) {
+		if (!isEmpty()) {
 			sendNextElements();
 		}
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private void sendNextElements() {
@@ -150,17 +149,17 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 
 	@Override
 	protected void process_next(T object, int port) {
-		elementsRead++;
 		synchronized (buffer) {
+			elementsRead++;
 			this.buffer.add(object);
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		puncRead++;
 		boolean sendDirectly = false;
 		synchronized (buffer) {
+			puncRead++;
 			// Punctuations on top of buffer should be send immediately
 			// --> do not add punctuation to an empty buffer
 			if (!buffer.isEmpty()) {
@@ -178,11 +177,15 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 
 	@Override
 	public int size() {
-		return this.buffer.size();
+		synchronized (buffer) {
+			return this.buffer.size();
+		}
 	}
 
 	public boolean isEmpty() {
-		return this.buffer.isEmpty();
+		synchronized (buffer) {
+			return this.buffer.isEmpty();
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -236,13 +239,12 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
-		map.put("Elements read", elementsRead+ "");
-		map.put("Elements send", elementWritten+ "");
-		map.put("Punctuations read", puncRead+ "");
+		map.put("Elements read", elementsRead + "");
+		map.put("Elements send", elementWritten + "");
+		map.put("Punctuations read", puncRead + "");
 		map.put("Punctuations send", puncWritten + "");
 		map.put("CurrentSize", size() + "");
 		return map;
 	}
-
 
 }

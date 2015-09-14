@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -62,21 +61,18 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 	
 	@Override
 	protected void process_next(T object, int port) {
-		if (size() < maxBufferSize) {
-			super.process_next(object, port);
-			synchronized (this) {
-				this.notifyAll();
-			}
-		} else {
-			synchronized (this) {
-				while (size() >= maxBufferSize) {
-					try {
-						this.wait(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+		synchronized (this) {
+			while (size() >= maxBufferSize) {
+				try {
+					this.wait(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
+		}		
+		super.process_next(object, port);
+		synchronized (this) {
+			this.notifyAll();
 		}
 	}
 	
