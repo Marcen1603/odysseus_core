@@ -158,19 +158,6 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 	}
 	
 	@Override
-	protected void process_done(int port) {
-		if (isDrainAtDone()){
-			drainBuffer();
-		}
-	}
-
-	private void drainBuffer() {
-		while (!this.buffer.isEmpty()) {
-			sendNextElements();
-		}
-	}
-
-	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		puncRead++;
 		boolean sendDirectly = false;
