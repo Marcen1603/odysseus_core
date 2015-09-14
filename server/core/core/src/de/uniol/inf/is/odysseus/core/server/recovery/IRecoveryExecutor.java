@@ -46,8 +46,7 @@ public interface IRecoveryExecutor {
 	 * @return {@code queries} either modified for recovery or not. Depends on
 	 *         the used recovery strategy.
 	 */
-	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries);
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries);
 
 	/**
 	 * Activates the backup mechanism for given queries.
@@ -62,13 +61,15 @@ public interface IRecoveryExecutor {
 	 * @return {@code queries} either modified for recovery or not. Depends on
 	 *         the used recovery strategy.
 	 */
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries);
-	
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
+			List<ILogicalQuery> queries);
+
 	/**
 	 * Checks, if a recovery is needed.
-	 * @return True, if {@link #recover(QueryBuildConfiguration, ISession, List)} should be called. <br />
-	 * False, if {@link #activateBackup(QueryBuildConfiguration, ISession, List)} should be called.
+	 * 
+	 * @return True, if
+	 *         {@link #recover(QueryBuildConfiguration, ISession, List)} should
+	 *         be called.
 	 */
 	public boolean isRecoveryNeeded();
 
