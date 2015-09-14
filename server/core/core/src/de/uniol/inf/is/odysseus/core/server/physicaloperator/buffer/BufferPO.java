@@ -57,7 +57,6 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 	private int elementWritten;
 	private int elementsRead;
 	private int puncRead;
-	private boolean drainAtDone = true;
 
 	public BufferPO() {
 		super();
@@ -245,18 +244,5 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 		return map;
 	}
 
-	/**
-	 * @return the drainAtDone
-	 */
-	public boolean isDrainAtDone() {
-		return drainAtDone;
-	}
-
-	/**
-	 * @param drainAtDone the drainAtDone to set
-	 */
-	public void setDrainAtDone(boolean drainAtDone) {
-		this.drainAtDone = drainAtDone;
-	}
 
 }
