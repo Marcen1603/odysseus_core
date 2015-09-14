@@ -14,6 +14,7 @@ import org.osgi.framework.Bundle;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
 
 
+//TODO mac, unix support?
 public class ExtractOSGIBundle {
 	
 	private static boolean DEBUG_MODUS = true;
@@ -50,6 +51,7 @@ public class ExtractOSGIBundle {
 					*/
 	
 					path = FileLocator.toFileURL(entryss).getPath();
+					
 					bundles.put(path.replaceFirst("/", "").replace(".project",""), neededBundel.getSymbolicName());
 					
 					System.out.println("Bundle-Path:"+path.replaceFirst("/", ""));
@@ -94,7 +96,9 @@ public class ExtractOSGIBundle {
 		for (Map.Entry<String, String> entry : bundles.entrySet())
 		{
 
-		    String path = entry.getKey().replace("/", "\\");
+		   String path = entry.getKey().replace("/", "\\");
+		  
+			//String path = entry.getKey();
 		    String name = entry.getValue().replace(".", "");
 		    String[] volume = path.split(":"); 
 		    

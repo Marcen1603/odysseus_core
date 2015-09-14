@@ -31,8 +31,6 @@ import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
 
-
-//TODO add mac support
 public class JavaFileWrite {
 	
 	
@@ -95,7 +93,7 @@ public class JavaFileWrite {
 
 	private void createExecutorFile() {
 	
-		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"\\src\\main");
+		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"/src/main");
 		fileHelper.writeToFile(executor.getExecutorCode());
 		
 	}
@@ -125,7 +123,7 @@ public class JavaFileWrite {
 	private void createMainJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(tempPath);
-		absolutePath.append("\\src\\main\\");
+		absolutePath.append("/src/main/");
 		absolutePath.append(fileName);
 		
 		file = new File(absolutePath.toString());
@@ -158,7 +156,7 @@ public class JavaFileWrite {
 	private void createUtilsJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(tempPath);
-		absolutePath.append("\\src\\main\\");
+		absolutePath.append("/src/main/");
 		absolutePath.append("Utils.java");
 		
 		file = new File(absolutePath.toString());
@@ -182,7 +180,7 @@ public class JavaFileWrite {
 	
 	private void createBuildScript(){
 
-		File buildFile = new File(tempPath+"\\build.xml");
+		File buildFile = new File(tempPath+"/build.xml");
 		try {
 			buildFile.createNewFile();
 			FileWriter buildWriter = new FileWriter(buildFile); 
@@ -201,7 +199,7 @@ public class JavaFileWrite {
 	}
 	
 	private void createClassFile(){
-		File classpathFile = new File(tempPath+"\\.classpath");
+		File classpathFile = new File(tempPath+"/.classpath");
 		
 		try {
 			classpathFile.createNewFile();
@@ -230,7 +228,7 @@ public class JavaFileWrite {
 		FileWriter infoFile = null;
 		
 		try {
-			 infoFile = new FileWriter(tempPath+"\\operatorConfigurationInfo.txt");
+			 infoFile = new FileWriter(tempPath+"/operatorConfigurationInfo.txt");
 		
 			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
 			{
@@ -242,7 +240,7 @@ public class JavaFileWrite {
 			    
 				infoFile.write(entry.getKey().getName()+" --> "+ operatorVariable +"\n");
 					
-				FileWriter file = new FileWriter(tempPath+"\\"+operatorVariable+"PO.json");
+				FileWriter file = new FileWriter(tempPath+"/"+operatorVariable+"PO.json");
 				file.write(json);
 				file.flush();
 				file.close();
