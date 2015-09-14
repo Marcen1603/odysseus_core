@@ -397,6 +397,7 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 							addCommand.getParserId(), addCommand.getCaller(), addCommand.getTransCfgName(),
 							addCommand.getContext(), setRecoveryNeeded(addCommand.getAddSettings()),
 							addCommand.startQueries());
+					modifiedCommand.setIdentifier(addCommand.getIdentifier());
 					commandsPerQuery.put(modifiedCommand.getIdentifier(),
 							new Pair<IExecutorCommand, IExecutorCommand>(modifiedCommand, null));
 					executionOrder.add(modifiedCommand);
