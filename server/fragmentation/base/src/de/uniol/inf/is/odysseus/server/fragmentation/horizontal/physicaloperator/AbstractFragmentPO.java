@@ -39,6 +39,10 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 
     }
 
+    public AbstractFragmentPO(){
+    	super();
+    }
+    
     @Override
     public OutputMode getOutputMode() {
 

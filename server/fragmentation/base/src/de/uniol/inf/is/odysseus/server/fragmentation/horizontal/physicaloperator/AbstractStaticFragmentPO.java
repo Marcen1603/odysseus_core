@@ -61,7 +61,16 @@ public abstract class AbstractStaticFragmentPO<T extends IStreamObject<IMetaAttr
 		this.heartbeatRate = fragmentAO.getHeartbeatrate();
 		this.elementsSend = new long[this.numFragments];
 	}
-
+    
+    
+    public AbstractStaticFragmentPO(int numFragments,int heartbeatRate) {
+    	super();
+        this.numFragments = (int) numFragments;
+        this.heartbeatCounter = new int[this.numFragments];
+        this.heartbeatRate = heartbeatRate;
+        this.elementsSend = new long[this.numFragments];
+    }
+    
 	@Override
 	public OutputMode getOutputMode() {
 

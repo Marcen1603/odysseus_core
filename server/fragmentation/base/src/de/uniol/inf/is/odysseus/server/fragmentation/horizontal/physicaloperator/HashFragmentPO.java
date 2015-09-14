@@ -69,6 +69,33 @@ AbstractStaticFragmentPO<T> {
 			
 	}
 
+	public HashFragmentPO(SDFSchema inputSchema,List<SDFAttribute> fragmentAttributes, boolean optimizeDistribution, int numFragments,int heartbeatRate) {
+		super(numFragments, heartbeatRate);
+		
+		this.optimizeDistribution = optimizeDistribution;
+		
+		
+		if (fragmentAttributes != null) {
+
+			indices = new int[fragmentAttributes.size()];
+			int i = 0;
+		
+			for (SDFAttribute restrictAttribute:fragmentAttributes){
+				int pos = inputSchema.indexOf(restrictAttribute);
+				if (pos == -1){
+					throw new IllegalArgumentException("Attribute "+restrictAttribute+" not found in input schema");
+				}
+				indices[i++] = pos;
+			}		
+		} else{
+			
+			indices = null;
+			
+		}
+	}
+	
+
+
 	@Override
 	protected int route(IStreamObject<IMetaAttribute> object) {
 
