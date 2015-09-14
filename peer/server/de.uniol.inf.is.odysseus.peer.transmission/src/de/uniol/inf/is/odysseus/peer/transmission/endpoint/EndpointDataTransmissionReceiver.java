@@ -36,7 +36,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	
 	@Override
 	public void open() {
-		LOG.info("Open called");
+		LOG.debug("Open called");
 		this.peerCommunicator.addListener(this, DataMessage.class);
 		this.peerCommunicator.addListener(this, PunctuationMessage.class);
 		this.peerCommunicator.addListener(this, OpenAckMessage.class);
@@ -46,7 +46,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	
 	@Override
 	public void close() {
-		LOG.info("Close called...");
+		LOG.debug("Close called...");
 		this.peerCommunicator.removeListener(this, DataMessage.class);
 		this.peerCommunicator.removeListener(this, PunctuationMessage.class);
 		this.peerCommunicator.removeListener(this, OpenAckMessage.class);
