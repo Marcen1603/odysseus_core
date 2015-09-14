@@ -99,7 +99,7 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 		joinTIPOTemplate.getSt().add("input0",  JreCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[0].getTarget()));
 		joinTIPOTemplate.getSt().add("input1",  JreCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[1].getTarget()));
 		
-		
+
 		joinTIPO.addCodeFragmentInfo((CreateJreDefaultCode.getCodeForSDFSchema(logicalSubscritions[0].getSchema(), operatorVariable+"leftSchema")));
 		joinTIPO.addCodeFragmentInfo((CreateJreDefaultCode.getCodeForSDFSchema(logicalSubscritions[1].getSchema(), operatorVariable+"rightSchema")));
 		

@@ -92,4 +92,6 @@ public abstract class AbstractRule<T extends ILogicalOperator> implements IOpera
 		}
 
 	}
+	
+
 }

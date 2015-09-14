@@ -140,18 +140,25 @@ public class QueryTransformation{
 		for(ILogicalOperator topAO : findSinksVisitor.getResult()){
 			if(topAO instanceof TopAO){
 				
-				for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
-					
-					transformationInformation.addSinkOp(sourceOPSub.getTarget());
-				}
-				
-			}else{
-				if(topAO instanceof RenameAO){
+			
 					for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
 						
 						transformationInformation.addSinkOp(sourceOPSub.getTarget());
 					}
+			
+				
+			}else{
+				//TODO refactoring...
+				if(topAO instanceof RenameAO){
 					
+					if(topAO.getSubscriptions().isEmpty()){
+						transformationInformation.addSinkOp(topAO);
+					}else{
+					   //TODO wird nicht mehr benötigt? Workaround vom RenameAO
+						for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
+							transformationInformation.addSinkOp(sourceOPSub.getTarget());
+						}
+					}
 					
 				}else{
 					transformationInformation.addSinkOp(topAO);
@@ -200,7 +207,6 @@ public class QueryTransformation{
 		
 	}
 	
-
 
 
 }
