@@ -128,7 +128,8 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 			if(!JreCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
 				
-				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO));
+			
+				updateProgressBar(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
 				
 				//add ready
 				JreCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);

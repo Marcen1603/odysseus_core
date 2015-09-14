@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.query.codegenerator.ICAnalyse;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
@@ -27,9 +28,9 @@ import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.Tar
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.SessionHelper;
 import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
-public class QueryTransformation{
+public class DefaultQueryAnalyse implements ICAnalyse{
 	
-	private static Logger LOG = LoggerFactory.getLogger(QueryTransformation.class);
+	private static Logger LOG = LoggerFactory.getLogger(DefaultQueryAnalyse.class);
 
 	private static QueryAnalyseInformation transformationInformation;
 	
@@ -37,10 +38,9 @@ public class QueryTransformation{
 	private static boolean newRound = false;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
+	public void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
 		
 
-		
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
 		
 		transformationInformation = new QueryAnalyseInformation();

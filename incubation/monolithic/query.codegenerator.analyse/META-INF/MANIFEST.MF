@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.query.codegenerator
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator.analyse
+Service-Component: OSGI-INF/CDefaultAnalyse.xml

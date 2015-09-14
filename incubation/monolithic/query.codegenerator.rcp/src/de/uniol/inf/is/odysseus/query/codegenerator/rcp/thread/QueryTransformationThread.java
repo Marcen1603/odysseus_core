@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.rcp.thread;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.analyse.QueryTransformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.CAnalyseServiceBinding;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
 
 
@@ -68,8 +68,9 @@ public class QueryTransformationThread extends Thread {
 		checkUpdates.setDaemon(true);
 		checkUpdates.start();
 	
-		QueryTransformation.startQueryTransformation(parameter,queue);
 
+		CAnalyseServiceBinding.getAnalyseComponent().startQueryTransformation(parameter, queue);
+		
 		checkUpdates.interrupt();
 		window.showFinishButton();
 		
