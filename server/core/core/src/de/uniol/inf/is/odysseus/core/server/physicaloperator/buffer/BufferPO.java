@@ -57,6 +57,7 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 	private int elementWritten;
 	private int elementsRead;
 	private int puncRead;
+	private boolean drainAtDone = true;
 
 	public BufferPO() {
 		super();
@@ -95,36 +96,41 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 		return !buffer.isEmpty();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
 		if (!this.buffer.isEmpty()) {
-			// the transfer might take some time, so pop element first and
-			// release lock on buffer instead of transfer(buffer.pop())
-			IStreamable element;
-			synchronized (this.buffer) {
-				element = buffer.pop();
-			}
+			sendNextElements();
+		}
+	}
 
-			if (element.isPunctuation()) {
-				sendPunctuation((IPunctuation) element);
-				puncWritten++;
-			} else {
-				transfer((T) element);
-				elementWritten++;
-			}
 
-			// the top element of a buffer must always be
-			// an real element, send punctuations immediately
-			synchronized (buffer) {
-				while (!buffer.isEmpty() && buffer.peek().isPunctuation()) {
-					sendPunctuation((IPunctuation) buffer.pop());
-				}
-			}
+	@SuppressWarnings("unchecked")
+	private void sendNextElements() {
+		// the transfer might take some time, so pop element first and
+		// release lock on buffer instead of transfer(buffer.pop())
+		IStreamable element;
+		synchronized (this.buffer) {
+			element = buffer.pop();
+		}
 
-			if (isDone()) {
-				propagateDone();
+		if (element.isPunctuation()) {
+			sendPunctuation((IPunctuation) element);
+			puncWritten++;
+		} else {
+			transfer((T) element);
+			elementWritten++;
+		}
+
+		// the top element of a buffer must always be
+		// an real element, send punctuations immediately
+		synchronized (buffer) {
+			while (!buffer.isEmpty() && buffer.peek().isPunctuation()) {
+				sendPunctuation((IPunctuation) buffer.pop());
 			}
+		}
+
+		if (isDone()) {
+			propagateDone();
 		}
 	}
 
@@ -148,6 +154,19 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 		elementsRead++;
 		synchronized (buffer) {
 			this.buffer.add(object);
+		}
+	}
+	
+	@Override
+	protected void process_done(int port) {
+		if (isDrainAtDone()){
+			drainBuffer();
+		}
+	}
+
+	private void drainBuffer() {
+		while (!this.buffer.isEmpty()) {
+			sendNextElements();
 		}
 	}
 
@@ -237,6 +256,20 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 		map.put("Punctuations send", puncWritten + "");
 		map.put("CurrentSize", size() + "");
 		return map;
+	}
+
+	/**
+	 * @return the drainAtDone
+	 */
+	public boolean isDrainAtDone() {
+		return drainAtDone;
+	}
+
+	/**
+	 * @param drainAtDone the drainAtDone to set
+	 */
+	public void setDrainAtDone(boolean drainAtDone) {
+		this.drainAtDone = drainAtDone;
 	}
 
 }
