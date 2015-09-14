@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
 public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiver implements IPeerCommunicatorListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EndpointDataTransmissionSender.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EndpointDataTransmissionReceiver.class);
 
 	private final IPeerCommunicator peerCommunicator;
 	private PeerID pid;
@@ -36,6 +36,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	
 	@Override
 	public void open() {
+		LOG.info("Open called");
 		this.peerCommunicator.addListener(this, DataMessage.class);
 		this.peerCommunicator.addListener(this, PunctuationMessage.class);
 		this.peerCommunicator.addListener(this, OpenAckMessage.class);
@@ -45,6 +46,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 	
 	@Override
 	public void close() {
+		LOG.info("Close called...");
 		this.peerCommunicator.removeListener(this, DataMessage.class);
 		this.peerCommunicator.removeListener(this, PunctuationMessage.class);
 		this.peerCommunicator.removeListener(this, OpenAckMessage.class);
@@ -68,6 +70,7 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 			}
 
 		} else if (message instanceof DoneMessage) {
+			LOG.debug("Got done event.");
 			DoneMessage msg = (DoneMessage) message;
 			if (msg.getIdHash() == idHash) {
 				fireDoneEvent();

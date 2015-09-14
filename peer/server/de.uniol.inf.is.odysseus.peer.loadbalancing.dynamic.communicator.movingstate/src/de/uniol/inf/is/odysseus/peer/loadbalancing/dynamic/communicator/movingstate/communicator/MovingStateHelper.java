@@ -595,8 +595,10 @@ public class MovingStateHelper {
 		
 		physicalOriginal.removeAllOwners();
 		
-		
 		replaceSender(physicalOriginal,physicalCopy);
+		
+		//Close Transmission to avoid memory leak.
+		physicalOriginal.getTransmission().close();
 		
 		status.addReplacedOperator(physicalCopy,physicalOriginal);
 	}

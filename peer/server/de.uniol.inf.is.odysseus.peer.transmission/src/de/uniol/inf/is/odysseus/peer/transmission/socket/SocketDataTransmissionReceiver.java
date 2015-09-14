@@ -120,7 +120,6 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 							synchronized( receiving ) {
 								receiving = false;
 							}
-							close();
 						}
 					});
 					receivingThread.start();

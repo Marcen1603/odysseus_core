@@ -43,7 +43,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	@Override
 	public void open() {
-		LOG.debug("Open called...");
+		LOG.info("Open called...");
 		for(PeerID pid : pids) {
 			LOG.debug(pid.toString());
 		}
@@ -54,7 +54,7 @@ public class EndpointDataTransmissionSender extends AbstractTransmissionSender i
 
 	@Override
 	public void close() {
-		LOG.debug("Close called...");
+		LOG.info("Close called...");
 		for(PeerID pid : pids) {
 			LOG.debug(pid.toString());
 		}

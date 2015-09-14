@@ -6,11 +6,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
@@ -77,7 +80,7 @@ public class OdyLoadBidProvider implements IBidProvider {
 		
 		IPhysicalQuery physicalQuery = Helper.getPhysicalQuery(query,
 				configName);
-
+		
 		IResourceUsage usage = usageManager.getLocalResourceUsage();
 
 		if (LOG.isDebugEnabled()) {
@@ -131,7 +134,8 @@ public class OdyLoadBidProvider implements IBidProvider {
 		double freeMemAfterLoadBalancing = memFree-neededMemLoad;
 		double freeNetAfterLoadBalancing = netFree-neededNetLoad;
 		
-		
+		//Close all transmissions to avoid Memory Leak.
+		closeTransmissionsInPhysicalQuery(physicalQuery);
 
 
 		LOG.debug("needed Cpu Load:{}", String.format( "%.4f",neededCpuLoad));
@@ -157,6 +161,17 @@ public class OdyLoadBidProvider implements IBidProvider {
 
 	}
 	
-
+	
+	@SuppressWarnings("rawtypes")
+	private void closeTransmissionsInPhysicalQuery(IPhysicalQuery query) {
+		for(IPhysicalOperator operator:query.getAllOperators()) {
+			if(operator instanceof JxtaSenderPO) {
+				((JxtaSenderPO) operator).getTransmission().close();
+			}
+			else if (operator instanceof JxtaReceiverPO) {
+				((JxtaReceiverPO) operator).getTransmission().close();
+			}
+		}
+	}
 
 }

@@ -195,6 +195,9 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			LOG.debug("{} : Stopping query {}", getName(), queryID);
 			ServerExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
 		}
+		else {
+			LOG.debug("{} : Got Close message but no owner to tell.",getName());
+		}
 	}
 
 	private static Optional<Integer> determineQueryID(List<IOperatorOwner> owner) {

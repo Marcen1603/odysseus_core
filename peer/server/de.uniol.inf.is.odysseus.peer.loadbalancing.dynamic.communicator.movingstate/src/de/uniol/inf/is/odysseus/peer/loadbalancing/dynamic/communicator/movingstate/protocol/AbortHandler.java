@@ -101,6 +101,7 @@ public class AbortHandler {
 							JxtaSenderPO copy = (JxtaSenderPO) replaced;
 							JxtaSenderPO original = (JxtaSenderPO) status.getOriginalOperator(copy);
 							try {
+								original.getTransmission().open();
 								MovingStateHelper.replaceSender(copy, original);
 							} catch (LoadBalancingException e) {
 								LOG.error("An error happened during Rollback:", e);
