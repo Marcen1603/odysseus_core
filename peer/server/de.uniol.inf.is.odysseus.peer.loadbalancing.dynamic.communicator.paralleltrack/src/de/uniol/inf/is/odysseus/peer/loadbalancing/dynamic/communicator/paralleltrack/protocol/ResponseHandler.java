@@ -267,7 +267,7 @@ public class ResponseHandler {
 					}
 
 					int queryId = status.getLogicalQuery();
-					//LoadBalancingHelper.cutReceiversFromQuery(queryId);
+					LoadBalancingHelper.cutReceiversFromQuery(queryId);
 					LoadBalancingHelper.deleteQuery(queryId);
 				}
 			}

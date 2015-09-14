@@ -317,7 +317,7 @@ public class ResponseHandler {
 					status.setPhase(LB_PHASES.STOP_BUFFERING);
 					dispatcher.sendMsgReceived(senderPeer);
 
-					//LoadBalancingHelper.cutReceiversFromQuery(status.getLogicalQuery());
+					LoadBalancingHelper.cutReceiversFromQuery(status.getLogicalQuery());
 
 					MovingStateHelper.sendStopBufferingToUpstreamPeers(status);
 					if (status.getUpstreamPeers().size() == 0) {

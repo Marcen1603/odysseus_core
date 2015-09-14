@@ -173,9 +173,7 @@ public class ParallelTrackHelper {
 
 				physicalCopy.setOutputSchema(physicalOriginal.getOutputSchema().clone());
 				physicalCopy.addOwner(physicalOriginal.getOwner());
-				
-				physicalOriginal.removeAllOwners();
-				
+
 				AbstractPhysicalSubscription subscription = physicalOriginal.getSubscribedToSource(0);
 
 				if (subscription.getTarget() instanceof AbstractSource) {
@@ -368,7 +366,7 @@ public class ParallelTrackHelper {
 		}
 
 		sender.unsubscribeFromAllSources();
-		sender.getTransmission().close();
+
 	}
 
 	/***
