@@ -50,8 +50,8 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 
 	private boolean opened;
 
-	private IProtocolHandler<W> protocolHandler;
-	final private boolean readMetaData;
+	protected IProtocolHandler<W> protocolHandler;
+	protected final boolean readMetaData;
 	
 	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
 

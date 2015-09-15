@@ -24,38 +24,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
  * it is not allowed to block for buffers.
  * @author Jonas Jacobi
  */
-public interface IIterableSource<T> extends ISource<T> {
+public interface IIterableSource<T> extends ISource<T>, IIterableSchedulerSource {
 	/**
 	 * Get whether a call to transferNext() will be successful.
 	 * @return true, if an element can be transfered. 
 	 */
 	public boolean hasNext();
 
-	/**
-	 * Set time in milliseconds to wait between two hasNext() calls
-	 * Scheduler should respect this value
-	 * 
-	 */
-	public void setDelay(long delay);
-	
-	/**
-	 * Get time in milliseconds to wait between two hasNext() calls
-	 * Scheduler should respect this value
-	 * @return
-	 */
-	public long getDelay();	
-
-	/**
-	 * Scheduler specific value, works only in pull based schedulers
-	 * @param yieldRate
-	 */
-	public void setYieldRate(int yieldRate);
-
-	/**
-	 * 
-	 * @returns the yieldrate (-1 == do not yield)
-	 */
-	int getYieldRate();
 	
 	/**
 	 * Call {@link #transfer(Object)} with the next element. May only be called
@@ -86,29 +61,7 @@ public interface IIterableSource<T> extends ISource<T> {
 	 */
 	@Override
 	public void unblock();
-	
-	/**
-	 * Try to get a Lock 
-	 * @return
-	 */
-	public boolean tryLock();
-	
-	/**
-	 * Release Lock
-	 */
-	public void unlock();
 
-	/**
-	 * The number of nano seconds to sleep the thread for a yield
-	 * @return
-	 */
-	public int getYieldDurationNanos();
-
-	/**
-	 * Sets the number of nano seconds that the thread should sleep each yield
-	 * @param yieldDuration
-	 */
-	public void setYieldDurationNanos(int yieldDuration);
 	
 }
 

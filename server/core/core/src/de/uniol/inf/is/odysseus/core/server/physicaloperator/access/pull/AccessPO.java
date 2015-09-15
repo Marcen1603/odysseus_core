@@ -20,20 +20,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.command.Command;
 import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSchedulerSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IterableSchedulerSourceDelegate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 
 /**
  * This class represents all sources that need to be scheduled to deliver input
@@ -47,8 +44,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSou
  * @param <W>
  *            The Output that is written by this operator.
  */
-public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractIterableSource<W>
-		implements IMetadataInitializer<M, W>, ICommandProvider {
+public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends ReceiverPO<W,M>
+		implements IMetadataInitializer<M, W>, ICommandProvider, IIterableSource<W>   {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 
@@ -58,16 +55,43 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> exte
 
 	final private AtomicBoolean isClosing = new AtomicBoolean(false);
 
-	final private boolean readMetaData;
-
-	private IProtocolHandler<W> protocolHandler;
-
-	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
-
+	IIterableSchedulerSource iteratableSourceDelegate = new IterableSchedulerSourceDelegate();
+	
 	public AccessPO(IProtocolHandler<W> protocolHandler, long maxTimeToWaitForNewEventMS, boolean readMetaData) {
-		this.protocolHandler = protocolHandler;
+		super(protocolHandler,readMetaData);
 		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
-		this.readMetaData = readMetaData;
+	}
+
+	public void setDelay(long delay) {
+		iteratableSourceDelegate.setDelay(delay);
+	}
+
+	public long getDelay() {
+		return iteratableSourceDelegate.getDelay();
+	}
+
+	public void setYieldRate(int yieldRate) {
+		iteratableSourceDelegate.setYieldRate(yieldRate);
+	}
+
+	public int getYieldRate() {
+		return iteratableSourceDelegate.getYieldRate();
+	}
+
+	public int getYieldDurationNanos() {
+		return iteratableSourceDelegate.getYieldDurationNanos();
+	}
+
+	public void setYieldDurationNanos(int yieldDuration) {
+		iteratableSourceDelegate.setYieldDurationNanos(yieldDuration);
+	}
+
+	public boolean tryLock() {
+		return iteratableSourceDelegate.tryLock();
+	}
+
+	public void unlock() {
+		iteratableSourceDelegate.unlock();
 	}
 
 	@Override
@@ -156,92 +180,22 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> exte
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
-		if (!isOpen()) {
-			try {
-				isDone = false;
-				protocolHandler.open();
-			} catch (Exception e) {
-				sendError("Error when opening query " + e.getMessage(), e);
-				throw new OpenFailedException(e);
-			}
-		}
+	public synchronized void process_open() throws OpenFailedException {
+		super.process_open();
 		isClosing.set(false);
 	}
 
 	@Override
-	protected void process_close() {
+	public void process_close() {
 		isClosing.set(true);
-		try {
-			if (isOpen()) {
-				protocolHandler.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		super.process_close();
 	}
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof AccessPO)) {
-			return false;
-		}
-		// TODO: Check for Equality
 		// This is not needed. Access Operators with the same name are shared
 		// automatically
 		return false;
 	}
 
-	@Override
-	public void setMetadataType(IMetaAttribute type) {
-		this.metadataInitializer.setMetadataType(type);
-	}
-
-	@Override
-	public M getMetadataInstance() throws InstantiationException, IllegalAccessException {
-		if (this.metadataInitializer == null) {
-			return null;
-		}
-
-		return this.metadataInitializer.getMetadataInstance();
-	}
-
-	@Override
-	public void addMetadataUpdater(IMetadataUpdater<M, W> mFac) {
-		this.metadataInitializer.addMetadataUpdater(mFac);
-	}
-
-	@Override
-	public void updateMetadata(W object) {
-		this.metadataInitializer.updateMetadata(object);
-	}
-
-	// TODO: This code is duplicated in AccessPO! Move to common base class?
-	@Override
-	public Command getCommandByName(String commandName, SDFSchema schema) {
-		int delimiter = commandName.indexOf('.');
-		if (delimiter != -1) {
-			// Command is for transport, protocol, ... handler
-			String target = commandName.substring(0, delimiter);
-			String newCommandName = commandName.substring(delimiter + 1);
-
-			if (target.equalsIgnoreCase("transport")) {
-				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler)
-						.getTransportHandler();
-				if (transportHandler instanceof ICommandProvider)
-					return ((ICommandProvider) transportHandler).getCommandByName(newCommandName, schema);
-				else
-					throw new UnsupportedOperationException("transport handler doesn't implement ICommandProvider");
-			} else if (target.equalsIgnoreCase("protocol")) {
-				if (protocolHandler instanceof ICommandProvider)
-					return ((ICommandProvider) protocolHandler).getCommandByName(newCommandName, schema);
-				else
-					throw new UnsupportedOperationException("protocol handler doesn't implement ICommandProvider");
-			} else
-				throw new IllegalArgumentException("Unknown target \"" + target + "\" in \"" + commandName + "\"");
-		} else {
-			// Command is for this Operator!
-			return null;
-		}
-	}
 }
