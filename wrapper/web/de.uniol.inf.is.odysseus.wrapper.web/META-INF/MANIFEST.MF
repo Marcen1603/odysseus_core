@@ -22,5 +22,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  org.mortbay.jetty.server,
  org.mortbay.jetty.util,
  javax.servlet;bundle-version="2.5.0",
- org.apache.commons.collections;bundle-version="3.2.1",
  org.apache.commons.collections15;bundle-version="1.0.0"
