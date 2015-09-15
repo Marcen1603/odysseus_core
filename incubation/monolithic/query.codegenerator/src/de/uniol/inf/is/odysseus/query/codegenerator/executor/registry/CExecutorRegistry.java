@@ -83,6 +83,10 @@ public class CExecutorRegistry {
 	
 	public static Set<String> getAllExecutor(String programmLanguage){
 		return executorList.get(programmLanguage.toLowerCase()).keySet();
-}
+	}
+	
+	public static Map<String, Map<String,ICExecutor>> getAllExecutor(){
+		return executorList;
+	}
 
 }
