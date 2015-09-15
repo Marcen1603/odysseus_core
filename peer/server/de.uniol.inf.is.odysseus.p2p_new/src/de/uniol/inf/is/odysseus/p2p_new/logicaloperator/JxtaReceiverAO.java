@@ -39,6 +39,18 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	private String schemaName;
 	private String basetimeUnit;
 	private SourceAdvertisement importedSrcAdvertisement;
+	
+	private boolean doNotCreateTransmission = false;
+
+	public boolean isDoNotCreateTransmission() {
+		return doNotCreateTransmission;
+	}
+
+	public void setDoNotCreateTransmission(boolean doNotCreateTransmission) {
+		this.doNotCreateTransmission = doNotCreateTransmission;
+	}
+
+
 
 	private IMetaAttribute localMetaAttribute;
 	

@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.costmodel.logical.ILogicalCost;
 import de.uniol.inf.is.odysseus.costmodel.logical.ILogicalCostModel;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DummyAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
@@ -100,12 +102,15 @@ public class Helper {
 		return session;
 	}
 
-	public static IPhysicalQuery getPhysicalQuery(ILogicalQuery query, String transCfgName) {
+	public static IPhysicalQuery getPhysicalQuery(ILogicalQuery query, String transCfgName, boolean deactiveTransmissionsOnJxtaOperators) {
 		IQueryBuildConfigurationTemplate settings = executor.getQueryBuildConfiguration(transCfgName);
 		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(settings.getConfiguration());
 		QueryBuildConfiguration config = new QueryBuildConfiguration(newSettings.toArray(new IQueryBuildSetting<?>[0]), transCfgName);
 
 		LogicalQueryHelper.replaceStreamAOs(LogicalQueryHelper.getAllOperators(query));
+		if(deactiveTransmissionsOnJxtaOperators) {
+			deactiveTransmissionsOnLogicalJxtaOperators(query);
+		}
 		return executor.getCompiler().transform(query, config.getTransformationConfiguration(), getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()));
 	}
 
@@ -217,5 +222,16 @@ public class Helper {
 			}
 		}
 		return logicalOperatorEstimationMap;
+	}
+	
+	public static void deactiveTransmissionsOnLogicalJxtaOperators(ILogicalQuery query) {
+		for(ILogicalOperator op : LogicalQueryHelper.getAllOperators(query)) {
+			if(op instanceof JxtaSenderAO) {
+				((JxtaSenderAO) op).setDoNotCreateTransmission(true);
+			}
+			else if(op instanceof JxtaReceiverAO) {
+				((JxtaReceiverAO) op).setDoNotCreateTransmission(true);
+			}
+		}
 	}
 }

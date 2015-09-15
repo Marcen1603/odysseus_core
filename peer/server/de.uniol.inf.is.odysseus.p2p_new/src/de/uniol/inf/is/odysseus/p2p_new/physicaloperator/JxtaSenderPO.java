@@ -64,11 +64,11 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 		localPeerID = P2PNetworkManagerService.getInstance().getLocalPeerID();
 		localPeerName = P2PNetworkManagerService.getInstance().getLocalPeerName();
-
-		this.transmission = DataTransmissionManager.registerTransmissionSender(peerIDString, pipeIDString);
-		this.transmission.addListener(this);
-		this.transmission.open();
-
+		if(!ao.isDoNotCreateTransmission()) {
+			this.transmission = DataTransmissionManager.registerTransmissionSender(peerIDString, pipeIDString);
+			this.transmission.addListener(this);
+			this.transmission.open();
+		}
 		mObservers = new Vector<IOperatorObserver>();
 	}
 
@@ -339,4 +339,5 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 			}
 		}
 	}
+	
 }
