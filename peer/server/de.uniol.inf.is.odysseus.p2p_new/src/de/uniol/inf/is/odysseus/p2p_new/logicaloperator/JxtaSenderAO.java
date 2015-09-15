@@ -20,6 +20,16 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	private boolean useUDP;
 	private boolean useMultiple;
 	private boolean writeResourceUsage;
+	
+	private boolean doNotCreateTransmission = false;
+
+	public boolean isDoNotCreateTransmission() {
+		return doNotCreateTransmission;
+	}
+
+	public void setDoNotCreateTransmission(boolean doNotCreateTransmission) {
+		this.doNotCreateTransmission = doNotCreateTransmission;
+	}
 
 	public JxtaSenderAO() {
 		super();
