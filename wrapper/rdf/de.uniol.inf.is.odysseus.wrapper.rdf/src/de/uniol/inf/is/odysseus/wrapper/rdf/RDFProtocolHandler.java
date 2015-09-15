@@ -45,7 +45,8 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 			String predicate = st.getPredicate().stringValue();
 			String object = st.getObject().stringValue();
 			Triple<IMetaAttribute> t = new Triple<>(subject, predicate, object);
-			stored.add(t);
+			process(t);
+			//stored.add(t);
 			
 		};
 	};
