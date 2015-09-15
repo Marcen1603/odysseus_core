@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -91,7 +93,7 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 	 */
 	private IPredicate selectionPredicate;
 
-	private Map<String,String> replacements;
+	private Map<String, String> replacements;
 
 	public TriplePatternMatchingAO() {
 	}
@@ -126,8 +128,8 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 		this.triple = triple;
 	}
 
-	@Parameter(name="replacements", type = StringParameter.class, isMap=true, optional = true, doc="Key value map for replacements")
-	public void setReplacements(Map<String,String> replacements) {
+	@Parameter(name = "replacements", type = StringParameter.class, isMap = true, optional = true, doc = "Key value map for replacements")
+	public void setReplacements(Map<String, String> replacements) {
 		this.replacements = replacements;
 	}
 
@@ -185,7 +187,10 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 			}
 		}
 
-		setOutputSchema(SDFSchemaFactory.createNewWithAttributes(attrs, getInputSchema(0)));
+		@SuppressWarnings("unchecked")
+		SDFSchema schema = SDFSchemaFactory.createNewSchema(getInputSchema(0).getURI(),
+				(Class<? extends IStreamObject<?>>) Tuple.class, attrs, getInputSchema(0));
+		setOutputSchema(schema);
 		return getOutputSchema();
 	}
 

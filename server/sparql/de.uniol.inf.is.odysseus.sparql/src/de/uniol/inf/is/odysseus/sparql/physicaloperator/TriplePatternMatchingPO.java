@@ -117,14 +117,14 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	@SuppressWarnings("static-method")
     private Tuple<M> preprocess(Tuple<M> element, int attrPos){
 		// remove datatype information
-		int hatPos = ((String)element.getAttribute(attrPos)).indexOf("^^");
+		int hatPos = (element.getAttribute(attrPos)).toString().indexOf("^^");
 		if(hatPos != -1){
-			String modified = ((String)element.getAttribute(attrPos)).substring(0, hatPos-1);
+			String modified = (element.getAttribute(attrPos)).toString().substring(0, hatPos-1);
 			element.setAttribute(attrPos, modified);
 		}
 		
 		// remove quotes
-		String withoutQuotes = ((String)element.getAttribute(attrPos)).replace("\"", "");
+		String withoutQuotes = (element.getAttribute(attrPos)).toString().replace("\"", "");
 		element.setAttribute(attrPos, withoutQuotes);
 
 		return element;
