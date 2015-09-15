@@ -41,7 +41,7 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.apache.jena.2.13"
+         id="org.sesame"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

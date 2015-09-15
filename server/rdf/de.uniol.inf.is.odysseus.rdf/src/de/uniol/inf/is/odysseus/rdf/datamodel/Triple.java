@@ -17,36 +17,38 @@ package de.uniol.inf.is.odysseus.rdf.datamodel;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public class Triple<T extends IMetaAttribute> extends AbstractStreamObject<T>{
+public class Triple<T extends IMetaAttribute> extends Tuple<T>{
 
 	private static final long serialVersionUID = 599012678300032084L;
-	final private INode subject;
-	final private INode predicate;
-	final private INode object;
+	final static int subject = 0;
+	final static int predicate = 1;
+	final static int object = 2;
 	
 	public Triple(){
-		this.subject = null;
-		this.object = null;
-		this.predicate = null;
+		super(3,false);
 	}
 	
 	public Triple(INode subject, INode predicate, INode object){
-		this.subject = subject;
-		this.predicate = predicate;
-		this.object = object;
+		super(3,false);
 		
 		if(subject.getName() == null){
-			throw new RuntimeException("No value for Subject in triple. Subject: " + this.subject);
+			throw new RuntimeException("No value for Subject in triple. Subject: " + Triple.subject);
 		}
 		if(predicate.getName() == null){
-			throw new RuntimeException("No value for Predicate in triple. Predicate: " + this.predicate);
+			throw new RuntimeException("No value for Predicate in triple. Predicate: " + Triple.predicate);
 		}
 		if(object.getName() == null){
-			throw new RuntimeException("No value for Object in triple. Object: " + this.object);
+			throw new RuntimeException("No value for Object in triple. Object: " + Triple.object);
 		}
+		
+		setAttribute(Triple.subject, subject);
+		setAttribute(Triple.predicate, predicate);
+		setAttribute(Triple.object, object);
+
 	}
 
 	public Triple(String subject, String predicate, String  object){
@@ -54,31 +56,31 @@ public class Triple<T extends IMetaAttribute> extends AbstractStreamObject<T>{
 	}
 		
 	public Triple<T> replacePrefixes(Map<String, String> prefixes){
-		INode newSubject = !subject.isVariable()?subject.replacePrefixes(prefixes):subject;
-		INode newPredicate = !predicate.isVariable()?predicate.replacePrefixes(prefixes):predicate;
-		INode newObject = !object.isVariable()?object.replacePrefixes(prefixes):object;
+		INode newSubject = !getSubject().isVariable()?getSubject().replacePrefixes(prefixes):getSubject();
+		INode newPredicate = !getPredicate().isVariable()?getPredicate().replacePrefixes(prefixes):getPredicate();
+		INode newObject = !getObject().isVariable()?getObject().replacePrefixes(prefixes):getObject();
 		return new Triple<T>(newSubject, newPredicate, newObject);
 	}
 	
 	public INode getSubject() {
-		return subject;
+		return getAttribute(Triple.subject);
 	}
 	
 	public INode getPredicate() {
-		return predicate;
+		return getAttribute(Triple.predicate);
 	}
 
 	public INode getObject() {
-		return object;
+		return getAttribute(Triple.object);
 	}
 	
 	@Override
 	public String toString() {
-		return subject+" "+predicate+" "+object;
+		return getSubject()+" "+getPredicate()+" "+getObject();
 	}
 
 	@Override
-	public AbstractStreamObject<T> clone() {
+	public Tuple<T> clone() {
 		return this; // No need to clone
 	}
 
@@ -90,11 +92,11 @@ public class Triple<T extends IMetaAttribute> extends AbstractStreamObject<T>{
 	public INode get(int i) {
 		switch(i){
 		case 0:
-			return subject;
+			return getSubject();
 		case 1:
-			return predicate;
+			return getPredicate();
 		case 2:
-			return object;
+			return getObject();
 		default:
 			throw new IllegalArgumentException("Position "+i+" not available in triples!");
 		}
