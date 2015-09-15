@@ -26,14 +26,16 @@ public class DataDictionaryListener implements IDataDictionaryListener, IDataDic
 
 	@Override
 	public void addedSinkDefinition(IDataDictionary sender, String name, ILogicalOperator op, ISession caller) {
-		IExecutorCommand command = new CreateSinkCommand(name, op, caller);
-		QueryStateRecoveryComponent.backupExecutorCommand(command, System.currentTimeMillis());
+		// FIXME Can not serialize such a CreateSinkCommand
+//		IExecutorCommand command = new CreateSinkCommand(name, op, caller);
+//		QueryStateRecoveryComponent.backupExecutorCommand(command, System.currentTimeMillis());
 	}
 
 	@Override
 	public void removedSinkDefinition(IDataDictionary sender, String name, ILogicalOperator op, ISession caller) {
-		IExecutorCommand command = new DropSinkCommand(name, true, caller);
-		QueryStateRecoveryComponent.backupExecutorCommand(command, System.currentTimeMillis());
+		// FIXME Can not serialize such a CreateSinkCommand
+//		IExecutorCommand command = new DropSinkCommand(name, true, caller);
+//		QueryStateRecoveryComponent.backupExecutorCommand(command, System.currentTimeMillis());
 	}
 
 	@Override
