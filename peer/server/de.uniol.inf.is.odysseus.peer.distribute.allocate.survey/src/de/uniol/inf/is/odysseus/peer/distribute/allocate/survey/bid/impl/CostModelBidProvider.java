@@ -61,7 +61,7 @@ public class CostModelBidProvider implements IBidProvider {
 	}
 
 	private static CostSummary calcCostsForPlan(ILogicalQuery query, String transCfgName) {
-		IPhysicalQuery p = Helper.getPhysicalQuery(query, transCfgName,true);
+		IPhysicalQuery p = Helper.getPhysicalQuery(query, transCfgName);
 
 		IPhysicalCost cost = costModel.estimateCost(p.getPhysicalChilds());
 

@@ -70,11 +70,11 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		peerIDString = ao.getPeerID();
 
 		localPeerName = P2PNetworkManagerService.getInstance().getLocalPeerName();
-		if(!ao.isDoNotCreateTransmission()) {
-			transmission = DataTransmissionManager.registerTransmissionReceiver(peerIDString, pipeIDString);
-			transmission.addListener(this);
-			transmission.open();
-		}
+
+		transmission = DataTransmissionManager.registerTransmissionReceiver(peerIDString, pipeIDString);
+		transmission.addListener(this);
+		transmission.open();
+
 		isRunning = false;
 
 		mObservers = new Vector<IOperatorObserver>();

@@ -76,7 +76,7 @@ public class OdyLoadBidProvider implements IBidProvider {
 		
 		
 		IPhysicalQuery physicalQuery = Helper.getPhysicalQuery(query,
-				configName,true);
+				configName);
 
 		IResourceUsage usage = usageManager.getLocalResourceUsage();
 
