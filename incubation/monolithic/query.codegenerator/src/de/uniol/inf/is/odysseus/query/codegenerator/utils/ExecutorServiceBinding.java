@@ -32,13 +32,10 @@ package de.uniol.inf.is.odysseus.query.codegenerator.utils;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
-import de.uniol.inf.is.odysseus.query.codegenerator.listener.QueryAddedListener;
 
 
 public class ExecutorServiceBinding {
 	
-	private static IQueryAddedListener queryListener = new QueryAddedListener(); 
 	private static IServerExecutor executor = null;
 
 	public static IServerExecutor getExecutor() {
@@ -47,7 +44,6 @@ public class ExecutorServiceBinding {
 
 	public void bindExecutor(IExecutor ex) {
 		executor = (IServerExecutor)ex;
-		executor.addQueryAddedListener(queryListener);
 	}
 
 	public void unbindExecutor(IExecutor ex) {

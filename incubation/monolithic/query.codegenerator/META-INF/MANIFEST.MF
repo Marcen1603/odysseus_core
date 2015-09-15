@@ -39,7 +39,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi.services,
  com.google.code.gson
-Service-Component: OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRegistry.xml,OSGI-INF/ExecutorRegistry.xml,OSGI-INF/OperatorRuleRegistry.xml,OSGI-INF/TransformPreParserKeywordProvider.xml,
+Service-Component: OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRegistry.xml,OSGI-INF/ExecutorRegistry.xml,OSGI-INF/OperatorRuleRegistry.xml,OSGI-INF/CodegenerationPreParserKeywordProvider.xml,
  OSGI-INF/CAnalyseServiceBinding.xml
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator,
  de.uniol.inf.is.odysseus.query.codegenerator.executor,
