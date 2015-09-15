@@ -8,11 +8,12 @@ import org.osgi.framework.Bundle;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 
 public interface IIQLServiceObserver {
-	public Collection<Bundle> getDependencies();
+	public Collection<Bundle> getRequiredBundles();
 	public Collection<Class<?>> getVisibleTypes();
 	public Collection<String> getImplicitImports();
 	public Collection<Class<?>> getImplicitStaticImports();
 	public Collection<Bundle> getVisibleTypesFromBundle();
+	public Collection<String> getImportedPackages();
 	public Map<Class<? extends IParameter<?>>, Class<?>> getParameters();
 
 }

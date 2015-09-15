@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 
 public interface IIQLService {
-	Collection<Bundle> getDependencies();
+	Collection<Bundle> getRequiredBundles();
 	Collection<String> getImplicitImports();
 	Collection<Class<?>> getImplicitStaticImports();
 	Collection<IIQLTypeExtensions> getTypeExtensions();
@@ -16,6 +16,7 @@ public interface IIQLService {
 	Collection<Class<?>> getVisibleTypes();	
 	Collection<Bundle> getVisibleTypesFromBundle();	
 	
-	Collection<ParameterPair> getParameters();	
+	Collection<ParameterPair> getParameters();
+	Collection<String> getImportedPackages();	
 
 }

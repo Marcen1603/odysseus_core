@@ -34,16 +34,29 @@ public abstract class AbstractIQLServiceObserver  implements IIQLServiceObserver
 	}
 	
 	@Override
-	public Collection<Bundle> getDependencies() {
+	public Collection<Bundle> getRequiredBundles() {
 		Collection<Bundle> bundles = new HashSet<>();
 		for (IIQLService service : getServices()) {
-			if (service.getDependencies() != null) {
-				for (Bundle bundle : service.getDependencies()) {
+			if (service.getRequiredBundles() != null) {
+				for (Bundle bundle : service.getRequiredBundles()) {
 					bundles.add(bundle);
 				}
 			}			
 		}
 		return bundles;
+	}
+	
+	@Override
+	public Collection<String> getImportedPackages() {
+		Collection<String> packages = new HashSet<>();
+		for (IIQLService service : getServices()) {
+			if (service.getImportedPackages() != null) {
+				for (String p : service.getImportedPackages()) {
+					packages.add(p);
+				}
+			}			
+		}
+		return packages;
 	}
 	
 	@Override

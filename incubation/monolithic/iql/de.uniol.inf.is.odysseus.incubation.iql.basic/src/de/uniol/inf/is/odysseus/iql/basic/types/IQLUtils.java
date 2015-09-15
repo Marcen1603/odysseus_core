@@ -68,9 +68,9 @@ public class IQLUtils {
 	}
 
 	
-	public static List createList(List list) {
-		return new ArrayList(list);
-	}
+//	public static List createList(List list) {		
+//		return new ArrayList(list);
+//	}
 	
 	public static List createEmptyList() {
 		return new ArrayList();

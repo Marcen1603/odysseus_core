@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.iql.qdl.types.source;
 
-public interface IQDLSource {
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
+
+public interface IQDLSource extends IQDLOperator {
 
 }

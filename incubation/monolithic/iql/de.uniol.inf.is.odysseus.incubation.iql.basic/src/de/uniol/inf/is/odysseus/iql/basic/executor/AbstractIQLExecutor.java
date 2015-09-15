@@ -184,13 +184,16 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 	}
 	
 	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
-		Collection<Bundle> bundles = typeDictionary.getDependencies();	
+		Collection<Bundle> bundles = typeDictionary.getRequiredBundles();	
 		
 		Collection<String> entries = new ArrayList<>();		
 		for (Bundle bundle : bundles) {
 			File file = getPluginDir(bundle);
 			if (file != null) {
-				entries.add(file.getAbsolutePath()+File.separator+"bin");
+				File binFolder = new File(file.getAbsolutePath()+File.separator+"bin");
+				if (binFolder.exists()) {
+					entries.add(file.getAbsolutePath()+File.separator+"bin");
+				}
 				entries.add(file.getParentFile().getAbsolutePath());
 				if (bundle instanceof AbstractBundle) {
 					try {

@@ -41,7 +41,6 @@ import org.eclipse.xtext.scoping.impl.SimpleScope;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
@@ -159,10 +158,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		return new SimpleScope(elements);
 	}
 	
-	@Override
-	public Collection<IEObjectDescription> getScopeIQLJvmElementCallExpression(EObject expr) {
-		JvmDeclaredType type = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
-
+	protected Collection<JvmIdentifiableElement> getElementsIQLJvmElementCallExpression(EObject expr) {
 		Collection<JvmIdentifiableElement> elements = new HashSet<>();
 		Set<String> vars = new HashSet<>();
 		EObject container = expr;
@@ -203,39 +199,35 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 			lastContainer = container;
 			container = container.eContainer();
 		}
-		if (type instanceof IQLClass) {
-			IQLClass clazz = (IQLClass) type;
-			Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(expr);
-			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
-			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
 		
-			elements.addAll(lookUp.getPublicMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
-			elements.addAll(lookUp.getProtectedMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
+		Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(expr);
+		
+		JvmTypeReference superType = lookUp.getSuperType(expr);
 
-		}
-			
-		Map<String, Pair<JvmOperation, JvmOperation>> properties = new HashMap<>();
+		elements.addAll(lookUp.getPublicAttributes(superType, importedTypes, true));
+		elements.addAll(lookUp.getProtectedAttributes(superType, importedTypes, true));
+		
+		elements.addAll(lookUp.getPublicMethods(superType, importedTypes,true));
+		elements.addAll(lookUp.getProtectedMethods(superType, importedTypes,true));
+
+		return elements;
+	}
+	
+	@Override
+	public Collection<IEObjectDescription> getScopeIQLJvmElementCallExpression(EObject expr) {
+		Collection<JvmIdentifiableElement> elements = getElementsIQLJvmElementCallExpression(expr);
+		
 		Collection<IEObjectDescription> result = new HashSet<>();
 		for (JvmIdentifiableElement element : elements) {
 			if (element instanceof JvmOperation) {
 				JvmOperation method = (JvmOperation) element;
-				if (typeUtils.isSetter(method)) {
-					String name = typeUtils.getNameWithoutSetterPrefix(method);
-					Pair<JvmOperation, JvmOperation> pair = properties.get(name);
-					if (pair == null) {
-						pair = new Pair<JvmOperation, JvmOperation>();
-						properties.put(name, pair);
-					}
-					pair.setE1(method);
-				} else if (typeUtils.isGetter(method)) {
-					String name = typeUtils.getNameWithoutGetterPrefix(method);
-					Pair<JvmOperation, JvmOperation> pair = properties.get(name);
-					if (pair == null) {
-						pair = new Pair<JvmOperation, JvmOperation>();
-						properties.put(name, pair);
-					}
-					pair.setE2(method);
-				} 
+				if (method.getSimpleName().startsWith("set")) {
+					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
+				} else if (method.getSimpleName().startsWith("get")) {
+					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
+				} else if (method.getSimpleName().startsWith("is")) {
+					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(2)), method));
+				}
 				if (method.isStatic()) {
 					JvmDeclaredType declaredType = (JvmDeclaredType) method.eContainer();
 					result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(method), method));
@@ -246,17 +238,10 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 					JvmDeclaredType declaredType = (JvmDeclaredType) element.eContainer();
 					result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(field), field));
 				}
-			}			
+			} 
 			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(element), element));
 		}
-		for (Entry<String, Pair<JvmOperation, JvmOperation>> entry : properties.entrySet()) {
-			if (entry.getValue().getE1() != null && entry.getValue().getE2() != null) {
-				String name = firstCharLowerCase(entry.getKey());
-				result.add(EObjectDescription.create(name, entry.getValue().getE1()));
-				result.add(EObjectDescription.create(name, entry.getValue().getE2()));
-			}
-		}
-		return result;
+		return result;		
 	}	
 	
 	
@@ -271,7 +256,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		elements.addAll(getScopeIQLArgumentsMapKey(argumentsMap));		
 		return new SimpleScope(elements);
 	}	
-	
+
 	
 	@Override
 	public Collection<IEObjectDescription> getScopeIQLMemberSelection(IQLMemberSelectionExpression expr) {

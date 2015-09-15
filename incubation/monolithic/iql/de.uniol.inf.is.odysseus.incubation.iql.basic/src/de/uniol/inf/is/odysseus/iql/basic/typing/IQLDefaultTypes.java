@@ -60,6 +60,14 @@ public class IQLDefaultTypes {
 		bundles.add("de.uniol.inf.is.odysseus.core");
 		bundles.add("de.uniol.inf.is.odysseus.core.server");
 		bundles.add("de.uniol.inf.is.odysseus.slf4j");	
+		
+		bundles.add("org.eclipse.osgi");
+		bundles.add("io.netty");
+		
+		bundles.add("com.google.guava");
+		bundles.add("com.rits.cloning");
+		
+		bundles.add("de.uniol.inf.is.odysseus.mep");	
 		return bundles;
 	}
 	
@@ -68,6 +76,15 @@ public class IQLDefaultTypes {
 		bundles.add("de.uniol.inf.is.odysseus.core");
 		bundles.add("de.uniol.inf.is.odysseus.core.server");
 		return bundles;
+	}
+
+	public static Collection<String> getImportedPackages() {
+		Collection<String> packages = new HashSet<>();
+		packages.add("org.apache.commons.io");
+		packages.add("org.apache.log4j");
+		packages.add("org.simpleframework.xml");
+		packages.add("org.simpleframework.xml.core");
+		return packages;	
 	}
 
 }

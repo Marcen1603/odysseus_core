@@ -128,9 +128,11 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 			Method readMethod = curProperty.getReadMethod();
 			if (readMethod != null && writeMethod != null && writeMethod.isAnnotationPresent(Parameter.class)) {
 				Parameter parameterAnnotation = writeMethod.getAnnotation(Parameter.class);
+				
 				if (parameterAnnotation.deprecated()) {
 					continue;
 				}
+				
 				String parameterName = parameterAnnotation.name();
 				if (Strings.isNullOrEmpty(parameterName)) {
 					parameterName = curProperty.getName();

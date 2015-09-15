@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.osgi.framework.Bundle;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 
@@ -39,24 +38,25 @@ public class IQLProjectCreator extends org.eclipse.xtext.ui.wizard.AbstractPlugi
     }
 	
     protected List<String> getImportedPackages() {
-		List<String> result = Lists.newArrayList();
-		result.add("org.apache.commons.io");
-		result.add("org.apache.log4j");
-		return result;
+		Set<String> result = new HashSet<>();
+		for (String p : typeDictionary.getImportedPackages()) {
+			result.add(p);
+		}		
+		for (IIQLDependenciesProvider provider : IQLDependenciesProviderServiceBinding.getProviders()) {
+			result.addAll(provider.getImportedPackages());
+		}
+		return new ArrayList<String>(result);
     }
 
     @Override
 	protected List<String> getRequiredBundles() {
 		Set<String> result = new HashSet<>();
 		
-		result.add("org.eclipse.osgi");
-		result.add("io.netty");
-
-		for (Bundle dep : typeDictionary.getDependencies()) {
+		for (Bundle dep : typeDictionary.getRequiredBundles()) {
 			result.add(dep.getSymbolicName());
 		}		
 		for (IIQLDependenciesProvider provider : IQLDependenciesProviderServiceBinding.getProviders()) {
-			result.addAll(provider.getDependencies());
+			result.addAll(provider.getRequiredBundles());
 		}
 		return new ArrayList<String>(result);
 	}

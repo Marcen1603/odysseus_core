@@ -140,5 +140,10 @@ public class ODLDefaultTypes {
 		return bundles;
 	}
 
+	public static Collection<String> getImportedPackages() {
+		Collection<String> packages = new HashSet<>();
+		return packages;
+	}
+
 
 }

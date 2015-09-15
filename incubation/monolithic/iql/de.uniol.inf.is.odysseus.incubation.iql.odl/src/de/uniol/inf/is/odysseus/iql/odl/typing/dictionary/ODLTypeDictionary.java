@@ -40,10 +40,19 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	public String getFileExtension() {
 		return "odl";
 	}
+	
+	@Override
+	public Collection<String> getImportedPackages() {
+		Collection<String> packages = super.getImportedPackages();
+		for (String p : ODLDefaultTypes.getImportedPackages()) {
+			packages.add(p);
+		}
+		return packages;
+	}
 		
 	@Override
-	public Collection<Bundle> getDependencies() {
-		Collection<Bundle> bundles = super.getDependencies();
+	public Collection<Bundle> getRequiredBundles() {
+		Collection<Bundle> bundles = super.getRequiredBundles();
 		for (String bundleName : ODLDefaultTypes.getDependencies()) {
 			bundles.add(Platform.getBundle(bundleName));
 		}

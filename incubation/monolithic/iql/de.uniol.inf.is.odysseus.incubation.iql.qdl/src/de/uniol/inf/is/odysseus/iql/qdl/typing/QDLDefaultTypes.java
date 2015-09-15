@@ -44,4 +44,9 @@ public class QDLDefaultTypes {
 		return bundles;
 	}
 
+	public static Collection<String>  getImportedPackages() {
+		Collection<String> packages = new HashSet<>();
+		return packages;
+	}
+
 }

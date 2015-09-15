@@ -69,6 +69,7 @@ import org.reflections.scanners.SubTypesScanner;
 
 
 
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
@@ -423,12 +424,23 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	}
 	
 	@Override
-	public Collection<Bundle> getDependencies() {
+	public Collection<String> getImportedPackages() {
+		Collection<String> packages = new HashSet<>();
+		for (String p : IQLDefaultTypes.getImportedPackages()) {
+			packages.add(p);
+		}
+		packages.addAll(this.serviceObserver.getImportedPackages());
+		return packages;
+	}
+
+	
+	@Override
+	public Collection<Bundle> getRequiredBundles() {
 		Collection<Bundle> bundles = new HashSet<>();
 		for (String bundleName : IQLDefaultTypes.getDependencies()) {
 			bundles.add(Platform.getBundle(bundleName));
 		}
-		bundles.addAll(this.serviceObserver.getDependencies());
+		bundles.addAll(this.serviceObserver.getRequiredBundles());
 		return bundles;
 	}
 	
@@ -543,7 +555,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		ServiceReference ref = Activator.getContext().getServiceReference(PackageAdmin.class.getName());
 		PackageAdmin packageAdmin = (PackageAdmin) Activator.getContext().getService(ref);
 		
-		for (Bundle bundle : getDependencies()) {
+		for (Bundle bundle : getRequiredBundles()) {
 			try {
 				for (ExportedPackage p : packageAdmin.getExportedPackages(bundle)) {
 					result.add(p.getName());

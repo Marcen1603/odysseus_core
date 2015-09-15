@@ -27,7 +27,7 @@ public interface IIQLTypeDictionary {
 	String getImportName(JvmType type);	
 	String getSimpleName(JvmType type,  String text, boolean wrapper, boolean array);
 		
-	Collection<Bundle> getDependencies();
+	Collection<Bundle> getRequiredBundles();
 	
 	String getFileExtension();
 	boolean isSystemFile(String fileName);
@@ -46,5 +46,6 @@ public interface IIQLTypeDictionary {
 	
 	Class<?> getParameterValue(Class<? extends IParameter<?>> parameterType);
 	Collection<Bundle> getVisibleTypesFromBundle();
+	Collection<String> getImportedPackages();
 
 }

@@ -52,6 +52,7 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 		context.addImport(QDLSubscribableWithPort.canonicalName)
 		'''new «QDLSubscribableWithPort.simpleName»(«compile(e.leftOperand, context)», «compile(e.rightOperand, context)»)'''
 	}
+
 	
 	override String compile(IQLNewExpression e, IQDLGeneratorContext context) {		
 		if (helper.isOperator(e.ref)) {
@@ -126,16 +127,18 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 	}
 	
 	override String compileAssignmentExpr(IQLAssignmentExpression e, IQLMemberSelectionExpression selExpr, IQDLGeneratorContext c) {
-		if (e.op.equals("=") && selExpr.sel.member instanceof JvmField) {
-			var field = selExpr.sel.member as JvmField
+		if (selExpr.sel.member instanceof JvmOperation) {
+			var op = selExpr.sel.member as JvmOperation
 			var leftType = exprEvaluator.eval(selExpr.leftOperand);
 			var rightType = exprEvaluator.eval(e.rightOperand);
-			if (!leftType.isNull && helper.isOperator(leftType.ref) && helper.isParameter(field.simpleName, leftType.ref) && helper.isJvmArray(field.type) && !rightType.isNull && !helper.isJvmArray(rightType.ref)){
+			if (!leftType.isNull && helper.isOperator(leftType.ref) && helper.isParameterSetter(op, leftType.ref) && helper.isJvmArray(op.parameters.get(0).parameterType) && !rightType.isNull && !helper.isJvmArray(rightType.ref)){
 				c.addImport(IQLUtils.canonicalName)
-				var dim = typeUtils.getArrayDim(field.type);
-				'''«compile(selExpr.leftOperand, c)».setParameter("«field.simpleName»",«IQLUtils.simpleName».toArray«dim»(«compile(e.rightOperand, c)»))'''		
-			} else if (!leftType.isNull && helper.isOperator(leftType.ref) && helper.isParameter(field.simpleName, leftType.ref)) {
-				'''«compile(selExpr.leftOperand, c)».setParameter("«field.simpleName»",«compile(e.rightOperand, c)»)'''		
+				var dim = typeUtils.getArrayDim(op.parameters.get(0).parameterType);
+				var pName = helper.getParameterOfSetter(op);
+				'''«compile(selExpr.leftOperand, c)».setParameter("«pName»",«IQLUtils.simpleName».toArray«dim»(«compile(e.rightOperand, c)»))'''		
+			} else if (!leftType.isNull && helper.isOperator(leftType.ref) && helper.isParameterSetter(op, leftType.ref)) {
+				var pName = helper.getParameterOfSetter(op);
+				'''«compile(selExpr.leftOperand, c)».setParameter("«pName»",«compile(e.rightOperand, c)»)'''		
 			}else {
 				super.compileAssignmentExpr(e, selExpr, c);
 			}

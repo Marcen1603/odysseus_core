@@ -54,9 +54,19 @@ public class QDLTypeDictionary extends AbstractIQLTypeDictionary<IQDLTypeUtils, 
 	}
 
 	
+	
 	@Override
-	public Collection<Bundle> getDependencies() {
-		Collection<Bundle> bundles =super.getDependencies();
+	public Collection<String> getImportedPackages() {
+		Collection<String> packages = super.getImportedPackages();
+		for (String p : QDLDefaultTypes.getImportedPackages()) {
+			packages.add(p);
+		}
+		return packages;
+	}
+	
+	@Override
+	public Collection<Bundle> getRequiredBundles() {
+		Collection<Bundle> bundles =super.getRequiredBundles();
 		for (String bundleName : QDLDefaultTypes.getDependencies()) {
 			bundles.add(Platform.getBundle(bundleName));
 		}

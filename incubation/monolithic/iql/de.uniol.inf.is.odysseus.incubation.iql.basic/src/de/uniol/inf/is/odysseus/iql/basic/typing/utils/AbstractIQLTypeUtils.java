@@ -404,7 +404,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	@Override
 	public boolean isSetter(JvmOperation method) {
 		boolean name = method.getSimpleName().startsWith("set");		
-		boolean returnType = method.getReturnType() == null || getShortName(method.getReturnType(), true).equals("void");
+		boolean returnType = method.getReturnType() == null || getShortName(method.getReturnType(), true).equalsIgnoreCase("void");
 		boolean parameters = method.getParameters().size() == 1;
 		return name && returnType && parameters;
 	}
@@ -412,7 +412,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	@Override
 	public boolean isGetter(JvmOperation method) {
 		boolean name =  method.getSimpleName().startsWith("get") || method.getSimpleName().startsWith("is");
-		boolean returnType = method.getReturnType() != null;
+		boolean returnType = method.getReturnType() != null && !getShortName(method.getReturnType(), true).equalsIgnoreCase("void");;
 		boolean parameters = method.getParameters().size() == 0;
 		return name && returnType && parameters;
 	}

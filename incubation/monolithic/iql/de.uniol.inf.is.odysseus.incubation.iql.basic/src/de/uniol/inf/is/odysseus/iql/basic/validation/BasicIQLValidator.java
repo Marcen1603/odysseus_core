@@ -49,6 +49,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	public static String TYPE_MISMATCH= "typeMismatch";
 	public static String DUPLICATE_LOCAL_VARIABLE= "duplicateLocalVariable";
 	public static String DUPLICATE_PARAMETERS= "duplicateParameters";
+	public static String CONSTRUCTOR_UNDEFINED= "constructorUndefined";
 
 	private static final Logger LOG = LoggerFactory.getLogger(BasicIQLValidator.class);
 	
@@ -344,7 +345,24 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 					}										
 				}
 			} else {
-				LOG.error("Could not find constructor");
+				StringBuilder b = new StringBuilder();
+				int i = 0;
+				for (IQLExpression e : expr.getArgsList().getElements()) {
+					if (i > 0) {
+						b.append(", ");
+					}
+					TypeResult typeResult = exprEvaluator.eval(e);
+					if (typeResult.hasError()) {
+						LOG.error("Could not evaluate expression. "+typeResult.getDiagnostic());
+					}
+					if (typeResult.isNull()) {
+						b.append("null");
+					} else {
+						b.append(typeUtils.getShortName(typeResult.getRef(), true));
+					}
+					i++;
+				}				
+				error("The constructor "+typeUtils.getShortName(expr.getRef(), true)+"("+b.toString()+") is undefined", expr, BasicIQLPackage.eINSTANCE.getIQLNewExpression_ArgsList(), CONSTRUCTOR_UNDEFINED);
 			}
 		}
 	}	

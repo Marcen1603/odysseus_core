@@ -19,5 +19,4 @@ public interface IODLTypeDictionary extends IIQLTypeDictionary{
 	Collection<JvmTypeReference> getAllParameterValues(Notifier context);
 
 	Collection<JvmTypeReference> getAllParameterTypes(Notifier context);
-
 }

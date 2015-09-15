@@ -70,15 +70,21 @@ public class IQLLinkingService extends DefaultLinkingService{
 		String crossRefString = getCrossRefNodeAsString(node);
 
 		EObject result = null;
+		Collection<JvmOperation> methods = new HashSet<>();
 		for (IEObjectDescription desc : eObjectDescriptions) {
 			EObject obj = desc.getEObjectOrProxy();
 			if (obj instanceof JvmField && crossRefString.equalsIgnoreCase(((JvmField) obj).getSimpleName())) {
 				result = obj;
 				break;
 			} else if (obj instanceof JvmOperation && ("set"+crossRefString).equalsIgnoreCase(((JvmOperation) obj).getSimpleName())) {
-				result = obj;
+				methods.add((JvmOperation) obj);
 			}			
-		}		
+		}	
+		if (result == null) {
+			List<IQLExpression> list = new ArrayList<>();
+			list.add(keyValue.getValue());
+			result = methodFinder.findMethod(methods, "set"+crossRefString, list);
+		}
 		if (result != null) {
 			return Collections.singletonList(result);
 		} else {

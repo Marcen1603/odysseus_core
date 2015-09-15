@@ -14,13 +14,25 @@ import de.uniol.inf.is.odysseus.iql.qdl.ui.internal.QDLActivator;
 public class QDLDependenciesProvider implements IIQLDependenciesProvider{
 
 	@Override
-	public Collection<String> getDependencies() {
+	public Collection<String> getRequiredBundles() {
 		Injector injector =  QDLActivator.getInstance().getInjector(QDLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL);
 		IQDLTypeDictionary typeDictionary = injector.getInstance(IQDLTypeDictionary.class);
 		
 		Collection<String> result = new HashSet<>();
-		for (Bundle bundle : typeDictionary.getDependencies()) {
+		for (Bundle bundle : typeDictionary.getRequiredBundles()) {
 			result.add(bundle.getSymbolicName());
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<String> getImportedPackages() {
+		Injector injector =  QDLActivator.getInstance().getInjector(QDLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL);
+		IQDLTypeDictionary typeDictionary = injector.getInstance(IQDLTypeDictionary.class);
+		
+		Collection<String> result = new HashSet<>();
+		for (String p : typeDictionary.getImportedPackages()) {
+			result.add(p);
 		}
 		return result;
 	}
