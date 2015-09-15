@@ -83,13 +83,13 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		createMaxDataControls(dashboardPartSettingComposite);
 		createUpdateIntervalControls(dashboardPartSettingComposite);
 
-		createLayerSettingsControls(layerSettingComp);
+		createLayerOrderingControls(layerSettingComp);
 
 		
-		if (!mapDashboardPart.getWizardBoolean()) {
-			DashboardPartUtil.createLabel(topComposite, "CARE! The time slider is not working properly!");
-			createTimeSliderComposite(topComposite);
-		}
+//		if (!mapDashboardPart.getWizardBoolean()) {
+//			DashboardPartUtil.createLabel(topComposite, "CARE! The time slider is not working properly!");
+//			createTimeSliderComposite(topComposite);
+//		}
 
 		reprintLayerTable();
 	}
@@ -111,7 +111,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 	private void createUpdateIntervalControls(Composite topComposite) {
-		Label updateIntervall = DashboardPartUtil.createLabel(topComposite, "Upate Interval (s)");
+		Label updateIntervall = DashboardPartUtil.createLabel(topComposite, "Upate Interval (in s)");
 		updateIntervall.setToolTipText("Updates the map in the given time intervall");
 		final Text updateIntervalText = DashboardPartUtil.createText(topComposite,
 				String.valueOf(mapDashboardPart.getUpdateInterval()));
@@ -125,20 +125,20 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		});
 	}
 
-	private void createLayerSettingsControls(Composite parent) {
+	private void createLayerOrderingControls(Composite parent) {
 
-		Composite tableSettingComp = new Composite(parent, SWT.NONE);
-		tableSettingComp.setLayout(new GridLayout(1, true));
-		tableSettingComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite tableOrderingComp = new Composite(parent, SWT.NONE);
+		tableOrderingComp.setLayout(new GridLayout(1, true));
+		tableOrderingComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Label layerSettingsLabel = DashboardPartUtil.createLabel(tableSettingComp, "Layer Settings");
+		Label layerSettingsLabel = DashboardPartUtil.createLabel(tableOrderingComp, "Layer Ordering");
 		layerSettingsLabel.setToolTipText("If no layer was added, a basic layer will be added");
 
-		Composite tableComp = new Composite(tableSettingComp, SWT.NONE);
+		Composite tableComp = new Composite(tableOrderingComp, SWT.NONE);
 		tableComp.setLayout(new GridLayout(1, true));
 		tableComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Composite buttonComp = new Composite(tableSettingComp, SWT.NONE);
+		Composite buttonComp = new Composite(tableOrderingComp, SWT.NONE);
 		buttonComp.setLayout(new GridLayout(3, false));
 		buttonComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -340,7 +340,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 						propertiesDialog.create();
 						propertiesDialog.open();
 						if (propertiesDialog.getReturnCode() == Window.OK) {
-
+							mapDashboardPart.editLayer(group.get(index), propertiesDialog.getLayerConfiguration());;
+							reprintLayerTable();
+							fireListener();
 						}
 					} else {
 

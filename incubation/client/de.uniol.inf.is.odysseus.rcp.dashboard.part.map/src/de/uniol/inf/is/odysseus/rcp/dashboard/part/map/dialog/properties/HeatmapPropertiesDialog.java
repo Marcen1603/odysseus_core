@@ -9,6 +9,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -100,7 +103,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 		// Create a new configuration, that is used, if the user clicks
 		// ok
 		HeatmapLayerConfiguration newConfig = new HeatmapLayerConfiguration(heatmap.getConfig());
-
+		layerConfiguration = newConfig;
 		// Remove everything except the Tree on the left
 		removeContent(container);
 
@@ -120,6 +123,30 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 		settingsContainer.setText("Heatmap settings");
 		settingsContainer.setLayout(new GridLayout(2, false));
 
+		//First of all the name of the layer
+		Label nameLabel = new Label(settingsContainer, SWT.NONE);
+		nameLabel.setText("Name: ");
+		
+		final Text nameText = new Text(settingsContainer, SWT.BORDER);
+		nameText.setLayoutData(DialogUtils.getTextDataLayout());
+		nameText.setText(heatmap.getName());
+		nameText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				layerConfiguration.setName(nameText.getText());
+
+			}
+		});
+		
+		//Checkbox used to decide if one or two attributes are used
+		Label geoTypeButtonLabel = new Label (settingsContainer, SWT.NONE);
+		geoTypeButtonLabel.setText("Use Point?");
+		geoTypeButtonLabel.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		final Button geoSelectTypeButton = new Button(settingsContainer, SWT.CHECK);
+		geoSelectTypeButton.setLayoutData(DialogUtils.getTextDataLayout());
+		geoSelectTypeButton.setSelection(true);
+				
 		// Position of geometry-Attribute
 		Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
 		geoAttrLabel.setText("Geometry Attribute: ");
@@ -143,13 +170,15 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 		lngSelect.setLayoutData(DialogUtils.getTextDataLayout());
 		lngSelect.setEnabled(false);
 		
-		Label geoTypeButtonLabel = new Label (settingsContainer, SWT.NONE);
-		geoTypeButtonLabel.setText("Use Point?");
-		geoTypeButtonLabel.setLayoutData(DialogUtils.getTextDataLayout());
 		
-		final Button geoSelectTypeButton = new Button(settingsContainer, SWT.CHECK);
-		geoSelectTypeButton.setLayoutData(DialogUtils.getTextDataLayout());
-		geoSelectTypeButton.setSelection(true);
+		// Position of value-Attribute
+		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
+		valueAttrLabel.setText("Value-Attribute: ");
+
+		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
+		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		//Add a SelectionListener to the checkbox 
 		geoSelectTypeButton.addSelectionListener(new SelectionAdapter() {
 			
 			 @Override
@@ -168,13 +197,6 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				 	}
 			    }
 		});
-		
-		// Position of value-Attribute
-		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
-		valueAttrLabel.setText("Value-Attribute: ");
-
-		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
-		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
 		
 		// Fill the comboboxes
 		geoAttrInput.removeAll();
@@ -551,43 +573,43 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 		}
 	}
 
-	/**
-	 * Updates the value-sum-table: Fills it with new values
-	 * 
-	 * @param t
-	 * @param values
-	 */
-	private void updateTableValues(Table t, Heatmap heatmap) {
-
-		// Remove old content, user should not see what we're doing
-		t.setRedraw(false);
-
-		t.removeAll();
-
-		// Remove the old columns
-		while (t.getColumnCount() > 0) {
-			t.getColumns()[0].dispose();
-		}
-
-		double[][] values = heatmap.getVauesForTiles();
-
-		// Build the columns
-		for (int i = 0; i < values.length; i++) {
-			TableColumn tc = new TableColumn(t, SWT.CENTER);
-			tc.setText(Integer.toString(i));
-			tc.setWidth(40);
-		}
-
-		for (int i = 0; i < values[0].length; i++) {
-			String[] columnContents = new String[values.length];
-			for (int j = 0; j < values.length; j++) {
-				columnContents[j] = Double.toString(values[j][i]);
-			}
-			TableItem item = new TableItem(t, SWT.NONE);
-			item.setText(columnContents);
-		}
-		t.setRedraw(true);
-	}
+//	/**
+//	 * Updates the value-sum-table: Fills it with new values
+//	 * 
+//	 * @param t
+//	 * @param values
+//	 */
+//	private void updateTableValues(Table t, Heatmap heatmap) {
+//
+//		// Remove old content, user should not see what we're doing
+//		t.setRedraw(false);
+//
+//		t.removeAll();
+//
+//		// Remove the old columns
+//		while (t.getColumnCount() > 0) {
+//			t.getColumns()[0].dispose();
+//		}
+//
+//		double[][] values = heatmap.getVauesForTiles();
+//
+//		// Build the columns
+//		for (int i = 0; i < values.length; i++) {
+//			TableColumn tc = new TableColumn(t, SWT.CENTER);
+//			tc.setText(Integer.toString(i));
+//			tc.setWidth(40);
+//		}
+//
+//		for (int i = 0; i < values[0].length; i++) {
+//			String[] columnContents = new String[values.length];
+//			for (int j = 0; j < values.length; j++) {
+//				columnContents[j] = Double.toString(values[j][i]);
+//			}
+//			TableItem item = new TableItem(t, SWT.NONE);
+//			item.setText(columnContents);
+//		}
+//		t.setRedraw(true);
+//	}
 
 	/**
 	 * Create contents of the button bar.

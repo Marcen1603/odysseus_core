@@ -58,7 +58,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 
 	private Stats stats = new Stats();
 	private ScreenManager manager = null;
-	private ScreenTransformation transformation = null;
+	protected ScreenTransformation transformation = null;
 	private Canvas canvas = null;
 	private ImageStyle style = null;
 

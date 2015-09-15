@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	private MapEditorModel mapModel;
 	private Puffer puffer;
 	private IPhysicalOperator operator;
-	// private Thread updateThread;
+	private Thread updateThread;
 
 	/**
 	 * If the MapEditorModel is initiated and the LayerUpdater is connected
@@ -70,30 +71,30 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		puffer = mapModel.addConnection(this);
 		mapModel.init(this);
 
-		// updateThread = new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// while (!parent.isDisposed()) {
-		// final Display disp = PlatformUI.getWorkbench().getDisplay();
-		// if (!disp.isDisposed()) {
-		// disp.asyncExec(new Runnable() {
-		// @Override
-		// public void run() {
-		// if (!screenManager.getCanvas().isDisposed()) {
-		// screenManager.redraw();
-		// }
-		// }
-		// });
-		// }
-		// waiting(updateInterval);
-		// }
-		// }
-		//
-		// });
-		//
-		// updateThread.setName("StreamList Updater");
-		// updateThread.start();
+		 updateThread = new Thread(new Runnable() {
+		
+		 @Override
+		 public void run() {
+		 while (!parent.isDisposed()) {
+		 final Display disp = screenManager.getCanvas().getDisplay();
+		 if (!disp.isDisposed()) {
+		 disp.asyncExec(new Runnable() {
+		 @Override
+		 public void run() {
+		 if (!screenManager.getCanvas().isDisposed()) {
+		 screenManager.redraw();
+		 }
+		 }
+		 });
+		 }
+		 waiting(updateInterval);
+		 }
+		 }
+		
+		 });
+		
+		 updateThread.setName("StreamList Updater");
+		 updateThread.start();
 	}
 
 	@Override
@@ -152,7 +153,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			// Add tuple to current list if the new timestamp is in the interval
 
 			puffer.addTuple(tuple);
-			// System.out.println("Tupel:" + tuple);
+
 		}
 
 		// Prevent an overflow in the puffer
@@ -161,7 +162,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		// TODO SOLLTE DAS HIER SEIN?
 		// Should we redraw here or just if we added the tupel to the current
 		// list?
-		screenManager.redraw();
+		//screenManager.redraw();
 
 	}
 
@@ -186,12 +187,12 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	}
 
-	// private static void waiting(long length) {
-	// try {
-	// Thread.sleep(length);
-	// } catch (final InterruptedException e) {
-	// }
-	// }
+	 private static void waiting(long length) {
+	 try {
+	 Thread.sleep(length*1000);
+	 } catch (final InterruptedException e) {
+	 }
+	 }
 
 	@Override
 	public ScreenManager getScreenManager() {
