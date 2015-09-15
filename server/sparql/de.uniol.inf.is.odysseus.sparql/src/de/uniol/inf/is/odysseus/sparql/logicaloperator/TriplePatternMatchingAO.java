@@ -58,8 +58,6 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 	 */
 	private static final long serialVersionUID = 3371043653340988294L;
 
-	private static int sourceNameCounter = 0;
-
 	private Triple<IMetaAttribute> triple;
 	private IPredicate<?> predicate;
 
@@ -289,7 +287,6 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// the source name must be a unique artificial name, since
 		// every triple pattern needs its own source name.
-		this.sourceName = "s" + TriplePatternMatchingAO.sourceNameCounter++;
 		this.calcOutputSchema();
 		return getOutputSchema();
 	}
