@@ -24,9 +24,10 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.IQDLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
-import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLSourceImpl;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.Operator;
+import de.uniol.inf.is.odysseus.iql.qdl.types.source.Source;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       context.addImport(_canonicalName);
       String _canonicalName_1 = Collection.class.getCanonicalName();
       context.addImport(_canonicalName_1);
-      String _canonicalName_2 = IQDLOperator.class.getCanonicalName();
+      String _canonicalName_2 = Operator.class.getCanonicalName();
       context.addImport(_canonicalName_2);
       String _canonicalName_3 = ArrayList.class.getCanonicalName();
       context.addImport(_canonicalName_3);
@@ -156,7 +157,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       String _simpleName_1 = Collection.class.getSimpleName();
       _builder.append(_simpleName_1, "\t");
       _builder.append("<");
-      String _simpleName_2 = IQDLOperator.class.getSimpleName();
+      String _simpleName_2 = Operator.class.getSimpleName();
       _builder.append(_simpleName_2, "\t");
       _builder.append("> execute() {");
       _builder.newLineIfNotEmpty();
@@ -164,7 +165,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       String _simpleName_3 = Collection.class.getSimpleName();
       _builder.append(_simpleName_3, "\t\t");
       _builder.append("<");
-      String _simpleName_4 = IQDLOperator.class.getSimpleName();
+      String _simpleName_4 = Operator.class.getSimpleName();
       _builder.append(_simpleName_4, "\t\t");
       _builder.append("> operators = new ");
       String _simpleName_5 = ArrayList.class.getSimpleName();
@@ -179,24 +180,25 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
           context.addImport(_canonicalName);
           _builder.newLineIfNotEmpty();
           _builder.append("\t \t");
-          String _canonicalName_1 = DefaultQDLSource.class.getCanonicalName();
+          String _canonicalName_1 = Source.class.getCanonicalName();
           context.addImport(_canonicalName_1);
-          _builder.append("\t\t\t \t\t");
+          _builder.append("\t\t");
           _builder.newLineIfNotEmpty();
           _builder.append("\t \t");
-          String _simpleName_6 = DefaultQDLSource.class.getSimpleName();
+          String _canonicalName_2 = QDLSourceImpl.class.getCanonicalName();
+          context.addImport(_canonicalName_2);
+          _builder.newLineIfNotEmpty();
+          _builder.append("\t \t");
+          String _simpleName_6 = Source.class.getSimpleName();
           _builder.append(_simpleName_6, "\t \t");
           _builder.append(" ");
           _builder.append(source, "\t \t");
-          _builder.append(" = getSource");
-          String _lowerCase = source.toLowerCase();
-          _builder.append(_lowerCase, "\t \t");
-          _builder.append("(new ");
-          String _simpleName_7 = DefaultQDLSource.class.getSimpleName();
+          _builder.append(" = new ");
+          String _simpleName_7 = QDLSourceImpl.class.getSimpleName();
           _builder.append(_simpleName_7, "\t \t");
           _builder.append("(\"");
           _builder.append(source, "\t \t");
-          _builder.append("\"), operators);");
+          _builder.append("\");");
           _builder.newLineIfNotEmpty();
         }
       }
@@ -219,40 +221,6 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.newLine();
       _builder.append("\t");
       _builder.newLine();
-      {
-        Collection<String> _sources_1 = this.typeDictionary.getSources();
-        for(final String source_1 : _sources_1) {
-          _builder.append("\t");
-          _builder.append("private ");
-          String _simpleName_8 = DefaultQDLSource.class.getSimpleName();
-          _builder.append(_simpleName_8, "\t");
-          _builder.append(" getSource");
-          String _lowerCase_1 = source_1.toLowerCase();
-          _builder.append(_lowerCase_1, "\t");
-          _builder.append("(");
-          String _simpleName_9 = DefaultQDLSource.class.getSimpleName();
-          _builder.append(_simpleName_9, "\t");
-          _builder.append(" type, ");
-          String _simpleName_10 = Collection.class.getSimpleName();
-          _builder.append(_simpleName_10, "\t");
-          _builder.append("<");
-          String _simpleName_11 = IQDLOperator.class.getSimpleName();
-          _builder.append(_simpleName_11, "\t");
-          _builder.append("> operators) {");
-          _builder.newLineIfNotEmpty();
-          _builder.append("\t");
-          _builder.append("\t");
-          _builder.append("operators.add(type);");
-          _builder.newLine();
-          _builder.append("\t");
-          _builder.append("\t");
-          _builder.append("return type;");
-          _builder.newLine();
-          _builder.append("\t");
-          _builder.append("}");
-          _builder.newLine();
-        }
-      }
       _builder.append("\t");
       _builder.newLine();
       {
@@ -403,7 +371,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       String _simpleName = Collection.class.getSimpleName();
       _builder.append(_simpleName, "");
       _builder.append("<");
-      String _simpleName_1 = IQDLOperator.class.getSimpleName();
+      String _simpleName_1 = Operator.class.getSimpleName();
       _builder.append(_simpleName_1, "");
       _builder.append("> operators");
       {

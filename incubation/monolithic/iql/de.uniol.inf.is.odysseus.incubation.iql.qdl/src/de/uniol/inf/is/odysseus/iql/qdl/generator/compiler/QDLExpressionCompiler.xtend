@@ -6,7 +6,6 @@ import javax.inject.Inject
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression
-import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression
@@ -19,6 +18,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
 import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsDictionary
 import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.QDLSubscribableWithPort
 
 class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLExpressionEvaluator, IQDLTypeUtils, IQDLLookUp, IQDLTypeExtensionsDictionary> implements IQDLExpressionCompiler{
 		
@@ -76,7 +76,7 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 				'''getOperator«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»("«typeUtils.getShortName(e.ref, false)»"), operators)'''
 			}
 		} else if (helper.isSource(e.ref)) {
-				'''getSource«typeUtils.getShortName(e.ref, false).toLowerCase»(new «typeCompiler.compile(e.ref, context, false)»("«typeUtils.getShortName(e.ref, false)»"), operators)'''
+				'''new «typeCompiler.compile(e.ref, context, false)»("«typeUtils.getShortName(e.ref, false)»")'''
 		} else {
 			super.compile(e, context);
 		}

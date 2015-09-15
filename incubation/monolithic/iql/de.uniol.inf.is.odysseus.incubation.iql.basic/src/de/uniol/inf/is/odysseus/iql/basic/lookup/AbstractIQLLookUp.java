@@ -24,6 +24,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
@@ -368,7 +369,11 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 	
 	@Override
 	public boolean isInstantiateable(JvmDeclaredType declaredType) {
-		return declaredType.isInstantiateable() || typeUtils.isUserDefinedType(declaredType, false);
+		if (declaredType instanceof IQLClass) {
+			return true;
+		} else {
+			return declaredType.isInstantiateable();
+		}
 	}
 	
 //	@Override

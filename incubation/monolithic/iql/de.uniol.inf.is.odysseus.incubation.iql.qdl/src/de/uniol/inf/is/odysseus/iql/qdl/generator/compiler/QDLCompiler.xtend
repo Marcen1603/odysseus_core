@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLCompiler
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.IQDLCompilerHelper
 import javax.inject.Inject
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.AbstractQDLQuery
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataMethodCompiler
 import java.util.Collection
@@ -12,14 +12,15 @@ import java.util.ArrayList
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
-import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource
 import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
 import org.eclipse.xtext.common.types.JvmOperation
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.Operator
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLSourceImpl
+import de.uniol.inf.is.odysseus.iql.qdl.types.source.Source
 
 class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeDictionary, IQDLTypeUtils> implements IQDLCompiler{
 	
@@ -37,7 +38,7 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 		builder.append(compileQuery(element, q, context))
 		context.addImport(AbstractQDLQuery.canonicalName)
 		context.addImport(Collection.canonicalName)
-		context.addImport(IQDLOperator.canonicalName)
+		context.addImport(Operator.canonicalName)
 		context.addImport(ArrayList.canonicalName)
 		
 		for (String i : context.getImports) {
@@ -75,12 +76,13 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 				return "«q.simpleName»";
 			}
 			
-			public «Collection.simpleName»<«IQDLOperator.simpleName»> execute() {
-				«Collection.simpleName»<«IQDLOperator.simpleName»> operators = new «ArrayList.simpleName»<>();
+			public «Collection.simpleName»<«Operator.simpleName»> execute() {
+				«Collection.simpleName»<«Operator.simpleName»> operators = new «ArrayList.simpleName»<>();
 			 	«FOR source : typeDictionary.sources»
 			 		«context.addImport(StreamAO.canonicalName)»
-			 		«context.addImport(DefaultQDLSource.canonicalName)»			 		
-			 		«DefaultQDLSource.simpleName» «source» = getSource«source.toLowerCase»(new «DefaultQDLSource.simpleName»("«source»"), operators);
+			 		«context.addImport(Source.canonicalName)»		
+			 		«context.addImport(QDLSourceImpl.canonicalName)»
+			 		«Source.simpleName» «source» = new «QDLSourceImpl.simpleName»("«source»");
 				«ENDFOR»
 			 	«FOR stmt : block.statements»
 			 		«stmtCompiler.compile(stmt, context)»
@@ -89,12 +91,6 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 			}
 			
 			
-			«FOR source : typeDictionary.sources»
-				private «DefaultQDLSource.simpleName» getSource«source.toLowerCase»(«DefaultQDLSource.simpleName» type, «Collection.simpleName»<«IQDLOperator.simpleName»> operators) {
-					operators.add(type);
-					return type;
-				}
-			«ENDFOR»
 			
 			«FOR a : varStmts»
 				«var decl = a.^var as IQLVariableDeclaration»
@@ -125,7 +121,7 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 		if (helper.isOperator(typeRef)) {
 			'''
 			
-			private «typeCompiler.compile(typeRef, context, false)» getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «Collection.simpleName»<«IQDLOperator.simpleName»> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
+			private «typeCompiler.compile(typeRef, context, false)» getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «Collection.simpleName»<«Operator.simpleName»> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
 				operators.add(type);
 				«IF map != null»
 					«FOR el :map.elements»

@@ -576,7 +576,11 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		} else if (typeExtensionsDictionary.hasTypeExtensions(left, method.simpleName,list)){
 			var typeOps = typeExtensionsDictionary.getTypeExtensions(left, method.simpleName, list);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».«method.simpleName»(«compile(e.leftOperand, c)»«IF method.parameters.size > 0», «ENDIF»«compile(e.sel.args, method.parameters, c)»)'''
+			if (typeExtensionsDictionary.ignoreFirstParameter(method)) {
+				'''«typeOps.class.simpleName».«method.simpleName»(«compile(e.leftOperand, c)»«IF method.parameters.size > 0», «ENDIF»«compile(e.sel.args, method.parameters, c)»)'''				
+			} else {
+				'''«typeOps.class.simpleName».«method.simpleName»(«compile(e.sel.args, method.parameters, c)»)'''
+			}
 		} else if (method.returnType != null && helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))){
 			c.addImport(IQLUtils.canonicalName)
 			'''«IQLUtils.simpleName».toList(«compile(e.leftOperand, c)».«method.simpleName»(«compile(e.sel.args, method.parameters, c)»))'''
@@ -715,7 +719,11 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 				c.addImport(IQLUtils.canonicalName)
 				'''«IQLUtils.simpleName».toList(«typeOps.class.simpleName».«method.simpleName»(this«IF method.parameters.size > 0», «ENDIF»«compile(m.args, method.parameters, c)»))'''
 			} else {
-				'''«typeOps.class.simpleName».«method.simpleName»(this«IF method.parameters.size > 0», «ENDIF»«compile(m.args, method.parameters, c)»)'''
+				if (typeExtensionsDictionary.ignoreFirstParameter(method)) {
+					'''«typeOps.class.simpleName».«method.simpleName»(this«IF method.parameters.size > 0», «ENDIF»«compile(m.args, method.parameters, c)»)'''
+				} else {
+					'''«typeOps.class.simpleName».«method.simpleName»(«compile(m.args, method.parameters, c)»)'''
+				}
 			}
 		} else if (method.isStatic) {
 			var containerType = method.eContainer as JvmDeclaredType

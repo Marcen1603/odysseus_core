@@ -20,7 +20,7 @@ public class QDLCompilerHelper extends AbstractIQLCompilerHelper<IQDLLookUp, IQD
 	
 	@Override
 	public boolean isSource(JvmTypeReference typeRef) {
-		return typeDictionary.isSource(typeRef);
+		return lookUp.isSource(typeRef);
 	}
 	
 	
@@ -31,7 +31,7 @@ public class QDLCompilerHelper extends AbstractIQLCompilerHelper<IQDLLookUp, IQD
 	
 	@Override
 	public boolean isOperator(JvmTypeReference typeRef) {
-		return typeDictionary.isOperator(typeRef);
+		return lookUp.isOperator(typeRef);
 	}
 	
 	@Override

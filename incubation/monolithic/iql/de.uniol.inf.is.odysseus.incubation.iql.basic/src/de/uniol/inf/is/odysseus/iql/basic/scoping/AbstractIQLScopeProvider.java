@@ -221,11 +221,11 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		for (JvmIdentifiableElement element : elements) {
 			if (element instanceof JvmOperation) {
 				JvmOperation method = (JvmOperation) element;
-				if (method.getSimpleName().startsWith("set")) {
+				if (method.getSimpleName().startsWith("set") && method.getSimpleName().length() > 3) {
 					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
-				} else if (method.getSimpleName().startsWith("get")) {
+				} else if (method.getSimpleName().startsWith("get") && method.getSimpleName().length() > 3) {
 					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
-				} else if (method.getSimpleName().startsWith("is")) {
+				} else if (method.getSimpleName().startsWith("is") && method.getSimpleName().length() > 2) {
 					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(2)), method));
 				}
 				if (method.isStatic()) {

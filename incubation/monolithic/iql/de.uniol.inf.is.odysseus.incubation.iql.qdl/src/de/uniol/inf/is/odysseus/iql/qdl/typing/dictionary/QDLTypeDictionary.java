@@ -11,9 +11,7 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmType;
-import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.osgi.framework.Bundle;
 
@@ -27,8 +25,6 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactor
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.AbstractIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceObserver;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLDefaultTypes;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
@@ -258,30 +254,6 @@ public class QDLTypeDictionary extends AbstractIQLTypeDictionary<IQDLTypeUtils, 
 	@Override
 	public IOperatorBuilder getOperatorBuilder(String name) {
 		return this.operators.get(name.toLowerCase());
-	}
-
-	@Override
-	public boolean isOperator(JvmTypeReference typeRef) {
-		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
-			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);
-			if (clazz.getExtendedClass() != null) {
-				JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLOperator.class, getSystemResourceSet());
-				return typeUtils.getLongName(clazz.getExtendedClass(), false).equals(typeUtils.getLongName(superClass, false));
-			}
-		} 
-		return false;	
-	}
-
-	@Override
-	public boolean isSource(JvmTypeReference typeRef) {
-		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
-			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);
-			if (clazz.getExtendedClass() != null) {
-				JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLSource.class, getSystemResourceSet());
-				return typeUtils.getLongName(clazz.getExtendedClass(), false).equals(typeUtils.getLongName(superClass, false));	
-			}
-		} 
-		return false;
 	}
 	
 }

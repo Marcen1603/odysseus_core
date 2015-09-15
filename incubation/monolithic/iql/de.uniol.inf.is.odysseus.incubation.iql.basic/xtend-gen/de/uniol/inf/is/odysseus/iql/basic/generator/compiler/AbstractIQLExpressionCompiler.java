@@ -2778,32 +2778,53 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
             String _canonicalName = _class.getCanonicalName();
             c.addImport(_canonicalName);
-            StringConcatenation _builder = new StringConcatenation();
-            Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
-            String _simpleName_3 = _class_1.getSimpleName();
-            _builder.append(_simpleName_3, "");
-            _builder.append(".");
-            String _simpleName_4 = method.getSimpleName();
-            _builder.append(_simpleName_4, "");
-            _builder.append("(");
-            IQLExpression _leftOperand = e.getLeftOperand();
-            String _compile = this.compile(_leftOperand, c);
-            _builder.append(_compile, "");
-            {
-              EList<JvmFormalParameter> _parameters = method.getParameters();
-              int _size = _parameters.size();
-              boolean _greaterThan = (_size > 0);
-              if (_greaterThan) {
-                _builder.append(", ");
+            String _xifexpression_2 = null;
+            boolean _ignoreFirstParameter = this.typeExtensionsDictionary.ignoreFirstParameter(method);
+            if (_ignoreFirstParameter) {
+              StringConcatenation _builder = new StringConcatenation();
+              Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
+              String _simpleName_3 = _class_1.getSimpleName();
+              _builder.append(_simpleName_3, "");
+              _builder.append(".");
+              String _simpleName_4 = method.getSimpleName();
+              _builder.append(_simpleName_4, "");
+              _builder.append("(");
+              IQLExpression _leftOperand = e.getLeftOperand();
+              String _compile = this.compile(_leftOperand, c);
+              _builder.append(_compile, "");
+              {
+                EList<JvmFormalParameter> _parameters = method.getParameters();
+                int _size = _parameters.size();
+                boolean _greaterThan = (_size > 0);
+                if (_greaterThan) {
+                  _builder.append(", ");
+                }
               }
+              IQLMemberSelection _sel_2 = e.getSel();
+              IQLArgumentsList _args_2 = _sel_2.getArgs();
+              EList<JvmFormalParameter> _parameters_1 = method.getParameters();
+              String _compile_1 = this.compile(_args_2, _parameters_1, c);
+              _builder.append(_compile_1, "");
+              _builder.append(")");
+              _xifexpression_2 = _builder.toString();
+            } else {
+              StringConcatenation _builder_1 = new StringConcatenation();
+              Class<? extends IIQLTypeExtensions> _class_2 = typeOps.getClass();
+              String _simpleName_5 = _class_2.getSimpleName();
+              _builder_1.append(_simpleName_5, "");
+              _builder_1.append(".");
+              String _simpleName_6 = method.getSimpleName();
+              _builder_1.append(_simpleName_6, "");
+              _builder_1.append("(");
+              IQLMemberSelection _sel_3 = e.getSel();
+              IQLArgumentsList _args_3 = _sel_3.getArgs();
+              EList<JvmFormalParameter> _parameters_2 = method.getParameters();
+              String _compile_2 = this.compile(_args_3, _parameters_2, c);
+              _builder_1.append(_compile_2, "");
+              _builder_1.append(")");
+              _xifexpression_2 = _builder_1.toString();
             }
-            IQLMemberSelection _sel_2 = e.getSel();
-            IQLArgumentsList _args_2 = _sel_2.getArgs();
-            EList<JvmFormalParameter> _parameters_1 = method.getParameters();
-            String _compile_1 = this.compile(_args_2, _parameters_1, c);
-            _builder.append(_compile_1, "");
-            _builder.append(")");
-            _xblockexpression_2 = _builder.toString();
+            _xblockexpression_2 = _xifexpression_2;
           }
           _xifexpression_1 = _xblockexpression_2;
         } else {
@@ -3471,28 +3492,48 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             }
             _xifexpression_1 = _xblockexpression_2;
           } else {
-            StringConcatenation _builder = new StringConcatenation();
-            Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
-            String _simpleName_2 = _class_1.getSimpleName();
-            _builder.append(_simpleName_2, "");
-            _builder.append(".");
-            String _simpleName_3 = method.getSimpleName();
-            _builder.append(_simpleName_3, "");
-            _builder.append("(this");
-            {
-              EList<JvmFormalParameter> _parameters = method.getParameters();
-              int _size = _parameters.size();
-              boolean _greaterThan = (_size > 0);
-              if (_greaterThan) {
-                _builder.append(", ");
+            String _xifexpression_2 = null;
+            boolean _ignoreFirstParameter = this.typeExtensionsDictionary.ignoreFirstParameter(method);
+            if (_ignoreFirstParameter) {
+              StringConcatenation _builder = new StringConcatenation();
+              Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
+              String _simpleName_2 = _class_1.getSimpleName();
+              _builder.append(_simpleName_2, "");
+              _builder.append(".");
+              String _simpleName_3 = method.getSimpleName();
+              _builder.append(_simpleName_3, "");
+              _builder.append("(this");
+              {
+                EList<JvmFormalParameter> _parameters = method.getParameters();
+                int _size = _parameters.size();
+                boolean _greaterThan = (_size > 0);
+                if (_greaterThan) {
+                  _builder.append(", ");
+                }
               }
+              IQLArgumentsList _args_2 = m.getArgs();
+              EList<JvmFormalParameter> _parameters_1 = method.getParameters();
+              String _compile = this.compile(_args_2, _parameters_1, c);
+              _builder.append(_compile, "");
+              _builder.append(")");
+              _xifexpression_2 = _builder.toString();
+            } else {
+              StringConcatenation _builder_1 = new StringConcatenation();
+              Class<? extends IIQLTypeExtensions> _class_2 = typeOps.getClass();
+              String _simpleName_4 = _class_2.getSimpleName();
+              _builder_1.append(_simpleName_4, "");
+              _builder_1.append(".");
+              String _simpleName_5 = method.getSimpleName();
+              _builder_1.append(_simpleName_5, "");
+              _builder_1.append("(");
+              IQLArgumentsList _args_3 = m.getArgs();
+              EList<JvmFormalParameter> _parameters_2 = method.getParameters();
+              String _compile_1 = this.compile(_args_3, _parameters_2, c);
+              _builder_1.append(_compile_1, "");
+              _builder_1.append(")");
+              _xifexpression_2 = _builder_1.toString();
             }
-            IQLArgumentsList _args_2 = m.getArgs();
-            EList<JvmFormalParameter> _parameters_1 = method.getParameters();
-            String _compile = this.compile(_args_2, _parameters_1, c);
-            _builder.append(_compile, "");
-            _builder.append(")");
-            _xifexpression_1 = _builder.toString();
+            _xifexpression_1 = _xifexpression_2;
           }
           _xblockexpression_1 = _xifexpression_1;
         }

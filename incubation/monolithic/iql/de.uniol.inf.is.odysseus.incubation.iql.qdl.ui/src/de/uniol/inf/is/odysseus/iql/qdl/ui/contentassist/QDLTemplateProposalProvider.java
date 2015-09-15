@@ -122,7 +122,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		} else {
 			typeRef = newExpr.getRef();
 		}
-		if (typeDictionary.isOperator(typeRef)) {
+		if (lookUp.isOperator(typeRef)) {
 			IOperatorBuilder builder = typeDictionary.getOperatorBuilder(typeUtils.getShortName(typeRef, false));
 			IParameter<?> parameter = typeDictionary.getOperatorParameter(typeUtils.getShortName(typeRef, false), node.getKey().getSimpleName());
 			if (parameter.getPossibleValueMethod() != null && parameter.getPossibleValueMethod().length()>0) {

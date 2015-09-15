@@ -29,6 +29,11 @@ public class ObjectExtensions implements IIQLTypeExtensions {
 		 System.out.print(text);
 	}
 	
+	@ExtensionMethod(ignoreFirstParameter=false)
+	public static void println(String text) {
+		 System.out.println(text);
+	}
+	
 	@Override
 	public Class<?> getType() {
 		return Object.class;

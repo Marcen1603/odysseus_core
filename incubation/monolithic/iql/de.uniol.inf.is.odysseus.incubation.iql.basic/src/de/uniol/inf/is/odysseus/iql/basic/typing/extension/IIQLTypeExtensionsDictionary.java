@@ -28,4 +28,5 @@ public interface IIQLTypeExtensionsDictionary {
 	boolean hasTypeExtensions(JvmTypeReference typeRef);
 	void addTypeExtensions(IIQLTypeExtensions typeExtensions);
 	void removeTypeExtensions(IIQLTypeExtensions typeExtensions);
+	boolean ignoreFirstParameter(JvmOperation method);
 }

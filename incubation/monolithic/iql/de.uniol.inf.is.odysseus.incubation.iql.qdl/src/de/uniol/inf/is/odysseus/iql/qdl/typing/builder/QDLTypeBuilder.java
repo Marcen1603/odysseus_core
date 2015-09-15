@@ -30,9 +30,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.AbstractIQLTypeBuilder;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
-import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLPipeOperatorImpl;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLSinkOperatorImpl;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLSourceImpl;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.Operator;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
@@ -49,7 +50,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 	@Override
 	public void createSource(String sourceName, ILogicalOperator source) {
 		String name = getSourceName(sourceName);
-		JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLSource.class, typeDictionary.getSystemResourceSet());
+		JvmTypeReference superClass = typeUtils.createTypeRef(QDLSourceImpl.class, typeDictionary.getSystemResourceSet());
 
 		IQLClass sourceClass = BasicIQLFactory.eINSTANCE.createIQLClass();
 		sourceClass.setSimpleName(firstCharUpperCase(name));
@@ -69,7 +70,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		sourceAttr.setType(typeUtils.createTypeRef(sourceClass));
 		sourceClass.getMembers().add(sourceAttr);
 		
-		typeDictionary.addSystemType(sourceClass, DefaultQDLSource.class);
+		typeDictionary.addSystemType(sourceClass, QDLSourceImpl.class);
 		typeDictionary.addSource(name, source, sourceClass);
 	}
 	
@@ -100,7 +101,14 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 			name = operatorClassName;
 		}
 		
-		JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLOperator.class, typeDictionary.getSystemResourceSet());
+		Class<?> superJavaClass = null;
+		if (opBuilder.getMaxInputOperatorCount() == 0) {
+			superJavaClass = QDLSinkOperatorImpl.class;
+		} else {
+			superJavaClass = QDLPipeOperatorImpl.class;
+		}
+		
+		JvmTypeReference superClass = typeUtils.createTypeRef(superJavaClass, typeDictionary.getSystemResourceSet());
 
 		IQLClass opClass = BasicIQLFactory.eINSTANCE.createIQLClass();
 		opClass.setSimpleName(name);
@@ -111,7 +119,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		Map<String, Parameter> parameterTypes = new HashMap<>();
 
 		typeDictionary.removeSystemType(createQualifiedName(OPERATORS_NAMESPACE, name));
-		typeDictionary.addSystemType(opClass, DefaultQDLOperator.class);
+		typeDictionary.addSystemType(opClass, superJavaClass);
 		typeDictionary.addOperator(opBuilder, opClass, parameters, parameterTypes);
 		
 		BeanInfo beanInfo = null;
@@ -182,7 +190,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		
 		JvmFormalParameter constructor1Arg = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor1Arg.setName("source");
-		constructor1Arg.setParameterType(typeUtils.createTypeRef(IQDLOperator.class, typeDictionary.getSystemResourceSet()));
+		constructor1Arg.setParameterType(typeUtils.createTypeRef(Operator.class, typeDictionary.getSystemResourceSet()));
 		constructor1.getParameters().add(constructor1Arg);
 		opClass.getMembers().add(constructor1);
 		
@@ -192,12 +200,12 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 
 		JvmFormalParameter constructor2Arg1 = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor2Arg1.setName("source1");
-		constructor2Arg1.setParameterType(typeUtils.createTypeRef(IQDLOperator.class, typeDictionary.getSystemResourceSet()));
+		constructor2Arg1.setParameterType(typeUtils.createTypeRef(Operator.class, typeDictionary.getSystemResourceSet()));
 		constructor2.getParameters().add(constructor2Arg1);
 		
 		JvmFormalParameter constructor2Arg2 = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor2Arg2.setName("source2");
-		constructor2Arg2.setParameterType(typeUtils.createTypeRef(IQDLOperator.class, typeDictionary.getSystemResourceSet()));
+		constructor2Arg2.setParameterType(typeUtils.createTypeRef(Operator.class, typeDictionary.getSystemResourceSet()));
 		constructor2.getParameters().add(constructor2Arg2);
 		
 		opClass.getMembers().add(constructor2);

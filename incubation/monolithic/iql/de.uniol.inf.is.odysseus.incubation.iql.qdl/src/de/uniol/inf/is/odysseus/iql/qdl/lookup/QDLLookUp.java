@@ -20,14 +20,22 @@ import javax.inject.Inject;
 
 
 
+
+
+
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.Operator;
+import de.uniol.inf.is.odysseus.iql.qdl.types.source.Source;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
@@ -87,6 +95,26 @@ public class QDLLookUp extends AbstractIQLLookUp<IQDLTypeDictionary, IQDLTypeExt
 			}
 		}
 		return result;
+	}
+	
+	@Override
+	public boolean isOperator(JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
+			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);
+			JvmTypeReference operator = typeUtils.createTypeRef(Operator.class, typeDictionary.getSystemResourceSet());
+			return isAssignable(operator, clazz);			
+		} 
+		return false;	
+	}
+
+	@Override
+	public boolean isSource(JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
+			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);
+			JvmTypeReference source = typeUtils.createTypeRef(Source.class, typeDictionary.getSystemResourceSet());
+			return isAssignable(source, clazz);	
+		} 
+		return false;
 	}
 
 //	@Override

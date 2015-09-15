@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.qdl.types.impl.query;
+package de.uniol.inf.is.odysseus.iql.qdl.types.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,10 +6,12 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.Operator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQueryExecutor;
-import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort;
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.QDLSubscribableWithPort;
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.Subscribable;
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.Subscriber;
 
 
 public abstract class AbstractQDLQuery implements IQDLQuery {
@@ -25,35 +27,35 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		this.executor = executor;
 	}
 	
-	public void create(IQDLOperator operator) {
+	public void create(Operator operator) {
 		executor.create(operator);
 	}	
 	
-	protected void create(List<IQDLOperator> operators) {
+	protected void create(List<Operator> operators) {
 		executor.createWithMultipleSinks(operators);
 	}
 	
-	protected void start(IQDLOperator operator) {
+	protected void start(Operator operator) {
 		executor.start(operator);
 	}
 	
-	protected void start(List<IQDLOperator> operators) {
+	protected void start(List<Operator> operators) {
 		executor.startWithMultipleSinks(operators);
 	}
 	
-	public void create(String name,IQDLOperator operator) {
+	public void create(String name,Operator operator) {
 		executor.create(name, operator);
 	}	
 	
-	protected void create(String name,List<IQDLOperator> operators) {
+	protected void create(String name,List<Operator> operators) {
 		executor.createWithMultipleSinks(name, operators);
 	}
 	
-	protected void start(String name,IQDLOperator operator) {
+	protected void start(String name,Operator operator) {
 		executor.start(name, operator);
 	}
 	
-	protected void start(String name, List<IQDLOperator> operators) {
+	protected void start(String name, List<Operator> operators) {
 		executor.startWithMultipleSinks(name, operators);
 	}
 	
@@ -68,8 +70,8 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 		
 
-	protected List<IQDLOperator> subscribeToSource(Collection<?> sinks, Collection<?> sources) {
-		List<IQDLOperator> result = new ArrayList<>();
+	protected List<Subscribable> subscribeToSource(Collection<?> sinks, Collection<?> sources) {
+		List<Subscribable> result = new ArrayList<>();
 		for (Object sink : sinks) {			
 			for (Object source : sources) {
 				if (sink instanceof Collection && source instanceof Collection) {
@@ -77,9 +79,9 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 				} else if (sink instanceof Collection) {
 					result.add(subscribeToSource((Collection<?>)sink, source));
 				} else if (source instanceof Collection) {
-					result.addAll(subscribeToSource((IQDLOperator)sink, (Collection<?>)source));
+					result.addAll(subscribeToSource((Subscriber)sink, (Collection<?>)source));
 				} else {
-					result.add(subscribeToSource((IQDLOperator)sink, source));
+					result.add(subscribeToSource(sink, source));
 				}
 			}
 		}
@@ -87,8 +89,8 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 	
 	
-	protected List<IQDLOperator> subscribeToSource(IQDLOperator sink, Collection<?> sources) {
-		List<IQDLOperator> result = new ArrayList<>();
+	protected List<Subscribable> subscribeToSource(Subscriber sink, Collection<?> sources) {
+		List<Subscribable> result = new ArrayList<>();
 		for (Object source : sources) {
 			if (source instanceof Collection) {
 				result.addAll(subscribeToSource(sink, (Collection<?>)source));
@@ -99,49 +101,50 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return result;
 	}
 	
-	protected IQDLOperator subscribeToSource(Collection<?> sinks, Object source) {
+	protected Subscribable subscribeToSource(Collection<?> sinks, Object source) {
 		for (Object sink : sinks) {
 			if (sink instanceof Collection) {
 				subscribeToSource((Collection<?>) sink, source);
 			} else  {
-				subscribeToSource((IQDLOperator)sink, source);
+				subscribeToSource(sink, source);
 			} 			
 		}
 		if (source instanceof QDLSubscribableWithPort) {
-			return ((QDLSubscribableWithPort)source).getOp();
-		} else if (source instanceof IQDLOperator) {
-			return ((IQDLOperator)source);
+			return ((QDLSubscribableWithPort)source).getSource();
+		} else if (source instanceof Subscribable) {
+			return ((Subscribable)source);
 		} else {
 			return null;
 		}
 	}
 	
-	protected IQDLOperator subscribeToSource(IQDLOperator sink, Object sourceObj) {
-		IQDLOperator source = null;
+	protected Subscribable subscribeToSource(Object sink, Object sourceObj) {
+		Subscribable source = null;
 		int sourceOutPort = DEFAULT_SOURCE_OUT_PORT;
 
 		if (sourceObj instanceof QDLSubscribableWithPort) {
-			source = ((QDLSubscribableWithPort)sourceObj).getOp();
+			source = ((QDLSubscribableWithPort)sourceObj).getSource();
 			sourceOutPort = ((QDLSubscribableWithPort)sourceObj).getPort();
-		} else if (sourceObj instanceof IQDLOperator) {
-			source = ((IQDLOperator)sourceObj);
+		} else if (sourceObj instanceof Subscribable) {
+			source = ((Subscribable)sourceObj);
 		}
-		sink.subscribeToSource(source, sourceOutPort);
+		Subscriber subscriber = (Subscriber) sink;
+		subscriber.subscribeToSource(source, sourceOutPort, subscriber.getSubscriptionsToSource().size());
 		return source;
 	}
 	
-	protected List<IQDLOperator> subscribeSink(Collection<?> sources, Collection<?> sinks) {
-		List<IQDLOperator> result = new ArrayList<>();
+	protected List<Subscriber> subscribeSink(Collection<?> sources, Collection<?> sinks) {
+		List<Subscriber> result = new ArrayList<>();
 		for (Object source : sources) {			
 			for (Object sink : sinks) {
 				if (source instanceof Collection && sink instanceof Collection) {
 					result.addAll(subscribeSink((Collection<?>)source, (Collection<?>)sink));
 				} else if (source instanceof Collection) {
-					result.add(subscribeSink((Collection<?>)source, (IQDLOperator)sink));
+					result.add(subscribeSink((Collection<?>)source, (Subscriber)sink));
 				} else if (sink instanceof Collection) {
 					result.addAll(subscribeSink(source, (Collection<?>)sink));
 				} else {
-					result.add(subscribeSink(source,  (IQDLOperator)sink));
+					result.add(subscribeSink(source,  sink));
 				}
 			}
 		}
@@ -149,7 +152,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 	
 	
-	protected IQDLOperator subscribeSink(Collection<?> sources, IQDLOperator sink) {
+	protected Subscriber subscribeSink(Collection<?> sources, Object sink) {
 		for (Object obj : sources) {
 			if (obj instanceof Collection) {
 				subscribeSink((Collection<?>)obj, sink);
@@ -157,34 +160,35 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 				subscribeSink(obj, sink);
 			} 			
 		}
-		return sink;
+		return (Subscriber) sink;
 	}
 	
-	protected List<IQDLOperator> subscribeSink(Object source, Collection<?> sinks) {
-		List<IQDLOperator> result = new ArrayList<>();
+	protected List<Subscriber> subscribeSink(Object source, Collection<?> sinks) {
+		List<Subscriber> result = new ArrayList<>();
 		for (Object sink : sinks) {
 			if (sink instanceof Collection) {
 				result.addAll(subscribeSink(source, (Collection<?>) sink));
 			} else  {
-				result.add(subscribeSink(source, (IQDLOperator) sink));
+				result.add(subscribeSink(source, sink));
 			} 			
 		}
 		return result;
 	}
 	
-	protected IQDLOperator subscribeSink(Object sourceObj, IQDLOperator sink) {
-		IQDLOperator source = null;
+	protected Subscriber subscribeSink(Object sourceObj, Object sink) {
+		Subscribable source = null;
 		int sourceOutPort = DEFAULT_SOURCE_OUT_PORT;
 		
 		if (sourceObj instanceof QDLSubscribableWithPort) {
-			source = ((QDLSubscribableWithPort)sourceObj).getOp();
+			source = ((QDLSubscribableWithPort)sourceObj).getSource();
 			sourceOutPort = ((QDLSubscribableWithPort)sourceObj).getPort();
-		} else if (sourceObj instanceof IQDLOperator) {
-			source = ((IQDLOperator)sourceObj);
+		} else if (sourceObj instanceof Subscribable) {
+			source = ((Subscribable)sourceObj);
 		}
-		source.subscribeSink(sink, sourceOutPort);
+		Subscriber subscriber = (Subscriber) sink;
+		source.subscribeSink(subscriber, sourceOutPort, subscriber.getSubscriptionsToSource().size());
 
-		return sink;
+		return subscriber;
 	}
 
 }

@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
-import de.uniol.inf.is.odysseus.iql.odl.types.MepFunctions;
 import de.uniol.inf.is.odysseus.iql.odl.types.ODLUtils;
 import de.uniol.inf.is.odysseus.iql.odl.types.extension.PunctuationExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.extension.TransferExtensions;
@@ -68,7 +67,6 @@ public class ODLDefaultTypes {
 		implicitImports.add("java.util.*");
 		implicitImports.add("java.lang.*");
 		implicitImports.add(IExpression.class.getCanonicalName());
-		implicitImports.add(MepFunctions.class.getCanonicalName());
 		implicitImports.add(IPunctuation.class.getCanonicalName());
 		implicitImports.add(Tuple.class.getCanonicalName());
 		implicitImports.add(IStreamObject.class.getCanonicalName());
@@ -108,7 +106,6 @@ public class ODLDefaultTypes {
 		types.add(Tuple.class);
 		types.add(SDFSchemaFactory.class);
 		types.add(SDFSchema.class);
-		types.add(MepFunctions.class);
 		types.add(Order.class);
 		types.add(MetadataRegistry.class);
 		types.add(SDFDatatype.class);

@@ -82,7 +82,8 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 		this.typeExtensionsRefs.put(extensions, typeRef);
 	}
 	
-	private boolean ignoreFirstParameter(JvmOperation method) {
+	@Override
+	public boolean ignoreFirstParameter(JvmOperation method) {
 		if (method.getAnnotations().size() > 0) {
 			for (JvmAnnotationReference anno : method.getAnnotations()) {
 				if (anno.getAnnotation().getSimpleName().equals(ExtensionMethod.class.getSimpleName())) {

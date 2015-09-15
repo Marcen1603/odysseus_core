@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.AbstractIQLTypeExtens
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
-import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.AbstractQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLDefaultTypes;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;

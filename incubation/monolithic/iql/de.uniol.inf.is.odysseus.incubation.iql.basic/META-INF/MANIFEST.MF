@@ -27,7 +27,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.osgi,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core;bundle-version="3.7.3",
- org.eclipse.xtext.xbase;bundle-version="2.7.3"
+ org.eclipse.xtext.xbase;bundle-version="2.7.3",
+ de.uniol.inf.is.odysseus.mep
 Import-Package: org.apache.commons.io,
  org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

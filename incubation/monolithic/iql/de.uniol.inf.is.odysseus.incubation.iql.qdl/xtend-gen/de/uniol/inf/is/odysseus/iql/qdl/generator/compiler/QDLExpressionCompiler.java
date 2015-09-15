@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
-import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort;
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.QDLSubscribableWithPort;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import javax.inject.Inject;
@@ -320,20 +320,15 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
       boolean _isSource = this.helper.isSource(_ref_5);
       if (_isSource) {
         StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("getSource");
+        _builder_1.append("new ");
         JvmTypeReference _ref_6 = e.getRef();
-        String _shortName_2 = this.typeUtils.getShortName(_ref_6, false);
-        String _lowerCase = _shortName_2.toLowerCase();
-        _builder_1.append(_lowerCase, "");
-        _builder_1.append("(new ");
-        JvmTypeReference _ref_7 = e.getRef();
-        String _compile_1 = this.typeCompiler.compile(_ref_7, context, false);
+        String _compile_1 = this.typeCompiler.compile(_ref_6, context, false);
         _builder_1.append(_compile_1, "");
         _builder_1.append("(\"");
-        JvmTypeReference _ref_8 = e.getRef();
-        String _shortName_3 = this.typeUtils.getShortName(_ref_8, false);
-        _builder_1.append(_shortName_3, "");
-        _builder_1.append("\"), operators)");
+        JvmTypeReference _ref_7 = e.getRef();
+        String _shortName_2 = this.typeUtils.getShortName(_ref_7, false);
+        _builder_1.append(_shortName_2, "");
+        _builder_1.append("\")");
         _xifexpression_3 = _builder_1.toString();
       } else {
         _xifexpression_3 = super.compile(e, context);

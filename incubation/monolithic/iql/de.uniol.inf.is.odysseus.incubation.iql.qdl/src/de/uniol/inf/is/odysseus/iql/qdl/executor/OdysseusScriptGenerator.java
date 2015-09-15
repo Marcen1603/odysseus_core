@@ -38,10 +38,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParame
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
-import de.uniol.inf.is.odysseus.iql.qdl.types.IQLSubscription;
-import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.Operator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQueryExecutor;
+import de.uniol.inf.is.odysseus.iql.qdl.types.source.Source;
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.Subscribable;
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.Subscriber;
+import de.uniol.inf.is.odysseus.iql.qdl.types.subscription.Subscription;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
@@ -56,12 +59,12 @@ public class OdysseusScriptGenerator {
 	public List<ILogicalQuery> createLogicalQueries(IQDLQuery query,IDataDictionary dd, ISession session) {
 		QDLQueryExecutor executor = new QDLQueryExecutor(dd, session);
 		query.setExecutor(executor);
-		Collection<IQDLOperator> operators = query.execute();
+		Collection<Operator> operators = query.execute();
 		List<ILogicalQuery> result = new ArrayList<>();
 		result.addAll(executor.getQueries());
 		if (isAutoCreate(query)) {
-			Collection<IQDLOperator> roots = getRoots(operators);
-			ILogicalQuery logQuery = createLogicalQuery(roots, dd, session);
+			Collection<Operator> topOps = getTopOperators(operators);
+			ILogicalQuery logQuery = createLogicalQuery(topOps, dd, session);
 			logQuery.setName(query.getName());
 			result.add(logQuery);
 		}
@@ -77,32 +80,33 @@ public class OdysseusScriptGenerator {
 		return true;
  	}
 	
-	public ILogicalQuery createLogicalQuery(IQDLOperator root, IDataDictionary dd, ISession session) {
-		Collection<IQDLOperator> roots = new HashSet<>();
-		roots.add(root);
-		return createLogicalQuery(roots, dd, session);
+	public ILogicalQuery createLogicalQuery(Operator topOp, IDataDictionary dd, ISession session) {
+		Collection<Operator> topOps = new HashSet<>();
+		topOps.add(topOp);
+		return createLogicalQuery(topOps, dd, session);
 	}
 	
-	public ILogicalQuery createLogicalQuery(Collection<IQDLOperator> roots, IDataDictionary dd, ISession session) {	
-		Map<IQDLOperator, ILogicalOperator> operatorsMap = new HashMap<>();
-		Map<String, StreamAO> sourcesMap = new HashMap<>();
+	public ILogicalQuery createLogicalQuery(Collection<Operator> topOps, IDataDictionary dd, ISession session) {	
+		Map<Operator, ILogicalOperator> operatorsMap = new HashMap<>();
+		Map<Source, ILogicalOperator> sourcesMap = new HashMap<>();
 		
-		Collection<IQDLOperator> operators = getOperators(roots);
-		
-		for (IQDLOperator operator : operators) {
-			if (operator.isSource()) {
-				operatorsMap.put(operator, getSource(operator.getName(), sourcesMap, dd , session));
-			} else {
-				operatorsMap.put(operator, QDLServiceBinding.createOperator(operator.getName()));
-			}
+		Collection<Operator> operators = getOperators(topOps);
+		Collection<Source> sources = getSources(topOps);
+
+		for (Operator operator : operators) {
+			operatorsMap.put(operator, QDLServiceBinding.createOperator(operator.getName()));
 		}
 		
-		Collection<IQDLOperator> visitedOperators = new HashSet<>();
-		for (IQDLOperator root : roots) {
-			createLogicalGraph(root, operatorsMap,visitedOperators, dd , session);
+		for (Source source : sources) {
+			sourcesMap.put(source, getSource(source.getName(), dd , session));
 		}
 		
-		TopAO topAO = createTopAO(roots, operatorsMap);
+		Collection<Operator> visitedOperators = new HashSet<>();
+		for (Operator topOp : topOps) {
+			createLogicalGraph(topOp, operatorsMap, sourcesMap, visitedOperators, dd , session);
+		}
+		
+		TopAO topAO = createTopAO(topOps, operatorsMap);
 		
 		ILogicalQuery result = new LogicalQuery();
 		result.setLogicalPlan(topAO, true);
@@ -168,55 +172,62 @@ public class OdysseusScriptGenerator {
 		return false;
 	}
 
-	private ILogicalOperator getSource(String name, Map<String, StreamAO> sourcesMap, IDataDictionary dd, ISession session) {
+	private ILogicalOperator getSource(String name, IDataDictionary dd, ISession session) {
 		String sourceName = name.toLowerCase();
-		StreamAO streamAO = sourcesMap.get(sourceName);
-		if (streamAO == null) {
-			SourceParameter source = new SourceParameter();
-			source.setName("Source");
-			source.setInputValue(sourceName);
-			source.setDataDictionary(dd);		
-			source.setCaller(session);
-			
-			AccessAO accessAO = source.getValue();
-			streamAO = new StreamAO();
-			streamAO.setSource(accessAO);
-			streamAO.setName(sourceName);
-			
-			sourcesMap.put(name, streamAO);
-		}	
+		SourceParameter source = new SourceParameter();
+		source.setName("Source");
+		source.setInputValue(sourceName);
+		source.setDataDictionary(dd);		
+		source.setCaller(session);
+		
+		AccessAO accessAO = source.getValue();
+		StreamAO streamAO  = new StreamAO();
+		streamAO.setSource(accessAO);
+		streamAO.setName(sourceName);
 		return streamAO;
 	}
 
 	
-	private Collection<IQDLOperator> getRoots(Collection<IQDLOperator> operators) {
-		Collection<IQDLOperator> roots = new HashSet<>();
-		for (IQDLOperator op : operators) {
-			if (!op.isSource() && op.getSubscriptions().size() == 0) {
-				roots.add(op);
-			}
+	private Collection<Operator> getTopOperators(Collection<Operator> operators) {
+		Collection<Operator> result = new HashSet<>();
+		for (Operator op : operators) {
+			if (op instanceof Subscribable) {
+				Subscribable subscribable = (Subscribable) op;
+				if (subscribable.getSubscriptions().size() == 0) {
+					result.add(op);
+				}
+			}			
 		}
-		return roots;
+		return result;
 	}
 	
-	private void createLogicalGraph(IQDLOperator root, Map<IQDLOperator, ILogicalOperator> operatorsMap, Collection<IQDLOperator> visitedOperators, IDataDictionary dd, ISession session) {
-		if (!visitedOperators.contains(root)) {
-			visitedOperators.add(root);
-			for (IQLSubscription subs : root.getSubscriptionsToSource()) {
-				createLogicalGraph(subs.getSource(), operatorsMap, visitedOperators, dd, session);
-				ILogicalOperator sourceOp = operatorsMap.get(subs.getSource());
-				ILogicalOperator targetOp = operatorsMap.get(subs.getTarget());
-				targetOp.subscribeToSource(sourceOp, subs.getSinkInPort(), subs.getSourceOutPort(),  sourceOp.getOutputSchema(subs.getSourceOutPort()));
-			}
-			if (!root.isSource()) {
-				setParameters(root, operatorsMap.get(root), session, dd);
-			}
+	private void createLogicalGraph(Operator operator, Map<Operator, ILogicalOperator> operatorsMap, Map<Source, ILogicalOperator> sourcesMap, Collection<Operator> visitedOperators, IDataDictionary dd, ISession session) {
+		if (!visitedOperators.contains(operator)) {
+			visitedOperators.add(operator);
+			if (operator instanceof Subscriber) {
+				Subscriber subscriber = (Subscriber) operator;
+				for (Subscription subs : subscriber.getSubscriptionsToSource()) {
+					Subscribable source = subs.getSource();
+					if (source instanceof Operator) {
+						Operator sourceOperator = (Operator) source;
+						createLogicalGraph(sourceOperator, operatorsMap, sourcesMap, visitedOperators, dd, session);
+						ILogicalOperator sourceOp = operatorsMap.get(subs.getSource());
+						ILogicalOperator targetOp = operatorsMap.get(subs.getSink());
+						targetOp.subscribeToSource(sourceOp, subs.getSinkInPort(), subs.getSourceOutPort(),  sourceOp.getOutputSchema(subs.getSourceOutPort()));
+					} else if (source instanceof Source) {
+						ILogicalOperator sourceOp = sourcesMap.get(subs.getSource());
+						ILogicalOperator targetOp = operatorsMap.get(subs.getSink());
+						targetOp.subscribeToSource(sourceOp, subs.getSinkInPort(), subs.getSourceOutPort(),  sourceOp.getOutputSchema(subs.getSourceOutPort()));
+					}
+				}
+				setParameters(operator, operatorsMap.get(operator), session, dd);
+			}			
 		}
 	}
 	
 	
 	@SuppressWarnings({ "unchecked" })
-	private void setParameters(IQDLOperator operator, ILogicalOperator logicalOp, ISession session, IDataDictionary dd) {		
+	private void setParameters(Operator operator, ILogicalOperator logicalOp, ISession session, IDataDictionary dd) {		
 		Class<? extends ILogicalOperator> opClass = typeDictionary.getOperatorBuilder(logicalOp.getName()).getOperatorClass();
 		BeanInfo beanInfo = null;
 		try {
@@ -344,12 +355,12 @@ public class OdysseusScriptGenerator {
 		return null;
 	}
 	
-	private TopAO createTopAO(Collection<IQDLOperator> roots, Map<IQDLOperator, ILogicalOperator> operatorsMap) {
+	private TopAO createTopAO(Collection<Operator> topOps, Map<Operator, ILogicalOperator> operatorsMap) {
 		TopAO topAO = new TopAO();
 		int i = 0; 
-		for (IQDLOperator op : roots) {
-			ILogicalOperator root = operatorsMap.get(op);
-			topAO.subscribeToSource(root, i++, 0, root.getOutputSchema());
+		for (Operator op : topOps) {
+			ILogicalOperator topOp = operatorsMap.get(op);
+			topAO.subscribeToSource(topOp, i++, 0, topOp.getOutputSchema());
 		}
 		return topAO;
 	}
@@ -382,21 +393,52 @@ public class OdysseusScriptGenerator {
 		}
 	}
 	
-	private Collection<IQDLOperator> getOperators(Collection<IQDLOperator> roots) {
-		Collection<IQDLOperator> operators = new HashSet<>();
-		for (IQDLOperator root : roots) {
-			collectOperators(root, operators);
+	private Collection<Source> getSources(Collection<Operator> topOps) {
+		Collection<Source> result = new HashSet<>();
+		for (Operator topOp : topOps) {
+			findSources(topOp, result);
 		}
-		return operators;
+		return result;
 	}
 	
-	private void collectOperators(IQDLOperator operator, Collection<IQDLOperator> visitedOperators) {
-		visitedOperators.add(operator);
-		for (IQLSubscription subs : operator.getSubscriptionsToSource()) {
-			if (!visitedOperators.contains(subs.getSource())) {
-				collectOperators(subs.getSource(), visitedOperators);
+	private void findSources(Operator operator, Collection<Source> visitedSources) {
+		if (operator instanceof Subscriber) {
+			Subscriber subscriber = (Subscriber) operator;
+			for (Subscription subs : subscriber.getSubscriptionsToSource()) {
+				Subscribable source = subs.getSource();
+				if (source instanceof Operator) {
+					Operator sourceOp = (Operator) source;
+					findSources(sourceOp, visitedSources);					
+				}else if (source instanceof Source) {
+					visitedSources.add((Source) source);
+				}
 			}
+		}		
+	}
+	
+	
+	private Collection<Operator> getOperators(Collection<Operator> topOps) {
+		Collection<Operator> result = new HashSet<>();
+		for (Operator topOp : topOps) {
+			collectOperators(topOp, result);
 		}
+		return result;
+	}
+	
+	private void collectOperators(Operator operator, Collection<Operator> visitedOperators) {
+		visitedOperators.add(operator);
+		if (operator instanceof Subscriber) {
+			Subscriber subscriber = (Subscriber) operator;
+			for (Subscription subs : subscriber.getSubscriptionsToSource()) {
+				Subscribable source = subs.getSource();
+				if (source instanceof Operator) {
+					Operator sourceOp = (Operator) source;
+					if (!visitedOperators.contains(sourceOp)) {
+						collectOperators(sourceOp, visitedOperators);
+					}
+				}				
+			}
+		}		
 	}
 	
 	private class QDLQueryExecutor implements IQDLQueryExecutor {
@@ -410,28 +452,28 @@ public class OdysseusScriptGenerator {
 		}
 		
 		@Override
-		public void create(IQDLOperator operator) {
+		public void create(Operator operator) {
 			ILogicalQuery query = createLogicalQuery(operator, dd, session);
 			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
 			queries.add(query);
 		}
 
 		@Override
-		public void createWithMultipleSinks(List<IQDLOperator> operators) {
+		public void createWithMultipleSinks(List<Operator> operators) {
 			ILogicalQuery query = createLogicalQuery(operators, dd, session);
 			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
 			queries.add(query);
 		}
 
 		@Override
-		public void start(IQDLOperator operator) {
+		public void start(Operator operator) {
 			ILogicalQuery query = createLogicalQuery(operator, dd, session);
 			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
 			queries.add(query);
 		}
 
 		@Override
-		public void startWithMultipleSinks(List<IQDLOperator> operators) {
+		public void startWithMultipleSinks(List<Operator> operators) {
 			ILogicalQuery query = createLogicalQuery(operators, dd, session);
 			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
 			queries.add(query);
@@ -442,7 +484,7 @@ public class OdysseusScriptGenerator {
 		}
 
 		@Override
-		public void create(String name, IQDLOperator operator) {
+		public void create(String name, Operator operator) {
 			ILogicalQuery query = createLogicalQuery(operator, dd, session);
 			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
 			query.setName(name);
@@ -450,7 +492,7 @@ public class OdysseusScriptGenerator {
 		}
 
 		@Override
-		public void createWithMultipleSinks(String name,List<IQDLOperator> operators) {
+		public void createWithMultipleSinks(String name,List<Operator> operators) {
 			ILogicalQuery query = createLogicalQuery(operators, dd, session);
 			query.setParameter(QUERY_COMMAND, "#ADDQUERY");
 			query.setName(name);
@@ -458,7 +500,7 @@ public class OdysseusScriptGenerator {
 		}
 
 		@Override
-		public void start(String name, IQDLOperator operator) {
+		public void start(String name, Operator operator) {
 			ILogicalQuery query = createLogicalQuery(operator, dd, session);
 			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
 			query.setName(name);
@@ -466,7 +508,7 @@ public class OdysseusScriptGenerator {
 		}
 
 		@Override
-		public void startWithMultipleSinks(String name,	List<IQDLOperator> operators) {
+		public void startWithMultipleSinks(String name,	List<Operator> operators) {
 			ILogicalQuery query = createLogicalQuery(operators, dd, session);
 			query.setParameter(QUERY_COMMAND, "#RUNQUERY");
 			query.setName(name);
