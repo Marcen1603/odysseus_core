@@ -84,7 +84,7 @@ public class QueryTransformationParameterComposite extends
 		inputTwoGridComposite.setLayout(new GridLayout(2, false));
 
 		txtTragetDirectory = createTextFieldWithLabel(inputDirectoryComposite,
-				"C:\\Users\\clude\\Desktop\\target", "Zielverzeichnis");
+				"C:\\Users\\Marc\\Desktop\\target", "Zielverzeichnis");
 
 		btnChooseTargetDirectory = new Button(inputDirectoryComposite, SWT.NONE);
 		btnChooseTargetDirectory.setLayoutData(new GridData(SWT.RIGHT,
@@ -105,7 +105,7 @@ public class QueryTransformationParameterComposite extends
 		});
 
 		txtTempDirectory = createTextFieldWithLabel(inputDirectoryComposite,
-				"C:\\Users\\clude\\Desktop\\tmp", "Tempverzeichnis");
+				"C:\\Users\\Marc\\Desktop\\tmp", "Tempverzeichnis");
 
 		btnChooseTempDirectory = new Button(inputDirectoryComposite, SWT.NONE);
 		btnChooseTempDirectory.setLayoutData(new GridData(SWT.RIGHT,
@@ -127,7 +127,7 @@ public class QueryTransformationParameterComposite extends
 		});
 
 		txtOdysseusCode = createTextFieldWithLabel(inputDirectoryComposite,
-				"C:\\Studium\\Masterarbeit\\odysseus", "Odysseus Code");
+				"F:\\Studium\\odysseus", "Odysseus Code");
 
 		Button buttonOdysseusCore = new Button(inputDirectoryComposite,
 				SWT.NONE);

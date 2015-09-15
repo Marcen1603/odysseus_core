@@ -88,5 +88,16 @@ public class CExecutorRegistry {
 	public static Map<String, Map<String,ICExecutor>> getAllExecutor(){
 		return executorList;
 	}
+	
+	
+	public static boolean existExecutor(String targetPlatform, String executor){
+		
+		if(executorList.containsKey(targetPlatform.toLowerCase()) && executorList.get(targetPlatform.toLowerCase()).containsKey(executor.toLowerCase())){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
 
 }

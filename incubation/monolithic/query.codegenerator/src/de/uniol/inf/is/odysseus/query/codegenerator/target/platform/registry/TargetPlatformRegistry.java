@@ -44,4 +44,13 @@ public class TargetPlatformRegistry {
 	public static Set<String> getAllTargetPlatform(){
 				return supportedTargetPlattforms.keySet();
 	}
+	
+	
+	public static boolean existTargetPlatform(String targetPlatform){
+		if(supportedTargetPlattforms.containsKey(targetPlatform.toLowerCase())){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }
