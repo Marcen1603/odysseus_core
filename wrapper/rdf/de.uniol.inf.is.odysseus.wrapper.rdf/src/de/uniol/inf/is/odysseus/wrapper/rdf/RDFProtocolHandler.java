@@ -1,7 +1,13 @@
 package de.uniol.inf.is.odysseus.wrapper.rdf;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +36,9 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 	final List<Triple<IMetaAttribute>> stored = new ArrayList<>();
 	RDFFormat format;
 	
-	final RDFParser parser;
+	boolean isDone = false;
+	
+	RDFParser parser;
 	final RDFHandlerBase statementHandler = new RDFHandlerBase(){
 		public void handleStatement(org.openrdf.model.Statement st) throws org.openrdf.rio.RDFHandlerException {
 			String subject = st.getSubject().stringValue();
@@ -40,7 +48,9 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 			stored.add(t);
 			
 		};
-	};	
+	};
+	private BufferedReader reader;
+	private BufferedWriter writer;	
 	
 	public RDFProtocolHandler() {
 		parser = null;
@@ -50,6 +60,10 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 			IStreamObjectDataHandler<Triple<IMetaAttribute>> dataHandler) {
 		super(direction, access, dataHandler, options);
 		init_internal();
+		initParser();
+	}
+
+	private void initParser() {
 		parser = Rio.createParser(format);
 		parser.setRDFHandler(statementHandler);
 	}
@@ -78,14 +92,45 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 			throw new IllegalArgumentException("Not a valid rdf.format "+optionsMap.get(FORMAT));
 		}
 	}
+	
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		isDone = false;
+		getTransportHandler().open();
+		if (getDirection().equals(ITransportDirection.IN)) {
+			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
+					|| (this.getAccessPattern()
+							.equals(IAccessPattern.ROBUST_PULL))) {
+				reader = new BufferedReader(new InputStreamReader(
+						getTransportHandler().getInputStream()));
+			}
+		} else {
+			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
+					|| (this.getAccessPattern()
+							.equals(IAccessPattern.ROBUST_PULL))) {
+				writer = new BufferedWriter(new OutputStreamWriter(
+						getTransportHandler().getOutputStream()));
+			}
+		}
+	}
+	
+	@Override
+	public void close() throws IOException {
+		if (getDirection().equals(ITransportDirection.IN)) {
+			if (reader != null) {
+				reader.close();
+			}
+		} else {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+		getTransportHandler().close();
+	}
 
 	@Override
 	public boolean hasNext() {
-		try {
-			return stored.size() > 0 || getTransportHandler().getInputStream().available() > 0;
-		} catch (IOException e) {
-			return false;
-		}
+		return true;
 	}
 
 	@Override
@@ -94,11 +139,16 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 			return stored.remove(0);
 		}
 
-		if (getTransportHandler().getInputStream().available() > 0) {
-			readTriplesFromInputStream(getTransportHandler().getInputStream());
-			if (stored.size() > 0) {
-				return stored.remove(0);
+		try {
+			if (getTransportHandler().getInputStream().available() > 0) {
+				readTriplesFromInputStream(reader);
+				if (stored.size() > 0) {
+					return stored.remove(0);
+				}
 			}
+		} catch (Exception e) {
+			//e.printStackTrace();
+			isDone = true;
 		}
 		
 		return null;
@@ -111,6 +161,15 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 		for (Triple<IMetaAttribute> t : stored) {
 			getTransfer().transfer(t);
 		}
+	}
+	
+	private void readTriplesFromInputStream(Reader message) {
+	    try {
+			parser.parse(message, "");
+		} catch (RDFParseException | RDFHandlerException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 
 	private void readTriplesFromInputStream(InputStream message) {
@@ -143,5 +202,9 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 		return false;
 	}
 
+	@Override
+	public boolean isDone() {
+		return isDone;
+	}
 }
 
