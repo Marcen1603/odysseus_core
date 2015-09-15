@@ -102,17 +102,19 @@ public class ExtractOSGIBundle {
 		    String path = entry.getKey().replace("/", File.separator);
 		 
 		    String name = entry.getValue().replace(".", "");
-		    String[] volume = path.split(":"); 
-		    
-		    System.out.println(volume[0]+":");
-		    System.out.println("cd "+path);
-		    System.out.println("xcopy "+path+"src\\* "+path+"bin /s /e /c /y");
-		    System.out.println("jar cvf "+name+".jar *.properties lib/*.jar -C bin .");
-		        
+	
+		    String[] commands = new String[3];  
 		
 		    switch (Utils.getOS()) {
 	            case WINDOWS:
-	            	  String[] commands = new String[3];
+	            	
+	        	    String[] volume = path.split(":"); 
+	    		    
+	    		    System.out.println(volume[0]+":");
+	    		    System.out.println("cd "+path);
+	    		    System.out.println("xcopy "+path+"src\\* "+path+"bin /s /e /c /y");
+	    		    System.out.println("jar cvf "+name+".jar *.properties lib/*.jar -C bin .");
+	            	 
 	      		    commands[0] = "cmd";
 	      		    commands[1] = "/c";
 	                  /* Command to execute */
@@ -123,11 +125,30 @@ public class ExtractOSGIBundle {
 	      			    commands[2] = volume[0]+": && cd "+path+" && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
 	      		    }
 	      		    
-	      		    ExecuteShellComand.excecuteCommand(commands);
 	                break;
 	            case LINUX:
+	          	
+	      		    commands[0] = "sh";
+	      		    commands[1] = "-c";
+	                  /* Command to execute */
+	      		    
+	      		    if(DEBUG_MODUS){
+	      		    	commands[2] = "cd "+path+" && cp -r "+path+"src/* "+path+"bin && jar cvf "+tempPath+"/"+copyToFolder +"/"+name+".jar *.properties *.jar -C bin .";
+	      		    }else{ 
+	      			    commands[2] = "cd "+path+" && jar cvf "+tempPath+"/"+copyToFolder +"/"+name+".jar *.properties *.jar -C bin .";
+	      		    }
 	            	break;
 	            case MAC:
+	         
+	      		    commands[0] = "sh";
+	      		    commands[1] = "-c";
+	                  /* Command to execute */
+	      		    
+	      		    if(DEBUG_MODUS){
+	      		    	commands[2] = "cd "+path+" && cp -r "+path+"src/* "+path+"bin && jar cvf "+tempPath+"/"+copyToFolder +"/"+name+".jar *.properties *.jar -C bin .";
+	      		    }else{ 
+	      			    commands[2] = "cd "+path+" && jar cvf "+tempPath+"/"+copyToFolder +"/"+name+".jar *.properties *.jar -C bin .";
+	      		    }
 	            	break;
 	            default:
 	            	break;
@@ -135,7 +156,7 @@ public class ExtractOSGIBundle {
 		    }
 		    
 		    
-		
+		    ExecuteShellComand.excecuteCommand(commands);
             
             copyJars.add(name+".jar");
 		}
