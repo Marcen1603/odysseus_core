@@ -181,8 +181,8 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> exte
 
 	@Override
 	public synchronized void process_open() throws OpenFailedException {
-		super.process_open();
 		isDone = false;
+		super.process_open();
 		isClosing.set(false);
 	}
 
