@@ -12,6 +12,10 @@ import java.util.Set;
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.Activator;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
@@ -26,8 +30,8 @@ public class ExtractOSGIBundle {
 		List<String> copyJars = new ArrayList<String>();
 		
 		
-		//Map<String,String> requiredBundleByBundle = new HashMap<String,String>();
-		//List<String> onlyJarBundles = new ArrayList<String>();
+		Map<String,String> requiredBundleByBundle = new HashMap<String,String>();
+		List<String> onlyJarBundles = new ArrayList<String>();
 		
 		
 		Map<String,String> bundles = new HashMap<String, String>();
@@ -43,14 +47,14 @@ public class ExtractOSGIBundle {
 					//neededBundel.getHeaders().get("Require-Bundle");
 					System.out.println("Bundle:" +neededBundel.getSymbolicName());
 				
-					//List<RequireBundleModel> sss = getRequireBundleList(neededBundel.getHeaders().get("Require-Bundle"));
+					List<RequireBundleModel> sss = getRequireBundleList(neededBundel.getHeaders().get("Require-Bundle"));
 					
-					/*
+					
 					for(RequireBundleModel  bundle: sss){
 					
 						requiredBundleByBundle.put(bundle.getName(), bundle.getVersion());
 					}
-					*/
+					
 	
 					path = FileLocator.toFileURL(entryss).getPath();
 		
@@ -63,7 +67,7 @@ public class ExtractOSGIBundle {
 			}
 		}
 		
-		/*
+		
 		for (Map.Entry<String, String> bundleString : requiredBundleByBundle.entrySet())
 		{
 	
@@ -77,8 +81,22 @@ public class ExtractOSGIBundle {
 					if(bundleClassPathValue != null && bundleClassPathValue.contains(".jar")){
 						//only a jar file
 						System.out.println("Only Jar copy");
-						String path = entry.getLocation()+entry.getHeaders().get("Bundle-ClassPath");
-						onlyJarBundles.add(path.replaceFirst("reference:file:/", ""));
+						
+		
+		
+						List<String> jarList = Lists.newArrayList(Splitter.on(",").split(entry.getHeaders().get("Bundle-ClassPath")));
+						
+		
+						String path = entry.getLocation().replaceFirst("reference:file:/", "");
+						
+						for(String jarFile :jarList){
+							if(jarFile.contains(".jar")){
+								onlyJarBundles.add(path+jarFile);
+							}
+						
+						}
+						
+						
 						
 					}else{
 						//complex bundle
@@ -92,7 +110,7 @@ public class ExtractOSGIBundle {
 			}
 			
 		}
-		*/
+		
 	
 	
 		for (Map.Entry<String, String> entry : bundles.entrySet())
@@ -161,7 +179,7 @@ public class ExtractOSGIBundle {
             copyJars.add(name+".jar");
 		}
 		
-		/*
+		
 		for(String filePath : onlyJarBundles){
 			
 			String fileName = new File(filePath).getName();
@@ -172,13 +190,12 @@ public class ExtractOSGIBundle {
 		    commands[0] = "cmd";
 		    commands[1] = "/c";
 		    
-		    commands[2] = volume[0]+": && cd "+path+" && copy \""+filePath+"\" "+tempPath+"\\*"; 
+		    commands[2] = volume[0]+": && cd "+path+" && copy \""+filePath+"\" \""+tempPath+"/"+copyToFolder+"/"+fileName+"\""; 
 		    ExecuteShellComand.excecuteCommand(commands);
+		    
+		    copyJars.add(fileName);
 		}
-		
-		*/
-
-		
+	
 		return copyJars;
 	}
 	

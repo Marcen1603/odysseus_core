@@ -15,20 +15,38 @@ import de.uniol.inf.is.odysseus.query.codegenerator.commands.QueryCodegeneration
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.script.keyword.AbstractQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-
-
-
+import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
+import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
 public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserKeyword {
 
 	public static final String KEYWORD = "QUERYCODEGENERATION";
+	private PreParserKeywordParameterHelper<QueryCodegenerationKeywordParameter> parameterHelper;
+
+	@Override
+	public void validate(Map<String, Object> variables, String parameter,
+			ISession caller, Context context, IServerExecutor executor)
+			throws OdysseusScriptException {
+	
+		// validate parameter string
+		parameterHelper = PreParserKeywordParameterHelper
+				.newInstance(QueryCodegenerationKeywordParameter.class, QueryCodegenerationConstants.PATTERN_CUSTOM_PARAMETER_VALUE);
+		parameterHelper.validateParameterString(parameter);
+	}
 	
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		
-		Gson gson = new Gson();
-		TransformationParameter transformationParameter = gson.fromJson(parameter, TransformationParameter.class);  
+		Map<IKeywordParameter, String> result = parameterHelper.parse(parameter);
+		String targetPlatform =result.get(QueryCodegenerationKeywordParameter.TARGETPLATFROM);
+		String tempDirectory = result.get(QueryCodegenerationKeywordParameter.TEMPDIRECTORY);
+		String destinationDirectory =result.get(QueryCodegenerationKeywordParameter.DESTINATIONDIRECTORY);
+		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
+		String executorString =result.get(QueryCodegenerationKeywordParameter.EXECUTOR);
+		 
+		 
+		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  tempDirectory,  destinationDirectory,  0,  odysseusPath, true ,  executorString);  
 
 		List<IExecutorCommand> commands = new LinkedList<>();
 		

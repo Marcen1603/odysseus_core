@@ -28,6 +28,7 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.script.keyword,
  de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.script.parser.parameter,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator,
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.server.intervalapproach.window,
@@ -40,7 +41,8 @@ DynamicImport-Package: *
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi.services,
- com.google.code.gson
+ com.google.code.gson,
+ com.google.guava
 Service-Component: OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRegistry.xml,OSGI-INF/ExecutorRegistry.xml,OSGI-INF/OperatorRuleRegistry.xml,OSGI-INF/CodegenerationPreParserKeywordProvider.xml,OSGI-INF/CAnalyseServiceBinding.xml,
  OSGI-INF/CodegenerationConsole.xml
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator,
