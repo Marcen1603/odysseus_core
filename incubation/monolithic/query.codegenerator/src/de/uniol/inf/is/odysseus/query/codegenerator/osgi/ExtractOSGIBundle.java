@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.osgi;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
 
 //TODO mac, unix support?
@@ -51,7 +53,7 @@ public class ExtractOSGIBundle {
 					*/
 	
 					path = FileLocator.toFileURL(entryss).getPath();
-					
+		
 					bundles.put(path.replaceFirst("/", "").replace(".project",""), neededBundel.getSymbolicName());
 					
 					System.out.println("Bundle-Path:"+path.replaceFirst("/", ""));
@@ -96,9 +98,9 @@ public class ExtractOSGIBundle {
 		for (Map.Entry<String, String> entry : bundles.entrySet())
 		{
 
-		   String path = entry.getKey().replace("/", "\\");
-		  
-			//String path = entry.getKey();
+			//TODO unix mac support...
+		    String path = entry.getKey().replace("/", File.separator);
+		 
 		    String name = entry.getValue().replace(".", "");
 		    String[] volume = path.split(":"); 
 		    
@@ -107,19 +109,33 @@ public class ExtractOSGIBundle {
 		    System.out.println("xcopy "+path+"src\\* "+path+"bin /s /e /c /y");
 		    System.out.println("jar cvf "+name+".jar *.properties lib/*.jar -C bin .");
 		        
-		    String[] commands = new String[3];
-		    commands[0] = "cmd";
-		    commands[1] = "/c";
-            /* Command to execute */
-		    
-		    if(DEBUG_MODUS){
-		    	commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
-		    }else{ 
-			    commands[2] = volume[0]+": && cd "+path+" && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
+		
+		    switch (Utils.getOS()) {
+	            case WINDOWS:
+	            	  String[] commands = new String[3];
+	      		    commands[0] = "cmd";
+	      		    commands[1] = "/c";
+	                  /* Command to execute */
+	      		    
+	      		    if(DEBUG_MODUS){
+	      		    	commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
+	      		    }else{ 
+	      			    commands[2] = volume[0]+": && cd "+path+" && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
+	      		    }
+	      		    
+	      		    ExecuteShellComand.excecuteCommand(commands);
+	                break;
+	            case LINUX:
+	            	break;
+	            case MAC:
+	            	break;
+	            default:
+	            	break;
+	         	
 		    }
-		   
-        
-		    ExecuteShellComand.excecuteCommand(commands);
+		    
+		    
+		
             
             copyJars.add(name+".jar");
 		}
