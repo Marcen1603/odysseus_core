@@ -69,7 +69,6 @@ public class SystemLog implements ISystemLog {
 			cLog.debug("Created system log file '{}'.", SystemLogController.getSystemLogFile());
 			return;
 		}
-
 		// Read out file entry
 		try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
 			String line;
@@ -95,7 +94,8 @@ public class SystemLog implements ISystemLog {
 				synchronized (cEntries) {
 					cEntries.add(entry);
 				}
-				cLog.debug("Loaded system log entry '{}'", entry);
+				// Information can be too long for log entry -> deadlock
+				cLog.debug("Loaded system log entry '{}' at '{}'", entry.getTag(), new Long(entry.getTimeStamp()));
 			}
 		} catch (Exception e) {
 			throw e;
