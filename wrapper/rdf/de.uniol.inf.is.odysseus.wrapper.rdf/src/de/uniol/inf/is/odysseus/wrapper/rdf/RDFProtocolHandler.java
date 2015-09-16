@@ -25,6 +25,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.rdf.datamodel.INode;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Literal;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 
 public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttribute>> {
@@ -32,7 +34,8 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 	public static final String NAME = "RDF";
 	public static final String FORMAT = "rdf.format";
 	
-	
+	// TODO: option
+	final boolean determineType = true;
 	final List<Triple<IMetaAttribute>> stored = new ArrayList<>();
 	RDFFormat format;
 	
@@ -41,9 +44,9 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 	RDFParser parser;
 	final RDFHandlerBase statementHandler = new RDFHandlerBase(){
 		public void handleStatement(org.openrdf.model.Statement st) throws org.openrdf.rio.RDFHandlerException {
-			String subject = st.getSubject().stringValue();
-			String predicate = st.getPredicate().stringValue();
-			String object = st.getObject().stringValue();
+			INode subject = new Literal(st.getSubject().stringValue());
+			INode predicate = new Literal(st.getPredicate().stringValue());
+			INode object = new Literal(st.getObject(), determineType);
 			Triple<IMetaAttribute> t = new Triple<>(subject, predicate, object);
 			process(t);
 			//stored.add(t);

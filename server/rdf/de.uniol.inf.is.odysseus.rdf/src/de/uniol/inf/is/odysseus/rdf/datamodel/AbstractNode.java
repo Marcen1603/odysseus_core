@@ -50,6 +50,11 @@ public abstract class AbstractNode implements INode {
 	}
 	
 	@Override
+	public Object getValue() {
+		return null;
+	}
+	
+	@Override
 	public String toString() {
 		return getName();
 	}

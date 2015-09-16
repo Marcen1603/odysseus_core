@@ -21,6 +21,7 @@ public class Literal extends AbstractNode implements INode {
 
 	private String language;
 	private SDFDatatype datatype;
+	private Object value;
 
 	public Literal(String name, String language, SDFDatatype datatype) {
 		super(name);
@@ -30,6 +31,28 @@ public class Literal extends AbstractNode implements INode {
 
 	public Literal(String name) {
 		super(name);
+	}
+	
+	public Literal(Object input, boolean determineType){
+		super(input instanceof String?(String)input:input.toString());
+		if (determineType){
+			int hatPos = input.toString().indexOf("^^");
+			// TODO: Maybe use datatype information?
+			String modified;
+			if (hatPos != -1) {
+				modified = input.toString().substring(0, hatPos - 1);
+			}else{
+				modified = input.toString();
+			}
+			modified = modified.replace("\"", "");
+			if (modified.matches("[0-9.]+")){
+				this.value = Double.parseDouble(modified);
+			}else{
+				this.value = modified;
+			}
+		}else{
+			this.value = input;
+		}
 	}
 
 	public void setDatatype(SDFDatatype datatype) {
@@ -66,4 +89,15 @@ public class Literal extends AbstractNode implements INode {
 		return datatype;
 	}
 
+	public Object getValue() {
+		return value;
+	}
+	
+	@Override
+	public String toString() {
+		if (value != null){
+			return value.toString();
+		}
+		return super.toString();
+	}
 }

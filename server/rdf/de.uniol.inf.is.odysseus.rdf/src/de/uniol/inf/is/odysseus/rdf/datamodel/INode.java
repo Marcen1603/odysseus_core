@@ -24,5 +24,6 @@ public interface INode {
 	public boolean isIRI();
 	public boolean isBlankNode();
 	public String getName();
+	public Object getValue();
 	public INode replacePrefixes(Map<String, String> prefixes);
 }

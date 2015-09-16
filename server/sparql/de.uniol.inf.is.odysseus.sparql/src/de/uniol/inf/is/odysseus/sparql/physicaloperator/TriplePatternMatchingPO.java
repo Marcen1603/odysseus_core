@@ -115,7 +115,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 
 	@SuppressWarnings("static-method")
-	private Tuple<M> preprocess(Tuple<M> element, int attrPos) {
+	private Tuple<M> preprocess(Tuple<M> element, int attrPos) {		
 		// remove datatype information
 		int hatPos = (element.getAttribute(attrPos)).toString().indexOf("^^");
 		if (hatPos != -1) {
@@ -223,6 +223,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		return true;		
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean checkEquals(Object left, Object right) {
 		if (left == null && right == null){
 			return true;

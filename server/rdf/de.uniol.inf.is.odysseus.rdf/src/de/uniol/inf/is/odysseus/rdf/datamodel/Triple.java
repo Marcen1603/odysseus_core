@@ -41,7 +41,7 @@ public class Triple<T extends IMetaAttribute> extends Tuple<T>{
 		if(predicate.getName() == null){
 			throw new RuntimeException("No value for Predicate in triple. Predicate: " + Triple.predicate);
 		}
-		if(object.getName() == null){
+		if(object.getName() == null && object.getValue() == null){
 			throw new RuntimeException("No value for Object in triple. Object: " + Triple.object);
 		}
 		
