@@ -119,8 +119,12 @@ public class MedusaLoadBalancingConsole implements CommandProvider {
 			sb.append(peerName);
 			sb.append(" Price:");
 			sb.append(contract.getPrice());
+			sb.append(" Valid until:");
+			sb.append(System.currentTimeMillis());
 			ci.println(sb.toString());
 		}
+		
+		ci.println("Current System Millis:" + System.currentTimeMillis());
 		
 	}
 	
