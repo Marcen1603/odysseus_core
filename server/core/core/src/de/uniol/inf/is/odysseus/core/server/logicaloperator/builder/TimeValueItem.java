@@ -9,7 +9,11 @@ public class TimeValueItem {
 	
 	public TimeValueItem(long time, TimeUnit unit){
 		this.time = time;
-		this.unit = unit;
+		if (unit != null){
+			this.unit = unit;
+		}else{
+			this.unit = TimeUnit.MILLISECONDS;
+		}
 	}
 	
 	public TimeUnit getUnit() {
