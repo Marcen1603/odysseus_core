@@ -28,13 +28,11 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 
 	private int pos;
 
-	static public RelationalAvgSum getInstance(int pos, boolean isAvg,
-			boolean partialAggregateInput) {
+	static public RelationalAvgSum getInstance(int pos, boolean isAvg, boolean partialAggregateInput) {
 		return new RelationalAvgSum(pos, isAvg, partialAggregateInput);
 	}
 
-	private RelationalAvgSum(int pos, boolean isAvg,
-			boolean partialAggregateInput) {
+	private RelationalAvgSum(int pos, boolean isAvg, boolean partialAggregateInput) {
 		super(isAvg, partialAggregateInput);
 		this.pos = pos;
 	}
@@ -44,31 +42,35 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 		if (isPartialAggregateInput()) {
 			return init((AvgSumPartialAggregate<Tuple<?>>) in.getAttribute(pos));
 		} else {
-			return new AvgSumPartialAggregate<Tuple<?>>(
-					((Number) in.getAttribute(pos)), 1);
+			try {
+				return new AvgSumPartialAggregate<Tuple<?>>(((Number) in.getAttribute(pos)), 1);
+			} catch (ClassCastException e) {
+				return new AvgSumPartialAggregate<Tuple<?>>(Double.parseDouble(in.getAttribute(pos).toString()), 1);				
+			}
 		}
 	}
 
 	@Override
-	protected IPartialAggregate<Tuple<?>> process_merge(IPartialAggregate p,
-			Tuple toMerge) {
+	protected IPartialAggregate<Tuple<?>> process_merge(IPartialAggregate p, Tuple toMerge) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
 		if (isPartialAggregateInput()) {
-			return merge(p, (IPartialAggregate) toMerge.getAttribute(pos),
-					false);
+			return merge(p, (IPartialAggregate) toMerge.getAttribute(pos), false);
 		} else {
-			return pa.addAggValue(((Number) toMerge.getAttribute(pos)));
+			try{
+				return pa.addAggValue(((Number) toMerge.getAttribute(pos)));
+			}catch(ClassCastException e){
+				return pa.addAggValue((Double.parseDouble(toMerge.getAttribute(pos).toString())));
+			}
 		}
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
-			IPartialAggregate<Tuple<?>> toMerge, boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, IPartialAggregate<Tuple<?>> toMerge,
+			boolean createNew) {
 		AvgSumPartialAggregate<Tuple<?>> pa = null;
 		if (createNew) {
 			AvgSumPartialAggregate<Tuple<?>> h = (AvgSumPartialAggregate<Tuple<?>>) p;
-			pa = new AvgSumPartialAggregate<Tuple<?>>(h.getAggValue(),
-					h.getCount());
+			pa = new AvgSumPartialAggregate<Tuple<?>>(h.getAggValue(), h.getCount());
 		} else {
 			pa = (AvgSumPartialAggregate<Tuple<?>>) p;
 		}
@@ -80,8 +82,7 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
 		Tuple r = new Tuple(1, false);
 		if (isAvg()) {
-			r.setAttribute(0,
-					new Double(pa.getAggValue().doubleValue() / pa.getCount()));
+			r.setAttribute(0, new Double(pa.getAggValue().doubleValue() / pa.getCount()));
 		} else {
 			r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
 		}
