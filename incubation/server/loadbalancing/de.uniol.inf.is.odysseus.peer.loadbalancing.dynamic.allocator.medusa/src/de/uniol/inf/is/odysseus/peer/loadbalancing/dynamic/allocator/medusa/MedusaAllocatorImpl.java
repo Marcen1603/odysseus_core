@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
@@ -14,6 +18,13 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.datamodel.Cont
 public class MedusaAllocatorImpl implements ILoadBalancingAllocator {
 
 	private static final String ALLOCATOR_NAME = "Medusa";
+	
+
+	/**
+	 * The logger instance for this class.
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger(MedusaAllocatorImpl.class);
+
 	
 	@Override
 	public String getName() {

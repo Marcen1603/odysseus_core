@@ -90,6 +90,9 @@ public class ContractRegistry {
 	
 	
 	private static PeerID chooseRandom(List<PeerID> peerIDs) {
+		if(peerIDs.size()<1) {
+			return null;
+		}
 		int len = peerIDs.size();
 		Random rnd = new Random(System.currentTimeMillis());
 		int chosenIndex = rnd.nextInt(len);
