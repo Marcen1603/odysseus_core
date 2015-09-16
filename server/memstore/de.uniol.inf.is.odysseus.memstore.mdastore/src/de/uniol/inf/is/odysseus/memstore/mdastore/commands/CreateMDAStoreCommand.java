@@ -15,6 +15,8 @@ import de.uniol.inf.is.odysseus.memstore.mdastore.MDAStoreManager;
 
 public class CreateMDAStoreCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 3301766838992507006L;
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CreateMDAStoreCommand.class);
 	

@@ -25,7 +25,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 
-public class BasicTripleSelectionAO extends SelectAO {
+@SuppressWarnings("rawtypes")
+class BasicTripleSelectionAO extends SelectAO {
 
 	private static final long serialVersionUID = -8187061597335204197L;
 	protected Triple triple;

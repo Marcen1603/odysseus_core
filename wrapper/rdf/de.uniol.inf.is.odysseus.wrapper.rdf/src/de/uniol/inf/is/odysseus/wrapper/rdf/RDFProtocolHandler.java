@@ -187,7 +187,7 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 
 	@Override
 	public void write(Triple<IMetaAttribute> object) throws IOException {
-		// TODO: How to write a triple .... --> Options I guess
+		// TODO: write a triple
 	}
 
 	@Override
