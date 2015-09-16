@@ -1,11 +1,19 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.communication;
 
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.PriceCalculator;
 
 public class PriceUpdaterThread extends Thread {
 	
+	/***
+	 * Logger
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger(PriceUpdaterThread.class);
 	
 	private boolean isActive;
 	private final int PRICE_UPDATE_INTERVAL;
@@ -26,6 +34,7 @@ public class PriceUpdaterThread extends Thread {
 	public void run() {
 		isActive = true;
 		while(isActive) {
+			LOG.debug("Sending new Prices to Peers");
 			//No usage manager? Don't do anything...
 			if(PriceCalculator.isUsageManagerBound()) {
 				for(PeerID peer : peerDictionary.getRemotePeerIDs()) {
