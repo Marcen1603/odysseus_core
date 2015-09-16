@@ -15,7 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.server.planmanagement.configuration;
 
-public class Setting<E> implements ISetting<E> {
+import java.io.Serializable;
+
+public class Setting<E> implements ISetting<E>, Serializable {
+	
+	private static final long serialVersionUID = 8458229507792934068L;
+	
 	/**
 	 * Value of the setting.
 	 */
