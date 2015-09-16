@@ -247,7 +247,8 @@ public class InactiveQueryCommunicatorImpl implements IPeerCommunicatorListener,
 	 * Notfies Strategy that LoadBalancing is finished.
 	 */
 	public void notifyFinished(boolean successful) {
-		for (ILoadBalancingListener listener : listeners) {
+		ArrayList<ILoadBalancingListener> listenersCopy = new ArrayList<ILoadBalancingListener>(listeners);
+		for (ILoadBalancingListener listener : listenersCopy) {
 			listener.notifyLoadBalancingFinished(successful);
 		}
 
