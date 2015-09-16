@@ -15,11 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;

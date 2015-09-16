@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.NoProtocol
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SVMProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.StringArrayProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.DirectoryWatcherTransportHandler;

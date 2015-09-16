@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.testalgorithm;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;

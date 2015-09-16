@@ -15,11 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Stack;
 

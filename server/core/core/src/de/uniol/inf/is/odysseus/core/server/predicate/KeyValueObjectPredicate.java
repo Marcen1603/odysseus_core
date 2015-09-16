@@ -1,10 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.predicate;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;

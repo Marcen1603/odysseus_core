@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;

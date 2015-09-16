@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.predicate;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
