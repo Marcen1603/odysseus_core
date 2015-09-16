@@ -277,6 +277,11 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	public boolean isLocked() {
 		return lock;
 	}
+	
+	@Override
+	public String getLockingPeerID() {
+		return lockedForPeer.toString();
+	}
 
 	@Override
 	public void forceUnlock() {

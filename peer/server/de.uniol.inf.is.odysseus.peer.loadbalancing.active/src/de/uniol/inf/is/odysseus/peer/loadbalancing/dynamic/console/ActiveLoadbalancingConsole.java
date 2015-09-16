@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.control.ILoadBalancin
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.remotecontrol.LoadBalancingRemoteControlCommunicator;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 /**
  * Console with debug commands for active LoadBalancing.
@@ -74,13 +75,21 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static ILoadBalancingController loadBalancingControl;
 	private static IQueryPartController queryPartController;
 	private static ILoadBalancingLock lock;
-	
+	private static IP2PNetworkManager networkManager;
 
 	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
 	
 	
 	
+	public static void bindNetworkManager(IP2PNetworkManager serv) {
+		networkManager = serv;
+	}
 	
+	public static void unbindNetworkManager(IP2PNetworkManager serv) {
+		if(networkManager == serv) {
+			networkManager = null;
+		}
+	}
 	
 	public static void bindQueryPartController(IQueryPartController serv) {
 		queryPartController=serv;
@@ -293,6 +302,20 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 		else {
 			ci.println("Cuurent Lock Status:" + lock.isLocked());
+			if(lock.isLocked()) {
+				
+				String lockingPid = lock.getLockingPeerID();
+				if(lockingPid == null) {
+					ci.println("Locked for null");
+					return;
+				}
+				
+				if(lockingPid.equals(networkManager.getLocalPeerID().toString())) {
+					ci.println("Locked for local Peer");
+					return;
+				}
+				ci.println("Locked for Peer " + peerDictionary.getRemotePeerName(lockingPid));
+			}
 		}
 	}
 	
@@ -440,7 +463,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
 
-		final String ERROR_USAGE = "usage: initLBRemote <strategyname>";
+		final String ERROR_USAGE = "usage: initLBRemote <strategyname> (type 'none' if only logging should be activated)";
 		final String ERROR_STRATEGY = "No load balancing strategy found with the name ";
 
 		final String ERROR_NO_CONTROLLER = "No Load Balancing controller bound.";
@@ -456,7 +479,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			return;
 		}
 
-		if (!loadBalancingControl.setLoadBalancingStrategy(strategyName)) {
+		if (!loadBalancingControl.setLoadBalancingStrategy(strategyName) && !strategyName.equals("none")) {
 			ci.println(ERROR_STRATEGY + strategyName);
 			return;
 
@@ -468,7 +491,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		
 
 	}
-
+	
 
 	/**
 	 * Stops Loadbalancing Monitoring.

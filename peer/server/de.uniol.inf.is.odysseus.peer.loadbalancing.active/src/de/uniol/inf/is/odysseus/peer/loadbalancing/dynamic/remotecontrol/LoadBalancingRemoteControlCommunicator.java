@@ -96,9 +96,10 @@ public class LoadBalancingRemoteControlCommunicator implements IPeerCommunicator
 				loadLogger.startLogging();
 			}
 			
-			controller.setLoadBalancingStrategy(msg.getStrategyName());
-			controller.startLoadBalancing();
-			
+			if(msg.getStrategyName()!="none") {
+				controller.setLoadBalancingStrategy(msg.getStrategyName());
+				controller.startLoadBalancing();
+			}
 			StartLoadBalancingAckMessage answer = new StartLoadBalancingAckMessage(msg.getStrategyName(),msg.isStartLogLoad());
 			try {
 				communicator.send(senderPeer, answer);
