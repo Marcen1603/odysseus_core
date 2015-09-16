@@ -7,6 +7,12 @@ public class MedusaPricingContract {
 
 	private final double price;
 	
+	private final long validUntil;
+	
+	public long getValidUntil() {
+		return validUntil;
+	}
+
 	public PeerID getContractPartner() {
 		return contractPartner;
 	}
@@ -14,13 +20,11 @@ public class MedusaPricingContract {
 	public double getPrice() {
 		return price;
 	}
-
-
 	
-	
-	public MedusaPricingContract(PeerID contractPartner, double price) {
+		
+	public MedusaPricingContract(PeerID contractPartner, double price, long validUntil) {
 		this.contractPartner = contractPartner;
 		this.price = price;
-		
+		this.validUntil = validUntil;
 	}
 }

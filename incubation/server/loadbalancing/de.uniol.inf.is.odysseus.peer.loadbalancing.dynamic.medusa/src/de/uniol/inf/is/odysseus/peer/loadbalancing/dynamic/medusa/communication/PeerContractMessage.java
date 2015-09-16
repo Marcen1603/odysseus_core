@@ -7,7 +7,20 @@ import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 public class PeerContractMessage implements IMessage {
 
 	private double price;
+	private long validUntil;
 	
+
+	public long getValidUntil() {
+		return validUntil;
+	}
+
+
+
+	public void setValidUntil(long validUntil) {
+		this.validUntil = validUntil;
+	}
+
+
 
 	public double getPrice() {
 		return price;
@@ -15,7 +28,7 @@ public class PeerContractMessage implements IMessage {
 
 
 
-	public PeerContractMessage(double price) {
+	public PeerContractMessage(double price, double validUntil) {
 		this.price = price;
 	}
 	
@@ -26,8 +39,9 @@ public class PeerContractMessage implements IMessage {
 
 	@Override
 	public byte[] toBytes() {
-		ByteBuffer bb = ByteBuffer.allocate(8);
+		ByteBuffer bb = ByteBuffer.allocate(8 + 8);
 		bb.putDouble(price);
+		bb.putLong(validUntil);
 		return bb.array();
 	}
 
@@ -35,6 +49,7 @@ public class PeerContractMessage implements IMessage {
 	public void fromBytes(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		price = bb.getDouble();
+		validUntil = bb.getLong();
 	}
 
 }

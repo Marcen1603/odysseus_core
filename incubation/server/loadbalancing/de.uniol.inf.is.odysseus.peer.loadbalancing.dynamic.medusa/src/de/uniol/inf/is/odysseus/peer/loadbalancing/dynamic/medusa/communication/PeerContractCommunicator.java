@@ -71,7 +71,7 @@ public class PeerContractCommunicator implements IPeerCommunicatorListener {
 		
 		if(message instanceof PeerContractMessage) {
 			PeerContractMessage contractMessage = (PeerContractMessage)message;
-			MedusaPricingContract contract = new MedusaPricingContract(senderPeer,contractMessage.getPrice());
+			MedusaPricingContract contract = new MedusaPricingContract(senderPeer,contractMessage.getPrice(),contractMessage.getValidUntil());
 			ContractRegistry.addContract(contract);
 		}
 		
@@ -82,7 +82,7 @@ public class PeerContractCommunicator implements IPeerCommunicatorListener {
 	}
 	
 	public static void sendContractToPeer(PeerID peer) {
-		PeerContractMessage contractMessage = new PeerContractMessage(PriceCalculator.getPrice());
+		PeerContractMessage contractMessage = new PeerContractMessage(PriceCalculator.getPrice(),(System.currentTimeMillis() + PRICE_UPDATE_INTERVAL));
 		try {
 			communicator.send(peer, contractMessage);
 		} catch (PeerCommunicationException e) {
