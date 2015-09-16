@@ -28,8 +28,9 @@ public class PeerContractMessage implements IMessage {
 
 
 
-	public PeerContractMessage(double price, double validUntil) {
+	public PeerContractMessage(double price, long validUntil) {
 		this.price = price;
+		this.validUntil = validUntil;
 	}
 	
 	public PeerContractMessage() {

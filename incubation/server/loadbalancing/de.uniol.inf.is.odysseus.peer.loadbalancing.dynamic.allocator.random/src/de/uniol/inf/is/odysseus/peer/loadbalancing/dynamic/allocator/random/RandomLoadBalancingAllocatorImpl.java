@@ -1,35 +1,21 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.medusa;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.random;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.jxta.peer.PeerID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.datamodel.ContractRegistry;
 
-public class MedusaAllocatorImpl implements ILoadBalancingAllocator {
+public class RandomLoadBalancingAllocatorImpl implements ILoadBalancingAllocator {
 
-	private static final String ALLOCATOR_NAME = "Medusa";
-	
-
-	/**
-	 * The logger instance for this class.
-	 */
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(MedusaAllocatorImpl.class);
-
-	
 	@Override
 	public String getName() {
-		return ALLOCATOR_NAME;
+		return "Random";
 	}
 
 	@Override
@@ -40,8 +26,13 @@ public class MedusaAllocatorImpl implements ILoadBalancingAllocator {
 		
 		Map<ILogicalQueryPart,PeerID> resultMap = new HashMap<ILogicalQueryPart,PeerID>();
 		
-		for(ILogicalQueryPart part : queryParts) {
-			resultMap.put(part, ContractRegistry.getCheapestOffer());
+		for(ILogicalQueryPart queryPart : queryParts) {
+			if(knownRemotePeers.size()<1) {
+				resultMap.put(queryPart, localPeerID);
+				continue;
+			}
+			resultMap.put(queryPart, chooseRandom(knownRemotePeers));
+			
 		}
 		return resultMap;
 	}
@@ -51,8 +42,16 @@ public class MedusaAllocatorImpl implements ILoadBalancingAllocator {
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap,
 			Collection<PeerID> faultPeers, Collection<PeerID> knownRemotePeers,
 			PeerID localPeerID) throws QueryPartAllocationException {
-		//TODO Not implemented.
+		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+
+	private PeerID chooseRandom(Collection<PeerID> peerIDs) {
+		Random rnd = new Random(System.currentTimeMillis());
+		int indexOfResult = rnd.nextInt(peerIDs.size());
+		return (PeerID)peerIDs.toArray()[indexOfResult];
 	}
 
 }

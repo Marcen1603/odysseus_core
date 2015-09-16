@@ -23,7 +23,7 @@ public class PeerContractCommunicator implements IPeerCommunicatorListener {
 	private static IPeerDictionary peerDictionary;
 	
 	private static final int PRICE_UPDATE_INTERVAL = 5000;
-	private static final int TIME_UNTIL_INVALIDATION = 10000;
+	private static final int TIME_UNTIL_INVALIDATION = 5000;
 	
 	private PriceUpdaterThread updaterThread = null;
 	
