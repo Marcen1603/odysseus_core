@@ -23,6 +23,7 @@ public class PeerContractCommunicator implements IPeerCommunicatorListener {
 	private static IPeerDictionary peerDictionary;
 	
 	private static final int PRICE_UPDATE_INTERVAL = 5000;
+	private static final int TIME_UNTIL_INVALIDATION = 10000;
 	
 	private PriceUpdaterThread updaterThread = null;
 	
@@ -82,7 +83,7 @@ public class PeerContractCommunicator implements IPeerCommunicatorListener {
 	}
 	
 	public static void sendContractToPeer(PeerID peer) {
-		PeerContractMessage contractMessage = new PeerContractMessage(PriceCalculator.getPrice(),(System.currentTimeMillis() + PRICE_UPDATE_INTERVAL));
+		PeerContractMessage contractMessage = new PeerContractMessage(PriceCalculator.getPrice(),(System.currentTimeMillis() + TIME_UNTIL_INVALIDATION));
 		try {
 			communicator.send(peer, contractMessage);
 		} catch (PeerCommunicationException e) {
