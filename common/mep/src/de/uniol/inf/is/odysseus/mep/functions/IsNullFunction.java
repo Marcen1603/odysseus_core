@@ -15,10 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class IsNullFunction extends AbstractFunction<Boolean> {
+public class IsNullFunction extends AbstractFunction<Boolean> implements IHasAlias{
 
 	private static final long serialVersionUID = 4074484016029763344L;
 
@@ -29,6 +30,11 @@ public class IsNullFunction extends AbstractFunction<Boolean> {
 	@Override
 	public Boolean getValue() {
 		return getInputValue(0) == null;
+	}
+	
+	@Override
+	public String getAliasName() {
+		return "isBound";
 	}
 
 }
