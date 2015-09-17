@@ -15,6 +15,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  org.eclipse.osgi,
  org.eclipse.equinox.app
 Export-Package: de.uniol.inf.is.odysseus.badast
-Service-Component: OSGI-INF/BaDaStCommandProvider.xml,OSGI-INF/FileRecorder.xml,
- OSGI-INF/TCPRecorder.xml
+Service-Component: OSGI-INF/BaDaStCommandProvider.xml,OSGI-INF/FileRecorder.xml,OSGI-INF/TCPRecorder.xml,
+ OSGI-INF/TCPStringRecorder.xml
 Import-Package: de.uniol.inf.is.odysseus.core.server.recovery.badast

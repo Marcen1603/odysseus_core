@@ -74,12 +74,11 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 		writer.initialize(cfg);
 		return writer;
 	}
-
-	@Override
-	protected void validate_internal() throws BaDaStException {
+	
+	// TODO javaDoc
+	protected void validate_withoutBufferSize() throws BaDaStException {
 		validate(HOST_CONFIG);
 		validate(PORT_CONFIG);
-		validate(BUFFERSIZE_CONFIG);
 
 		// Check, if the port is an integer
 		try {
@@ -87,6 +86,12 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 		} catch (NumberFormatException e) {
 			throw new BaDaStException(this.getConfig().getProperty(PORT_CONFIG) + " is not a valid port!", e);
 		}
+	}
+
+	@Override
+	protected void validate_internal() throws BaDaStException {
+		validate_withoutBufferSize();
+		validate(BUFFERSIZE_CONFIG);
 
 		// Check, if the buffer size is an integer
 		try {

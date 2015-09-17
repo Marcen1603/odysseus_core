@@ -15,6 +15,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.recorders.FileRecorder;
 import de.uniol.inf.is.odysseus.badast.recorders.TCPRecorder;
+import de.uniol.inf.is.odysseus.badast.recorders.TCPStringRecorder;
 import de.uniol.inf.is.odysseus.core.server.recovery.badast.ABaDaStRecorder;
 import de.uniol.inf.is.odysseus.core.server.recovery.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
@@ -69,9 +70,12 @@ public class BaDaStCommandProvider implements CommandProvider {
 	// Fill the mapping with all recorder types, which are not bound by
 	// OSGi
 	static {
-		try (IBaDaStRecorder fileRecorder = new FileRecorder(); IBaDaStRecorder tcpRecorder = new TCPRecorder()) {
+		try (IBaDaStRecorder fileRecorder = new FileRecorder();
+				IBaDaStRecorder tcpRecorder = new TCPRecorder();
+				IBaDaStRecorder tcpStringRecorder = new TCPStringRecorder()) {
 			cRecorderTypes.put(FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), fileRecorder);
 			cRecorderTypes.put(TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpRecorder);
+			cRecorderTypes.put(TCPStringRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpStringRecorder);
 		} catch (Exception e) {
 			// Unreachable block
 			e.printStackTrace();
