@@ -23,7 +23,7 @@ public class PeerContractCommunicator implements IPeerCommunicatorListener {
 	private static IPeerDictionary peerDictionary;
 	
 	private static final int PRICE_UPDATE_INTERVAL = 5000;
-	private static final int TIME_UNTIL_INVALIDATION = 5000;
+	private static final int TIME_UNTIL_INVALIDATION = 15000;
 	
 	private PriceUpdaterThread updaterThread = null;
 	
@@ -71,7 +71,12 @@ public class PeerContractCommunicator implements IPeerCommunicatorListener {
 			PeerID senderPeer, IMessage message) {
 		
 		if(message instanceof PeerContractMessage) {
+			
 			PeerContractMessage contractMessage = (PeerContractMessage)message;
+			//Ignore old messages.
+			if(contractMessage.getValidUntil()<System.currentTimeMillis()) {
+				return;
+			}
 			MedusaPricingContract contract = new MedusaPricingContract(senderPeer,contractMessage.getPrice(),contractMessage.getValidUntil());
 			ContractRegistry.addContract(contract);
 		}
