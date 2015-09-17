@@ -28,4 +28,8 @@ abstract public class AbstractBinaryStringFunction<T> extends AbstractFunction<T
 		super(symbol,2,accTypes, datatype);
 	}
 	
+	public AbstractBinaryStringFunction(String symbol, SDFDatatype datatype, boolean optimizeConstantParameter) {
+		super(symbol,2,accTypes, datatype, optimizeConstantParameter);
+	}
+	
 }

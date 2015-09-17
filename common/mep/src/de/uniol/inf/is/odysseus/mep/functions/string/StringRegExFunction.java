@@ -10,7 +10,7 @@ public class StringRegExFunction extends AbstractBinaryStringFunction<Boolean> {
 	private Pattern pattern;
 	
 	public StringRegExFunction() {
-		super("regex", SDFDatatype.BOOLEAN);
+		super("regex", SDFDatatype.BOOLEAN, false);
 	}
 	
 	@Override
