@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToStringFunction extends AbstractFunction<String> {
+public class ToStringFunction extends AbstractFunction<String> implements IHasAlias{
 
     private static final long serialVersionUID = -3960501264856271045L;
 
@@ -39,5 +40,10 @@ public class ToStringFunction extends AbstractFunction<String> {
     @Override
     public String getValue() {
         return getInputValue(0).toString();
+    }
+    
+    @Override
+    public String getAliasName() {
+    	return "str";
     }
 }
