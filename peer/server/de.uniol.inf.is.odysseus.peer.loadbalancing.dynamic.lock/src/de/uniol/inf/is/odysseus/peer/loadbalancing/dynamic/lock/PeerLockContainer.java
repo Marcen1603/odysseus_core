@@ -68,8 +68,17 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 			job.clearListeners();
 			job.stopRunning();
+			
 		}
+		if(LOG.isDebugEnabled()) {
+			LOG.debug("Clearing Jobs. Lock states:");
+			for(PeerID peer : locks.keySet()) {
+				LOG.debug("{} : {}",peer,locks.get(peer));
+			}
+		}
+		
 		jobs.clear();
+	
 	}
 	
 	public void requestLocks() {
@@ -163,6 +172,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	
 			if (message instanceof LockDeniedMessage) {
 				if(locks.get(senderPeer) == LOCK_STATE.lock_requested) {
+					LOG.debug("Got Lock Denied Message from Peer {}",peerDictionary.getRemotePeerName(senderPeer));
 					locks.put(senderPeer, LOCK_STATE.unlocked);
 					jobs.get(senderPeer).stopRunning();
 					jobs.get(senderPeer).clearListeners();
@@ -274,8 +284,8 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	private void initiateRollback() {
 		// Stop all running Jobs.
-		clearJobs();
 		lockingPhaseFinished=true;
+		clearJobs();
 		LOG.error("Initiating Peer Lock Rollback.");
 		rollback = true;
 		releaseLocks();
