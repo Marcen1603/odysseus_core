@@ -139,6 +139,7 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_STRING: return createIQLLiteralExpressionString();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_BOOLEAN: return createIQLLiteralExpressionBoolean();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_RANGE: return createIQLLiteralExpressionRange();
+      case BasicIQLPackage.IQL_LITERAL_EXPRESSION_TYPE: return createIQLLiteralExpressionType();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_NULL: return createIQLLiteralExpressionNull();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_LIST: return createIQLLiteralExpressionList();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_MAP: return createIQLLiteralExpressionMap();
@@ -970,6 +971,17 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     IQLLiteralExpressionRangeImpl iqlLiteralExpressionRange = new IQLLiteralExpressionRangeImpl();
     return iqlLiteralExpressionRange;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLLiteralExpressionType createIQLLiteralExpressionType()
+  {
+    IQLLiteralExpressionTypeImpl iqlLiteralExpressionType = new IQLLiteralExpressionTypeImpl();
+    return iqlLiteralExpressionType;
   }
 
   /**

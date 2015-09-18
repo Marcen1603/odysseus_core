@@ -4,33 +4,48 @@ import java.util.Collection;
 import java.util.HashSet;
 
 
+
+
+
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.Subscription;
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.ODLUtils;
 import de.uniol.inf.is.odysseus.iql.odl.types.extension.PunctuationExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.extension.TransferExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.extension.TupleExtensions;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class ODLDefaultTypes {
 	
@@ -59,8 +74,22 @@ public class ODLDefaultTypes {
 		types.add(SDFDatatype.class);
 		types.add(AbstractPhysicalSubscription.class);
 		types.add(ITimeInterval.class);
+		types.add(TruePredicate.class);
+		types.add(SweepAreaRegistry.class);
+		types.add(PointInTime.class);
+		types.add(TimeUnit.class);
+		types.add(SDFDatatype.class);		
+		types.add(SDFConstraint.class);
+		types.add(IGroupProcessor.class);
+		types.add(NoGroupProcessor.class);
+		types.add(RelationalGroupProcessor.class);
+		types.add(Pair.class);
+		types.add(IPair.class);
+		types.add(AggregateFunction.class);
+
 		return types;
 	}
+
 	
 	public static Collection<String> getImplicitImports() {
 		Collection<String> implicitImports = new HashSet<>();
@@ -88,9 +117,40 @@ public class ODLDefaultTypes {
 		implicitImports.add(ODLUtils.class.getCanonicalName());
 		implicitImports.add(SDFDatatype.class.getCanonicalName());
 		implicitImports.add(AbstractPhysicalSubscription.class.getCanonicalName());
-
+		implicitImports.add(TruePredicate.class.getCanonicalName());
+		implicitImports.add(SweepAreaRegistry.class.getCanonicalName());
+		implicitImports.add(ITimeInterval.class.getCanonicalName());
+		implicitImports.add(PointInTime.class.getCanonicalName());
+		implicitImports.add(TimeUnit.class.getCanonicalName());
+		implicitImports.add(SDFDatatype.class.getCanonicalName());
+		implicitImports.add(SDFConstraint.class.getCanonicalName());
+		implicitImports.add(IGroupProcessor.class.getCanonicalName());
+		implicitImports.add(NoGroupProcessor.class.getCanonicalName());
+		implicitImports.add(RelationalGroupProcessor.class.getCanonicalName());
+		implicitImports.add(Pair.class.getCanonicalName());
+		implicitImports.add(IPair.class.getCanonicalName());
+		implicitImports.add(AggregateFunction.class.getCanonicalName());
 		return implicitImports;
 	}
+	
+
+	public static Collection<String> getImplicitStaticImports() {
+		Collection<String> types = new HashSet<>();
+		types.add(Tuple.class.getCanonicalName());
+		types.add(SDFSchemaFactory.class.getCanonicalName());
+		types.add(SDFSchema.class.getCanonicalName());
+		types.add(Order.class.getCanonicalName());
+		types.add(MetadataRegistry.class.getCanonicalName());
+		types.add(SDFDatatype.class.getCanonicalName());
+		types.add(ODLUtils.class.getCanonicalName());
+		types.add(TruePredicate.class.getCanonicalName());
+		types.add(SweepAreaRegistry.class.getCanonicalName());
+		types.add(TimeUnit.class.getCanonicalName());
+		types.add(SDFDatatype.class.getCanonicalName());
+		types.add(SDFConstraint.class.getCanonicalName());
+		return types;
+	}
+	
 	
 	public static Collection<IIQLTypeExtensions> getTypeOperators() {
 		Collection<IIQLTypeExtensions> result = new HashSet<>();
@@ -98,19 +158,6 @@ public class ODLDefaultTypes {
 		result.add(new PunctuationExtensions());
 		result.add(new TransferExtensions());
 		return result;
-	}
-
-	public static Collection<Class<?>> getImplicitStaticImports() {
-		Collection<Class<?>> types = new HashSet<>();
-		types.add(System.class);
-		types.add(Tuple.class);
-		types.add(SDFSchemaFactory.class);
-		types.add(SDFSchema.class);
-		types.add(Order.class);
-		types.add(MetadataRegistry.class);
-		types.add(SDFDatatype.class);
-		types.add(ODLUtils.class);
-		return types;
 	}
 	
 	public static Collection<String> getDependencies() {

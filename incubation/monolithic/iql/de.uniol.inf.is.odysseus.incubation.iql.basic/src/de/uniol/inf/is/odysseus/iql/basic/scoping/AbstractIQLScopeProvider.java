@@ -158,10 +158,41 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		return new SimpleScope(elements);
 	}
 	
-	protected Collection<JvmIdentifiableElement> getElementsIQLJvmElementCallExpression(EObject expr) {
+	@Override
+	public Collection<IEObjectDescription> getScopeIQLJvmElementCallExpression(EObject expr) {
+		Collection<JvmIdentifiableElement> elements = getElementsIQLJvmElementCallExpression(expr);
+		
+		Collection<IEObjectDescription> result = new HashSet<>();
+		for (JvmIdentifiableElement element : elements) {
+			if (element instanceof JvmOperation) {
+				JvmOperation method = (JvmOperation) element;
+				if (method.getSimpleName().startsWith("set") && method.getSimpleName().length() > 3) {
+					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
+				} else if (method.getSimpleName().startsWith("get") && method.getSimpleName().length() > 3) {
+					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
+				} else if (method.getSimpleName().startsWith("is") && method.getSimpleName().length() > 2) {
+					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(2)), method));
+				}
+				if (method.isStatic()) {
+					JvmDeclaredType declaredType = (JvmDeclaredType) method.eContainer();
+					result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(method), method));
+				}
+			} else if (element instanceof JvmField) {
+				JvmField field = (JvmField) element;
+				if (field.isStatic()) {
+					JvmDeclaredType declaredType = (JvmDeclaredType) element.eContainer();
+					result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(field), field));
+				}
+			} 
+			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(element), element));
+		}
+		return result;		
+	}	
+	
+	protected Collection<JvmIdentifiableElement> getElementsIQLJvmElementCallExpression(EObject node) {
 		Collection<JvmIdentifiableElement> elements = new HashSet<>();
 		Set<String> vars = new HashSet<>();
-		EObject container = expr;
+		EObject container = node;
 		EObject lastContainer = null;
 		while (container != null && !(container instanceof JvmDeclaredType)) {
 			for (EObject obj : container.eContents()) {
@@ -200,49 +231,33 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 			container = container.eContainer();
 		}
 		
-		Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(expr);
-		
-		JvmTypeReference superType = lookUp.getSuperType(expr);
+		Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(node);
+	
+		JvmTypeReference thisType = lookUp.getThisType(node);
 
-		elements.addAll(lookUp.getPublicAttributes(superType, importedTypes, true));
-		elements.addAll(lookUp.getProtectedAttributes(superType, importedTypes, true));
-		
-		elements.addAll(lookUp.getPublicMethods(superType, importedTypes,true));
-		elements.addAll(lookUp.getProtectedMethods(superType, importedTypes,true));
+		elements.addAll(getAttributesIQLJvmElementCallExpression(node, thisType, importedTypes));
+		elements.addAll(getMethodsIQLJvmElementCallExpression(node, thisType, importedTypes));
 
 		return elements;
 	}
 	
-	@Override
-	public Collection<IEObjectDescription> getScopeIQLJvmElementCallExpression(EObject expr) {
-		Collection<JvmIdentifiableElement> elements = getElementsIQLJvmElementCallExpression(expr);
+	protected Collection<JvmIdentifiableElement> getAttributesIQLJvmElementCallExpression(EObject node, JvmTypeReference thisType, Collection<JvmTypeReference> importedTypes) {
+		Collection<JvmIdentifiableElement> elements = new HashSet<>();
+
+		elements.addAll(lookUp.getPublicAttributes(thisType, importedTypes, true));
+		elements.addAll(lookUp.getProtectedAttributes(thisType, importedTypes, true));
 		
-		Collection<IEObjectDescription> result = new HashSet<>();
-		for (JvmIdentifiableElement element : elements) {
-			if (element instanceof JvmOperation) {
-				JvmOperation method = (JvmOperation) element;
-				if (method.getSimpleName().startsWith("set") && method.getSimpleName().length() > 3) {
-					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
-				} else if (method.getSimpleName().startsWith("get") && method.getSimpleName().length() > 3) {
-					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(3)), method));
-				} else if (method.getSimpleName().startsWith("is") && method.getSimpleName().length() > 2) {
-					result.add(EObjectDescription.create(firstCharLowerCase(method.getSimpleName().substring(2)), method));
-				}
-				if (method.isStatic()) {
-					JvmDeclaredType declaredType = (JvmDeclaredType) method.eContainer();
-					result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(method), method));
-				}
-			} else if (element instanceof JvmField) {
-				JvmField field = (JvmField) element;
-				if (field.isStatic()) {
-					JvmDeclaredType declaredType = (JvmDeclaredType) element.eContainer();
-					result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(field), field));
-				}
-			} 
-			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(element), element));
-		}
-		return result;		
-	}	
+		return elements;
+	}
+	
+	protected Collection<JvmIdentifiableElement> getMethodsIQLJvmElementCallExpression(EObject node, JvmTypeReference thisType, Collection<JvmTypeReference> importedTypes) {
+		Collection<JvmIdentifiableElement> elements = new HashSet<>();
+		
+		elements.addAll(lookUp.getPublicMethods(thisType, importedTypes,true));
+		elements.addAll(lookUp.getProtectedMethods(thisType, importedTypes,true));
+
+		return elements;
+	}
 	
 	
 	public IScope scope_IQLMemberCallExpression_member(IQLMemberSelectionExpression expr, EReference type) {		
@@ -250,40 +265,32 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		elements.addAll(getScopeIQLMemberSelection(expr));		
 		return new SimpleScope(elements);
 	}
-	
-	public IScope scope_IQLArgumentsMapKeyValue_key(IQLArgumentsMap argumentsMap, EReference type) {	
-		Collection<IEObjectDescription> elements = new HashSet<>();
-		elements.addAll(getScopeIQLArgumentsMapKey(argumentsMap));		
-		return new SimpleScope(elements);
-	}	
 
-	
 	@Override
 	public Collection<IEObjectDescription> getScopeIQLMemberSelection(IQLMemberSelectionExpression expr) {
 		Collection<IEObjectDescription> result = new HashSet<>();
 		TypeResult typeResult = exprEvaluator.eval(expr.getLeftOperand());
+		if (typeResult.hasError() || typeResult.isNull()) {
+			return result;
+		}
 		
 		if (typeUtils.isArray(typeResult.getRef())) {
-			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
-			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLAttributeSelection(expr, typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLMethodSelection(expr, typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
 
 		} else {
 			boolean isThis = expr.getLeftOperand() instanceof IQLThisExpression;
 			boolean isSuper = expr.getLeftOperand() instanceof IQLSuperExpression;
 			
-			result.addAll(getScopeIQLAttributeSelection(typeResult.getRef(),isThis, isSuper));
-			result.addAll(getScopeIQLMethodSelection(typeResult.getRef(),isThis, isSuper));
+			result.addAll(getScopeIQLAttributeSelection(expr, typeResult.getRef(),isThis, isSuper));
+			result.addAll(getScopeIQLMethodSelection(expr, typeResult.getRef(),isThis, isSuper));
 
 		}
 		return result;
 	}
 
-	protected Collection<IEObjectDescription> getScopeIQLAttributeSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
-		Collection<JvmField> attributes = null;
-		attributes = lookUp.getPublicAttributes(typeRef, true);
-		if (isThis || isSuper) {
-			attributes.addAll(lookUp.getProtectedAttributes(typeRef, true));
-		}
+	protected Collection<IEObjectDescription> getScopeIQLAttributeSelection(IQLMemberSelectionExpression expr, JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
+		Collection<JvmField> attributes = getIQLMemberSelectionAttributes(expr, typeRef, isThis, isSuper);
 		Collection<IEObjectDescription> result = new HashSet<>();
 		for (JvmField attribute : attributes) {
 			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(attribute), attribute));
@@ -291,13 +298,8 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		return result;
 	}
 	
-	
-	protected Collection<IEObjectDescription> getScopeIQLMethodSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
-		Collection<JvmOperation> methods = null;
-		methods = lookUp.getPublicMethods(typeRef, true);
-		if (isThis || isSuper) {
-			methods.addAll(lookUp.getProtectedMethods(typeRef, true));
-		}
+	protected Collection<IEObjectDescription> getScopeIQLMethodSelection(IQLMemberSelectionExpression expr, JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
+		Collection<JvmOperation> methods = getIQLMemberSelectionMethods(expr, typeRef, isThis, isSuper);
 		Map<String, Pair<JvmOperation, JvmOperation>> properties = new HashMap<>();
 		Collection<IEObjectDescription> result = new HashSet<>();
 		for (JvmOperation method : methods) {
@@ -330,8 +332,31 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 		return result;
 	}
 	
-
+	protected Collection<JvmField> getIQLMemberSelectionAttributes(IQLMemberSelectionExpression expr, JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
+		Collection<JvmField> attributes = null;
+		attributes = lookUp.getPublicAttributes(typeRef, true);
+		if (isThis || isSuper) {
+			attributes.addAll(lookUp.getProtectedAttributes(typeRef, true));
+		}
+		return attributes;
+	}
 	
+	
+	protected Collection<JvmOperation> getIQLMemberSelectionMethods(IQLMemberSelectionExpression expr, JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
+		Collection<JvmOperation> methods = null;
+		methods = lookUp.getPublicMethods(typeRef, true);
+		if (isThis || isSuper) {
+			methods.addAll(lookUp.getProtectedMethods(typeRef, true));
+		}
+		return methods;
+	}	
+	
+	
+	public IScope scope_IQLArgumentsMapKeyValue_key(IQLArgumentsMap argumentsMap, EReference type) {	
+		Collection<IEObjectDescription> elements = new HashSet<>();
+		elements.addAll(getScopeIQLArgumentsMapKey(argumentsMap));		
+		return new SimpleScope(elements);
+	}	
 	
 	@Override
 	public Collection<IEObjectDescription> getScopeIQLArgumentsMapKey(EObject node) {
@@ -360,8 +385,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 			}	
 		}
 		return result;
-	}
-	
+	}	
 
 	
 	protected String firstCharLowerCase(String s) {

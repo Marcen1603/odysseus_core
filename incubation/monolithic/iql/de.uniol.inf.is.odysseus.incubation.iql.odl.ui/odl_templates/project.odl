@@ -1,38 +1,31 @@
-operator OProject(outputMode ="MODIFIED_INPUT"){	
+operator ODLProject(outputMode ="MODIFIED_INPUT", minInputPorts = 1, maxInputPorts = 1){	
 	
-	parameter(type=ResolvedSDFAttributeParameter) SDFAttribute[] attributes;
-					
-	validate attributes {
-		if (attributes.isEmpty()) {
-			error("attribute have to be set");
-			return false;
-		}
-		return true;
-	}
-	
-	on processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
-	}	
+    parameter(type=ResolvedSDFAttributeParameter) SDFAttribute[] attributes;
 		
-	on processNext(Tuple tuple, int port) {
-		Tuple out = createEmptyTupleWithMeta(attributes.size(), tuple, tuple.requiresDeepClone());
-		int i = 0;
-		for (SDFAttribute attr : attributes) {
-			int index = getInputSchema(port).indexOf(attr);
-			out[i++] = tuple[index];
-		}
-		
-		sendStreamElement(out);
-	}
+    int[] restrictList;	
+    
+    on processNext(Tuple tuple, int port) {
+        Tuple out = tuple.restrict(restrictList, false);				
+        sendStreamElement(out);		
+    }    
+    
+    on processPunctuation(IPunctuation punctuation, int port) {
+        sendPunctuation(punctuation);
+    }	
+    
+    on createOutputSchema(int port) : SDFSchema{
+        return SDFSchemaFactory::createNewWithAttributes(attributes, getInputSchema(0));		
+    }
 	
+    on processOpen() {
+        restrictList = SDFSchema::calcRestrictList(getInputSchema(0), getOutputSchema(0));		
+    }	
 	
-	on createOutputSchema(int port) : SDFSchema{
-		return SDFSchemaFactory::createNewWithAttributes(attributes, getInputSchema(port));		
-	}
-	
-	on init() {
-			
-	}
-		
+    validate {
+        if (attributes.isEmpty()) {
+            error("attribute have to be set");
+            return false;
+        }
+        return true;
+    }		
 }
-

@@ -71,6 +71,8 @@ import org.reflections.scanners.SubTypesScanner;
 
 
 
+
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
@@ -83,6 +85,7 @@ import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLDefaultTypes;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 import de.uniol.inf.is.odysseus.iql.basic.typing.ParameterFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLSystemTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
@@ -117,6 +120,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	
 	private Map<String, IQLModel> systemFiles = new HashMap<>();
 	private Map<String, IQLSystemType> systemTypes= new HashMap<>();
+	private Map<String, IIQLSystemTypeCompiler> systemTypeCompilers= new HashMap<>();
 
 	
 	@Override
@@ -142,10 +146,15 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		Collection<JvmTypeReference> result = new HashSet<>();
 		for (String i : imports) {
 			if (!i.endsWith("*")) {
-				JvmTypeReference typeRef = typeUtils.createTypeRef(i, EcoreUtil2.getResourceSet(obj));
-				if (typeRef != null) {
-					result.add(typeRef);
-				}
+				if (isSystemType(i)) {
+					JvmGenericType type = getSystemType(i).getType();
+					result.add(typeUtils.createTypeRef(type));
+				} else {
+					JvmTypeReference typeRef = typeUtils.createTypeRef(i, EcoreUtil2.getResourceSet(obj));
+					if (typeRef != null) {
+						result.add(typeRef);
+					}
+				}				
 			}
 		}
 		return result;
@@ -192,11 +201,11 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	public Collection<String> createImplicitStaticImports() {
 		Collection<String> implicitStaticImports = new HashSet<>();
 		
-		for (Class<?> c : IQLDefaultTypes.getImplicitStaticImports()) {
-			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
+		for (String type : IQLDefaultTypes.getImplicitStaticImports()) {
+			implicitStaticImports.add(converter.toIQLString(type));
 		}
-		for (Class<?> c : serviceObserver.getImplicitStaticImports()) {
-			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
+		for (String type : serviceObserver.getImplicitStaticImports()) {
+			implicitStaticImports.add(converter.toIQLString(type));
 		}
 		return implicitStaticImports;
 	}
@@ -206,38 +215,8 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	public Collection<IQLModel> getSystemFiles() {
 		return systemFiles.values();
 	}
-		
-	@Override
-	public IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType) {
-		IQLSystemType systemType=  new IQLSystemType(type, javaType);
-		systemTypes.put(systemType.getType().getPackageName()+IQLQualifiedNameConverter.DELIMITER+systemType.getType().getSimpleName(), systemType);		
-		String packageName = type.getPackageName();
-		IQLModel systemFile = systemFiles.get(packageName);
-		if (systemFile == null) {
-			systemFile = BasicIQLFactory.eINSTANCE.createIQLModel();		
-			systemFile.setName(packageName);
-			systemFiles.put(packageName, systemFile);
-		}
-		IQLModelElement element = BasicIQLFactory.eINSTANCE.createIQLModelElement();
-		element.setInner(type);
-		systemFile.getElements().add(element);	
-		return systemType;
-	}
-	
-	@Override
-	public void removeSystemType(String name) {
-		IQLSystemType systemType = systemTypes.remove(name);
-		if (systemType != null) {
-			String packageName = systemType.getType().getPackageName();
-			IQLModel systemFile = systemFiles.get(packageName);
-			if (systemFile != null) {
-				systemFile.getElements().remove(systemType.getType());
-				if (systemFile.getElements().size() == 0) {
-					systemFiles.remove(systemFile);
-				}
-			}
-		}
-	}
+
+
 		
 	public Collection<JvmType> createVisibleTypes(Collection<String> usedNamespaces, Resource context) {
 		Collection<JvmType> result = new HashSet<>();
@@ -418,10 +397,59 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	public boolean isSystemType(String name) {
 		return getSystemType(name) != null;
 	}
+	
+	@Override
+	public boolean hasSystemTypeCompiler(String name) {
+		return systemTypeCompilers.containsKey(name.toLowerCase());
+	}
+	
+	@Override
+	public IIQLSystemTypeCompiler getSystemTypeCompiler(String name) {
+		return systemTypeCompilers.get(name.toLowerCase());
+	}
+	
+	@Override
+	public void addSystemType(IQLSystemType systemType) {
+		String name = systemType.getType().getPackageName()+IQLQualifiedNameConverter.DELIMITER+systemType.getType().getSimpleName();
+		systemTypes.put(name.toLowerCase(), systemType);		
+		String packageName = systemType.getType().getPackageName();
+		IQLModel systemFile = systemFiles.get(packageName);
+		if (systemFile == null) {
+			systemFile = BasicIQLFactory.eINSTANCE.createIQLModel();		
+			systemFile.setName(packageName);
+			systemFiles.put(packageName, systemFile);
+		}
+		IQLModelElement element = BasicIQLFactory.eINSTANCE.createIQLModelElement();
+		element.setInner(systemType.getType());
+		systemFile.getElements().add(element);	
+	}
+	
+	@Override
+	public void addSystemType(IQLSystemType systemType, IIQLSystemTypeCompiler compiler) {
+		String name = systemType.getType().getPackageName()+IQLQualifiedNameConverter.DELIMITER+systemType.getType().getSimpleName();
+		systemTypeCompilers.put(name.toLowerCase(), compiler);
+		addSystemType(systemType);
+	}
+	
+	@Override
+	public void removeSystemType(String name) {
+		systemTypeCompilers.remove(name.toLowerCase());
+		IQLSystemType systemType = systemTypes.remove(name.toLowerCase());
+		if (systemType != null) {
+			String packageName = systemType.getType().getPackageName();
+			IQLModel systemFile = systemFiles.get(packageName);
+			if (systemFile != null) {
+				systemFile.getElements().remove(systemType.getType());
+				if (systemFile.getElements().size() == 0) {
+					systemFiles.remove(systemFile);
+				}
+			}
+		}
+	}
 
 	@Override
 	public IQLSystemType getSystemType(String name) {
-		return systemTypes.get(name);
+		return systemTypes.get(name.toLowerCase());
 	}
 	
 	@Override

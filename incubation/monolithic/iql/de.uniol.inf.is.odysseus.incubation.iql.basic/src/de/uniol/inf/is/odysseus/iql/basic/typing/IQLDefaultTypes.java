@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.iql.basic.types.MEP;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.types.extension.CollectionExtensions;
 import de.uniol.inf.is.odysseus.iql.basic.types.extension.ListExtensions;
@@ -27,7 +26,6 @@ public class IQLDefaultTypes {
 		types.add(HashMap.class);
 		types.add(Iterator.class);
 		types.add(Range.class);
-		types.add(MEP.class);
 		return types;
 	}
 
@@ -37,7 +35,6 @@ public class IQLDefaultTypes {
 		implicitImports.add("java.lang.*");
 		implicitImports.add("java.lang.System");
 		implicitImports.add(Range.class.getCanonicalName());
-		implicitImports.add(MEP.class.getCanonicalName());
 		return implicitImports;
 	}
 
@@ -49,10 +46,10 @@ public class IQLDefaultTypes {
 		return result;
 	}
 
-	public static Collection<Class<?>> getImplicitStaticImports() {
-		Collection<Class<?>> types = new HashSet<>();
-		types.add(System.class);
-		types.add(MEP.class);
+	public static Collection<String> getImplicitStaticImports() {
+		Collection<String> types = new HashSet<>();
+		types.add(System.class.getCanonicalName());
+		types.add("iql.mep");
 		return types;
 	}
 	

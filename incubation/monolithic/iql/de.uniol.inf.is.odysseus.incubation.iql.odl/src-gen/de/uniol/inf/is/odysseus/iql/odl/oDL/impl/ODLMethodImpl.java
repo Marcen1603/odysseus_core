@@ -22,6 +22,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLMethodImpl#isOn <em>On</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLMethodImpl#isValidate <em>Validate</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLMethodImpl#isAo <em>Ao</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLMethodImpl#isPo <em>Po</em>}</li>
  * </ul>
  * </p>
  *
@@ -68,6 +70,46 @@ public class ODLMethodImpl extends IQLMethodImpl implements ODLMethod
    * @ordered
    */
   protected boolean validate = VALIDATE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isAo() <em>Ao</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAo()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean AO_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isAo() <em>Ao</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAo()
+   * @generated
+   * @ordered
+   */
+  protected boolean ao = AO_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isPo() <em>Po</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPo()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PO_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isPo() <em>Po</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPo()
+   * @generated
+   * @ordered
+   */
+  protected boolean po = PO_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -141,6 +183,52 @@ public class ODLMethodImpl extends IQLMethodImpl implements ODLMethod
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isAo()
+  {
+    return ao;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAo(boolean newAo)
+  {
+    boolean oldAo = ao;
+    ao = newAo;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, ODLPackage.ODL_METHOD__AO, oldAo, ao));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isPo()
+  {
+    return po;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setPo(boolean newPo)
+  {
+    boolean oldPo = po;
+    po = newPo;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, ODLPackage.ODL_METHOD__PO, oldPo, po));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -150,6 +238,10 @@ public class ODLMethodImpl extends IQLMethodImpl implements ODLMethod
         return isOn();
       case ODLPackage.ODL_METHOD__VALIDATE:
         return isValidate();
+      case ODLPackage.ODL_METHOD__AO:
+        return isAo();
+      case ODLPackage.ODL_METHOD__PO:
+        return isPo();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -169,6 +261,12 @@ public class ODLMethodImpl extends IQLMethodImpl implements ODLMethod
         return;
       case ODLPackage.ODL_METHOD__VALIDATE:
         setValidate((Boolean)newValue);
+        return;
+      case ODLPackage.ODL_METHOD__AO:
+        setAo((Boolean)newValue);
+        return;
+      case ODLPackage.ODL_METHOD__PO:
+        setPo((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -190,6 +288,12 @@ public class ODLMethodImpl extends IQLMethodImpl implements ODLMethod
       case ODLPackage.ODL_METHOD__VALIDATE:
         setValidate(VALIDATE_EDEFAULT);
         return;
+      case ODLPackage.ODL_METHOD__AO:
+        setAo(AO_EDEFAULT);
+        return;
+      case ODLPackage.ODL_METHOD__PO:
+        setPo(PO_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -208,6 +312,10 @@ public class ODLMethodImpl extends IQLMethodImpl implements ODLMethod
         return on != ON_EDEFAULT;
       case ODLPackage.ODL_METHOD__VALIDATE:
         return validate != VALIDATE_EDEFAULT;
+      case ODLPackage.ODL_METHOD__AO:
+        return ao != AO_EDEFAULT;
+      case ODLPackage.ODL_METHOD__PO:
+        return po != PO_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -227,6 +335,10 @@ public class ODLMethodImpl extends IQLMethodImpl implements ODLMethod
     result.append(on);
     result.append(", validate: ");
     result.append(validate);
+    result.append(", ao: ");
+    result.append(ao);
+    result.append(", po: ");
+    result.append(po);
     result.append(')');
     return result.toString();
   }

@@ -701,6 +701,14 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case BasicIQLPackage.IQL_LITERAL_EXPRESSION_TYPE:
+      {
+        IQLLiteralExpressionType iqlLiteralExpressionType = (IQLLiteralExpressionType)theEObject;
+        T result = caseIQLLiteralExpressionType(iqlLiteralExpressionType);
+        if (result == null) result = caseIQLExpression(iqlLiteralExpressionType);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_NULL:
       {
         IQLLiteralExpressionNull iqlLiteralExpressionNull = (IQLLiteralExpressionNull)theEObject;
@@ -1925,6 +1933,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLLiteralExpressionRange(IQLLiteralExpressionRange object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Literal Expression Type</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Literal Expression Type</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLLiteralExpressionType(IQLLiteralExpressionType object)
   {
     return null;
   }

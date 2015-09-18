@@ -55,15 +55,19 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 	}
 	
 	@Override
-	public JvmTypeReference getThisType(EObject obj) {
-		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
+	public JvmTypeReference getThisType(EObject node) {
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(node, JvmDeclaredType.class);
 		return typeUtils.createTypeRef(c);
 	}
 
 	@Override
-	public JvmTypeReference getSuperType(EObject obj) {
-		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
-		return c.getExtendedClass();
+	public JvmTypeReference getSuperType(EObject node) {
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(node, JvmDeclaredType.class);
+		if (c.getExtendedClass() != null) {
+			return c.getExtendedClass();
+		} else {
+			return typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet());
+		}		
 	}
 	
 	@Override

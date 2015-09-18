@@ -37,8 +37,8 @@ public interface IIQLLookUp {
 
 	Collection<String> getAllNamespaces();
 
-	JvmTypeReference getThisType(EObject obj);	
-	JvmTypeReference getSuperType(EObject obj);
+	JvmTypeReference getThisType(EObject node);	
+	JvmTypeReference getSuperType(EObject node);
 	
 	boolean isAssignable(JvmTypeReference targetRef, JvmTypeReference typeRef);	
 	boolean isCastable(JvmTypeReference targetRef, JvmTypeReference typeRef);	

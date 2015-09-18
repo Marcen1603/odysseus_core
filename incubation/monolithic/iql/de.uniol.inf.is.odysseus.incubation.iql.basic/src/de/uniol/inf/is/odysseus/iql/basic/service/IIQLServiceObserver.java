@@ -11,7 +11,7 @@ public interface IIQLServiceObserver {
 	public Collection<Bundle> getRequiredBundles();
 	public Collection<Class<?>> getVisibleTypes();
 	public Collection<String> getImplicitImports();
-	public Collection<Class<?>> getImplicitStaticImports();
+	public Collection<String> getImplicitStaticImports();
 	public Collection<Bundle> getVisibleTypesFromBundle();
 	public Collection<String> getImportedPackages();
 	public Map<Class<? extends IParameter<?>>, Class<?>> getParameters();

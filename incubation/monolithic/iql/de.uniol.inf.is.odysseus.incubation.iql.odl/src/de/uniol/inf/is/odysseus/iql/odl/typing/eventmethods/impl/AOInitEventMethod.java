@@ -6,26 +6,26 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodParameter;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.IEventMethod;
 
-public class InitEventMethod implements IEventMethod {
+public class AOInitEventMethod implements IEventMethod {
 
 	@Override
 	public boolean isAO() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isOverride() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public String getEventName() {
-		return "init";
+		return "ao_init";
 	}
 
 	@Override
 	public String getMethodName() {
-		return "init";
+		return "initialize";
 	}
 
 	@Override

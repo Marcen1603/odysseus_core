@@ -23,7 +23,11 @@ public class ODLLabelProvider extends AbstractIQLLabelProvider {
 	}
 	
 	String image(ODLMethod ele) {
-		return "methpri_obj.gif";
+		if (ele.isValidate()) {
+			return "methpri_obj.gif";
+		} else {
+			return "methpub_obj.gif";
+		}
 	}
 
 }

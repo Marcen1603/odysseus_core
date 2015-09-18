@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.iql.basic.typing.builder;
 
 import javax.inject.Inject;
 
+import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmVisibility;
+import org.eclipse.xtext.common.types.TypesFactory;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -9,9 +12,28 @@ import org.eclipse.xtext.common.types.util.TypeReferences;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
+import de.uniol.inf.is.odysseus.iql.basic.types.compiler.IQLMEPSystemTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.basic.types.compiler.MEP;
+import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
+import de.uniol.inf.is.odysseus.mep.FunctionSignature;
 
 
 
@@ -30,7 +52,33 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeDictionary, U ext
 	public AbstractIQLTypeBuilder(T typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
+		createMepFuntions();
 	}	
+	
+	private void createMepFuntions() {
+		IQLClass mepIQLClass = BasicIQLFactory.eINSTANCE.createIQLClass();
+		mepIQLClass.setPackageName("iql");
+		mepIQLClass.setSimpleName("mep");
+		
+		for (FunctionSignature signature : de.uniol.inf.is.odysseus.mep.MEP.getFunctions()) {
+			IQLMethod method = BasicIQLFactory.eINSTANCE.createIQLMethod();
+			method.setVisibility(JvmVisibility.PUBLIC);
+			method.setStatic(true);
+			method.setSimpleName(signature.getSymbol().toLowerCase());
+			
+			for (int i = 0; i<signature.getParameters().size(); i++) {
+				JvmFormalParameter parameter = TypesFactory.eINSTANCE.createJvmFormalParameter();
+				parameter.setName("arg"+i);
+				parameter.setParameterType(typeUtils.createTypeRef(String.class, typeDictionary.getSystemResourceSet()));
+				method.getParameters().add(parameter);
+			}			
+			method.setReturnType(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()));	
+			mepIQLClass.getMembers().add(method);
+		}
+		
+		IQLSystemType systemType = new IQLSystemType(mepIQLClass, MEP.class);
+		typeDictionary.addSystemType(systemType, new IQLMEPSystemTypeCompiler());
+	}
 		
 	public void removeSystemType(String[] namespaceSegments, String simpleName) {
 		typeDictionary.removeSystemType(createQualifiedName(namespaceSegments, simpleName));

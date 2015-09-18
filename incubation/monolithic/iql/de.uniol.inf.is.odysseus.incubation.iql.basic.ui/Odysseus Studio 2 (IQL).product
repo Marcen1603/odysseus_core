@@ -20,7 +20,7 @@ http://odysseus.informatik.uni-oldenburg.de/
    <launcherArgs>
       <programArgs>-console -clean -debug -nl en -data @noDefault
       </programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -XX:PermSize=512m
+      <vmArgs>-Xms1000M -Xmx1000M -XX:PermSize=2048m
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>

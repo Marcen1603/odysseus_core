@@ -698,6 +698,15 @@ public interface BasicIQLFactory extends EFactory
   IQLLiteralExpressionRange createIQLLiteralExpressionRange();
 
   /**
+   * Returns a new object of class '<em>IQL Literal Expression Type</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Literal Expression Type</em>'.
+   * @generated
+   */
+  IQLLiteralExpressionType createIQLLiteralExpressionType();
+
+  /**
    * Returns a new object of class '<em>IQL Literal Expression Null</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

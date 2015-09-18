@@ -144,6 +144,7 @@
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLForStatement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/var"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/value"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/predicate"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/updateExpr"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/body"/>
@@ -270,6 +271,9 @@
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionRange">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionRange/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLiteralExpressionType/value"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionNull"/>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionList">

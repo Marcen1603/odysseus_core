@@ -109,8 +109,8 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	@Override
 	public Collection<String> createImplicitStaticImports() {
 		Collection<String> implicitStaticImports = super.createImplicitStaticImports();
-		for (Class<?> c : ODLDefaultTypes.getImplicitStaticImports()) {
-			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
+		for (String type : ODLDefaultTypes.getImplicitStaticImports()) {
+			implicitStaticImports.add(converter.toIQLString(type));
 		}
 		return implicitStaticImports;
 	}
@@ -118,6 +118,9 @@ public class ODLTypeDictionary extends AbstractIQLTypeDictionary<IODLTypeUtils, 
 	
 	@Override
 	public JvmTypeReference getParameterType(JvmTypeReference valueType, Notifier context) {
+		if (typeUtils.isPrimitive(valueType)) {
+			valueType = typeUtils.getWrapper(valueType, context);
+		} 
 		String qName = converter.toJavaString(typeUtils.getLongName(valueType, false));
 		for (Class<? extends IParameter<?>> parameterType : ParameterFactory.getParameters()) {
 			Class<?> valueTypeClass = ParameterFactory.getParameterValue(parameterType);

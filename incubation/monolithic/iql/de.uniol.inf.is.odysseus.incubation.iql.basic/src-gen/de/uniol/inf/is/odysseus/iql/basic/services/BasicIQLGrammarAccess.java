@@ -1344,12 +1344,12 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		///////////////////////////////////////////////
 		//IQLStatement:
 		//	IQLStatementBlock | IQLExpressionStatement | IQLIfStatement | IQLWhileStatement | IQLDoWhileStatement |
-		//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | IQLVariableStatement | IQLBreakStatement |
+		//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | => IQLVariableStatement | IQLBreakStatement |
 		//	IQLContinueStatement | IQLReturnStatement | IQLConstructorCallStatement | IQLJavaStatement;
 		public ParserRule getRule() { return rule; }
 
 		//IQLStatementBlock | IQLExpressionStatement | IQLIfStatement | IQLWhileStatement | IQLDoWhileStatement | IQLForStatement
-		//| IQLForEachStatement | IQLSwitchStatement | IQLVariableStatement | IQLBreakStatement | IQLContinueStatement |
+		//| IQLForEachStatement | IQLSwitchStatement | => IQLVariableStatement | IQLBreakStatement | IQLContinueStatement |
 		//IQLReturnStatement | IQLConstructorCallStatement | IQLJavaStatement
 		public Alternatives getAlternatives() { return cAlternatives; }
 
@@ -1377,7 +1377,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLSwitchStatement
 		public RuleCall getIQLSwitchStatementParserRuleCall_7() { return cIQLSwitchStatementParserRuleCall_7; }
 
-		//IQLVariableStatement
+		//=> IQLVariableStatement
 		public RuleCall getIQLVariableStatementParserRuleCall_8() { return cIQLVariableStatementParserRuleCall_8; }
 
 		//IQLBreakStatement
@@ -1615,22 +1615,27 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cForKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Assignment cVarAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cVarIQLVariableStatementParserRuleCall_3_0 = (RuleCall)cVarAssignment_3.eContents().get(0);
-		private final Assignment cPredicateAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cPredicateIQLExpressionStatementParserRuleCall_4_0 = (RuleCall)cPredicateAssignment_4.eContents().get(0);
-		private final Assignment cUpdateExprAssignment_5 = (Assignment)cGroup.eContents().get(5);
-		private final RuleCall cUpdateExprIQLExpressionParserRuleCall_5_0 = (RuleCall)cUpdateExprAssignment_5.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_6 = (Keyword)cGroup.eContents().get(6);
-		private final Assignment cBodyAssignment_7 = (Assignment)cGroup.eContents().get(7);
-		private final RuleCall cBodyIQLStatementParserRuleCall_7_0 = (RuleCall)cBodyAssignment_7.eContents().get(0);
+		private final RuleCall cVarIQLVariableDeclarationParserRuleCall_3_0 = (RuleCall)cVarAssignment_3.eContents().get(0);
+		private final Keyword cEqualsSignKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Assignment cValueAssignment_5 = (Assignment)cGroup.eContents().get(5);
+		private final RuleCall cValueIQLExpressionParserRuleCall_5_0 = (RuleCall)cValueAssignment_5.eContents().get(0);
+		private final Keyword cSemicolonKeyword_6 = (Keyword)cGroup.eContents().get(6);
+		private final Assignment cPredicateAssignment_7 = (Assignment)cGroup.eContents().get(7);
+		private final RuleCall cPredicateIQLExpressionParserRuleCall_7_0 = (RuleCall)cPredicateAssignment_7.eContents().get(0);
+		private final Keyword cSemicolonKeyword_8 = (Keyword)cGroup.eContents().get(8);
+		private final Assignment cUpdateExprAssignment_9 = (Assignment)cGroup.eContents().get(9);
+		private final RuleCall cUpdateExprIQLExpressionParserRuleCall_9_0 = (RuleCall)cUpdateExprAssignment_9.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_10 = (Keyword)cGroup.eContents().get(10);
+		private final Assignment cBodyAssignment_11 = (Assignment)cGroup.eContents().get(11);
+		private final RuleCall cBodyIQLStatementParserRuleCall_11_0 = (RuleCall)cBodyAssignment_11.eContents().get(0);
 		
 		//IQLForStatement returns IQLStatement:
-		//	{IQLForStatement} "for" "(" var=IQLVariableStatement predicate=IQLExpressionStatement updateExpr=IQLExpression ")"
-		//	body=IQLStatement;
+		//	{IQLForStatement} "for" "(" var=IQLVariableDeclaration "=" value=IQLExpression ";" predicate=IQLExpression ";"
+		//	updateExpr=IQLExpression ")" body=IQLStatement;
 		public ParserRule getRule() { return rule; }
 
-		//{IQLForStatement} "for" "(" var=IQLVariableStatement predicate=IQLExpressionStatement updateExpr=IQLExpression ")"
-		//body=IQLStatement
+		//{IQLForStatement} "for" "(" var=IQLVariableDeclaration "=" value=IQLExpression ";" predicate=IQLExpression ";"
+		//updateExpr=IQLExpression ")" body=IQLStatement
 		public Group getGroup() { return cGroup; }
 
 		//{IQLForStatement}
@@ -1642,32 +1647,47 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//"("
 		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
 
-		//var=IQLVariableStatement
+		//var=IQLVariableDeclaration
 		public Assignment getVarAssignment_3() { return cVarAssignment_3; }
 
-		//IQLVariableStatement
-		public RuleCall getVarIQLVariableStatementParserRuleCall_3_0() { return cVarIQLVariableStatementParserRuleCall_3_0; }
+		//IQLVariableDeclaration
+		public RuleCall getVarIQLVariableDeclarationParserRuleCall_3_0() { return cVarIQLVariableDeclarationParserRuleCall_3_0; }
 
-		//predicate=IQLExpressionStatement
-		public Assignment getPredicateAssignment_4() { return cPredicateAssignment_4; }
+		//"="
+		public Keyword getEqualsSignKeyword_4() { return cEqualsSignKeyword_4; }
 
-		//IQLExpressionStatement
-		public RuleCall getPredicateIQLExpressionStatementParserRuleCall_4_0() { return cPredicateIQLExpressionStatementParserRuleCall_4_0; }
-
-		//updateExpr=IQLExpression
-		public Assignment getUpdateExprAssignment_5() { return cUpdateExprAssignment_5; }
+		//value=IQLExpression
+		public Assignment getValueAssignment_5() { return cValueAssignment_5; }
 
 		//IQLExpression
-		public RuleCall getUpdateExprIQLExpressionParserRuleCall_5_0() { return cUpdateExprIQLExpressionParserRuleCall_5_0; }
+		public RuleCall getValueIQLExpressionParserRuleCall_5_0() { return cValueIQLExpressionParserRuleCall_5_0; }
+
+		//";"
+		public Keyword getSemicolonKeyword_6() { return cSemicolonKeyword_6; }
+
+		//predicate=IQLExpression
+		public Assignment getPredicateAssignment_7() { return cPredicateAssignment_7; }
+
+		//IQLExpression
+		public RuleCall getPredicateIQLExpressionParserRuleCall_7_0() { return cPredicateIQLExpressionParserRuleCall_7_0; }
+
+		//";"
+		public Keyword getSemicolonKeyword_8() { return cSemicolonKeyword_8; }
+
+		//updateExpr=IQLExpression
+		public Assignment getUpdateExprAssignment_9() { return cUpdateExprAssignment_9; }
+
+		//IQLExpression
+		public RuleCall getUpdateExprIQLExpressionParserRuleCall_9_0() { return cUpdateExprIQLExpressionParserRuleCall_9_0; }
 
 		//")"
-		public Keyword getRightParenthesisKeyword_6() { return cRightParenthesisKeyword_6; }
+		public Keyword getRightParenthesisKeyword_10() { return cRightParenthesisKeyword_10; }
 
 		//body=IQLStatement
-		public Assignment getBodyAssignment_7() { return cBodyAssignment_7; }
+		public Assignment getBodyAssignment_11() { return cBodyAssignment_11; }
 
 		//IQLStatement
-		public RuleCall getBodyIQLStatementParserRuleCall_7_0() { return cBodyIQLStatementParserRuleCall_7_0; }
+		public RuleCall getBodyIQLStatementParserRuleCall_11_0() { return cBodyIQLStatementParserRuleCall_11_0; }
 	}
 
 	public class IQLForEachStatementElements extends AbstractParserRuleElementFinder {
@@ -2010,10 +2030,10 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSemicolonKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//IQLReturnStatement returns IQLStatement:
-		//	{IQLReturnStatement} "return" expression=IQLExpression ";";
+		//	{IQLReturnStatement} "return" expression=IQLExpression? ";";
 		public ParserRule getRule() { return rule; }
 
-		//{IQLReturnStatement} "return" expression=IQLExpression ";"
+		//{IQLReturnStatement} "return" expression=IQLExpression? ";"
 		public Group getGroup() { return cGroup; }
 
 		//{IQLReturnStatement}
@@ -2022,7 +2042,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//"return"
 		public Keyword getReturnKeyword_1() { return cReturnKeyword_1; }
 
-		//expression=IQLExpression
+		//expression=IQLExpression?
 		public Assignment getExpressionAssignment_2() { return cExpressionAssignment_2; }
 
 		//IQLExpression
@@ -2993,13 +3013,13 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	{IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
 		//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
 		//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
-		//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
+		//	argsMap=IQLArgumentsMap?) | => IQLLiteralExpression;
 		public ParserRule getRule() { return rule; }
 
 		//{IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
 		//{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
 		//{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
-		//argsMap=IQLArgumentsMap?) | IQLLiteralExpression
+		//argsMap=IQLArgumentsMap?) | => IQLLiteralExpression
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//{IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList?
@@ -3098,7 +3118,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLArgumentsMap
 		public RuleCall getArgsMapIQLArgumentsMapParserRuleCall_4_2_1_2_0() { return cArgsMapIQLArgumentsMapParserRuleCall_4_2_1_2_0; }
 
-		//IQLLiteralExpression
+		//=> IQLLiteralExpression
 		public RuleCall getIQLLiteralExpressionParserRuleCall_5() { return cIQLLiteralExpressionParserRuleCall_5; }
 	}
 
@@ -3126,20 +3146,28 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cValueAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
 		private final RuleCall cValueRANGETerminalRuleCall_4_1_0 = (RuleCall)cValueAssignment_4_1.eContents().get(0);
 		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
-		private final Action cIQLLiteralExpressionNullAction_5_0 = (Action)cGroup_5.eContents().get(0);
-		private final Keyword cNullKeyword_5_1 = (Keyword)cGroup_5.eContents().get(1);
-		private final RuleCall cIQLLiteralExpressionListParserRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
-		private final RuleCall cIQLLiteralExpressionMapParserRuleCall_7 = (RuleCall)cAlternatives.eContents().get(7);
+		private final Action cIQLLiteralExpressionTypeAction_5_0 = (Action)cGroup_5.eContents().get(0);
+		private final Keyword cClassKeyword_5_1 = (Keyword)cGroup_5.eContents().get(1);
+		private final Assignment cValueAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
+		private final RuleCall cValueJvmTypeReferenceParserRuleCall_5_2_0 = (RuleCall)cValueAssignment_5_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_5_3 = (Keyword)cGroup_5.eContents().get(3);
+		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
+		private final Action cIQLLiteralExpressionNullAction_6_0 = (Action)cGroup_6.eContents().get(0);
+		private final Keyword cNullKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
+		private final RuleCall cIQLLiteralExpressionListParserRuleCall_7 = (RuleCall)cAlternatives.eContents().get(7);
+		private final RuleCall cIQLLiteralExpressionMapParserRuleCall_8 = (RuleCall)cAlternatives.eContents().get(8);
 		
 		//IQLLiteralExpression returns IQLExpression:
 		//	{IQLLiteralExpressionInt} value=INT | {IQLLiteralExpressionDouble} value=DOUBLE | {IQLLiteralExpressionString}
 		//	value=STRING | {IQLLiteralExpressionBoolean} value=BOOLEAN | {IQLLiteralExpressionRange} value=RANGE |
-		//	{IQLLiteralExpressionNull} "null" | => IQLLiteralExpressionList | IQLLiteralExpressionMap;
+		//	{IQLLiteralExpressionType} "class(" value=JvmTypeReference ")" | {IQLLiteralExpressionNull} "null" | =>
+		//	IQLLiteralExpressionList | IQLLiteralExpressionMap;
 		public ParserRule getRule() { return rule; }
 
 		//{IQLLiteralExpressionInt} value=INT | {IQLLiteralExpressionDouble} value=DOUBLE | {IQLLiteralExpressionString}
 		//value=STRING | {IQLLiteralExpressionBoolean} value=BOOLEAN | {IQLLiteralExpressionRange} value=RANGE |
-		//{IQLLiteralExpressionNull} "null" | => IQLLiteralExpressionList | IQLLiteralExpressionMap
+		//{IQLLiteralExpressionType} "class(" value=JvmTypeReference ")" | {IQLLiteralExpressionNull} "null" | =>
+		//IQLLiteralExpressionList | IQLLiteralExpressionMap
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//{IQLLiteralExpressionInt} value=INT
@@ -3202,20 +3230,38 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//RANGE
 		public RuleCall getValueRANGETerminalRuleCall_4_1_0() { return cValueRANGETerminalRuleCall_4_1_0; }
 
-		//{IQLLiteralExpressionNull} "null"
+		//{IQLLiteralExpressionType} "class(" value=JvmTypeReference ")"
 		public Group getGroup_5() { return cGroup_5; }
 
+		//{IQLLiteralExpressionType}
+		public Action getIQLLiteralExpressionTypeAction_5_0() { return cIQLLiteralExpressionTypeAction_5_0; }
+
+		//"class("
+		public Keyword getClassKeyword_5_1() { return cClassKeyword_5_1; }
+
+		//value=JvmTypeReference
+		public Assignment getValueAssignment_5_2() { return cValueAssignment_5_2; }
+
+		//JvmTypeReference
+		public RuleCall getValueJvmTypeReferenceParserRuleCall_5_2_0() { return cValueJvmTypeReferenceParserRuleCall_5_2_0; }
+
+		//")"
+		public Keyword getRightParenthesisKeyword_5_3() { return cRightParenthesisKeyword_5_3; }
+
+		//{IQLLiteralExpressionNull} "null"
+		public Group getGroup_6() { return cGroup_6; }
+
 		//{IQLLiteralExpressionNull}
-		public Action getIQLLiteralExpressionNullAction_5_0() { return cIQLLiteralExpressionNullAction_5_0; }
+		public Action getIQLLiteralExpressionNullAction_6_0() { return cIQLLiteralExpressionNullAction_6_0; }
 
 		//"null"
-		public Keyword getNullKeyword_5_1() { return cNullKeyword_5_1; }
+		public Keyword getNullKeyword_6_1() { return cNullKeyword_6_1; }
 
 		//=> IQLLiteralExpressionList
-		public RuleCall getIQLLiteralExpressionListParserRuleCall_6() { return cIQLLiteralExpressionListParserRuleCall_6; }
+		public RuleCall getIQLLiteralExpressionListParserRuleCall_7() { return cIQLLiteralExpressionListParserRuleCall_7; }
 
 		//IQLLiteralExpressionMap
-		public RuleCall getIQLLiteralExpressionMapParserRuleCall_7() { return cIQLLiteralExpressionMapParserRuleCall_7; }
+		public RuleCall getIQLLiteralExpressionMapParserRuleCall_8() { return cIQLLiteralExpressionMapParserRuleCall_8; }
 	}
 
 	public class IQLLiteralExpressionListElements extends AbstractParserRuleElementFinder {
@@ -4356,7 +4402,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	///////////////////////////////////////////////
 	//IQLStatement:
 	//	IQLStatementBlock | IQLExpressionStatement | IQLIfStatement | IQLWhileStatement | IQLDoWhileStatement |
-	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | IQLVariableStatement | IQLBreakStatement |
+	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | => IQLVariableStatement | IQLBreakStatement |
 	//	IQLContinueStatement | IQLReturnStatement | IQLConstructorCallStatement | IQLJavaStatement;
 	public IQLStatementElements getIQLStatementAccess() {
 		return pIQLStatement;
@@ -4417,8 +4463,8 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLForStatement returns IQLStatement:
-	//	{IQLForStatement} "for" "(" var=IQLVariableStatement predicate=IQLExpressionStatement updateExpr=IQLExpression ")"
-	//	body=IQLStatement;
+	//	{IQLForStatement} "for" "(" var=IQLVariableDeclaration "=" value=IQLExpression ";" predicate=IQLExpression ";"
+	//	updateExpr=IQLExpression ")" body=IQLStatement;
 	public IQLForStatementElements getIQLForStatementAccess() {
 		return pIQLForStatement;
 	}
@@ -4509,7 +4555,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLReturnStatement returns IQLStatement:
-	//	{IQLReturnStatement} "return" expression=IQLExpression ";";
+	//	{IQLReturnStatement} "return" expression=IQLExpression? ";";
 	public IQLReturnStatementElements getIQLReturnStatementAccess() {
 		return pIQLReturnStatement;
 	}
@@ -4757,7 +4803,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	{IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
 	//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
 	//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
-	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
+	//	argsMap=IQLArgumentsMap?) | => IQLLiteralExpression;
 	public IQLOtherExpressionsElements getIQLOtherExpressionsAccess() {
 		return pIQLOtherExpressions;
 	}
@@ -4769,7 +4815,8 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	//IQLLiteralExpression returns IQLExpression:
 	//	{IQLLiteralExpressionInt} value=INT | {IQLLiteralExpressionDouble} value=DOUBLE | {IQLLiteralExpressionString}
 	//	value=STRING | {IQLLiteralExpressionBoolean} value=BOOLEAN | {IQLLiteralExpressionRange} value=RANGE |
-	//	{IQLLiteralExpressionNull} "null" | => IQLLiteralExpressionList | IQLLiteralExpressionMap;
+	//	{IQLLiteralExpressionType} "class(" value=JvmTypeReference ")" | {IQLLiteralExpressionNull} "null" | =>
+	//	IQLLiteralExpressionList | IQLLiteralExpressionMap;
 	public IQLLiteralExpressionElements getIQLLiteralExpressionAccess() {
 		return pIQLLiteralExpression;
 	}

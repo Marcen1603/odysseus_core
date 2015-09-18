@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.osgi.framework.Bundle;
@@ -13,6 +12,7 @@ import org.osgi.framework.Bundle;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
+import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLSystemTypeCompiler;
 
 
 
@@ -34,12 +34,7 @@ public interface IIQLTypeDictionary {
 	IQLModel getSystemFile(String fileName);
 	Collection<IQLModel> getSystemFiles();	
 	ResourceSet getSystemResourceSet();
-		
-	IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType);
-	void removeSystemType(String name);	
-	IQLSystemType getSystemType(String name);
-	boolean isSystemType(String name);
-	
+			
 	Collection<JvmTypeReference> getStaticImports(EObject obj);	
 	Collection<String> getJavaPackages();	
 	boolean isImportNeeded(JvmType type, String text);
@@ -47,5 +42,12 @@ public interface IIQLTypeDictionary {
 	Class<?> getParameterValue(Class<? extends IParameter<?>> parameterType);
 	Collection<Bundle> getVisibleTypesFromBundle();
 	Collection<String> getImportedPackages();
-
+	
+	void addSystemType(IQLSystemType systemType);
+	void addSystemType(IQLSystemType systemType, IIQLSystemTypeCompiler compiler);
+	boolean hasSystemTypeCompiler(String name);
+	IIQLSystemTypeCompiler getSystemTypeCompiler(String name);
+	void removeSystemType(String name);	
+	IQLSystemType getSystemType(String name);
+	boolean isSystemType(String name);
 }

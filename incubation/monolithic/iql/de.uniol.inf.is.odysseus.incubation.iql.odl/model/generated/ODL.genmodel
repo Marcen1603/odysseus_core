@@ -20,6 +20,8 @@
     <genClasses ecoreClass="ODL.ecore#//ODLMethod">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ODL.ecore#//ODLMethod/on"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ODL.ecore#//ODLMethod/validate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ODL.ecore#//ODLMethod/ao"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ODL.ecore#//ODLMethod/po"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

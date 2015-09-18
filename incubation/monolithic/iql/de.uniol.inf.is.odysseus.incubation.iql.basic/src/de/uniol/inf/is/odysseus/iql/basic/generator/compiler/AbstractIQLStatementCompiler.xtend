@@ -94,11 +94,30 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		'''			
 	}
 	
+	def String createTryCatchBlock(String content, G c) {
+		var result = 
+		'''
+		try {
+			«content»
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		'''
+		c.clearExceptions
+		return result;
+	}
+	
 	def String compile(IQLExpressionStatement s, G c) {
-		'''«exprCompiler.compile(s.expression, c)»;'''
+		var content = '''«exprCompiler.compile(s.expression, c)»;'''
+		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}		
 	}	
 	
 	def String compile(IQLIfStatement s, G c) {
+		var content = 
 		'''
 		if(«exprCompiler.compile(s.predicate, c)»)
 			«compile(s.thenBody, c)»
@@ -107,38 +126,68 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			«compile(s.elseBody, c)»
 		«ENDIF»
 		'''
+		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}
 	}
 	
 	def String compile(IQLWhileStatement s, G c) {
+		var content = 
 		'''
 		while(«exprCompiler.compile(s.predicate, c)»)
 			«compile(s.body, c)»
 		'''
+		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}
 	}
 	
 	def String compile(IQLDoWhileStatement s, G c) {
+		var content = 
 		'''
 		do
 			«compile(s.body, c)»
 		while(«exprCompiler.compile(s.predicate, c)»);
 		'''
+		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}
 	}
 	
 	def String compile(IQLForStatement s, G c) {
+		var content = 
 		'''
-		for («compile(s.^var, c)» «compile(s.predicate, c)» «exprCompiler.compile(s.updateExpr, c)»)
+		for («compile(s.^var as IQLVariableDeclaration, c)» = «exprCompiler.compile(s.value, c)»; «exprCompiler.compile(s.predicate, c)»; «exprCompiler.compile(s.updateExpr, c)»)
 			«compile(s.body, c)»
 		'''
+		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}
 	}
 	
 	def String compile(IQLForEachStatement s, G c) {
+		var content = 
 		'''
 		for («compile(s.^var as IQLVariableDeclaration, c)» : «exprCompiler.compile(s.forExpression, c)»)
 			«compile(s.body, c)»
 		'''
+		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}
 	}
 	
 	def String compile(IQLSwitchStatement s, G c) {
+		var content = 
 		'''
 		switch («exprCompiler.compile(s.expr, c)») {
 			«FOR ca : s.cases»
@@ -152,6 +201,11 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			«ENDIF»
 		}
 		'''
+		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}
 	}
 	
 	def String compile(IQLCasePart cp, G c) {
@@ -163,29 +217,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		'''	
 	}
 	
-	
-	def String compile(IQLVariableStatement s, G c) {
-		var leftVar = s.^var as IQLVariableDeclaration
-		var leftType = leftVar.ref
-		if (s.init != null && s.init.argsList == null && s.init.argsMap == null) {			
-			var right = exprEvaluator.eval(s.init.value, leftType);
-			if (right.isNull || lookUp.isAssignable(leftType, right.ref)){
-				'''«compile(leftVar, c)»«IF s.init != null» = «compile(s.init, leftType, c)»«ENDIF»;'''
-			} else if (right.isNull || lookUp.isCastable(leftType, right.ref)){
-				var target = typeCompiler.compile(leftType, c, false)
-				'''«compile(leftVar, c)»«IF s.init != null» = ((«target»)«compile(s.init, leftType, c)»«ENDIF»);'''
-			} else {
-				'''«compile(leftVar, c)»«IF s.init != null» = «compile(s.init, leftType, c)»«ENDIF»;'''				
-			}					
-		} else if (s.init != null) {
-			'''«compile(leftVar, c)» = «compile(s.init, leftType, c)»;'''
-			
-		} else {
-			'''«compile(leftVar, c)»;'''
-			
-		}
-	}
-	
+		
 	def String compile(IQLBreakStatement s, G c) {
 		'''break;'''
 	}
@@ -195,11 +227,48 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	}
 	
 	def String compile(IQLReturnStatement s, G c) {
-		'''return «exprCompiler.compile(s.expression, c)»;'''
+		var typeResult = exprEvaluator.eval(s.expression, c.expectedTypeRef);
+		var content = 
+		'''return «IF s.expression != null»«exprCompiler.compile(s.expression, c)»«ENDIF»;'''
+		if (c.hasException) {
+			'''
+			«createTryCatchBlock(content, c)»
+			return «getDefaultLiteral(typeResult.ref)»;
+			''' 		
+		} else {
+			return content;
+		}
+	}
+	
+	def String getDefaultLiteral(JvmTypeReference typeRef) {
+		if (typeRef == null) {
+			return "null";
+		} else if (typeUtils.isPrimitive(typeRef)) {
+			if (typeUtils.isByte(typeRef)) {
+				return "0";
+			} else if (typeUtils.isShort(typeRef)) {
+				return "0";
+			} else if (typeUtils.isInt(typeRef)) {
+				return "0";
+			} else if (typeUtils.isLong(typeRef)) {
+				return "0";
+			} else if (typeUtils.isFloat(typeRef)) {
+				return "0.0f";
+			} else if (typeUtils.isDouble(typeRef)) {
+				return "0.0";
+			} else if (typeUtils.isBoolean(typeRef)) {
+				return "false";
+			} else if (typeUtils.isCharacter(typeRef)) {
+				return "0";
+			} 
+		} else {
+			return "null";
+		}
 	}
 	
 	def String compile(IQLConstructorCallStatement s, G c) {
 		var type = helper.getClass(s);
+		var content = "";
 		if (type != null) {
 			var typeRef = typeUtils.createTypeRef(type) 
 			var JvmExecutable constructor = null;
@@ -209,19 +278,54 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 				constructor = lookUp.findDeclaredConstructor(typeRef, s.args.elements);
 			}
 			if (constructor != null && s.isSuper) {
-				'''super(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
+				c.addExceptions(constructor.exceptions)
+				content = '''super(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
 			} else if (constructor != null) {
-				'''this(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
+				c.addExceptions(constructor.exceptions)
+				content = '''this(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
 			}
  		} else {
  			if (s.isSuper) {
- 			'''super(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
+ 				content = '''super(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
  			} else {
- 			'''this(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
+ 				content = '''this(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
  			}
- 		}	
+ 		}
+ 		if (c.hasException) {
+			return createTryCatchBlock(content, c);		
+		} else {
+			return content;
+		}	
 	}
 	
+	def String compile(IQLVariableStatement s, G c) {
+		var leftVar = s.^var as IQLVariableDeclaration
+		var leftType = leftVar.ref
+		var content = "";
+		if (s.init != null && s.init.argsList == null && s.init.argsMap == null) {			
+			var right = exprEvaluator.eval(s.init.value, leftType);
+			if (right.isNull || lookUp.isAssignable(leftType, right.ref)){
+				content =''' = «compile(s.init, leftType, c)»;'''
+			} else if (right.isNull || lookUp.isCastable(leftType, right.ref)){
+				var target = typeCompiler.compile(leftType, c, false)
+				content =''' = ((«target»)«compile(s.init, leftType, c)»);'''
+			} else {
+				content =''' = «compile(s.init, leftType, c)»;'''				
+			}					
+		} else if (s.init != null) {
+			content = ''' = «compile(s.init, leftType, c)»;'''
+			
+		} 
+		
+		if (c.hasException) {
+			'''
+			«compile(leftVar, c)» = «getDefaultLiteral(leftType)»;
+			«createTryCatchBlock(leftVar.name+content, c)»
+			'''			
+		} else {
+			return compile(leftVar, c) + content;
+		}
+	}
 	
 	def String compile(IQLVariableDeclaration decl, G context) {
 		var type = decl.ref

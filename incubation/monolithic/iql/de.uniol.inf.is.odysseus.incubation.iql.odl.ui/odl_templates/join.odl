@@ -1,48 +1,48 @@
-operator OJoin(outputMode = "NEW_ELEMENT"){	
+operator ODLJoin(outputMode = "NEW_ELEMENT", minInputPorts = 2, maxInputPorts = 2){	
 	
-	parameter IPredicate joinPredicate;		
+	optional parameter IPredicate predicate = TruePredicate::getInstance();		
 	
-	ITimeIntervalSweepArea[] areas = [];
-	ITransferArea transferFunction;	
+	ITimeIntervalSweepArea[] areas = [];	
+	
 	IDataMergeFunction dataMerge;
-	IMetadataMergeFunction metadataMerge;
 	
+	ITransferArea transferFunction;		
+	
+	IMetadataMergeFunction metadataMerge;
 		
-	on init {
-		areas[0] = new JoinTISweepArea();
-		areas[0].queryPredicate = joinPredicate;
+		
+	on init {		
+		String areaName = "TIJoinSA";
+		areas[0] = SweepAreaRegistry::getSweepArea(areaName);		
+		areas[0].queryPredicate = predicate;		
 							
-		areas[1] = new JoinTISweepArea();
-		areas[1].queryPredicate = joinPredicate;
-	}		
+		areas[1] = SweepAreaRegistry::getSweepArea(areaName);
+		areas[1].queryPredicate = predicate;
+	}	
+		
 		
 	on createOutputSchema(int arg0) : SDFSchema{
 		SDFSchema left = getSubscribedToSource(0).schema;
 		SDFSchema right = getSubscribedToSource(1).schema;		
 		return SDFSchema::join(left, right);
 	}
-			
-			
 	
-	
-	on processOpen {
+	on processOpen {		
+		dataMerge = new RelationalMergeFunction(getOutputSchema.size);		
+		dataMerge.init;	
 			
 		transferFunction = new TITransferArea();
 		transferFunction.init(this, this.getSubscribedToSource.size);		
 		
-		dataMerge = new RelationalMergeFunction(getOutputSchema.size);		
-		dataMerge.init;		
-		
-		metadataMerge = getMergeFunction(getInputSchema(0).getMetaAttributeNames, getInputSchema(1).getMetaAttributeNames);
+		List leftMeta = getInputSchema(0).getMetaAttributeNames;
+		List rightMeta = getInputSchema(1).getMetaAttributeNames;
+		metadataMerge = MetadataRegistry::getMergeFunction(leftMeta,rightMeta);
 		metadataMerge.init;	
 		
-		joinPredicate.init();
+		predicate.init();
+		
 		areas[0].clear;
 		areas[1].clear;
-	}
-	
-	on processDone(int port) {
-		this.transferFunction.done(port);
 	}
 	
 	on processNext(Tuple tuple, int port) {
@@ -50,15 +50,15 @@ operator OJoin(outputMode = "NEW_ELEMENT"){
 				
 		int otherPort = getOtherPort(port);	
 				
-		Order order = fromOrdinal(port);	
+		Order order = Order::fromOrdinal(port);	
 				
 		areas[otherport].purgeElements(tuple, order);	
 		
 		Iterator qualifies = areas[otherPort].queryCopy(tuple, order, false);
 				
 		while(qualifies.hasNext) {
-			Object next = qualifies.next;
-			Object newElement = dataMerge.merge(tuple, next, metadataMerge, order);
+			Tuple next = qualifies.next;
+			Tuple newElement = dataMerge.merge(tuple, next, metadataMerge, order);
 			transferFunction.transfer(newElement);
 		}		
 				
@@ -72,6 +72,10 @@ operator OJoin(outputMode = "NEW_ELEMENT"){
 		}
 		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
+	}
+	
+	on processDone(int port) {
+		this.transferFunction.done(port);
 	}
 
 

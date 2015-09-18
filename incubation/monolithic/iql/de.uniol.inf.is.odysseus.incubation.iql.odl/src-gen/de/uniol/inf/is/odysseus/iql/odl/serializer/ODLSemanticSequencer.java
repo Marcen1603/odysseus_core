@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionMapKeyVal
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionNull;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionRange;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionString;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalAndExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalOrExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection;
@@ -602,6 +603,34 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
+			case BasicIQLPackage.IQL_LITERAL_EXPRESSION_TYPE:
+				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
+				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
+				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLEqualityExpressionRule() ||
+				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLExpressionRule() ||
+				   context == grammarAccess.getIQLLiteralExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
+				   context == grammarAccess.getIQLRelationalExpressionRule() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getIQLUnaryExpressionRule() ||
+				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
+					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionType) semanticObject); 
+					return; 
+				}
+				else break;
 			case BasicIQLPackage.IQL_LOGICAL_AND_EXPRESSION:
 				if(context == grammarAccess.getIQLAssignmentExpressionRule() ||
 				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
@@ -1091,7 +1120,7 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 	/**
 	 * Constraint:
 	 *     (
-	 *         (on?='on' | validate?='validate') 
+	 *         (on?='on' | validate?='validate' | (override?='override'? ao?='ao') | (override?='override'? po?='po')) 
 	 *         (simpleName=ID (parameters+=JvmFormalParameter parameters+=JvmFormalParameter*)? returnType=JvmTypeReference?)? 
 	 *         body=IQLStatementBlock
 	 *     )

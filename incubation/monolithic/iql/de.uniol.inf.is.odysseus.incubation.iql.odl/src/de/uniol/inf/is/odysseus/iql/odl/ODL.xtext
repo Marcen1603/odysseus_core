@@ -31,7 +31,7 @@ ODLParameter returns basiciql::IQLAttribute:
 
 ODLMethod returns basiciql::IQLMethod:
 	{ODLMethod}		
-	(on?='on' | validate?='validate')
+	(on?='on' | validate?='validate' | (override?='override')? ao?='ao' | (override?='override')? po?='po')
 	(simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?)?
 	body=IQLStatementBlock
 ;

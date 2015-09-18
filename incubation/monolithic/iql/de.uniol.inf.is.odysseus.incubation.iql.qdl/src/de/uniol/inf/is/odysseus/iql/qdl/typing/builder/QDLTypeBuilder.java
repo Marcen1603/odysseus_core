@@ -29,7 +29,11 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
+import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.AbstractIQLTypeBuilder;
+import de.uniol.inf.is.odysseus.iql.qdl.types.compiler.OperatorSystemTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.types.compiler.SourceSystemTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLPipeOperatorImpl;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLSinkOperatorImpl;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.QDLSourceImpl;
@@ -41,6 +45,9 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 	public static String[] OPERATORS_NAMESPACE = new String[]{"operators"};
 	private static final String[] SOURCES_NAMESPACE = new String[]{"sources"};
 	
+	@Inject
+	private IQLQualifiedNameConverter converter;
+
 	
 	@Inject
 	public QDLTypeBuilder(IQDLTypeDictionary typeDictionary, IQDLTypeUtils typeUtils) {
@@ -70,7 +77,8 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		sourceAttr.setType(typeUtils.createTypeRef(sourceClass));
 		sourceClass.getMembers().add(sourceAttr);
 		
-		typeDictionary.addSystemType(sourceClass, QDLSourceImpl.class);
+		IQLSystemType systemType = new IQLSystemType(sourceClass, QDLSourceImpl.class);
+		typeDictionary.addSystemType(systemType, new SourceSystemTypeCompiler(typeUtils, converter));
 		typeDictionary.addSource(name, source, sourceClass);
 	}
 	
@@ -119,7 +127,10 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		Map<String, Parameter> parameterTypes = new HashMap<>();
 
 		typeDictionary.removeSystemType(createQualifiedName(OPERATORS_NAMESPACE, name));
-		typeDictionary.addSystemType(opClass, superJavaClass);
+		
+		IQLSystemType systemType = new IQLSystemType(opClass, superJavaClass);
+		typeDictionary.addSystemType(systemType, new OperatorSystemTypeCompiler(typeDictionary, typeUtils));
+		
 		typeDictionary.addOperator(opBuilder, opClass, parameters, parameterTypes);
 		
 		BeanInfo beanInfo = null;

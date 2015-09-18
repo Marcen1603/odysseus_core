@@ -7,9 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
-import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -34,6 +32,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionNull;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionRange;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionString;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalAndExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalOrExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
@@ -150,11 +149,16 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeDictionar
 			return getType((IQLLiteralExpressionList)expr, context);
 		} else if (expr instanceof IQLLiteralExpressionMap) {
 			return getType((IQLLiteralExpressionMap)expr, context);
+		}  else if (expr instanceof IQLLiteralExpressionType) {
+			return getType((IQLLiteralExpressionType)expr, context);
 		}
 		return new TypeResult();
 	}
 	
 	
+	public TypeResult getType(IQLLiteralExpressionType expr, C context) {
+		return new TypeResult(typeUtils.createTypeRef(Class.class, typeDictionary.getSystemResourceSet()));
+	}
 	
 	public TypeResult getType(IQLLiteralExpressionDouble expr, C context) {
 		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"doubleToType", expr)){
@@ -371,13 +375,11 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeDictionar
 	}
 	
 	public TypeResult getType(IQLThisExpression expr, C context) {		
-		JvmDeclaredType c = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
-		return new TypeResult(typeUtils.createTypeRef(c));
+		return new TypeResult(lookUp.getThisType(expr));
 	}
 	
 	public TypeResult getType(IQLSuperExpression expr, C context) {
-		JvmDeclaredType c = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
-		return new TypeResult(c.getExtendedClass());
+		return new TypeResult(lookUp.getSuperType(expr));
 	}
 	
 	

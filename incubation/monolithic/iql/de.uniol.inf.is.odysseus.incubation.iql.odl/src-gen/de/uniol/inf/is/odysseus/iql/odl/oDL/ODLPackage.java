@@ -649,13 +649,31 @@ public interface ODLPackage extends EPackage
   int ODL_METHOD__VALIDATE = BasicIQLPackage.IQL_METHOD_FEATURE_COUNT + 1;
 
   /**
+   * The feature id for the '<em><b>Ao</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_METHOD__AO = BasicIQLPackage.IQL_METHOD_FEATURE_COUNT + 2;
+
+  /**
+   * The feature id for the '<em><b>Po</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_METHOD__PO = BasicIQLPackage.IQL_METHOD_FEATURE_COUNT + 3;
+
+  /**
    * The number of structural features of the '<em>Method</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ODL_METHOD_FEATURE_COUNT = BasicIQLPackage.IQL_METHOD_FEATURE_COUNT + 2;
+  int ODL_METHOD_FEATURE_COUNT = BasicIQLPackage.IQL_METHOD_FEATURE_COUNT + 4;
 
 
   /**
@@ -753,6 +771,28 @@ public interface ODLPackage extends EPackage
    * @generated
    */
   EAttribute getODLMethod_Validate();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isAo <em>Ao</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ao</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isAo()
+   * @see #getODLMethod()
+   * @generated
+   */
+  EAttribute getODLMethod_Ao();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isPo <em>Po</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Po</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isPo()
+   * @see #getODLMethod()
+   * @generated
+   */
+  EAttribute getODLMethod_Po();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -854,6 +894,22 @@ public interface ODLPackage extends EPackage
      * @generated
      */
     EAttribute ODL_METHOD__VALIDATE = eINSTANCE.getODLMethod_Validate();
+
+    /**
+     * The meta object literal for the '<em><b>Ao</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ODL_METHOD__AO = eINSTANCE.getODLMethod_Ao();
+
+    /**
+     * The meta object literal for the '<em><b>Po</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ODL_METHOD__PO = eINSTANCE.getODLMethod_Po();
 
   }
 

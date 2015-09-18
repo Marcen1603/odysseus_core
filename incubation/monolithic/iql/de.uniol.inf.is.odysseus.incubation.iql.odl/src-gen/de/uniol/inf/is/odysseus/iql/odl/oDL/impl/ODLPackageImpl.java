@@ -209,6 +209,26 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getODLMethod_Ao()
+  {
+    return (EAttribute)odlMethodEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getODLMethod_Po()
+  {
+    return (EAttribute)odlMethodEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public ODLFactory getODLFactory()
   {
     return (ODLFactory)getEFactoryInstance();
@@ -245,6 +265,8 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
     odlMethodEClass = createEClass(ODL_METHOD);
     createEAttribute(odlMethodEClass, ODL_METHOD__ON);
     createEAttribute(odlMethodEClass, ODL_METHOD__VALIDATE);
+    createEAttribute(odlMethodEClass, ODL_METHOD__AO);
+    createEAttribute(odlMethodEClass, ODL_METHOD__PO);
   }
 
   /**
@@ -296,6 +318,8 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
     initEClass(odlMethodEClass, ODLMethod.class, "ODLMethod", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getODLMethod_On(), ecorePackage.getEBoolean(), "on", null, 0, 1, ODLMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getODLMethod_Validate(), ecorePackage.getEBoolean(), "validate", null, 0, 1, ODLMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getODLMethod_Ao(), ecorePackage.getEBoolean(), "ao", null, 0, 1, ODLMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getODLMethod_Po(), ecorePackage.getEBoolean(), "po", null, 0, 1, ODLMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Create resource
     createResource(eNS_URI);

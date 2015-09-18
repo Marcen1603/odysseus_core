@@ -262,13 +262,11 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		descBuilder.append(name);
 		
 
-		if (name.equalsIgnoreCase(op.getSimpleName())) {
-			descBuilder.append("(");
-			if (op.getParameters() != null) {
-				descBuilder.append(toDescString(op.getParameters()));
-			}
-			descBuilder.append(")");			
+		descBuilder.append("(");
+		if (op.getParameters() != null) {
+			descBuilder.append(toDescString(op.getParameters()));
 		}
+		descBuilder.append(")");
 
 		
 		if (op.getReturnType() != null && !typeUtils.isVoid(op.getReturnType())) {
@@ -277,17 +275,17 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		
 		StringBuilder patternBuilder = new StringBuilder();
 		patternBuilder.append(name);
-		if (name.equalsIgnoreCase(op.getSimpleName())) {
-			if (op.getParameters() != null && op.getParameters().size() > 0) {
-				patternBuilder.append("(");
-				patternBuilder.append(toPattern(op.getParameters()));
-				patternBuilder.append(")");
-			}
+		if (op.getParameters() != null && op.getParameters().size() > 0) {
+			patternBuilder.append("(");
+			patternBuilder.append(toPattern(op.getParameters()));
+			patternBuilder.append(")");
 		}		
 
-		String id = name;
+		String id = "";
 		if (op.getParameters() != null) {
-			id = id+methodFinder.createExecutableID(op);
+			id = methodFinder.createExecutableID(op);
+		} else {
+			id = name;
 		}
 		Template template = createTemplate(descBuilder.toString(), declaredType.getSimpleName(), id, patternBuilder.toString());
 		Image image = labelProvider.getImage(op);

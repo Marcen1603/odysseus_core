@@ -464,6 +464,11 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLLiteralExpressionRangeAdapter();
       }
       @Override
+      public Adapter caseIQLLiteralExpressionType(IQLLiteralExpressionType object)
+      {
+        return createIQLLiteralExpressionTypeAdapter();
+      }
+      @Override
       public Adapter caseIQLLiteralExpressionNull(IQLLiteralExpressionNull object)
       {
         return createIQLLiteralExpressionNullAdapter();
@@ -1686,6 +1691,21 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLLiteralExpressionRangeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType <em>IQL Literal Expression Type</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType
+   * @generated
+   */
+  public Adapter createIQLLiteralExpressionTypeAdapter()
   {
     return null;
   }

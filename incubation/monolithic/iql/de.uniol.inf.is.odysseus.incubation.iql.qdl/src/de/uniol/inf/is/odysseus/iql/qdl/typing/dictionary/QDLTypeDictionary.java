@@ -114,8 +114,8 @@ public class QDLTypeDictionary extends AbstractIQLTypeDictionary<IQDLTypeUtils, 
 	@Override
 	public Collection<String> createImplicitStaticImports() {
 		Collection<String> implicitStaticImports = super.createImplicitStaticImports();
-		for (Class<?> c : QDLDefaultTypes.getImplicitStaticImports()) {
-			implicitStaticImports.add(converter.toIQLString(c.getCanonicalName()));
+		for (String type : QDLDefaultTypes.getImplicitStaticImports()) {
+			implicitStaticImports.add(converter.toIQLString(type));
 		}
 		return implicitStaticImports;
 	}

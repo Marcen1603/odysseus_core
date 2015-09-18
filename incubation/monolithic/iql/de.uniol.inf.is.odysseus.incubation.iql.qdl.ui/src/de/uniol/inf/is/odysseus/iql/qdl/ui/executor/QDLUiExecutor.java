@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.ui.executor;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -16,6 +17,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
+
 
 
 
@@ -86,7 +88,9 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 	
 	protected void copyAndMoveUserEditiedFiles(QDLQuery query, String path) {
 		BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(query, path, query.getSimpleName());
-		for (EObject obj : getUserDefinedTypes(query)) {
+		Collection<EObject> userDefinedTypes = new HashSet<>();
+		collectUserDefinedTypes(query, userDefinedTypes);
+		for (EObject obj : userDefinedTypes) {
 			if (obj instanceof IQLClass) {
 				BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
 			} else if (obj instanceof IQLInterface) {

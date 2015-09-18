@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -92,7 +91,8 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 	}
 	
 	protected Collection<Resource> createNecessaryIQLFiles(ResourceSet resourceSet, String outputPath, EObject element) {
-		Collection<EObject> userDefinedTypes = getUserDefinedTypes(element);
+		Collection<EObject> userDefinedTypes = new HashSet<>();
+		collectUserDefinedTypes(element, userDefinedTypes);
 		userDefinedTypes.add(element);
 		Map<IQLModel, StringBuilder> fileBuilders = new HashMap<>();
 		for (EObject type : userDefinedTypes) {
@@ -137,16 +137,14 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		return NodeModelUtils.getTokenText(node);
 	}
 	
-	protected Set<EObject> getUserDefinedTypes(EObject element) {
-		Set<EObject> userDefinedTypes = new HashSet<>();
+	protected void collectUserDefinedTypes(EObject element, Collection<EObject> userDefinedTypes)  {
 		for (JvmTypeReference typeRef : EcoreUtil2.getAllContentsOfType(element, JvmTypeReference.class)) {
 			JvmType type = typeUtils.getInnerType(typeRef, false);			
-			if (typeUtils.isUserDefinedType(type, false)) {
+			if (typeUtils.isUserDefinedType(type, false) && !userDefinedTypes.contains(type)) {
 				userDefinedTypes.add(type);
-				userDefinedTypes.addAll(getUserDefinedTypes(type));
+				collectUserDefinedTypes(type, userDefinedTypes);
 			} 
 		}
-		return userDefinedTypes;
 	}
 	
 	

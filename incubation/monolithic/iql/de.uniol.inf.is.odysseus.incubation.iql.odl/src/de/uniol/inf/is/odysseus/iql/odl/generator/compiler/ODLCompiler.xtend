@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLAORule
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute
 
 class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeDictionary, IODLTypeUtils> implements IODLCompiler{
 	
@@ -95,13 +96,9 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 	def String compileAOIntern(ODLOperator o, IODLGeneratorContext context) {	
 		var opName = o.simpleName+IODLCompilerHelper.AO_OPERATOR
 		var superClass = AbstractLogicalOperator.simpleName;
+		var members = helper.getAOMembers(o);	
+		var attributes = helper.getAOAttributes(o);	
 		var parameters = helper.getParameters(o);
-		var newExpressions = helper.getNewExpressions(o);
-		var varStmts = helper.getVarStatements(o);
-		var odlmethods = helper.getODLMethods(o);
-		var hasPredicate = helper.hasPredicate(o);
-		var predicates = helper.getPredicates(o);
-		var predicateArrays = helper.getPredicateArrays(o);
 		var operatorValidate = helper.hasOperatorValidate(o);
 		var parametersToValidate = new ArrayList();
 		for (p : parameters) {
@@ -109,6 +106,14 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 				parametersToValidate.add(p);
 			}
 		}
+		
+		var hasPredicate = helper.hasPredicate(o);
+		var newExpressions = helper.getNewExpressions(o);
+		var varStmts = helper.getVarStatements(o);
+		
+		var predicates = helper.getPredicates(o);
+		var predicateArrays = helper.getPredicateArrays(o);
+
 		context.addImport(List.canonicalName)
 		context.addImport(ArrayList.canonicalName)
 		context.addImport(Map.canonicalName)
@@ -123,10 +128,7 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 		@SuppressWarnings("all")
 		@«LogicalOperator.simpleName»(«metadataAnnotationCompiler.getAOAnnotationElements(o, context)»)
 		public class «opName» extends «superClass» implements «IODLAO.simpleName»«IF hasPredicate», «IHasPredicates.simpleName»«ENDIF» {
-			«FOR p : parameters»
-				«compile(p, context)»
-			«ENDFOR»
-			
+						
 			private «Map.simpleName»<«String.simpleName», «List.simpleName»<«Object.simpleName»>> metadata = new «HashMap.simpleName»<>();
 			
 			public «opName»() {
@@ -135,10 +137,14 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 			
 			public «opName»(«opName» ao) {
 				super(ao);
-				«FOR p : parameters»
-					«createCloneStatements(p, "ao", context)»
+				«FOR attr : attributes»
+					«createCloneStatements(attr, "ao", context)»
 				«ENDFOR»
 			}
+			
+			«FOR member : members»
+				«compile(member as JvmMember, context)»
+			«ENDFOR»
 			
 			«FOR p : parameters»
 				«var pName = helper.firstCharUpperCase(p.simpleName)»
@@ -149,16 +155,12 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 				}
 			«ENDFOR»
 			
-			«FOR p : parameters»
-				«var pName = helper.firstCharUpperCase(p.simpleName)»
-				«var type = typeCompiler.compile(p.type, context, false)»
-				public «type» get«pName»() {
-					return this.«p.simpleName»;
+			«FOR attr : attributes»
+				«var attrName = helper.firstCharUpperCase(attr.simpleName)»
+				«var type = typeCompiler.compile(attr.type, context, false)»
+				public «type» get«attrName»() {
+					return this.«attr.simpleName»;
 				}
-			«ENDFOR»
-			
-			«FOR m : odlmethods»			
-			«compile(m, context)»
 			«ENDFOR»
 			
 			«IF operatorValidate ||  parametersToValidate.size > 0»
@@ -200,7 +202,7 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 				«ENDIF»				
 			«ENDFOR»
 			
-			«FOR a : parameters»
+			«FOR a : attributes»
 				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
 					«createGetterMethod(a.type, a.init.argsMap, context)»
 				«ENDIF»				
@@ -263,20 +265,20 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 
 	def String compilePOIntern(IQLModelElement element, ODLOperator o, IODLGeneratorContext context) {
 		var opName = o.simpleName+IODLCompilerHelper.PO_OPERATOR
-		var aoName = o.simpleName+IODLCompilerHelper.AO_OPERATOR		
-		var parameters = helper.getParameters(o)
-		var attributes = helper.getAttributes(o)	
+		var aoName = o.simpleName+IODLCompilerHelper.AO_OPERATOR	
 		var superClass = AbstractPipe	
 		var read = helper.determineReadType(o)
 		var write = read
-		var meta = helper.determineMetadataType(o)
-		
+		var meta = helper.determineMetadataType(o)		
+		var members = helper.getPOMembers(o);		
+		var attributes = helper.getPOAttributes(o)	
+		var aoAttributes = helper.getAOAndPOAttributes(o)				
 		var newExpressions = helper.getNewExpressions(o);
 		var varStmts = helper.getVarStatements(o);
 		var outputmode = helper.determineOutputMode(o);
-		var hasInit = helper.hasInitMethod(o);
 		var hasProcessNext = helper.hasProcessNext(o);
 		var hasProcessPunctuation = helper.hasProcessPunctuation(o);
+		var hasInit = helper.hasPOInitMethod(o);
 		
 		context.addImport(superClass.canonicalName)
 		context.addImport(outputmode.class.canonicalName)		
@@ -292,40 +294,40 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 		@SuppressWarnings("all")
 		public class «opName» extends «superClass.simpleName»<«typeCompiler.compile(read, context, false)»<«typeCompiler.compile(meta, context, false)»>,«typeCompiler.compile(write, context, false)»<«typeCompiler.compile(meta, context, false)»>> implements «IODLPO.simpleName»<«typeCompiler.compile(read, context, false)»<«typeCompiler.compile(meta, context, false)»>,«typeCompiler.compile(write, context, false)»<«typeCompiler.compile(meta, context, false)»>> {
 			
-			«FOR m : o.members»	
-			«compile(m, context)»
-			«ENDFOR»
-			
 			public «opName»() {
-				super();
+				super();				
 			}
 			
 			public «opName»(«opName» po) {
 				super(po);
-				«FOR p : parameters»
-					«createCloneStatements(p, "po", context)»
-				«ENDFOR»
+				«FOR attr : attributes»
+					«createCloneStatements(attr, "po", context)»
+				«ENDFOR»			
 			}
 			
 			public «opName»(«aoName» ao) {
-				«FOR p : parameters»
-					«createCloneStatements(p, "ao", context)»
-				«ENDFOR»
+				«FOR attr : aoAttributes»
+					«createCloneStatements(attr, "ao", context)»
+				«ENDFOR»	
 				«IF hasInit»
-					init();
-				«ENDIF»
+					initialize();
+				«ENDIF»			
 			}
+			
+			«FOR m : members»	
+			«compile(m, context)»
+			«ENDFOR»
 			
 			@«Override.simpleName»
 			public «OutputMode.simpleName» getOutputMode() {
 				return «OutputMode.simpleName».«outputmode.toString»;
 			}
 			
-			«FOR p : parameters»
-				«var pName = helper.firstCharUpperCase(p.simpleName)»
-				«var type = typeCompiler.compile(p.type, context, false)»
+			«FOR attr : attributes»
+				«var pName = helper.firstCharUpperCase(attr.simpleName)»
+				«var type = typeCompiler.compile(attr.type, context, false)»
 				public «type» get«pName»() {
-					return this.«p.simpleName»;
+					return this.«attr.simpleName»;
 				}
 			«ENDFOR»
 			
@@ -370,7 +372,7 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 	}	
 	
 	override String compile(JvmMember m, IODLGeneratorContext context) {
-		if (context.ao && m instanceof ODLParameter) {
+		if (m instanceof ODLParameter) {
 			compile(m as ODLParameter, context);
 		} else if (m instanceof ODLMethod) {
 			compile(m as ODLMethod, context);			
@@ -388,19 +390,19 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 
 	
 	def String compile(ODLMethod m,IODLGeneratorContext context) {
-		if (m.validate && m.simpleName != null && context.isAo) {
+		if (m.validate && m.simpleName != null) {
 			'''
 			private boolean validate«m.simpleName»()
 				«stmtCompiler.compile(m.body, context)»	
 			
 			'''	
-		} else if (m.validate && m.simpleName == null && context.isAo) {
+		} else if (m.validate && m.simpleName == null) {
 			'''
 			protected boolean validate()
 				«stmtCompiler.compile(m.body, context)»	
 			
 			'''	
-		} else if (m.on && ((context.ao && EventMethodsFactory.getInstance.hasEventMethod(true, m.simpleName, m.parameters)) ||  (!context.ao && EventMethodsFactory.getInstance.hasEventMethod(false, m.simpleName, m.parameters)))){
+		} else if (m.on){
 			var className = helper.getClassName(m);
 			var returnT = "";
 			var eventMethod = EventMethodsFactory.getInstance.getEventMethod(context.ao, m.simpleName, m.parameters);
@@ -417,25 +419,37 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 				«stmtCompiler.compile(m.body, context)»	
 			
 			'''	
-		} 
+		} else {
+			super.compile(m, context)
+		}
 	}
 	
-	def String createCloneStatements(ODLParameter p, String varName, IODLGeneratorContext context) {
-		var name = p.simpleName
+	def String createCloneStatements(IQLAttribute attr, String varName, IODLGeneratorContext context) {
+		var name = attr.simpleName
 		var pName = helper.firstCharUpperCase(name)
-		var type = p.type
-		
+		var type = attr.type
+		var content = "";
+		var ifStmt = true;
 		if (lookUp.isList(type)) {
 			context.addImport(IQLUtils.canonicalName)			
-			'''this.«name» = «IQLUtils.simpleName».createList(«varName».get«pName»());'''
+			content = '''this.«name» = «IQLUtils.simpleName».copyList(«varName».get«pName»());'''
 
 		} else if (lookUp.isMap(type)) {
 			context.addImport(IQLUtils.canonicalName)				
-			'''this.«name» = «IQLUtils.simpleName».createMap(«varName».get«pName»());'''		
+			content = '''this.«name» = «IQLUtils.simpleName».copyMap(«varName».get«pName»());'''		
 		} else if (lookUp.isClonable(type)) {
-			'''this.«name» = «varName».get«pName»().clone();'''
+			content = '''this.«name» = «varName».get«pName»().clone();'''
 		} else {
-			'''this.«name» = «varName».get«pName»();'''
+			ifStmt = false;
+			content = '''this.«name» = «varName».get«pName»();'''
+		}
+		if (ifStmt) {
+			'''
+			if («varName».get«pName»() != null)
+				«content»
+			'''
+		} else {
+			'''«content»'''
 		}
 	}	
 

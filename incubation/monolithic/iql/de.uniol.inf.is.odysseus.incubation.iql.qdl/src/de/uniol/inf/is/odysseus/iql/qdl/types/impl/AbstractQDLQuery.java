@@ -27,7 +27,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		this.executor = executor;
 	}
 	
-	public void create(Operator operator) {
+	protected void create(Operator operator) {
 		executor.create(operator);
 	}	
 	
@@ -43,7 +43,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		executor.startWithMultipleSinks(operators);
 	}
 	
-	public void create(String name,Operator operator) {
+	protected void create(String name,Operator operator) {
 		executor.create(name, operator);
 	}	
 	

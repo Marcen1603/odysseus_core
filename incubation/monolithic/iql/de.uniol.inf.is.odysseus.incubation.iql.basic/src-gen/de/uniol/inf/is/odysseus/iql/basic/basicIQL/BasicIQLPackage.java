@@ -2207,13 +2207,22 @@ public interface BasicIQLPackage extends EPackage
   int IQL_FOR_STATEMENT__VAR = IQL_STATEMENT_FEATURE_COUNT + 0;
 
   /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_FOR_STATEMENT__VALUE = IQL_STATEMENT_FEATURE_COUNT + 1;
+
+  /**
    * The feature id for the '<em><b>Predicate</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IQL_FOR_STATEMENT__PREDICATE = IQL_STATEMENT_FEATURE_COUNT + 1;
+  int IQL_FOR_STATEMENT__PREDICATE = IQL_STATEMENT_FEATURE_COUNT + 2;
 
   /**
    * The feature id for the '<em><b>Update Expr</b></em>' containment reference.
@@ -2222,7 +2231,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_FOR_STATEMENT__UPDATE_EXPR = IQL_STATEMENT_FEATURE_COUNT + 2;
+  int IQL_FOR_STATEMENT__UPDATE_EXPR = IQL_STATEMENT_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -2231,7 +2240,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_FOR_STATEMENT__BODY = IQL_STATEMENT_FEATURE_COUNT + 3;
+  int IQL_FOR_STATEMENT__BODY = IQL_STATEMENT_FEATURE_COUNT + 4;
 
   /**
    * The number of structural features of the '<em>IQL For Statement</em>' class.
@@ -2240,7 +2249,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_FOR_STATEMENT_FEATURE_COUNT = IQL_STATEMENT_FEATURE_COUNT + 4;
+  int IQL_FOR_STATEMENT_FEATURE_COUNT = IQL_STATEMENT_FEATURE_COUNT + 5;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForEachStatementImpl <em>IQL For Each Statement</em>}' class.
@@ -3419,6 +3428,34 @@ public interface BasicIQLPackage extends EPackage
   int IQL_LITERAL_EXPRESSION_RANGE_FEATURE_COUNT = IQL_EXPRESSION_FEATURE_COUNT + 1;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLLiteralExpressionTypeImpl <em>IQL Literal Expression Type</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLLiteralExpressionTypeImpl
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionType()
+   * @generated
+   */
+  int IQL_LITERAL_EXPRESSION_TYPE = 75;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_LITERAL_EXPRESSION_TYPE__VALUE = IQL_EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>IQL Literal Expression Type</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_LITERAL_EXPRESSION_TYPE_FEATURE_COUNT = IQL_EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLLiteralExpressionNullImpl <em>IQL Literal Expression Null</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3426,7 +3463,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionNull()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_NULL = 75;
+  int IQL_LITERAL_EXPRESSION_NULL = 76;
 
   /**
    * The number of structural features of the '<em>IQL Literal Expression Null</em>' class.
@@ -3445,7 +3482,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionList()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_LIST = 76;
+  int IQL_LITERAL_EXPRESSION_LIST = 77;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -3473,7 +3510,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionMap()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_MAP = 77;
+  int IQL_LITERAL_EXPRESSION_MAP = 78;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -4542,6 +4579,17 @@ public interface BasicIQLPackage extends EPackage
   EReference getIQLForStatement_Var();
 
   /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement#getValue()
+   * @see #getIQLForStatement()
+   * @generated
+   */
+  EReference getIQLForStatement_Value();
+
+  /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement#getPredicate <em>Predicate</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5576,6 +5624,27 @@ public interface BasicIQLPackage extends EPackage
   EAttribute getIQLLiteralExpressionRange_Value();
 
   /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType <em>IQL Literal Expression Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>IQL Literal Expression Type</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType
+   * @generated
+   */
+  EClass getIQLLiteralExpressionType();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionType#getValue()
+   * @see #getIQLLiteralExpressionType()
+   * @generated
+   */
+  EReference getIQLLiteralExpressionType_Value();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionNull <em>IQL Literal Expression Null</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6527,6 +6596,14 @@ public interface BasicIQLPackage extends EPackage
     EReference IQL_FOR_STATEMENT__VAR = eINSTANCE.getIQLForStatement_Var();
 
     /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_FOR_STATEMENT__VALUE = eINSTANCE.getIQLForStatement_Value();
+
+    /**
      * The meta object literal for the '<em><b>Predicate</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -7367,6 +7444,24 @@ public interface BasicIQLPackage extends EPackage
      * @generated
      */
     EAttribute IQL_LITERAL_EXPRESSION_RANGE__VALUE = eINSTANCE.getIQLLiteralExpressionRange_Value();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLLiteralExpressionTypeImpl <em>IQL Literal Expression Type</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLLiteralExpressionTypeImpl
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionType()
+     * @generated
+     */
+    EClass IQL_LITERAL_EXPRESSION_TYPE = eINSTANCE.getIQLLiteralExpressionType();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_LITERAL_EXPRESSION_TYPE__VALUE = eINSTANCE.getIQLLiteralExpressionType_Value();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLLiteralExpressionNullImpl <em>IQL Literal Expression Null</em>}' class.

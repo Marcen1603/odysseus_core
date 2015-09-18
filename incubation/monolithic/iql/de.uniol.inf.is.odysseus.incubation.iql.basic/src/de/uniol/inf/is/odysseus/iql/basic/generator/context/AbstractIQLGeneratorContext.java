@@ -10,6 +10,23 @@ public abstract class AbstractIQLGeneratorContext implements IIQLGeneratorContex
 	private Collection<String> imports = new HashSet<>();
 	
 	private JvmTypeReference expectedTypeRef;
+		
+	private Collection<JvmTypeReference> exceptions = new HashSet<>();
+	
+	@Override
+	public boolean hasException() {
+		return !exceptions.isEmpty();
+	}
+	
+	@Override
+	public void addExceptions(Collection<JvmTypeReference> exceptions) {
+		this.exceptions.addAll(exceptions);
+	}
+	
+	@Override
+	public void clearExceptions() {
+		this.exceptions.clear();
+	}
 	
 	@Override
 	public void addImport(String importLine) {

@@ -100,11 +100,11 @@ public abstract class AbstractIQLServiceObserver  implements IIQLServiceObserver
 	}
 	
 	@Override
-	public Collection<Class<?>> getImplicitStaticImports() {
-		Collection<Class<?>> result = new HashSet<>();
+	public Collection<String> getImplicitStaticImports() {
+		Collection<String> result = new HashSet<>();
 		for (IIQLService service : getServices()) {
 			if (service.getImplicitStaticImports() != null) {
-				for (Class<?> type : service.getImplicitStaticImports()) {
+				for (String type : service.getImplicitStaticImports()) {
 					result.add(type);
 				}
 			}

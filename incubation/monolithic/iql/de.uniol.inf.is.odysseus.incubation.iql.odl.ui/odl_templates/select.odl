@@ -1,4 +1,4 @@
-operator OSelect(outputMode = "INPUT"){
+operator ODLSelect(outputMode = "INPUT", minInputPorts = 1, maxInputPorts = 1){
 	
 	parameter IPredicate predicate;
 	

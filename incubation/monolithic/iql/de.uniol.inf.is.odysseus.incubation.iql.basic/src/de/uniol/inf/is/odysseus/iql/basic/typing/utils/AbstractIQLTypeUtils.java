@@ -40,6 +40,29 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
 	
 	@Override
+	public JvmTypeReference getWrapper(JvmTypeReference valueType, Notifier context) {
+		if (isByte(valueType)) {
+			return createTypeRef(Byte.class, context);
+		} else if (isShort(valueType)) {
+			return createTypeRef(Short.class, context);
+		} else if (isInt(valueType)) {
+			return createTypeRef(Integer.class, context);
+		} else if (isLong(valueType)) {
+			return createTypeRef(Long.class, context);
+		} else if (isFloat(valueType)) {
+			return createTypeRef(Float.class, context);
+		} else if (isDouble(valueType)) {
+			return createTypeRef(Double.class, context);
+		} else if (isBoolean(valueType)) {
+			return createTypeRef(Boolean.class, context);
+		} else if (isCharacter(valueType)) {
+			return createTypeRef(Character.class, context);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
 	public JvmTypeReference createTypeRef(Class<?> javaType, Notifier context) {
 		JvmType type = typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(javaType.getCanonicalName());
 		if (type != null) {

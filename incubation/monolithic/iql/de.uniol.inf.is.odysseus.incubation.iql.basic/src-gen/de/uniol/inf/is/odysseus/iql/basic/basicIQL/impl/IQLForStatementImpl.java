@@ -15,6 +15,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>IQL For Statement</b></em>'.
@@ -23,6 +25,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getVar <em>Var</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getValue <em>Value</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getPredicate <em>Predicate</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getUpdateExpr <em>Update Expr</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getBody <em>Body</em>}</li>
@@ -41,7 +44,17 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * @generated
    * @ordered
    */
-  protected IQLStatement var;
+  protected JvmIdentifiableElement var;
+
+  /**
+   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getValue()
+   * @generated
+   * @ordered
+   */
+  protected IQLExpression value;
 
   /**
    * The cached value of the '{@link #getPredicate() <em>Predicate</em>}' containment reference.
@@ -51,7 +64,7 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * @generated
    * @ordered
    */
-  protected IQLStatement predicate;
+  protected IQLExpression predicate;
 
   /**
    * The cached value of the '{@link #getUpdateExpr() <em>Update Expr</em>}' containment reference.
@@ -99,7 +112,7 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLStatement getVar()
+  public JvmIdentifiableElement getVar()
   {
     return var;
   }
@@ -109,9 +122,9 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetVar(IQLStatement newVar, NotificationChain msgs)
+  public NotificationChain basicSetVar(JvmIdentifiableElement newVar, NotificationChain msgs)
   {
-    IQLStatement oldVar = var;
+    JvmIdentifiableElement oldVar = var;
     var = newVar;
     if (eNotificationRequired())
     {
@@ -126,7 +139,7 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setVar(IQLStatement newVar)
+  public void setVar(JvmIdentifiableElement newVar)
   {
     if (newVar != var)
     {
@@ -147,7 +160,55 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLStatement getPredicate()
+  public IQLExpression getValue()
+  {
+    return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetValue(IQLExpression newValue, NotificationChain msgs)
+  {
+    IQLExpression oldValue = value;
+    value = newValue;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_FOR_STATEMENT__VALUE, oldValue, newValue);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setValue(IQLExpression newValue)
+  {
+    if (newValue != value)
+    {
+      NotificationChain msgs = null;
+      if (value != null)
+        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_FOR_STATEMENT__VALUE, null, msgs);
+      if (newValue != null)
+        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_FOR_STATEMENT__VALUE, null, msgs);
+      msgs = basicSetValue(newValue, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_FOR_STATEMENT__VALUE, newValue, newValue));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLExpression getPredicate()
   {
     return predicate;
   }
@@ -157,9 +218,9 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetPredicate(IQLStatement newPredicate, NotificationChain msgs)
+  public NotificationChain basicSetPredicate(IQLExpression newPredicate, NotificationChain msgs)
   {
-    IQLStatement oldPredicate = predicate;
+    IQLExpression oldPredicate = predicate;
     predicate = newPredicate;
     if (eNotificationRequired())
     {
@@ -174,7 +235,7 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setPredicate(IQLStatement newPredicate)
+  public void setPredicate(IQLExpression newPredicate)
   {
     if (newPredicate != predicate)
     {
@@ -298,6 +359,8 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
     {
       case BasicIQLPackage.IQL_FOR_STATEMENT__VAR:
         return basicSetVar(null, msgs);
+      case BasicIQLPackage.IQL_FOR_STATEMENT__VALUE:
+        return basicSetValue(null, msgs);
       case BasicIQLPackage.IQL_FOR_STATEMENT__PREDICATE:
         return basicSetPredicate(null, msgs);
       case BasicIQLPackage.IQL_FOR_STATEMENT__UPDATE_EXPR:
@@ -320,6 +383,8 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
     {
       case BasicIQLPackage.IQL_FOR_STATEMENT__VAR:
         return getVar();
+      case BasicIQLPackage.IQL_FOR_STATEMENT__VALUE:
+        return getValue();
       case BasicIQLPackage.IQL_FOR_STATEMENT__PREDICATE:
         return getPredicate();
       case BasicIQLPackage.IQL_FOR_STATEMENT__UPDATE_EXPR:
@@ -341,10 +406,13 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
     switch (featureID)
     {
       case BasicIQLPackage.IQL_FOR_STATEMENT__VAR:
-        setVar((IQLStatement)newValue);
+        setVar((JvmIdentifiableElement)newValue);
+        return;
+      case BasicIQLPackage.IQL_FOR_STATEMENT__VALUE:
+        setValue((IQLExpression)newValue);
         return;
       case BasicIQLPackage.IQL_FOR_STATEMENT__PREDICATE:
-        setPredicate((IQLStatement)newValue);
+        setPredicate((IQLExpression)newValue);
         return;
       case BasicIQLPackage.IQL_FOR_STATEMENT__UPDATE_EXPR:
         setUpdateExpr((IQLExpression)newValue);
@@ -367,10 +435,13 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
     switch (featureID)
     {
       case BasicIQLPackage.IQL_FOR_STATEMENT__VAR:
-        setVar((IQLStatement)null);
+        setVar((JvmIdentifiableElement)null);
+        return;
+      case BasicIQLPackage.IQL_FOR_STATEMENT__VALUE:
+        setValue((IQLExpression)null);
         return;
       case BasicIQLPackage.IQL_FOR_STATEMENT__PREDICATE:
-        setPredicate((IQLStatement)null);
+        setPredicate((IQLExpression)null);
         return;
       case BasicIQLPackage.IQL_FOR_STATEMENT__UPDATE_EXPR:
         setUpdateExpr((IQLExpression)null);
@@ -394,6 +465,8 @@ public class IQLForStatementImpl extends IQLStatementImpl implements IQLForState
     {
       case BasicIQLPackage.IQL_FOR_STATEMENT__VAR:
         return var != null;
+      case BasicIQLPackage.IQL_FOR_STATEMENT__VALUE:
+        return value != null;
       case BasicIQLPackage.IQL_FOR_STATEMENT__PREDICATE:
         return predicate != null;
       case BasicIQLPackage.IQL_FOR_STATEMENT__UPDATE_EXPR:

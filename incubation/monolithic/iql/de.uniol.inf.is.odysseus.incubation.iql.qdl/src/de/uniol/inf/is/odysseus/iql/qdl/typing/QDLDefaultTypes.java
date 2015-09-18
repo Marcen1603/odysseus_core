@@ -45,9 +45,8 @@ public class QDLDefaultTypes {
 		return implicitImports;
 	}
 
-	public static Collection<Class<?>> getImplicitStaticImports() {
-		Collection<Class<?>> types = new HashSet<>();
-		types.add(System.class);
+	public static Collection<String> getImplicitStaticImports() {
+		Collection<String> types = new HashSet<>();
 		return types;
 	}
 

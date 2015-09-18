@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.odl.ui.executor;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -16,6 +17,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
+
 
 
 
@@ -66,10 +68,7 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 			copyAndMoveUserEditiedFiles(operator, outputPath);
 			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
 			loadOperator(operator, resources);			
-			
-			if (!isPersistent(operator)){
-				cleanUpDir(outputPath);
-			}
+		
 		}
 	}
 	
@@ -77,7 +76,9 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 		BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AO");
 		BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AORule");
 		BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"PO");
-		for (EObject obj : getUserDefinedTypes(operator)) {
+		Collection<EObject> userDefinedTypes = new HashSet<>();
+		collectUserDefinedTypes(operator, userDefinedTypes);
+		for (EObject obj : userDefinedTypes) {
 			if (obj instanceof IQLClass) {
 				BasicIQLUiExecutor.copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
 			} else if (obj instanceof IQLInterface) {

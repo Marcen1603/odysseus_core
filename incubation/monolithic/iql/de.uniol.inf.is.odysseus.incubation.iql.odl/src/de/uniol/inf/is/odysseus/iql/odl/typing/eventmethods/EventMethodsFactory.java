@@ -9,8 +9,9 @@ import java.util.Set;
 
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 
-import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.impl.InitEventMethod;
+import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.impl.AOInitEventMethod;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.impl.OutputSchemaEventMethod;
+import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.impl.POInitEventMethod;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.impl.ProcessCloseMethod;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.impl.ProcessDoneMethod;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.impl.ProcessDoneMethod2;
@@ -40,7 +41,7 @@ public class EventMethodsFactory {
 	}
 	
 	private void registerDefaultMethods() {
-		this.addEventMethod(new InitEventMethod());
+		this.addEventMethod(new AOInitEventMethod());
 		this.addEventMethod(new OutputSchemaEventMethod());
 		this.addEventMethod(new ProcessCloseMethod());
 		this.addEventMethod(new ProcessDoneMethod());
@@ -51,6 +52,7 @@ public class EventMethodsFactory {
 		this.addEventMethod(new SourceUnsubscribedEventMethod());
 		this.addEventMethod(new StreamObjectEventMethod());
 		this.addEventMethod(new TupleEventMethod());
+		this.addEventMethod(new POInitEventMethod());
 	}
 	
 	private void addEventMethod(IEventMethod eventMethod) {

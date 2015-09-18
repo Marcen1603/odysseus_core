@@ -46,15 +46,19 @@ public class BasicIQLUiTypeUtils extends BasicIQLTypeUtils {
 
 	public static String getPackage(Resource res) {
 		URI outputFolder = getOutputPath(res);
-		String[] segments = outputFolder.getPath().split("/");
-		StringBuilder packageBuilder = new StringBuilder();
-		for (int i = 0; i<segments.length; i++) {
-			if (i > 0) {
-				packageBuilder.append(IQLQualifiedNameConverter.DELIMITER);
+		if (outputFolder != null) {
+			String[] segments = outputFolder.getPath().split("/");
+			StringBuilder packageBuilder = new StringBuilder();
+			for (int i = 0; i<segments.length; i++) {
+				if (i > 0) {
+					packageBuilder.append(IQLQualifiedNameConverter.DELIMITER);
+				}
+				packageBuilder.append(segments[i]);
 			}
-			packageBuilder.append(segments[i]);
+			return packageBuilder.toString();
+		} else {
+			return null;
 		}
-		return packageBuilder.toString();
 	}
 
 

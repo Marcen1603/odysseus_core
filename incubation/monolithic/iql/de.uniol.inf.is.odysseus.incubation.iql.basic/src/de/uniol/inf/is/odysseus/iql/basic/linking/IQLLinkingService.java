@@ -51,21 +51,24 @@ public class IQLLinkingService extends DefaultLinkingService{
 	
 	@Override
 	public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) throws IllegalNodeException {
-		List<EObject> result = null;
+		EObject result = null;
 		if (context instanceof IQLMemberSelection) {
-			result = getLinkedObjectsIQLMemberSelection((IQLMemberSelection)context, ref, node);
+			result = getLinkedObjectIQLMemberSelection((IQLMemberSelection)context, ref, node);
 		} else if (context instanceof IQLJvmElementCallExpression) {
-			result =  getLinkedObjectsIQLJvmElementCallExpression((IQLJvmElementCallExpression)context, ref, node);
+			result = getLinkedObjectIQLJvmElementCallExpression((IQLJvmElementCallExpression)context, ref, node);
 		} else if (context instanceof IQLArgumentsMapKeyValue) {
-			result =  getLinkedObjectsIQLArgumentsMapKeyValue((IQLArgumentsMapKeyValue)context, ref, node);
+			result = getLinkedObjectIQLArgumentsMapKeyValue((IQLArgumentsMapKeyValue)context, ref, node);
+		} else {
+			return super.getLinkedObjects(context, ref, node);
+		}	
+		if (result == null) {
+			return new ArrayList<EObject>();
+		} else {
+			return Collections.singletonList(result);
 		}
-		if (result == null || result.isEmpty()) {
-			result =  super.getLinkedObjects(context, ref, node);
-		} 
-		return result;		
 	}
 	
-	protected List<EObject> getLinkedObjectsIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue, EReference ref, INode node) throws IllegalNodeException {
+	protected EObject getLinkedObjectIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue, EReference ref, INode node) throws IllegalNodeException {
 		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getScopeIQLArgumentsMapKey(keyValue);
 		String crossRefString = getCrossRefNodeAsString(node);
 
@@ -85,14 +88,10 @@ public class IQLLinkingService extends DefaultLinkingService{
 			list.add(keyValue.getValue());
 			result = methodFinder.findMethod(methods, "set"+crossRefString, list);
 		}
-		if (result != null) {
-			return Collections.singletonList(result);
-		} else {
-			return null;
-		}
+		return result;
 	}
 	
-	protected List<EObject> getLinkedObjectsIQLMemberSelection(IQLMemberSelection expr, EReference ref, INode node) throws IllegalNodeException {
+	protected EObject getLinkedObjectIQLMemberSelection(IQLMemberSelection expr, EReference ref, INode node) throws IllegalNodeException {
 		IQLMemberSelectionExpression container = (IQLMemberSelectionExpression) expr.eContainer();
 		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getScopeIQLMemberSelection(container);
 		String crossRefString = getCrossRefNodeAsString(node);
@@ -131,11 +130,8 @@ public class IQLLinkingService extends DefaultLinkingService{
 				result = methodFinder.findMethod(methods, crossRefString);
 			}
 		}
-		if (result != null) {
-			return Collections.singletonList(result);
-		} else {
-			return null;
-		}
+		return result;
+
 	}
 	
 	private boolean isAssignment(EObject obj) {
@@ -149,7 +145,7 @@ public class IQLLinkingService extends DefaultLinkingService{
 	}
 	
 	
-	protected List<EObject> getLinkedObjectsIQLJvmElementCallExpression(IQLJvmElementCallExpression expr, EReference ref, INode node) throws IllegalNodeException {
+	protected EObject getLinkedObjectIQLJvmElementCallExpression(IQLJvmElementCallExpression expr, EReference ref, INode node) throws IllegalNodeException {
 		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getScopeIQLJvmElementCallExpression(expr);
 		String[] splits = getCrossRefNodeAsString(node).split(IQLQualifiedNameConverter.DELIMITER);
 		String crossRefString = splits[splits.length-1];
@@ -211,10 +207,6 @@ public class IQLLinkingService extends DefaultLinkingService{
 				result = methodFinder.findMethod(methods, crossRefString);
 			}
 		}
-		if (result != null) {
-			return Collections.singletonList(result);
-		} else {
-			return null;
-		}
+		return result;
 	}
 }

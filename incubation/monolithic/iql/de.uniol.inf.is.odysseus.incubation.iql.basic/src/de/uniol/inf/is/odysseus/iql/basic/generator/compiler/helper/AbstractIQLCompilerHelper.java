@@ -8,10 +8,13 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -26,6 +29,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLSystemTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
@@ -42,6 +46,69 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 		this.lookUp = lookUp;
 		this.typeUtils = typeUtils;
 		this.typeDictionary = typeDictionary;
+	}
+	
+	
+	@Override
+	public String getArrayMethodName(JvmTypeReference typeRef) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("to");
+		JvmType innerType = typeUtils.getInnerType(typeRef, false);
+		if (typeUtils.isPrimitive(innerType)) {
+			if (typeUtils.isByte(typeUtils.createTypeRef(innerType))) {
+				builder.append("Byte");
+			} else if(typeUtils.isShort(typeUtils.createTypeRef(innerType))) {
+				builder.append("Short");
+			} else if(typeUtils.isInt(typeUtils.createTypeRef(innerType))) {
+				builder.append("Int");
+			} else if(typeUtils.isLong(typeUtils.createTypeRef(innerType))) {
+				builder.append("Long");
+			} else if(typeUtils.isFloat(typeUtils.createTypeRef(innerType))) {
+				builder.append("Float");
+			} else if(typeUtils.isDouble(typeUtils.createTypeRef(innerType))) {
+				builder.append("Double");
+			} else if(typeUtils.isBoolean(typeUtils.createTypeRef(innerType))) {
+				builder.append("Boolean");
+			}  else if(typeUtils.isCharacter(typeUtils.createTypeRef(innerType))) {
+				builder.append("Char");
+			}
+		}		
+		builder.append("Array");
+		int dim = typeUtils.getArrayDim(typeRef);
+		builder.append(dim);
+		return builder.toString();
+	}
+	
+	@Override
+	public boolean isPrimitiveArray(JvmTypeReference typeRef) {
+		if (typeUtils.isArray(typeRef)) {
+			JvmType innerType = typeUtils.getInnerType(typeRef, false);
+			return typeUtils.isPrimitive(innerType);
+		}
+		return false;
+	}
+
+	@Override
+	public List<String> toList(String element) {
+		List<String> result = new ArrayList<>();
+		result.add(element);
+		return result;
+	}
+	
+	@Override
+	public boolean hasSystemTypeCompiler(JvmMember member) {
+		return getSystemTypeCompiler(member) != null;
+	}
+
+	
+	@Override
+	public IIQLSystemTypeCompiler getSystemTypeCompiler(JvmMember member) {
+		if (member.eContainer() instanceof JvmDeclaredType) {
+			JvmDeclaredType type = (JvmDeclaredType) member.eContainer();
+			String name = typeUtils.getLongName(type, true);
+			return typeDictionary.getSystemTypeCompiler(name);
+		} 
+		return null;
 	}
 	
 	@Override

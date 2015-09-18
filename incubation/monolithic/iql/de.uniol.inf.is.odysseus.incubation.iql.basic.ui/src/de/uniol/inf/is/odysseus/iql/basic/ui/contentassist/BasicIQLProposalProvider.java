@@ -107,10 +107,10 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 			for (IEObjectDescription desc :  scopeProvider.getTypes(model)) {
 				EObject object = desc.getEObjectOrProxy();
 				if (object.eIsProxy()) {
-					object = EcoreUtil.resolve(object,resourceSet);
+					//object = EcoreUtil.resolve(object,resourceSet);
 				}
 				if (object.eIsProxy()) {
-					continue;
+					//continue;
 				}
 				if (object instanceof JvmDeclaredType) {
 					JvmDeclaredType declaredType = (JvmDeclaredType) object;
@@ -164,10 +164,10 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 		for (IEObjectDescription desc :  scopeProvider.getTypes(model)) {
 			EObject object = desc.getEObjectOrProxy();		
 			if (object.eIsProxy()) {
-				object = EcoreUtil.resolve(object,resourceSet);
+				//object = EcoreUtil.resolve(object,resourceSet);
 			}
 			if (object.eIsProxy()) {
-				continue;
+				//continue;
 			}
 			String proposalStr = desc.getQualifiedName().getLastSegment();
 			String displayString = desc.getQualifiedName().getLastSegment()+ " - " +converter.toString(desc.getQualifiedName());

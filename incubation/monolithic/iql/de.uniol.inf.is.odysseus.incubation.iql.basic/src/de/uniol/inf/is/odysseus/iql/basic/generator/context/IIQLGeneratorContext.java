@@ -15,5 +15,12 @@ public interface IIQLGeneratorContext {
 	public JvmTypeReference getExpectedTypeRef();
 	
 	public void setExpectedTypeRef(JvmTypeReference typeRef);
+	
+	public boolean hasException();
+	
+	public void addExceptions(Collection<JvmTypeReference> exceptions);
+
+	void clearExceptions();
+
 
 }

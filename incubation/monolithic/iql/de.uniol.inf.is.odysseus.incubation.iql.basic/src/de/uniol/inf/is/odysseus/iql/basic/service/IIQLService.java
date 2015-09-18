@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 public interface IIQLService {
 	Collection<Bundle> getRequiredBundles();
 	Collection<String> getImplicitImports();
-	Collection<Class<?>> getImplicitStaticImports();
+	Collection<String> getImplicitStaticImports();
 	Collection<IIQLTypeExtensions> getTypeExtensions();
 
 	Collection<Class<?>> getVisibleTypes();	

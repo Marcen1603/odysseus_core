@@ -177,7 +177,7 @@ IQLStatement:
 	IQLForStatement |
 	IQLForEachStatement	|
 	IQLSwitchStatement |	
-	IQLVariableStatement |
+	=> IQLVariableStatement |
 	IQLBreakStatement |
 	IQLContinueStatement |
 	IQLReturnStatement | 
@@ -217,7 +217,7 @@ IQLDoWhileStatement returns IQLStatement:
    
 IQLForStatement returns IQLStatement:
 	{IQLForStatement}
-	'for' '(' var=IQLVariableStatement predicate=IQLExpressionStatement updateExpr=IQLExpression ')'
+	'for' '(' var=IQLVariableDeclaration '=' value=IQLExpression ';' predicate=IQLExpression ';' updateExpr=IQLExpression ')'
 		body=IQLStatement
 ;
 		
@@ -266,7 +266,7 @@ IQLContinueStatement returns IQLStatement:
 
 IQLReturnStatement returns IQLStatement:
 	{IQLReturnStatement}
-	'return' expression=IQLExpression ';'
+	'return' (expression=IQLExpression)? ';'
 ;	
 
 
@@ -380,7 +380,7 @@ IQLOtherExpressions returns IQLExpression:
     {IQLSuperExpression} 'super'  |    
     {IQLParenthesisExpression} '(' expr = IQLExpression ')'  |
     {IQLNewExpression} 'new' ((ref=IQLArrayTypeRef) | (ref=IQLSimpleTypeRef argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)?)) |
-    IQLLiteralExpression
+    =>IQLLiteralExpression
 ; 
 
 IQLLiteralExpression returns IQLExpression:
@@ -388,7 +388,8 @@ IQLLiteralExpression returns IQLExpression:
 	{IQLLiteralExpressionDouble} value=DOUBLE |
 	{IQLLiteralExpressionString} value=STRING |
    	{IQLLiteralExpressionBoolean} value = BOOLEAN |
-   	{IQLLiteralExpressionRange} value = RANGE |  
+   	{IQLLiteralExpressionRange} value = RANGE |    
+   	{IQLLiteralExpressionType} 'class('value = JvmTypeReference')' |   	
 	{IQLLiteralExpressionNull} 'null' |
 	(=>IQLLiteralExpressionList) |
 	IQLLiteralExpressionMap

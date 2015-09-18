@@ -13,5 +13,10 @@ public class QDLSourceImpl extends AbstractSubscribable implements Source{
 	public String getName() {
 		return this.name;
 	}
+	
+	@Override
+	public String getAttribute(String attribute) {
+		return attribute;
+	}
 
 }

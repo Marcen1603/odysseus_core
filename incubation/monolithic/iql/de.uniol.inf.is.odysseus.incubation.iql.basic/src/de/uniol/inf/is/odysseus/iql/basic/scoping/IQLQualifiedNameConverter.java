@@ -36,12 +36,12 @@ public class IQLQualifiedNameConverter implements IQualifiedNameConverter {
 	}
 
 	public String toJavaString(String text) {
-		return text.replace(DELIMITER, ".");
+		return text.replace(DELIMITER, ".").replace(DELIMITER, "$");
 	}
 
 
 	public String toIQLString(String text) {
-		return text.replace(".", DELIMITER);
+		return text.replace(".", DELIMITER).replace("$", DELIMITER);
 	}
 
 }

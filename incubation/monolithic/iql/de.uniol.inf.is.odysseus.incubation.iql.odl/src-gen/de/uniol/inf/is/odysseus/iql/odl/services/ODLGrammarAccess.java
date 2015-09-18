@@ -263,6 +263,16 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOnOnKeyword_1_0_0 = (Keyword)cOnAssignment_1_0.eContents().get(0);
 		private final Assignment cValidateAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
 		private final Keyword cValidateValidateKeyword_1_1_0 = (Keyword)cValidateAssignment_1_1.eContents().get(0);
+		private final Group cGroup_1_2 = (Group)cAlternatives_1.eContents().get(2);
+		private final Assignment cOverrideAssignment_1_2_0 = (Assignment)cGroup_1_2.eContents().get(0);
+		private final Keyword cOverrideOverrideKeyword_1_2_0_0 = (Keyword)cOverrideAssignment_1_2_0.eContents().get(0);
+		private final Assignment cAoAssignment_1_2_1 = (Assignment)cGroup_1_2.eContents().get(1);
+		private final Keyword cAoAoKeyword_1_2_1_0 = (Keyword)cAoAssignment_1_2_1.eContents().get(0);
+		private final Group cGroup_1_3 = (Group)cAlternatives_1.eContents().get(3);
+		private final Assignment cOverrideAssignment_1_3_0 = (Assignment)cGroup_1_3.eContents().get(0);
+		private final Keyword cOverrideOverrideKeyword_1_3_0_0 = (Keyword)cOverrideAssignment_1_3_0.eContents().get(0);
+		private final Assignment cPoAssignment_1_3_1 = (Assignment)cGroup_1_3.eContents().get(1);
+		private final Keyword cPoPoKeyword_1_3_1_0 = (Keyword)cPoAssignment_1_3_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Assignment cSimpleNameAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
 		private final RuleCall cSimpleNameIDTerminalRuleCall_2_0_0 = (RuleCall)cSimpleNameAssignment_2_0.eContents().get(0);
@@ -284,18 +294,20 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cBodyIQLStatementBlockParserRuleCall_3_0 = (RuleCall)cBodyAssignment_3.eContents().get(0);
 		
 		//ODLMethod returns basiciql::IQLMethod:
-		//	{ODLMethod} (on?="on" | validate?="validate") (simpleName=ID ("(" (parameters+=JvmFormalParameter (","
-		//	parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)?)? body=IQLStatementBlock;
+		//	{ODLMethod} (on?="on" | validate?="validate" | override?="override"? ao?="ao" | override?="override"? po?="po")
+		//	(simpleName=ID ("(" (parameters+=JvmFormalParameter ("," parameters+=JvmFormalParameter)*)? ")")? (":"
+		//	returnType=JvmTypeReference)?)? body=IQLStatementBlock;
 		public ParserRule getRule() { return rule; }
 
-		//{ODLMethod} (on?="on" | validate?="validate") (simpleName=ID ("(" (parameters+=JvmFormalParameter (","
-		//parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)?)? body=IQLStatementBlock
+		//{ODLMethod} (on?="on" | validate?="validate" | override?="override"? ao?="ao" | override?="override"? po?="po")
+		//(simpleName=ID ("(" (parameters+=JvmFormalParameter ("," parameters+=JvmFormalParameter)*)? ")")? (":"
+		//returnType=JvmTypeReference)?)? body=IQLStatementBlock
 		public Group getGroup() { return cGroup; }
 
 		//{ODLMethod}
 		public Action getODLMethodAction_0() { return cODLMethodAction_0; }
 
-		//on?="on" | validate?="validate"
+		//on?="on" | validate?="validate" | override?="override"? ao?="ao" | override?="override"? po?="po"
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
 		//on?="on"
@@ -309,6 +321,36 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"validate"
 		public Keyword getValidateValidateKeyword_1_1_0() { return cValidateValidateKeyword_1_1_0; }
+
+		//override?="override"? ao?="ao"
+		public Group getGroup_1_2() { return cGroup_1_2; }
+
+		//override?="override"?
+		public Assignment getOverrideAssignment_1_2_0() { return cOverrideAssignment_1_2_0; }
+
+		//"override"
+		public Keyword getOverrideOverrideKeyword_1_2_0_0() { return cOverrideOverrideKeyword_1_2_0_0; }
+
+		//ao?="ao"
+		public Assignment getAoAssignment_1_2_1() { return cAoAssignment_1_2_1; }
+
+		//"ao"
+		public Keyword getAoAoKeyword_1_2_1_0() { return cAoAoKeyword_1_2_1_0; }
+
+		//override?="override"? po?="po"
+		public Group getGroup_1_3() { return cGroup_1_3; }
+
+		//override?="override"?
+		public Assignment getOverrideAssignment_1_3_0() { return cOverrideAssignment_1_3_0; }
+
+		//"override"
+		public Keyword getOverrideOverrideKeyword_1_3_0_0() { return cOverrideOverrideKeyword_1_3_0_0; }
+
+		//po?="po"
+		public Assignment getPoAssignment_1_3_1() { return cPoAssignment_1_3_1; }
+
+		//"po"
+		public Keyword getPoPoKeyword_1_3_1_0() { return cPoPoKeyword_1_3_1_0; }
 
 		//(simpleName=ID ("(" (parameters+=JvmFormalParameter ("," parameters+=JvmFormalParameter)*)? ")")? (":"
 		//returnType=JvmTypeReference)?)?
@@ -722,8 +764,9 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ODLMethod returns basiciql::IQLMethod:
-	//	{ODLMethod} (on?="on" | validate?="validate") (simpleName=ID ("(" (parameters+=JvmFormalParameter (","
-	//	parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)?)? body=IQLStatementBlock;
+	//	{ODLMethod} (on?="on" | validate?="validate" | override?="override"? ao?="ao" | override?="override"? po?="po")
+	//	(simpleName=ID ("(" (parameters+=JvmFormalParameter ("," parameters+=JvmFormalParameter)*)? ")")? (":"
+	//	returnType=JvmTypeReference)?)? body=IQLStatementBlock;
 	public ODLMethodElements getODLMethodAccess() {
 		return pODLMethod;
 	}
@@ -1046,7 +1089,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	///////////////////////////////////////////////
 	//IQLStatement:
 	//	IQLStatementBlock | IQLExpressionStatement | IQLIfStatement | IQLWhileStatement | IQLDoWhileStatement |
-	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | IQLVariableStatement | IQLBreakStatement |
+	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | => IQLVariableStatement | IQLBreakStatement |
 	//	IQLContinueStatement | IQLReturnStatement | IQLConstructorCallStatement | IQLJavaStatement;
 	public BasicIQLGrammarAccess.IQLStatementElements getIQLStatementAccess() {
 		return gaBasicIQL.getIQLStatementAccess();
@@ -1107,8 +1150,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLForStatement returns IQLStatement:
-	//	{IQLForStatement} "for" "(" var=IQLVariableStatement predicate=IQLExpressionStatement updateExpr=IQLExpression ")"
-	//	body=IQLStatement;
+	//	{IQLForStatement} "for" "(" var=IQLVariableDeclaration "=" value=IQLExpression ";" predicate=IQLExpression ";"
+	//	updateExpr=IQLExpression ")" body=IQLStatement;
 	public BasicIQLGrammarAccess.IQLForStatementElements getIQLForStatementAccess() {
 		return gaBasicIQL.getIQLForStatementAccess();
 	}
@@ -1199,7 +1242,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLReturnStatement returns IQLStatement:
-	//	{IQLReturnStatement} "return" expression=IQLExpression ";";
+	//	{IQLReturnStatement} "return" expression=IQLExpression? ";";
 	public BasicIQLGrammarAccess.IQLReturnStatementElements getIQLReturnStatementAccess() {
 		return gaBasicIQL.getIQLReturnStatementAccess();
 	}
@@ -1447,7 +1490,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	//	{IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
 	//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
 	//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
-	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
+	//	argsMap=IQLArgumentsMap?) | => IQLLiteralExpression;
 	public BasicIQLGrammarAccess.IQLOtherExpressionsElements getIQLOtherExpressionsAccess() {
 		return gaBasicIQL.getIQLOtherExpressionsAccess();
 	}
@@ -1459,7 +1502,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	//IQLLiteralExpression returns IQLExpression:
 	//	{IQLLiteralExpressionInt} value=INT | {IQLLiteralExpressionDouble} value=DOUBLE | {IQLLiteralExpressionString}
 	//	value=STRING | {IQLLiteralExpressionBoolean} value=BOOLEAN | {IQLLiteralExpressionRange} value=RANGE |
-	//	{IQLLiteralExpressionNull} "null" | => IQLLiteralExpressionList | IQLLiteralExpressionMap;
+	//	{IQLLiteralExpressionType} "class(" value=JvmTypeReference ")" | {IQLLiteralExpressionNull} "null" | =>
+	//	IQLLiteralExpressionList | IQLLiteralExpressionMap;
 	public BasicIQLGrammarAccess.IQLLiteralExpressionElements getIQLLiteralExpressionAccess() {
 		return gaBasicIQL.getIQLLiteralExpressionAccess();
 	}

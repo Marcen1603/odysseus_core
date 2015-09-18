@@ -24,6 +24,8 @@ import javax.inject.Inject;
 
 
 
+
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
@@ -52,12 +54,22 @@ public class QDLLookUp extends AbstractIQLLookUp<IQDLTypeDictionary, IQDLTypeExt
 	}
 	
 	@Override
-	public JvmTypeReference getSuperType(EObject obj) {
-		QDLQuery query = EcoreUtil2.getContainerOfType(obj, QDLQuery.class);
-		if (query != null) {
+	public JvmTypeReference getThisType(EObject node) {
+		QDLQuery query = EcoreUtil2.getContainerOfType(node, QDLQuery.class);
+		if (node instanceof QDLQuery || query != null) {
 			return typeUtils.createTypeRef(AbstractQDLQuery.class, typeDictionary.getSystemResourceSet());
 		} else {
-			return super.getSuperType(obj);
+			return super.getSuperType(node);
+		}
+	}
+	
+	@Override
+	public JvmTypeReference getSuperType(EObject node) {
+		QDLQuery query = EcoreUtil2.getContainerOfType(node, QDLQuery.class);
+		if (node instanceof QDLQuery || query != null) {
+			return typeUtils.createTypeRef(AbstractQDLQuery.class, typeDictionary.getSystemResourceSet());
+		} else {
+			return super.getSuperType(node);
 		}
 	}
 
