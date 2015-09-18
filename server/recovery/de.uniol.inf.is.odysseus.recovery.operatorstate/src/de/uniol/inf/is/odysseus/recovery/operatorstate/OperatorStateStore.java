@@ -13,6 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
@@ -68,8 +72,46 @@ public class OperatorStateStore {
 		try (FileOutputStream fout = new FileOutputStream(file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			for (IStatefulPO operator : operators) {
+				startBuffering((ISink<?>) operator);
 				oos.writeObject(operator.getState());
 				cLog.debug("Wrote state of '{}' to file '{}'", operator, file.getName());
+				stopBuffering((ISink<?>) operator);
+			}
+		}
+	}
+
+	/***
+	 * Starts buffering before a given Operator.
+	 * 
+	 * @param operator
+	 *            The given operator.
+	 */
+	private static void startBuffering(ISink<?> operator) {
+		for (AbstractPhysicalSubscription<?> sub : operator.getSubscribedToSource()) {
+			for (AbstractPhysicalSubscription<?> subTo : ((ISource<?>) sub.getTarget()).getSubscriptions()) {
+				if (subTo.getTarget() != operator) {
+					continue;
+				} else if (subTo instanceof ControllablePhysicalSubscription) {
+					((ControllablePhysicalSubscription<?>) subTo).suspend();
+				}
+			}
+		}
+	}
+
+	/***
+	 * Stops buffering before a given Operator.
+	 * 
+	 * @param operator
+	 *            The given operator.
+	 */
+	private static void stopBuffering(ISink<?> operator) {
+		for (AbstractPhysicalSubscription<?> sub : operator.getSubscribedToSource()) {
+			for (AbstractPhysicalSubscription<?> subTo : ((ISource<?>) sub.getTarget()).getSubscriptions()) {
+				if (subTo.getTarget() != operator) {
+					continue;
+				} else if (subTo instanceof ControllablePhysicalSubscription) {
+					((ControllablePhysicalSubscription<?>) subTo).resume();
+				}
 			}
 		}
 	}
@@ -101,8 +143,10 @@ public class OperatorStateStore {
 				if (state == null) {
 					throw new IOException("No state to load for operator " + operator);
 				}
+				startBuffering((ISink<?>) operator);
 				operator.setState(state);
 				cLog.debug("Loaded state of '{}' from file '{}'", operator, file.getName());
+				stopBuffering((ISink<?>) operator);
 			}
 		}
 	}

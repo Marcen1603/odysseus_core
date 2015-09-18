@@ -75,8 +75,10 @@ public class QueueStateStore {
 		try (FileOutputStream fout = new FileOutputStream(file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			for (ControllablePhysicalSubscription<K> queue : queues) {
+				queue.suspend();
 				oos.writeObject(queue.getBufferedElements());
 				cLog.debug("Wrote state of '{}' to file '{}'", queue, file.getName());
+				queue.resume();
 			}
 		}
 	}
@@ -110,8 +112,10 @@ public class QueueStateStore {
 				if (state == null) {
 					throw new IOException("No state to load for queue " + queue);
 				}
+				queue.suspend();
 				queue.setBufferedElements(state);
 				cLog.debug("Loaded state of '{}' from file '{}'", queue, file.getName());
+				queue.resume();
 			}
 		}
 	}
