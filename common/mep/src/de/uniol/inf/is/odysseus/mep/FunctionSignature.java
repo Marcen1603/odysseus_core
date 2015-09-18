@@ -56,6 +56,10 @@ public class FunctionSignature {
         return symbol;
     }
 
+    public List<SDFDatatype[]> getParameters() {
+    	return parameters;
+    }
+    
     public boolean contains(List<SDFDatatype> parameters) {
         Objects.requireNonNull(parameters);
         boolean contains = true;
