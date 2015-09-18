@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
-public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterval>> {
+public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterval>> implements Serializable {
+
+	private static final long serialVersionUID = 4108744737007378022L;
 
 	private class QueueComparator implements
 			Comparator<IStreamObject<? extends ITimeInterval>>, Serializable {
