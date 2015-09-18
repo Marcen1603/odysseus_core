@@ -65,8 +65,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	private void clearJobs() {
 		for(RepeatingMessageSend job : jobs.values()) {
-			job.stopRunning();
+
 			job.clearListeners();
+			job.stopRunning();
 		}
 		jobs.clear();
 	}
@@ -129,7 +130,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		if (message instanceof ReleaseLockMessage) {
 			// Timeout while releasing locks (maybe after an error).
 			// Log error and go on (nothing we can do)
-			LOG.error("Timeout while trying to release lock on Peer " + peerDictionary.getRemotePeerName(peerID));
+			LOG.error("Timeout while trying to release lock on Peer " + peerDictionary.getRemotePeerName(peerID)); 
 			jobs.get(peerID).stopRunning();
 			jobs.remove(peerID);
 			locks.put(peerID, LOCK_STATE.timed_out);
@@ -194,7 +195,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			}
 			
 			if(message instanceof LockNotReleasedMessage) {
-				if (locks.get(senderPeer) == LOCK_STATE.release_requested) {
+				if (locks.get(senderPeer) == LOCK_STATE.release_requested  || (locks.get(senderPeer) == LOCK_STATE.locked)) {
 					LOG.error("Could not release Lock on Peer {}",peerDictionary.getRemotePeerName(senderPeer));
 					locks.put(senderPeer, LOCK_STATE.timed_out);
 					jobs.get(senderPeer).clearListeners();
