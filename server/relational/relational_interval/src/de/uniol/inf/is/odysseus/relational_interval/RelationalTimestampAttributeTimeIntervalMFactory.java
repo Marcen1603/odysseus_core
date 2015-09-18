@@ -37,6 +37,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private int startAttrPos;
 	final private int endAttrPos;
 	final private SimpleDateFormat df;
+	final private String df_string;
+	final private Locale loc;
 
 	// Time is separated to different attributes
 	final private int startTimestampYearPos;
@@ -64,6 +66,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			this.timezone = TimeZone.getTimeZone("UTC");
 		}
 
+		df_string = dateFormat;
+		loc = locale;
 		if (dateFormat != null) {
 			if (locale != null) {
 				df = new SimpleDateFormat(dateFormat, locale);
@@ -109,6 +113,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		this.clearEnd = clearEnd;
 
 		df = null;
+		df_string = null;
+		loc = null;
 		if (timezone != null) {
 			this.timezone = TimeZone.getTimeZone(timezone);
 		} else {
@@ -323,6 +329,26 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 	public TimeZone getTimezone() {
 		return timezone;
+	}
+	
+	public int getStartAttrPos() {
+		return startAttrPos;
+	}
+	
+	public int getEndAttrPos() {
+		return endAttrPos;
+	}
+	
+	public String getDateFormat() {
+		return df_string;
+	}
+	
+	public Locale getLocale() {
+		return loc;
+	}
+	
+	public long getOffset() {
+		return offset;
 	}
 
 }

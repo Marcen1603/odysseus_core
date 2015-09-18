@@ -6,9 +6,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriber;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriberController;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.SubscriberControllerFactory;
@@ -35,6 +39,64 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	 * The version of this class for serialization.
 	 */
 	private static final long serialVersionUID = -2660605545656846436L;
+	
+	/**
+	 * Transfer handler for the objects from public subscribe system in recovery
+	 * mode. Not for the objects from the source operator.
+	 */
+	private class RecoveryTransferHandler extends AbstractSourceRecoveryTransferHandler implements IMetadataInitializer<IMetaAttribute, StreamObject> {
+		
+		// TODO javaDoc
+		private final IMetadataInitializer<IMetaAttribute, StreamObject> mMetaDataInitializer = new MetadataInitializerAdapter<>();
+
+		// TODO javaDoc
+		public RecoveryTransferHandler() {
+			// Empty default constructor
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void transfer_intern(IStreamable object, int port) {
+			if (object.isPunctuation()) {
+				SourceRecoveryPO.this.sendPunctuation((IPunctuation) object, port);
+			} else {
+				StreamObject strObj = (StreamObject) object;
+				try {
+					strObj.setMetadata(getMetadataInstance());
+				} catch (InstantiationException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				updateMetadata(strObj);
+				SourceRecoveryPO.this.transfer(strObj, port);
+			}
+		}
+
+		@Override
+		public String getName() {
+			return SourceRecoveryPO.this.getName();
+		}
+
+		@Override
+		public void setMetadataType(IMetaAttribute type) {
+			this.mMetaDataInitializer.setMetadataType(type);
+		}
+
+		@Override
+		public IMetaAttribute getMetadataInstance() throws InstantiationException, IllegalAccessException {
+			return this.mMetaDataInitializer.getMetadataInstance();
+		}
+
+		@Override
+		public void addMetadataUpdater(IMetadataUpdater<IMetaAttribute, StreamObject> mFac) {
+			this.mMetaDataInitializer.addMetadataUpdater(mFac);
+		}
+
+		@Override
+		public void updateMetadata(StreamObject object) {
+			this.mMetaDataInitializer.updateMetadata(object);
+		}
+
+	}
 
 	/**
 	 * The protocol handler to use in recovery mode.
@@ -64,24 +126,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	 * Transfer handler for the objects from public subscribe system in recovery
 	 * mode. Not for the objects from the source operator.
 	 */
-	private final ITransferHandler<StreamObject> mRecoveryTransferHandler = new AbstractSourceRecoveryTransferHandler() {
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public void transfer_intern(IStreamable object, int port) {
-			if (object.isPunctuation()) {
-				SourceRecoveryPO.this.sendPunctuation((IPunctuation) object, port);
-			} else {
-				SourceRecoveryPO.this.transfer((StreamObject) object, port);
-			}
-		}
-
-		@Override
-		public String getName() {
-			return SourceRecoveryPO.this.getName();
-		}
-
-	};
+	private final RecoveryTransferHandler mRecoveryTransferHandler = new RecoveryTransferHandler();
 
 	/**
 	 * Creates a new {@link SourceRecoveryPO}.
@@ -96,8 +141,30 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		this.mRecoveryProtocolHandler.setTransfer(this.mRecoveryTransferHandler);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
+		// Handle metadata
+		IMetaAttribute metaDate = this.mSourceAccess.getLocalMetaAttribute();
+		if(metaDate != null) {
+			this.mRecoveryTransferHandler.setMetadataType(metaDate);
+			if(TimeStampHelper.isTimeIntervalUsed(metaDate)) {
+				IMetadataUpdater<?, ?> updater = null;
+				MetadataUpdatePO<?, ?> updatePO = TimeStampHelper.searchMetaDataUpdatePO(this);
+				if(updatePO != null) {
+					updater = TimeStampHelper.createInitializer(updatePO);
+				} else {
+					ReceiverPO<?, ?> receiverPO = TimeStampHelper.searchReceiverPO(this);
+					if(receiverPO != null) {
+						updater = TimeStampHelper.createInitializer(receiverPO);
+					}
+				}
+				if(updater != null) {
+					this.mRecoveryTransferHandler.addMetadataUpdater((IMetadataUpdater<IMetaAttribute, StreamObject>) updater);
+				}
+			}
+		}
+		
 		// offset should be loaded as operator state
 		this.mNeedToAdjustOffset = false;
 		this.mRecoverySubscriberController = SubscriberControllerFactory.createController(

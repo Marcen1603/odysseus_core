@@ -54,6 +54,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 	protected final boolean readMetaData;
 	
 	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
+	private IMetadataUpdater<M, W> metadataUpdater;
 
 	public ReceiverPO(IProtocolHandler<W> protocolHandler, boolean readMetaData) {
 		this.protocolHandler = protocolHandler;
@@ -153,6 +154,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 	@Override
 	public void addMetadataUpdater(IMetadataUpdater<M, W> mFac) {
 		this.metadataInitializer.addMetadataUpdater(mFac);
+		this.metadataUpdater = mFac;
 	}
 
 	@Override
@@ -187,6 +189,10 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 			// Command is for this Operator!
 			return null;
 		}
+	}
+	
+	public IMetadataUpdater<M, W> getMetadataFactory() {
+		return this.metadataUpdater;
 	}
 
 }

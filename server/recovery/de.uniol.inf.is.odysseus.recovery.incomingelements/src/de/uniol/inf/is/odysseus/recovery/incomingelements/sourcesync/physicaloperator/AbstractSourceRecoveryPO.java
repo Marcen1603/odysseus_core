@@ -246,13 +246,44 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	/**
 	 * Adjusts the offset as an {@code ISubscriber}, if {@code object} is the
-	 * first element or punctuation to be processed by this operator.
+	 * first element to be processed by this operator.
 	 * 
 	 * @param object
 	 *            The first element to process.
 	 * 
 	 */
-	protected void adjustOffsetIfNeeded(IStreamable object) {
+	protected void adjustOffsetIfNeeded(StreamObject object) {
+		synchronized (this.mOffset) {
+			if (this.mNeedToAdjustOffset) {
+				this.mNeedToAdjustOffset = false;
+				@SuppressWarnings("unchecked")
+				StreamObject clone = (StreamObject) object.clone();
+				clone.setMetadata(null);
+				this.mReference = clone;
+				// ISubscriberController has to be deleted and new created for
+				// every protection point reaching, because otherwise an
+				// IllegalThreadStateException occurs.
+				if (this.mBackupSubscriberController != null) {
+					this.mBackupSubscriberController.interrupt();
+					this.mBackupSubscriberController = null;
+				}
+				this.mBackupSubscriberController = SubscriberControllerFactory.createController(
+						this.mSourceAccess.getAccessAOName(), this.mBackupSubscriber, this.mOffset.longValue());
+				this.mBackupSubscriberController.start();
+			}
+		}
+
+	}
+	
+	/**
+	 * Adjusts the offset as an {@code ISubscriber}, if {@code object} is the
+	 * first punctuation to be processed by this operator.
+	 * 
+	 * @param object
+	 *            The first punctuation to process.
+	 * 
+	 */
+	protected void adjustOffsetIfNeeded(IPunctuation object) {
 		synchronized (this.mOffset) {
 			if (this.mNeedToAdjustOffset) {
 				this.mNeedToAdjustOffset = false;

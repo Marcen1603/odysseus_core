@@ -16,9 +16,9 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -164,8 +164,8 @@ public class QueueStateRecoveryComponent
 	@SuppressWarnings("unchecked")
 	private <K> void collectControllableSubscriptionsRecursive(IPhysicalOperator operator,
 			Set<ControllablePhysicalSubscription<K>> queues) {
-		if (IPipe.class.isInstance(operator)) {
-			for (Object sub : ((IPipe<?, ?>) operator).getSubscribedToSource()) {
+		if (ISink.class.isInstance(operator)) {
+			for (Object sub : ((ISink<?>) operator).getSubscribedToSource()) {
 				if (ControllablePhysicalSubscription.class.isInstance(sub)) {
 					queues.add((ControllablePhysicalSubscription<K>) sub);
 					collectControllableSubscriptionsRecursive(

@@ -15,10 +15,10 @@ import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -167,8 +167,8 @@ public class OperatorStateRecoveryComponent
 				operators.add(statefulOperator);
 			}
 		}
-		if (IPipe.class.isInstance(operator)) {
-			for (Object sub : ((IPipe<?, ?>) operator).getSubscribedToSource()) {
+		if (ISink.class.isInstance(operator)) {
+			for (Object sub : ((ISink<?>) operator).getSubscribedToSource()) {
 				if (AbstractPhysicalSubscription.class.isInstance(sub)) {
 					collectStateFulOperatorsRecursive(
 							(IPhysicalOperator) ((AbstractPhysicalSubscription<?>) sub).getTarget(), operators);
