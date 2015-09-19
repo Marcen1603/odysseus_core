@@ -20,7 +20,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	private boolean rollback = false;
 
-	private final int lockingID;
+	private int lockingID;
 	
 	private static enum LOCK_STATE {
 		unlocked, lock_requested, locked, release_requested, timed_out, blocked
@@ -210,7 +210,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			
 			if (message instanceof LockReleasedMessage) {
 				if  (((LockReleasedMessage)message).getLockingID()!=lockingID) {
-					LOG.debug("Got LockReleased from {}, but with wrong Locking ID: {}",peerDictionary.getRemotePeerName(senderPeer), lockingID);
+					LOG.debug("Got LockReleased from {}, but with wrong Locking ID: {}",peerDictionary.getRemotePeerName(senderPeer), ((LockReleasedMessage) message).getLockingID());
 					return;
 				}
 				if ((locks.get(senderPeer) == LOCK_STATE.release_requested) || (locks.get(senderPeer) == LOCK_STATE.locked)) {

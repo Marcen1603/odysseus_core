@@ -21,7 +21,7 @@ public class ReleaseLockMessage implements IMessage{
 	}
 	
 	public ReleaseLockMessage(int lockingID) {
-		
+		this.lockingID = lockingID;
 	}
 	
 	@Override

@@ -66,7 +66,7 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 				return;
 			}
 			
-			LOG.debug("Got ReleaseLock message.");
+			LOG.debug("Got ReleaseLock message. (Locking ID {})",lockingIDFromMessage);
 			if (modifyLock(false, senderPeer)) {
 				sendLockReleased(senderPeer,lockingIDFromMessage);
 			} else {
