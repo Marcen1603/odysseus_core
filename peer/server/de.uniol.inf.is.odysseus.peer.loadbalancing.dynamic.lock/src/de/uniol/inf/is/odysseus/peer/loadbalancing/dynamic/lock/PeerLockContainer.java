@@ -158,9 +158,11 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 
 		// Ignore if Peer is not known.
-		if (!jobs.containsKey(senderPeer))
+		if (!jobs.containsKey(senderPeer)) {
+			LOG.warn("Received message from Peer which is not in Jobs Map: {}",peerDictionary.getRemotePeerName(senderPeer));
 			return;
-				
+		}
+		
 		if(!lockingPhaseFinished) {
 			if (message instanceof LockGrantedMessage) {
 				if  (((LockGrantedMessage)message).getLockingID()!=lockingID) {
@@ -179,6 +181,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 					// All peers locked?
 					checkIfAllPeersLocked();
 				}
+				return;
 			}
 	
 			if (message instanceof LockDeniedMessage) {
@@ -188,17 +191,19 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 					return;
 				}
 				if(locks.get(senderPeer) == LOCK_STATE.lock_requested) {
-					LOG.debug("Got Lock Denied Message from Peer {}  locking ID is {}",peerDictionary.getRemotePeerName(senderPeer),lockingID);
-					locks.put(senderPeer, LOCK_STATE.unlocked);
-					jobs.get(senderPeer).stopRunning();
-					jobs.get(senderPeer).clearListeners();
-					jobs.remove(senderPeer);
-					synchronized (rollbackLock) {
-						if (!rollback) {
-							initiateRollback();
-						}
+					LOG.debug("Got Lock granted Message from Peer {} locking ID is {}",peerDictionary.getRemotePeerName(senderPeer),lockingID);
+					if (locks.get(senderPeer) == LOCK_STATE.lock_requested) {
+						locks.put(senderPeer, LOCK_STATE.blocked);
+						jobs.get(senderPeer).stopRunning();
+						jobs.get(senderPeer).clearListeners();
+						jobs.remove(senderPeer);
+		
+						// All peers locked?
+						checkIfAllPeersLocked();
 					}
+					return;
 				}
+				return;
 			}
 		}
 		if(lockingPhaseFinished && !rleasingPhaseFinished) {
@@ -220,7 +225,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				else {
 					LOG.debug("Got LockReleaseMessage from Peer {} but LOCK_STATE is {}",peerDictionary.getRemotePeerName(senderPeer),locks.get(senderPeer));
 				}
-				
+				return;
 				
 			}
 			
@@ -239,7 +244,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	
 					checkIfAllPeersUnlocked();
 				}
-			
+			return;
 		}
 		}
 
@@ -251,16 +256,38 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			return;
 		}
 		
-		if (getNumberOfLockedPeers() == locks.size()) {
+		if (getNumberOfLockingRequests() == 0) {
 			if(!lockingPhaseFinished) {
 				lockingPhaseFinished = true;
-				LOG.debug("All affected Peers locked. (Locking Id:{})",lockingID);
-				clearJobs();
-				for (IPeerLockContainerListener listener : listeners) {
-					listener.notifyLockingSuccessfull();
+				if(checkIfLockingSuccessful()) {
+					LOG.debug("All affected Peers locked. (Locking Id:{})",lockingID);
+					clearJobs();
+					for (IPeerLockContainerListener listener : listeners) {
+						listener.notifyLockingSuccessfull();
+					}
+				}
+				else {
+					LOG.debug("Locking was not successful.");
+					initiateRollback();
 				}
 			}
 		}
+	}
+
+	private boolean checkIfLockingSuccessful() {
+		int i=0;
+		for(PeerID peer : locks.keySet()) {
+			if(locks.get(peer) == LOCK_STATE.locked) {
+				i++;
+			}
+		}
+		
+		if(i==locks.size()) {
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 
 	private void checkIfAllPeersUnlocked() {
@@ -269,7 +296,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			return;
 		}
 		
-		if (getNumberOfUnlockedPeers() == locks.size()) {
+		if (getNumberOfReleaseRequests() == 0) {
 			if(!rleasingPhaseFinished) {
 				rleasingPhaseFinished = true;
 				LOG.debug("No more peers to unlock. (Locking ID: {})",lockingID);
@@ -287,20 +314,20 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		}
 	}
 
-	private int getNumberOfLockedPeers() {
+	private int getNumberOfLockingRequests() {
 		int i = 0;
 		for (LOCK_STATE state : locks.values()) {
-			if (state == LOCK_STATE.locked)
+			if (state == LOCK_STATE.lock_requested)
 				i++;
 		}
 		return i;
 	}
 
-	private int getNumberOfUnlockedPeers() {
+	private int getNumberOfReleaseRequests() {
 		int i = 0;
 		for (LOCK_STATE state : locks.values()) {
 			// Count timed_out as unlocked too, to avoid deadlock.
-			if (state == LOCK_STATE.unlocked || state == LOCK_STATE.timed_out) {
+			if (state == LOCK_STATE.release_requested) {
 				i++;
 			}
 		}
