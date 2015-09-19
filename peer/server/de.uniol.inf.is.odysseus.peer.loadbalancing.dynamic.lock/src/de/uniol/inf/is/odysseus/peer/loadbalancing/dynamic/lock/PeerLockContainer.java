@@ -104,7 +104,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	public void releaseLocks() {
 		lockingPhaseFinished = true;
 		for (PeerID peer : locks.keySet()) {
-			if (locks.get(peer) != LOCK_STATE.unlocked) {
+			if (locks.get(peer) != LOCK_STATE.blocked) {
 				locks.put(peer, LOCK_STATE.release_requested);
 				RepeatingMessageSend job = createReleaseRequest(peer);
 				jobs.put(peer, job);
