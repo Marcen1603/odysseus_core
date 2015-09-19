@@ -92,31 +92,31 @@ public class RelationalBloomFilterPO<M extends IMetaAttribute> extends AbstractP
                         final SDFDatatype datatype = operator.getInputSchema().get(pos).getDatatype();
 
                         if (datatype.isByte()) {
-                            into.putByte(tuple.getAttribute(pos));
+                            into.putByte((Byte)tuple.getAttribute(pos));
                         }
                         else if (datatype.isShort()) {
-                            into.putShort(tuple.getAttribute(pos));
+                            into.putShort((Short)tuple.getAttribute(pos));
                         }
                         else if (datatype.isInteger()) {
-                            into.putInt(tuple.getAttribute(pos));
+                            into.putInt((Integer)tuple.getAttribute(pos));
                         }
                         else if (datatype.isLong()) {
-                            into.putLong(tuple.getAttribute(pos));
+                            into.putLong((Long)tuple.getAttribute(pos));
                         }
                         else if (datatype.isFloat()) {
-                            into.putFloat(tuple.getAttribute(pos));
+                            into.putFloat((Float)tuple.getAttribute(pos));
                         }
                         else if (datatype.isDouble()) {
-                            into.putDouble(tuple.getAttribute(pos));
+                            into.putDouble((Double)tuple.getAttribute(pos));
                         }
                         else if (datatype.isChar()) {
-                            into.putChar(tuple.getAttribute(pos));
+                            into.putChar((char)tuple.getAttribute(pos));
                         }
                         else if (datatype.isBoolean()) {
-                            into.putBoolean(tuple.getAttribute(pos));
+                            into.putBoolean((Boolean)tuple.getAttribute(pos));
                         }
                         else if (datatype.isString()) {
-                            into.putString(tuple.getAttribute(pos), Charsets.UTF_8);
+                            into.putString(tuple.getAttribute(pos).toString(), Charsets.UTF_8);
                         }
                         else if (datatype.isByteBuffer()) {
                             into.putBytes(((ByteBuffer) tuple.getAttribute(pos)).array());
