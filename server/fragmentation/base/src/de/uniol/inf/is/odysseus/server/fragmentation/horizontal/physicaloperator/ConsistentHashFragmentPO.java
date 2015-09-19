@@ -78,8 +78,6 @@ public class ConsistentHashFragmentPO<T extends IStreamObject<IMetaAttribute>> e
     @Override
     protected void process_open() throws OpenFailedException {
         for (AbstractPhysicalSubscription<ISink<? super T>> subscription : getSubscriptions()) {
-            System.out.println((subscription.getTarget().getName() + subscription.getSourceOutPort()).hashCode());
-            System.out.println(subscription.getTarget().getName());
             circle.put(getHashCode(subscription.getTarget().getName() + subscription.getSourceOutPort()), subscription);
         }
         super.process_open();
