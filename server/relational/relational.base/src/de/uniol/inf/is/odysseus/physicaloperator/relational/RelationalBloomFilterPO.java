@@ -92,28 +92,28 @@ public class RelationalBloomFilterPO<M extends IMetaAttribute> extends AbstractP
                         final SDFDatatype datatype = operator.getInputSchema().get(pos).getDatatype();
 
                         if (datatype.isByte()) {
-                            into.putByte((Byte)tuple.getAttribute(pos));
+                            into.putByte(((Number) tuple.getAttribute(pos)).byteValue());
                         }
                         else if (datatype.isShort()) {
-                            into.putShort((Short)tuple.getAttribute(pos));
+                            into.putShort(((Number) tuple.getAttribute(pos)).shortValue());
                         }
                         else if (datatype.isInteger()) {
-                            into.putInt((Integer)tuple.getAttribute(pos));
+                            into.putInt(((Number) tuple.getAttribute(pos)).intValue());
                         }
                         else if (datatype.isLong()) {
-                            into.putLong((Long)tuple.getAttribute(pos));
+                            into.putLong(((Number) tuple.getAttribute(pos)).longValue());
                         }
                         else if (datatype.isFloat()) {
-                            into.putFloat((Float)tuple.getAttribute(pos));
+                            into.putFloat(((Number) tuple.getAttribute(pos)).floatValue());
                         }
                         else if (datatype.isDouble()) {
-                            into.putDouble((Double)tuple.getAttribute(pos));
+                            into.putDouble(((Number) tuple.getAttribute(pos)).doubleValue());
                         }
                         else if (datatype.isChar()) {
-                            into.putChar((char)tuple.getAttribute(pos));
+                            into.putChar((Character) tuple.getAttribute(pos));
                         }
                         else if (datatype.isBoolean()) {
-                            into.putBoolean((Boolean)tuple.getAttribute(pos));
+                            into.putBoolean((Boolean) tuple.getAttribute(pos));
                         }
                         else if (datatype.isString()) {
                             into.putString(tuple.getAttribute(pos).toString(), Charsets.UTF_8);
