@@ -362,7 +362,7 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 						this.queryID = queryAndID.getE2();
 
 						// Acquire Locks for other peers
-						PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator, peerDictionary,otherPeers, this);
+						PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator, peerDictionary,otherPeers, this,lock.getNewLockingId());
 						peerLocks.requestLocks();
 						this.lockContainer = peerLocks;
 					} catch (Exception e) {

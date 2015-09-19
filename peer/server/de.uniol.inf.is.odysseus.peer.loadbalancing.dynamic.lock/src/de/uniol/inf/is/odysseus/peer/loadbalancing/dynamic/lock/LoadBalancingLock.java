@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.jxta.peer.PeerID;
 
@@ -29,30 +30,47 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	private IPeerDictionary peerDictionary;
 	private IP2PNetworkManager networkManager;
 	
+	private Integer currentLockingId = 0;
+	
 	private final Object lockModificationLock = new Object();
 	
 	private PeerID lockedForPeer = null;
 	
 	private ArrayList<ILoadBalancingLockListener> listeners = Lists.newArrayList();
+	
+	private ConcurrentHashMap<PeerID,Integer> seenLockingIDs = new ConcurrentHashMap<PeerID,Integer>();
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 
+		
 		if (message instanceof RequestLockMessage) {
 			LOG.debug("Got RequestLock message.");
+			int lockingIDFromMessage = ((RequestLockMessage)message).getLockingID();
+			if(!isMessageValid(senderPeer, lockingIDFromMessage)) {
+				LOG.debug("Got invalid message from Peer {} Locking ID {}",senderPeer,lockingIDFromMessage);
+				return;
+			}
+			
 			if (modifyLock(true, senderPeer)) {
-				sendLockGranted(senderPeer);
+				sendLockGranted(senderPeer,lockingIDFromMessage);
 			} else {
-				sendLockDenied(senderPeer);
+				sendLockDenied(senderPeer,lockingIDFromMessage);
 			}
 		}
 
 		if (message instanceof ReleaseLockMessage) {
+			int lockingIDFromMessage = ((ReleaseLockMessage)message).getLockingID();
+			if(!isMessageValid(senderPeer,  lockingIDFromMessage)) {
+				LOG.debug("Got invalid message from Peer {} Locking ID {}",senderPeer,lockingIDFromMessage);
+				return;
+			}
+			
 			LOG.debug("Got ReleaseLock message.");
 			if (modifyLock(false, senderPeer)) {
-				sendLockReleased(senderPeer);
+				sendLockReleased(senderPeer,lockingIDFromMessage);
 			} else {
-				sendLockNotReleased(senderPeer);
+				sendLockNotReleased(senderPeer,lockingIDFromMessage);
 			}
 		}
 		notifyListeners();
@@ -169,8 +187,8 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		}
 	}
 
-	private void sendLockGranted(PeerID peerID) {
-		LockGrantedMessage message = new LockGrantedMessage();
+	private void sendLockGranted(PeerID peerID,int lockingID) {
+		LockGrantedMessage message = new LockGrantedMessage(lockingID);
 		try {
 			LOG.debug("Sending Lock Granted to Peer {}",peerDictionary.getRemotePeerName(peerID));
 			communicator.send(peerID, message);
@@ -180,8 +198,8 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 
 	}
 
-	private void sendLockDenied(PeerID peerID) {
-		LockDeniedMessage message = new LockDeniedMessage();
+	private void sendLockDenied(PeerID peerID,int lockingID) {
+		LockDeniedMessage message = new LockDeniedMessage(lockingID);
 		LOG.debug("Sending Lock Denied to Peer {}",peerDictionary.getRemotePeerName(peerID));
 		try {
 			communicator.send(peerID, message);
@@ -190,8 +208,8 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		}
 	}
 
-	private void sendLockReleased(PeerID peerID) {
-		LockReleasedMessage message = new LockReleasedMessage();
+	private void sendLockReleased(PeerID peerID,int lockingID) {
+		LockReleasedMessage message = new LockReleasedMessage(lockingID);
 		try {
 
 			LOG.debug("Sending LockReleased to Peer {}",peerDictionary.getRemotePeerName(peerID));
@@ -201,10 +219,10 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		}
 	}
 
-	private void sendLockNotReleased(PeerID peerID) {
+	private void sendLockNotReleased(PeerID peerID,int lockingID) {
 
 		LOG.debug("Sending LockNotReleased to Peer {}",peerDictionary.getRemotePeerName(peerID));
-		LockNotReleasedMessage message = new LockNotReleasedMessage();
+		LockNotReleasedMessage message = new LockNotReleasedMessage(lockingID);
 		try {
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
@@ -302,6 +320,38 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		if(listeners.contains(listener)) {
 			listeners.remove(listener);
 		}
+		
+	}
+
+	@Override
+	public synchronized int getNewLockingId() {
+		return currentLockingId++;
+	}
+	
+	private boolean isMessageValid(PeerID peer, Integer lockingID) {
+		if(!seenLockingIDs.contains(peer)){
+			seenLockingIDs.put(peer, lockingID);
+			return true;
+		}
+		
+		Integer currentLockingIDForPeer =  seenLockingIDs.get(peer);
+		
+
+		if(lockingID == currentLockingIDForPeer) {
+			return true;
+		}
+		
+		if(lockingID < currentLockingIDForPeer) {
+			return false;
+		}
+		
+		if(lockingID > currentLockingIDForPeer) {
+			seenLockingIDs.put(peer, lockingID);
+			return true;
+		}
+		
+		return true;
+		
 		
 	}
 

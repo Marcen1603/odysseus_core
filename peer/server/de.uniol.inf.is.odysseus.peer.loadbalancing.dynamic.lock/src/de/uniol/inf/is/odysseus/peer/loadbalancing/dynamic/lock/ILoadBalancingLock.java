@@ -11,4 +11,6 @@ public interface ILoadBalancingLock {
 	
 	public void addListener(ILoadBalancingLockListener listener);
 	public void removeListener(ILoadBalancingLockListener listener);
+	
+	public int getNewLockingId();
 }
