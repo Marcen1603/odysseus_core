@@ -164,6 +164,8 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		if(!lockingPhaseFinished) {
 			if (message instanceof LockGrantedMessage) {
 				if  (((LockGrantedMessage)message).getLockingID()!=lockingID) {
+
+					LOG.debug("Got LockGrantedMessage from {}, but with wrong Locking ID: {}",peerDictionary.getRemotePeerName(senderPeer), lockingID);
 					return;
 				}
 				
@@ -181,6 +183,8 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	
 			if (message instanceof LockDeniedMessage) {
 				if  (((LockDeniedMessage)message).getLockingID()!=lockingID) {
+
+					LOG.debug("Got LockDeniedMessage from {}, but with wrong Locking ID: {}",peerDictionary.getRemotePeerName(senderPeer), lockingID);
 					return;
 				}
 				if(locks.get(senderPeer) == LOCK_STATE.lock_requested) {
@@ -201,6 +205,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			
 			if (message instanceof LockReleasedMessage) {
 				if  (((LockReleasedMessage)message).getLockingID()!=lockingID) {
+					LOG.debug("Got LockReleased from {}, but with wrong Locking ID: {}",peerDictionary.getRemotePeerName(senderPeer), lockingID);
 					return;
 				}
 				if ((locks.get(senderPeer) == LOCK_STATE.release_requested) || (locks.get(senderPeer) == LOCK_STATE.locked)) {
@@ -221,6 +226,8 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 			
 			if(message instanceof LockNotReleasedMessage) {
 				if  (((LockNotReleasedMessage)message).getLockingID()!=lockingID) {
+
+					LOG.debug("Got LockNotReleased from {}, but with wrong Locking ID: {}",peerDictionary.getRemotePeerName(senderPeer), lockingID);
 					return;
 				}
 				if (locks.get(senderPeer) == LOCK_STATE.release_requested  || (locks.get(senderPeer) == LOCK_STATE.locked)) {

@@ -211,7 +211,6 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	private void sendLockReleased(PeerID peerID,int lockingID) {
 		LockReleasedMessage message = new LockReleasedMessage(lockingID);
 		try {
-
 			LOG.debug("Sending LockReleased to Peer {}",peerDictionary.getRemotePeerName(peerID));
 			communicator.send(peerID, message);
 		} catch (PeerCommunicationException e) {
