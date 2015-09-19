@@ -104,7 +104,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	public void releaseLocks() {
 		lockingPhaseFinished = true;
 		for (PeerID peer : locks.keySet()) {
+			int counter = 0;
 			if (locks.get(peer) != LOCK_STATE.blocked) {
+				counter++;
 				locks.put(peer, LOCK_STATE.release_requested);
 				RepeatingMessageSend job = createReleaseRequest(peer);
 				jobs.put(peer, job);
@@ -112,6 +114,10 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 				
 				LOG.debug("Sending Release Lock Request to Peer with ID {}, current Lock status is {}",peerDictionary.getRemotePeerName(peer),locks.get(peer).toString());
 				LOG.debug("Locking ID {}",lockingID);
+			}
+			if(counter == 0) {
+				LOG.debug("No Peers to unlock. Maybe all of them are blocked?");
+				checkIfAllPeersUnlocked();
 			}
 		}
 	}
