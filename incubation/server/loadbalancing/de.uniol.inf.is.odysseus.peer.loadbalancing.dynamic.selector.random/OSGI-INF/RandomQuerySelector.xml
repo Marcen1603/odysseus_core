@@ -4,4 +4,6 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.IQuerySelector"/>
    </service>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
+   <reference bind="bindExcludedQueriesRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry" name="IExcludedQueriesRegistry" policy="static" unbind="unbindExcludedQueriesRegistry"/>
 </scr:component>
