@@ -438,6 +438,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 				|| this.getURI().equals(LIST_PARTIAL_AGGREGATE.getURI());
 	}
 
+    public boolean isBoolean() {
+        return this.getURI().equals(BOOLEAN.getURI());
+    }
+    
 	public boolean isDouble() {
 		return this.getURI().equals(DOUBLE.getURI());
 	}
@@ -466,6 +470,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		return this.getURI().equals(BYTEBUFFER.getURI());
 	}	
 
+    public boolean isChar() {
+        return this.getURI().equals(CHAR.getURI());
+    }
+    
 	public boolean isString() {
 		return this.getURI().equals(STRING.getURI());
 	}
