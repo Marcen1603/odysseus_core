@@ -43,7 +43,7 @@ public class CheckMarginCostThread extends Thread {
 					MedusaPricingContract contract = ContractRegistry.getContractforPeer(cheapestPeer);
 				
 					if(marginCost>contract.getPrice()) {
-						LOG.debug("Costs of other Peer < local costs. Triggering Load Balancing.");
+						LOG.info("Costs of other Peer < local costs. Triggering Load Balancing.");
 						callback.loadBalancingTriggered();
 					}
 				}

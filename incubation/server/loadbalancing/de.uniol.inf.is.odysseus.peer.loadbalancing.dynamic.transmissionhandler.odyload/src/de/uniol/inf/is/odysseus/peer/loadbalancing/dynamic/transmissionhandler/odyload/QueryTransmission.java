@@ -90,7 +90,7 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 				
 				LOG.debug("{} - Local lock acquired. Requesting other locks.",queryId);
 				
-				locks = new PeerLockContainer(peerCommunicator,peerDictionary,involvedPeers,this);
+				locks = new PeerLockContainer(peerCommunicator,peerDictionary,involvedPeers,this,lock.getNewLockingId());
 				locks.requestLocks();
 			}
 			catch(Exception e) {
