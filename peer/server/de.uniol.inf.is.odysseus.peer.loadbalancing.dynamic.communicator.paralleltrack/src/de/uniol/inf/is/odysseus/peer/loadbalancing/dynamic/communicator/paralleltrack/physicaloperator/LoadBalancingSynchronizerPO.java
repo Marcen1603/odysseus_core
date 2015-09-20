@@ -296,6 +296,23 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 					LoadBalancingSynchronizerPO.log
 							.warn("Got element on port {} without seeing any elements on port {}",
 									port, LoadBalancingSynchronizerPO.old_port);
+					
+					// update elapsed time
+					final long timeElapsed = this.threshold.getUnit()
+							.convert(
+									System.currentTimeMillis()
+											- this.startTime,
+									TimeUnit.MILLISECONDS);
+					if (timeElapsed >= this.threshold.getTime()) {
+
+						// threshold time elapsed
+						LoadBalancingSynchronizerPO.log.warn(
+								"Threshold of {} reached", this.threshold);
+						this.finishSynchroization();
+
+					}
+					
+					
 	
 				} else if (newTS.equals(this.tsOflastSeenElementOnOldPort)) {
 	
