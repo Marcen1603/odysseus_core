@@ -332,7 +332,7 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 						LoadBalancingSynchronizerPO.log
 								.warn("Data stream on port {} got ahead of data stream on port {}",
 										port, LoadBalancingSynchronizerPO.old_port);
-						
+						this.finishSynchroization();
 						
 						if(lastSeenTimeShift==null) {
 							log.debug("Last seen Timeshift is null.");
