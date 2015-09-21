@@ -328,10 +328,21 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 					.getUsermanagement(true);
 			ISession newSession = userManagement.getSessionManagement().loginAs(command.getCaller().getUser().getName(),
 					command.getCaller().getTenant(), userManagement.getSessionManagement().loginSuperUser(null));
-			IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
-					.getDataDictionary(newSession.getTenant());
-			command.setCaller(newSession);
-			command.execute(dd, userManagement, executor);
+
+			if (AddQueryCommand.class.isInstance(command)) {
+				// If the command would be executed normally, there would be no
+				// CreateQueryCommand and backupExecutorCommand could not
+				// identify the query for the AddQueryCommand
+				AddQueryCommand addCommand = (AddQueryCommand) command;
+				executor.addQuery(addCommand.getQueryText(), addCommand.getParserId(), newSession,
+						addCommand.getTransCfgName(), addCommand.getContext(), addCommand.getAddSettings());
+				backupExecutorCommand(addCommand, System.currentTimeMillis());
+			} else {
+				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
+						.getDataDictionary(newSession.getTenant());
+				command.setCaller(newSession);
+				command.execute(dd, userManagement, executor);
+			}
 		}
 	}
 

@@ -13,19 +13,6 @@ import com.google.common.base.Optional;
 public enum QueryStateLogTag {
 
 	/**
-	 * The tag for system log entries identifying an added script (query, sink
-	 * or source plus other information).
-	 */
-	SCRIPT_ADDED {
-
-		@Override
-		public String toString() {
-			return "SCRIPTADDED";
-		}
-
-	},
-
-	/**
 	 * The tag for system log entries identifying an added query.
 	 */
 	QUERY_ADDED {
