@@ -84,7 +84,10 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 	@Override
 	protected void process_next(T object, int port) {
 		boolean found = false;
-		Collection<Integer> routedToPorts = Lists.newArrayList();
+		Collection<Integer> routedToPorts = null;
+		if(sendingHeartbeats) {
+			routedToPorts = Lists.newArrayList();
+		}
 		for (int i = 0; i < predicates.size(); i++) {
 			if (predicates.get(i).evaluate(object)) {
 				T out = object;
@@ -96,7 +99,9 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 				}
 				transfer(out, i);
 				found = true;
-				routedToPorts.add(i);
+				if(sendingHeartbeats) {
+					routedToPorts.add(i);
+				}
 				if (!overlappingPredicates) {
 					break;
 				}
@@ -104,14 +109,19 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 		}
 		if (!found) {
 			transfer(object, predicates.size());
-			routedToPorts.add(predicates.size());
+			if(sendingHeartbeats) {
+				routedToPorts.add(predicates.size());
+			}
 		}
-		// Sending heartbeats to all other ports
-		for(int i = 0; i < predicates.size(); i++) {
-			
-			if(!routedToPorts.contains(i))
-				this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()), i);
-			
+		
+		if(sendingHeartbeats) {
+			// Sending heartbeats to all other ports
+			for(int i = 0; i < predicates.size(); i++) {
+				
+				if(!routedToPorts.contains(i))
+					this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()), i);
+				
+			}
 		}
 	}
 	
