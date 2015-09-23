@@ -15,7 +15,10 @@ public class TLODEnrichAORule extends AbstractTransformationRule<LODEnrichAO> {
 
 	@Override
 	public void execute(LODEnrichAO operator, TransformationConfiguration config) throws RuleException {
-		defaultExecute(operator, new LODEnrichPO(), config, true, true);
+		defaultExecute(operator, new LODEnrichPO<>(operator.getURL(),
+												   operator.getType(),
+												   operator.getPredicate(),
+												   operator.getAttribute()), config, true, true);
 	}
 
 	@Override
