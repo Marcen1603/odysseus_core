@@ -48,7 +48,7 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 		final CvMat mapMatrix = cvCreateMat(2, 3, CV_32FC1);
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 
-		ImageJCV result = new ImageJCV(image.getWidth(), image.getHeight(), image.getDepth(), image.getNumChannels());
+		ImageJCV result = ImageJCV.createCompatible(image);
 		cvWarpAffine(image.getImage(), result.getImage(), mapMatrix);		
 		return result;
 	}

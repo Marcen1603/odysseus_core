@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
-import static org.bytedeco.javacpp.opencv_core.cvAbsDiff;
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.avutil.*;
 
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -31,6 +32,7 @@ public class ImageDiffFunction extends AbstractFunction<ImageJCV> {
 	 * 
 	 * @return ImageJCV Difference Image between image from inputValue 0 and image from inputValue 1.
 	 */
+	
 	@Override
 	public ImageJCV getValue() {
 		final ImageJCV image1 = (ImageJCV) this.getInputValue(0);
@@ -39,9 +41,9 @@ public class ImageDiffFunction extends AbstractFunction<ImageJCV> {
 		Objects.requireNonNull(image1);
 		Objects.requireNonNull(image2);		
 		
-		ImageJCV gray1 = image1.toGrayscaleImage();
-		ImageJCV gray2 = image2.toGrayscaleImage();
-		ImageJCV result = new ImageJCV(image1.getWidth(), image1.getHeight(), IPL_DEPTH_8U, 1);
+		ImageJCV gray1 = ImageJCV.extendToMultipleOf(image1.toGrayscaleImage(), 4);
+		ImageJCV gray2 = ImageJCV.extendToMultipleOf(image2.toGrayscaleImage(), 4);
+		ImageJCV result = new ImageJCV(image1.getWidth(), image1.getHeight(), IPL_DEPTH_8U, 1, AV_PIX_FMT_GRAY8);
 		
 		cvAbsDiff(gray1.getImage(), gray2.getImage(), result.getImage());
 		

@@ -10,12 +10,32 @@ import java.io.IOException;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
+import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
+
+class Decoder
+{
+	public ImageJCV decode(ImageJCV input)
+	{
+		return input.clone();
+	}
+}
+
+class Decoder_RGB2Gray16 extends Decoder
+{
+	public ImageJCV decode(ImageJCV input)
+	{
+		return ImageFunctions.stretchContrast(ImageFunctions.convertEncodedRGBTo16Bit(input), 1000, 5000, 0, 255);
+	}
+}
+
 
 public class VideoPlayback extends PlaybackReceiver 
 {
@@ -25,7 +45,10 @@ public class VideoPlayback extends PlaybackReceiver
 	private double[]			syncData;
 	private int					currentFrame;
 	private boolean 			rotate180;
+	private Decoder				decoder;
 
+	private final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+	
 	public VideoPlayback(SensorModel sensorModel, LogMetaData logMetaData) 
 	{
 		super(sensorModel, logMetaData);
@@ -33,11 +56,17 @@ public class VideoPlayback extends PlaybackReceiver
 
 	@Override protected void onStart() throws IOException
 	{
-		VideoLogMetaData videoLogMetaData = (VideoLogMetaData) logMetaData;
+		VideoLogMetaData videoLogMetaData = (VideoLogMetaData) logMetaData;		
+		if (videoLogMetaData.decoder != null)
+			decoder = new Decoder_RGB2Gray16();
+		else
+			decoder = new Decoder();
 		
 		try
 		{		
 			capture = new FFmpegFrameGrabber(videoLogMetaData.path + videoLogMetaData.videoFile);
+			if (videoLogMetaData.bitsPerPixel != null) capture.setBitsPerPixel(videoLogMetaData.bitsPerPixel);
+			if (videoLogMetaData.pixelFormat != null) capture.setPixelFormat(videoLogMetaData.pixelFormat);
 			capture.start();
 			
 			if (videoLogMetaData.syncFile != null)
@@ -115,18 +144,20 @@ public class VideoPlayback extends PlaybackReceiver
 					eventTime = syncData[currentFrame];
 			}
 			
-			IplImage image = capture.grab();			
+			IplImage image = converter.convert(capture.grab());			
 			
 			if (image != null && !image.isNull())
 			{		
 				image = image.clone();
+//				ImageJCV imageJCV = decoder.decode(ImageJCV.fromIplImage(image, capture.getPixelFormat()));
+				
 				if (rotate180)
 				{
-					cvFlip(image, image, -1);
+//					cvFlip(imageJCV.getImage(), imageJCV.getImage(), -1);
 				}
 
 				double eventSecondsValid = 1.0; //1.0 / fps * 2.0;
-				e =  new Event(getSensorModel(), image, eventTime, eventSecondsValid);
+				e =  new Event(getSensorModel(), /*imageJCV.getImage()*/ image, eventTime, eventSecondsValid);
 				
 				if (syncData == null)
 					eventTime += 1.0 / fps;

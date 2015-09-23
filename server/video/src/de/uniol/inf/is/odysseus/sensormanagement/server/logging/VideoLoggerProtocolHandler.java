@@ -1,12 +1,11 @@
 
 package de.uniol.inf.is.odysseus.sensormanagement.server.logging;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -24,29 +23,43 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData;
+import de.uniol.inf.is.odysseus.video.AbstractVideoImplementation;
 
 public class VideoLoggerProtocolHandler extends LoggerProtocolHandler 
 {
 	public static final String NAME = "VideoLogger";
 	public static final Logger LOG = LoggerFactory.getLogger(VideoLoggerProtocolHandler.class);
 
-	private FrameRecorder 		recorder = null;
-	private DataOutputStream 	syncFileStream = null;	
-	private double				frameRate;
-		
-	private String			videoFileName;
-	private String			syncFileName;
+	private AbstractVideoImplementation videoImpl;
+	private String videoExtension;	
+	
+	private String videoFileName;
+	private String syncFileName;
 
 	public VideoLoggerProtocolHandler() 
 	{
 		super();
 	}
 
-	public VideoLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, OptionMap options) 
+	public VideoLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, OptionMap optionMap) 
 	{
-		super(direction, access, dataHandler, options);
+		super(direction, access, dataHandler, optionMap);
 		
-		frameRate = options.getDouble("framerate", 30.0);
+		videoImpl = new AbstractVideoImplementation()
+		{
+			@Override public FrameRecorder createRecorder(ImageJCV image) 
+			{
+				return new FFmpegFrameRecorder(videoFileName, image.getWidth(), image.getHeight());
+			}
+
+			@Override public FrameGrabber createGrabber() { return null; }
+			@Override public void onRecorderStarted() {}
+			@Override public void onGrabberStarted() {}
+			
+		};
+		
+		videoExtension = optionMap.get("videoExtension", "mp4");		
+		videoImpl.getOptions(optionMap);		
 	}
 
 	@Override
@@ -57,29 +70,27 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	
 	@Override protected LogMetaData startLoggingInternal(Tuple<?> object) throws IOException 
 	{
-		videoFileName = getFileNameBase() + ".mp4";
+		videoFileName = getFileNameBase() + ( (videoExtension.length() > 0) ? ("." + videoExtension) : "");
 		syncFileName = getFileNameBase() + ".sync";		
 				
-		ImageJCV image = (ImageJCV) object.getAttribute(0);
+		videoImpl.setSyncFileName(syncFileName);
+		
+/*		ImageJCV image = (ImageJCV) object.getAttribute(0);
 		
 		try
 		{
-			recorder = new FFmpegFrameRecorder(videoFileName, image.getWidth(), image.getHeight());
-	        recorder.setVideoCodec(13);
-	        recorder.setFrameRate(frameRate);
-	        recorder.setFormat("mp4");
-	        recorder.setVideoQuality(0);
-	        recorder.start();
+			options.createAndStartRecorder(new FFmpegFrameRecorder(videoFileName, image.getWidth(), image.getHeight()));
+//	        recorder.setVideoCodec(13);
+//	        recorder.setFrameRate(frameRate);
+//	        recorder.setFormat("mp4");
+//	        recorder.setVideoQuality(0);
+//	        recorder.start();
 		}
 		catch (FFmpegFrameRecorder.Exception e)
 		{
-			recorder = null;
 			throw new IOException(e);
-		}		
-	        
-		// Set up sync file
-	    syncFileStream = new DataOutputStream(new FileOutputStream(syncFileName));
-	    
+		}		*/
+	        	    
 		VideoLogMetaData logMetaData = new VideoLogMetaData();
 		logMetaData.videoFile = new File(videoFileName).getName();
 		logMetaData.syncFile = new File(syncFileName).getName();
@@ -90,52 +101,16 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 
 	@Override protected void stopLoggingInternal(LogMetaData logMetaData) 
 	{
-		if (recorder != null)
-		{
-			try
-			{
-                recorder.stop();
-                recorder.release();
-			}
-			catch (FrameRecorder.Exception e) 
-			{				
-			} 	
-			
-			recorder = null;
-		}
-		
-		if (syncFileStream != null)
-		{
-			try
-			{
-				syncFileStream.close();
-			}
-			catch (IOException e) 
-			{
-			}
-	
-			syncFileStream = null;
-		}		
+		videoImpl.stop();
 	}
 
 	@Override protected long writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
 		ImageJCV image = (ImageJCV) object.getAttribute(0);
-
-		try
-		{		
-			recorder.record(image.getImage());
-			syncFileStream.writeDouble(timeStamp / 1000.0);			
-		}		
-		catch (Exception e)
-		{
-			throw new IOException(e);
-		}
+		videoImpl.record(image, timeStamp / 1000.0);
 		
 		long length = new File(videoFileName).length();
-		System.out.println("write " + image.toString() + ", video file size = " + length);
-		
-//		image.releaseReference();
+		System.out.println("write " + image.toString() + ", video file size = " + length + " byte 0 = " + image.getImageData().get(0));
 		
 		return length;
 	}	
@@ -183,20 +158,12 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
 	{
-		if (!(o instanceof VideoLoggerProtocolHandler)) {
-			return false;
-		}
-/*		VideoLogger other = (VideoLogger) o;
-		if (this.nanodelay != other.getNanodelay()
-				|| this.delay != other.getDelay()
-				|| this.delayeach != other.getDelayeach()
-				|| this.dumpEachLine != other.getDumpEachLine()
-				|| this.measureEachLine != other.getMeasureEachLine()
-				|| this.lastLine != other.getLastLine()
-				|| this.debug != other.isDebug()
-				|| this.readFirstLine != other.isReadFirstLine()) {
-			return false;
-		}*/
+		if (!(o instanceof VideoLoggerProtocolHandler)) return false;
+		
+		VideoLoggerProtocolHandler other = (VideoLoggerProtocolHandler) o;
+		if (!videoExtension.equals(other.videoExtension)) return false;
+		if (!videoImpl.equals(other.videoImpl)) return false;
+
 		return true;
 	}
 

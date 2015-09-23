@@ -304,7 +304,7 @@ public class MainFrame extends JFrame
 			liveSession.addInstance("Sensorbox 3", "192.168.3.2:9669");
 			liveSession.addInstance("Sensorbox 4", "192.168.4.2:9669");
 			
-			liveSession.addInstance("Lokal", "127.0.0.1:9669");
+//			liveSession.addInstance("Lokal", "127.0.0.1:9669");
 			
 			addSession(liveSession);
 		}

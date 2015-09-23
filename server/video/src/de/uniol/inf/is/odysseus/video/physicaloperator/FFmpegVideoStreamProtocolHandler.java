@@ -57,5 +57,5 @@ public class FFmpegVideoStreamProtocolHandler extends AbstractVideoStreamProtoco
 			return false;
 		
 		return true;
-	}	
+	}
 }

@@ -124,7 +124,7 @@ public class SensorFactory
 			  + "                      transport='none',\n"
 			  + "			           protocol='VideoLogger',\n"
 			  + "                      dataHandler='Tuple',\n"
-			  + "                      options=[%(options)]},\n"
+			  + "                      options=[%(optionsEx) ['format', 'mp4']]},\n"
 			  + "                     %(sourceName))\n";		
 		
 		String liveViewQuery = 
@@ -171,7 +171,7 @@ public class SensorFactory
 			  + "                      transport='none',\n"
 			  + "			           protocol='VideoLogger',\n"
 			  + "                      dataHandler='Tuple',\n"
-			  + "                      options=[%(options)]},\n"
+			  + "                      options=[%(optionsEx)  ['format', 'mp4']]},\n"
 			  + "                     %(sourceName))\n";		
 		
 		String liveViewQuery = 
@@ -209,22 +209,34 @@ public class SensorFactory
 			  + "                         dataHandler='Tuple',\n"
 			  + "                         schema=[['Image', 'ImageJCV']],\n"
 			  + "                         options=[%(options)]})\n";
+			  
 
 		String logQuery = 
 				"#PARSER PQL\n"
-			  + "#RUNQUERY\n"			
+			  + "#RUNQUERY\n"
+			
+			  + "encoded = MAP({expressions = [['convert16BitToRGBCV(image)', 'image']]}, %(sourceName))\n"
 			  + "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 			  + "			           wrapper='GenericPush',\n"
 			  + "                      transport='none',\n"
 			  + "			           protocol='VideoLogger',\n"
 			  + "                      dataHandler='Tuple',\n"
-			  + "                      options=[%(options)]},\n"
-			  + "                     %(sourceName))\n";		
+			  + "                      options=[%(optionsEx)\n"
+			  + "								['videoExtension', 'avi'],\n"
+			  + "								['videoCodec', '34'],\n"			// FFV1
+			  + "								['frameRate', '27'],\n"
+			  + "								['videoQuality', '0'],\n"
+			  + "								['pixelformat', '30'],\n"			// RGBA
+			  + "								['codec:preset', 'veryslow'],\n"
+			  + "								['stretchToFit', 'false']\n"
+			  + "                              ]},\n"
+			  + "                     encoded)\n";		
 		
 		String liveViewQuery = 
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"
-				+ "resizedVideo = MAP({expressions=['resizeCV(image,300,300)']}, %(sourceName))\n"
+						  
+				+ "grayscale = MAP({expressions = [['stretchContrastCV(image, 1000, 5000, 0, 255)', 'image']]}, %(sourceName))\n"
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
 				+ "                      transport='none',\n"
@@ -234,7 +246,7 @@ public class SensorFactory
 				+ "                               ['format', 'h264'],\n"
 				+ "                               ['codec:tune', 'zerolatency'],\n"
 				+ "                               ['codec:preset', 'ultrafast']]},\n"
-				+ "                     resizedVideo)\n";		
+				+ "                     grayscale)\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		

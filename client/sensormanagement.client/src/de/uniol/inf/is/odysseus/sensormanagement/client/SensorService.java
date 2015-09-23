@@ -30,113 +30,18 @@ import javax.xml.ws.ResponseWrapper;
     /**
      * 
      * @param securityToken
-     * @param sensorId
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removeSensor", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.RemoveSensor")
-    @ResponseWrapper(localName = "removeSensorResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.RemoveSensorResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/removeSensorRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/removeSensorResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/removeSensor/Fault/InvalidUserDataException")
-    })
-    public void removeSensor(
-        @WebParam(name = "securityToken", targetNamespace = "")
-        String securityToken,
-        @WebParam(name = "sensorId", targetNamespace = "")
-        String sensorId)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securityToken
-     * @param sensorXml
-     * @param sensorId
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "modifySensor", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.ModifySensor")
-    @ResponseWrapper(localName = "modifySensorResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.ModifySensorResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/modifySensorRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/modifySensorResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/modifySensor/Fault/InvalidUserDataException")
-    })
-    public void modifySensor(
-        @WebParam(name = "securityToken", targetNamespace = "")
-        String securityToken,
-        @WebParam(name = "sensorId", targetNamespace = "")
-        String sensorId,
-        @WebParam(name = "sensorXml", targetNamespace = "")
-        String sensorXml)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securityToken
-     * @param targetHost
-     * @param targetPort
-     * @param sensorId
-     * @return
-     *     returns java.lang.String
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(name = "streamUrl", targetNamespace = "")
-    @RequestWrapper(localName = "startLiveView", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StartLiveView")
-    @ResponseWrapper(localName = "startLiveViewResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StartLiveViewResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/startLiveViewRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/startLiveViewResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/startLiveView/Fault/InvalidUserDataException")
-    })
-    public String startLiveView(
-        @WebParam(name = "securityToken", targetNamespace = "")
-        String securityToken,
-        @WebParam(name = "sensorId", targetNamespace = "")
-        String sensorId,
-        @WebParam(name = "targetHost", targetNamespace = "")
-        String targetHost,
-        @WebParam(name = "targetPort", targetNamespace = "")
-        int targetPort)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securityToken
-     * @param sensorType
-     * @return
-     *     returns java.lang.String
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(name = "sensorTypeXml", targetNamespace = "")
-    @RequestWrapper(localName = "getSensorType", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorType")
-    @ResponseWrapper(localName = "getSensorTypeResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorTypeResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypeRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypeResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorType/Fault/InvalidUserDataException")
-    })
-    public String getSensorType(
-        @WebParam(name = "securityToken", targetNamespace = "")
-        String securityToken,
-        @WebParam(name = "sensorType", targetNamespace = "")
-        String sensorType)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securityToken
      * @return
      *     returns java.util.List<java.lang.String>
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
-    @WebResult(name = "sensorIds", targetNamespace = "")
-    @RequestWrapper(localName = "getSensorIds", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorIds")
-    @ResponseWrapper(localName = "getSensorIdsResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorIdsResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorIdsRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorIdsResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorIds/Fault/InvalidUserDataException")
+    @WebResult(name = "sensorTypes", targetNamespace = "")
+    @RequestWrapper(localName = "getSensorTypes", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorTypes")
+    @ResponseWrapper(localName = "getSensorTypesResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorTypesResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypesRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypes/Fault/InvalidUserDataException")
     })
-    public List<String> getSensorIds(
+    public List<String> getSensorTypes(
         @WebParam(name = "securityToken", targetNamespace = "")
         String securityToken)
         throws InvalidUserDataException_Exception
@@ -145,20 +50,23 @@ import javax.xml.ws.ResponseWrapper;
     /**
      * 
      * @param securityToken
-     * @param sensorId
+     * @param name
+     * @param loggingDirectory
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
-    @RequestWrapper(localName = "stopLiveView", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StopLiveView")
-    @ResponseWrapper(localName = "stopLiveViewResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StopLiveViewResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/stopLiveViewRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/stopLiveViewResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/stopLiveView/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "initService", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.InitService")
+    @ResponseWrapper(localName = "initServiceResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.InitServiceResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/initServiceRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/initServiceResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/initService/Fault/InvalidUserDataException")
     })
-    public void stopLiveView(
+    public void initService(
         @WebParam(name = "securityToken", targetNamespace = "")
         String securityToken,
-        @WebParam(name = "sensorId", targetNamespace = "")
-        String sensorId)
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "loggingDirectory", targetNamespace = "")
+        String loggingDirectory)
         throws InvalidUserDataException_Exception
     ;
 
@@ -188,6 +96,49 @@ import javax.xml.ws.ResponseWrapper;
     /**
      * 
      * @param securityToken
+     * @param sensorXml
+     * @param sensorId
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "modifySensor", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.ModifySensor")
+    @ResponseWrapper(localName = "modifySensorResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.ModifySensorResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/modifySensorRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/modifySensorResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/modifySensor/Fault/InvalidUserDataException")
+    })
+    public void modifySensor(
+        @WebParam(name = "securityToken", targetNamespace = "")
+        String securityToken,
+        @WebParam(name = "sensorId", targetNamespace = "")
+        String sensorId,
+        @WebParam(name = "sensorXml", targetNamespace = "")
+        String sensorXml)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securityToken
+     * @return
+     *     returns java.util.List<java.lang.String>
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(name = "sensorIds", targetNamespace = "")
+    @RequestWrapper(localName = "getSensorIds", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorIds")
+    @ResponseWrapper(localName = "getSensorIdsResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorIdsResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorIdsRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorIdsResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorIds/Fault/InvalidUserDataException")
+    })
+    public List<String> getSensorIds(
+        @WebParam(name = "securityToken", targetNamespace = "")
+        String securityToken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securityToken
      * @param sensorId
      * @return
      *     returns java.lang.String
@@ -201,6 +152,49 @@ import javax.xml.ws.ResponseWrapper;
         @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorById/Fault/InvalidUserDataException")
     })
     public String getSensorById(
+        @WebParam(name = "securityToken", targetNamespace = "")
+        String securityToken,
+        @WebParam(name = "sensorId", targetNamespace = "")
+        String sensorId)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securityToken
+     * @param sensorType
+     * @return
+     *     returns java.lang.String
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(name = "sensorTypeXml", targetNamespace = "")
+    @RequestWrapper(localName = "getSensorType", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorType")
+    @ResponseWrapper(localName = "getSensorTypeResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorTypeResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypeRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypeResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorType/Fault/InvalidUserDataException")
+    })
+    public String getSensorType(
+        @WebParam(name = "securityToken", targetNamespace = "")
+        String securityToken,
+        @WebParam(name = "sensorType", targetNamespace = "")
+        String sensorType)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securityToken
+     * @param sensorId
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removeSensor", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.RemoveSensor")
+    @ResponseWrapper(localName = "removeSensorResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.RemoveSensorResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/removeSensorRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/removeSensorResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/removeSensor/Fault/InvalidUserDataException")
+    })
+    public void removeSensor(
         @WebParam(name = "securityToken", targetNamespace = "")
         String securityToken,
         @WebParam(name = "sensorId", targetNamespace = "")
@@ -251,43 +245,49 @@ import javax.xml.ws.ResponseWrapper;
     /**
      * 
      * @param securityToken
-     * @param name
-     * @param loggingDirectory
+     * @param targetHost
+     * @param targetPort
+     * @param sensorId
+     * @return
+     *     returns java.lang.String
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
-    @RequestWrapper(localName = "initService", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.InitService")
-    @ResponseWrapper(localName = "initServiceResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.InitServiceResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/initServiceRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/initServiceResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/initService/Fault/InvalidUserDataException")
+    @WebResult(name = "streamUrl", targetNamespace = "")
+    @RequestWrapper(localName = "startLiveView", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StartLiveView")
+    @ResponseWrapper(localName = "startLiveViewResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StartLiveViewResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/startLiveViewRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/startLiveViewResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/startLiveView/Fault/InvalidUserDataException")
     })
-    public void initService(
+    public String startLiveView(
         @WebParam(name = "securityToken", targetNamespace = "")
         String securityToken,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "loggingDirectory", targetNamespace = "")
-        String loggingDirectory)
+        @WebParam(name = "sensorId", targetNamespace = "")
+        String sensorId,
+        @WebParam(name = "targetHost", targetNamespace = "")
+        String targetHost,
+        @WebParam(name = "targetPort", targetNamespace = "")
+        int targetPort)
         throws InvalidUserDataException_Exception
     ;
 
     /**
      * 
      * @param securityToken
-     * @return
-     *     returns java.util.List<java.lang.String>
+     * @param sensorId
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
-    @WebResult(name = "sensorTypes", targetNamespace = "")
-    @RequestWrapper(localName = "getSensorTypes", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorTypes")
-    @ResponseWrapper(localName = "getSensorTypesResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.GetSensorTypesResponse")
-    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypesRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/getSensorTypes/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "stopLiveView", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StopLiveView")
+    @ResponseWrapper(localName = "stopLiveViewResponse", targetNamespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.sensormanagement.client.StopLiveViewResponse")
+    @Action(input = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/stopLiveViewRequest", output = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/stopLiveViewResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://server.sensormanagement.odysseus.is.inf.uniol.de/SensorService/stopLiveView/Fault/InvalidUserDataException")
     })
-    public List<String> getSensorTypes(
+    public void stopLiveView(
         @WebParam(name = "securityToken", targetNamespace = "")
-        String securityToken)
+        String securityToken,
+        @WebParam(name = "sensorId", targetNamespace = "")
+        String sensorId)
         throws InvalidUserDataException_Exception
     ;
 

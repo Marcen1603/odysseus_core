@@ -17,9 +17,14 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacv.Java2DFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 public class Utilities 
 {
+	private static final Java2DFrameConverter bufferedImageConverter = new Java2DFrameConverter();
+	private static final OpenCVFrameConverter.ToIplImage frameConverter = new OpenCVFrameConverter.ToIplImage();
+	
 	// Static class, do not instantiate
 	private Utilities() {}
 	
@@ -98,11 +103,11 @@ public class Utilities
     	{
     		IplImage newImage = cvCreateImage(cvSize(w, h), image.depth(), image.nChannels());
     		cvResize(image, newImage);
-    		graphics.drawImage(newImage.getBufferedImage(), x, y, observer);
+    		graphics.drawImage(bufferedImageConverter.convert(frameConverter.convert(newImage)), x, y, observer);
     		cvReleaseImage(newImage);
     	}
     	else		
-    		graphics.drawImage(image.getBufferedImage(), x, y, observer);
+    		graphics.drawImage(bufferedImageConverter.convert(frameConverter.convert(image)), x, y, observer);
 	}
 
 	public static void printTimeInMillis(int y, int m, int d, int h, int min, int s)

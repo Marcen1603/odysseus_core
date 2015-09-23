@@ -6,6 +6,7 @@ import java.util.TimeZone;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
@@ -44,9 +45,12 @@ public class VideoReceiver extends LiveSensor
 					capture.start();
 					System.out.println("capture returned");
 				
+					OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+					
 	                while (isRunning())
 	                {
-						IplImage image = capture.grab();
+						IplImage image = converter.convert(capture.grab());
+						
 						Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));								
 						long now = c.getTimeInMillis();
 							

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.imagejcv.functions;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Rect;
+import org.bytedeco.javacpp.opencv_core.RectVector;
 import org.bytedeco.javacpp.opencv_objdetect.CascadeClassifier;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -37,7 +37,7 @@ public class CountFacesFunction extends AbstractFunction<Integer> {
 		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final IplImage iplImage = image.getImage();
 		final Mat matImage = new Mat(iplImage);
-		Rect faceDetections = new Rect();
+		RectVector faceDetections = new RectVector();
 		faceDetector.detectMultiScale(matImage, faceDetections);
 		return faceDetections.sizeof();
 	}

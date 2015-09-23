@@ -7,12 +7,15 @@ import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 public class ImageFrame extends CanvasFrame 
 {
 	private static final long serialVersionUID = -4978661992664838114L;
+	private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+	
 	private Object syncObj = new Object();
 	private Thread grabThread;
 	private boolean running;
@@ -48,7 +51,7 @@ public class ImageFrame extends CanvasFrame
 				{
 					IplImage iplImage;
 					try {
-						iplImage = frameGrabber.grab();
+						iplImage = converter.convert(frameGrabber.grab());
 					} catch (FrameGrabber.Exception e) {
 						ReceiveVideoStreamApp.showException(e);
 						return;
@@ -56,7 +59,7 @@ public class ImageFrame extends CanvasFrame
 
 					if (image == null || (image.getWidth() != iplImage.width()) || (image.getHeight() != iplImage.height()) || 
 							 (image.getDepth() != iplImage.depth()) || (image.getNumChannels() != iplImage.nChannels()))	
-						image = new ImageJCV(iplImage.width(), iplImage.height(), iplImage.depth(), iplImage.nChannels());
+						image = ImageJCV.createCompatible(image);
 					
 					image.copyFrom(iplImage);
 					showImage(image);					
@@ -86,7 +89,7 @@ public class ImageFrame extends CanvasFrame
 			if (getWidth() != image.getWidth() || getHeight() != image.getHeight())
 				setSize(image.getWidth(), image.getHeight());
 			
-			showImage(image.getImage());
+			showImage(converter.convert(image.getImage()));
 			repaint();
 		}
 	}

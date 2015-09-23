@@ -21,7 +21,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception,
  de.uniol.inf.is.odysseus.security.provider,
  de.uniol.inf.is.odysseus.slf4j,
- org.bytedeco.javacv,
  org.osgi.framework;version="1.6.0",
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",

@@ -45,7 +45,7 @@ public class ResizeImageFunction extends AbstractFunction<ImageJCV> {
 		Preconditions.checkArgument(width > 0, "Invalid dimension");
 		Preconditions.checkArgument(height > 0, "Invalid dimension");
 		
-		ImageJCV result = new ImageJCV(width, height, image.getDepth(), image.getNumChannels());		
+		ImageJCV result = new ImageJCV(width, height, image.getDepth(), image.getNumChannels(), image.getPixelFormat());		
 		cvResize(image.getImage(), result.getImage());
 		
 		return result;

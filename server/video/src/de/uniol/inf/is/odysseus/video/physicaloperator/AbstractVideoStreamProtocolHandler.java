@@ -1,17 +1,11 @@
 
 package de.uniol.inf.is.odysseus.video.physicaloperator;
 
-import static org.bytedeco.javacpp.avcodec.AV_CODEC_ID_NONE;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.slf4j.Logger;
@@ -21,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -30,11 +25,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+import de.uniol.inf.is.odysseus.video.AbstractVideoImplementation;
 
 public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>> 
 {
-	public static final String OPTIONS_PREFIX = "codec:";
-	
 	private enum TimeStampMode
 	{
 		start, fileTime, syncFile, none
@@ -44,25 +38,17 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	
 	private final Object processLock = new Object();
 
+	private AbstractVideoImplementation videoImpl;
+	
 	private String streamUrl;
 	private boolean useDelay;
-	private double frameRate;
-	private int bitRate;
-	private String format;	
-	private int videoCodec;
-	private double videoQuality;
-	private Map<String, String> videoOptions = new HashMap<>();	
+		
 	private TimeStampMode timeStampMode;
 	private long startTime;			// Time stamp for first frame
 	private String syncFileName = null;
 	
-	private FrameRecorder recorder;
-	private FrameGrabber grabber;
-//	private Tuple<IMetaAttribute> currentTuple;
-	
 	private LinkedList<Tuple<IMetaAttribute>> tupleQueue = new LinkedList<>();
 	
-	private ImageJCV receivedImage;
 	private boolean isDone;
 	private double currentTime; // Current frame timestamp in seconds
 	private double currentFrameSystemTime; // System timestamp for current frame
@@ -73,27 +59,51 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	}
 
 	public AbstractVideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, 
-												OptionMap options) 
+												OptionMap optionMap) 
 	{
-		super(direction, access, dataHandler, options);
+		super(direction, access, dataHandler, optionMap);
 
-		options.checkRequiredException("streamurl");
+		optionMap.checkRequiredException("streamurl");
 
-		frameRate = options.getDouble("framerate", 0.0);
-		streamUrl = options.get("streamurl");
-		useDelay = options.getBoolean("usedelay",  false);
-		bitRate = options.getInt("bitRate", 0);
-		videoCodec = options.getInt("videoCodec", AV_CODEC_ID_NONE);
-		videoQuality = options.getDouble("videoQuality", -1.0);
-		format = options.get("format", null); 
-		
-		for (String key : options.getUnreadOptions())
+		videoImpl = new AbstractVideoImplementation()
 		{
-			if (key.startsWith(OPTIONS_PREFIX))
-				videoOptions.put(key.substring(OPTIONS_PREFIX.length()), options.get(key));
-		}		
-		
-		String timeStampModeStr = options.get("timestampmode", "start");
+			@Override public FrameRecorder createRecorder(ImageJCV image) 
+			{
+				LOG.info("Start streaming to " + streamUrl + ", w = " + image.getWidth() + ", h = " + image.getHeight());
+				FrameRecorder recorder = AbstractVideoStreamProtocolHandler.this.createRecorder(image);												
+				LOG.info("Streaming to " + streamUrl + " is running");
+				
+				return recorder;
+			}
+
+			@Override public FrameGrabber createGrabber() 
+			{
+				LOG.info("Starting grabber for " + streamUrl);
+				FrameGrabber grabber = AbstractVideoStreamProtocolHandler.this.createGrabber();
+				LOG.info("Grabber for " + streamUrl + " started!");
+					
+				return grabber;
+			}
+
+			@Override public void onRecorderStarted() {}
+
+			@Override public void onGrabberStarted() 
+			{
+				if (frameRate == 0.0)
+				{
+					if (timeStampMode == TimeStampMode.start || timeStampMode == TimeStampMode.fileTime)
+						throw new IllegalArgumentException("Video source doesn't provide frame rate. Can't use \"start\" or \"fileTime\" as timeStampMode!");
+					if (useDelay)
+						throw new IllegalArgumentException("Video source doesn't provide frame rate. Can't use \"useDelay\", since frame length is unknown!");
+				}
+			}
+			
+		};
+		videoImpl.getOptions(optionMap);
+
+		streamUrl = optionMap.get("streamurl");
+		useDelay = optionMap.getBoolean("usedelay",  false);		
+		String timeStampModeStr = optionMap.get("timestampmode", "start");
 		
 			 if (timeStampModeStr.equals("start"))		timeStampMode = TimeStampMode.start;
 		else if (timeStampModeStr.equals("filetime"))	timeStampMode = TimeStampMode.fileTime;
@@ -105,8 +115,8 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	
 	@Override public void open() throws UnknownHostException, IOException 
 	{
-		recorder = null;
-		grabber = null;
+		videoImpl.open();
+				
 		isDone = false;
 				
 		if (getDirection().equals(ITransportDirection.IN))
@@ -156,102 +166,31 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	{
 		synchronized (processLock) 
 		{
-			if (recorder != null) 
-			{
-				try	{
-					recorder.stop();
-					recorder.release();
-				} catch (FrameRecorder.Exception e) {
-					throw new IOException(e);
-				} finally {
-					recorder = null;
-				}
-			} 
-
-			if (grabber != null) 
-			{
-				try	{
-					grabber.stop();
-					grabber.release();
-				} catch (FrameGrabber.Exception e) {
-					throw new IOException(e);
-				} finally {
-					grabber = null;
-				}
-			} 
-			
+			videoImpl.stop();						
 			isDone = true;
 		}
 	}	
 	
 	public abstract FrameRecorder createRecorder(ImageJCV image);
-	
-	private void startRecorder(ImageJCV image) throws FrameRecorder.Exception
-	{
-		LOG.info("Start streaming to " + streamUrl + ", w = " + image.getWidth() + ", h = " + image.getHeight());
 		
-		recorder = createRecorder(image);
-		
-		if (format != null) recorder.setFormat(format);
-		if (videoCodec != AV_CODEC_ID_NONE) recorder.setVideoCodec(videoCodec);
-		if (videoQuality != -1.0) recorder.setVideoQuality(videoQuality);
-		if (frameRate != 0.0) recorder.setFrameRate(frameRate);
-		if (bitRate != 0) recorder.setVideoBitrate(bitRate);
-		
-		for (Entry<String, String> entry : videoOptions.entrySet())
-			recorder.setVideoOption(entry.getKey(), entry.getValue());
-		
-		recorder.start();
-							
-		LOG.info("Streaming to " + streamUrl + " is running");
-	}	
-	
 	@Override
 	public void write(Tuple<?> object) throws IOException 
 	{
 		synchronized (processLock)
 		{
-			try
-			{
-				ImageJCV image = (ImageJCV) object.getAttribute(0);
-				
-				if (recorder == null)
-					startRecorder(image);
-				
-				recorder.record(image.getImage());
-				LOG.debug("Frame written: " + image);
-			}
-			catch (Exception e)
-			{
-				throw new IOException("Error while recording frame", e);
-			}
+			long timeStamp = 0;
+			TimeInterval timeInterval = (TimeInterval)object.getMetadata();
+	        if (timeInterval != null)
+	        	timeStamp = timeInterval.getStart().getMainPoint();			
+			
+			ImageJCV image = (ImageJCV) object.getAttribute(0);				
+			videoImpl.record(image, timeStamp / 1000.0);								
+			LOG.debug("Frame written: " + image);
 		}
 	}
 	
 	public abstract FrameGrabber createGrabber();
 	
-	private void startGrabber() throws FrameGrabber.Exception
-	{
-		LOG.info("Starting grabber for " + streamUrl);
-		grabber = createGrabber();
-		grabber.start();		
-
-		if (frameRate == 0.0)
-		{
-			frameRate = grabber.getFrameRate();
-			if (frameRate == 0.0)
-			{
-				if (timeStampMode == TimeStampMode.start || timeStampMode == TimeStampMode.fileTime)
-					throw new IllegalArgumentException("Video source doesn't provide frame rate. Can't use \"start\" or \"fileTime\" as timeStampMode!");
-				if (useDelay)
-					throw new IllegalArgumentException("Video source doesn't provide frame rate. Can't use \"useDelay\", since frame length is unknown!");
-			}
-				
-		}
-		
-		LOG.info("Grabber for " + streamUrl + " started!");
-	}
-
 	
 	@Override
 	public boolean hasNext() throws IOException 
@@ -260,33 +199,10 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 		{
 			if (isDone) return true;
 			
-//			if (this instanceof FFmpegVideoStreamProtocolHandler)
-//				System.out.println("hasNext enter");
-			
 			try
 			{
-				// Start grabber if not started yet
-				if (grabber == null)
-					startGrabber();				
-				
-				// Apply delay if necessary. Grabber has to be started before since frameRate is needed here
-				if (useDelay)
-					try 
-					{
-						double frameTime = 1.0 / frameRate;
-						while (System.currentTimeMillis() / 1000.0 - currentFrameSystemTime < frameTime)
-							Thread.sleep(1);
-					} 
-					catch (InterruptedException e) 
-					{
-						e.printStackTrace();
-						Thread.currentThread().interrupt();
-						return false;
-					}						
-								
-				// Grab image
-				IplImage iplImage = grabber.grab();
-				if (iplImage == null || iplImage.isNull())
+				ImageJCV receivedImage = videoImpl.grab();
+				if (receivedImage == null)
 				{
 					isDone = true;
 					return false;
@@ -299,13 +215,6 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 				int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 				if (attrs.length > 0)
 				{
-					if (receivedImage == null || (receivedImage.getWidth() != iplImage.width()) || (receivedImage.getHeight() != iplImage.height()) || 
-							 (receivedImage.getDepth() != iplImage.depth()) || (receivedImage.getNumChannels() != iplImage.nChannels()))
-					{
-						receivedImage = ImageJCV.fromIplImage(iplImage);
-					}
-					else
-						receivedImage.copyFrom(iplImage);
 					currentTuple.setAttribute(attrs[0], receivedImage);
 				}
 					
@@ -321,7 +230,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 			        }	
 			        else
 			        {
-			        	currentTime += 1.0 / frameRate;
+			        	currentTime += 1.0 / videoImpl.frameRate;
 			        }
 				        
 			        long endTimeStamp = (long) (currentTime * 1000.0);
@@ -338,9 +247,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 				currentFrameSystemTime = System.currentTimeMillis() / 1000.0;
 
 				tupleQueue.addLast(currentTuple);
-				
-	//			if (this instanceof FFmpegVideoStreamProtocolHandler)
-	//				System.out.println("hasNext leave true");
+
 				return true;
 			}
 			catch (Exception e) 
@@ -356,7 +263,25 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	{
 		synchronized (processLock)
 		{
-	        return isDone ? null : tupleQueue.pop();
+			if (isDone)
+				return null;
+			
+			// Apply delay if necessary
+			if (useDelay)
+				try 
+				{
+					double frameTime = 1.0 / videoImpl.frameRate;
+					while (System.currentTimeMillis() / 1000.0 - currentFrameSystemTime < frameTime)
+						Thread.sleep(1);
+				} 
+				catch (InterruptedException e) 
+				{
+					e.printStackTrace();
+					Thread.currentThread().interrupt();
+					return null;
+				}						
+			
+	        return tupleQueue.pop();
 		}
 	}
 
@@ -391,8 +316,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 			return false;
 		
 		AbstractVideoStreamProtocolHandler other = (AbstractVideoStreamProtocolHandler) o;
-		if (!streamUrl.equals(other.streamUrl) || frameRate != other.frameRate || 
-		    (bitRate != other.bitRate) || !format.equals(other.format) || !videoOptions.equals(other.videoOptions))
+		if (!streamUrl.equals(other.streamUrl) || !videoImpl.equals(other.videoImpl))
 			return false;
 		
 		return true;
@@ -411,17 +335,12 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 
 	public double getFrameRate() 
 	{
-		return frameRate;
+		return videoImpl.frameRate;
 	}
 
 	public void setFrameRate(double frameRate) 
 	{
 		throw new UnsupportedOperationException("Not implemented yet!");
 //		this.frameRate = frameRate;
-	}
-
-	public FrameRecorder getRecorder() 
-	{
-		return recorder;
 	}
 }

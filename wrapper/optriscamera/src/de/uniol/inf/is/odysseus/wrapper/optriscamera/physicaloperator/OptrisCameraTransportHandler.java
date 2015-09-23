@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.optriscamera.physicaloperator;
 
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_16S;
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.avutil.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -66,11 +67,13 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 								if (attrs.length > 0)
 		 								{
 		 									if (image == null)
-		 										image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16S, cameraCapture.getImageChannels());
+		 										image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16U, cameraCapture.getImageChannels(), AV_PIX_FMT_GRAY16);
 		 									
 		 									image.getImageData().rewind();
 			 								image.getImageData().put(buffer);				 								
 		 									tuple.setAttribute(attrs[0], image);
+		 									
+//		 									System.out.println("Optris received, byte 0 = " + buffer.get(0));
 		 								}
 		 								
 		 								fireProcess(tuple);
@@ -122,7 +125,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 	@Override
 	public void processOutClose() throws IOException 
 	{
-		throw new UnsupportedOperationException("Operator can not be used as sink");
+//		throw new UnsupportedOperationException("Operator can not be used as sink");
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.awt.event.WindowListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -24,9 +25,10 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> 
 {
 	private static final long serialVersionUID = 4077769822100028025L;
-	private final AtomicBoolean pause = new AtomicBoolean(false);
+	private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+	
 	private int pos;
-	private Object syncObj = new Object();
+	private String title = "Frame";
 	
 	public ShowImageJCVUDF() 
 	{		 
@@ -43,46 +45,19 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 		if (initString != null)
 			try 
 			{
-				this.pos = Integer.parseInt(initString);
+				String[] parts = initString.split(",");
+				
+				this.pos = Integer.parseInt(parts[0]);
+				
+				if (parts.length > 1)
+					title = parts[1]; 
+					
 			} 
 			catch (java.lang.Exception e) 
 			{
 			}
 		
-		
-		addWindowListener(new WindowListener()
-			{
-				@Override public void windowActivated(WindowEvent arg0) 	{}
-				@Override public void windowClosing(WindowEvent arg0) 		{}
-				@Override public void windowDeactivated(WindowEvent arg0) 	{}
-				@Override public void windowDeiconified(WindowEvent arg0) 	{}
-				@Override public void windowIconified(WindowEvent arg0) 	{}
-				@Override public void windowOpened(WindowEvent arg0)		{}
-				
-				@Override public void windowClosed(WindowEvent arg0) 		
-				{
-					synchronized (syncObj)
-					{
-						pause.set(true);
-					}					
-				}
-			});
-						
-		
-		this.addKeyListener(new KeyListener() 
-			{
-				@Override public void keyPressed(final KeyEvent event) 
-				{
-					if (event.getKeyCode() == KeyEvent.VK_SPACE)
-						ShowImageJCVUDF.this.pause.set(!ShowImageJCVUDF.this.pause.get());
-				}
-			
-				@Override public void keyReleased(final KeyEvent event) {}
-
-				@Override public void keyTyped(final KeyEvent event) {}
-			});
-		this.setSize(700, 700);
-		this.setVisible(true);
+		setVisible(true);
 	}
 	
 	/**
@@ -90,19 +65,18 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 	 */
 	@Override public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) 
 	{		
-		synchronized (syncObj) 
-		{
-			ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
-			showImage(image.getImage());
-			repaint();
-		}
+		if (!isVisible()) return in;
+		
+		ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
+			
+		setTitle(title + " [" + image.getWidth() + "x" + image.getHeight() + "]");
+		showImage(converter.convert(image.getImage()));
+		
 		return in;
 	}
 	
 	/**
 	 * Returns output mode of this class.
-	 * 
-	 * @author Kristian Bruns
 	 * 
 	 * @return OutputMode Output mode.
 	 */

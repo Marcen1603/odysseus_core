@@ -134,10 +134,13 @@ public class Sensor
 		loggingOptionsMap.put("directory", directory);
 		loggingOptionsMap.put("sizeLimit", Integer.toString(300*1024*1024)); // 300MB		
 		
+		String options = StringUtils.mapToString(loggingOptionsMap);
+		
 		Map<String, Object> formatMap = new HashMap<>();
 		formatMap.put("sourceName", getDataQueryName());
 		formatMap.put("sinkName", getLoggingQueryName());
-		formatMap.put("options", StringUtils.mapToString(loggingOptionsMap));		
+		formatMap.put("options", options);
+		formatMap.put("optionsEx", (options.length() > 0) ? (options + ",") : "");
 		
 		String queryText = StringUtils.namedFormatStr(type.loggingQueryText, formatMap);
 		safeAddQuery(queryName, queryText, session);

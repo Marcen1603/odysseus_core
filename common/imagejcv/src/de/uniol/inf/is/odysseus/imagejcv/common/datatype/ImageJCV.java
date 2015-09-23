@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.imagejcv.common.datatype;
 
-import static org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U;
-import static org.bytedeco.javacpp.opencv_core.cvCreateImageHeader;
-import static org.bytedeco.javacpp.opencv_core.cvReleaseImageHeader;
-import static org.bytedeco.javacpp.opencv_core.cvSize;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2GRAY;
-import static org.bytedeco.javacpp.opencv_imgproc.cvCvtColor;
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.avutil.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -19,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacv.Java2DFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
@@ -28,16 +27,21 @@ import de.uniol.inf.is.odysseus.core.IClone;
 
 public class ImageJCV implements IClone, Cloneable 
 {
+	public static IplImage current = null;
+	
+	private byte[]		garbage;
 	private int			width;
 	private int			height;
 	private int			numChannels;
 	private int			depth;
 	private int			widthStep;
+	private int			pixelFormat;
 	
 	private IplImage 	image;
 	private ByteBuffer 	imageData;
 
-	public ByteBuffer getImageData()	{ return imageData; }
+	public ByteBuffer getImageData()	{ return (ByteBuffer) imageData.position(0); }
+	
 	public IplImage   getImage() 		{ return image; }
 	
 	public int 		getNumChannels()	{ return numChannels; }	
@@ -45,71 +49,89 @@ public class ImageJCV implements IClone, Cloneable
 	public int 		getWidth() 			{ return width; }	
 	public int 		getHeight() 		{ return height; }
 	public int 		getWidthStep() 		{ return widthStep; }
+	public int		getPixelFormat()	{ return pixelFormat; }
 	
 	public ImageJCV(ImageJCV other) 
 	{
-		this(other.getWidth(), other.getHeight(), other.getDepth(), other.getNumChannels());
-		image.getByteBuffer().put(other.image.getByteBuffer());
+		this(other.getWidth(), other.getHeight(), other.getDepth(), other.getNumChannels(), other.getPixelFormat());
+		other.imageData.rewind();
+		imageData.put(other.imageData);
 	}
 	
 	public ImageJCV(int width, int height)
 	{
-		this(width, height, IPL_DEPTH_8U, 4);
+		this(width, height, IPL_DEPTH_8U, 4, AV_PIX_FMT_RGBA);
 	}
 
-	public ImageJCV(int width, int height, int depth, int channels)
+	public ImageJCV(int width, int height, int depth, int channels, int pixelFormat)
 	{
+		// Create a dummy payload which triggers the gc early
+		// Native memory is not watched by the gc and each image only holds around 24bytes of java heap space.
+		// A 4k RGBA image holds around 16MB native memory and we would run out of memory very fast since 
+		// the gc will not be triggered before several thousand images have been generated.
+		// The payload increases the java heap footprint by around 10% of the image size, so the gc runs earlier.
+		garbage = new byte[width*height/4];
+		garbage[0] = 0;
+		garbage[1] = (byte)(Math.random()*255.0);
+		
 		// Save these values since each call to image.get... is a native call
 		this.width = width;
 		this.height = height;
 		this.depth = depth;
 		this.numChannels = channels;
+		this.pixelFormat = pixelFormat;
 		
-		image = cvCreateImageHeader(cvSize(width, height), depth, channels);
+		image = IplImage.createHeader(cvSize(width, height), depth, channels);
 		
 		imageData = ByteBufferCache.getOrAllocateBuffer(image.imageSize());
 		image.imageData(new BytePointer(imageData));
 		
 		widthStep = image.widthStep();
 		
-		ImageGC.onCreateImage();
+//		ImageGC.onCreateImage();
 	}		
+	
+	public static ImageJCV createCompatible(ImageJCV other)
+	{
+		return new ImageJCV(other.getWidth(), other.getHeight(), other.getDepth(), other.getNumChannels(), other.getPixelFormat());	
+	}
 	
 	@Override public ImageJCV clone()
 	{
 		return new ImageJCV(this);
 	}
 	
-	@Override
+/*	@Override
 	protected void finalize()
 	{
 		ImageGC.onReleaseImage();
-		release();
-	}	
+//		release();
+	}	*/
 	
 	public void release()
 	{
 		if (image != null)
 		{
-			System.out.println("Release enter");
-			cvReleaseImageHeader(image);
-			image = null;		
+//			System.out.println("Release enter");
 			
 			ByteBufferCache.putBuffer(imageData);
 			imageData = null;
-			System.out.println("Release leave");
+			image.imageData(null);			
+			image = null;		
+			
+//			System.out.println("Release leave");
 		}			
 	}
 	
-	public int get(final int index) {
-		ByteBuffer buffer = this.image.getByteBuffer();
-		int value = buffer.getInt(index);
+	public int get(final int index) 
+	{
+		int value = imageData.getInt(index);
 		return value;
 	}
 	
-	public void set(int index, int value) {
-		ByteBuffer buffer = this.image.getByteBuffer();
-		buffer.putInt(index, value);
+	public void set(int index, int value) 
+	{
+		imageData.putInt(index, value);
 	}
 	
 	public void writeData(ByteBuffer buffer) 
@@ -118,13 +140,15 @@ public class ImageJCV implements IClone, Cloneable
 		buffer.putInt(height);
 		buffer.putInt(depth);
 		buffer.putInt(numChannels);
+		buffer.putInt(pixelFormat);
 		
-		buffer.put(image.getByteBuffer());
+		imageData.rewind();
+		buffer.put(imageData);
 	}
 	
 	@Override
 	public String toString() {
-		return "{Width: " + getWidth() + " Height: " + getHeight() + "}";
+		return "{Width: " + getWidth() + " Height: " + (getHeight() + garbage[0]) + "}";
 	}
 
 	// Returns this image converted to grayscale. Returns this, when this image already is a grayscale image and doClone = false
@@ -137,14 +161,18 @@ public class ImageJCV implements IClone, Cloneable
 				return doClone ? clone() : this;
 				
 			case 3:
-				conversion = CV_BGR2GRAY; 
+				conversion = CV_BGR2GRAY; 				
+				break;
+				
+			case 4:
+				conversion = CV_BGRA2GRAY;
 				break;
 			
 			default: 
 				throw new UnsupportedOperationException("toGrayscale not implemented for " + getNumChannels() + " channels!");
 		}
 		
-		ImageJCV result = new ImageJCV(getWidth(), getHeight(), IPL_DEPTH_8U, 1);
+		ImageJCV result = new ImageJCV(getWidth(), getHeight(), IPL_DEPTH_8U, 1, AV_PIX_FMT_GRAY8);
 		cvCvtColor(image, result.image, conversion);
 		return result;
 	}
@@ -154,6 +182,66 @@ public class ImageJCV implements IClone, Cloneable
 	{
 		return toGrayscaleImage(false);
 	}
+	
+	public static ImageJCV extendToMultipleOf(ImageJCV image, int multiple)
+	{
+		int newWidth  = image.getWidth();
+		int newHeight = image.getHeight(); 
+		
+		if (newWidth  % multiple != 0) newWidth  = (newWidth / multiple + 1) * multiple;
+		if (newHeight % multiple != 0) newHeight = (newHeight / multiple + 1) * multiple;
+		
+		if (newWidth == image.getWidth() && newHeight == image.getHeight()) return image;
+		
+		ImageJCV newImage = new ImageJCV(newWidth, newHeight, image.getDepth(), image.getNumChannels(), image.getPixelFormat());
+		int bytesPerPixel = Math.abs(newImage.getDepth() & 0xFF) / 8 * newImage.getNumChannels();
+		ByteBuffer newBuffer = newImage.getImageData();
+		ByteBuffer oldBuffer = image.getImageData();
+		
+		newBuffer.rewind();
+		oldBuffer.rewind();
+		
+		if (newWidth == image.getWidth())
+		{
+			// Only some lines have been added to the end. 
+			// Since width and widthStep is the same, the whole memory block of the old image can be copied						 
+			newBuffer.put(oldBuffer);												
+		}
+		else
+		{
+			// Since the width has changed, each line has to be copied seperately
+			for (int y=0;y<image.getHeight();y++)
+			{
+				int oldLineStart = y*image.getWidthStep();
+				int newLineStart = y*newImage.getWidthStep();
+				
+				oldBuffer.position(oldLineStart);
+				newBuffer.position(newLineStart);
+				
+				// Copy whole line
+				for (int x = 0; x < image.getWidth()*bytesPerPixel; x++)
+					newBuffer.put(oldBuffer.get());
+				
+				// Fill remaining empty pixel
+				int remaining = newWidth - image.getWidth();
+				for (int x = 0; x < remaining * bytesPerPixel; x++)
+					newBuffer.put((byte)0);
+			}
+		}
+		
+		// If new lines have been added at the bottom, fill them with 0
+		if (newHeight != image.getHeight())
+		{
+			for (int y=image.getHeight(); y<newHeight; y++)
+			{
+				newBuffer.position(y*newImage.getWidthStep());
+				for (int x = 0; x < newWidth*bytesPerPixel; x++)
+					newBuffer.put((byte)0);
+			}
+		}		
+		
+		return newImage;
+	}		
 	
 	public void fill(int value) {
 		throw new UnsupportedOperationException("Currently not implemented");
@@ -177,30 +265,51 @@ public class ImageJCV implements IClone, Cloneable
 	public void copyFrom(IplImage iplImage) 
 	{
 		// TODO: Make sure image fits!
-		
 		imageData.rewind();
 		
 		if (widthStep != iplImage.widthStep())
 		{
-			image.copyFrom(iplImage.getBufferedImage());						
+			throw new UnsupportedOperationException("Needs to be reimplemented!");
+//			image.copyFrom(iplImage.getBufferedImage());						
 		}
 		else
-			imageData.put(iplImage.getByteBuffer());
+		{
+			imageData.put(iplImage.imageData().position(0).limit(iplImage.imageSize()).asByteBuffer());
+		}
 	}
 		
-	public static ImageJCV fromBufferedImage(BufferedImage bufferedImage)
+	private static Java2DFrameConverter bufferedImageConverter = null;
+	private static OpenCVFrameConverter.ToIplImage iplImageConverter = null;
+	
+	private static Java2DFrameConverter getBufferedImageConverter()
 	{
-		ImageJCV result = new ImageJCV(bufferedImage.getWidth(), bufferedImage.getHeight());		
-		result.getImage().copyFrom(bufferedImage);
+		if (bufferedImageConverter == null)
+			bufferedImageConverter = new Java2DFrameConverter();
 		
-		return result;
+		return bufferedImageConverter;
+	}
+
+	private static OpenCVFrameConverter.ToIplImage getIplImageConverter()
+	{
+		if (iplImageConverter == null)
+			iplImageConverter = new OpenCVFrameConverter.ToIplImage();
+		
+		return iplImageConverter;
 	}
 	
-	public static ImageJCV fromIplImage(IplImage iplImage)
+	
+	public static ImageJCV fromBufferedImage(BufferedImage bufferedImage)
 	{
-		ImageJCV image = new ImageJCV(iplImage.width(), iplImage.height(), iplImage.depth(), iplImage.nChannels());
+		// TODO: Convert bufferedImage pixelformat to OpenCV pixelformat
+		
+		return ImageJCV.fromIplImage(getIplImageConverter().convert(getBufferedImageConverter().convert(bufferedImage)), AV_PIX_FMT_RGBA);
+	}
+	
+	public static ImageJCV fromIplImage(IplImage iplImage, int pixelFormat)
+	{
+		ImageJCV image = new ImageJCV(iplImage.width(), iplImage.height(), iplImage.depth(), iplImage.nChannels(), pixelFormat);
 		image.getImageData().rewind();
-		image.getImageData().put(iplImage.getByteBuffer());																	
+		image.getImageData().put(iplImage.imageData().position(0).limit(iplImage.imageSize()).asByteBuffer());																	
 		
 		return image;
 	}
@@ -220,7 +329,7 @@ public class ImageJCV implements IClone, Cloneable
 	
 	public static ImageJCV fromBuffer(ByteBuffer buffer) 
 	{
-		ImageJCV result = new ImageJCV(buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt());
+		ImageJCV result = new ImageJCV(buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt());
 		
 		buffer.position(buffer.limit());
 		
@@ -252,9 +361,11 @@ class ByteBufferCache
 	
 	public synchronized static void putBuffer(ByteBuffer buffer)
 	{
+		if (1==1) return;
+		
 		if (!buffer.isDirect())
 			throw new InvalidParameterException("buffer must be a direct ByteBuffer!");
-		
+
 		LinkedList<ByteBuffer> list = cache.get(buffer.capacity());
 		
 		if (list != null)
@@ -280,6 +391,9 @@ class ByteBufferCache
 	
 	public synchronized static ByteBuffer getOrAllocateBuffer(int capacity)
 	{
+		if (1==1)
+			return ByteBuffer.allocateDirect(capacity);
+		
 		LinkedList<ByteBuffer> list = cache.get(capacity);
 		
 		if (list == null || list.isEmpty())
@@ -309,8 +423,8 @@ class ByteBufferCache
 //       images from the same camera are always the same size (their buffers too)
 class ImageGC
 {
-	private static final int startThreshold = 20;	// Only start thread when imageCount>startThreshold. Stop running thread when imageCount<=startThreshold. 
-	private static final int gcThreshold = 200;		// Run System.gc() when imageCount>gcThreshold. Threshold should be a lot larger than the normal number of concurrent images in the system. 
+	private static final int startThreshold = 20; //20;	// Only start thread when imageCount>startThreshold. Stop running thread when imageCount<=startThreshold. 
+	private static final int gcThreshold = 200; //200;		// Run System.gc() when imageCount>gcThreshold. Threshold should be a lot larger than the normal number of concurrent images in the system. 
 	private static final int checkInterval = 500;	// Sleep for checkInterval in each iteration
 	
 	private static Thread gcThread = null;
@@ -326,6 +440,8 @@ class ImageGC
 						{
 							@Override public void run()
 							{
+								System.out.println(Thread.currentThread().getName() + " started");
+								
 								while (imageCount.get() > startThreshold)
 								{
 									try 
