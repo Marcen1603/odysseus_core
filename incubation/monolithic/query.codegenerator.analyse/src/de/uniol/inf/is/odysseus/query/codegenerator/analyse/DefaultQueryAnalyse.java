@@ -30,12 +30,12 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.SessionHelper;
 import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
 public class DefaultQueryAnalyse implements ICAnalyse{
 	
-	private static Logger LOG = LoggerFactory.getLogger(DefaultQueryAnalyse.class);
+	private  Logger LOG = LoggerFactory.getLogger(DefaultQueryAnalyse.class);
 
-	private static QueryAnalyseInformation transformationInformation;
+	private  QueryAnalyseInformation transformationInformation;
 	
-	private static boolean renameRemoved = false;
-	private static boolean newRound = false;
+	private  boolean renameRemoved = false;
+	private  boolean newRound = false;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
@@ -88,7 +88,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 	}
 	
 
-	private static void prepareLogicalPlan(List<ILogicalOperator> sourceOps){
+	private  void prepareLogicalPlan(List<ILogicalOperator> sourceOps){
 		renameRemoved = false;
 		
 		for(ILogicalOperator ss : sourceOps){
@@ -102,7 +102,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		}
 	}
 	
-	private static void removeAO(ILogicalOperator operator){
+	private  void removeAO(ILogicalOperator operator){
 		
 		for(LogicalSubscription s:operator.getSubscriptions()){
 			removeAO(s.getTarget());
@@ -125,7 +125,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void analyseLogicalPlan(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
+	private  void analyseLogicalPlan(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
 		
 		
 		for(String metaDataType : transformationConfiguration.getDefaultMetaTypeSet()){
@@ -179,7 +179,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		
 	}
 	
-	private static void analyseOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+	private  void analyseOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 		

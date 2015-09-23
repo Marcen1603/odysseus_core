@@ -7,11 +7,11 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 
 public interface ICExecutor {
 	
+	public CodeFragmentInfo getStartCode(List<ILogicalOperator> sourceOPs);
+	
 	public String getName();
 	
 	public String getTargetPlatform();
-	
-	public CodeFragmentInfo getStartCode(List<ILogicalOperator> sourceOPs);
 	
 	public String getExecutorCode();
 }

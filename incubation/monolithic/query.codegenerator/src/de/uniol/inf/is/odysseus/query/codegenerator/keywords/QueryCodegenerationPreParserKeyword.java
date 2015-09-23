@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParamete
 
 public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserKeyword {
 
-	public static final String KEYWORD = "QUERYCODEGENERATION";
+	public static final String KEYWORD = "QUERYCODEGENERATION";	
 	private PreParserKeywordParameterHelper<QueryCodegenerationKeywordParameter> parameterHelper;
 
 	@Override

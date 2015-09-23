@@ -52,8 +52,6 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 String odysseusPath= ci.nextArgument();
 		 String executor= ci.nextArgument();
 		 
-		 
-		 
 		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  tempDirectory,  destinationDirectory,  queryId,  odysseusPath, true,  executor));
 	 }
 
@@ -70,7 +68,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 				sb.append("- tempDirectory: "+config.getValue().getTempDirectory()).append("\n");
 				sb.append("- destinationDirectory: "+config.getValue().getDestinationDirectory()).append("\n");
 				sb.append("- queryId: "+config.getValue().getQueryId()).append("\n");
-				sb.append("- odysseusPath: "+config.getValue().getOdysseusPath()).append("\n");
+				sb.append("- odysseusDirectory: "+config.getValue().getOdysseusPath()).append("\n");
 				sb.append("- executor: "+config.getValue().getExecutor()).append("\n");
 				
 				sb.append("\n");	

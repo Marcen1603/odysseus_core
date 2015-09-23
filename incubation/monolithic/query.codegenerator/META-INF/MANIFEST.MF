@@ -52,7 +52,6 @@ Export-Package: de.uniol.inf.is.odysseus.query.codegenerator,
  de.uniol.inf.is.odysseus.query.codegenerator.modell.enums,
  de.uniol.inf.is.odysseus.query.codegenerator.operator.rule,
  de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry,
- de.uniol.inf.is.odysseus.query.codegenerator.osgi,
  de.uniol.inf.is.odysseus.query.codegenerator.target.platform,
  de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry,
  de.uniol.inf.is.odysseus.query.codegenerator.utils

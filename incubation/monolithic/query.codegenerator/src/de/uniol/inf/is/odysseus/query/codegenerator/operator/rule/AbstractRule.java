@@ -23,6 +23,7 @@ public abstract class AbstractRule<T extends ILogicalOperator> implements IOpera
 		this.name = name;
 	}
 
+	@Override
 	public int getPriority() {
 		return 0;
 	}
@@ -41,6 +42,7 @@ public abstract class AbstractRule<T extends ILogicalOperator> implements IOpera
 
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public Class<T> getConditionClass() {
 		ParameterizedType parameterizedType = (ParameterizedType) getClass()
 				.getGenericSuperclass();

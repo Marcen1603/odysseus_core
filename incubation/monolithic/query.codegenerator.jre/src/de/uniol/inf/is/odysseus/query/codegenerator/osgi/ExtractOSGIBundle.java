@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,51 +24,30 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 //TODO mac, unix support?
 public class ExtractOSGIBundle {
 	
-	private static boolean DEBUG_MODUS = true;
+	private boolean DEBUG_MODUS = false;
+	static Map<String,String> requiredBundleByBundle = new HashMap<String,String>();
+	static Map<String,String> bundles = new HashMap<String, String>();
+	static Set<String> importedClassList = new HashSet<String>();
+	static List<String> onlyJarBundles = new ArrayList<String>();
 	
-	public static List<String> extractOSGIBundle(Set<String> importList ,String tempPath, String copyToFolder){
-		
-		List<String> copyJars = new ArrayList<String>();
-		
-		
-		Map<String,String> requiredBundleByBundle = new HashMap<String,String>();
-		List<String> onlyJarBundles = new ArrayList<String>();
-		
-		
-		Map<String,String> bundles = new HashMap<String, String>();
-		//get needed bundle
-		for(String neededClass : importList){
-			String path;
-			try {
-				
-				Bundle neededBundel = org.osgi.framework.FrameworkUtil.getBundle(Class.forName(neededClass));
-				if(neededBundel != null){				
-					URL entryss = neededBundel.getEntry(".project");
-					
-					//neededBundel.getHeaders().get("Require-Bundle");
-					System.out.println("Bundle:" +neededBundel.getSymbolicName());
-				
-					List<RequireBundleModel> sss = getRequireBundleList(neededBundel.getHeaders().get("Require-Bundle"));
-					
-					
-					for(RequireBundleModel  bundle: sss){
-					
-						requiredBundleByBundle.put(bundle.getName(), bundle.getVersion());
-					}
-					
+	public ExtractOSGIBundle(){
 	
-					path = FileLocator.toFileURL(entryss).getPath();
+	}
+	
+	public ExtractOSGIBundle(boolean debugmode){
+		DEBUG_MODUS  = debugmode;
+	}
+	
+	
+	public Set<String> extractOSGIBundle(Set<String> importList ,String tempPath, String copyToFolder){
 		
-					bundles.put(path.replaceFirst("/", "").replace(".project",""), neededBundel.getSymbolicName());
-					
-					System.out.println("Bundle-Path:"+path.replaceFirst("/", ""));
-				}
-			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
+		Set<String> copyJars = new HashSet<String>();
+	
 		
+		getBundles(importList);
 		
+		//getBundles(importedClassList);
+	
 		for (Map.Entry<String, String> bundleString : requiredBundleByBundle.entrySet())
 		{
 	
@@ -82,8 +62,7 @@ public class ExtractOSGIBundle {
 						//only a jar file
 						System.out.println("Only Jar copy");
 						
-		
-		
+	
 						List<String> jarList = Lists.newArrayList(Splitter.on(",").split(entry.getHeaders().get("Bundle-ClassPath")));
 						
 		
@@ -122,7 +101,12 @@ public class ExtractOSGIBundle {
 		    String name = entry.getValue().replace(".", "");
 	
 		    String[] commands = new String[3];  
-		
+		    
+		    
+		    File filePath = new File(path+File.separator+"src");
+		    if(filePath.exists() && filePath.isDirectory()) { 
+		    	
+		    
 		    switch (Utils.getOS()) {
 	            case WINDOWS:
 	            	
@@ -138,9 +122,9 @@ public class ExtractOSGIBundle {
 	                  /* Command to execute */
 	      		    
 	      		    if(DEBUG_MODUS){
-	      		    	commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
+	      		    	commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar -cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
 	      		    }else{ 
-	      			    commands[2] = volume[0]+": && cd "+path+" && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
+	      			    commands[2] = volume[0]+": && cd "+path+" && jar -cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
 	      		    }
 	      		    
 	                break;
@@ -153,7 +137,7 @@ public class ExtractOSGIBundle {
 	      		    if(DEBUG_MODUS){
 	      		    	commands[2] = "cd "+path+" && cp -r "+path+"src/* "+path+"bin && jar cvf "+tempPath+"/"+copyToFolder +"/"+name+".jar *.properties *.jar -C bin .";
 	      		    }else{ 
-	      			    commands[2] = "cd "+path+" && jar cvf "+tempPath+"/"+copyToFolder +"/"+name+".jar *.properties *.jar -C bin .";
+	      			    commands[2] = "cd "+path+" && jar -cvf "+tempPath+"/"+copyToFolder +"/"+name+".jar *.properties *.jar -C bin .";
 	      		    }
 	            	break;
 	            case MAC:
@@ -177,6 +161,7 @@ public class ExtractOSGIBundle {
 		    ExecuteShellComand.excecuteCommand(commands);
             
             copyJars.add(name+".jar");
+		    }
 		}
 		
 		
@@ -200,24 +185,104 @@ public class ExtractOSGIBundle {
 	}
 	
 	
-	public static List<RequireBundleModel> getRequireBundleList(String requiredBundleString){
+	private  List<RequireBundleModel> getRequireBundleList(String requiredBundleString){
 		List<RequireBundleModel> requireBundleList = new ArrayList<RequireBundleModel>();
 		
-		String[] temp = requiredBundleString.split(",");
-		
-		for(String bundleString : temp){
-			String[] bundleInfo = bundleString.split(";");
+		if(requiredBundleString != null){
+			String[] temp = requiredBundleString.split(",");
 			
-			if(bundleInfo.length == 2){
-				requireBundleList.add(new RequireBundleModel(bundleInfo[0],bundleInfo[1].replace("bundle-version=", "").replace("\"", "")));
+			for(String bundleString : temp){
+				
+				if(bundleString.contains(";")){
+			
+					String[] bundleInfo = bundleString.split(";");
+					
+					if(bundleInfo.length == 2){
+						requireBundleList.add(new RequireBundleModel(bundleInfo[0],bundleInfo[1].replace("bundle-version=", "").replace("\"", "")));
+					}
+				
+				}else{
+					
+					
+					requireBundleList.add(new RequireBundleModel(bundleString, null));
+				}
+				
 			}
-			
 		}
+		
+	
 		
 		
 		return requireBundleList;
 	}
 	
+	
+	private  void getBundles(Set<String> importList){
+		//get needed bundle
+				for(String neededClass : importList){
+					String path;
+					try {
+					
+						Bundle neededBundel = org.osgi.framework.FrameworkUtil.getBundle(Class.forName(neededClass));
+						
+					
+						if(neededBundel != null){				
+							URL entryss = neededBundel.getEntry(".project");
+							
+						
+							System.out.println("Bundle:" +neededBundel.getSymbolicName());
+							List<RequireBundleModel> sss = getRequireBundleList(neededBundel.getHeaders().get("Require-Bundle"));
+							
+							//TODO add Bundle with only jar 
+							for(RequireBundleModel  bundle: sss){
+								requiredBundleByBundle.put(bundle.getName(), bundle.getVersion());
+							}
+							
+							
+							
+							String bundleClassPathValue =neededBundel.getHeaders().get("Bundle-ClassPath");
+							
+							if(bundleClassPathValue != null && bundleClassPathValue.contains(".jar")){
+								//only a jar file
+								System.out.println("Only Jar copy");
+								
+								List<String> jarList = Lists.newArrayList(Splitter.on(",").split(neededBundel.getHeaders().get("Bundle-ClassPath")));
+								
+								String pathNeu = neededBundel.getLocation().replaceFirst("reference:file:/", "");
+								
+								for(String jarFile :jarList){
+									if(jarFile.contains(".jar")){
+										onlyJarBundles.add(pathNeu+jarFile);
+									}
+								
+								}
+								
+								
+								
+							}
+							
+							
+					
+							
+							List<RequireBundleModel> test = getRequireBundleList(neededBundel.getHeaders().get("Import-Package"));
+							for(RequireBundleModel  className: test){
+								importedClassList.add(className.getName());
+							}
+							
+							
+			
+							path = FileLocator.toFileURL(entryss).getPath();
+				
+							bundles.put(path.replaceFirst("/", "").replace(".project",""), neededBundel.getSymbolicName());
+							
+							System.out.println("Bundle-Path:"+path.replaceFirst("/", ""));
+						}
+					} catch (IOException | ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+	}
+
 	
 
 	

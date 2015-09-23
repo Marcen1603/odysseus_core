@@ -27,8 +27,6 @@ Import-Package: de.uniol.inf.is.odysseus.core,
 Bundle-ClassPath: .,
  ST-4.0.8.jar,
  templates/
-Service-Component: OSGI-INF/DalvikTargetPlatform.xml,
- OSGI-INF/CAggregateTIPORule.xml,OSGI-INF/CSlidingAdvanceTimeWindowTIPORule.xml,OSGI-INF/CCSVFileSourceRule.xml,OSGI-INF/CSelectAORule.xml,OSGI-INF/CCSVFileSinkRule.xml,OSGI-INF/CRelationalProjectAORule.xml,OSGI-INF/CStreamAORule.xml,OSGI-INF/CSlidingTimeWindowTIPORule.xml,OSGI-INF/CSlidingPeriodicWindowTIPORule.xml,OSGI-INF/CJoinTIPORule.xml,OSGI-INF/CRelationalMapPORule.xml
- 
- 
+Service-Component: OSGI-INF/DalvikTargetPlatform.xml,OSGI-INF/CAggregateTIPORule.xml,OSGI-INF/CSlidingAdvanceTimeWindowTIPORule.xml,OSGI-INF/CCSVFileSourceRule.xml,OSGI-INF/CSelectAORule.xml,OSGI-INF/CCSVFileSinkRule.xml,OSGI-INF/CRelationalProjectAORule.xml,OSGI-INF/CStreamAORule.xml,OSGI-INF/CSlidingTimeWindowTIPORule.xml,OSGI-INF/CSlidingPeriodicWindowTIPORule.xml,OSGI-INF/CJoinTIPORule.xml,OSGI-INF/CRelationalMapPORule.xml,
+ OSGI-INF/CHashFragmentAORule.xml
 

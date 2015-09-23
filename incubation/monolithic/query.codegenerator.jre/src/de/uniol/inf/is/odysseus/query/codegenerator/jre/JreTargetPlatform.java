@@ -17,12 +17,12 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorSt
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 
 public class JreTargetPlatform extends AbstractTargetPlatform{
 	

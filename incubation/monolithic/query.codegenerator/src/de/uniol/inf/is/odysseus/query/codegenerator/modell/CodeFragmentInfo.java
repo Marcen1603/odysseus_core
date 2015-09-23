@@ -40,6 +40,5 @@ public class CodeFragmentInfo {
 		addImports(newFragment.getImports());	
 	}
 	
-	
 
 }

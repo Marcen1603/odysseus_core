@@ -44,6 +44,8 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 		csvFileSink.addImport(SenderPO.class.getName());
 		csvFileSink.addCode(senderPOTemplate.getSt().render());
 		
+
+		
 		return csvFileSink;
 	}
 	

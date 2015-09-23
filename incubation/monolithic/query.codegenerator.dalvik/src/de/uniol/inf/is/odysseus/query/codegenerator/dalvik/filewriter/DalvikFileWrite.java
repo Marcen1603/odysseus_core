@@ -164,7 +164,8 @@ public class DalvikFileWrite {
 	
 	
 	private void copyOdysseusJar(){
-		ExtractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "app\\libs");
+		ExtractOSGIBundle extractOSGIBundle = new ExtractOSGIBundle();
+		extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "app\\libs");
 	}
 	
 	

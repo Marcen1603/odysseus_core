@@ -40,7 +40,7 @@ public class JavaFileWrite {
 	private String tempPath;
 	private TransformationParameter transformationParameter;
 	private Set<String> importList = new HashSet<String>();
-	private List<String> copyJars = new ArrayList<String>();
+	private Set<String> copyJars = new HashSet<String>();
 	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
@@ -61,7 +61,6 @@ public class JavaFileWrite {
 		this.startCode = startCode;
 		this.operatorConfigurationList = operatorConfigurationList;
 		this.executor = executor;
-		
 	}
 
 	public void createProject() throws IOException{
@@ -103,7 +102,6 @@ public class JavaFileWrite {
 		
 		Bundle bundle = Activator.getContext().getBundle();
 	
-		
 		URL fileURL = bundle.getEntry("templates/java/JavaProject.zip");
 		File file = null;
 		try {
@@ -220,7 +218,8 @@ public class JavaFileWrite {
 	
 	
 	private void copyOdysseusJar(){
-		copyJars = ExtractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "lib");
+		ExtractOSGIBundle extractOSGIBundle =  new ExtractOSGIBundle();
+		copyJars = extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "lib");
 	}
 	
 	

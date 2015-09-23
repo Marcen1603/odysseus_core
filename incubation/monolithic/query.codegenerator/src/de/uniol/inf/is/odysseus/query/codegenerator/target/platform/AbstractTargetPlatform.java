@@ -16,22 +16,27 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		this.setTargetPlatformName(targetPlatformName);
 	}
 	
+	@Override
 	public BlockingQueue<ProgressBarUpdate> getProgressBarQueue() {
 		return progressBarQueue;
 	}
-
+	
+	@Override
 	public void setProgressBarQueue(BlockingQueue<ProgressBarUpdate> progressBarQueue) {
 		this.progressBarQueue = progressBarQueue;
 	}
 
+	@Override
 	public String getTargetPlatformName() {
 		return targetPlatformName;
 	}
 
+	@Override
 	public void setTargetPlatformName(String targetPlatformName) {
 		this.targetPlatformName = targetPlatformName;
 	}
 	
+	@Override
 	public void updateProgressBar(int value, String text, UpdateMessageStatusType statusType){
 		if(progressBarQueue!= null){
 			try {

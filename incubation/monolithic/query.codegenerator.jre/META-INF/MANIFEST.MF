@@ -29,7 +29,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.query.codegenerator,
  de.uniol.inf.is.odysseus.relational_interval,
  org.eclipse.core.runtime,
  com.google.code.gson;bundle-version="2.2.4",
- org.eclipse.osgi.services
+ org.eclipse.osgi.services,
+ org.eclipse.osgi,
+ io.netty
 Service-Component: OSGI-INF/JreTargetPlatform.xml,OSGI-INF/MultipleSourceExecutor.xml,OSGI-INF/CSlidingAdvanceTimeWindowTIPORule.xml,OSGI-INF/CCSVFileSourceRule.xml,OSGI-INF/CSelectAORule.xml,OSGI-INF/CCSVFileSinkRule.xml,OSGI-INF/CRelationalProjectAORule.xml,OSGI-INF/CStreamAORule.xml,OSGI-INF/CSlidingTimeWindowTIPORule.xml,
  OSGI-INF/CSlidingPeriodicWindowTIPORule.xml,OSGI-INF/CJoinTIPORule.xml,OSGI-INF/CRelationalMapPORule.xml,OSGI-INF/CAggregateTIPORule.xml,OSGI-INF/CSenderAORule.xml,OSGI-INF/CUnboundedWindowTIPORule.xml,OSGI-INF/CSystemTimeStampRule.xml,OSGI-INF/CApplicationTimestampPosGreaterEqualZeroRule.xml,OSGI-INF/CApplicationTimestamp.xml,OSGI-INF/CSlidingElementWindowTIPORule.xml,OSGI-INF/CRenameAORule.xml,
  OSGI-INF/CHashFragmentAORule.xml
@@ -38,4 +40,5 @@ Bundle-ClassPath: .,
  ST-4.0.8.jar
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping,
  de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules,
- de.uniol.inf.is.odysseus.query.codegenerator.jre.utils
+ de.uniol.inf.is.odysseus.query.codegenerator.jre.utils,
+ de.uniol.inf.is.odysseus.query.codegenerator.osgi

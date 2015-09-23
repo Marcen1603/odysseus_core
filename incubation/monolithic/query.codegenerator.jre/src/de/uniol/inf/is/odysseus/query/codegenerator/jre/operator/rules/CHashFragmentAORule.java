@@ -17,13 +17,13 @@ public class CHashFragmentAORule extends AbstractCHashFragmentAORule<HashFragmen
 
 	@Override
 	public CodeFragmentInfo getCode(HashFragmentAO operator) {
-	CodeFragmentInfo hashFragmentPO = new CodeFragmentInfo();
+		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
 		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 	
 		
-		hashFragmentPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFAttributeList(operator.getAttributes(), operatorVariable+"Fragment"));
-		hashFragmentPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(operator.getInputSchema(), operatorVariable+"Input"));
+		codeFragmentInfo.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFAttributeList(operator.getAttributes(), operatorVariable+"Fragment"));
+		codeFragmentInfo.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(operator.getInputSchema(), operatorVariable+"Input"));
 
 		
 		StringTemplate hashFragmentTemplate = new StringTemplate("operator","hashFragmentPO");
@@ -33,10 +33,10 @@ public class CHashFragmentAORule extends AbstractCHashFragmentAORule<HashFragmen
 		hashFragmentTemplate.getSt().add("heartbeatRate", operator.getHeartbeatrate());
 		
 		
-		hashFragmentPO.addCode(hashFragmentTemplate.getSt().render());
-		hashFragmentPO.addImport(HashFragmentPO.class.getName());
+		codeFragmentInfo.addCode(hashFragmentTemplate.getSt().render());
+		codeFragmentInfo.addImport(HashFragmentPO.class.getName());
 		
-		return hashFragmentPO;
+		return codeFragmentInfo;
 	}
 
 }

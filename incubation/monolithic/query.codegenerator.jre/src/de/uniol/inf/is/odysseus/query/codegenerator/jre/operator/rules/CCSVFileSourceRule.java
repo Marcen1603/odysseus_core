@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
+
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -60,6 +61,8 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource
 		csvFileSource.addImport(IMetadataInitializer.class.getName());
 		csvFileSource.addImport(AccessPO.class.getName());
 		
+
+	
 		return csvFileSource;
 	}
 
