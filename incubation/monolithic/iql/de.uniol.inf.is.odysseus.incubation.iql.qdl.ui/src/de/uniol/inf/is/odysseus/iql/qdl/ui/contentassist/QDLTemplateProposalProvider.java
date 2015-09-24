@@ -211,14 +211,12 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		patternBuilder.append(" ${var}()");
 		patternBuilder.append("{");
 		int j = 0;
-		for (IQLAttribute parameter : EcoreUtil2.getAllContentsOfType(operatorType, IQLAttribute.class)) {
-			if (parameters.contains(parameter.getSimpleName().toLowerCase())) {
-				if (j > 0) {
-					patternBuilder.append(", ");
-				}
-				j++;
-				patternBuilder.append(parameter.getSimpleName().toLowerCase()+"="+"${"+parameter.getSimpleName().toLowerCase()+"}");
+		for (String parameter : parameters) {
+			if (j > 0) {
+				patternBuilder.append(", ");
 			}
+			j++;
+			patternBuilder.append(parameter+"="+"${"+parameter+"}");
 		}
 		patternBuilder.append("}");	
 	
