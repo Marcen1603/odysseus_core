@@ -147,7 +147,7 @@ import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 
 public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTypeUtils> {
 	
-	protected static final String OPERATORS_DIR = "operators";
+	public static final String OPERATORS_DIR = "operators";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ODLExecutor.class);
 

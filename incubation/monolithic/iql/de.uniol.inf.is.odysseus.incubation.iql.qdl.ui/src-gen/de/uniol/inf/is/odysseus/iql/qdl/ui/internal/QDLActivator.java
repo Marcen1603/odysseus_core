@@ -3,11 +3,9 @@
  */
 package de.uniol.inf.is.odysseus.iql.qdl.ui.internal;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.shared.SharedStateModule;
@@ -18,9 +16,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-
-import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
-import de.uniol.inf.is.odysseus.iql.qdl.executor.QDLExecutor;
 
 /**
  * This class was generated. Customizations should only happen in a newly
@@ -46,15 +41,7 @@ public class QDLActivator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		injectors.clear();
 		INSTANCE = null;
-		cleanUpQueriesDir();
 		super.stop(context);
-	}
-	
-	private void cleanUpQueriesDir() {
-		try {
-			FileUtils.deleteDirectory(new File(BasicIQLTypeUtils.getIQLOutputPath()+File.separator+QDLExecutor.QUERIES_DIR));
-		} catch (Exception e) {
-		}
 	}
 	
 	public static QDLActivator getInstance() {

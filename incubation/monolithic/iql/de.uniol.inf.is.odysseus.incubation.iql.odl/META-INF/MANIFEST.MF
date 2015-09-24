@@ -36,7 +36,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  de.uniol.inf.is.odysseus.intervalapproach,
  org.eclipse.jdt.core,
  org.eclipse.xtext.xbase;bundle-version="2.7.3",
- org.eclipse.xtext.junit4
+ org.eclipse.xtext.junit4,
+ org.apache.commons.io
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.odl,
