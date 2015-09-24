@@ -17,6 +17,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.wizard.IProjectCreator;
 
+import de.uniol.inf.is.odysseus.iql.basic.generator.IIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
@@ -53,6 +54,11 @@ public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDL
 	public QDLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
+	
+	public Class<? extends IIQLGenerator> bindIQLGenerator() {
+		return QDLUiGenerator.class;
+	}
+	
 	public Class<? extends IIQLCrossReferenceValidator> bindCrossReferenceValidator() {
 		return IQLUiCrossReferenceValidator.class;
 	}

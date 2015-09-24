@@ -1258,7 +1258,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueBOOLEANTerminalRuleCall_3_1_0(), semanticObject.isValue());
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueBOOLEANParserRuleCall_3_1_0(), semanticObject.isValue());
 		feeder.finish();
 	}
 	

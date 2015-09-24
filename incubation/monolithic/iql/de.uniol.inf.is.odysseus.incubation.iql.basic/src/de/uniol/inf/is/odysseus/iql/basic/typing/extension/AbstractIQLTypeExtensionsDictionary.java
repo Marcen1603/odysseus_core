@@ -46,6 +46,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 	
 	@Inject
 	protected IQLQualifiedNameConverter converter;
+	
 
 	public AbstractIQLTypeExtensionsDictionary(F typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;

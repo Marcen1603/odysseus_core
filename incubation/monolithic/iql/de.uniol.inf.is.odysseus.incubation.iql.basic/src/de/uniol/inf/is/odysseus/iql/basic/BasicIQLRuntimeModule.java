@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.BasicIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.generator.BasicIQLGenerator;
+import de.uniol.inf.is.odysseus.iql.basic.generator.IIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.BasicIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.BasicIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.BasicIQLMetadataAnnotationCompiler;
@@ -68,6 +69,10 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.AbstractBasicIQLRuntimeModule {
 
+	public Class<? extends IIQLGenerator> bindIQLGenerator() {
+		return BasicIQLGenerator.class;
+	}
+	
 	public Class<? extends IDefaultResourceDescriptionStrategy> bindResourceDescriptionStrategy() {
 		return BasicIQLResourceDescriptionStrategy.class;
 	}

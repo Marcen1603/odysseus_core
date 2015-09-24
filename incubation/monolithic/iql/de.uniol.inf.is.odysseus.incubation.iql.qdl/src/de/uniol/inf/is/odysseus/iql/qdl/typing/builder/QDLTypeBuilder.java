@@ -18,6 +18,8 @@ import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.common.types.TypesFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -47,6 +49,8 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 	
 	@Inject
 	private IQLQualifiedNameConverter converter;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(QDLTypeBuilder.class);
 
 	
 	@Inject
@@ -137,7 +141,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		try {
 			beanInfo = Introspector.getBeanInfo(opBuilder.getOperatorClass(), Object.class);
 		} catch (IntrospectionException e) {
-			e.printStackTrace();
+			LOG.error("error while creating operator", e);
 			return;
 		}
 			

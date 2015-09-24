@@ -5,14 +5,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -38,29 +31,28 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 		super(creator);	
 		initOperators();
 		initSources();
-		//refresProjects();
 	}
 	
 
 	private void refresProjects() {
-		final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
-				.getProjects();
-		if (projects != null && projects.length > 0) {
-			Job job = new Job("Build projects") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					for (IProject project : projects) {
-						try {
-							project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-						} catch (CoreException e) {
-						}
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule(); 
-		}      
-			
+//		final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+//				.getProjects();
+//		if (projects != null && projects.length > 0) {
+//			Job job = new Job("Build projects") {
+//				@Override
+//				protected IStatus run(IProgressMonitor monitor) {
+//					for (IProject project : projects) {
+//						try {
+//							project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+//						} catch (CoreException e) {
+//						}
+//					}
+//					return Status.OK_STATUS;
+//				}
+//			};
+//			job.schedule(); 
+//		}      
+//			
 		
 	}
 	

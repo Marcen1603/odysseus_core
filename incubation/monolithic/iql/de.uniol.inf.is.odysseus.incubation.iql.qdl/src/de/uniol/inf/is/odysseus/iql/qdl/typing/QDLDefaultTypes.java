@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.typing;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
@@ -28,6 +29,7 @@ public class QDLDefaultTypes {
 		types.add(Subscribable.class);
 		types.add(Subscriber.class);
 		types.add(Subscription.class);
+		types.add(TimeUnit.class);
 		return types;
 	}
 	
@@ -42,11 +44,13 @@ public class QDLDefaultTypes {
 		implicitImports.add(Subscribable.class.getCanonicalName());
 		implicitImports.add(Subscriber.class.getCanonicalName());
 		implicitImports.add(Subscription.class.getCanonicalName());
+		implicitImports.add(TimeUnit.class.getCanonicalName());
 		return implicitImports;
 	}
 
 	public static Collection<String> getImplicitStaticImports() {
 		Collection<String> types = new HashSet<>();
+		types.add(TimeUnit.class.getCanonicalName());
 		return types;
 	}
 

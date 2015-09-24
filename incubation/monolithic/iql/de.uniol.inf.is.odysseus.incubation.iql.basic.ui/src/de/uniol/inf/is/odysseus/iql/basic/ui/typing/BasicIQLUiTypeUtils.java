@@ -18,6 +18,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.ui.util.ResourceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
@@ -25,6 +27,8 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
 public class BasicIQLUiTypeUtils extends BasicIQLTypeUtils {
 	
+	private static final Logger LOG = LoggerFactory.getLogger(BasicIQLUiTypeUtils.class);
+
 	@Override
 	protected String getLongNameOfUserDefinedType(JvmGenericType type) {
 		String packageName = BasicIQLUiTypeUtils.getPackage(type);
@@ -68,7 +72,7 @@ public class BasicIQLUiTypeUtils extends BasicIQLTypeUtils {
 			try {
 				file = ResourceUtil.getFile(eResource);
 			}catch (Exception e) {
-				//e.printStackTrace();
+				LOG.error("", e);
 			}
 			if (file != null && file.exists()) {
 				IProject project = file.getProject();
@@ -130,6 +134,7 @@ public class BasicIQLUiTypeUtils extends BasicIQLTypeUtils {
 	            }
 	        }
 		} catch (JavaModelException e) {
+			LOG.error("error while getting source directories of java project", e);
 		}
         return result;
 	}

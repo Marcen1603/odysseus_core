@@ -6,6 +6,7 @@ import java.util.Set;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.TypesPackage;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.CheckType;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
@@ -14,7 +15,7 @@ public class ODLValidator extends AbstractODLValidator{
 
 	public static String DUPLICATE_OPERATORS = "duplicateOperators";
 
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkDuplicateOperators(IQLModel model) {
 		Set<String> names = new HashSet<>();
 		for (ODLOperator op : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {

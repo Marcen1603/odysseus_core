@@ -10,7 +10,7 @@ public class TransferExtensions implements IIQLTypeExtensions {
 	}
 	
 	public static <T> void sendStreamElement(ITransfer<T> t, T element, int sourceOutPort) {
-		t.transfer(element);
+		t.transfer(element, sourceOutPort);
 	}
 	
 	@Override

@@ -14,6 +14,7 @@ import org.eclipse.xtext.resource.XtextResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.executor.IIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
+import de.uniol.inf.is.odysseus.iql.basic.generator.IIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataAnnotationCompiler;
@@ -86,6 +87,10 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.utils.ODLTypeUtils;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
+	public Class<? extends IIQLGenerator> bindIQLGenerator() {
+		return ODLGenerator.class;
+	}
+	
 	public Class<? extends IDefaultResourceDescriptionStrategy> bindResourceDescriptionStrategy() {
 		return ODLResourceDescriptionStrategy.class;
 	}

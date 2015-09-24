@@ -14,6 +14,7 @@ import org.eclipse.xtext.resource.XtextResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.executor.IIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
+import de.uniol.inf.is.odysseus.iql.basic.generator.IIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataAnnotationCompiler;
@@ -87,6 +88,10 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.QDLTypeUtils;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQDLRuntimeModule {
 
+	public Class<? extends IIQLGenerator> bindIQLGenerator() {
+		return QDLGenerator.class;
+	}
+	
 	public Class<? extends IIQLCrossReferenceValidator> bindCrossReferenceValidator() {
 		return IQLCrossReferenceValidator.class;
 	}

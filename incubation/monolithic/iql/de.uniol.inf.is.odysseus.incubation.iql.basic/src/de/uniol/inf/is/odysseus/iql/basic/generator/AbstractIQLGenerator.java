@@ -9,6 +9,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
@@ -19,12 +21,15 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 
 
 
-public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C extends IIQLCompiler<G>>  implements IGenerator{
+public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C extends IIQLCompiler<G>>  implements IIQLGenerator, IGenerator{
 	
 	protected G context;
 	
 	
 	protected C compiler;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractIQLGenerator.class);
+
 	
 	public AbstractIQLGenerator (G context, C compiler) {
 		this.context = context;
@@ -36,15 +41,22 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 		doGenerate(input, fsa, null);
 	}
 	
+	@Override
+	public void doGenerate(IQLModelElement element, IFileSystemAccess fsa) {
+		doGenerate(element, fsa, null);		
+	}
+	
 	protected void doGenerate(Resource input, IFileSystemAccess fsa, URI outputFolder) {
-		try {
-			for (EObject obj : input.getContents()) {
+		for (EObject obj : input.getContents()) {
+			try {
 				if (obj instanceof IQLModel) {
 					doGenerate((IQLModel) obj, fsa, outputFolder);
+				} else if (obj instanceof IQLModelElement) {
+					doGenerate((IQLModelElement) obj, fsa, outputFolder);
 				}
+			} catch (Exception e) {
+				LOG.error("error while generating java files", e);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	

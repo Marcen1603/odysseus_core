@@ -27,11 +27,7 @@ public class IQLClasspathTypeProvider extends ClasspathTypeProvider{
 	public JvmType findTypeByName(String name) {
 		JvmType type = null;
 		if (jdtTypeProvider!= null) {
-			try {
-				type = jdtTypeProvider.findTypeByName(converter.toJavaString(name));
-			}catch (Exception e) {
-				
-			}
+			type = jdtTypeProvider.findTypeByName(converter.toJavaString(name));
 		}
 		if (type != null) {
 			return type;

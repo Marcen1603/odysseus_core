@@ -11,8 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.Subscription;
+import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -34,8 +36,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IEvaluator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.ODLUtils;
 import de.uniol.inf.is.odysseus.iql.odl.types.extension.PunctuationExtensions;
@@ -86,7 +96,16 @@ public class ODLDefaultTypes {
 		types.add(Pair.class);
 		types.add(IPair.class);
 		types.add(AggregateFunction.class);
-
+		types.add(IAggregateFunctionBuilder.class);
+		types.add(IAggregateFunction.class);
+		types.add(IMerger.class);
+		types.add(IEvaluator.class);
+		types.add(IPartialAggregate.class);
+		types.add(IInitializer.class);
+		types.add(FESortedClonablePair.class);
+		types.add(PairMap.class);
+		types.add(AggregateTISweepArea.class);
+		types.add(AggregateFunctionBuilderRegistry.class);
 		return types;
 	}
 
@@ -130,6 +149,17 @@ public class ODLDefaultTypes {
 		implicitImports.add(Pair.class.getCanonicalName());
 		implicitImports.add(IPair.class.getCanonicalName());
 		implicitImports.add(AggregateFunction.class.getCanonicalName());
+		implicitImports.add(IAggregateFunctionBuilder.class.getCanonicalName());
+		implicitImports.add(IAggregateFunction.class.getCanonicalName());
+		implicitImports.add(IMerger.class.getCanonicalName());
+		implicitImports.add(IEvaluator.class.getCanonicalName());
+		implicitImports.add(IPartialAggregate.class.getCanonicalName());
+		implicitImports.add(IInitializer.class.getCanonicalName());
+		implicitImports.add(FESortedClonablePair.class.getCanonicalName());
+		implicitImports.add(PairMap.class.getCanonicalName());
+		implicitImports.add(AggregateTISweepArea.class.getCanonicalName());
+		implicitImports.add(AggregateFunctionBuilderRegistry.class.getCanonicalName());
+		implicitImports.add(PairMap.class.getCanonicalName());
 		return implicitImports;
 	}
 	
@@ -148,6 +178,7 @@ public class ODLDefaultTypes {
 		types.add(TimeUnit.class.getCanonicalName());
 		types.add(SDFDatatype.class.getCanonicalName());
 		types.add(SDFConstraint.class.getCanonicalName());
+		types.add(AggregateFunctionBuilderRegistry.class.getCanonicalName());
 		return types;
 	}
 	

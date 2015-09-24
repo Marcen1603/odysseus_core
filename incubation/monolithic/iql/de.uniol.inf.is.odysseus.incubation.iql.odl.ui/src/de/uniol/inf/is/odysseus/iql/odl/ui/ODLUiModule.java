@@ -32,6 +32,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 
 import org.eclipse.xtext.ui.wizard.IProjectCreator;
 
+import de.uniol.inf.is.odysseus.iql.basic.generator.IIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLCrossReferenceValidator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
@@ -68,6 +69,10 @@ import de.uniol.inf.is.odysseus.iql.odl.ui.typing.ODLUiTypeUtils;
 public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODLUiModule {
 	public ODLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	public Class<? extends IIQLGenerator> bindIQLGenerator() {
+		return ODLUiGenerator.class;
 	}
 	
 	public Class<? extends IIQLCrossReferenceValidator> bindCrossReferenceValidator() {

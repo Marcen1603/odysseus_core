@@ -101,57 +101,48 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 
 	@Override
 	public String getLongName(JvmTypeReference typeRef, boolean array) {
-		try {
-			if (typeRef instanceof IQLSimpleTypeRef) {
-				return getLongName(typeRef.getType(), array);
-			} else if (typeRef instanceof IQLArrayTypeRef) {
-				return getLongName(typeRef.getType(), array);		
-			} else {
-				return getLongName(typeRef.getType(), array);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (typeRef instanceof IQLSimpleTypeRef) {
+			return getLongName(typeRef.getType(), array);
+		} else if (typeRef instanceof IQLArrayTypeRef) {
+			return getLongName(typeRef.getType(), array);		
+		} else {
+			return getLongName(typeRef.getType(), array);
 		}
-		return "";
 	}
 	
 	@Override
 	public String getLongName(JvmType type, boolean array) {
 		String result = "";
-		try {
-			if (type instanceof IQLArrayType && array) {
-				IQLArrayType arrayType = (IQLArrayType) type;				
-				StringBuilder b = new StringBuilder();
-				b.append(getLongName(arrayType.getComponentType(), array));
-				for (int i = 0; i < arrayType.getDimensions().size(); i++) {
-					b.append("[]");
-				}
-				result = b.toString();	
-			} else if (type instanceof IQLArrayType) {
-				IQLArrayType arrayType = (IQLArrayType) type;	
-				result = getLongName(arrayType.getComponentType(), array);
-			} else if (type instanceof JvmArrayType && !array) {
-				JvmArrayType arrayType = (JvmArrayType) type;	
-				result = getLongName(arrayType.getComponentType(), array);
-			} else if (type instanceof JvmTypeParameter) {
-				JvmTypeParameter typeParameter = (JvmTypeParameter) type;
-				for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
-					if (constraint instanceof JvmUpperBound) {
-						JvmUpperBound upperBound = (JvmUpperBound) constraint;
-						return getLongName(upperBound.getTypeReference(), array);
-					} else if (constraint instanceof JvmLowerBound) {
-						JvmLowerBound lowerBound = (JvmLowerBound) constraint;
-						return getLongName(lowerBound.getTypeReference(), array);
-					}
-				}
-				result = type.getIdentifier();
-			} else if (isUserDefinedType(type, array)) {				
-				result = getLongNameOfUserDefinedType((JvmGenericType) type);
-			} else {
-				result = type.getIdentifier();
+		if (type instanceof IQLArrayType && array) {
+			IQLArrayType arrayType = (IQLArrayType) type;				
+			StringBuilder b = new StringBuilder();
+			b.append(getLongName(arrayType.getComponentType(), array));
+			for (int i = 0; i < arrayType.getDimensions().size(); i++) {
+				b.append("[]");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			result = b.toString();	
+		} else if (type instanceof IQLArrayType) {
+			IQLArrayType arrayType = (IQLArrayType) type;	
+			result = getLongName(arrayType.getComponentType(), array);
+		} else if (type instanceof JvmArrayType && !array) {
+			JvmArrayType arrayType = (JvmArrayType) type;	
+			result = getLongName(arrayType.getComponentType(), array);
+		} else if (type instanceof JvmTypeParameter) {
+			JvmTypeParameter typeParameter = (JvmTypeParameter) type;
+			for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
+				if (constraint instanceof JvmUpperBound) {
+					JvmUpperBound upperBound = (JvmUpperBound) constraint;
+					return getLongName(upperBound.getTypeReference(), array);
+				} else if (constraint instanceof JvmLowerBound) {
+					JvmLowerBound lowerBound = (JvmLowerBound) constraint;
+					return getLongName(lowerBound.getTypeReference(), array);
+				}
+			}
+			result = type.getIdentifier();
+		} else if (isUserDefinedType(type, array)) {				
+			result = getLongNameOfUserDefinedType((JvmGenericType) type);
+		} else {
+			result = type.getIdentifier();
 		}
 		return converter.toIQLString(result);
 		
@@ -164,59 +155,48 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
 	@Override
 	public String getShortName(JvmTypeReference typeRef, boolean array) {
-		try {
-			if (typeRef instanceof IQLSimpleTypeRef) {
-				return getShortName(typeRef.getType(), array);
-			} else if (typeRef instanceof IQLArrayTypeRef) {
-				return getShortName(typeRef.getType(), array);			
-			} else {
-				return getShortName(typeRef.getType(), array);			
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (typeRef instanceof IQLSimpleTypeRef) {
+			return getShortName(typeRef.getType(), array);
+		} else if (typeRef instanceof IQLArrayTypeRef) {
+			return getShortName(typeRef.getType(), array);			
+		} else {
+			return getShortName(typeRef.getType(), array);			
 		}
-		return "";
 	}
 	
 	@Override
 	public String getShortName(JvmType type, boolean array) {
-		try {
-			if (type instanceof IQLArrayType && array) {				
-				IQLArrayType arrayType = (IQLArrayType) type;
-				StringBuilder b = new StringBuilder();
-				b.append(getShortName(arrayType.getComponentType(), array));
-				for (int i = 0; i < arrayType.getDimensions().size(); i++) {
-					b.append("[]");
-				}
-				return b.toString();
-			} else if (type instanceof IQLArrayType) {	
-				IQLArrayType arrayType = (IQLArrayType) type;	
-				return getShortName(arrayType.getComponentType(), array);
-				
-			} else if (type instanceof JvmArrayType && !array) {	
-				JvmArrayType arrayType = (JvmArrayType) type;	
-				return getShortName(arrayType.getComponentType(), array);
-				
-			} else if (type instanceof JvmTypeParameter) {
-				JvmTypeParameter typeParameter = (JvmTypeParameter) type;
-				for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
-					if (constraint instanceof JvmUpperBound) {
-						JvmUpperBound upperBound = (JvmUpperBound) constraint;
-						return getShortName(upperBound.getTypeReference(), array);
-					} else if (constraint instanceof JvmLowerBound) {
-						JvmLowerBound lowerBound = (JvmLowerBound) constraint;
-						return getShortName(lowerBound.getTypeReference(), array);
-					}
-				}
-				return type.getSimpleName();
-			} else {
-				return type.getSimpleName();
+		if (type instanceof IQLArrayType && array) {				
+			IQLArrayType arrayType = (IQLArrayType) type;
+			StringBuilder b = new StringBuilder();
+			b.append(getShortName(arrayType.getComponentType(), array));
+			for (int i = 0; i < arrayType.getDimensions().size(); i++) {
+				b.append("[]");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return "";
-		
+			return b.toString();
+		} else if (type instanceof IQLArrayType) {	
+			IQLArrayType arrayType = (IQLArrayType) type;	
+			return getShortName(arrayType.getComponentType(), array);
+			
+		} else if (type instanceof JvmArrayType && !array) {	
+			JvmArrayType arrayType = (JvmArrayType) type;	
+			return getShortName(arrayType.getComponentType(), array);
+			
+		} else if (type instanceof JvmTypeParameter) {
+			JvmTypeParameter typeParameter = (JvmTypeParameter) type;
+			for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
+				if (constraint instanceof JvmUpperBound) {
+					JvmUpperBound upperBound = (JvmUpperBound) constraint;
+					return getShortName(upperBound.getTypeReference(), array);
+				} else if (constraint instanceof JvmLowerBound) {
+					JvmLowerBound lowerBound = (JvmLowerBound) constraint;
+					return getShortName(lowerBound.getTypeReference(), array);
+				}
+			}
+			return type.getSimpleName();
+		} else {
+			return type.getSimpleName();
+		}		
 	}
 	
 	@Override

@@ -904,7 +904,7 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	
 	def String compile(IQLNewExpression e, G c) {
 				
-		if (e.argsMap != null && e.argsMap.elements.size > 0) {		
+		if (e.argsList != null && e.argsMap != null && e.argsMap.elements.size > 0) {		
 			var constructor = lookUp.findPublicConstructor(e.ref, e.argsList.elements)
 			c.addExceptions(constructor.exceptions)
 			if (constructor != null) {
@@ -912,10 +912,14 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 			} else {
 				'''get«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, c, true)»(«compile(e.argsList, c)»), «compile(e.argsMap, e.ref, c)»)'''		
 			}
+		} else if (e.argsMap != null && e.argsMap.elements.size > 0) {		
+			var constructor = lookUp.findPublicConstructor(e.ref, new ArrayList())
+			c.addExceptions(constructor.exceptions)
+			'''get«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, c, true)»(), «compile(e.argsMap, e.ref, c)»)'''
 		} else if (e.argsList != null) {
 			var constructor = lookUp.findPublicConstructor(e.ref, e.argsList.elements)
-			c.addExceptions(constructor.exceptions)
 			if (constructor != null) {
+				c.addExceptions(constructor.exceptions)
 				'''new «typeCompiler.compile(e.ref, c, true)»(«compile(e.argsList, constructor.parameters, c)»)'''			
 			} else {
 				'''new «typeCompiler.compile(e.ref, c, true)»(«compile(e.argsList, c)»)'''			

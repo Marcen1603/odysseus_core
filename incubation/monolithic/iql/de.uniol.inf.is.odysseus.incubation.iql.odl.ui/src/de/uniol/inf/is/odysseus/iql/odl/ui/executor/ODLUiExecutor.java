@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.iql.odl.ui.executor;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -11,7 +11,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
@@ -22,11 +21,16 @@ import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 
 
 
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.BasicIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.typing.BasicIQLUiTypeUtils;
@@ -40,6 +44,8 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 	@Inject
 	private IJavaProjectProvider javaProjectProvider;
 	
+	private static final Logger LOG = LoggerFactory.getLogger(ODLExecutor.class);
+
 	@Inject
 	public ODLUiExecutor(IODLTypeDictionary typeDictionary, IODLTypeUtils typeUtils) {
 		super(typeDictionary, typeUtils);
@@ -55,20 +61,25 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 	public void parse(IQLModel model) {	
 		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
 
-		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));
-			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operatorName;
+		List<ODLOperator> operators = EcoreUtil2.getAllContentsOfType(model, ODLOperator.class);
+		if (operators.size() == 0) {
+			throw new QueryParseException("No operators found");
+		}	
+		for (ODLOperator operator : operators) {
+			String outputPath = getOperatorPath(operator);
 						
-			cleanUpDir(outputPath);
+			cleanUpDir(outputPath);	
 			
-			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,operator);
-			generateJavaFiles(resources);
-			deleteResources(resources);
+			Collection<IQLModelElement> resources = getModelElementsToCompile(resourceSet, outputPath,operator);
+			
+			generateJavaFiles(resources, outputPath);
 			
 			copyAndMoveUserEditiedFiles(operator, outputPath);
-			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
-			loadOperator(operator, resources);			
-		
+			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator)));
+			
+			loadOperator(operator);	
+			
+			LOG.info("Adding operator "+operator.getSimpleName()+" using ODL done.");								
 		}
 	}
 	
@@ -91,8 +102,8 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 
 	
 	@Override
-	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
-		Collection<String> result = super.createClassPathEntries(set, resources);
+	protected Collection<String> createClassPathEntries(ResourceSet set) {
+		Collection<String> result = super.createClassPathEntries(set);
 		
 		IJavaProject project = javaProjectProvider.getJavaProject(set);
 		if (project != null) {
@@ -102,6 +113,7 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 				IFolder folder = root.getFolder(path);
 				result.add(folder.getLocation().toFile().getAbsolutePath());
 			} catch (JavaModelException e) {
+				LOG.error("error while creating classpath entries", e);
 				throw new QueryParseException("error while creating classpath entries : " +e.getMessage(),e);
 			}
 		}

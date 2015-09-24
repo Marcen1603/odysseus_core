@@ -11,7 +11,7 @@ operator ODLJoin(outputMode = "NEW_ELEMENT", minInputPorts = 2, maxInputPorts = 
 	IMetadataMergeFunction metadataMerge;
 		
 		
-	on init {		
+	on po_init {		
 		String areaName = "TIJoinSA";
 		areas[0] = SweepAreaRegistry::getSweepArea(areaName);		
 		areas[0].queryPredicate = predicate;		

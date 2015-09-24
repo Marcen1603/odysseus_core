@@ -7,7 +7,7 @@ operator ODLTimeWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxInpu
 	
 	long windowAdvance;
 	
-	on processOpen() {
+	on ao_init() {
 		TimeUnit baseTimeUnit = getBaseTimeUnit;
 		windowSize = baseTimeUnit.convert(size.getTime, size.getUnit);
 		
@@ -38,7 +38,7 @@ operator ODLTimeWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxInpu
 	
 
 
-	getBaseTimeUnit : TimeUnit {
+	ao getBaseTimeUnit : TimeUnit {
 		TimeUnit baseTimeUnit = TimeUnit::MILLISECONDS;
 		SDFConstraint c = getInputSchema(0).getConstraint(SDFConstraint::BASE_TIME_UNIT);
 		if (c != null) {

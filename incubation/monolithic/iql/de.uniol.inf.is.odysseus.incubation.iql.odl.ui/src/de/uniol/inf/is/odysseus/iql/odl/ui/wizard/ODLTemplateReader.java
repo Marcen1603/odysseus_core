@@ -8,16 +8,22 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.iql.odl.ui.internal.ODLActivator;
 
 
 public class ODLTemplateReader {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ODLTemplateReader.class);
+
 
 	public static String readTemplate(URL url) {
 		try (InputStream inputStream = url.openStream()) {
 		    return IOUtils.toString(inputStream);
-		} catch (Exception e) {			
+		} catch (Exception e) {	
+			LOG.error("Could not read template "+url.toString(), e);
 		}
 		return "";
 	}
@@ -26,6 +32,7 @@ public class ODLTemplateReader {
 		try (InputStream inputStream = ODLActivator.getInstance().getBundle().getEntry(path).openStream()) {
 		    return IOUtils.toString(inputStream);
 		} catch (Exception e) {			
+			LOG.error("Could not read template "+path, e);
 		}
 		return "";
 	}

@@ -63,8 +63,10 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMemberCallExpressionAccess().getAlternatives_1(), "rule__IQLMemberCallExpression__Alternatives_1");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives(), "rule__IQLOtherExpressions__Alternatives");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives_4_2(), "rule__IQLOtherExpressions__Alternatives_4_2");
+					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives_4_2_1_1(), "rule__IQLOtherExpressions__Alternatives_4_2_1_1");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getAlternatives(), "rule__IQLLiteralExpression__Alternatives");
 					put(grammarAccess.getIQL_JAVA_KEYWORDSAccess().getAlternatives(), "rule__IQL_JAVA_KEYWORDS__Alternatives");
+					put(grammarAccess.getBOOLEANAccess().getAlternatives(), "rule__BOOLEAN__Alternatives");
 					put(grammarAccess.getODLModelAccess().getGroup(), "rule__ODLModel__Group__0");
 					put(grammarAccess.getODLModelElementAccess().getGroup(), "rule__ODLModelElement__Group__0");
 					put(grammarAccess.getODLOperatorAccess().getGroup(), "rule__ODLOperator__Group__0");
@@ -125,7 +127,8 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMetadataValueMapElementAccess().getGroup(), "rule__IQLMetadataValueMapElement__Group__0");
 					put(grammarAccess.getIQLVariableDeclarationAccess().getGroup(), "rule__IQLVariableDeclaration__Group__0");
 					put(grammarAccess.getIQLVariableInitializationAccess().getGroup_0(), "rule__IQLVariableInitialization__Group_0__0");
-					put(grammarAccess.getIQLVariableInitializationAccess().getGroup_1(), "rule__IQLVariableInitialization__Group_1__0");
+					put(grammarAccess.getIQLVariableInitializationAccess().getGroup_0_1(), "rule__IQLVariableInitialization__Group_0_1__0");
+					put(grammarAccess.getIQLVariableInitializationAccess().getGroup_2(), "rule__IQLVariableInitialization__Group_2__0");
 					put(grammarAccess.getIQLArgumentsListAccess().getGroup(), "rule__IQLArgumentsList__Group__0");
 					put(grammarAccess.getIQLArgumentsListAccess().getGroup_2(), "rule__IQLArgumentsList__Group_2__0");
 					put(grammarAccess.getIQLArgumentsListAccess().getGroup_2_1(), "rule__IQLArgumentsList__Group_2_1__0");
@@ -207,6 +210,7 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLOtherExpressionsAccess().getGroup_3(), "rule__IQLOtherExpressions__Group_3__0");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getGroup_4(), "rule__IQLOtherExpressions__Group_4__0");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getGroup_4_2_1(), "rule__IQLOtherExpressions__Group_4_2_1__0");
+					put(grammarAccess.getIQLOtherExpressionsAccess().getGroup_4_2_1_1_0(), "rule__IQLOtherExpressions__Group_4_2_1_1_0__0");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getGroup_0(), "rule__IQLLiteralExpression__Group_0__0");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getGroup_1(), "rule__IQLLiteralExpression__Group_1__0");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getGroup_2(), "rule__IQLLiteralExpression__Group_2__0");
@@ -303,9 +307,10 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMetadataValueMapElementAccess().getValueAssignment_2(), "rule__IQLMetadataValueMapElement__ValueAssignment_2");
 					put(grammarAccess.getIQLVariableDeclarationAccess().getRefAssignment_1(), "rule__IQLVariableDeclaration__RefAssignment_1");
 					put(grammarAccess.getIQLVariableDeclarationAccess().getNameAssignment_2(), "rule__IQLVariableDeclaration__NameAssignment_2");
-					put(grammarAccess.getIQLVariableInitializationAccess().getArgsListAssignment_0_0(), "rule__IQLVariableInitialization__ArgsListAssignment_0_0");
-					put(grammarAccess.getIQLVariableInitializationAccess().getArgsMapAssignment_0_1(), "rule__IQLVariableInitialization__ArgsMapAssignment_0_1");
-					put(grammarAccess.getIQLVariableInitializationAccess().getValueAssignment_1_1(), "rule__IQLVariableInitialization__ValueAssignment_1_1");
+					put(grammarAccess.getIQLVariableInitializationAccess().getArgsListAssignment_0_1_0(), "rule__IQLVariableInitialization__ArgsListAssignment_0_1_0");
+					put(grammarAccess.getIQLVariableInitializationAccess().getArgsMapAssignment_0_1_1(), "rule__IQLVariableInitialization__ArgsMapAssignment_0_1_1");
+					put(grammarAccess.getIQLVariableInitializationAccess().getArgsMapAssignment_1(), "rule__IQLVariableInitialization__ArgsMapAssignment_1");
+					put(grammarAccess.getIQLVariableInitializationAccess().getValueAssignment_2_1(), "rule__IQLVariableInitialization__ValueAssignment_2_1");
 					put(grammarAccess.getIQLArgumentsListAccess().getElementsAssignment_2_0(), "rule__IQLArgumentsList__ElementsAssignment_2_0");
 					put(grammarAccess.getIQLArgumentsListAccess().getElementsAssignment_2_1_1(), "rule__IQLArgumentsList__ElementsAssignment_2_1_1");
 					put(grammarAccess.getIQLArgumentsMapAccess().getElementsAssignment_2_0(), "rule__IQLArgumentsMap__ElementsAssignment_2_0");
@@ -375,8 +380,9 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLOtherExpressionsAccess().getExprAssignment_3_2(), "rule__IQLOtherExpressions__ExprAssignment_3_2");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getRefAssignment_4_2_0(), "rule__IQLOtherExpressions__RefAssignment_4_2_0");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getRefAssignment_4_2_1_0(), "rule__IQLOtherExpressions__RefAssignment_4_2_1_0");
-					put(grammarAccess.getIQLOtherExpressionsAccess().getArgsListAssignment_4_2_1_1(), "rule__IQLOtherExpressions__ArgsListAssignment_4_2_1_1");
-					put(grammarAccess.getIQLOtherExpressionsAccess().getArgsMapAssignment_4_2_1_2(), "rule__IQLOtherExpressions__ArgsMapAssignment_4_2_1_2");
+					put(grammarAccess.getIQLOtherExpressionsAccess().getArgsListAssignment_4_2_1_1_0_0(), "rule__IQLOtherExpressions__ArgsListAssignment_4_2_1_1_0_0");
+					put(grammarAccess.getIQLOtherExpressionsAccess().getArgsMapAssignment_4_2_1_1_0_1(), "rule__IQLOtherExpressions__ArgsMapAssignment_4_2_1_1_0_1");
+					put(grammarAccess.getIQLOtherExpressionsAccess().getArgsMapAssignment_4_2_1_1_1(), "rule__IQLOtherExpressions__ArgsMapAssignment_4_2_1_1_1");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getValueAssignment_0_1(), "rule__IQLLiteralExpression__ValueAssignment_0_1");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getValueAssignment_1_1(), "rule__IQLLiteralExpression__ValueAssignment_1_1");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getValueAssignment_2_1(), "rule__IQLLiteralExpression__ValueAssignment_2_1");

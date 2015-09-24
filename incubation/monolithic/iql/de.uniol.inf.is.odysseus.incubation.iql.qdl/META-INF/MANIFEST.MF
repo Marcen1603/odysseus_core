@@ -32,7 +32,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  de.uniol.inf.is.odysseus.script.parser,
  org.eclipse.xtext.xbase;bundle-version="2.7.3",
  org.eclipse.xtext.junit4
-Import-Package: org.apache.log4j
+Import-Package: org.apache.log4j,
+ org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.qdl,
  de.uniol.inf.is.odysseus.iql.qdl.executor,

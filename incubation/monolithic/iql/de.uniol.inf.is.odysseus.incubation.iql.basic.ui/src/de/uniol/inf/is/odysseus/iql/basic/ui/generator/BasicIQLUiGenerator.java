@@ -13,6 +13,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.ui.util.ResourceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.BasicIQLGenerator;
@@ -24,6 +26,8 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.typing.BasicIQLUiTypeUtils;
 
 public class BasicIQLUiGenerator extends BasicIQLGenerator{
 
+	private static final Logger LOG = LoggerFactory.getLogger(BasicIQLUiGenerator.class);
+	
 	@Inject
 	public BasicIQLUiGenerator(BasicIQLGeneratorContext generatorContext,BasicIQLCompiler compiler) {
 		super(generatorContext, compiler);
@@ -36,6 +40,15 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 			createEditFolder(input);
 		}
 		doGenerate(input, fsa, outputFolder);
+	}
+	
+	@Override
+	public void doGenerate(IQLModelElement element, IFileSystemAccess fsa) {
+		URI outputFolder = BasicIQLUiTypeUtils.getOutputPath(element.eResource());
+		if (fsa instanceof EclipseResourceFileSystemAccess2) {
+			createEditFolder( element.eResource());
+		}
+		doGenerate(element, fsa, outputFolder);
 	}
 	
 	@Override
@@ -58,6 +71,7 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 					try {
 						folder.create(false, true, null);
 					} catch (CoreException e) {
+						LOG.error("Could not create edit folder", e);
 					}
 				}
 				String outputFolder = BasicIQLUiTypeUtils.getOutputFolder(input);
@@ -67,6 +81,7 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 						mkdirs(folder);
 						folder.create(false, true, null);
 					} catch (CoreException e) {
+						LOG.error("Could not create output folder", e);
 					}
 				}				
 			}

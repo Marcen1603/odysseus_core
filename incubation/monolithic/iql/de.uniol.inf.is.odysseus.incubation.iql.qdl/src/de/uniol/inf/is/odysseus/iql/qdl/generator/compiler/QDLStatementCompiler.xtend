@@ -19,14 +19,16 @@ class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompilerHelp
 	
 	override String compile(IQLVariableInitialization init, JvmTypeReference typeRef, IQDLGeneratorContext context) {
 		if (helper.isOperator(typeRef)) {
-			if (init.argsMap != null && init.argsMap.elements.size > 0) {
+			if (init.argsList != null && init.argsMap != null && init.argsMap.elements.size > 0) {
 				var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 				var args = init.argsList.elements.size > 0
-				if (constructor != null) {
+				if (constructor != null) {					
 					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 				} else {
 					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 				}
+			} else if (init.argsMap != null && init.argsMap.elements.size > 0) {
+				'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			} else if (init.argsList != null) {
 				var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 				var args = init.argsList.elements.size > 0				

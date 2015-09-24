@@ -44,11 +44,19 @@ public class ODLUiGenerator extends ODLGenerator{
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
-		URI outputFolder = null;
+		URI outputFolder = BasicIQLUiTypeUtils.getOutputPath(input);
 		if (fsa instanceof EclipseResourceFileSystemAccess2) {
-			outputFolder = BasicIQLUiTypeUtils.getOutputPath(input);
 			BasicIQLUiGenerator.createEditFolder(input);
 		}
 		doGenerate(input, fsa, outputFolder);
+	}
+	
+	@Override
+	public void doGenerate(IQLModelElement element, IFileSystemAccess fsa) {
+		URI outputFolder = BasicIQLUiTypeUtils.getOutputPath(element.eResource());
+		if (fsa instanceof EclipseResourceFileSystemAccess2) {
+			BasicIQLUiGenerator.createEditFolder(element.eResource());
+		}
+		doGenerate(element, fsa, outputFolder);
 	}
 }

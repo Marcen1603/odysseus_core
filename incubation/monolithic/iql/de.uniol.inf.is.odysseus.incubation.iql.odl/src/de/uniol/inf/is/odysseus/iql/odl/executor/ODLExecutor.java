@@ -61,9 +61,15 @@ import java.util.Map;
 
 
 
+
+
+
+
 import javax.inject.Inject;
 
-import org.eclipse.emf.ecore.resource.Resource;
+
+
+
 
 
 
@@ -107,6 +113,11 @@ import org.eclipse.xtext.junit4.util.ParseHelper;
 
 
 
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -120,6 +131,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
@@ -137,7 +149,8 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 	
 	protected static final String OPERATORS_DIR = "operators";
 
-	
+	private static final Logger LOG = LoggerFactory.getLogger(ODLExecutor.class);
+
 	@Inject
 	private ParseHelper<IQLModel> parseHelper;
 	
@@ -147,31 +160,41 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 		super(typeDictionary, typeUtils);
 	}
 	
+	protected String getOperatorPath(ODLOperator operator) {
+		String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));
+		if (isPersistent(operator)) {
+			operatorName ="persistent."+operatorName;
+		}
+		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operatorName;
+		return outputPath;
+	}
+	
 	@Override
 	public List<IExecutorCommand> parse(String text, IDataDictionary dd, ISession session, Context context) throws QueryParseException {		
 		IQLModel model = null;
 		try {
 			model = parseHelper.parse(text);
 		} catch (Exception e) {
-			throw new QueryParseException("error while parsing operator text: "+e.getMessage(),e);
+			LOG.error("error while parsing operator text", e);
+			throw new QueryParseException("error while parsing operator text: "+System.lineSeparator()+e.getMessage(),e);
 		}
 		
-		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));
-			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operatorName;
+		List<ODLOperator> operators = EcoreUtil2.getAllContentsOfType(model, ODLOperator.class);
+		if (operators.size() == 0) {
+			throw new QueryParseException("No operators found");
+		}			
+		for (ODLOperator operator : operators) {
+			String outputPath = getOperatorPath(operator);
 			
 			cleanUpDir(outputPath);
 			
-			Collection<Resource> resources = createNecessaryIQLFiles(EcoreUtil2.getResourceSet(operator), outputPath,operator);
-			generateJavaFiles(resources);
-			deleteResources(resources);
+			Collection<IQLModelElement> resources = getModelElementsToCompile(EcoreUtil2.getResourceSet(operator), outputPath,operator);
+			generateJavaFiles(resources, outputPath);
 			
-			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
-			loadOperator(operator, resources);
+			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator)));
+			loadOperator(operator);
 			
-			if (!isPersistent(operator)){
-				cleanUpDir(outputPath);
-			}
+			LOG.info("Adding operator "+operator.getSimpleName()+" using ODL done.");
 		}
 		
 		return new ArrayList<>();		
@@ -180,14 +203,16 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 	
 	
 	@SuppressWarnings("unchecked")
-	protected void loadOperator(ODLOperator operator, Collection<Resource> resources) {
+	protected void loadOperator(ODLOperator operator) {
 		Collection<URL> urls = new HashSet<>();
 		String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));		
-		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+OPERATORS_DIR+File.separator+operatorName;
+		String outputPath = getOperatorPath(operator);
 		File file = new File(outputPath);
 		try {
 			urls.add(file.toURI().toURL());
 		} catch (MalformedURLException e1) {
+			LOG.error("error while loading operator "+operator.getSimpleName(), e1);
+			throw new QueryParseException("error while loading operator "+operator.getSimpleName()+": "+System.lineSeparator()+e1.getMessage(),e1);
 		}			
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
 		try {
@@ -196,7 +221,8 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 			Class<?> rule = Class.forName(operatorName+IODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
 			TransformationInventory.getInstance().addRule((IRule<?, ?>) rule.newInstance());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			throw new QueryParseException("error while loading operator "+operator.getSimpleName()+": "+e.getMessage(),e);
+			LOG.error("error while loading operator "+operator.getSimpleName(), e);
+			throw new QueryParseException("error while loading operator "+operator.getSimpleName()+": "+System.lineSeparator()+e.getMessage(),e);
 		}
 	}
 	
@@ -214,13 +240,14 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 				}
 			}
 		} catch (IntrospectionException e) {
-			throw new QueryParseException("error while adding operator "+logicalOperatorAnnotation.name()+": "+e.getMessage(),e);
+			LOG.error("error while adding operator "+logicalOperatorAnnotation.name(), e);
+			throw new QueryParseException("error while adding operator "+logicalOperatorAnnotation.name()+": "+System.lineSeparator()+e.getMessage(),e);
 		}
 		String doc = logicalOperatorAnnotation.doc();
         String url = logicalOperatorAnnotation.url();
         GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(),logicalOperatorAnnotation.maxInputPorts(), doc, url, logicalOperatorAnnotation.category());
         if (!isOverridingAllowed(builder.getName())) {
-        	throw new RuntimeException("Overriding system operators is not possible");
+        	throw new QueryParseException("Overriding system operators is not possible");
         }
         OperatorBuilderFactory.removeOperatorBuilderByName(builder.getName());
         OperatorBuilderFactory.addOperatorBuilder(builder);
@@ -258,22 +285,31 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 		    }
 		}
 	}
+
 	
 	@SuppressWarnings("unchecked")
-	public static void loadPersistentOperator(File folder) {				
+	public static void loadPersistentOperator(File folder) {
+		String operatorName = folder.getName();
+		if (operatorName.startsWith("persistent")) {
+			operatorName = operatorName.substring(11, operatorName.length());
+		} else {
+			return;
+		}
 		Collection<URL> urls = new HashSet<>();
 		try {
 			urls.add(folder.toURI().toURL());
 		} catch (MalformedURLException e1) {
+			LOG.error("error while loading operator "+operatorName, e1);
+			throw new QueryParseException("error while loading operator "+operatorName+": "+e1.getMessage(),e1);
 		}			
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
-		String operatorName = folder.getName();
 		try {
 			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operatorName+IODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
 			Class<?> rule = Class.forName(operatorName+IODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
 			TransformationInventory.getInstance().addRule((IRule<?, ?>) rule.newInstance());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			LOG.error("error while loading operator "+operatorName, e);
 			throw new QueryParseException("error while loading operator "+operatorName+": "+e.getMessage(),e);
 		}
 	}

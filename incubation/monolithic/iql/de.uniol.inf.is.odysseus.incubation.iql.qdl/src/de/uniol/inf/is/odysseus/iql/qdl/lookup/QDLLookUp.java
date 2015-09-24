@@ -26,10 +26,13 @@ import javax.inject.Inject;
 
 
 
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
@@ -47,6 +50,7 @@ import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
 public class QDLLookUp extends AbstractIQLLookUp<IQDLTypeDictionary, IQDLTypeExtensionsDictionary, IQDLTypeUtils> implements IQDLLookUp{
 
+	private static final Logger LOG = LoggerFactory.getLogger(QDLLookUp.class);
 
 	@Inject
 	public QDLLookUp(IQDLTypeDictionary typeDictionary, IQDLTypeExtensionsDictionary typeExtensionsDictionary, IQDLTypeUtils typeUtils) {
@@ -101,6 +105,7 @@ public class QDLLookUp extends AbstractIQLLookUp<IQDLTypeDictionary, IQDLTypeExt
 								result.addAll(parameters);
 							}
 						} catch (InstantiationException	| IllegalAccessException e) {
+							LOG.error("", e);
 						}
 					}
 				}

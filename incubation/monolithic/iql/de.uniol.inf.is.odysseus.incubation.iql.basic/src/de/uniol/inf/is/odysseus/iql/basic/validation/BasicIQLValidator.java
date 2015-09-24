@@ -16,6 +16,7 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.TypesPackage;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.CheckType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	@Inject
 	private IIQLTypeUtils typeUtils;
 
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLMethodDuplicateParameters(IQLMethod method) {
 		Set<String> parameters = new HashSet<>();
 		for (JvmFormalParameter parameter : method.getParameters()) {
@@ -77,7 +78,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}
 	}
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLMethodDeclarationDuplicateParameters(IQLMethodDeclaration methodDecl) {
 		Set<String> parameters = new HashSet<>();
 		for (JvmFormalParameter parameter : methodDecl.getParameters()) {
@@ -91,7 +92,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 
 	
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLVariableStatementDuplicateLocalVariable(IQLVariableStatement varStmt) {
 		IQLVariableDeclaration varDecl = (IQLVariableDeclaration) varStmt.getVar();
 		String varName = varDecl.getName();
@@ -132,7 +133,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	}
 	
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkDuplicateAttributes(IQLArgumentsMapKeyValue keyValue) {
 		JvmTypeReference leftTypeRef = null;
 
@@ -155,7 +156,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	}
 
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkDuplicateAttributes(JvmGenericType type) {
 		Set<String> names = new HashSet<>();
 		for (IQLAttribute attr : EcoreUtil2.getAllContentsOfType(type, IQLAttribute.class)) {
@@ -167,7 +168,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}
 	}
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkDuplicateMethod(JvmGenericType type) {
 		Set<String> names = new HashSet<>();
 		for (IQLMethod meth : EcoreUtil2.getAllContentsOfType(type, IQLMethod.class)) {			 
@@ -184,7 +185,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}
 	}
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLAttributeArguments(IQLAttribute attr) {
 		if (attr.getInit() != null &&attr.getInit().getArgsList() != null && attr.getInit().getArgsList().getElements().size() > 0) {
 			JvmExecutable constructor = lookUp.findPublicConstructor(attr.getType(), attr.getInit().getArgsList().getElements());
@@ -209,7 +210,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}		
 	}
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLAttributeValue(IQLAttribute attr) {		
 		if (attr.getInit() != null && attr.getInit().getValue() != null) {			
 			JvmTypeReference leftTypeRef = attr.getType();
@@ -225,7 +226,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}		
 	}
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLVariableStatementArguments(IQLVariableStatement varStmt) {
 		if (varStmt.getInit() != null && varStmt.getInit().getArgsList() != null && varStmt.getInit().getArgsList().getElements().size() > 0) {
 			JvmTypeReference typeRef = ((IQLVariableDeclaration)varStmt.getVar()).getRef();
@@ -251,7 +252,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}
 	}
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLVariableStatementValue(IQLVariableStatement varStmt) {
 		if (varStmt.getInit() != null && varStmt.getInit().getValue() != null) {
 			JvmTypeReference leftTypeRef = ((IQLVariableDeclaration)varStmt.getVar()).getRef();
@@ -268,7 +269,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	}
 
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLConstructorCallStatement(IQLConstructorCallStatement stmt) {
 		if (stmt.getArgs() != null && stmt.getArgs().getElements().size() > 0) {
 			
@@ -301,7 +302,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	}
 
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLJvmElementCallExpression(IQLJvmElementCallExpression expr) {
 		if (expr.getElement() instanceof JvmOperation) {
 			JvmOperation op = (JvmOperation) expr.getElement();
@@ -324,7 +325,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}
 	}
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLNewExpression(IQLNewExpression expr) {
 		if (expr.getArgsList() != null && expr.getArgsList().getElements().size() > 0) {
 			
@@ -367,7 +368,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 		}
 	}	
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkIQLMemberSelection(IQLMemberSelection memberSelection) {
 		if (memberSelection.getMember() instanceof JvmOperation) {
 			JvmOperation op = (JvmOperation) memberSelection.getMember();
@@ -391,7 +392,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	}
 	
 	
-	@Check
+	@Check(CheckType.NORMAL)
 	void checkAssignmentExpression(IQLAssignmentExpression expr) {
 		if (expr.getLeftOperand() instanceof IQLMemberSelectionExpression) {
 			checkAssignmentExpression(expr, (IQLMemberSelectionExpression)expr.getLeftOperand() , expr.getRightOperand());

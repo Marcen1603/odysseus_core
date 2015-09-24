@@ -70,8 +70,8 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 		
 
-	protected List<Subscribable> subscribeToSource(Collection<?> sinks, Collection<?> sources) {
-		List<Subscribable> result = new ArrayList<>();
+	protected List<Object> subscribeToSource(Collection<?> sinks, Collection<?> sources) {
+		List<Object> result = new ArrayList<>();
 		for (Object sink : sinks) {			
 			for (Object source : sources) {
 				if (sink instanceof Collection && source instanceof Collection) {
@@ -89,8 +89,8 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 	
 	
-	protected List<Subscribable> subscribeToSource(Subscriber sink, Collection<?> sources) {
-		List<Subscribable> result = new ArrayList<>();
+	protected List<Object> subscribeToSource(Subscriber sink, Collection<?> sources) {
+		List<Object> result = new ArrayList<>();
 		for (Object source : sources) {
 			if (source instanceof Collection) {
 				result.addAll(subscribeToSource(sink, (Collection<?>)source));
@@ -101,7 +101,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return result;
 	}
 	
-	protected Subscribable subscribeToSource(Collection<?> sinks, Object source) {
+	protected Object subscribeToSource(Collection<?> sinks, Object source) {
 		for (Object sink : sinks) {
 			if (sink instanceof Collection) {
 				subscribeToSource((Collection<?>) sink, source);
@@ -109,17 +109,12 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 				subscribeToSource(sink, source);
 			} 			
 		}
-		if (source instanceof QDLSubscribableWithPort) {
-			return ((QDLSubscribableWithPort)source).getSource();
-		} else if (source instanceof Subscribable) {
-			return ((Subscribable)source);
-		} else {
-			return null;
-		}
+		return source;
 	}
 	
-	protected Subscribable subscribeToSource(Object sink, Object sourceObj) {
+	protected Object subscribeToSource(Object sink, Object sourceObj) {
 		Subscribable source = null;
+		Subscriber subscriber = null;
 		int sourceOutPort = DEFAULT_SOURCE_OUT_PORT;
 
 		if (sourceObj instanceof QDLSubscribableWithPort) {
@@ -128,13 +123,17 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		} else if (sourceObj instanceof Subscribable) {
 			source = ((Subscribable)sourceObj);
 		}
-		Subscriber subscriber = (Subscriber) sink;
+		if (sink instanceof QDLSubscribableWithPort) {
+			subscriber = (Subscriber) ((QDLSubscribableWithPort)sink).getSource();
+		} else if (sink instanceof Subscribable) {
+			subscriber = (Subscriber) sink;
+		}
 		subscriber.subscribeToSource(source, sourceOutPort, subscriber.getSubscriptionsToSource().size());
-		return source;
+		return sourceObj;
 	}
 	
-	protected List<Subscriber> subscribeSink(Collection<?> sources, Collection<?> sinks) {
-		List<Subscriber> result = new ArrayList<>();
+	protected List<Object> subscribeSink(Collection<?> sources, Collection<?> sinks) {
+		List<Object> result = new ArrayList<>();
 		for (Object source : sources) {			
 			for (Object sink : sinks) {
 				if (source instanceof Collection && sink instanceof Collection) {
@@ -152,7 +151,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 	
 	
-	protected Subscriber subscribeSink(Collection<?> sources, Object sink) {
+	protected Object subscribeSink(Collection<?> sources, Object sink) {
 		for (Object obj : sources) {
 			if (obj instanceof Collection) {
 				subscribeSink((Collection<?>)obj, sink);
@@ -163,8 +162,8 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return (Subscriber) sink;
 	}
 	
-	protected List<Subscriber> subscribeSink(Object source, Collection<?> sinks) {
-		List<Subscriber> result = new ArrayList<>();
+	protected List<Object> subscribeSink(Object source, Collection<?> sinks) {
+		List<Object> result = new ArrayList<>();
 		for (Object sink : sinks) {
 			if (sink instanceof Collection) {
 				result.addAll(subscribeSink(source, (Collection<?>) sink));
@@ -175,8 +174,9 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return result;
 	}
 	
-	protected Subscriber subscribeSink(Object sourceObj, Object sink) {
+	protected Object subscribeSink(Object sourceObj, Object sink) {
 		Subscribable source = null;
+		Subscriber subscriber  = null;
 		int sourceOutPort = DEFAULT_SOURCE_OUT_PORT;
 		
 		if (sourceObj instanceof QDLSubscribableWithPort) {
@@ -185,10 +185,16 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		} else if (sourceObj instanceof Subscribable) {
 			source = ((Subscribable)sourceObj);
 		}
-		Subscriber subscriber = (Subscriber) sink;
+		
+		if (sink instanceof QDLSubscribableWithPort) {
+			subscriber = (Subscriber) ((QDLSubscribableWithPort)sink).getSource();
+		} else if (sink instanceof Subscribable) {
+			subscriber = ((Subscriber)sink);
+		}
+		
 		source.subscribeSink(subscriber, sourceOutPort, subscriber.getSubscriptionsToSource().size());
 
-		return subscriber;
+		return sink;
 	}
 
 }

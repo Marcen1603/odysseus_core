@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentRewriteSession;
@@ -28,6 +29,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
@@ -99,26 +101,31 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 
 	@Override
 	public void completeIQLOtherExpressions_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		if (context.getPrefix() == null || context.getPrefix().length() == 0) {
+			return;
+		}
 		if (model instanceof IQLNewExpression) {
 			IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleTypeRef_Type());
-			//ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
+			ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
 			for (IEObjectDescription desc :  scopeProvider.getTypes(model)) {
-				EObject object = desc.getEObjectOrProxy();
-				if (object.eIsProxy()) {
-					//object = EcoreUtil.resolve(object,resourceSet);
-				}
-				if (object.eIsProxy()) {
-					//continue;
-				}
-				if (object instanceof JvmDeclaredType) {
-					JvmDeclaredType declaredType = (JvmDeclaredType) object;
-					if (lookUp.isInstantiateable(declaredType)) {
-						createConstructorProposal(null, desc, declaredType,scope, model, context, acceptor);
-						for (JvmExecutable constructor : lookUp.getPublicConstructors(typeUtils.createTypeRef(declaredType))) {
-							createConstructorProposal(constructor, desc,declaredType, scope, model, context, acceptor);
-						}
+				if (desc.getQualifiedName().getLastSegment().startsWith(context.getPrefix())) {
+					EObject object = desc.getEObjectOrProxy();
+					if (object.eIsProxy()) {
+						object = EcoreUtil.resolve(object,resourceSet);
+					}
+					if (object.eIsProxy()) {
+						continue;
+					}
+					if (object instanceof JvmDeclaredType) {
+						JvmDeclaredType declaredType = (JvmDeclaredType) object;
+						if (lookUp.isInstantiateable(declaredType)) {
+							createConstructorProposal(null, desc, declaredType,scope, model, context, acceptor);
+							for (JvmExecutable constructor : lookUp.getPublicConstructors(typeUtils.createTypeRef(declaredType))) {
+								createConstructorProposal(constructor, desc,declaredType, scope, model, context, acceptor);
+							}
+						} 
 					} 
-				} 
+				}
 			}
 		}  else {
 			super.completeIQLOtherExpressions_Ref(model, assignment, context, acceptor);
@@ -157,24 +164,29 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	}
 	
 	public void createTypeProposals(EObject model, ContentAssistContext context,  ICompletionProposalAcceptor acceptor) {
+		if (context.getPrefix() == null || context.getPrefix().length() == 0) {
+			return;
+		}
 		IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleTypeRef_Type());
-		//ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
-		for (IEObjectDescription desc :  scopeProvider.getTypes(model)) {
-			EObject object = desc.getEObjectOrProxy();		
-			if (object.eIsProxy()) {
-				//object = EcoreUtil.resolve(object,resourceSet);
-			}
-			if (object.eIsProxy()) {
-				//continue;
-			}
-			String proposalStr = desc.getQualifiedName().getLastSegment();
-			String displayString = desc.getQualifiedName().getLastSegment()+ " - " +converter.toString(desc.getQualifiedName());
-			
-			ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(object), context);
-			if (proposal != null) {
-				proposal.setAdditionalProposalInfo(converter.toString(desc.getQualifiedName()));
-				proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));
-				acceptor.accept(proposal);
+		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
+		for (IEObjectDescription desc :  scope.getAllElements()) {
+			if (desc.getQualifiedName().getLastSegment().startsWith(context.getPrefix())) {
+				EObject object = desc.getEObjectOrProxy();		
+				if (object.eIsProxy()) {
+					object = EcoreUtil.resolve(object,resourceSet);
+				}
+				if (object.eIsProxy()) {
+					continue;
+				}
+				String proposalStr = desc.getQualifiedName().getLastSegment();
+				String displayString = desc.getQualifiedName().getLastSegment()+ " - " +converter.toString(desc.getQualifiedName());
+				
+				ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(object), context);
+				if (proposal != null) {
+					proposal.setAdditionalProposalInfo(converter.toString(desc.getQualifiedName()));
+					proposal.setTextApplier(new FQNShortener(model.eResource(),scope, converter, context.getViewer()));
+					acceptor.accept(proposal);
+				}
 			}
 		}
 	}

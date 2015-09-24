@@ -13,12 +13,13 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.ui.util.ResourceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
@@ -35,6 +36,8 @@ public class BasicIQLUiExecutor extends BasicIQLExecutor implements IIQLUiExecut
 	@Inject
 	private IJavaProjectProvider javaProjectProvider;
 	
+	private static final Logger LOG = LoggerFactory.getLogger(BasicIQLUiExecutor.class);
+
 	@Inject
 	public BasicIQLUiExecutor(BasicIQLTypeDictionary typeDictionary,BasicIQLTypeUtils typeUtils) {
 		super(typeDictionary, typeUtils);
@@ -52,8 +55,8 @@ public class BasicIQLUiExecutor extends BasicIQLExecutor implements IIQLUiExecut
 
 	
 	@Override
-	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
-		Collection<String> result = super.createClassPathEntries(set, resources);
+	protected Collection<String> createClassPathEntries(ResourceSet set) {
+		Collection<String> result = super.createClassPathEntries(set);
 		
 		IJavaProject project = javaProjectProvider.getJavaProject(set);
 		if (project != null) {
@@ -63,7 +66,7 @@ public class BasicIQLUiExecutor extends BasicIQLExecutor implements IIQLUiExecut
 				IFolder folder = root.getFolder(path);
 				result.add(folder.getLocation().toFile().getAbsolutePath());
 			} catch (JavaModelException e) {
-				e.printStackTrace();
+				LOG.error("error while creating classpath entries", e);
 			}
 		}
 		

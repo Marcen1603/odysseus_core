@@ -73,6 +73,9 @@ import org.reflections.scanners.SubTypesScanner;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
@@ -108,7 +111,9 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 
 	@Inject
 	IIQLTypingEntryPoint entryPoint;
-		
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractIQLTypeDictionary.class);
+
 	public AbstractIQLTypeDictionary(U typeUtils, I serviceObserver, XtextResourceSet systemResourceSet, IQLClasspathTypeProviderFactory typeProviderFactory,IQLQualifiedNameConverter converter) {
 		this.systemResourceSet = systemResourceSet;
 		this.typeUtils = typeUtils;
@@ -224,11 +229,17 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		result.addAll(getSystemTypes());
 		
 		for (Class<?> c : IQLDefaultTypes.getVisibleTypes()) {
-			result.add(getType(c.getCanonicalName(), context));
+			JvmType type = getType(c.getCanonicalName(), context);
+			if (type != null) {
+				result.add(type);
+			}
 		}
 		
 		for (Class<?> c : serviceObserver.getVisibleTypes()) {
-			result.add(getType(c.getCanonicalName(), context));
+			JvmType type = getType(c.getCanonicalName(), context);
+			if (type != null) {
+				result.add(type);
+			} 
 		}
 		
 		for (Bundle bundle : getVisibleTypesFromBundle()) {
@@ -242,7 +253,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 				JvmType type = getType(c.getCanonicalName(), context);
 				if (type != null) {
 					result.add(type);
-				}
+				} 
 			}
 		}
 		
@@ -254,7 +265,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 				JvmType t = getType(namespace, context);
 				if (t != null) {
 					result.add(t);
-				}
+				} 
 			}
 		}
 		
@@ -273,6 +284,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 					result.addAll(getTypesOfJar(entry, bundle));
 				}
 			} catch (BundleException e) {
+				LOG.error("error while reading classpath of bundle "+bundle.getSymbolicName(),e);
 			}								
 		}
 		return result;
@@ -327,6 +339,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 			URL url = FileLocator.toFileURL(FileLocator.find(bundle, new Path(""), null));
 			return new File(url.toURI());
 		} catch (Exception e) {
+        	LOG.warn("could not find plugin dir "+bundle.getSymbolicName(), e);
 		}
 		return null;
 	}
@@ -335,9 +348,9 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		ResourceSet set = EcoreUtil2.getResourceSet(context);
 		try {
 			return typeProviderFactory.findOrCreateTypeProvider(set).findTypeByName(name);
-		}catch (Exception e) {			
+		}catch (Exception e) {
+			return null;
 		}
-		return null;
 	}
 		
 	public Collection<JvmType> getTypesOfPackage(String packageName, Resource context) {
@@ -543,7 +556,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 			}
 			if (wrapper && typeUtils.isPrimitive(type)) {
 				return toWrapper(qualifiedName);
-			} else if (!isImportNeeded(type, text)) {
+			}else if (text != null && !isImportNeeded(type, text)) {
 				return text;				
 			} else if (javaType != null) {
 				return javaType.getSimpleName();
@@ -590,7 +603,7 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 					result.add(p.getName());
 				}
 			} catch (IllegalArgumentException | SecurityException e) {
-				e.printStackTrace();
+				LOG.warn("error while getting java packages", e);
 			}
 		}
 		return result;

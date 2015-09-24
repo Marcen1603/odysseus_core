@@ -5,7 +5,7 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 	
 	optional parameter (type=ResolvedSDFAttributeParameter) SDFAttribute[] partition;
 	
-	IGroupProcessor groupProcessor = new NoGroupProcessor();
+	IGroupProcessor groupProcessor;
 	
 	ITransferArea transferArea = new TITransferArea();
 
@@ -14,22 +14,25 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 	PointInTime lastTs = null;
 	
 	
-	
-	on processOpen() {
-		if (partition != null) {
-			groupProcessor = new RelationalGroupProcessor(getInputSchema(0), getOutputSchema(),partition,null, false);			
-		} else {
-			groupProcessor = new NoGroupProcessor();
-		}
+	on po_init() {		
 		if (advance <= 0) {
 			advance = 1;
 		}
+	}
 		
-		buffers.clear();
+	on processOpen() {	
+		if (partition != null && groupProcessor == null) {
+			groupProcessor = new RelationalGroupProcessor(getInputSchema(0), getOutputSchema(),partition,null, false);			
+		} else if (groupProcessor == null){
+			groupProcessor = new NoGroupProcessor();
+		}
 		groupProcessor.init();
-		transferArea.init(this, 1);		
+		buffers.clear();
+		transferArea.init(this, 1);				
 	}	
 	
+	
+		
 	on processNext(Tuple tuple, int port) {
 		ITimeInterval time = tuple.getMetadata();		
 		lastTs = time.getStart();
@@ -77,7 +80,7 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 		}
 	}
 	
-	transferBuffer(List buffer, long numberofelements,	PointInTime ts) {
+	po transferBuffer(List buffer, long numberofelements,	PointInTime ts) {
 		Iterator bufferIter = buffer.iterator();
 		PointInTime start = null;
 		for (int i = 0; i < numberofelements; i++) {
@@ -92,7 +95,7 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 		
 	}
 
-	ping {
+	po ping {
 		PointInTime minTs = getMinTs();
 		if (minTs != null) {
 			transferArea.newHeartbeat(minTs, 0);
@@ -101,7 +104,7 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 		}
 	}
 	
-	 getMinTs : PointInTime {
+	po getMinTs : PointInTime {
 		if (buffers.size() == 0) {
 			return null;
 		}		

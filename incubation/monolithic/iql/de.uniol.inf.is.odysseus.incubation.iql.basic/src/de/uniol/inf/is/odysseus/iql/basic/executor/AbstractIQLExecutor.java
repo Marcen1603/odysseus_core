@@ -1,16 +1,12 @@
 package de.uniol.inf.is.odysseus.iql.basic.executor;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -19,26 +15,25 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 import org.eclipse.osgi.framework.internal.core.AbstractBundle;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
-import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Provider;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
+import de.uniol.inf.is.odysseus.iql.basic.generator.IIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
@@ -53,7 +48,7 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 	protected Provider<ResourceSet> resourceSetProvider;
 	
 	@Inject
-	protected IGenerator generator;
+	protected IIQLGenerator generator;
 	
 	@Inject
 	protected JavaIoFileSystemAccess fsa;	
@@ -66,7 +61,11 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 	protected IQLQualifiedNameConverter converter;
 	
 	protected U typeUtils;
+	
 	protected F typeDictionary;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractIQLExecutor.class);
+
 
 	public AbstractIQLExecutor(F typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;
@@ -78,50 +77,31 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		try {
 			FileUtils.deleteDirectory(new File(dir));
 		} catch (Exception e) {
+			LOG.warn("Could not delete directory "+dir);
 		}
 	}
-			
-	protected void deleteResources(Collection<Resource> resources) {
-		for (Resource res : resources) {
-			try {
-				res.delete(new HashMap<>());
-			} catch (IOException e) {
-			}
-		}
-	}
+
 	
-	protected Collection<Resource> createNecessaryIQLFiles(ResourceSet resourceSet, String outputPath, EObject element) {
+	protected Collection<IQLModelElement> getModelElementsToCompile(ResourceSet resourceSet, String outputPath, EObject element) {
 		Collection<EObject> userDefinedTypes = new HashSet<>();
 		collectUserDefinedTypes(element, userDefinedTypes);
 		userDefinedTypes.add(element);
-		Map<IQLModel, StringBuilder> fileBuilders = new HashMap<>();
-		for (EObject type : userDefinedTypes) {
-			IQLModel containerFile = EcoreUtil2.getContainerOfType(type, IQLModel.class);
-			StringBuilder builder = fileBuilders.get(containerFile);
-			if (builder == null) {
-				builder = new StringBuilder();
-				for (IQLNamespace namepace : containerFile.getNamespaces()) {
-					builder.append(getNodeText(namepace)+System.lineSeparator());
-				}
-				fileBuilders.put(containerFile, builder);
-			} 
-			builder.append(getNodeText(type)+System.lineSeparator());
+		Collection<IQLModelElement> result = new HashSet<>();
+		for (EObject obj : userDefinedTypes) {
+			result.add((IQLModelElement) obj.eContainer());
 		}
-		Collection<Resource> resources = new HashSet<>();
-		for (Entry<IQLModel, StringBuilder> entry : fileBuilders.entrySet()) {
-			String text = entry.getValue().toString();
-			String fileName = getFileName(entry.getKey());
-			String folder = getFolder(entry.getKey());
-			StringBuilder pathBuilder = new StringBuilder();
-			pathBuilder.append(outputPath);
-			if (folder != null && folder.length() > 0) {
-				pathBuilder.append(File.separator+folder);
-			}
-			pathBuilder.append(File.separator+fileName);
-			resources.add(createIQLFile(pathBuilder.toString(), text, resourceSet));
-		}
-		return resources;
+		return result;
 	}
+	
+//	
+//	protected Collection<IQLModelElement> getModelElementsToCompile(ResourceSet resourceSet, String outputPath, EObject element) {
+//		Collection<IQLModelElement> result = new HashSet<>();
+//		IQLModel model = EcoreUtil2.getContainerOfType(element, IQLModel.class);
+//		for (IQLModelElement member : model.getElements()) {
+//			result.add(member);
+//		}
+//		return result;
+//	}
 	
 	protected String getFolder(IQLModel file) {
 		return "";
@@ -132,13 +112,10 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		return uri.lastSegment();
 	}
 	
-	private String getNodeText(EObject object) {
-		INode node = NodeModelUtils.getNode(object);
-		return NodeModelUtils.getTokenText(node);
-	}
-	
 	protected void collectUserDefinedTypes(EObject element, Collection<EObject> userDefinedTypes)  {
 		for (JvmTypeReference typeRef : EcoreUtil2.getAllContentsOfType(element, JvmTypeReference.class)) {
+			JvmType t = typeRef.getType();
+			t.eIsProxy();
 			JvmType type = typeUtils.getInnerType(typeRef, false);			
 			if (typeUtils.isUserDefinedType(type, false) && !userDefinedTypes.contains(type)) {
 				userDefinedTypes.add(type);
@@ -146,31 +123,21 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 			} 
 		}
 	}
-	
-	
-	private Resource createIQLFile(String path, String text, ResourceSet resourceSet) {
-		File file = new File(path);
-		file.getParentFile().mkdirs();
-		try(PrintWriter writer = new PrintWriter(file)) {
-			writer.print(text);
-		} catch (FileNotFoundException e) {
-			throw new QueryParseException("error while creating iql file: "+e.getMessage(),e);
-		}
-		return resourceSet.getResource(URI.createURI(file.toURI().toString()), true);
-	}
-	
-	protected void generateJavaFiles(Collection<Resource> resources) {
-		for (Resource res : resources) {
-			generateJavaFiles(res);
+		
+	protected void generateJavaFiles(Collection<IQLModelElement> modelElements, String outputPath) {
+		for (IQLModelElement obj : modelElements) {
+			generateJavaFiles(obj, outputPath);
 		}
 	}
 
-	private void generateJavaFiles(Resource res) {
-		URI uri = res.getURI();
-		uri = uri.trimSegments(1);		
-		String outputPath = uri.toFileString();
+	private void generateJavaFiles(IQLModelElement obj, String outputPath) {
 		fsa.setOutputPath(outputPath);
-		generator.doGenerate(res, fsa);
+		try {
+			generator.doGenerate(obj, fsa);
+		}catch (Exception e) {
+			LOG.error("error while generating java files for "+obj.getInner().getSimpleName(), e);
+			throw new QueryParseException("error while generating java files for "+obj.getInner().getSimpleName()+": "+System.lineSeparator()+ e.getMessage(), e);
+		}
 	}
 	
 	protected void compileJavaFiles(String path, Collection<String> classPathEntries) {
@@ -178,10 +145,16 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		for (String cpe : classPathEntries) {
 			classPath = classPath+cpe+File.pathSeparatorChar;
 		}
-		BatchCompiler.compile("-"+JAVA_VERSION+" -classpath "+classPath+" "+path,new PrintWriter(System.out),new PrintWriter(System.err),null);
+		StringWriter errWriter = new StringWriter();
+		BatchCompiler.compile("-"+JAVA_VERSION+" -classpath "+classPath+" "+path,new PrintWriter(System.out),new PrintWriter(errWriter),null);
+		String output = errWriter.toString();
+		if (output != null && output.length() > 0) {
+			System.err.print(output);
+			throw new QueryParseException("error while compiling java files: "+System.lineSeparator()+ output);
+		}	
 	}
 	
-	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
+	protected Collection<String> createClassPathEntries(ResourceSet set) {
 		Collection<Bundle> bundles = typeDictionary.getRequiredBundles();	
 		
 		Collection<String> entries = new ArrayList<>();		
@@ -200,13 +173,13 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 							entries.add(file.getAbsolutePath()+File.separator+e);
 						}
 					} catch (BundleException e) {
-						throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName()+": "+e.getMessage(),e);
+						LOG.error("error while adding classpath entries of bundle " +bundle.getSymbolicName(), e);
+						throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName()+": "+System.lineSeparator()+e.getMessage(),e);
 					}								
 				}
 			}
 		}	
-		
-		
+				
 		return entries;	
 	}
 	

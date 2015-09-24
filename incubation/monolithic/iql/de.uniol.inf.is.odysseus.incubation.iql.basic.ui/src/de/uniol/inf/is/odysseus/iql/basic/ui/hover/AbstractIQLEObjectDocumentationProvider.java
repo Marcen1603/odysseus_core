@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 import org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLTypeDictionary, U extends IIQLTypeUtils> extends MultiLineCommentDocumentationProvider {
@@ -29,6 +31,8 @@ public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLType
 	@Inject
 	protected IJavaElementFinder javaElementFinder;
 	
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractIQLEObjectDocumentationProvider.class);
+
 	public AbstractIQLEObjectDocumentationProvider(F typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
@@ -77,10 +81,9 @@ public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLType
 		IJavaElement element = javaElementFinder.findElementFor(object);
 		if (element instanceof IMember && element.exists()) {
 			try {
-				return JavadocContentAccess2.getHTMLContent((IMember) element,
-						true);
+				return JavadocContentAccess2.getHTMLContent((IMember) element,true);
 			} catch (JavaModelException e) {
-				e.printStackTrace();
+				LOG.warn("Could not get java doc", e);
 			}
 		}
 		return "";

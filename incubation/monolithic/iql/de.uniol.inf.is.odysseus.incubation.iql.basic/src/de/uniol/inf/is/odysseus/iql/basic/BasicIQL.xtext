@@ -145,7 +145,8 @@ IQLVariableDeclaration returns jvm::JvmIdentifiableElement:
 ;
 
 IQLVariableInitialization:
-	(argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)? ) | ('=' value=IQLExpression)
+	{IQLVariableInitialization}
+	(argsList=IQLArgumentsList (argsMap=IQLArgumentsMap)?) |  (argsMap=IQLArgumentsMap) | ('=' value=IQLExpression)
 ;
 
 IQLArgumentsList:
@@ -177,7 +178,7 @@ IQLStatement:
 	IQLForStatement |
 	IQLForEachStatement	|
 	IQLSwitchStatement |	
-	=> IQLVariableStatement |
+	IQLVariableStatement |
 	IQLBreakStatement |
 	IQLContinueStatement |
 	IQLReturnStatement | 
@@ -379,8 +380,8 @@ IQLOtherExpressions returns IQLExpression:
     {IQLThisExpression} 'this'  |
     {IQLSuperExpression} 'super'  |    
     {IQLParenthesisExpression} '(' expr = IQLExpression ')'  |
-    {IQLNewExpression} 'new' ((ref=IQLArrayTypeRef) | (ref=IQLSimpleTypeRef argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)?)) |
-    =>IQLLiteralExpression
+    {IQLNewExpression} 'new' ((ref=IQLArrayTypeRef) | (ref=IQLSimpleTypeRef ((argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)?) | argsMap=IQLArgumentsMap))) |
+    IQLLiteralExpression
 ; 
 
 IQLLiteralExpression returns IQLExpression:
@@ -451,7 +452,7 @@ IQL_JAVA_KEYWORDS:
 ;
 
 
-terminal BOOLEAN returns ecore::EBoolean:
+BOOLEAN returns ecore::EBoolean:
 	'true' | 'false'
 ;
 

@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator
 import org.eclipse.xtext.common.types.JvmExecutable
+import java.util.ArrayList
 
 abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionEvaluator, L extends IIQLLookUp> implements IIQLStatementCompiler<G>{
 	protected H helper;
@@ -335,16 +336,24 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	override String compile(IQLVariableInitialization init, JvmTypeReference typeRef, G context) {
 		var result = "";
 		context.expectedTypeRef = typeRef		
-		if (init.argsMap != null && init.argsMap.elements.size > 0) {
+		if (init.argsList != null && init.argsMap != null && init.argsMap.elements.size > 0) {
 			var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 			if (constructor != null) {
+				context.addExceptions(constructor.exceptions)				
 				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, constructor.parameters,context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			} else {
 				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			}
+		} else if (init.argsMap != null && init.argsMap.elements.size > 0) {
+			var constructor = lookUp.findPublicConstructor(typeRef, new ArrayList())
+			if (constructor != null) {
+				context.addExceptions(constructor.exceptions)
+			}
+			result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 		} else if (init.argsList != null) {
 			var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 			if (constructor != null) {
+				context.addExceptions(constructor.exceptions)	
 				result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList,constructor.parameters, context)»)'''			
 			} else {
 				result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»)'''			

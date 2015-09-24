@@ -51,7 +51,7 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 	
 	override String compile(IQLNewExpression e, IQDLGeneratorContext context) {		
 		if (helper.isOperator(e.ref)) {
-			if (e.argsMap != null && e.argsMap.elements.size > 0) {	
+			if (e.argsList != null && e.argsMap != null && e.argsMap.elements.size > 0) {	
 				var constructor = lookUp.findPublicConstructor(e.ref, e.argsList.elements)
 				var args = e.argsList.elements.size > 0
 				if (constructor != null) {
@@ -59,6 +59,8 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 				} else {
 					'''getOperator«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»("«typeUtils.getShortName(e.ref, false)»"«IF args», «ENDIF»«compile(e.argsList, context)»), operators,  «compile(e.argsMap,e.ref, context)»)'''
 				}		
+			} else if (e.argsMap != null && e.argsMap.elements.size > 0) {	
+				'''getOperator«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»("«typeUtils.getShortName(e.ref, false)»"), operators,  «compile(e.argsMap,e.ref, context)»)'''		
 			} else if (e.argsList != null) {
 				var constructor = lookUp.findPublicConstructor(e.ref, e.argsList.elements)
 				var args = e.argsList.elements.size > 0

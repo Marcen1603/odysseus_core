@@ -79,11 +79,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IOD
 			for (IQLMetadata metadata : operator.getMetadataList().getElements()) {
 				if (metadata.getValue() instanceof IQLMetadataValueSingleString) {
 					String value = ((IQLMetadataValueSingleString)metadata.getValue()).getValue();					
-					try {
-						return OutputMode.valueOf(value);
-					}catch (Exception e) {
-						
-					}
+					return OutputMode.valueOf(value);
 				}				
 			}
 		}

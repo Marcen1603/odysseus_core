@@ -362,7 +362,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
 		private final Action cIQLMetadataValueSingleBooleanAction_3_0 = (Action)cGroup_3.eContents().get(0);
 		private final Assignment cValueAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cValueBOOLEANTerminalRuleCall_3_1_0 = (RuleCall)cValueAssignment_3_1.eContents().get(0);
+		private final RuleCall cValueBOOLEANParserRuleCall_3_1_0 = (RuleCall)cValueAssignment_3_1.eContents().get(0);
 		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
 		private final Group cGroup_4_0 = (Group)cGroup_4.eContents().get(0);
 		private final Action cQDLMetadataValueSingleIDAction_4_0_0 = (Action)cGroup_4_0.eContents().get(0);
@@ -435,7 +435,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		public Assignment getValueAssignment_3_1() { return cValueAssignment_3_1; }
 
 		//BOOLEAN
-		public RuleCall getValueBOOLEANTerminalRuleCall_3_1_0() { return cValueBOOLEANTerminalRuleCall_3_1_0; }
+		public RuleCall getValueBOOLEANParserRuleCall_3_1_0() { return cValueBOOLEANParserRuleCall_3_1_0; }
 
 		//=> ({QDLMetadataValueSingleID} value=ID)
 		public Group getGroup_4() { return cGroup_4; }
@@ -480,7 +480,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cIQL_JAVA_KEYWORDSParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cWSTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cIDTerminalRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
-		private final RuleCall cBOOLEANTerminalRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
+		private final RuleCall cBOOLEANParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		private final RuleCall cDOUBLETerminalRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
 		private final RuleCall cSTRINGTerminalRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
 		private final RuleCall cINTTerminalRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
@@ -557,7 +557,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getIDTerminalRuleCall_2() { return cIDTerminalRuleCall_2; }
 
 		//BOOLEAN
-		public RuleCall getBOOLEANTerminalRuleCall_3() { return cBOOLEANTerminalRuleCall_3; }
+		public RuleCall getBOOLEANParserRuleCall_3() { return cBOOLEANParserRuleCall_3; }
 
 		//DOUBLE
 		public RuleCall getDOUBLETerminalRuleCall_4() { return cDOUBLETerminalRuleCall_4; }
@@ -1118,7 +1118,8 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLVariableInitialization:
-	//	argsList=IQLArgumentsList argsMap=IQLArgumentsMap? | "=" value=IQLExpression;
+	//	{IQLVariableInitialization} (argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) | argsMap=IQLArgumentsMap | "="
+	//	value=IQLExpression;
 	public BasicIQLGrammarAccess.IQLVariableInitializationElements getIQLVariableInitializationAccess() {
 		return gaBasicIQL.getIQLVariableInitializationAccess();
 	}
@@ -1162,7 +1163,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	///////////////////////////////////////////////
 	//IQLStatement:
 	//	IQLStatementBlock | IQLExpressionStatement | IQLIfStatement | IQLWhileStatement | IQLDoWhileStatement |
-	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | => IQLVariableStatement | IQLBreakStatement |
+	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | IQLVariableStatement | IQLBreakStatement |
 	//	IQLContinueStatement | IQLReturnStatement | IQLConstructorCallStatement | IQLJavaStatement;
 	public BasicIQLGrammarAccess.IQLStatementElements getIQLStatementAccess() {
 		return gaBasicIQL.getIQLStatementAccess();
@@ -1551,8 +1552,8 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	//IQLOtherExpressions returns IQLExpression:
 	//	{IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
 	//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
-	//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
-	//	argsMap=IQLArgumentsMap?) | => IQLLiteralExpression;
+	//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef (argsList=IQLArgumentsList
+	//	argsMap=IQLArgumentsMap? | argsMap=IQLArgumentsMap)) | IQLLiteralExpression;
 	public BasicIQLGrammarAccess.IQLOtherExpressionsElements getIQLOtherExpressionsAccess() {
 		return gaBasicIQL.getIQLOtherExpressionsAccess();
 	}
@@ -1657,11 +1658,15 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQL_JAVA_KEYWORDSAccess().getRule();
 	}
 
-	//terminal BOOLEAN returns ecore::EBoolean:
+	//BOOLEAN returns ecore::EBoolean:
 	//	"true" | "false";
-	public TerminalRule getBOOLEANRule() {
-		return gaBasicIQL.getBOOLEANRule();
-	} 
+	public BasicIQLGrammarAccess.BOOLEANElements getBOOLEANAccess() {
+		return gaBasicIQL.getBOOLEANAccess();
+	}
+	
+	public ParserRule getBOOLEANRule() {
+		return getBOOLEANAccess().getRule();
+	}
 
 	//terminal INT returns ecore::EInt:
 	//	"0".."9"+;

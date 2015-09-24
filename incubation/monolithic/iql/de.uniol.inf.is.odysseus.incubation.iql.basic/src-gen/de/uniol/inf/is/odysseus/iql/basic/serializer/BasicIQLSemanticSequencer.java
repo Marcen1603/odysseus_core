@@ -1487,7 +1487,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLLiteralExpressionAccess().getValueBOOLEANTerminalRuleCall_3_1_0(), semanticObject.isValue());
+		feeder.accept(grammarAccess.getIQLLiteralExpressionAccess().getValueBOOLEANParserRuleCall_3_1_0(), semanticObject.isValue());
 		feeder.finish();
 	}
 	
@@ -1719,7 +1719,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueBOOLEANTerminalRuleCall_3_1_0(), semanticObject.isValue());
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueBOOLEANParserRuleCall_3_1_0(), semanticObject.isValue());
 		feeder.finish();
 	}
 	
@@ -1890,7 +1890,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (ref=IQLArrayTypeRef | (ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?))
+	 *     (ref=IQLArrayTypeRef | (ref=IQLSimpleTypeRef ((argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) | argsMap=IQLArgumentsMap)))
 	 */
 	protected void sequence_IQLOtherExpressions(EObject context, IQLNewExpression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -2131,7 +2131,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     ((argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) | value=IQLExpression)
+	 *     (argsList=IQLArgumentsList argsMap=IQLArgumentsMap?)
 	 */
 	protected void sequence_IQLVariableInitialization(EObject context, IQLVariableInitialization semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

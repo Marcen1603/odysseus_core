@@ -4,18 +4,20 @@ operator ODLProject(outputMode ="MODIFIED_INPUT", minInputPorts = 1, maxInputPor
 		
     int[] restrictList;	
     
+    
     on processNext(Tuple tuple, int port) {
         Tuple out = tuple.restrict(restrictList, false);				
         sendStreamElement(out);		
     }    
     
     on processPunctuation(IPunctuation punctuation, int port) {
-        sendPunctuation(punctuation);
+        sendPunctuation(punctuation);        
     }	
     
     on createOutputSchema(int port) : SDFSchema{
         return SDFSchemaFactory::createNewWithAttributes(attributes, getInputSchema(0));		
     }
+         
 	
     on processOpen() {
         restrictList = SDFSchema::calcRestrictList(getInputSchema(0), getOutputSchema(0));		

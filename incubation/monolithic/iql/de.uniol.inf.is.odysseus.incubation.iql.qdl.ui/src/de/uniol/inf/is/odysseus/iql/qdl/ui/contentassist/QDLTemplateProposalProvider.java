@@ -58,6 +58,9 @@ import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -67,6 +70,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
+import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
@@ -77,6 +81,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 
 public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<IQDLExpressionEvaluator, IQDLTypeDictionary, IQDLLookUp, IQDLScopeProvider, IQDLTypeUtils> {
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractIQLExecutor.class);
 
 	@Inject
 	public QDLTemplateProposalProvider(TemplateStore templateStore,
@@ -152,7 +157,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 				finishTemplate(template, templateContext, context, acceptor);
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
-			e.printStackTrace();
+			LOG.error("error while creating possible values of parameters", e);
 		}
 	}
 	

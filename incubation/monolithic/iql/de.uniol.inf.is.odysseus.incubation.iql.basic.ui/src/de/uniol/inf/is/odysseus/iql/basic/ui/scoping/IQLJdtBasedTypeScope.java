@@ -25,15 +25,11 @@ public class IQLJdtBasedTypeScope extends JdtBasedSimpleTypeScope {
 	
 	@Override
 	public IEObjectDescription getSingleElement(QualifiedName name, boolean binary) {
-		try {
-			JvmType type = getTypeProvider().findTypeByName(name.toString(), binary);
-			if (type == null)
-				return null;
-			IEObjectDescription result = EObjectDescription.create(name, type);
-			return result;
-		} catch (IllegalArgumentException e) {
+		JvmType type = getTypeProvider().findTypeByName(name.toString(), binary);
+		if (type == null)
 			return null;
-		}
+		IEObjectDescription result = EObjectDescription.create(name, type);
+		return result;
 	}
 
 }

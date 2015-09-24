@@ -26,8 +26,10 @@ Require-Bundle: de.uniol.inf.is.odysseus.iql.qdl;visibility:=reexport,
  org.eclipse.xtext.xbase.ui;bundle-version="2.7.3",
  org.eclipse.jdt.core,
  de.uniol.inf.is.odysseus.rcp.editor.text,
- org.eclipse.xtext.junit4
-Import-Package: org.apache.log4j
+ org.eclipse.xtext.junit4,
+ org.apache.commons.io
+Import-Package: org.apache.log4j,
+ org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.qdl.ui.quickfix,
  de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist,
