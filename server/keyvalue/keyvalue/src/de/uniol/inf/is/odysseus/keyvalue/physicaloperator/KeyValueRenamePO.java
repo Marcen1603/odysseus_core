@@ -19,11 +19,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class KeyValueRenamePO<T extends KeyValueObject<?>> extends AbstractPipe<T, T> {
+public class KeyValueRenamePO<T extends KeyValueObject<M>, M extends IMetaAttribute> extends AbstractPipe<T, T> {
 	private Map<String, String> renameMap;
 	boolean keepInputObject;
 
@@ -40,14 +41,18 @@ public class KeyValueRenamePO<T extends KeyValueObject<?>> extends AbstractPipe<
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T input, int port) {
 		Map<String, Object> attributes = input.getAttributes();
 		for(Entry<String, String> renamePair : this.renameMap.entrySet()) {
 			attributes.put(renamePair.getValue(), attributes.remove(renamePair.getKey()));
 		}
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings({ "rawtypes" })
 		T output = (T) new KeyValueObject(attributes);
+		if (input.getMetadata() != null) {	
+			output.setMetadata((M) input.getMetadata().clone());
+		}
 		transfer(output);	
 	}
 

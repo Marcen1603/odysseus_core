@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.keyvalue.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.keyvalue.physicaloperator.KeyValueRenamePO;
@@ -15,7 +16,7 @@ public class TKeyValueRenameRule extends AbstractTransformationRule<RenameAO> {
 	@Override
 	public void execute(RenameAO renameAO, TransformationConfiguration config)
 			throws RuleException {
-		KeyValueRenamePO<KeyValueObject<?>> renamePO = new KeyValueRenamePO<KeyValueObject<?>>(renameAO);
+		KeyValueRenamePO<KeyValueObject<IMetaAttribute>, IMetaAttribute> renamePO = new KeyValueRenamePO<KeyValueObject<IMetaAttribute>, IMetaAttribute>(renameAO);
 		defaultExecute(renameAO, renamePO, config, true, true, true);
 	}
 
