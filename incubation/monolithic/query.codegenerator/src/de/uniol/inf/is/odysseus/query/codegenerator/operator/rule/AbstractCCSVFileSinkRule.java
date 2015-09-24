@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends AbstractRule<CSVFileSink> {
+public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends AbstractCOperatorRule<CSVFileSink> {
 
 	public AbstractCCSVFileSinkRule(String name) {
 		super(name);

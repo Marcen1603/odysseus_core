@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 //TProjectAORule
-public abstract class AbstractCRelationalProjectAORule<T extends ProjectAO> extends AbstractRule<ProjectAO> {
+public abstract class AbstractCRelationalProjectAORule<T extends ProjectAO> extends AbstractCOperatorRule<ProjectAO> {
 
 	public AbstractCRelationalProjectAORule(String name) {
 		super(name);

@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-public abstract class AbstractCIntervalRule<T extends ILogicalOperator>  extends AbstractRule<T>{
+public abstract class AbstractCIntervalRule<T extends ILogicalOperator>  extends AbstractCOperatorRule<T>{
 
 	public AbstractCIntervalRule(String name) {
 		super(name);

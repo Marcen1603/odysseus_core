@@ -37,19 +37,13 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		Map<IKeywordParameter, String> result = parameterHelper.parse(parameter);
 		
 		String targetPlatform =result.get(QueryCodegenerationKeywordParameter.TARGETPLATFROM);
-		String tempDirectory = result.get(QueryCodegenerationKeywordParameter.TEMPDIRECTORY);
-		String destinationDirectory =result.get(QueryCodegenerationKeywordParameter.DESTINATIONDIRECTORY);
+		String targetDirectory = result.get(QueryCodegenerationKeywordParameter.TARGETDIRECTORY);
 		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
 		String executorString =result.get(QueryCodegenerationKeywordParameter.EXECUTOR);
 		
-		if (!checkDirecotry(tempDirectory)) {
+		if (!checkDirecotry(targetDirectory)) {
 			throw new IllegalArgumentException(
-					"Temp directory "+tempDirectory+" not exist or not readable!");
-		}
-		
-		if (!checkDirecotry(destinationDirectory)) {
-			throw new IllegalArgumentException(
-					"Desitnation directory "+destinationDirectory+" not exist or not readable!");
+					"Target directory "+targetDirectory+" not exist or not readable!");
 		}
 		
 		if (!checkDirecotry(odysseusPath)) {
@@ -94,13 +88,12 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		
 		Map<IKeywordParameter, String> result = parameterHelper.parse(parameter);
 		String targetPlatform =result.get(QueryCodegenerationKeywordParameter.TARGETPLATFROM);
-		String tempDirectory = result.get(QueryCodegenerationKeywordParameter.TEMPDIRECTORY);
-		String destinationDirectory =result.get(QueryCodegenerationKeywordParameter.DESTINATIONDIRECTORY);
+		String targetDirectory = result.get(QueryCodegenerationKeywordParameter.TARGETDIRECTORY);
 		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
 		String executorString =result.get(QueryCodegenerationKeywordParameter.EXECUTOR);
 		 
 		
-		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  tempDirectory,  destinationDirectory,  0,  odysseusPath, true ,  executorString);  
+		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  targetDirectory,  0,  odysseusPath, true ,  executorString);  
 
 		List<IExecutorCommand> commands = new LinkedList<>();
 		

@@ -9,17 +9,17 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractRule<T extends ILogicalOperator> implements IOperatorRule<T> {
+public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implements IOperatorRule<T> {
 
 	private ComponentContext context;
 
 	private String name = "";
 	private String targetPlatform = "";
 
-	public AbstractRule() {
+	public AbstractCOperatorRule() {
 	}
 
-	public AbstractRule(String name) {
+	public AbstractCOperatorRule(String name) {
 		this.name = name;
 	}
 

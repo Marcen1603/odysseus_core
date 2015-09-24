@@ -33,9 +33,10 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 	private  Logger LOG = LoggerFactory.getLogger(DefaultQueryAnalyse.class);
 
 	private  QueryAnalyseInformation transformationInformation;
-	
 	private  boolean renameRemoved = false;
 	private  boolean newRound = false;
+
+	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
@@ -44,6 +45,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
 		
 		transformationInformation = new QueryAnalyseInformation();
+		
 	
 		//get query
 		ILogicalQuery queryTopAo = ExecutorServiceBinding.getExecutor().getLogicalQueryById(parameter.getQueryId(), SessionHelper.getActiveSession());
@@ -88,11 +90,11 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 	}
 	
 
-	private  void prepareLogicalPlan(List<ILogicalOperator> sourceOps){
+	private void prepareLogicalPlan(List<ILogicalOperator> sourceOps){
 		renameRemoved = false;
 		
-		for(ILogicalOperator ss : sourceOps){
-			removeAO(ss);
+		for(ILogicalOperator operator : sourceOps){
+			removeAO(operator);
 		}
 		
 		if(renameRemoved){
@@ -117,7 +119,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 				RestructHelper.removeOperator(renameAO, true);
 				renameRemoved = true;
 			}else{
-				System.out.println("Kann nicht entfernt werden!");
+				LOG.debug("Operator: "+renameAO.getName() +"could not removed!");
 			}
 		
 		}
@@ -125,7 +127,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private  void analyseLogicalPlan(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
+	private void analyseLogicalPlan(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
 		
 		
 		for(String metaDataType : transformationConfiguration.getDefaultMetaTypeSet()){
@@ -179,7 +181,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		
 	}
 	
-	private  void analyseOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+	private void analyseOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 		

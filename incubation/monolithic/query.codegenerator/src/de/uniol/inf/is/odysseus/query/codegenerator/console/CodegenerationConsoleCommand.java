@@ -47,12 +47,11 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 String configName  = ci.nextArgument();
 		 String targetPlatform = ci.nextArgument();
 		 String tempDirectory= ci.nextArgument();
-		 String destinationDirectory= ci.nextArgument();
 		 int queryId= Integer.parseInt(ci.nextArgument());
 		 String odysseusPath= ci.nextArgument();
 		 String executor= ci.nextArgument();
 		 
-		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  tempDirectory,  destinationDirectory,  queryId,  odysseusPath, true,  executor));
+		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  tempDirectory,  queryId,  odysseusPath, true,  executor));
 	 }
 
 	 
@@ -65,8 +64,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 				sb.append(config.getKey()).append("\n");
 				
 				sb.append("- targetPlatform: "+config.getValue().getProgramLanguage()).append("\n");
-				sb.append("- tempDirectory: "+config.getValue().getTempDirectory()).append("\n");
-				sb.append("- destinationDirectory: "+config.getValue().getDestinationDirectory()).append("\n");
+				sb.append("- tempDirectory: "+config.getValue().getTargetDirectory()).append("\n");
 				sb.append("- queryId: "+config.getValue().getQueryId()).append("\n");
 				sb.append("- odysseusDirectory: "+config.getValue().getOdysseusPath()).append("\n");
 				sb.append("- executor: "+config.getValue().getExecutor()).append("\n");

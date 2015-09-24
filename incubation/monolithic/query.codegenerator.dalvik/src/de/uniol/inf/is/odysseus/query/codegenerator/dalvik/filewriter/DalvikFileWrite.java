@@ -45,7 +45,7 @@ public class DalvikFileWrite {
 	
 	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICExecutor executor){
 		this.fileName = fileName;
-		this.tempPath = transformationParameter.getTempDirectory();
+		this.tempPath = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;
 		this.importList = importList;
 		this.osgiBindCode = osgiBindCode;
@@ -77,7 +77,7 @@ public class DalvikFileWrite {
 
 	private void createExecutorFile() {
 	
-		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"\\app\\src\\main\\java\\com\\app\\odysseus\\odysseustest");
+		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"/app/src/main/java/com/app/odysseus/odysseustest");
 		fileHelper.writeToFile(executor.getExecutorCode());
 		
 	}
@@ -107,7 +107,7 @@ public class DalvikFileWrite {
 	private void createMainActivityFragmentFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(tempPath);
-		absolutePath.append("\\app\\src\\main\\java\\com\\app\\odysseus\\odysseustest\\");
+		absolutePath.append("/app/src/main/java/com/app/odysseus/odysseustest/");
 		absolutePath.append(fileName);
 		
 		file = new File(absolutePath.toString());
@@ -141,7 +141,7 @@ public class DalvikFileWrite {
 	private void createUtilsJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(tempPath);
-		absolutePath.append("\\app\\src\\main\\java\\com\\app\\odysseus\\odysseustest\\");
+		absolutePath.append("/app/src/main/java/com/app/odysseus/odysseustest/");
 		absolutePath.append("Utils.java");
 		
 		file = new File(absolutePath.toString());
@@ -165,7 +165,7 @@ public class DalvikFileWrite {
 	
 	private void copyOdysseusJar(){
 		ExtractOSGIBundle extractOSGIBundle = new ExtractOSGIBundle();
-		extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "app\\libs");
+		extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTargetDirectory(), "app/libs");
 	}
 	
 	

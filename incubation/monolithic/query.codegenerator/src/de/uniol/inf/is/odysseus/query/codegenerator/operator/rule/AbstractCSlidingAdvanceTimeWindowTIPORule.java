@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule<T extends TimeWindowAO> extends
-		AbstractRule<TimeWindowAO>{
+		AbstractCOperatorRule<TimeWindowAO>{
 
 	public AbstractCSlidingAdvanceTimeWindowTIPORule(String name) {
 		super(name);
@@ -20,18 +20,14 @@ public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule<T extends TimeWi
 			
 				switch (logicalOperator.getWindowType()) {
 				case TIME:
-					if (logicalOperator.getWindowSlide() == null
-							&& logicalOperator.getWindowAdvance() != null) {
+					if (logicalOperator.getWindowSlide() == null && logicalOperator.getWindowAdvance() != null) {
 						return true;
 					}
-					return false;
 				default:
 					return false;
 				}
-
 		}
 		return false;
-	
 	}
 
 }

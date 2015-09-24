@@ -80,7 +80,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			javaFileWrite.createProject();
 	
 			updateProgressBar(85, "Compile the Java project",UpdateMessageStatusType.INFO);
-			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
+			ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
 			
 			updateProgressBar(100, "Transformation finish",UpdateMessageStatusType.INFO);
 		} catch (IOException e) {

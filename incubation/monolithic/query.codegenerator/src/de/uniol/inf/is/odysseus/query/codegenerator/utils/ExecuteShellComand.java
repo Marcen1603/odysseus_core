@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+
+//TODO mac, unix support?
 public class ExecuteShellComand {
 	
-	public static void compileJavaProgram(String tempDirectory){
+	public static void executeAntScript(String tempDirectory){
 		
 	Process p;
 

@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-public abstract class AbstractCRenameAORule <T extends RenameAO> extends AbstractRule<RenameAO> {
+public abstract class AbstractCRenameAORule <T extends RenameAO> extends AbstractCOperatorRule<RenameAO> {
 
 	public AbstractCRenameAORule(String name) {
 		super(name);

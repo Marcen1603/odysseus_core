@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCRelationalMapPORule<T extends MapAO> extends AbstractRule<MapAO> {
+public abstract class AbstractCRelationalMapPORule<T extends MapAO> extends AbstractCOperatorRule<MapAO> {
 
 	public AbstractCRelationalMapPORule(String name) {
 		super(name);

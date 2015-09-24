@@ -21,15 +21,12 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParamet
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 
-public class QueryTransformationParameterComposite extends
-		AbstractParamterComposite {
+public class QueryTransformationParameterComposite extends AbstractParameterComposite {
 
-	private Text txtTragetDirectory;
-	private Text txtTempDirectory;
+	private Text txtTargetDirectory;
 	private Text txtOdysseusCode;
 
 	private Button btnChooseTargetDirectory;
-	private Button btnChooseTempDirectory;
 	private Combo targetPlatform;
 	private Combo comboExecutor;
 
@@ -83,51 +80,31 @@ public class QueryTransformationParameterComposite extends
 		inputDirectoryComposite.setLayout(new GridLayout(3, false));
 		inputTwoGridComposite.setLayout(new GridLayout(2, false));
 
-		txtTragetDirectory = createTextFieldWithLabel(inputDirectoryComposite,
-				"C:\\Users\\Marc\\Desktop\\target", "Zielverzeichnis");
+
+		txtTargetDirectory = createTextFieldWithLabel(inputDirectoryComposite,
+				"C:\\Users\\Marc\\Desktop\\tmp", "Target directory");
 
 		btnChooseTargetDirectory = new Button(inputDirectoryComposite, SWT.NONE);
 		btnChooseTargetDirectory.setLayoutData(new GridData(SWT.RIGHT,
 				SWT.CENTER, false, false, 1, 1));
 		btnChooseTargetDirectory.setText("...");
+
 		btnChooseTargetDirectory.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				DirectoryDialog dlg = new DirectoryDialog(
-						btnChooseTargetDirectory.getShell(), SWT.OPEN);
+						parentShell, SWT.OPEN);
 				dlg.setText("Open");
 				String path = dlg.open();
 				if (path == null)
 					return;
-				txtTragetDirectory.setText(path);
-			}
-		});
-
-		txtTempDirectory = createTextFieldWithLabel(inputDirectoryComposite,
-				"C:\\Users\\Marc\\Desktop\\tmp", "Tempverzeichnis");
-
-		btnChooseTempDirectory = new Button(inputDirectoryComposite, SWT.NONE);
-		btnChooseTempDirectory.setLayoutData(new GridData(SWT.RIGHT,
-				SWT.CENTER, false, false, 1, 1));
-		btnChooseTempDirectory.setText("...");
-
-		btnChooseTempDirectory.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				DirectoryDialog dlg = new DirectoryDialog(
-						btnChooseTargetDirectory.getShell(), SWT.OPEN);
-				dlg.setText("Open");
-				String path = dlg.open();
-				if (path == null)
-					return;
-				txtTempDirectory.setText(path);
+				txtTargetDirectory.setText(path);
 			}
 		});
 
 		txtOdysseusCode = createTextFieldWithLabel(inputDirectoryComposite,
-				"F:\\Studium\\odysseus", "Odysseus Code");
+				"F:\\Studium\\odysseus", "Odysseus-Code directory");
 
 		Button buttonOdysseusCore = new Button(inputDirectoryComposite,
 				SWT.NONE);
@@ -138,7 +115,7 @@ public class QueryTransformationParameterComposite extends
 			public void widgetSelected(SelectionEvent e) {
 
 				DirectoryDialog dlg = new DirectoryDialog(
-						btnChooseTargetDirectory.getShell(), SWT.OPEN);
+						parentShell, SWT.OPEN);
 				dlg.setText("Open");
 				String path = dlg.open();
 				if (path == null)
@@ -149,10 +126,10 @@ public class QueryTransformationParameterComposite extends
 		buttonOdysseusCore.setText("...");
 
 		targetPlatform = createComboWithLabel(inputTwoGridComposite,
-				"Sprache:", TargetPlatformRegistry.getAllTargetPlatform());
+				"Targetplatform:", TargetPlatformRegistry.getAllTargetPlatform(),1);
 
 		comboExecutor = createComboWithLabel(inputTwoGridComposite,
-				"Executor:", CExecutorRegistry.getAllExecutor("JRE"));
+				"Executor:", CExecutorRegistry.getAllExecutor("JRE"),0);
 
 	}
 
@@ -170,8 +147,8 @@ public class QueryTransformationParameterComposite extends
 					checkInputFields();
 
 					TransformationParameter parameter = new TransformationParameter(
-							targetPlatform.getText(), txtTempDirectory
-									.getText(), txtTragetDirectory.getText(),
+							targetPlatform.getText(), txtTargetDirectory
+									.getText(),
 							window.getQueryId(), txtOdysseusCode.getText(),
 							true, comboExecutor.getText());
 					window.startQueryTransformation(parameter);
@@ -201,17 +178,12 @@ public class QueryTransformationParameterComposite extends
 
 	private void checkInputFields() throws IllegalArgumentException {
 
-		if (!checkDirecotry(txtTempDirectory.getText())) {
+		if (!checkDirecotry(txtTargetDirectory.getText())) {
 			throw new IllegalArgumentException(
 					"Please check your input\nNo access to the temp folder: "
-							+ txtTempDirectory.getText());
+							+ txtTargetDirectory.getText());
 		}
 
-		if (!checkDirecotry(txtTragetDirectory.getText())) {
-			throw new IllegalArgumentException(
-					"Please check your input\nNo access to the target folder: "
-							+ txtTragetDirectory.getText());
-		}
 
 		if (!checkDirecotry(txtOdysseusCode.getText())) {
 			throw new IllegalArgumentException(

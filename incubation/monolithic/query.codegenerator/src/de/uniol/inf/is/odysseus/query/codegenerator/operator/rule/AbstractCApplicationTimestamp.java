@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> extends AbstractRule<TimestampAO> {
+public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> extends AbstractCOperatorRule<TimestampAO> {
 
 	public AbstractCApplicationTimestamp(String name) {
 		super(name);

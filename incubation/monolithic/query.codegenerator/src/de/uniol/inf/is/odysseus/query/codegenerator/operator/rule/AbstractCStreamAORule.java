@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCStreamAORule<T extends StreamAO> extends AbstractRule<StreamAO> {
+public abstract class AbstractCStreamAORule<T extends StreamAO> extends AbstractCOperatorRule<StreamAO> {
 
 	public AbstractCStreamAORule(String name) {
 		super(name);

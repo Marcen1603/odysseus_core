@@ -5,10 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -37,7 +35,7 @@ public class JavaFileWrite {
 	private String fileName;
 	private File file;
 	private FileWriter writer;
-	private String tempPath;
+	private String targetDirectory;
 	private TransformationParameter transformationParameter;
 	private Set<String> importList = new HashSet<String>();
 	private Set<String> copyJars = new HashSet<String>();
@@ -53,7 +51,7 @@ public class JavaFileWrite {
 	
 	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICExecutor executor){
 		this.fileName = fileName;
-		this.tempPath = transformationParameter.getTempDirectory();
+		this.targetDirectory = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;
 		this.importList = importList;
 		this.osgiBindCode = osgiBindCode;
@@ -92,7 +90,7 @@ public class JavaFileWrite {
 
 	private void createExecutorFile() {
 	
-		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"/src/main");
+		FileHelper fileHelper = new FileHelper(executor.getName()+".java", targetDirectory+"/src/main");
 		fileHelper.writeToFile(executor.getExecutorCode());
 		
 	}
@@ -111,7 +109,7 @@ public class JavaFileWrite {
 		}
 		
 		if(file != null){
-			unZip.unZipIt(file.getAbsolutePath(),tempPath);
+			unZip.unZipIt(file.getAbsolutePath(),targetDirectory);
 		}else{
 			LOG.error("Project file not found!");
 		}
@@ -120,7 +118,7 @@ public class JavaFileWrite {
 	
 	private void createMainJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
-		absolutePath.append(tempPath);
+		absolutePath.append(targetDirectory);
 		absolutePath.append("/src/main/");
 		absolutePath.append(fileName);
 		
@@ -153,7 +151,7 @@ public class JavaFileWrite {
 	
 	private void createUtilsJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
-		absolutePath.append(tempPath);
+		absolutePath.append(targetDirectory);
 		absolutePath.append("/src/main/");
 		absolutePath.append("Utils.java");
 		
@@ -178,7 +176,7 @@ public class JavaFileWrite {
 	
 	private void createBuildScript(){
 
-		File buildFile = new File(tempPath+"/build.xml");
+		File buildFile = new File(targetDirectory+"/build.xml");
 		try {
 			buildFile.createNewFile();
 			FileWriter buildWriter = new FileWriter(buildFile); 
@@ -197,7 +195,7 @@ public class JavaFileWrite {
 	}
 	
 	private void createClassFile(){
-		File classpathFile = new File(tempPath+"/.classpath");
+		File classpathFile = new File(targetDirectory+"/.classpath");
 		
 		try {
 			classpathFile.createNewFile();
@@ -219,7 +217,7 @@ public class JavaFileWrite {
 	
 	private void copyOdysseusJar(){
 		ExtractOSGIBundle extractOSGIBundle =  new ExtractOSGIBundle();
-		copyJars = extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "lib");
+		copyJars = extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTargetDirectory(), "lib");
 	}
 	
 	
@@ -227,7 +225,7 @@ public class JavaFileWrite {
 		FileWriter infoFile = null;
 		
 		try {
-			 infoFile = new FileWriter(tempPath+"/operatorConfigurationInfo.txt");
+			 infoFile = new FileWriter(targetDirectory+"/operatorConfigurationInfo.txt");
 		
 			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
 			{
@@ -239,7 +237,7 @@ public class JavaFileWrite {
 			    
 				infoFile.write(entry.getKey().getName()+" --> "+ operatorVariable +"\n");
 					
-				FileWriter file = new FileWriter(tempPath+"/"+operatorVariable+"PO.json");
+				FileWriter file = new FileWriter(targetDirectory+"/"+operatorVariable+"PO.json");
 				file.write(json);
 				file.flush();
 				file.close();

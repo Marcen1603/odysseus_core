@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCSenderAORule<T extends SenderAO> extends AbstractRule<SenderAO> {
+public abstract class AbstractCSenderAORule<T extends SenderAO> extends AbstractCOperatorRule<SenderAO> {
 
 	public AbstractCSenderAORule(String name) {
 		super(name);

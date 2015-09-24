@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 public abstract class AbstractCSlidingElementWindowTIPORule<T extends ElementWindowAO> extends
-AbstractRule<ElementWindowAO>{
+AbstractCOperatorRule<ElementWindowAO>{
 	
 	public AbstractCSlidingElementWindowTIPORule(String name) {
 		super(name);

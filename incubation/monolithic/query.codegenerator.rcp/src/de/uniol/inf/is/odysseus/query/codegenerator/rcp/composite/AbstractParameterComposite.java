@@ -9,9 +9,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class AbstractParamterComposite extends Composite{
+public abstract class AbstractParameterComposite extends Composite{
 	
-	AbstractParamterComposite(Composite parent, int style) {
+	AbstractParameterComposite(Composite parent, int style) {
 		super(parent, style);
 	}
 
@@ -39,16 +39,22 @@ public abstract class AbstractParamterComposite extends Composite{
 	}
 	
 	
-	protected static Combo createComboWithLabel(Composite composite, String labelText, Set<String> comboValues){
+	protected static Combo createComboWithLabel(Composite composite, String labelText, Set<String> comboValues, int selectItem){
 		createLabelWithBounds(composite,labelText);
 		
-		Combo combo =new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		combo.setBounds(99, 127, 68, 23);
 		
 		for(String value : comboValues){
 		    	 combo.add(value.toUpperCase());
 		  }
-		combo.select(0);
+		
+		if(combo.getItemCount()>= selectItem){
+			combo.select(selectItem);
+		}else{
+			combo.select(0);
+		}
+	
 		
 		return combo;
 	}
@@ -58,10 +64,6 @@ public abstract class AbstractParamterComposite extends Composite{
 		Text text = createTextField(composite,defaultText);
 		return text;
 	}
-	
-
-	
-	
 	
 
 

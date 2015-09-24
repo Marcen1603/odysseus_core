@@ -3,17 +3,15 @@ package de.uniol.inf.is.odysseus.query.codegenerator.modell;
 public class TransformationParameter {
 	
 	private String targetPlatform;
-	private String tempDirectory;
-	private String destinationDirectory;
+	private String targetDirectory;
 	private String odysseusPath;
 	private boolean generateOdysseusJar;
 	private int queryId;
 	private String executor;
 	
-	public TransformationParameter(String targetPlatform, String tempDirectory, String destinationDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor){
+	public TransformationParameter(String targetPlatform, String targetDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor){
 		this.targetPlatform = targetPlatform;
-		this.tempDirectory = tempDirectory;
-		this.destinationDirectory = destinationDirectory;
+		this.targetDirectory = targetDirectory;
 		this.queryId = queryId;
 		this.setOdysseusPath(odysseusPath);
 		this.setGenerateOdysseusJar(generateOdysseusJar);
@@ -27,17 +25,12 @@ public class TransformationParameter {
 	public void setProgramLanguage(String programLanguage) {
 		this.targetPlatform = programLanguage;
 	}
-	public String getDestinationDirectory() {
-		return destinationDirectory;
+
+	public String getTargetDirectory() {
+		return targetDirectory;
 	}
-	public void setDestinationDirectory(String destinationDirectory) {
-		this.destinationDirectory = destinationDirectory;
-	}
-	public String getTempDirectory() {
-		return tempDirectory;
-	}
-	public void setTempDirectory(String tempDirectory) {
-		this.tempDirectory = tempDirectory;
+	public void setTargetDirectory(String targetDirectory) {
+		this.targetDirectory = targetDirectory;
 	}
 
 	public int getQueryId() {
@@ -51,9 +44,8 @@ public class TransformationParameter {
 	
 	public String getParameterForDebug(){
 		StringBuilder debugParameter = new StringBuilder();
-		debugParameter.append("Programlanguage:" +targetPlatform);
-		debugParameter.append("Temp path: "+tempDirectory);
-		debugParameter.append("Target path: "+ destinationDirectory);
+		debugParameter.append("Targetplatform:" +targetPlatform);
+		debugParameter.append("Target directory "+targetDirectory);
 		debugParameter.append("QueryId: "+ queryId);
 		
 		return debugParameter.toString();

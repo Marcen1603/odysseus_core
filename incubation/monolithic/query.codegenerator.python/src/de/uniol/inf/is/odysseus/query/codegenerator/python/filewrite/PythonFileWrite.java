@@ -18,7 +18,7 @@ public class PythonFileWrite {
 
 	public PythonFileWrite(String fileName, TransformationParameter parameter){
 		this.fileName = fileName;
-		this.path = parameter.getTempDirectory();
+		this.path = parameter.getTargetDirectory();
 	}
 	
 	public void createFile() throws IOException{

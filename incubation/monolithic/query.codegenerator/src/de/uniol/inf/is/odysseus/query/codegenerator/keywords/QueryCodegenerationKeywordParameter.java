@@ -6,12 +6,9 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 public enum QueryCodegenerationKeywordParameter implements
 IKeywordParameter {
 TARGETPLATFROM("targetPlatform", 0, false), 
-TEMPDIRECTORY("tempDirectory", 1, false), 
-DESTINATIONDIRECTORY("destinationDirectory", 2, false), 
-ODYSSEUSPATH("odysseusDirectory", 3, false),
-EXECUTOR("executor", 4, false);
-
-
+TARGETDIRECTORY("targetDirectory", 1, false), 
+ODYSSEUSPATH("odysseusDirectory", 2, false),
+EXECUTOR("executor", 3, false);
 
 
 private String name;

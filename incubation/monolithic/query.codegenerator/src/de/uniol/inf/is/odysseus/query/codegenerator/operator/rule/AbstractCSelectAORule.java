@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
-public abstract class AbstractCSelectAORule<T extends SelectAO> extends AbstractRule<SelectAO> {
+public abstract class AbstractCSelectAORule<T extends SelectAO> extends AbstractCOperatorRule<SelectAO> {
 
 	public AbstractCSelectAORule(String name) {
 		super(name);

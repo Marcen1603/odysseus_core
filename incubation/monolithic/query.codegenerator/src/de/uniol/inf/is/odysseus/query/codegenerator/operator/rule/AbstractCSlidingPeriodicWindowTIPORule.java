@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 public abstract class AbstractCSlidingPeriodicWindowTIPORule<T extends TimeWindowAO> extends
-		AbstractRule<TimeWindowAO> {
+		AbstractCOperatorRule<TimeWindowAO> {
 
 	public AbstractCSlidingPeriodicWindowTIPORule(String name) {
 		super(name);

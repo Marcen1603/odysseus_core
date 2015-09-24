@@ -6,55 +6,50 @@ javaAntBuild(copyJars)::=<<
 		
 		<target name="clean">
 		
-		<delete dir="build"/>
+			<delete dir="build"/>
 		
 		</target>
 		
 		
 		<target name="compile">
 		
-		<mkdir dir="build/classes"/>
+			<mkdir dir="build/classes"/>
 		
-		 <javac srcdir="./src" destdir="./build/classes">   
-		
-		<classpath>
-		
-	 	$copyJars: {copyJar| 
+			 <javac srcdir="./src" destdir="./build/classes">   
 			
-			 <pathelement path="lib/$copyJar$"/>
-		}$
-		
-			 <pathelement path="lib/gson-2.2.4.jar"/>
-	
- 
-		</classpath>
-		
-		</javac>
+				<classpath>
+				
+			 	$copyJars: {copyJar| 
+					
+					 <pathelement path="lib/$copyJar$"/>
+				}$
+				
+					 <pathelement path="lib/gson-2.2.4.jar"/>
+			
+		 
+				</classpath>
+			
+			</javac>
 		
 		</target>
 		
 		
 		<target name="jar" depends="compile">
 		
-		<mkdir dir="target"/>
+			<mkdir dir="target"/>
 		
-		<jar destfile="target/OdysseusQuery.jar" filesetmanifest="mergewithoutmain" basedir="build/classes">
+			<jar destfile="target/OdysseusQuery.jar" filesetmanifest="mergewithoutmain" basedir="build/classes">
 		
-		<manifest>
-		
-		<attribute name="Main-Class" value="main.Main"/>
-		
-			<attribute name="Class-Path" value="."/>
-			
-				</manifest>
+			<manifest>
+				<attribute name="Main-Class" value="main.Main"/>
+				<attribute name="Class-Path" value="."/>
+			</manifest>
 				
-	
 
-			 	$copyJars: {copyJar| 
-			 		<zipfileset excludes="META-INF/*.SF" src="lib/$copyJar$"/>
-				}$
+			 $copyJars: {copyJar| 
+			 <zipfileset excludes="META-INF/*.SF" src="lib/$copyJar$"/>
+			}$
             
-            	
         	</jar>
         	
     	</target>

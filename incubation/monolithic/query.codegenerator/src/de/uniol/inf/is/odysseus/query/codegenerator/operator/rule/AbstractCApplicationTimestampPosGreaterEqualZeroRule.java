@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 
-public abstract class AbstractCApplicationTimestampPosGreaterEqualZeroRule<T extends TimestampAO> extends AbstractRule<TimestampAO> {
+public abstract class AbstractCApplicationTimestampPosGreaterEqualZeroRule<T extends TimestampAO> extends AbstractCOperatorRule<TimestampAO> {
 
 	public AbstractCApplicationTimestampPosGreaterEqualZeroRule(String name) {
 		super(name);
