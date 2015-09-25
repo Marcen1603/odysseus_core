@@ -67,6 +67,10 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
+	
+	@Override public boolean deliversStoredElement(int outputPort) { 
+		return false; 
+	}
 
 	@Override
 	protected void process_next(T object, int port) {

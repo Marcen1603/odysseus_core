@@ -155,14 +155,28 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		return this.delegateSink.getInputSchema(port);
 	}
 
-	// Returns the output mode of port 0
+	// Returns the input mode of input port 0
+	// Deprecated soon, use getInputMode instead
 	abstract public OutputMode getOutputMode();
 
-	// Returns the output mode of the specified port
-	// Default implementation returns output mode of port 0
-	public OutputMode getOutputMode(int port)
+	public enum InputMode {
+		SINK, 				// Elements entering this operator will not leave this operator
+		MODIFIED_INPUT, 	// Elements entering this operator will leave this operator modified 
+		INPUT				// Elements entering this operator will leave this operator unmodified
+	}	
+
+	// Returns whether an element entering this operator via the specified will be modified,
+	// passed on, or if the element will not leave this operator to another operator
+	// Default implementation returns getOutputMode() mapped to appropriate values of InputMode
+	public InputMode getInputPortMode(int inputPort)
 	{
-		return getOutputMode();
+		switch (getOutputMode())
+		{
+		case NEW_ELEMENT: return InputMode.SINK;
+		case MODIFIED_INPUT: return InputMode.MODIFIED_INPUT;
+		case INPUT: return InputMode.INPUT;
+		default: return null;
+		}
 	}
 
 //	@Override

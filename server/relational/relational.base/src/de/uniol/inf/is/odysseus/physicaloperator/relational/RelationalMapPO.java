@@ -88,6 +88,10 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
+	
+	@Override public boolean deliversStoredElement(int outputPort) { 
+		return false; 
+	}
 
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {

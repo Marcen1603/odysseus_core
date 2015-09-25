@@ -43,6 +43,9 @@ public class TopPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 		return OutputMode.INPUT;
 	}
 
+	@Override public boolean deliversStoredElement(int outputPort) { 
+		return false; 
+	}	
 	
 	@Override
 	protected void process_next(R object, int port) {

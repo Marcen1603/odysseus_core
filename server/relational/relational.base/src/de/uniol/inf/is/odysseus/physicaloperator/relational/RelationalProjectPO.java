@@ -51,6 +51,10 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		return OutputMode.MODIFIED_INPUT;
 	}
 	
+	@Override public boolean deliversStoredElement(int outputPort) { 
+		return false; 
+	}
+	
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {
 		try {

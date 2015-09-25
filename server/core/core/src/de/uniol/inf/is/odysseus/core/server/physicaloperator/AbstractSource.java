@@ -211,6 +211,14 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final protected boolean hasSingleConsumer(int port) {
 		return consumerCount.get(port) <= 1;
 	}
+	
+	// Returns wether this source delivers an element which is also stored in this source. 
+	// The element then may not be modified since this source needs it in its original state
+	public boolean deliversStoredElement(int outputPort)
+	{
+		getLogger().warn("Operator " + getName() + " doesn't implement method deliversStoredElement. Cloning performance may suffer!");
+		return true;
+	}	
 
 	@Override
 	public String getName() {

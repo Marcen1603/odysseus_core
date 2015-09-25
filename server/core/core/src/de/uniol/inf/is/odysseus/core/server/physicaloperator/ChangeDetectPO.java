@@ -67,8 +67,12 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
+	}
+	
+	@Override public boolean deliversStoredElement(int outputPort) { 
+		return true; 
 	}
 
 	public void setGroupProcessor(IGroupProcessor<R, R> groupProcessor) {

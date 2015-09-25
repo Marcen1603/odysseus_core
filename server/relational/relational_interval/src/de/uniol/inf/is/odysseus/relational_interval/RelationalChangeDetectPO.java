@@ -60,7 +60,7 @@ public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+	public OutputMode getOutputMode() {
 		return suppressAttributePos < 0 ? OutputMode.INPUT
 				: OutputMode.NEW_ELEMENT;
 	}

@@ -180,6 +180,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
+	
+	@Override public boolean deliversStoredElement(int outputPort) { 
+		return true; 
+	}
 
 	@Override
 	protected void process_next(T object, int port) {
