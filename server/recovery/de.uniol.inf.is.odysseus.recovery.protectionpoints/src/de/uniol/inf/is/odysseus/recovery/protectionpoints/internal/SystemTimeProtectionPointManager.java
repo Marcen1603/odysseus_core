@@ -39,7 +39,7 @@ public class SystemTimeProtectionPointManager implements
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
+	static final Logger cLog = LoggerFactory
 			.getLogger(SystemTimeProtectionPointManager.class);
 
 	/**
@@ -147,13 +147,21 @@ public class SystemTimeProtectionPointManager implements
 	 * Calls all listeners that a protection point is reached.
 	 */
 	void fireProtectionPointReachedEvent() {
-		for (IProtectionPointHandler handler : this.mHandlers) {
-			try {
-				handler.onProtectionPointReached();
-			} catch (Exception e) {
-				cLog.error("Error in ProtectionPointHandler "
-						+ handler.getClass().getSimpleName(), e);
-			}
+		for (final IProtectionPointHandler handler : this.mHandlers) {
+			new Thread("ProtectionPoint-" + handler.getClass().getSimpleName()) {
+				
+				@Override
+				public void run() {
+					try {
+						handler.onProtectionPointReached();
+					}
+					catch (Exception e) {
+						SystemTimeProtectionPointManager.cLog.error("Error in ProtectionPointHandler "
+								+ handler.getClass().getSimpleName(), e);
+					}
+				}
+				
+			}.start();
 		}
 	}
 

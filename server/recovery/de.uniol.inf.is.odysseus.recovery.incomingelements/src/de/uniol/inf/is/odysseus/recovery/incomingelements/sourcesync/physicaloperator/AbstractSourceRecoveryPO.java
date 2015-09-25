@@ -116,6 +116,12 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	 */
 	protected boolean mNeedToAdjustOffset = false;
 
+	// TODO javaDoc. Those objects are to sync the offset setting and saving it
+	// as operator state
+	Object mSynchronizer = new Object();
+	boolean mProtectionPointReached = false;
+	boolean mOffsetSet = false;
+
 	/**
 	 * Reference is the first element to be backed up. So the offset of
 	 * {@link #mReference} stored on the publish subscribe system will be stored
@@ -167,6 +173,10 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		public void transfer_intern(IStreamable object, int port) {
 			if (AbstractSourceRecoveryPO.this.mReference.equals(object)) {
 				AbstractSourceRecoveryPO.this.mOffset = AbstractSourceRecoveryPO.this.mCurrentOffsets.getFirst();
+				AbstractSourceRecoveryPO.this.mOffsetSet = true;
+				synchronized (AbstractSourceRecoveryPO.this.mSynchronizer) {
+					AbstractSourceRecoveryPO.this.mSynchronizer.notifyAll();
+				}
 				if (AbstractSourceRecoveryPO.this.mBackupSubscriberController != null) {
 					AbstractSourceRecoveryPO.this.mBackupSubscriberController.interrupt();
 					AbstractSourceRecoveryPO.this.mBackupSubscriberController = null;
@@ -274,7 +284,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		}
 
 	}
-	
+
 	/**
 	 * Adjusts the offset as an {@code ISubscriber}, if {@code object} is the
 	 * first punctuation to be processed by this operator.
@@ -305,9 +315,17 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	@Override
 	public IOperatorState getState() {
-		synchronized (this.mOffset) {
-			return new SourceRecoveryState(this.mOffset.longValue());
+		while (!this.mProtectionPointReached || !this.mOffsetSet) {
+			synchronized (this.mSynchronizer) {
+				try {
+					this.mSynchronizer.wait(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+		this.mProtectionPointReached = false;
+		return new SourceRecoveryState(this.mOffset.longValue());
 	}
 
 	@Override
@@ -319,9 +337,9 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	@Override
 	public void onProtectionPointReached() throws Exception {
-		synchronized (this.mOffset) {
-			this.mNeedToAdjustOffset = true;
-		}
+		this.mOffsetSet = false;
+		this.mNeedToAdjustOffset = true;
+		this.mProtectionPointReached = true;
 	}
 
 }
