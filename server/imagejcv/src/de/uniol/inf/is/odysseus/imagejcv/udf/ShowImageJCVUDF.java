@@ -1,11 +1,5 @@
 package de.uniol.inf.is.odysseus.imagejcv.udf;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 

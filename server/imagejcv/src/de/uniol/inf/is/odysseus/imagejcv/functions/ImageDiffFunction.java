@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.imagejcv.functions;
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.avutil.*;
 
-import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
