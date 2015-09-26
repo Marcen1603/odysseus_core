@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.planmanagement.query;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -444,7 +447,9 @@ public class LogicalQuery implements ILogicalQuery {
 
 	
 	private Pair<String, Object> getP(String key){
-		for (Pair<String, Object> p:parameters){
+		// Avoid ConcurrentModificationExceptions
+		List<Pair<String, Object>> list = Lists.newArrayList(parameters);
+		for (Pair<String, Object> p:list){
 			if (p.getE1().equals(key)){
 				return p;
 			}

@@ -4,9 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
 
 /**
  * Helper class to queue operator states into a file. <br />
@@ -68,7 +68,7 @@ public class QueueStateStore {
 	 * @throws IOException
 	 *             if any error occurs.
 	 */
-	public static <K> void store(Collection<ControllablePhysicalSubscription<K>> queues, ILogicalQuery query)
+	public static <K> void store(List<ControllablePhysicalSubscription<K>> queues, ILogicalQuery query)
 			throws IOException {
 		File file = new File(
 				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
@@ -97,7 +97,7 @@ public class QueueStateStore {
 	 *             if the class of an object, which is read from file, can not
 	 *             be found.
 	 */
-	public static <K> void load(Collection<ControllablePhysicalSubscription<K>> queues, ILogicalQuery query)
+	public static <K> void load(List<ControllablePhysicalSubscription<K>> queues, ILogicalQuery query)
 			throws IOException, ClassNotFoundException {
 		File file = new File(
 				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
@@ -105,7 +105,8 @@ public class QueueStateStore {
 			cLog.error("File '{}' to load queue states from does not exist!", file.getName());
 			return;
 		}
-		try (FileInputStream fin = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fin)) {
+		try (FileInputStream fin = new FileInputStream(file);
+				OsgiObjectInputStream ois = new OsgiObjectInputStream(fin)) {
 			for (ControllablePhysicalSubscription<K> queue : queues) {
 				@SuppressWarnings({ "rawtypes", "unchecked" })
 				ImmutableList<IStreamObject> state = (ImmutableList<IStreamObject>) ois.readObject();
@@ -143,7 +144,7 @@ public class QueueStateStore {
 			return;
 		}
 		try (FileInputStream fin = new FileInputStream(fileToLoad);
-				ObjectInputStream ois = new ObjectInputStream(fin);
+				OsgiObjectInputStream ois = new OsgiObjectInputStream(fin);
 				FileOutputStream fout = new FileOutputStream(fileToStore);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			oos.writeObject(ois.readObject());

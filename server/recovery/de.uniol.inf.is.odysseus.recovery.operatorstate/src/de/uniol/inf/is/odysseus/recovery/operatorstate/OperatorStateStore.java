@@ -4,10 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
 
 /**
  * Helper class to store operator states into a file.
@@ -66,7 +66,7 @@ public class OperatorStateStore {
 	 * @throws IOException
 	 *             if any error occurs.
 	 */
-	public static void store(Collection<IStatefulPO> operators, ILogicalQuery query) throws IOException {
+	public static void store(List<IStatefulPO> operators, ILogicalQuery query) throws IOException {
 		File file = new File(
 				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
 		try (FileOutputStream fout = new FileOutputStream(file);
@@ -129,7 +129,7 @@ public class OperatorStateStore {
 	 *             if the class of an object, which is read from file, can not
 	 *             be found.
 	 */
-	public static void load(Collection<IStatefulPO> operators, ILogicalQuery query)
+	public static void load(List<IStatefulPO> operators, ILogicalQuery query)
 			throws IOException, ClassNotFoundException {
 		File file = new File(
 				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
@@ -137,7 +137,8 @@ public class OperatorStateStore {
 			cLog.error("File '{}' to load operator states from does not exist!", file.getName());
 			return;
 		}
-		try (FileInputStream fin = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fin)) {
+		try (FileInputStream fin = new FileInputStream(file);
+				OsgiObjectInputStream ois = new OsgiObjectInputStream(fin)) {
 			for (IStatefulPO operator : operators) {
 				Serializable state = (Serializable) ois.readObject();
 				if (state == null) {
@@ -174,7 +175,7 @@ public class OperatorStateStore {
 			return;
 		}
 		try (FileInputStream fin = new FileInputStream(fileToLoad);
-				ObjectInputStream ois = new ObjectInputStream(fin);
+				OsgiObjectInputStream ois = new OsgiObjectInputStream(fin);
 				FileOutputStream fout = new FileOutputStream(fileToStore);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			oos.writeObject(ois.readObject());

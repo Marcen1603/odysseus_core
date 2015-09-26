@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
@@ -129,10 +130,11 @@ public class OperatorStateRecoveryComponent
 			return;
 		}
 		for (IPair<Integer, ISession> queryId : cQueryIdsForBackup) {
-			OperatorStateStore.store(
-					collectStateFulOperators(
-							cExecutor.get().getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2())),
-					cExecutor.get().getLogicalQueryById(queryId.getE1().intValue(), queryId.getE2()));
+			// Avoid ConcurrentModificationExceptions
+			List<IPhysicalOperator> physRoots = Lists
+					.newArrayList(cExecutor.get().getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2()));
+			ILogicalQuery logQuery = cExecutor.get().getLogicalQueryById(queryId.getE1().intValue(), queryId.getE2());
+			OperatorStateStore.store(collectStateFulOperators(physRoots), logQuery);
 		}
 	}
 
@@ -141,10 +143,10 @@ public class OperatorStateRecoveryComponent
 	 * 
 	 * @param physicalRoots
 	 *            The roots of the plan.
-	 * @return A set of operators each implementing {@link IStatefulPO}.
+	 * @return A list of operators each implementing {@link IStatefulPO}.
 	 */
-	private Set<IStatefulPO> collectStateFulOperators(List<IPhysicalOperator> physicalRoots) {
-		Set<IStatefulPO> statefulOperators = Sets.newHashSet();
+	private List<IStatefulPO> collectStateFulOperators(List<IPhysicalOperator> physicalRoots) {
+		List<IStatefulPO> statefulOperators = Lists.newArrayList();
 		for (IPhysicalOperator root : physicalRoots) {
 			collectStateFulOperatorsRecursive(root, statefulOperators);
 		}
@@ -158,9 +160,8 @@ public class OperatorStateRecoveryComponent
 	 *            The current operator to add and check.
 	 * @param operators
 	 *            All already collected stateful operators.
-	 * @return A set of operators each implementing {@link IStatefulPO}.
 	 */
-	private void collectStateFulOperatorsRecursive(IPhysicalOperator operator, Set<IStatefulPO> operators) {
+	private void collectStateFulOperatorsRecursive(IPhysicalOperator operator, List<IStatefulPO> operators) {
 		if (IStatefulPO.class.isInstance(operator)) {
 			IStatefulPO statefulOperator = (IStatefulPO) operator;
 			if (!operators.contains(statefulOperator)) {

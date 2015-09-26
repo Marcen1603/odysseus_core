@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
@@ -141,11 +142,11 @@ public class QueueStateRecoveryComponent
 	 * 
 	 * @param physicalRoots
 	 *            The roots of the plan.
-	 * @return A set of controllable subscriptions.
+	 * @return A list of controllable subscriptions.
 	 */
-	private <K> Set<ControllablePhysicalSubscription<K>> collectControllableSubscriptions(
+	private <K> List<ControllablePhysicalSubscription<K>> collectControllableSubscriptions(
 			List<IPhysicalOperator> physicalRoots) {
-		Set<ControllablePhysicalSubscription<K>> controllableSubs = Sets.newHashSet();
+		List<ControllablePhysicalSubscription<K>> controllableSubs = Lists.newArrayList();
 		for (IPhysicalOperator root : physicalRoots) {
 			collectControllableSubscriptionsRecursive(root, controllableSubs);
 		}
@@ -159,11 +160,10 @@ public class QueueStateRecoveryComponent
 	 *            The current operator to check.
 	 * @param queues
 	 *            All already collected controllable subscriptions.
-	 * @return A set of controllable subscriptions.
 	 */
 	@SuppressWarnings("unchecked")
 	private <K> void collectControllableSubscriptionsRecursive(IPhysicalOperator operator,
-			Set<ControllablePhysicalSubscription<K>> queues) {
+			List<ControllablePhysicalSubscription<K>> queues) {
 		if (ISink.class.isInstance(operator)) {
 			for (Object sub : ((ISink<?>) operator).getSubscribedToSource()) {
 				if (ControllablePhysicalSubscription.class.isInstance(sub)) {
