@@ -114,9 +114,7 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 	
 	protected void collectUserDefinedTypes(EObject element, Collection<EObject> userDefinedTypes)  {
 		for (JvmTypeReference typeRef : EcoreUtil2.getAllContentsOfType(element, JvmTypeReference.class)) {
-			JvmType t = typeRef.getType();
-			t.eIsProxy();
-			JvmType type = typeUtils.getInnerType(typeRef, false);			
+			JvmType type = typeUtils.getInnerType(typeRef, false);
 			if (typeUtils.isUserDefinedType(type, false) && !userDefinedTypes.contains(type)) {
 				userDefinedTypes.add(type);
 				collectUserDefinedTypes(type, userDefinedTypes);

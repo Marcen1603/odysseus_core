@@ -224,12 +224,15 @@ public class OdysseusScriptGenerator {
 		operatorsMap.put(operator, op);
 		
 	}
-	
-	
+
 	private void setParameters(Operator operator, IOperatorBuilder builder, ISession session, IDataDictionary dd) {		
 		Map<String, Object> parameters = operator.getParameters();
 		for (IParameter<?> parameter : builder.getParameters()) {
 			String parameterName = parameter.getName();
+			Object value = parameters.get(parameterName.toLowerCase());
+			if (value instanceof Integer) {
+				value = new Long((int)value);
+			}
 			parameter.setInputValue(parameters.get(parameterName.toLowerCase()));
 		}
 	}

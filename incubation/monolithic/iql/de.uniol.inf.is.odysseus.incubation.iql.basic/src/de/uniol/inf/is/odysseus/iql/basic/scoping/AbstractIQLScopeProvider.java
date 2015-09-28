@@ -260,7 +260,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 	}
 	
 	
-	public IScope scope_IQLMemberCallExpression_member(IQLMemberSelectionExpression expr, EReference type) {		
+	public IScope scope_IQLMemberSelection_member(IQLMemberSelectionExpression expr, EReference type) {		
 		Collection<IEObjectDescription> elements = new HashSet<>();
 		elements.addAll(getScopeIQLMemberSelection(expr));		
 		return new SimpleScope(elements);
@@ -323,9 +323,13 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L e
 			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(method), method));
 		}
 		for (Entry<String, Pair<JvmOperation, JvmOperation>> entry : properties.entrySet()) {
-			if (entry.getValue().getE1() != null && entry.getValue().getE2() != null) {
+			if (entry.getValue().getE1() != null) {
 				String name = firstCharLowerCase(entry.getKey());
 				result.add(EObjectDescription.create(name, entry.getValue().getE1()));
+			}
+			
+			if (entry.getValue().getE2() != null) {
+				String name = firstCharLowerCase(entry.getKey());
 				result.add(EObjectDescription.create(name, entry.getValue().getE2()));
 			}
 		}

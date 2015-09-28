@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -106,6 +108,8 @@ public class ODLDefaultTypes {
 		types.add(PairMap.class);
 		types.add(AggregateTISweepArea.class);
 		types.add(AggregateFunctionBuilderRegistry.class);
+		types.add(Cardinalities.class);
+		types.add(EnumParameter.class);
 		return types;
 	}
 
@@ -160,6 +164,8 @@ public class ODLDefaultTypes {
 		implicitImports.add(AggregateTISweepArea.class.getCanonicalName());
 		implicitImports.add(AggregateFunctionBuilderRegistry.class.getCanonicalName());
 		implicitImports.add(PairMap.class.getCanonicalName());
+		implicitImports.add(Cardinalities.class.getCanonicalName());
+		implicitImports.add(EnumParameter.class.getCanonicalName());
 		return implicitImports;
 	}
 	
@@ -179,6 +185,7 @@ public class ODLDefaultTypes {
 		types.add(SDFDatatype.class.getCanonicalName());
 		types.add(SDFConstraint.class.getCanonicalName());
 		types.add(AggregateFunctionBuilderRegistry.class.getCanonicalName());
+		types.add(Cardinalities.class.getCanonicalName());
 		return types;
 	}
 	

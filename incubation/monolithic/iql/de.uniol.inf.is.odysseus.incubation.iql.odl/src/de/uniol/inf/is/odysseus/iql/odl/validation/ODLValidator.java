@@ -15,7 +15,7 @@ public class ODLValidator extends AbstractODLValidator{
 
 	public static String DUPLICATE_OPERATORS = "duplicateOperators";
 
-	@Check(CheckType.NORMAL)
+	@Check(CheckType.FAST)
 	void checkDuplicateOperators(IQLModel model) {
 		Set<String> names = new HashSet<>();
 		for (ODLOperator op : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {

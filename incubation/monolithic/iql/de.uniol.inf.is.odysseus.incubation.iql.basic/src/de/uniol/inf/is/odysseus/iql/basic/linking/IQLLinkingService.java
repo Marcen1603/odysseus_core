@@ -17,9 +17,12 @@ import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.linking.impl.DefaultLinkingService;
 import org.eclipse.xtext.linking.impl.IllegalNodeException;
+import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScope;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
@@ -92,9 +95,12 @@ public class IQLLinkingService extends DefaultLinkingService{
 	}
 	
 	protected EObject getLinkedObjectIQLMemberSelection(IQLMemberSelection expr, EReference ref, INode node) throws IllegalNodeException {
-		IQLMemberSelectionExpression container = (IQLMemberSelectionExpression) expr.eContainer();
-		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getScopeIQLMemberSelection(container);
 		String crossRefString = getCrossRefNodeAsString(node);
+		IQLMemberSelectionExpression e = EcoreUtil2.getContainerOfType(expr, IQLMemberSelectionExpression.class);
+		
+		IScope scope = scopeProvider.getScope(e, BasicIQLPackage.eINSTANCE.getIQLMemberSelection_Member());
+		Iterable<IEObjectDescription> eObjectDescriptions = scope.getElements(QualifiedName.create(crossRefString));
+			
 		EObject result = null;
 		for (IEObjectDescription desc : eObjectDescriptions) {
 			if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
@@ -134,9 +140,25 @@ public class IQLLinkingService extends DefaultLinkingService{
 
 	}
 	
-	private boolean isAssignment(EObject obj) {
+	private boolean isAssignment(IQLJvmElementCallExpression obj) {
 		IQLAssignmentExpression expr = EcoreUtil2.getContainerOfType(obj, IQLAssignmentExpression.class);
-		return expr != null;
+		if (expr != null) {
+			return true;			
+		} 
+		return false;
+	}
+	
+	private boolean isAssignment(IQLMemberSelection obj) {
+		IQLAssignmentExpression expr = EcoreUtil2.getContainerOfType(obj, IQLAssignmentExpression.class);
+		if (expr != null) {
+			if (expr.getLeftOperand() instanceof IQLMemberSelectionExpression) {
+				IQLMemberSelectionExpression memberSel = (IQLMemberSelectionExpression) expr.getLeftOperand();
+				if (memberSel.getSel() == obj) {
+					return true;
+				}
+			}			
+		} 
+		return false;
 	}
 	
 	private IQLAssignmentExpression getAssignmentExpr(EObject obj) {
@@ -146,14 +168,16 @@ public class IQLLinkingService extends DefaultLinkingService{
 	
 	
 	protected EObject getLinkedObjectIQLJvmElementCallExpression(IQLJvmElementCallExpression expr, EReference ref, INode node) throws IllegalNodeException {
-		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getScopeIQLJvmElementCallExpression(expr);
 		String[] splits = getCrossRefNodeAsString(node).split(IQLQualifiedNameConverter.DELIMITER);
 		String crossRefString = splits[splits.length-1];
 		String type = null;
 		if (splits.length>1) {
 			type = splits[0];
 		}
-
+		
+		IScope scope = scopeProvider.getScope(expr, BasicIQLPackage.eINSTANCE.getIQLJvmElementCallExpression_Element());
+		Iterable<IEObjectDescription> eObjectDescriptions = scope.getElements(QualifiedName.create(crossRefString));
+				
 		EObject result = null;
 		if (expr.getArgs() == null) {
 			for (IEObjectDescription desc : eObjectDescriptions) {

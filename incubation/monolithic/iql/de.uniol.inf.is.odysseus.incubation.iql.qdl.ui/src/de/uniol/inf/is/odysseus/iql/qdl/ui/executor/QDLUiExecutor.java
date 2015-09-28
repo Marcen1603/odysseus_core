@@ -79,14 +79,17 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 		for (QDLQuery query : queries) {
 			String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+QUERIES_DIR+File.separator+query.getSimpleName();
 			cleanUpDir(outputPath);	
-			
+			LOG.info("Start " +System.currentTimeMillis());
 			Collection<IQLModelElement> resources = getModelElementsToCompile(resourceSet, outputPath,query);
+			LOG.info("Vorber " +System.currentTimeMillis());
 
 			generateJavaFiles(resources, outputPath);
+			LOG.info("Codegenerierung " +System.currentTimeMillis());
 
 			copyAndMoveUserEditiedFiles(query, outputPath);
 			compileJavaFiles(outputPath, createClassPathEntries(resourceSet));
-			
+			LOG.info("Kompilierung " +System.currentTimeMillis());
+
 			IQDLQuery qdlQuery = loadQuery(query);
 						
 			ISession session = OdysseusRCPPlugIn.getActiveSession();
@@ -94,11 +97,13 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 			IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
 			
 			String script = generator.createOdysseusScript(qdlQuery, dd, session);
-			
+			LOG.info("OdysseusScript Generierung " +System.currentTimeMillis());
+
 			LOG.info("Generated OdysseusScript for QDL-Query "+query.getSimpleName()+System.lineSeparator()+script);
 
 			QDLServiceBinding.getExecutor().addQuery(script, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), Context.empty());
-		
+			LOG.info("Hinzugefuegt " +System.currentTimeMillis());
+
 			LOG.info("Adding textual query using QDL for user "+session.getUser().getName()+" done.");
 		}
 	}
