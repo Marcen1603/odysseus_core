@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implements IOperatorRule<T> {
+public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implements ICOperatorRule<T> {
 
 	private ComponentContext context;
 

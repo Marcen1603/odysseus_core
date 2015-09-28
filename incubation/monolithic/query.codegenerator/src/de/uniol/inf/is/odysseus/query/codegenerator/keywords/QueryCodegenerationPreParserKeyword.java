@@ -91,13 +91,15 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		String targetDirectory = result.get(QueryCodegenerationKeywordParameter.TARGETDIRECTORY);
 		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
 		String executorString =result.get(QueryCodegenerationKeywordParameter.EXECUTOR);
-		 
+		String queryname =result.get(QueryCodegenerationKeywordParameter.QUERYNAME);
+		
+		
 		
 		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  targetDirectory,  0,  odysseusPath, true ,  executorString);  
 
 		List<IExecutorCommand> commands = new LinkedList<>();
 		
-		QueryCodegenerationCommand cmd = new QueryCodegenerationCommand(caller,transformationParameter);
+		QueryCodegenerationCommand cmd = new QueryCodegenerationCommand(caller,transformationParameter,queryname);
 		commands.add(cmd);
 	
 		return commands;

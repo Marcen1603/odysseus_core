@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public interface IOperatorRule<T extends ILogicalOperator> {
+public interface ICOperatorRule<T extends ILogicalOperator> {
 
 	public String getName();
 

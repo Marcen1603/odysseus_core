@@ -217,7 +217,7 @@ public class ExtractOSGIBundle {
 	}
 	
 	
-	private  void getBundles(Set<String> importList){
+	private void getBundles(Set<String> importList){
 		//get needed bundle
 				for(String neededClass : importList){
 					String path;
@@ -261,8 +261,7 @@ public class ExtractOSGIBundle {
 								
 							}
 							
-							
-					
+				
 							
 							List<RequireBundleModel> test = getRequireBundleList(neededBundel.getHeaders().get("Import-Package"));
 							for(RequireBundleModel  className: test){

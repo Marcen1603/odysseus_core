@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+//TODO mac unix support
 public class FileHelper {
 
 	private File file ;

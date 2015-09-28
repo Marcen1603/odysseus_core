@@ -12,27 +12,27 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRuleComparator;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRuleComparator;
 
 
 public class OperatorRuleRegistry {
 	
 	private static Logger LOG = LoggerFactory.getLogger(OperatorRuleRegistry.class);
 	
-	static Map<String, Map<String,IOperatorRule<ILogicalOperator>>> operatorRuleList = new HashMap<String, Map<String,IOperatorRule<ILogicalOperator>>>();
+	static Map<String, Map<String,ICOperatorRule<ILogicalOperator>>> operatorRuleList = new HashMap<String, Map<String,ICOperatorRule<ILogicalOperator>>>();
 	
 	
-	public static IOperatorRule<ILogicalOperator> getOperatorRules(String targetPlatform, ILogicalOperator operator, TransformationConfiguration transformationConfiguration){
-		List<IOperatorRule<ILogicalOperator>> acceptedRules = new ArrayList<IOperatorRule<ILogicalOperator>>();
+	public static ICOperatorRule<ILogicalOperator> getOperatorRules(String targetPlatform, ILogicalOperator operator, TransformationConfiguration transformationConfiguration){
+		List<ICOperatorRule<ILogicalOperator>> acceptedRules = new ArrayList<ICOperatorRule<ILogicalOperator>>();
 		
 
 		//targetplatform vorhanden
 		if(operatorRuleList.containsKey(targetPlatform.toLowerCase())){
 			
-			Map<String,IOperatorRule<ILogicalOperator>> rules = operatorRuleList.get(targetPlatform.toLowerCase());
+			Map<String,ICOperatorRule<ILogicalOperator>> rules = operatorRuleList.get(targetPlatform.toLowerCase());
 			
-			for (Entry<String, IOperatorRule<ILogicalOperator>> entry : rules.entrySet())
+			for (Entry<String, ICOperatorRule<ILogicalOperator>> entry : rules.entrySet())
 			{
 				Class<ILogicalOperator> conditionClass = entry.getValue().getConditionClass();
 				//Class<ILogicalOperator> conditionClass = null;
@@ -46,7 +46,7 @@ public class OperatorRuleRegistry {
 			
 		}
 	
-		Collections.sort(acceptedRules, new IOperatorRuleComparator());
+		Collections.sort(acceptedRules, new ICOperatorRuleComparator());
 		
 		if(acceptedRules.size() == 0){
 			return null;
@@ -58,7 +58,7 @@ public class OperatorRuleRegistry {
 	
 
 					   
-	public static void registerOperatorRule(IOperatorRule<ILogicalOperator> rule){
+	public static void registerOperatorRule(ICOperatorRule<ILogicalOperator> rule){
 	
 		//Programmiersprache noch nicht vorhanden
 		if(!operatorRuleList.containsKey(rule.getTargetPlatform().toLowerCase())){
@@ -66,7 +66,7 @@ public class OperatorRuleRegistry {
 			//Operator noch nicht vorhanden?
 			if(operatorRuleList.get(rule.getTargetPlatform().toLowerCase())== null || !operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).containsKey(rule.getName().toLowerCase())){
 				//Operatorname + ITransformationOperator Map erzeugen
-				Map<String,IOperatorRule<ILogicalOperator>> tempMap = new HashMap<String,IOperatorRule<ILogicalOperator>>();
+				Map<String,ICOperatorRule<ILogicalOperator>> tempMap = new HashMap<String,ICOperatorRule<ILogicalOperator>>();
 				tempMap.put(rule.getName(), rule);
 				
 				//verschachtelte Map abspeichern
@@ -78,7 +78,7 @@ public class OperatorRuleRegistry {
 		}else{
 			//Programmiersprache existiert bereits nur Operator hinzufügen			
 			if(!operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).containsKey(rule.getName())){
-				Map<String,IOperatorRule<ILogicalOperator>> tempMap = operatorRuleList.get(rule.getTargetPlatform().toLowerCase());
+				Map<String,ICOperatorRule<ILogicalOperator>> tempMap = operatorRuleList.get(rule.getTargetPlatform().toLowerCase());
 				tempMap.put(rule.getName(), rule);
 			}else{
 				LOG.debug("Operator "+rule.getName()+" -> "+rule.getTargetPlatform().toLowerCase()+" already added" );
@@ -87,7 +87,7 @@ public class OperatorRuleRegistry {
 		
 	}
 	
-	public static void unregisterOperatorRule(IOperatorRule<ILogicalOperator> rule){
+	public static void unregisterOperatorRule(ICOperatorRule<ILogicalOperator> rule){
 		if(operatorRuleList.containsKey(rule.getTargetPlatform().toLowerCase())){
 			if(operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).containsKey(rule.getName())){
 				operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).remove(rule.getName());

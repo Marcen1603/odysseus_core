@@ -8,7 +8,8 @@ IKeywordParameter {
 TARGETPLATFROM("targetPlatform", 0, false), 
 TARGETDIRECTORY("targetDirectory", 1, false), 
 ODYSSEUSPATH("odysseusDirectory", 2, false),
-EXECUTOR("executor", 3, false);
+EXECUTOR("executor", 3, false),
+QUERYNAME("queryname", 4, true);
 
 
 private String name;

@@ -4,10 +4,10 @@ import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class IOperatorRuleComparator implements Comparator<IOperatorRule<ILogicalOperator>>{
+public class ICOperatorRuleComparator implements Comparator<ICOperatorRule<ILogicalOperator>>{
 
 			@Override
-			public int compare(IOperatorRule<ILogicalOperator> o1, IOperatorRule<ILogicalOperator> o2) {
+			public int compare(ICOperatorRule<ILogicalOperator> o1, ICOperatorRule<ILogicalOperator> o2) {
 				 return o2.getPriority() - o1.getPriority();
 		
 			}

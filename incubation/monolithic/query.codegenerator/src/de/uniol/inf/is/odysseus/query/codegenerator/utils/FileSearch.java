@@ -11,15 +11,15 @@ public class FileSearch {
 	  private File directory;
 	  private List<String> result = new ArrayList<String>();
 	 
+	  public FileSearch(){
+		  
+	   }
+	  
 	  public FileSearch(String fileNameToSearch, String directory){
 		  this.fileNameToSearch = fileNameToSearch.trim();
 		  this.directory = new File(directory);
 	  }
 
-	   public FileSearch(){
-		   
-	   }
-	  
 	  public String getFileNameToSearch() {
 		return fileNameToSearch;
 	  }

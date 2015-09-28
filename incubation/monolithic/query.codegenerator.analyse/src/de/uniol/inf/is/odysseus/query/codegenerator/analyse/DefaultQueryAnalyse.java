@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.ICAnalyse;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.ITargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
@@ -185,7 +185,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 		
-		IOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
+		ICOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		
 		if(opTrans != null ){
 		

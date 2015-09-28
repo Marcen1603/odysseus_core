@@ -3,6 +3,6 @@
    <implementation class="de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules.CApplicationTimestamp"/>
    <property name="targetPlatform" type="String" value="JRE"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule"/>
+      <provide interface="de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule"/>
    </service>
 </scr:component>
