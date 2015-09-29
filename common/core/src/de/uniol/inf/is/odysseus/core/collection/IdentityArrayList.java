@@ -3,11 +3,10 @@ package de.uniol.inf.is.odysseus.core.collection;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.RandomAccess;
 
 @SuppressWarnings("unchecked")
-public class IdentityArrayList<E> extends AbstractList<E>implements List<E>, RandomAccess {
+public class IdentityArrayList<E> extends AbstractList<E> implements RandomAccess {
 
 	private transient Object[] content;
 	private int currentSize;
