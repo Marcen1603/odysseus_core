@@ -68,12 +68,17 @@ public class TICompareSink<T extends IStreamObject<ITimeInterval>> extends Abstr
 			IStreamObjectDataHandler<T> dh = (IStreamObjectDataHandler<T>) DataHandlerRegistry.getDataHandler(this.dataHandler, getOutputSchema());
 			OptionMap options = new OptionMap();
 			options.setOption(AbstractCSVHandler.DELIMITER, "|");
-			SimpleCSVProtocolHandler csvreader = new SimpleCSVProtocolHandler(ITransportDirection.IN, IAccessPattern.PULL, dh, options);
-			csvreader = (SimpleCSVProtocolHandler) csvreader.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
+			SimpleCSVProtocolHandler csvreader = (SimpleCSVProtocolHandler) new SimpleCSVProtocolHandler().createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
+
 			for (Pair<String, String> csv : expectedOriginals) {
-				T tuple = (T) csvreader.convertLine(csv.getE1());
-				TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
-				((Tuple)tuple).setMetadata(ti);
+				T tuple;
+				if (csv.getE2() == null || csv.getE2().equals("")){
+					tuple = (T) csvreader.convertLine(csv.getE1(), true);					
+				}else{
+					tuple = (T) csvreader.convertLine(csv.getE1(), false);
+					TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
+					((Tuple)tuple).setMetadata(ti);					
+				}
 				this.expected.insert(tuple);
 				if(tracing){
 					System.out.println("load expected tuple: "+tuple);
