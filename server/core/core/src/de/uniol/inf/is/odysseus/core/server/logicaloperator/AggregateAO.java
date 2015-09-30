@@ -223,8 +223,14 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema outputSchema;
 		List<SDFAttribute> outAttribs = new ArrayList<>();
-
+		// First grouping attributes
+		outAttribs.addAll(groupingAttributes);
+		
 		for (Pair<SDFAttribute, Boolean> a : outputAttributList) {
+			// grouping attributes already contained
+			if (groupingAttributes.contains(a.getE1())){
+				continue;
+			}
 			if (outputPA && a.getE2()) {
 				SDFDatatype type = SDFDatatype.PARTIAL_AGGREGATE;
 				AggregateFunction f = this.outAttributeToAggregation.get(a
@@ -246,7 +252,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 				outAttribs.add(a.getE1());
 			}
 		}
-
+		
 		if (getInputSchema() != null) {
 			outputSchema = SDFSchemaFactory.createNewWithAttributes(outAttribs,
 					getInputSchema());
