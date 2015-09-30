@@ -15,9 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.server.util;
 
-import java.util.IdentityHashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -31,8 +30,10 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 	/**
 	 * Here the copies of each operator will stored.
 	 */
-	Map<T, T> nodeCopies;
+	final MyIdentityHashMap<T, T> nodeCopies = new MyIdentityHashMap<T, T>();
 
+	//IdentityHashMap<T, T> nodeCopies;
+	
 	/**
 	 * This is the first node, this visitor has ever seen. This is used to
 	 * return as result, the same root in the copy of the plan as passed before
@@ -44,12 +45,10 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 	private List<IOperatorOwner> ownerList;
 
 	public CopyLogicalGraphVisitor(IOperatorOwner owner) {
-		this.nodeCopies = new IdentityHashMap<T, T>();
 		this.owner = owner;
 	}
 
 	public CopyLogicalGraphVisitor(List<IOperatorOwner> ownerList) {
-		this.nodeCopies = new IdentityHashMap<T, T>();
 		this.ownerList = ownerList;
 	}
 
@@ -91,14 +90,15 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 			// operator.
 			for (LogicalSubscription sub : original.getSubscribedToSource()) {
 				// get the copy of each target
-				T targetCopy = this.nodeCopies.get(sub.getTarget());
+				@SuppressWarnings("unchecked")
+				T targetCopy = this.nodeCopies.get((T)sub.getTarget());
 				// subscribe the target copy to the node copy
 				// if its in the same plan, add copy
 				if (targetCopy != null) {
 					copy.subscribeToSource(targetCopy, sub.getSinkInPort(),
 							sub.getSourceOutPort(), sub.getSchema());			
 				}
-			}
+			} 
 		}
 
 		return this.nodeCopies.get(this.root);
@@ -120,4 +120,77 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 		}
 	}
 
+}
+
+/**
+ * Just a test to see, if some compiler problems in Java 8 occur from IdentityHashMap
+ * This is not as fast, as the IdentityHashMap but plans are typically not so large
+ * @author Marco Grawunder
+ *
+ */
+class MyIdentityHashMap<KEY,VALUE>{
+
+	class MyMapEntry<K,V> implements Entry<K,V>{
+		
+		K key;
+		V value;
+		
+		
+		
+		public MyMapEntry(K key, V value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		@Override
+		public K getKey() {
+			return key;
+		}
+
+		@Override
+		public V getValue() {
+			// TODO Auto-generated method stub
+			return value;
+		}
+
+		@Override
+		public V setValue(V value) {
+			this.value = value;
+			return value;
+		}
+		
+	}
+	
+	List<Entry<KEY,VALUE>> entries = new ArrayList<>();
+	
+	public List<Entry<KEY, VALUE>> entrySet() {
+		return entries;
+	}
+
+	public void put(KEY key, VALUE value) {
+		boolean found = false;
+		for (Entry<KEY, VALUE> e:entries){
+			if (e.getKey() == key){
+				found = true;
+				e.setValue(value);
+			}
+		}
+		if (!found){
+			entries.add(new MyMapEntry<KEY,VALUE>(key,value));
+		}
+	}
+
+	public boolean containsKey(KEY key) {
+		return get(key) != null;
+	}
+
+	public VALUE get(KEY key) {
+		for (Entry<KEY, VALUE> e:entries){
+			if (e.getKey() == key){
+				return e.getValue();
+			}
+		}
+		return null;
+	}
+	
 }
