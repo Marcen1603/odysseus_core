@@ -8,10 +8,10 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCHashF
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator.HashFragmentPO;
 
-public class CHashFragmentAORule extends AbstractCHashFragmentAORule<HashFragmentAO>{
+public class CHashFragmentPORule extends AbstractCHashFragmentAORule<HashFragmentAO>{
 
-	public CHashFragmentAORule() {
-		super(CHashFragmentAORule.class.getName());
+	public CHashFragmentPORule() {
+		super(CHashFragmentPORule.class.getName());
 	}
 
 

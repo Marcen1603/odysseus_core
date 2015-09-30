@@ -8,10 +8,10 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCRenameAORule;
 
-public class CRenameAORule extends AbstractCRenameAORule<RenameAO>{
+public class CRenamePORule extends AbstractCRenameAORule<RenameAO>{
 
-	public CRenameAORule() {
-		super(CRenameAORule.class.getName());
+	public CRenamePORule() {
+		super(CRenamePORule.class.getName());
 	}
 
 

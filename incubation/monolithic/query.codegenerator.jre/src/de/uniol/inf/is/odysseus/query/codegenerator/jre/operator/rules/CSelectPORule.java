@@ -11,10 +11,10 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSelectAORule;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-public class CSelectAORule extends AbstractCSelectAORule<SelectAO>{
+public class CSelectPORule extends AbstractCSelectAORule<SelectAO>{
 
-	public CSelectAORule() {
-		super(CSelectAORule.class.getName());
+	public CSelectPORule() {
+		super(CSelectPORule.class.getName());
 	}
 
 

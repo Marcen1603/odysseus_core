@@ -14,10 +14,10 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSenderAORule;
 
-public class CSenderAORule extends AbstractCSenderAORule<SenderAO>{
+public class CSenderPORule extends AbstractCSenderAORule<SenderAO>{
 	
-	public CSenderAORule() {
-		super(CSenderAORule.class.getName());
+	public CSenderPORule() {
+		super(CSenderPORule.class.getName());
 	}
 
 	

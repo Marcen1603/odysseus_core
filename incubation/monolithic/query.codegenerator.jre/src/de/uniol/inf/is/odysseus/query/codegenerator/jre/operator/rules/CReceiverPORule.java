@@ -20,10 +20,10 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCStreamAORule;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
-public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
+public class CReceiverPORule extends AbstractCStreamAORule<StreamAO>{
 	
-	public CStreamAORule() {
-		super(CStreamAORule.class.getName());
+	public CReceiverPORule() {
+		super(CReceiverPORule.class.getName());
 	}
 	
 
@@ -39,8 +39,7 @@ public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
 
 		AccessAO accessAO = (AccessAO)logicalPlan;
 		
-	
-	
+
 		String transportHandler = accessAO.getTransportHandler();
 		String dataHandler = accessAO.getDataHandler();
 		String wrapper = accessAO.getWrapper();

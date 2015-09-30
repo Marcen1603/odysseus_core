@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCRelat
 
 
 //TProjectAORule
-public class CRelationalProjectAORule extends AbstractCRelationalProjectAORule<ProjectAO>{
+public class CRelationalProjectPORule extends AbstractCRelationalProjectAORule<ProjectAO>{
 	
-	public CRelationalProjectAORule() {
-		super(CRelationalProjectAORule.class.getName());
+	public CRelationalProjectPORule() {
+		super(CRelationalProjectPORule.class.getName());
 	}
 
 	@Override
