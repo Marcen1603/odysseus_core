@@ -14,7 +14,7 @@ public class ExecuteShellComand {
 
 	try {
 		p = Runtime.getRuntime().exec("cmd /c ant -f "+tempDirectory);
-		p.waitFor();
+		//p.waitFor();
 		
 		StringBuilder okLine = new StringBuilder();
 		StringBuilder errorLine = new StringBuilder();
@@ -39,9 +39,6 @@ public class ExecuteShellComand {
 		System.out.println(okLine);		    
 		System.out.println(errorLine);		
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (InterruptedException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}

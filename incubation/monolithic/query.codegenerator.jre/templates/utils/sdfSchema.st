@@ -4,8 +4,9 @@ sdfSchema(operatorVariable,className,schemaURI,sdfAttributes)::=<<
 List<SDFAttribute> $operatorVariable$SDFAttributeList = new ArrayList<SDFAttribute>();
  
 $sdfAttributes : {attribute |
-SDFAttribute $operatorVariable$$attribute.uRIWithoutQualName$_$attribute.qualName; format="escape"$ = new SDFAttribute("$attribute.uRIWithoutQualName$","$attribute.qualName$", SDFDatatype.getType("$attribute.datatype$"), null, null,null);
-$operatorVariable$SDFAttributeList.add($operatorVariable$$attribute.uRIWithoutQualName$_$attribute.qualName; format="escape"$);
+
+SDFAttribute $operatorVariable$$attribute.uRIWithoutQualName; format="escape"$_$attribute.qualName; format="escape"$ = new SDFAttribute("$attribute.uRIWithoutQualName$","$attribute.qualName$", SDFDatatype.getType("$attribute.datatype$"), null, null,null);
+$operatorVariable$SDFAttributeList.add($operatorVariable$$attribute.uRIWithoutQualName; format="escape"$_$attribute.qualName; format="escape"$);
 	
 }$
 //Create SDFSchema for $operatorVariable$

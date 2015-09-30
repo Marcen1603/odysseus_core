@@ -38,10 +38,14 @@ public class JreCodegeneratorStatus{
 		}
 	}
 	
+	//TODO remove special chars in the operatorName e.g :
 	public void addOperator(ILogicalOperator operator){
 		
 		if(!operatorList.containsKey(operator)){
-			operatorList.put(operator, operator.getName().toLowerCase()+getUniqueId());
+			String operatorName = operator.getName().toLowerCase();
+			operatorName = operatorName.replaceAll("[^a-zA-Z0-9]", "");
+			
+			operatorList.put(operator, operatorName+getUniqueId());
 		}
 		
 	}
@@ -96,6 +100,7 @@ public class JreCodegeneratorStatus{
 		 return uniqueId++;
 	   
 	}
+	
 	
 	public  Map<ILogicalOperator, String> getOperatorList(){
 		return operatorList;

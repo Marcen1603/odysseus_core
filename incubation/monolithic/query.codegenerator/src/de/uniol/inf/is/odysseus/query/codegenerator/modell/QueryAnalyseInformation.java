@@ -208,9 +208,14 @@ public class QueryAnalyseInformation {
 	}
 	
 	public void addOperator(ILogicalOperator operator){
+
+		
 		
 		if(!operatorList.containsKey(operator)){
-			operatorList.put(operator, operator.getName().toLowerCase()+getUniqueId());
+			String operatorName = operator.getName().toLowerCase();
+			operatorName = operatorName.replaceAll("[^a-zA-Z0-9]", "");
+			
+			operatorList.put(operator, operatorName+getUniqueId());
 		}
 	
 	}

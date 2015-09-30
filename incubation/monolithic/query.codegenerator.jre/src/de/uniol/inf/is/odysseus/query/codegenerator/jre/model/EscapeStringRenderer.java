@@ -11,6 +11,6 @@ public class EscapeStringRenderer extends StringRenderer
         if (!("escape".equals(formatString)))
             return super.toString(o, formatString, locale);
        // replace . with _
-        return ((String) o).replace(".", "_").replace("(", "_").replace(")", "_");
+        return ((String) o).replace(".", "_").replace("(", "_").replace(")", "_").replace(":", "");
     }
 }
