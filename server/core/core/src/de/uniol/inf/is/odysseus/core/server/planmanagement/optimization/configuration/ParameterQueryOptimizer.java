@@ -29,6 +29,11 @@ public class ParameterQueryOptimizer extends Setting<IQueryOptimizer> implements
 		IOptimizationSetting<IQueryOptimizer> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8096489585570362530L;
+
+	/**
 	 * Creates a new ParameterQueryOptimizer with a specific query optimizer.
 	 * 
 	 * @param value

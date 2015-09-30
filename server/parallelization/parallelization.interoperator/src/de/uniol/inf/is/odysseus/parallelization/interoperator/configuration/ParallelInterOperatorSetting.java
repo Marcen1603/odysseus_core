@@ -35,6 +35,11 @@ public class ParallelInterOperatorSetting extends
 		Setting<Map<String, ParallelOperatorConfiguration>> implements
 		IQueryBuildSetting<Map<String, ParallelOperatorConfiguration>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2749552353246414512L;
+
 	protected ParallelInterOperatorSetting(
 			Map<String, ParallelOperatorConfiguration> value) {
 		super(value);

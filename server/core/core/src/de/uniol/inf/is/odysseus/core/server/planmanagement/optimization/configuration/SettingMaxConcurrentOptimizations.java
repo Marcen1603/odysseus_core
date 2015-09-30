@@ -26,6 +26,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
  */
 public class SettingMaxConcurrentOptimizations extends Setting<Integer> implements IOptimizationSetting<Integer> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4420672096651128972L;
+
 	public SettingMaxConcurrentOptimizations(Integer value) {
 		super(value);
 	}

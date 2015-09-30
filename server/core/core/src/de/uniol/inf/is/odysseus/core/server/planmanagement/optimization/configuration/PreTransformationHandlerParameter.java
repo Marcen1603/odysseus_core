@@ -13,6 +13,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 public class PreTransformationHandlerParameter extends Setting<Object> implements IQueryBuildSetting<Object>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5385581293870142221L;
+
 	public static class HandlerParameterPair {
 		
 		public String name;

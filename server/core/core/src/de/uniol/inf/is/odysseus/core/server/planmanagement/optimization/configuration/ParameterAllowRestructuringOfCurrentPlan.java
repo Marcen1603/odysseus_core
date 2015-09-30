@@ -24,6 +24,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  */
 public class ParameterAllowRestructuringOfCurrentPlan extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7022956394338193398L;
+
+	/**
 	 * Auch der alte Plan darf umstrukturiert werden.
 	 */
 	public static final ParameterAllowRestructuringOfCurrentPlan TRUE = new ParameterAllowRestructuringOfCurrentPlan(true);

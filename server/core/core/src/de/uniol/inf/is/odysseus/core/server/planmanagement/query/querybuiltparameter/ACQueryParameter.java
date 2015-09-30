@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
 
 public final class ACQueryParameter extends Setting<Boolean> implements IQueryBuildSetting<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1175990670688387877L;
+
 	public ACQueryParameter(Boolean value) {
 		super(value);
 	}

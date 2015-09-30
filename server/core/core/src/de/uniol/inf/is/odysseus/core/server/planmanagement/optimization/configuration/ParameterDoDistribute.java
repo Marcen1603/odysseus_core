@@ -21,6 +21,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 public class ParameterDoDistribute extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1404765914974190841L;
 	public static final ParameterDoDistribute TRUE = new ParameterDoDistribute(true);
 	public static final ParameterDoDistribute FALSE = new ParameterDoDistribute(false);
 

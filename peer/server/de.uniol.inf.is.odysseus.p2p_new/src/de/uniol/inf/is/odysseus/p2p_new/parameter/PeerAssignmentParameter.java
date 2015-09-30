@@ -14,6 +14,10 @@ public class PeerAssignmentParameter extends Setting<String> implements
 		IOptimizationSetting<String>, IQueryBuildSetting<String> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5040381310252357767L;
+	/**
 	 * The string representation for an undefined strategy.
 	 */
 	public static final String UNDEFINED = "undefined";

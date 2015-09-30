@@ -26,6 +26,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  */
 public class ParameterDoRewrite extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6415272908162510873L;
+
+	/**
 	 * Restructure a query.
 	 */
 	public static final ParameterDoRewrite TRUE = new ParameterDoRewrite(true);

@@ -27,6 +27,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
 public  final class ParameterPriority extends Setting<Integer> implements IQueryBuildSetting<Integer> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4045137579679896576L;
+
+	/**
 	 * Creates a ParameterPriority.
 	 * 
 	 * @param value

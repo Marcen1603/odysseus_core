@@ -12,6 +12,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class ParameterDoPlanAdaption extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6366850539431434064L;
+
+	/**
 	 * Adapt the plan during runtime.
 	 */
 	public static final ParameterDoPlanAdaption TRUE = new ParameterDoPlanAdaption(true);

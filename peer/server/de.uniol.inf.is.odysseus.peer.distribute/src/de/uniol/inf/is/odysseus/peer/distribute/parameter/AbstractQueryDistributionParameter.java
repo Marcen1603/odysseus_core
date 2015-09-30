@@ -12,6 +12,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 public class AbstractQueryDistributionParameter extends Setting<Object> implements IQueryBuildSetting<Object> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7263235923036142801L;
 	private final List<InterfaceNameParametersPair> pairs = Lists.newArrayList();
 
 	protected AbstractQueryDistributionParameter() {

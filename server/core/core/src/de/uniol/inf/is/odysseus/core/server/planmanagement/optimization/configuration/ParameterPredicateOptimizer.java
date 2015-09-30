@@ -27,6 +27,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  */
 public class ParameterPredicateOptimizer extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5192907613431740776L;
+
+	/**
      * Optimize predicates
      */
     public static final ParameterPredicateOptimizer TRUE = new ParameterPredicateOptimizer(true);

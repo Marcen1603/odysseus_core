@@ -27,6 +27,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuratio
 public class SettingCalculateLatency extends Setting<Boolean> implements IExecutionSetting<Boolean> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -299490138148568317L;
+
+	/**
 	 * Calculate the data latency.
 	 */
 	public static final SettingCalculateLatency TRUE = new SettingCalculateLatency(

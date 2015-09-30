@@ -28,6 +28,11 @@ public class ParameterPlanGenerationMethod extends
 		IQueryBuildSetting<PlanGenerationConfiguration> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4954465737423335627L;
+
+	/**
 	 * @param value
 	 */
 	protected ParameterPlanGenerationMethod(PlanGenerationConfiguration value) {

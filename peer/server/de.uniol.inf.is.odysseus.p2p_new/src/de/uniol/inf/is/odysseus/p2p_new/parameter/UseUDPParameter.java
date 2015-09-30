@@ -22,6 +22,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 public class UseUDPParameter extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5015434523524778423L;
 	public static final UseUDPParameter TRUE = new UseUDPParameter(true);
 	public static final UseUDPParameter FALSE = new UseUDPParameter(false);
 

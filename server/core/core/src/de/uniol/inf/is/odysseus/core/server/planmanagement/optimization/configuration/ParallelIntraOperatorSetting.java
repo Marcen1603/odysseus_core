@@ -31,6 +31,11 @@ public class ParallelIntraOperatorSetting extends
 		Setting<ParallelIntraOperatorSettingValue> implements
 		IQueryBuildSetting<ParallelIntraOperatorSettingValue> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7508795431000143064L;
+
 	public ParallelIntraOperatorSetting(ParallelIntraOperatorSettingValue value) {
 		super(value);
 	}

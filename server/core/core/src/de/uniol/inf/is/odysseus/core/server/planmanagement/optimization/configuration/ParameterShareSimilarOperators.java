@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  */
 public class ParameterShareSimilarOperators extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6940031222769380345L;
+
+	/**
 	 * Auch teilweise gleiche Operatoren werden - wenn möglich - geteilt.
 	 */
 	public static final ParameterShareSimilarOperators TRUE = new ParameterShareSimilarOperators(true);

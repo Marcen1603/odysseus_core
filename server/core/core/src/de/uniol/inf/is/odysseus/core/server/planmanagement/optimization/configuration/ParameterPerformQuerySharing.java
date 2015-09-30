@@ -23,6 +23,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  */
 public class ParameterPerformQuerySharing extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7829864548893164461L;
+
+	/**
 	 * Es soll Query-Sharing genutzt werden.
 	 */
 	public static final ParameterPerformQuerySharing TRUE = new ParameterPerformQuerySharing(true);

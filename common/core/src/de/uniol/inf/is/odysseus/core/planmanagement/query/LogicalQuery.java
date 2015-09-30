@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.planmanagement.query;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

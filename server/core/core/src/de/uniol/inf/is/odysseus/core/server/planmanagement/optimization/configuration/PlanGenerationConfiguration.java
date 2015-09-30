@@ -17,6 +17,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  */
 public class PlanGenerationConfiguration extends Setting<Map<String, String>> implements IOptimizationSetting<Map<String,String>>, IQueryBuildSetting<Map<String, String>>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3367195739139238470L;
 	Map<String, String> configuration = new HashMap<String, String>();
 	
 	public PlanGenerationConfiguration() {

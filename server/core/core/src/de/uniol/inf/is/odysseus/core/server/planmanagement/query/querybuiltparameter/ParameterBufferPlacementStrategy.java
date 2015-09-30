@@ -29,6 +29,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuratio
 public class ParameterBufferPlacementStrategy extends Setting<IBufferPlacementStrategy> implements
 		IQueryBuildSetting<IBufferPlacementStrategy>, IExecutionSetting<IBufferPlacementStrategy> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4247756088702050719L;
 	private String name;
 
 	/**

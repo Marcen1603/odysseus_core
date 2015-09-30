@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
  */
 public class SettingRefuseOptimizationAtMemoryLoad extends Setting<Double> implements IOptimizationSetting<Double>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5789117551039962096L;
+
 	public SettingRefuseOptimizationAtMemoryLoad(Double value) {
 		super(value);
 	}

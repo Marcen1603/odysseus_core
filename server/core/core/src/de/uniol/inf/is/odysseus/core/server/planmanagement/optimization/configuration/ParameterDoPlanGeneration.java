@@ -12,6 +12,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class ParameterDoPlanGeneration extends Setting<Boolean> implements IOptimizationSetting<Boolean>, IQueryBuildSetting<Boolean> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5927656930906303806L;
+
+	/**
 	 * Generate multiple plans from a query.
 	 */
 	public static final ParameterDoPlanGeneration TRUE = new ParameterDoPlanGeneration(true);

@@ -26,8 +26,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rits.cloning.Cloner;
-
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.Order;
@@ -269,9 +267,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
                     clone[i] = ((IClone) attr[i]).clone();
                 }
                 catch (ClassCastException e) {
-                    LOG.debug(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
-                    Cloner cloner = new Cloner();
-                    clone[i] = cloner.deepClone(attr[i]);
+                    LOG.error(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
+//                    Cloner cloner = new Cloner();
+//                    clone[i] = cloner.deepClone(attr[i]);
                 }
             }
         }
@@ -302,9 +300,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
                     clone.add(((IClone) element).clone());
                 }
                 catch (Throwable t) {
-                    System.err.println(String.format("Instance of %s does not implement IClone interface", element.getClass()));
-                    Cloner cloner = new Cloner();
-                    clone.add(cloner.deepClone(element));
+                   LOG.error(String.format("Instance of %s does not implement IClone interface", element.getClass()));
+//                    Cloner cloner = new Cloner();
+//                    clone.add(cloner.deepClone(element));
                 }
             }
         }

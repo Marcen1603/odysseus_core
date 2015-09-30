@@ -28,6 +28,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
 public class ParameterParserID extends Setting<String> implements IQueryBuildSetting<String> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8548569199185853919L;
+
+	/**
 	 * Creates a ParameterParserID.
 	 * 
 	 * @param value

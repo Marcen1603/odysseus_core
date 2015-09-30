@@ -29,6 +29,11 @@ public final class ParameterTransformationConfiguration extends
 		Setting<TransformationConfiguration> implements IQueryBuildSetting<TransformationConfiguration> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4435801645319473034L;
+
+	/**
 	 * Creates a ParameterTransformationConfiguration.
 	 * 
 	 * @param value

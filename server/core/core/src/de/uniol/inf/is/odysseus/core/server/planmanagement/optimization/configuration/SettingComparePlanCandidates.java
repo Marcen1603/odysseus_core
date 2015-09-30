@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
  */
 public class SettingComparePlanCandidates extends Setting<Integer> implements IOptimizationSetting<Integer> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 67854047367569178L;
+
 	public SettingComparePlanCandidates(Integer value) {
 		super(value);
 	}
