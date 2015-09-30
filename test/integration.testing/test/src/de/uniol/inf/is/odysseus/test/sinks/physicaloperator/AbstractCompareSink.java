@@ -76,7 +76,9 @@ public abstract class AbstractCompareSink<T extends IStreamObject<? extends ITim
 				System.out.println("Process next: "+object);
 			}
 			inputdata.add(object);
-			List<T> startSame = expected.extractEqualElementsStartingEquals(object,0.00001,true);
+		// TODO: Change again, if meta data correctly written
+//			List<T> startSame = expected.extractEqualElementsStartingEquals(object,0.00001,true);
+			List<T> startSame = expected.extractEqualElementsStartingEquals(object,0.00001,false);
 			if (startSame.size() == 0) {
 				stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);
 				logger.debug(StatusCode.ERROR_NOT_EQUIVALENT.name() + ": Following object has no counterpart in expected values: ");
