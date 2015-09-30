@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
@@ -347,8 +348,9 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return retval.iterator();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<T> extractEqualElementsStartingEquals(T element,
-			double tolerance) {
+			double tolerance, boolean compareMeta) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
@@ -357,7 +359,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				if (s_hat.getMetadata().getStart()
 						.equals(element.getMetadata().getStart())) {
 					// if (s_hat.equalsTolerance(element, tolerance)) {
-					if (s_hat.equals(element)) {
+					if (s_hat.equals((IStreamObject<IMetaAttribute>) element, compareMeta)) {
 						retval.add(s_hat);
 						li.remove();
 					}

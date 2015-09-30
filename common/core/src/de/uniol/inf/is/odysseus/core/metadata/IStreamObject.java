@@ -86,6 +86,7 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 */
 	boolean equalsTolerance(Object o, double tolerance);
 
+	boolean equals(IStreamObject<IMetaAttribute> o, boolean compareMeta);
 
 
 }

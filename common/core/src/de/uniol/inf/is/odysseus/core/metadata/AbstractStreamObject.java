@@ -135,5 +135,14 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		// Default with no restriction
 		return equals(o);
 	}
+	
+	@Override
+	public boolean equals(IStreamObject<IMetaAttribute> o, boolean compareMeta) {
+		boolean ret = equals(o);
+		if (compareMeta){
+			ret = ret & o.getMetadata().equals(this.getMetadata());
+		}
+		return ret;
+	}
 
 }
