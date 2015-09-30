@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvide
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
@@ -17,21 +17,22 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCo
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCStreamAORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCAccessAORule;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
+import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
-public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
+public class CAccessPORule  extends AbstractCAccessAORule<StreamAO>{
 	
-	public CStreamAORule() {
-		super(CStreamAORule.class.getName());
+
+	public CAccessPORule() {
+		super(CAccessPORule.class.getName());
 	}
-	
 
 	@Override
 	public CodeFragmentInfo getCode(StreamAO operator) {
 		
-		CodeFragmentInfo receiverPO = new CodeFragmentInfo();
-	
+		CodeFragmentInfo accessPO = new CodeFragmentInfo();
+		
 		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
@@ -39,8 +40,6 @@ public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
 
 		AccessAO accessAO = (AccessAO)logicalPlan;
 		
-	
-	
 		String transportHandler = accessAO.getTransportHandler();
 		String dataHandler = accessAO.getDataHandler();
 		String wrapper = accessAO.getWrapper();
@@ -50,28 +49,25 @@ public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
 		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
-		receiverPO.addCodeFragmentInfo(codeAccessFramwork);
+		accessPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
-		StringTemplate receiverPOTemplate = new StringTemplate("operator","receiverPO");
-		receiverPOTemplate.getSt().add("operatorVariable", operatorVariable);
-		receiverPOTemplate.getSt().add("readMetaData", accessAO.getReadMetaData());
+		StringTemplate accessPOTemplate = new StringTemplate("operator","accessPO");
+		accessPOTemplate.getSt().add("operatorVariable", operatorVariable);
+		accessPOTemplate.getSt().add("getMaxTimeToWaitForNewEventMS", accessAO.getMaxTimeToWaitForNewEventMS());
+		accessPOTemplate.getSt().add("readMetaData", accessAO.readMetaData());
 		
-			
-		receiverPO.addCode(receiverPOTemplate.getSt().render());
-		
+		accessPO.addCode(accessPOTemplate.getSt().render());
+
 		//important add timestamp op
 		Utils.createTimestampAO(operator, accessAO.getDateFormat());
-		
-		
-		receiverPO.addImport(ReceiverPO.class.getName());
-		receiverPO.addImport(IOException.class.getName());
-		
-		
-		receiverPO.addImport(IMetaAttribute.class.getName());
-		receiverPO.addImport(IMetadataInitializer.class.getName());
+				
+		accessPO.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());	
+		accessPO.addImport(AccessPO.class.getName());
+		accessPO.addImport(IOException.class.getName());
+		accessPO.addImport(IMetaAttribute.class.getName());
+		accessPO.addImport(IMetadataInitializer.class.getName());
 			
-		return receiverPO;
+		return accessPO;
 	}
-
 
 }

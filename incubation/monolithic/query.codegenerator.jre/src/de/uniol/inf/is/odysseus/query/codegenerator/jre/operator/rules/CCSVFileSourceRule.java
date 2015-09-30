@@ -61,8 +61,6 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource
 		csvFileSource.addImport(IMetadataInitializer.class.getName());
 		csvFileSource.addImport(AccessPO.class.getName());
 		
-
-	
 		return csvFileSource;
 	}
 

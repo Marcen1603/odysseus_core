@@ -10,9 +10,10 @@ import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCStreamAORule<T extends StreamAO> extends AbstractCOperatorRule<StreamAO> {
-
-	public AbstractCStreamAORule(String name) {
+public abstract class AbstractCAccessAORule<T extends StreamAO> extends AbstractCOperatorRule<StreamAO> { 
+	
+	
+	public AbstractCAccessAORule(String name) {
 		super(name);
 	}
 
@@ -26,9 +27,9 @@ public abstract class AbstractCStreamAORule<T extends StreamAO> extends Abstract
 			AccessAO accessAO = (AccessAO) op;
 			
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(accessAO.getWrapper())) {
-				return false;
-			} else {
 				return true;
+			} else {
+				return false;
 			}
 	}
 
@@ -36,12 +37,11 @@ public abstract class AbstractCStreamAORule<T extends StreamAO> extends Abstract
 	public void analyseOperator(StreamAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-		StreamAO streamAO = (StreamAO) logicalOperator;
 
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider
 				.getDataDictionary(tenant).getStreamForTransformation(
-						streamAO.getStreamname(), null);
+						logicalOperator.getStreamname(), null);
 
 		AccessAO accessAO = (AccessAO) logicalPlan;
 
@@ -52,6 +52,7 @@ public abstract class AbstractCStreamAORule<T extends StreamAO> extends Abstract
 		transformationInformation.addTransportHandler(transportHandler);
 		transformationInformation.addProtocolHandler(protocolHandler);
 		transformationInformation.addDataHandler(dataHandler);
+		
+		transformationInformation.addIterableSource(logicalOperator);
 	}
-
 }

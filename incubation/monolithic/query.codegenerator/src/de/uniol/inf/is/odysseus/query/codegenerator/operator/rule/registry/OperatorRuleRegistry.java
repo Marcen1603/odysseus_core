@@ -26,7 +26,7 @@ public class OperatorRuleRegistry {
 	public static ICOperatorRule<ILogicalOperator> getOperatorRules(String targetPlatform, ILogicalOperator operator, TransformationConfiguration transformationConfiguration){
 		List<ICOperatorRule<ILogicalOperator>> acceptedRules = new ArrayList<ICOperatorRule<ILogicalOperator>>();
 		
-
+		
 		//targetplatform vorhanden
 		if(operatorRuleList.containsKey(targetPlatform.toLowerCase())){
 			

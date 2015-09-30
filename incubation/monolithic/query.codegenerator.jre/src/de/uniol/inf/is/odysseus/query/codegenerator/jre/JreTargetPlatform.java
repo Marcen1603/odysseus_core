@@ -123,6 +123,8 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 
 	private void generateOperatorCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
 		
+	
+		
 		ICOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
