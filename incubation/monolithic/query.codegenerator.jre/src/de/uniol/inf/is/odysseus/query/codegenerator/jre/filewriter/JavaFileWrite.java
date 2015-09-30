@@ -235,7 +235,7 @@ public class JavaFileWrite {
 			    Gson gson = new Gson();
 			    String json = gson.toJson(entry.getValue());
 			    
-				infoFile.write(entry.getKey().getName()+" --> "+ operatorVariable +"\n");
+				infoFile.write(entry.getKey().getName()+" --> "+ operatorVariable +"PO.json\n");
 					
 				FileWriter file = new FileWriter(targetDirectory+"/"+operatorVariable+"PO.json");
 				file.write(json);
