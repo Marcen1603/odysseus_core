@@ -41,16 +41,16 @@ public class SimpleCSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> e
 	}
 
 	@Override
-	protected T readLine(String line) {
+	protected T readLine(String line, boolean readMeta) {
 		String[] ret = CSVParser.parseCSV(line, delimiter, trim);
         if (ret.length < this.getDataHandler().getSchema().size()) {
             String[] tmpRet = new String[this.getDataHandler().getSchema().size()];
             System.arraycopy(ret, 0, tmpRet, 0, ret.length);
             ret = tmpRet;
         }
-		return getDataHandler().readData(ret);
+		return getDataHandler().readData(ret, readMeta);
 	}
-
+		
 	@Override
 	public String getName() {
 		return NAME;
@@ -60,6 +60,11 @@ public class SimpleCSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> e
 		return readLine(line);
 	}
 
+	public T convertLine(String line, boolean readMeta){
+		return readLine(line, readMeta);
+	}
+
+	
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,

@@ -97,7 +97,11 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		return null;
 	}
 
-	protected abstract T readLine(String line);
+	final T readLine(String line){
+			return readLine(line, false);
+	}
+	
+	protected abstract T readLine(String line, boolean readMeta);
 
 	@Override
 	public void write(T object) throws IOException {
