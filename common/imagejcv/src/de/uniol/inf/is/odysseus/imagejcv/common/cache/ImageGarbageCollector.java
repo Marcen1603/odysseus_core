@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.imagejcv.common.cache;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 //This static class monitors the number of un-finalized ImageJCV objects. Since native memory allocation will not trigger
 //GC, it has to be done manually. When there are enough un-finalized objects, a thread is started, which monitors the image 
 //count and calls System.gc() when a threshold is reached. If there are only a few objects left, the thread finishes on its own.

@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractP
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
-import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.OptrisCamera;
 
 public class OptrisCameraTransportHandler extends AbstractPushTransportHandler 

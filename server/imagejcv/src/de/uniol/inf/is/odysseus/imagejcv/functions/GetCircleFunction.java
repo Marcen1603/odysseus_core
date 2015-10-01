@@ -1,15 +1,9 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
-
-import java.util.Objects;
-
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
-import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 
 /**
  * ODYSSEUS Function for getting circles inside an image.

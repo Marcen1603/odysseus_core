@@ -1,12 +1,5 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacpp.opencv_core.CvMat;
-
-import static org.bytedeco.javacpp.opencv_core.*;
-
-import java.util.Objects;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;

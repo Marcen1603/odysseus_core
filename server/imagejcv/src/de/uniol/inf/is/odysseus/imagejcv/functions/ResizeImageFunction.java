@@ -1,10 +1,6 @@
 package de.uniol.inf.is.odysseus.imagejcv.functions;
 
-import static org.bytedeco.javacpp.opencv_imgproc.cvResize;
-
 import java.util.Objects;
-
-import org.bytedeco.javacpp.opencv_core.IplImage;
 
 import com.google.common.base.Preconditions;
 

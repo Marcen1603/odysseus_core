@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.ddc.distribute
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Chris Tönjes-Deye
 Bundle-Activator: de.uniol.inf.is.odysseus.peer.ddc.distribute.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.base,
  org.apache.commons.lang3;version="3.1.0",
  org.apache.log4j.spi,
