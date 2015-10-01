@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 public class ImageFrame extends CanvasFrame 
 {
 	private static final long serialVersionUID = -4978661992664838114L;
-	private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
 	
 	private Object syncObj = new Object();
 	private Thread grabThread;
@@ -51,7 +50,7 @@ public class ImageFrame extends CanvasFrame
 				{
 					IplImage iplImage;
 					try {
-						iplImage = converter.convert(frameGrabber.grab());
+						iplImage = new OpenCVFrameConverter.ToIplImage().convert(frameGrabber.grab());
 					} catch (FrameGrabber.Exception e) {
 						ReceiveVideoStreamApp.showException(e);
 						return;
@@ -59,9 +58,10 @@ public class ImageFrame extends CanvasFrame
 
 					if (image == null || (image.getWidth() != iplImage.width()) || (image.getHeight() != iplImage.height()) || 
 							 (image.getDepth() != iplImage.depth()) || (image.getNumChannels() != iplImage.nChannels()))	
-						image = ImageJCV.createCompatible(image);
+						image = ImageJCV.fromIplImage(iplImage, frameGrabber.getPixelFormat());
+					else
+						image.getImageData().put(iplImage.imageData().position(0).limit(iplImage.imageSize()).asByteBuffer());
 					
-					image.copyFrom(iplImage);
 					showImage(image);					
 				}
 			}
@@ -89,7 +89,9 @@ public class ImageFrame extends CanvasFrame
 			if (getWidth() != image.getWidth() || getHeight() != image.getHeight())
 				setSize(image.getWidth(), image.getHeight());
 			
-			showImage(converter.convert(image.getImage()));
+			IplImage iplImage = image.unwrap();
+			showImage(new OpenCVFrameConverter.ToIplImage().convert(iplImage));
+			image.rewrap(iplImage);
 			repaint();
 		}
 	}
