@@ -47,8 +47,6 @@ public class VideoPlayback extends PlaybackReceiver
 	private boolean 			rotate180;
 	private Decoder				decoder;
 
-	private final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
-	
 	public VideoPlayback(SensorModel sensorModel, LogMetaData logMetaData) 
 	{
 		super(sensorModel, logMetaData);
@@ -144,7 +142,7 @@ public class VideoPlayback extends PlaybackReceiver
 					eventTime = syncData[currentFrame];
 			}
 			
-			IplImage image = converter.convert(capture.grab());			
+			IplImage image = new OpenCVFrameConverter.ToIplImage().convert(capture.grab());			
 			
 			if (image != null && !image.isNull())
 			{		

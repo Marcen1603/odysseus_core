@@ -168,9 +168,18 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			}
 			
 			LOG.debug("Grabbed frame from Basler camera " + serialNumber);
+			System.out.println("Grabbed frame from Basler camera " + serialNumber);
 
-			currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
-			int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+			int size = 1;
+			int[] attrs = {0};
+			
+			if (getSchema() != null)
+			{
+				size = getSchema().size();
+				attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+			}
+			
+			currentTuple = new Tuple<IMetaAttribute>(size, false);			
 			if (attrs.length > 0)
 			{
 				currentTuple.setAttribute(attrs[0], imageJCV); 

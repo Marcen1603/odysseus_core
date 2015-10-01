@@ -17,15 +17,15 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
+import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 
 public abstract class AbstractVideoImplementation 
 {
-	private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
 	public static final String OPTIONS_PREFIX = "codec:";
 	
 	public String format;	
 	public double frameRate;
-	public boolean stretchToFit;
+	public int frameSizeMultiple;
 	public int bitRate;		
 	public int pixelFormat;
 	public int bitsPerPixel;
@@ -47,7 +47,7 @@ public abstract class AbstractVideoImplementation
 		AbstractVideoImplementation other = (AbstractVideoImplementation) otherObject;
 		if (!format.equals(other.format)) return false;
 		if (frameRate != other.frameRate) return false;
-		if (stretchToFit != other.stretchToFit) return false;
+		if (frameSizeMultiple != other.frameSizeMultiple) return false;
 		if (bitRate != other.bitRate) return false; 
 		if (pixelFormat != other.pixelFormat) return false;
 		if (bitsPerPixel != other.bitsPerPixel) return false;
@@ -66,14 +66,17 @@ public abstract class AbstractVideoImplementation
 		videoQuality = optionMap.getDouble("videoQuality", 0);
 		format = optionMap.get("format", null); 
 		pixelFormat = optionMap.getInt("pixelFormat", AV_PIX_FMT_NONE);
-		stretchToFit = optionMap.getBoolean("stretchToFit", true);
+		frameSizeMultiple = optionMap.getInt("frameSizeMultiple", 1);
 		bitsPerPixel = optionMap.getInt("bitsPerPixel", 0);
 		
 		for (String key : optionMap.getUnreadOptions())
 		{
 			if (key.startsWith(OPTIONS_PREFIX))
 				videoOptions.put(key.substring(OPTIONS_PREFIX.length()), optionMap.get(key));
-		}		
+		}
+		
+		if (frameSizeMultiple < 1)
+			throw new IllegalArgumentException("frameSizeMultiple must be greater or equal 1");
 	}
 
 	abstract public FrameRecorder createRecorder(ImageJCV image);
@@ -177,13 +180,23 @@ public abstract class AbstractVideoImplementation
 	{
 		try 
 		{
-			if (!stretchToFit)
-				image = ImageJCV.extendToMultipleOf(image, 2);			
+			if (frameSizeMultiple > 1)
+				image = ImageFunctions.extendToMultipleOf(image, frameSizeMultiple);			
 			
 			if (recorder == null)
 				createAndStartRecorder(image);		
 					
-			recorder.record(converter.convert(image.getImage()));
+			IplImage iplImage = image.unwrap();
+			try
+			{
+				recorder.record(new OpenCVFrameConverter.ToIplImage().convert(iplImage));
+			}
+			catch (ArithmeticException e)
+			{
+				System.err.println("Error " + e.getMessage() + " using " + image);
+//				e.printStackTrace();
+			}			
+			image.rewrap(iplImage);
 			
 			if (syncFileStream != null)
 				syncFileStream.writeDouble(timeStamp);
@@ -192,6 +205,7 @@ public abstract class AbstractVideoImplementation
 		{
 			throw new IOException("Error while recording frame", e);
 		}
+		
 	}
 
 	public ImageJCV grab() throws FrameGrabber.Exception 
@@ -199,7 +213,7 @@ public abstract class AbstractVideoImplementation
 		if (grabber == null)
 			createAndStartGrabber();										
 		
-		IplImage iplImage = converter.convert(grabber.grab());
+		IplImage iplImage = new OpenCVFrameConverter.ToIplImage().convert(grabber.grab());
 		if (iplImage == null || iplImage.isNull()) return null;
 		
 		if (receivedImage == null || (receivedImage.getWidth() != iplImage.width()) || (receivedImage.getHeight() != iplImage.height()) || 
@@ -208,7 +222,7 @@ public abstract class AbstractVideoImplementation
 			receivedImage = ImageJCV.fromIplImage(iplImage, grabber.getPixelFormat());
 		}
 		else
-			receivedImage.copyFrom(iplImage);
+			receivedImage.getImageData().put(iplImage.imageData().position(0).limit(iplImage.imageSize()).asByteBuffer());
 		
 		return receivedImage;
 	}

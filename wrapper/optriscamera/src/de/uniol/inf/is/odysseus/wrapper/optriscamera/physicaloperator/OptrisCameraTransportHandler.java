@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractP
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.OptrisCamera;
 
 public class OptrisCameraTransportHandler extends AbstractPushTransportHandler 
@@ -25,9 +26,9 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 	private final Logger logger = LoggerFactory.getLogger(OptrisCameraTransportHandler.class);
 	private final Object processLock = new Object();
 
-	private String 			ethernetAddress;
-	private OptrisCamera 	cameraCapture;
-	private ImageJCV 		image;
+	private String ethernetAddress;
+	private OptrisCamera cameraCapture;
+	private ImageJCV image;
 	
 	public OptrisCameraTransportHandler() 
 	{
@@ -60,18 +61,31 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			{
 		 		cameraCapture = new OptrisCamera("", ethernetAddress)
 		 						{
+		 							short frameNum = 0;
+		 			
 		 							@Override public void onNewFrame(ByteBuffer buffer)
 		 							{
-		 								Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), true);
-		 								int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-		 								if (attrs.length > 0)
+		 								int size = 1; 
+		 								int[] attrs = {0};
+		 								
+		 								if (getSchema() != null)
 		 								{
-		 									if (image == null)
-		 										image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16U, cameraCapture.getImageChannels(), AV_PIX_FMT_GRAY16);
+		 									size = getSchema().size();
+		 									attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+		 								}
+		 								
+		 								Tuple<IMetaAttribute> tuple = new Tuple<>(size, true);		 								
+		 								if (attrs.length > 0)
+		 								{		 								
+//		 									if (image == null)
+		 									ImageJCV image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16U, cameraCapture.getImageChannels(), AV_PIX_FMT_GRAY16);
 		 									
 		 									image.getImageData().rewind();
 			 								image.getImageData().put(buffer);				 								
-		 									tuple.setAttribute(attrs[0], image);
+		 									tuple.setAttribute(attrs[0], image); 
+		 									
+/*		 									ImageJCV temperatureImage = ImageFunctions.create16BitTestImage(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), 10*frameNum++);		 									
+		 									tuple.setAttribute(attrs[0], temperatureImage);*/
 		 									
 //		 									System.out.println("Optris received, byte 0 = " + buffer.get(0));
 		 								}

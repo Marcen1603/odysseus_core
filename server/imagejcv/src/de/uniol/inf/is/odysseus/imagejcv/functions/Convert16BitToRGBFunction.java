@@ -9,6 +9,7 @@ import java.util.Objects;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class Convert16BitToRGBFunction extends AbstractFunction<ImageJCV> {
@@ -40,7 +41,9 @@ public class Convert16BitToRGBFunction extends AbstractFunction<ImageJCV> {
 		if (oldImage.getWidth() % 2 != 0)
 			throw new UnsupportedOperationException("Input image width is no multiple of 2");
 		
-		ImageJCV newImage = new ImageJCV(oldImage.getWidth() / 2, oldImage.getHeight(), IPL_DEPTH_8U, 4, AV_PIX_FMT_RGBA);
+		return ImageFunctions.reinterpret(oldImage, oldImage.getWidth() / 2, oldImage.getHeight(), IPL_DEPTH_8U, 4, AV_PIX_FMT_RGBA);
+		
+/*		ImageJCV newImage = new ImageJCV(oldImage.getWidth() / 2, oldImage.getHeight(), IPL_DEPTH_8U, 4, AV_PIX_FMT_RGBA);
 		
 		ByteBuffer oldBuffer = oldImage.getImageData();
 		ByteBuffer newBuffer = newImage.getImageData();
@@ -55,7 +58,7 @@ public class Convert16BitToRGBFunction extends AbstractFunction<ImageJCV> {
 		else
 			throw new UnsupportedOperationException("Not implemented yet!");
 
-		return ImageJCV.extendToMultipleOf(newImage, 2);
+		return ImageFunctions.extendToMultipleOf(newImage, 2);*/
 	}
 
 }

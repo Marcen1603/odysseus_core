@@ -107,10 +107,13 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	@Override protected long writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
 		ImageJCV image = (ImageJCV) object.getAttribute(0);
+		
+//		System.out.print("write " + image.toString());
+		
 		videoImpl.record(image, timeStamp / 1000.0);
 		
 		long length = new File(videoFileName).length();
-		System.out.println("write " + image.toString() + ", video file size = " + length + " byte 0 = " + image.getImageData().get(0));
+//		System.out.println(", video file size = " + length + " byte 0 = " + image.getImageData().get(0));
 		
 		return length;
 	}	

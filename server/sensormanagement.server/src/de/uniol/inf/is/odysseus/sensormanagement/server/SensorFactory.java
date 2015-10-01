@@ -171,7 +171,9 @@ public class SensorFactory
 			  + "                      transport='none',\n"
 			  + "			           protocol='VideoLogger',\n"
 			  + "                      dataHandler='Tuple',\n"
-			  + "                      options=[%(optionsEx)  ['format', 'mp4']]},\n"
+			  + "                      options=[%(optionsEx)\n"
+			  + "                               ['format', 'mp4'],\n"
+			  + "                               ['frameSizeMultiple', '4']]},\n"
 			  + "                     %(sourceName))\n";		
 		
 		String liveViewQuery = 
@@ -228,7 +230,7 @@ public class SensorFactory
 			  + "								['videoQuality', '0'],\n"
 			  + "								['pixelformat', '30'],\n"			// RGBA
 			  + "								['codec:preset', 'veryslow'],\n"
-			  + "								['stretchToFit', 'false']\n"
+			  + "								['frameSizeMultiple', '2']\n"
 			  + "                              ]},\n"
 			  + "                     encoded)\n";		
 		

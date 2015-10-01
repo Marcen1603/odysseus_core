@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.imagejcv.udf;
 
+import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
@@ -19,7 +20,6 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> 
 {
 	private static final long serialVersionUID = 4077769822100028025L;
-	private static final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
 	
 	private int pos;
 	private String title = "Frame";
@@ -64,7 +64,10 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 		ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
 			
 		setTitle(title + " [" + image.getWidth() + "x" + image.getHeight() + "]");
-		showImage(converter.convert(image.getImage()));
+		
+		IplImage iplImage = image.unwrap();
+		showImage(new OpenCVFrameConverter.ToIplImage().convert(iplImage));
+		image.rewrap(iplImage);
 		
 		return in;
 	}
