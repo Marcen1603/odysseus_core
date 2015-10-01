@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.misc.Activator
 Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.mep,
  org.slf4j

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Querysharing
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing,

@@ -11,7 +11,7 @@ Import-Package: de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.core,

@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.image
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.image.Activator
 Bundle-Vendor: Christian Kuka
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.image.common.datatype,
  de.uniol.inf.is.odysseus.image.common.sdf.schema,

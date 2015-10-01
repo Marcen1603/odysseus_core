@@ -4,7 +4,7 @@ Bundle-Name: Systemload Relational Feature
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.systemload_relational
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.systemload,
  de.uniol.inf.is.odysseus.systemload.logicaloperator,
  org.osgi.framework;version="1.3.0"

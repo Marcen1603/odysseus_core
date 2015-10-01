@@ -4,7 +4,7 @@ Bundle-Name: Dalvik.incubation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.dalvik
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.dalvik.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement,

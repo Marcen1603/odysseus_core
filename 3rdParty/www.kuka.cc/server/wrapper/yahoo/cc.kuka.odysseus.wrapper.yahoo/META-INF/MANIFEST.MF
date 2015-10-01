@@ -4,7 +4,7 @@ Bundle-Name: Yahoo Financial
 Bundle-SymbolicName: cc.kuka.odysseus.wrapper.yahoo
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.wrapper.yahoo.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.codec,
  org.apache.commons.httpclient,

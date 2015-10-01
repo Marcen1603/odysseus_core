@@ -5,7 +5,7 @@ Bundle-SymbolicName: cc.kuka.odysseus.image;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.image.Activator
 Bundle-Vendor: Christian Kuka
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: cc.kuka.odysseus.image.common.sdf.schema,
  com.google.common.base,
  de.uniol.inf.is.odysseus.intervalapproach.sweeparea,

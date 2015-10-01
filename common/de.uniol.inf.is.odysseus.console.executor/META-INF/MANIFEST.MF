@@ -4,7 +4,7 @@ Bundle-Name: Odysseus Console Command Executor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.console.executor
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.eclipse.osgi.framework.console,
  org.osgi.framework;version="1.6.0"
 Service-Component: OSGI-INF/commandProviderBinder.xml,

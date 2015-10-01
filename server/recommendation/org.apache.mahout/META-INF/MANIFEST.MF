@@ -117,7 +117,7 @@ Export-Package: org.apache.mahout,
  org.apache.mahout.vectorizer.pruner,
  org.apache.mahout.vectorizer.term,
  org.apache.mahout.vectorizer.tfidf
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,
  com.google.common.collect,
  com.google.common.io,

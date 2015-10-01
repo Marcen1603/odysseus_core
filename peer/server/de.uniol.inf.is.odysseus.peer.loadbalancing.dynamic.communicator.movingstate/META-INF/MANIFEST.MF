@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicator.movingstate
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicator.movingstate
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.peer.communication,
  de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication,
  Jxta_2.6_Source,

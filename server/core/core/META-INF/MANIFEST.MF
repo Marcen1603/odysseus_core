@@ -14,7 +14,7 @@ Import-Package:
  org.simpleframework.xml.core,
  org.slf4j
 Service-Component: OSGI-INF/*
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
 Export-Package: 

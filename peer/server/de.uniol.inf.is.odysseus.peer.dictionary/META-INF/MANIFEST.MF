@@ -4,7 +4,7 @@ Bundle-Name: Dictionary
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.dictionary
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: Jxta_2.6_Source;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",

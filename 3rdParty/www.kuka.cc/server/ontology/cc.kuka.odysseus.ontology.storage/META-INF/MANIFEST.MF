@@ -4,7 +4,7 @@ Bundle-Name: Sensor Ontolgy Storage
 Bundle-SymbolicName: cc.kuka.odysseus.ontology.storage;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.ontology.storage.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Embed-Dependency: *
 Embed-Transitive: true

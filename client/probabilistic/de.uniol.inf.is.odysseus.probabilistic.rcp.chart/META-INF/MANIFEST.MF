@@ -9,7 +9,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  org.eclipse.core.runtime,
  de.uniol.inf.is.jfreechart;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: batik-awt-util.jar,
  batik-ext.jar,
  batik-svggen.jar,

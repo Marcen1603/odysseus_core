@@ -5,7 +5,7 @@ Bundle-SymbolicName: cc.kuka.odysseus.interval
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.interval.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: cc.kuka.odysseus.interval.datatype,
  cc.kuka.odysseus.interval.sdf.schema,
  de.uniol.inf.is.odysseus.mep,

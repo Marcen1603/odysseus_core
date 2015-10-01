@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: BaDaSt application
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.badast;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  org.apache.zookeeper;bundle-version="3.4.6",

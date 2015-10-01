@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Test Runner Product" uid="de.uniol.inf.is.odysseus.test.runner.product" id="de.uniol.inf.is.odysseus.test.odysseustestproduct" application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
+<product name="Test Runner Product" uid="de.uniol.inf.is.odysseus.test.runner.product" id="de.uniol.inf.is.odysseus.test.odysseustestproduct" application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication" version="1.0.0" useFeatures="true" includeLaunchers="false">
+
 
    <configIni use="default">
    </configIni>
@@ -19,6 +20,7 @@
 
    <windowImages/>
 
+
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -26,8 +28,10 @@
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
    </plugins>
@@ -41,5 +45,12 @@
    <configurations>
       <plugin id="de.uniol.inf.is.odysseus.test" autoStart="true" startLevel="0" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>
