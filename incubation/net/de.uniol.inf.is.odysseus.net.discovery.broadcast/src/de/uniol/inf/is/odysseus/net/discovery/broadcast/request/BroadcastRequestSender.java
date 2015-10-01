@@ -12,16 +12,19 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
 public class BroadcastRequestSender {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BroadcastRequestSender.class);
+	private static final long REQUEST_SEND_INTERVAL_MILLIS = 3000;
 	
 	private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 	private final Bootstrap b = new Bootstrap();
 
 	private ChannelFuture channelFuture;
+	private BroadcastRequestSendThread sendThread;
 
 	public BroadcastRequestSender() {
 		b.group(workerGroup);
@@ -37,14 +40,15 @@ public class BroadcastRequestSender {
 
 	public void start() throws OdysseusNetDiscoveryException {
 		try {
-			LOG.info("Binding netty server for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT);
+			LOG.info("Binding request sender for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT);
 			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT).sync();
 			LOG.info("Binding was successful");
 			
+			sendThread = new BroadcastRequestSendThread(REQUEST_SEND_INTERVAL_MILLIS, (DatagramChannel)channelFuture.channel());
 			// TODO: Regelm‰ﬂiges Senden von Nachrichten beginnen (extra-Thread)
 			
 		} catch (InterruptedException e) {
-			throw new OdysseusNetDiscoveryException("Could not start server for sending broadcast messages", e);
+			throw new OdysseusNetDiscoveryException("Could not start sending request messages", e);
 		}
 	}
 
@@ -52,7 +56,7 @@ public class BroadcastRequestSender {
 		workerGroup.shutdownGracefully();
 
 		channelFuture.channel().close();
-		LOG.info("Netty server for broadcasting messages stopped");
+		LOG.info("Request sender stopped");
 	}
 
 }
