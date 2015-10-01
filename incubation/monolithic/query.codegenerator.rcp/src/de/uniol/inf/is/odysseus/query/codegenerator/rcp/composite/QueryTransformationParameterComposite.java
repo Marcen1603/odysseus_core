@@ -151,7 +151,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		buttonOdysseusCore.setText("...");
 
 		targetPlatform = createComboWithLabel(inputTwoGridComposite,
-				"Targetplatform:", TargetPlatformRegistry.getAllTargetPlatform(),1);
+				"Targetplatform:", TargetPlatformRegistry.getAllTargetPlatform(),2);
 		
 		targetPlatform.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent e) {

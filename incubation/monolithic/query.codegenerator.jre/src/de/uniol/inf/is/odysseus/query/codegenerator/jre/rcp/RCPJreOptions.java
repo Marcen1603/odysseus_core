@@ -31,6 +31,7 @@ public class RCPJreOptions extends Composite implements ICRCPOptionComposite{
 		
 		autoBuild = new Button(this, SWT.CHECK);
 		autoBuild.setText("Autobuild project");
+		autoBuild.setSelection(true);
 	
 	}
 	
