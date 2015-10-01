@@ -32,13 +32,14 @@ public class FillImageFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		// TODO: When image.fill is implemented, modify this code so it returns a copy instead of the original image.
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final double value = this.getNumericalInputValue(1);
 		
 		Objects.requireNonNull(image);
 		
 		image.fill((int) value);
-		return image;
+		return image;*/
 	}
 }

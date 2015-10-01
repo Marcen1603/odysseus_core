@@ -30,10 +30,12 @@ public class ToMatrixFunction extends AbstractFunction<double[][]> {
 	 */
 	@Override
 	public double[][] getValue() {
-		final ImageJCV image = this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = this.getInputValue(0);
 		Objects.requireNonNull(image);
 		double[][] matrix = image.getMatrix();
-		return matrix;
+		return matrix;*/
 	}
 	
 }

@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.imagejcv.functions;
 import java.util.Objects;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
+
 import static org.bytedeco.javacpp.opencv_core.*;
+
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -42,7 +44,9 @@ public class SubImageFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final int x = this.getNumericalInputValue(1).intValue();
 		final int y = this.getNumericalInputValue(2).intValue();
 		final int width = this.getNumericalInputValue(3).intValue();
@@ -72,7 +76,7 @@ public class SubImageFunction extends AbstractFunction<ImageJCV> {
 		
 		cvResetImageROI(iplImage);
 		
-		return result;
+		return result; */
 	}
 	
 }

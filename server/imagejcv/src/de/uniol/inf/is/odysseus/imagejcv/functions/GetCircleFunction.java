@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 
 /**
  * ODYSSEUS Function for getting circles inside an image.
@@ -37,10 +38,12 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);		
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);		
 		Objects.requireNonNull(image);		
 		
-		ImageJCV result = image.toGrayscaleImage(true);
+		ImageJCV result = ImageFunctions.toGrayscaleImage(image, true);
 		
 		CvMemStorage mem = CvMemStorage.create();
 		CvSeq circles = cvHoughCircles(result.getImage(), mem, CV_HOUGH_GRADIENT, 3d, (result.getWidth() * result.getHeight()));
@@ -55,7 +58,7 @@ public class GetCircleFunction extends AbstractFunction<ImageJCV> {
 			cvCircle(result.getImage(), center, radius, CV_RGB(125, 125, 125), 1, 8, 0);
 		}
 		
-		return result;
+		return result;*/
 	}
 	
 }

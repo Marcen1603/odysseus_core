@@ -6,11 +6,11 @@ import java.util.Objects;
 
 import static org.bytedeco.javacpp.opencv_imgproc.*;
 import static org.bytedeco.javacpp.opencv_core.*;
-
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 
 /**
  * ODYSSEUS Threshold function.
@@ -43,12 +43,14 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		double threshold = this.getNumericalInputValue(1);
 		boolean dark = (boolean) this.getInputValue(2);		
 		Objects.requireNonNull(image);
 		
-		ImageJCV result = image.toGrayscaleImage(true);
+		ImageJCV result = ImageFunctions.toGrayscaleImage(image, true);
 		
 		if (threshold < 1)
 			threshold = getThreshold(result.getImage(), dark);
@@ -57,7 +59,7 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 		
 		cvThreshold(result.getImage(), result.getImage(), threshold, 255, dark ? THRESH_BINARY : THRESH_BINARY_INV);
 		
-		return result;
+		return result;*/
 	}
 	
 	protected double getThreshold(IplImage image, boolean dark) {

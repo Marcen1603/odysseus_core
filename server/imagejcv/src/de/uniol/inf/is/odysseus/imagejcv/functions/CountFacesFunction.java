@@ -34,12 +34,14 @@ public class CountFacesFunction extends AbstractFunction<Integer> {
 	 */
 	@Override
 	public Integer getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final IplImage iplImage = image.getImage();
 		final Mat matImage = new Mat(iplImage);
 		RectVector faceDetections = new RectVector();
 		faceDetector.detectMultiScale(matImage, faceDetections);
-		return faceDetections.sizeof();
+		return faceDetections.sizeof();*/
 	}
 	
 }

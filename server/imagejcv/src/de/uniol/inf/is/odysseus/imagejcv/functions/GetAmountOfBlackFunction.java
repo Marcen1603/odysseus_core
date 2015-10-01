@@ -6,6 +6,7 @@ import org.bytedeco.javacpp.opencv_core.IplImage;
 
 
 
+
 import static org.bytedeco.javacpp.opencv_core.*;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
@@ -41,7 +42,9 @@ public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
 	 */
 	@Override
 	public Double getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final boolean border = (boolean) this.getInputValue(1);
 		
 		Objects.requireNonNull(image);
@@ -82,6 +85,6 @@ public class GetAmountOfBlackFunction extends AbstractFunction<Double> {
 		
 		result = Math.round(100.0 * result) / 100.0;
 		
-		return result;
+		return result;*/
 	}
 }

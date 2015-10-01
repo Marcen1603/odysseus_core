@@ -40,7 +40,9 @@ public class RaiseContrastFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final int value = this.getNumericalInputValue(1).intValue();
 		
 		Objects.requireNonNull(image);
@@ -55,7 +57,7 @@ public class RaiseContrastFunction extends AbstractFunction<ImageJCV> {
 		
 		cvGetImage(matImage, iplImage);
 		
-		return result;
+		return result;*/
 	}
 
 }

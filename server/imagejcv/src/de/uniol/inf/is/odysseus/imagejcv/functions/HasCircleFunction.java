@@ -35,7 +35,9 @@ public class HasCircleFunction extends AbstractFunction<Boolean> {
 	 */
 	@Override
 	public Boolean getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		
 		Objects.requireNonNull(image);
 		
@@ -53,7 +55,7 @@ public class HasCircleFunction extends AbstractFunction<Boolean> {
 			return true;
 		} else {
 			return false;
-		}
+		}*/
 	}
 	
 

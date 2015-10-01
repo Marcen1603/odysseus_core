@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.imagejcv.functions;
 import java.util.Objects;
 
 import org.bytedeco.javacpp.opencv_core.CvMat;
+
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
@@ -37,7 +37,9 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final double angle = this.getNumericalInputValue(1);		
 		Objects.requireNonNull(image);
 				
@@ -50,6 +52,6 @@ public class RotateImageFunction extends AbstractFunction<ImageJCV> {
 
 		ImageJCV result = ImageJCV.createCompatible(image);
 		cvWarpAffine(image.getImage(), result.getImage(), mapMatrix);		
-		return result;
+		return result;*/
 	}
 }

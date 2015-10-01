@@ -32,12 +32,14 @@ public class ToImageMatrixFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		final double data[][] = this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final double data[][] = this.getInputValue(0);
 		Objects.requireNonNull(data);
 		Preconditions.checkArgument(data.length > 0, "Invalid Dimension");
 		Preconditions.checkArgument(data[0].length > 0, "Invalid Dimension");
 		ImageJCV image = new ImageJCV(data);
-		return image;
+		return image;*/
 	}
 	
 }

@@ -37,7 +37,9 @@ public class SetImageFunction extends AbstractFunction<ImageJCV> {
 	 */
 	@Override
 	public ImageJCV getValue() {
-		final ImageJCV image = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image = (ImageJCV) this.getInputValue(0);
 		final int x = this.getNumericalInputValue(1).intValue();
 		final int y = this.getNumericalInputValue(2).intValue();
 		final int value = this.getNumericalInputValue(3).intValue();
@@ -53,7 +55,7 @@ public class SetImageFunction extends AbstractFunction<ImageJCV> {
 		
 		result.set(index, value);
 		
-		return result;
+		return result;*/
 	}
 	
 }

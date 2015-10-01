@@ -8,6 +8,7 @@ import java.util.Objects;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
+import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
@@ -34,19 +35,21 @@ public class ImageDiffFunction extends AbstractFunction<ImageJCV> {
 	
 	@Override
 	public ImageJCV getValue() {
-		final ImageJCV image1 = (ImageJCV) this.getInputValue(0);
+		throw new UnsupportedOperationException("This MEP function needs to be re-implemented!");
+		
+/*		final ImageJCV image1 = (ImageJCV) this.getInputValue(0);
 		final ImageJCV image2 = (ImageJCV) this.getInputValue(1);
 		
 		Objects.requireNonNull(image1);
 		Objects.requireNonNull(image2);		
 		
-		ImageJCV gray1 = ImageJCV.extendToMultipleOf(image1.toGrayscaleImage(), 4);
-		ImageJCV gray2 = ImageJCV.extendToMultipleOf(image2.toGrayscaleImage(), 4);
+		ImageJCV gray1 = ImageFunctions.extendToMultipleOf(ImageFunctions.toGrayscaleImage(image1, false), 4);
+		ImageJCV gray2 = ImageFunctions.extendToMultipleOf(ImageFunctions.toGrayscaleImage(image2, false), 4);
 		ImageJCV result = new ImageJCV(image1.getWidth(), image1.getHeight(), IPL_DEPTH_8U, 1, AV_PIX_FMT_GRAY8);
 		
 		cvAbsDiff(gray1.getImage(), gray2.getImage(), result.getImage());
 		
-		return result;
+		return result;*/
 	}
 
 }
