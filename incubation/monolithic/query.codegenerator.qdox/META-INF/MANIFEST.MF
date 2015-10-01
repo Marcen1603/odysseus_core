@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Qdox
-Bundle-SymbolicName: qdox
+Bundle-SymbolicName: qdox_old
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: qdox-2.0-M3.jar

@@ -26,7 +26,7 @@ public class CAggregateItemModel {
 		 this.outAttributeAttributeName = outAttributeAttributeName;
 		 this.outAttributeSDFDataTypeName = outAttributeSDFDataTypeName;
 		 
-		 this.outAttributeAttributeNameEscaped = outAttributeAttributeName.replace("(", "_").replace(")", "_").replace(".", "_");
+		 this.outAttributeAttributeNameEscaped = outAttributeAttributeName.replace("(", "_").replace(")", "_").replace(".", "_").replace(":", "");
 	}
 
 	

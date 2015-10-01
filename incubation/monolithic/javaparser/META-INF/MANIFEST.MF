@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Javaparser
-Bundle-SymbolicName: javaparser
+Bundle-SymbolicName: javaparser_old
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: javaparser-core-3.0.0-SNAPSHOT.jar,

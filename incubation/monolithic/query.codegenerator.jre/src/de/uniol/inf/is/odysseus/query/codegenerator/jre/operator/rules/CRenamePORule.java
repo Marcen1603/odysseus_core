@@ -27,9 +27,6 @@ public class CRenamePORule extends AbstractCRenameAORule<RenameAO>{
 
 	
 		topPO.addCode(topTemplate.getSt().render());
-		
-		
-		
 		topPO.addImport(TopPO.class.getName());
 		topPO.addImport(IStreamObject.class.getName());
 		

@@ -9,11 +9,11 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCApplicationTimestamp;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
-public class CApplicationTimestamp extends AbstractCApplicationTimestamp<TimestampAO>{
+public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<TimestampAO>{
 	
 	
-	public CApplicationTimestamp() {
-		super(CApplicationTimestamp.class.getName());
+	public CApplicationTimestampRule() {
+		super(CApplicationTimestampRule.class.getName());
 	}
 
 	@Override
