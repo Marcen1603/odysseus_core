@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.rcp.composite;
 
 import java.io.File;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -11,14 +12,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.ITargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 
 public class QueryTransformationParameterComposite extends AbstractParameterComposite {
@@ -32,9 +36,19 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 	private Composite inputDirectoryComposite;
 	private Composite inputTwoGridComposite;
+	private Composite inputOptionComposite;
+	
+	private Composite parentComposite;
+	
+
+	private ICRCPOptionComposite optionComposite;
+	
+	
 	private Composite buttonComposite;
 	private QueryTransformationWindow window;
 	private Shell parentShell;
+	
+	private int style; 
 
 	public QueryTransformationParameterComposite(
 			final QueryTransformationWindow window, Composite parent,
@@ -42,6 +56,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		super(parent, style);
 		this.window = window;
 		this.parentShell = parent.getShell();
+		this.style = style;
+		this.parentComposite = parent;
 
 		GridData contentGridData = new GridData(GridData.FILL_BOTH);
 		contentGridData.horizontalAlignment = SWT.FILL;
@@ -56,6 +72,11 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		inputTwoGridComposite = new Composite(this, SWT.FILL);
 		inputTwoGridComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
 				true, false, 1, 1));
+		
+		inputOptionComposite  = new Composite(this, SWT.FILL);
+		inputOptionComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+				true, false, 1, 1));
+		inputOptionComposite.setLayout(new GridLayout(1, false));
 
 		createContent();
 
@@ -68,7 +89,11 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		griDDatabuttonComposite.horizontalAlignment = SWT.FILL;
 		buttonComposite.setLayoutData(griDDatabuttonComposite);
 		buttonComposite.setLayout(new GridLayout(3, false));
-
+		
+		
+		ITargetPlatform targetplat= TargetPlatformRegistry.getTargetPlatform(targetPlatform.getText());
+		optionComposite = targetplat.getOptionsRCP(inputOptionComposite, style);
+		
 		createButton();
 
 		parent.pack();
@@ -127,6 +152,22 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 		targetPlatform = createComboWithLabel(inputTwoGridComposite,
 				"Targetplatform:", TargetPlatformRegistry.getAllTargetPlatform(),1);
+		
+		targetPlatform.addSelectionListener(new SelectionAdapter() {
+		      public void widgetSelected(SelectionEvent e) {
+		    	ITargetPlatform targetplat= TargetPlatformRegistry.getTargetPlatform(targetPlatform.getText());
+		 
+		    	 Control[] children = inputOptionComposite.getChildren();
+		    	    for (int i = 0 ; i < children.length; i++) {
+		    	        children[i].dispose();
+		    	    }
+		  		optionComposite = targetplat.getOptionsRCP(inputOptionComposite, style);
+		  
+		  		inputOptionComposite.layout();
+		  		parentComposite.pack();
+		  	
+		      }
+		});
 
 		comboExecutor = createComboWithLabel(inputTwoGridComposite,
 				"Executor:", CSchedulerRegistry.getAllExecutor("JRE"),0);
@@ -146,11 +187,17 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 				try {
 					checkInputFields();
 
+					Map<String,String> options = null;
+					if(optionComposite != null){
+						options= optionComposite.getInput();
+					}
+					
+
 					TransformationParameter parameter = new TransformationParameter(
 							targetPlatform.getText(), txtTargetDirectory
 									.getText(),
 							window.getQueryId(), txtOdysseusCode.getText(),
-							true, comboExecutor.getText());
+							true, comboExecutor.getText(), options);
 					window.startQueryTransformation(parameter);
 				} catch (IllegalArgumentException ae) {
 					createErrorDialog(ae);

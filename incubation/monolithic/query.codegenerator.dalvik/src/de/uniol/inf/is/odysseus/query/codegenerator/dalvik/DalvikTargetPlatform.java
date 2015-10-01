@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
+import org.eclipse.swt.widgets.Composite;
+
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter.DalvikFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
@@ -144,6 +147,12 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		}
 
 		
+	}
+
+	@Override
+	public ICRCPOptionComposite getOptionsRCP(Composite parent, int style) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

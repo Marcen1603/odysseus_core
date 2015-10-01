@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.modell;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TransformationParameter {
 	
 	private String targetPlatform;
@@ -8,14 +11,16 @@ public class TransformationParameter {
 	private boolean generateOdysseusJar;
 	private int queryId;
 	private String executor;
+	private Map<String,String> options = new HashMap<String,String>();
 	
-	public TransformationParameter(String targetPlatform, String targetDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor){
+	public TransformationParameter(String targetPlatform, String targetDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor,Map<String,String> options){
 		this.targetPlatform = targetPlatform;
 		this.targetDirectory = targetDirectory;
 		this.queryId = queryId;
 		this.setOdysseusPath(odysseusPath);
 		this.setGenerateOdysseusJar(generateOdysseusJar);
 		this.executor = executor;
+		this.setOptions(options);
 	}
 	
 	
@@ -82,5 +87,14 @@ public class TransformationParameter {
 		this.executor = executor;
 	}
 
+
+	public Map<String,String> getOptions() {
+		return options;
+	}
+
+
+	public void setOptions(Map<String,String> options) {
+		this.options = options;
+	}
 	
 }

@@ -9,7 +9,8 @@ TARGETPLATFROM("targetPlatform", 0, false),
 TARGETDIRECTORY("targetDirectory", 1, false), 
 ODYSSEUSPATH("odysseusDirectory", 2, false),
 EXECUTOR("executor", 3, false),
-QUERYNAME("queryname", 4, true);
+OPTIONS("options",4,true),
+QUERYNAME("queryname", 5, true);
 
 
 private String name;

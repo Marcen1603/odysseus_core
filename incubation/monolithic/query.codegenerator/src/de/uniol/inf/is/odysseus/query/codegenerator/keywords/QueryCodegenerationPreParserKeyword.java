@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.query.codegenerator.keywords;
 
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -91,11 +92,12 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		String targetDirectory = result.get(QueryCodegenerationKeywordParameter.TARGETDIRECTORY);
 		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
 		String executorString =result.get(QueryCodegenerationKeywordParameter.EXECUTOR);
+		String options =result.get(QueryCodegenerationKeywordParameter.OPTIONS);
 		String queryname =result.get(QueryCodegenerationKeywordParameter.QUERYNAME);
 		
 		
 		
-		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  targetDirectory,  0,  odysseusPath, true ,  executorString);  
+		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  targetDirectory,  0,  odysseusPath, true ,  executorString, parseOptions(options));  
 
 		List<IExecutorCommand> commands = new LinkedList<>();
 		
@@ -120,5 +122,22 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		} else {
 			return false;
 		}
+	}
+	
+	private Map<String,String> parseOptions(String options){
+		 Map<String,String> optionMap = new  HashMap<String,String>();
+		 
+		 String[] splitedOptions = options.split(",");
+		 
+		 if(splitedOptions.length>0){
+			 for(int i=0; i<splitedOptions.length; i++){
+				 
+				 String optionKey = splitedOptions[i].split("\\(")[0];
+				 String optionValue = splitedOptions[i].replaceAll(".*\\(|\\).*", "");
+				 optionMap.put(optionKey, optionValue);
+				 
+			 }
+		 }
+		 return optionMap;	
 	}
 }

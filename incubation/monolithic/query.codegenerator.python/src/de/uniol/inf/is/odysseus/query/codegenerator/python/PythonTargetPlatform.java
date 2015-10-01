@@ -3,10 +3,13 @@ package de.uniol.inf.is.odysseus.query.codegenerator.python;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
+import org.eclipse.swt.widgets.Composite;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.python.filewrite.PythonFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
@@ -53,6 +56,13 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 	private  void walkThroughLogicalPlan(ILogicalOperator topAO, TransformationParameter parameter) throws IOException{
 		
 	
+	}
+
+
+	@Override
+	public ICRCPOptionComposite getOptionsRCP(Composite parent, int style) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

@@ -3,17 +3,22 @@ package de.uniol.inf.is.odysseus.query.codegenerator.jre;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+
+import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.rcp.RCPJreOptions;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
@@ -78,9 +83,13 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		try {
 			updateProgressBar(80, "Create Java project",UpdateMessageStatusType.INFO);
 			javaFileWrite.createProject();
-	
-			updateProgressBar(85, "Compile the Java project",UpdateMessageStatusType.INFO);
-			ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
+
+
+			if(isAutobuild(parameter)){
+				updateProgressBar(85, "Compile the Java project",UpdateMessageStatusType.INFO);
+				ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
+			}
+		
 			
 			updateProgressBar(100, "Transformation finish",UpdateMessageStatusType.INFO);
 		} catch (IOException e) {
@@ -177,6 +186,24 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		}
 	}
 
+	@Override
+	public ICRCPOptionComposite getOptionsRCP(Composite parent, int style) {
+		return new RCPJreOptions(parent, style);
+	}
 
-
+	
+	private boolean isAutobuild(TransformationParameter parameter){
+		Map<String, String> options = parameter.getOptions();
+		if(options != null){
+			if(options.containsKey("autobuild")){
+				if(options.get("autobuild").equals("true")){
+					return true;
+				}else{
+					return false;
+				}
+			}
+			
+		}
+		return false;
+	}
 }

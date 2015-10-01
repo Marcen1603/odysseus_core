@@ -51,7 +51,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 String odysseusPath= ci.nextArgument();
 		 String executor= ci.nextArgument();
 		 
-		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  tempDirectory,  queryId,  odysseusPath, true,  executor));
+		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  tempDirectory,  queryId,  odysseusPath, true,  executor, null));
 	 }
 
 	 

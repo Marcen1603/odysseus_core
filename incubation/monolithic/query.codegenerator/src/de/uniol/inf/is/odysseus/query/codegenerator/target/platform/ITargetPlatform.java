@@ -2,8 +2,11 @@ package de.uniol.inf.is.odysseus.query.codegenerator.target.platform;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.eclipse.swt.widgets.Composite;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
@@ -17,4 +20,7 @@ public interface ITargetPlatform {
 	public void updateProgressBar(int value, String text, UpdateMessageStatusType statusType);
 	public void setProgressBarQueue(BlockingQueue<ProgressBarUpdate> progressBarQueue);
 	public BlockingQueue<ProgressBarUpdate> getProgressBarQueue();
+	
+	
+	public ICRCPOptionComposite getOptionsRCP(Composite parent,int style);
 }
