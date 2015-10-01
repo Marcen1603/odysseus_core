@@ -4,7 +4,7 @@ Bundle-Name: Discovery
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.discovery
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/nodeDiscovererBinder.xml,OSGI-INF/nodeDiscovererManager.xml,
  OSGI-INF/OdysseusNetDiscoveryPlugIn.xml
 Require-Bundle: de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",

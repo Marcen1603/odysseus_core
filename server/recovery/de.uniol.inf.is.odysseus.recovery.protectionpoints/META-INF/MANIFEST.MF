@@ -4,7 +4,7 @@ Bundle-Name: Protection Points Recovery Component
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.protectionpoints
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Michael Brand
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.recovery.protectionpoints
 Require-Bundle: com.google.guava;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",

@@ -4,7 +4,7 @@ Bundle-Name: Odysseus Core
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.core.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.command,

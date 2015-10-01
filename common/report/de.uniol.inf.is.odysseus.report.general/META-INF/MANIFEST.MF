@@ -7,7 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.report.general.GeneralReportPlugIn
 Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.report;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/systemReportProvider.xml,OSGI-INF/bundleReportProvider.xml,
  OSGI-INF/servicesReportProvider.xml

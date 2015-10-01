@@ -11,7 +11,7 @@ Import-Package: org.eclipse.core.runtime;version="3.4.0",
  org.osgi.service.prefs;version="1.1.1",
  org.slf4j
 Service-Component: OSGI-INF/*
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.updater;bundle-version="1.0.0",

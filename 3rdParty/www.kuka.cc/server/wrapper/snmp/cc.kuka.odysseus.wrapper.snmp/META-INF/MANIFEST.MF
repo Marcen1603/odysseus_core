@@ -4,7 +4,7 @@ Bundle-Name: SNMP Wrapper
 Bundle-SymbolicName: cc.kuka.odysseus.wrapper.snmp
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.wrapper.snmp.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,

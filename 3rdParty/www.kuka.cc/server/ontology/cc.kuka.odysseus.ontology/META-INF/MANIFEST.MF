@@ -5,7 +5,7 @@ Bundle-SymbolicName: cc.kuka.odysseus.ontology
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.ontology.Activator
 Bundle-Vendor: Christian Kuka
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: cc.kuka.odysseus.ontology.common,
  cc.kuka.odysseus.ontology.common.model,
  cc.kuka.odysseus.ontology.common.model.condition,

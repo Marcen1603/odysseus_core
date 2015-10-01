@@ -7,7 +7,7 @@ Bundle-Activator: cc.kuka.odysseus.polynomial.Activator
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
   cc.kuka.odysseus.polynomial.common
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.mep,

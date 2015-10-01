@@ -4,7 +4,7 @@ Bundle-Name: Signal
 Bundle-SymbolicName: cc.kuka.odysseus.signal
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.signal.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
 Import-Package: cc.kuka.odysseus.signal.common.datatype,

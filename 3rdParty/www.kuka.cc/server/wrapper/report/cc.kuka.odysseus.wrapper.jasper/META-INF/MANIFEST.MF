@@ -5,7 +5,7 @@ Bundle-SymbolicName: cc.kuka.odysseus.wrapper.jasper
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.wrapper.jasper.Activator
 Bundle-Vendor: Christian Kuka
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,

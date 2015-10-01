@@ -11,6 +11,6 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.rcp.editor.text;bundle-version="1.0.0",
  org.eclipse.jface.text;bundle-version="3.7.2",
  org.eclipse.core.resources
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/EditorCompletionProvider.xml,OSGI-INF/cqlScriptTemplate.xml,
  OSGI-INF/CQLFileExecutor.xml

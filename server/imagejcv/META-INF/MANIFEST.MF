@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.imagejcv
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.imagejcv.Activator
 Bundle-Vendor: Kristian Bruns
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.imagejcv.common.datatype,
  de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema,
