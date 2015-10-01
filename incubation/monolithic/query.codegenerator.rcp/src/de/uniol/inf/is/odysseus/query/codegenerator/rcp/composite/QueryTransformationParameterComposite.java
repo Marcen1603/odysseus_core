@@ -16,9 +16,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 
 public class QueryTransformationParameterComposite extends AbstractParameterComposite {
@@ -129,7 +129,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 				"Targetplatform:", TargetPlatformRegistry.getAllTargetPlatform(),1);
 
 		comboExecutor = createComboWithLabel(inputTwoGridComposite,
-				"Executor:", CExecutorRegistry.getAllExecutor("JRE"),0);
+				"Executor:", CSchedulerRegistry.getAllExecutor("JRE"),0);
 
 	}
 

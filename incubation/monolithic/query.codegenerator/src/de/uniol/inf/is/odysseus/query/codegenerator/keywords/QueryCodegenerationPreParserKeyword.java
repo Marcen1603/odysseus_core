@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.query.codegenerator.commands.QueryCodegenerationCommand;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 import de.uniol.inf.is.odysseus.script.keyword.AbstractQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -66,10 +66,10 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		}
 	
 		
-		if(!CExecutorRegistry.existExecutor(targetPlatform, executorString)){
+		if(!CSchedulerRegistry.existExecutor(targetPlatform, executorString)){
 			StringBuilder availableExecutor = new StringBuilder();
 			
-			for(String executorTemp : CExecutorRegistry.getAllExecutor(targetPlatform)	){
+			for(String executorTemp : CSchedulerRegistry.getAllExecutor(targetPlatform)	){
 				availableExecutor.append(executorTemp);
 				availableExecutor.append(System.getProperty("line.separator"));
 			}

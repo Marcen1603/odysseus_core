@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.Activator;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.ICScheduler;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
 
@@ -38,12 +38,12 @@ public class DalvikFileWrite {
 	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
-	private ICExecutor executor;
+	private ICScheduler executor;
 	
 	private static Logger LOG = LoggerFactory.getLogger(DalvikFileWrite.class);
 	
 	
-	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICExecutor executor){
+	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
 		this.fileName = fileName;
 		this.tempPath = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;

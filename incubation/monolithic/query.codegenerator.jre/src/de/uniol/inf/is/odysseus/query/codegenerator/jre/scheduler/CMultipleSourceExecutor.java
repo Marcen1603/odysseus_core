@@ -1,17 +1,17 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.jre.executor;
+package de.uniol.inf.is.odysseus.query.codegenerator.jre.scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.AbstractCExecutor;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.AbstractCScheduler;
 
-public class MultipleSourceExecutor extends AbstractCExecutor{
+public class CMultipleSourceExecutor extends AbstractCScheduler{
 
-	public MultipleSourceExecutor() {
+	public CMultipleSourceExecutor() {
 		super("MultipleSourceExecutor", "JRE");
 	}
 
@@ -23,11 +23,9 @@ public class MultipleSourceExecutor extends AbstractCExecutor{
 		List<String> sourceOpList = new ArrayList<String>();
 		
 		for(ILogicalOperator sourceOp : operatorList){
-		
 			sourceOpList.add(JreCodegeneratorStatus.getInstance().getVariable(sourceOp));
 		}
-		
-
+	
 		StringTemplate startCodeTemplate = new StringTemplate("executor","multipleSourceExecutorStartCode");
 		startCodeTemplate.getSt().add("operatorList", sourceOpList);
 		
@@ -36,8 +34,9 @@ public class MultipleSourceExecutor extends AbstractCExecutor{
 		return code;
 	}
 
-	
+	@Override
 	public String getExecutorCode() {
+		
 		StringTemplate multipleSourceExecutorImplTemplate = new StringTemplate("executor","multipleSourceExecutorImpl");
 	
 		return multipleSourceExecutorImplTemplate.getSt().render();

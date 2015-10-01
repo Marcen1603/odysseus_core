@@ -10,9 +10,9 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.CAnalyseServiceBinding;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.ICScheduler;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 
 
@@ -87,11 +87,11 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 sb.append("\n");
 		 
 		 sb.append("--Executors--\n");
-			for (Entry<String, Map<String, ICExecutor>> platform : CExecutorRegistry.getAllExecutor().entrySet())
+			for (Entry<String, Map<String, ICScheduler>> platform : CSchedulerRegistry.getAllExecutor().entrySet())
 			{
 				sb.append(platform.getKey()).append("\n");
 				
-				for (Entry<String, ICExecutor> executor : platform.getValue().entrySet())
+				for (Entry<String, ICScheduler> executor : platform.getValue().entrySet())
 				{
 					sb.append("-"+executor.getKey()).append("\n");
 				}

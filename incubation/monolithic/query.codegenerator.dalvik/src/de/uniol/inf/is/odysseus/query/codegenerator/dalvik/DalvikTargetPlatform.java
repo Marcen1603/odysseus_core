@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter.DalvikFileWrite;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
@@ -17,6 +16,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParamet
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -65,7 +65,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		
 		importList.addAll(startStreams.getImports());
 		
-		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
+		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor("Java", parameter.getExecutor()));
 		
 		try {
 			dalvikFileWrite.createProject();

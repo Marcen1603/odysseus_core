@@ -9,7 +9,6 @@ import java.util.concurrent.BlockingQueue;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
@@ -21,6 +20,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParamet
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
 
@@ -73,7 +73,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(startStreams.getImports());
 	
 		updateProgressBar(75, "Create Java files",UpdateMessageStatusType.INFO);
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CExecutorRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
 		
 		try {
 			updateProgressBar(80, "Create Java project",UpdateMessageStatusType.INFO);

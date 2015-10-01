@@ -20,12 +20,12 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.Activator;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
+import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.ICScheduler;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
 
@@ -42,14 +42,14 @@ public class JavaFileWrite {
 	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
-	private ICExecutor executor;
+	private ICScheduler executor;
 	
 	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList;
 	
 	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
 	
 	
-	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICExecutor executor){
+	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
 		this.fileName = fileName;
 		this.targetDirectory = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;

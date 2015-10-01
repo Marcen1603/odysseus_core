@@ -6,9 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.rcp.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.query.codegenerator,
- de.uniol.inf.is.odysseus.query.codegenerator.executor.registry,
  de.uniol.inf.is.odysseus.query.codegenerator.modell,
  de.uniol.inf.is.odysseus.query.codegenerator.modell.enums,
+ de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry,
  de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry,
  org.eclipse.jface.dialogs,
  org.eclipse.swt,
