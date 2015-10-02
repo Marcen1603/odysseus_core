@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.eclipse.swt.widgets.Composite;
@@ -10,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.JreTargetplatformOption;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.rcp.RCPJreOptions;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
@@ -40,8 +40,13 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			throws InterruptedException  {
 		//clear transformation infos
 		DefaultCodegeneratorStatus.clear();
-		
+
 		DefaultCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
+		
+		//get special transformation options
+		JreTargetplatformOption jreTargetplatformOption = new JreTargetplatformOption();
+		jreTargetplatformOption.parse(parameter);
+		
 		
 		this.setProgressBarQueue(progressBarQueue);
 		
@@ -76,7 +81,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			javaFileWrite.createProject();
 
 
-			if(isAutobuild(parameter)){
+			if(jreTargetplatformOption.isAutobuild()){
 				updateProgressBar(85, "Compile the Java project",UpdateMessageStatusType.INFO);
 				ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
 			}
@@ -136,22 +141,5 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 	}
 
 	
-	private boolean isAutobuild(TransformationParameter parameter){
-		Map<String, String> options = parameter.getOptions();
-		if(options != null){
-			if(options.containsKey("autobuild")){
-				if(options.get("autobuild").equals("true")){
-					return true;
-				}else{
-					return false;
-				}
-			}
-			
-		}
-		return false;
-	}
-
-
-
 
 }

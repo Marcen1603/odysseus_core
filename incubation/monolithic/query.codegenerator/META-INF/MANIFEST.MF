@@ -43,7 +43,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi.services,
  com.google.code.gson,
- com.google.guava
+ com.google.guava,
+ org.apache.commons.beanutils,
+ org.apache.commons.collections;bundle-version="3.2.1"
 Service-Component: OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRegistry.xml,OSGI-INF/SchedulerRegistry.xml,OSGI-INF/OperatorRuleRegistry.xml,OSGI-INF/CodegenerationPreParserKeywordProvider.xml,OSGI-INF/CAnalyseServiceBinding.xml,
  OSGI-INF/CodegenerationConsole.xml
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator,
