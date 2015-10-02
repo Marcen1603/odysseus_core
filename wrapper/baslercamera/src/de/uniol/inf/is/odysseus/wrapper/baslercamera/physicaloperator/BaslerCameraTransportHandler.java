@@ -141,12 +141,14 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
 		
 //		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
-		System.out.println(String.format("%d %s: %.4f FPS (%.4f)", imageCount++, serialNumber, smoothFPS, fps));
+		System.out.println(String.format("%d %s: %.4f FPS (%.4f)", imageCount, serialNumber, smoothFPS, fps));
 		lastTime = now;		
 	}
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
+		imageCount++;
+		
 		logStats();
 		
 		Tuple<IMetaAttribute> tuple = currentTuple;
@@ -160,11 +162,22 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			if (cameraCapture == null) return false;
 
-			if (!cameraCapture.grabRGB8(imageJCV.getImageData(), 1000))
+			int grabTries = 0;
+			while (!cameraCapture.grabRGB8(imageJCV.getImageData(), 1000))
 			{
-				// TODO: Sometimes the camera is opened successfully, but grab always returns false. 
-				// Check if it is OK to throw an exception on first grab failure, or if there are 10 in a row...?
-				return false;
+				// Sometimes the camera is opened successfully, but grab always returns false.
+				// 
+				if (imageCount == 0)
+				{
+					grabTries++;
+					if (grabTries > 3)
+						throw new RuntimeException("Camera opened successfully, but cannot grab frames");
+					
+					cameraCapture.stop();
+					cameraCapture.start(operationMode);
+				}
+				else
+					return false;
 			}
 			
 			LOG.debug("Grabbed frame from Basler camera " + serialNumber);

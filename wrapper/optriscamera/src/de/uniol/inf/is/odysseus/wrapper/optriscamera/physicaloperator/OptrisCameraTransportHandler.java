@@ -60,10 +60,29 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			{
 		 		cameraCapture = new OptrisCamera("", ethernetAddress)
 		 						{
-		 							short frameNum = 0;
+						 			private double smoothFPS = 0.0f;
+						 			private double alpha = 0.95f;
+						 			private long lastTime = 0;
+						 			private int imageCount = 0;
+						 			
+						 			private void logStats()
+						 			{
+						 				long now = System.nanoTime();
+						 				double dt = (now - lastTime) / 1.0e9;
+						 				double fps = 1.0/dt;
+				
+						 				smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
+						 				
+				//		 				System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
+						 				System.out.println(String.format("%d optris: %.4f FPS (%.4f)", imageCount, smoothFPS, fps));
+						 				lastTime = now;		
+						 			}		 			
 		 			
 		 							@Override public void onNewFrame(long timeStamp, ByteBuffer buffer)
 		 							{
+		 								logStats();
+		 								imageCount++;
+		 								
 		 								int size = 1; 
 		 								int[] attrs = {0};
 		 								
@@ -76,17 +95,12 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 								Tuple<IMetaAttribute> tuple = new Tuple<>(size, true);		 								
 		 								if (attrs.length > 0)
 		 								{		 								
-//		 									if (image == null)
-		 									ImageJCV image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16U, cameraCapture.getImageChannels(), AV_PIX_FMT_GRAY16);
+		 									if (image == null)
+		 										image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16U, cameraCapture.getImageChannels(), AV_PIX_FMT_GRAY16);
 		 									
 		 									image.getImageData().rewind();
 			 								image.getImageData().put(buffer);				 								
 		 									tuple.setAttribute(attrs[0], image); 
-		 									
-/*		 									ImageJCV temperatureImage = ImageFunctions.create16BitTestImage(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), 10*frameNum++);		 									
-		 									tuple.setAttribute(attrs[0], temperatureImage);*/
-		 									
-//		 									System.out.println("Optris received, byte 0 = " + buffer.get(0));
 		 								}
 		 								
 		 								fireProcess(tuple);
