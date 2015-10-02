@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParamete
 
 public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserKeyword {
 
-	public static final String KEYWORD = "QUERYCODEGENERATION";	
+	public static final String KEYWORD = "CODEGENERATION";	
 	private PreParserKeywordParameterHelper<QueryCodegenerationKeywordParameter> parameterHelper;
 
 	@Override
@@ -95,8 +95,6 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		String options =result.get(QueryCodegenerationKeywordParameter.OPTIONS);
 		String queryname =result.get(QueryCodegenerationKeywordParameter.QUERYNAME);
 		
-		
-		
 		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  targetDirectory,  0,  odysseusPath, true ,  executorString, parseOptions(options));  
 
 		List<IExecutorCommand> commands = new LinkedList<>();
@@ -127,17 +125,20 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 	private Map<String,String> parseOptions(String options){
 		 Map<String,String> optionMap = new  HashMap<String,String>();
 		 
-		 String[] splitedOptions = options.split(",");
-		 
-		 if(splitedOptions.length>0){
-			 for(int i=0; i<splitedOptions.length; i++){
-				 
-				 String optionKey = splitedOptions[i].split("\\(")[0];
-				 String optionValue = splitedOptions[i].replaceAll(".*\\(|\\).*", "");
-				 optionMap.put(optionKey, optionValue);
-				 
+		 if(options !=null){
+			 String[] splitedOptions = options.split(",");
+			 
+			 if(splitedOptions.length>0){
+				 for(int i=0; i<splitedOptions.length; i++){
+					 
+					 String optionKey = splitedOptions[i].split("\\(")[0];
+					 String optionValue = splitedOptions[i].replaceAll(".*\\(|\\).*", "");
+					 optionMap.put(optionKey, optionValue);
+					 
+				 }
 			 }
 		 }
+		
 		 return optionMap;	
 	}
 }
