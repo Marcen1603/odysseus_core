@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.iql.odl.service;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.service.IQLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.odl.executor.ODLExecutor;
 
 public class ODLServiceBinding extends IQLServiceBinding {
 
@@ -26,4 +28,13 @@ public class ODLServiceBinding extends IQLServiceBinding {
 	public static void unbindOperatorBuilderFactory(IOperatorBuilderFactory factory) {
 
 	}
+	
+	public static void bindExecutor(IExecutor executor) {
+		ODLExecutor.loadPersistentOperators();
+	}
+	
+	public static void unbindExecutor(IExecutor executor) {
+
+	}
+	
 }
