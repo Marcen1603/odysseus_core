@@ -62,7 +62,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 						{
 		 							short frameNum = 0;
 		 			
-		 							@Override public void onNewFrame(ByteBuffer buffer)
+		 							@Override public void onNewFrame(long timeStamp, ByteBuffer buffer)
 		 							{
 		 								int size = 1; 
 		 								int[] attrs = {0};

@@ -677,22 +677,24 @@ SwigDirector_OptrisCamera::~SwigDirector_OptrisCamera() {
 }
 
 
-void SwigDirector_OptrisCamera::onNewFrame(void *buffer, long size) {
+void SwigDirector_OptrisCamera::onNewFrame(long long timeStamp, void *buffer, long size) {
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
+  jlong jtimeStamp  ;
   jobject jbuffer = 0 ;
   
   if (!swig_override[0]) {
-    OptrisCamera::onNewFrame(buffer,size);
+    OptrisCamera::onNewFrame(timeStamp,buffer,size);
     return;
   }
   swigjobj = swig_get_self(jenv);
   if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
+    jtimeStamp = (jlong) timeStamp;
     {
       jbuffer = (jenv)->NewDirectByteBuffer(buffer, size); 
     }
-    jenv->CallStaticVoidMethod(Swig::jclass_OptrisJavaJNI, Swig::director_methids[0], swigjobj, jbuffer);
+    jenv->CallStaticVoidMethod(Swig::jclass_OptrisJavaJNI, Swig::director_methids[0], swigjobj, jtimeStamp, jbuffer);
     jthrowable swigerror = jenv->ExceptionOccurred();
     if (swigerror) {
       jenv->ExceptionClear();
@@ -712,7 +714,7 @@ void SwigDirector_OptrisCamera::swig_connect_director(JNIEnv *jenv, jobject jsel
     jmethodID base_methid;
   } methods[] = {
     {
-      "onNewFrame", "(Ljava/nio/ByteBuffer;)V", NULL 
+      "onNewFrame", "(JLjava/nio/ByteBuffer;)V", NULL 
     }
   };
   
@@ -832,39 +834,43 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_
 }
 
 
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1onNewFrame(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1onNewFrame(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg3) {
   OptrisCamera *arg1 = (OptrisCamera *) 0 ;
-  void *arg2 = (void *) 0 ;
-  long arg3 ;
+  long long arg2 ;
+  void *arg3 = (void *) 0 ;
+  long arg4 ;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(OptrisCamera **)&jarg1; 
+  arg2 = (long long)jarg2; 
   {
     /* %typemap(in) void * */ 
-    arg2 = jenv->GetDirectBufferAddress(jarg2); 
-    arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
+    arg3 = jenv->GetDirectBufferAddress(jarg3); 
+    arg4 = (long)(jenv->GetDirectBufferCapacity(jarg3)); 
   }
-  (arg1)->onNewFrame(arg2,arg3);
+  (arg1)->onNewFrame(arg2,arg3,arg4);
 }
 
 
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1onNewFrameSwigExplicitOptrisCamera(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_OptrisJavaJNI_OptrisCamera_1onNewFrameSwigExplicitOptrisCamera(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg3) {
   OptrisCamera *arg1 = (OptrisCamera *) 0 ;
-  void *arg2 = (void *) 0 ;
-  long arg3 ;
+  long long arg2 ;
+  void *arg3 = (void *) 0 ;
+  long arg4 ;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(OptrisCamera **)&jarg1; 
+  arg2 = (long long)jarg2; 
   {
     /* %typemap(in) void * */ 
-    arg2 = jenv->GetDirectBufferAddress(jarg2); 
-    arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
+    arg3 = jenv->GetDirectBufferAddress(jarg3); 
+    arg4 = (long)(jenv->GetDirectBufferCapacity(jarg3)); 
   }
-  (arg1)->OptrisCamera::onNewFrame(arg2,arg3);
+  (arg1)->OptrisCamera::onNewFrame(arg2,arg3,arg4);
 }
 
 
@@ -956,7 +962,7 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_optriscamera_swig_
     const char *signature;
   } methods[1] = {
     {
-      "SwigDirector_OptrisCamera_onNewFrame", "(Lde/uniol/inf/is/odysseus/wrapper/optriscamera/swig/OptrisCamera;Ljava/nio/ByteBuffer;)V" 
+      "SwigDirector_OptrisCamera_onNewFrame", "(Lde/uniol/inf/is/odysseus/wrapper/optriscamera/swig/OptrisCamera;JLjava/nio/ByteBuffer;)V" 
     }
   };
   Swig::jclass_OptrisJavaJNI = (jclass) jenv->NewGlobalRef(jcls);

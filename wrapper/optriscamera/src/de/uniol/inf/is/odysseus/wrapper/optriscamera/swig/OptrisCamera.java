@@ -63,8 +63,8 @@ public class OptrisCamera {
     OptrisJavaJNI.OptrisCamera_stop(swigCPtr, this);
   }
 
-  public void onNewFrame(java.nio.ByteBuffer buffer) {
-    if (getClass() == OptrisCamera.class) OptrisJavaJNI.OptrisCamera_onNewFrame(swigCPtr, this, buffer); else OptrisJavaJNI.OptrisCamera_onNewFrameSwigExplicitOptrisCamera(swigCPtr, this, buffer);
+  public void onNewFrame(long timeStamp, java.nio.ByteBuffer buffer) {
+    if (getClass() == OptrisCamera.class) OptrisJavaJNI.OptrisCamera_onNewFrame(swigCPtr, this, timeStamp, buffer); else OptrisJavaJNI.OptrisCamera_onNewFrameSwigExplicitOptrisCamera(swigCPtr, this, timeStamp, buffer);
   }
 
   public int getImageChannels() {

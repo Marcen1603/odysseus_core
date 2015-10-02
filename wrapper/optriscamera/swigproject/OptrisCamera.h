@@ -37,7 +37,7 @@ public:
 	void start() throw(std::exception);
 	void stop();
 
-	virtual void onNewFrame(void *buffer, long size);
+	virtual void onNewFrame(long long timeStamp, void *buffer, long size);
 
 	int		getImageChannels() const { return 1; }
 	int		getBufferSize() const { return Width * Height * Depth; }
