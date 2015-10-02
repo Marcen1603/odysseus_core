@@ -7,9 +7,12 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl en -data @noDefault -clean -debug -profile OdysseusProfile</programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-console -debug -nl en -data @noDefault -clean -debug -profile OdysseusProfile
+      </programArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
@@ -24,6 +27,7 @@
    </launcher>
 
    <vm>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
 
    <license>
