@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCApplicationTimestamp;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
 public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<TimestampAO>{
@@ -20,7 +20,7 @@ public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<Tim
 	public CodeFragmentInfo getCode(TimestampAO operator) {
 	CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator.getSubscribedToSource().iterator().next().getTarget());
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator.getSubscribedToSource().iterator().next().getTarget());
 		
 		TimestampAO timestampAO = (TimestampAO)operator;
 		

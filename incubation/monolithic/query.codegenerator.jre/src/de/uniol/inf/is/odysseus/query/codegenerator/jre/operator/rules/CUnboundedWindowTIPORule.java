@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCUnboundedWindowTIPORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.UnboundedWindowTIPO;
 
 public class CUnboundedWindowTIPORule extends AbstractCUnboundedWindowTIPORule<WindowAO>{
@@ -30,7 +30,7 @@ public class CUnboundedWindowTIPORule extends AbstractCUnboundedWindowTIPORule<W
 		
 		StringBuilder code = new StringBuilder();
 
-		String operatorVariable = JreCodegeneratorStatus.getInstance()
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 
 		AbstractWindowWithWidthAO windowAO = (AbstractWindowWithWidthAO) operator;

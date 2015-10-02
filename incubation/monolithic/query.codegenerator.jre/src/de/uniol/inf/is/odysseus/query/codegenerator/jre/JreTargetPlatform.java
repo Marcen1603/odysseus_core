@@ -1,22 +1,17 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.rcp.RCPJreOptions;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
@@ -24,16 +19,12 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformati
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
 
 public class JreTargetPlatform extends AbstractTargetPlatform{
-	
-	private Set<String> importList = new HashSet<String>();
-	private StringBuilder bodyCode;
-	private StringBuilder sdfSchemaCode;
 	
 	public JreTargetPlatform(){
 		super("Jre");
@@ -48,9 +39,9 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			TransformationConfiguration transformationConfiguration)
 			throws InterruptedException  {
 		//clear transformation infos
-		JreCodegeneratorStatus.clear();
+		DefaultCodegeneratorStatus.clear();
 		
-		JreCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
+		DefaultCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
 		this.setProgressBarQueue(progressBarQueue);
 		
@@ -97,95 +88,48 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		}
 	}
 	
+	
+	@Override
+	public void generateOperatorCodeOperatorReady(ILogicalOperator operator,
+			TransformationParameter parameter,
+			TransformationConfiguration transformationConfiguration,
+			QueryAnalyseInformation queryAnalseInformation,
+			ICOperatorRule<ILogicalOperator> opTrans) {
+		
+		updateProgressBar(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
+		
+		//add ready
+		DefaultCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
 
-	private void transformQuery(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+		//generate the default code e.g. SDFSchema
+		CodeFragmentInfo initOp = CreateJreDefaultCode.getCodeForInitOperator(operator);
+		sdfSchemaCode.append(initOp.getCode());
 		
-		List<ILogicalOperator> operatorSources = queryAnalyseInformation.getSourceOpList();
+		//add imports for default code
+		importList.addAll(initOp.getImports());
 		
-		for(ILogicalOperator sourceOperator: operatorSources){
-				preCheckOperator(sourceOperator,parameter, transformationConfiguration,queryAnalyseInformation);
-		}
+		//generate operator code
+		CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
 		
-		
-		//sdfschema nach oben schieben
-		StringBuilder tempBodyCode = new StringBuilder();
-		tempBodyCode = bodyCode;
-		
-		bodyCode = sdfSchemaCode;
-		bodyCode.append(tempBodyCode);
+		String operatorCode = opCodeFragment.getCode();
+	
+		//add operator code to java body
+		bodyCode.append(operatorCode);
+
+		//subcode imports
+		importList.addAll(opCodeFragment.getImports());
 		
 	}
 	
-	private void preCheckOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
-		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
-
-		if(operator.getSubscribedToSource().size() >= 2){
-			if(JreCodegeneratorStatus.getInstance().isOperatorReadyforCodegeneration(operator)){
-				generateOperatorCode(operator,parameter, transformationConfiguration,queryAnalseInformation);
-			}
-		}else{
-			generateOperatorCode(operator,parameter, transformationConfiguration,queryAnalseInformation);
-		}
-			
-	}
-	
-
-	private void generateOperatorCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
-		
-	
-		
-		ICOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
-		if(opTrans != null ){
-		
-			if(!JreCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
-				
-			
-				updateProgressBar(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
-				
-				//add ready
-				JreCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
-		
-				//generate the default code e.g. SDFSchema
-				CodeFragmentInfo initOp = CreateJreDefaultCode.getCodeForInitOperator(operator);
-				sdfSchemaCode.append(initOp.getCode());
-				
-				//String operatorCode = initOp.getCode();
-				
-				//add imports for default code
-				importList.addAll(initOp.getImports());
-				
-				//generate operator code
-				CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
-				
-				String operatorCode = opCodeFragment.getCode();
-			
-				//add operator code to java body
-				bodyCode.append(operatorCode);
-				
-				//add import for *PO
-				//importList.addAll(opTrans.getNeededImports());
-	
-				//subcode imports
-				importList.addAll(opCodeFragment.getImports());
-				
-			}
-			
-			//generate subscription
-			CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
-			if(subscription!= null){
-				bodyCode.append(subscription.getCode());	
-				importList.addAll(subscription.getImports());
-			}
-		}else{
-			updateProgressBar(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,UpdateMessageStatusType.WARNING);
-		}
-		
-	
-		for(LogicalSubscription s:operator.getSubscriptions()){
-			preCheckOperator(s.getTarget(),parameter, transformationConfiguration,queryAnalseInformation);
+	public void generateOperatorSubscription(ILogicalOperator operator,QueryAnalyseInformation queryAnalseInformation){
+		//generate subscription
+		CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
+		if(subscription!= null){
+			bodyCode.append(subscription.getCode());	
+			importList.addAll(subscription.getImports());
 		}
 	}
-
+	
 	@Override
 	public ICRCPOptionComposite getOptionsRCP(Composite parent, int style) {
 		return new RCPJreOptions(parent, style);
@@ -206,4 +150,8 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		}
 		return false;
 	}
+
+
+
+
 }

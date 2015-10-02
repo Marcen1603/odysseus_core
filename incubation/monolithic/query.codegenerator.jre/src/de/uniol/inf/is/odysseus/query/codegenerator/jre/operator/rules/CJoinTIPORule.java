@@ -15,10 +15,10 @@ import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder
 import de.uniol.inf.is.odysseus.persistentqueries.DirectTransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCJoinTIPORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
@@ -35,7 +35,7 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 		
 		CodeFragmentInfo joinTIPO = new CodeFragmentInfo();
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		JoinAO joinAO = (JoinAO) operator;
 		
@@ -96,8 +96,8 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 		
 	
 		
-		joinTIPOTemplate.getSt().add("input0",  JreCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[0].getTarget()));
-		joinTIPOTemplate.getSt().add("input1",  JreCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[1].getTarget()));
+		joinTIPOTemplate.getSt().add("input0",  DefaultCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[0].getTarget()));
+		joinTIPOTemplate.getSt().add("input1",  DefaultCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[1].getTarget()));
 		
 
 		joinTIPO.addCodeFragmentInfo((CreateJreDefaultCode.getCodeForSDFSchema(logicalSubscritions[0].getSchema(), operatorVariable+"leftSchema")));

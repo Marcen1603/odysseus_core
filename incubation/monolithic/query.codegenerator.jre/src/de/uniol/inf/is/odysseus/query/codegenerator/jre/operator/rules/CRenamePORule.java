@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.TopPO;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCRenameAORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 
 public class CRenamePORule extends AbstractCRenameAORule<RenameAO>{
 
@@ -19,7 +19,7 @@ public class CRenamePORule extends AbstractCRenameAORule<RenameAO>{
 	public CodeFragmentInfo getCode(RenameAO operator) {
 	CodeFragmentInfo topPO = new CodeFragmentInfo();
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 
 		StringTemplate topTemplate = new StringTemplate("operator","topPO");

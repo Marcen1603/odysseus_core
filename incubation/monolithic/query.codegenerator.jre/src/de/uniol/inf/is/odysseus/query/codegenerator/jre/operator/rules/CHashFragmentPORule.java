@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCHashFragmentAORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator.HashFragmentPO;
 
@@ -19,7 +19,7 @@ public class CHashFragmentPORule extends AbstractCHashFragmentAORule<HashFragmen
 	public CodeFragmentInfo getCode(HashFragmentAO operator) {
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 	
 		
 		codeFragmentInfo.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFAttributeList(operator.getAttributes(), operatorVariable+"Fragment"));

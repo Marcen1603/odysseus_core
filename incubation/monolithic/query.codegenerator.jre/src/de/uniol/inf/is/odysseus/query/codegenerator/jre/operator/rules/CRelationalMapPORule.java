@@ -4,10 +4,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCRelationalMapPORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 
 public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 	
@@ -24,7 +24,7 @@ public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 	
 			MapAO mapAO = (MapAO)logicalOperator;
 		
-			String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(logicalOperator);
+			String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(logicalOperator);
 			
 			mapPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema( mapAO.getInputSchema(), operatorVariable+"Input"));
 			 

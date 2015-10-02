@@ -21,11 +21,11 @@ import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.Activator;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.ICScheduler;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
 
@@ -229,7 +229,7 @@ public class JavaFileWrite {
 		
 			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
 			{
-			    String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(entry.getKey());
+			    String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(entry.getKey());
 			  
 			    
 			    Gson gson = new Gson();

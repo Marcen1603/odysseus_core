@@ -22,10 +22,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAggregateF
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.CAggregateItemModel;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractAggregateTIPORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
 
@@ -44,7 +44,7 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 		
 		AggregateAO aggregateAO = (AggregateAO) operator;
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		aggregateTIPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(aggregateAO.getInputSchema(), operatorVariable+"Input"));
 		

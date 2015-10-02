@@ -5,10 +5,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCCSVFileSinkRule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 
 public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 	
@@ -20,7 +20,7 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 	public CodeFragmentInfo getCode(CSVFileSink operator) {
 		CodeFragmentInfo csvFileSink = new CodeFragmentInfo();
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		CSVFileSink csvFileSinkOP = (CSVFileSink) operator;
 

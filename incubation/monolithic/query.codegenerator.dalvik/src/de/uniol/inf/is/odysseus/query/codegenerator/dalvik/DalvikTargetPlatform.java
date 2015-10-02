@@ -1,16 +1,14 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.dalvik;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 import org.eclipse.swt.widgets.Composite;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter.DalvikFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
@@ -18,19 +16,13 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformati
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 
 public class DalvikTargetPlatform extends AbstractTargetPlatform{
-	
-	private Set<String> importList = new HashSet<String>();
-	private StringBuilder bodyCode;
-	private StringBuilder sdfSchemaCode;
-	
+
+
 	
 	public DalvikTargetPlatform() {
 		super("Dalvik");
@@ -45,19 +37,18 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			TransformationConfiguration transformationConfiguration)
 			throws InterruptedException {
 		
-		
 		//add userfeedback
 		updateProgressBar(10, "Start the transformation",UpdateMessageStatusType.INFO);
 		
 		//clear transformation infos
-		JreCodegeneratorStatus.clear();
+		DefaultCodegeneratorStatus.clear();
 		
-		JreCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
+		DefaultCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 	
 		bodyCode = new StringBuilder();
 		sdfSchemaCode  = new StringBuilder();
 		
-		walkTroughLogicalPlan(queryAnalyseInformation,parameter, transformationConfiguration);
+		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 
 		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
@@ -79,75 +70,6 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 	}
 	
 	
-	private void walkTroughLogicalPlan(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
-		
-		List<ILogicalOperator> operatorSources = queryAnalyseInformation.getSourceOpList();
-		
-		for(ILogicalOperator sourceOperator: operatorSources){
-				generateCode(sourceOperator,parameter, transformationConfiguration,queryAnalyseInformation);
-		}
-		
-		
-		//sdfschema nach oben schieben
-		StringBuilder tempBodyCode = new StringBuilder();
-		tempBodyCode = bodyCode;
-		
-		bodyCode = sdfSchemaCode;
-		bodyCode.append(tempBodyCode);
-
-	}
-	
-
-	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
-		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
-
-	
-		ICOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
-		if(opTrans != null ){
-		
-			if(!JreCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
-		
-				//add ready
-				JreCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
-		
-				//generate the default code e.g. SDFSchema
-				CodeFragmentInfo initOp = CreateJreDefaultCode.getCodeForInitOperator(operator);
-				sdfSchemaCode.append(initOp.getCode());
-				
-				//String operatorCode = initOp.getCode();
-				
-				//add imports for default code
-				importList.addAll(initOp.getImports());
-				
-				//generate operator code
-				CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
-				
-				String operatorCode = opCodeFragment.getCode();
-			
-				//add operator code to java body
-				bodyCode.append(operatorCode);
-				
-				//subcode imports
-				importList.addAll(opCodeFragment.getImports());
-				
-			}
-			
-			//generate subscription
-			CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
-			if(subscription!= null){
-				bodyCode.append(subscription.getCode());	
-				importList.addAll(subscription.getImports());
-			}
-			
-			
-		}
-		
-		for(LogicalSubscription s:operator.getSubscriptions()){
-			generateCode(s.getTarget(),parameter, transformationConfiguration,queryAnalseInformation);
-		}
-
-		
-	}
 
 	@Override
 	public ICRCPOptionComposite getOptionsRCP(Composite parent, int style) {
@@ -155,6 +77,45 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		return null;
 	}
 
+	@Override
+	public void generateOperatorCodeOperatorReady(ILogicalOperator operator,
+			TransformationParameter parameter,
+			TransformationConfiguration transformationConfiguration,
+			QueryAnalyseInformation queryAnalseInformation,
+			ICOperatorRule<ILogicalOperator> opTrans) {
+		
+		updateProgressBar(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
+		
+		//add ready
+		DefaultCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
 
+		//generate the default code e.g. SDFSchema
+		CodeFragmentInfo initOp = CreateJreDefaultCode.getCodeForInitOperator(operator);
+		sdfSchemaCode.append(initOp.getCode());
+		
+		//add imports for default code
+		importList.addAll(initOp.getImports());
+		
+		//generate operator code
+		CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
+		
+		String operatorCode = opCodeFragment.getCode();
+	
+		//add operator code to java body
+		bodyCode.append(operatorCode);
+
+		//subcode imports
+		importList.addAll(opCodeFragment.getImports());
+		
+	}
+	
+	public void generateOperatorSubscription(ILogicalOperator operator,QueryAnalyseInformation queryAnalseInformation){
+		//generate subscription
+		CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
+		if(subscription!= null){
+			bodyCode.append(subscription.getCode());	
+			importList.addAll(subscription.getImports());
+		}
+	}
 
 }

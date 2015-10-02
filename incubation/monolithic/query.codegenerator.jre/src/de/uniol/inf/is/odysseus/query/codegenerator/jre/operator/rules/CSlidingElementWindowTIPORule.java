@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSlidingElementWindowTIPORule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
 
 public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindowTIPORule<ElementWindowAO>{
@@ -26,7 +26,7 @@ public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindow
 	public CodeFragmentInfo getCode(ElementWindowAO operator) {
 		CodeFragmentInfo slidingElementWindowCode = new CodeFragmentInfo();
 	
-		String operatorVariable = JreCodegeneratorStatus.getInstance()
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 
 		boolean isWindowSlideNull = true;

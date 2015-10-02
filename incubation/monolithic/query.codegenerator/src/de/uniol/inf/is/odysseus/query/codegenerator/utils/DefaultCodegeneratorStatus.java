@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.jre.utils;
+package de.uniol.inf.is.odysseus.query.codegenerator.utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,22 +6,19 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class JreCodegeneratorStatus{
+public class DefaultCodegeneratorStatus{
 
-	private static JreCodegeneratorStatus instance = null;
+	private static DefaultCodegeneratorStatus instance = null;
 
-	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
-	
+	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();	
 	private Map<ILogicalOperator,String> codeReady  = new HashMap<ILogicalOperator, String>();
-	
 	private Map<ILogicalOperator, Integer> moreInputs = new HashMap<ILogicalOperator, Integer>();
-	
 	private int uniqueId = 0;
 	
 	
-	public static JreCodegeneratorStatus getInstance() {
+	public static DefaultCodegeneratorStatus getInstance() {
 		if (instance == null) {
-			instance = new JreCodegeneratorStatus();
+			instance = new DefaultCodegeneratorStatus();
 		}
 		return instance;
 	}
@@ -95,12 +92,9 @@ public class JreCodegeneratorStatus{
 	}
 
 
-	private synchronized int getUniqueId()
-	{  
+	private synchronized int getUniqueId(){  
 		 return uniqueId++;
-	   
 	}
-	
 	
 	public  Map<ILogicalOperator, String> getOperatorList(){
 		return operatorList;

@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.python.filewrite.PythonFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
@@ -26,7 +27,7 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 	
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
-			QueryAnalyseInformation transformationInforamtion,
+			QueryAnalyseInformation queryAnalyseInformation,
 			TransformationParameter parameter,
 			BlockingQueue<ProgressBarUpdate> queue,
 			TransformationConfiguration transformationConfiguration)
@@ -34,13 +35,12 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 	
 
 		
-		
 		testWrite = new PythonFileWrite("TestFilePython.py",parameter);
 		try {
 			testWrite.createFile();
 			
 			
-			walkThroughLogicalPlan(query,parameter);
+			transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 			
 			testWrite.closeFile();
 			
@@ -51,12 +51,6 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 		
 		
 	}
-	
-	//Test
-	private  void walkThroughLogicalPlan(ILogicalOperator topAO, TransformationParameter parameter) throws IOException{
-		
-	
-	}
 
 
 	@Override
@@ -64,6 +58,27 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	@Override
+	public void generateOperatorCodeOperatorReady(ILogicalOperator operator,
+			TransformationParameter parameter,
+			TransformationConfiguration transformationConfiguration,
+			QueryAnalyseInformation queryAnalseInformation,
+			ICOperatorRule<ILogicalOperator> opsTrans) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void generateOperatorSubscription(ILogicalOperator operator,
+			QueryAnalyseInformation queryAnalseInformation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 
 

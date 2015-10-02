@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerPar
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
@@ -45,7 +46,7 @@ public class CreateJreDefaultCode {
 	public static CodeFragmentInfo getCodeForInitOperator(ILogicalOperator operator){
 		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		if(operatorVariable != null && !operatorVariable.equals("")){
 			sdfSchema.addCodeFragmentInfo(getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
@@ -57,7 +58,7 @@ public class CreateJreDefaultCode {
 	public static CodeFragmentInfo getCodeForAccessFramework(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 	
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 
 		//add import
 		codeFragmentInfo.addImport(ITransportDirection.class.getName());
@@ -76,7 +77,7 @@ public class CreateJreDefaultCode {
 	public static CodeFragmentInfo getCodeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
-		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(forOperator);
+		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(forOperator);
 		
 		SDFSchema schema = timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
@@ -124,7 +125,7 @@ public class CreateJreDefaultCode {
 	public static CodeFragmentInfo getCodeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs,List<ILogicalOperator> iterableSources, String executor){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
-		String firstOP = JreCodegeneratorStatus.getInstance().getVariable(sourceOPs.get(0));
+		String firstOP = DefaultCodegeneratorStatus.getInstance().getVariable(sourceOPs.get(0));
 		
 		List<String> sinkOpList = new ArrayList<String>();
 
@@ -133,15 +134,15 @@ public class CreateJreDefaultCode {
 		for(ILogicalOperator sinkOp : sinkOPs){
 		
 			
-			sinkOpList.add(JreCodegeneratorStatus.getInstance().getVariable(sinkOp));
+			sinkOpList.add(DefaultCodegeneratorStatus.getInstance().getVariable(sinkOp));
 		}
 		
 	
 		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
 		startCodeTemplate.getSt().add("firstOP", firstOP);
-		startCodeTemplate.getSt().add("operatorList",JreCodegeneratorStatus.getInstance().getOperatorList());
+		startCodeTemplate.getSt().add("operatorList",DefaultCodegeneratorStatus.getInstance().getOperatorList());
 		startCodeTemplate.getSt().add("sinkOpList",sinkOpList);
-		startCodeTemplate.getSt().add("sourceOP",JreCodegeneratorStatus.getInstance().getVariable(sourceOPs.get(0)));
+		startCodeTemplate.getSt().add("sourceOP",DefaultCodegeneratorStatus.getInstance().getVariable(sourceOPs.get(0)));
 		
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
@@ -195,7 +196,7 @@ public class CreateJreDefaultCode {
 				   }
 		   }
 		   
-		 if(JreCodegeneratorStatus.getInstance().allOperatorExistForSubscriptions(neededOperator)){
+		 if(DefaultCodegeneratorStatus.getInstance().allOperatorExistForSubscriptions(neededOperator)){
 			 
 
 			StringTemplate startCodeTemplate = new StringTemplate("utils","subscribeToSource");
