@@ -8,8 +8,8 @@ public class ImageCacheProvider
 	{
 		if (instance == null)
 		{
-			instance = new NoImageCache();
-//			instance = new SimpleImageCache();
+//			instance = new NoImageCache();
+			instance = new SimpleImageCache();
 		}
 	
 		return instance;

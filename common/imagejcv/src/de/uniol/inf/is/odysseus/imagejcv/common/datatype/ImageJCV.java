@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 
 import org.bytedeco.javacpp.BytePointer;
@@ -17,6 +16,7 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.imagejcv.common.cache.ImageCacheProvider;
 import de.uniol.inf.is.odysseus.imagejcv.common.cache.ImageGarbageCollector;
 
@@ -29,18 +29,18 @@ abstract class GCMonitored
 
 	protected abstract void releaseImage();
 	
-/*	@Override protected void finalize() throws Throwable
+	@Override protected void finalize() throws Throwable
 	{
-		System.out.print(" G");
 		releaseImage();
-		System.out.print("C ");
 		super.finalize();
-	}*/
+	}
 }
 
-public class ImageJCV extends GCMonitored
+public class ImageJCV extends GCMonitored implements IClone, Cloneable 
 {
-	private WeakReference<IplImage> lastImage;
+	// TODO: Löschen, nur als kurzfristiger Hack zur synchrnoisation von Basler und Optris benutzt
+	public static long startTime;
+	
 	private IplImage image;
 	
 	private int	width;
@@ -55,29 +55,12 @@ public class ImageJCV extends GCMonitored
 	public int getWidth() { return width; }	
 	public int getHeight() { return height; }
 	public int getWidthStep() { return widthStep; }
-	public int getPixelFormat()	{ return pixelFormat; }
-	
+	public int getPixelFormat()	{ return pixelFormat; }	
 	public ByteBuffer getImageData() { return image.imageData().position(0).limit(image.imageSize()).asByteBuffer(); }
+	public IplImage getImage() { return image; }
 	
 	private ImageJCV() {}
 	
-	public IplImage unwrap() 
-	{
-		IplImage result = image;
-		lastImage = new WeakReference<>(image);
-		image = null;
-		return result; 
-	}
-	
-	public void rewrap(IplImage iplImage)
-	{
-		if (lastImage.get() != iplImage)
-			throw new UnsupportedOperationException("Can only rewrap the image which was wrapped before!");
-		
-		lastImage.clear();
-		image = iplImage;
-	}
-
 	public ImageJCV(ImageJCV other) 
 	{
 		this(other.getWidth(), other.getHeight(), other.getDepth(), other.getNumChannels(), other.getPixelFormat());
@@ -216,10 +199,4 @@ public class ImageJCV extends GCMonitored
 			image = null;			
 		}
 	}
-	
-/*	@Deprecated
-	public IplImage getImage() 
-	{
-		return image;
-	}*/	
 }

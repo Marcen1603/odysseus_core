@@ -165,6 +165,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			if (cameraCapture == null) return false;
 
+			if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return false;
+			
 			int grabTries = 0;
 			while (!cameraCapture.grabRGB8(imageJCV.getImageData(), 1000))
 			{

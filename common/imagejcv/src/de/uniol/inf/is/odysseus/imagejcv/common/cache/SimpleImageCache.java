@@ -15,7 +15,9 @@ public class SimpleImageCache implements ImageCache
 	Map<Integer, LinkedList<IplImage>> cache = new HashMap<>();
 	
 	public long allocatedMemory = 0;
-	public int cacheSize = 100; 
+	public int cacheSize = 300; 
+	
+	public boolean doChecks = false;
 	
 	private void checkLists()
 	{
@@ -35,7 +37,7 @@ public class SimpleImageCache implements ImageCache
 	{
 		synchronized (syncObj)
 		{
-			checkLists();
+			if (doChecks) checkLists();
 			
 			IplImage header = IplImage.createHeader(cvSize(width, height), depth, channels);		
 			
@@ -45,17 +47,18 @@ public class SimpleImageCache implements ImageCache
 			{
 				allocatedMemory += header.imageSize();
 	//			System.out.println("New image created! Total mem = " + allocatedMemory);
-				System.out.print("C");
+//				System.out.print("C");
 				
 				return IplImage.create(cvSize(width, height), depth, channels);
 			}
 			else
 			{
-				System.out.print("R");
+//				System.out.print("R");
 	//			System.out.println("Image recycled! " + (list.size()-1) + " images left");			
 				IplImage image = (IplImage) list.removeFirst();
 				
 				// DEBUG: Make sure image was added to cache properly
+				if (doChecks) 
 				if (image.width() != 0 || image.height() != 0 || image.depth() != 0 || image.nChannels() != 0)
 					System.out.println("Warning: Non-zeroed image in cache!");
 				
@@ -75,13 +78,14 @@ public class SimpleImageCache implements ImageCache
 	{
 		synchronized (syncObj)
 		{
-			checkLists();
+			if (doChecks) 
+				checkLists();
 			
 			// Get list to which this image belongs 
 			LinkedList<IplImage> list = cache.get(image.imageSize());
 			
 			// DEBUG: Make sure image is not in cache
-			if (list != null)
+			if (doChecks && list != null)
 				for (IplImage inList : list)
 				{
 					if (inList == image)
@@ -98,17 +102,17 @@ public class SimpleImageCache implements ImageCache
 			if (list != null) {
 				if (list.size() < cacheSize) {				
 					list.add(image);
-					System.out.print("A");
+//					System.out.print("A");
 	//				System.out.println("Image added to cache, num images = " + list.size());
 				} else {
-					System.out.print("D");
+//					System.out.print("D");
 	//				System.out.println("Cache full, image dismissed");
 					allocatedMemory -= image.imageSize();				
 				}
 			} else {
 				list = new LinkedList<IplImage>();
 				list.add(image);
-				System.out.print("A");
+//				System.out.print("A");
 				cache.put(image.imageSize(), list);
 			}		
 		}

@@ -37,15 +37,15 @@ public class ImageGarbageCollector
 			{
 				imageCount = 0;
 				
-				onGC();
+//				onGC();
 				
-/*				new Thread()
+				new Thread()
 				{
 					@Override public void run()
 					{
 						onGC();
 					}
-				}.run();*/
+				}.start();
 			}
 		}
 	}

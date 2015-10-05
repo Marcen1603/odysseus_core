@@ -27,14 +27,8 @@ public class ImageFunctions {
 			default: throw new UnsupportedOperationException("No conversion specified from pixel format " + input.getPixelFormat() + " to RGBA");
 			}
 						
-			ImageJCV converted = ImageJCV.createCompatible(input);
-			
-			IplImage iplInput = input.unwrap();
-			IplImage iplConverted = converted.unwrap();
-			cvCvtColor(iplInput, iplConverted, conversion);
-			input.rewrap(iplInput);
-			converted.rewrap(iplConverted);
-			
+			ImageJCV converted = ImageJCV.createCompatible(input);			
+			cvCvtColor(input.getImage(), converted.getImage(), conversion);			
 			input = converted;
 		}
 
@@ -127,10 +121,13 @@ public class ImageFunctions {
 		if (newWidth == image.getWidth() && newHeight == image.getHeight()) return image;
 		
 		ImageJCV newImage = new ImageJCV(newWidth, newHeight, image.getDepth(), image.getNumChannels(), image.getPixelFormat());
-		int bytesPerPixel = Math.abs(newImage.getDepth() & 0xFF) / 8 * newImage.getNumChannels();
+		cvCopyMakeBorder(image.getImage(), newImage.getImage(), new int[]{0, 0, newWidth - image.getWidth(), newHeight - image.getHeight()}, 0); 
+		return newImage;
+		
+/*		int bytesPerPixel = Math.abs(newImage.getDepth() & 0xFF) / 8 * newImage.getNumChannels();
 		ByteBuffer newBuffer = newImage.getImageData();
 		ByteBuffer oldBuffer = image.getImageData();
-		
+
 		newBuffer.rewind();
 		oldBuffer.rewind();
 		
@@ -173,7 +170,7 @@ public class ImageFunctions {
 			}
 		}		
 		
-		return newImage;
+		return newImage;*/
 	}		
 	
 	// Returns this image converted to grayscale. Returns this, when this image already is a grayscale image and doClone = false
@@ -197,14 +194,8 @@ public class ImageFunctions {
 				throw new UnsupportedOperationException("toGrayscale not implemented for " + input.getNumChannels() + " channels!");
 		}
 		
-		ImageJCV result = new ImageJCV(input.getWidth(), input.getHeight(), IPL_DEPTH_8U, 1, AV_PIX_FMT_GRAY8);
-		
-		IplImage iplInput = input.unwrap();
-		IplImage iplResult = result.unwrap();
-		cvCvtColor(iplInput, iplResult, conversion);
-		input.rewrap(iplInput);
-		result.rewrap(iplResult);
-		
+		ImageJCV result = new ImageJCV(input.getWidth(), input.getHeight(), IPL_DEPTH_8U, 1, AV_PIX_FMT_GRAY8);		
+		cvCvtColor(input.getImage(), result.getImage(), conversion);		
 		return result;
 	}
 
@@ -224,14 +215,8 @@ public class ImageFunctions {
 
 	public static ImageJCV resize(ImageJCV image, int width, int height) 
 	{
-		ImageJCV result = new ImageJCV(width, height, image.getDepth(), image.getNumChannels(), image.getPixelFormat());
-		
-		IplImage iplImage = image.unwrap();
-		IplImage iplResult = result.unwrap();
-		cvResize(iplImage, iplResult);
-		result.rewrap(iplResult);
-		image.rewrap(iplImage);
-		
+		ImageJCV result = new ImageJCV(width, height, image.getDepth(), image.getNumChannels(), image.getPixelFormat());		
+		cvResize(image.getImage(), result.getImage());		
 		return result;
 	}	
 }

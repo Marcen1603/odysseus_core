@@ -80,7 +80,11 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 			
 		 							@Override public void onNewFrame(long timeStamp, ByteBuffer buffer)
 		 							{
-		 								logStats();
+//		 								if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return;
+		 								
+//		 								System.out.println("Timestamp = " + timeStamp);
+	
+//		 								logStats();
 		 								imageCount++;
 		 								
 		 								int size = 1; 
@@ -102,6 +106,8 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			 								image.getImageData().put(buffer);				 								
 		 									tuple.setAttribute(attrs[0], image); 
 		 								}
+		 								
+		 								System.out.println("Optris generated image @ " + System.currentTimeMillis());
 		 								
 		 								fireProcess(tuple);
 		 							}

@@ -186,17 +186,14 @@ public abstract class AbstractVideoImplementation
 			if (recorder == null)
 				createAndStartRecorder(image);		
 					
-			IplImage iplImage = image.unwrap();
 			try
 			{
-				recorder.record(new OpenCVFrameConverter.ToIplImage().convert(iplImage));
+				recorder.record(new OpenCVFrameConverter.ToIplImage().convert(image.getImage()));
 			}
 			catch (ArithmeticException e)
 			{
 				System.err.println("Error " + e.getMessage() + " using " + image);
-//				e.printStackTrace();
 			}			
-			image.rewrap(iplImage);
 			
 			if (syncFileStream != null)
 				syncFileStream.writeDouble(timeStamp);

@@ -89,9 +89,7 @@ public class ImageFrame extends CanvasFrame
 			if (getWidth() != image.getWidth() || getHeight() != image.getHeight())
 				setSize(image.getWidth(), image.getHeight());
 			
-			IplImage iplImage = image.unwrap();
-			showImage(new OpenCVFrameConverter.ToIplImage().convert(iplImage));
-			image.rewrap(iplImage);
+			showImage(new OpenCVFrameConverter.ToIplImage().convert(image.getImage()));
 			repaint();
 		}
 	}

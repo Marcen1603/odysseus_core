@@ -132,7 +132,10 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	        if (timeStamp != null)
 	        	lastTimeStamp = timeStamp.getStart().getMainPoint();
 	        else
-	        	lastTimeStamp = System.currentTimeMillis();			
+	        {
+	        	lastTimeStamp = System.currentTimeMillis();
+	        	System.out.println("Warning: No timestamp provided!");
+	        }
 			
 			if (!logSetUp)
 				startLogging(object, lastTimeStamp);

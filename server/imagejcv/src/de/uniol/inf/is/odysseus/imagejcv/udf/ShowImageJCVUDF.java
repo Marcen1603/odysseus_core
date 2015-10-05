@@ -6,6 +6,7 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
@@ -59,15 +60,22 @@ public class ShowImageJCVUDF extends CanvasFrame implements IUserDefinedFunction
 	 */
 	@Override public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) 
 	{		
-		if (!isVisible()) return in;
-		
-		ImageJCV image = (ImageJCV) in.getAttribute(this.pos);
+		if (isVisible())
+		{
+			ImageJCV image = (ImageJCV) in.getAttribute(this.pos);			
+								
 			
-		setTitle(title + " [" + image.getWidth() + "x" + image.getHeight() + "]");
-		
-		IplImage iplImage = image.unwrap();
-		showImage(new OpenCVFrameConverter.ToIplImage().convert(iplImage));
-		image.rewrap(iplImage);
+			String curTitle = title + " [" + image.getWidth() + "x" + image.getHeight() + "]";
+			
+	        TimeInterval timeStamp = (TimeInterval)in.getMetadata();
+	        if (timeStamp != null)
+//	        	curTitle += " lag = " + (System.currentTimeMillis() - timeStamp.getStart().getMainPoint()) + "ms";			
+	        	curTitle += " timestamp = " + timeStamp.getStart().getMainPoint() + "ms";
+			
+	        setTitle(curTitle);
+	        
+			showImage(new OpenCVFrameConverter.ToIplImage().convert(image.getImage()));
+		}
 		
 		return in;
 	}
