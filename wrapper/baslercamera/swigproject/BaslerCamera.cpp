@@ -130,10 +130,10 @@ void BaslerCamera::onGrabbedInternal(const CGrabResultPtr& grabResult)
 	converter.OutputPaddingX = lineLength - imageWidth * 3; // NumChannels = 3
 	converter.Convert(image, grabResult);
 
-	onGrabbed(image.GetBuffer(), image.GetImageSize());
+	onGrabbed(grabResult->GetTimeStamp(), image.GetBuffer(), image.GetImageSize());
 }
 
-void BaslerCamera::onGrabbed(void* buffer, long size)
+void BaslerCamera::onGrabbed(long long timeStamp, void* buffer, long size)
 {
 }
 
@@ -161,6 +161,8 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 
 	if (size < bufferSize) return false;
 	if (buffer == NULL) return false;
+
+	lastTimeStamp = result->GetTimeStamp();
 
 	CImageFormatConverter converter;
 //	if (supportsBGRConversion)

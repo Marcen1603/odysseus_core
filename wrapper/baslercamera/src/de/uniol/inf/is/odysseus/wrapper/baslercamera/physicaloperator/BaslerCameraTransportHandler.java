@@ -77,8 +77,11 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				LOG.info("Starting basler camera...");
 		 		cameraCapture = new BaslerCamera(serialNumber)
 		 			{
-		 				@Override public void onGrabbed(ByteBuffer buffer)
+		 				@Override public void onGrabbed(long timeStamp, ByteBuffer buffer)
 		 				{
+		 					// TODO: Use timestamp
+		 					System.out.println("Grab timestamp = " + timeStamp);
+		 					
 							Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
 							int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 							if (attrs.length > 0)
@@ -181,7 +184,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			}
 			
 			LOG.debug("Grabbed frame from Basler camera " + serialNumber);
-			System.out.println("Grabbed frame from Basler camera " + serialNumber);
+			System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraCapture.getLastTimeStamp());
 
 			int size = 1;
 			int[] attrs = {0};

@@ -16,7 +16,8 @@ class SwigDirector_BaslerCamera : public BaslerCamera, public Swig::Director {
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
     SwigDirector_BaslerCamera(JNIEnv *jenv, std::string serialNumber);
-    virtual void onGrabbed(void *buffer, long size);
+    virtual ~SwigDirector_BaslerCamera();
+    virtual void onGrabbed(long long timeStamp, void *buffer, long size);
 public:
     bool swig_overrides(int n) {
       return (n < 1 ? swig_override[n] : false);

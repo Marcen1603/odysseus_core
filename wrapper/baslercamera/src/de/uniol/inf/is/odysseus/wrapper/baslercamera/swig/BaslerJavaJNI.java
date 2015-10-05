@@ -19,16 +19,17 @@ public class BaslerJavaJNI {
   public final static native boolean BaslerCamera_grabRGB8(long jarg1, BaslerCamera jarg1_, java.nio.ByteBuffer jarg2, long jarg4) throws java.lang.RuntimeException;
   public final static native int BaslerCamera_getImageWidth(long jarg1, BaslerCamera jarg1_);
   public final static native int BaslerCamera_getImageHeight(long jarg1, BaslerCamera jarg1_);
-  public final static native void BaslerCamera_onGrabbed(long jarg1, BaslerCamera jarg1_, java.nio.ByteBuffer jarg2);
-  public final static native void BaslerCamera_onGrabbedSwigExplicitBaslerCamera(long jarg1, BaslerCamera jarg1_, java.nio.ByteBuffer jarg2);
+  public final static native long BaslerCamera_getLastTimeStamp(long jarg1, BaslerCamera jarg1_);
+  public final static native void BaslerCamera_onGrabbed(long jarg1, BaslerCamera jarg1_, long jarg2, java.nio.ByteBuffer jarg3);
+  public final static native void BaslerCamera_onGrabbedSwigExplicitBaslerCamera(long jarg1, BaslerCamera jarg1_, long jarg2, java.nio.ByteBuffer jarg3);
   public final static native void BaslerCamera_initializeSystem() throws java.lang.RuntimeException;
   public final static native void BaslerCamera_shutDownSystem();
   public final static native boolean BaslerCamera_isSystemInitialized();
   public final static native void BaslerCamera_director_connect(BaslerCamera obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void BaslerCamera_change_ownership(BaslerCamera obj, long cptr, boolean take_or_release);
 
-  public static void SwigDirector_BaslerCamera_onGrabbed(BaslerCamera self, java.nio.ByteBuffer buffer) {
-    self.onGrabbed(buffer);
+  public static void SwigDirector_BaslerCamera_onGrabbed(BaslerCamera self, long timeStamp, java.nio.ByteBuffer buffer) {
+    self.onGrabbed(timeStamp, buffer);
   }
 
   private final static native void swig_module_init();
