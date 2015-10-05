@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -54,5 +57,23 @@ public abstract class AbstractCAccessAORule<T extends StreamAO> extends Abstract
 		transformationInformation.addDataHandler(dataHandler);
 		
 		transformationInformation.addIterableSource(logicalOperator);
+	}
+	
+	@Override
+	public void addOperatorConfiguration(StreamAO logicalOperator,
+			QueryAnalyseInformation transformationInformation) {
+		
+		
+		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		ILogicalOperator logicalPlan = DataDictionaryProvider
+				.getDataDictionary(tenant).getStreamForTransformation(
+						logicalOperator.getStreamname(), null);
+
+		AccessAO accessAO = (AccessAO) logicalPlan;
+		
+		Map<String, String> optionMap = new HashMap<String, String>();
+		optionMap = accessAO.getOptionsMap();
+
+		transformationInformation.addOperatorConfiguration(logicalOperator,optionMap);
 	}
 }

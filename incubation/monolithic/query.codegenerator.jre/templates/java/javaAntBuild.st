@@ -4,6 +4,11 @@ javaAntBuild(copyJars)::=<<
 		
 		<project default="jar" name="Create Runnable Jar for Odysseus">
 		
+		
+		<property name="ant.build.javac.source" value="1.7"/>
+		<property name="ant.build.javac.target" value="1.7"/>
+		
+		
 		<target name="clean">
 		
 			<delete dir="build"/>
