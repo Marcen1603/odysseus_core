@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.HashSet;
 
 import javax.inject.Inject;
@@ -17,7 +18,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
-import org.eclipse.osgi.framework.internal.core.AbstractBundle;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -25,6 +25,7 @@ import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,50 +40,47 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLExecutor{
-	
+public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extends IIQLTypeUtils>
+		implements IIQLExecutor {
+
 	protected static final String JAVA_VERSION = "1.7";
-	
-	
-	@Inject 
+
+	@Inject
 	protected Provider<ResourceSet> resourceSetProvider;
-	
+
 	@Inject
 	protected IIQLGenerator generator;
-	
+
 	@Inject
-	protected JavaIoFileSystemAccess fsa;	
-	
+	protected JavaIoFileSystemAccess fsa;
+
 	@Inject
 	protected IOutputConfigurationProvider outputConfigurationProvider;
-	
-	
+
 	@Inject
 	protected IQLQualifiedNameConverter converter;
-	
-	protected U typeUtils;
-	
-	protected F typeDictionary;
-	
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractIQLExecutor.class);
 
+	protected U typeUtils;
+
+	protected F typeDictionary;
+
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractIQLExecutor.class);
 
 	public AbstractIQLExecutor(F typeDictionary, U typeUtils) {
 		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
 	}
-	
-	
+
 	protected void cleanUpDir(String dir) {
 		try {
 			FileUtils.deleteDirectory(new File(dir));
 		} catch (Exception e) {
-			LOG.warn("Could not delete directory "+dir);
+			LOG.warn("Could not delete directory " + dir);
 		}
 	}
 
-	
-	protected Collection<IQLModelElement> getModelElementsToCompile(ResourceSet resourceSet, String outputPath, EObject element) {
+	protected Collection<IQLModelElement> getModelElementsToCompile(ResourceSet resourceSet, String outputPath,
+			EObject element) {
 		Collection<EObject> userDefinedTypes = new HashSet<>();
 		collectUserDefinedTypes(element, userDefinedTypes);
 		userDefinedTypes.add(element);
@@ -92,36 +90,38 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		}
 		return result;
 	}
-	
-//	
-//	protected Collection<IQLModelElement> getModelElementsToCompile(ResourceSet resourceSet, String outputPath, EObject element) {
-//		Collection<IQLModelElement> result = new HashSet<>();
-//		IQLModel model = EcoreUtil2.getContainerOfType(element, IQLModel.class);
-//		for (IQLModelElement member : model.getElements()) {
-//			result.add(member);
-//		}
-//		return result;
-//	}
-	
+
+	//
+	// protected Collection<IQLModelElement>
+	// getModelElementsToCompile(ResourceSet resourceSet, String outputPath,
+	// EObject element) {
+	// Collection<IQLModelElement> result = new HashSet<>();
+	// IQLModel model = EcoreUtil2.getContainerOfType(element, IQLModel.class);
+	// for (IQLModelElement member : model.getElements()) {
+	// result.add(member);
+	// }
+	// return result;
+	// }
+
 	protected String getFolder(IQLModel file) {
 		return "";
 	}
-	
+
 	protected String getFileName(IQLModel file) {
-		URI uri = file.eResource().getURI();		
+		URI uri = file.eResource().getURI();
 		return uri.lastSegment();
 	}
-	
-	protected void collectUserDefinedTypes(EObject element, Collection<EObject> userDefinedTypes)  {
+
+	protected void collectUserDefinedTypes(EObject element, Collection<EObject> userDefinedTypes) {
 		for (JvmTypeReference typeRef : EcoreUtil2.getAllContentsOfType(element, JvmTypeReference.class)) {
 			JvmType type = typeUtils.getInnerType(typeRef, false);
 			if (typeUtils.isUserDefinedType(type, false) && !userDefinedTypes.contains(type)) {
 				userDefinedTypes.add(type);
 				collectUserDefinedTypes(type, userDefinedTypes);
-			} 
+			}
 		}
 	}
-		
+
 	protected void generateJavaFiles(Collection<IQLModelElement> modelElements, String outputPath) {
 		for (IQLModelElement obj : modelElements) {
 			generateJavaFiles(obj, outputPath);
@@ -132,26 +132,28 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		fsa.setOutputPath(outputPath);
 		try {
 			generator.doGenerate(obj, fsa);
-		}catch (Exception e) {
-			LOG.error("error while generating java files for "+obj.getInner().getSimpleName(), e);
-			throw new QueryParseException("error while generating java files for "+obj.getInner().getSimpleName()+": "+System.lineSeparator()+ e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error("error while generating java files for " + obj.getInner().getSimpleName(), e);
+			throw new QueryParseException("error while generating java files for " + obj.getInner().getSimpleName()
+					+ ": " + System.lineSeparator() + e.getMessage(), e);
 		}
 	}
-	
+
 	protected void compileJavaFiles(String path, Collection<String> classPathEntries) {
 		String classPath = "";
 		for (String cpe : classPathEntries) {
-			classPath = classPath+cpe+File.pathSeparatorChar;
+			classPath = classPath + cpe + File.pathSeparatorChar;
 		}
 		StringWriter errWriter = new StringWriter();
-		BatchCompiler.compile("-"+JAVA_VERSION+" -classpath "+classPath+" "+path,new PrintWriter(System.out),new PrintWriter(errWriter),null);
+		BatchCompiler.compile("-" + JAVA_VERSION + " -classpath " + classPath + " " + path, new PrintWriter(System.out),
+				new PrintWriter(errWriter), null);
 		String output = errWriter.toString();
 		if (output != null && output.length() > 0) {
 			System.err.print(output);
-			throw new QueryParseException("error while compiling java files: "+System.lineSeparator()+ output);
-		}	
+			throw new QueryParseException("error while compiling java files: " + System.lineSeparator() + output);
+		}
 	}
-	
+
 	protected Collection<String> createClassPathEntries(ResourceSet set) {
 		Collection<Bundle> bundles = typeDictionary.getRequiredBundles();	
 		
@@ -164,24 +166,31 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 					entries.add(file.getAbsolutePath()+File.separator+"bin");
 				}
 				entries.add(file.getParentFile().getAbsolutePath());
-				if (bundle instanceof AbstractBundle) {
-					try {
-						String[] classPathEntries = ((AbstractBundle) bundle).getBundleData().getClassPath();
-						for (String e : classPathEntries) {
-							entries.add(file.getAbsolutePath()+File.separator+e);
-						}
-					} catch (BundleException e) {
-						LOG.error("error while adding classpath entries of bundle " +bundle.getSymbolicName(), e);
-						throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName()+": "+System.lineSeparator()+e.getMessage(),e);
-					}								
+				String[] classPathEntries = getBundleClasspath(bundle);
+				if (classPathEntries != null){
+					for (String e : classPathEntries) {
+						entries.add(file.getAbsolutePath()+File.separator+e);
+					}
+				}else{
+					LOG.error("error while adding classpath entries of bundle " +bundle.getSymbolicName());
+					throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName());
 				}
 			}
 		}	
-				
+		
 		return entries;	
 	}
-	
-	
+
+	// TODO: Duplicated code (AbstractIQLTypeDictionary)
+	private String[] getBundleClasspath(Bundle bundle) {
+		Dictionary<String, String> d = bundle.getHeaders();
+		String classPath = d.get(Constants.BUNDLE_CLASSPATH);
+		if (classPath != null) {
+			return classPath.split(",");
+		}
+		return null;
+	}
+
 	private File getPluginDir(Bundle bundle) {
 		try {
 			URL url = FileLocator.toFileURL(FileLocator.find(bundle, new Path(""), null));
@@ -190,6 +199,5 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 			return null;
 		}
 	}
-
 
 }
