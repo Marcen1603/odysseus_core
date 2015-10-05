@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Dictionary;
 import java.util.HashSet;
 
 import javax.inject.Inject;
@@ -24,8 +23,6 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +36,6 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-@SuppressWarnings("restriction")
 public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extends IIQLTypeUtils>
 		implements IIQLExecutor {
 
@@ -166,7 +162,7 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 					entries.add(file.getAbsolutePath()+File.separator+"bin");
 				}
 				entries.add(file.getParentFile().getAbsolutePath());
-				String[] classPathEntries = getBundleClasspath(bundle);
+				String[] classPathEntries = typeDictionary.getBundleClasspath(bundle);
 				if (classPathEntries != null){
 					for (String e : classPathEntries) {
 						entries.add(file.getAbsolutePath()+File.separator+e);
@@ -179,16 +175,6 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		}	
 		
 		return entries;	
-	}
-
-	// TODO: Duplicated code (AbstractIQLTypeDictionary)
-	private String[] getBundleClasspath(Bundle bundle) {
-		Dictionary<String, String> d = bundle.getHeaders();
-		String classPath = d.get(Constants.BUNDLE_CLASSPATH);
-		if (classPath != null) {
-			return classPath.split(",");
-		}
-		return null;
 	}
 
 	private File getPluginDir(Bundle bundle) {

@@ -50,4 +50,5 @@ public interface IIQLTypeDictionary {
 	void removeSystemType(String name);	
 	IQLSystemType getSystemType(String name);
 	boolean isSystemType(String name);
+	String[] getBundleClasspath(Bundle bundle);
 }

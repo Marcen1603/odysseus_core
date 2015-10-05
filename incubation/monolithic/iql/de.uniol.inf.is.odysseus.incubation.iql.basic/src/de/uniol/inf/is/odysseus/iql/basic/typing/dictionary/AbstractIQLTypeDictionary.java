@@ -239,7 +239,8 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 		return result;
 	}
 
-	private String[] getBundleClasspath(Bundle bundle) {
+	@Override
+	public String[] getBundleClasspath(Bundle bundle) {
 		Dictionary<String, String> d = bundle.getHeaders();
 		String classPath = d.get(Constants.BUNDLE_CLASSPATH);
 		if (classPath != null) {
