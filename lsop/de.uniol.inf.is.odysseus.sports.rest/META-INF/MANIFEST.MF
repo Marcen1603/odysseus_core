@@ -4,7 +4,7 @@ Bundle-Name: Example
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.sports.rest
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.sports.rest.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.sports.sportsql.parser,

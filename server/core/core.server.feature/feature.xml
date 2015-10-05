@@ -30,10 +30,6 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
-   <includes
-         id="org.eclipse.equinox.p2.core.feature"
-         version="0.0.0"/>
-
    <requires>
       <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
    </requires>
@@ -121,26 +117,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.math3"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.commons.codec"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.commons.lang3"
-         download-size="0"
-         install-size="0"
-         version="3.1.0"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.core.server.datadictionary"
          download-size="0"
          install-size="0"
@@ -160,88 +136,6 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.director"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.engine"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.metadata"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.metadata.repository"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.publisher"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.publisher.eclipse"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.repository"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.repository.tools"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.console"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.operations"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="io.netty"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"
@@ -285,13 +179,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.equinox.p2.artifact.repository"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.security"
          download-size="0"
          install-size="0"
@@ -311,5 +198,11 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.lang3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

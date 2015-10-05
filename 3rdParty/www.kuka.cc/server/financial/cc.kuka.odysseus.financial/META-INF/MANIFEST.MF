@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: cc.kuka.odysseus.financial.Activator
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: cc.kuka.odysseus.financial.common.sdf.schema,
  com.google.common.base,

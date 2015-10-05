@@ -14,7 +14,7 @@ Import-Package: de.uniol.inf.is.odysseus.benchmark,
  org.simpleframework.xml.core,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.benchmarker
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/* 

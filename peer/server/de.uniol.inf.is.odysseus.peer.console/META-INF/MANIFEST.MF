@@ -4,7 +4,7 @@ Bundle-Name: Console
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.console
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/PeerConsole.xml
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,

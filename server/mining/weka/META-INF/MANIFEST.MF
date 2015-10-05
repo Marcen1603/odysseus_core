@@ -88,4 +88,4 @@ Export-Package: org.tartarus.snowball,
  weka.gui.treevisualizer,
  weka.gui.visualize,
  weka.gui.visualize.plugins
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

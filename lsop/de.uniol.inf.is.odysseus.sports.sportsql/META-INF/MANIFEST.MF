@@ -4,7 +4,7 @@ Bundle-Name: Sportsql
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.sports.sportsql
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.sports.sportsql.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: com.fasterxml.jackson.core,
  com.fasterxml.jackson.databind,

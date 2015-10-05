@@ -55,6 +55,18 @@ limitations under the License.
          id="org.eclipse.zest"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.rcp"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecore"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.common"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
          download-size="0"
@@ -76,6 +88,56 @@ limitations under the License.
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.config"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.codec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf.filetransfer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf.identity"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf.ssl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.p2.transport.ecf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf.provider.filetransfer"
          download-size="0"
          install-size="0"
          version="0.0.0"

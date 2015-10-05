@@ -28,8 +28,9 @@ public class StringPlusOperator extends AbstractBinaryOperator<String> {
 	@Override
 	public String getValue() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.valueOf(getInputValue(0)));
-		sb.append(String.valueOf(getInputValue(1)));
+		// We know, this must be a string!
+		sb.append((String)getInputValue(0));
+		sb.append((String)getInputValue(1));
 		return sb.toString();
 	}
 

@@ -5,15 +5,10 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.base;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn
 Bundle-Vendor: University of Oldenburg
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.client.common,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.rcp.config,
- org.apache.commons.httpclient,
- org.apache.commons.httpclient.cookie,
- org.apache.commons.httpclient.methods,
- org.apache.commons.httpclient.methods.multipart,
- org.apache.commons.httpclient.protocol,
  org.eclipse.core.commands,
  org.eclipse.core.resources,
  org.eclipse.core.runtime;version="3.4.0",
@@ -58,3 +53,5 @@ Require-Bundle: org.eclipse.ui.navigator.resources;bundle-version="3.4.300",
  de.uniol.inf.is.odysseus.report;bundle-version="1.0.0",
  org.eclipse.ui.ide,
  org.apache.commons.codec;bundle-version="1.3.0"
+Bundle-ClassPath: commons-httpclient-3.1.jar,
+ .

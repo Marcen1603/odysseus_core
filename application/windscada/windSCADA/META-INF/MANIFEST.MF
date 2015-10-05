@@ -4,7 +4,7 @@ Bundle-Name: WindSCADAAnwendung
 Bundle-SymbolicName: windscadaanwendung;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: windscadaanwendung.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.database,
  org.eclipse.ui.workbench,

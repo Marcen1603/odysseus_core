@@ -4,7 +4,7 @@ Bundle-Name: Viewer.incubation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.rcp;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.rcp.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.query.codegenerator,
  de.uniol.inf.is.odysseus.query.codegenerator.modell,
  de.uniol.inf.is.odysseus.query.codegenerator.modell.enums,

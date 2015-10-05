@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.iql.basic.ui.hover;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
@@ -82,7 +83,7 @@ public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLType
 		if (element instanceof IMember && element.exists()) {
 			try {
 				return JavadocContentAccess2.getHTMLContent((IMember) element,true);
-			} catch (JavaModelException e) {
+			} catch (CoreException e) {
 				LOG.warn("Could not get java doc", e);
 			}
 		}

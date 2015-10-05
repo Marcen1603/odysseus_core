@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.mail
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.mail.Activator
 Bundle-Vendor: Christian Kuka
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.mail,
  javax.mail.internet;version="1.4.0",
  javax.mail.search;version="1.4.0",

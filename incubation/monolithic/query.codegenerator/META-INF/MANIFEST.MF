@@ -4,7 +4,7 @@ Bundle-Name: Transformation.incubation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.datadictionary,

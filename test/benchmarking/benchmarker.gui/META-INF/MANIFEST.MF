@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.databinding;bundle-version="1.4.0",
  de.uniol.inf.is.odysseus.core.server
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.benchmark,
  de.uniol.inf.is.odysseus.benchmark.result,
  de.uniol.inf.is.odysseus.benchmarker,

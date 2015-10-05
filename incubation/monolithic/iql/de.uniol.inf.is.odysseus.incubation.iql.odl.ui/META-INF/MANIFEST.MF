@@ -29,7 +29,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.iql.odl;visibility:=reexport,
  org.eclipse.xtext.junit4;bundle-version="2.7.3"
 Import-Package: org.apache.log4j,
  org.slf4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.iql.odl.ui.contentassist,
  de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.antlr,
  de.uniol.inf.is.odysseus.iql.odl.ui.internal,

@@ -4,7 +4,7 @@ Bundle-Name: Activestandby Recovery Strategy
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Michael Brand
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.Activator
 Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server,

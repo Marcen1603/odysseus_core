@@ -318,7 +318,6 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.codec_1_7"/>
-      <import plugin="org.apache.commons.httpclient"/>
       <import plugin="org.apache.commons.logging"/>
       <import plugin="org.json"/>
       <import plugin="org.eclipse.osgi"/>

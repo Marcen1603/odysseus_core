@@ -455,20 +455,21 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class<?> adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == CommandStack.class) {
-			return editDomain.getCommandStack();
+			return (T) editDomain.getCommandStack();
 		}
 		if (adapter == ActionRegistry.class) {
-			return getActionRegistry();
+			return (T) getActionRegistry();
 		}
 		if (adapter == ZoomManager.class) {
-			return ((ScalableFreeformRootEditPart) viewer.getRootEditPart())
+			return (T) ((ScalableFreeformRootEditPart) viewer.getRootEditPart())
 					.getZoomManager();
 		}
 		if (adapter == PalettePage.class) {
-			return createPalettePage();
+			return (T) createPalettePage();
 
 		}
 		return super.getAdapter(adapter);

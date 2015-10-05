@@ -74,7 +74,7 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	public void addListener(IDashboardPartListener listener);
 	public void removeListener(IDashboardPartListener listener);
 	
-	public Object getAdapter(Class<?> adapter);
+	public <T> T getAdapter(Class<T> adapter);
 	
 	public IDashboardActionBarContributor getEditorActionBarContributor();
 	

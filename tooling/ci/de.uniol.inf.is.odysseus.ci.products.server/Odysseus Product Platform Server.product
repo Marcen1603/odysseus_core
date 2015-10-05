@@ -7,9 +7,12 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -data @noDefault</programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -Declipse.p2.mirrors=false</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-console -clean -data @noDefault
+      </programArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -Declipse.p2.mirrors=false -Dosgi.console.enable.builtin=true
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
