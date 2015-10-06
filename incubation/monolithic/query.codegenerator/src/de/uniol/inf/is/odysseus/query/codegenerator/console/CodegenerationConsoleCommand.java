@@ -49,8 +49,10 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 int queryId= Integer.parseInt(ci.nextArgument());
 		 String odysseusDirectory= ci.nextArgument();
 		 String executor= ci.nextArgument();
-		 
-		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  targetDirectory,  queryId,  odysseusDirectory, true,  executor, null));
+		 String optionsString = ci.nextArgument();
+	
+	
+		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  targetDirectory,  queryId,  odysseusDirectory, true,  executor,  parseOptions(optionsString)));
 	 }
 
 	 
@@ -112,7 +114,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		sb.append("---Codegeneration commands---\n");
 		sb.append("    queryCodegen <configName> <queryID>		   		- Transform a query to a standalone application\n");
 		sb.append("    showRegistrys 				   		- Show all registry values\n");
-		sb.append("    addCodegenConfig <configName> <targetPlatform> <targetDirectory> <queryId> <odysseusPath> <executor>		- Add a codegeneration config\n");
+		sb.append("    addCodegenConfig <configName> <targetPlatform> <targetDirectory> <queryId> <odysseusPath> <scheduler> <options>	- Add a codegeneration config\n");
 		sb.append("    showAllConfigs 						- Show all configs\n");
 		
 		
@@ -137,5 +139,26 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		}
 		
 		return parameterAsInt;
+	}
+	
+	
+	private Map<String,String> parseOptions(String options){
+		 Map<String,String> optionMap = new  HashMap<String,String>();
+		 
+		 if(options !=null){
+			 String[] splitedOptions = options.split(",");
+			 
+			 if(splitedOptions.length>0){
+				 for(int i=0; i<splitedOptions.length; i++){
+					 
+					 String optionKey = splitedOptions[i].split("=")[0];
+					 String optionValue = splitedOptions[i].split("=")[1];
+					 optionMap.put(optionKey, optionValue);
+					 
+				 }
+			 }
+		 }
+		
+		 return optionMap;	
 	}
 }
