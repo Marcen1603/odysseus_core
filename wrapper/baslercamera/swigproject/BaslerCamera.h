@@ -28,7 +28,8 @@ private:
 	int imageWidth;
 	int imageHeight;
 	int bufferSize;
-	long long lastTimeStamp;
+	int ticksPerSecond;
+	double lastTimeStamp;
 
 	void onGrabbedInternal(const Pylon::CGrabResultPtr& grabResult);
 
@@ -36,17 +37,17 @@ public:
 	BaslerCamera(std::string serialNumber) : serialNumber(serialNumber), camera(NULL) {}
 	virtual ~BaslerCamera() {}
 
-	void	start(OperationMode operationMode) throw(std::exception);
-	void	stop();
-	void	setLineLength(int lineLength) { this->lineLength = lineLength; }
+	void start(OperationMode operationMode) throw(std::exception);
+	void stop();
+	void setLineLength(int lineLength) { this->lineLength = lineLength; }
 
-	bool	trigger() throw(std::exception);
-	bool	grabRGB8(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);
-	int		getImageWidth() const { return imageWidth; }
-	int		getImageHeight() const { return imageHeight; }
-	long long getLastTimeStamp() const { return lastTimeStamp; }
+	bool trigger() throw(std::exception);
+	bool grabRGB8(void *buffer, long size, unsigned int timeOutMs) throw(std::exception);
+	int	getImageWidth() const { return imageWidth; }
+	int getImageHeight() const { return imageHeight; }
+	double getLastTimeStamp() const { return lastTimeStamp; }
 
-	virtual void onGrabbed(long long timeStamp, void *buffer, long size);
+	virtual void onGrabbed(double timeStamp, void *buffer, long size);
 
 public:
 	static void initializeSystem() throw(std::exception);

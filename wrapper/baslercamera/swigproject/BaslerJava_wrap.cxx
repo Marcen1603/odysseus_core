@@ -677,11 +677,11 @@ SwigDirector_BaslerCamera::~SwigDirector_BaslerCamera() {
 }
 
 
-void SwigDirector_BaslerCamera::onGrabbed(long long timeStamp, void *buffer, long size) {
+void SwigDirector_BaslerCamera::onGrabbed(double timeStamp, void *buffer, long size) {
   JNIEnvWrapper swigjnienv(this) ;
   JNIEnv * jenv = swigjnienv.getJNIEnv() ;
   jobject swigjobj = (jobject) NULL ;
-  jlong jtimeStamp  ;
+  jdouble jtimeStamp  ;
   jobject jbuffer = 0 ;
   
   if (!swig_override[0]) {
@@ -690,7 +690,7 @@ void SwigDirector_BaslerCamera::onGrabbed(long long timeStamp, void *buffer, lon
   }
   swigjobj = swig_get_self(jenv);
   if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
-    jtimeStamp = (jlong) timeStamp;
+    jtimeStamp = (jdouble) timeStamp;
     {
       jbuffer = (jenv)->NewDirectByteBuffer(buffer, size); 
     }
@@ -714,7 +714,7 @@ void SwigDirector_BaslerCamera::swig_connect_director(JNIEnv *jenv, jobject jsel
     jmethodID base_methid;
   } methods[] = {
     {
-      "onGrabbed", "(JLjava/nio/ByteBuffer;)V", NULL 
+      "onGrabbed", "(DLjava/nio/ByteBuffer;)V", NULL 
     }
   };
   
@@ -930,24 +930,24 @@ SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1getLastTimeStamp(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
-  jlong jresult = 0 ;
+SWIGEXPORT jdouble JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1getLastTimeStamp(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jdouble jresult = 0 ;
   BaslerCamera *arg1 = (BaslerCamera *) 0 ;
-  long long result;
+  double result;
   
   (void)jenv;
   (void)jcls;
   (void)jarg1_;
   arg1 = *(BaslerCamera **)&jarg1; 
-  result = (long long)((BaslerCamera const *)arg1)->getLastTimeStamp();
-  jresult = (jlong)result; 
+  result = (double)((BaslerCamera const *)arg1)->getLastTimeStamp();
+  jresult = (jdouble)result; 
   return jresult;
 }
 
 
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1onGrabbed(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg3) {
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1onGrabbed(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2, jobject jarg3) {
   BaslerCamera *arg1 = (BaslerCamera *) 0 ;
-  long long arg2 ;
+  double arg2 ;
   void *arg3 = (void *) 0 ;
   long arg4 ;
   
@@ -955,7 +955,7 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
   (void)jcls;
   (void)jarg1_;
   arg1 = *(BaslerCamera **)&jarg1; 
-  arg2 = (long long)jarg2; 
+  arg2 = (double)jarg2; 
   {
     /* %typemap(in) void * */ 
     arg3 = jenv->GetDirectBufferAddress(jarg3); 
@@ -965,9 +965,9 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
 }
 
 
-SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1onGrabbedSwigExplicitBaslerCamera(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg3) {
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_BaslerJavaJNI_BaslerCamera_1onGrabbedSwigExplicitBaslerCamera(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2, jobject jarg3) {
   BaslerCamera *arg1 = (BaslerCamera *) 0 ;
-  long long arg2 ;
+  double arg2 ;
   void *arg3 = (void *) 0 ;
   long arg4 ;
   
@@ -975,7 +975,7 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
   (void)jcls;
   (void)jarg1_;
   arg1 = *(BaslerCamera **)&jarg1; 
-  arg2 = (long long)jarg2; 
+  arg2 = (double)jarg2; 
   {
     /* %typemap(in) void * */ 
     arg3 = jenv->GetDirectBufferAddress(jarg3); 
@@ -1050,7 +1050,7 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_baslercamera_swig_
     const char *signature;
   } methods[1] = {
     {
-      "SwigDirector_BaslerCamera_onGrabbed", "(Lde/uniol/inf/is/odysseus/wrapper/baslercamera/swig/BaslerCamera;JLjava/nio/ByteBuffer;)V" 
+      "SwigDirector_BaslerCamera_onGrabbed", "(Lde/uniol/inf/is/odysseus/wrapper/baslercamera/swig/BaslerCamera;DLjava/nio/ByteBuffer;)V" 
     }
   };
   Swig::jclass_BaslerJavaJNI = (jclass) jenv->NewGlobalRef(jcls);

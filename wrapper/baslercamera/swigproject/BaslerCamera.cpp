@@ -85,15 +85,14 @@ void BaslerCamera::start(OperationMode operationMode)
 	if (!CImageFormatConverter::IsSupportedOutputFormat(PixelType_BGR8packed))
 		throw std::exception("Conversion to BGR not implemented!");
 
-/*	supportsBGRConversion = CImageFormatConverter::IsSupportedOutputFormat(PixelType_BGR8packed);
-	std::cout << "supportsBGRConversion = " << supportsBGRConversion << std::endl;*/
-
 	GenApi::INodeMap& nodemap = camera->GetNodeMap();
 
 	camera->Open();
 
 	imageWidth  = GenApi::CIntegerPtr(nodemap.GetNode("Width"))->GetValue();
 	imageHeight = GenApi::CIntegerPtr(nodemap.GetNode("Height"))->GetValue();
+	ticksPerSecond = GenApi::CIntegerPtr(nodemap.GetNode("GevTimestampTickFrequency"))->GetValue();
+	GenApi::CCommandPtr(nodemap.GetNode("GevTimestampControlReset"))->Execute();
 	
 	if (operationMode == PUSH)
 	{
@@ -130,10 +129,10 @@ void BaslerCamera::onGrabbedInternal(const CGrabResultPtr& grabResult)
 	converter.OutputPaddingX = lineLength - imageWidth * 3; // NumChannels = 3
 	converter.Convert(image, grabResult);
 
-	onGrabbed(grabResult->GetTimeStamp(), image.GetBuffer(), image.GetImageSize());
+	onGrabbed((double)grabResult->GetTimeStamp() / ticksPerSecond, image.GetBuffer(), image.GetImageSize());
 }
 
-void BaslerCamera::onGrabbed(long long timeStamp, void* buffer, long size)
+void BaslerCamera::onGrabbed(double timeStamp, void* buffer, long size)
 {
 }
 
@@ -157,58 +156,17 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 	
 	imageWidth = result->GetWidth();
 	imageHeight = result->GetHeight();
-//	bufferSize = imageWidth*imageHeight*getImageChannels();
 
 	if (size < bufferSize) return false;
 	if (buffer == NULL) return false;
 
-	lastTimeStamp = result->GetTimeStamp();
+	lastTimeStamp = (double)result->GetTimeStamp() / ticksPerSecond;
 
 	CImageFormatConverter converter;
-//	if (supportsBGRConversion)
-	{
-		converter.OutputPixelFormat = PixelType_BGR8packed;
-		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
-		converter.OutputPaddingX = lineLength - imageWidth * 3; // NumChannels = 3
-		converter.Convert(buffer, size, result);
-	}
-/*	else
-	{
-		// TODO: Code not tested
-		CPylonImage image;
-		converter.OutputPixelFormat = PixelType_RGB8packed;
-		converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; //OutputBitAlignment_MsbAligned;
-		converter.OutputPaddingX = 0;
-		converter.Convert(image, result);
-
-		int bytesLeft = image.GetImageSize();
-
-		struct PixelRGB
-		{
-			BYTE r, g, b;
-		};
-
-		struct PixelBGR
-		{
-			BYTE b, g, r;
-		};
-
-		PixelRGB* inBuffer = (PixelRGB*)image.GetBuffer();
-		PixelBGR* outBuffer = (PixelBGR*)buffer;
-
-		while (bytesLeft > 0)
-		{
-			PixelRGB* cur = inBuffer++;
-
-			outBuffer->r = cur->r;
-			outBuffer->g = cur->g;
-			outBuffer->b = cur->b;
-
-			outBuffer++;
-
-			bytesLeft -= 3;
-		}
-	}*/
+	converter.OutputPixelFormat = PixelType_BGR8packed;
+	converter.OutputBitAlignment = OutputBitAlignment_LsbAligned; // OutputBitAlignment_MsbAligned;
+	converter.OutputPaddingX = lineLength - imageWidth * 3; // NumChannels = 3
+	converter.Convert(buffer, size, result);
 
 	return true;
 }

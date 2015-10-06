@@ -83,11 +83,11 @@ public class BaslerCamera {
     return BaslerJavaJNI.BaslerCamera_getImageHeight(swigCPtr, this);
   }
 
-  public long getLastTimeStamp() {
+  public double getLastTimeStamp() {
     return BaslerJavaJNI.BaslerCamera_getLastTimeStamp(swigCPtr, this);
   }
 
-  public void onGrabbed(long timeStamp, java.nio.ByteBuffer buffer) {
+  public void onGrabbed(double timeStamp, java.nio.ByteBuffer buffer) {
     if (getClass() == BaslerCamera.class) BaslerJavaJNI.BaslerCamera_onGrabbed(swigCPtr, this, timeStamp, buffer); else BaslerJavaJNI.BaslerCamera_onGrabbedSwigExplicitBaslerCamera(swigCPtr, this, timeStamp, buffer);
   }
 
