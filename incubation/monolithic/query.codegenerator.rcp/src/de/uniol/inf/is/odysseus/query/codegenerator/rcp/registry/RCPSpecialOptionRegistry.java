@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RCPSpecialOptionRegistry {
+public class RcpSpecialOptionRegistry {
 	
-	static Map<String, IRCPSpecialOption> rcpSpeicalOptionList= new HashMap<String, IRCPSpecialOption>();
+	static Map<String, IRcpSpecialOption> rcpSpeicalOptionList= new HashMap<String, IRcpSpecialOption>();
 	
 	
 	
-	public static void registerRCPSpeicalOption(IRCPSpecialOption specialOption){
+	public static void registerRCPSpeicalOption(IRcpSpecialOption specialOption){
 		
 		if(!rcpSpeicalOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
 			rcpSpeicalOptionList.put(specialOption.getTargetPlatform().toLowerCase(), specialOption);
@@ -18,7 +18,7 @@ public class RCPSpecialOptionRegistry {
 	}
 	
 	
-	public static void unregisterRCPSpeicalOption(IRCPSpecialOption specialOption){
+	public static void unregisterRCPSpeicalOption(IRcpSpecialOption specialOption){
 		
 		if(rcpSpeicalOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
 			rcpSpeicalOptionList.remove(specialOption.getTargetPlatform().toLowerCase());
@@ -28,7 +28,7 @@ public class RCPSpecialOptionRegistry {
 	}
 	
 	
-	public static IRCPSpecialOption getRCPSpeicalOption(String targetPlatform){
+	public static IRcpSpecialOption getRCPSpeicalOption(String targetPlatform){
 		
 		if(rcpSpeicalOptionList.containsKey(targetPlatform.toLowerCase())){
 			return rcpSpeicalOptionList.get(targetPlatform.toLowerCase());

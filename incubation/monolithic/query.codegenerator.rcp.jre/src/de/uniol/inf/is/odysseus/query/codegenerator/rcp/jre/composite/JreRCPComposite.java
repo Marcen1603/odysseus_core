@@ -9,9 +9,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.AbstractRCPOptionComposite;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.AbstractRcpOptionComposite;
 
-public class JreRcpComposite extends AbstractRCPOptionComposite {
+public class JreRcpComposite extends AbstractRcpOptionComposite {
 	
 	private Button autoBuild;
 

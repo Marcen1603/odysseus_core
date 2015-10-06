@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.ICRCPOptionComposite;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.IRCPSpecialOption;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.RCPSpecialOptionRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.IRcpOptionComposite;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.IRcpSpecialOption;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.RcpSpecialOptionRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
@@ -42,7 +42,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 	private Composite parentComposite;
 	
 
-	private ICRCPOptionComposite optionComposite;
+	private IRcpOptionComposite optionComposite;
 	
 	
 	private Composite buttonComposite;
@@ -92,7 +92,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		buttonComposite.setLayout(new GridLayout(3, false));
 		
 		
-		IRCPSpecialOption rcpSpecialOption = RCPSpecialOptionRegistry.getRCPSpeicalOption(targetPlatform.getText());
+		IRcpSpecialOption rcpSpecialOption = RcpSpecialOptionRegistry.getRCPSpeicalOption(targetPlatform.getText());
 		
 		if(rcpSpecialOption != null){
 			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
@@ -166,7 +166,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		    	    }
 		    	
 		    	  
-		  		IRCPSpecialOption rcpSpecialOption = RCPSpecialOptionRegistry.getRCPSpeicalOption(targetPlatform.getText());
+		  		IRcpSpecialOption rcpSpecialOption = RcpSpecialOptionRegistry.getRCPSpeicalOption(targetPlatform.getText());
 		  		
 		  		if(rcpSpecialOption != null){
 		  			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
