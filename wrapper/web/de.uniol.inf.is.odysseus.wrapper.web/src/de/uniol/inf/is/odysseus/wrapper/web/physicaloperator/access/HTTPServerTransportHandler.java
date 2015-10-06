@@ -19,14 +19,14 @@ package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.AbstractHandler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,12 +189,10 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
          */
         public DataHandler() {
         }
-
-        /**
-         * {@inheritDoc}
-         */
+        
         @Override
-        public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException, ServletException {
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+        		throws IOException, ServletException {
             if ((target != null) && (target.equals(getPath()))) {
                 response.setContentType("application/json;charset=utf-8");
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -210,8 +208,7 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
             else {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-            response.flushBuffer();
+            response.flushBuffer();        }
 
         }
-    }
 }
