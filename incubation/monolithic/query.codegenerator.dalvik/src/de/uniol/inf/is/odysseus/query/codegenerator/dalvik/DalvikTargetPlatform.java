@@ -3,14 +3,11 @@ package de.uniol.inf.is.odysseus.query.codegenerator.dalvik;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
-import org.eclipse.swt.widgets.Composite;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter.DalvikFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
@@ -50,7 +47,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		
 		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
-
+		
 		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
 		importList.addAll(osgiBind.getImports());
 		
@@ -59,7 +56,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		
 		importList.addAll(startStreams.getImports());
 		
-		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor("Java", parameter.getExecutor()));
+		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor("dalvik", parameter.getExecutor()));
 		
 		try {
 			dalvikFileWrite.createProject();
@@ -70,12 +67,6 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 	}
 	
 	
-
-	@Override
-	public ICRCPOptionComposite getOptionsRCP(Composite parent, int style) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void generateOperatorCodeOperatorReady(ILogicalOperator operator,

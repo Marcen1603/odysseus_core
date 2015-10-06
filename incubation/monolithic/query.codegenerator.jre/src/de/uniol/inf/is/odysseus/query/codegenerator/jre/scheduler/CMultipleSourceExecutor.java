@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorSt
 public class CMultipleSourceExecutor extends AbstractCScheduler{
 
 	public CMultipleSourceExecutor() {
-		super("MultipleSourceExecutor", "JRE");
+		super("MultipleSourceExecutor");
 	}
 
 	@Override

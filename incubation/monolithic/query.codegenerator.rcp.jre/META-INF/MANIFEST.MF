@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jre
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.query.codegenerator.modell,
+ de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell,
+ de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry,
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: org.eclipse.swt
+Service-Component: OSGI-INF/JreRCPSpeicalOption.xml
+Bundle-ActivationPolicy: lazy

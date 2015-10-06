@@ -23,5 +23,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.rcp.base,
  org.eclipse.ui;bundle-version="3.7.0",
  com.google.guava
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator.rcp,
- de.uniol.inf.is.odysseus.query.codegenerator.rcp.commands
-Service-Component: OSGI-INF/CAnalyseServiceBinding.xml
+ de.uniol.inf.is.odysseus.query.codegenerator.rcp.commands,
+ de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell,
+ de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry
+Service-Component: OSGI-INF/CAnalyseServiceBinding.xml,
+ OSGI-INF/RCPSpeicalOptionRegistry.xml

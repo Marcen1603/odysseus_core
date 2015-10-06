@@ -1,5 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.jre.rcp;
-
+package de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre.composite;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,13 +9,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ICRCPOptionComposite;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.ICRCPOptionComposite;
 
 
-public class RCPJreOptions extends Composite implements ICRCPOptionComposite{
 
+public class JreRCPComposite  extends Composite implements ICRCPOptionComposite{
+	
 	private Button autoBuild;
-	public RCPJreOptions(Composite parent,int style) {
+
+
+	public JreRCPComposite(Composite parent,int style) {
 		super(parent, style);
 		
 		GridData contentGridData = new GridData(GridData.FILL_BOTH);
@@ -35,7 +37,7 @@ public class RCPJreOptions extends Composite implements ICRCPOptionComposite{
 	
 	}
 	
-	
+
 	public Map<String,String> getInput(){
 		Map<String,String>  options = new HashMap<String,String>();
 		
@@ -46,7 +48,9 @@ public class RCPJreOptions extends Composite implements ICRCPOptionComposite{
 	}
 	
 	
-	
-	
-	
+	public boolean isDisposed(){
+		return super.isDisposed();
+	}
+
+
 }
