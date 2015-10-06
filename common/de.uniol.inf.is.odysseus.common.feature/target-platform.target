@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="Odysseus Target Platform" sequenceNumber="152">
+<?pde version="3.8"?><target includeMode="feature" name="Odysseus Target Platform" sequenceNumber="153">
 <locations>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.xtext.sdk.feature.group" version="2.7.3.v201411190455"/>
@@ -29,15 +29,22 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.common.feature.group" version="2.11.0.v20150805-0538"/>
 <unit id="org.eclipse.e4.rcp.feature.group" version="1.4.0.v20150903-1804"/>
 <unit id="org.eclipse.ecf.core.feature.feature.group" version="1.1.0.v20150810-1719"/>
-<unit id="org.eclipse.e4.core.tools.feature.source.feature.group" version="4.5.0.v20150818-0640"/>
+<unit id="org.eclipse.sdk.feature.group" version="4.5.1.v20150904-0345"/>
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.11.1.v20150831-1342"/>
+<unit id="org.eclipse.pde.feature.group" version="3.11.1.v20150904-0345"/>
 <unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group" version="1.0.0.v20150810-1719"/>
 <unit id="org.eclipse.equinox.core.sdk.feature.group" version="3.11.1.v20150831-1342"/>
+<unit id="org.eclipse.rcp.configuration.feature.group" version="1.0.101.v20150904-0015"/>
 <unit id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group" version="1.0.0.v20150810-1719"/>
+<unit id="org.eclipse.platform.feature.group" version="4.5.1.v20150904-0015"/>
+<unit id="org.eclipse.rcp.feature.group" version="4.5.1.v20150904-0015"/>
 <unit id="org.eclipse.equinox.core.feature.feature.group" version="1.2.101.v20150826-1312"/>
+<unit id="org.eclipse.rcp.source.feature.group" version="4.5.1.v20150904-0015"/>
 <unit id="org.eclipse.sdk.ide" version="4.5.1.M20150904-0015"/>
+<unit id="org.eclipse.equinox.executable.feature.group" version="3.6.200.v20150602-1417"/>
 <unit id="org.eclipse.equinox.executable" version="3.6.200.v20150602-1417"/>
 <unit id="org.eclipse.equinox.compendium.sdk.feature.group" version="3.11.0.v20150430-1834"/>
 <unit id="org.eclipse.equinox.p2.core.feature.feature.group" version="1.3.100.v20150527-1706"/>
@@ -45,8 +52,10 @@
 <unit id="org.eclipse.equinox.p2.user.ui.feature.group" version="2.2.101.v20150826-1318"/>
 <unit id="org.eclipse.equinox.p2.core.feature.source.feature.group" version="1.3.100.v20150527-1706"/>
 <unit id="org.eclipse.equinox.server.p2.feature.group" version="1.2.200.v20150527-1706"/>
+<unit id="org.eclipse.core.runtime.feature.feature.group" version="1.1.101.v20150903-1804"/>
 <unit id="org.eclipse.rcp.sdk.id" version="4.5.1.M20150904-0015"/>
 <unit id="org.eclipse.equinox.p2.extras.feature.feature.group" version="1.2.100.v20150601-1708"/>
+<unit id="org.eclipse.emf.ecore.feature.group" version="2.11.1.v20150805-0538"/>
 <unit id="org.eclipse.equinox.serverside.sdk.feature.group" version="3.11.1.v20150828-1818"/>
 <unit id="org.eclipse.ecf.filetransfer.feature.feature.group" version="3.10.1.v20150810-1719"/>
 <unit id="org.eclipse.e4.rcp.source.feature.group" version="1.4.0.v20150903-1804"/>
