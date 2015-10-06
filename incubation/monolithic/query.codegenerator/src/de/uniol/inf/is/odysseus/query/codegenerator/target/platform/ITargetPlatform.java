@@ -18,5 +18,7 @@ public interface ITargetPlatform {
 	public void setProgressBarQueue(BlockingQueue<ProgressBarUpdate> progressBarQueue);
 	public BlockingQueue<ProgressBarUpdate> getProgressBarQueue();
 	
+	public String getSpecialOptionInfos();
+	
 
 }

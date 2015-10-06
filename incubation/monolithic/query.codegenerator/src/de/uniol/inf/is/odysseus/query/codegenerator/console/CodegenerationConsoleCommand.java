@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.CAnalyseServiceBinding;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.ICScheduler;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.ITargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 
 
@@ -107,7 +108,24 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		ci.println(sb.toString());
 		
 	 }
-	
+	 
+	 
+	 public void _showSpecialOptions(CommandInterpreter ci) {
+		 String targetPlatformString = ci.nextArgument();
+		 ITargetPlatform targetPlatform = TargetPlatformRegistry.getTargetPlatform(targetPlatformString);
+		 
+		 if(targetPlatform != null){
+			 if(targetPlatform.getSpecialOptionInfos().length()>0){
+				 ci.println("<options>: "+targetPlatform.getSpecialOptionInfos());
+			 }else{
+				 ci.println("No options available!");
+			 }
+		 }else{
+			 ci.println("No targetplatform "+ targetPlatformString +" found!");
+		 }
+			
+		
+	 }
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();

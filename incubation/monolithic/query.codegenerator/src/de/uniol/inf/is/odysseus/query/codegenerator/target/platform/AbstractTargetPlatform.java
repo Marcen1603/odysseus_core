@@ -63,6 +63,11 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		}
 	}
 	
+	@Override
+	public String getSpecialOptionInfos(){
+		return "";
+	}
+	
 	
 	protected void transformQuery(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		

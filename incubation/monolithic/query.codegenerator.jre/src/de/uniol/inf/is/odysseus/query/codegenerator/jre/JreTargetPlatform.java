@@ -131,6 +131,11 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		}
 	}
 	
+	
+	@Override
+	public String getSpecialOptionInfos(){
+		return "autobuild=true/false";
+	}
 
 	
 
