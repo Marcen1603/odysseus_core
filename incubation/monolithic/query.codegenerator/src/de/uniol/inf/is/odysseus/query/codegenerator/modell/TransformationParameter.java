@@ -58,7 +58,7 @@ public class TransformationParameter {
 	}
 
 
-	public String getOdysseusPath() {
+	public String getOdysseusDirectory() {
 		return odysseusPath;
 	}
 

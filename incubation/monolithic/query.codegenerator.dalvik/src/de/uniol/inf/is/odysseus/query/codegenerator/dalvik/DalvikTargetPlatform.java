@@ -48,7 +48,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 		
-		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
+		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusDirectory(), queryAnalyseInformation);
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code

@@ -28,7 +28,6 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 String configName = ci.nextArgument();
 		 Integer queryId = getIntegerParameter(ci, ERROR_USAGE);
 		 
-	
 		if(configList.containsKey(configName.toLowerCase())){
 			TransformationParameter transformationParameter = configList.get(configName.toLowerCase());
 			if(queryId != null){
@@ -46,12 +45,12 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 	 public void _addCodegenConfig(CommandInterpreter ci){
 		 String configName  = ci.nextArgument();
 		 String targetPlatform = ci.nextArgument();
-		 String tempDirectory= ci.nextArgument();
+		 String targetDirectory= ci.nextArgument();
 		 int queryId= Integer.parseInt(ci.nextArgument());
-		 String odysseusPath= ci.nextArgument();
+		 String odysseusDirectory= ci.nextArgument();
 		 String executor= ci.nextArgument();
 		 
-		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  tempDirectory,  queryId,  odysseusPath, true,  executor, null));
+		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  targetDirectory,  queryId,  odysseusDirectory, true,  executor, null));
 	 }
 
 	 
@@ -64,9 +63,9 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 				sb.append(config.getKey()).append("\n");
 				
 				sb.append("- targetPlatform: "+config.getValue().getProgramLanguage()).append("\n");
-				sb.append("- tempDirectory: "+config.getValue().getTargetDirectory()).append("\n");
+				sb.append("- targetDirectory: "+config.getValue().getTargetDirectory()).append("\n");
 				sb.append("- queryId: "+config.getValue().getQueryId()).append("\n");
-				sb.append("- odysseusDirectory: "+config.getValue().getOdysseusPath()).append("\n");
+				sb.append("- odysseusDirectory: "+config.getValue().getOdysseusDirectory()).append("\n");
 				sb.append("- executor: "+config.getValue().getExecutor()).append("\n");
 				
 				sb.append("\n");	
@@ -113,7 +112,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		sb.append("---Codegeneration commands---\n");
 		sb.append("    queryCodegen <configName> <queryID>		   		- Transform a query to a standalone application\n");
 		sb.append("    showRegistrys 				   		- Show all registry values\n");
-		sb.append("    addCodegenConfig <configName> <targetPlatform> <tempDirectory> <destinationDirectory> <queryId> <odysseusPath> <executor>		- Add a codegeneration config\n");
+		sb.append("    addCodegenConfig <configName> <targetPlatform> <targetDirectory> <queryId> <odysseusPath> <executor>		- Add a codegeneration config\n");
 		sb.append("    showAllConfigs 						- Show all configs\n");
 		
 		

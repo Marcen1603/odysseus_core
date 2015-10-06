@@ -54,14 +54,14 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 		//Start Odysseus index
 		updateProgressBar(15, "Index the Odysseus codepath",UpdateMessageStatusType.INFO);
-		OdysseusIndex.getInstance().search(parameter.getOdysseusPath());
+		OdysseusIndex.getInstance().search(parameter.getOdysseusDirectory());
 	
 		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
 		updateProgressBar(70, "Generate OSGI emulation code",UpdateMessageStatusType.INFO);
 		
-		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
+		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusDirectory(), queryAnalyseInformation);
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
