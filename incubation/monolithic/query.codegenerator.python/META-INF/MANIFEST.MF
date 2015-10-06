@@ -10,7 +10,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.query.codegenerator.modell,
  de.uniol.inf.is.odysseus.query.codegenerator.operator.rule,
  de.uniol.inf.is.odysseus.query.codegenerator.target.platform,
- org.eclipse.swt.widgets,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server
