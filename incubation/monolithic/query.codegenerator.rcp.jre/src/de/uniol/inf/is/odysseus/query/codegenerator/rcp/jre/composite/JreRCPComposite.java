@@ -9,16 +9,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.ICRCPOptionComposite;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.AbstractRCPOptionComposite;
 
-
-
-public class JreRCPComposite  extends Composite implements ICRCPOptionComposite{
+public class JreRcpComposite extends AbstractRCPOptionComposite {
 	
 	private Button autoBuild;
 
 
-	public JreRCPComposite(Composite parent,int style) {
+	public JreRcpComposite(Composite parent,int style) {
 		super(parent, style);
 		
 		GridData contentGridData = new GridData(GridData.FILL_BOTH);

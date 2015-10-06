@@ -2,11 +2,11 @@ package de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre.composite;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.ICRCPOptionComposite;
+import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.AbstractRCPOptionComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.IRCPSpecialOption;
 
 
-public class RCPJreOptions implements IRCPSpecialOption{
+public class JreRcpOptions implements IRCPSpecialOption{
 
 	String targetPlatform = "JRE";
 	
@@ -16,8 +16,8 @@ public class RCPJreOptions implements IRCPSpecialOption{
 	}
 
 	@Override
-	public ICRCPOptionComposite getComposite(Composite parent,int style) {
-		return new JreRCPComposite(parent,style);
+	public AbstractRCPOptionComposite getComposite(Composite parent,int style) {
+		return new JreRcpComposite(parent,style);
 	}
 	
 }
