@@ -22,7 +22,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -868,10 +870,13 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	@Help(description = "show registered queries")
 	public void _lsqueries(CommandInterpreter ci) {
 		addCommand();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance();
 		try {
-			ci.println("Current registered queries (ID | STATE):");
+			ci.println("Current registered queries (ID | STATE | START DATE/TIME | LAST QUERY STATE CHANGE):");
 			for (IPhysicalQuery query : this.executor.getExecutionPlan().getQueries()) {
-				ci.println(query.getID() + " | " + query.getState().name());
+				ci.println(query.getID() + " | " + query.getState().name() +
+						" | " + dateFormat.format(new Date(query.getQueryStartTS())) + 
+						" | " + dateFormat.format(new Date(query.getLastQueryStateChangeTS())));
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
