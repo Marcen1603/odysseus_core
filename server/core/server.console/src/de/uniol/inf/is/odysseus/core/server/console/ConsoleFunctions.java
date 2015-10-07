@@ -18,12 +18,14 @@ package de.uniol.inf.is.odysseus.core.server.console;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 
 public class ConsoleFunctions {
@@ -55,6 +57,17 @@ public class ConsoleFunctions {
 		b.append("(");
 		b.append(mySink.getSubscribedToSource());
 		b.append(")\n");
+		if(mySink instanceof IPhysicalOperatorKeyValueProvider) {
+			for (int i = 0; i < depth; ++i) {
+				b.append("  ");
+			}
+			b.append("[");
+			for(Map.Entry<String, String> entry : ((IPhysicalOperatorKeyValueProvider) mySink).getKeyValues().entrySet()) {
+				b.append(entry.getKey()).append("=").append(entry.getValue()).append(";");
+			}
+			b.append("]\n");
+			
+		}
 
 		for (AbstractPhysicalSubscription<? extends ISource<?>> source : mySink
 				.getSubscribedToSource()) {
@@ -76,6 +89,17 @@ public class ConsoleFunctions {
 			b.append("(");
 			b.append(source.getSubscriptions());
 			b.append(")\n");
+			if(source instanceof IPhysicalOperatorKeyValueProvider) {
+				for (int i = 0; i < depth; ++i) {
+					b.append("  ");
+				}
+				b.append("[");
+				for(Map.Entry<String, String> entry : ((IPhysicalOperatorKeyValueProvider) source).getKeyValues().entrySet()) {
+					b.append(entry.getKey()).append("=").append(entry.getValue()).append(";");
+				}
+				b.append("]\n");
+				
+			}
 		}		
 	}
 	
