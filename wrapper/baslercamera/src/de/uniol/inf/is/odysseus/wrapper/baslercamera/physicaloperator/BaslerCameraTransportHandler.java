@@ -77,7 +77,9 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				LOG.info("Starting basler camera...");
 		 		cameraCapture = new BaslerCamera(serialNumber)
 		 			{
-		 				@Override public void onGrabbed(long timeStamp, ByteBuffer buffer)
+		 				// FIXME: Was override, did not compile!
+		 				//@Override 
+		 				public void onGrabbed(long timeStamp, ByteBuffer buffer)
 		 				{
 		 					// TODO: Use timestamp
 		 					System.out.println("Grab timestamp = " + timeStamp);
