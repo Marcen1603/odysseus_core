@@ -122,7 +122,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	@Override
 	@SuppressWarnings({"rawtypes"})
 	public void writeData(ByteBuffer buffer, Object data) {
-		ArrayList values = (ArrayList)data;
+		List values = (List)data;
 		buffer.putInt(values.size());
 		for(Object v: values){
 			this.handler.writeData(buffer, v);
@@ -141,7 +141,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	@Override
 	public int memSize(Object data) {
 		int size = 0;
-		ArrayList<?> values = (ArrayList<?>)data;
+		List<?> values = (List<?>)data;
 		for(Object v: values){
 			size+=this.handler.memSize(v);
 		}
