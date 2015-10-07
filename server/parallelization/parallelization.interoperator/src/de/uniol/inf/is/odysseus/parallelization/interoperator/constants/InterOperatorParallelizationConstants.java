@@ -26,7 +26,7 @@ public class InterOperatorParallelizationConstants {
 	public static final String PATTERN_CUSTOM_PARAMETER_VALUE = "((([a-zA-Z0-9_]+)|([(][a-zA-Z0-9_]+([:][a-zA-Z0-9_]+)+[)]))[,])"
 			+ "*(([a-zA-Z0-9_]+)|([(][a-zA-Z0-9_]+([:][a-zA-Z0-9_]+)+[)]))";
 
-	public static final int DEFAULT_BUFFER_SIZE = 10000000;
+	public static final int DEFAULT_BUFFER_SIZE = 1000;
 
 	public static String BLANK = " ";
 }

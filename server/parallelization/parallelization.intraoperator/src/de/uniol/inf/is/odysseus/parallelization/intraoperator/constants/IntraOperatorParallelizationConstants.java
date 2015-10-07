@@ -21,7 +21,7 @@ package de.uniol.inf.is.odysseus.parallelization.intraoperator.constants;
  *
  */
 public class IntraOperatorParallelizationConstants {
-	public static final int DEFAULT_BUFFERSIZE = 100000;
+	public static final int DEFAULT_BUFFERSIZE = 1000;
 	
 	public static final String GLOBAL = "GLOBAL";
 	public static final String AUTO = "AUTO";

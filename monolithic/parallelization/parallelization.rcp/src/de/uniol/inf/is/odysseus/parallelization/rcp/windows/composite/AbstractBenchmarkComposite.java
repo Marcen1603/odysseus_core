@@ -150,12 +150,12 @@ public abstract class AbstractBenchmarkComposite extends Composite {
 	 * @return
 	 */
 	protected Combo createComboWithLabel(Composite composite,
-			GridData gridData, String[] items, String labelString) {
+			GridData gridData, String[] items, String labelString, int selectedIndex) {
 		createLabel(composite, labelString);
 
 		Combo combo = new Combo(composite, SWT.READ_ONLY);
 		combo.setItems(items);
-		combo.select(0);
+		combo.select(selectedIndex);
 		combo.setLayoutData(gridData);
 		return combo;
 	}

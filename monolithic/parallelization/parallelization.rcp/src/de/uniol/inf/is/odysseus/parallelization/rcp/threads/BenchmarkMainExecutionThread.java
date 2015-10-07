@@ -111,8 +111,7 @@ public class BenchmarkMainExecutionThread extends Thread {
 		int currentPercentage = (int) (((configurationCounter + 1) / (double) numberOfConfigurations) * 100);
 
 		long averageExecutionTime = benchmarkerExecution
-				.getAverageExecutionTime(data.getConfiguration()
-						.getMaximumExecutionTime());
+				.getMedianExecutionTime();
 		long remainingTimeMillis = ((numberOfConfigurations - configurationCounter)
 				* averageExecutionTime * data.getConfiguration()
 				.getNumberOfExecutions());
@@ -155,16 +154,13 @@ public class BenchmarkMainExecutionThread extends Thread {
 
 		// iterate over all execution results
 		for (IBenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
-			if (benchmarkerExecution.getAverageExecutionTime(data
-					.getConfiguration().getMaximumExecutionTime()) <= 0l) {
+			if (benchmarkerExecution.getMedianExecutionTime() <= 0l) {
 				// ignore result if it is not better than another
 				continue;
 			} else {
 				// if it is better, set it as best execution time and result
-				if (benchmarkerExecution.getAverageExecutionTime(data
-						.getConfiguration().getMaximumExecutionTime()) < currentBestExecution
-						.getAverageExecutionTime(data.getConfiguration()
-								.getMaximumExecutionTime())) {
+				if (benchmarkerExecution.getMedianExecutionTime() < currentBestExecution
+						.getMedianExecutionTime()) {
 					currentBestExecution = benchmarkerExecution;
 				}
 			}

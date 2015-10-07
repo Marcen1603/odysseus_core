@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,8 +26,7 @@ import java.util.List;
  * @author ChrisToenjesDeye
  *
  */
-public abstract class AbstractBenchmarkerExecution implements
-		IBenchmarkerExecution {
+public abstract class AbstractBenchmarkerExecution implements IBenchmarkerExecution {
 
 	protected List<Long> executionTimes = new ArrayList<Long>();
 
@@ -37,29 +37,27 @@ public abstract class AbstractBenchmarkerExecution implements
 	public abstract String toString();
 
 	/**
-	 * calculates the avergae execution time for an execution which is executed
+	 * calculates the median of execution times for an execution which is executed
 	 * multiple times to get better results
 	 * 
-	 * @param maximumExecutionTime
-	 *            (is needed to exclude this values)
-	 * @return average execution time
+	 * @return median of execution time
 	 */
 	@Override
-	public long getAverageExecutionTime(long maximumExecutionTime) {
-		long sumExecutionTime = 0l;
-
-		for (Long executionTime : executionTimes) {
-			if (executionTime == -1l) {
-				return -1l;
-			} else if (executionTime == 0l) {
-				return 0l;
-			} else if (executionTime >= maximumExecutionTime) {
-				return maximumExecutionTime;
-			} else {
-				sumExecutionTime += executionTime;
-			}
+	public long getMedianExecutionTime() {
+		int size = executionTimes.size();
+		if (size <= 0){
+			return 0l;
+		} else {
+			// list need to be ordered
+			Collections.sort(executionTimes);
 		}
-		return sumExecutionTime / executionTimes.size();
+		
+		int middle = size / 2;
+		if (size % 2 == 1) {
+			return executionTimes.get(middle);
+		} else {
+			return (executionTimes.get(middle - 1) + executionTimes.get(middle)) / 2;
+		}
 	}
 
 	/**

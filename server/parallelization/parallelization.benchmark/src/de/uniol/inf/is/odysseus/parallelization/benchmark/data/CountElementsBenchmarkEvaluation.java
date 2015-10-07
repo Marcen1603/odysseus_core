@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 public class CountElementsBenchmarkEvaluation extends
 		AbstractBenchmarkEvaluation {
 
-	private int counter;
+	private Integer counter = new Integer(0);
 	private long startTimestamp;
 	private long endTimestamp;
 	private int numberOfElements;
@@ -46,26 +46,27 @@ public class CountElementsBenchmarkEvaluation extends
 	@Override
 	public <T extends IStreamObject<?>> void evaluate(
 			BenchmarkPOObservable<?> observable, T object) {
-		// if counter is greater than the given value ignore this element
-		if (counter > numberOfElements) {
-			return;
-		}
-
-		// if counter is zero and first element comes, start the evaluation time
-		if (counter == 0) {
-			startTimestamp = System.currentTimeMillis();
-		}
-
-		if (counter < numberOfElements) {
-			counter++;
-			if (counter == numberOfElements) {
-				endTimestamp = System.currentTimeMillis();
-				// calculate the needed evaluation time
-				long executionTime = endTimestamp - startTimestamp;
-				updateObserver(observable, executionTime);
+		synchronized (counter) {
+			// if counter is greater than the given value ignore this element
+			if (counter >= numberOfElements) {
+				return;
 			}
+			
+			// if counter is zero and first element comes, start the evaluation time
+			if (counter == 0) {
+				startTimestamp = System.currentTimeMillis();
+			}
+			
+			if (counter < numberOfElements) {
+				counter++;
+				if (counter == numberOfElements) {
+					endTimestamp = System.currentTimeMillis();
+					// calculate the needed evaluation time
+					long executionTime = endTimestamp - startTimestamp;
+					updateObserver(observable, executionTime);
+				}
+			}	
 		}
-
 	}
 
 	/**

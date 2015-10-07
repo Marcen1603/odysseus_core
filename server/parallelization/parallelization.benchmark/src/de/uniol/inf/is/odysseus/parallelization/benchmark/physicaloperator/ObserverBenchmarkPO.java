@@ -28,11 +28,10 @@ import de.uniol.inf.is.odysseus.parallelization.benchmark.data.BenchmarkPOObserv
  *
  * @param <T>
  */
-public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends
-		AbstractPipe<T, T> {
+public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
-	// we need a delegate, because it is not possible to inherit from Obserable
-	// (no multi inhertance in java)
+	// we need a delegate, because it is not possible to inherit from Observable
+	// (no multi inheritance in java)
 	private BenchmarkPOObservable<T> delegate;
 
 	public ObserverBenchmarkPO() {
@@ -64,7 +63,8 @@ public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_done() {
-
+		delegate.evaluationDone();
+		super.process_done();
 	}
 
 }

@@ -33,14 +33,12 @@ public interface IBenchmarkerExecution {
 	String getOdysseusScript();
 
 	/**
-	 * calculates the avergae execution time for an execution which is executed
+	 * calculates the median of execution times for an execution which is executed
 	 * multiple times to get better results
 	 * 
-	 * @param maximumExecutionTime
-	 *            (is needed to exclude this values)
-	 * @return average execution time
+	 * @return median of execution time
 	 */
-	long getAverageExecutionTime(long maximumExecutionTime);
+	long getMedianExecutionTime();
 
 	/**
 	 * adds an execution time to this execution. 
