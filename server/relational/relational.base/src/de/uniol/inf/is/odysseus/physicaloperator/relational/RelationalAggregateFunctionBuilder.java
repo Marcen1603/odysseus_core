@@ -35,6 +35,7 @@ public class RelationalAggregateFunctionBuilder implements
     private final static String MIN = "MIN";
     private final static String MAX = "MAX";
     private final static String NEST = "NEST";
+    private final static String DISTINCTNEST = "DISTINCTNEST";
     private final static String STDDEV = "STDDEV";
     private final static String CORR = "CORR";
     private final static String COV = "COV";
@@ -55,6 +56,7 @@ public class RelationalAggregateFunctionBuilder implements
 		names.add(MIN);
 		names.add(MAX);
 		names.add(NEST);
+		names.add(DISTINCTNEST);
 		names.add(STDDEV);
         names.add(CORR);
         names.add(COV);
@@ -92,6 +94,8 @@ public class RelationalAggregateFunctionBuilder implements
             aggFunc = RelationalVar.getInstance(pos[0], partialAggregateInput);		
         } else if ((key.getName().equalsIgnoreCase(NEST))) {
 			aggFunc = new RelationalNest(pos, partialAggregateInput);
+        } else if ((key.getName().equalsIgnoreCase(DISTINCTNEST))) {
+        	aggFunc = new RelationalDistinctNest(pos, partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(LAST)) {
 			aggFunc = RelationalLast.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(FIRST)) {
