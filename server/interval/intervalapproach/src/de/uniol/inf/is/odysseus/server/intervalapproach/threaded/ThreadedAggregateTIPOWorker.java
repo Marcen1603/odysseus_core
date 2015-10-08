@@ -110,12 +110,12 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	}
 
 	private void processElement(Pair<Long, R> pair) {
-		Long groupId = pair.getE1();
 		R object = pair.getE2();
+		Long groupId = pair.getE1();
 
 		if (groupId != null && object != null) {
 			// the grouping processor needs to know this object and group
-			this.g.getGroupID(object);
+			this.g.setGroup(groupId, object);
 
 			// get sweep area from groupId
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;

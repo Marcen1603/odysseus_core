@@ -65,7 +65,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 			this.tupleMap = new HashMap<>(other.tupleMap);
 		}
 		if (other.groupList != null) {
-			this.groupList = new LinkedList<>(other.groupList);
+			this.groupList = new ArrayList<>(other.groupList);
 		}
 		this.maxId = other.maxId;
 		if (other.gRestrict != null) {
