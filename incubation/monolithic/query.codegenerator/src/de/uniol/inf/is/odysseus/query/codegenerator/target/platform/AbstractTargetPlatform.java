@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -17,6 +20,9 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.Opera
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 
 public abstract class AbstractTargetPlatform implements ITargetPlatform{
+	
+	private static Logger LOG = LoggerFactory.getLogger(AbstractTargetPlatform.class);
+	
 	
 	protected Set<String> importList = new HashSet<String>();
 	protected StringBuilder bodyCode;
@@ -57,6 +63,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		if(progressBarQueue!= null){
 			try {
 				progressBarQueue.put(new ProgressBarUpdate(value, text,statusType));
+				LOG.debug(statusType+": "+text);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

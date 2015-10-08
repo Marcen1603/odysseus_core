@@ -20,7 +20,7 @@ public class CSelectPORule extends AbstractCSelectAORule<SelectAO>{
 
 	@Override
 	public CodeFragmentInfo getCode(SelectAO operator) {
-	CodeFragmentInfo selectPO = new CodeFragmentInfo();
+		CodeFragmentInfo selectPO = new CodeFragmentInfo();
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
@@ -33,14 +33,13 @@ public class CSelectPORule extends AbstractCSelectAORule<SelectAO>{
 		StringTemplate selectTemplate = new StringTemplate("operator","selectPO");
 		selectTemplate.getSt().add("operatorVariable", operatorVariable);
 		selectTemplate.getSt().add("predicateValue", predicateValue);
-		
-
 		selectPO.addCode(selectTemplate.getSt().render());
 		
 		selectPO.addImport(DirectAttributeResolver.class.getName());
 		selectPO.addImport(RelationalPredicateBuilder.class.getName());
 		selectPO.addImport(RelationalPredicate.class.getName());
 		selectPO.addImport(SelectPO.class.getName());
+		
 		
 		return selectPO;
 	}

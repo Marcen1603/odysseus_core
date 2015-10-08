@@ -4,9 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 //TODO mac, unix support?
 public class ExecuteShellComand {
+	
+	
+	private static Logger LOG = LoggerFactory.getLogger(ExecuteShellComand.class);
 	
 	public static void executeAntScript(String tempDirectory){
 		
@@ -35,11 +41,11 @@ public class ExecuteShellComand {
 	    while ((errorline = errorReader.readLine())!= null) {
 	    	errorLine.append(errorline + "\n");
 	    }
+	
+		LOG.debug(okLine.toString());
+		LOG.debug(errorLine.toString());	
 		
-		System.out.println(okLine);		    
-		System.out.println(errorLine);		
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 	
@@ -61,7 +67,6 @@ public class ExecuteShellComand {
 			         new BufferedReader(new InputStreamReader(p.getInputStream()));
 		
 		//no error
-		
 		String line = "";			
 			    while ((line = reader.readLine())!= null) {
 			    	okLine.append(line + "\n");
@@ -76,8 +81,10 @@ public class ExecuteShellComand {
 	    	errorLine.append(errorline + "\n");
 	    }
 		
-		System.out.println(okLine);		    
-		System.out.println(errorLine);		
+		LOG.debug(okLine.toString());
+		LOG.debug(errorLine.toString());	
+		
+		
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -85,10 +92,4 @@ public class ExecuteShellComand {
 	
 	}
 	
-	
-	
-	
-	
-
-
 }
