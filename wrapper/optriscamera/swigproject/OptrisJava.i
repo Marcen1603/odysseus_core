@@ -42,4 +42,5 @@ $input = (jenv)->NewDirectByteBuffer($1, $2); }
 
 %feature("director") OptrisCamera;
 
+enum TFlagState {fsFlagOpen, fsFlagClose, fsFlagOpening, fsFlagClosing, fsError};
 %include "OptrisCamera.h"

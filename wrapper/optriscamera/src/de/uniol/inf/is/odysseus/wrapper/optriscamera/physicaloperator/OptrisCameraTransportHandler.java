@@ -15,9 +15,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.OptrisCamera;
+import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.TFlagState;
 
 public class OptrisCameraTransportHandler extends AbstractPushTransportHandler 
 {
@@ -59,57 +62,10 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			try
 			{
 		 		cameraCapture = new OptrisCamera("", ethernetAddress)
-		 						{
-						 			private double smoothFPS = 0.0f;
-						 			private double alpha = 0.95f;
-						 			private long lastTime = 0;
-						 			private int imageCount = 0;
-						 			
-						 			private void logStats()
-						 			{
-						 				long now = System.nanoTime();
-						 				double dt = (now - lastTime) / 1.0e9;
-						 				double fps = 1.0/dt;
-				
-						 				smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
-						 				
-				//		 				System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
-						 				System.out.println(String.format("%d optris: %.4f FPS (%.4f)", imageCount, smoothFPS, fps));
-						 				lastTime = now;		
-						 			}		 			
-		 			
-		 							@Override public void onNewFrame(long timeStamp, ByteBuffer buffer)
+		 						{		 			
+		 							@Override public void onNewFrame(long timeStamp, TFlagState flagState, ByteBuffer buffer)
 		 							{
-//		 								if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return;
-		 								
-//		 								System.out.println("Timestamp = " + timeStamp);
-	
-//		 								logStats();
-		 								imageCount++;
-		 								
-		 								int size = 1; 
-		 								int[] attrs = {0};
-		 								
-		 								if (getSchema() != null)
-		 								{
-		 									size = getSchema().size();
-		 									attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-		 								}
-		 								
-		 								Tuple<IMetaAttribute> tuple = new Tuple<>(size, true);		 								
-		 								if (attrs.length > 0)
-		 								{		 								
-		 									if (image == null)
-		 										image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16U, cameraCapture.getImageChannels(), AV_PIX_FMT_GRAY16);
-		 									
-		 									image.getImageData().rewind();
-			 								image.getImageData().put(buffer);				 								
-		 									tuple.setAttribute(attrs[0], image); 
-		 								}
-		 								
-		 								System.out.println("Optris generated image @ " + System.currentTimeMillis());
-		 								
-		 								fireProcess(tuple);
+		 								fireProcess(generateTuple(timeStamp, flagState, buffer));		 								
 		 							}
 		 						};
 				cameraCapture.start();
@@ -133,9 +89,69 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			cameraCapture = null;
 			image = null;
 		}
-		
+
 		fireOnDisconnect();
 	}
+
+	private double smoothFPS = 0.0f;
+	private double alpha = 0.95f;
+	private long lastTime = 0;
+	private int imageCount = 0;
+
+	private void logStats()
+	{
+		long now = System.nanoTime();
+		double dt = (now - lastTime) / 1.0e9;
+		double fps = 1.0/dt;
+
+		smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
+
+		System.out.println(String.format("%d optris: %.4f FPS (%.4f)", imageCount, smoothFPS, fps));
+		lastTime = now;		
+	}		 				
+
+	private Tuple<IMetaAttribute> generateTuple(double cameraTimePassed, TFlagState flagState, ByteBuffer buffer)
+	{
+//		if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return;		
+//		System.out.println("Timestamp = " + timeStamp);
+
+		imageCount++;		
+//		logStats();
+				
+		int attrs[];
+		Tuple<IMetaAttribute> newTuple = new Tuple<IMetaAttribute>(getSchema().size(), true);
+		
+		attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+		if (attrs.length > 0)
+		{		 								
+			if (image == null)
+				image = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_16U, cameraCapture.getImageChannels(), AV_PIX_FMT_GRAY16);
+			
+			image.getImageData().put(buffer);				 								
+			newTuple.setAttribute(attrs[0], image); 
+		}
+		
+		attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
+		if (attrs.length > 0) 
+		{
+/*			long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
+			newTuple.setAttribute(attrs[0], timestamp);*/
+		}		
+		
+		for (int i=0; i<getSchema().size(); i++)
+		{
+			SDFAttribute attr = getSchema().getAttribute(i);
+			if (attr.getAttributeName().equalsIgnoreCase("FlagState"))
+			{
+				newTuple.setAttribute(i, flagState.swigValue());
+				break;
+			}
+		}
+		
+		System.out.println("Optris generated image @ " + System.currentTimeMillis());
+		return newTuple;
+	}
+	
 	
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {

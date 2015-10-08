@@ -3,6 +3,9 @@
 #include <exception>
 #include <string>
 #include <iostream>
+#include <Windows.h>
+
+#include "ImagerIPC2.h"
 
 #pragma warning(disable:4290)
 
@@ -37,7 +40,7 @@ public:
 	void start() throw(std::exception);
 	void stop();
 
-	virtual void onNewFrame(long long timeStamp, void *buffer, long size);
+	virtual void onNewFrame(long long timeStamp, TFlagState flagState, void *buffer, long size);
 
 	int		getImageChannels() const { return 1; }
 	int		getBufferSize() const { return Width * Height * Depth; }

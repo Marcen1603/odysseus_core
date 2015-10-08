@@ -13,8 +13,8 @@ public class OptrisJavaJNI {
   public final static native void delete_OptrisCamera(long jarg1);
   public final static native void OptrisCamera_start(long jarg1, OptrisCamera jarg1_) throws java.lang.RuntimeException;
   public final static native void OptrisCamera_stop(long jarg1, OptrisCamera jarg1_);
-  public final static native void OptrisCamera_onNewFrame(long jarg1, OptrisCamera jarg1_, long jarg2, java.nio.ByteBuffer jarg3);
-  public final static native void OptrisCamera_onNewFrameSwigExplicitOptrisCamera(long jarg1, OptrisCamera jarg1_, long jarg2, java.nio.ByteBuffer jarg3);
+  public final static native void OptrisCamera_onNewFrame(long jarg1, OptrisCamera jarg1_, long jarg2, int jarg3, java.nio.ByteBuffer jarg4);
+  public final static native void OptrisCamera_onNewFrameSwigExplicitOptrisCamera(long jarg1, OptrisCamera jarg1_, long jarg2, int jarg3, java.nio.ByteBuffer jarg4);
   public final static native int OptrisCamera_getImageChannels(long jarg1, OptrisCamera jarg1_);
   public final static native int OptrisCamera_getBufferSize(long jarg1, OptrisCamera jarg1_);
   public final static native int OptrisCamera_getImageWidth(long jarg1, OptrisCamera jarg1_);
@@ -22,8 +22,8 @@ public class OptrisJavaJNI {
   public final static native void OptrisCamera_director_connect(OptrisCamera obj, long cptr, boolean mem_own, boolean weak_global);
   public final static native void OptrisCamera_change_ownership(OptrisCamera obj, long cptr, boolean take_or_release);
 
-  public static void SwigDirector_OptrisCamera_onNewFrame(OptrisCamera self, long timeStamp, java.nio.ByteBuffer buffer) {
-    self.onNewFrame(timeStamp, buffer);
+  public static void SwigDirector_OptrisCamera_onNewFrame(OptrisCamera self, long timeStamp, int flagState, java.nio.ByteBuffer buffer) {
+    self.onNewFrame(timeStamp, TFlagState.swigToEnum(flagState), buffer);
   }
 
   private final static native void swig_module_init();

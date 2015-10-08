@@ -1,8 +1,4 @@
-#include <string>
-#include <Windows.h>
-#include <iostream>
-
-#include "ImagerIPC2.h"
+//#include "ImagerIPC2.h"
 #include "OptrisCamera.h"
 
 using namespace std;
@@ -297,9 +293,9 @@ void OptrisCamera::OnFrameInit(int frameWidth, int frameHeight, int frameDepth)
 
 void OptrisCamera::OnNewFrameCallback(void * pBuffer, FrameMetadata *pMetaData)
 {
-	onNewFrame(pMetaData->Timestamp, pBuffer, getBufferSize());
+	onNewFrame(pMetaData->Timestamp, pMetaData->FlagState, false, getBufferSize());
 }
 
-void OptrisCamera::onNewFrame(long long timeStamp, void *buffer, long size)
+void OptrisCamera::onNewFrame(long long timeStamp, TFlagState flagState, void *buffer, long size)
 {
 }
