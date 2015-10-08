@@ -37,7 +37,6 @@
 							<groupId>de.uniol.inf.is.odysseus.target</groupId>
 							<artifactId>de.uniol.inf.is.odysseus.releng.targetplatform</artifactId>
 							<version>1.0.0-SNAPSHOT</version>
-							<relativePath>../de.uniol.inf.is.odysseus.releng.targetplatform/</relativePath>
 						</artifact>
 					</target>
 					<environments>
