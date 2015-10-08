@@ -293,7 +293,7 @@ void OptrisCamera::OnFrameInit(int frameWidth, int frameHeight, int frameDepth)
 
 void OptrisCamera::OnNewFrameCallback(void * pBuffer, FrameMetadata *pMetaData)
 {
-	onNewFrame(pMetaData->Timestamp, pMetaData->FlagState, false, getBufferSize());
+	onNewFrame(pMetaData->Timestamp, pMetaData->FlagState, pBuffer, getBufferSize());
 }
 
 void OptrisCamera::onNewFrame(long long timeStamp, TFlagState flagState, void *buffer, long size)
