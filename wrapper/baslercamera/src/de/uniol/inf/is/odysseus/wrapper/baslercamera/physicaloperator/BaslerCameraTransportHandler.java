@@ -82,19 +82,20 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		 			{
 		 				@Override public void onGrabbed(double timeStamp, ByteBuffer buffer)
 		 				{
+							imageJCV.getImageData().put(buffer);				 										 							 					
+							fireProcess(generateTuple(timeStamp));
+							
 		 					// TODO: Use timestamp
-		 					System.out.println("Grab timestamp = " + timeStamp);
+/*		 					System.out.println("Grab timestamp = " + timeStamp);
 		 					
 							Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
 							int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 							if (attrs.length > 0)
 							{
-								imageJCV.getImageData().rewind();
-								imageJCV.getImageData().put(buffer);				 								
 								tuple.setAttribute(attrs[0], imageJCV);
 							}
 								
-							fireProcess(tuple);		 					
+							fireProcess(tuple);*/		 					
 		 				}
 		 			};
 				cameraCapture.start(operationMode);	
@@ -156,14 +157,38 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		imageCount++;
-		
-		logStats();
 		
 		Tuple<IMetaAttribute> tuple = currentTuple;
 		currentTuple = null;				
         return tuple;					
 	}	
+	
+	private Tuple<IMetaAttribute> generateTuple(double cameraTimePassed)
+	{
+		imageCount++;		
+		logStats();
+		
+		double systemTimePassed = (System.currentTimeMillis() - startupTimeStamp) / 1000.0;
+		
+		LOG.debug("Grabbed frame from Basler camera " + serialNumber);
+		System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraTimePassed + " systime = " + systemTimePassed + " diff = " + (systemTimePassed - cameraTimePassed) * 1000 + "ms");
+
+		int attrs[];
+		Tuple<IMetaAttribute> newTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
+		
+		attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
+		if (attrs.length > 0)
+			newTuple.setAttribute(attrs[0], imageJCV); 
+
+		attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
+		if (attrs.length > 0) 
+		{
+			long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
+			newTuple.setAttribute(attrs[0], timestamp);
+		}		
+		
+		return newTuple;
+	}
 	
 	@Override public boolean hasNext() 
 	{
@@ -192,26 +217,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 					return false;
 			}
 			
-			double cameraTimePassed = cameraCapture.getLastTimeStamp();
-			double systemTimePassed = (System.currentTimeMillis() - startupTimeStamp) / 1000.0;
-			
-			LOG.debug("Grabbed frame from Basler camera " + serialNumber);
-			System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraTimePassed + " systime = " + systemTimePassed + " diff = " + (systemTimePassed - cameraTimePassed) * 1000 + "ms");
-
-			int attrs[];
-			currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
-			
-			attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-			if (attrs.length > 0)
-				currentTuple.setAttribute(attrs[0], imageJCV); 
-
-			attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
-			if (attrs.length > 0) 
-			{
-				long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
-				currentTuple.setAttribute(attrs[0], timestamp);
-			}
-			
+			currentTuple = generateTuple(cameraCapture.getLastTimeStamp());						
 			return true;
 		}
 	}	
