@@ -22,14 +22,16 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 
 	Logger LOG = LoggerFactory.getLogger(BlockingBufferPO.class);
-	
+
 	final long maxBufferSize;
 
-	
+	private boolean isRunning = false;
+
 	public BlockingBufferPO(long maxBufferSize) {
 		this.maxBufferSize = maxBufferSize;
 	}
@@ -43,54 +45,64 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 	}
 
 	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+		isRunning = true;
+	}
+
+	@Override
 	protected void process_close() {
-		LOG.debug("Closing at size "+buffer.size());
+		isRunning = false;
+		LOG.debug("Closing at size " + buffer.size());
 		super.process_close();
 		synchronized (this) {
 			this.notifyAll();
 		}
 		LOG.debug("Closing done");
 	}
-	
+
 	@Override
 	protected void process_done(int port) {
+		isRunning = false;
 		super.process_done(port);
 		synchronized (this) {
 			this.notifyAll();
 		}
 	}
-	
+
 	@Override
 	protected void process_next(T object, int port) {
 		synchronized (this) {
-			while (size() >= maxBufferSize && isOpen()) {
+			while (size() >= maxBufferSize && isRunning) {
 				try {
 					this.wait(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-		}		
-		super.process_next(object, port);
+		}
+		if (isRunning) {
+			super.process_next(object, port);
+		}
 		synchronized (this) {
 			this.notifyAll();
 		}
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof BlockingBufferPO)){
+		if (!(ipo instanceof BlockingBufferPO)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		BlockingBufferPO<T> b = (BlockingBufferPO<T>)ipo;
-		if (b.maxBufferSize != this.maxBufferSize){
+		BlockingBufferPO<T> b = (BlockingBufferPO<T>) ipo;
+		if (b.maxBufferSize != this.maxBufferSize) {
 			return false;
 		}
-		
+
 		return super.process_isSemanticallyEqual(ipo);
 	}
-	
+
 	public long getMaxBufferSize() {
 		return maxBufferSize;
 	}
@@ -98,8 +110,7 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = super.getKeyValues();
-		map.put("isBlocked", (size()==maxBufferSize) + "");
+		map.put("isBlocked", (size() == maxBufferSize) + "");
 		return map;
 	}
 }
-
