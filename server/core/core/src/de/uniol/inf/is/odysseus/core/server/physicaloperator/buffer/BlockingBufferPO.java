@@ -29,6 +29,7 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 	
 	final long maxBufferSize;
 
+	
 	public BlockingBufferPO(long maxBufferSize) {
 		this.maxBufferSize = maxBufferSize;
 	}
@@ -62,7 +63,7 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 	@Override
 	protected void process_next(T object, int port) {
 		synchronized (this) {
-			while (size() >= maxBufferSize) {
+			while (size() >= maxBufferSize && isOpen()) {
 				try {
 					this.wait(1000);
 				} catch (InterruptedException e) {
