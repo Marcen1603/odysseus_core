@@ -6,7 +6,6 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
  org.eclipse.jdt.feature.group  
  org.eclipse.equinox.p2.discovery.feature.feature.group  
  
- org.eclipse.equinox.executable.feature.group
  org.eclipse.e4.rcp.feature.group
  org.eclipse.ecf.core.feature.feature.group
  org.eclipse.pde.feature.group
@@ -26,16 +25,13 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
  org.eclipse.equinox.sdk.feature.group
  org.eclipse.equinox.core.sdk.feature.group
  org.eclipse.rcp.source.feature.group
- org.eclipse.equinox.executable
  org.eclipse.equinox.p2.core.feature.feature.group
  org.eclipse.core.runtime.feature.feature.group
  org.eclipse.equinox.p2.sdk.feature.group
  org.eclipse.ecf.filetransfer.httpclient4.feature.feature.group
- org.eclipse.rcp.id
  org.eclipse.platform.ide
  org.eclipse.emf.common.feature.group
  org.eclipse.ecf.filetransfer.ssl.feature.feature.group
- org.eclipse.rcp.configuration.feature.group
  org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group
  org.eclipse.equinox.server.jetty.feature.group
  org.eclipse.equinox.compendium.sdk.feature.group
