@@ -46,6 +46,14 @@ public interface IGroupProcessor<R, W extends IClone> extends IClone{
 	Long getGroupID(R elem);
 	
 	/**
+	 * Allow to set for a spefic elemtent the group id
+	 * should typically only be used in distributed cases
+	 * @param id
+	 * @param elem
+	 */
+	void setGroup(long id, R elem);
+	
+	/**
 	 * Especially for aggregation, this method creates an output element (with real values)
 	 * @param groupID Output for which group ID
 	 * @param r the aggregations for this group

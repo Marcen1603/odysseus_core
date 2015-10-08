@@ -68,7 +68,7 @@
 <unit id="org.eclipse.rcp.id" version="4.5.1.M20150904-0015"/>
 <unit id="org.eclipse.platform.ide" version="4.5.1.M20150904-0015"/>
 <unit id="org.eclipse.help.feature.group" version="2.1.1.v20150904-0015"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.5"/>
+<repository location="http://download.eclipse.org/releases/mars/"/>
 </location>
 </locations>
 </target>

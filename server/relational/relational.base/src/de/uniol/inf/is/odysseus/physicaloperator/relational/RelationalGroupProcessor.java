@@ -61,14 +61,14 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 	}
 
 	public RelationalGroupProcessor(RelationalGroupProcessor<T> other) {
-		if(other.tupleMap != null){
-		this.tupleMap = new HashMap<>(other.tupleMap);
+		if (other.tupleMap != null) {
+			this.tupleMap = new HashMap<>(other.tupleMap);
 		}
-		if (other.groupList != null){
-		this.groupList = new LinkedList<>(other.groupList);
+		if (other.groupList != null) {
+			this.groupList = new LinkedList<>(other.groupList);
 		}
 		this.maxId = other.maxId;
-		if (other.gRestrict != null){
+		if (other.gRestrict != null) {
 			this.gRestrict = new int[other.gRestrict.length];
 			System.arraycopy(other.gRestrict, 0, this.gRestrict, 0, other.gRestrict.length);
 		}
@@ -125,6 +125,14 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 
 		}
 		return hash;
+	}
+
+	@Override
+	public void setGroup(long id, Tuple<T> elem) {
+		if (!tupleMap.containsKey(id)) {
+			Tuple<T> gTuple = getGroupingPart(elem);
+			tupleMap.put(id, gTuple);
+		}
 	}
 
 	@Override
