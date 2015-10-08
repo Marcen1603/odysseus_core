@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
@@ -68,6 +69,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 
 	@Override public String getName() { return "BaslerCamera"; }
 
+	long startupTimeStamp = 0;
+	
 	@Override public void processInOpen() throws IOException 
 	{
 		synchronized (processLock)
@@ -77,9 +80,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				LOG.info("Starting basler camera...");
 		 		cameraCapture = new BaslerCamera(serialNumber)
 		 			{
-		 				// FIXME: Was override, did not compile!
-		 				//@Override 
-		 				public void onGrabbed(long timeStamp, ByteBuffer buffer)
+		 				@Override public void onGrabbed(double timeStamp, ByteBuffer buffer)
 		 				{
 		 					// TODO: Use timestamp
 		 					System.out.println("Grab timestamp = " + timeStamp);
@@ -96,10 +97,13 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 							fireProcess(tuple);		 					
 		 				}
 		 			};
-				cameraCapture.start(operationMode);				
+				cameraCapture.start(operationMode);	
+				startupTimeStamp = System.currentTimeMillis();
+				
 				imageJCV = new ImageJCV(cameraCapture.getImageWidth(), cameraCapture.getImageHeight(), IPL_DEPTH_8U, 3, AV_PIX_FMT_BGR24);
 				cameraCapture.setLineLength(imageJCV.getWidthStep());
 				
+				imageCount = 0;
 				currentTuple = null;
 				
 				LOG.info("Basler camera started.");
@@ -159,7 +163,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		Tuple<IMetaAttribute> tuple = currentTuple;
 		currentTuple = null;				
         return tuple;					
-	}
+	}	
 	
 	@Override public boolean hasNext() 
 	{
@@ -167,7 +171,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			if (cameraCapture == null) return false;
 
-			if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return false;
+//			if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return false;
 			
 			int grabTries = 0;
 			while (!cameraCapture.grabRGB8(imageJCV.getImageData(), 1000))
@@ -182,29 +186,32 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 					
 					cameraCapture.stop();
 					cameraCapture.start(operationMode);
+					startupTimeStamp = System.currentTimeMillis();
 				}
 				else
 					return false;
 			}
 			
+			double cameraTimePassed = cameraCapture.getLastTimeStamp();
+			double systemTimePassed = (System.currentTimeMillis() - startupTimeStamp) / 1000.0;
+			
 			LOG.debug("Grabbed frame from Basler camera " + serialNumber);
-			System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraCapture.getLastTimeStamp());
+			System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraTimePassed + " systime = " + systemTimePassed + " diff = " + (systemTimePassed - cameraTimePassed) * 1000 + "ms");
 
-			int size = 1;
-			int[] attrs = {0};
+			int attrs[];
+			currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
 			
-			if (getSchema() != null)
-			{
-				size = getSchema().size();
-				attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-			}
-			
-			currentTuple = new Tuple<IMetaAttribute>(size, false);			
+			attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 			if (attrs.length > 0)
-			{
 				currentTuple.setAttribute(attrs[0], imageJCV); 
-			}
 
+			attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
+			if (attrs.length > 0) 
+			{
+				long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
+				currentTuple.setAttribute(attrs[0], timestamp);
+			}
+			
 			return true;
 		}
 	}	
