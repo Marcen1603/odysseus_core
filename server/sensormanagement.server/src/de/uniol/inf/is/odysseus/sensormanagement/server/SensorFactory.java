@@ -124,7 +124,9 @@ public class SensorFactory
 			  + "                      transport='none',\n"
 			  + "			           protocol='VideoLogger',\n"
 			  + "                      dataHandler='Tuple',\n"
-			  + "                      options=[%(optionsEx) ['format', 'mp4']]},\n"
+			  + "                      options=[%(optionsEx)\n"
+			  + "                               ['format', 'mp4'],\n"
+			  + "                               ['metadata_decoder', 'none']]},\n"
 			  + "                     %(sourceName))\n";		
 		
 		String liveViewQuery = 
@@ -173,7 +175,8 @@ public class SensorFactory
 			  + "                      dataHandler='Tuple',\n"
 			  + "                      options=[%(optionsEx)\n"
 			  + "                               ['format', 'mp4'],\n"
-			  + "                               ['frameSizeMultiple', '4']]},\n"
+			  + "                               ['frameSizeMultiple', '4'],"
+			  + "                               ['metadata_decoder', 'none']]},\n"
 			  + "                     %(sourceName))\n";		
 		
 		String liveViewQuery = 
@@ -212,7 +215,6 @@ public class SensorFactory
 			  + "                         schema=[['Image', 'ImageJCV']],\n"
 			  + "                         options=[%(options)]})\n";
 			  
-
 		String logQuery = 
 				"#PARSER PQL\n"
 			  + "#RUNQUERY\n"
@@ -225,6 +227,7 @@ public class SensorFactory
 			  + "                      dataHandler='Tuple',\n"
 			  + "                      options=[%(optionsEx)\n"
 			  + "								['videoExtension', 'avi'],\n"
+			  + "                               ['metadata_decoder', 'RGB2Gray16'],"
 			  + "								['videoCodec', '34'],\n"			// FFV1
 			  + "								['frameRate', '27'],\n"
 			  + "								['videoQuality', '0'],\n"

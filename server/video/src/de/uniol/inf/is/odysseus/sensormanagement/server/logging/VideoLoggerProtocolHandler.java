@@ -31,7 +31,8 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	public static final Logger LOG = LoggerFactory.getLogger(VideoLoggerProtocolHandler.class);
 
 	private AbstractVideoImplementation videoImpl;
-	private String videoExtension;	
+	private String videoExtension;
+	private String decoder;
 	
 	private String videoFileName;
 	private String syncFileName;
@@ -59,6 +60,7 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		};
 		
 		videoExtension = optionMap.get("videoExtension", "mp4");		
+		decoder = optionMap.get("metadata_decoder", null);
 		videoImpl.getOptions(optionMap);		
 	}
 
@@ -75,26 +77,11 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 				
 		videoImpl.setSyncFileName(syncFileName);
 		
-/*		ImageJCV image = (ImageJCV) object.getAttribute(0);
-		
-		try
-		{
-			options.createAndStartRecorder(new FFmpegFrameRecorder(videoFileName, image.getWidth(), image.getHeight()));
-//	        recorder.setVideoCodec(13);
-//	        recorder.setFrameRate(frameRate);
-//	        recorder.setFormat("mp4");
-//	        recorder.setVideoQuality(0);
-//	        recorder.start();
-		}
-		catch (FFmpegFrameRecorder.Exception e)
-		{
-			throw new IOException(e);
-		}		*/
-	        	    
 		VideoLogMetaData logMetaData = new VideoLogMetaData();
 		logMetaData.videoFile = new File(videoFileName).getName();
 		logMetaData.syncFile = new File(syncFileName).getName();
 		logMetaData.doRotate180 = false;
+		logMetaData.decoder = decoder;
 	    
 	    return logMetaData;
 	}
