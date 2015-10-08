@@ -81,7 +81,7 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 	}
 
 	@Override
-	final protected void process_open() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		// super.process_open();
 		this.buffer.clear();
 		puncWritten = 0;
