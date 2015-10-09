@@ -143,7 +143,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			SDFAttribute attr = getSchema().getAttribute(i);
 			if (attr.getAttributeName().equalsIgnoreCase("FlagState"))
 			{
-				newTuple.setAttribute(i, flagState.swigValue());
+				newTuple.setAttribute(i, flagState.toString());
 				break;
 			}
 		}
