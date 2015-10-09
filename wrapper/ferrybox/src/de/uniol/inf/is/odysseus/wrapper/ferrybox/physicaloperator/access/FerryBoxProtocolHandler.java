@@ -1,20 +1,3 @@
-/*******************************************************************************
- * LMS1xx protocol handler for the Odysseus data stream management system
- * Copyright (C) 2014  Christian Kuka <christian@kuka.cc>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.ferrybox.physicaloperator.access;
 
 import java.io.IOException;
@@ -39,22 +22,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
- * Protocol Handler for the SICK protocol supporting LMS100 and LMS151 laser
- * scanner
+ * Protocol Handler to receive custom NMEA string from the FerryBox software by HS Jena
  * 
- * @author Christian Kuka <christian@kuka.cc>
+ * @author Henrik Surm
  */
 public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<IMetaAttribute>> {
 	private static final Logger LOG = LoggerFactory.getLogger(FerryBoxProtocolHandler.class);
 	public static final String NAME = "FerryBox";
-
-	/** Commands */
-	public static final String START = "header\r\n";
-	public static final String DATA = "daten\r\n";
-	public static final String STOP = "stop\r\n";
-	
-	private int interval;
-	private Timer timer;
 
 	@Override public String getName() { return FerryBoxProtocolHandler.NAME; }
 	
@@ -65,8 +39,6 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 	public FerryBoxProtocolHandler(ITransportDirection direction, IAccessPattern access,
 			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
-		
-		interval = optionsMap.getInt("interval", 1000);
 	}	
 
 	@Override
@@ -82,61 +54,52 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 	 */
 	@Override
 	public void onConnect(final ITransportHandler caller) {
-		send(START);
 	}
 
-	private void send(String message)
-	{
-		try {
-			getTransportHandler().send(message.getBytes(charset));
-		} catch (IOException e) {
-			FerryBoxProtocolHandler.LOG.error(e.getMessage(), e);
-		}
+	@Override
+	public void onDisonnect(ITransportHandler caller) {
 	}
 	
-	@Override
-	public void onDisonnect(ITransportHandler caller)
-	{
-		timer.cancel();
-		timer.purge();
-		timer = null;
-		
-		send(STOP);
+	private String[] header = null;
+	
+	private void processLine(String line)
+	{		
+		if (line.length() == 0) return;
+			
+		// The first message fills the header
+		if (header == null)
+		{
+			header = line.split(",");
+		}
+		else
+		{
+			// Split received nmea string w/o checksum and fill map
+			String[] lines = line.substring(0, line.length()-4).split(",");
+			Map<String, Object> event = new HashMap<>();
+			
+			// Ignore first entry, since it is the nmea code $icbm
+			int i=0;
+			for (String entry : lines)
+			{
+				if (i > 0)
+					event.put(header[i], entry);
+				
+				i++;
+			}
+			
+			KeyValueObject<IMetaAttribute> kvObject = new KeyValueObject<>(event);
+			getTransfer().transfer(kvObject);
+		}		
 	}
 	
 	@Override
 	public void process(long callerId, final ByteBuffer message) 
 	{
-		String line = new String(message.array(), charset);
-		System.out.println(line);
-
-		if (timer == null)
-		{
-			// The first message received is the header
-			// Now start the data timer
-			timer = new Timer();
-			final TimerTask task = new TimerTask() {
-				@Override
-				public void run() {
-					send(DATA);
-				}
-			};        
-			timer.schedule(task, 0, interval);						
-		}
-		else
-		{		
-			// Split received nmea string and fill map
-			final String[] lines = line.substring(0, line.length()-4).split(",");
-			Map<String, Object> event = new HashMap<>();
-			int i=0;
-			for (String entry : lines)
-			{
-				event.put("entry" + i, entry);
-			}
-			
-			KeyValueObject<IMetaAttribute> kvObject = new KeyValueObject<>(event);
-			getTransfer().transfer(kvObject);
-		}
+		String asString = new String(message.array(), 0, message.limit(), charset);
+		
+		String[] lines = asString.split("\n");
+		for (String line : lines)
+			processLine(line);			
 	}
 
 	@Override
@@ -144,20 +107,9 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 		return ITransportExchangePattern.InOnly;
 	}
 	
-	public int getInterval() {
-		return interval;
-	}
-
-	public void setInterval(int interval) {
-		throw new UnsupportedOperationException("Not implemented yet!");
-	}
-
 	@Override
 	public boolean isSemanticallyEqualImpl(final IProtocolHandler<?> other) {
 		if (!(other instanceof FerryBoxProtocolHandler)) return false;
-		
-		FerryBoxProtocolHandler o = (FerryBoxProtocolHandler) other;
-		if (interval != o.interval) return false;
 		
 		return true;
 	}
