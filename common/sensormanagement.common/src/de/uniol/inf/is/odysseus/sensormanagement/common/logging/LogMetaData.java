@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelperHandler;
 
+
 @XmlRootElement(name = "log")
 public class LogMetaData implements XmlMarshalHelperHandler
 {
@@ -16,6 +17,14 @@ public class LogMetaData implements XmlMarshalHelperHandler
 	public String sensorId;
 	public long startTime;
 	public long endTime = 0;
+	
+	public static class AdditionalData
+	{
+		public String fileName;
+		public String header;
+	};
+	
+	public AdditionalData additionalData;
 	
 	@Override public void onUnmarshalling(File xmlFile) 
 	{

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.sensormanagement.server.logging;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.IntStream;
 
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameGrabber;
@@ -97,18 +98,14 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		videoImpl.stop();
 	}
 
-	@Override protected long writeInternal(Tuple<?> object, long timeStamp) throws IOException 
+	@Override protected int[] writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
-		ImageJCV image = (ImageJCV) object.getAttribute(0);
-		
-//		System.out.print("write " + image.toString());
-		
+		ImageJCV image = (ImageJCV) object.getAttribute(0);		
+//		System.out.print("write " + image.toString());		
 		videoImpl.record(image, timeStamp / 1000.0);
 		
-		long length = new File(videoFileName).length();
-//		System.out.println(", video file size = " + length + " byte 0 = " + image.getImageData().get(0));
-		
-		return length;
+		// Return that all attributes except the first one are left
+		return IntStream.rangeClosed(1, object.size()-1).toArray();
 	}	
 	
 	@Override
@@ -172,5 +169,10 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 			LOG.warn("VideoLoggerProtocolHandler requires sensormanagement.server feature");
 			return null;
 		}
+	}
+
+	@Override
+	protected long getLogFileSize() {
+		return new File(videoFileName).length();
 	}
 }

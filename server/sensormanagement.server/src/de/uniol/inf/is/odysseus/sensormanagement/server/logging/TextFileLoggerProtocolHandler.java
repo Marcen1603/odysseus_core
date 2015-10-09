@@ -77,18 +77,24 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 		}		
 	}
 
-	@Override protected long writeInternal(Tuple<?> object, long timeStamp) throws IOException 
+	@Override protected int[] writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
 		try
 		{
-			String rawString = object.csvToString(new WriteOptions(',', '\'', null, null, false)); //(String) object.getAttribute(0);
+			String rawString = object.csvToString(new WriteOptions(',', '\'', null, null, false));
 			logFileStream.write(rawString + "\n");
-			return new File(logFileName).length();
+			
+			// Return that no attributes are left
+			return new int[0];
 		}		
 		catch (Exception e)
 		{
 			throw new IOException(e);
 		}
+	}	
+	
+	@Override protected long getLogFileSize() {
+		return new File(logFileName).length();
 	}	
 
 	@Override

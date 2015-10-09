@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.sensormanagement.server.logging;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -18,18 +21,21 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelp
 
 public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 {
-	private Object			processLock = new Object();
+	private Object processLock = new Object();
 	
-	private long 			lastTimeStamp;
+	private long lastTimeStamp;
 
-	private String 			loggingDirectory;
-	private String			fileNameBase;
-	private long			logfileSizeLimit;	
+	private String loggingDirectory;
+	private String fileNameBase;
+	private long logfileSizeLimit;	
 	private SensorModel	sensorModel;
 	
-	private boolean 		logSetUp;	
-	private LogMetaData 	logMetaData;
-	private String			logMetaDataFileName;
+	private boolean logSetUp;	
+	private LogMetaData logMetaData;
+	private String logMetaDataFileName;
+	
+	private BufferedWriter additionalFileWriter;
+	private WriteOptions csvWriteOptions = new WriteOptions(',', '\'', null, null, false);
 	
 	public LoggerProtocolHandler() 
 	{
@@ -108,19 +114,23 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		
 		stopLoggingInternal(logMetaData);
 		
-		try
-		{
+		if (additionalFileWriter != null) {
+			try {
+				additionalFileWriter.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
 			logMetaData.endTime = lastTimeStamp;
 			XmlMarshalHelper.toXmlFile(logMetaData, new File(logMetaDataFileName));
-		}
-		catch(IOException e)
-		{
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		finally
-		{
-			logMetaData = null;
-		}			
+		
+		logMetaData = null;
+		additionalFileWriter = null;
 	}
 	
 	@Override
@@ -140,14 +150,41 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 			if (!logSetUp)
 				startLogging(object, lastTimeStamp);
 		
-			boolean logFileSizeLimitReached = writeInternal(object, lastTimeStamp) >= getLogfileSizeLimit();
+			
+			int[] remaining = writeInternal(object, lastTimeStamp);
+			if (remaining.length > 0)
+			{
+				if (additionalFileWriter == null)
+				{
+					// Create additional data file
+					String additionalFileName = getFileNameBase() + ".csv";
+					
+					logMetaData.additionalData = new LogMetaData.AdditionalData();
+					logMetaData.additionalData.fileName = new File(additionalFileName).getName();					
+					additionalFileWriter = new BufferedWriter(new FileWriter(additionalFileName));
+					
+					// Collect attribute names for additional header in log meta data
+					logMetaData.additionalData.header = "";					
+					for (int attr : remaining)
+						logMetaData.additionalData.header += getSchema().getAttribute(attr).getAttributeName() + ", ";
+					
+					logMetaData.additionalData.header = logMetaData.additionalData.header.substring(0, logMetaData.additionalData.header.length()-2);
+				}
+				
+				Tuple<?> remainingTuple = object.restrict(remaining, true);
+				additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
+			}
 		
-			if (logFileSizeLimitReached)
+			if (getLogFileSize() >= getLogfileSizeLimit())
 				stopLogging(lastTimeStamp);
 		}
 	}
 	
+	// Returns the current log file size in bytes 
+	protected abstract long getLogFileSize();
 	protected abstract LogMetaData startLoggingInternal(Tuple<?> object) throws IOException;
 	protected abstract void stopLoggingInternal(LogMetaData logMetaData);
-	protected abstract long writeInternal(Tuple<?> object, long timeStamp) throws IOException;
+	
+	// Returns tuple attribute positions which have not been written to the log file
+	protected abstract int[] writeInternal(Tuple<?> object, long timeStamp) throws IOException;
 }

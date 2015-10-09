@@ -163,7 +163,7 @@ public class SensorFactory
 			  + "                         protocol='none',\n"
 			  + "                         dataHandler='Tuple',\n"
 			  + "                         schema=[['Image', 'ImageJCV'],\n"
-			  + "                                 ['start', 'STARTTIMESTAMP']],\n"
+			  + "                                 ['timestamp', 'STARTTIMESTAMP']],\n"
 			  + "                         options=[%(options)]})\n";
 
 		String logQuery = 
@@ -213,15 +213,16 @@ public class SensorFactory
 			  + "                         transport='OptrisCamera',\n"
 			  + "                         protocol='none',\n"
 			  + "                         dataHandler='Tuple',\n"
-			  + "                         schema=[['Image', 'ImageJCV'],\n"
-			  + "                                 ['FlagState', 'String']],\n"
+			  + "                         schema=[['Image', 'ImageJCV'],"
+			  + "                                 ['timestamp', 'STARTTIMESTAMP'],\n"
+			  + "                                 ['flagState', 'String']],\n"
 			  + "                         options=[%(options)]})\n";
 			  
 		String logQuery = 
 				"#PARSER PQL\n"
 			  + "#RUNQUERY\n"
 			
-			  + "encoded = MAP({expressions = [['convert16BitToRGBCV(image)', 'image']]}, %(sourceName))\n"
+			  + "encoded = MAP({expressions = [['convert16BitToRGBCV(image)', 'image'], ['timestamp', 'timestamp'], ['flagState', 'flagState']]}, %(sourceName))\n"
 			  + "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 			  + "			           wrapper='GenericPush',\n"
 			  + "                      transport='none',\n"
