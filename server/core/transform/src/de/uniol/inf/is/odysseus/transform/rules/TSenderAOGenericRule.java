@@ -96,6 +96,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 			LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
 			throw new TransformationException("No protocol handler " + operator.getProtocolHandler() + " found.");
 		}
+		protocolHandler.setSchema(dataHandler.getSchema());
 
 		if (!operator.getTransportHandler().equalsIgnoreCase("NONE")) {
 			ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler, options);
