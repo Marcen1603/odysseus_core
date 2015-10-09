@@ -10,11 +10,36 @@
 		<tycho.version>0.23.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<odysseus-repo.url>http://odysseus.offis.uni-oldenburg.de/update/</odysseus-repo.url>
+		<mars-repo.url>http://download.eclipse.org/releases/mars/</mars-repo.url>
+		<xtext-repo.url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</xtext-repo.url>
+		<gef-repo.url>http://download.eclipse.org/tools/gef/updates/releases</gef-repo.url>
+		<dropins-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/</dropins-repo.url>
 	</properties>
 	<repositories>
 		<repository>
 			<id>odysseus</id>
 			<url>${odysseus-repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>mars</id>
+			<url>${mars-repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+
+		<repository>
+			<id>xtext</id>
+			<url>${xtext-repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>gef</id>
+			<url>${gef-repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>dropins</id>
+			<url>${dropins-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -32,13 +57,14 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<target>
+<!--					<target>
 						<artifact>
 							<groupId>de.uniol.inf.is.odysseus.target</groupId>
 							<artifactId>de.uniol.inf.is.odysseus.releng.targetplatform</artifactId>
 							<version>1.0.0-SNAPSHOT</version>
 						</artifact>
 					</target>
+-->
 					<environments>
 						<environment>
 							<os>linux</os>
