@@ -36,6 +36,8 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	
 	private String videoFileName;
 	private String syncFileName;
+	private int bitsPerPixel;
+	private int pixelFormat;
 
 	public VideoLoggerProtocolHandler() 
 	{
@@ -61,6 +63,8 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		
 		videoExtension = optionMap.get("videoExtension", "mp4");		
 		decoder = optionMap.get("metadata_decoder", null);
+		bitsPerPixel = optionMap.getInt("metadata_bitsPerPixel", -1);
+		pixelFormat	= optionMap.getInt("metadata_pixelFormat", -1);	
 		videoImpl.getOptions(optionMap);		
 	}
 
@@ -82,6 +86,8 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		logMetaData.syncFile = new File(syncFileName).getName();
 		logMetaData.doRotate180 = false;
 		logMetaData.decoder = decoder;
+		logMetaData.bitsPerPixel = bitsPerPixel != -1 ? bitsPerPixel : null;
+		logMetaData.pixelFormat = pixelFormat != -1 ? pixelFormat : null;
 	    
 	    return logMetaData;
 	}

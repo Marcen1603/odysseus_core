@@ -162,7 +162,8 @@ public class SensorFactory
 			  + "                         transport='BaslerCamera',\n"
 			  + "                         protocol='none',\n"
 			  + "                         dataHandler='Tuple',\n"
-			  + "                         schema=[['Image', 'ImageJCV']],\n"
+			  + "                         schema=[['Image', 'ImageJCV'],\n"
+			  + "                                 ['start', 'STARTTIMESTAMP']],\n"
 			  + "                         options=[%(options)]})\n";
 
 		String logQuery = 
@@ -212,7 +213,8 @@ public class SensorFactory
 			  + "                         transport='OptrisCamera',\n"
 			  + "                         protocol='none',\n"
 			  + "                         dataHandler='Tuple',\n"
-			  + "                         schema=[['Image', 'ImageJCV']],\n"
+			  + "                         schema=[['Image', 'ImageJCV'],\n"
+			  + "                                 ['FlagState', 'String']],\n"
 			  + "                         options=[%(options)]})\n";
 			  
 		String logQuery = 
@@ -228,6 +230,8 @@ public class SensorFactory
 			  + "                      options=[%(optionsEx)\n"
 			  + "								['videoExtension', 'avi'],\n"
 			  + "                               ['metadata_decoder', 'RGB2Gray16'],"
+			  + "                               ['metadata_bitsperpixel', '32'],"
+			  + "                               ['metadata_pixelformat', '30'],"			  
 			  + "								['videoCodec', '34'],\n"			// FFV1
 			  + "								['frameRate', '27'],\n"
 			  + "								['videoQuality', '0'],\n"
