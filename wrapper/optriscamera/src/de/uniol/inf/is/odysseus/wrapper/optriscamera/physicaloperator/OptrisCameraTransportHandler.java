@@ -134,8 +134,9 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
 		if (attrs.length > 0) 
 		{
-/*			long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
-			newTuple.setAttribute(attrs[0], timestamp);*/
+			// TODO: Use camera timestamp
+			long timestamp = System.currentTimeMillis(); //startupTimeStamp + (long) (cameraTimePassed * 1000);
+			newTuple.setAttribute(attrs[0], timestamp);
 		}		
 		
 		for (int i=0; i<getSchema().size(); i++)
