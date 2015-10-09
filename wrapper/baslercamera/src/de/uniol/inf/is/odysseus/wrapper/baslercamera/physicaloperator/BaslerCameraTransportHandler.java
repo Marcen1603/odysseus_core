@@ -84,18 +84,6 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		 				{
 							imageJCV.getImageData().put(buffer);				 										 							 					
 							fireProcess(generateTuple(timeStamp));
-							
-		 					// TODO: Use timestamp
-/*		 					System.out.println("Grab timestamp = " + timeStamp);
-		 					
-							Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
-							int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
-							if (attrs.length > 0)
-							{
-								tuple.setAttribute(attrs[0], imageJCV);
-							}
-								
-							fireProcess(tuple);*/		 					
 		 				}
 		 			};
 				cameraCapture.start(operationMode);	
@@ -144,6 +132,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	
 	private void logStats()
 	{
+		imageCount++;
 		long now = System.nanoTime();
 		double dt = (now - lastTime) / 1.0e9;
 		double fps = 1.0/dt;
@@ -156,8 +145,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	}
 	
 	@Override public Tuple<IMetaAttribute> getNext() 
-	{
-		
+	{		
 		Tuple<IMetaAttribute> tuple = currentTuple;
 		currentTuple = null;				
         return tuple;					
@@ -165,8 +153,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	
 	private Tuple<IMetaAttribute> generateTuple(double cameraTimePassed)
 	{
-		imageCount++;		
-		logStats();
+//		logStats();
 		
 		double systemTimePassed = (System.currentTimeMillis() - startupTimeStamp) / 1000.0;
 		
