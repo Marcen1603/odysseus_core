@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 @SuppressWarnings("restriction")
 public class IQLJdtTypeProvider extends JdtTypeProvider implements IIQLJdtTypeProvider {
 
+	@SuppressWarnings("deprecation")
 	public IQLJdtTypeProvider(IJavaProject javaProject,
 			ResourceSet resourceSet, IndexedJvmTypeAccess indexedJvmTypeAccess,
 			WorkingCopyOwner workingCopyOwner) {

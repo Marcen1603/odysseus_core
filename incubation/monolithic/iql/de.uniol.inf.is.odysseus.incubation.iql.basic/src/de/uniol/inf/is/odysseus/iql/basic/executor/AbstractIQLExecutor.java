@@ -167,9 +167,6 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 					for (String e : classPathEntries) {
 						entries.add(file.getAbsolutePath()+File.separator+e);
 					}
-				}else{
-					LOG.error("error while adding classpath entries of bundle " +bundle.getSymbolicName());
-					throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName());
 				}
 			}
 		}	

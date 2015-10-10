@@ -46,6 +46,7 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
     this.typeCompiler = typeCompiler;
   }
   
+  @Override
   public String compile(final IQLMetadataList o, final G context) {
     String _xblockexpression = null;
     {

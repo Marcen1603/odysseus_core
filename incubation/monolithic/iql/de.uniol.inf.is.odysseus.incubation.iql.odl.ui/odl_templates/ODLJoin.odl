@@ -2,6 +2,8 @@ operator ODLJoin(outputMode = "NEW_ELEMENT", minInputPorts = 2, maxInputPorts = 
 	
 	optional parameter IPredicate predicate = TruePredicate::getInstance();		
 	
+	optional parameter(type = EnumParameter) Cardinalities card;
+		
 	ITimeIntervalSweepArea[] areas = [];	
 	
 	IDataMergeFunction dataMerge;
@@ -9,7 +11,6 @@ operator ODLJoin(outputMode = "NEW_ELEMENT", minInputPorts = 2, maxInputPorts = 
 	ITransferArea transferFunction;		
 	
 	IMetadataMergeFunction metadataMerge;
-		
 		
 	on po_init {		
 		String areaName = "TIJoinSA";
@@ -19,72 +20,104 @@ operator ODLJoin(outputMode = "NEW_ELEMENT", minInputPorts = 2, maxInputPorts = 
 		areas[1] = SweepAreaRegistry::getSweepArea(areaName);
 		areas[1].queryPredicate = predicate;
 	}	
-		
-		
+			
+	on processOpen {
+		if (dataMerge == null) {
+			dataMerge = new RelationalMergeFunction(this.outputSchema.size);		
+			transferFunction = new TITransferArea();
+			List leftMeta = getInputSchema(0).metaAttributeNames;
+			List rightMeta = getInputSchema(1).metaAttributeNames;
+			metadataMerge = MetadataRegistry::getMergeFunction(leftMeta,rightMeta);			
+		}
+		areas[0].clear;
+		areas[1].clear;		
+		dataMerge.init;				
+		transferFunction.init(this, this.subscribedToSource.size);		
+		metadataMerge.init;			
+		predicate.init;		
+	}
+	
 	on createOutputSchema(int arg0) : SDFSchema{
 		SDFSchema left = getSubscribedToSource(0).schema;
 		SDFSchema right = getSubscribedToSource(1).schema;		
 		return SDFSchema::join(left, right);
 	}
 	
-	on processOpen {		
-		dataMerge = new RelationalMergeFunction(getOutputSchema.size);		
-		dataMerge.init;	
-			
-		transferFunction = new TITransferArea();
-		transferFunction.init(this, this.getSubscribedToSource.size);		
-		
-		List leftMeta = getInputSchema(0).getMetaAttributeNames;
-		List rightMeta = getInputSchema(1).getMetaAttributeNames;
-		metadataMerge = MetadataRegistry::getMergeFunction(leftMeta,rightMeta);
-		metadataMerge.init;	
-		
-		predicate.init();
-		
-		areas[0].clear;
-		areas[1].clear;
-	}
-	
 	on processNext(Tuple tuple, int port) {
-		this.transferFunction.newElement(tuple, port);
-				
-		int otherPort = getOtherPort(port);	
-				
-		Order order = Order::fromOrdinal(port);	
-				
-		areas[otherport].purgeElements(tuple, order);	
+		transferFunction.newElement(tuple, port);				
+		int otherPort = getOtherPort(port);					
+		Order order = Order::fromOrdinal(port);				
+		areas[otherPort].purgeElements(tuple, order);
+		boolean extract = false;
+		if (card != null) {
+			switch (card.toString) {
+				case "ONE_ONE":
+					extract = true;
+					break;
+				case "MANY_ONE":
+					extract = port == 1;
+					break;
+				case "ONE_MANY":
+					extract = port == 0;
+					break;
+				default:
+					break;
+			}
+		}
+					
+		Iterator qualifies = areas[otherPort].queryCopy(tuple, order, extract);
 		
-		Iterator qualifies = areas[otherPort].queryCopy(tuple, order, false);
-				
+		boolean hit = qualifies.hasNext;		
 		while(qualifies.hasNext) {
 			Tuple next = qualifies.next;
 			Tuple newElement = dataMerge.merge(tuple, next, metadataMerge, order);
 			transferFunction.transfer(newElement);
 		}		
 				
-		areas[port].insert(tuple);	
-	}	
-	
+		if (card == null || card == Cardinalities::MANY_MANY) {
+				areas[port].insert(tuple);
+		} else {
+			switch (card.toString) {
+			case "ONE_ONE":
+				if (!hit) {
+					areas[port].insert(tuple);
+				}
+				break;
+			case "ONE_MANY":
+				if (port == 0 || (port == 1 && !hit)) {
+					areas[port].insert(tuple);
+				}
+				break;
+			case "MANY_ONE":
+				if (port == 1 || (port == 0 && !hit)) {
+					areas[port].insert(tuple);
+				}
+				break;
+			default:
+				areas[port].insert(tuple);
+				break;
+			}
+		}
+	}
 	
 	on processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation.isHeartbeat) {
-			this.areas[getOtherPort(port)].purgeElementsBefore(punctuation.getTime);		
+			areas[getOtherPort(port)].purgeElementsBefore(punctuation.time);		
 		}
-		this.transferFunction.sendPunctuation(punctuation);
-		this.transferFunction.newElement(punctuation, port);
+		transferFunction.sendPunctuation(punctuation);
+		transferFunction.newElement(punctuation, port);
 	}
 	
 	on processDone(int port) {
-		this.transferFunction.done(port);
+		transferFunction.done(port);
 	}
 
-
-	getOtherPort(int port) : int {
+	
+	po getOtherPort(int port) : int {
 		if (port == 0) {
 			return 1;
 		} else {
 			return 0;
 		}
-	}	
-	
+	}
 }

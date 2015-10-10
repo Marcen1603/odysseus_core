@@ -33,6 +33,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
     super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeExtensionsDictionary, typeDictionary);
   }
   
+  @Override
   public String compile(final IQLExpression e, final IQDLGeneratorContext context) {
     String _xifexpression = null;
     if ((e instanceof IQLSubscribeExpression)) {
@@ -104,6 +105,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
     return _xblockexpression;
   }
   
+  @Override
   public String compile(final IQLNewExpression e, final IQDLGeneratorContext context) {
     String _xifexpression = null;
     JvmTypeReference _ref = e.getRef();

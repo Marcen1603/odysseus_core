@@ -58,6 +58,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     this.typeDictionary = typeDictionary;
   }
   
+  @Override
   public String compile(final IQLClass c, final G context) {
     String _xblockexpression = null;
     {
@@ -114,10 +115,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
         boolean _greaterThan = (_size > 0);
         if (_greaterThan) {
           _builder.append(" implements ");
-          final Function1<JvmTypeReference, String> _function = new Function1<JvmTypeReference, String>() {
-            public String apply(final JvmTypeReference el) {
-              return AbstractIQLCompiler.this.typeCompiler.compile(el, context, true);
-            }
+          final Function1<JvmTypeReference, String> _function = (JvmTypeReference el) -> {
+            return this.typeCompiler.compile(el, context, true);
           };
           List<String> _map = ListExtensions.<JvmTypeReference, String>map(interfaces, _function);
           String _join = IterableExtensions.join(_map, ",");
@@ -256,6 +255,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     return _xblockexpression;
   }
   
+  @Override
   public String compile(final IQLInterface interf, final G context) {
     String _xblockexpression = null;
     {
@@ -299,10 +299,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
         boolean _greaterThan = (_size > 0);
         if (_greaterThan) {
           _builder.append(" extends ");
-          final Function1<JvmTypeReference, String> _function = new Function1<JvmTypeReference, String>() {
-            public String apply(final JvmTypeReference el) {
-              return AbstractIQLCompiler.this.typeCompiler.compile(el, context, true);
-            }
+          final Function1<JvmTypeReference, String> _function = (JvmTypeReference el) -> {
+            return this.typeCompiler.compile(el, context, true);
           };
           List<String> _map = ListExtensions.<JvmTypeReference, String>map(interfaces, _function);
           String _join = IterableExtensions.join(_map, ",");
@@ -449,10 +447,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
         boolean _notEquals_1 = (!Objects.equal(_parameters, null));
         if (_notEquals_1) {
           EList<JvmFormalParameter> _parameters_1 = m.getParameters();
-          final Function1<JvmFormalParameter, String> _function = new Function1<JvmFormalParameter, String>() {
-            public String apply(final JvmFormalParameter p) {
-              return AbstractIQLCompiler.this.compile(p, context);
-            }
+          final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
+            return this.compile(p, context);
           };
           List<String> _map = ListExtensions.<JvmFormalParameter, String>map(_parameters_1, _function);
           String _join = IterableExtensions.join(_map, ", ");
@@ -493,10 +489,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     _builder.append(_simpleName, "");
     _builder.append("(");
     EList<JvmFormalParameter> _parameters = m.getParameters();
-    final Function1<JvmFormalParameter, String> _function = new Function1<JvmFormalParameter, String>() {
-      public String apply(final JvmFormalParameter p) {
-        return AbstractIQLCompiler.this.compile(p, context);
-      }
+    final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
+      return this.compile(p, context);
     };
     List<String> _map = ListExtensions.<JvmFormalParameter, String>map(_parameters, _function);
     String _join = IterableExtensions.join(_map, ", ");
@@ -523,10 +517,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     _builder.append(_compile_1, "");
     _builder.append(" type, ");
     EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
-    final Function1<IQLArgumentsMapKeyValue, String> _function = new Function1<IQLArgumentsMapKeyValue, String>() {
-      public String apply(final IQLArgumentsMapKeyValue el) {
-        return AbstractIQLCompiler.this.compile(el, typeRef, context);
-      }
+    final Function1<IQLArgumentsMapKeyValue, String> _function = (IQLArgumentsMapKeyValue el) -> {
+      return this.compile(el, typeRef, context);
     };
     List<String> _map = ListExtensions.<IQLArgumentsMapKeyValue, String>map(_elements, _function);
     String _join = IterableExtensions.join(_map, ", ");

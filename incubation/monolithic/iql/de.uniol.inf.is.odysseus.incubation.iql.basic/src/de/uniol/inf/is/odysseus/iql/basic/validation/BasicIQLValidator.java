@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.validation;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,7 +52,8 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	public static String DUPLICATE_LOCAL_VARIABLE= "duplicateLocalVariable";
 	public static String DUPLICATE_PARAMETERS= "duplicateParameters";
 	public static String CONSTRUCTOR_UNDEFINED= "constructorUndefined";
-
+	public static String OVERRIDE_NOT_ALLOWED= "overrideNotAllowed";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(BasicIQLValidator.class);
 	
 	@Inject
@@ -89,6 +91,26 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 			}
 		}
 	}
+	
+	@Check(CheckType.FAST)
+	void checkMethodOverride(IQLMethod method) {		
+		if (method.isOverride()) {
+			JvmGenericType type = EcoreUtil2.getContainerOfType(method, JvmGenericType.class);
+			Collection<JvmOperation> methods = lookUp.getMethodsToOverride(type);
+			for (JvmOperation op : methods) {
+				if (op.getSimpleName().equalsIgnoreCase(method.getSimpleName()) && op != method) {
+					for (int i = 0; i<method.getParameters().size(); i++) {
+						if (!typeUtils.getLongName(method.getParameters().get(i).getParameterType(),true).equalsIgnoreCase(typeUtils.getLongName(op.getParameters().get(i).getParameterType(),true))) {
+							break;
+						}
+					}
+					return;
+				}
+			}
+			error("The method "+method.getSimpleName()+" of type "+typeUtils.getShortName(type, false)+" must override or implement a supertype method", method, TypesPackage.eINSTANCE.getJvmMember_SimpleName() ,OVERRIDE_NOT_ALLOWED);
+		}
+	}
+	
 
 	@Check(CheckType.FAST)
 	void checkDuplicateAttributes(JvmGenericType type) {

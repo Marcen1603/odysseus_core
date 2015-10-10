@@ -4,28 +4,23 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 	
 	parameter AggregateItem[] aggregations;
 			
-	List outputAttributList = [];
-		
+	List outputAttributList = [];		
 	Map aggregationsMap = new HashMap();
 	Map outAttributeToAggregation = new HashMap();
-	List groupingAttributes = new ArrayList();
-	
-	
+	List groupingAttributes = new ArrayList();	
 	IMetadataMergeFunction metadataMerge;
 	IGroupProcessor groupProcessor;	
 	ITransferArea transferArea  = new TITransferArea();
-	
 	Map groups = new HashMap();
 	long createOutputCounter = 0;
 	Map init = new HashMap();
 	Map merger = new HashMap();
 	Map eval = new HashMap();
-	
-	
-	on ao_init() {
+		
+	on ao_init {
 		for (AggregateItem item : aggregations) {
 			addAggregation(item.inAttributes, item.aggregateFunction,item.outAttribute);
-		}
+		}		
 		if (group_by != null) {
 			for (SDFAttribute attr : group_by) {
 				addGroupingAttribute(attr);
@@ -33,29 +28,44 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 		}	
 	}
 	
-	on processOpen() {
+	on createOutputSchema(int port) : SDFSchema{							
+		SDFAttribute[] outAttribs = new ArrayList();
+
+		for (Object obj : outputAttributList) {
+			SDFAttribute e1 = ((IPair)obj).e1;
+			outAttribs += e1;
+		}
+		
+		if (getInputSchema(0) != null) {
+			return SDFSchemaFactory::createNewWithAttributes(outAttribs, getInputSchema(0));
+		} else {
+			return SDFSchemaFactory::createNewSchema("<tmp>", class(Tuple), outAttribs);		
+		}		
+	}
+	
+	on processOpen {
 		if (init.isEmpty || merger.isEmpty || eval.isEmpty) {
-			for (Object obj : aggregationsMap.keySet()) {
+			for (Object obj : aggregationsMap.keySet) {
 				SDFSchema attrList = obj;
 				if (SDFSchema::subset(attrList, getInputSchema(0))) {
 					Map funcs = aggregationsMap.get(attrList);
-					for (Object o : funcs.entrySet()) {
+					for (Object o : funcs.entrySet) {
 						Entry e = o;
-						FESortedClonablePair p = new FESortedClonablePair(attrList, e.getKey());
+						FESortedClonablePair p = new FESortedClonablePair(attrList, e.key);
 						int[] posArray = new int[];
 						boolean partialAggregateInput = false;
 						String datatype = null;
-						SDFSchema schema = p.getE1();
-						for (int i = 0; i < schema.size(); ++i) {
+						SDFSchema schema = p.e1;
+						for (int i = 0; i < schema.size; ++i) {
 							SDFAttribute attr = schema.get(i);
 							posArray[i] = getInputSchema(0).indexOf(attr);
-							if (attr.getDatatype().isPartialAggregate()) {
+							if (attr.datatype.isPartialAggregate) {
 								partialAggregateInput = true;
 							}
-							datatype = attr.getDatatype().getURI();
+							datatype = attr.datatype.uRI;
 						}		
-						AggregateFunction function = p.getE2();	
-						IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry::getBuilder(getInputSchema(0).getType(), function.getName());
+						AggregateFunction function = p.e2;	
+						IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry::getBuilder(getInputSchema(0).type, function.name);
 				
 						IAggregateFunction aggFunction = builder.createAggFunction(function, schema, posArray, partialAggregateInput,datatype);
 						init.put(p, aggFunction);
@@ -67,23 +77,20 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 		}
 		
 		if (groupProcessor == null) {
-			groupProcessor = new RelationalGroupProcessor(getInputSchema(0), getOutputSchema(0), groupingAttributes, aggregationsMap, false);
+			groupProcessor = new RelationalGroupProcessor(getInputSchema(0), this.outputSchema, groupingAttributes, aggregationsMap, false);
 		}
 		if (metadataMerge == null) {
-			List metadataSet = getInputSchema(0).getMetaAttributeNames();
-			metadataSet.remove(class(ITimeInterval).getName());
+			List metadataSet = getInputSchema(0).metaAttributeNames;
+			metadataSet.remove(class(ITimeInterval).name);
 			metadataMerge = MetadataRegistry::getMergeFunction(metadataSet);
 		}
 		
-		groupProcessor.init();
-		transferArea.init(this, getSubscribedToSource().size());
-		groups.clear();
+		groupProcessor.init;
+		transferArea.init(this, this.subscribedToSource.size);
+		groups.clear;
 		createOutputCounter = 0;
 	}
 	
-	on processDone() {
-		transferArea.done(0);
-	}
 	
 	on processNext(Tuple tuple, int port) {
 		
@@ -94,30 +101,17 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 			groups.put(groupID, sa);
 		}
 		List results = updateSA(sa, tuple, false);
-		ITimeInterval time = tuple.getMetadata;
-		createOutput(results, groupID, time.getStart(), port, groups, groupProcessor);
+		ITimeInterval time = tuple.metadata;
+		createOutput(results, groupID, time.start, port, groups, groupProcessor);
 	}
 	
 	on processPunctuation(IPunctuation punctuation, int port) {
 		transferArea.sendPunctuation(punctuation, port);
-		createOutput(null, null, punctuation.getTime(), port, groups, groupProcessor);		
+		createOutput(null, null, punctuation.time, port, groups, groupProcessor);		
 	}
-			
-	on createOutputSchema(int port) : SDFSchema{							
-		SDFAttribute[] outAttribs = new ArrayList();
-
-		for (Object obj : outputAttributList) {
-			SDFAttribute e1 = ((IPair)obj).getE1();
-			outAttribs += e1;
-		}
-		
-		if (getInputSchema(0) != null) {
-			return SDFSchemaFactory::createNewWithAttributes(outAttribs, getInputSchema(0));
-		} else {
-			return SDFSchemaFactory::createNewSchema("<tmp>", class(Tuple), outAttribs);		
-		}		
+	on processDone {
+		transferArea.done(0);
 	}
-	
 	
 	po createOutput(List existingResults, Long groupID,	PointInTime timestamp, int inPort,	Map groupsToProcess, IGroupProcessor g) {
 
@@ -128,14 +122,14 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 		}
 
 
-		for (Object obj : groupsToProcess.entrySet()) {
+		for (Object obj : groupsToProcess.entrySet) {
 			Entry entry = obj;
-			AggregateTISweepArea sa = entry.getValue();
+			AggregateTISweepArea sa = entry.value;
 
 			Iterator results = sa.extractElementsBefore(timestamp);
 				
-			produceResults(results, entry.getKey(), g);
-			PointInTime sa_min_ts = sa.calcMinTs();
+			produceResults(results, entry.key, g);
+			PointInTime sa_min_ts = sa.calcMinTs;
 
 			if (sa_min_ts != null) {
 				if (sa_min_ts.before(border)) {
@@ -150,34 +144,34 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 		for (Object obj : results) {
 			PairMap e = obj;
 			Tuple out = g.createOutputElement(groupID, e);
-			ITimeInterval newMeta = e.getMetadata().clone();
-			out.setMetadata(newMeta);
+			ITimeInterval newMeta = e.metadata.clone;
+			out.metadata = newMeta;
 			transferArea.transfer(out);
 		}
 	}
 	
 	po  produceResults(Iterator results, Long groupID, IGroupProcessor g) {
-		while (results.hasNext()) {
-			PairMap e = results.next();
+		while (results.hasNext) {
+			PairMap e = results.next;
 			Tuple out = null;
 			PairMap r = calcEval(e, true);
 			out = g.createOutputElement(groupID, r);
-			ITimeInterval newMeta = e.getMetadata().clone();
-			out.setMetadata(newMeta);
+			ITimeInterval newMeta = e.metadata.clone;
+			out.metadata = newMeta;
 			transferArea.transfer(out);
 		}
 	}
 	
 	po calcEval(PairMap toEval, boolean clearPartialAggregate) : PairMap{
 		PairMap ret = new PairMap();
-		for (Object obj: toEval.entrySet()) {
+		for (Object obj: toEval.entrySet) {
 			Entry e = obj;
-			IEvaluator eva = eval.get(e.getKey());
-			Tuple value = eva.evaluate(e.getValue());
-			ret.put(e.getKey(), value);
+			IEvaluator eva = eval.get(e.key);
+			Tuple value = eva.evaluate(e.value);
+			ret.put(e.key, value);
 			if (clearPartialAggregate){
-				IPartialAggregate agg = e.getValue();
-				agg.clear();
+				IPartialAggregate agg = e.value;
+				agg.clear;
 			}
 		}
 		return ret;
@@ -185,44 +179,45 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 	
 	po updateSA(AggregateTISweepArea sa, Tuple elemToAdd, boolean outputPA) : List {
 		List returnValues = new LinkedList();
-		ITimeInterval t_probe = elemToAdd.getMetadata();
+		ITimeInterval t_probe = elemToAdd.metadata;
 		Iterator qualifies = sa.extractOverlaps(t_probe);
 		
-		if (!qualifies.hasNext()) {
+		if (!qualifies.hasNext) {
 			saInsert(sa, calcInit(elemToAdd), t_probe);
 		} else {
 			List pl = getSortedIntersectionPoints(t_probe, qualifies);
 
-			Iterator pointIter = pl.iterator();
+			Iterator pointIter = pl.iterator;
+			
 			_Point p1 = null;
 			_Point p2 = null;
 
 
-			p1 = pointIter.next();
-			PairMap lastPartialAggregate = p1.getLoad();
+			p1 = pointIter.next;
+			PairMap lastPartialAggregate = p1.load;
 			
-			while (pointIter.hasNext()) {
-				p2 = pointIter.next();
+			while (pointIter.hasNext) {
+				p2 = pointIter.next;
 				if (p1.before(p2)) {
 
-					if (p1.isStart() && p2.isStart()) {
+					if (p1.start && p2.start) {
 						lastPartialAggregate = updateSAStartStart(sa, elemToAdd, p1, p2, lastPartialAggregate);
 
-					} else if (p1.isStart() && p2.isEnd()) {
+					} else if (p1.start && p2.end) {
 
 						updateSAStartEnd(sa, elemToAdd, outputPA, returnValues, t_probe, p1, p2, lastPartialAggregate);
 
-					} else if (p1.isEnd() && p2.isStart()) {
+					} else if (p1.end && p2.start) {
 						updateSAEndStart(sa, elemToAdd, p1, p2);
-					} else if (p1.isEnd() && p2.isEnd()) { // Element after
+					} else if (p1.end && p2.end) {
 						lastPartialAggregate = updateSAEndEnd(sa, elemToAdd, p1, p2, lastPartialAggregate);
 					}
-					if (p1.getLoad != null) {
-						lastPartialAggregate = p1.getLoad();						
+					if (p1.load != null) {
+						lastPartialAggregate = p1.load;						
 					} 
 				} else {
-					if (p2.getLoad != null) {
-						lastPartialAggregate = p2.getLoad();						
+					if (p2.load != null) {
+						lastPartialAggregate = p2.load;						
 					} 
 				}
 
@@ -234,32 +229,32 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 	
 	po updateSAStartEnd(AggregateTISweepArea sa, Tuple elemToAdd, boolean outputPA, List returnValues, ITimeInterval t_probe,_Point p1,_Point p2, PairMap lastPartialAggregate) {
 		boolean createNew = false;
-		if (!outputPA && p2.before(t_probe.getStart())) {
+		if (!outputPA && p2.before(t_probe.start)) {
 			createNew = false;
 			PairMap v = calcEval(lastPartialAggregate, false);
-			ITimeInterval meta = lastPartialAggregate.getMetadata().clone();
-			v.setMetadata(meta);
-			meta.setEnd(p2.getPoint());
+			ITimeInterval meta = lastPartialAggregate.metadata.clone;
+			v.metadata = meta;
+			meta.end = p2.point;
 			returnValues.add(v);
 		} else {
-			ITimeInterval meta = lastPartialAggregate.getMetadata();
-			createNew = !(p1.getPoint().equals(meta.getStart())
-					&& p2.getPoint().equals(meta.getEnd()));
+			ITimeInterval meta = lastPartialAggregate.metadata;
+			createNew = !(p1.point.equals(meta.start)
+					&& p2.point.equals(meta.end));
 		}
 
-		ITimeInterval newMeta = metadataMerge.mergeMetadata(lastPartialAggregate.getMetadata(), elemToAdd.getMetadata());
-		newMeta = newMeta.clone();
-		newMeta.setStartAndEnd(p1.getPoint(), p2.getPoint());
+		ITimeInterval newMeta = metadataMerge.mergeMetadata(lastPartialAggregate.metadata, elemToAdd.metadata);
+		newMeta = newMeta.clone;
+		newMeta.setStartAndEnd(p1.point, p2.point);
 		saInsert(sa, calcMerge(lastPartialAggregate, elemToAdd, createNew), newMeta);
 	}
 	
 	po calcMerge(PairMap toMerge, Tuple element, boolean createNew) : PairMap {		
 		PairMap ret = new PairMap();
-		for (Object obj : toMerge.entrySet()) {
+		for (Object obj : toMerge.entrySet) {
 			Entry e = obj;
-			IMerger mf = merger.get(e.getKey());
-			IPartialAggregate pa = mf.merge(e.getValue(), element, createNew);
-			ret.put(e.getKey(), pa);
+			IMerger mf = merger.get(e.key);
+			IPartialAggregate pa = mf.merge(e.value, element, createNew);
+			ret.put(e.key, pa);
 		}
 
 		return ret;
@@ -269,14 +264,14 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 	po getSortedIntersectionPoints(ITimeInterval t_probe, Iterator qualifies) : List {		
 		List pl = new LinkedList();
 
-		while (qualifies.hasNext()) {
-			PairMap element_agg = qualifies.next();
-			ITimeInterval t_agg = element_agg.getMetadata();
-			pl.add(new _Point(t_agg.getStart(), true,element_agg));
-			pl.add(new _Point(t_agg.getEnd(), false, element_agg));
+		while (qualifies.hasNext) {
+			PairMap element_agg = qualifies.next;
+			ITimeInterval t_agg = element_agg.metadata;
+			pl.add(new _Point(t_agg.start, true,element_agg));
+			pl.add(new _Point(t_agg.end, false, element_agg));
 		}
-		pl.add(new _Point(t_probe.getStart(), true,	null));
-		pl.add(new _Point(t_probe.getEnd(), false,	null));
+		pl.add(new _Point(t_probe.start, true,	null));
+		pl.add(new _Point(t_probe.end, false,	null));
 
 		Collections::sort(pl);
 		return pl;
@@ -284,29 +279,29 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 
 	po updateSAStartStart(AggregateTISweepArea sa, Tuple elemToAdd,	_Point p1, _Point p2, PairMap lastPartialAggr) : PairMap{
 		PairMap lastPartialAggregate = lastPartialAggr;
-		if (p1.getLoad == null) {			
-			ITimeInterval meta = elemToAdd.getMetadata();
-			ITimeInterval newMeta = meta.clone();
-			newMeta.setStartAndEnd(p1.getPoint(), p2.getPoint());
+		if (p1.load == null) {			
+			ITimeInterval meta = elemToAdd.metadata;
+			ITimeInterval newMeta = meta.clone;
+			newMeta.setStartAndEnd(p1.point, p2.point);
 			saInsert(sa, calcInit(elemToAdd), newMeta);
-			lastPartialAggregate = p2.getLoad();
+			lastPartialAggregate = p2.load;
 		} else {
-			PairMap pairMap = p1.getLoad();	
-			ITimeInterval meta = pairMap.getMetadata();
-			ITimeInterval newMeta = meta.clone();
-			newMeta.setStartAndEnd(p1.getPoint(), p2.getPoint());
+			PairMap pairMap = p1.load;	
+			ITimeInterval meta = pairMap.metadata;
+			ITimeInterval newMeta = meta.clone;
+			newMeta.setStartAndEnd(p1.point, p2.point);
 			saInsert(sa, pairMap, newMeta);
 		}
 		return lastPartialAggregate;
 	}
 	
 	po updateSAEndEnd(AggregateTISweepArea sa, Tuple elemToAdd,	_Point p1,	_Point p2,	PairMap partialAggregate) : PairMap {
-		if (p2.getLoad == null) {
+		if (p2.load == null) {
 			updateSAEndStart(sa, elemToAdd, p1, p2);
 		} else {
-			PairMap newPA = partialAggregate.clone();
-			ITimeInterval newTI = partialAggregate.getMetadata().clone();
-			newTI.setStartAndEnd(p1.getPoint(), p2.getPoint());
+			PairMap newPA = partialAggregate.clone;
+			ITimeInterval newTI = partialAggregate.metadata.clone;
+			newTI.setStartAndEnd(p1.point, p2.point);
 			saInsert(sa, newPA, newTI);
 			partialAggregate = newPA;
 		}
@@ -314,24 +309,24 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 	}
 	
 	po updateSAEndStart(AggregateTISweepArea sa, Tuple elemToAdd,_Point p1,_Point p2) {
-		ITimeInterval newTI = elemToAdd.getMetadata().clone();
-		newTI.setStartAndEnd(p1.getPoint(), p2.getPoint());
+		ITimeInterval newTI = elemToAdd.metadata.clone;
+		newTI.setStartAndEnd(p1.point, p2.point);
 		saInsert(sa, calcInit(elemToAdd), newTI);
 	}
 	
 	
 	po calcInit(Tuple element) : PairMap {
 		PairMap ret = new PairMap();
-		for (Object o : aggregationsMap.keySet()) {
+		for (Object o : aggregationsMap.keySet) {
 			SDFSchema attrList = o;
 			if (SDFSchema::subset(attrList, getInputSchema(0))) {
 				Map funcs = aggregationsMap.get(attrList);
-				for (Object obj : funcs.entrySet()) {		
+				for (Object obj : funcs.entrySet) {		
 					Entry e = obj;			
-					FESortedClonablePair toFind = new FESortedClonablePair(attrList, e.getKey());
+					FESortedClonablePair toFind = new FESortedClonablePair(attrList, e.key);
 					IInitializer initFktn = init.get(toFind);					
 					IPartialAggregate pa = initFktn.init(element);
-					ret.put(attrList, e.getKey(), pa);
+					ret.put(attrList, e.key, pa);
 				}
 			}
 		}
@@ -339,7 +334,7 @@ operator ODLAggregate(outputMode = "NEW_ELEMENT", minInputPorts = 1, maxInputPor
 	}
 	
 	po saInsert(AggregateTISweepArea sa, PairMap elem, ITimeInterval t) {
-		elem.setMetadata(t);
+		elem.metadata = t;
 		sa.insert(elem);
 	}	
 	
@@ -393,17 +388,17 @@ class _Point implements Comparable {
 
 	override compareTo(Object obj) : int {
 		_Point p2 = obj;
-		int c = this.point.compareTo(p2.point);
+		int c = point.compareTo(p2.point);
 		if (c == 0) {
-			if (this.isStartPoint && !p2.isStartPoint) {
+			if (isStartPoint && !p2.isStartPoint) {
 				c = 1;
-			} else if (!this.isStartPoint && p2.isStartPoint) {
+			} else if (!isStartPoint && p2.isStartPoint) {
 				c = -1;
 			}
 		}
 		if (c == 0) {
-			if (this.newElement()) {
-				if (this.isStartPoint) {
+			if (newElement) {
+				if (isStartPoint) {
 					c = 1;
 				} else {
 					c = -1;
@@ -413,19 +408,19 @@ class _Point implements Comparable {
 		return c;
 	}
 
-	isStart() : boolean {
+	isStart : boolean {
 		return isStartPoint;
 	}
 
-	isEnd() : boolean {
+	isEnd : boolean {
 		return !isStartPoint;
 	}
 
-	getLoad() : Object {
+	getLoad : Object {
 		return load;
 	}
 
-	getPoint() : PointInTime{
+	getPoint : PointInTime{
 		return point;
 	}
 
@@ -437,13 +432,13 @@ class _Point implements Comparable {
 		return point.before(other);
 	}
 
-	override hashCode() : int {
+	override hashCode : int {
 		int PRIME = 31;
 		int result = 1;
 		if (point == null) {
 			result = PRIME * result + 0;			
 		} else {
-			result = PRIME * result + point.hashCode();			
+			result = PRIME * result + point.hashCode;			
 		}
 		if (isStartPoint) {
 			result = PRIME * result + 1231;			
@@ -458,7 +453,7 @@ class _Point implements Comparable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass != obj.getClass)
 			return false;
 		_Point other =  obj;
 		if (point == null) {
@@ -471,18 +466,18 @@ class _Point implements Comparable {
 		return true;
 	}
 
-	newElement() : boolean {
+	newElement : boolean {
 		return load == null;
 	}
 
-	override toString() : String {
+	override toString : String {
 		String result = "";
 		if (isStartPoint) {
 			result = "s";
 		} else {
 			result =  "e";
 		}
-		if (newElement()) {
+		if (newElement) {
 			result = result +"^";
 		} 
 		return result + point;

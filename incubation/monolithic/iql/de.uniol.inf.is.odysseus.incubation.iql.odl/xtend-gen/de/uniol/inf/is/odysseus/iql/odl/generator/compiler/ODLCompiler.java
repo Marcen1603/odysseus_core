@@ -73,6 +73,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     super(helper, typeCompiler, stmtCompiler, typeDictionary, typeUtils);
   }
   
+  @Override
   public String compileAO(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
@@ -99,6 +100,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     return _xblockexpression;
   }
   
+  @Override
   public String compilePO(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
@@ -118,6 +120,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     return _xblockexpression;
   }
   
+  @Override
   public String compileAORule(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
@@ -404,12 +407,10 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
           _builder.append("\t");
           _builder.append("\t");
           _builder.append("return ");
-          final Function1<ODLParameter, String> _function = new Function1<ODLParameter, String>() {
-            public String apply(final ODLParameter p) {
-              String _simpleName = p.getSimpleName();
-              String _plus = ("this.validate" + _simpleName);
-              return (_plus + "()");
-            }
+          final Function1<ODLParameter, String> _function = (ODLParameter p_2) -> {
+            String _simpleName_16 = p_2.getSimpleName();
+            String _plus = ("this.validate" + _simpleName_16);
+            return (_plus + "()");
           };
           List<String> _map = ListExtensions.<ODLParameter, String>map(parametersToValidate, _function);
           String _join = IterableExtensions.join(_map, "&&");
@@ -1144,6 +1145,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     return _xblockexpression;
   }
   
+  @Override
   public String compile(final JvmMember m, final IODLGeneratorContext context) {
     String _xifexpression = null;
     if ((m instanceof ODLParameter)) {
@@ -1298,10 +1300,8 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
               boolean _notEquals_2 = (!Objects.equal(_parameters_1, null));
               if (_notEquals_2) {
                 EList<JvmFormalParameter> _parameters_2 = m.getParameters();
-                final Function1<JvmFormalParameter, String> _function = new Function1<JvmFormalParameter, String>() {
-                  public String apply(final JvmFormalParameter p) {
-                    return ODLCompiler.this.compile(p, context);
-                  }
+                final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
+                  return this.compile(p, context);
                 };
                 List<String> _map = ListExtensions.<JvmFormalParameter, String>map(_parameters_2, _function);
                 String _join = IterableExtensions.join(_map, ", ");

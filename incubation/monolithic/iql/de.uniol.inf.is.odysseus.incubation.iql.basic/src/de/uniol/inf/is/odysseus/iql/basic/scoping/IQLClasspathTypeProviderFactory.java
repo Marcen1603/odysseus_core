@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.common.types.access.ClasspathTypeProviderFactory;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
+import org.eclipse.xtext.common.types.access.impl.TypeResourceServices;
 
 @SuppressWarnings("restriction")
 public class IQLClasspathTypeProviderFactory extends ClasspathTypeProviderFactory {
@@ -17,8 +18,8 @@ public class IQLClasspathTypeProviderFactory extends ClasspathTypeProviderFactor
 	private IQLQualifiedNameConverter converter;
 	
 	@Inject
-	public IQLClasspathTypeProviderFactory(ClassLoader classLoader) {
-		super(IQLClasspathTypeProviderFactory.class.getClassLoader());
+	public IQLClasspathTypeProviderFactory(ClassLoader classLoader, TypeResourceServices services) {
+		super(IQLClasspathTypeProviderFactory.class.getClassLoader(), services);
 	}
 	
 	@Override

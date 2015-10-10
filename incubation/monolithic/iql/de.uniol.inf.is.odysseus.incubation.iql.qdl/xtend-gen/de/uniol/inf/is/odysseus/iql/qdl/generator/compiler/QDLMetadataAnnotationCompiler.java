@@ -18,6 +18,7 @@ public class QDLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
     super(helper, typeCompiler, typeUtils);
   }
   
+  @Override
   public String compile(final IQLMetadataValue o, final IQDLGeneratorContext c) {
     String _xifexpression = null;
     if ((o instanceof QDLMetadataValueSingleID)) {

@@ -12,6 +12,7 @@ public class IQLClasspathTypeProvider extends ClasspathTypeProvider{
 	private IIQLJdtTypeProvider jdtTypeProvider;
 	private IQLQualifiedNameConverter converter;
 	
+	@SuppressWarnings("deprecation")
 	public IQLClasspathTypeProvider(IIQLJdtTypeProvider jdtTypeProvider, ClassLoader classLoader,ResourceSet resourceSet, IQLQualifiedNameConverter converter, IndexedJvmTypeAccess indexedJvmTypeAccess) {
 		super(classLoader, resourceSet, indexedJvmTypeAccess);
 		this.jdtTypeProvider = jdtTypeProvider;

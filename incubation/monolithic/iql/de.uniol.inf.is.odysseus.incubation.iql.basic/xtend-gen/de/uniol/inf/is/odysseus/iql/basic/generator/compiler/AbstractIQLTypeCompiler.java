@@ -30,6 +30,7 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
     this.typeUtils = typeUtils;
   }
   
+  @Override
   public String compile(final JvmTypeReference typeRef, final G context, final boolean wrapper) {
     boolean w = wrapper;
     String result = "";

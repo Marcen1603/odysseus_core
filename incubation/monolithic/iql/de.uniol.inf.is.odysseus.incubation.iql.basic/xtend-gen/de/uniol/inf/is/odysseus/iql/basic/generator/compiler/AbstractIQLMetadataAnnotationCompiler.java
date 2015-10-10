@@ -43,10 +43,8 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   public String compile(final IQLMetadataList o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     EList<IQLMetadata> _elements = o.getElements();
-    final Function1<IQLMetadata, String> _function = new Function1<IQLMetadata, String>() {
-      public String apply(final IQLMetadata e) {
-        return AbstractIQLMetadataAnnotationCompiler.this.compile(e, c);
-      }
+    final Function1<IQLMetadata, String> _function = (IQLMetadata e) -> {
+      return this.compile(e, c);
     };
     List<String> _map = ListExtensions.<IQLMetadata, String>map(_elements, _function);
     String _join = IterableExtensions.join(_map, ", ");
@@ -174,10 +172,8 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("{");
     EList<IQLMetadataValue> _elements = o.getElements();
-    final Function1<IQLMetadataValue, String> _function = new Function1<IQLMetadataValue, String>() {
-      public String apply(final IQLMetadataValue e) {
-        return AbstractIQLMetadataAnnotationCompiler.this.compile(e, c);
-      }
+    final Function1<IQLMetadataValue, String> _function = (IQLMetadataValue e) -> {
+      return this.compile(e, c);
     };
     List<String> _map = ListExtensions.<IQLMetadataValue, String>map(_elements, _function);
     String _join = IterableExtensions.join(_map, ", ");
@@ -190,10 +186,8 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("(");
     EList<IQLMetadataValueMapElement> _elements = o.getElements();
-    final Function1<IQLMetadataValueMapElement, String> _function = new Function1<IQLMetadataValueMapElement, String>() {
-      public String apply(final IQLMetadataValueMapElement e) {
-        return AbstractIQLMetadataAnnotationCompiler.this.compile(e, c);
-      }
+    final Function1<IQLMetadataValueMapElement, String> _function = (IQLMetadataValueMapElement e) -> {
+      return this.compile(e, c);
     };
     List<String> _map = ListExtensions.<IQLMetadataValueMapElement, String>map(_elements, _function);
     String _join = IterableExtensions.join(_map, ", ");

@@ -2,14 +2,13 @@ operator ODLFilter(outputMode = "INPUT", minInputPorts = 1, maxInputPorts = 1){
 	
 	parameter IPredicate predicate;
 	
-	on processOpen() {
+	on processOpen {
 		predicate.init;
 	}
 	
 	on processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);		
-	}	
-	
+	}
 	
 	on processNext(Tuple tuple, int port) {
 		if (predicate.evaluate(tuple)) {
@@ -17,9 +16,5 @@ operator ODLFilter(outputMode = "INPUT", minInputPorts = 1, maxInputPorts = 1){
 		} else {
 			sendStreamElement(tuple,1);			
 		}
-	}	
-		
-		
-		
-	
+	}		
 }

@@ -97,6 +97,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     this.typeDictionary = typeDictionary;
   }
   
+  @Override
   public String compile(final IQLExpression expr, final G context) {
     if ((expr instanceof IQLAssignmentExpression)) {
       return this.compile(((IQLAssignmentExpression) expr), context);
@@ -797,10 +798,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             _builder.append(_compile_1, "");
             _builder.append("), ");
             EList<IQLExpression> _expressions_2 = arrayExpr.getExpressions();
-            final Function1<IQLExpression, String> _function = new Function1<IQLExpression, String>() {
-              public String apply(final IQLExpression el) {
-                return AbstractIQLExpressionCompiler.this.compile(el, c);
-              }
+            final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
+              return this.compile(el, c);
             };
             List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_2, _function);
             String _join = IterableExtensions.join(_map, ", ");
@@ -837,10 +836,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             _builder_1.append(_compile_3, "");
             _builder_1.append("), ");
             EList<IQLExpression> _expressions_3 = arrayExpr.getExpressions();
-            final Function1<IQLExpression, String> _function_1 = new Function1<IQLExpression, String>() {
-              public String apply(final IQLExpression el) {
-                return AbstractIQLExpressionCompiler.this.compile(el, c);
-              }
+            final Function1<IQLExpression, String> _function_1 = (IQLExpression el) -> {
+              return this.compile(el, c);
             };
             List<String> _map_1 = ListExtensions.<IQLExpression, String>map(_expressions_3, _function_1);
             String _join_1 = IterableExtensions.join(_map_1, ", ");
@@ -912,10 +909,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _builder_3.append(_simpleName_6, "");
               _builder_3.append(".createList(");
               EList<IQLExpression> _expressions_6 = arrayExpr.getExpressions();
-              final Function1<IQLExpression, String> _function_2 = new Function1<IQLExpression, String>() {
-                public String apply(final IQLExpression el) {
-                  return AbstractIQLExpressionCompiler.this.compile(el, c);
-                }
+              final Function1<IQLExpression, String> _function_2 = (IQLExpression el) -> {
+                return this.compile(el, c);
               };
               List<String> _map_2 = ListExtensions.<IQLExpression, String>map(_expressions_6, _function_2);
               String _join_2 = IterableExtensions.join(_map_2, ", ");
@@ -993,10 +988,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_5.append(_simpleName_9, "");
                 _builder_5.append(".createList(");
                 EList<IQLExpression> _expressions_9 = arrayExpr.getExpressions();
-                final Function1<IQLExpression, String> _function_3 = new Function1<IQLExpression, String>() {
-                  public String apply(final IQLExpression el) {
-                    return AbstractIQLExpressionCompiler.this.compile(el, c);
-                  }
+                final Function1<IQLExpression, String> _function_3 = (IQLExpression el) -> {
+                  return this.compile(el, c);
                 };
                 List<String> _map_3 = ListExtensions.<IQLExpression, String>map(_expressions_9, _function_3);
                 String _join_3 = IterableExtensions.join(_map_3, ", ");
@@ -1050,10 +1043,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_7.append(_simpleName_12, "");
                 _builder_7.append(".createList(");
                 EList<IQLExpression> _expressions_12 = arrayExpr.getExpressions();
-                final Function1<IQLExpression, String> _function_4 = new Function1<IQLExpression, String>() {
-                  public String apply(final IQLExpression el) {
-                    return AbstractIQLExpressionCompiler.this.compile(el, c);
-                  }
+                final Function1<IQLExpression, String> _function_4 = (IQLExpression el) -> {
+                  return this.compile(el, c);
                 };
                 List<String> _map_4 = ListExtensions.<IQLExpression, String>map(_expressions_12, _function_4);
                 String _join_4 = IterableExtensions.join(_map_4, ", ");
@@ -1152,10 +1143,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _builder_8.append(_compile_20, "");
               _builder_8.append("), ");
               EList<IQLExpression> _expressions_13 = arrayExpr.getExpressions();
-              final Function1<IQLExpression, String> _function_5 = new Function1<IQLExpression, String>() {
-                public String apply(final IQLExpression el) {
-                  return AbstractIQLExpressionCompiler.this.compile(el, c);
-                }
+              final Function1<IQLExpression, String> _function_5 = (IQLExpression el) -> {
+                return this.compile(el, c);
               };
               List<String> _map_5 = ListExtensions.<IQLExpression, String>map(_expressions_13, _function_5);
               String _join_5 = IterableExtensions.join(_map_5, ", ");
@@ -1191,10 +1180,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _builder_9.append(_compile_22, "");
               _builder_9.append("), ");
               EList<IQLExpression> _expressions_14 = arrayExpr.getExpressions();
-              final Function1<IQLExpression, String> _function_6 = new Function1<IQLExpression, String>() {
-                public String apply(final IQLExpression el) {
-                  return AbstractIQLExpressionCompiler.this.compile(el, c);
-                }
+              final Function1<IQLExpression, String> _function_6 = (IQLExpression el) -> {
+                return this.compile(el, c);
               };
               List<String> _map_6 = ListExtensions.<IQLExpression, String>map(_expressions_14, _function_6);
               String _join_6 = IterableExtensions.join(_map_6, ", ");
@@ -1238,10 +1225,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _builder_10.append(_compile_24, "");
               _builder_10.append(", ");
               EList<IQLExpression> _expressions_15 = arrayExpr.getExpressions();
-              final Function1<IQLExpression, String> _function_7 = new Function1<IQLExpression, String>() {
-                public String apply(final IQLExpression el) {
-                  return AbstractIQLExpressionCompiler.this.compile(el, c);
-                }
+              final Function1<IQLExpression, String> _function_7 = (IQLExpression el) -> {
+                return this.compile(el, c);
               };
               List<String> _map_7 = ListExtensions.<IQLExpression, String>map(_expressions_15, _function_7);
               String _join_7 = IterableExtensions.join(_map_7, ", ");
@@ -1288,10 +1273,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_11.append(_compile_26, "");
                 _builder_11.append("), ");
                 EList<IQLExpression> _expressions_16 = arrayExpr.getExpressions();
-                final Function1<IQLExpression, String> _function_8 = new Function1<IQLExpression, String>() {
-                  public String apply(final IQLExpression el) {
-                    return AbstractIQLExpressionCompiler.this.compile(el, c);
-                  }
+                final Function1<IQLExpression, String> _function_8 = (IQLExpression el) -> {
+                  return this.compile(el, c);
                 };
                 List<String> _map_8 = ListExtensions.<IQLExpression, String>map(_expressions_16, _function_8);
                 String _join_8 = IterableExtensions.join(_map_8, ", ");
@@ -1316,10 +1299,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_12.append(_compile_28, "");
                 _builder_12.append(", ");
                 EList<IQLExpression> _expressions_17 = arrayExpr.getExpressions();
-                final Function1<IQLExpression, String> _function_9 = new Function1<IQLExpression, String>() {
-                  public String apply(final IQLExpression el) {
-                    return AbstractIQLExpressionCompiler.this.compile(el, c);
-                  }
+                final Function1<IQLExpression, String> _function_9 = (IQLExpression el) -> {
+                  return this.compile(el, c);
                 };
                 List<String> _map_9 = ListExtensions.<IQLExpression, String>map(_expressions_17, _function_9);
                 String _join_9 = IterableExtensions.join(_map_9, ", ");
@@ -2742,10 +2723,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _builder_1.append(_simpleName_2, "");
               _builder_1.append(".createList(");
               EList<IQLExpression> _expressions_4 = e.getExpressions();
-              final Function1<IQLExpression, String> _function = new Function1<IQLExpression, String>() {
-                public String apply(final IQLExpression el) {
-                  return AbstractIQLExpressionCompiler.this.compile(el, c);
-                }
+              final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
+                return this.compile(el, c);
               };
               List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_4, _function);
               String _join = IterableExtensions.join(_map, ", ");
@@ -2815,10 +2794,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_1.append(_simpleName_2, "");
                 _builder_1.append(".createList(");
                 EList<IQLExpression> _expressions_3 = e.getExpressions();
-                final Function1<IQLExpression, String> _function = new Function1<IQLExpression, String>() {
-                  public String apply(final IQLExpression el) {
-                    return AbstractIQLExpressionCompiler.this.compile(el, c);
-                  }
+                final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
+                  return this.compile(el, c);
                 };
                 List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_3, _function);
                 String _join = IterableExtensions.join(_map, ", ");
@@ -3406,6 +3383,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     return _xblockexpression;
   }
   
+  @Override
   public String compile(final IQLArgumentsList args, final EList<JvmFormalParameter> parameters, final G c) {
     List<String> arguments = this.compileArguments(args, parameters, c);
     String result = "";
@@ -3557,6 +3535,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     return result;
   }
   
+  @Override
   public String compile(final IQLArgumentsList list, final G context) {
     String _xblockexpression = null;
     {
@@ -3566,10 +3545,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       }
       StringConcatenation _builder = new StringConcatenation();
       EList<IQLExpression> _elements = list.getElements();
-      final Function1<IQLExpression, String> _function = new Function1<IQLExpression, String>() {
-        public String apply(final IQLExpression e) {
-          return AbstractIQLExpressionCompiler.this.compile(e, context);
-        }
+      final Function1<IQLExpression, String> _function = (IQLExpression e) -> {
+        return this.compile(e, context);
       };
       List<String> _map = ListExtensions.<IQLExpression, String>map(_elements, _function);
       String _join = IterableExtensions.join(_map, ", ");
@@ -3579,6 +3556,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     return _xblockexpression;
   }
   
+  @Override
   public String compile(final IQLArgumentsMap map, final JvmTypeReference typeRef, final G c) {
     String result = "";
     for (int i = 0; (i < map.getElements().size()); i++) {
@@ -5147,10 +5125,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _builder.append(_simpleName_1, "");
         _builder.append(".createList(");
         EList<IQLExpression> _elements = e.getElements();
-        final Function1<IQLExpression, String> _function = new Function1<IQLExpression, String>() {
-          public String apply(final IQLExpression el) {
-            return AbstractIQLExpressionCompiler.this.compile(el, c);
-          }
+        final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
+          return this.compile(el, c);
         };
         List<String> _map = ListExtensions.<IQLExpression, String>map(_elements, _function);
         String _join = IterableExtensions.join(_map, ", ");
@@ -5169,10 +5145,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _builder.append(_simpleName, "");
         _builder.append(".createList(");
         EList<IQLExpression> _elements = e.getElements();
-        final Function1<IQLExpression, String> _function = new Function1<IQLExpression, String>() {
-          public String apply(final IQLExpression el) {
-            return AbstractIQLExpressionCompiler.this.compile(el, c);
-          }
+        final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
+          return this.compile(el, c);
         };
         List<String> _map = ListExtensions.<IQLExpression, String>map(_elements, _function);
         String _join = IterableExtensions.join(_map, ", ");
@@ -5215,15 +5189,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _builder.append(_simpleName_1, "");
         _builder.append(".createMap(");
         EList<IQLLiteralExpressionMapKeyValue> _elements = e.getElements();
-        final Function1<IQLLiteralExpressionMapKeyValue, String> _function = new Function1<IQLLiteralExpressionMapKeyValue, String>() {
-          public String apply(final IQLLiteralExpressionMapKeyValue el) {
-            IQLExpression _key = el.getKey();
-            String _compile = AbstractIQLExpressionCompiler.this.compile(_key, c);
-            String _plus = (_compile + ", ");
-            IQLExpression _value = el.getValue();
-            String _compile_1 = AbstractIQLExpressionCompiler.this.compile(_value, c);
-            return (_plus + _compile_1);
-          }
+        final Function1<IQLLiteralExpressionMapKeyValue, String> _function = (IQLLiteralExpressionMapKeyValue el) -> {
+          IQLExpression _key = el.getKey();
+          String _compile = this.compile(_key, c);
+          String _plus = (_compile + ", ");
+          IQLExpression _value = el.getValue();
+          String _compile_1 = this.compile(_value, c);
+          return (_plus + _compile_1);
         };
         List<String> _map = ListExtensions.<IQLLiteralExpressionMapKeyValue, String>map(_elements, _function);
         String _join = IterableExtensions.join(_map, ", ");
@@ -5243,15 +5215,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _builder.append(_simpleName, "\t");
         _builder.append(".createMap(");
         EList<IQLLiteralExpressionMapKeyValue> _elements = e.getElements();
-        final Function1<IQLLiteralExpressionMapKeyValue, String> _function = new Function1<IQLLiteralExpressionMapKeyValue, String>() {
-          public String apply(final IQLLiteralExpressionMapKeyValue el) {
-            IQLExpression _key = el.getKey();
-            String _compile = AbstractIQLExpressionCompiler.this.compile(_key, c);
-            String _plus = (_compile + ", ");
-            IQLExpression _value = el.getValue();
-            String _compile_1 = AbstractIQLExpressionCompiler.this.compile(_value, c);
-            return (_plus + _compile_1);
-          }
+        final Function1<IQLLiteralExpressionMapKeyValue, String> _function = (IQLLiteralExpressionMapKeyValue el) -> {
+          IQLExpression _key = el.getKey();
+          String _compile = this.compile(_key, c);
+          String _plus = (_compile + ", ");
+          IQLExpression _value = el.getValue();
+          String _compile_1 = this.compile(_value, c);
+          return (_plus + _compile_1);
         };
         List<String> _map = ListExtensions.<IQLLiteralExpressionMapKeyValue, String>map(_elements, _function);
         String _join = IterableExtensions.join(_map, ", ");

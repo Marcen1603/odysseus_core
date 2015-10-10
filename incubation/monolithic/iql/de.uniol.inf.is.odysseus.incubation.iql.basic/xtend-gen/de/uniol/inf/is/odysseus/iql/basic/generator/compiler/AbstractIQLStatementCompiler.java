@@ -65,6 +65,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     this.lookUp = lookUp;
   }
   
+  @Override
   public String compile(final IQLStatement s, final G c) {
     if ((s instanceof IQLStatementBlock)) {
       return this.compile(((IQLStatementBlock) s), c);
@@ -754,6 +755,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     return _xblockexpression;
   }
   
+  @Override
   public String compile(final IQLVariableInitialization init, final JvmTypeReference typeRef, final G context) {
     String result = "";
     context.setExpectedTypeRef(typeRef);

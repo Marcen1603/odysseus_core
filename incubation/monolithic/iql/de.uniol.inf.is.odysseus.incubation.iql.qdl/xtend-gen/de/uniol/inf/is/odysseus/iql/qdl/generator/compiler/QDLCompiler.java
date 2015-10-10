@@ -54,6 +54,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
     super(helper, typeCompiler, stmtCompiler, typeDictionary, typeUtils);
   }
   
+  @Override
   public String compile(final QDLQuery q, final IQDLGeneratorContext context) {
     String _xblockexpression = null;
     {
@@ -350,6 +351,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
     return _xblockexpression;
   }
   
+  @Override
   public CharSequence createGetterMethod(final JvmTypeReference typeRef, final IQLArgumentsMap map, final IQDLGeneratorContext context) {
     CharSequence _xifexpression = null;
     boolean _isOperator = this.helper.isOperator(typeRef);
@@ -388,10 +390,8 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
         if (_and) {
           _builder.append(", ");
           EList<IQLArgumentsMapKeyValue> _elements_1 = map.getElements();
-          final Function1<IQLArgumentsMapKeyValue, String> _function = new Function1<IQLArgumentsMapKeyValue, String>() {
-            public String apply(final IQLArgumentsMapKeyValue el) {
-              return QDLCompiler.super.compile(el, typeRef, context);
-            }
+          final Function1<IQLArgumentsMapKeyValue, String> _function = (IQLArgumentsMapKeyValue el) -> {
+            return super.compile(el, typeRef, context);
           };
           List<String> _map = ListExtensions.<IQLArgumentsMapKeyValue, String>map(_elements_1, _function);
           String _join = IterableExtensions.join(_map, ", ");

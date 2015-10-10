@@ -11,31 +11,28 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 
 	Map buffers = new HashMap();
 
-	PointInTime lastTs = null;
-	
-	
-	on po_init() {		
+	PointInTime lastTs;
+		
+	on po_init {		
 		if (advance <= 0) {
 			advance = 1;
 		}
 	}
 		
-	on processOpen() {	
+	on processOpen {	
 		if (partition != null && groupProcessor == null) {
-			groupProcessor = new RelationalGroupProcessor(getInputSchema(0), getOutputSchema(),partition,null, false);			
+			groupProcessor = new RelationalGroupProcessor(getInputSchema(0), this.outputSchema, partition,null, false);			
 		} else if (groupProcessor == null){
 			groupProcessor = new NoGroupProcessor();
 		}
-		groupProcessor.init();
-		buffers.clear();
+		groupProcessor.init;
+		buffers.clear;
 		transferArea.init(this, 1);				
 	}	
-	
-	
 		
 	on processNext(Tuple tuple, int port) {
-		ITimeInterval time = tuple.getMetadata();		
-		lastTs = time.getStart();
+		ITimeInterval time = tuple.metadata;		
+		lastTs = time.start;
 		long bufferId = groupProcessor.getGroupID(tuple);
 		List buffer = buffers.get(bufferId);
 		if (buffer == null) {
@@ -44,13 +41,13 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 		}		
 		buffer.add(tuple);
 		
-		if (buffer.size() == this.size + 1) {
+		if (buffer.size == size + 1) {
 			long elemsToSend = advance;
 			transferBuffer(buffer, elemsToSend, lastTs);
-			ping();
+			ping;
 		}
 
-		if (buffer.size() == 0) {
+		if (buffer.size == 0) {
 			buffers.remove(bufferId);
 		}
 	}
@@ -59,11 +56,11 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 		sendPunctuation(punctuation);
 	}
 	
-	on processDone() {
-		for (Object value : buffers.values()) {
+	on processDone {
+		for (Object value : buffers.values) {
 			List b = value;
-			if (b.size() > 0) {
-				transferBuffer(b, b.size(), lastTs.plus(1));
+			if (b.size > 0) {
+				transferBuffer(b, b.size, lastTs.plus(1));
 				for (Object t : b) {					
 					transferArea.transfer(t);
 				}
@@ -72,31 +69,30 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 		transferArea.newHeartbeat(lastTs, 0);
 	}
 	
-	on processClose() {
-		process_done();
-		for (Object value : buffers.values()) {
+	on processClose {
+		process_done;
+		for (Object value : buffers.values) {
 			List b = value;
-			b.clear();
+			b.clear;
 		}
 	}
 	
 	po transferBuffer(List buffer, long numberofelements,	PointInTime ts) {
-		Iterator bufferIter = buffer.iterator();
+		Iterator bufferIter = buffer.iterator;
 		PointInTime start = null;
 		for (int i = 0; i < numberofelements; i++) {
-			Tuple toReturn = bufferIter.next();
-			bufferIter.remove();
-			ITimeInterval time = toReturn.getMetadata();
-			if (time.getStart().before(ts)) {
-				time.setEnd(ts);
+			Tuple toReturn = bufferIter.next;
+			bufferIter.remove;
+			ITimeInterval time = toReturn.metadata;
+			if (time.start.before(ts)) {
+				time.end = ts;
 				transferArea.transfer(toReturn);
 			}
-		}
-		
+		}		
 	}
 
 	po ping {
-		PointInTime minTs = getMinTs();
+		PointInTime minTs = getMinTs;
 		if (minTs != null) {
 			transferArea.newHeartbeat(minTs, 0);
 		} else {
@@ -105,22 +101,21 @@ operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxI
 	}
 	
 	po getMinTs : PointInTime {
-		if (buffers.size() == 0) {
+		if (buffers.size == 0) {
 			return null;
 		}		
 		PointInTime min = null;
-		for (Object value : buffers.values()) {
+		for (Object value : buffers.values) {
 			List buffer = value;
-			if (!buffer.isEmpty()) {
+			if (!buffer.isEmpty) {
 				Tuple e = buffer.get(0);
-				ITimeInterval time = e.getMetadata();				
-				PointInTime test = time.getStart();
+				ITimeInterval time = e.metadata;				
+				PointInTime test = time.start;
 				if (min == null || min.after(test)) {
 					min = test;
 				}
 			}
 		}
 		return min;
-	}		
-	
+	}
 }

@@ -19,6 +19,7 @@ public class QDLMetadataMethodCompiler extends AbstractIQLMetadataMethodCompiler
     super(helper, typeCompiler);
   }
   
+  @Override
   public String compile(final IQLMetadataValue o, final String varName, final AtomicInteger counter, final IQDLGeneratorContext context) {
     if ((o instanceof QDLMetadataValueSingleID)) {
       return this.compile(((QDLMetadataValueSingleID) o), varName, context);

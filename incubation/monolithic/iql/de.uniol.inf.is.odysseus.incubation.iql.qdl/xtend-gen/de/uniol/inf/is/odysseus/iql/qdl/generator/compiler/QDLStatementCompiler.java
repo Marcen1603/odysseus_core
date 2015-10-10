@@ -29,6 +29,7 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompi
     super(helper, exprCompiler, typeCompiler, typeUtils, exprEvaluator, lookUp);
   }
   
+  @Override
   public String compile(final IQLVariableInitialization init, final JvmTypeReference typeRef, final IQDLGeneratorContext context) {
     String _xifexpression = null;
     boolean _isOperator = this.helper.isOperator(typeRef);
