@@ -1,3 +1,5 @@
+package de.uniol.inf.is.odysseus.gpu;
+
 /*
  * JCudaUtils - Utilities for JCuda
  * http://www.jcuda.org
