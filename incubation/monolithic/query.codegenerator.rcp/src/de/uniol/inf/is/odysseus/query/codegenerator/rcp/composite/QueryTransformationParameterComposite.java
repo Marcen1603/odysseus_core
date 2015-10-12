@@ -25,6 +25,8 @@ import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.RcpSpecialOptio
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguartionException;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 
 public class QueryTransformationParameterComposite extends AbstractParameterComposite {
 
@@ -50,6 +52,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 	private Shell parentShell;
 	
 	private int style; 
+	
+	private static String rcpConfig = "CODEGEN";
 
 	public QueryTransformationParameterComposite(
 			final QueryTransformationWindow window, Composite parent,
@@ -99,6 +103,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		}
 	
 		createButton();
+		
+		loadRCPConfig();
 
 		parent.pack();
 		parent.setVisible(true);
@@ -111,7 +117,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 
 		txtTargetDirectory = createTextFieldWithLabel(inputDirectoryComposite,
-				"C:\\Users\\Marc\\Desktop\\tmp", "Target directory");
+				"", "Target directory");
 
 		btnChooseTargetDirectory = new Button(inputDirectoryComposite, SWT.NONE);
 		btnChooseTargetDirectory.setLayoutData(new GridData(SWT.RIGHT,
@@ -133,7 +139,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		});
 
 		txtOdysseusCode = createTextFieldWithLabel(inputDirectoryComposite,
-				"F:\\Studium\\odysseus", "Odysseus-Code directory");
+				"", "Odysseus-Code directory");
 
 		Button buttonOdysseusCore = new Button(inputDirectoryComposite,
 				SWT.NONE);
@@ -195,6 +201,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 				try {
 					checkInputFields();
+					
+					saveInputFields();
 
 					Map<String,String> options = null;
 					if(optionComposite != null && !optionComposite.isDisposed()){
@@ -266,6 +274,41 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 				t.getLocalizedMessage(), MessageDialog.ERROR,
 				new String[] { "ok" }, 0);
 		dialog.open();
+	}
+	
+	private void loadRCPConfig(){
+		
+			
+			try {
+				String targetDirectoryRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"targetDirectory");
+				txtTargetDirectory.setText(targetDirectoryRCPConfig);
+				
+			} catch (OdysseusRCPConfiguartionException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				String odysseusDirectoryRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"odysseusDirectory");
+				txtOdysseusCode.setText(odysseusDirectoryRCPConfig);
+			} catch (OdysseusRCPConfiguartionException e) {
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+	}
+	
+	
+	private void saveInputFields(){
+		
+		OdysseusRCPConfiguration.set(rcpConfig+"targetDirectory", txtTargetDirectory.getText());
+		OdysseusRCPConfiguration.set(rcpConfig+"odysseusDirectory", txtOdysseusCode.getText());
+		
+		
+
+		
+	
 	}
 
 }

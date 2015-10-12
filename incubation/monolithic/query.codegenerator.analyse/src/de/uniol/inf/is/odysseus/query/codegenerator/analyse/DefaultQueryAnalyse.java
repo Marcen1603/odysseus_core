@@ -104,7 +104,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		}
 	}
 	
-	private  void removeAO(ILogicalOperator operator){
+	private void removeAO(ILogicalOperator operator){
 		
 		for(LogicalSubscription s:operator.getSubscriptions()){
 			removeAO(s.getTarget());

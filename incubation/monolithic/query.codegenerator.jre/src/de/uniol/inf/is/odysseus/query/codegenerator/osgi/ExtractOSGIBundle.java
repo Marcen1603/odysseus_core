@@ -44,13 +44,9 @@ public class ExtractOSGIBundle {
 	
 	
 	public Set<String> extractOSGIBundle(Set<String> importList , String tempPath, String copyToDirectory){
-		
 		Set<String> copyJars = new HashSet<String>();
-	
-		
 		getBundles(importList);
 		
-		//getBundles(importedClassList);
 	
 		for (Map.Entry<String, String> bundleString : requiredBundleByBundle.entrySet())
 		{
@@ -120,9 +116,9 @@ public class ExtractOSGIBundle {
 	                  /* Command to execute */
 	      		    
 	      		    if(EXTRACT_SOURCE){
-	      		    	commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar -cvf "+tempPath+"\\"+copyToDirectory +"\\"+name+".jar *.properties *.jar -C bin .";
+	      		    	commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar -cvf \""+tempPath+"/"+copyToDirectory +"/"+name+".jar\" *.properties -C bin .";
 	      		    }else{ 
-	      			    commands[2] = volume[0]+": && cd "+path+" && jar -cvf "+tempPath+"\\"+copyToDirectory +"\\"+name+".jar *.properties *.jar -C bin .";
+	      			    commands[2] = volume[0]+": && cd "+path+" && jar -cvf \""+tempPath+"/"+copyToDirectory +"/"+name+".jar\" *.properties -C bin .";
 	      		    }
 	      		    
 	                break;
@@ -133,9 +129,9 @@ public class ExtractOSGIBundle {
 	                  /* Command to execute */
 	      		    
 	      		    if(EXTRACT_SOURCE){
-	      		    	commands[2] = "cd "+path+" && cp -r "+path+"src/* "+path+"bin && jar cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties *.jar -C bin .";
+	      		    	commands[2] = "cd "+path+" && cp -r "+path+"src/* "+path+"bin && jar cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties  -C bin .";
 	      		    }else{ 
-	      			    commands[2] = "cd "+path+" && jar -cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties *.jar -C bin .";
+	      			    commands[2] = "cd "+path+" && jar -cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties -C bin .";
 	      		    }
 	            	break;
 	            case MAC:
@@ -145,9 +141,9 @@ public class ExtractOSGIBundle {
 	                  /* Command to execute */
 	      		    
 	      		    if(EXTRACT_SOURCE){
-	      		    	commands[2] = "cd "+path+" && cp -r "+path+"src/* "+path+"bin && jar cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties *.jar -C bin .";
+	      		    	commands[2] = "cd "+path+" && cp -r "+path+"src/* "+path+"bin && jar cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties -C bin .";
 	      		    }else{ 
-	      			    commands[2] = "cd "+path+" && jar cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties *.jar -C bin .";
+	      			    commands[2] = "cd "+path+" && jar cvf "+tempPath+"/"+copyToDirectory +"/"+name+".jar *.properties -C bin .";
 	      		    }
 	            	break;
 	            default:
@@ -266,6 +262,9 @@ public class ExtractOSGIBundle {
 							path = FileLocator.toFileURL(entryss).getPath();
 				
 							bundles.put(path.replaceFirst("/", "").replace(".project",""), neededBundel.getSymbolicName());
+							
+							LOG.info("Bundle:" +neededBundel.getSymbolicName() +" found, in path "+path.replaceFirst("/", "").replace(".project",""));
+							
 						}
 					} catch (IOException | ClassNotFoundException e) {
 						e.printStackTrace();

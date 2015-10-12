@@ -19,7 +19,7 @@ public class ExecuteShellComand {
 	Process p;
 
 	try {
-		p = Runtime.getRuntime().exec("cmd /c ant -f "+tempDirectory);
+		p = Runtime.getRuntime().exec("cmd /c ant -f \""+tempDirectory+"\"");
 		//p.waitFor();
 		
 		StringBuilder okLine = new StringBuilder();
@@ -43,7 +43,7 @@ public class ExecuteShellComand {
 	    }
 	
 		LOG.debug(okLine.toString());
-		LOG.debug(errorLine.toString());	
+		LOG.error(errorLine.toString());	
 		
 	} catch (IOException e) {
 		e.printStackTrace();
@@ -82,11 +82,10 @@ public class ExecuteShellComand {
 	    }
 		
 		LOG.debug(okLine.toString());
-		LOG.debug(errorLine.toString());	
+		LOG.error(errorLine.toString());	
 		
 		
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 	
