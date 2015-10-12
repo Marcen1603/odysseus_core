@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rewrite.rule;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rewrite.engine.RewriteWorkingMemory;
@@ -38,6 +39,15 @@ public abstract class AbstractRewriteRule<T> extends
 	@Override
 	final public String getName() {
 		return getClass().getName();
+	}
+	
+	protected boolean isLastOne(ILogicalOperator operator) {
+		if (operator.getSubscriptions().size() == 1) {
+			if (operator.getSubscriptions().iterator().next().getTarget() instanceof TopAO) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/*
