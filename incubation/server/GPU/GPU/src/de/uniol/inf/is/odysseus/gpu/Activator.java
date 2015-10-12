@@ -13,9 +13,10 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
+		Activator.context = bundleContext;		
 		
-		System.out.print("Hello Welt;");
+		System.out.println("GPU-Bundle loaded");
+		
 	}
 
 	@Override

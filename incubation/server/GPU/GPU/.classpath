@@ -3,5 +3,13 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcublas-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcuda-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcufft-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcurand-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcusolver-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcusparse-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/JCudnn-0.7.5-bin/jcudnn-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/jcudaUtils-0.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

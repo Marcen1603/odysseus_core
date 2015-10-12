@@ -1,5 +1,11 @@
 package de.uniol.inf.is.odysseus.gpu.transform;
 
+//JCUDA
+import static jcuda.driver.JCudaDriver.cuDeviceGetCount;
+import static jcuda.driver.JCudaDriver.cuInit;
+import static jcuda.driver.JCudaDriver.setExceptionsEnabled;
+
+//Odysseus
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.gpu.physicaloperator.GpuSelectPO;
@@ -17,15 +23,42 @@ public class TGPUSelectPORule extends AbstractTransformationRule<SelectAO> {
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void execute(SelectAO operator, TransformationConfiguration config) throws RuleException {
+	public void execute(SelectAO operator, TransformationConfiguration config) throws RuleException  {
 		// select ao durch gpu po ersetzen
+		
 		GpuSelectPO po = new GpuSelectPO(operator);
 		defaultExecute(operator, po, config, true, true);
+		
+		
+	    
 	}
 
 	@Override
-	public boolean isExecutable(SelectAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(SelectAO operator, TransformationConfiguration config){
+		
+		//CUDA Grafikkarte prüfen
+		
+		System.out.println("Beginn CUDA");
+		System.out.println("");
+		
+		setExceptionsEnabled(true);
+
+//		CUDA try- catch-Block abfangen falls keine passende GPU vorhanden sind	
+		
+		
+        cuInit(0);
+//		
+//        
+//        // existieren Grafikkarten
+		int deviceCountArray[] = { 0 };
+        cuDeviceGetCount(deviceCountArray);
+        int deviceCount = deviceCountArray[0];
+	        
+		
 		return operator.isAllPhysicalInputSet();
+		
+			
+		
 	}
 
 	@Override
@@ -38,4 +71,6 @@ public class TGPUSelectPORule extends AbstractTransformationRule<SelectAO> {
 		// TODO Auto-generated method stub
 		return SelectAO.class;
 	}
+	
+	 
 }
