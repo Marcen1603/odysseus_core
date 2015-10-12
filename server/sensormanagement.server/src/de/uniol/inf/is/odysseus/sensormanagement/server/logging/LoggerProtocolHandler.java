@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
@@ -34,8 +35,21 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	private LogMetaData logMetaData;
 	private String logMetaDataFileName;
 	
+	private int[] remainingAttributes;
 	private BufferedWriter additionalFileWriter;
 	private WriteOptions csvWriteOptions = new WriteOptions(',', '\'', null, null, false);
+	
+	public String getFileNameBase() 	{ return fileNameBase; }
+	public long   getLogfileSizeLimit() { return logfileSizeLimit; }
+	
+	// Returns the current log file size in bytes 
+	protected abstract long getLogFileSize();
+	protected abstract LogMetaData startLoggingInternal(Tuple<?> object) throws IOException;
+	protected abstract void stopLoggingInternal(LogMetaData logMetaData);
+	protected abstract void writeInternal(Tuple<?> object, long timeStamp) throws IOException;
+	
+	// Returns tuple attribute positions which will not been written to the log file
+	protected abstract int[] getRemainingAttributes();	
 	
 	public LoggerProtocolHandler() 
 	{
@@ -55,9 +69,6 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		logfileSizeLimit = options.getLong("sizelimit", Long.MAX_VALUE);		
 	}
 	
-	public String getFileNameBase() 	{ return fileNameBase; }
-	public long   getLogfileSizeLimit() { return logfileSizeLimit; }
-
 	@Override
 	public final void open() throws IOException
 	{
@@ -94,6 +105,25 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 			logMetaData.startTime = firstTimeStamp;
 			logMetaData.endTime = 0;
 			logMetaData.sensorId = sensorModel.id;
+			
+			remainingAttributes = getRemainingAttributes();
+			if (remainingAttributes.length > 0)
+			{
+				// Create additional data file
+				String additionalFileName = getFileNameBase() + ".csv";
+					
+				logMetaData.additionalData = new LogMetaData.AdditionalData();
+				logMetaData.additionalData.fileName = new File(additionalFileName).getName();					
+				additionalFileWriter = new BufferedWriter(new FileWriter(additionalFileName));
+					
+				// Collect attribute names for additional header in log meta data
+				logMetaData.additionalData.header = "";					
+				for (int attr : remainingAttributes)
+					logMetaData.additionalData.header += getSchema().getAttribute(attr).getAttributeName() + ", ";
+					
+				logMetaData.additionalData.header = logMetaData.additionalData.header.substring(0, logMetaData.additionalData.header.length()-2);
+			}
+			
 			
 			XmlMarshalHelper.toXmlFile(logMetaData, new File(logMetaDataFileName));
 		}
@@ -151,27 +181,10 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 				startLogging(object, lastTimeStamp);
 		
 			
-			int[] remaining = writeInternal(object, lastTimeStamp);
-			if (remaining.length > 0)
+			writeInternal(object, lastTimeStamp);
+			if (remainingAttributes.length > 0)
 			{
-				if (additionalFileWriter == null)
-				{
-					// Create additional data file
-					String additionalFileName = getFileNameBase() + ".csv";
-					
-					logMetaData.additionalData = new LogMetaData.AdditionalData();
-					logMetaData.additionalData.fileName = new File(additionalFileName).getName();					
-					additionalFileWriter = new BufferedWriter(new FileWriter(additionalFileName));
-					
-					// Collect attribute names for additional header in log meta data
-					logMetaData.additionalData.header = "";					
-					for (int attr : remaining)
-						logMetaData.additionalData.header += getSchema().getAttribute(attr).getAttributeName() + ", ";
-					
-					logMetaData.additionalData.header = logMetaData.additionalData.header.substring(0, logMetaData.additionalData.header.length()-2);
-				}
-				
-				Tuple<?> remainingTuple = object.restrict(remaining, true);
+				Tuple<?> remainingTuple = object.restrict(remainingAttributes, true);
 				additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
 			}
 		
@@ -179,12 +192,18 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 				stopLogging(lastTimeStamp);
 		}
 	}
+		
+	@Override
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
+	{
+		if (!(o instanceof LoggerProtocolHandler)) return false;
+		if (!super.isSemanticallyEqual(o)) return false;
+		
+		LoggerProtocolHandler other = (LoggerProtocolHandler) o;		
+		if (!sensorModel.equals(other.sensorModel)) return false;		
+		if (!loggingDirectory.equals(other.loggingDirectory)) return false;
+		if (logfileSizeLimit != other.logfileSizeLimit) return false;		
 	
-	// Returns the current log file size in bytes 
-	protected abstract long getLogFileSize();
-	protected abstract LogMetaData startLoggingInternal(Tuple<?> object) throws IOException;
-	protected abstract void stopLoggingInternal(LogMetaData logMetaData);
-	
-	// Returns tuple attribute positions which have not been written to the log file
-	protected abstract int[] writeInternal(Tuple<?> object, long timeStamp) throws IOException;
+		return true;
+	}	
 }

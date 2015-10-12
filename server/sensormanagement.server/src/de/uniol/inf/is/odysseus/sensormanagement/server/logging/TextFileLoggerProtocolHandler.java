@@ -32,6 +32,9 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 	private BufferedWriter 	logFileStream;
 	private String 			extension;
 
+	// Return that no attributes will be left
+	@Override protected int[] getRemainingAttributes() { return new int[0]; }
+	
 	public TextFileLoggerProtocolHandler() 
 	{
 		super();
@@ -77,15 +80,12 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 		}		
 	}
 
-	@Override protected int[] writeInternal(Tuple<?> object, long timeStamp) throws IOException 
+	@Override protected void writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
 		try
 		{
 			String rawString = object.csvToString(new WriteOptions(',', '\'', null, null, false));
-			logFileStream.write(rawString + "\n");
-			
-			// Return that no attributes are left
-			return new int[0];
+			logFileStream.write(rawString + "\n");			
 		}		
 		catch (Exception e)
 		{
@@ -140,20 +140,12 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
 	{
-		if (!(o instanceof TextFileLoggerProtocolHandler)) {
-			return false;
-		}
-/*		VideoLogger other = (VideoLogger) o;
-		if (this.nanodelay != other.getNanodelay()
-				|| this.delay != other.getDelay()
-				|| this.delayeach != other.getDelayeach()
-				|| this.dumpEachLine != other.getDumpEachLine()
-				|| this.measureEachLine != other.getMeasureEachLine()
-				|| this.lastLine != other.getLastLine()
-				|| this.debug != other.isDebug()
-				|| this.readFirstLine != other.isReadFirstLine()) {
-			return false;
-		}*/
+		if (!(o instanceof TextFileLoggerProtocolHandler)) return false;
+		if (!super.isSemanticallyEqual(o)) return false;
+		
+		TextFileLoggerProtocolHandler other = (TextFileLoggerProtocolHandler) o; 
+		if (extension.equals(other.extension)) return false;
+		
 		return true;
 	}
 }

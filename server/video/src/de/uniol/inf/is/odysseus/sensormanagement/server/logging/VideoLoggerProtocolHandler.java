@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData;
@@ -36,10 +35,18 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	private String decoder;
 	
 	private String videoFileName;
-	private String syncFileName;
 	private int bitsPerPixel;
 	private int pixelFormat;
-
+	
+	// Return that only the first attribute will be consumed
+	@Override protected int[] getRemainingAttributes() { return IntStream.rangeClosed(1, getSchema().size()-1).toArray(); }	
+	@Override protected long getLogFileSize() { return new File(videoFileName).length(); }
+	
+	@Override public boolean hasNext() throws IOException { return false; }
+	@Override public Tuple<?> getNext() throws IOException { return null; }
+	@Override public boolean isDone() { return true; }
+	@Override public String getName() { return NAME; }
+	
 	public VideoLoggerProtocolHandler() 
 	{
 		super();
@@ -77,14 +84,10 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	
 	@Override protected LogMetaData startLoggingInternal(Tuple<?> object) throws IOException 
 	{
-		videoFileName = getFileNameBase() + ( (videoExtension.length() > 0) ? ("." + videoExtension) : "");
-		syncFileName = getFileNameBase() + ".sync";		
-				
-		videoImpl.setSyncFileName(syncFileName);
+		videoFileName = getFileNameBase() + ((videoExtension.length() > 0) ? ("." + videoExtension) : "");
 		
 		VideoLogMetaData logMetaData = new VideoLogMetaData();
 		logMetaData.videoFile = new File(videoFileName).getName();
-		logMetaData.syncFile = new File(syncFileName).getName();
 		logMetaData.doRotate180 = false;
 		logMetaData.decoder = decoder;
 		logMetaData.bitsPerPixel = bitsPerPixel != -1 ? bitsPerPixel : null;
@@ -98,33 +101,13 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		videoImpl.stop();
 	}
 
-	@Override protected int[] writeInternal(Tuple<?> object, long timeStamp) throws IOException 
+	@Override protected void writeInternal(Tuple<?> object, long timeStamp) throws IOException 
 	{
 		ImageJCV image = (ImageJCV) object.getAttribute(0);		
 //		System.out.print("write " + image.toString());		
-		videoImpl.record(image, timeStamp / 1000.0);
-		
-		// Return that all attributes except the first one are left
-		return IntStream.rangeClosed(1, object.size()-1).toArray();
+		videoImpl.record(image, timeStamp / 1000.0);		
 	}	
 	
-	@Override
-	public boolean hasNext() throws IOException 
-	{
-		return false;
-	}
-
-	@Override
-	public Tuple<?> getNext() throws IOException 
-	{
-		return null;
-	}
-
-	@Override
-	public String getName() {
-		return NAME;
-	}
-
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection().equals(ITransportDirection.IN)) {
@@ -134,22 +117,7 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 		}
 	}
 
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override public boolean isDone() { return true; }
-	
-	@Override
-	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
+	@Override public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
 	{
 		if (!(o instanceof VideoLoggerProtocolHandler)) return false;
 		
@@ -169,10 +137,5 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 			LOG.warn("VideoLoggerProtocolHandler requires sensormanagement.server feature");
 			return null;
 		}
-	}
-
-	@Override
-	protected long getLogFileSize() {
-		return new File(videoFileName).length();
 	}
 }

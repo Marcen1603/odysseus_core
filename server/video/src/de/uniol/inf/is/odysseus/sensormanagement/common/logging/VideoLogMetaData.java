@@ -6,10 +6,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class VideoLogMetaData extends LogMetaData
 {
 	public String videoFile;
-	public String syncFile;
 	public boolean doRotate180;
 	public String fps;
 	public String decoder;
 	public Integer bitsPerPixel;
 	public Integer pixelFormat;
+	
+	@Deprecated
+	public String syncFile;	
 }
