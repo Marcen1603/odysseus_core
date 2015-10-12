@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre;
 
 import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -10,7 +9,6 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.JreTargetplatformOption;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
@@ -31,9 +29,10 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			ILogicalOperator query,
 			QueryAnalyseInformation queryAnalyseInformation,
 			TransformationParameter parameter,
-			BlockingQueue<ProgressBarUpdate> progressBarQueue,
 			TransformationConfiguration transformationConfiguration)
 			throws InterruptedException  {
+
+		
 		//clear transformation infos
 		DefaultCodegeneratorStatus.clear();
 
@@ -43,8 +42,6 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		JreTargetplatformOption jreTargetplatformOption = new JreTargetplatformOption();
 		jreTargetplatformOption.parse(parameter);
 		
-		
-		this.setProgressBarQueue(progressBarQueue);
 		
 		//add userfeedback
 		updateProgressBar(10, "Start the transformation", UpdateMessageStatusType.INFO);

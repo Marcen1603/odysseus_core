@@ -35,7 +35,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 				transformationParameter.setQueryId(queryId);	
 			}
 			
-			CAnalyseServiceBinding.getAnalyseComponent().startQueryTransformation(transformationParameter, null);
+			CAnalyseServiceBinding.getAnalyseComponent().startQueryTransformation(transformationParameter);
 			
 		}
 		 

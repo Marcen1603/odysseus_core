@@ -42,7 +42,7 @@ public class QueryCodegenerationCommand extends AbstractExecutorCommand {
 		
 		
 		
-		CAnalyseServiceBinding.getAnalyseComponent().startQueryTransformation(transformationParameter, null);
+		CAnalyseServiceBinding.getAnalyseComponent().startQueryTransformation(transformationParameter);
 		
 	}
 	

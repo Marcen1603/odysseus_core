@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.rcp.composite.QueryTransform
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.thread.QueryTransformationThread;
 
 
-public class QueryTransformationWindow {
+public class QueryTransformationWindow{
 
 	private static final String TITLE = "Query Transformation";
 	
@@ -57,8 +57,10 @@ public class QueryTransformationWindow {
 		queryTransformationProgressComposite =	new QueryTransformationProgressComposite(window, SWT.NONE, WINDOW_WIDTH);
 		
 		QueryTransformationThread queryTransformationThread = new QueryTransformationThread(parameter,this);
+	
 		queryTransformationThread.setName("TransformationQueryThread");
 		queryTransformationThread.setDaemon(true);
+		
 		queryTransformationThread.start();
 		
 	}

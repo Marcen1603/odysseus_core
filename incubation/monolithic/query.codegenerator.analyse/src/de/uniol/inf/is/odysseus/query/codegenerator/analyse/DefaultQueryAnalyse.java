@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.analyse;
 
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +17,11 @@ import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.codegenerator.ICAnalyse;
+import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.ITargetPlatform;
@@ -39,10 +40,13 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
+	public void startQueryTransformation(TransformationParameter parameter){
 		
 
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
+		
+		CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, "Start query analyse",UpdateMessageStatusType.INFO));
+		
 		
 		transformationInformation = new QueryAnalyseInformation();
 		
@@ -79,7 +83,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		
 
 		try {
-			targetPlatform.convertQueryToStandaloneSystem(savedPlan,transformationInformation, parameter, queue, transformationConfiguration);
+			targetPlatform.convertQueryToStandaloneSystem(savedPlan,transformationInformation, parameter, transformationConfiguration);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

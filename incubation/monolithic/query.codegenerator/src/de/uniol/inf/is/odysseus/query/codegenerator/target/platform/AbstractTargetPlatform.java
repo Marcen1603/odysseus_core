@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
@@ -43,10 +44,6 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		return progressBarQueue;
 	}
 	
-	@Override
-	public void setProgressBarQueue(BlockingQueue<ProgressBarUpdate> progressBarQueue) {
-		this.progressBarQueue = progressBarQueue;
-	}
 
 	@Override
 	public String getTargetPlatformName() {
@@ -60,14 +57,9 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
 	@Override
 	public void updateProgressBar(int value, String text, UpdateMessageStatusType statusType){
-		if(progressBarQueue!= null){
-			try {
-				progressBarQueue.put(new ProgressBarUpdate(value, text,statusType));
-				LOG.info(statusType+": "+text);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(value, text,statusType));
+		LOG.info(statusType+": "+text);
+		
 	}
 	
 	@Override

@@ -13,9 +13,9 @@ public interface ITargetPlatform {
 	
 	public String getTargetPlatformName();
 	public void setTargetPlatformName(String targetPlatformName);
-	public void convertQueryToStandaloneSystem(ILogicalOperator query,QueryAnalyseInformation transformationInforamtion, TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue,TransformationConfiguration transformationConfiguration) throws InterruptedException;
+	public void convertQueryToStandaloneSystem(ILogicalOperator query,QueryAnalyseInformation transformationInforamtion, TransformationParameter parameter,TransformationConfiguration transformationConfiguration) throws InterruptedException;
 	public void updateProgressBar(int value, String text, UpdateMessageStatusType statusType);
-	public void setProgressBarQueue(BlockingQueue<ProgressBarUpdate> progressBarQueue);
+
 	public BlockingQueue<ProgressBarUpdate> getProgressBarQueue();
 	
 	public String getSpecialOptionInfos();

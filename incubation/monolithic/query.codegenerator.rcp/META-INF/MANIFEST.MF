@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.rcp.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.query.codegenerator,
+ de.uniol.inf.is.odysseus.query.codegenerator.message.bus,
  de.uniol.inf.is.odysseus.query.codegenerator.modell,
  de.uniol.inf.is.odysseus.query.codegenerator.modell.enums,
  de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry,
@@ -27,5 +28,5 @@ Export-Package: de.uniol.inf.is.odysseus.query.codegenerator.rcp,
  de.uniol.inf.is.odysseus.query.codegenerator.rcp.commands,
  de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell,
  de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry
-Service-Component: OSGI-INF/CAnalyseServiceBinding.xml,
- OSGI-INF/RcpSpecialOptionRegistry.xml
+Service-Component: OSGI-INF/CAnalyseServiceBinding.xml,OSGI-INF/RcpSpecialOptionRegistry.xml,
+ OSGI-INF/MessageConsumerRCP.xml

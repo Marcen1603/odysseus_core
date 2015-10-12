@@ -7,6 +7,10 @@ import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+
 
 //TODO mac, unix support?
 public class ExecuteShellComand {
@@ -42,8 +46,13 @@ public class ExecuteShellComand {
 	    	errorLine.append(errorline + "\n");
 	    }
 	
-		LOG.debug(okLine.toString());
-		LOG.error(errorLine.toString());	
+		LOG.debug("Execute ant  "+ okLine.toString());
+		CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, "Execute ant "+okLine.toString(),UpdateMessageStatusType.INFO));
+	
+		if(errorLine.length()>0){
+			LOG.error(errorLine.toString());	
+			CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, errorLine.toString(),UpdateMessageStatusType.ERROR));
+		}
 		
 	} catch (IOException e) {
 		e.printStackTrace();
@@ -65,8 +74,7 @@ public class ExecuteShellComand {
 		StringBuilder errorLine = new StringBuilder();
 		BufferedReader reader = 
 			         new BufferedReader(new InputStreamReader(p.getInputStream()));
-		
-
+	
 		
 		//no error
 		String line = "";			
@@ -86,9 +94,10 @@ public class ExecuteShellComand {
 	
 		if(errorLine.length()>0){
 			LOG.error(errorLine.toString());	
+			CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, errorLine.toString(),UpdateMessageStatusType.ERROR));
 		}
 	
-		LOG.debug(okLine.toString());
+		LOG.info(okLine.toString());
 		
 	} catch (IOException e) {
 		e.printStackTrace();
