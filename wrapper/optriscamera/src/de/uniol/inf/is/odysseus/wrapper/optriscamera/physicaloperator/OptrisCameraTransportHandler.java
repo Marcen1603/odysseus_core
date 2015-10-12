@@ -68,17 +68,17 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		 								fireProcess(generateTuple(timeStamp, flagState, buffer));		 								
 		 							}
 		 						};
+		 		fireOnConnect();
 				cameraCapture.start();
 							
 			}
 			catch (RuntimeException e) 
 			{
 				cameraCapture = null;
+				fireOnDisconnect();
 				throw new IOException(e.getMessage());
 			}
 		}
-		
-		fireOnConnect();
 	}
 	
 	@Override public void processInClose() throws IOException 
