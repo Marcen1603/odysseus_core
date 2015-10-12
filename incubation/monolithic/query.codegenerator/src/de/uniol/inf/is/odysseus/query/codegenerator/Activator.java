@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator;
 
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -17,6 +18,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+
 	}
 
 	/*

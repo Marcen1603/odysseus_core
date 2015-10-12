@@ -187,8 +187,6 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 	
 	private void analyseOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		
-		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
-		
 		ICOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		
 		if(opTrans != null ){

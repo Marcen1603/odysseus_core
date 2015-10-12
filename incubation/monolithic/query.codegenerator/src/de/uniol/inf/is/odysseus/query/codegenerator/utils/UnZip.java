@@ -8,7 +8,14 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class UnZip {
+	
+	
+	private static Logger LOG = LoggerFactory.getLogger(UnZip.class);
+	
 	List<String> fileList;
 
 	/**
@@ -51,8 +58,7 @@ public class UnZip {
 				File newFile = new File(outputFolder + File.separator
 						+ fileName);
 
-				System.out.println("file unzip : " + newFile.getAbsoluteFile());
-
+				LOG.info("file unzip : " + newFile.getAbsoluteFile());
 				// create all non exists folders
 				// else you will hit FileNotFoundException for compressed folder
 				new File(newFile.getParent()).mkdirs();

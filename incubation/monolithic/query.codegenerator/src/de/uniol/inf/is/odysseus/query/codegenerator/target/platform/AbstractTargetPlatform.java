@@ -24,7 +24,6 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
 	private static Logger LOG = LoggerFactory.getLogger(AbstractTargetPlatform.class);
 	
-	
 	protected Set<String> importList = new HashSet<String>();
 	protected StringBuilder bodyCode;
 	protected StringBuilder sdfSchemaCode;
@@ -87,8 +86,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 
 	
 	protected void preCheckOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
-		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
-
+		
 		if(operator.getSubscribedToSource().size() >= 2){
 			if(DefaultCodegeneratorStatus.getInstance().isOperatorReadyforCodegeneration(operator)){
 				try {
