@@ -66,6 +66,8 @@ public class ExecuteShellComand {
 		BufferedReader reader = 
 			         new BufferedReader(new InputStreamReader(p.getInputStream()));
 		
+
+		
 		//no error
 		String line = "";			
 			    while ((line = reader.readLine())!= null) {
@@ -81,9 +83,12 @@ public class ExecuteShellComand {
 	    	errorLine.append(errorline + "\n");
 	    }
 		
+	
+		if(errorLine.length()>0){
+			LOG.error(errorLine.toString());	
+		}
+	
 		LOG.debug(okLine.toString());
-		LOG.error(errorLine.toString());	
-		
 		
 	} catch (IOException e) {
 		e.printStackTrace();

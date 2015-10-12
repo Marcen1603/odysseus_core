@@ -63,7 +63,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		if(progressBarQueue!= null){
 			try {
 				progressBarQueue.put(new ProgressBarUpdate(value, text,statusType));
-				LOG.debug(statusType+": "+text);
+				LOG.info(statusType+": "+text);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -51,9 +51,7 @@ public class ExtractOSGIBundle {
 		for (Map.Entry<String, String> bundleString : requiredBundleByBundle.entrySet())
 		{
 	
-		
-	
-	
+
 			for(Bundle entry : Activator.getBundleContext().getBundles()){
 				//if(bundleString.getKey().equals(entry.getSymbolicName()) && bundleString.getValue().equals(entry.getVersion().toString())){
 				if(bundleString.getKey().equals(entry.getSymbolicName())){
@@ -74,8 +72,7 @@ public class ExtractOSGIBundle {
 						
 						}
 						
-						
-						
+	
 					}else{
 						//complex bundle
 						String path = entry.getLocation();
@@ -97,7 +94,7 @@ public class ExtractOSGIBundle {
 			//TODO unix mac support...
 		    String path = entry.getKey().replace("/", File.separator);
 		 
-		    String name = entry.getValue().replace(".", "");
+		    String name = entry.getValue();
 	
 		    String[] commands = new String[3];  
 		    
