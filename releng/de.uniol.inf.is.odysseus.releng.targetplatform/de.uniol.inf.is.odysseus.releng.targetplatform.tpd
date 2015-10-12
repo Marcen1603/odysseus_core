@@ -1,4 +1,4 @@
-target "Odysseus Target Platform" with allEnvironments
+target "Odysseus Target Platform" with requirements
 
 location "http://download.eclipse.org/releases/mars/" eclipse-mars {  
  org.eclipse.platform.feature.group  
@@ -18,6 +18,8 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
  org.eclipse.equinox.server.p2.feature.group
  org.eclipse.equinox.p2.extras.feature.feature.group
  org.eclipse.emf.ecore.feature.group
+ org.eclipse.emf.common.feature.group
+ org.eclipse.emf.edit.feature.group
  org.eclipse.ecf.core.ssl.feature.feature.group
  org.eclipse.equinox.p2.extras.feature.source.feature.group
  org.eclipse.help.feature.group
@@ -30,7 +32,6 @@ location "http://download.eclipse.org/releases/mars/" eclipse-mars {
  org.eclipse.equinox.p2.sdk.feature.group
  org.eclipse.ecf.filetransfer.httpclient4.feature.feature.group
  org.eclipse.platform.ide
- org.eclipse.emf.common.feature.group
  org.eclipse.ecf.filetransfer.ssl.feature.feature.group
  org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group
  org.eclipse.equinox.server.jetty.feature.group
@@ -60,4 +61,6 @@ location "http://download.eclipse.org/tools/orbit/downloads/drops/R2015082115334
 	javax.servlet
 	org.apache.httpcomponents.httpcore
 	org.apache.httpcomponents.httpclient
+	com.google.guava
+	com.google.inject	
 }
