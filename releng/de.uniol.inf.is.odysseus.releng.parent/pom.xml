@@ -9,7 +9,7 @@
 	<properties>
 		<tycho.version>0.23.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<odysseus-repo.url>http://odysseus.offis.uni-oldenburg.de/update/</odysseus-repo.url>
+		<odysseus-repo.url>http://odysseus.offis.uni-oldenburg.de/update2/</odysseus-repo.url>
 		<mars-repo.url>http://download.eclipse.org/releases/mars/</mars-repo.url>
 		<xtext-repo.url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</xtext-repo.url>
 		<gef-repo.url>http://download.eclipse.org/tools/gef/updates/releases</gef-repo.url>
