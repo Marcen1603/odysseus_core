@@ -130,10 +130,9 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private long lastTime = 0;
 	private int imageCount = 0;
 	
-	private void logStats()
+	private void logStats(long now)
 	{
 		imageCount++;
-		long now = System.nanoTime();
 		double dt = (now - lastTime) / 1.0e9;
 		double fps = 1.0/dt;
 
@@ -153,9 +152,10 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	
 	private Tuple<IMetaAttribute> generateTuple(double cameraTimePassed)
 	{
-//		logStats();
-		
+		long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
 		double systemTimePassed = (System.currentTimeMillis() - startupTimeStamp) / 1000.0;
+		
+//		logStats(timestamp);
 		
 		LOG.debug("Grabbed frame from Basler camera " + serialNumber);
 		System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraTimePassed + " systime = " + systemTimePassed + " diff = " + (systemTimePassed - cameraTimePassed) * 1000 + "ms");
@@ -169,8 +169,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 
 		attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
 		if (attrs.length > 0) 
-		{
-			long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
+		{			
 			newTuple.setAttribute(attrs[0], timestamp);
 		}		
 		

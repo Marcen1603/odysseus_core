@@ -98,9 +98,9 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 	private long lastTime = 0;
 	private int imageCount = 0;
 
-	private void logStats()
+	private void logStats(long now)
 	{
-		long now = System.nanoTime();
+		imageCount++;
 		double dt = (now - lastTime) / 1.0e9;
 		double fps = 1.0/dt;
 
@@ -112,12 +112,13 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 
 	private Tuple<IMetaAttribute> generateTuple(double cameraTimePassed, TFlagState flagState, ByteBuffer buffer)
 	{
+		// TODO: Use camera timestamp
+		long timestamp = System.currentTimeMillis(); //startupTimeStamp + (long) (cameraTimePassed * 1000);
+//		logStats(timestamp);
+		
 //		if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return;		
 //		System.out.println("Timestamp = " + timeStamp);
 
-		imageCount++;		
-//		logStats();
-				
 		int attrs[];
 		Tuple<IMetaAttribute> newTuple = new Tuple<IMetaAttribute>(getSchema().size(), true);
 		
@@ -134,8 +135,6 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		attrs = getSchema().getSDFDatatypeAttributePositions(SDFDatatype.START_TIMESTAMP);
 		if (attrs.length > 0) 
 		{
-			// TODO: Use camera timestamp
-			long timestamp = System.currentTimeMillis(); //startupTimeStamp + (long) (cameraTimePassed * 1000);
 			newTuple.setAttribute(attrs[0], timestamp);
 		}		
 		
