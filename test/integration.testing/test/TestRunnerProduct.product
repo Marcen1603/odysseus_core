@@ -3,6 +3,7 @@
 
 <product name="Test Runner Product" uid="de.uniol.inf.is.odysseus.test.runner.product" id="de.uniol.inf.is.odysseus.test.odysseustestproduct" application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -11,13 +12,14 @@
       </programArgs>
       <programArgsLin>-os linux -ws gtk -arch x86_64
       </programArgsLin>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx2048m -Dlog4j.configuration=log4j.test.properties -Dosgi.console.enable.builtin=true
+      <vmArgs>-Dosgi.requiredJavaVersion=1.8 -Xms1024m -Xmx2048m -Dlog4j.configuration=log4j.test.properties -Dosgi.console.enable.builtin=true
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
+
 
    <launcher>
       <solaris/>
@@ -26,9 +28,11 @@
       </win>
    </launcher>
 
+
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
+
 
    <plugins>
    </plugins>
