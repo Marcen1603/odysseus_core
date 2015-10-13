@@ -79,8 +79,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 				ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
 			}
 		
-			
-			updateProgressBar(100, "Transformation finish",UpdateMessageStatusType.INFO);
+			updateProgressBar(100, generateSummary(parameter,compiledProgramm(parameter)),UpdateMessageStatusType.INFO);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -135,5 +134,11 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 	}
 
 	
+	private String compiledProgramm(TransformationParameter parameter){
+		StringBuilder compiledProgramm = new StringBuilder();
+		compiledProgramm.append("Compiled programm: "+parameter.getTargetDirectory()+"\\target");
+		
+		return compiledProgramm.toString();
+	}
 
 }

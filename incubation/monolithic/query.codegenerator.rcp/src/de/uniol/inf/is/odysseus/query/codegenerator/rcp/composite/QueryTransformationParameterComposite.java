@@ -95,6 +95,11 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		buttonComposite.setLayoutData(griDDatabuttonComposite);
 		buttonComposite.setLayout(new GridLayout(3, false));
 		
+
+	
+		createButton();
+		
+		loadRCPConfig();
 		
 		IRcpSpecialOption rcpSpecialOption = RcpSpecialOptionRegistry.getRCPSpeicalOption(targetPlatform.getText());
 		
@@ -102,10 +107,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
 		}
 	
-		createButton();
+		refreshComboExecutor();
 		
-		loadRCPConfig();
-
 		parent.pack();
 		parent.setVisible(true);
 	}
@@ -177,6 +180,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		  		if(rcpSpecialOption != null){
 		  			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
 		  		}
+		  		
+		  		refreshComboExecutor();
 			
 		  		inputOptionComposite.layout();
 		  		parentComposite.pack();
@@ -186,7 +191,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 		comboExecutor = createComboWithLabel(inputTwoGridComposite,
 				"Executor:", CSchedulerRegistry.getAllExecutor("JRE"),0);
-
+		
 	}
 
 	private void createButton() {
@@ -295,20 +300,64 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 			}
 			
 			
-			
-			
+			try {
+				String targetPlatformRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"targetPlatform");
+				String[] items = targetPlatform.getItems();
+				
+				for(int i=0;i<items.length; i++){
+					 if (items[i].equals(targetPlatformRCPConfig)) {
+						 targetPlatform.select(i);
+				     }
+				}
+				
+		
+				refreshComboExecutor();
+				
+			} catch (OdysseusRCPConfiguartionException e) {
+				e.printStackTrace();
+			}
 	}
 	
 	
 	private void saveInputFields(){
-		
 		OdysseusRCPConfiguration.set(rcpConfig+"targetDirectory", txtTargetDirectory.getText());
 		OdysseusRCPConfiguration.set(rcpConfig+"odysseusDirectory", txtOdysseusCode.getText());
-		
-		
-
-		
+		OdysseusRCPConfiguration.set(rcpConfig+"targetPlatform", targetPlatform.getText());
+		OdysseusRCPConfiguration.set(rcpConfig+"scheduler", comboExecutor.getText());
+	}
 	
+	
+	private void refreshComboExecutor(){
+		
+		if(CSchedulerRegistry.getAllExecutor(targetPlatform.getText())!=null){
+			
+			String[] schedulers = CSchedulerRegistry.getAllExecutor(targetPlatform.getText()).toArray(new String[CSchedulerRegistry.getAllExecutor(targetPlatform.getText()).size()]);
+			comboExecutor.setItems(stringArrayToUpperCase(schedulers));
+			comboExecutor.select(0);
+			
+			for(int i=0; i<schedulers.length;i++){
+				 try {
+					if (schedulers[i].toLowerCase().equals(OdysseusRCPConfiguration.get(rcpConfig+"scheduler").toLowerCase())) {
+						comboExecutor.select(i);
+					 }
+				} catch (OdysseusRCPConfiguartionException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			comboExecutor.setEnabled(true);
+		}else{
+			comboExecutor.setEnabled(false);
+		}
+	}
+	
+	private String[] stringArrayToUpperCase(String[] stringArray){
+		
+		for(int i=0; i< stringArray.length; i++){
+			stringArray[i] = stringArray[i].toUpperCase();
+		}
+		
+		return stringArray;
 	}
 
 }

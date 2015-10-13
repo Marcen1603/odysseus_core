@@ -82,8 +82,17 @@ public class CSchedulerRegistry {
 	}
 	
 	public static Set<String> getAllExecutor(String programmLanguage){
-		return schedulerList.get(programmLanguage.toLowerCase()).keySet();
+		Map<String, ICScheduler> schedulerMap = schedulerList.get(programmLanguage.toLowerCase());
+		if(schedulerMap != null){
+			return schedulerMap.keySet();
+		}else{
+			return null;
+		}
+		
 	}
+	
+	
+
 	
 	public static Map<String, Map<String,ICScheduler>> getAllExecutor(){
 		return schedulerList;

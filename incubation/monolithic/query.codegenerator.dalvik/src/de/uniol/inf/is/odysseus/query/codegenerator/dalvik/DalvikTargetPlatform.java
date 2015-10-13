@@ -58,6 +58,9 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		try {
 			dalvikFileWrite.createProject();
 
+			
+			updateProgressBar(100, generateSummary(parameter,projectInfo(parameter)),UpdateMessageStatusType.INFO);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -104,6 +107,15 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			bodyCode.append(subscription.getCode());	
 			importList.addAll(subscription.getImports());
 		}
+	}
+	
+	
+	private String projectInfo(TransformationParameter parameter){
+		StringBuilder projectInfo = new StringBuilder();
+		projectInfo.append("\n\n------Info------\n\n");
+		projectInfo.append("Please open the generated project with Android-Studio!\n");
+		return projectInfo.toString();
+		
 	}
 
 }

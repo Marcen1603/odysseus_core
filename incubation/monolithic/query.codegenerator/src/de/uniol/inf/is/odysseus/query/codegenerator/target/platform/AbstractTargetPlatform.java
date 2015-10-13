@@ -127,4 +127,15 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		}
 	}
 	
+	
+	protected String generateSummary(TransformationParameter parameter, String optional){
+		StringBuilder summary = new StringBuilder();
+		summary.append("Transformation finish \n\n");
+		summary.append("------Summary------\n\n");
+		summary.append("Target directory: "+parameter.getTargetDirectory()+"\n");
+		summary.append("Targetplatform: "+parameter.getProgramLanguage()+"\n");
+		summary.append(optional.toString());
+		return summary.toString();
+	}
+	
 }
