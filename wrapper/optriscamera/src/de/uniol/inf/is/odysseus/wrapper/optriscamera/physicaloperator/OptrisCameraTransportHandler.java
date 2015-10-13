@@ -101,7 +101,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 	private void logStats(long now)
 	{
 		imageCount++;
-		double dt = (now - lastTime) / 1.0e9;
+		double dt = (now - lastTime) / 1.0e3;
 		double fps = 1.0/dt;
 
 		smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
@@ -114,7 +114,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 	{
 		// TODO: Use camera timestamp
 		long timestamp = System.currentTimeMillis(); //startupTimeStamp + (long) (cameraTimePassed * 1000);
-//		logStats(timestamp);
+		logStats(timestamp);
 		
 //		if (System.currentTimeMillis() > ImageJCV.startTime + 10000) return;		
 //		System.out.println("Timestamp = " + timeStamp);
@@ -148,7 +148,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			}
 		}
 		
-		System.out.println("Optris generated image @ " + System.currentTimeMillis());
+//		System.out.println("Optris generated image @ " + System.currentTimeMillis());
 		return newTuple;
 	}
 	

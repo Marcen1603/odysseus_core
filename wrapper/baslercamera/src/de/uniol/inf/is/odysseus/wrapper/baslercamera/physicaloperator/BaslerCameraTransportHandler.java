@@ -133,7 +133,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private void logStats(long now)
 	{
 		imageCount++;
-		double dt = (now - lastTime) / 1.0e9;
+		double dt = (now - lastTime) / 1.0e3;
 		double fps = 1.0/dt;
 
 		smoothFPS = alpha*smoothFPS + (1.0-alpha)*fps; 
@@ -155,10 +155,10 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
 		double systemTimePassed = (System.currentTimeMillis() - startupTimeStamp) / 1000.0;
 		
-//		logStats(timestamp);
+		logStats(timestamp);
 		
-		LOG.debug("Grabbed frame from Basler camera " + serialNumber);
-		System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraTimePassed + " systime = " + systemTimePassed + " diff = " + (systemTimePassed - cameraTimePassed) * 1000 + "ms");
+//		LOG.debug("Grabbed frame from Basler camera " + serialNumber);
+//		System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraTimePassed + " systime = " + systemTimePassed + " diff = " + (systemTimePassed - cameraTimePassed) * 1000 + "ms");
 
 		int attrs[];
 		Tuple<IMetaAttribute> newTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
