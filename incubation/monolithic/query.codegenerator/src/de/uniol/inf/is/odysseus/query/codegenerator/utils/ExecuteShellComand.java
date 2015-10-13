@@ -55,9 +55,10 @@ public class ExecuteShellComand {
 			CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, errorLine.toString(),UpdateMessageStatusType.ERROR));
 		}
 	
-		LOG.info(okLine.toString());
+	
 		
 		if(sendOkLineToMessageBus){
+			LOG.info(okLine.toString());
 			CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, okLine.toString(),UpdateMessageStatusType.INFO));
 		}
 		

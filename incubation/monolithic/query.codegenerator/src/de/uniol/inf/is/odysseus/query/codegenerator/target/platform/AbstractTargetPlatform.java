@@ -28,6 +28,8 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	protected StringBuilder bodyCode;
 	protected StringBuilder sdfSchemaCode;
 	
+	protected boolean warningErrorDetected = false;
+
 	public abstract void generateOperatorCodeOperatorReady(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation,ICOperatorRule<ILogicalOperator> opTrans);
 	public abstract void generateOperatorSubscription(ILogicalOperator operator,QueryAnalyseInformation queryAnalseInformation );
 	
@@ -59,6 +61,9 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(value, text,statusType));
 		LOG.info(statusType+": "+text);
 		
+		if(statusType == UpdateMessageStatusType.WARNING || statusType == UpdateMessageStatusType.ERROR  ){
+			warningErrorDetected = true;
+		}
 	}
 	
 	@Override
@@ -68,6 +73,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
 	
 	protected void transformQuery(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+		warningErrorDetected = false;
 		
 		List<ILogicalOperator> operatorSources = queryAnalyseInformation.getSourceOpList();
 		
@@ -131,7 +137,13 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	protected String generateSummary(TransformationParameter parameter, String optional){
 		StringBuilder summary = new StringBuilder();
 		summary.append("Transformation finish \n\n");
-		summary.append("------Summary------\n\n");
+		
+		if(warningErrorDetected){
+			summary.append("------------------WARNING DETECTED------------------\n\n");
+			summary.append("please check the log!\n\n");
+		}
+		
+		summary.append("------------------Summary------------------\n\n");
 		summary.append("Target directory: "+parameter.getTargetDirectory()+"\n");
 		summary.append("Targetplatform: "+parameter.getProgramLanguage()+"\n");
 		summary.append(optional.toString());

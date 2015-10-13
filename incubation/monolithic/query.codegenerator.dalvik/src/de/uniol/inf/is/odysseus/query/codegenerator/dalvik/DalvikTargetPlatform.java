@@ -112,7 +112,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 	
 	private String projectInfo(TransformationParameter parameter){
 		StringBuilder projectInfo = new StringBuilder();
-		projectInfo.append("\n\n------Info------\n\n");
+		projectInfo.append("\n\n------------------Info------------------\n\n");
 		projectInfo.append("Please open the generated project with Android-Studio!\n");
 		return projectInfo.toString();
 		

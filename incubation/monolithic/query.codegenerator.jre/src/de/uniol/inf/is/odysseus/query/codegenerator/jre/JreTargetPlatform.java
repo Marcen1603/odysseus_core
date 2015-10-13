@@ -31,11 +31,9 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			TransformationParameter parameter,
 			TransformationConfiguration transformationConfiguration)
 			throws InterruptedException  {
-
 		
-		//clear transformation infos
+		//clear defaultCodegeneratorStatus 
 		DefaultCodegeneratorStatus.clear();
-
 		DefaultCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
 		//get special transformation options
@@ -137,7 +135,6 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 	private String compiledProgramm(TransformationParameter parameter){
 		StringBuilder compiledProgramm = new StringBuilder();
 		compiledProgramm.append("Compiled programm: "+parameter.getTargetDirectory()+"\\target");
-		
 		return compiledProgramm.toString();
 	}
 
