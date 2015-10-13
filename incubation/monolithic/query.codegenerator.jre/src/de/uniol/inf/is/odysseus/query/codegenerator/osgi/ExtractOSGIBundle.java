@@ -149,7 +149,7 @@ public class ExtractOSGIBundle {
 		    }
 		    
 		    
-		    ExecuteShellComand.excecuteCommand(commands);
+		    ExecuteShellComand.excecuteCommand(commands,false);
             
             copyJars.add(name+".jar");
 		    }
@@ -167,7 +167,7 @@ public class ExtractOSGIBundle {
 		    commands[1] = "/c";
 		    
 		    commands[2] = volume[0]+": && cd "+path+" && copy \""+filePath+"\" \""+tempPath+"/"+copyToDirectory+"/"+fileName+"\""; 
-		    ExecuteShellComand.excecuteCommand(commands);
+		    ExecuteShellComand.excecuteCommand(commands, false);
 		    
 		    copyJars.add(fileName);
 		}

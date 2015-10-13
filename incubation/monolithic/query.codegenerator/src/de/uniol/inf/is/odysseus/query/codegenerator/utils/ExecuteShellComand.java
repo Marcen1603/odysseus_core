@@ -18,50 +18,8 @@ public class ExecuteShellComand {
 	
 	private static Logger LOG = LoggerFactory.getLogger(ExecuteShellComand.class);
 	
-	public static void executeAntScript(String tempDirectory){
-		
-	Process p;
-
-	try {
-		p = Runtime.getRuntime().exec("cmd /c ant -f \""+tempDirectory+"\"");
-		//p.waitFor();
-		
-		StringBuilder okLine = new StringBuilder();
-		StringBuilder errorLine = new StringBuilder();
-		BufferedReader reader = 
-			         new BufferedReader(new InputStreamReader(p.getInputStream()));
-		
-		//no error
-		String line = "";			
-			    while ((line = reader.readLine())!= null) {
-			    	okLine.append(line + "\n");
-			    }
-		
-		//error stream    
-		BufferedReader errorReader = 
-				         new BufferedReader(new InputStreamReader(p.getErrorStream()));
-		
-		String errorline = "";			
-	    while ((errorline = errorReader.readLine())!= null) {
-	    	errorLine.append(errorline + "\n");
-	    }
 	
-		LOG.debug("Execute ant  "+ okLine.toString());
-		CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, "Execute ant "+okLine.toString(),UpdateMessageStatusType.INFO));
-	
-		if(errorLine.length()>0){
-			LOG.error(errorLine.toString());	
-			CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, errorLine.toString(),UpdateMessageStatusType.ERROR));
-		}
-		
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-	
-	}
-	
-	
-	public static void excecuteCommand(String[] commands){
+	public static void excecuteCommand(String[] commands, boolean sendOkLineToMessageBus){
 		
 	Process p;
 
@@ -99,10 +57,28 @@ public class ExecuteShellComand {
 	
 		LOG.info(okLine.toString());
 		
+		if(sendOkLineToMessageBus){
+			CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, okLine.toString(),UpdateMessageStatusType.INFO));
+		}
+		
+		
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
 	
 	}
+	
+	
+	public static void executeAntScript(String tempDirectory){
+		
+	    String[] commands = new String[3];  
+	    
+      	commands[0] = "cmd";
+      	commands[1] = "/c";
+    	commands[2] = "ant -f \""+tempDirectory+"\"";
+    	
+    	excecuteCommand(commands, true);
+	}
+	
 	
 }
