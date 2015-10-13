@@ -67,7 +67,7 @@ public class JavaFileWrite {
 		
 		//create and copy odysseus jars
 		copyOdysseusJar();
-		
+	
 		//create main.java file
 		createMainJavaFile();
 		
@@ -224,25 +224,27 @@ public class JavaFileWrite {
 	private void createOperationConfigurationFiles() {
 		FileWriter infoFile = null;
 		
+		StringBuilder infoFileText = new StringBuilder();
+
 		try {
 			 infoFile = new FileWriter(targetDirectory+"/operatorConfigurationInfo.txt");
 		
 			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
 			{
 			    String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(entry.getKey());
-			  
+			 
+			    infoFileText.append(entry.getKey().getName()+" --> "+ operatorVariable +"PO.json\n");
 			    
 			    Gson gson = new Gson();
 			    String json = gson.toJson(entry.getValue());
-			    
-				infoFile.write(entry.getKey().getName()+" --> "+ operatorVariable +"PO.json\n");
-					
+			   
 				FileWriter file = new FileWriter(targetDirectory+"/"+operatorVariable+"PO.json");
 				file.write(json);
 				file.flush();
 				file.close();
 			}
 			
+				infoFile.write(infoFileText.toString());
 				infoFile.flush();
 				infoFile.close();
 		}catch (IOException e) {
