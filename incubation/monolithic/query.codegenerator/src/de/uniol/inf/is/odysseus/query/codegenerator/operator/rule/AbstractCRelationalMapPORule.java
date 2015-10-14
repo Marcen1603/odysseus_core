@@ -34,11 +34,8 @@ public abstract class AbstractCRelationalMapPORule<T extends MapAO> extends Abst
 		for (NamedExpression e : logicalOperator.getExpressions()) {
 
 			IExpression<?> temp = e.expression.getMEPExpression();
-			if (temp.isFunction()) {
-				transformationInformation.addMEPFunction(temp);
-			}
-
+			
+			transformationInformation.addMEPFunction(getAllMEPFunctions(temp));
 		}
-
 	}
 }

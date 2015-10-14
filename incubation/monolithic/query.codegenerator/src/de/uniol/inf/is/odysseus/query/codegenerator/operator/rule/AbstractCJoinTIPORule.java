@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
 public abstract class AbstractCJoinTIPORule<T extends JoinAO> extends AbstractCIntervalRule<JoinAO> {
 
@@ -51,8 +50,7 @@ public abstract class AbstractCJoinTIPORule<T extends JoinAO> extends AbstractCI
 			String predicateValue = predicate.toString();
 			IExpression<?> mepExpression = MEP.getInstance().parse(predicateValue);
 
-			Map<String, IExpression<?>> mepFunctions = Utils
-					.getAllMEPFunctions(mepExpression);
+			Map<String, IExpression<?>> mepFunctions = getAllMEPFunctions(mepExpression);
 
 			transformationInformation.addMEPFunction(mepFunctions);
 		}

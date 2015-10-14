@@ -1,12 +1,16 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
 public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implements ICOperatorRule<T> {
@@ -95,5 +99,26 @@ public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implemen
 
 	}
 	
+	
+	public  Map<String,IExpression<?>> getAllMEPFunctions( IExpression<?> expression){
+		   Map<String,IExpression<?>> functionList = new HashMap<String,IExpression<?>>();
+		
+			if (expression.isFunction()) {
+				functionList.put(expression.getClass().getName(), expression);
+			
+				IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) expression;
+				IExpression<?> argument1 = binaryOperator.getArgument(0);
+				if (argument1.isFunction()) {
+					functionList.put(argument1.getClass().getName(), argument1);
+					functionList.putAll(getAllMEPFunctions(argument1));
+				}
+				IExpression<?> argument2 = binaryOperator.getArgument(1);
+				if (argument2.isFunction()) {
+					functionList.put(argument2.getClass().getName(), argument2);
+					functionList.putAll(getAllMEPFunctions(argument2));
+				}
+			}
+			return functionList;
+	}
 
 }

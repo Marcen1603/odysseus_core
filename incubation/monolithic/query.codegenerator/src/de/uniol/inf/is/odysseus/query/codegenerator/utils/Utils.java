@@ -1,14 +1,9 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 
 public class Utils {
 	
@@ -18,7 +13,7 @@ public class Utils {
         WINDOWS, LINUX, MAC, SOLARIS
     };
     
-    private static  Map<String,IExpression<?>> functionList = new HashMap<String,IExpression<?>>();
+ 
     
 	public static TimestampAO createTimestampAO(ILogicalOperator operator,
 			String dateFormat) {
@@ -50,26 +45,6 @@ public class Utils {
 		return timestampAO;
 	}
 	
-	
-	public static  Map<String,IExpression<?>> getAllMEPFunctions(final IExpression<?> expression){
-		
-		if (expression.isFunction()) {
-			functionList.put(expression.getClass().getName(), expression);
-		
-			IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) expression;
-			IExpression<?> argument1 = binaryOperator.getArgument(0);
-			if (argument1.isFunction()) {
-				functionList.put(argument1.getClass().getName(), argument1);
-				getAllMEPFunctions(argument1);
-			}
-			IExpression<?> argument2 = binaryOperator.getArgument(1);
-			if (argument2.isFunction()) {
-				functionList.put(argument2.getClass().getName(), argument2);
-				getAllMEPFunctions(argument2);
-			}
-		}
-		return functionList;
-	}
 	
 
 	public static OS getOS() {
