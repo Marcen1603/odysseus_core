@@ -32,7 +32,7 @@ public abstract class SensorClient implements ILoggable
 		this.odysseusSession = session;
 				
 		sensorClient = new WsSensorClient(wsdlLocation + ";http://server.sensormanagement.odysseus.is.inf.uniol.de/;SensorServiceService");
-		sensorClient.init(session, name, "C:/test/records");
+		sensorClient.init(session, name, "D:/test/records");
 		
 		List<String> sensorIds = sensorClient.getSensorIds(odysseusSession);
 		sensors = new ArrayList<RemoteSensor>(sensorIds.size());
