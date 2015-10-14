@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class QueryAnalyseInformation {
@@ -22,6 +23,8 @@ public class QueryAnalyseInformation {
 	private Map<String, String> transportHandler = new HashMap<String, String>();
 	private Map<String, String> metaDataTypes = new HashMap<String, String>();
 	private Map<String, String> sweepAreas = new HashMap<String, String>();
+	private Map<String, String> aggregateFunctionBuilder = new HashMap<String, String>();
+	
 	
 	private List<ILogicalOperator> iIterableSource = new ArrayList<ILogicalOperator>();
 
@@ -34,6 +37,27 @@ public class QueryAnalyseInformation {
 	private List<ILogicalOperator> sinkOPs = new ArrayList<ILogicalOperator>();;
 	
 	private int uniqueId = 0;
+	
+	
+	public void addAggregateFunctionBuilder(IAggregateFunctionBuilder builder) {
+		
+		  if(builder != null ){
+		
+			String fullClassName = builder.getClass().getName();
+			String simpleClassName = builder.getClass().getSimpleName();
+	
+			if (!aggregateFunctionBuilder.containsKey(fullClassName)) {
+				aggregateFunctionBuilder.put(fullClassName, simpleClassName);
+			}
+		}
+		
+		
+	}
+	
+	public Map<String, String> getNeededAggregateFunctionBuilder() {
+		return aggregateFunctionBuilder;
+	}
+	
 	
 	
 	public void addIterableSource(ILogicalOperator operator){
@@ -132,7 +156,6 @@ public class QueryAnalyseInformation {
 
 	
 	public void addMEPFunction(Map<String,IExpression<?>> expressions){
-		
 		for (Entry<String, IExpression<?>> entry : expressions.entrySet())
 		{
 			addMEPFunction(entry.getValue());

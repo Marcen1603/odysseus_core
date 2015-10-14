@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
@@ -338,6 +339,9 @@ public class CreateJreDefaultCode {
 	
 	public static CodeFragmentInfo getCodeForOSGIBinds(String odysseusPath, QueryAnalyseInformation transformationInforamtion){
 		CodeFragmentInfo osgiBinds = new CodeFragmentInfo();
+		
+		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("registerAggregateFunctionBuilder",transformationInforamtion.getNeededAggregateFunctionBuilder(), AggregateFunctionBuilderRegistry.class));
+		
 		
 		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("registerFunction",transformationInforamtion.getNeededMEPFunctions(), MEP.class));
 		

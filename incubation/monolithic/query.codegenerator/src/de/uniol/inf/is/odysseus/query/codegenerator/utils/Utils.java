@@ -18,6 +18,8 @@ public class Utils {
         WINDOWS, LINUX, MAC, SOLARIS
     };
     
+    private static  Map<String,IExpression<?>> functionList = new HashMap<String,IExpression<?>>();
+    
 	public static TimestampAO createTimestampAO(ILogicalOperator operator,
 			String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
@@ -50,7 +52,7 @@ public class Utils {
 	
 	
 	public static  Map<String,IExpression<?>> getAllMEPFunctions(final IExpression<?> expression){
-		final Map<String,IExpression<?>> functionList = new HashMap<String,IExpression<?>>();
+		
 		if (expression.isFunction()) {
 			functionList.put(expression.getClass().getName(), expression);
 		

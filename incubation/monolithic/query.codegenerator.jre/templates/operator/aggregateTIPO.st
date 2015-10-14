@@ -23,8 +23,6 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 				.getAggregations();
 
 
-		AggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry =  new AggregateFunctionBuilderRegistry();
-		aggregateFunctionBuilderRegistry.registerAggregateFunctionBuilder(new RelationalAggregateFunctionBuilder());
 
 		for (SDFSchema attrList : $operatorVariable$Aggregations.keySet()) {
 			if (SDFSchema.subset(attrList, $operatorVariable$InputSchema)) {
@@ -52,7 +50,7 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 		
 			
 					
-					IAggregateFunctionBuilder builder = aggregateFunctionBuilderRegistry.getBuilder(
+					IAggregateFunctionBuilder builder = aggregatefunctionbuilderregistry.getBuilder(
 							$operatorVariable$InputSchema.getType(), p.getE2().getName());
 					if (builder == null) {
 						throw new RuntimeException(
