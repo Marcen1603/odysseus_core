@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -110,6 +111,7 @@ public class ODLDefaultTypes {
 		types.add(AggregateFunctionBuilderRegistry.class);
 		types.add(Cardinalities.class);
 		types.add(EnumParameter.class);
+		types.add(KeyValueObject.class);
 		return types;
 	}
 
@@ -166,6 +168,7 @@ public class ODLDefaultTypes {
 		implicitImports.add(PairMap.class.getCanonicalName());
 		implicitImports.add(Cardinalities.class.getCanonicalName());
 		implicitImports.add(EnumParameter.class.getCanonicalName());
+		implicitImports.add(KeyValueObject.class.getCanonicalName());
 		return implicitImports;
 	}
 	

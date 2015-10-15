@@ -2,7 +2,10 @@ package de.uniol.inf.is.odysseus.iql.odl.lookup;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -26,7 +29,10 @@ import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.JvmVisibility;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -47,6 +53,40 @@ public class ODLLookUp extends AbstractIQLLookUp<IODLTypeDictionary, IODLTypeExt
 	public ODLLookUp(IODLTypeDictionary typeDictionary, IODLTypeExtensionsDictionary typeExtensionsDictionary,IODLTypeUtils typeUtils) {
 		super(typeDictionary, typeExtensionsDictionary, typeUtils);
 	}
+	
+	@Override
+	public Collection<JvmOperation> getMethodsToOverride(JvmGenericType type, EObject context) {
+		if (type instanceof ODLOperator) {
+			JvmTypeReference typeRef = null;
+
+			ODLMethod method = EcoreUtil2.getContainerOfType(context, ODLMethod.class);
+			if (method == null && context instanceof ODLMethod) {
+				method = (ODLMethod) context;
+			} 
+			if (method != null) {
+				if (method.isAo()) {
+					typeRef = typeUtils.createTypeRef(AbstractLogicalOperator.class, typeDictionary.getSystemResourceSet());
+				} else if (method.isPo()) {
+					typeRef = typeUtils.createTypeRef(AbstractPipe.class, typeDictionary.getSystemResourceSet());
+				} else {
+					typeRef = typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet());
+				}
+			} else {
+				typeRef = typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet());
+			}
+			
+			Map<String, JvmOperation> methods = new HashMap<>();
+			Set<String> visitedTypes = new HashSet<>();
+			
+			int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE, JvmVisibility.PROTECTED_VALUE, JvmVisibility.DEFAULT_VALUE};
+			
+			findMethods(typeRef,visitedTypes, methods, true, visibilities, false, false);
+			return new HashSet<>(methods.values());
+		} else {
+			return super.getMethodsToOverride(type, context);
+		}
+	}
+	
 //	
 //	@Override
 //	public boolean isAssignable(JvmTypeReference targetRef, JvmTypeReference typeRef) {

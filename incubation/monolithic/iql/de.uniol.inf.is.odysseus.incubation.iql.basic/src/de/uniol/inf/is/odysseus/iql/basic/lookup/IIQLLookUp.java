@@ -27,7 +27,7 @@ public interface IIQLLookUp {
 	Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef, boolean extensionMethods);	
 	Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef, boolean extensionMethods);		
 	Collection<JvmOperation> getDeclaredPublicMethods(JvmTypeReference typeRef,	boolean onlyStatic);
-	Collection<JvmOperation> getMethodsToOverride(JvmGenericType type);
+	Collection<JvmOperation> getMethodsToOverride(JvmGenericType type, EObject context);
 
 	Collection<JvmExecutable> getPublicConstructors(JvmTypeReference typeRef);
 	Collection<JvmExecutable> getDeclaredConstructors(JvmTypeReference typeRef);

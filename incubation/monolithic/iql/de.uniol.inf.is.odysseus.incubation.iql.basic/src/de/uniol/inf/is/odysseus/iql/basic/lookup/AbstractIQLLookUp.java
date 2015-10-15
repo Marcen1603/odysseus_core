@@ -190,18 +190,18 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 	}
 	
 	@Override
-	public Collection<JvmOperation> getMethodsToOverride(JvmGenericType type) {
+	public Collection<JvmOperation> getMethodsToOverride(JvmGenericType type, EObject context) {
 		Map<String, JvmOperation> methods = new HashMap<>();
 		Set<String> visitedTypes = new HashSet<>();
 		
 		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE, JvmVisibility.PROTECTED_VALUE, JvmVisibility.DEFAULT_VALUE};
 		if (type.getExtendedClass() != null) {
-			findMethods(type.getExtendedClass(),visitedTypes, methods, false, visibilities, false, false);
+			findMethods(type.getExtendedClass(),visitedTypes, methods, true, visibilities, false, false);
 		} else {
-			findMethods(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()),visitedTypes, methods, false, visibilities, false, false);
+			findMethods(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()),visitedTypes, methods, true, visibilities, false, false);
 		}
 		for (JvmTypeReference interf : type.getExtendedInterfaces()) {
-			findMethods(interf,visitedTypes, methods, false, visibilities, false, false);
+			findMethods(interf,visitedTypes, methods, true, visibilities, false, false);
 		}
 		return new HashSet<>(methods.values());
 	}

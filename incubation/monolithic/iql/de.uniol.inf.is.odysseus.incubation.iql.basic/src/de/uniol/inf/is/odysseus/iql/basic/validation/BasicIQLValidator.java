@@ -96,7 +96,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 	void checkMethodOverride(IQLMethod method) {		
 		if (method.isOverride()) {
 			JvmGenericType type = EcoreUtil2.getContainerOfType(method, JvmGenericType.class);
-			Collection<JvmOperation> methods = lookUp.getMethodsToOverride(type);
+			Collection<JvmOperation> methods = lookUp.getMethodsToOverride(type, method);
 			for (JvmOperation op : methods) {
 				if (op.getSimpleName().equalsIgnoreCase(method.getSimpleName()) && op != method) {
 					for (int i = 0; i<method.getParameters().size(); i++) {
