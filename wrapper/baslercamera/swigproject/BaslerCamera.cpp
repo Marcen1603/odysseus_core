@@ -51,7 +51,6 @@ public:
 
 void BaslerCamera::start(OperationMode operationMode)
 {
-	cout << "Enter start" << endl;
 	if (camera != NULL) stop();
 
 	this->operationMode = operationMode;
@@ -110,11 +109,11 @@ void BaslerCamera::start(OperationMode operationMode)
 	{
 		camera->StartGrabbing();
 
-		CBaslerGigEGrabResultPtr result;
+/*		CBaslerGigEGrabResultPtr result;
 		if (!camera->RetrieveResult(1000, result, TimeoutHandling_Return) || !result->GrabSucceeded()) 
 			throw std::exception("Could open camera, but grabbing failed!");
 
-		cout << "Grab on startup ok! w = %d, h = %d" << result->GetWidth() << result->GetHeight() << endl;
+		cout << "Grab on startup ok! w = %d, h = %d" << result->GetWidth() << result->GetHeight() << endl;*/
 	}
 }
 
@@ -161,20 +160,16 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 {
 	if (!camera->IsGrabbing()) return false;
 
-	cout << "a" << endl;
 	CBaslerGigEGrabResultPtr result;
 	if (!camera->RetrieveResult(timeOutMs, result, TimeoutHandling_Return)) return false;
-	cout << "b" << endl;
 	if (!result->GrabSucceeded()) return false;
-	cout << "c" << endl;
-
-	imageWidth = result->GetWidth();
-	imageHeight = result->GetHeight();
-
-	if (size < bufferSize) return false;
-	if (buffer == NULL) return false;
 
 	lastTimeStamp = (double)result->GetTimeStamp() / ticksPerSecond;
+
+	if (buffer == NULL) return true;
+
+	imageWidth = result->GetWidth();
+	imageHeight = result->GetHeight();		
 
 	CImageFormatConverter converter;
 	converter.OutputPixelFormat = PixelType_BGR8packed;

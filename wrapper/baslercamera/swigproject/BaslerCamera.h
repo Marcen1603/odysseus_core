@@ -24,10 +24,8 @@ private:
 	OperationMode operationMode;
 	int lineLength;
 
-//	bool supportsBGRConversion;
 	int imageWidth;
 	int imageHeight;
-	int bufferSize;
 	int ticksPerSecond;
 	double lastTimeStamp;
 
