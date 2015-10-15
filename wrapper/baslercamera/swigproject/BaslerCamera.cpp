@@ -104,7 +104,13 @@ void BaslerCamera::start(OperationMode operationMode)
 		trigger();
 	}
 	else
+	{
 		camera->StartGrabbing();
+
+		CBaslerGigEGrabResultPtr result;
+		if (!camera->RetrieveResult(1000, result, TimeoutHandling_Return) || !result->GrabSucceeded()) 
+			throw std::exception("Could open camera, but grabbing failed!");
+	}
 }
 
 void BaslerCamera::stop()
