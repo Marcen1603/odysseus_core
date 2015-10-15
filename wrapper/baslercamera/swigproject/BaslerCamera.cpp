@@ -110,6 +110,8 @@ void BaslerCamera::start(OperationMode operationMode)
 		CBaslerGigEGrabResultPtr result;
 		if (!camera->RetrieveResult(1000, result, TimeoutHandling_Return) || !result->GrabSucceeded()) 
 			throw std::exception("Could open camera, but grabbing failed!");
+
+		printf("Grab on startup ok! w = %d, h = %d", result->GetWidth(), result->GetHeight());
 	}
 }
 
@@ -156,10 +158,13 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 {
 	if (!camera->IsGrabbing()) return false;
 
+	printf("a\n");
 	CBaslerGigEGrabResultPtr result;
 	if (!camera->RetrieveResult(timeOutMs, result, TimeoutHandling_Return)) return false;
+	printf("b\n");
 	if (!result->GrabSucceeded()) return false;
-	
+	printf("c\n");
+
 	imageWidth = result->GetWidth();
 	imageHeight = result->GetHeight();
 
