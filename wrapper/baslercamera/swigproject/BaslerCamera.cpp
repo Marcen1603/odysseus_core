@@ -49,6 +49,7 @@ public:
 
 void BaslerCamera::start(OperationMode operationMode)
 {
+	std::cout << "Enter start" << std::endl;
 	if (camera != NULL) stop();
 
 	this->operationMode = operationMode;
@@ -111,7 +112,7 @@ void BaslerCamera::start(OperationMode operationMode)
 		if (!camera->RetrieveResult(1000, result, TimeoutHandling_Return) || !result->GrabSucceeded()) 
 			throw std::exception("Could open camera, but grabbing failed!");
 
-		printf("Grab on startup ok! w = %d, h = %d", result->GetWidth(), result->GetHeight());
+		std::cout << "Grab on startup ok! w = %d, h = %d" << result->GetWidth() << result->GetHeight() << std::endl;
 	}
 }
 
