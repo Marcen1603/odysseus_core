@@ -6,6 +6,8 @@
 #include "BaslerCamera.h"
 
 using namespace Pylon;
+using std::cout;
+using std::endl;
 
 bool BaslerCamera::isInitialized = false;
 
@@ -49,7 +51,7 @@ public:
 
 void BaslerCamera::start(OperationMode operationMode)
 {
-	std::cout << "Enter start" << std::endl;
+	cout << "Enter start" << endl;
 	if (camera != NULL) stop();
 
 	this->operationMode = operationMode;
@@ -93,7 +95,7 @@ void BaslerCamera::start(OperationMode operationMode)
 	imageWidth  = GenApi::CIntegerPtr(nodemap.GetNode("Width"))->GetValue();
 	imageHeight = GenApi::CIntegerPtr(nodemap.GetNode("Height"))->GetValue();
 	ticksPerSecond = GenApi::CIntegerPtr(nodemap.GetNode("GevTimestampTickFrequency"))->GetValue();
-	GenApi::CCommandPtr(nodemap.GetNode("GevTimestampControlReset"))->Execute();
+	GenApi::CCommandPtr(nodemap.GetNode("GevTimestampControlReset"))->Execute();	
 	
 	if (operationMode == PUSH)
 	{
@@ -112,7 +114,7 @@ void BaslerCamera::start(OperationMode operationMode)
 		if (!camera->RetrieveResult(1000, result, TimeoutHandling_Return) || !result->GrabSucceeded()) 
 			throw std::exception("Could open camera, but grabbing failed!");
 
-		std::cout << "Grab on startup ok! w = %d, h = %d" << result->GetWidth() << result->GetHeight() << std::endl;
+		cout << "Grab on startup ok! w = %d, h = %d" << result->GetWidth() << result->GetHeight() << endl;
 	}
 }
 
@@ -159,12 +161,12 @@ bool BaslerCamera::grabRGB8(void *buffer, long size, unsigned int timeOutMs)
 {
 	if (!camera->IsGrabbing()) return false;
 
-	printf("a\n");
+	cout << "a" << endl;
 	CBaslerGigEGrabResultPtr result;
 	if (!camera->RetrieveResult(timeOutMs, result, TimeoutHandling_Return)) return false;
-	printf("b\n");
+	cout << "b" << endl;
 	if (!result->GrabSucceeded()) return false;
-	printf("c\n");
+	cout << "c" << endl;
 
 	imageWidth = result->GetWidth();
 	imageHeight = result->GetHeight();
