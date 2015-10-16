@@ -50,7 +50,7 @@ public class SensorFactory
 				+ "			             protocol='SimpleCSV',\n"
 				+ "                      dataHandler='Tuple',\n"
 				+ "                      options=[['host', '%(host)'], ['port', '%(port)'], ['write', '20480']]},\n"
-				+ "              SAMPLE({timeValue = [100, ‘milliseconds’]}, raw))\n";
+				+ "              SAMPLE({samplerate=5}, raw))\n";
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		

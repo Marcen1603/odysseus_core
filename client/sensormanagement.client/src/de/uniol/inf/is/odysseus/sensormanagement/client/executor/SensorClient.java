@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 public abstract class SensorClient implements ILoggable
 {	
 	private String userName;	
+	private String localIp;
 	protected boolean initialized = false;
 	
 	protected WsClient odysseusClient;
@@ -25,11 +26,13 @@ public abstract class SensorClient implements ILoggable
 	
 	public boolean isInitialized() { return initialized; }
 	public String getUserName()	{ return userName; }	
+	public String getLocalIp() { return localIp; }
 	
-	public SensorClient(String name, WsClient client, ISession session, String wsdlLocation) throws MalformedURLException
+	public SensorClient(String name, WsClient client, ISession session, String wsdlLocation, String localIp) throws MalformedURLException
 	{
 		this.odysseusClient = client;
 		this.odysseusSession = session;
+		this.localIp = localIp;
 				
 		sensorClient = new WsSensorClient(wsdlLocation + ";http://server.sensormanagement.odysseus.is.inf.uniol.de/;SensorServiceService");
 		sensorClient.init(session, name, "D:/test/records");

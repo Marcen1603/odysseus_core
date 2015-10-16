@@ -40,7 +40,7 @@ public class RemoteSensor implements ILoggable
 
 	public String startLiveView() throws UnknownHostException 
 	{
-		String localIp = Inet4Address.getLocalHost().getHostAddress();
+		String localIp = client.getLocalIp(); //Inet4Address.getLocalHost().getHostAddress();
 		int port = NetUtilities.getFreePortNum();
 		
 		String streamUrl = client.sensorClient.startLiveView(client.odysseusSession, sensor.id, localIp, port);		
