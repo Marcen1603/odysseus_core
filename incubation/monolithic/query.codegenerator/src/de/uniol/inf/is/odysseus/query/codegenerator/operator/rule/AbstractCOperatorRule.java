@@ -106,17 +106,22 @@ public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implemen
 			if (expression.isFunction()) {
 				functionList.put(expression.getClass().getName(), expression);
 			
-				IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) expression;
-				IExpression<?> argument1 = binaryOperator.getArgument(0);
-				if (argument1.isFunction()) {
-					functionList.put(argument1.getClass().getName(), argument1);
-					functionList.putAll(getAllMEPFunctions(argument1));
+				try{
+					IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) expression;
+					IExpression<?> argument1 = binaryOperator.getArgument(0);
+					if (argument1.isFunction()) {
+						functionList.put(argument1.getClass().getName(), argument1);
+						functionList.putAll(getAllMEPFunctions(argument1));
+					}
+					IExpression<?> argument2 = binaryOperator.getArgument(1);
+					if (argument2.isFunction()) {
+						functionList.put(argument2.getClass().getName(), argument2);
+						functionList.putAll(getAllMEPFunctions(argument2));
+					}
+				}catch(ClassCastException e){
+					e.getStackTrace();
 				}
-				IExpression<?> argument2 = binaryOperator.getArgument(1);
-				if (argument2.isFunction()) {
-					functionList.put(argument2.getClass().getName(), argument2);
-					functionList.putAll(getAllMEPFunctions(argument2));
-				}
+			
 			}
 			return functionList;
 	}
