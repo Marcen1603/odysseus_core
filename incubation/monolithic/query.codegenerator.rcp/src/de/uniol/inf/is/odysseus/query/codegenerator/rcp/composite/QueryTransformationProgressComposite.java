@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
 
 
 public class QueryTransformationProgressComposite extends Composite{
@@ -81,7 +81,7 @@ public class QueryTransformationProgressComposite extends Composite{
 		finishButton.setVisible(visible);
 	}
 
-	public void updateProgress(ProgressBarUpdate updateInfo) {
+	public void updateProgress(CodegeneratorMessageEvent updateInfo) {
 		
 		if(updateInfo.getProgressValue() != -1){
 			progressInitializeQuery.setSelection(updateInfo.getProgressValue());

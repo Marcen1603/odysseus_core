@@ -34,6 +34,7 @@ public class DalvikFileWrite {
 	private FileWriter writer;
 	private String tempPath;
 	private TransformationParameter transformationParameter;
+	private Set<String> frameworkImportList = new HashSet<String>();
 	private Set<String> importList = new HashSet<String>();
 	private String osgiBindCode;
 	private String bodyCode;
@@ -43,10 +44,11 @@ public class DalvikFileWrite {
 	private static Logger LOG = LoggerFactory.getLogger(DalvikFileWrite.class);
 	
 	
-	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
+	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> frameworkImportList, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
 		this.fileName = fileName;
 		this.tempPath = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;
+		this.frameworkImportList = frameworkImportList;
 		this.importList = importList;
 		this.osgiBindCode = osgiBindCode;
 		this.bodyCode = bodyCode;
@@ -78,6 +80,7 @@ public class DalvikFileWrite {
 	private void createExecutorFile() {
 	
 		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"/app/src/main/java/com/app/odysseus/odysseustest");
+		executor.setPackageName("com.app.odysseus.odysseustest");
 		fileHelper.writeToFile(executor.getExecutorCode());
 		
 	}
@@ -118,8 +121,8 @@ public class DalvikFileWrite {
 			
 			//sort importList for nice look 
 			TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
+			sortList.addAll(frameworkImportList);
 			sortList.addAll(importList);
-			
 			
 			StringTemplate dalviMainActivityFragment = new StringTemplate("dalvik","dalvikMainActivityFragment");
 			dalviMainActivityFragment.getSt().add("importList", sortList);
@@ -165,7 +168,7 @@ public class DalvikFileWrite {
 	
 	private void copyOdysseusJar(){
 		ExtractOSGIBundle extractOSGIBundle = new ExtractOSGIBundle();
-		extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTargetDirectory(), "app/libs");
+		extractOSGIBundle.extractOSGIBundle(frameworkImportList, transformationParameter.getTargetDirectory(), "app/libs");
 	}
 	
 	

@@ -38,6 +38,7 @@ public class CMultipleSourceExecutor extends AbstractCScheduler{
 	public String getExecutorCode() {
 		
 		StringTemplate multipleSourceExecutorImplTemplate = new StringTemplate("executor","multipleSourceExecutorImpl");
+		multipleSourceExecutorImplTemplate.getSt().add("packageName", getPackageName());
 	
 		return multipleSourceExecutorImplTemplate.getSt().render();
 	

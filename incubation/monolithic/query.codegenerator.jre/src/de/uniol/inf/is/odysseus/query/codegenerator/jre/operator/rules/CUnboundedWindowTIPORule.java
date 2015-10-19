@@ -47,10 +47,10 @@ public class CUnboundedWindowTIPORule extends AbstractCUnboundedWindowTIPORule<W
 		code.append(slidingTimeWindowTIPOTemplateTemplate.getSt().render());
 	
 		slidingWindow.addCode(code.toString());
-		slidingWindow.addImport(TimeValueItem.class.getName());
-		slidingWindow.addImport(TimeUnit.class.getName());
-		slidingWindow.addImport(WindowType.class.getName());
-		slidingWindow.addImport(UnboundedWindowTIPO.class.getName());
+		slidingWindow.addFrameworkImport(TimeValueItem.class.getName());
+		slidingWindow.addFrameworkImport(TimeUnit.class.getName());
+		slidingWindow.addFrameworkImport(WindowType.class.getName());
+		slidingWindow.addFrameworkImport(UnboundedWindowTIPO.class.getName());
 
 		return slidingWindow;
 	}

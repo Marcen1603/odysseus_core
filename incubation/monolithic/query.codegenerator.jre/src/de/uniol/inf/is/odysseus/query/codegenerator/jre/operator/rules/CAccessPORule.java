@@ -61,11 +61,11 @@ public class CAccessPORule  extends AbstractCAccessAORule<StreamAO>{
 		//important add timestamp op
 		Utils.createTimestampAO(operator, accessAO.getDateFormat());
 				
-		accessPO.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());	
-		accessPO.addImport(AccessPO.class.getName());
-		accessPO.addImport(IOException.class.getName());
-		accessPO.addImport(IMetaAttribute.class.getName());
-		accessPO.addImport(IMetadataInitializer.class.getName());
+		accessPO.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());	
+		accessPO.addFrameworkImport(AccessPO.class.getName());
+		accessPO.addFrameworkImport(IOException.class.getName());
+		accessPO.addFrameworkImport(IMetaAttribute.class.getName());
+		accessPO.addFrameworkImport(IMetadataInitializer.class.getName());
 			
 		return accessPO;
 	}

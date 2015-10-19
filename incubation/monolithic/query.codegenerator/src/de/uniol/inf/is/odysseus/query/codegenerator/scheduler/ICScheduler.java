@@ -14,4 +14,6 @@ public interface ICScheduler {
 	public String getTargetPlatform();
 	
 	public String getExecutorCode();
+	
+	public void setPackageName(String packageName);
 }

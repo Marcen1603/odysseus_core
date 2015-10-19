@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
 import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.ICodegeneratorMessageConsumer;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.CAnalyseServiceBinding;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
@@ -26,8 +26,7 @@ public class QueryTransformationThread extends Thread implements ICodegeneratorM
 	
 	@Override
 	public void run() {
-		LOG.debug("Query transformation started...");
-	
+		LOG.debug("Query transformation thread started...");
 		CAnalyseServiceBinding.getAnalyseComponent().startQueryTransformation(parameter);
 		CodegeneratorMessageBus.unregisterConsumer(this);	
 		window.showFinishButton();	
@@ -35,7 +34,7 @@ public class QueryTransformationThread extends Thread implements ICodegeneratorM
 	
 
 	@Override
-	public void addMessage(ProgressBarUpdate update) {
+	public void addMessage(CodegeneratorMessageEvent update) {
 		window.updateProgressbar(update);
 	}
 

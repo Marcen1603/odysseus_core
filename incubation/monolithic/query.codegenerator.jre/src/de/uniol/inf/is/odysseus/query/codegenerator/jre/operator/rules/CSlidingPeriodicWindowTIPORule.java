@@ -50,10 +50,10 @@ public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWind
 		code.append(slidingTimeWindowTIPOTemplate.getSt().render());
 	
 		slidingWindow.addCode(code.toString());
-		slidingWindow.addImport(TimeValueItem.class.getName());
-		slidingWindow.addImport(TimeUnit.class.getName());
-		slidingWindow.addImport(WindowType.class.getName());
-		slidingWindow.addImport(SlidingPeriodicWindowTIPO.class.getName());
+		slidingWindow.addFrameworkImport(TimeValueItem.class.getName());
+		slidingWindow.addFrameworkImport(TimeUnit.class.getName());
+		slidingWindow.addFrameworkImport(WindowType.class.getName());
+		slidingWindow.addFrameworkImport(SlidingPeriodicWindowTIPO.class.getName());
 
 		return slidingWindow;
 	}

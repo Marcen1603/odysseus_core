@@ -62,12 +62,12 @@ public class CReceiverPORule extends AbstractCStreamAORule<StreamAO>{
 		Utils.createTimestampAO(operator, accessAO.getDateFormat());
 		
 		
-		receiverPO.addImport(ReceiverPO.class.getName());
-		receiverPO.addImport(IOException.class.getName());
+		receiverPO.addFrameworkImport(ReceiverPO.class.getName());
+		receiverPO.addFrameworkImport(IOException.class.getName());
 		
 		
-		receiverPO.addImport(IMetaAttribute.class.getName());
-		receiverPO.addImport(IMetadataInitializer.class.getName());
+		receiverPO.addFrameworkImport(IMetaAttribute.class.getName());
+		receiverPO.addFrameworkImport(IMetadataInitializer.class.getName());
 			
 		return receiverPO;
 	}

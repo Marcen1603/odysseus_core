@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.composite.QueryTransformationParameterComposite;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.composite.QueryTransformationProgressComposite;
@@ -73,7 +73,7 @@ public class QueryTransformationWindow{
 		queryTransformationParameterComposite.dispose();
 	}
 	
-	public void updateProgressbar(final ProgressBarUpdate updateInfo){
+	public void updateProgressbar(final CodegeneratorMessageEvent updateInfo){
 		if (!window.isDisposed()) {
 		   Display.getDefault().asyncExec(new Runnable() {
               public void run() {

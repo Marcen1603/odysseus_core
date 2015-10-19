@@ -62,7 +62,7 @@ public class CreateJreDefaultCode {
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 
 		//add import
-		codeFragmentInfo.addImport(ITransportDirection.class.getName());
+		codeFragmentInfo.addFrameworkImport(ITransportDirection.class.getName());
 		
 		//generate code for options
 		codeFragmentInfo.addCodeFragmentInfo(getCodeForOptionMap(optionMap,operatorVariable));
@@ -98,8 +98,8 @@ public class CreateJreDefaultCode {
 			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("clearEnd", clearEnd);	
 			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("timestampAO", timestampAO);	
 			
-			codeFragmentInfo.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
-			codeFragmentInfo.addImport(IMetadataInitializer.class.getName());
+			codeFragmentInfo.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
+			codeFragmentInfo.addFrameworkImport(IMetadataInitializer.class.getName());
 			
 			codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
 			
@@ -152,11 +152,11 @@ public class CreateJreDefaultCode {
 			startFragment.addCodeFragmentInfo(executorCode);
 		}
 		
-		startFragment.addImport(IPhysicalOperator.class.getName());
-		startFragment.addImport(ArrayList.class.getName());
-		startFragment.addImport(IPhysicalOperator.class.getName());
-		startFragment.addImport(PhysicalQuery.class.getName());
-		startFragment.addImport(IOperatorOwner.class.getName());
+		startFragment.addFrameworkImport(IPhysicalOperator.class.getName());
+		startFragment.addFrameworkImport(ArrayList.class.getName());
+		startFragment.addFrameworkImport(IPhysicalOperator.class.getName());
+		startFragment.addFrameworkImport(PhysicalQuery.class.getName());
+		startFragment.addFrameworkImport(IOperatorOwner.class.getName());
 	
 		
 		return startFragment;
@@ -235,7 +235,7 @@ public class CreateJreDefaultCode {
 		
 		codeFragmentInfo.addCode(optionMapTemplate.getSt().render().replace("\\", "\\\\"));
 	
-		codeFragmentInfo.addImport(OptionMap.class.getName());
+		codeFragmentInfo.addFrameworkImport(OptionMap.class.getName());
 		
 		return codeFragmentInfo;
 	}
@@ -312,23 +312,20 @@ public class CreateJreDefaultCode {
 		sdfSchemaTemplate.getSt().add("className", className);
 		sdfSchemaTemplate.getSt().add("sdfAttributes", schema.getAttributes());
 		
-	
 		
 		code.append(sdfSchemaTemplate.getSt().render());
 		
 
-		
 		//Add imports 
-		sdfSchema.addImport(schema.getType().getName());
-		sdfSchema.addImport(SDFSchema.class.getName());
-		sdfSchema.addImport(SDFSchemaFactory.class.getName());
+		sdfSchema.addFrameworkImport(schema.getType().getName());
+		sdfSchema.addFrameworkImport(SDFSchema.class.getName());
+		sdfSchema.addFrameworkImport(SDFSchemaFactory.class.getName());
+		sdfSchema.addFrameworkImport(SDFAttribute.class.getName());
+		sdfSchema.addFrameworkImport(ArrayList.class.getName());
+		sdfSchema.addFrameworkImport(SDFDatatype.class.getName());
 		
-		
-		sdfSchema.addImport(SDFAttribute.class.getName());
+	
 		sdfSchema.addImport(List.class.getName());
-		sdfSchema.addImport(ArrayList.class.getName());
-		sdfSchema.addImport(SDFDatatype.class.getName());
-		
 		
 		
 		sdfSchema.addCode(code.toString());
@@ -373,7 +370,7 @@ public class CreateJreDefaultCode {
 		List<String> functionNameList = new ArrayList<String>();
 		for (Map.Entry<String, String> entry : registerList.entrySet())
 		{
-			registryCode.addImport(entry.getKey());
+			registryCode.addFrameworkImport(entry.getKey());
 			functionNameList.add(entry.getValue());
 
 		}
@@ -387,7 +384,7 @@ public class CreateJreDefaultCode {
 			mepRegistryTemplate.getSt().add("registerFunctionName",registerFunctionName);
 			
 			registryCode.addCode(mepRegistryTemplate.getSt().render());
-			registryCode.addImport(registryClass.getName());
+			registryCode.addFrameworkImport(registryClass.getName());
 		
 		}
 		return registryCode;

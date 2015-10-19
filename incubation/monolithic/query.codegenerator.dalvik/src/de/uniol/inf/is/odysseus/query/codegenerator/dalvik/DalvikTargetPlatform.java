@@ -32,7 +32,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			throws InterruptedException {
 		
 		//add userfeedback
-		updateProgressBar(10, "Start the transformation",UpdateMessageStatusType.INFO);
+		sendMessageEvent(10, "Start the transformation",UpdateMessageStatusType.INFO);
 		
 		//clear transformation infos
 		DefaultCodegeneratorStatus.clear();
@@ -42,24 +42,25 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		bodyCode = new StringBuilder();
 		sdfSchemaCode  = new StringBuilder();
 		
+		//start query transformation
 		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
-		
 		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusDirectory(), queryAnalyseInformation);
+		frameworkImportList.addAll(osgiBind.getFrameworkImports());
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
 		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
-		
+		frameworkImportList.addAll(startStreams.getFrameworkImports());
 		importList.addAll(startStreams.getImports());
 		
-		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor("dalvik", parameter.getExecutor()));
+		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor("dalvik", parameter.getExecutor()));
 		
 		try {
 			dalvikFileWrite.createProject();
 
 			
-			updateProgressBar(100, generateSummary(parameter,projectInfo(parameter)),UpdateMessageStatusType.INFO);
+			sendMessageEvent(100, generateSummary(parameter,projectInfo(parameter)),UpdateMessageStatusType.INFO);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -75,7 +76,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			QueryAnalyseInformation queryAnalseInformation,
 			ICOperatorRule<ILogicalOperator> opTrans) {
 		
-		updateProgressBar(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
+		sendMessageEvent(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
 		
 		//add ready
 		DefaultCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
@@ -85,6 +86,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		sdfSchemaCode.append(initOp.getCode());
 		
 		//add imports for default code
+		frameworkImportList.addAll(initOp.getFrameworkImports());
 		importList.addAll(initOp.getImports());
 		
 		//generate operator code
@@ -96,6 +98,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		bodyCode.append(operatorCode);
 
 		//subcode imports
+		frameworkImportList.addAll(opCodeFragment.getFrameworkImports());
 		importList.addAll(opCodeFragment.getImports());
 		
 	}
@@ -105,6 +108,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
 		if(subscription!= null){
 			bodyCode.append(subscription.getCode());	
+			frameworkImportList.addAll(subscription.getFrameworkImports());
 			importList.addAll(subscription.getImports());
 		}
 	}

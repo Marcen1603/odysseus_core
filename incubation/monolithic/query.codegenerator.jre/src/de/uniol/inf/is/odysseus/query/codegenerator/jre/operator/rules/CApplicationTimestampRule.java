@@ -54,8 +54,8 @@ public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<Tim
 		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("clearEnd", clearEnd);	
 		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("timezone", timestampAO.getTimezone());	
 	
-		codeFragmentInfo.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
-		codeFragmentInfo.addImport(IMetadataInitializer.class.getName());
+		codeFragmentInfo.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
+		codeFragmentInfo.addFrameworkImport(IMetadataInitializer.class.getName());
 	
 		codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
 		

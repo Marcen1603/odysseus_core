@@ -3,16 +3,12 @@ package de.uniol.inf.is.odysseus.query.codegenerator.target.platform;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
@@ -22,29 +18,20 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorSt
 
 public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
-	private static Logger LOG = LoggerFactory.getLogger(AbstractTargetPlatform.class);
+	private String targetPlatformName = "";
 	
+	protected Set<String> frameworkImportList = new HashSet<String>();
 	protected Set<String> importList = new HashSet<String>();
 	protected StringBuilder bodyCode;
 	protected StringBuilder sdfSchemaCode;
 	
-
 	public abstract void generateOperatorCodeOperatorReady(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation,ICOperatorRule<ILogicalOperator> opTrans);
 	public abstract void generateOperatorSubscription(ILogicalOperator operator,QueryAnalyseInformation queryAnalseInformation );
-	
-	private BlockingQueue<ProgressBarUpdate> progressBarQueue;
-	private String targetPlatformName = "";
-	
+
 	public AbstractTargetPlatform(String targetPlatformName) {
 		this.setTargetPlatformName(targetPlatformName);
 	}
 	
-	@Override
-	public BlockingQueue<ProgressBarUpdate> getProgressBarQueue() {
-		return progressBarQueue;
-	}
-	
-
 	@Override
 	public String getTargetPlatformName() {
 		return targetPlatformName;
@@ -56,9 +43,8 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	}
 	
 	@Override
-	public void updateProgressBar(int value, String text, UpdateMessageStatusType statusType){
-		CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(value, text,statusType));
-		LOG.info(statusType+": "+text);
+	public void sendMessageEvent(int value, String text, UpdateMessageStatusType statusType){
+		CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(value, text,statusType));
 	}
 	
 	@Override
@@ -119,7 +105,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 			 	generateOperatorSubscription(operator, queryAnalseInformation);
 
 		}else{
-			updateProgressBar(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,UpdateMessageStatusType.WARNING);
+			sendMessageEvent(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,UpdateMessageStatusType.WARNING);
 		}
 		
 	

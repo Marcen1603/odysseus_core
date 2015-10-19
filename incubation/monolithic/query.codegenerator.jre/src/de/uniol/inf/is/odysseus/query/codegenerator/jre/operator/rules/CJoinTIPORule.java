@@ -106,23 +106,23 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 		
 		joinTIPO.addCode(joinTIPOTemplate.getSt().render());
 		
-		joinTIPO.addImport(IMetadataMergeFunction.class.getName());
-		joinTIPO.addImport(JoinTIPO.class.getName());
-		joinTIPO.addImport(ITimeIntervalSweepArea.class.getName());
-		joinTIPO.addImport(DefaultTISweepArea.class.getName());
-		joinTIPO.addImport(RelationalMergeFunction.class.getName());
-		joinTIPO.addImport(ITimeInterval.class.getName());
+		joinTIPO.addFrameworkImport(IMetadataMergeFunction.class.getName());
+		joinTIPO.addFrameworkImport(JoinTIPO.class.getName());
+		joinTIPO.addFrameworkImport(ITimeIntervalSweepArea.class.getName());
+		joinTIPO.addFrameworkImport(DefaultTISweepArea.class.getName());
+		joinTIPO.addFrameworkImport(RelationalMergeFunction.class.getName());
+		joinTIPO.addFrameworkImport(ITimeInterval.class.getName());
 		
 	
 		
 
 		
-		joinTIPO.addImport(DirectAttributeResolver.class.getName());
-		joinTIPO.addImport(RelationalPredicateBuilder.class.getName());
-		joinTIPO.addImport(RelationalPredicate.class.getName());
-		joinTIPO.addImport(TITransferArea.class.getName());
-		joinTIPO.addImport(DirectTransferArea.class.getName());
-		joinTIPO.addImport(DefaultTIDummyDataCreation.class.getName());
+		joinTIPO.addFrameworkImport(DirectAttributeResolver.class.getName());
+		joinTIPO.addFrameworkImport(RelationalPredicateBuilder.class.getName());
+		joinTIPO.addFrameworkImport(RelationalPredicate.class.getName());
+		joinTIPO.addFrameworkImport(TITransferArea.class.getName());
+		joinTIPO.addFrameworkImport(DirectTransferArea.class.getName());
+		joinTIPO.addFrameworkImport(DefaultTIDummyDataCreation.class.getName());
 		
 	
 		

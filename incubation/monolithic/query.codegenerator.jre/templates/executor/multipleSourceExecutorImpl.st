@@ -1,6 +1,6 @@
-multipleSourceExecutorImpl()::=<<
+multipleSourceExecutorImpl(packageName)::=<<
 
-package main;
+package $packageName$;
 
 import java.util.ArrayList;
 import java.util.Collection;

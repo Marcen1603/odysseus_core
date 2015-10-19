@@ -34,7 +34,7 @@ public class CRelationalProjectPORule extends AbstractCRelationalProjectAORule<P
 		
 	
 		projectPO.addCode(relationalProjectPOTemplate.getSt().render());
-		projectPO.addImport(RelationalProjectPO.class.getName());
+		projectPO.addFrameworkImport(RelationalProjectPO.class.getName());
 
 		return projectPO;
 	}

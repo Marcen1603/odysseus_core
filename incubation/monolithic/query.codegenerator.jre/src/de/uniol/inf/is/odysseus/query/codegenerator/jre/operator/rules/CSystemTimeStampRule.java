@@ -39,9 +39,9 @@ public class CSystemTimeStampRule extends AbstractCSystemTimeStampRule<Timestamp
 		
 	
 		
-		systemTimeCode.addImport(SystemTimeIntervalFactory.class.getName());
-		systemTimeCode.addImport(ITimeInterval.class.getName());
-		systemTimeCode.addImport(IStreamObject.class.getName());
+		systemTimeCode.addFrameworkImport(SystemTimeIntervalFactory.class.getName());
+		systemTimeCode.addFrameworkImport(ITimeInterval.class.getName());
+		systemTimeCode.addFrameworkImport(IStreamObject.class.getName());
 		
 		
 		

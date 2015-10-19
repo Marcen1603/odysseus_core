@@ -40,44 +40,46 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		JreTargetplatformOption jreTargetplatformOption = new JreTargetplatformOption();
 		jreTargetplatformOption.parse(parameter);
 		
-		
 		//add userfeedback
-		updateProgressBar(10, "Start the transformation", UpdateMessageStatusType.INFO);
+		sendMessageEvent(10, "Start the transformation", UpdateMessageStatusType.INFO);
 		
 		bodyCode = new StringBuilder();
 		sdfSchemaCode  = new StringBuilder();
 		
 		//Start Odysseus index
-		updateProgressBar(15, "Index the Odysseus codepath",UpdateMessageStatusType.INFO);
+		sendMessageEvent(15, "Index the Odysseus codepath",UpdateMessageStatusType.INFO);
 		OdysseusIndex.getInstance().search(parameter.getOdysseusDirectory());
 	
+		//start query transformation
 		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
-		updateProgressBar(70, "Generate OSGI emulation code",UpdateMessageStatusType.INFO);
+		sendMessageEvent(70, "Generate OSGI emulation code",UpdateMessageStatusType.INFO);
 		
 		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusDirectory(), queryAnalyseInformation);
+		frameworkImportList.addAll(osgiBind.getFrameworkImports());
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
 		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
-		
+		frameworkImportList.addAll(startStreams.getFrameworkImports());
 		importList.addAll(startStreams.getImports());
+		
 	
-		updateProgressBar(75, "Create Java files",UpdateMessageStatusType.INFO);
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
+		sendMessageEvent(75, "Create Java files",UpdateMessageStatusType.INFO);
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
 		
 		try {
-			updateProgressBar(80, "Create Java project",UpdateMessageStatusType.INFO);
+			sendMessageEvent(80, "Create Java project",UpdateMessageStatusType.INFO);
 			javaFileWrite.createProject();
 
 
 			if(jreTargetplatformOption.isAutobuild()){
-				updateProgressBar(85, "Compile the Java project",UpdateMessageStatusType.INFO);
+				sendMessageEvent(85, "Compile the Java project",UpdateMessageStatusType.INFO);
 				ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
 			}
 		
-			updateProgressBar(100, generateSummary(parameter,compiledProgramm(parameter)),UpdateMessageStatusType.INFO);
+			sendMessageEvent(100, generateSummary(parameter,compiledProgramm(parameter)),UpdateMessageStatusType.INFO);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +93,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			QueryAnalyseInformation queryAnalseInformation,
 			ICOperatorRule<ILogicalOperator> opTrans) {
 		
-		updateProgressBar(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
+		sendMessageEvent(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
 		
 		//add ready
 		DefaultCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
@@ -101,6 +103,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		sdfSchemaCode.append(initOp.getCode());
 		
 		//add imports for default code
+		frameworkImportList.addAll(initOp.getFrameworkImports());
 		importList.addAll(initOp.getImports());
 		
 		//generate operator code
@@ -112,6 +115,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		bodyCode.append(operatorCode);
 
 		//subcode imports
+		frameworkImportList.addAll(opCodeFragment.getFrameworkImports());
 		importList.addAll(opCodeFragment.getImports());
 		
 	}
@@ -121,6 +125,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
 		if(subscription!= null){
 			bodyCode.append(subscription.getCode());	
+			frameworkImportList.addAll(subscription.getFrameworkImports());
 			importList.addAll(subscription.getImports());
 		}
 	}

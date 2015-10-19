@@ -41,7 +41,7 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 		StringTemplate senderPOTemplate = new StringTemplate("operator","senderPO");
 		senderPOTemplate.getSt().add("operatorVariable", operatorVariable);
 
-		csvFileSink.addImport(SenderPO.class.getName());
+		csvFileSink.addFrameworkImport(SenderPO.class.getName());
 		csvFileSink.addCode(senderPOTemplate.getSt().render());
 		
 

@@ -10,16 +10,16 @@ joinTIPO(operatorVariable,input0MetaAttributeNamesCode, input1MetaAttributeNames
 		JoinTIPO $operatorVariable$PO = new JoinTIPO($operatorVariable$metaDataMerge);
 		
 		
-		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+		ITimeIntervalSweepArea[] $operatorVariable$areas = new ITimeIntervalSweepArea[2];
 		try{
-			areas[0] = (ITimeIntervalSweepArea) sweeparearegistry.getSweepArea("$areaName$");
-			areas[1] = (ITimeIntervalSweepArea) sweeparearegistry.getSweepArea("$areaName$");
+			$operatorVariable$areas[0] = (ITimeIntervalSweepArea) sweeparearegistry.getSweepArea("$areaName$");
+			$operatorVariable$areas[1] = (ITimeIntervalSweepArea) sweeparearegistry.getSweepArea("$areaName$");
 		} catch (InstantiationException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		$operatorVariable$PO.setAreas(areas);
+		$operatorVariable$PO.setAreas($operatorVariable$areas);
 		
 		$operatorVariable$PO.setTransferFunction(new $transferFuntion$());
 		

@@ -55,11 +55,11 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource
 		csvFileSource.addCode(accessPOTemplate.getSt().render());
 	
 		//add imports
-		csvFileSource.addImport(IMetaAttribute.class.getName());
-		csvFileSource.addImport(TimeInterval.class.getName());
-		csvFileSource.addImport(IOException.class.getName());
-		csvFileSource.addImport(IMetadataInitializer.class.getName());
-		csvFileSource.addImport(AccessPO.class.getName());
+		csvFileSource.addFrameworkImport(IMetaAttribute.class.getName());
+		csvFileSource.addFrameworkImport(TimeInterval.class.getName());
+		csvFileSource.addFrameworkImport(IOException.class.getName());
+		csvFileSource.addFrameworkImport(IMetadataInitializer.class.getName());
+		csvFileSource.addFrameworkImport(AccessPO.class.getName());
 		
 		return csvFileSource;
 	}

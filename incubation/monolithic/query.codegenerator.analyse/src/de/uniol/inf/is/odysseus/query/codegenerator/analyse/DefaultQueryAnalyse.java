@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.codegenerator.ICAnalyse;
 import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
@@ -45,7 +45,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
 		
-		CodegeneratorMessageBus.sendUpdate(new ProgressBarUpdate(-1, "Start query analyse",UpdateMessageStatusType.INFO));
+		CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(-1, "Start query analyse",UpdateMessageStatusType.INFO));
 		
 		
 		transformationInformation = new QueryAnalyseInformation();

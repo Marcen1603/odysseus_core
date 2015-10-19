@@ -129,27 +129,24 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 		
 		aggregateTIPO.addCode(aggregateTIPOTemplate.getSt().render());
 		
-		aggregateTIPO.addImport(AggregateTIPO.class.getName());
-		aggregateTIPO.addImport(ITimeInterval.class.getName());
-		aggregateTIPO.addImport(IStreamObject.class.getName());
-		aggregateTIPO.addImport(AggregateItem.class.getName());
-		aggregateTIPO.addImport(IMetadataMergeFunction.class.getName());
-		aggregateTIPO.addImport(AggregateAO.class.getName());
-		aggregateTIPO.addImport(AggregateFunction.class.getName());
-		aggregateTIPO.addImport(RelationalAggregateFunctionBuilder.class.getName());
-		aggregateTIPO.addImport(IAggregateFunctionBuilder.class.getName());
-		aggregateTIPO.addImport(IAggregateFunction.class.getName());
-		aggregateTIPO.addImport(FESortedClonablePair.class.getName());
-		aggregateTIPO.addImport(java.util.Map.class.getName());
-		aggregateTIPO.addImport(RelationalGroupProcessor.class.getName());
+		aggregateTIPO.addFrameworkImport(AggregateTIPO.class.getName());
+		aggregateTIPO.addFrameworkImport(ITimeInterval.class.getName());
+		aggregateTIPO.addFrameworkImport(IStreamObject.class.getName());
+		aggregateTIPO.addFrameworkImport(AggregateItem.class.getName());
+		aggregateTIPO.addFrameworkImport(IMetadataMergeFunction.class.getName());
+		aggregateTIPO.addFrameworkImport(AggregateAO.class.getName());
+		aggregateTIPO.addFrameworkImport(AggregateFunction.class.getName());
+		aggregateTIPO.addFrameworkImport(RelationalAggregateFunctionBuilder.class.getName());
+		aggregateTIPO.addFrameworkImport(IAggregateFunctionBuilder.class.getName());
+		aggregateTIPO.addFrameworkImport(IAggregateFunction.class.getName());
+		aggregateTIPO.addFrameworkImport(FESortedClonablePair.class.getName());
+		aggregateTIPO.addFrameworkImport(RelationalGroupProcessor.class.getName());
+		aggregateTIPO.addFrameworkImport(AggregateTISweepArea.class.getName());
+		aggregateTIPO.addFrameworkImport(AggregateFunctionBuilderRegistry.class.getName());
+		
+	
 		aggregateTIPO.addImport(java.util.Map.Entry.class.getCanonicalName());
-		aggregateTIPO.addImport(AggregateTISweepArea.class.getName());
-		
-	
-		
-	
-		aggregateTIPO.addImport(AggregateFunctionBuilderRegistry.class.getName());
-		
+		aggregateTIPO.addImport(java.util.Map.class.getName());
 		
 		
 		return aggregateTIPO;

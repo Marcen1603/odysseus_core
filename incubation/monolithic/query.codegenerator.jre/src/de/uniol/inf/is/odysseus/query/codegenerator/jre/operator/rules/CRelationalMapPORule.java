@@ -49,8 +49,8 @@ public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 			mapPO.addCode(relationalMapPOTemplate.getSt().render());
 			
 			
-			mapPO.addImport(RelationalMapPO.class.getName());
-			mapPO.addImport(SDFExpression.class.getName());
+			mapPO.addFrameworkImport(RelationalMapPO.class.getName());
+			mapPO.addFrameworkImport(SDFExpression.class.getName());
 		}
 		return mapPO;
 		

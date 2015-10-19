@@ -48,10 +48,10 @@ public class CSlidingTimeWindowTIPORule extends AbstractCSlidingTimeWindowTIPORu
 		code.append(slidingTimeWindowTIPOTemplate.getSt().render());
 	
 		slidingWindow.addCode(code.toString());
-		slidingWindow.addImport(TimeValueItem.class.getName());
-		slidingWindow.addImport(TimeUnit.class.getName());
-		slidingWindow.addImport(WindowType.class.getName());
-		slidingWindow.addImport(SlidingTimeWindowTIPO.class.getName());
+		slidingWindow.addFrameworkImport(TimeValueItem.class.getName());
+		slidingWindow.addFrameworkImport(TimeUnit.class.getName());
+		slidingWindow.addFrameworkImport(WindowType.class.getName());
+		slidingWindow.addFrameworkImport(SlidingTimeWindowTIPO.class.getName());
 
 		return slidingWindow;
 	}

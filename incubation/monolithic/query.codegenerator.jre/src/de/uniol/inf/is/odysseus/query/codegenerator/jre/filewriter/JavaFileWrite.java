@@ -37,7 +37,9 @@ public class JavaFileWrite {
 	private FileWriter writer;
 	private String targetDirectory;
 	private TransformationParameter transformationParameter;
+	private Set<String> frameworkImportList = new HashSet<String>();
 	private Set<String> importList = new HashSet<String>();
+	
 	private Set<String> copyJars = new HashSet<String>();
 	private String osgiBindCode;
 	private String bodyCode;
@@ -49,10 +51,11 @@ public class JavaFileWrite {
 	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
 	
 	
-	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
+	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> frameworkImportList,Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
 		this.fileName = fileName;
 		this.targetDirectory = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;
+		this.frameworkImportList = frameworkImportList;
 		this.importList = importList;
 		this.osgiBindCode = osgiBindCode;
 		this.bodyCode = bodyCode;
@@ -91,6 +94,7 @@ public class JavaFileWrite {
 	private void createExecutorFile() {
 	
 		FileHelper fileHelper = new FileHelper(executor.getName()+".java", targetDirectory+"/src/main");
+		executor.setPackageName("main");
 		fileHelper.writeToFile(executor.getExecutorCode());
 		
 	}
@@ -130,6 +134,7 @@ public class JavaFileWrite {
 			
 			//sort importList for nice look 
 			TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
+			sortList.addAll(frameworkImportList);
 			sortList.addAll(importList);
 			
 			StringTemplate javaMain = new StringTemplate("java","javaMain");
@@ -217,7 +222,7 @@ public class JavaFileWrite {
 	
 	private void copyOdysseusJar(){
 		ExtractOSGIBundle extractOSGIBundle =  new ExtractOSGIBundle();
-		copyJars = extractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTargetDirectory(), "lib");
+		copyJars = extractOSGIBundle.extractOSGIBundle(frameworkImportList, transformationParameter.getTargetDirectory(), "lib");
 	}
 	
 	

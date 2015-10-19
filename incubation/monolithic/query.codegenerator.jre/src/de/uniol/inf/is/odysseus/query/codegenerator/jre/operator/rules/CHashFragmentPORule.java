@@ -34,7 +34,7 @@ public class CHashFragmentPORule extends AbstractCHashFragmentAORule<HashFragmen
 		
 		
 		codeFragmentInfo.addCode(hashFragmentTemplate.getSt().render());
-		codeFragmentInfo.addImport(HashFragmentPO.class.getName());
+		codeFragmentInfo.addFrameworkImport(HashFragmentPO.class.getName());
 		
 		return codeFragmentInfo;
 	}

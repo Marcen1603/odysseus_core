@@ -35,10 +35,10 @@ public class CSelectPORule extends AbstractCSelectAORule<SelectAO>{
 		selectTemplate.getSt().add("predicateValue", predicateValue);
 		selectPO.addCode(selectTemplate.getSt().render());
 		
-		selectPO.addImport(DirectAttributeResolver.class.getName());
-		selectPO.addImport(RelationalPredicateBuilder.class.getName());
-		selectPO.addImport(RelationalPredicate.class.getName());
-		selectPO.addImport(SelectPO.class.getName());
+		selectPO.addFrameworkImport(DirectAttributeResolver.class.getName());
+		selectPO.addFrameworkImport(RelationalPredicateBuilder.class.getName());
+		selectPO.addFrameworkImport(RelationalPredicate.class.getName());
+		selectPO.addFrameworkImport(SelectPO.class.getName());
 		
 		
 		return selectPO;

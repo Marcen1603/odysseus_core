@@ -9,6 +9,7 @@ public abstract class AbstractCScheduler implements ICScheduler{
 	
 	private String name = "";
 	private String targetPlatform = "";
+	private String packageName = "";
 	
 	
 	public AbstractCScheduler(String name) {
@@ -45,6 +46,15 @@ public abstract class AbstractCScheduler implements ICScheduler{
 		String targetPlattform = (String) this.context.getProperties().get(
 				"targetPlatform");
 		setTragetPlattform(targetPlattform);
+	}
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	@Override
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
 	}
 	
 

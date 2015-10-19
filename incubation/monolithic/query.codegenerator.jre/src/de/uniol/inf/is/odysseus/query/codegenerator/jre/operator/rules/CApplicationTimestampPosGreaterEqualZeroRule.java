@@ -40,8 +40,8 @@ public class CApplicationTimestampPosGreaterEqualZeroRule extends AbstractCAppli
 			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("clearEnd", clearEnd);	
 			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("timestampAO", timestampAO);	
 			
-			codeFragmentInfo.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
-			codeFragmentInfo.addImport(IMetadataInitializer.class.getName());
+			codeFragmentInfo.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
+			codeFragmentInfo.addFrameworkImport(IMetadataInitializer.class.getName());
 			
 			codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
 			

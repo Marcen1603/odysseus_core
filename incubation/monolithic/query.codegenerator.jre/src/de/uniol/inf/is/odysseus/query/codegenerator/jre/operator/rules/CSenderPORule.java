@@ -51,7 +51,7 @@ public class CSenderPORule extends AbstractCSenderAORule<SenderAO>{
 		StringTemplate senderPOTemplate = new StringTemplate("operator","senderPO");
 		senderPOTemplate.getSt().add("operatorVariable", operatorVariable);
 
-		senderPO.addImport(SenderPO.class.getName());
+		senderPO.addFrameworkImport(SenderPO.class.getName());
 		senderPO.addCode(senderPOTemplate.getSt().render());
 	
 		
