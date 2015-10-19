@@ -55,6 +55,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
 	protected void transformQuery(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		CodegeneratorMessageBus.warningErrorDetected = false;
+	
 		
 		List<ILogicalOperator> operatorSources = queryAnalyseInformation.getSourceOpList();
 		

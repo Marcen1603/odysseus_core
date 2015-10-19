@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -45,6 +46,8 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 		bodyCode = new StringBuilder();
 		sdfSchemaCode  = new StringBuilder();
+		frameworkImportList = new HashSet<String>();
+		importList = new HashSet<String>();
 		
 		//Start Odysseus index
 		sendMessageEvent(15, "Index the Odysseus codepath",UpdateMessageEventType.INFO);
