@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.imagejcv.udf;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 

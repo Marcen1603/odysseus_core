@@ -6,8 +6,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 import java.nio.ByteBuffer;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
-
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 public class ImageFunctions {
