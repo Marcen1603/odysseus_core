@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcublas-0.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcuda-0.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcuda-0.7.5.jar" sourcepath="lib/JCuda0.7.5-bin/jcuda-0.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcufft-0.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcurand-0.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/JCuda0.7.5-bin/jcusolver-0.7.5.jar"/>
