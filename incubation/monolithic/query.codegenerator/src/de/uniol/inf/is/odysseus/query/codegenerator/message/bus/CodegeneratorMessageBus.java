@@ -16,7 +16,7 @@ public class CodegeneratorMessageBus {
 	public static void sendUpdate(CodegeneratorMessageEvent update){
 		synchronized (consumerList) {
 			for(ICodegeneratorMessageConsumer consumer : consumerList){
-				consumer.addMessage(update);
+				consumer.addMessageEvent(update);
 			}
 		}
 		if(update.getStatusType() == UpdateMessageStatusType.WARNING || update.getStatusType() == UpdateMessageStatusType.ERROR  ){

@@ -4,6 +4,6 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageE
 
 public interface ICodegeneratorMessageConsumer {
 	
-	public void addMessage(CodegeneratorMessageEvent update);
+	public void addMessageEvent(CodegeneratorMessageEvent update);
 
 }

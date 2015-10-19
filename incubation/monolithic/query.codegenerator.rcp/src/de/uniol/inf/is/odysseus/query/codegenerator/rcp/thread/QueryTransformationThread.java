@@ -34,7 +34,7 @@ public class QueryTransformationThread extends Thread implements ICodegeneratorM
 	
 
 	@Override
-	public void addMessage(CodegeneratorMessageEvent update) {
+	public void addMessageEvent(CodegeneratorMessageEvent update) {
 		window.updateProgressbar(update);
 	}
 
