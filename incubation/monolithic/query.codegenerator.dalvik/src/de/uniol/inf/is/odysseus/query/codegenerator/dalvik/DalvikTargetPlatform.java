@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCo
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageEventType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
@@ -32,7 +32,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			throws InterruptedException {
 		
 		//add userfeedback
-		sendMessageEvent(10, "Start the transformation",UpdateMessageStatusType.INFO);
+		sendMessageEvent(10, "Start the transformation",UpdateMessageEventType.INFO);
 		
 		//clear transformation infos
 		DefaultCodegeneratorStatus.clear();
@@ -60,7 +60,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			dalvikFileWrite.createProject();
 
 			
-			sendMessageEvent(100, generateSummary(parameter,projectInfo(parameter)),UpdateMessageStatusType.INFO);
+			sendMessageEvent(100, generateSummary(parameter,projectInfo(parameter)),UpdateMessageEventType.INFO);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,7 +76,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			QueryAnalyseInformation queryAnalseInformation,
 			ICOperatorRule<ILogicalOperator> opTrans) {
 		
-		sendMessageEvent(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
+		sendMessageEvent(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageEventType.INFO);
 		
 		//add ready
 		DefaultCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);

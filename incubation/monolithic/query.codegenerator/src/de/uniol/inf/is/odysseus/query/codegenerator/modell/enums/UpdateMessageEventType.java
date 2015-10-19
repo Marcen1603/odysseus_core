@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.modell.enums;
 
-public enum UpdateMessageStatusType {
+public enum UpdateMessageEventType {
 	  
 	    INFO("Info"),
 	    ERROR("Error"),
@@ -9,7 +9,7 @@ public enum UpdateMessageStatusType {
 	  
 	    private String text;
 	    
-	    UpdateMessageStatusType(String text) {
+	    UpdateMessageEventType(String text) {
 	      this.text = text;
 	    }
 
@@ -17,9 +17,9 @@ public enum UpdateMessageStatusType {
 	      return this.text;
 	    }
 
-	    public static UpdateMessageStatusType fromString(String text) {
+	    public static UpdateMessageEventType fromString(String text) {
 	      if (text != null) {
-	        for (UpdateMessageStatusType b : UpdateMessageStatusType.values()) {
+	        for (UpdateMessageEventType b : UpdateMessageEventType.values()) {
 	          if (text.equalsIgnoreCase(b.text)) {
 	            return b;
 	          }

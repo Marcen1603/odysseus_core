@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 
-public abstract class TargetPlatformOption implements ITargetPlatformOption{
+public abstract class AbstractTargetPlatformOption implements ITargetPlatformOption{
 	
 	@Override
 	public void parse(TransformationParameter parameter){

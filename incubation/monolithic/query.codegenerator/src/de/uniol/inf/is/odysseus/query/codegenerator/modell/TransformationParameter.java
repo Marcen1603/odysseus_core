@@ -23,7 +23,6 @@ public class TransformationParameter {
 		this.setOptions(options);
 	}
 	
-	
 	public String getProgramLanguage() {
 		return targetPlatform;
 	}

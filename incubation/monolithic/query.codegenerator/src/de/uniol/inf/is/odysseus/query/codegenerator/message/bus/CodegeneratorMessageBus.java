@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageEventType;
 
 public class CodegeneratorMessageBus {
 	
@@ -19,7 +19,7 @@ public class CodegeneratorMessageBus {
 				consumer.addMessageEvent(update);
 			}
 		}
-		if(update.getStatusType() == UpdateMessageStatusType.WARNING || update.getStatusType() == UpdateMessageStatusType.ERROR  ){
+		if(update.getStatusType() == UpdateMessageEventType.WARNING || update.getStatusType() == UpdateMessageEventType.ERROR  ){
 			warningErrorDetected = true;
 		}
 	}

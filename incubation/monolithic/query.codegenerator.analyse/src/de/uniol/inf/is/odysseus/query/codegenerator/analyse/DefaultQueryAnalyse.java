@@ -21,9 +21,9 @@ import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMes
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageEventType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.COperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.ITargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecutorServiceBinding;
@@ -45,7 +45,7 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
 		
-		CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(-1, "Start query analyse",UpdateMessageStatusType.INFO));
+		CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(-1, "Start query analyse",UpdateMessageEventType.INFO));
 		
 		
 		transformationInformation = new QueryAnalyseInformation();
@@ -145,14 +145,9 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		
 		for(ILogicalOperator topAO : findSinksVisitor.getResult()){
 			if(topAO instanceof TopAO){
-				
-			
 					for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
-						
 						transformationInformation.addSinkOp(sourceOPSub.getTarget());
 					}
-			
-				
 			}else{
 				//TODO refactoring...
 				if(topAO instanceof RenameAO){
@@ -180,14 +175,12 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
 	
-		
 	}
 	
 	private void analyseOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		
-		ICOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
+		ICOperatorRule<ILogicalOperator> opTrans = COperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		
 		if(opTrans != null ){
 		
@@ -206,11 +199,5 @@ public class DefaultQueryAnalyse implements ICAnalyse{
 		for(LogicalSubscription s:operator.getSubscriptions()){
 			analyseOperator(s.getTarget(),parameter, transformationConfiguration);
 		}
-
-		
-		
 	}
-	
-
-
 }

@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCo
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageEventType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
@@ -41,20 +41,20 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		jreTargetplatformOption.parse(parameter);
 		
 		//add userfeedback
-		sendMessageEvent(10, "Start the transformation", UpdateMessageStatusType.INFO);
+		sendMessageEvent(10, "Start the transformation", UpdateMessageEventType.INFO);
 		
 		bodyCode = new StringBuilder();
 		sdfSchemaCode  = new StringBuilder();
 		
 		//Start Odysseus index
-		sendMessageEvent(15, "Index the Odysseus codepath",UpdateMessageStatusType.INFO);
+		sendMessageEvent(15, "Index the Odysseus codepath",UpdateMessageEventType.INFO);
 		OdysseusIndex.getInstance().search(parameter.getOdysseusDirectory());
 	
 		//start query transformation
 		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
-		sendMessageEvent(70, "Generate OSGI emulation code",UpdateMessageStatusType.INFO);
+		sendMessageEvent(70, "Generate OSGI emulation code",UpdateMessageEventType.INFO);
 		
 		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusDirectory(), queryAnalyseInformation);
 		frameworkImportList.addAll(osgiBind.getFrameworkImports());
@@ -66,20 +66,20 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(startStreams.getImports());
 		
 	
-		sendMessageEvent(75, "Create Java files",UpdateMessageStatusType.INFO);
+		sendMessageEvent(75, "Create Java files",UpdateMessageEventType.INFO);
 		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
 		
 		try {
-			sendMessageEvent(80, "Create Java project",UpdateMessageStatusType.INFO);
+			sendMessageEvent(80, "Create Java project",UpdateMessageEventType.INFO);
 			javaFileWrite.createProject();
 
 
 			if(jreTargetplatformOption.isAutobuild()){
-				sendMessageEvent(85, "Compile the Java project",UpdateMessageStatusType.INFO);
+				sendMessageEvent(85, "Compile the Java project",UpdateMessageEventType.INFO);
 				ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
 			}
 		
-			sendMessageEvent(100, generateSummary(parameter,compiledProgramm(parameter)),UpdateMessageStatusType.INFO);
+			sendMessageEvent(100, generateSummary(parameter,compiledProgramm(parameter)),UpdateMessageEventType.INFO);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -93,7 +93,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			QueryAnalyseInformation queryAnalseInformation,
 			ICOperatorRule<ILogicalOperator> opTrans) {
 		
-		sendMessageEvent(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO);
+		sendMessageEvent(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageEventType.INFO);
 		
 		//add ready
 		DefaultCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);

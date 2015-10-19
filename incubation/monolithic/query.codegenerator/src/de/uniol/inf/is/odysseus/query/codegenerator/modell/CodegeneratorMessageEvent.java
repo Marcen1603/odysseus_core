@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.modell;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageEventType;
 
 public class CodegeneratorMessageEvent {
 	
 	private String text;
 	private int progressValue;
-	private UpdateMessageStatusType statusType;
+	private UpdateMessageEventType statusType;
 	
-	public CodegeneratorMessageEvent(int progressValue,String text, UpdateMessageStatusType statusType){
+	public CodegeneratorMessageEvent(int progressValue,String text, UpdateMessageEventType statusType){
 		this.progressValue = progressValue;
 		this.text =text;
 		this.statusType = statusType;
@@ -27,11 +27,11 @@ public class CodegeneratorMessageEvent {
 		this.progressValue = progressValue;
 	}
 
-	public UpdateMessageStatusType getStatusType() {
+	public UpdateMessageEventType getStatusType() {
 		return statusType;
 	}
 
-	public void setStatusType(UpdateMessageStatusType statusType) {
+	public void setStatusType(UpdateMessageEventType statusType) {
 		this.statusType = statusType;
 	}
 	

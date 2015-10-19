@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre.model;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.TargetPlatformOption;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.AbstractTargetPlatformOption;
 
-public class JreTargetplatformOption extends TargetPlatformOption{
+public class JreTargetplatformOption extends AbstractTargetPlatformOption{
 	
 	private boolean autobuild;
 	

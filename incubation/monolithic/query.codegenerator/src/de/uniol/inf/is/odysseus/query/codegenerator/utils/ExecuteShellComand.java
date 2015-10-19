@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageEventType;
 
 
 //TODO mac, unix support?
@@ -42,13 +42,13 @@ public class ExecuteShellComand {
 		
 	
 		if(errorLine.length()>0){
-			CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(-1, errorLine.toString(),UpdateMessageStatusType.ERROR));
+			CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(-1, errorLine.toString(),UpdateMessageEventType.ERROR));
 		}
 	
 	
 		
 		if(sendOkLineToMessageBus){
-			CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(-1, okLine.toString(),UpdateMessageStatusType.INFO));
+			CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(-1, okLine.toString(),UpdateMessageEventType.INFO));
 		}
 		
 		

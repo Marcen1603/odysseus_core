@@ -11,9 +11,9 @@ import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMes
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageEventType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.COperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.DefaultCodegeneratorStatus;
 
 public abstract class AbstractTargetPlatform implements ITargetPlatform{
@@ -43,7 +43,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	}
 	
 	@Override
-	public void sendMessageEvent(int value, String text, UpdateMessageStatusType statusType){
+	public void sendMessageEvent(int value, String text, UpdateMessageEventType statusType){
 		CodegeneratorMessageBus.sendUpdate(new CodegeneratorMessageEvent(value, text,statusType));
 	}
 	
@@ -94,7 +94,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
 	protected void generateOperatorCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
 		
-		ICOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
+		ICOperatorRule<ILogicalOperator> opTrans = COperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
 			if(!DefaultCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
@@ -105,7 +105,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 			 	generateOperatorSubscription(operator, queryAnalseInformation);
 
 		}else{
-			sendMessageEvent(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,UpdateMessageStatusType.WARNING);
+			sendMessageEvent(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,UpdateMessageEventType.WARNING);
 		}
 		
 	

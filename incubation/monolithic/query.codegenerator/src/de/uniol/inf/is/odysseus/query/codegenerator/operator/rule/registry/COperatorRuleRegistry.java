@@ -16,9 +16,9 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRule
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.ICOperatorRuleComparator;
 
 
-public class OperatorRuleRegistry {
+public class COperatorRuleRegistry {
 	
-	private static Logger LOG = LoggerFactory.getLogger(OperatorRuleRegistry.class);
+	private static Logger LOG = LoggerFactory.getLogger(COperatorRuleRegistry.class);
 	
 	static Map<String, Map<String,ICOperatorRule<ILogicalOperator>>> operatorRuleList = new HashMap<String, Map<String,ICOperatorRule<ILogicalOperator>>>();
 	
