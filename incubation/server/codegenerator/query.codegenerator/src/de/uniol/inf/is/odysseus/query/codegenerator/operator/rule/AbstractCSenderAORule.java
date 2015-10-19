@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
@@ -52,6 +55,24 @@ public abstract class AbstractCSenderAORule<T extends SenderAO> extends Abstract
 		transformationInformation.addProtocolHandler(protocolHandler);
 		transformationInformation.addDataHandler(dataHandler);
 
+	}
+	
+	@Override
+	public void addOperatorConfiguration(SenderAO logicalOperator,
+			QueryAnalyseInformation transformationInformation) {
+
+		Map<String, String> optionMap = new HashMap<String, String>();
+
+		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		ILogicalOperator logicalPlan = DataDictionaryProvider
+				.getDataDictionary(tenant).getSinkForTransformation(
+						logicalOperator.getSinkname(), null);
+
+		SenderAO senderAO = (SenderAO) logicalPlan;
+		optionMap = senderAO.getOptionsMap();
+		
+		transformationInformation.addOperatorConfiguration(logicalOperator,
+				optionMap);
 	}
 
 }

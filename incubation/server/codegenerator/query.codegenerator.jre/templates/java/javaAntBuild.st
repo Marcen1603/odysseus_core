@@ -54,6 +54,10 @@ javaAntBuild(copyJars)::=<<
 			 $copyJars: {copyJar| 
 			 <zipfileset excludes="META-INF/*.SF" src="lib/$copyJar$"/>
 			}$
+			
+			
+			 <zipfileset excludes="META-INF/*.SF" src="lib/gson-2.2.4.jar"/>
+		
             
         	</jar>
         	
