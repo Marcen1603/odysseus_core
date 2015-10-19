@@ -23,48 +23,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.python"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.rcp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.jre"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.dalvik"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.analyse"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="qdox"
          download-size="0"
          install-size="0"
@@ -99,10 +57,45 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre"
+         id="de.uniol.inf.is.odysseus.query.codegenerator.analyseC"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.query.codegenerator.dalvikC"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.query.codegenerator.jreC"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.query.codegenerator.pythonC"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.query.codegenerator.rcp.jreC"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.query.codegenerator.rcpC"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.query.codegeneratorC"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
