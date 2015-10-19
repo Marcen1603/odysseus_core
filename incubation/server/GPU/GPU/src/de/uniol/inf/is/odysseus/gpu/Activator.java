@@ -13,9 +13,17 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
+		
 		Activator.context = bundleContext;		
 		
 		System.out.println("GPU-Bundle loaded");
+				
+		String path = bundleContext.getBundle().getLocation().substring(16,bundleContext.getBundle().getLocation().length());	
+		
+		prepare.setPath(path);
+		
+		System.out.println(path);
+		
 		
 	}
 

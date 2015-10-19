@@ -28,9 +28,6 @@ public class TGPUSelectPORule extends AbstractTransformationRule<SelectAO> {
 		
 		GpuSelectPO po = new GpuSelectPO(operator);
 		defaultExecute(operator, po, config, true, true);
-		
-		
-	    
 	}
 
 	@Override
@@ -49,7 +46,7 @@ public class TGPUSelectPORule extends AbstractTransformationRule<SelectAO> {
         cuInit(0);
 //		
 //        
-//        // existieren Grafikkarten
+        // existieren Grafikkarten
 		int deviceCountArray[] = { 0 };
         cuDeviceGetCount(deviceCountArray);
         int deviceCount = deviceCountArray[0];
