@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Java.incubation
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.jreC
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator.jre
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.jre.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -17,7 +17,7 @@ Import-Package: com.google.gson,
  org.osgi.service.component;version="1.1.0",
  org.osgi.service.packageadmin;version="1.2.0"
 DynamicImport-Package: *
-Require-Bundle: de.uniol.inf.is.odysseus.query.codegeneratorC,
+Require-Bundle: de.uniol.inf.is.odysseus.codegenerator,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j,

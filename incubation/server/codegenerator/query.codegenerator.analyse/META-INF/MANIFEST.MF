@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.uniol.inf.is.odysseus.query.codegenerator.analyse
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.analyseC
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator.analyse
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.analyse.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -12,6 +12,6 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.sweeparea,
- de.uniol.inf.is.odysseus.query.codegeneratorC
+ de.uniol.inf.is.odysseus.codegenerator
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator.analyse
 Service-Component: OSGI-INF/CDefaultAnalyse.xml

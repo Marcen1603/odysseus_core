@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Python.incubation
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.pythonC
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator.python
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.python.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

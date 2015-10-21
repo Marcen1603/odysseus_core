@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Dalvik.incubation
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.dalvikC
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator.dalvik
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.dalvik.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

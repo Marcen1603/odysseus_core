@@ -37,17 +37,18 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		DefaultCodegeneratorStatus.clear();
 		DefaultCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
+		//init variables
+		bodyCode = new StringBuilder();
+		sdfSchemaCode  = new StringBuilder();
+		frameworkImportList = new HashSet<String>();
+		importList = new HashSet<String>();
+		
 		//get special transformation options
 		JreTargetplatformOption jreTargetplatformOption = new JreTargetplatformOption();
 		jreTargetplatformOption.parse(parameter);
 		
 		//add userfeedback
 		sendMessageEvent(10, "Start the transformation", UpdateMessageEventType.INFO);
-		
-		bodyCode = new StringBuilder();
-		sdfSchemaCode  = new StringBuilder();
-		frameworkImportList = new HashSet<String>();
-		importList = new HashSet<String>();
 		
 		//Start Odysseus index
 		sendMessageEvent(15, "Index the Odysseus codepath",UpdateMessageEventType.INFO);
