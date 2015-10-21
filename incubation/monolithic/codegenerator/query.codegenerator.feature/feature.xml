@@ -57,45 +57,52 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.analyseC"
+         id="de.uniol.inf.is.odysseus.codegenerator"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.dalvikC"
+         id="de.uniol.inf.is.odysseus.codegenerator.analyse"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.jreC"
+         id="de.uniol.inf.is.odysseus.codegenerator.dalvik"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.pythonC"
+         id="de.uniol.inf.is.odysseus.codegenerator.jre"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.rcp.jreC"
+         id="de.uniol.inf.is.odysseus.codegenerator.python"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.rcpC"
+         id="de.uniol.inf.is.odysseus.codegenerator.rcp"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegeneratorC"
+         id="de.uniol.inf.is.odysseus.codegenerator.rcp.jre"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
