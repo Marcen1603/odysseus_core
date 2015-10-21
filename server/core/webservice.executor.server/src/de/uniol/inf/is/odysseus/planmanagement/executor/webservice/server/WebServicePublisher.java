@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server;
 
 import java.net.BindException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -77,7 +76,7 @@ public class WebServicePublisher {
 				return httpServer;
 			} 
 			catch (Exception e) {
-				if (e.getCause() instanceof BindException) {
+				if (e.getCause() instanceof BindException || e instanceof BindException) {
 					// Ignore if port is already used
 				} else {
 					e.printStackTrace();
