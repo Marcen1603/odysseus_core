@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.expression;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -48,7 +47,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		}
 	}
 	
-	public Object evaluate(Tuple<T> object, List<ISession> sessions, LinkedList<Tuple<T>> history ){
+	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history ){
 
 		Object[] values = new Object[this.variables.length];
 //		IMetaAttribute[] meta = new IMetaAttribute[this.variables.length];
@@ -76,7 +75,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 	}
 	
 	protected Tuple<T> determineObjectForExpression(Tuple<T> object,
-			LinkedList<Tuple<T>> history, int j) {
+			List<Tuple<T>> history, int j) {
 		return object;
 	}
 	

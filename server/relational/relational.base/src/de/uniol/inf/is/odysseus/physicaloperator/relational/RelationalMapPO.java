@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 			lastTuple = object;
 		}
 		boolean nullValueOccured = false;
-		LinkedList<Tuple<T>> preProcessResult = preProcess(object);
+		List<Tuple<T>> preProcessResult = preProcess(object);
 		
 		Tuple<T> outputVal = Tuple.createEmptyTupleWithMeta(this.getOutputSchema().size(), object, requiresDeepClone);
 
@@ -135,7 +135,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		}
 	}
 	
-	public LinkedList<Tuple<T>> preProcess(Tuple<T> object) {
+	public List<Tuple<T>> preProcess(Tuple<T> object) {
 		return null;
 	}
 

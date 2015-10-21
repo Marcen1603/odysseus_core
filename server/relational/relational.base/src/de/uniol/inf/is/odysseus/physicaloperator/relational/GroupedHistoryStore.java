@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -11,7 +12,7 @@ import de.uniol.inf.is.odysseus.relational.IProvidesMaxHistoryElements;
 
 public class GroupedHistoryStore<T extends IStreamObject<? extends IMetaAttribute>> {
 
-	private Map<Long, LinkedList<T>> groupsLastObjects = new HashMap<>();
+	private Map<Long, List<T>> groupsLastObjects = new HashMap<>();
 	final private IGroupProcessor<T, T> groupProcessor;
 	private int maxHistoryElements = 0;
 
@@ -42,27 +43,27 @@ public class GroupedHistoryStore<T extends IStreamObject<? extends IMetaAttribut
 		}		
 	}
 	
-	public LinkedList<T> process(T object){
+	public List<T> process(T object){
 		Long groupId = groupProcessor.getGroupID(object);
-		LinkedList<T> lastObjects = groupsLastObjects.get(groupId);
+		List<T> lastObjects = groupsLastObjects.get(groupId);
 
 		if (lastObjects == null) {
-			lastObjects = new LinkedList<>();
+			lastObjects = new ArrayList<>();
 			groupsLastObjects.put(groupId, lastObjects);
 		}
 
 		if (lastObjects.size() > maxHistoryElements) {
-			lastObjects.removeLast();
+			lastObjects.remove(lastObjects.size()-1);
 		}
-		lastObjects.addFirst(object);
+		lastObjects.add(0,object);
 		return lastObjects;
 	}
 	
-	public Map<Long, LinkedList<T>> getGroupsLastObjects() {
+	public Map<Long, List<T>> getGroupsLastObjects() {
 		return groupsLastObjects;
 	}
 	
-	public void setGroupsLastObjects(Map<Long, LinkedList<T>> groupsLastObjects) {
+	public void setGroupsLastObjects(Map<Long, List<T>> groupsLastObjects) {
 		this.groupsLastObjects = groupsLastObjects;
 	}
 	

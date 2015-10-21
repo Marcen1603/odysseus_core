@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -45,7 +45,7 @@ public class RelationalStateExpression<T extends IMetaAttribute> extends Relatio
 	
 	@Override
 	public Tuple<T> determineObjectForExpression(Tuple<T> object,
-			LinkedList<Tuple<T>> lastObjects, int j) {
+			List<Tuple<T>> lastObjects, int j) {
 		Tuple<T> obj = null;
 		if (lastObjects.size() > this.variables[j].getObjectPosToUse()) {
 			obj = lastObjects.get(this.variables[j].getObjectPosToUse());
