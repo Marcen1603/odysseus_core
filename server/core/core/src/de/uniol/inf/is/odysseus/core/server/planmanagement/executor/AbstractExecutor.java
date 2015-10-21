@@ -176,32 +176,27 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/**
 	 * Alle Listener f�r Anfragebearbeitungs-Nachrichten
 	 */
-	private List<IPlanModificationListener> planModificationListener = Collections
-			.synchronizedList(new ArrayList<IPlanModificationListener>());
+	private List<IPlanModificationListener> planModificationListener = 	new CopyOnWriteArrayList<IPlanModificationListener>();
 	
 	/**
 	 * All Listener for executor command events.
 	 */
-	private List<IExecutorCommandListener> executorCommandListener = Collections
-			.synchronizedList(new ArrayList<IExecutorCommandListener>());
+	private List<IExecutorCommandListener> executorCommandListener = new CopyOnWriteArrayList<IExecutorCommandListener>();
 	
 	/**
 	 * All Listener for query added events.
 	 */
-	private List<IQueryAddedListener> queryAddedListener = Collections
-			.synchronizedList(new ArrayList<IQueryAddedListener>());
+	private List<IQueryAddedListener> queryAddedListener = new CopyOnWriteArrayList<IQueryAddedListener>();
 
 	/**
 	 * Alle Listener f�r Ausf�hrungs-Nachrichten
 	 */
-	private List<IPlanExecutionListener> planExecutionListener = Collections
-			.synchronizedList(new ArrayList<IPlanExecutionListener>());
+	private List<IPlanExecutionListener> planExecutionListener = new CopyOnWriteArrayList<IPlanExecutionListener>();
 
 	/**
 	 * Alle Listener f�r Fehler-Nachrichten
 	 */
-	private List<IErrorEventListener> errorEventListener = Collections
-			.synchronizedList(new ArrayList<IErrorEventListener>());
+	private List<IErrorEventListener> errorEventListener = new CopyOnWriteArrayList<IErrorEventListener>();
 
 	/**
 	 * Compiler Listener
