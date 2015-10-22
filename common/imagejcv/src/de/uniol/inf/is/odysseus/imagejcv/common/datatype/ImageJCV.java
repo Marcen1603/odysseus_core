@@ -163,14 +163,17 @@ public class ImageJCV extends GCMonitored implements IClone, Cloneable
 	public static ImageJCV fromBuffer(ByteBuffer buffer) 
 	{
 		ImageJCV result = new ImageJCV(buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt());
-		ByteBuffer newBuffer = result.getImageData();		
-		newBuffer.put((ByteBuffer) buffer.slice().limit(result.image.imageSize()));
+		int imageSize = result.image.imageSize();
+		
+		ByteBuffer newBuffer = result.getImageData();
+		newBuffer.put((ByteBuffer) buffer.slice().limit(imageSize));
+		buffer.position(buffer.position() + imageSize);
 		
 		return result;
 	}	
 	
 	// Writes this image to a byte buffer
-	public void toByteBuffer(ByteBuffer buffer) 
+	public void appendToByteBuffer(ByteBuffer buffer) 
 	{
 		buffer.putInt(width);
 		buffer.putInt(height);
@@ -180,6 +183,21 @@ public class ImageJCV extends GCMonitored implements IClone, Cloneable
 		
 		buffer.put(getImageData());
 	}
+
+	// Creates a byte buffer and writes this image to it
+	public ByteBuffer toByteBuffer() 
+	{
+		ByteBuffer buffer = ByteBuffer.allocate(5*4 + getImage().imageSize());
+		buffer.putInt(width);
+		buffer.putInt(height);
+		buffer.putInt(depth);
+		buffer.putInt(numChannels);
+		buffer.putInt(pixelFormat);
+		
+		buffer.put(getImageData());
+		return buffer;
+	}
+	
 	
 	// Returns a copy of this image
 	@Override public ImageJCV clone()

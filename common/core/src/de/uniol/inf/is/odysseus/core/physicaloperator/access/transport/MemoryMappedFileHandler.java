@@ -145,6 +145,11 @@ public class MemoryMappedFileHandler extends AbstractPushTransportHandler
 		createFile();
 		fireOnConnect();
 	}
+	
+	@Override public void send(Object message) throws IOException 
+	{
+		// empty default implementation
+	}	
 
 	@Override public void send(final byte[] message) throws IOException 
 	{

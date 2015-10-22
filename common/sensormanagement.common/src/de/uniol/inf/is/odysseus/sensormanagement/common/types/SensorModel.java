@@ -21,6 +21,9 @@ public class SensorModel
 	@XmlJavaTypeAdapter(SimpleMapXmlAdapter.class)
 	public Map<String, String> options = new HashMap<>();
 	public Position position;
+	
+	// If this value is set, this sensor will be set up as a sensor in Odysseus which receives playback data
+	public String playbackConfig;
 			
 	public SensorModel()
 	{
@@ -28,16 +31,22 @@ public class SensorModel
 
 	public SensorModel(SensorModel other) 
 	{
+		assign(other);
+	}
+	
+	public void generateId()
+	{
+		id = type + "_" + Integer.toString((int) (Math.random() * Integer.MAX_VALUE));
+	}
+
+	public void assign(SensorModel other) 
+	{
 		id = other.id;
 		type = other.type;
 		displayName = other.displayName;
 		
 		options = new HashMap<>(other.options);
 		position = other.position == null ? null : other.position.clone();
-	}
-	
-	public void generateId()
-	{
-		id = type + "_" + Integer.toString((int) (Math.random() * Integer.MAX_VALUE));
+		playbackConfig = other.playbackConfig;
 	}
 }

@@ -27,7 +27,8 @@ public class AbsolutePosition extends Position
 	
 	@Override public String toString()
 	{
-		return "lon="+longitude + " lat=" + latitude + " alt=" + altitude + " or=" + orientation;
+//		return "lon="+longitude + " lat=" + latitude + " alt=" + altitude + " or=" + orientation;
+		return "absolute: " + longitude + ", " + latitude + ", " + altitude + ", " + orientation;
 	}	
 	
 	@Override public AbsolutePosition clone()

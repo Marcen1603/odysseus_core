@@ -35,4 +35,10 @@ public class RelativePosition extends Position
 		
 		return Position.add(parentPos, this);
 	}*/
+	
+	@Override public String toString()
+	{
+//		return "lon="+longitude + " lat=" + latitude + " alt=" + altitude + " or=" + orientation;
+		return "relative: " + x + ", " + y + ", " + z + ", " + orientation;
+	}	
 }

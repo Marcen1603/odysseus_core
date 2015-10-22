@@ -74,6 +74,7 @@ public class LMS1xxProtocolHandler extends
 	public static final String PASSWORD = "password";
 	public static final String INIT_RAWDATA = "rawdata";
 	public static final String IGNORE_TIMESTAMP = "ignoretimestamp";
+	public static final String PASSIVE_MODE = "passivemode";
 
 	/** Key value parameter names. */
 	private final static String RAW_DATA = "RAWDATA";
@@ -109,6 +110,7 @@ public class LMS1xxProtocolHandler extends
 	private ByteBuffer buffer;
 	private boolean addRawData;
 	private boolean ignoreTimestamp;
+	private boolean passiveMode;
 
 	/**
      * 
@@ -139,6 +141,7 @@ public class LMS1xxProtocolHandler extends
 		setPassword(optionsMap.get(PASSWORD, "client"));		
 		setAddRawData(optionsMap.getBoolean(INIT_RAWDATA, false));
 		setIgnoreTimestamp(optionsMap.getBoolean(IGNORE_TIMESTAMP, false));
+		setPassiveMode(optionsMap.getBoolean(PASSIVE_MODE, false));
 	}
 
 	/**
@@ -171,7 +174,7 @@ public class LMS1xxProtocolHandler extends
 	 */
 	@Override
 	public void onConnect(final ITransportHandler caller) {
-		if (!(caller instanceof AbstractFileHandler)) {
+		if (!(caller instanceof AbstractFileHandler) && !passiveMode) {
 			// if
 			// (caller.getExchangePattern().equals(ITransportExchangePattern.InOut))
 			// {
@@ -292,7 +295,7 @@ public class LMS1xxProtocolHandler extends
 	 */
 	@Override
 	public void onDisonnect(final ITransportHandler caller) {
-		if (caller.getExchangePattern().equals(ITransportExchangePattern.InOut)) {
+		if (caller.getExchangePattern().equals(ITransportExchangePattern.InOut) && !passiveMode) {
 			try {
 				this.send(LMS1xxConstants.STOP_SCAN_COMMAND
 						.getBytes(this.charset));
@@ -392,9 +395,17 @@ public class LMS1xxProtocolHandler extends
 		ignoreTimestamp  = ignore;
 	}
 	
-	public boolean getIgnoreTimestamp() {
+	public boolean doesIgnoreTimestamp() {
 		return ignoreTimestamp;
 	}	
+	
+	public void setPassiveMode(boolean passiveMode) {
+		this.passiveMode = passiveMode;
+	}
+	
+	public boolean isInPassiveMode() {
+		return passiveMode;
+	}
 
 	private KeyValueObject<IMetaAttribute> parse()
 			throws LMS1xxReadErrorException, LMS1xxLoginException,

@@ -16,7 +16,8 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelp
 public class Sensor 
 {
 	private final static IServerExecutor executor = ExecutorServiceBinding.getExecutor();
-	
+
+	String ownerName;
 	SensorModel config;
 	SensorType type;
 	
@@ -67,6 +68,8 @@ public class Sensor
 	
 	public Sensor(SensorModel sensor, ISession session) 
 	{
+		ownerName = session.getUser().getName();
+		
 		config = sensor;
 		if (config.id == null) config.generateId();
 		
@@ -79,7 +82,12 @@ public class Sensor
 		formatMap.put("options", options);
 		formatMap.put("optionsEx", (options.length() > 0) ? (options + ",") : "");
 		
-		String queryText = StringUtils.namedFormatStr(type.dataQueryText, formatMap);
+		String queryText;		
+		if (config.playbackConfig == null)
+			queryText = StringUtils.namedFormatStr(type.dataQueryText, formatMap);
+		else
+			queryText = StringUtils.namedFormatStr(type.playbackQueryText, formatMap);
+		
 		safeAddQuery(getDataQueryName(), queryText, session);
 	}
 	
@@ -111,7 +119,7 @@ public class Sensor
 		if (!config.id.equals(newSensorInfo.id))
 		{
 			// TODO: Change exception type
-			throw new RuntimeException("This is not the same sensor!");
+			throw new RuntimeException("Ids of original and modified sensor do not match");
 		}		
 		
 		if (!config.type.equals(newSensorInfo.type))
@@ -137,7 +145,7 @@ public class Sensor
 		String options = StringUtils.mapToString(loggingOptionsMap);
 		
 		Map<String, Object> formatMap = new HashMap<>();
-		formatMap.put("sourceName", getDataQueryName());
+		formatMap.put("sourceName", ownerName + "." + getDataQueryName());
 		formatMap.put("sinkName", getLoggingQueryName());
 		formatMap.put("options", options);
 		formatMap.put("optionsEx", (options.length() > 0) ? (options + ",") : "");
@@ -157,7 +165,7 @@ public class Sensor
 		String queryName = getLiveViewQueryName(session);	
 		
 		Map<String, Object> formatMap = new HashMap<>();
-		formatMap.put("sourceName", getDataQueryName());
+		formatMap.put("sourceName", ownerName + "." + getDataQueryName());
 		formatMap.put("sinkName", queryName);
 		formatMap.put("host", targetHost);
 		formatMap.put("port", targetPort);

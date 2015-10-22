@@ -51,7 +51,7 @@ public class ImageJCVDataHandler extends AbstractDataHandler<ImageJCV> {
 	@Override public void writeData(final ByteBuffer buffer, final Object data) 
 	{
 		ImageJCV image = (ImageJCV) data;
-		image.toByteBuffer(buffer);
+		image.appendToByteBuffer(buffer);
 	}
 	
 	@Override final public List<String> getSupportedDataTypes() 

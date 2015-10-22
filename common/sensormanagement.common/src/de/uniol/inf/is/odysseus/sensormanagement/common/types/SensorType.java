@@ -12,6 +12,7 @@ public class SensorType
 {
 	public final String name;
 	public final String dataQueryText;
+	public final String playbackQueryText;
 	public final String loggingQueryText;
 	public final String liveViewQueryText;
 	public final String liveViewUrl;
@@ -21,14 +22,15 @@ public class SensorType
 	
 	public SensorType()
 	{		
-		name = dataQueryText = loggingQueryText = liveViewQueryText = liveViewUrl = null;
+		name = dataQueryText = playbackQueryText = loggingQueryText = liveViewQueryText = liveViewUrl = null;
 		optionsInformation = null;
 	}
 	
-	public SensorType(String name, String dataQueryText, String loggingQueryText, String liveViewQueryText, String liveViewUrl, Map<String, String> optionsInformation) 
+	public SensorType(String name, String dataQueryText, String playbackQueryText, String loggingQueryText, String liveViewQueryText, String liveViewUrl, Map<String, String> optionsInformation) 
 	{
 		this.name = name;
 		this.dataQueryText = dataQueryText;
+		this.playbackQueryText = playbackQueryText;
 		this.loggingQueryText = loggingQueryText;
 		this.liveViewQueryText = liveViewQueryText;
 		this.liveViewUrl = liveViewUrl;

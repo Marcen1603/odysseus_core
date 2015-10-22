@@ -64,12 +64,6 @@ public abstract class SensorClient implements ILoggable
 				e.printStackTrace();
 			}
 		}
-				
-		try {
-			odysseusClient.logout(odysseusSession);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void addSensor(RemoteSensor sensor)
@@ -83,7 +77,7 @@ public abstract class SensorClient implements ILoggable
 	
 	public void updateSensor(RemoteSensor sensor, SensorModel newSensorInfo)
 	{
-		sensor.setSensorModel(newSensorInfo);
+		sensor.updateSensorModel(newSensorInfo);
 		sensorClient.modifySensor(odysseusSession, sensor.getId(), newSensorInfo);
 		
 		if (isInitialized())
@@ -98,6 +92,16 @@ public abstract class SensorClient implements ILoggable
 		if (isInitialized())
 			onSensorRemoved(sensor);
 	}
+
+	public void removeAllSensors()
+	{
+		try {		
+			for (int i = sensors.size()-1; i >= 0; i--)
+				removeSensor(sensors.get(i));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}	
 	
 	@Override public void startLogging() 
 	{
