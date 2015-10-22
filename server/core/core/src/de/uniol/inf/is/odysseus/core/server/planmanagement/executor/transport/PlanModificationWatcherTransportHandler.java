@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 public class PlanModificationWatcherTransportHandler extends
 		AbstractPushTransportHandler implements IPlanModificationListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PlanModificationWatcherTransportHandler.class);
+	///private static final Logger LOG = LoggerFactory.getLogger(PlanModificationWatcherTransportHandler.class);
 	
 	private static final String NAME = "PlanModificationWatcher";
 	private IPlanManager planManager;
