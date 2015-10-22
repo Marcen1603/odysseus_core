@@ -1,6 +1,11 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.transport;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -16,8 +21,14 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 public class PlanModificationWatcherTransportHandler extends
 		AbstractPushTransportHandler implements IPlanModificationListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PlanModificationWatcherTransportHandler.class);
+	
 	private static final String NAME = "PlanModificationWatcher";
 	private IPlanManager planManager;
+
+	final private List<Tuple<IMetaAttribute>> outputBuffer = new ArrayList<>();
+	
+	private Thread runner; 
 
 	public PlanModificationWatcherTransportHandler() {
 		super();
@@ -51,6 +62,25 @@ public class PlanModificationWatcherTransportHandler extends
 						+ " cannot be used on this site. Must be on server!");
 			}
 		}
+		runner = new Thread("PlanModificationWatcherTransportHandlerThread"){
+			public void run() {
+				while (!interrupted()){
+					synchronized (outputBuffer) {
+						if (outputBuffer.size() > 0){
+							PlanModificationWatcherTransportHandler.this.fireProcess(outputBuffer.remove(0));
+						}else{
+							try {
+								outputBuffer.wait(1000);
+							} catch (InterruptedException e) {
+							}
+						}
+						
+					}
+				}
+				
+			};
+		};
+		runner.start();
 		planManager.addPlanModificationListener(this);
 	}
 
@@ -61,6 +91,7 @@ public class PlanModificationWatcherTransportHandler extends
 	@Override
 	public void processInClose() throws IOException {
 		planManager.removePlanModificationListener(this);
+		runner.interrupt();
 	}
 
 	@Override
@@ -78,14 +109,20 @@ public class PlanModificationWatcherTransportHandler extends
 	}
 
 	@Override
-	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+	public synchronized void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		if (eventArgs instanceof QueryPlanModificationEvent) {
 			QueryPlanModificationEvent e = (QueryPlanModificationEvent) eventArgs;
-			Tuple<IMetaAttribute> output = new Tuple<IMetaAttribute>(3, false);
+			Tuple<IMetaAttribute> output = new Tuple<IMetaAttribute>(4, false);
 			output.setAttribute(0, System.currentTimeMillis());
 			output.setAttribute(1, e.getValue().getID());
 			output.setAttribute(2, e.getEventType().toString());
-			fireProcess(output);
+			// TODO: Define User Type
+			output.setAttribute(3, e.getValue().getSession().getUser().getName());
+			// Different threads can call planModificationEvent --> Assure correct ordering by sender threat
+			synchronized (outputBuffer) {
+				outputBuffer.add(output);
+				outputBuffer.notifyAll();
+			}
 		}
 	}
 

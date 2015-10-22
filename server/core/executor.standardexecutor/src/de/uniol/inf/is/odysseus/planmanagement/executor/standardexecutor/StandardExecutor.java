@@ -1089,11 +1089,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			try {
 				this.executionPlanLock.lock();
 				getOptimizer().beforeQueryStart(queryToStart, this.executionPlan);
-				executionPlanChanged(PlanModificationEventType.QUERY_START, queryToStart);
 				queryToStart.start(this);
 				LOG.info("Query " + queryToStart.getID() + " started.");
 				firePlanModificationEvent(
 						new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_START, queryToStart));
+				executionPlanChanged(PlanModificationEventType.QUERY_START, queryToStart);
 			} catch (Exception e) {
 				LOG.warn("Query not started. An Error during optimizing occurd (ID: " + queryToStart.getID() + ").", e);
 				throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: "
@@ -1189,41 +1189,44 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	}
 
 	private void stopQuery(IPhysicalQuery queryToStop) {
-		// There are two ways, a query can be stopped. By a scheduler or by the
-		// executor. Run into this method only once, else there will be a
-		// deadlock!
-		if (queryToStop.getState() != QueryState.INACTIVE) {
-			if (!queryToStop.isMarkedAsStopping()) {
-				queryToStop.setAsStopping(true);
-				LOG.debug("Try to stop query " + queryToStop.getID());
-				try {
-					this.executionPlanLock.lock();
-					getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
-					executionPlanChanged(PlanModificationEventType.QUERY_STOP, queryToStop);
-					if (isRunning()) {
-						if (queryToStop.getState() != QueryState.INACTIVE) {
-							queryToStop.stop();
+		synchronized (queryToStop) {
+			// There are two ways, a query can be stopped. By a scheduler or by
+			// the
+			// executor. Run into this method only once, else there will be a
+			// deadlock!
+			if (queryToStop.getState() != QueryState.INACTIVE) {
+				if (!queryToStop.isMarkedAsStopping()) {
+					queryToStop.setAsStopping(true);
+					LOG.debug("Try to stop query " + queryToStop.getID());
+					try {
+						this.executionPlanLock.lock();
+						getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
+						if (isRunning()) {
+							if (queryToStop.getState() != QueryState.INACTIVE) {
+								queryToStop.stop();
+							}
+							LOG.info("Query " + queryToStop.getID() + " stopped. Execution time "
+									+ (queryToStop.getQueryStartTS() > 0
+											? (System.currentTimeMillis() - queryToStop.getQueryStartTS()) + " ms"
+											: "undefined"));
+							firePlanModificationEvent(new QueryPlanModificationEvent(this,
+									PlanModificationEventType.QUERY_STOP, queryToStop));
 						}
-						LOG.info("Query " + queryToStop.getID() + " stopped. Execution time "
-								+ (queryToStop.getQueryStartTS() > 0
-										? (System.currentTimeMillis() - queryToStop.getQueryStartTS()) + " ms"
-										: "undefined"));
-						firePlanModificationEvent(new QueryPlanModificationEvent(this,
-								PlanModificationEventType.QUERY_STOP, queryToStop));
+						executionPlanChanged(PlanModificationEventType.QUERY_STOP, queryToStop);
+					} catch (Exception e) {
+						LOG.warn("Query not stopped. An Error while optimizing occurd (ID: " + queryToStop.getID()
+								+ ")." + e.getMessage());
+						throw new RuntimeException(e);
+						// return;
+					} finally {
+						this.executionPlanLock.unlock();
 					}
-				} catch (Exception e) {
-					LOG.warn("Query not stopped. An Error while optimizing occurd (ID: " + queryToStop.getID() + ")."
-							+ e.getMessage());
-					throw new RuntimeException(e);
-					// return;
-				} finally {
-					this.executionPlanLock.unlock();
+				} else {
+					LOG.debug("Query already marked for stopping");
 				}
-			}else{
-				LOG.debug("Query already marked for stopping");
+			} else {
+				LOG.warn("Cannot stop a non running query");
 			}
-		}else{
-			LOG.warn("Cannot stop a non running query");
 		}
 	}
 

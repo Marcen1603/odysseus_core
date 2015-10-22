@@ -112,7 +112,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 	}
 
 	@Override
-	final public void transfer(W object, int sourceOutPort) {
+	final public synchronized void transfer(W object, int sourceOutPort) {
 		if (opened) {
 			try {
 				if (!readMetaData) {

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,8 +14,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PlanModificationActionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -28,10 +25,8 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>
 	private static final Logger LOG = LoggerFactory.getLogger(PlanModificationActionPO.class);
 
 	private final IServerExecutor executor;
-	private final SDFAttribute queryIDAttribute;
-	private final RelationalExpression<IMetaAttribute> expression;
-
-	private int queryIDAttributeIndex;
+	private final RelationalExpression<IMetaAttribute> actionExpression;
+	private final RelationalExpression<IMetaAttribute> queryIDExpression;
 
 	private ISession caller;
 
@@ -40,16 +35,14 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>
 		Preconditions.checkNotNull(ao, "PlanModificationActionAO must not be null!");
 
 		this.executor = executor;
-		this.expression = new RelationalExpression<IMetaAttribute>(ao.getCommandExpression());
-		this.expression.initVars(ao.getInputSchema(0));
-		this.queryIDAttribute = ao.getQueryIDAttribute();
+		this.actionExpression = new RelationalExpression<IMetaAttribute>(ao.getCommandExpression());
+		this.actionExpression.initVars(ao.getInputSchema(0));
+		this.queryIDExpression = new RelationalExpression<IMetaAttribute>(ao.getQueryIDExpression());
+		this.queryIDExpression.initVars(ao.getInputSchema(0));
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		SDFSchema schema = getOutputSchema();
-
-		queryIDAttributeIndex = schema.indexOf(queryIDAttribute);
 
 		List<ISession> callers = getSessions();
 
@@ -63,20 +56,31 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>
 
 	@Override
 	protected void process_next(Tuple<IMetaAttribute> object, int port) {
+		List<Tuple<IMetaAttribute>> preProcessResult = null;
+
 		String command = null;
 		try {
-			List<Tuple<IMetaAttribute>> preProcessResult = null;
-			Object v = this.expression.evaluate(object, getSessions(), preProcessResult);
+			Object v = this.actionExpression.evaluate(object, getSessions(), preProcessResult);
 			if (v != null) {
 				command = v.toString();
 			}
 		} catch (Exception e) {
 
+		}		
+		Integer queryID = null;
+		try{
+			Object v = this.queryIDExpression.evaluate(object, getSessions(), preProcessResult);
+			if (v != null){
+				queryID = Integer.parseInt(v.toString());
+			}
+		}catch(Exception e){
+			
 		}
-		Integer queryID = object.getAttribute(queryIDAttributeIndex);
-
+				
 		if (!Strings.isNullOrEmpty(command) && queryID != null) {
 			tryExecuteCommand(command, queryID);
+		}else{
+			LOG.warn("Problems executing "+command+" on query id "+queryID);
 		}
 	}
 
