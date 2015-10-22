@@ -110,8 +110,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		processTransportHandler(operator, config, options, dataHandler, protocolHandler);
 
 		if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-			inputPO = new AccessPO(protocolHandler, operator.getMaxTimeToWaitForNewEventMS(),
-					operator.readMetaData());
+			inputPO = new AccessPO(protocolHandler, operator.getMaxTimeToWaitForNewEventMS(), operator.readMetaData());
 		} else {
 			inputPO = new ReceiverPO(protocolHandler, operator.readMetaData());
 		}
@@ -137,7 +136,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				if (type == null) {
 					type = MetadataRegistry.getMetadataType(config.getDefaultMetaTypeSet());
 				}
-				((IMetadataInitializer<?,?>) inputPO).setMetadataType(type);
+				((IMetadataInitializer<?, ?>) inputPO).setMetadataType(type);
 
 				TimestampAO tsAO = getTimestampAOAsFather(operator);
 				Class<? extends IMetaAttribute> toC = ITimeInterval.class;
@@ -155,17 +154,19 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler, options);
 			if (transportHandler == null) {
 				LOG.error("No transport handler {} found.", operator.getTransportHandler());
-				throw new TransformationException(
-						"No transport handler " + operator.getTransportHandler() + " found.");
+				throw new TransformationException("No transport handler " + operator.getTransportHandler() + " found.");
 			}
 
 			transportHandler.setExecutor((IExecutor) config.getOption(IServerExecutor.class.getName()));
 
+			// if the transport handler provides a schema this must be used
+			// instead of the user defined schema
 			// In some cases the transport handler needs to know the
 			// schema
-			if (dataHandler != null) {
+			if (dataHandler != null && transportHandler.getSchema() == null){
 				transportHandler.setSchema(dataHandler.getSchema());
 			}
+		
 		}
 	}
 

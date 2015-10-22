@@ -10,6 +10,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -20,19 +24,36 @@ public class PlanModificationWatcherTransportHandler extends
 	
 	private static final String NAME = "PlanModificationWatcher";
 	private IPlanManager planManager;
+	private static SDFSchema schema;
+	static {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("", "ts",
+				SDFDatatype.START_TIMESTAMP, null));
+		attributes.add(new SDFAttribute("", "queryID",
+				SDFDatatype.INTEGER, null));
+		attributes.add(new SDFAttribute("", "eventType",
+				SDFDatatype.STRING, null));
+		attributes.add(new SDFAttribute("", "user",
+				SDFDatatype.STRING, null));
 
+		schema = SDFSchemaFactory.createNewSchema("",
+				Tuple.class, attributes);	
+	}
+	
 	final private List<Tuple<IMetaAttribute>> outputBuffer = new ArrayList<>();
 	
 	private Thread runner; 
 
 	public PlanModificationWatcherTransportHandler() {
 		super();
+		setSchema(schema);
 		planManager = null;
 	}
 
 	public PlanModificationWatcherTransportHandler(
 			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
+		setSchema(schema);
 	}
 
 	@Override
@@ -121,5 +142,6 @@ public class PlanModificationWatcherTransportHandler extends
 			}
 		}
 	}
+	
 
 }

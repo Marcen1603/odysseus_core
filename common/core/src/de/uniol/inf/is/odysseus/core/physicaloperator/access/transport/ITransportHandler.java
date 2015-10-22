@@ -98,6 +98,13 @@ public interface ITransportHandler {
      * @param punctuation
      */
     void processPunctuation(IPunctuation punctuation);
+
+    /**
+     * If the transport handler has a schema it can be provided here
+     * @param schema
+     */
+    SDFSchema getSchema();
+
     
     /**
      * If the transport handler needs to know the schema, it will be called here

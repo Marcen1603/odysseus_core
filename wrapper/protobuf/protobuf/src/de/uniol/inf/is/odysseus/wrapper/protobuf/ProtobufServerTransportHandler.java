@@ -224,6 +224,11 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	}
 	
 	@Override
+	public SDFSchema getSchema() {
+		return delegate.getSchema();
+	}
+	
+	@Override
 	public void processOutOpen() throws IOException {
 		
 	}
