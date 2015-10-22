@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -20,8 +17,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 
 public class PlanModificationWatcherTransportHandler extends
 		AbstractPushTransportHandler implements IPlanModificationListener {
-
-	///private static final Logger LOG = LoggerFactory.getLogger(PlanModificationWatcherTransportHandler.class);
 	
 	private static final String NAME = "PlanModificationWatcher";
 	private IPlanManager planManager;
@@ -62,6 +57,7 @@ public class PlanModificationWatcherTransportHandler extends
 						+ " cannot be used on this site. Must be on server!");
 			}
 		}
+		// Different threads can call planModificationEvent --> Assure correct ordering by sender threat
 		runner = new Thread("PlanModificationWatcherTransportHandlerThread"){
 			public void run() {
 				while (!interrupted()){
