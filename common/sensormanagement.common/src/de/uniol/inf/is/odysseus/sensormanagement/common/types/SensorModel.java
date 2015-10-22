@@ -22,8 +22,8 @@ public class SensorModel
 	public Map<String, String> options = new HashMap<>();
 	public Position position;
 	
-	// If this value is set, this sensor will be set up as a sensor in Odysseus which receives playback data
-	public String playbackConfig;
+	// If this value is set, this sensor will be set up as a simulated sensor in Odysseus which receives simulated data
+	public String simulationConfig;
 			
 	public SensorModel()
 	{
@@ -47,6 +47,6 @@ public class SensorModel
 		
 		options = new HashMap<>(other.options);
 		position = other.position == null ? null : other.position.clone();
-		playbackConfig = other.playbackConfig;
+		simulationConfig = other.simulationConfig;
 	}
 }

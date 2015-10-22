@@ -18,7 +18,7 @@ public class SensorFactory
 {
 	static private SensorType getLMS1xx()
 	{
-		String dataQuery =
+		String liveDataQuery =
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"				
 				+ "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -28,12 +28,12 @@ public class SensorFactory
 				+ "               dataHandler='KeyValueObject',\n"
 				+ "               options=[%(optionsEx) ['rawData','true'], ['ignoretimestamp', 'true']]})\n";
 
-		String playbackQuery =
+		String simulatedDataQuery =
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"				
 				+ "%(sourceName) := ACCESS({source='%(sourceName)',\n"
 		    	+ "               wrapper='GenericPush',\n"
-				+ "               transport='UDPClient',\n"
+				+ "               transport='UDPServer',\n"
 				+ "               protocol='LMS1xx',\n"
 				+ "               dataHandler='KeyValueObject',\n"
 				+ "               options=[%(optionsEx) ['passiveMode', 'true'], ['rawData','true'], ['ignoretimestamp', 'true']]})\n";		
@@ -68,12 +68,12 @@ public class SensorFactory
 		optionsInformation.put("host", "The ethernet address for the scanner");
 		optionsInformation.put("port", "The port number for the scanner");
 		
-		return new SensorType("LMS1xx", dataQuery, playbackQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
+		return new SensorType("LMS1xx", liveDataQuery, simulatedDataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}
 
 	static private SensorType getDummy()
 	{
-		String dataQuery =
+		String liveDataQuery =
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"				
 				+ "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -84,7 +84,7 @@ public class SensorFactory
 				+ "				  schema=[['Timestamp', 'STARTTIMESTAMP']],\n"
 				+ "               options=[%(optionsEx) ['period','100']]})\n";
 
-		String playbackQuery =
+		String simulatedDataQuery =
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"				
 				+ "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -121,12 +121,12 @@ public class SensorFactory
 		
 		Map<String, String> optionsInformation = new HashMap<>();
 		
-		return new SensorType("Dummy", dataQuery, playbackQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
+		return new SensorType("Dummy", liveDataQuery, simulatedDataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
 	
 	static private SensorType getIntegratedCamera()
 	{
-		String dataQuery = 
+		String liveDataQuery = 
 				"#PARSER PQL\n"		
 			  + "#RUNQUERY\n"				
 			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -137,7 +137,7 @@ public class SensorFactory
 			  + "                         schema=[['Image', 'ImageJCV']],\n"
 			  + "                         options=[%(optionsEx) ['timestampmode', 'none']]})\n";
 
-		String playbackQuery =
+		String simulatedDataQuery =
 				"#PARSER PQL\n"		
 			  + "#RUNQUERY\n"				
 			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -181,12 +181,12 @@ public class SensorFactory
 		Map<String, String> optionsInformation = new HashMap<>();
 		optionsInformation.put("streamUrl", "Specify camera id as \"camera://[ID]\"");
 		
-		return new SensorType("IntegratedCamera", dataQuery, playbackQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
+		return new SensorType("IntegratedCamera", liveDataQuery, simulatedDataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
 
 	static private SensorType getBaslerCamera()
 	{
-		String dataQuery =
+		String liveDataQuery =
 				"#PARSER PQL\n"		
 			  + "#RUNQUERY\n"				
 			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -198,7 +198,7 @@ public class SensorFactory
 			  + "                                 ['timestamp', 'STARTTIMESTAMP']],\n"
 			  + "                         options=[%(options)]})\n";
 
-		String playbackQuery =
+		String simulatedDataQuery =
 				"#PARSER PQL\n"		
 			  + "#RUNQUERY\n"				
 			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -244,12 +244,12 @@ public class SensorFactory
 		Map<String, String> optionsInformation = new HashMap<>();
 		optionsInformation.put("serialNumber", "The serial number of the camera");		
 		
-		return new SensorType("BaslerCamera", dataQuery, playbackQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
+		return new SensorType("BaslerCamera", liveDataQuery, simulatedDataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}		
 
 	static private SensorType getOptrisCamera()
 	{
-		String dataQuery =
+		String liveDataQuery =
 				"#PARSER PQL\n"		
 			  + "#RUNQUERY\n"				
 			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -262,7 +262,7 @@ public class SensorFactory
 			  + "                                 ['flagState', 'String']],\n"
 			  + "                         options=[%(options)]})\n";
 			  
-		String playbackQuery =
+		String simulatedDataQuery =
 				"#PARSER PQL\n"		
 			  + "#RUNQUERY\n"				
 			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -320,12 +320,12 @@ public class SensorFactory
 		Map<String, String> optionsInformation = new HashMap<>();
 		optionsInformation.put("ethernetAddress", "The ethernet address for the camera");
 		
-		return new SensorType("OptrisCamera", dataQuery, playbackQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
+		return new SensorType("OptrisCamera", liveDataQuery, simulatedDataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
 
 	static private SensorType getGPS()
 	{
-		String dataQuery =
+		String liveDataQuery =
 			"#PARSER PQL\n"		
 		  + "#RUNQUERY\n"				
 		  + "gps = ACCESS({source='%(sourceName)',\n"
@@ -349,7 +349,7 @@ public class SensorFactory
 		  + "                        ['ToString(time.hours) + \":\" + ToString(time.minutes) + \":\" + ToString(time.seconds)', 'time']]}, Input)	\n"           						
 		  + "%(sourceName) := out\n";
 
-		String playbackQuery =
+		String simulatedDataQuery =
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"				
 				+ "%(sourceName) := ACCESS({source='%(sourceName)',\n"
@@ -391,9 +391,9 @@ public class SensorFactory
 		String liveViewUrl = "udp://%(host):%(port)";
 		
 		Map<String, String> optionsInformation = new HashMap<>();
-		optionsInformation.put("port", "The port number for the GPS receiver (F. ex. COM3)");
+		optionsInformation.put("port", "The port number of the GPS receiver (F. ex. COM3)");
 		
-		return new SensorType("GPS", dataQuery, playbackQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
+		return new SensorType("GPS", liveDataQuery, simulatedDataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
 	
 	static private SensorFactory instance = null;

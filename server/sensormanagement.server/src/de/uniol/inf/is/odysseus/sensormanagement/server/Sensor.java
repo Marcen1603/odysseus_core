@@ -83,10 +83,10 @@ public class Sensor
 		formatMap.put("optionsEx", (options.length() > 0) ? (options + ",") : "");
 		
 		String queryText;		
-		if (config.playbackConfig == null)
-			queryText = StringUtils.namedFormatStr(type.dataQueryText, formatMap);
+		if (config.simulationConfig == null)
+			queryText = StringUtils.namedFormatStr(type.liveDataQueryText, formatMap);
 		else
-			queryText = StringUtils.namedFormatStr(type.playbackQueryText, formatMap);
+			queryText = StringUtils.namedFormatStr(type.simulatedDataQueryText, formatMap);
 		
 		safeAddQuery(getDataQueryName(), queryText, session);
 	}

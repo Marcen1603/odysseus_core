@@ -24,7 +24,7 @@ public class MemoryMappedFile
 	private MappedByteBuffer mapBuffer;
 	private Thread thread;
 	
-	final public Callback<MemoryMappedFile, ByteBuffer> callback = new Callback<>();
+	final public Callback<MemoryMappedFile, ByteBuffer> callback = new Callback<>(this);
 	
 	public MemoryMappedFile(String filename, int size, Direction direction) throws IOException 
 	{
