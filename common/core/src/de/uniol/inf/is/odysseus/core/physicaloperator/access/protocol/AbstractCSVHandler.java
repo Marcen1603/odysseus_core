@@ -23,7 +23,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	protected boolean trim = false;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
-	private WriteOptions writeOptions;
+	protected WriteOptions writeOptions;
 
 	public static final String DELIMITER = "delimiter";
 	public static final String CSV_DELIMITER = "csv.delimiter";
