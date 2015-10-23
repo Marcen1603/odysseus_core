@@ -26,9 +26,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-// TODO: Noch mal ber die Grenzen nachdenken (Wann <=, wann <)
-// TODO: Gibt es evtl. effizientere Algorithmen?
-
 /**
  * Klasse, mit deren Hilfe ein diskretes (!) rechtsoffenes Intervall zwischen
  * zwei Zeitpunkten (PointInTime) definiert werden kann die linke Grenze muss
@@ -92,7 +89,8 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	}
 
 	protected void init(PointInTime start, PointInTime end) {
-		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
+		// New: Allow elements with zero valid time
+		if (!start.beforeOrEquals(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
 					"start point is not before end point in time interval ["
 							+ start + "," + end + ")");
@@ -151,7 +149,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 
 	@Override
 	public void setEnd(PointInTime end) {
-		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
+		if (!start.beforeOrEquals(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
 					"start point is not before end point in time interval ["
 							+ start + "," + end + ")");
@@ -448,6 +446,10 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 
 	public static TimeInterval forever() {
 		return forever.clone();
+	}
+	
+	public boolean isEmpty(){
+		return this.start.equals(this.end);
 	}
 
 	@Override
