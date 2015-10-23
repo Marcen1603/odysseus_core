@@ -112,7 +112,8 @@ public class TStreamGroupingWithAggregationTIPORule extends
 		}
 		if (po != null) {
 			po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
-
+			po.setAllowElementsWithEmptyValidTime(aggregateAO.isAllowElementsWithEmptyValidTime());
+			
 			po.setOutputPA(aggregateAO.isOutputPA());
 			po.setDrainAtDone(aggregateAO.isDrainAtDone());
 			po.setDrainAtClose(aggregateAO.isDrainAtClose());

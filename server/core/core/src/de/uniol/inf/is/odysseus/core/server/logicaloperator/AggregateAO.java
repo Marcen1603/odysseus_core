@@ -57,6 +57,8 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 
 	private List<AggregateItem> aggregationItems;
 	private int dumpAtValueCount = -1;
+	boolean allowElementsWithEmptyValidTime;
+
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
@@ -93,6 +95,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		this.useRoundRobinAllocation = op.useRoundRobinAllocation;
 		this.aggregationItems = op.aggregationItems != null ? Lists
 				.newArrayList(op.aggregationItems) : null;
+		this.allowElementsWithEmptyValidTime = op.allowElementsWithEmptyValidTime;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -274,6 +277,16 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		return dumpAtValueCount;
 	}
 
+	@Parameter(type = BooleanParameter.class, optional = true, doc = "If set to true and dumpAtValueCount is used, also elements with same start and end timestamp are produced as additional output")
+	public void setAllowElementsWithEmptyValidTime(boolean allowElementsWithEmptyValidTime){
+		this.allowElementsWithEmptyValidTime = allowElementsWithEmptyValidTime;
+	}
+	
+	public boolean isAllowElementsWithEmptyValidTime() {
+		return allowElementsWithEmptyValidTime;
+	}
+
+	
 	@Parameter(type = BooleanParameter.class, optional = true)
 	public void setOutputPA(boolean outputPA) {
 		this.outputPA = outputPA;
@@ -357,4 +370,5 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		
 		return true;
 	}
+
 }

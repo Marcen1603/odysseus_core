@@ -88,6 +88,12 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	protected long createOutputCounter = 0;
 
 	/**
+	 * If set to true, element with same start and end time stamp can be produced with
+	 * dumpAtValueCount function
+	 */
+	private boolean allowElementsWithEmptyValidTime = false;
+	
+	/**
 	 * The aggregation could output values or partial aggregates.
 	 */
 	protected boolean outputPA = false;
@@ -113,6 +119,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * aggregation
 	 */
 	protected Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
+
+	
 
 	static final Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
@@ -159,6 +167,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		this.dumpAtValueCount = dumpAtValueCount;
 	}
 
+	public void setAllowElementsWithEmptyValidTime(boolean allowElementsWithEmptyValidTime){
+		this.allowElementsWithEmptyValidTime = allowElementsWithEmptyValidTime;
+	}
+	
 	/**
 	 * The aggreation can created concrete values as output, e.g. 20 for an AVG
 	 * aggregation. If the aggregation is splitted partial aggregates can be
@@ -362,7 +374,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 				if (createAdditionalOutput) {
 					List<PairMap<SDFSchema, AggregateFunction, W, Q>> addResults = updateSA(entry.getValue(),
-							timestamp);
+							timestamp, allowElementsWithEmptyValidTime);
 					if (addResults.size() > 0) {
 						produceResults(addResults, entry.getKey(), g);
 					}
@@ -744,7 +756,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	@SuppressWarnings("unchecked")
 	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-			PointInTime splitPoint) {
+			PointInTime splitPoint, boolean allowElementsWithEmptyValidTime) {
 		// System.err.println("BEFORE "+splitPoint);
 		// System.err.println(sa.toString());
 		ITimeInterval t_probe = new TimeInterval(splitPoint, splitPoint.plus(1));
@@ -756,7 +768,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		while (qualifies.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies.next();
 			Q meta = element_agg.getMetadata();
-			if (meta.getStart().before(splitPoint)) {
+			if ((!allowElementsWithEmptyValidTime && meta.getStart().before(splitPoint))
+					|| (allowElementsWithEmptyValidTime && meta.getStart().beforeOrEquals(splitPoint))) {
 				PairMap<SDFSchema, AggregateFunction, W, Q> e = calcEval(element_agg, false);
 				Q outputMeta = (Q) meta.clone();
 				outputMeta.setEnd(splitPoint);
