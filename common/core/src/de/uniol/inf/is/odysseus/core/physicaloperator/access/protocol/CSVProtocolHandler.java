@@ -45,6 +45,7 @@ public class CSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends
         } else {
             textDelimiter = optionsMap.containsKey(CSV_TEXT_DELIMITER) ? optionsMap.get(CSV_TEXT_DELIMITER).toCharArray()[0] : "'".toCharArray()[0];
         }
+        writeOptions.setTextSeperator(textDelimiter);
 	}
 
 	@Override
