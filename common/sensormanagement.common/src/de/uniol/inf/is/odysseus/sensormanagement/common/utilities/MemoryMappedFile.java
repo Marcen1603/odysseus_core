@@ -103,12 +103,13 @@ public class MemoryMappedFile
         mapBuffer = memoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, size);		    	
     }
     
-	public void close() throws IOException
+	public void close(boolean deleteFile) throws IOException
 	{
 		if (direction == Direction.READ)
 			stopThread();
 		
-		memoryMappedFile.close();
+		memoryMappedFile.close();		
+		new File(filename).delete();
 	}
 
 	public void write(ByteBuffer message) throws IOException 
