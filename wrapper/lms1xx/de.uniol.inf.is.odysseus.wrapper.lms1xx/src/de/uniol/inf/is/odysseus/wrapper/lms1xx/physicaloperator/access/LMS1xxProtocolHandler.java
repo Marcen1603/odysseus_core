@@ -762,7 +762,7 @@ public class LMS1xxProtocolHandler extends
 				Map<String, Object> event = measurementToMap(measurement);
 				
 				if (addRawData)
-					event.put(LMS1xxProtocolHandler.RAW_DATA, "\u0002" + message + "\u0003");
+					event.put(LMS1xxProtocolHandler.RAW_DATA, (char) LMS1xxConstants.STX + message + (char) LMS1xxConstants.ETX);
 				
 				return new KeyValueObject<>(event);
 			}

@@ -36,7 +36,7 @@ public class SensorFactory
 				+ "               transport='UDPServer',\n"
 				+ "               protocol='LMS1xx',\n"
 				+ "               dataHandler='KeyValueObject',\n"
-				+ "               options=[%(optionsEx) ['passiveMode', 'true'], ['rawData','true'], ['ignoretimestamp', 'true']]})\n";		
+				+ "               options=[%(optionsEx) ['passiveMode', 'true'], ['rawData','true']]})\n";		
 		
 		String logQuery = 
 				  "#PARSER PQL\n"		
@@ -53,11 +53,11 @@ public class SensorFactory
 		String liveViewQuery = 
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"
-				+ "raw = KEYVALUETOTUPLE({schema=[['RAWDATA','String']], type='Tuple', keepinput='false'}, %(sourceName))"
+				+ "raw = KEYVALUETOTUPLE({schema=[['TIMESTAMP', 'Long'], ['RAWDATA','String']], type='Tuple', keepinput='false'}, %(sourceName))"
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
 				+ "                      transport='UDPClient',\n"
-				+ "			             protocol='SimpleCSV',\n"
+				+ "			             protocol='CSV',\n"
 				+ "                      dataHandler='Tuple',\n"
 				+ "                      options=[['host', '%(host)'], ['port', '%(port)'], ['write', '20480']]},\n"
 				+ "              SAMPLE({samplerate=5}, raw))\n";
