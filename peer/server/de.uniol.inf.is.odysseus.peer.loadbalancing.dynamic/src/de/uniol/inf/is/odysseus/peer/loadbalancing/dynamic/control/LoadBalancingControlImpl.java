@@ -142,12 +142,19 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 	public void forceLoadBalancing() {
 		
 		if(currentStrategy!=null) {
-			try {
-				currentStrategy.forceLoadBalancing();
-			} catch (LoadBalancingException e) {
-				LOG.error("Error while forcing LoadBalancing: {}",e.getMessage());
-				e.printStackTrace();
-			}
+			LOG.info("Forced Load balancing. This might interfere with Monitoring Process. ");
+			new Thread()
+			{
+			    public void run() {
+			    	try {				
+						currentStrategy.forceLoadBalancing();
+					} catch (LoadBalancingException e) {
+						LOG.error("Error while forcing LoadBalancing: {}",e.getMessage());
+						e.printStackTrace();
+					}
+			    }
+			}.start();
+			
 		}
 		
 	}

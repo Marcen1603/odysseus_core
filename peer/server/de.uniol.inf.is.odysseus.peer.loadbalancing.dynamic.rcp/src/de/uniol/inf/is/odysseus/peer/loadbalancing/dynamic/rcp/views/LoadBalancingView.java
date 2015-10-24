@@ -192,15 +192,10 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		forceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new Thread()
-				{
-				    public void run() {
-				    	ILoadBalancingController controller = Activator.getLoadBalancingController();
-						if (controller != null){
-							controller.forceLoadBalancing();;
-						}
-				    }
-				}.start();
+				ILoadBalancingController controller = Activator.getLoadBalancingController();
+				if (controller != null){
+					controller.forceLoadBalancing();;
+				}
 
 			}
 		});
