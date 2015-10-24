@@ -8,6 +8,12 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 
+/**
+ * Data Structure to hold information about sets of Queries and their Cpu, Mem and Net Costs.
+ * Used in Dynamic Load Balancing
+ * @author Carsten Cordes
+ *
+ */
 public class QueryCostMap implements Cloneable {
 
 	private TreeMap<Double,List<Integer>> internalCostMap = new TreeMap<Double,List<Integer>>();
@@ -19,14 +25,24 @@ public class QueryCostMap implements Cloneable {
 	private double totalNetLoad = 0.0;
 	
 	
+	/**
+	 * 
+	 */
 	public QueryCostMap() {
 		
 	}
 	
+	/**
+	 * @see java.lang.Object#clone()
+	 */
 	public QueryCostMap clone() {
 		return new QueryCostMap(this);
 	}
 	
+	/**
+	 * Copy Constructor
+	 * @param old Query Cost Map to clone.
+	 */
 	public QueryCostMap(QueryCostMap old) {
 		this.totalCpuLoad = old.totalCpuLoad;
 		this.totalMemLoad = old.totalMemLoad;
@@ -47,6 +63,10 @@ public class QueryCostMap implements Cloneable {
 		}
 	}
 	
+	/**
+	 * Adds Query to Cost Map
+	 * @param query {@link QueryLoadInformation} of Query to add.
+	 */
 	public void add(QueryLoadInformation query) {
 		int queryId = query.getQueryId();
 		
@@ -76,11 +96,23 @@ public class QueryCostMap implements Cloneable {
 	}
 	
 
+	/**
+	 * Adds Query to cost Map
+	 * @param queryId QueryID to add
+	 * @param individualCost Migration Cost for Query.
+	 * @param cpuLoad Cpu Load of Query
+	 * @param memLoad Mem Load of Query
+	 * @param netLoad Net Load of Query
+	 */
 	public void add(Integer queryId, double individualCost, double cpuLoad, double memLoad, double netLoad) {
 		QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,memLoad,netLoad,individualCost);
 		add(info);
 	}
 	
+	/**
+	 * Removes Query from Cost Map
+	 * @param queryId QueryID to remove.
+	 */
 	public void remove(int queryId) {
 		if(!internalInformationMap.containsKey(queryId))
 			return;
@@ -103,6 +135,11 @@ public class QueryCostMap implements Cloneable {
 		individualCostSum -= info.getIndividualMigrationCost();
 	}
 	
+	/**
+	 * Gets Information about Query
+	 * @param queryId QueryID to get Information for
+	 * @return @link{QueryLoadInformation} with Information about chosen Query or null if Query not in Cost Map.
+	 */
 	public QueryLoadInformation getQueryInformation(int queryId) {
 		if(internalInformationMap.containsKey(queryId)) {
 			return internalInformationMap.get(queryId);
@@ -110,10 +147,19 @@ public class QueryCostMap implements Cloneable {
 		return null;
 	}
 
+	/**
+	 * Checks if Cost Map contains particular Query
+	 * @param queryId Query ID to check for.
+	 * @return true if Query is in Cost Map, false if not.
+	 */
 	public boolean containsQuery(Integer queryId) {
 		return internalInformationMap.containsKey(queryId);
 	}
 	
+	/**
+	 * Returns sorted List of @link{QueryLoadInformation} of all Queries in Cost Map.
+	 * @return sorted List of @link{QueryLoadInformation} of all Queries in Cost Map
+	 */
 	public List<QueryLoadInformation> getQueriesSortedByCost() {
 		Iterator<Entry<Double,List<Integer>>> iter = internalCostMap.entrySet().iterator();
 		List<QueryLoadInformation> queries = new ArrayList<QueryLoadInformation>();
@@ -127,16 +173,28 @@ public class QueryCostMap implements Cloneable {
 	}
 	
 
+	/**
+	 * Get total Costs of Query Cost Map
+	 * @return total Costs of Cost Map.
+	 */
 	public double getCosts() {
 		return individualCostSum;
 	}
 	
 
+	/**
+	 * Get all QueryIDs in Cost Map
+	 * @return List of queryIDs in Cost Map.
+	 */
 	public List<Integer> getQueryIds() {
 		return new ArrayList<Integer>(internalInformationMap.keySet());
 	}
 	
 	
+	/**
+	 * Returns a nice formatted output of Query Costs in Cost Map (e.g. for debug purpose).
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -172,14 +230,25 @@ public class QueryCostMap implements Cloneable {
 		
 	}
 
+	/**
+	 * Returns Total Cpu Load of Cost Map.
+	 * @return total Cpu Load of Cost Map.
+	 */
 	public double getTotalCpuLoad() {
 		return totalCpuLoad;
 	}
 
+	/**
+	 * Returns Total Mem Load of Cost Map.
+	 * @return total Mem Load of Cost Map.
+	 */
 	public double getTotalMemLoad() {
 		return totalMemLoad;
 	}
-
+	/**
+	* Returns Total Net Load of Cost Map.
+	* @return total Net Load of Cost Map.
+	*/
 	public double getTotalNetLoad() {
 		return totalNetLoad;
 	}

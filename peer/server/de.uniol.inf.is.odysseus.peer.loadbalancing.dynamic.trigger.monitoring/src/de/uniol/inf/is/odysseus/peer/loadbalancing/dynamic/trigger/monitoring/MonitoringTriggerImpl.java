@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingTrigger;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.listeners.ILoadBalancingTriggerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.OdyLoadConstants;
 
 public class MonitoringTriggerImpl implements ILoadBalancingTrigger, IMonitoringThreadListener {
 
@@ -66,9 +67,17 @@ public class MonitoringTriggerImpl implements ILoadBalancingTrigger, IMonitoring
 	@Override
 	public void notifyLoadBalancingTriggered(double cpuUsage, double memUsage,
 			double netUsage) {
+		
+		double cpuLoadToRemove = Math.max(0.0, cpuUsage
+				- OdyLoadConstants.CPU_THRESHOLD);
+		double memLoadToRemove = Math.max(0.0, memUsage
+				- OdyLoadConstants.MEM_THRESHOLD);
+		double netLoadToRemove = Math.max(0.0, netUsage
+				- OdyLoadConstants.NET_THRESHOLD);
+		
 		ArrayList<ILoadBalancingTriggerListener> listenersCopy = new ArrayList<ILoadBalancingTriggerListener>(listenerList);
 		for (ILoadBalancingTriggerListener listener : listenersCopy) {
-			listener.triggerLoadBalancing(cpuUsage, memUsage, netUsage);
+			listener.triggerLoadBalancing(cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
 		}
 		
 	}

@@ -37,6 +37,11 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
+/**
+  * Allows split Queries containing a DataratePO after Datarate PO. 
+ * Source of Query becomes new Query (and is added to excluded Queries). This allows Load balancing Communicators to process query.
+ * @author Carsten Cordes
+ */
 public class DataratePOTransformer {
 
 	/**
@@ -45,6 +50,16 @@ public class DataratePOTransformer {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DataratePOTransformer.class);
 
+	/**
+	 * split Queries containing DataratePO after Datarate and creates new Query from Source. (Prototype - expect errors)
+	 * @param queryID Query to Split
+	 * @param localPeerID ID of Local Peer (for new Jxta-Operators)
+	 * @param session active Session
+	 * @param executor Executor
+	 * @param networkManager Network manager
+	 * @param excludedQueriesRegistry Excluded Queries Registry
+	 * @param queryPartController To set shared Query ID if needed.
+	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static void replaceDataratePOs(int queryID, PeerID localPeerID, ISession session,IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry,IQueryPartController queryPartController) {
 		

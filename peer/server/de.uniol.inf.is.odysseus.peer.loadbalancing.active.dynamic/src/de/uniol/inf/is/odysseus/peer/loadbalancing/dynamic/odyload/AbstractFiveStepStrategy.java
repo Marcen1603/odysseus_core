@@ -46,6 +46,11 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.Transfo
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
+/**
+ * Basic Implementation of {@link de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy} that implements a standardized Five-Step Approach with customizable steps.
+ * @author badagent
+ *
+ */
 public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy,ILoadBalancingTriggerListener, IQueryTransmissionHandlerListener {
 
 	private static final int WAIT_TIME_MILLIS_AFTER_LB_ATTEMPT = 0;
@@ -68,15 +73,27 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 	private IQueryTransmissionHandler transmissionHandler;
 	
 	
+	/**
+	 * Set Trigger for Strategy
+	 * @param name Trigger name
+	 */
 	protected void setTrigger(String name) {
 		trigger = OsgiServiceProvider.getTriggerRegistry().getTrigger(name);
 	}
 	
+	/**
+	 * Set (Single) Selector for Strategy
+	 * @param name Selector name
+	 */
 	protected void setSelector(String name) {
 		selectors = Lists.newArrayList();
 		selectors.add(OsgiServiceProvider.getSelectorRegistry().getSelector(name));
 	}
 	
+	/**
+	 * Set (multiple) Selectors for Strategy
+	 * @param names List of Selector names
+	 */
 	protected void setSelectors(List<String> names) {
 		selectors = Lists.newArrayList();
 		for(String selectorName : names) {
@@ -85,22 +102,34 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 	}
 	
 
+	/**
+	 * Set Allocator for Strategy
+	 * @param name Allocator name
+	 */
 	protected void setAllocator(String name) {
 		allocator = OsgiServiceProvider.getAllocatorRegistry().getAllocator(name);
 	}
 	
+	/**
+	 * Set Communicator for Strategy 
+	 * @param name Communciator names
+	 */
 	protected void setCommunicatorChooser(String name) {
 		communicatorChooser = OsgiServiceProvider.getCommunicatorChooserRegistry().getCommunicatorChooser(name);
 	}
 	
+	/**
+	 * Set Transmission Handler for Stratgy 
+	 * @param name Transmission Handler Name.
+	 */
 	protected void setTransmissionHandler(String name) {
 		transmissionHandler = OsgiServiceProvider.getTransmissionHandlerRegistry().getTransmissionHandler(name);
 	}
 	
 
 	@Override
-	public void triggerLoadBalancing(double cpuUsage, double memUsage,
-			double netUsage) {
+	public void triggerLoadBalancing(double cpuLoadToRemove, double memLoadToRemove,
+			double netLoadToRemove) {
 
 		Preconditions.checkNotNull(allocator,"No Allocator bound.");
 		Preconditions.checkNotNull(communicatorChooser,"No Communicator Chooser bound.");
@@ -123,13 +152,7 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 
 		LOG.info("Re-Allocation of queries triggered.");
 
-		//TODO this has to be in the trigger!
-		double cpuLoadToRemove = Math.max(0.0, cpuUsage
-				- OdyLoadConstants.CPU_THRESHOLD);
-		double memLoadToRemove = Math.max(0.0, memUsage
-				- OdyLoadConstants.MEM_THRESHOLD);
-		double netLoadToRemove = Math.max(0.0, netUsage
-				- OdyLoadConstants.NET_THRESHOLD);
+		
 
 		Collection<Integer> queryIDs = getNotExcludedQueries();
 
@@ -246,7 +269,6 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 					results.add(result);
 					if(chosenResult==null || chosenResult.getCosts()>result.getCosts()) {
 					LOG.info("Setting last result as best result.");
-					//TODO Feasability!
 					chosenResult = result;
 					}
 			}
@@ -456,7 +478,6 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 			try {
 				Thread.sleep(WAIT_TIME_MILLIS_AFTER_LB_ATTEMPT);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

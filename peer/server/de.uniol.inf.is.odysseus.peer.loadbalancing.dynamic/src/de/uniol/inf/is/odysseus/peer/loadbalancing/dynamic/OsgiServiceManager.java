@@ -67,12 +67,17 @@ public class OsgiServiceManager {
 		return p2pNetworkManager;
 	}
 	
-	
+	/**
+	 * Called by OSGi-DS
+	 */
 	public static void bindQueryPartController(IQueryPartController controller) {
 		LOG.debug("Boung Query Part Controller");
 		queryPartController = controller;
 	}
 	
+	/**
+	 * Called by OSGi-DS
+	 */
 	public static void unbindQueryPartController(IQueryPartController controller) {
 		LOG.debug("Unbinding Query Part Controller");
 		if(queryPartController == controller) {
@@ -127,6 +132,10 @@ public class OsgiServiceManager {
 		}
 	}
 	
+	/***
+	 * Getter for Query Part Controller.
+	 * @return
+	 */
 	public static IQueryPartController getQueryPartController() {
 		return queryPartController;
 	}
@@ -147,11 +156,17 @@ public class OsgiServiceManager {
 		return activeSession;
 	}
 	
+	/**
+	 * Called by OSGi-DS
+	 */
 	public static void bindLBQueryManager(ILoadBalancingQueryManager serv) {
 		LOG.debug("Bound LB Query Manager");
 		queryManager = serv;
 	}
 	
+	/**
+	 * Called by OSGi-DS
+	 */
 	public static void unbindLBQueryManager(ILoadBalancingQueryManager serv) {
 		LOG.debug("Unbound LB Query Manager");
 		if(queryManager==serv) {
@@ -159,7 +174,10 @@ public class OsgiServiceManager {
 		}
 	}
 
-	
+	/***
+	 * Getter for Load Balancing Query manager.
+	 * @return
+	 */
 	public static ILoadBalancingQueryManager getQueryManager() {
 		return queryManager;
 	}

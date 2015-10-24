@@ -5,19 +5,15 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 
 /**
- * The {@link ILoadBalancingStrategy} interface provides methods to start monitoring the current load and enabling the load balancing 
- * as well as to stop monitoring the current load and disabling the load balancing. <br />
- * Additionally, an {@link ILoadBalancingAllocator} and an {@link ILoadBalancingCommunicator} are necessary for the load balancing process. 
- * Both can be set within an {@link ILoadBalancingStrategy}.
- * @author Michael Brand
+ * Interface to implement custom Load Balancing Strategy for dynamic Load Balancing
+ * @author Michael Brand, Carsten Cordes
+ *
  */
 public interface ILoadBalancingStrategy extends INamedInterface {
 	
-	/**
-	 * A {@link LoadBalancingException} indicates, that an error occurred either in 
-	 * {@link ILoadBalancingStrategy#startMonitoring()} or in 
-	 * {@link ILoadBalancingStrategy#stopMonitoring()}.
-	 * @author Michael Brand
+	/***
+	 * Load Balancing Exception
+	 * @author Carsten Cordes
 	 */
 	public class LoadBalancingException extends Exception {
 
@@ -30,50 +26,48 @@ public interface ILoadBalancingStrategy extends INamedInterface {
 		 * @see Exception#Exception()
 		 */
 		public LoadBalancingException() {
-			
 			super();
-			
 		}
 
 		/**
 		 * @see Exception#Exception(String, Throwable)
 		 */
 		public LoadBalancingException(String message, Throwable cause) {
-			
 			super(message, cause);
-			
 		}
 
 		/**
 		 * @see Exception#Exception(String)
 		 */
 		public LoadBalancingException(String message) {
-			
-			super(message);
-			
+			super(message);	
 		}
 
 		/**
 		 * @see Exception#Exception(Throwable)
 		 */
 		public LoadBalancingException(Throwable cause) {
-			
 			super(cause);
-			
 		}
 		
 	}
 	
+	/***
+	 * Method that can be used to force a load balancing, e.g. for testing purpose
+	 * @throws LoadBalancingException
+	 */
 	public void forceLoadBalancing() throws LoadBalancingException;
 	
 	/**
 	 * Sets the allocator to be used for handing over {@link ILogicalQueryPart}s.
+	 * (do not use this)
 	 * @param allocator An implementation of {@link ILoadBalancingAllocator}.
 	 */
 	public void setAllocator(ILoadBalancingAllocator allocator);
 	
 	/**
 	 * Sets the communicator to be used for load balancing coordination.
+	 * (do not use this, use communicator choser instead)
 	 * @param communicator An implementation of {@link ILoadBalancingCommunicator}.
 	 */
 	public void setCommunicator(ILoadBalancingCommunicator communicator);

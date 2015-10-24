@@ -196,7 +196,6 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 				{
 				    public void run() {
 				    	ILoadBalancingController controller = Activator.getLoadBalancingController();
-
 						if (controller != null){
 							controller.forceLoadBalancing();;
 						}

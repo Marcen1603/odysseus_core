@@ -16,6 +16,11 @@ import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.IMessageDeliveryFailedListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.RepeatingMessageSend;
 
+/**
+ * Coordinates Locking of Peers.
+ * @author Carsten Cordes
+ *
+ */
 public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerCommunicatorListener {
 
 	private boolean rollback = false;
@@ -46,6 +51,14 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(PeerLockContainer.class);
 
+	/**
+	 * Constructor
+	 * @param communicator PeerCommunicator to use
+	 * @param peerDictionary PeerDictionary to use
+	 * @param peers list of Peers that should be locked
+	 * @param callbackListener Callback that is notified of Locking success or failure
+	 * @param lockingID Unique Locking ID to synchronized locking Process.
+	 */
 	public PeerLockContainer(IPeerCommunicator communicator,IPeerDictionary peerDictionary, List<PeerID> peers, IPeerLockContainerListener callbackListener, int lockingID) {
 
 		this.peerDictionary = peerDictionary;
@@ -84,6 +97,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 	
 	}
 	
+	/**
+	 * start Requesting Locks
+	 */
 	public void requestLocks() {
 
 		registerWithPeerCommunicator();
@@ -101,6 +117,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	}
 
+	/**
+	 * Start releasing Locks.
+	 */
 	public void releaseLocks() {
 		lockingPhaseFinished = true;
 		for (PeerID peer : locks.keySet()) {
@@ -136,6 +155,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 		return job;
 	}
 
+	/**
+	 * @see de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.IMessageDeliveryFailedListener#update(de.uniol.inf.is.odysseus.peer.communication.IMessage, net.jxta.peer.PeerID)
+	 */
 	@Override
 	public void update(IMessage message, PeerID peerID) {
 		// At least one Message failed to deliver.
@@ -160,6 +182,9 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 	}
 
+	/**
+	 * @see de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener#receivedMessage(de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator, net.jxta.peer.PeerID, de.uniol.inf.is.odysseus.peer.communication.IMessage)
+	 */
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
 

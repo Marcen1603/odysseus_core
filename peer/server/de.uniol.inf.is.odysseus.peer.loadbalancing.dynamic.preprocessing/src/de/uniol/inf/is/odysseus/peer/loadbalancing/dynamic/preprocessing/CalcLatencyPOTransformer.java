@@ -38,6 +38,12 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
+/**
+ * Allows split Queries containing a CalclatecyPO before CalcLatecy PO.
+ * Sink of Query becomes new Query (and is added to excluded Queries). This allows Load balancing Communicators to process query.
+ * @author Carsten Cordes
+ *
+ */
 public class CalcLatencyPOTransformer {
 
 	/**
@@ -46,6 +52,16 @@ public class CalcLatencyPOTransformer {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CalcLatencyPOTransformer.class);
 
+	/**
+	 * split Queries containing before CalcLatencyPO and creates new Query from Sink.  (Prototype - expect errors)
+	 * @param queryID Query to Split
+	 * @param localPeerID ID of Local Peer (for new Jxta-Operators)
+	 * @param session active Session
+	 * @param executor Executor
+	 * @param networkManager Network manager
+	 * @param excludedQueriesRegistry Excluded Queries Registry
+	 * @param queryPartController To set shared Query ID if needed.
+	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static void replaceCalcLatencyPO(int queryID, PeerID localPeerID,
 			ISession session, IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry,IQueryPartController queryPartController) {

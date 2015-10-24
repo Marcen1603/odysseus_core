@@ -11,8 +11,21 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
+/**
+ * Adds shared QueryID to Query to allow for distribution of Query.
+ * @author Carsten Cordes
+ *
+ */
 public class SharedQueryIDModifier {
 	
+	/**
+	 * Add shared Query ID to query (if it has none yet)
+	 * @param queryID Query 
+	 * @param session active Session
+	 * @param executor Executor
+	 * @param queryPartController QueryPart Controller
+	 * @param networkManager Network Manager
+	 */
 	public static void addSharedQueryIDIfNeccessary(int queryID,ISession session,IServerExecutor executor, IQueryPartController queryPartController, IP2PNetworkManager networkManager) {
 
 		

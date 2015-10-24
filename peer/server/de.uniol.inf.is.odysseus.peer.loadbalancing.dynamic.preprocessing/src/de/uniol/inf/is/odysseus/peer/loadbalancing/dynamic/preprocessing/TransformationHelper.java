@@ -45,6 +45,11 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 
+/**
+ * Helper class for transformation of Queries.
+ * @author Carsten Cordes
+ *
+ */
 public class TransformationHelper {
 	
 
@@ -54,6 +59,11 @@ public class TransformationHelper {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(TransformationHelper.class);
 	
+	/**
+	 * Checks if Operator is real Sink 
+	 * @param op Operator to check
+	 * @return true if Operator is real sink for Query.
+	 */
 	@SuppressWarnings("rawtypes")
 	public static boolean isRealSink(IPhysicalOperator op) {
 		if(op instanceof JxtaSenderPO)
@@ -80,6 +90,12 @@ public class TransformationHelper {
 		return false;
 	}
 	
+	/**
+	 * Checks if Query has real sources 
+	 * @param queryID Query to check
+	 * @param executor Executor
+	 * @return true if Query has real sources.
+	 */
 	public static boolean hasRealSources(int queryID,IServerExecutor executor) {
 		
 		
@@ -91,6 +107,12 @@ public class TransformationHelper {
 		return false;
 	}
 	
+	/**
+	 * Checks if Query has real sinks 
+	 * @param queryID Query to check
+	 * @param executor Executor
+	 * @return true if Query has real sinks.
+	 */
 	public static boolean hasRealSinks(int queryID,IServerExecutor executor) {
 		
 		
@@ -118,6 +140,11 @@ public class TransformationHelper {
 		}
 	}
 
+	/**
+	 * Checks if Operator is real Source 
+	 * @param op Operator to check
+	 * @return true if Operator is Source.
+	 */
 	@SuppressWarnings("rawtypes")
 	public static boolean isRealSource(IPhysicalOperator op) {
 		if(op instanceof JxtaReceiverPO)
@@ -145,6 +172,14 @@ public class TransformationHelper {
 	}
 	
 
+	/**
+	 * Tries to get Logical Source Operator to Physical Source Operator
+	 * @param sourceOperator Physical Source Operator
+	 * @param queryID Query ID
+	 * @param session Session 
+	 * @param executor Executor
+	 * @return Logical Operator for Physical Operator or null.
+	 */
 	public static ILogicalOperator getLogicalSourceToPhysicalSource(
 			IPhysicalOperator sourceOperator, int queryID,ISession session,IServerExecutor executor) {
 		
@@ -205,6 +240,14 @@ public class TransformationHelper {
 	
 
 	
+	/**
+	 * Tries to get Logical Sink Operator to Physical Sink Operator
+	 * @param sinkOperator Physical Sink Operator
+	 * @param queryID Query ID
+	 * @param session Session 
+	 * @param executor Executor
+	 * @return Logical Operator for Physical Operator or null.
+	 */
 	public static ILogicalOperator getLogicalSinkToPhysicalSink(IPhysicalOperator sinkOperator,int queryID,ISession session,IServerExecutor executor) {
 		
 		
@@ -254,6 +297,12 @@ public class TransformationHelper {
 		return sink;
 	}
 	
+	/**
+	 * Checks if Query has DataratePOs
+	 * @param queryID Query ID
+	 * @param executor Executor
+	 * @return true if Query has Datarate POs
+	 */
 	public static boolean hasDataratePOs(int queryID,IServerExecutor executor) {
 		
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
@@ -265,6 +314,12 @@ public class TransformationHelper {
 	}
 	
 
+	/**
+	 * Checks if Operator has CalcLatencyPOs
+	 * @param queryID Query 
+	 * @param executor Executor
+	 * @return true if Operator has CalcLatencyPOs.
+	 */
 	public static boolean hasCalclatencyPOs(int queryID,IServerExecutor executor) {
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
@@ -275,6 +330,14 @@ public class TransformationHelper {
 	}
 	
 
+	/**
+	 * Gets Subscriptions that need to be replaced with Sender/Receiver
+	 * @param operator Operator
+	 * @param queryID Query
+	 * @param isSink is Operator Sink(true) or Source(False)
+	 * @param executor Executor
+	 * @return List of Subscriptions.
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<ControllablePhysicalSubscription> getSubscriptionsToReplace(
 			IPhysicalOperator operator, int queryID, boolean isSink,IServerExecutor executor) {
@@ -308,6 +371,12 @@ public class TransformationHelper {
 	}
 	
 
+	/** 
+	 * Returns first physical Root of Query
+	 * @param queryId QueryID
+	 * @param executor Executor
+	 * @return First physical Root for Query.
+	 */
 	public static IPhysicalOperator getFirstPhysicalRootOfQuery(int queryId,IServerExecutor executor) {
 		
 		
@@ -315,6 +384,15 @@ public class TransformationHelper {
 	}
 	
 
+	/**
+	 * Creates a new Query from logical Operator
+	 * @param operator Operator to be in Query.
+	 * @param oldQueryID QueryID of old Query
+	 * @param session Sessoin
+	 * @param queryNamePostfix String that is put after old Query name to get new Query Name.
+	 * @param executor Executor
+	 * @return Pair with Integer (new Query ID ) and Physical Operator
+	 */
 	public static Pair<Integer, IPhysicalOperator> createNewQueryWithFromLogicalOperator(
 			ILogicalOperator operator, int oldQueryID,
 			ISession session, String queryNamePostfix,IServerExecutor executor) {
@@ -342,6 +420,13 @@ public class TransformationHelper {
 	}
 	
 
+	/**
+	 * Creates a new JxtaSenderAO
+	 * @param op Physical Operator (to get Schema)
+	 * @param peerID PeerID
+	 * @param pipeID PipeID
+	 * @return new JxtaSenderAO
+	 */
 	public static JxtaSenderAO createJxtaSenderAO(IPhysicalOperator op, PeerID peerID,
 			PipeID pipeID) {
 		JxtaSenderAO senderAO = new JxtaSenderAO();
@@ -353,6 +438,14 @@ public class TransformationHelper {
 	}
 	
 
+	/**
+	 * Creates a new JxtaReceiverAO
+	 * @param op Operator (for configuration)
+	 * @param peerID PeerID
+	 * @param pipeID pipeID
+	 * @param schema Schema
+	 * @return new JxtaReceiverAO
+	 */
 	public static JxtaReceiverAO createReceiverAO(IPhysicalOperator op, PeerID peerID,
 			PipeID pipeID,SDFSchema schema) {
 		JxtaReceiverAO receiverAO = new JxtaReceiverAO();
@@ -367,6 +460,13 @@ public class TransformationHelper {
 	}
 	
 
+	/**
+	 * Tries to get Logical for pyhsical Subscription
+	 * @param op Operator
+	 * @param subscr physical Subscription
+	 * @param reverse is it a reverse subscription(Sink to Source?)
+	 * @return LogicalSubscription that fits or null
+	 */
 	@SuppressWarnings("rawtypes")
 	public static ISubscription getLogicalForPhysicalSubscription(ILogicalOperator op,ISubscription subscr,boolean reverse) {
 		Iterator<LogicalSubscription> iter;
@@ -394,6 +494,14 @@ public class TransformationHelper {
 	
 	
 
+	/**
+	 * Replaces logical Subscription with Sender/Receiver
+	 * @param logicalSubscription 
+	 * @param source
+	 * @param sink
+	 * @param senderAO
+	 * @param receiverAO
+	 */
 	@SuppressWarnings("rawtypes")
 	public static void replaceLogicalSubscription(
 			ISubscription logicalSubscription, ILogicalOperator source,ILogicalOperator sink,
@@ -420,6 +528,20 @@ public class TransformationHelper {
 
 	}
 	
+	/**
+	 * Modifies logical Query to represent changes done on physical Query.
+	 * @param operator
+	 * @param jxtaSender
+	 * @param jxtaReceiver
+	 * @param subscription
+	 * @param sourceQueryID
+	 * @param sinkQueryID
+	 * @param newRootsSourceSide
+	 * @param newRootsSinkSide
+	 * @param session
+	 * @param reverseSubscription Is Subscription Sink->Source?
+	 * @param executor
+	 */
 	@SuppressWarnings("rawtypes")
 	public static void modifyLogicalQuery(ILogicalOperator operator,JxtaSenderAO jxtaSender,JxtaReceiverAO jxtaReceiver, ISubscription subscription,int sourceQueryID,int sinkQueryID,Collection<ILogicalOperator> newRootsSourceSide,Collection<ILogicalOperator> newRootsSinkSide,ISession session, boolean reverseSubscription,IServerExecutor executor) {
 		
@@ -480,6 +602,13 @@ public class TransformationHelper {
 		}
 	}
 
+	/**
+	 * Tries to get Forward Subscription  (source->Sink) for Backward Subscription (sink->source)
+	 * @param originalSource
+	 * @param originalSink
+	 * @param logicalSubscription
+	 * @return
+	 */
 	@SuppressWarnings("rawtypes")
 	public static LogicalSubscription getSourceToSinkSubscriptionFromReversed(
 			ILogicalOperator originalSource, ILogicalOperator originalSink,
@@ -494,11 +623,25 @@ public class TransformationHelper {
 		return null;
 	}
 
+	/**
+	 * Tries to get Logical For physical Operator by provided Methods in Physical Op (does not work)
+	 * @param physOp
+	 * @return
+	 */
 	public static ILogicalOperator getLogicalForPhysicalOperator(IPhysicalOperator physOp) {
 		return physOp.getLogicalOperator();
 	}
 	
 
+	/**
+	 * Replaces Physical Subscsription with Sender and Receiver
+	 * @param source
+	 * @param sink
+	 * @param subscr
+	 * @param senderPO
+	 * @param receiverPO
+	 * @param openReceivers
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void replacePhysicalConnectionWithSenderReceiverPair(ISource source,ISink sink,ISubscription subscr, JxtaSenderPO senderPO,JxtaReceiverPO receiverPO,boolean openReceivers) {
 
@@ -534,6 +677,20 @@ public class TransformationHelper {
 
 	}
 	
+	/**
+	 * Modifies Physical Query to set new Roots after Transformation.
+	 * @param sinkOperator
+	 * @param sourceOperator
+	 * @param sourceSideQueryID
+	 * @param session
+	 * @param newRoots
+	 * @param iter
+	 * @param subscr
+	 * @param receiverPO
+	 * @param senderPO
+	 * @param openReceivers
+	 * @param executor
+	 */
 	@SuppressWarnings("rawtypes")
 	public static void modifyPhyiscalQuery(ISink sinkOperator,ISource sourceOperator, int sourceSideQueryID, ISession session,List<IPhysicalOperator> newRoots,Iterator<ControllablePhysicalSubscription> iter,
 			ISubscription subscr, JxtaReceiverPO receiverPO,

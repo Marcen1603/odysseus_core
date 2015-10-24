@@ -29,6 +29,11 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
+/**
+ * Helper class for Migration Cost and Load Calculation in OdyLoad Strategy
+ * @author Carsten Cordes
+ *
+ */
 public class CostEstimationHelper {
 	
 
@@ -41,10 +46,18 @@ public class CostEstimationHelper {
 	private static IPhysicalCostModel physicalCostModel;
 	private static ISession activeSession;
 	
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		networkManager = serv;
 	}
 	
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if(networkManager==serv) {
 			networkManager = null;
@@ -53,10 +66,18 @@ public class CostEstimationHelper {
 	
 	
 
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void bindExecutor(IExecutor serv) {
 		executor = (IServerExecutor)serv;
 	}
 	
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void unbindExecutor(IExecutor serv) {
 		if(executor==serv) {
 			executor=null;
@@ -65,25 +86,46 @@ public class CostEstimationHelper {
 	
 	
 
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void bindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
 		usageManager = serv;
 	}
 	
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void unbindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
 		if(usageManager==serv) {
 			networkManager = null;
 		}
 	}
 	
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void bindPhysicalCostModel(IPhysicalCostModel serv) {
 		physicalCostModel = serv;
 	}
 	
+	/**
+	 * used by OSGi
+	 * @param serv
+	 */
 	public static void unbindPhysicalCostModel(IPhysicalCostModel serv) {
 		physicalCostModel = null;
 	}
 	
 	
+	/**
+	 * Estimate Netload with alternative Net-Metric based on Jxta-Sender and Receiver operators.
+	 * @param operatorList List of all operators in a query
+	 * @return Accumulated Netload of Operators based on alternative Metric.
+	 */
 	@SuppressWarnings("rawtypes")
 	public static double estimateNetloadFromJxtaOperatorCount(Set<IPhysicalOperator> operatorList) {
 		
@@ -115,10 +157,18 @@ public class CostEstimationHelper {
 	
 	
 
+	/**
+	 * Estimate Free Network Capacity by using alternative Metric based on Jxta-Operator Count. 
+	 * @return Free network Capacity based on alternative Metric.
+	 */
 	public static double estimateNetFreeFromJxtaOperatorCount() {
 		return (1.0-estimateNetUsedFromJxtaOperatorCount());
 	}
 	
+	/**
+	 * Estimate Used Network Capacity by using alternative Metric based on Jxta-Operator Count. 
+	 * @return Used network Capacity based on alternative Metric.
+	 */
 	public static double estimateNetUsedFromJxtaOperatorCount() {
 
 		List<IPhysicalOperator> allOperatorsOnPeer = Lists.newArrayList();
@@ -138,6 +188,11 @@ public class CostEstimationHelper {
 
 	
 	
+	/**
+	 * Calculate Migration Cost for Query
+	 * @param operators list of Operators in Query
+	 * @return Migration Cost of Query.
+	 */
 	public static double calculateIndividualMigrationCostsForQuery(Collection<IPhysicalOperator> operators) {
 		
 		int numberOfReceivers = 0;
@@ -176,6 +231,10 @@ public class CostEstimationHelper {
 	}
 	
 
+	/**
+	 * Generator A cost map for all installed Queries on Peer.
+	 * @return Cost Map that contains all installed Queries.
+	 */
 	public static QueryCostMap generateCostMapForAllQueries() {
 
 		HashMap<Integer, IPhysicalQuery> queries = getPhysicalQueries();
@@ -194,6 +253,10 @@ public class CostEstimationHelper {
 	}
 	
 
+	/**
+	 * Get map of Queries IDs and according physical Queries installed on Peer.
+	 * @return map of Queries IDs and according physical Queries installed on Peer.
+	 */
 	public static HashMap<Integer, IPhysicalQuery> getPhysicalQueries() {
 
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
@@ -220,6 +283,12 @@ public class CostEstimationHelper {
 	
 
 
+	/**
+	 * Add Query to provided Cost Map
+	 * @param queryCostMap Cost Map the query should be added to
+	 * @param queryId QueryID of query to add
+	 * @param operatorList List of Operators in Query.
+	 */
 	public static void addQueryToCostMap(QueryCostMap queryCostMap, int queryId,Set<IPhysicalOperator> operatorList) {
 		
 		

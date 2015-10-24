@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload;
 
+/***
+ * Constants used in OdyLoad Strategy.
+ * @author Carsten Cordes.
+ *
+ */
 public class OdyLoadConstants {
 
 	

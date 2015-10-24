@@ -36,6 +36,11 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
+/**
+ * Allows to split Queries after Source.
+ * Source of Query becomes new Query (and is added to excluded Queries). This allows Load balancing Communicators to process query.
+ * @author Carsten Cordes
+ */
 public class SourceTransformer {
 
 	/**
@@ -44,6 +49,16 @@ public class SourceTransformer {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SourceTransformer.class);
 
+	/**
+	 * splits Query into old Query connected to Jxta-Receiver and new Query from Source connected to Jxta-Sender (prototype - expect errors).
+	 * @param queryID Query 
+	 * @param localPeerID local Peer ID (for Jxta-Operators)
+	 * @param session active Session
+	 * @param executor Executor
+	 * @param networkManager Network Manager
+	 * @param excludedQueriesRegistry Excluded Queries Registry
+	 * @param queryPartController Query Part Controller
+	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static void replaceSources(int queryID, PeerID localPeerID, ISession session, IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry, IQueryPartController queryPartController) {
 		
