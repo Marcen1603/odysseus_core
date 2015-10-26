@@ -190,7 +190,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		});
 
 		comboExecutor = createComboWithLabel(inputTwoGridComposite,
-				"Executor:", CSchedulerRegistry.getAllExecutor("JRE"),0);
+				"Executor:", CSchedulerRegistry.getAllScheduler("JRE"),0);
 		
 	}
 
@@ -329,9 +329,9 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 	
 	private void refreshComboExecutor(){
 		
-		if(CSchedulerRegistry.getAllExecutor(targetPlatform.getText())!=null){
+		if(CSchedulerRegistry.getAllScheduler(targetPlatform.getText())!=null){
 			
-			String[] schedulers = CSchedulerRegistry.getAllExecutor(targetPlatform.getText()).toArray(new String[CSchedulerRegistry.getAllExecutor(targetPlatform.getText()).size()]);
+			String[] schedulers = CSchedulerRegistry.getAllScheduler(targetPlatform.getText()).toArray(new String[CSchedulerRegistry.getAllScheduler(targetPlatform.getText()).size()]);
 			comboExecutor.setItems(stringArrayToUpperCase(schedulers));
 			comboExecutor.select(0);
 			

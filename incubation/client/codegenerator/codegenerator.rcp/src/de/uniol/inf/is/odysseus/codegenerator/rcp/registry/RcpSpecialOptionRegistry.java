@@ -8,7 +8,6 @@ public class RcpSpecialOptionRegistry {
 	static Map<String, IRcpSpecialOption> rcpSpeicalOptionList= new HashMap<String, IRcpSpecialOption>();
 	
 	
-	
 	public static void registerRCPSpeicalOption(IRcpSpecialOption specialOption){
 		
 		if(!rcpSpeicalOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
@@ -17,16 +16,12 @@ public class RcpSpecialOptionRegistry {
 		
 	}
 	
-	
 	public static void unregisterRCPSpeicalOption(IRcpSpecialOption specialOption){
 		
 		if(rcpSpeicalOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
 			rcpSpeicalOptionList.remove(specialOption.getTargetPlatform().toLowerCase());
 		}
-		
-		
 	}
-	
 	
 	public static IRcpSpecialOption getRCPSpeicalOption(String targetPlatform){
 		
