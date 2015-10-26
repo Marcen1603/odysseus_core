@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.composite;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.composite;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
 
 
 public class QueryTransformationProgressComposite extends Composite{

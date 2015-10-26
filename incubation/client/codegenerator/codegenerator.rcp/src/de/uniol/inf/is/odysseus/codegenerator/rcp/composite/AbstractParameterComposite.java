@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.composite;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.composite;
 
 import java.util.Set;
 

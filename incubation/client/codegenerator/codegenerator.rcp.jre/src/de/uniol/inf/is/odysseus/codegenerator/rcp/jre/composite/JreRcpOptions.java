@@ -1,9 +1,9 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre.composite;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.jre.composite;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.AbstractRcpOptionComposite;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.IRcpSpecialOption;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.modell.AbstractRcpOptionComposite;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.registry.IRcpSpecialOption;
 
 
 public class JreRcpOptions implements IRcpSpecialOption{

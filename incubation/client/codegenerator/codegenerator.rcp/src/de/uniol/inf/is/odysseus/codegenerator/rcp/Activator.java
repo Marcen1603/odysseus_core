@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre;
+package de.uniol.inf.is.odysseus.codegenerator.rcp;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

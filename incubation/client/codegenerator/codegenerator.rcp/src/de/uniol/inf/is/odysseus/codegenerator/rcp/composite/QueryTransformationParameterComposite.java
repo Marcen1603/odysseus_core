@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.composite;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.composite;
 
 import java.io.File;
 import java.util.Map;
@@ -18,13 +18,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.IRcpOptionComposite;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.IRcpSpecialOption;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry.RcpSpecialOptionRegistry;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
-import de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry.CSchedulerRegistry;
-import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
+import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.modell.IRcpOptionComposite;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.registry.IRcpSpecialOption;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.registry.RcpSpecialOptionRegistry;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.window.QueryTransformationWindow;
+import de.uniol.inf.is.odysseus.codegenerator.scheduler.registry.CSchedulerRegistry;
+import de.uniol.inf.is.odysseus.codegenerator.target.platform.registry.TargetPlatformRegistry;
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguartionException;
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 

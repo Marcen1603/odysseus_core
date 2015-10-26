@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.jre.composite;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.jre.composite;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell.AbstractRcpOptionComposite;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.modell.AbstractRcpOptionComposite;
 
 public class JreRcpComposite extends AbstractRcpOptionComposite {
 	

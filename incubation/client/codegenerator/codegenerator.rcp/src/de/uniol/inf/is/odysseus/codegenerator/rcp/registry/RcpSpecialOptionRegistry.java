@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.registry;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.registry;
 
 import java.util.HashMap;
 import java.util.Map;

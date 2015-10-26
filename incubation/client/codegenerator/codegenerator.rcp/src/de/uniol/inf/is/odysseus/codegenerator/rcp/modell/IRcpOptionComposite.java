@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.modell;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.modell;
 
 import java.util.Map;
 

@@ -1,7 +1,7 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp;
+package de.uniol.inf.is.odysseus.codegenerator.rcp;
 
 
-import de.uniol.inf.is.odysseus.query.codegenerator.ICAnalyse;
+import de.uniol.inf.is.odysseus.codegenerator.ICAnalyse;
 
 public class CAnalyseServiceBinding {
 	

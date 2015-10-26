@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.commands;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.commands;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 public class ExportQueryCommand extends AbstractHandler {

@@ -1,14 +1,14 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.rcp.thread;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.thread;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.CodegeneratorMessageBus;
-import de.uniol.inf.is.odysseus.query.codegenerator.message.bus.ICodegeneratorMessageConsumer;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodegeneratorMessageEvent;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.CAnalyseServiceBinding;
-import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
+import de.uniol.inf.is.odysseus.codegenerator.message.bus.CodegeneratorMessageBus;
+import de.uniol.inf.is.odysseus.codegenerator.message.bus.ICodegeneratorMessageConsumer;
+import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.CAnalyseServiceBinding;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.window.QueryTransformationWindow;
 
 
 
