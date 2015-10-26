@@ -15,306 +15,186 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
-import java.util.HashMap;
 import java.util.Iterator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
- * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von
- * Daten- und Metadatenmodell betrachtet werden. Die Logik des in dieser Klasse
- * implementierten Operators entspricht jedoch der Logik eines JoinOperators im
- * Intervallansatz.
+ * Left Join: Works as a join with one exception: elements on the left input (0)
+ * will be transfered even if there is no join partner. In this case the schema
+ * will be filled with null values.
  * 
- * @author abolles
- * 
- * @param <M>
- *            Metadatentyp
+ * @author Michael Brand
+ *
+ * @param <K>
  * @param <T>
- *            Datentyp
  */
-public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
-		extends JoinTIPO<M, T> {
-	// private static final Logger logger =
-	// LoggerFactory.getLogger(LeftJoinTIPO.class);
+public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
 
-	private HashMap<T, PointInTime> left_t_tilde;
-	private ILeftMergeFunction<T, M> dataMerge;
-	// private JoinTISweepArea<T>[] joinAreas;
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger cLog = LoggerFactory.getLogger(LeftJoinTIPO.class);
 
-	private SDFSchema leftSchema;
-	private SDFSchema rightSchema;
-	private SDFSchema resultSchema;
+	/**
+	 * The key for the temporal meta data, which marks if an element has a join
+	 * partner.
+	 */
+	private static final String cMetaDataKey = "JoinPartner";
 
-	public SDFSchema getLeftSchema() {
-		return leftSchema;
+	// Start constructors from super
+
+	public LeftJoinTIPO(IMetadataMergeFunction<K> metaDataMergeFunction) {
+		super(metaDataMergeFunction);
 	}
 
-	public SDFSchema getRightSchema() {
-		return rightSchema;
+	public LeftJoinTIPO(ILeftMergeFunction<T, K> dataMergeFunction, IMetadataMergeFunction<K> metaDataMergeFunction,
+			ITransferArea<T, T> transferArea, ITimeIntervalSweepArea<T>[] sweepAreas) {
+		super(dataMergeFunction, metaDataMergeFunction, transferArea, sweepAreas);
 	}
 
-	public SDFSchema getResultSchema() {
-		return resultSchema;
+	public LeftJoinTIPO(LeftJoinTIPO<K, T> other) {
+		super(other);
 	}
 
-	public LeftJoinTIPO(SDFSchema leftSchema, SDFSchema rightSchema,
-			SDFSchema resultSchema, IMetadataMergeFunction<M> metadataMerge) {
-		super(metadataMerge);
-		this.leftSchema = leftSchema;
-		this.rightSchema = rightSchema;
-		this.resultSchema = resultSchema;
-		this.left_t_tilde = new HashMap<T, PointInTime>();
-	}
-
-	public LeftJoinTIPO(LeftMergeFunction<T, M> dataMerge,
-			IMetadataMergeFunction<M> metadataMerge,
-			ITransferArea<T, T> transferFunction,
-			ITimeIntervalSweepArea<T>[] areas) {
-		super(dataMerge, metadataMerge, transferFunction, areas);
-		this.left_t_tilde = new HashMap<T, PointInTime>();
-		this.areas = areas;
-		this.dataMerge = dataMerge;
-	}
+	// End constructors from super
 
 	@Override
 	protected void process_next(T object, int port) {
+		// If not marked, it's the same algorithm as for normal joins
+
+		this.transferFunction.newElement(object, port);
+
 		if (isDone()) {
 			return;
+		} else if (cLog.isDebugEnabled() && !isOpen()) {
+			cLog.error("process next called on non opened operator " + this + " with " + object + " from " + port);
 		}
 
-		// Was soll denn der Unfung?
-		// if(this.hashCode() == 29392698){
-		// String s = "hallo";
-		// }
+		int otherport = port ^ 1;
+		Order order = Order.fromOrdinal(port);
+		Iterator<T> qualifies;
 
-		if (port == 0) {
-			this.doLeft(object, port);
-		} else {
-			this.doRight(object, port);
-		}
-
-		// man muss immer den minimalen Zeitstempel der linken SweepArea wählen
-		// transferFunction.newElement(new Heartbeat(this.areas[0].getMinTs()),
-		// port);
-		transferFunction.newHeartbeat(this.areas[0].getMinTs(), port);
+		// Avoid removing elements while querying for potential hits
 		synchronized (this) {
+
+			if (this.inOrder) {
+				// Left Join: if elements in the left sweep area (0) shall be
+				// purged, check, if they had join partners before.
+				if (otherport == 0) {
+					Iterator<T> extracted = this.areas[otherport].extractElements(object, order);
+					while (extracted.hasNext()) {
+						T next = extracted.next();
+						if (!next.hasMetadata(cMetaDataKey)) {
+							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
+							this.transferFunction.transfer(out);
+						}
+					}
+				} else {
+					this.areas[otherport].purgeElements(object, order);
+				}
+			}
+
 			// status could change, if the other port was done and
 			// its sweeparea is now empty after purging
 			if (isDone()) {
 				propagateDone();
 				return;
 			}
-		}
-	}
 
-	@SuppressWarnings("unchecked")
-	private void doLeft(T object, int port) {
-		int otherport = port ^ 1;
-		Order leftRight = Order.fromOrdinal(port);
+			// depending on card, delete hits from areas
+			// deleting if port is ONE-side
+			// cases for ONE_MANY, MANY_ONE:
+			// ONE side element is earlier than MANY side elements, nothing will
+			// be found
+			// and nothing will be removed
+			// ONE side element is later than some MANY side elements, find all
+			// corresponding elements and remove them
+			boolean extract = false;
+			if (this.card != null) {
+				switch (this.card) {
+				case ONE_ONE:
+					extract = true;
+					break;
+				case MANY_ONE:
+					extract = port == 1;
+					break;
+				case ONE_MANY:
+					extract = port == 0;
+					break;
+				default:
+					break;
+				}
+			}
 
-		// purgeElemente nimmt keine Ruecksicht auf <order>
-		areas[otherport].purgeElements(object, leftRight);
+			qualifies = this.areas[otherport].queryCopy(object, order, extract);
 
-		PointInTime t_tilde = object.getMetadata().getStart();
+			boolean hit = qualifies.hasNext();
 
-		Iterator<T> qualifies;
-		synchronized (this.areas) {
-			synchronized (this.areas[otherport]) {
-				qualifies = areas[otherport].queryCopy(object, leftRight, false);
+			// Left Join: if this is the left input port, mark the object as
+			// join partner found
+			if (hit && port == 0) {
+				object.setMetadata(cMetaDataKey, new Boolean(true));
+			}
 
-				while (qualifies.hasNext()) {
-					T next = qualifies.next();
-					T merged = dataMerge.merge(object, next, metadataMerge,
-							leftRight);
+			while (qualifies.hasNext()) {
+				T next = qualifies.next();
+				T newElement = this.dataMerge.merge(object, next, this.metadataMerge, order);
+				this.transferFunction.transfer(newElement);
 
-					if (merged.getMetadata().getStart().after(t_tilde)) {
-						T leftUnbound = null;
-						leftUnbound = this.dataMerge
-								.createLeftFilledUp((T) object.clone());
-
-						leftUnbound.getMetadata().setStart(t_tilde);
-						leftUnbound.getMetadata().setEnd(
-								merged.getMetadata().getStart());
-						transferFunction.transfer(leftUnbound);
-					}
-					transferFunction.transfer(merged);
-					t_tilde = merged.getMetadata().getEnd();
-					this.left_t_tilde.put(object, t_tilde);
+				// Left Join: if "next" is from the left sweep area, mark it as
+				// join partner found
+				if (hit && otherport == 0 && !next.hasMetadata(cMetaDataKey)) {
+					this.areas[otherport].remove(next);
+					next.setMetadata(cMetaDataKey, new Boolean(true));
+					this.areas[otherport].insert(next);
 				}
 
-				PointInTime ts_max_right = this.areas[otherport].getMaxTs();
-				if (ts_max_right != null && ts_max_right.after(t_tilde)) {
-					T leftUnbound = null;
-					leftUnbound = this.dataMerge.createLeftFilledUp((T) object
-							.clone());
-					leftUnbound.getMetadata().setStart(t_tilde);
-					PointInTime t_end = PointInTime.min(ts_max_right, object
-							.getMetadata().getEnd());
-					leftUnbound.getMetadata().setEnd(t_end);
-					transferFunction.transfer(leftUnbound);
-
-					// t_tilde kann neu gesetzt werden
-					t_tilde = t_end;
-				}
-
-				this.left_t_tilde.put(object, t_tilde);
+			}
+			// Depending on card insert elements into sweep area
+			if (this.card == null || this.card == Cardinalities.MANY_MANY) {
 				this.areas[port].insert(object);
-
+			} else {
+				switch (this.card) {
+				case ONE_ONE:
+					// If one to one case, a hit cannot be produce another hit
+					if (!hit) {
+						this.areas[port].insert(object);
+					}
+					break;
+				case ONE_MANY:
+					// If from left insert
+					// if from right and no hit, insert (corresponding left
+					// element not found now)
+					if (port == 0 || (port == 1 && !hit)) {
+						this.areas[port].insert(object);
+					}
+					break;
+				case MANY_ONE:
+					// If from right insert
+					// if from left and no hit, insert (corresponding right
+					// element not found now)
+					if (port == 1 || (port == 0 && !hit)) {
+						this.areas[port].insert(object);
+					}
+					break;
+				default:
+					this.areas[port].insert(object);
+					break;
+				}
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void doRight(T object, int port) {
-		int leftport = port ^ 1;
-		Order leftRight = Order.fromOrdinal(leftport);
-		Order rightLeft = Order.fromOrdinal(port);
-
-		// first process all invalid elements
-		Iterator<T> invalids = this.areas[leftport].extractElements(object,
-				leftRight);
-		while (invalids.hasNext()) {
-			T invalid = invalids.next();
-			PointInTime invalid_t_tilde = this.left_t_tilde.get(invalid);
-			// the invalid object will not be needed anymore
-			this.left_t_tilde.remove(invalid);
-			if (invalid_t_tilde.before(invalid.getMetadata().getEnd())) {
-				T leftUnbound = null;
-				leftUnbound = this.dataMerge.createLeftFilledUp((T) invalid
-						.clone());
-				leftUnbound.getMetadata().setStart(invalid_t_tilde);
-				transferFunction.transfer(leftUnbound);
-			}
-		}
-
-		// second, process all valid elements with join partner
-		Iterator<T> qualifies = this.areas[leftport].queryCopy(object,
-				rightLeft, false);
-		while (qualifies.hasNext()) {
-			T e_hat = qualifies.next(); // es werden nur kompatible Partner
-										// zurueckgeliefert, die auch nach einem
-										// Join das Join Praedikat erfuellen
-			PointInTime e_hat_t_tilde = this.left_t_tilde.get(e_hat);
-			T merged = dataMerge.merge(e_hat, object, metadataMerge, leftRight);
-			if (merged.getMetadata().getStart().after(e_hat_t_tilde)) {
-				T leftUnbound = null;
-				leftUnbound = this.dataMerge.createLeftFilledUp((T) e_hat
-						.clone());
-				leftUnbound.getMetadata().setStart(e_hat_t_tilde);
-				leftUnbound.getMetadata().setEnd(
-						merged.getMetadata().getStart());
-				this.transferFunction.transfer(leftUnbound);
-			}
-			// es muss <port> sein, weil der Startzeitstempel von Merged mit dem
-			// Startzeitstempel des rechten Elementes uebereinstimmt.
-			this.transferFunction.transfer(merged);
-			this.left_t_tilde.put(e_hat, merged.getMetadata().getEnd());
-		}
-
-		this.areas[port].insert(object);
-
-		// // third, process all elements, that are still in
-		// // left_t_tilde with t_tilde < object.getStart();
-		// // since left_t_tilde has been updated by the
-		// // processing before, we can simply compare
-		// // object.getStart() and each t_tilde timestamp
-		// // each time t_tilde < object.getStart() we
-		// // insert the left element with [t_tilde;objet.getStart())
-		// // into the transfer function
-		// List<Pair<T, PointInTime>> modifiedElements = new ArrayList<Pair<T,
-		// PointInTime>>();
-		// for(Entry<T, PointInTime> entry: this.left_t_tilde.entrySet()){
-		// if(entry.getValue().before(object.getMetadata().getStart())){
-		// T leftUnbound = null;
-		// leftUnbound =
-		// this.dataMerge.createLeftFilledUp((T)entry.getKey().clone());
-		// leftUnbound.getMetadata().setStart(entry.getValue());
-		// leftUnbound.getMetadata().setEnd(object.getMetadata().getStart());
-		// this.transferFunction.transfer(leftUnbound);
-		// Pair<T, PointInTime> newEntry = new Pair(entry.getKey(),
-		// entry.getValue());
-		// modifiedElements.add(newEntry);
-		// }
-		// }
-		//
-		// // insert the modified left_t_tilde entries
-		// for(Pair<T, PointInTime> newEntry: modifiedElements){
-		// this.left_t_tilde.put(newEntry.getE1(), newEntry.getE2());
-		// }
 
 	}
 
-	@Override
-	protected void process_open() throws OpenFailedException {
-		for (int i = 0; i < 2; ++i) {
-			this.areas[i].clear();
-		}
-		this.transferFunction.init(this, getSubscribedToSource().size());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	protected synchronized void process_done() {
-		System.out.println("LeftJoinTIPO (" + this.hashCode()
-				+ ").processDone().");
-
-		// transfer all elements from the left side
-		while (!areas[0].isEmpty()) {
-			T leftUnbound = areas[0].poll();
-			// get t_tilde
-			PointInTime t_tilde = this.left_t_tilde.get(leftUnbound);
-
-			// in the case that we have infinite windows
-			// t_tilde can be infinity. In this case
-			// we do not have put a new element into
-			// the transfer function. More general
-			// we only have to put a new element into
-			// the transfer function, if t_tilde < element.getEnd()
-			if (t_tilde == null) {
-				leftUnbound = this.dataMerge.createLeftFilledUp((T) leftUnbound
-						.clone());
-				// start timestamp is already set from the copy
-				this.transferFunction.transfer(leftUnbound);
-			} else if (t_tilde.before(leftUnbound.getMetadata().getEnd())) {
-				leftUnbound = this.dataMerge.createLeftFilledUp((T) leftUnbound
-						.clone());
-				leftUnbound.getMetadata().setStart(t_tilde);
-				this.transferFunction.transfer(leftUnbound);
-			}
-		}
-		areas[0].clear();
-		areas[1].clear();
-	}
-
-	@Override
-	protected void process_done(int port) {
-		transferFunction.done(port);
-	}
-
-	@Override
-	public boolean isDone() {
-		if (getSubscribedToSource(0).isDone()) {
-			return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
-		}
-		return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
-	}
-
-	public void setDataMerge(ILeftMergeFunction<T, M> dataMerge) {
-		this.dataMerge = dataMerge;
-	}
-
-	@Override
-	public ILeftMergeFunction<T, M> getDataMerge() {
-		return this.dataMerge;
-	}
 }

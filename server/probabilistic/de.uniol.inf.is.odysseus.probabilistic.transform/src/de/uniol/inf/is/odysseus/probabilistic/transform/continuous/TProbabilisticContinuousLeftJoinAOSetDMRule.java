@@ -48,11 +48,11 @@ public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransfo
     @Override
     public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) throws RuleException {
         Objects.requireNonNull(operator);
-        Objects.requireNonNull(operator.getLeftSchema());
-        Objects.requireNonNull(operator.getRightSchema());
+        Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(operator.getInputSchema(1));
         Objects.requireNonNull(operator.getOutputSchema());
         Objects.requireNonNull(transformConfig);
-        operator.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(operator.getLeftSchema(), operator.getRightSchema(), operator.getOutputSchema()));
+        operator.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(operator.getInputSchema(0), operator.getInputSchema(1), operator.getOutputSchema()));
         this.update(operator);
     }
 

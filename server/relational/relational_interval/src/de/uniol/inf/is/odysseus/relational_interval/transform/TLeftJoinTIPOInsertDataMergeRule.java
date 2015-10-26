@@ -15,33 +15,37 @@
   */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
+public class TLeftJoinTIPOInsertDataMergeRule
+		extends AbstractTransformationRule<LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
 
 	@Override
-	public int getPriority() {	
+	public int getPriority() {
 		return 0;
 	}
 
 	@Override
-	public void execute(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, TransformationConfiguration transformConfig) throws RuleException {
-		joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
-		update(joinPO);		
+	public void execute(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO,
+			TransformationConfiguration transformConfig) throws RuleException {
+		joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getInputSchema(0),
+				joinPO.getInputSchema(1), joinPO.getOutputSchema()));
+		update(joinPO);
 	}
 
 	@Override
-	public boolean isExecutable(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-		if(operator.getOutputSchema().getType() == Tuple.class){
-			if(operator.getDataMerge()==null){
+	public boolean isExecutable(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator,
+			TransformationConfiguration transformConfig) {
+		if (operator.getOutputSchema().getType() == Tuple.class) {
+			if (operator.getDataMerge() == null) {
 				return true;
 			}
 		}
@@ -50,16 +54,16 @@ public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule
 
 	@Override
 	public String getName() {
-		return"Insert DataMergeFunction (Relational)";
+		return "Insert DataMergeFunction (Relational)";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
 	}
-	
+
 	@Override
-	public Class<? super LeftJoinTIPO<?,?>> getConditionClass() {	
+	public Class<? super LeftJoinTIPO<?, ?>> getConditionClass() {
 		return LeftJoinTIPO.class;
 	}
 

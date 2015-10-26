@@ -18,24 +18,22 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, doc = "Left join: CURRENTLY NOT WORKING CORRECTLY.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/LeftJoin+operator", name = "LEFTJOIN", category = { LogicalOperatorCategory.BASE })
-public class LeftJoinAO extends JoinAO{
+@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, doc = "Operator to combine two datastreams based on the predicate. All attributes from the first (left) source remain. If an element from the first source has no join partner, it will also be part of the output stream and the output schema contains null values for the missing fields.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/LeftJoin+operator", name = "LEFTJOIN", category = {
+		LogicalOperatorCategory.BASE })
+public class LeftJoinAO extends JoinAO {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8336532431695971478L;
 
-	public LeftJoinAO(){
+	public LeftJoinAO() {
 		super();
 	}
 
 	public LeftJoinAO(LeftJoinAO joinPO) {
 		super(joinPO);
 	}
-	
+
 	@Override
-	public LeftJoinAO clone(){
+	public LeftJoinAO clone() {
 		return new LeftJoinAO(this);
 	}
 

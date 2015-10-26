@@ -15,82 +15,87 @@
   */
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform.join;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.persistentqueries.DirectTransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
-import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTITransferArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.transform.AbstractIntervalTransformationRule;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TLeftJoinAORule extends AbstractIntervalTransformationRule<LeftJoinAO> {
 
 	@Override
-	public int getPriority() {	
+	public int getPriority() {
 		// must be higher than TJoinAORule, since
 		// LeftJoinAO extends JoinAO
-		return 5; 
-	
+		return 5;
+
 	}
 
 	@Override
 	public void execute(LeftJoinAO joinAO, TransformationConfiguration transformConfig) throws RuleException {
-		
-		
-		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
-				.getMergeFunction(joinAO.getInputSchema(0).getMetaAttributeNames(),
-						joinAO.getInputSchema(1).getMetaAttributeNames());
-		
-		LeftJoinTIPO joinPO = new LeftJoinTIPO(joinAO.getInputSchema(0), joinAO.getInputSchema(1), joinAO.getOutputSchema(), metaDataMerge);
-		IPredicate pred = joinAO.getPredicate();
-		joinPO.setJoinPredicate(pred == null ? TruePredicate.getInstance() : pred.clone());
-	
-		// see TJoinAORule
-		
-		// if in both input paths there is no window, we
-		// use a persistent sweep area
-		// check the paths
-//		boolean windowFound=false;
-//		for(int port = 0; port<2; port++){
-//			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
-//				windowFound = true;
-//				break;
-//			}
-//		}
-//		
-//		if(!windowFound){
-//			joinPO.setTransferFunction(new PersistentTransferArea());
-//		}
-//		// otherwise we use a LeftJoinTISweepArea
-//		else{
-			joinPO.setTransferFunction(new LeftJoinTITransferArea());	
-//		}
-		
-		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
-		
-		defaultExecute(joinAO, joinPO, transformConfig, true, true);
-	}
 
+		List<String> leftMeta = joinAO.getInputSchema(0).getMetaAttributeNames();
+		List<String> rightMeta = joinAO.getInputSchema(1).getMetaAttributeNames();
+
+		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry.getMergeFunction(leftMeta, rightMeta);
+
+		if (metaDataMerge == null) {
+			throw new RuntimeException(
+					"Cannot find a meta data merge function for left=" + leftMeta + " and right=" + rightMeta);
+		}
+
+		LeftJoinTIPO joinPO = new LeftJoinTIPO(metaDataMerge);
+		boolean isCross = false;
+		IPredicate pred = joinAO.getPredicate();
+		if (pred == null) {
+			joinPO.setJoinPredicate(TruePredicate.getInstance());
+			isCross = true;
+		} else {
+			joinPO.setJoinPredicate(pred.clone());
+		}
+		joinPO.setCardinalities(joinAO.getCard());
+		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
+
+		if (joinAO.isAssureOrder()) {
+			joinPO.setTransferFunction(new TITransferArea());
+		} else {
+			joinPO.setTransferFunction(new DirectTransferArea());
+		}
+		// }
+
+		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
+
+		defaultExecute(joinAO, joinPO, transformConfig, true, true);
+		if (isCross) {
+			joinPO.setName("Crossproduct");
+		}
+
+	}
 
 	@Override
 	public String getName() {
 		return "JoinAO -> JoinTIPO";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
-	public Class<? super LeftJoinAO> getConditionClass() {	
+	public Class<? super LeftJoinAO> getConditionClass() {
 		return LeftJoinAO.class;
 	}
 
