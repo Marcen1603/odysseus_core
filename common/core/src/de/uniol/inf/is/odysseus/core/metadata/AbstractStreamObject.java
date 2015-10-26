@@ -31,6 +31,11 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	final public Object getMetadata(String name) {
 		return metadataMap.get(name);
 	}
+	
+	@Override
+	final public boolean hasMetadata(String name) {
+		return this.metadataMap.containsKey(name);
+	}
 
 	@Override
 	final public void setMetadata(String name, Object content) {

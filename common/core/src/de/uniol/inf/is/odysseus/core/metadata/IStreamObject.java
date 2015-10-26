@@ -57,6 +57,8 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 * @return the stored meta data object
 	 */
 	Object getMetadata(String name);
+	
+	boolean hasMetadata(String name);
 
 	void setMetadataMap(Map<String, Object> metaMap);
 	Map<String, Object> getMetadataMap();
