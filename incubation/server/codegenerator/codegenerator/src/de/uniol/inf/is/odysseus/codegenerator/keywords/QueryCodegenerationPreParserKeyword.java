@@ -40,7 +40,7 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		String targetPlatform =result.get(QueryCodegenerationKeywordParameter.TARGETPLATFROM);
 		String targetDirectory = result.get(QueryCodegenerationKeywordParameter.TARGETDIRECTORY);
 		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
-		String executorString =result.get(QueryCodegenerationKeywordParameter.EXECUTOR);
+		String schedulerString =result.get(QueryCodegenerationKeywordParameter.SCHEDULER);
 		
 		if (!checkDirecotry(targetDirectory)) {
 			throw new IllegalArgumentException(
@@ -67,18 +67,18 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		}
 	
 		
-		if(!CSchedulerRegistry.existScheduler(targetPlatform, executorString)){
-			StringBuilder availableExecutor = new StringBuilder();
+		if(!CSchedulerRegistry.existScheduler(targetPlatform, schedulerString)){
+			StringBuilder availableScheduler = new StringBuilder();
 			
-			for(String executorTemp : CSchedulerRegistry.getAllScheduler(targetPlatform)	){
-				availableExecutor.append(executorTemp);
-				availableExecutor.append(System.getProperty("line.separator"));
+			for(String schedulerTemp : CSchedulerRegistry.getAllScheduler(targetPlatform)	){
+				availableScheduler.append(schedulerTemp);
+				availableScheduler.append(System.getProperty("line.separator"));
 			}
 			
 			throw new IllegalArgumentException(
-					"No executor "+executorString+" found!"+System.getProperty("line.separator")
+					"No executor "+schedulerString+" found!"+System.getProperty("line.separator")
 					+"available executor:"+System.getProperty("line.separator")
-					+availableExecutor.toString());
+					+availableScheduler.toString());
 		}
 	
 	}
@@ -91,11 +91,11 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		String targetPlatform =result.get(QueryCodegenerationKeywordParameter.TARGETPLATFROM);
 		String targetDirectory = result.get(QueryCodegenerationKeywordParameter.TARGETDIRECTORY);
 		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
-		String executorString =result.get(QueryCodegenerationKeywordParameter.EXECUTOR);
+		String schedulerString =result.get(QueryCodegenerationKeywordParameter.SCHEDULER);
 		String options =result.get(QueryCodegenerationKeywordParameter.OPTIONS);
 		String queryname =result.get(QueryCodegenerationKeywordParameter.QUERYNAME);
 		
-		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  targetDirectory,  0,  odysseusPath, true ,  executorString, parseOptions(options));  
+		TransformationParameter transformationParameter = new TransformationParameter(targetPlatform,  targetDirectory,  0,  odysseusPath, true ,  schedulerString, parseOptions(options));  
 
 		List<IExecutorCommand> commands = new LinkedList<>();
 		

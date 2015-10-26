@@ -49,11 +49,11 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 String targetDirectory= ci.nextArgument();
 		 int queryId= Integer.parseInt(ci.nextArgument());
 		 String odysseusDirectory= ci.nextArgument();
-		 String executor= ci.nextArgument();
+		 String scheduler= ci.nextArgument();
 		 String optionsString = ci.nextArgument();
 	
 	
-		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  targetDirectory,  queryId,  odysseusDirectory, true,  executor,  parseOptions(optionsString)));
+		 configList.put(configName.toLowerCase(), new TransformationParameter( targetPlatform,  targetDirectory,  queryId,  odysseusDirectory, true,  scheduler,  parseOptions(optionsString)));
 	 }
 
 	 
@@ -69,7 +69,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 				sb.append("- targetDirectory: "+config.getValue().getTargetDirectory()).append("\n");
 				sb.append("- queryId: "+config.getValue().getQueryId()).append("\n");
 				sb.append("- odysseusDirectory: "+config.getValue().getOdysseusDirectory()).append("\n");
-				sb.append("- executor: "+config.getValue().getExecutor()).append("\n");
+				sb.append("- scheduler: "+config.getValue().getScheduler()).append("\n");
 				
 				sb.append("\n");	
 			}
@@ -88,14 +88,14 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 			}
 		 sb.append("\n");
 		 
-		 sb.append("--Executors--\n");
+		 sb.append("--Scheduler--\n");
 			for (Entry<String, Map<String, ICScheduler>> platform : CSchedulerRegistry.getAllScheduler().entrySet())
 			{
 				sb.append(platform.getKey()).append("\n");
 				
-				for (Entry<String, ICScheduler> executor : platform.getValue().entrySet())
+				for (Entry<String, ICScheduler> scheduler : platform.getValue().entrySet())
 				{
-					sb.append("-"+executor.getKey()).append("\n");
+					sb.append("-"+scheduler.getKey()).append("\n");
 				}
 				
 					sb.append("\n");

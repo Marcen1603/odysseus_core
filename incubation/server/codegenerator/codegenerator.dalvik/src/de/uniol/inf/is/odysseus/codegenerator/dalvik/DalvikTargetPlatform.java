@@ -50,11 +50,11 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getScheduler());
 		frameworkImportList.addAll(startStreams.getFrameworkImports());
 		importList.addAll(startStreams.getImports());
 		
-		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler("dalvik", parameter.getExecutor()));
+		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler("dalvik", parameter.getScheduler()));
 		
 		try {
 			dalvikFileWrite.createProject();

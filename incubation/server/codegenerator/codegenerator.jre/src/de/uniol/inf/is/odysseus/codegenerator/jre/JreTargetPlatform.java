@@ -65,13 +65,13 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getScheduler());
 		frameworkImportList.addAll(startStreams.getFrameworkImports());
 		importList.addAll(startStreams.getImports());
 		
 	
 		sendMessageEvent(75, "Create Java files",UpdateMessageEventType.INFO);
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler(parameter.getProgramLanguage(), parameter.getExecutor()));
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler(parameter.getProgramLanguage(), parameter.getScheduler()));
 		
 		try {
 			sendMessageEvent(80, "Create Java project",UpdateMessageEventType.INFO);

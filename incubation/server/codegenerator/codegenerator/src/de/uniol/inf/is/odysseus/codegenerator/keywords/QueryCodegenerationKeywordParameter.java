@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 public enum QueryCodegenerationKeywordParameter implements IKeywordParameter {
 	TARGETPLATFROM("targetPlatform", 0, false), TARGETDIRECTORY(
 			"targetDirectory", 1, false), ODYSSEUSPATH("odysseusDirectory", 2,
-			false), EXECUTOR("executor", 3, false), OPTIONS("options", 4, true), QUERYNAME(
+			false), SCHEDULER("scheduler", 3, false), OPTIONS("options", 4, true), QUERYNAME(
 			"queryname", 5, true);
 
 	private String name;

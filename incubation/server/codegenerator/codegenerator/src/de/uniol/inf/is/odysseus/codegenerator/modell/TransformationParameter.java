@@ -10,16 +10,16 @@ public class TransformationParameter {
 	private String odysseusPath;
 	private boolean generateOdysseusJar;
 	private int queryId;
-	private String executor;
+	private String scheduler;
 	private Map<String,String> options = new HashMap<String,String>();
 	
-	public TransformationParameter(String targetPlatform, String targetDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor,Map<String,String> options){
+	public TransformationParameter(String targetPlatform, String targetDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String scheduler,Map<String,String> options){
 		this.targetPlatform = targetPlatform;
 		this.targetDirectory = targetDirectory;
 		this.queryId = queryId;
 		this.setOdysseusPath(odysseusPath);
 		this.setGenerateOdysseusJar(generateOdysseusJar);
-		this.executor = executor;
+		this.scheduler = scheduler;
 		this.setOptions(options);
 	}
 	
@@ -77,13 +77,13 @@ public class TransformationParameter {
 	}
 
 
-	public String getExecutor() {
-		return executor;
+	public String getScheduler() {
+		return scheduler;
 	}
 
 
-	public void setExecutor(String executor) {
-		this.executor = executor;
+	public void setScheduler(String executor) {
+		this.scheduler = executor;
 	}
 
 
