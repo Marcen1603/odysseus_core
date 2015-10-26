@@ -116,7 +116,7 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
     }
 
 	@Override
-	public void setLayerUpdater(Puffer puffer) {
+	public void setPuffer(Puffer puffer) {
 	}
 	
 	@Override

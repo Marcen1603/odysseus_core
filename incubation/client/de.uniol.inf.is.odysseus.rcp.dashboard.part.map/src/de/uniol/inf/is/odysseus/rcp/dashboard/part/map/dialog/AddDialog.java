@@ -40,16 +40,18 @@ public class AddDialog extends TitleAreaDialog {
 
 	private String layerType;
 	private Text layerName;
+	private int layerPositionAfter;
 	private CCombo server = null;
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public AddDialog( Shell parentShell,IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
+	public AddDialog(Shell parentShell, IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
 		super(parentShell);
 		this.operator = operator;
 		this.layerOrder = layerOrder;
 		this.layerType = "RasterLayer";
 		this.ownProperties = new OwnProperties();
+		this.layerPositionAfter = layerOrder.size()-1;
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public class AddDialog extends TitleAreaDialog {
 		configContainer.setLayout(DialogUtils.getGroupLayout());
 		configContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
-		//getRasterLayerConfigurationComposite(configContainer);
+		// getRasterLayerConfigurationComposite(configContainer);
 		getThematicConfiguration(configContainer);
 		DialogUtils.separator(parent);
 
@@ -105,7 +107,7 @@ public class AddDialog extends TitleAreaDialog {
 		final Combo layerTypesCombo = new Combo(typeSelection, SWT.DROP_DOWN);
 		layerTypesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		layerTypesCombo.setItems(types);
-		layerTypesCombo.select(2);//Map
+		layerTypesCombo.select(2);// Heatmap
 		layerTypesCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -122,7 +124,7 @@ public class AddDialog extends TitleAreaDialog {
 				} else
 
 				if (layerTypesCombo.getText().equals("Map")) {
-					if (!(layerType.equals("RasterLayer"))) {
+					if (!(layerType.equals("Map"))) {
 						for (Control c : configContainer.getChildren()) {
 							c.dispose();
 						}
@@ -148,22 +150,21 @@ public class AddDialog extends TitleAreaDialog {
 		Label layerPlaceLabel = new Label(layerConfigurationComp, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");
 
-		CCombo layerPlace = new CCombo(layerConfigurationComp, SWT.BORDER);
+		final CCombo layerPlace = new CCombo(layerConfigurationComp, SWT.BORDER);
 		layerPlace.setLayoutData(DialogUtils.getTextDataLayout());
 
 		for (ILayer layer : layerOrder) {
 			layerPlace.add(layer.getName());
 		}
 		if (!layerOrder.isEmpty())
-			layerPlace.setText(layerOrder.getFirst().getName());
+			layerPlace.setText(layerOrder.getLast().getName());
 
-		// TODO PLACEMENT
-		// layerPlace.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		//
-		// };
-		// });
+		layerPlace.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				 layerPositionAfter = layerPlace.getSelectionIndex();
+			};
+		});
 
 		return layerConfigurationComp;
 	}
@@ -174,7 +175,8 @@ public class AddDialog extends TitleAreaDialog {
 	}
 
 	private Composite getRasterLayerConfigurationComposite(Composite parent) {
-		if (!(layerConfiguration instanceof RasterLayerConfiguration))
+		if (!(layerConfiguration instanceof RasterLayerConfiguration)
+				|| layerConfiguration instanceof HeatmapLayerConfiguration)
 			this.layerConfiguration = new RasterLayerConfiguration("");
 		final RasterLayerConfiguration layerConfiguration = (RasterLayerConfiguration) this.layerConfiguration;
 		Composite rasterLayerComp = new Composite(parent, SWT.NONE);
@@ -216,12 +218,11 @@ public class AddDialog extends TitleAreaDialog {
 	 * @return
 	 */
 	private Composite getThematicConfiguration(Composite parent) {
-		
+
 		if (!(layerConfiguration instanceof HeatmapLayerConfiguration))
 			this.layerConfiguration = new HeatmapLayerConfiguration("");
 		final HeatmapLayerConfiguration layerConfiguration = (HeatmapLayerConfiguration) this.layerConfiguration;
-		
-		
+
 		Composite thematicLayer = new Composite(parent, SWT.NONE);
 		thematicLayer.setLayout(DialogUtils.getGroupLayout());
 		thematicLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
@@ -244,7 +245,7 @@ public class AddDialog extends TitleAreaDialog {
 
 		final CCombo geometrieSelect = new CCombo(thematicLayer, SWT.BORDER);
 		geometrieSelect.setLayoutData(DialogUtils.getTextDataLayout());
-		
+
 		Label latLabel = new Label(thematicLayer, SWT.NONE);
 		latLabel.setText("Latitude Attribute:");
 		latLabel.setLayoutData(DialogUtils.getLabelDataLayout());
@@ -252,7 +253,7 @@ public class AddDialog extends TitleAreaDialog {
 		final CCombo latSelect = new CCombo(thematicLayer, SWT.BORDER);
 		latSelect.setLayoutData(DialogUtils.getTextDataLayout());
 		latSelect.setEnabled(false);
-		
+
 		Label lngLabel = new Label(thematicLayer, SWT.NONE);
 		lngLabel.setText("Longitude Attribute:");
 		lngLabel.setLayoutData(DialogUtils.getLabelDataLayout());
@@ -260,34 +261,31 @@ public class AddDialog extends TitleAreaDialog {
 		final CCombo lngSelect = new CCombo(thematicLayer, SWT.BORDER);
 		lngSelect.setLayoutData(DialogUtils.getTextDataLayout());
 		lngSelect.setEnabled(false);
-		
-		Label geoTypeButtonLabel = new Label (thematicLayer, SWT.NONE);
+
+		Label geoTypeButtonLabel = new Label(thematicLayer, SWT.NONE);
 		geoTypeButtonLabel.setText("Use Point?");
 		geoTypeButtonLabel.setLayoutData(DialogUtils.getTextDataLayout());
-		
+
 		final Button geoSelectTypeButton = new Button(thematicLayer, SWT.CHECK);
 		geoSelectTypeButton.setLayoutData(DialogUtils.getTextDataLayout());
 		geoSelectTypeButton.setSelection(true);
 		geoSelectTypeButton.addSelectionListener(new SelectionAdapter() {
-			
-			 @Override
-			    public void widgetSelected(SelectionEvent e)
-			    {
-				 	if(geoSelectTypeButton.getSelection()){
-				 		geometrieSelect.setEnabled(true);
-				 		latSelect.setEnabled(false);
-				 		lngSelect.setEnabled(false);
-				 		layerConfiguration.setUsePoint(true);
-				 	}else{
-				 		geometrieSelect.setEnabled(false);
-				 		latSelect.setEnabled(true);
-				 		lngSelect.setEnabled(true);
-				 		layerConfiguration.setUsePoint(false);
-				 	}
-			    }
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (geoSelectTypeButton.getSelection()) {
+					geometrieSelect.setEnabled(true);
+					latSelect.setEnabled(false);
+					lngSelect.setEnabled(false);
+					layerConfiguration.setUsePoint(true);
+				} else {
+					geometrieSelect.setEnabled(false);
+					latSelect.setEnabled(true);
+					lngSelect.setEnabled(true);
+					layerConfiguration.setUsePoint(false);
+				}
+			}
 		});
-		
-		
 
 		Label visualizationLabel = new Label(thematicLayer, SWT.NONE);
 		visualizationLabel.setText("Value Attribute:");
@@ -300,8 +298,8 @@ public class AddDialog extends TitleAreaDialog {
 		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(layerConfiguration,
 				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 
-		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operator,
-				layerConfiguration, mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
+		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operator, layerConfiguration,
+				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
 
 		geometrieSelect.addSelectionListener(thematicSelectionListener);
@@ -312,7 +310,7 @@ public class AddDialog extends TitleAreaDialog {
 		// Initialize selection
 		thematicSelectionListener.widgetSelected(null);
 		streamSelectionListener.widgetSelected(null);
-		
+
 		main.layout();
 		return thematicLayer;
 	}
@@ -375,6 +373,10 @@ public class AddDialog extends TitleAreaDialog {
 
 	public void setLayerConfiguration(LayerConfiguration layerConfiguration) {
 		this.layerConfiguration = layerConfiguration;
+	}
+	
+	public  int getLayerPositionAfter(){
+		return this.layerPositionAfter;
 	}
 
 	private boolean isValidInput() {

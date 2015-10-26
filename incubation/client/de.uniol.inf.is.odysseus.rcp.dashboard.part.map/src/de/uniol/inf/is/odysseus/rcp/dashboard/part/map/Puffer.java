@@ -9,9 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.index.quadtree.Quadtree;
 
@@ -25,9 +22,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 public class Puffer extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
 
 	private static final long serialVersionUID = 1092858542289960843L;
-
-	private static final Logger LOG = LoggerFactory
-			.getLogger(Puffer.class);
 
 	private final IMapDashboardAdapter mapDashboardPart;
 	private int maxNumerOfElements;
@@ -45,9 +39,6 @@ public class Puffer extends ArrayList<ILayer> implements  Serializable, Property
 		this.mapDashboardPart = mapDashboardPart;
 
 		this.puffer = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
-		
-		maxNumerOfElements = 1000;
-
 	}
 	
 	/**
@@ -221,7 +212,7 @@ public class Puffer extends ArrayList<ILayer> implements  Serializable, Property
 
 	@Override
 	public boolean add(ILayer e) {
-		e.setLayerUpdater(this);
+		e.setPuffer(this);
 		return super.add(e);
 	}
 

@@ -46,7 +46,7 @@ public interface ILayer extends Serializable {
 	
 	public String[] getSupportedDatatypes();
 		
-	public void setLayerUpdater(Puffer puffer);
+	public void setPuffer(Puffer puffer);
 	
 	public Style getStyle();
 	

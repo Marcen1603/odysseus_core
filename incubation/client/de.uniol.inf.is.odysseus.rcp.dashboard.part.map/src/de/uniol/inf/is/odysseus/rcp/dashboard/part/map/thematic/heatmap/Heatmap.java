@@ -212,8 +212,10 @@ public class Heatmap extends RasterLayer {
 				// Transform the given area to the screen
 				zoomEnv = new Envelope(new Coordinate(config.getLngSW(), config.getLatSW()),
 						new Coordinate(config.getLngNE(), config.getLatNE()));
-				int[] southWest = transformation.transformCoord(new Coordinate(config.getLngSW(), config.getLatSW()), srid); // SouthWest
-				int[] northEast = transformation.transformCoord(new Coordinate(config.getLngNE(), config.getLatNE()), srid); // northEast
+				int[] southWest = transformation.transformCoord(new Coordinate(config.getLngSW(), config.getLatSW()),
+						srid); // SouthWest
+				int[] northEast = transformation.transformCoord(new Coordinate(config.getLngNE(), config.getLatNE()),
+						srid); // northEast
 				heatMapArea = new Envelope(southWest[0], northEast[0], southWest[1], northEast[1]);
 			}
 
@@ -331,8 +333,10 @@ public class Heatmap extends RasterLayer {
 					// Transform the given area to the screen
 					zoomEnv = new Envelope(new Coordinate(config.getLngSW(), config.getLatSW()),
 							new Coordinate(config.getLngNE(), config.getLatNE()));
-					int[] southWest = transformation.transformCoord(new Coordinate(config.getLngSW(), config.getLatSW()), srid); // SouthWest
-					int[] northEast = transformation.transformCoord(new Coordinate(config.getLngNE(), config.getLatNE()), srid); // northEast
+					int[] southWest = transformation
+							.transformCoord(new Coordinate(config.getLngSW(), config.getLatSW()), srid); // SouthWest
+					int[] northEast = transformation
+							.transformCoord(new Coordinate(config.getLngNE(), config.getLatNE()), srid); // northEast
 					heatMapArea = new Envelope(southWest[0], northEast[0], southWest[1], northEast[1]);
 				}
 
@@ -341,7 +345,7 @@ public class Heatmap extends RasterLayer {
 				if (heatMapArea.getWidth() == 0) {
 					heatMapArea.expandBy(20);
 				}
-				totalNumberOfElement = (this.config.usePoint()) ? data.size() : tempList.size();
+				totalNumberOfElement = tempList.size();
 
 				double tempTotalValue = 0;
 				for (Tuple<? extends ITimeInterval> tuple : tempList) {
@@ -368,18 +372,17 @@ public class Heatmap extends RasterLayer {
 						if (heatMapArea.covers(tempEnv)) {
 							// Just calculate with this point if its in the area
 							// (maybe the area the user gave us does not include
-							// every
-							// point
-							// in the data)
-							// +1 for the points which are exactly on the border
-							// or if we just have a point as area (just one tuple)
+							// every point in the data) +1 for the points which
+							// are exactly on the border or if we just have a
+							// point as area (just one tuple)
 							double partsWidth = (heatMapArea.getWidth() + 1) / x;
 							int posX = (int) ((tempEnv.getMaxX() - heatMapArea.getMinX()) / partsWidth);
 
 							double partsHeight = (heatMapArea.getHeight() + 1) / y;
 							int posY = (int) ((tempEnv.getMaxY() - heatMapArea.getMinY()) / partsHeight);
 
-							// Add the value to the sum of this tile in the heatmap
+							// Add the value to the sum of this tile in the
+							// heatmap
 							valueSum[posX][posY] += value;
 							// and to the total value
 							tempTotalValue += value;
@@ -416,7 +419,6 @@ public class Heatmap extends RasterLayer {
 			}
 		}
 	}
-
 
 	/**
 	 * Calculates the color for the value between the minColor and the maxColor
@@ -476,7 +478,7 @@ public class Heatmap extends RasterLayer {
 	}
 
 	@Override
-	public void setLayerUpdater(Puffer layerUpdater) {
+	public void setPuffer(Puffer layerUpdater) {
 		this.puffer = layerUpdater;
 	}
 

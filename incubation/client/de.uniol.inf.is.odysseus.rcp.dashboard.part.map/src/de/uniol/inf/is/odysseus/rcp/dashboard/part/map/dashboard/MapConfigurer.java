@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -28,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.AddDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.HeatmapPropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
@@ -37,12 +38,10 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerC
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.buffer.MaxTupleListener;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.buffer.TimeSliderComposite;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 
 /**
- * The MapConfigurer of the {@link MapDashboardPart}. This is what you can see
- * in settings
+ * The configurer of the {@link MapDashboardPart}.
  *
  */
 public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardPart> {
@@ -53,7 +52,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 	private MapDashboardPart mapDashboardPart;
 
-	private TimeSliderComposite timeSliderComposite;
+	//private TimeSliderComposite timeSliderComposite;
 	private Table layerTable;
 
 	private Button editButton, upButton, downButton, topButton, bottomButton;
@@ -85,32 +84,36 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 		createLayerOrderingControls(layerSettingComp);
 
-		
-//		if (!mapDashboardPart.getWizardBoolean()) {
-//			DashboardPartUtil.createLabel(topComposite, "CARE! The time slider is not working properly!");
-//			createTimeSliderComposite(topComposite);
-//		}
+		// if (!mapDashboardPart.getWizardBoolean()) {
+		// DashboardPartUtil.createLabel(topComposite, "CARE! The time slider is
+		// not working properly!");
+		// createTimeSliderComposite(topComposite);
+		// }
 
 		reprintLayerTable();
 	}
 
-	private void createMaxDataControls(Composite topComposite) {
+	private void createMaxDataControls(final Composite topComposite) {
 		Label maxDataLabel = DashboardPartUtil.createLabel(topComposite, "Max. Data");
 		maxDataLabel.setToolTipText("Max value of DataStreamElements are processed");
 		final Spinner maxTuples = new Spinner(topComposite, SWT.NONE);
-		maxTuples.setValues(mapDashboardPart.getLayerUpdater().getMaxPufferSize(), 0, Integer.MAX_VALUE, 0, 1, 1);
-		maxTuples.addSelectionListener(new MaxTupleListener(mapDashboardPart.getLayerUpdater(), maxTuples));
+		maxTuples.setValues(mapDashboardPart.getMaxData(), 0, Integer.MAX_VALUE, 0, 1, 1);
+		maxTuples.addSelectionListener(new MaxTupleListener(mapDashboardPart.getPuffer(), maxTuples));
 
 		maxTuples.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				mapDashboardPart.setMaxData(Integer.valueOf(maxTuples.getText()));
-				fireListener();
+				if (Integer.valueOf(maxTuples.getText()) < 0) {
+					MessageDialog.openInformation(topComposite.getShell(), "Warning", "Negative numbers are forbidden!");
+				} else {
+					mapDashboardPart.setMaxData(Integer.valueOf(maxTuples.getText()));
+					fireListener();
+				}
 			}
 		});
 	}
 
-	private void createUpdateIntervalControls(Composite topComposite) {
+	private void createUpdateIntervalControls(final Composite topComposite) {
 		Label updateIntervall = DashboardPartUtil.createLabel(topComposite, "Upate Interval (in s)");
 		updateIntervall.setToolTipText("Updates the map in the given time intervall");
 		final Text updateIntervalText = DashboardPartUtil.createText(topComposite,
@@ -119,8 +122,12 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		updateIntervalText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				mapDashboardPart.setUpdateInterval(Integer.valueOf(updateIntervalText.getText()));
-				fireListener();
+				if (Integer.valueOf(updateIntervalText.getText()) < 0) {
+					MessageDialog.openInformation(topComposite.getShell(), "Warning", "Negative numbers are forbidden!");
+				} else {
+					mapDashboardPart.setUpdateInterval(Integer.valueOf(updateIntervalText.getText()));
+					fireListener();
+				}
 			}
 		});
 	}
@@ -205,12 +212,14 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		layerTable.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
+				if (!mapDashboardPart.getWizardBoolean()) {
+					LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
-				for (int i = 0; i < group.size(); i++) {
-					if (group.get(i).isActive() != layerTable.getItem(i).getChecked()) {
-						mapDashboardPart.setActive(group.get(i), layerTable.getItem(i).getChecked());
-						fireListener();
+					for (int i = 0; i < group.size(); i++) {
+						if (group.get(i).isActive() != layerTable.getItem(i).getChecked()) {
+							mapDashboardPart.setActive(group.get(i), layerTable.getItem(i).getChecked());
+							fireListener();
+						}
 					}
 				}
 			}
@@ -245,6 +254,15 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 					mapDashboardPart.addLayer(addDialog.getLayerConfiguration());
 
+					int layerPositionAfter = addDialog.getLayerPositionAfter();
+					int layerSize = mapDashboardPart.getMapEditorModel().getLayers().size();
+					if (!(layerPositionAfter == layerSize - 2)) {
+						for (int index = layerSize - 1; index > layerPositionAfter; index--) {
+							LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
+							mapDashboardPart.layerUp(group.get(index));
+						}
+					}
+
 					reprintLayerTable();
 					fireListener();
 				} else {
@@ -265,7 +283,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (layerTable.getSelectionIndex() < 0) {
-					createWarningShell(parent, "Select row!");
+					MessageDialog.openInformation(parent.getShell(), "Warning", "No layer selected!");
 				} else {
 					createDeleteShell(parent, layerTable.getSelectionIndex());
 				}
@@ -329,7 +347,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (layerTable.getSelectionIndex() < 0) {
-					createWarningShell(parent, "Select row!");
+					MessageDialog.openInformation(parent.getShell(), "Warning", "No layer selected!");
 				} else {
 					LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 					int index = layerTable.getSelectionIndex();
@@ -340,7 +358,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 						propertiesDialog.create();
 						propertiesDialog.open();
 						if (propertiesDialog.getReturnCode() == Window.OK) {
-							mapDashboardPart.editLayer(group.get(index), propertiesDialog.getLayerConfiguration());;
+							mapDashboardPart.editLayer(group.get(index), propertiesDialog.getLayerConfiguration());
+							;
 							reprintLayerTable();
 							fireListener();
 						}
@@ -352,6 +371,18 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 						editDialog.open();
 						if (editDialog.getReturnCode() == Window.OK) {
 							mapDashboardPart.editLayer(group.get(index), editDialog.getLayerConfiguration());
+
+							// TODO
+							if (index > editDialog.getLayerPositionAfter() && index != editDialog.getLayerPositionAfter()+1) {
+								for (int i = index; i > editDialog.getLayerPositionAfter()+1; i--) {
+									mapDashboardPart.layerDown(group.get(i));
+								}
+							} else if (index < editDialog.getLayerPositionAfter()) {
+								for (int i = index; i < editDialog.getLayerPositionAfter(); i++) {
+									mapDashboardPart.layerUp(group.get(i));
+								}
+							}
+
 							reprintLayerTable();
 							fireListener();
 						}
@@ -364,33 +395,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 
-	private void createWarningShell(Composite topComposite, String text) {
-		final Shell warningShell = new Shell(topComposite.getShell(),
-				SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.CENTER);
-		warningShell.setText("Warning");
-		warningShell.setSize(200, 100);
-		warningShell.setLayout(new GridLayout(1, false));
-		warningShell.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		Label label = new Label(warningShell, SWT.CENTER);
-		label.setText(text);
-
-		Button confirmDeleteButton = new Button(warningShell, SWT.PUSH | SWT.CENTER);
-		confirmDeleteButton.setText("Confirm");
-		confirmDeleteButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				warningShell.close();
-			}
-		});
-
-		warningShell.open();
-	}
-
-	// TODO BUTTONS AUSGRAUEN, FALLS DIE GEWAEHLTE SCHICHT SCHON TOP ODER BOTTOM
-	// IST
 	private void createOrderButtons(final Composite parent) {
-
 		Label horizontalSpacer = new Label(parent, SWT.NONE);
 		int height = 50;
 		horizontalSpacer.setLayoutData(new GridData(1, height));
@@ -404,7 +409,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
-					createWarningShell(parent, "Select row!");
+					MessageDialog.openInformation(parent.getShell(), "Warning", "No layer selected!");
 				} else if (tableIndex > 0) {
 					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerBottom(group.get(tableIndex));
@@ -423,7 +428,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
-					createWarningShell(parent, "Select row!");
+					MessageDialog.openInformation(parent.getShell(), "Warning", "No layer selected!");
 				} else if (tableIndex > 0) {
 					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerDown(group.get(tableIndex));
@@ -442,7 +447,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
-					createWarningShell(parent, "Select row!");
+					MessageDialog.openInformation(parent.getShell(), "Warning", "No layer selected!");
 				} else if (tableIndex < group.size() - 1) {
 					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerUp(group.get(tableIndex));
@@ -461,7 +466,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
-					createWarningShell(parent, "Select row!");
+					MessageDialog.openInformation(parent.getShell(), "Warning", "No layer selected!");
 				} else if (tableIndex < group.size() - 1) {
 					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerTop(group.get(tableIndex));
@@ -531,23 +536,23 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		return physicalRoots.iterator().next();
 	}
 
-	public TimeSliderComposite createTimeSliderComposite(Composite parent) {
-		timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
-		timeSliderComposite.setScreenmanager(mapDashboardPart.getScreenManager());
-		return timeSliderComposite;
-	}
-
-	public final TimeSliderComposite getTimeSliderComposite() {
-		return timeSliderComposite;
-	}
-
-	public void setTimeSlider(TimeSliderComposite timeSlider) {
-		if (timeSlider != null) {
-			this.timeSliderComposite = timeSlider;
-		} else {
-			LOG.error("TimeSlider is null.");
-		}
-	}
+//	public TimeSliderComposite createTimeSliderComposite(Composite parent) {
+//		timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
+//		timeSliderComposite.setScreenmanager(mapDashboardPart.getScreenManager());
+//		return timeSliderComposite;
+//	}
+//
+//	public final TimeSliderComposite getTimeSliderComposite() {
+//		return timeSliderComposite;
+//	}
+//
+//	public void setTimeSlider(TimeSliderComposite timeSlider) {
+//		if (timeSlider != null) {
+//			this.timeSliderComposite = timeSlider;
+//		} else {
+//			LOG.error("TimeSlider is null.");
+//		}
+//	}
 
 	@Override
 	public void dispose() {

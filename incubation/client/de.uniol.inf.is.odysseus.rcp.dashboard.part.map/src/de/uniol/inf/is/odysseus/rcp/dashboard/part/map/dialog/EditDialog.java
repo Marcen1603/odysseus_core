@@ -37,11 +37,12 @@ public class EditDialog extends TitleAreaDialog {
 	private OwnProperties ownProperties;
 
 	private Composite configContainer;
-	private Composite main;
 
 	private Text layerName;
 	private CCombo server = null;
 	private int layerPosition;
+	private int layerPositionAfter;
+	
 
 	private LayerConfiguration layerConfiguration = null;
 
@@ -52,6 +53,7 @@ public class EditDialog extends TitleAreaDialog {
 		this.ownProperties = new OwnProperties();
 		this.layerConfiguration = layerConfiguration;
 		this.layerPosition = layerPosition;
+		this.layerPositionAfter = layerPosition;
 	}
 
 	@Override
@@ -64,7 +66,6 @@ public class EditDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		parent.setLayout(DialogUtils.getMainLayout());
-		main = parent;
 
 		getBasicConfiguration(parent);
 
@@ -103,25 +104,21 @@ public class EditDialog extends TitleAreaDialog {
 		Label layerPlaceLabel = new Label(layerConfigurationComp, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");
 
-		CCombo layerPlace = new CCombo(layerConfigurationComp, SWT.BORDER);
+		final CCombo layerPlace = new CCombo(layerConfigurationComp, SWT.BORDER);
 		layerPlace.setLayoutData(DialogUtils.getTextDataLayout());
 
 		for (ILayer layer : layerOrder) {
 			layerPlace.add(layer.getName());
 		}
 		if (!layerOrder.isEmpty())
-			if(layerPosition-1 > 0){
-				layerPlace.setText(layerOrder.get(layerPosition-1).getName());
-			}else{
-				layerPlace.setText(layerOrder.getFirst().getName());
-			}
+				layerPlace.setText(layerOrder.get(layerPosition).getName());
 
-//		layerPlace.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//
-//			};
-//		});
+		layerPlace.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				 layerPositionAfter = layerPlace.getSelectionIndex();				
+			};
+		});
 
 		return layerConfigurationComp;
 	}
@@ -163,76 +160,7 @@ public class EditDialog extends TitleAreaDialog {
 		return rasterLayerComp;
 	}
 
-	// private Composite getVectorConfiguration(Composite parent) {
-	// if (!(layerConfiguration instanceof VectorLayerConfiguration))
-	// this.layerConfiguration = new VectorLayerConfiguration("");
-	// final VectorLayerConfiguration layerConfiguration =
-	// (VectorLayerConfiguration) this.layerConfiguration;
-	// final Composite vectorLayer = new Composite(parent, SWT.NONE);
-	// vectorLayer.setLayout(DialogUtils.getGroupLayout());
-	// vectorLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING,
-	// true, false));
-	// vectorLayer.setVisible(true);
-	//
-	// if (connections.isEmpty()) {
-	// Label streamLabel = new Label(vectorLayer, SWT.NONE);
-	// streamLabel.setText("No Streams Available.");
-	// streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	// setErrorMessage("Please connect a stream to the Map.");
-	// return vectorLayer;
-	// }
-	//
-	// Label streamLabel = new Label(vectorLayer, SWT.NONE);
-	// streamLabel.setText("Stream:");
-	// streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo streamSelect = new CCombo(vectorLayer, SWT.BORDER);
-	// streamSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	//
-	// for (int i = 0; i < connections.toArray().length; i++) {
-	// streamSelect.add(((LayerUpdater)
-	// connections.toArray()[i]).getQuery().getQueryText(), i);
-	// }
-	// streamSelect.select(0);
-	// Label attributesLabel = new Label(vectorLayer, SWT.NONE);
-	// attributesLabel.setText("Attribute:");
-	// attributesLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo attributeSelect = new CCombo(vectorLayer, SWT.BORDER);
-	// attributeSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	//
-	// streamSelect.addSelectionListener(new SelectionAdapter() {
-	// @Override
-	// public void widgetSelected(SelectionEvent e) {
-	// attributeSelect.removeAll();
-	// layerConfiguration.setQuery(streamSelect.getText());
-	// LOG.debug("Set Query: " + layerConfiguration.getQuery());
-	// SDFSchema schema = ((LayerUpdater)
-	// connections.toArray()[streamSelect.getSelectionIndex()])
-	// .getConnection().getOutputSchema();
-	//
-	// for (int i = 0; i < schema.size(); i++) {
-	// attributeSelect.add(schema.getAttribute(i).getAttributeName(), i);
-	// }
-	//
-	// AttributeResolver resolver = new AttributeResolver();
-	// resolver.addAttributes(schema);
-	//
-	// attributeSelect.setText(schema.getAttribute(0).getAttributeName());
-	// layerConfiguration.setAttribute(attributeSelect.getText());
-	//
-	// attributeSelect.addSelectionListener(new SelectionAdapter() {
-	// @Override
-	// public void widgetSelected(SelectionEvent e) {
-	// layerConfiguration.setAttribute(attributeSelect.getText());
-	// LOG.debug("Set Attribute: " + layerConfiguration.getAttribute());
-	// };
-	// });
-	//
-	// };
-	// });
-	// return vectorLayer;
-	// }
+
 
 	// /**
 	// * Creates the content to select the thematic map and the stream for it
@@ -369,6 +297,10 @@ public class EditDialog extends TitleAreaDialog {
 		}
 		setButtonLayoutData(button);
 		return button;
+	}
+	
+	public int getLayerPositionAfter(){
+		return layerPositionAfter;
 	}
 
 	public LayerConfiguration getLayerConfiguration() {

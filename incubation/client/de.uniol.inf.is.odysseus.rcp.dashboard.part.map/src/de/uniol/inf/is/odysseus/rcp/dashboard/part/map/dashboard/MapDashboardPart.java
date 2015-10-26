@@ -42,7 +42,6 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	private MapEditorModel mapModel;
 	private Puffer puffer;
 	private IPhysicalOperator operator;
-	private Thread updateThread;
 
 	/**
 	 * If the MapEditorModel is initiated and the LayerUpdater is connected
@@ -63,42 +62,30 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		screenManager = new ScreenManager(transformation, this);
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 
-		if (mapModel.getLayers().isEmpty()) {
-			BasicLayer basic = new BasicLayer();
+		if (mapModel.getLayers().isEmpty() && wizard == true) {
+			BasicLayer basic = new BasicLayer ();
 			basic.setActive(true);
 			mapModel.getLayers().addFirst(basic);
 		}
 		puffer = mapModel.addConnection(this);
+		puffer.setMaxPufferSize(maxData);
+
+		if (!wizard && layerSettings != null) {
+			mapModel.load(layerSettings);
+		}
+
 		mapModel.init(this);
 
-		 updateThread = new Thread(new Runnable() {
-		
-		 @Override
-		 public void run() {
-		 while (!parent.isDisposed()) {
-		 final Display disp = screenManager.getCanvas().getDisplay();
-		 if (!disp.isDisposed()) {
-		 disp.asyncExec(new Runnable() {
-		 @Override
-		 public void run() {
-		 if (!screenManager.getCanvas().isDisposed()) {
-		 screenManager.redraw();
-		 }
-		 }
-		 });
-		 }
-		 waiting(updateInterval);
-		 }
-		 }
-		
-		 });
-		
-		 updateThread.setName("StreamList Updater");
-		 updateThread.start();
 	}
 
 	@Override
 	public Map<String, String> onSave() {
+		if (mapModel.getLayers().isEmpty() && wizard ) {
+			BasicLayer basic = new BasicLayer();
+			basic.setActive(true);
+			mapModel.getLayers().addFirst(basic);
+		}
+		
 		Map<String, String> toSaveMap = Maps.newHashMap();
 		layerSettings = mapModel.save();
 		toSaveMap.put("Attributes", attributeList);
@@ -159,11 +146,8 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		// Prevent an overflow in the puffer
 		puffer.checkForPufferSize();
 
-		// TODO SOLLTE DAS HIER SEIN?
-		// Should we redraw here or just if we added the tupel to the current
-		// list?
-		//screenManager.redraw();
-
+		if (updateInterval == 0)
+			screenManager.redraw();
 	}
 
 	public void init() {
@@ -181,18 +165,10 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			}
 
 			puffer = mapModel.addConnection(this);
-			puffer.setMaxPufferSize(maxData);
 			initiated = true;
 		}
 
 	}
-
-	 private static void waiting(long length) {
-	 try {
-	 Thread.sleep(length*1000);
-	 } catch (final InterruptedException e) {
-	 }
-	 }
 
 	@Override
 	public ScreenManager getScreenManager() {
@@ -281,8 +257,12 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	}
 
 	public void setMaxData(int maxData) {
-		this.maxData = maxData;
-		puffer.setMaxPufferSize(maxData);
+		if (maxData == 0)
+			this.maxData = Integer.MAX_VALUE;
+		else {
+			this.maxData = maxData;
+			puffer.setMaxPufferSize(maxData);
+		}
 	}
 
 	public int getUpdateInterval() {
@@ -294,7 +274,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		puffer.setTimeRange(updateInterval);
 	}
 
-	public Puffer getLayerUpdater() {
+	public Puffer getPuffer() {
 		return this.puffer;
 	}
 
@@ -309,11 +289,4 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	public boolean getWizardBoolean() {
 		return wizard;
 	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Object getAdapter(Class adapter) {
-		return null;
-	}
-
 }

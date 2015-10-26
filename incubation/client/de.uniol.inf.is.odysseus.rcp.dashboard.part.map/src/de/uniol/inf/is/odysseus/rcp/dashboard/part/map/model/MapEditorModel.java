@@ -5,13 +5,11 @@ import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
@@ -25,9 +23,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerCo
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 
-public class MapEditorModel extends ModelObject {
+public class MapEditorModel {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MapEditorModel.class);
+	//private static final Logger LOG = LoggerFactory.getLogger(MapEditorModel.class);
 
 	public static final String MAP = "map";
 
@@ -132,7 +130,8 @@ public class MapEditorModel extends ModelObject {
 		
 		int startIndex = subString.indexOf("{");
 		int endIndex = subString.indexOf("}");
-		subString = subString.substring(startIndex + 1, endIndex);
+		//Minus 5 to remove the alpha. New Color can only use 0 or 255. We need values between those
+		subString = subString.substring(startIndex + 1, endIndex-5);
 		layerSetting += subString + ";";
 
 		// Just get the RGB values. Usually getMinColor would return e.g. "Color
@@ -140,7 +139,8 @@ public class MapEditorModel extends ModelObject {
 		subString = configuration.getMaxColor().toString().trim();
 		startIndex = subString.indexOf("{");
 		endIndex = subString.indexOf("}");
-		subString = subString.substring(startIndex + 1, endIndex);
+		//Minus 5 to remove the alpha. New Color can only use 0 or 255. 
+		subString = subString.substring(startIndex + 1, endIndex-5);
 		layerSetting += subString + ";";
 
 		layerSetting += configuration.getAlpha() + ";";
@@ -158,7 +158,7 @@ public class MapEditorModel extends ModelObject {
 		return layerSetting;
 	}
 
-	// TODO this could be done with an String array
+	// This could be done with an array
 	/**
 	 * Separates the given String into each layer configuration represented by a
 	 * String
@@ -205,11 +205,9 @@ public class MapEditorModel extends ModelObject {
 		endIndex = configuration.indexOf(";");
 		BasicLayer basic = new BasicLayer();
 
-		// Get the name of the BasicLayer
 		String subString = configuration.substring(startIndex, endIndex);
 		basic.setName(subString);
 
-		// Gets activity
 		startIndex = endIndex + 1;
 		subString = configuration.substring(startIndex);
 		basic.setActive(Boolean.valueOf(subString));
@@ -217,7 +215,7 @@ public class MapEditorModel extends ModelObject {
 		layers.add(basic);
 	}
 
-	// TODO this could also be handled by a string array
+	// This could also be handled by a string array
 	private void loadRasterLayerConfiguration(String configuration) {
 		startIndex = 0;
 		endIndex = 0;
@@ -317,7 +315,7 @@ public class MapEditorModel extends ModelObject {
 		
 		Heatmap heatmap = new Heatmap(hlc);
 		heatmap.setActive(Boolean.valueOf(getSubString(configuration, ";")));
-		heatmap.setLayerUpdater(puffer);
+		heatmap.setPuffer(puffer);
 		layers.add(heatmap);
 	}
 
@@ -334,6 +332,7 @@ public class MapEditorModel extends ModelObject {
 		startIndex = endIndex + 1;
 		endIndex = string.indexOf(separator, startIndex);
 		String subString = string.substring(startIndex, endIndex);
+		
 		return subString;
 	}
 
@@ -357,7 +356,7 @@ public class MapEditorModel extends ModelObject {
 		} else {
 			layer = addLayer();
 		}
-		firePropertyChange(MAP, null, this);
+		//firePropertyChange(MAP, null, this);
 		layers.addLast(layer);
 	}
 
@@ -392,7 +391,7 @@ public class MapEditorModel extends ModelObject {
 
 		// We don't want to set it active manually, too much clicks ...
 		layer.setActive(true);
-		layer.setLayerUpdater(puffer);
+		layer.setPuffer(puffer);
 		return layer;
 	}
 
@@ -452,7 +451,6 @@ public class MapEditorModel extends ModelObject {
 	 */
 	public void removeLayer(ILayer layer) {
 		layers.remove(layer);
-		firePropertyChange(MAP, null, this);
 	}
 
 	public void layerUp(ILayer layer) {
@@ -519,8 +517,9 @@ public class MapEditorModel extends ModelObject {
 		layer.setName(name);
 	}
 
+	//TODO 
 	/**
-	 * Generates a new layerUpdater and connects it to the ScreenManager
+	 * Generates a puffer connection to the ScreenManager
 	 * 
 	 * @param mapDashboardPart
 	 */
@@ -532,7 +531,6 @@ public class MapEditorModel extends ModelObject {
 			screenManager.addPropertyChangeListener(puffer);
 			screenManager.addConnection(puffer);
 		}
-		firePropertyChange(MAP, null, this);
 		return puffer;
 	}
 
@@ -563,6 +561,4 @@ public class MapEditorModel extends ModelObject {
 	public OwnProperties getOwnProperties() {
 		return ownProperties;
 	}
-	
-
 }

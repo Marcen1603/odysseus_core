@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
+//import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 
 public class ScreenManager {
 
@@ -239,27 +239,27 @@ public class ScreenManager {
 		return env;
 	}
 
-	public void zoomToExtend(ILayer layer) {
-		Envelope env = layer.getEnvelope();
-		Point screenSize = canvas.getSize();
-		double scaleX = (env.getMaxX() - env.getMinX()) / (screenSize.x);
-		double scaleY = (env.getMaxY() - env.getMinY()) / (screenSize.y);
-		double oldScale = scale;
-		scale = 1;
-		double scaleInt = 1;
-		for (scaleInt = (Math.max(scaleX, scaleY)); scaleInt > 10; scaleInt /= 10) {
-			scale *= 10;
-		}
-		scale *= Math.ceil(scaleInt);
-		if (scale > 0) {
-			// This should always be the case, if there is an environment
-			setCenterUV((int) Math.floor((env.centre().x / scale * (-1))), (int) Math.floor((env.centre().y / scale)));
-		} else {
-			scale = 1;
-		}
-		pcs.firePropertyChange("scale", oldScale, scale);
-		redraw();
-	}
+//	public void zoomToExtend(ILayer layer) {
+//		Envelope env = layer.getEnvelope();
+//		Point screenSize = canvas.getSize();
+//		double scaleX = (env.getMaxX() - env.getMinX()) / (screenSize.x);
+//		double scaleY = (env.getMaxY() - env.getMinY()) / (screenSize.y);
+//		double oldScale = scale;
+//		scale = 1;
+//		double scaleInt = 1;
+//		for (scaleInt = (Math.max(scaleX, scaleY)); scaleInt > 10; scaleInt /= 10) {
+//			scale *= 10;
+//		}
+//		scale *= Math.ceil(scaleInt);
+//		if (scale > 0) {
+//			// This should always be the case, if there is an environment
+//			setCenterUV((int) Math.floor((env.centre().x / scale * (-1))), (int) Math.floor((env.centre().y / scale)));
+//		} else {
+//			scale = 1;
+//		}
+//		pcs.firePropertyChange("scale", oldScale, scale);
+//		redraw();
+//	}
 
 	public ITimeInterval getInterval() {
 		return interval;
