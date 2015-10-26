@@ -46,6 +46,7 @@ public class MultipleSourceExecutor extends Thread {
 
 	@Override
 	public void run() {
+	long startTime = System.currentTimeMillis();
 		try {
 			interrupt = false;
 			while (!interrupt) {
@@ -73,6 +74,9 @@ public class MultipleSourceExecutor extends Thread {
 
 		// caller.removeSourceThread(this);
 
+		long endTime = System.currentTimeMillis();
+		long time = endTime-startTime;
+		System.out.println("Zeitmessung:"+time);
 	}
 
 	private void waitForProcessableSources() {

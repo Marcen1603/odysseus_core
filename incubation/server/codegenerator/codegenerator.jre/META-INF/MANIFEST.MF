@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Java.incubation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator.jre
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.jre.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.codegenerator.jre.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson,
  de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
@@ -41,8 +41,8 @@ Service-Component: OSGI-INF/JreTargetPlatform.xml,OSGI-INF/CMultipleSourceExecut
 Bundle-ClassPath: .,
  templates/,
  ST-4.0.8.jar
-Export-Package: de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping,
- de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules,
- de.uniol.inf.is.odysseus.query.codegenerator.jre.scheduler,
- de.uniol.inf.is.odysseus.query.codegenerator.jre.utils,
- de.uniol.inf.is.odysseus.query.codegenerator.osgi
+Export-Package: de.uniol.inf.is.odysseus.codegenerator.jre.mapping,
+ de.uniol.inf.is.odysseus.codegenerator.jre.operator.rules,
+ de.uniol.inf.is.odysseus.codegenerator.jre.scheduler,
+ de.uniol.inf.is.odysseus.codegenerator.jre.utils,
+ de.uniol.inf.is.odysseus.codegenerator.osgi

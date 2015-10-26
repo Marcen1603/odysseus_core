@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Transformation.incubation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.codegenerator.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.core.logicaloperator,
@@ -33,14 +33,14 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  org.apache.commons.beanutils
 Service-Component: OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRegistry.xml,OSGI-INF/SchedulerRegistry.xml,OSGI-INF/COperatorRuleRegistry.xml,OSGI-INF/CodegenerationPreParserKeywordProvider.xml,OSGI-INF/CAnalyseServiceBinding.xml,OSGI-INF/CodegenerationConsole.xml,OSGI-INF/MessageConsumerService.xml,
  OSGI-INF/ConsolenMessage.xml
-Export-Package: de.uniol.inf.is.odysseus.query.codegenerator,
- de.uniol.inf.is.odysseus.query.codegenerator.message.bus,
- de.uniol.inf.is.odysseus.query.codegenerator.modell,
- de.uniol.inf.is.odysseus.query.codegenerator.modell.enums,
- de.uniol.inf.is.odysseus.query.codegenerator.operator.rule,
- de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry,
- de.uniol.inf.is.odysseus.query.codegenerator.scheduler,
- de.uniol.inf.is.odysseus.query.codegenerator.scheduler.registry,
- de.uniol.inf.is.odysseus.query.codegenerator.target.platform,
- de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry,
- de.uniol.inf.is.odysseus.query.codegenerator.utils
+Export-Package: de.uniol.inf.is.odysseus.codegenerator,
+ de.uniol.inf.is.odysseus.codegenerator.message.bus,
+ de.uniol.inf.is.odysseus.codegenerator.modell,
+ de.uniol.inf.is.odysseus.codegenerator.modell.enums,
+ de.uniol.inf.is.odysseus.codegenerator.operator.rule,
+ de.uniol.inf.is.odysseus.codegenerator.operator.rule.registry,
+ de.uniol.inf.is.odysseus.codegenerator.scheduler,
+ de.uniol.inf.is.odysseus.codegenerator.scheduler.registry,
+ de.uniol.inf.is.odysseus.codegenerator.target.platform,
+ de.uniol.inf.is.odysseus.codegenerator.target.platform.registry,
+ de.uniol.inf.is.odysseus.codegenerator.utils
