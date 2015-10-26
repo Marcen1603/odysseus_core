@@ -1,25 +1,60 @@
 package de.uniol.inf.is.odysseus.gpu;
 
+import static jcuda.driver.JCudaDriver.cuCtxCreate;
+import static jcuda.driver.JCudaDriver.cuCtxDestroy;
+import static jcuda.driver.JCudaDriver.cuDeviceGet;
+import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
+import static jcuda.driver.JCudaDriver.cuModuleLoad;
+import static jcuda.driver.JCudaDriver.cuModuleUnload;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
-public class prepare {
+import jcuda.driver.CUcontext;
+import jcuda.driver.CUdevice;
+import jcuda.driver.CUfunction;
+import jcuda.driver.CUmodule;
+import jcuda.driver.JCudaDriver;
+
+//@SuppressWarnings("unused")
+public class Prepare {
 	
-	private static String path;
+	private static String path;	
+
+	//CUDA DEVICE 
+	private static CUdevice device = new CUdevice();	
 	
+	private static CUcontext context;
+
+	private static CUmodule modul;
+
+	private static CUfunction function;
+	
+	//getters
 	public static String getPath() {
 		return path;
 	}
+	
+	public static CUcontext getContext() {
+		return context;
+	}
 
-	public static void setPath(String path) {
-		prepare.path = path;
+	public static CUmodule getModul() {
+		return modul;
+	}
+
+	public static CUfunction getFunction() {
+		return function;
 	}
 	
+	//setters
+	public static void setPath(String path) {
+		Prepare.path = path;
+	}
 	
-	public static String CUDA(String cuFileName ) throws IOException{		
+	public static String ptxFile(String cuFileName ) throws IOException{		
 		
 		
 		String cuFile = preparePtxFile(path+cuFileName);
@@ -29,8 +64,45 @@ public class prepare {
 	}
 	
 	
+	
+	public static void cuRun(){
+		
+	JCudaDriver.cuInit(0);
+	 
+	device = new CUdevice();	
+	cuDeviceGet(device, 0);	
+	
+	
+	
+	}
+	
+	public static void cuLoad(String ptxFileName, String functionName){		
+		
+		context = new CUcontext();
+		cuCtxCreate(context, 0, device);
+		
+		// Load the PTX that contains the kernel.
+		modul = new CUmodule();
+		cuModuleLoad(modul, ptxFileName);
+		
+		function = new CUfunction();
+		cuModuleGetFunction(function, modul, functionName);
+				
+	}
+	
+	public static void cuUnload(){
+		
+		if(modul != null){
+			cuModuleUnload(modul);
+		}
+		
+		if (context != null) {
+			cuCtxDestroy(context);
+		}
+	}
+	
 	//Quelle JCUDA.org
-	static String preparePtxFile(String cuFileName) throws IOException
+	private static String preparePtxFile(String cuFileName) throws IOException
     {
         int endIndex = cuFileName.lastIndexOf('.');
         if (endIndex == -1)

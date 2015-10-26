@@ -20,7 +20,9 @@ public class Activator implements BundleActivator {
 				
 		String path = bundleContext.getBundle().getLocation().substring(16,bundleContext.getBundle().getLocation().length());	
 		
-		prepare.setPath(path);
+		Prepare.setPath(path);
+		
+		Prepare.cuRun();
 		
 		System.out.println(path);
 		
@@ -30,6 +32,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+		
+		Prepare.cuUnload();
+		
 	}
 
 }

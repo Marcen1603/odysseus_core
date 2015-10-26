@@ -7,8 +7,10 @@ package de.uniol.inf.is.odysseus.gpu.physicaloperator;
 import static jcuda.driver.JCudaDriver.*;
 import jcuda.driver.CUcontext;
 import jcuda.driver.CUdevice;
+import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
+import jcuda.driver.JCudaDriver;
 import jcuda.*;
 
 import java.io.BufferedWriter;
@@ -20,7 +22,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.StringTokenizer;
+import java.util.function.Predicate;
 
 import javax.smartcardio.ATR;
 
@@ -34,35 +38,54 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.gpu.prepare;
+import de.uniol.inf.is.odysseus.gpu.Prepare;
 
 /**
  * @author Alexander
  *
  */
-
+@SuppressWarnings("unused")
 public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 
 	// standard const
-	private String predicate[] = new String[3];
-
-	private Pointer P_Input, P_Output, P_Predicate = new Pointer();
-
+	private String predicate[];
+	
+	private IPredicate<? super T> predicateI = super.getPredicate();
+	
+	private String predikatObj;
+	
+	private SDFDatatype attributeDatatype;
+	
+	private  int a[] = new int [2];
+	
+	private int values[];
+	
+	//CUDA Variablen
+	private static Pointer inputPtr, outputPtr, predicatePtr = new Pointer();
+	
+	private CUdeviceptr predDevicePtr , outputDevicePtr;
+	
+	private int SIZE;
+	
+	private Object type;
+	
 	private int gridDimX = 1;
+	
 	private int blockDimX = 1;
-
-	private static String ptxFileName;
-
-	private static CUcontext context = new CUcontext();
-
-	private static CUdevice device = new CUdevice();
-
-	private static CUmodule modul = new CUmodule();
-
-	private static CUfunction function = new CUfunction();
-
+	
 	private int attributeIndex;
+	
+	
+	//CUDA Init Variablen
+	private String ptxFileName;
 
+	private CUcontext context = new CUcontext();
+	
+	private CUmodule modul = new CUmodule();	
+	
+	private CUfunction function = new CUfunction();
+	
+	
 	@SuppressWarnings("unchecked")
 	public GpuSelectPO(SelectAO ao) {
 		super((IPredicate<? super T>) ao.getPredicate());
@@ -73,6 +96,7 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 		super(po);
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void process_open() throws OpenFailedException {
 
@@ -84,56 +108,141 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 
 		try {
 
+						//Predikate vorbereiten
+						StringTokenizer TokenPredicate = new StringTokenizer(super.getPredicate().toString(), " ");
+					
+						int token = TokenPredicate.countTokens();
+						predicate = new String[token];
+						int n = TokenPredicate.countTokens();
+						for(int i = 0; i<n;i++){
+							predicate[i] = TokenPredicate.nextToken();
+			
+							if(predicate[i].length()-1 > 0){
+								predicate[i] = predicate[i].substring(1, predicate[i].length() - 1);
+							}
+							
+						}
+						
+			List<SDFAttribute> attibutesLst = predicateI.getAttributes();
+			//Object e =  predicateI.getAttributes().get(4);
+			
+			
+//CUDA-Vorbereitung
+			
+			//CUDA Try- catch-Block
+			
 			// CUDA .ptx laden
-			ptxFileName = prepare.CUDA("CUDA/Hello.cu");
-
-			// Predikate vorbereiten
-			StringTokenizer TokenPredicate = new StringTokenizer(super.getPredicate().toString(), " ");
-
-			predicate[0] = TokenPredicate.nextToken();
-			predicate[1] = TokenPredicate.nextToken();
-			predicate[2] = TokenPredicate.nextToken();
-
-			predicate[0] = predicate[0].substring(1, predicate[0].length() - 1);
-			predicate[2] = predicate[2].substring(1, predicate[2].length() - 1);
-			System.out.println(predicate);
-
-			// CUDA Try- catch-Block
-
-			// CUDA-Vorbereitung
-
-			cuInit(0);
-			// device = new CUdevice();
-
-			cuDeviceGet(device, 0);
-
+			try {
+				ptxFileName = Prepare.ptxFile("CUDA/Select.cu");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 			// Initialisieren des Treibers und schaffen eines Kontext für das
 			// Gerät 0
+			
+		
+				Prepare.cuLoad(ptxFileName, "Select");			
+				
+				context = Prepare.getContext();			
+				modul = Prepare.getModul();
+				function = Prepare.getFunction();
+											
+//				CUdeviceptr deviceptr = new CUdeviceptr();
+//				
+//				cuMemAlloc(deviceptr, numElemt * Sizeof.INT);
+//						
+//				cuMemcpyHtoD(deviceptr, Pointer.to(values), numElemt * Sizeof.INT);
+//				
+//				CUdeviceptr DevicetoHost = new CUdeviceptr();
+//				
+//				cuMemAlloc(DevicetoHost, numElemt * Sizeof.INT);
 
+//				predDevicePtr = deviceptr;
+//				
+//				outputDevicePtr = DevicetoHost;
+				
 			// Elemente vorbereiten
+			
 			if (getInputSchema(0).findAttributeIndex(predicate[2]) != -1) {
 				attributeIndex = getInputSchema(0).findAttributeIndex(predicate[2]);
+				predikatObj = predicate[0];
+				
 			} else {
 				attributeIndex = getInputSchema(0).findAttributeIndex(predicate[0]);
+				predikatObj = predicate[2];
 			}
 
-			SDFDatatype attributeDatatype = getInputSchema(0).getAttribute(attributeIndex).getDatatype();
+//			predikatObj = new Object[]{150,"Hello"};
+			
+			
+			
+			//CUDA Predikat vorbereiten und Speicher allekolieren 
+			attributeDatatype = getInputSchema(0).getAttribute(attributeIndex).getDatatype();		
+			
+			CUdeviceptr predDevicePtr = new CUdeviceptr();
+						
+			CUdeviceptr outputDevicePtr = new CUdeviceptr();
+			
+			this.predDevicePtr = predDevicePtr;			
+			this.outputDevicePtr = outputDevicePtr;
+			
 			if (attributeDatatype.equals(SDFDatatype.INTEGER)) {
-				// int auf gpu reservieren
+				
+				int predikat = 150;
+				
+				SIZE = 1 * Sizeof.INT;
+				
+				cuMemAlloc(predDevicePtr, SIZE);
+				
+				cuMemcpyHtoD(predDevicePtr, Pointer.to(predicatePtr), SIZE);
+				
 			} else if (attributeDatatype.equals(SDFDatatype.FLOAT)) {
 				// float auf gpu reservieren
+				float predikat = 150;
+				
+				SIZE = 1 * Sizeof.FLOAT;
+				
+				cuMemAlloc(predDevicePtr, SIZE);
+				
+				cuMemcpyHtoD(predDevicePtr, Pointer.to(predicatePtr), SIZE);
+				
+			} else if (attributeDatatype.equals(SDFDatatype.DOUBLE)) {								
+				
+				SIZE = 1 * Sizeof.DOUBLE;
+				
+				//this.predDevicePtr = predDevicePtr;
+				
+				cuMemAlloc(this.predDevicePtr, SIZE);
+				
+				cuMemcpyHtoD(this.predDevicePtr, Pointer.to(predicatePtr), SIZE);
+				
+				
+				
+			} else if(attributeDatatype.equals(SDFDatatype.CHAR)){
+
+				
+				
+				SIZE = predikatObj.length() * Sizeof.CHAR;				
+				
+				cuMemAlloc(predDevicePtr, SIZE);
+				
+				cuMemcpyHtoD(predDevicePtr, Pointer.to(predicatePtr), SIZE);
 			} else {
 				throw new OpenFailedException("Nicht unterstützter Datentyp " + attributeDatatype);
+				
+				
 			}
 
+			
 			// usw.
 
-		} catch (IOException e) {
-
-			e.printStackTrace();
+		}finally{
+			//allekolierten Speicher freigeben
+			
 		}
 
-		// Finally allekolierten Speicher freigeben
+		
 
 	}
 
@@ -147,10 +256,12 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 		// CUDA Zeitmessen
 
 		long start = System.nanoTime();
-
+		
 		Tuple<?> result = CUDA_process((Tuple<?>) element, attributeIndex);
+		
 		transfer((T) result);
 
+		long end = System.nanoTime();
 		// Elemente sammeln
 
 		// CUDA Speicher allokeieren
@@ -161,10 +272,6 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 
 		// transfer jedes/ reihe von Elements
 
-		// System.out.println(element.toString());
-
-		// System.out.println(Attribute);
-
 		// Finally allekolierten Speicher freigeben
 
 	}
@@ -174,48 +281,96 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 		super.process_close();
 
 		// CUDA-Nachbereitung
-		try {
-			cuModuleUnload(modul);
-
-			if (context != null) {
+		cuMemFree(this.predDevicePtr);
+		cuMemFree(this.outputDevicePtr);
+//		cuMemFree(ias);
+		
+		cuModuleUnload(modul);
+		if (context != null) {
 				cuCtxDestroy(context);
-			}
-
-			// Speicher auf der GPU freigeben
-			// cuMemFree();
-		} finally {
-
 		}
+			// Speicher auf der GPU freigeben
+		
 	}
 
-	private Tuple<?> CUDA_process(Tuple<?> element, int attribute) {
-
-		cuCtxCreate(context, 0, device);
-
-		cuModuleLoad(modul, ptxFileName);
-
-		cuModuleGetFunction(function, modul, "Hello");
-
-		Object attributeValue = element.getAttribute(attribute);
-		// objekt + datentyp (s. processOpen)
+	@SuppressWarnings("unused")
+	private Tuple<?> CUDA_process(Tuple<?> element, int attributeIndex) {		
 		
+		cuCtxPushCurrent(context);
 		
-		System.out.println(element.toString());
+		//Abfrage auf Datentyp
+		
+		CUdeviceptr ias = new CUdeviceptr();
+		
+		if (attributeDatatype.equals(SDFDatatype.INTEGER)) {
+			
+			
+			
+		} else if (attributeDatatype.equals(SDFDatatype.FLOAT)) {
+			
+			
+		} else if (attributeDatatype.equals(SDFDatatype.DOUBLE)) {								
+			
+			double attributeValue[] = new double[]{element.getAttribute(attributeIndex)};
+			
+			cuMemAlloc(ias, SIZE);
+			
+			cuMemcpyHtoD(ias, Pointer.to(attributeValue), SIZE);
+		
+			
+		} else if(attributeDatatype.equals(SDFDatatype.CHAR)){
 
-		// cuLaunchKernel(function,
-		// gridDimX, 1, 1,
-		// blockDimX, 5, 5,
-		// 0, null,
-		// null, null);
-		//
-		// cuCtxSynchronize();
-
-		cuModuleUnload(modul);
-
-		if (context != null) {
-			cuCtxDestroy(context);
+			
+		} else {
+			throw new OpenFailedException("Nicht unterstützter Datentyp " + attributeDatatype);
+			
+			
 		}
+		
+		Pointer kernelParameter = Pointer.to(
+				Pointer.to(predDevicePtr),
+				Pointer.to(ias),
+				Pointer.to(outputDevicePtr)
+				);
+		
+		//Start Kernel auf der GPU
+		cuLaunchKernel(function,
+		gridDimX, 1, 1,
+		blockDimX, 1, 1,
+		0, null,
+		kernelParameter, null);
+		
+		//blockiert bis alle Grids abgeschloßen sind
+		cuCtxSynchronize();
+		
+		if (attributeDatatype.equals(SDFDatatype.INTEGER)) {
+			
+			
+		} else if (attributeDatatype.equals(SDFDatatype.FLOAT)) {
+			
+			
+		} else if (attributeDatatype.equals(SDFDatatype.DOUBLE)) {								
+			
+			double erg[] = new double[1];
+			
+			cuMemcpyDtoH(Pointer.to(erg), this.outputDevicePtr, SIZE);
+			
+		} else if(attributeDatatype.equals(SDFDatatype.CHAR)){
 
+			
+		} else {
+			throw new OpenFailedException("Nicht unterstützter Datentyp " + attributeDatatype);
+			
+			
+		}
+		
+		
+		
+				
+		element = null;
+		
+		//cuCtxPopCurrent(context);
+		
 		return element;
 	}
 

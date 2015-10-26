@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Alexander
  *
  */
+@SuppressWarnings("unused")
 public class TGPUProjectionPORule extends AbstractTransformationRule<ProjectAO> {
 
 	@Override
