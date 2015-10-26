@@ -17,7 +17,7 @@ public class CSchedulerRegistry {
 	static Map<String, Map<String,ICScheduler>> schedulerList= new HashMap<String, Map<String,ICScheduler>>();
 	
 
-	public static ICScheduler getExecutor(String targetPlatform, String schedulerName){
+	public static ICScheduler getScheduler(String targetPlatform, String schedulerName){
 	
 	if(!schedulerList.isEmpty()){
 		if(schedulerList.containsKey(targetPlatform.toLowerCase())){
@@ -81,7 +81,7 @@ public class CSchedulerRegistry {
 		}
 	}
 	
-	public static Set<String> getAllExecutor(String programmLanguage){
+	public static Set<String> getAllScheduler(String programmLanguage){
 		Map<String, ICScheduler> schedulerMap = schedulerList.get(programmLanguage.toLowerCase());
 		if(schedulerMap != null){
 			return schedulerMap.keySet();
@@ -94,12 +94,12 @@ public class CSchedulerRegistry {
 	
 
 	
-	public static Map<String, Map<String,ICScheduler>> getAllExecutor(){
+	public static Map<String, Map<String,ICScheduler>> getAllScheduler(){
 		return schedulerList;
 	}
 	
 	
-	public static boolean existExecutor(String targetPlatform, String executor){
+	public static boolean existScheduler(String targetPlatform, String executor){
 		
 		if(schedulerList.containsKey(targetPlatform.toLowerCase()) && schedulerList.get(targetPlatform.toLowerCase()).containsKey(executor.toLowerCase())){
 			return true;

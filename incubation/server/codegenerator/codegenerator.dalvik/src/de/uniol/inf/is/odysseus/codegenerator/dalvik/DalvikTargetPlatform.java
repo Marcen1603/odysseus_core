@@ -54,7 +54,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		frameworkImportList.addAll(startStreams.getFrameworkImports());
 		importList.addAll(startStreams.getImports());
 		
-		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor("dalvik", parameter.getExecutor()));
+		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler("dalvik", parameter.getExecutor()));
 		
 		try {
 			dalvikFileWrite.createProject();

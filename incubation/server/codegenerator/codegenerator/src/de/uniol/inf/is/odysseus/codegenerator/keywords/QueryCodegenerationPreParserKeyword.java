@@ -67,10 +67,10 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		}
 	
 		
-		if(!CSchedulerRegistry.existExecutor(targetPlatform, executorString)){
+		if(!CSchedulerRegistry.existScheduler(targetPlatform, executorString)){
 			StringBuilder availableExecutor = new StringBuilder();
 			
-			for(String executorTemp : CSchedulerRegistry.getAllExecutor(targetPlatform)	){
+			for(String executorTemp : CSchedulerRegistry.getAllScheduler(targetPlatform)	){
 				availableExecutor.append(executorTemp);
 				availableExecutor.append(System.getProperty("line.separator"));
 			}

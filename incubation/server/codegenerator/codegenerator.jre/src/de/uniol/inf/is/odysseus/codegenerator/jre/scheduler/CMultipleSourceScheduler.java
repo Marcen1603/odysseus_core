@@ -9,10 +9,10 @@ import de.uniol.inf.is.odysseus.codegenerator.scheduler.AbstractCScheduler;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class CMultipleSourceExecutor extends AbstractCScheduler{
+public class CMultipleSourceScheduler extends AbstractCScheduler{
 
-	public CMultipleSourceExecutor() {
-		super("MultipleSourceExecutor");
+	public CMultipleSourceScheduler() {
+		super("MultipleSourceScheduler");
 	}
 
 	@Override
@@ -25,8 +25,9 @@ public class CMultipleSourceExecutor extends AbstractCScheduler{
 		for(ILogicalOperator sourceOp : operatorList){
 			sourceOpList.add(DefaultCodegeneratorStatus.getInstance().getVariable(sourceOp));
 		}
+																		  
 	
-		StringTemplate startCodeTemplate = new StringTemplate("executor","multipleSourceExecutorStartCode");
+		StringTemplate startCodeTemplate = new StringTemplate("scheduler","multipleSourceSchedulerStartCode");
 		startCodeTemplate.getSt().add("operatorList", sourceOpList);
 		
 		code.addCode(startCodeTemplate.getSt().render());
@@ -37,7 +38,7 @@ public class CMultipleSourceExecutor extends AbstractCScheduler{
 	@Override
 	public String getExecutorCode() {
 		
-		StringTemplate multipleSourceExecutorImplTemplate = new StringTemplate("executor","multipleSourceExecutorImpl");
+		StringTemplate multipleSourceExecutorImplTemplate = new StringTemplate("scheduler","multipleSourceSchedulerImpl");
 		multipleSourceExecutorImplTemplate.getSt().add("packageName", getPackageName());
 	
 		return multipleSourceExecutorImplTemplate.getSt().render();

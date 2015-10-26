@@ -71,7 +71,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 	
 		sendMessageEvent(75, "Create Java files",UpdateMessageEventType.INFO);
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler(parameter.getProgramLanguage(), parameter.getExecutor()));
 		
 		try {
 			sendMessageEvent(80, "Create Java project",UpdateMessageEventType.INFO);

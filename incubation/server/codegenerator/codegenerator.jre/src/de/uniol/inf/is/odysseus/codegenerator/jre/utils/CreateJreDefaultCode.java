@@ -148,7 +148,7 @@ public class CreateJreDefaultCode {
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
 		if(!iterableSources.isEmpty()){
-			CodeFragmentInfo executorCode = CSchedulerRegistry.getExecutor("JRE", executor).getStartCode(iterableSources);
+			CodeFragmentInfo executorCode = CSchedulerRegistry.getScheduler("JRE", executor).getStartCode(iterableSources);
 			startFragment.addCodeFragmentInfo(executorCode);
 		}
 		

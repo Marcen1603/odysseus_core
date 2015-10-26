@@ -89,7 +89,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 		 sb.append("\n");
 		 
 		 sb.append("--Executors--\n");
-			for (Entry<String, Map<String, ICScheduler>> platform : CSchedulerRegistry.getAllExecutor().entrySet())
+			for (Entry<String, Map<String, ICScheduler>> platform : CSchedulerRegistry.getAllScheduler().entrySet())
 			{
 				sb.append(platform.getKey()).append("\n");
 				

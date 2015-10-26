@@ -1,4 +1,4 @@
-multipleSourceExecutorImpl(packageName)::=<<
+multipleSourceSchedulerImpl(packageName)::=<<
 
 package $packageName$;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 
-public class MultipleSourceExecutor extends Thread {
+public class MultipleSourceScheduler extends Thread {
 
 
 	private boolean interrupt = false;
@@ -40,8 +40,8 @@ public class MultipleSourceExecutor extends Thread {
 
 	private static long counter = 0;
 
-	public MultipleSourceExecutor() {
-		this.setName("MultiSourceExecutor #" + (counter++) + " ");
+	public MultipleSourceScheduler() {
+		this.setName("MultiSourceScheduler #" + (counter++) + " ");
 	}
 
 	@Override
