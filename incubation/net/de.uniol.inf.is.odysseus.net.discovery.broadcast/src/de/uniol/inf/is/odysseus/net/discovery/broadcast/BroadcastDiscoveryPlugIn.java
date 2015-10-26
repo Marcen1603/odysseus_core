@@ -5,8 +5,9 @@ import org.osgi.framework.BundleContext;
 
 public class BroadcastDiscoveryPlugIn implements BundleActivator {
 
-	public static final int BROADCAST_REQUEST_PORT = 65212;
-	public static final int BROADCAST_ANSWER_PORT = 65213;
+	public static final int BROADCAST_REQUEST_PORT = 60100;
+	public static final int BROADCAST_ANSWER_PORT = 60101;
+	public static final String BROADCAST_REQUEST_CONTENT = "BROADCAST_REQUEST";
 	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {

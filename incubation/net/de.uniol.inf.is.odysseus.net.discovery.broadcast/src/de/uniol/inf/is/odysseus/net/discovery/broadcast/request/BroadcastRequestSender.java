@@ -40,12 +40,12 @@ public class BroadcastRequestSender {
 
 	public void start() throws OdysseusNetDiscoveryException {
 		try {
-			LOG.info("Binding request sender for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT);
-			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT).sync();
+			LOG.info("Binding request sender for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT);
+			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT).sync();
 			LOG.info("Binding was successful");
 			
 			sendThread = new BroadcastRequestSendThread(REQUEST_SEND_INTERVAL_MILLIS, (DatagramChannel)channelFuture.channel());
-			// TODO: Regelm‰ﬂiges Senden von Nachrichten beginnen (extra-Thread)
+			sendThread.start();
 			
 		} catch (InterruptedException e) {
 			throw new OdysseusNetDiscoveryException("Could not start sending request messages", e);
@@ -53,6 +53,10 @@ public class BroadcastRequestSender {
 	}
 
 	public void stop() {
+		if( sendThread.isAlive() ) {
+			sendThread.stopRunning();
+		}
+		
 		workerGroup.shutdownGracefully();
 
 		channelFuture.channel().close();

@@ -1,17 +1,25 @@
 package de.uniol.inf.is.odysseus.net.discovery.broadcast.request;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
 
-public class BroadcastRequestAnswerHandler extends ChannelInboundHandlerAdapter {
+public class BroadcastRequestAnswerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
-	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(BroadcastRequestAnswerHandler.class);
 	
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+		LOG.debug("Received answer from {}", msg.sender());
+	}
 
+	@Override
+	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+		super.channelReadComplete(ctx);
+		
+		ctx.flush();
 	}
 }
