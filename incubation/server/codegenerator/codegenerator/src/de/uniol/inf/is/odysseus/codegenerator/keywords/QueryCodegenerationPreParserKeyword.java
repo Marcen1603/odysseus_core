@@ -76,8 +76,8 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 			}
 			
 			throw new IllegalArgumentException(
-					"No executor "+schedulerString+" found!"+System.getProperty("line.separator")
-					+"available executor:"+System.getProperty("line.separator")
+					"No scheduler "+schedulerString+" found!"+System.getProperty("line.separator")
+					+"available scheduler:"+System.getProperty("line.separator")
 					+availableScheduler.toString());
 		}
 	

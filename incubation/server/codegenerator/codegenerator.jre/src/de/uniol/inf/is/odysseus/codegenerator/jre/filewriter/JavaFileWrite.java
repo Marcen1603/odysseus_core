@@ -44,14 +44,14 @@ public class JavaFileWrite {
 	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
-	private ICScheduler executor;
+	private ICScheduler scheduler;
 	
 	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList;
 	
 	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
 	
 	
-	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> frameworkImportList,Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
+	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> frameworkImportList,Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler scheduler){
 		this.fileName = fileName;
 		this.targetDirectory = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;
@@ -61,7 +61,7 @@ public class JavaFileWrite {
 		this.bodyCode = bodyCode;
 		this.startCode = startCode;
 		this.operatorConfigurationList = operatorConfigurationList;
-		this.executor = executor;
+		this.scheduler = scheduler;
 	}
 
 	public void createProject() throws IOException{
@@ -77,8 +77,8 @@ public class JavaFileWrite {
 		//create Utils.java file
 		createUtilsJavaFile();
 		
-		//create executor file
-		createExecutorFile();
+		//create scheduler file
+		createSchedulerFile();
 		
 		//create operatorconfiguration files
 		createOperationConfigurationFiles();
@@ -91,11 +91,11 @@ public class JavaFileWrite {
 	}
 	
 
-	private void createExecutorFile() {
+	private void createSchedulerFile() {
 	
-		FileHelper fileHelper = new FileHelper(executor.getName()+".java", targetDirectory+"/src/main");
-		executor.setPackageName("main");
-		fileHelper.writeToFile(executor.getSchedulerCode());
+		FileHelper fileHelper = new FileHelper(scheduler.getName()+".java", targetDirectory+"/src/main");
+		scheduler.setPackageName("main");
+		fileHelper.writeToFile(scheduler.getSchedulerCode());
 		
 	}
 

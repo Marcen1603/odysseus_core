@@ -39,12 +39,12 @@ public class DalvikFileWrite {
 	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
-	private ICScheduler executor;
+	private ICScheduler scheduler;
 	
 	private static Logger LOG = LoggerFactory.getLogger(DalvikFileWrite.class);
 	
 	
-	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> frameworkImportList, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler executor){
+	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> frameworkImportList, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler scheduler){
 		this.fileName = fileName;
 		this.tempPath = transformationParameter.getTargetDirectory();
 		this.transformationParameter = transformationParameter;
@@ -53,7 +53,7 @@ public class DalvikFileWrite {
 		this.osgiBindCode = osgiBindCode;
 		this.bodyCode = bodyCode;
 		this.startCode = startCode;
-		this.executor = executor;
+		this.scheduler = scheduler;
 		
 	}
 
@@ -69,19 +69,19 @@ public class DalvikFileWrite {
 		//create Utils.java file
 		createUtilsJavaFile();
 		
-		//create executor file
-		createExecutorFile();
+		//create scheduler file
+		createSchedulerFile();
 		
 		//create operatorconfiguration files
 		createOperationConfigurationFiles();
 	}
 	
 
-	private void createExecutorFile() {
+	private void createSchedulerFile() {
 	
-		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"/app/src/main/java/com/app/odysseus/odysseustest");
-		executor.setPackageName("com.app.odysseus.odysseustest");
-		fileHelper.writeToFile(executor.getSchedulerCode());
+		FileHelper fileHelper = new FileHelper(scheduler.getName()+".java", tempPath+"/app/src/main/java/com/app/odysseus/odysseustest");
+		scheduler.setPackageName("com.app.odysseus.odysseustest");
+		fileHelper.writeToFile(scheduler.getSchedulerCode());
 		
 	}
 

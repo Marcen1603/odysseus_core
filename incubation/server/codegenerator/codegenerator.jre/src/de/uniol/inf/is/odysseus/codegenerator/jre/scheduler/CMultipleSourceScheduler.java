@@ -38,10 +38,10 @@ public class CMultipleSourceScheduler extends AbstractCScheduler{
 	@Override
 	public String getSchedulerCode() {
 		
-		StringTemplate multipleSourceExecutorImplTemplate = new StringTemplate("scheduler","multipleSourceSchedulerImpl");
-		multipleSourceExecutorImplTemplate.getSt().add("packageName", getPackageName());
+		StringTemplate multipleSourceSchedulerImplTemplate = new StringTemplate("scheduler","multipleSourceSchedulerImpl");
+		multipleSourceSchedulerImplTemplate.getSt().add("packageName", getPackageName());
 	
-		return multipleSourceExecutorImplTemplate.getSt().render();
+		return multipleSourceSchedulerImplTemplate.getSt().render();
 	
 	}
 	

@@ -116,14 +116,14 @@ public class CreateJreDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo getCodeForStartStreams(QueryAnalyseInformation queryAnalyseInform, String executor){
+	public static CodeFragmentInfo getCodeForStartStreams(QueryAnalyseInformation queryAnalyseInform, String scheduler){
 		
-		return getCodeForStartStreams(queryAnalyseInform.getSinkOpList(),queryAnalyseInform.getSourceOpList(),queryAnalyseInform.getIterableSources(), executor);
+		return getCodeForStartStreams(queryAnalyseInform.getSinkOpList(),queryAnalyseInform.getSourceOpList(),queryAnalyseInform.getIterableSources(), scheduler);
 	}
 	
 	
 	
-	public static CodeFragmentInfo getCodeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs,List<ILogicalOperator> iterableSources, String executor){
+	public static CodeFragmentInfo getCodeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs,List<ILogicalOperator> iterableSources, String scheduler){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
 		String firstOP = DefaultCodegeneratorStatus.getInstance().getVariable(sourceOPs.get(0));
@@ -148,8 +148,8 @@ public class CreateJreDefaultCode {
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
 		if(!iterableSources.isEmpty()){
-			CodeFragmentInfo executorCode = CSchedulerRegistry.getScheduler("JRE", executor).getStartCode(iterableSources);
-			startFragment.addCodeFragmentInfo(executorCode);
+			CodeFragmentInfo schedulerCode = CSchedulerRegistry.getScheduler("JRE", scheduler).getStartCode(iterableSources);
+			startFragment.addCodeFragmentInfo(schedulerCode);
 		}
 		
 		startFragment.addFrameworkImport(IPhysicalOperator.class.getName());

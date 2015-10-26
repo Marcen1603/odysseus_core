@@ -37,31 +37,31 @@ public class CSchedulerRegistry {
 	}
 	
 					   
-	public static void registerScheduler(ICScheduler executor){
-		LOG.debug("Operator" + executor.getName() +" für "+executor.getTargetPlatform() +" wird hinzugefügt");
+	public static void registerScheduler(ICScheduler scheduler){
+		LOG.debug("Operator" + scheduler.getName() +" für "+scheduler.getTargetPlatform() +" wird hinzugefügt");
 		
 		//Programmiersprache noch nicht vorhanden
-		if(!schedulerList.containsKey(executor.getTargetPlatform().toLowerCase())){
+		if(!schedulerList.containsKey(scheduler.getTargetPlatform().toLowerCase())){
 		
 			//Operator noch nicht vorhanden?
-			if(schedulerList.get(executor.getTargetPlatform().toLowerCase())== null || !schedulerList.get(executor.getTargetPlatform().toLowerCase()).containsKey(executor.getName().toLowerCase())){
+			if(schedulerList.get(scheduler.getTargetPlatform().toLowerCase())== null || !schedulerList.get(scheduler.getTargetPlatform().toLowerCase()).containsKey(scheduler.getName().toLowerCase())){
 				//Operatorname + ITransformationOperator Map erzeugen
 				Map<String,ICScheduler> tempMap = new HashMap<String,ICScheduler>();
-				tempMap.put(executor.getName().toLowerCase(), executor);
+				tempMap.put(scheduler.getName().toLowerCase(), scheduler);
 				
 				//verschachtelte Map abspeichern
-				schedulerList.put(executor.getTargetPlatform().toLowerCase(), tempMap);
+				schedulerList.put(scheduler.getTargetPlatform().toLowerCase(), tempMap);
 			}else{
-				LOG.debug("Operator "+executor.getName()+" -> "+executor.getTargetPlatform().toLowerCase()+" already added" );
+				LOG.debug("Operator "+scheduler.getName()+" -> "+scheduler.getTargetPlatform().toLowerCase()+" already added" );
 			}
 			
 		}else{
 			//Programmiersprache existiert bereits nur Operator hinzufügen			
-			if(!schedulerList.get(executor.getTargetPlatform().toLowerCase()).containsKey(executor.getName())){
-				Map<String,ICScheduler> tempMap = schedulerList.get(executor.getTargetPlatform().toLowerCase());
-				tempMap.put(executor.getName().toLowerCase(), executor);
+			if(!schedulerList.get(scheduler.getTargetPlatform().toLowerCase()).containsKey(scheduler.getName())){
+				Map<String,ICScheduler> tempMap = schedulerList.get(scheduler.getTargetPlatform().toLowerCase());
+				tempMap.put(scheduler.getName().toLowerCase(), scheduler);
 			}else{
-				LOG.debug("Operator "+executor.getName()+" -> "+executor.getTargetPlatform().toLowerCase()+" already added" );
+				LOG.debug("Operator "+scheduler.getName()+" -> "+scheduler.getTargetPlatform().toLowerCase()+" already added" );
 			}
 	
 		}
@@ -69,20 +69,20 @@ public class CSchedulerRegistry {
 		
 	}
 
-	public static void unregisterScheduler(ICScheduler executor){
-		if(schedulerList.containsKey(executor.getTargetPlatform().toLowerCase())){
-			if(schedulerList.get(executor.getTargetPlatform().toLowerCase()).containsKey(executor.getName())){
-				schedulerList.get(executor.getTargetPlatform().toLowerCase()).remove(executor.getName());
+	public static void unregisterScheduler(ICScheduler scheduler){
+		if(schedulerList.containsKey(scheduler.getTargetPlatform().toLowerCase())){
+			if(schedulerList.get(scheduler.getTargetPlatform().toLowerCase()).containsKey(scheduler.getName())){
+				schedulerList.get(scheduler.getTargetPlatform().toLowerCase()).remove(scheduler.getName());
 			}
 			
-			if(schedulerList.get(executor.getTargetPlatform().toLowerCase()).isEmpty()){
-				schedulerList.remove(executor.getTargetPlatform().toLowerCase());
+			if(schedulerList.get(scheduler.getTargetPlatform().toLowerCase()).isEmpty()){
+				schedulerList.remove(scheduler.getTargetPlatform().toLowerCase());
 			}
 		}
 	}
 	
-	public static Set<String> getAllScheduler(String programmLanguage){
-		Map<String, ICScheduler> schedulerMap = schedulerList.get(programmLanguage.toLowerCase());
+	public static Set<String> getAllScheduler(String targetPlatform){
+		Map<String, ICScheduler> schedulerMap = schedulerList.get(targetPlatform.toLowerCase());
 		if(schedulerMap != null){
 			return schedulerMap.keySet();
 		}else{
@@ -99,9 +99,9 @@ public class CSchedulerRegistry {
 	}
 	
 	
-	public static boolean existScheduler(String targetPlatform, String executor){
+	public static boolean existScheduler(String targetPlatform, String scheduler){
 		
-		if(schedulerList.containsKey(targetPlatform.toLowerCase()) && schedulerList.get(targetPlatform.toLowerCase()).containsKey(executor.toLowerCase())){
+		if(schedulerList.containsKey(targetPlatform.toLowerCase()) && schedulerList.get(targetPlatform.toLowerCase()).containsKey(scheduler.toLowerCase())){
 			return true;
 		}else{
 			return false;
