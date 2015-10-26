@@ -21,6 +21,8 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	protected AbstractStreamObject(AbstractStreamObject<T> other) {
 		if (other.metadataMap != null) {
 			this.metadataMap = new HashMap<>(other.metadataMap);
+		} else {
+			this.metadataMap = new HashMap<>();
 		}
 		if (other.metadata != null) {
 			this.metadata = (T) other.metadata.clone();
