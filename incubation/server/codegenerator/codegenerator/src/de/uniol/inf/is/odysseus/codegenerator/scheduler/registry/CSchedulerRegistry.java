@@ -24,7 +24,7 @@ public class CSchedulerRegistry {
 			if(schedulerList.get(targetPlatform.toLowerCase()).containsKey(schedulerName.toLowerCase())){
 				return schedulerList.get(targetPlatform.toLowerCase()).get(schedulerName.toLowerCase());
 			}else{
-				LOG.debug("No support for the "+ schedulerName.toLowerCase() +" executor");
+				LOG.debug("No support for the "+ schedulerName.toLowerCase() +" scheduler");
 			}
 		}else{
 			LOG.debug("Transformation operator registry found no programmlanguage:"+targetPlatform.toLowerCase());

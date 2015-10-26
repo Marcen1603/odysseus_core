@@ -81,7 +81,7 @@ public class DalvikFileWrite {
 	
 		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"/app/src/main/java/com/app/odysseus/odysseustest");
 		executor.setPackageName("com.app.odysseus.odysseustest");
-		fileHelper.writeToFile(executor.getExecutorCode());
+		fileHelper.writeToFile(executor.getSchedulerCode());
 		
 	}
 

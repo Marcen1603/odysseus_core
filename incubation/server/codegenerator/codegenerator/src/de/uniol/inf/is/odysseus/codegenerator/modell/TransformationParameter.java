@@ -82,8 +82,8 @@ public class TransformationParameter {
 	}
 
 
-	public void setScheduler(String executor) {
-		this.scheduler = executor;
+	public void setScheduler(String scheduler) {
+		this.scheduler = scheduler;
 	}
 
 

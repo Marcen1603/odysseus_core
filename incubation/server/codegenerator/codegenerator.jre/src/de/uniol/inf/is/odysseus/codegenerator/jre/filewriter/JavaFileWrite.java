@@ -95,7 +95,7 @@ public class JavaFileWrite {
 	
 		FileHelper fileHelper = new FileHelper(executor.getName()+".java", targetDirectory+"/src/main");
 		executor.setPackageName("main");
-		fileHelper.writeToFile(executor.getExecutorCode());
+		fileHelper.writeToFile(executor.getSchedulerCode());
 		
 	}
 

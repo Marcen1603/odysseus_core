@@ -13,7 +13,7 @@ public interface ICScheduler {
 	
 	public String getTargetPlatform();
 	
-	public String getExecutorCode();
+	public String getSchedulerCode();
 	
 	public void setPackageName(String packageName);
 }
