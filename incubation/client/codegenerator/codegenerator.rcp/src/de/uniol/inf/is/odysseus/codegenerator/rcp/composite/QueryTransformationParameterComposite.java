@@ -35,7 +35,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 	private Button btnChooseTargetDirectory;
 	private Combo targetPlatform;
-	private Combo comboExecutor;
+	private Combo comboScheduler;
 
 	private Composite inputDirectoryComposite;
 	private Composite inputTwoGridComposite;
@@ -107,7 +107,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
 		}
 	
-		refreshComboExecutor();
+		refreshComboScheduler();
 		
 		parent.pack();
 		parent.setVisible(true);
@@ -181,7 +181,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		  			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
 		  		}
 		  		
-		  		refreshComboExecutor();
+		  		refreshComboScheduler();
 			
 		  		inputOptionComposite.layout();
 		  		parentComposite.pack();
@@ -189,8 +189,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		      }
 		});
 
-		comboExecutor = createComboWithLabel(inputTwoGridComposite,
-				"Executor:", CSchedulerRegistry.getAllScheduler("JRE"),0);
+		comboScheduler = createComboWithLabel(inputTwoGridComposite,
+				"Scheduler:", CSchedulerRegistry.getAllScheduler("JRE"),0);
 		
 	}
 
@@ -220,7 +220,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 							targetPlatform.getText(), txtTargetDirectory
 									.getText(),
 							window.getQueryId(), txtOdysseusCode.getText(),
-							true, comboExecutor.getText(), options);
+							true, comboScheduler.getText(), options);
 					window.startQueryTransformation(parameter);
 				} catch (IllegalArgumentException ae) {
 					createErrorDialog(ae);
@@ -311,7 +311,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 				}
 				
 		
-				refreshComboExecutor();
+				refreshComboScheduler();
 				
 			} catch (OdysseusRCPConfiguartionException e) {
 				e.printStackTrace();
@@ -323,31 +323,31 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		OdysseusRCPConfiguration.set(rcpConfig+"targetDirectory", txtTargetDirectory.getText());
 		OdysseusRCPConfiguration.set(rcpConfig+"odysseusDirectory", txtOdysseusCode.getText());
 		OdysseusRCPConfiguration.set(rcpConfig+"targetPlatform", targetPlatform.getText());
-		OdysseusRCPConfiguration.set(rcpConfig+"scheduler", comboExecutor.getText());
+		OdysseusRCPConfiguration.set(rcpConfig+"scheduler", comboScheduler.getText());
 	}
 	
 	
-	private void refreshComboExecutor(){
+	private void refreshComboScheduler(){
 		
 		if(CSchedulerRegistry.getAllScheduler(targetPlatform.getText())!=null){
 			
 			String[] schedulers = CSchedulerRegistry.getAllScheduler(targetPlatform.getText()).toArray(new String[CSchedulerRegistry.getAllScheduler(targetPlatform.getText()).size()]);
-			comboExecutor.setItems(stringArrayToUpperCase(schedulers));
-			comboExecutor.select(0);
+			comboScheduler.setItems(stringArrayToUpperCase(schedulers));
+			comboScheduler.select(0);
 			
 			for(int i=0; i<schedulers.length;i++){
 				 try {
 					if (schedulers[i].toLowerCase().equals(OdysseusRCPConfiguration.get(rcpConfig+"scheduler").toLowerCase())) {
-						comboExecutor.select(i);
+						comboScheduler.select(i);
 					 }
 				} catch (OdysseusRCPConfiguartionException e) {
 					e.printStackTrace();
 				}
 				
 			}
-			comboExecutor.setEnabled(true);
+			comboScheduler.setEnabled(true);
 		}else{
-			comboExecutor.setEnabled(false);
+			comboScheduler.setEnabled(false);
 		}
 	}
 	
