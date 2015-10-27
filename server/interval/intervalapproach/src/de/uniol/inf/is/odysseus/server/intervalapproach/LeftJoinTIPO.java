@@ -24,9 +24,12 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -95,7 +98,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					Iterator<T> extracted = this.areas[otherport].extractElements(object, order);
 					while (extracted.hasNext()) {
 						T next = extracted.next();
-						if (!next.hasMetadata(cMetaDataKey)) {
+						if (next.getMetadataMap() == null || !next.hasMetadata(cMetaDataKey)) {
 							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
 							this.transferFunction.transfer(out);
 						}
@@ -154,7 +157,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 
 				// Left Join: if "next" is from the left sweep area, mark it as
 				// join partner found
-				if (hit && otherport == 0 && !next.hasMetadata(cMetaDataKey)) {
+				if (hit && otherport == 0 && (next.getMetadataMap() == null || !next.hasMetadata(cMetaDataKey))) {
 					this.areas[otherport].remove(next);
 					next.setMetadata(cMetaDataKey, new Boolean(true));
 					this.areas[otherport].insert(next);
@@ -195,6 +198,46 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 			}
 		}
 
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		if (punctuation.isHeartbeat()) {
+			synchronized (this) {
+				// Left Join: if elements in the left sweep area (0) shall be
+				// purged, check, if they had join partners before.
+				if (port == 1) {
+					Iterator<T> extracted = this.areas[port^1].extractElementsBefore(punctuation.getTime());
+					while (extracted.hasNext()) {
+						T next = extracted.next();
+						if (next.getMetadataMap() == null || !next.hasMetadata(cMetaDataKey)) {
+							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
+							this.transferFunction.transfer(out);
+						}
+					}
+				} else {
+					this.areas[port^1].purgeElementsBefore(punctuation.getTime());
+				}
+			}
+		}
+		this.transferFunction.sendPunctuation(punctuation);
+		this.transferFunction.newElement(punctuation, port);
+	}
+	
+	@Override
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof LeftJoinTIPO)) {
+			return false;
+		}
+		return super.process_isSemanticallyEqual(ipo);
+	}
+	
+	@Override
+	public boolean isContainedIn(IPipe<T, T> ip) {
+		if (!(ip instanceof LeftJoinTIPO)) {
+			return false;
+		}
+		return super.isContainedIn(ip);
 	}
 
 }
