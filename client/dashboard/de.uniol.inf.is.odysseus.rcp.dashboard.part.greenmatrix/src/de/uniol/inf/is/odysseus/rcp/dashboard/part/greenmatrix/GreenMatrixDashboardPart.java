@@ -43,7 +43,7 @@ public class GreenMatrixDashboardPart extends AbstractDashboardPart implements P
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		canvas = new Canvas(parent, SWT.BORDER);
+		canvas = new Canvas(parent, SWT.BORDER |  SWT.DOUBLE_BUFFERED);
 		canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
 		canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		canvas.addPaintListener(this);
