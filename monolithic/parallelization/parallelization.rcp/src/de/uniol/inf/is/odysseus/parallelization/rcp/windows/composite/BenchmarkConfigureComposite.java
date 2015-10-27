@@ -191,7 +191,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				"Buffersize: ",
 				String.valueOf(InterOperatorParallelizationConstants.DEFAULT_BUFFER_SIZE));
 		buffertypeCombo = createComboWithLabel(interOperatorconfigComposite,
-				gridData, BUFFER_COMBO, "Select buffer type: ", 1);
+				gridData, BUFFER_COMBO, "Select buffer type: ", 0);
 		allowPostOptimizationButton = createCheckButton(this,
 				"Allow post optimization");
 		useThreadedOperatorsButton = createCheckButton(this,
