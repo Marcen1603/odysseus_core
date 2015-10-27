@@ -45,7 +45,7 @@ public abstract class AbstractBenchmarkComposite extends Composite {
 	 * @return
 	 */
 	protected static Label createLabel(Composite generalComposite, String string) {
-		Label label = new Label(generalComposite, SWT.WRAP | SWT.BORDER
+		Label label = new Label(generalComposite, SWT.WRAP 
 				| SWT.LEFT);
 		label.setText(string);
 		return label;
@@ -60,7 +60,7 @@ public abstract class AbstractBenchmarkComposite extends Composite {
 	 */
 	protected static Label createBoldLabel(Composite generalComposite,
 			String string) {
-		Label label = new Label(generalComposite, SWT.WRAP | SWT.BORDER
+		Label label = new Label(generalComposite, SWT.WRAP 
 				| SWT.LEFT);
 		label.setFont(JFaceResources.getFontRegistry().getBold(
 				JFaceResources.DEFAULT_FONT));
