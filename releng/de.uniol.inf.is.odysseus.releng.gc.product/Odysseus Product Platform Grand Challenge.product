@@ -78,7 +78,6 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.debs2012.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.debs2013.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.debsgc2015.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.part.map.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.spatial.client.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
