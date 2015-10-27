@@ -19,7 +19,7 @@ public class TemperatureDataProvider extends AbstractDataGenerator {
 
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		Thread.sleep(500);
+		Thread.sleep(100);
 		double random = Math.random();
 
 		// Switch between two normal areas, in average every 20 tuples
