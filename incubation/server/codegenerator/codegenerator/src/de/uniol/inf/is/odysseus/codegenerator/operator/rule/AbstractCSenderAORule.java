@@ -33,8 +33,7 @@ public abstract class AbstractCSenderAORule<T extends SenderAO> extends Abstract
 			}
 	
 	}
-
-
+	
 	@Override
 	public void analyseOperator(SenderAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {

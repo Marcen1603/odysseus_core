@@ -42,43 +42,14 @@ public class ExtractOSGIBundle {
 
 	
 	public Set<String> extractOSGIBundle(Set<String> importList , String targetDirectory, String copyToDirectory){
-	
+		
 		resolveBundles(importList);
 	
 		resolveRequiredBundlesByBundle();
 		
-		return copyBundles( targetDirectory, copyToDirectory);	
+		return copyBundles(targetDirectory, copyToDirectory);	
 	}
 	
-	
-
-	private List<RequireBundleModel> getRequireBundleList(String requiredBundleString){
-		List<RequireBundleModel> requireBundleList = new ArrayList<RequireBundleModel>();
-		
-		if(requiredBundleString != null){
-			String[] temp = requiredBundleString.split(",");
-			
-			for(String bundleString : temp){
-				
-				if(bundleString.contains(";")){
-			
-					String[] bundleInfo = bundleString.split(";");
-					
-					if(bundleInfo.length == 2){
-						requireBundleList.add(new RequireBundleModel(bundleInfo[0],bundleInfo[1].replace("bundle-version=", "").replace("\"", "")));
-					}
-				
-				}else{
-					requireBundleList.add(new RequireBundleModel(bundleString, null));
-				}
-				
-			}
-		}
-		
-		return requireBundleList;
-	}
-	
-
 	
 	private void resolveBundles(Set<String> importList){
 		//get needed bundle
@@ -276,5 +247,30 @@ public class ExtractOSGIBundle {
 		}
 	
 		return copiedJars;
+	}
+	
+	private List<RequireBundleModel> getRequireBundleList(String requiredBundleString){
+		List<RequireBundleModel> requireBundleList = new ArrayList<RequireBundleModel>();
+		
+		if(requiredBundleString != null){
+			String[] temp = requiredBundleString.split(",");
+			
+			for(String bundleString : temp){
+				
+				if(bundleString.contains(";")){
+			
+					String[] bundleInfo = bundleString.split(";");
+					
+					if(bundleInfo.length == 2){
+						requireBundleList.add(new RequireBundleModel(bundleInfo[0],bundleInfo[1].replace("bundle-version=", "").replace("\"", "")));
+					}
+				
+				}else{
+					requireBundleList.add(new RequireBundleModel(bundleString, null));
+				}
+				
+			}
+		}
+		return requireBundleList;
 	}
 }
