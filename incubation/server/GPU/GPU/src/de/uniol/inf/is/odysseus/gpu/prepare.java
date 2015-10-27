@@ -111,10 +111,10 @@ public class Prepare {
         }
         String ptxFileName = cuFileName.substring(0, endIndex+1)+"ptx";
         File ptxFile = new File(ptxFileName);
-        if (ptxFile.exists())
-        {
-            return ptxFileName;
-        }
+//        if (ptxFile.exists())
+//        {
+//            return ptxFileName;
+//        }
         
         File cuFile = new File(cuFileName);
         if (!cuFile.exists())
