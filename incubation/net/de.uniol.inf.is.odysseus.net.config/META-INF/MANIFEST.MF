@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.net.config
