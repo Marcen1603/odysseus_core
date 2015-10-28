@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.NodeManager">
    <implementation class="de.uniol.inf.is.odysseus.net.impl.NodeManager"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.net.INodeManager"/>
+      <provide interface="de.uniol.inf.is.odysseus.net.IOdysseusNodeManager"/>
    </service>
 </scr:component>

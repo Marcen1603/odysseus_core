@@ -7,18 +7,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.net.INodeManager;
-import de.uniol.inf.is.odysseus.net.INodeManagerListener;
+import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
 
 public final class NodeManagerListenerBinder {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NodeManagerListenerBinder.class);
 	
-	private static INodeManager nodeManager;
-	private static Collection<INodeManagerListener> listenerCache = Lists.newArrayList(); // for the case, the listeners are bound before the manager
+	private static IOdysseusNodeManager nodeManager;
+	private static Collection<IOdysseusNodeManagerListener> listenerCache = Lists.newArrayList(); // for the case, the listeners are bound before the manager
 	
 	// called by OSGi-DS
-	public static void bindNodeManager( INodeManager manager ) {
+	public static void bindNodeManager( IOdysseusNodeManager manager ) {
 		synchronized( listenerCache ) {
 			nodeManager = manager;
 			LOG.info("Bound node manager");
@@ -26,7 +26,7 @@ public final class NodeManagerListenerBinder {
 			if( !listenerCache.isEmpty() ) {
 				LOG.debug("Emptying cache of {} listeners", listenerCache.size());
 				
-				for( INodeManagerListener listener : listenerCache ) {
+				for( IOdysseusNodeManagerListener listener : listenerCache ) {
 					nodeManager.addListener(listener);
 				}
 				
@@ -36,7 +36,7 @@ public final class NodeManagerListenerBinder {
 	}
 	
 	// called by OSGi-DS
-	public static void unbindNodeManager( INodeManager manager ) {
+	public static void unbindNodeManager( IOdysseusNodeManager manager ) {
 		if( nodeManager == manager ) {
 			nodeManager = null;
 			LOG.info("Unbound node manager");
@@ -44,7 +44,7 @@ public final class NodeManagerListenerBinder {
 	}
 	
 	// called by OSGi-DS
-	public static void bindNodeManagerListener( INodeManagerListener listener ) {
+	public static void bindNodeManagerListener( IOdysseusNodeManagerListener listener ) {
 		synchronized( listenerCache ) {
 			LOG.info("Bound node manager listener {}", listener);
 			
@@ -60,7 +60,7 @@ public final class NodeManagerListenerBinder {
 	}
 	
 	// called by OSGi-DS
-	public static void unbindNodeManagerListener( INodeManagerListener listener ) {
+	public static void unbindNodeManagerListener( IOdysseusNodeManagerListener listener ) {
 		synchronized( listenerCache ) {
 			LOG.info("Unbound node manager listener {}", listener);
 			

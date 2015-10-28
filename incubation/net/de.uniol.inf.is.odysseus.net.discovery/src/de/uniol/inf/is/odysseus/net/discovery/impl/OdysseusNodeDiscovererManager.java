@@ -12,16 +12,16 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.net.discovery.INodeDiscoverer;
-import de.uniol.inf.is.odysseus.net.discovery.INodeDiscovererManager;
+import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
+import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
 
-public final class NodeDiscovererManager implements INodeDiscovererManager {
+public final class OdysseusNodeDiscovererManager implements IOdysseusNodeDiscovererManager {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NodeDiscovererManager.class);
-	private final Map<String, INodeDiscoverer> discovererMap = Maps.newHashMap();
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeDiscovererManager.class);
+	private final Map<String, IOdysseusNodeDiscoverer> discovererMap = Maps.newHashMap();
 	
 	@Override
-	public void add( INodeDiscoverer discoverer ) {
+	public void add( IOdysseusNodeDiscoverer discoverer ) {
 		Preconditions.checkNotNull(discoverer, "discoverer must not be null!");
 		
 		String discovererName = determineName(discoverer);
@@ -37,7 +37,7 @@ public final class NodeDiscovererManager implements INodeDiscovererManager {
 	}
 	
 	@Override
-	public void remove( INodeDiscoverer discoverer ) {
+	public void remove( IOdysseusNodeDiscoverer discoverer ) {
 		String discovererName = determineName(discoverer);
 		
 		synchronized (discovererMap) {
@@ -50,7 +50,7 @@ public final class NodeDiscovererManager implements INodeDiscovererManager {
 		}
 	}
 	
-	private static final String determineName( INodeDiscoverer discoverer ) {
+	private static final String determineName( IOdysseusNodeDiscoverer discoverer ) {
 		return discoverer.getClass().getSimpleName();
 	}
 	
@@ -71,7 +71,7 @@ public final class NodeDiscovererManager implements INodeDiscovererManager {
 	}
 
 	@Override
-	public Optional<INodeDiscoverer> get( String discovererName ) {
+	public Optional<IOdysseusNodeDiscoverer> get( String discovererName ) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(discovererName), "discovererName must not be null or empty!");
 		
 		synchronized( discovererMap ) {

@@ -10,19 +10,19 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.net.INode;
-import de.uniol.inf.is.odysseus.net.INodeManager;
-import de.uniol.inf.is.odysseus.net.INodeManagerListener;
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
 
-public final class NodeManager implements INodeManager {
+public final class NodeManager implements IOdysseusNodeManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NodeManager.class);
 
-	private final Collection<INode> nodes = Lists.newLinkedList();
-	private final Collection<INodeManagerListener> listeners = Lists.newLinkedList();
+	private final Collection<IOdysseusNode> nodes = Lists.newLinkedList();
+	private final Collection<IOdysseusNodeManagerListener> listeners = Lists.newLinkedList();
 
 	@Override
-	public void addNode(INode node) {
+	public void addNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 
 		synchronized (nodes) {
@@ -37,11 +37,11 @@ public final class NodeManager implements INodeManager {
 		}
 	}
 
-	private void fireNodeAddedEvent(INode node) {
+	private void fireNodeAddedEvent(IOdysseusNode node) {
 		synchronized (listeners) {
 			LOG.debug("Fire node add event to listeners");
 			
-			for (INodeManagerListener listener : listeners) {
+			for (IOdysseusNodeManagerListener listener : listeners) {
 				try {
 					listener.nodeAdded(this, node);
 				} catch (Throwable t) {
@@ -52,7 +52,7 @@ public final class NodeManager implements INodeManager {
 	}
 
 	@Override
-	public void removeNode(INode node) {
+	public void removeNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 		
 		synchronized (nodes) {
@@ -65,11 +65,11 @@ public final class NodeManager implements INodeManager {
 		}
 	}
 
-	private void fireNodeRemovedEvent(INode node) {
+	private void fireNodeRemovedEvent(IOdysseusNode node) {
 		synchronized (listeners) {
 			LOG.debug("Fire node remove event to listeners");
 			
-			for (INodeManagerListener listener : listeners) {
+			for (IOdysseusNodeManagerListener listener : listeners) {
 				try {
 					listener.nodeRemoved(this, node);
 				} catch (Throwable t) {
@@ -80,12 +80,12 @@ public final class NodeManager implements INodeManager {
 	}
 
 	@Override
-	public ImmutableCollection<INode> getNodes() {
+	public ImmutableCollection<IOdysseusNode> getNodes() {
 		return ImmutableList.copyOf(nodes);
 	}
 
 	@Override
-	public void addListener(INodeManagerListener listener) {
+	public void addListener(IOdysseusNodeManagerListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
 		synchronized (listeners) {
@@ -96,14 +96,14 @@ public final class NodeManager implements INodeManager {
 
 		// call nodeAdded for new listener for already existing nodes
 		synchronized (nodes) {
-			for (INode node : nodes) {
+			for (IOdysseusNode node : nodes) {
 				listener.nodeAdded(this, node);
 			}
 		}
 	}
 
 	@Override
-	public void removeListener(INodeManagerListener listener) {
+	public void removeListener(IOdysseusNodeManagerListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 		
 		synchronized (listeners) {

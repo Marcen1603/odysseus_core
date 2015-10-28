@@ -7,18 +7,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.net.discovery.INodeDiscoverer;
-import de.uniol.inf.is.odysseus.net.discovery.INodeDiscovererManager;
+import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
+import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
 
-public class NodeDiscovererBinder {
+public class OdysseusNodeDiscovererBinder {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NodeDiscovererBinder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeDiscovererBinder.class);
 	
-	private static final Collection<INodeDiscoverer> CACHE = Lists.newArrayList();
-	private static INodeDiscovererManager discovererManager;
+	private static final Collection<IOdysseusNodeDiscoverer> CACHE = Lists.newArrayList();
+	private static IOdysseusNodeDiscovererManager discovererManager;
 
 	// called by OSGi-DS
-	public static void bindNodeDiscoverer(INodeDiscoverer serv) {
+	public static void bindNodeDiscoverer(IOdysseusNodeDiscoverer serv) {
 		synchronized( CACHE ) {
 			LOG.info("Bound node discoverer {}", serv);
 			
@@ -35,7 +35,7 @@ public class NodeDiscovererBinder {
 	}
 
 	// called by OSGi-DS
-	public static void unbindNodeDiscoverer(INodeDiscoverer serv) {
+	public static void unbindNodeDiscoverer(IOdysseusNodeDiscoverer serv) {
 		synchronized( CACHE ) {
 			CACHE.remove(serv);
 			LOG.info("Unbound node discoverer {}", serv);
@@ -47,7 +47,7 @@ public class NodeDiscovererBinder {
 	}
 
 	// called by OSGi-DS
-	public static void bindNodeDiscovererManager(INodeDiscovererManager serv) {
+	public static void bindNodeDiscovererManager(IOdysseusNodeDiscovererManager serv) {
 		synchronized( CACHE ) {
 			discovererManager = serv;
 			LOG.info("Bound discoverer manager");
@@ -55,7 +55,7 @@ public class NodeDiscovererBinder {
 			if( !CACHE.isEmpty() ) {
 				LOG.debug("Emptying cache of {} discoverers", CACHE.size());
 				
-				for( INodeDiscoverer discoverer : CACHE) {
+				for( IOdysseusNodeDiscoverer discoverer : CACHE) {
 					discovererManager.add(discoverer);
 				}
 				
@@ -65,7 +65,7 @@ public class NodeDiscovererBinder {
 	}
 
 	// called by OSGi-DS
-	public static void unbindNodeDiscovererManager(INodeDiscovererManager serv) {
+	public static void unbindNodeDiscovererManager(IOdysseusNodeDiscovererManager serv) {
 		synchronized( CACHE ) {
 			if (discovererManager == serv) {
 				discovererManager = null;

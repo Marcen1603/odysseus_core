@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.net.INodeManager;
-import de.uniol.inf.is.odysseus.net.discovery.INodeDiscoverer;
-import de.uniol.inf.is.odysseus.net.discovery.INodeDiscovererManager;
+import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
+import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
 
 public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 
@@ -18,15 +18,15 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 	private static final long WAIT_TIME_FOR_NODE_DISCOVERER_MILLIS = 1000;
 	private static final long MAX_WAIT_TIME_FOR_NODE_DISCOVERER_MILLIS = 30 * 1000;
 
-	private static INodeManager nodeManager;
-	private static INodeDiscovererManager discovererManager;
+	private static IOdysseusNodeManager nodeManager;
+	private static IOdysseusNodeDiscovererManager discovererManager;
 
-	private static INodeDiscoverer nodeDiscoverer;
+	private static IOdysseusNodeDiscoverer nodeDiscoverer;
 
 	private static Object syncObject = new Object();
 
 	// called by OSGi-DS
-	public static void bindNodeManager(INodeManager serv) {
+	public static void bindNodeManager(IOdysseusNodeManager serv) {
 		nodeManager = serv;
 		LOG.info("Node manager bound");
 
@@ -34,7 +34,7 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 	}
 
 	// called by OSGi-DS
-	public static void unbindNodeManager(INodeManager serv) {
+	public static void unbindNodeManager(IOdysseusNodeManager serv) {
 		if (nodeManager == serv) {
 			nodeManager = null;
 			LOG.info("Node manager unbound");
@@ -44,7 +44,7 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 	}
 
 	// called by OSGi-DS
-	public static void bindNodeDiscovererManager(INodeDiscovererManager serv) {
+	public static void bindNodeDiscovererManager(IOdysseusNodeDiscovererManager serv) {
 		discovererManager = serv;
 		LOG.info("Node discoverer manager bound");
 
@@ -52,7 +52,7 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 	}
 
 	// called by OSGi-DS
-	public static void unbindNodeDiscovererManager(INodeDiscovererManager serv) {
+	public static void unbindNodeDiscovererManager(IOdysseusNodeDiscovererManager serv) {
 		if (discovererManager == serv) {
 			discovererManager = null;
 			LOG.info("Node discoverer manager unbound");
@@ -72,7 +72,7 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 						
 						long currentWaitingTime = 0;
 						while( nodeDiscoverer == null ) {
-							Optional<INodeDiscoverer> optNodeDiscovererToUse = determineFirstNodeDiscoverer();
+							Optional<IOdysseusNodeDiscoverer> optNodeDiscovererToUse = determineFirstNodeDiscoverer();
 							if (optNodeDiscovererToUse.isPresent()) {
 								nodeDiscoverer = optNodeDiscovererToUse.get();
 								LOG.info("Using node discoverer {}", nodeDiscoverer);
@@ -112,7 +112,7 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 		}
 	}
 
-	private static Optional<INodeDiscoverer> determineFirstNodeDiscoverer() {
+	private static Optional<IOdysseusNodeDiscoverer> determineFirstNodeDiscoverer() {
 		ImmutableCollection<String> discovererNames = discovererManager.getNames();
 		if (discovererNames.isEmpty()) {
 			return Optional.absent();
