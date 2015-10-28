@@ -108,8 +108,9 @@ public class MemoryMappedFile
 		if (direction == Direction.READ)
 			stopThread();
 		
-		memoryMappedFile.close();		
-		new File(filename).delete();
+		memoryMappedFile.close();
+		if (deleteFile)
+			new File(filename).delete();
 	}
 
 	public void write(ByteBuffer message) throws IOException 
