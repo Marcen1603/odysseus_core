@@ -1,23 +1,32 @@
 package de.uniol.inf.is.odysseus.net.discovery;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 
 public abstract class AbstractOdysseusNodeDiscoverer implements IOdysseusNodeDiscoverer {
 
 	private boolean started = false;
 	private IOdysseusNodeManager manager;
+	private OdysseusNetStartupData data;
 
 	@Override
-	public final void start(IOdysseusNodeManager manager) throws OdysseusNetDiscoveryException {
+	public final void start(IOdysseusNodeManager manager, OdysseusNetStartupData data) throws OdysseusNetDiscoveryException {
 		this.manager = manager;
-		startImpl(manager);
+		this.data = data;
+		
+		startImpl(manager, data);
+		
 		started = true;
 	}
 
-	protected abstract void startImpl(IOdysseusNodeManager manager) throws OdysseusNetDiscoveryException;
+	protected abstract void startImpl(IOdysseusNodeManager manager, OdysseusNetStartupData data) throws OdysseusNetDiscoveryException;
 	
 	protected final IOdysseusNodeManager getNodeManager() {
 		return manager;
+	}
+	
+	protected final OdysseusNetStartupData getStartupData() {
+		return data;
 	}
 	
 	@Override

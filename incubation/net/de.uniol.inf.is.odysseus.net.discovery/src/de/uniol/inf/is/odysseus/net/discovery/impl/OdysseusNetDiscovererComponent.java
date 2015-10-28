@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
@@ -56,6 +58,8 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	public void start(OdysseusNetStartupData data) {
 		LOG.info("Starting node discovery");
 
+		waitForServices();
+		
 		long currentWaitingTime = 0;
 		while (nodeDiscoverer == null) {
 			Optional<IOdysseusNodeDiscoverer> optNodeDiscovererToUse = determineNodeDiscoverer();
@@ -64,7 +68,7 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 				LOG.info("Using node discoverer {}", nodeDiscoverer);
 
 				try {
-					nodeDiscoverer.start(nodeManager);
+					nodeDiscoverer.start(nodeManager, data);
 				} catch (Throwable t) {
 					LOG.error("Could not start node discoverer", t);
 					return;
@@ -80,6 +84,16 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 				waitSomeTime();
 				currentWaitingTime += WAIT_TIME_FOR_NODE_DISCOVERER_MILLIS;
 			}
+		}
+	}
+
+	private void waitForServices() {
+		while( nodeManager == null ) {
+			waitSomeTime();
+		}
+		
+		while( discovererManager == null ) {
+			waitSomeTime();
 		}
 	}
 
@@ -111,6 +125,11 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 			nodeDiscoverer.stop();
 			
 			nodeDiscoverer = null;
+		}
+		
+		ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
+		for( IOdysseusNode node : nodes ) {
+			nodeManager.removeNode(node);
 		}
 	}
 

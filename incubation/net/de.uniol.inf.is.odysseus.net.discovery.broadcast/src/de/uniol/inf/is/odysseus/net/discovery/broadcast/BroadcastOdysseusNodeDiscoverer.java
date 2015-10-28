@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.discovery.AbstractOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.request.BroadcastRequestReceiver;
@@ -17,11 +18,11 @@ public class BroadcastOdysseusNodeDiscoverer extends AbstractOdysseusNodeDiscove
 	private BroadcastRequestReceiver requestReceiver;
 	
 	@Override
-	protected void startImpl(IOdysseusNodeManager manager) throws OdysseusNetDiscoveryException {
+	protected void startImpl(IOdysseusNodeManager manager, OdysseusNetStartupData data) throws OdysseusNetDiscoveryException {
 		requestSender = new BroadcastRequestSender(manager);		
 		requestSender.start();
 		
-		requestReceiver = new BroadcastRequestReceiver();
+		requestReceiver = new BroadcastRequestReceiver(data);
 		requestReceiver.start();
 		
 		LOG.info("Started broadcast node discoverer");

@@ -33,7 +33,7 @@ public class BroadcastRequestSender {
 
 	public BroadcastRequestSender(IOdysseusNodeManager nodeManager) {
 		Preconditions.checkNotNull(nodeManager, "nodeManager must not be null!");
-		
+	
 		b.group(workerGroup);
 		b.channel(NioDatagramChannel.class);
 		b.handler(new ChannelInitializer<Channel>() {

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.net.discovery.broadcast.request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn;
 import io.netty.bootstrap.Bootstrap;
@@ -22,13 +23,14 @@ public class BroadcastRequestReceiver {
 
 	private ChannelFuture channelFuture;
 
-	public BroadcastRequestReceiver() {
+	public BroadcastRequestReceiver(OdysseusNetStartupData data) {
+
 		b.group(workerGroup);
 		b.channel(NioDatagramChannel.class);
 		b.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new BroadcastRequestHandler());
+				ch.pipeline().addLast(new BroadcastRequestHandler(data));
 			}
 		});
 	}

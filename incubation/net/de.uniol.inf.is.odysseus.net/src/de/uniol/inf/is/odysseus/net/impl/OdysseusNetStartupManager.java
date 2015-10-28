@@ -24,6 +24,8 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	private IOdysseusNetStartup startup;
 	private Boolean started = false;
 
+	private OdysseusNetStartupData startupData;
+
 	// called by OSGi-DS
 	public void bindOdysseusNetStartup(IOdysseusNetStartup serv) {
 		synchronized (startUpSyncObject) {
@@ -89,9 +91,9 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			}
 			
 			LOG.info("Beginning Startup of OdysseusNet");
-			OdysseusNetStartupData startupData = tryStart();
+			startupData = tryStart();
 			LOG.info("Starting OdysseusNet components");
-			startComponents(startupData);
+			startComponents();
 
 			started = true;
 			LOG.info("Start of OdysseusNet finished");
@@ -108,7 +110,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 		}
 	}
 
-	private void startComponents(OdysseusNetStartupData startupData) {
+	private void startComponents() {
 		synchronized( components ) {
 			for( IOdysseusNetComponent component : components ) {
 				try {
@@ -156,6 +158,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			
 			LOG.info("Stopping OdysseusNet startup");
 			tryStop();
+			startupData = null;
 			LOG.info("Stopping OdysseusNet components");
 			stopComponents();
 
@@ -198,5 +201,10 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			result = started;
 		}
 		return result;
+	}
+	
+	@Override
+	public OdysseusNetStartupData getStartupData() {
+		return startupData;
 	}
 }

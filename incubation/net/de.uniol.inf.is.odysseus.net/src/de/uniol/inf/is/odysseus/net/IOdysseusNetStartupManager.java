@@ -6,4 +6,5 @@ public interface IOdysseusNetStartupManager {
 	public void stop();
 	
 	public boolean isStarted();
+	public OdysseusNetStartupData getStartupData();
 }

@@ -26,8 +26,8 @@ public final class BroadcastRequestSendThread extends Thread {
 
 	public BroadcastRequestSendThread(long timeIntervalMillis, DatagramChannel datagramChannel) {
 		Preconditions.checkArgument(timeIntervalMillis > 0, "Time interval (in ms) must be positive and non-zero");
-		this.channel =  Preconditions.checkNotNull(datagramChannel, "channel must not be null!");
 
+		this.channel =  Preconditions.checkNotNull(datagramChannel, "channel must not be null!");
 		this.intervalMillis = timeIntervalMillis;
 		
 		setName("Broadcast Request sender");

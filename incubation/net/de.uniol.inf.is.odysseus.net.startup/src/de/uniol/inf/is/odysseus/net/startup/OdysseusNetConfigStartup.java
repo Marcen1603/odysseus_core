@@ -7,6 +7,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartup;
 import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfigurationKeys;
 
@@ -24,6 +25,7 @@ public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 		
 		OdysseusNetStartupData data = new OdysseusNetStartupData();
 		data.setNodeName(nodeName);
+		data.setNodeID(OdysseusNodeID.generateNew());
 		
 		return data;
 	}
