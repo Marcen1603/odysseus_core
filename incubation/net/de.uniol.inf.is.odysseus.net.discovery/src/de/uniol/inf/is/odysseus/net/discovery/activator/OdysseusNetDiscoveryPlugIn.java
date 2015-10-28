@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
+import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfigurationKeys;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
 
@@ -72,7 +73,7 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 						
 						long currentWaitingTime = 0;
 						while( nodeDiscoverer == null ) {
-							Optional<IOdysseusNodeDiscoverer> optNodeDiscovererToUse = determineFirstNodeDiscoverer();
+							Optional<IOdysseusNodeDiscoverer> optNodeDiscovererToUse = determineNodeDiscoverer();
 							if (optNodeDiscovererToUse.isPresent()) {
 								nodeDiscoverer = optNodeDiscovererToUse.get();
 								LOG.info("Using node discoverer {}", nodeDiscoverer);
@@ -112,16 +113,19 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 		}
 	}
 
-	private static Optional<IOdysseusNodeDiscoverer> determineFirstNodeDiscoverer() {
-		ImmutableCollection<String> discovererNames = discovererManager.getNames();
-		if (discovererNames.isEmpty()) {
-			return Optional.absent();
+	private static Optional<IOdysseusNodeDiscoverer> determineNodeDiscoverer() {
+		Optional<String> optDiscovererName = OdysseusNetConfiguration.get(OdysseusNetConfigurationKeys.DISCOVERER_NAME_CONFIG_KEY);
+		if( optDiscovererName.isPresent() ) {
+			LOG.info("Selected node discoverer from config: {}", optDiscovererName.get());
+			Optional<IOdysseusNodeDiscoverer> optDiscoverer = discovererManager.get(optDiscovererName.get());
+			if( optDiscoverer.isPresent() ) {
+				return optDiscoverer;
+			}
+			
+			LOG.error("Selected node discoverer name '{}' not found", optDiscoverer.get());
 		}
-
-		LOG.info("Available node discoverer: {}", discovererNames);
 		
-		String firstDiscovererName = discovererNames.iterator().next();
-		return discovererManager.get(firstDiscovererName);
+		return Optional.absent();
 	}
 
 	private static void stopNodeDiscovery() {

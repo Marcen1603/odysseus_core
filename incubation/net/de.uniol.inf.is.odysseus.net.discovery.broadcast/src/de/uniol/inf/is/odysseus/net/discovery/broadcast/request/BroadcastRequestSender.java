@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
+import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfigurationKeys;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn;
 import io.netty.bootstrap.Bootstrap;
@@ -21,7 +23,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 public class BroadcastRequestSender {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BroadcastRequestSender.class);
-	private static final long REQUEST_SEND_INTERVAL_MILLIS = 3000;
+	private static final long DEFAULT_SEND_INTERVAL_MILLIS = 5000;
 
 	private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 	private final Bootstrap b = new Bootstrap();
@@ -49,11 +51,31 @@ public class BroadcastRequestSender {
 			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT).sync();
 			LOG.info("Binding was successful");
 
-			sendThread = new BroadcastRequestSendThread(REQUEST_SEND_INTERVAL_MILLIS, (DatagramChannel) channelFuture.channel());
+			sendThread = new BroadcastRequestSendThread(determineSendInterval(), (DatagramChannel) channelFuture.channel());
 			sendThread.start();
 
 		} catch (InterruptedException e) {
 			throw new OdysseusNetDiscoveryException("Could not start sending request messages", e);
+		}
+	}
+
+	private static long determineSendInterval() {
+		String updateIntervalStr = OdysseusNetConfiguration.get(OdysseusNetConfigurationKeys.DISCOVERER_INTERVAL_CONFIG_KEY, "" + DEFAULT_SEND_INTERVAL_MILLIS);
+		long updateInterval = tryCastToLong(updateIntervalStr, DEFAULT_SEND_INTERVAL_MILLIS);
+		if( updateInterval < 1 ) {
+			LOG.error("Update interval must be positive, not {}", updateInterval);
+			return DEFAULT_SEND_INTERVAL_MILLIS;
+		}
+		
+		return updateInterval;
+	}
+
+	private static long tryCastToLong(String text, long defaultValue) {
+		try {
+			return Long.parseLong(text);
+		} catch( Throwable t ) {
+			LOG.error("Invalid value for time interval: {}", text);
+			return defaultValue;
 		}
 	}
 

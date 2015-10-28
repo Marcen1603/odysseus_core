@@ -91,8 +91,8 @@ public class OdysseusNetConfiguration {
 	}
 
 	private static void setDefaultValues(Hashtable<Object,Object> props) {
-		setDefaultValue("net.discoverer", "BroadcastOdysseusNodeDiscoverer");
-		setDefaultValue("net.discoverer.interval", "5000");
+		setDefaultValue(OdysseusNetConfigurationKeys.DISCOVERER_NAME_CONFIG_KEY, "BroadcastOdysseusNodeDiscoverer");
+		setDefaultValue(OdysseusNetConfigurationKeys.DISCOVERER_INTERVAL_CONFIG_KEY, "5000");
 	}
 
 	private static void setDefaultValue(String key, String defaultValue) {
