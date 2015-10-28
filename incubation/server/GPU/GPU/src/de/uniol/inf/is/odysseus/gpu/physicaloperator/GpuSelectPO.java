@@ -281,6 +281,7 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 			System.err.println("GPU kann nur mit Tupel arbeiten");
 			return;
 		}
+		Tuple<?> inputTuple = (Tuple<?>)element;
 
 		// CUDA Zeitmessen
 
@@ -288,7 +289,9 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 		
 		// Elemente sammeln
 		
-		Tuple<?> result = CUDA_process((Tuple<?>) element, attributeIndex);
+		Tuple<?> result = CUDA_process(inputTuple, attributeIndex);
+		
+//		Tuple<?> outputTuple = new Tuple(new Object[] {1,2,3}, inputTuple.requiresDeepClone());
 		
 		transfer((T) result);
 
