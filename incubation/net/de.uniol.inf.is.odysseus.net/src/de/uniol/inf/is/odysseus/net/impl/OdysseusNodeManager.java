@@ -14,9 +14,9 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
 
-public final class NodeManager implements IOdysseusNodeManager {
+public final class OdysseusNodeManager implements IOdysseusNodeManager {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NodeManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeManager.class);
 
 	private final Collection<IOdysseusNode> nodes = Lists.newLinkedList();
 	private final Collection<IOdysseusNodeManagerListener> listeners = Lists.newLinkedList();

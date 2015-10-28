@@ -10,9 +10,9 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
 
-public final class NodeManagerListenerBinder {
+public final class OdysseusNodeManagerListenerBinder {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NodeManagerListenerBinder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeManagerListenerBinder.class);
 	
 	private static IOdysseusNodeManager nodeManager;
 	private static Collection<IOdysseusNodeManagerListener> listenerCache = Lists.newArrayList(); // for the case, the listeners are bound before the manager

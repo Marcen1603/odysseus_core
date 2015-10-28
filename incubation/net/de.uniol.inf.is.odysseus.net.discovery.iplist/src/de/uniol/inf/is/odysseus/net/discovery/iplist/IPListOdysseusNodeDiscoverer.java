@@ -15,9 +15,9 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.discovery.AbstractOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 
-public final class IPListNodeDiscoverer extends AbstractOdysseusNodeDiscoverer {
+public final class IPListOdysseusNodeDiscoverer extends AbstractOdysseusNodeDiscoverer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(IPListNodeDiscoverer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(IPListOdysseusNodeDiscoverer.class);
 	private static final String IP_LIST_FILENAME = "nodeIPList.conf";
 
 	@Override
