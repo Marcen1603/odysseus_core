@@ -4,8 +4,9 @@ import java.net.InetAddress;
 
 public interface IOdysseusNode {
 
+	public OdysseusNodeID getID();
+	
 	public String getName();
 	public InetAddress getInetAddress();
-	public int getPort();
 	
 }
