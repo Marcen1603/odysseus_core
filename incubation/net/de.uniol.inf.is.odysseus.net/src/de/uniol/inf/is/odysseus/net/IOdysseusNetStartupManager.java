@@ -7,4 +7,7 @@ public interface IOdysseusNetStartupManager {
 	
 	public boolean isStarted();
 	public OdysseusNetStartupData getStartupData();
+	
+	public void addListener( IOdysseusNetStartupListener listener);
+	public void removeListener( IOdysseusNetStartupListener listener);
 }

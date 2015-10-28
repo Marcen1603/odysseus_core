@@ -5,10 +5,12 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartup;
+import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupListener;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
@@ -20,6 +22,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	private final Collection<IOdysseusNetComponent> components = Lists.newArrayList();
 	private final Collection<IOdysseusNetComponent> startedComponents = Lists.newArrayList();
 	private final Object startUpSyncObject = new Object();
+	private final Collection<IOdysseusNetStartupListener> listeners = Lists.newArrayList();
 
 	private IOdysseusNetStartup startup;
 	private Boolean started = false;
@@ -66,6 +69,16 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	}
 	
 	// called by OSGi-DS
+	public void bindOdysseusNetStartupListener(IOdysseusNetStartupListener serv) {
+		addListener(serv);
+	}
+
+	// called by OSGi-DS
+	public void unbindOdysseusNetStartupListener(IOdysseusNetStartupListener serv) {
+		removeListener(serv);
+	}
+	
+	// called by OSGi-DS
 	public void activate() {
 		// do nothing
 	}
@@ -98,6 +111,8 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			started = true;
 			LOG.info("Start of OdysseusNet finished");
 		}
+		
+		fireStartEvent(startupData);
 	}
 
 	private OdysseusNetStartupData tryStart() throws OdysseusNetException {
@@ -165,6 +180,8 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			started = false;
 			LOG.info("OdysseusNet stopped now");
 		}
+		
+		fireStopEvent();
 	}
 
 	private void tryStop() {
@@ -206,5 +223,45 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	@Override
 	public OdysseusNetStartupData getStartupData() {
 		return startupData;
+	}
+
+	@Override
+	public void addListener(IOdysseusNetStartupListener listener) {
+		Preconditions.checkNotNull(listener, "listener must not be null!");
+
+		synchronized( listeners ) {
+			listeners.add(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(IOdysseusNetStartupListener listener) {
+		synchronized( listeners ) {
+			listeners.remove(listener);
+		}
+	}
+	
+	private void fireStartEvent(OdysseusNetStartupData data) {
+		synchronized( listeners ) {
+			for( IOdysseusNetStartupListener listener : listeners ) {
+				try {
+					listener.odysseusNetStarted(this, data);
+				} catch( Throwable t ) {
+					LOG.error("Exception in OdysseusNet startup listener", t);
+				}
+			}
+		}
+	}
+	
+	private void fireStopEvent() {
+		synchronized( listeners ) {
+			for( IOdysseusNetStartupListener listener : listeners ) {
+				try {
+					listener.odysseusNetStopped(this);
+				} catch( Throwable t ) {
+					LOG.error("Exception in OdysseusNet startup listener", t);
+				}
+			}
+		}
 	}
 }
