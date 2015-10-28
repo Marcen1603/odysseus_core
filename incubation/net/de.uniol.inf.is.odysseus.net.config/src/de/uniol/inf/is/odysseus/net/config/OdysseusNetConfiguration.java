@@ -75,7 +75,7 @@ public class OdysseusNetConfiguration {
 				try {
 					properties.loadFromXML(in);
 				} catch( Throwable t ) {
-					LOG.error("Could not load odysseus net configuration contents from file '{}'", confFile.getName(), t);
+					LOG.warn("Could not load odysseus net configuration contents from file '{}'", confFile.getName(), t);
 				}
 				
 			} finally {
@@ -91,21 +91,22 @@ public class OdysseusNetConfiguration {
 	}
 
 	private static void setDefaultValues(Hashtable<Object,Object> props) {
-//		setDefaultValue("peer.log", "false");
+		setDefaultValue("net.discoverer", "BroadcastOdysseusNodeDiscoverer");
+		setDefaultValue("net.discoverer.interval", "5000");
 	}
 
-//	private static void setDefaultValue(String key, String defaultValue) {
-//		if( OdysseusConfiguration.exists(key)) {
-//			String valueFromOdysseusConfig = OdysseusConfiguration.get(key);
-//			if( !Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
-//				properties.put(key, valueFromOdysseusConfig);
-//			} else {
-//				properties.put(key, defaultValue);
-//			}
-//		} else {
-//			properties.put(key, defaultValue);
-//		}
-//	}
+	private static void setDefaultValue(String key, String defaultValue) {
+		if( OdysseusConfiguration.exists(key)) {
+			String valueFromOdysseusConfig = OdysseusConfiguration.get(key);
+			if( !Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
+				properties.put(key, valueFromOdysseusConfig);
+			} else {
+				properties.put(key, defaultValue);
+			}
+		} else {
+			properties.put(key, defaultValue);
+		}
+	}
 
 	public static void save() {
 		try {
