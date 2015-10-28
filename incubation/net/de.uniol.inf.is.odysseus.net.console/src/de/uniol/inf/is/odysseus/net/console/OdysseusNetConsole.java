@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -25,6 +26,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 
 public class OdysseusNetConsole implements CommandProvider {
@@ -32,10 +35,11 @@ public class OdysseusNetConsole implements CommandProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConsole.class);
 
 	private static IServerExecutor executor;
+	private static IOdysseusNodeManager nodeManager;
 
 	// called by OSGi-DS
 	public static void bindServerExecutor(IExecutor serv) {
-		executor = (IServerExecutor)serv;
+		executor = (IServerExecutor) serv;
 	}
 
 	// called by OSGi-DS
@@ -44,7 +48,19 @@ public class OdysseusNetConsole implements CommandProvider {
 			executor = null;
 		}
 	}
-	
+
+	// called by OSGi-DS
+	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
+		nodeManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNodeManager(IOdysseusNodeManager serv) {
+		if (nodeManager == serv) {
+			nodeManager = null;
+		}
+	}
+
 	// called by OSGi-DS
 	public void activate() {
 		LOG.debug("Odysseus net console activated");
@@ -58,7 +74,7 @@ public class OdysseusNetConsole implements CommandProvider {
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("---Odysseus net commands---\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
 		sb.append("    setLogger <logger> <level>     		- Sets the logging level of a specific logger\n");
@@ -459,26 +475,26 @@ public class OdysseusNetConsole implements CommandProvider {
 			b.append("[").append(source.getName()).append("]\n");
 		}
 	}
-	
-	public void _lsNetConfiguration(CommandInterpreter ci ) {
+
+	public void _lsNetConfiguration(CommandInterpreter ci) {
 		Collection<String> configKeys = OdysseusNetConfiguration.getKeys();
 		List<String> output = Lists.newLinkedList();
-		for( String configKey : configKeys ) {
+		for (String configKey : configKeys) {
 			Optional<String> optValue = OdysseusNetConfiguration.get(configKey);
-			if( optValue.isPresent() ) {
+			if (optValue.isPresent()) {
 				output.add(configKey + " = " + optValue.get());
 			} else {
 				output.add(configKey + " = <no value>");
 			}
 		}
-		
+
 		sortAndPrintList(ci, output);
 	}
-	
-	public void _listNetConfiguration(CommandInterpreter ci ) {
+
+	public void _listNetConfiguration(CommandInterpreter ci) {
 		_lsNetConfiguration(ci);
 	}
-	
+
 	private static void sortAndPrintList(CommandInterpreter ci, List<String> list) {
 		if (list != null && !list.isEmpty()) {
 			Collections.sort(list);
@@ -487,26 +503,38 @@ public class OdysseusNetConsole implements CommandProvider {
 			}
 		}
 	}
-	
-	public void _setNetConfiguration(CommandInterpreter ci ) {
+
+	public void _setNetConfiguration(CommandInterpreter ci) {
 		String key = ci.nextArgument();
-		if( Strings.isNullOrEmpty(key)) {
+		if (Strings.isNullOrEmpty(key)) {
 			ci.println("usage: setNetConfiguration <key> <value>");
 			return;
 		}
-		
+
 		String value = ci.nextArgument();
-		if( Strings.isNullOrEmpty(value)) {
+		if (Strings.isNullOrEmpty(value)) {
 			ci.println("usage: setNetConfiguration <key> <value>");
 			return;
 		}
-		
+
 		OdysseusNetConfiguration.set(key, value);
 		ci.println("Set key '" + key + "' to '" + value + "'");
 	}
-	
-	public void _saveNetConfiguration(CommandInterpreter ci ) {
+
+	public void _saveNetConfiguration(CommandInterpreter ci) {
 		OdysseusNetConfiguration.save();
 		ci.println("Saved odysseus net configuration");
+	}
+	
+	public void _lsFoundOdysseusNodes(CommandInterpreter ci ) {
+		ImmutableCollection<IOdysseusNode> foundNodes = nodeManager.getNodes();
+		
+		for( IOdysseusNode foundNode : foundNodes ) {
+			ci.println(foundNode);
+		}
+	}
+	
+	public void _listFoundOdysseusNodes(CommandInterpreter ci ) {
+		_lsFoundOdysseusNodes(ci);
 	}
 }

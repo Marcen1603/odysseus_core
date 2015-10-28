@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.net.discovery.broadcast.request;
 
 import java.net.InetSocketAddress;
 import java.util.Random;
+import java.util.UUID;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ public class BroadcastRequestHandler extends SimpleChannelInboundHandler<Datagra
 
 	private static final Logger LOG = LoggerFactory.getLogger(BroadcastRequestHandler.class);
 	private static final int RANDOM_NUM = new Random().nextInt(1000);
+	private static final UUID NODE_ID = UUID.randomUUID();
 	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
@@ -26,9 +28,11 @@ public class BroadcastRequestHandler extends SimpleChannelInboundHandler<Datagra
 			
 			JSONObject json = new JSONObject();
 			json.put("nodeName", "OdysseusNode_" + RANDOM_NUM);
+			json.put("nodeID", NODE_ID);
 			
+			String jsonString = json.toString();
 			InetSocketAddress address = new InetSocketAddress(msg.sender().getAddress(), BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT);
-			DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(json.toString().getBytes()), address);
+			DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(jsonString, CharsetUtil.UTF_8), address);
 			
 			LOG.debug("Sending request answer to {}", packet.recipient());
 			ctx.write(packet);

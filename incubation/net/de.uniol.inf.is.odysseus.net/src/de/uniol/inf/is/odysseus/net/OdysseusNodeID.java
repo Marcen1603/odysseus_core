@@ -8,10 +8,19 @@ public final class OdysseusNodeID {
 
 	private final UUID uuid;
 	
-	public OdysseusNodeID(UUID uuid) {
+	OdysseusNodeID(UUID uuid) {
 		Preconditions.checkNotNull(uuid, "uuid must not be null!");
 
 		this.uuid = uuid;
+	}
+	
+	public static OdysseusNodeID fromString( String text ) {
+		UUID uuid = UUID.fromString(text);
+		return new OdysseusNodeID(uuid);
+	}
+	
+	public static OdysseusNodeID generateNew() {
+		return new OdysseusNodeID(UUID.randomUUID());
 	}
 	
 	@Override
@@ -36,4 +45,5 @@ public final class OdysseusNodeID {
 	public int hashCode() {
 		return uuid.hashCode();
 	}
+
 }

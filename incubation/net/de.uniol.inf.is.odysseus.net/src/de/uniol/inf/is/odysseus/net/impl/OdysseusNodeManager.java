@@ -112,5 +112,11 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 			LOG.debug("Added node manager listener {}", listener);
 		}
 	}
-
+	
+	@Override
+	public boolean existsNode(IOdysseusNode node) {
+		synchronized( nodes ) {
+			return nodes.contains(node);
+		}
+	}
 }
