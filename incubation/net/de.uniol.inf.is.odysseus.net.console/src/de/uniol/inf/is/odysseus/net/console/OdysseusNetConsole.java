@@ -26,8 +26,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 
 public class OdysseusNetConsole implements CommandProvider {
@@ -36,6 +38,7 @@ public class OdysseusNetConsole implements CommandProvider {
 
 	private static IServerExecutor executor;
 	private static IOdysseusNodeManager nodeManager;
+	private static IOdysseusNetStartupManager startupManager;
 
 	// called by OSGi-DS
 	public static void bindServerExecutor(IExecutor serv) {
@@ -58,6 +61,18 @@ public class OdysseusNetConsole implements CommandProvider {
 	public static void unbindOdysseusNodeManager(IOdysseusNodeManager serv) {
 		if (nodeManager == serv) {
 			nodeManager = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
+		startupManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
+		if (startupManager == serv) {
+			startupManager = null;
 		}
 	}
 
@@ -536,5 +551,21 @@ public class OdysseusNetConsole implements CommandProvider {
 	
 	public void _listFoundOdysseusNodes(CommandInterpreter ci ) {
 		_lsFoundOdysseusNodes(ci);
+	}
+	
+	public void _startOdysseusNet(CommandInterpreter ci ) {
+		try {
+			startupManager.start();
+			ci.println("OdysseusNet started by console");
+		} catch (OdysseusNetException e) {
+			ci.println("Could not start OdysseusNet");
+			ci.println(e);
+		}
+	}
+	
+	public void _stopOdysseusNet(CommandInterpreter ci ) {
+		startupManager.stop();
+		
+		ci.println("OdysseusNet stopped by console");
 	}
 }
