@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Properties;
@@ -71,7 +70,6 @@ public class OdysseusNetConfiguration {
 			
 			FileInputStream in = new FileInputStream(confFile);
 			try {
-				setDefaultValues(properties);
 				try {
 					properties.loadFromXML(in);
 				} catch( Throwable t ) {
@@ -88,24 +86,6 @@ public class OdysseusNetConfiguration {
 		} catch (IOException ex) {
 			LOG.warn("Could not load configuration file '" + ODYSSEUS_NET_CONFIGURATION_FILE + "'", ex);
 		} 
-	}
-
-	private static void setDefaultValues(Hashtable<Object,Object> props) {
-		setDefaultValue(OdysseusNetConfigurationKeys.DISCOVERER_NAME_CONFIG_KEY, "BroadcastOdysseusNodeDiscoverer");
-		setDefaultValue(OdysseusNetConfigurationKeys.DISCOVERER_INTERVAL_CONFIG_KEY, "5000");
-	}
-
-	private static void setDefaultValue(String key, String defaultValue) {
-		if( OdysseusConfiguration.exists(key)) {
-			String valueFromOdysseusConfig = OdysseusConfiguration.get(key);
-			if( !Strings.isNullOrEmpty(valueFromOdysseusConfig)) {
-				properties.put(key, valueFromOdysseusConfig);
-			} else {
-				properties.put(key, defaultValue);
-			}
-		} else {
-			properties.put(key, defaultValue);
-		}
 	}
 
 	public static void save() {
@@ -180,7 +160,12 @@ public class OdysseusNetConfiguration {
 
 	public static String get(String key, String defaultValue) {
 		Optional<String> optValue = get(key);
-		return optValue.isPresent() ? optValue.get() : defaultValue;
+		if( !optValue.isPresent() ) {
+			set(key, defaultValue);
+			return defaultValue;
+		}
+		
+		return optValue.get();
 	}
 
 	public static boolean exists(String key) {

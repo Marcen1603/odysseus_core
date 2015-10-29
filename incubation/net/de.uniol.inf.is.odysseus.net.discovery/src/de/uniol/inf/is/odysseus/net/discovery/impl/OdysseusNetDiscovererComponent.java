@@ -11,9 +11,9 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
-import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfigurationKeys;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
+import de.uniol.inf.is.odysseus.net.discovery.activator.OdysseusNetDiscoveryPlugIn;
 
 public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 
@@ -25,7 +25,7 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	private IOdysseusNodeManager nodeManager;
 	private IOdysseusNodeDiscovererManager discovererManager;
 	private IOdysseusNodeDiscoverer nodeDiscoverer;
-	
+
 	// called by OSGi-DS
 	public void bindNodeManager(IOdysseusNodeManager serv) {
 		nodeManager = serv;
@@ -53,13 +53,13 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 			LOG.info("Node discoverer manager unbound");
 		}
 	}
-	
+
 	@Override
 	public void start(OdysseusNetStartupData data) {
 		LOG.info("Starting node discovery");
 
 		waitForServices();
-		
+
 		long currentWaitingTime = 0;
 		while (nodeDiscoverer == null) {
 			Optional<IOdysseusNodeDiscoverer> optNodeDiscovererToUse = determineNodeDiscoverer();
@@ -88,11 +88,11 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	}
 
 	private void waitForServices() {
-		while( nodeManager == null ) {
+		while (nodeManager == null) {
 			waitSomeTime();
 		}
-		
-		while( discovererManager == null ) {
+
+		while (discovererManager == null) {
 			waitSomeTime();
 		}
 	}
@@ -105,31 +105,30 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	}
 
 	private Optional<IOdysseusNodeDiscoverer> determineNodeDiscoverer() {
-		Optional<String> optDiscovererName = OdysseusNetConfiguration.get(OdysseusNetConfigurationKeys.DISCOVERER_NAME_CONFIG_KEY);
-		if (optDiscovererName.isPresent()) {
-			LOG.info("Selected node discoverer from config: {}", optDiscovererName.get());
-			Optional<IOdysseusNodeDiscoverer> optDiscoverer = discovererManager.get(optDiscovererName.get());
-			if (optDiscoverer.isPresent()) {
-				return optDiscoverer;
-			}
+		String discovererName = OdysseusNetConfiguration.get(OdysseusNetDiscoveryPlugIn.DISCOVERER_NAME_CONFIG_KEY, OdysseusNetDiscoveryPlugIn.DEFAULT_DISCOVERER_NAME);
 
-			LOG.error("Selected node discoverer name '{}' not found", optDiscoverer.get());
+		LOG.info("Selected node discoverer from config: {}", discovererName);
+		Optional<IOdysseusNodeDiscoverer> optDiscoverer = discovererManager.get(discovererName);
+		if (optDiscoverer.isPresent()) {
+			return optDiscoverer;
 		}
+
+		LOG.error("Selected node discoverer name '{}' not found", optDiscoverer.get());
 
 		return Optional.absent();
 	}
 
 	@Override
 	public void stop() {
-		if( nodeDiscoverer != null ) {
+		if (nodeDiscoverer != null) {
 			nodeDiscoverer.stop();
-			
+
 			nodeDiscoverer = null;
 		}
-		
-		if( nodeManager != null ) {
+
+		if (nodeManager != null) {
 			ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
-			for( IOdysseusNode node : nodes ) {
+			for (IOdysseusNode node : nodes) {
 				nodeManager.removeNode(node);
 			}
 		}

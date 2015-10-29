@@ -48,7 +48,7 @@ public class BroadcastRequestHandler extends SimpleChannelInboundHandler<Datagra
 			json.put("nodeID", ownNodeID);
 			
 			String jsonString = json.toString();
-			InetSocketAddress address = new InetSocketAddress(msg.sender().getAddress(), BroadcastDiscoveryPlugIn.BROADCAST_PORT);
+			InetSocketAddress address = new InetSocketAddress(msg.sender().getAddress(), msg.sender().getPort());
 			DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(jsonString, CharsetUtil.UTF_8), address);
 			
 			LOG.debug("Sending request answer to {}", packet.recipient());

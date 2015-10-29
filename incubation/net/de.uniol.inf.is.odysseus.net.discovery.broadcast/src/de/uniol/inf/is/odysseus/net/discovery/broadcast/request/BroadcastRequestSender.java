@@ -8,7 +8,6 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
-import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfigurationKeys;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn;
 import io.netty.bootstrap.Bootstrap;
@@ -62,7 +61,7 @@ public class BroadcastRequestSender {
 	}
 
 	private static long determineSendInterval() {
-		String updateIntervalStr = OdysseusNetConfiguration.get(OdysseusNetConfigurationKeys.DISCOVERER_INTERVAL_CONFIG_KEY, "" + DEFAULT_SEND_INTERVAL_MILLIS);
+		String updateIntervalStr = OdysseusNetConfiguration.get(BroadcastDiscoveryPlugIn.DISCOVERER_INTERVAL_CONFIG_KEY, "" + DEFAULT_SEND_INTERVAL_MILLIS);
 		long updateInterval = tryCastToLong(updateIntervalStr, DEFAULT_SEND_INTERVAL_MILLIS);
 		if( updateInterval < 1 ) {
 			LOG.error("Update interval must be positive, not {}", updateInterval);

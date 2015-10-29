@@ -9,15 +9,15 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetStartup;
 import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
-import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfigurationKeys;
 
 public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 
+	private static final String NODE_NAME_CONFIG_KEY = "net.node.name";
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConfigStartup.class);
 	
 	@Override
 	public OdysseusNetStartupData start() {
-		String nodeName = OdysseusNetConfiguration.get(OdysseusNetConfigurationKeys.DISCOVERER_NAME_CONFIG_KEY, "OdysseusNode");
+		String nodeName = OdysseusNetConfiguration.get(NODE_NAME_CONFIG_KEY, "OdysseusNode");
 		if( Strings.isNullOrEmpty(nodeName)) {
 			LOG.error("Invalid node name. Using default");
 			nodeName = "OdysseusNode";

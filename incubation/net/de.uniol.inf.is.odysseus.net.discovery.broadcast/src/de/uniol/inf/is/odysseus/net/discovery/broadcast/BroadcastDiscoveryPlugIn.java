@@ -7,6 +7,7 @@ public class BroadcastDiscoveryPlugIn implements BundleActivator {
 
 	public static final int BROADCAST_PORT = 60100;
 	public static final String BROADCAST_REQUEST_CONTENT = "BROADCAST_REQUEST";
+	public static final String DISCOVERER_INTERVAL_CONFIG_KEY = "net.discoverer.interval";
 	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
