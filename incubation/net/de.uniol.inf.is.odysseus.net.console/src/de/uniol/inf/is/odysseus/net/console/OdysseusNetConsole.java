@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
+import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 
 public class OdysseusNetConsole implements CommandProvider {
@@ -91,6 +92,14 @@ public class OdysseusNetConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("---Odysseus net commands---\n");
+		sb.append("    startOdysseusNet/stop...             - Starts/Stops OdysseusNet\n");
+		sb.append("    showStartupData                      - Shows selected startup data of started OdysseusNet\n");
+		sb.append("\n");
+		sb.append("    listNetConfiguration/ls...           - Prints the current odysseus net configuration\n");
+		sb.append("    setNetConfiguration <key> <value>    - Sets key in the odysseus net configuration to spezified value\n");
+		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");	
+		sb.append("\n");
+		sb.append("---Utility commands---\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
 		sb.append("    setLogger <logger> <level>     		- Sets the logging level of a specific logger\n");
 		sb.append("    setLoggerOdysseus <logger> <level>	- Sets the logging level of a Odysseus-logger (de.uniol.inf.is.odysseus)\n");
@@ -103,9 +112,6 @@ public class OdysseusNetConsole implements CommandProvider {
 		sb.append("    dumpPlan <queryid>                   - Prints the physical plan of the specified query.\n");
 		sb.append("    dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis> - Prints the current stream of the specified operator.\n");
 		sb.append("\n");
-		sb.append("    listNetConfiguration/ls...           - Prints the current odysseus net configuration\n");
-		sb.append("    setNetConfiguration <key> <value>    - Sets key in the odysseus net configuration to spezified value\n");
-		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");
 
 		return sb.toString();
 	}
@@ -567,5 +573,17 @@ public class OdysseusNetConsole implements CommandProvider {
 		startupManager.stop();
 		
 		ci.println("OdysseusNet stopped by console");
+	}
+	
+	public void _showStartupData(CommandInterpreter ci ) {
+		if( startupManager.isStarted() ) {
+			OdysseusNetStartupData startupData = startupManager.getStartupData();
+			
+			ci.println("NodeName = " + startupData.getNodeName());
+			ci.println("NodeID   = " + startupData.getNodeID());
+			ci.println("Port     = " + startupData.getCommunicationPort());
+		} else {
+			ci.println("OdysseusNet is not started");
+		}
 	}
 }

@@ -8,5 +8,6 @@ public interface IOdysseusNode {
 	
 	public String getName();
 	public InetAddress getInetAddress();
+	public int getCommunicationPort();
 	
 }

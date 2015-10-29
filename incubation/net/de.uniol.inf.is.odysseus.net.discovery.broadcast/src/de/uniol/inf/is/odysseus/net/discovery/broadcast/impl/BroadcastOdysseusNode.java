@@ -13,15 +13,19 @@ public class BroadcastOdysseusNode implements IOdysseusNode {
 	private final OdysseusNodeID nodeID;
 	private final String nodeName;
 	private final InetAddress address;
+	private final int communicationPort;
 	
-	public BroadcastOdysseusNode(OdysseusNodeID nodeID, String name, InetAddress address) {
+	public BroadcastOdysseusNode(OdysseusNodeID nodeID, String name, InetAddress address, int communicationPort) {
 		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
 		Preconditions.checkNotNull(address, "address must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Nodename must not be null or empty!");
+		Preconditions.checkArgument(communicationPort > 0, "communicationPort must be positive!");
+
 
 		this.nodeID = nodeID;
 		this.nodeName = name;
 		this.address = address;
+		this.communicationPort = communicationPort;
 	}
 	
 	@Override
@@ -37,6 +41,11 @@ public class BroadcastOdysseusNode implements IOdysseusNode {
 	@Override
 	public InetAddress getInetAddress() {
 		return address;
+	}
+	
+	@Override
+	public int getCommunicationPort() {
+		return communicationPort;
 	}
 	
 	@Override
@@ -60,7 +69,7 @@ public class BroadcastOdysseusNode implements IOdysseusNode {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{Node ").append(nodeID).append(": ").append(nodeName).append(" [").append(address).append("]}");
+		sb.append("{Node ").append(nodeID).append(": ").append(nodeName).append(" [").append(address).append(":").append(communicationPort).append("]}");
 		return sb.toString();
 	}
 }

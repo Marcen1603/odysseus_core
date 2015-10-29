@@ -29,19 +29,22 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 
 	private final String ownNodeName;
 	private final OdysseusNodeID ownNodeID;
-	private final int ownPort;
+	private final int ownCommunicationPort;
+	
+	private final int ownBroadcastPort;
 	
 	private final IOdysseusNodeManager manager;
 	
 
-	public BroadcastHandler(OdysseusNetStartupData data, IOdysseusNodeManager manager, int usedPort) {
+	public BroadcastHandler(OdysseusNetStartupData data, IOdysseusNodeManager manager, int broadcastPort, int communicationPort) {
 		Preconditions.checkNotNull(manager, "manager must not be null!");
 		Preconditions.checkNotNull(data, "Data must not be null!");
 
 		this.ownNodeName = data.getNodeName();
 		this.ownNodeID = data.getNodeID();
 		this.manager = manager;
-		this.ownPort = usedPort;
+		this.ownBroadcastPort = broadcastPort;
+		this.ownCommunicationPort = communicationPort;
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 	private boolean isOwnMessage(DatagramPacket msg) {
 		try {
 			InetSocketAddress sender = msg.sender();
-			return sender.getAddress().equals(InetAddress.getLocalHost()) && sender.getPort() == ownPort;
+			return sender.getAddress().equals(InetAddress.getLocalHost()) && sender.getPort() == ownBroadcastPort;
 		} catch (UnknownHostException e) {
 			return false;
 		}
@@ -74,6 +77,7 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 		JSONObject json = new JSONObject();
 		json.put("nodeName", ownNodeName);
 		json.put("nodeID", ownNodeID);
+		json.put("communicationPort", ownCommunicationPort);
 
 		String jsonString = json.toString();
 		DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(jsonString, CharsetUtil.UTF_8), destination);
@@ -87,8 +91,9 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 		if (jsonObject.has("nodeName") && jsonObject.has("nodeID")) {
 			String nodeName = jsonObject.getString("nodeName");
 			String nodeIDStr = jsonObject.getString("nodeID");
+			int communicationPort = jsonObject.getInt("communicationPort");
 
-			IOdysseusNode newNode = new BroadcastOdysseusNode(OdysseusNodeID.fromString(nodeIDStr), nodeName, sender);
+			IOdysseusNode newNode = new BroadcastOdysseusNode(OdysseusNodeID.fromString(nodeIDStr), nodeName, sender, communicationPort);
 			if (!manager.existsNode(newNode)) {
 				manager.addNode(newNode);
 				LOG.debug("New node added: {}", newNode);

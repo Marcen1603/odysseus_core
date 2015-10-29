@@ -105,6 +105,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			
 			LOG.info("Beginning Startup of OdysseusNet");
 			startupData = tryStart();
+			LOG.info("Startupdata is {}", startupData);
 			LOG.info("Starting OdysseusNet components");
 			startComponents();
 
