@@ -8,7 +8,9 @@ public interface IOdysseusNodeManager {
 	public void addNode( IOdysseusNode node );
 	public void removeNode( IOdysseusNode node );
 	public ImmutableCollection<IOdysseusNode> getNodes();
+	public ImmutableCollection<OdysseusNodeID> getNodeIDs();
 	public boolean existsNode(IOdysseusNode node);
+	public boolean existsNode(OdysseusNodeID nodeID);
 	public Optional<IOdysseusNode> getNode(OdysseusNodeID nodeID);
 	
 	public void addListener( IOdysseusNodeManagerListener listener );

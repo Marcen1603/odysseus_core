@@ -130,4 +130,18 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 			return Optional.fromNullable(nodeMap.get(nodeID));
 		}
 	}
+	
+	@Override
+	public boolean existsNode(OdysseusNodeID nodeID) {
+		synchronized( nodeMap ) {
+			return nodeMap.containsKey(nodeID);
+		}
+	}
+	
+	@Override
+	public ImmutableCollection<OdysseusNodeID> getNodeIDs() {
+		synchronized( nodeMap ) {
+			return ImmutableList.copyOf(nodeMap.keySet());
+		}
+	}
 }
