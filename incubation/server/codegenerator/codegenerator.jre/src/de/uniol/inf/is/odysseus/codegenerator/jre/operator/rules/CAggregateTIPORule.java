@@ -55,8 +55,6 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 
 		List<String> metaAttributeNames = aggregateAO.getInputSchema().getMetaAttributeNames();
 		
-
-		
 		StringTemplate aggregateMetaDataTemplate = new StringTemplate("utils","metaDataMergeFunction");
 		aggregateMetaDataTemplate.getSt().add("operatorVariable", operatorVariable);
 		aggregateMetaDataTemplate.getSt().add("metaAttributeNames", metaAttributeNames);
@@ -113,14 +111,10 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 		aggregateItemsTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		aggregateItemsTIPOTemplate.getSt().add("cAggregateItemModelList", cAggregateItemModelList);
 	
-
 		aggregateTIPO.addCode(aggregateItemsTIPOTemplate.getSt().render());
 		
-		
-		
-		
+
 		boolean fastGrouping = aggregateAO.isFastGrouping();
-		
 		
 		StringTemplate aggregateTIPOTemplate = new StringTemplate("operator","aggregateTIPO");
 		aggregateTIPOTemplate.getSt().add("operatorVariable", operatorVariable);

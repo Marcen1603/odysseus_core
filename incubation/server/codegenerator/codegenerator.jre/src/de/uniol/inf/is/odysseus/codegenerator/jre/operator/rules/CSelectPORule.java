@@ -40,7 +40,6 @@ public class CSelectPORule extends AbstractCSelectAORule<SelectAO>{
 		selectPO.addFrameworkImport(RelationalPredicate.class.getName());
 		selectPO.addFrameworkImport(SelectPO.class.getName());
 		
-		
 		return selectPO;
 	}
 

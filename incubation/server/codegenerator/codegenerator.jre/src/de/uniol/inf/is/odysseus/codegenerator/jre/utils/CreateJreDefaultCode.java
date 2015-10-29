@@ -3,10 +3,8 @@ package de.uniol.inf.is.odysseus.codegenerator.jre.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.codegenerator.jre.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
@@ -16,13 +14,11 @@ import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -62,7 +58,7 @@ public class CreateJreDefaultCode {
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 
 		//add import
-		codeFragmentInfo.addFrameworkImport(ITransportDirection.class.getName());
+		codeFragmentInfo.addFrameworkImport(direction.getClass().getName());
 		
 		//generate code for options
 		codeFragmentInfo.addCodeFragmentInfo(getCodeForOptionMap(optionMap,operatorVariable));
@@ -253,7 +249,7 @@ public class CreateJreDefaultCode {
 
 	public static CodeFragmentInfo getCodeForProtocolHandler(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
-		Set<String> imports = new HashSet<String>();
+	
 
 		boolean openwrapper = false;
 		
@@ -265,7 +261,7 @@ public class CreateJreDefaultCode {
 		}else{
 			 wrapper = "IAccessPattern.PUSH";
 		}
-		imports.add(IAccessPattern.class.getName());
+		codeFragmentInfo.addFrameworkImport(IAccessPattern.class.getName());
 		
 	
 		StringTemplate protocolHandlerTemplate = new StringTemplate("utils","protocolHandler");
@@ -277,27 +273,22 @@ public class CreateJreDefaultCode {
 		protocolHandlerTemplate.getSt().add("direction", direction);
 		
 		//add imports
-		imports.add(IProtocolHandler.class.getName());
-		imports.add(ITransportHandler.class.getName());
-		imports.add(FileHandler.class.getName());
-		imports.add(IStreamObjectDataHandler.class.getName());
+		codeFragmentInfo.addFrameworkImport(IProtocolHandler.class.getName());
+		codeFragmentInfo.addFrameworkImport(ITransportHandler.class.getName());
+	//	codeFragmentInfo.addFrameworkImport(FileHandler.class.getName());
+//		codeFragmentInfo.addFrameworkImport(IStreamObjectDataHandler.class.getName());
 	 
+		//add dynamic transportHandler as import
+		codeFragmentInfo.addFrameworkImport(TransportHandlerRegistry.getITransportHandlerClass(protocolHandlerParameter.getTransportHandler()).getClass().getName());
+		
 		codeFragmentInfo.setCode(protocolHandlerTemplate.getSt().render());
-		codeFragmentInfo.setImports(imports);
+
+		
 		
 		return codeFragmentInfo;
 	}
 	
-	/*
-    //AccessPO schema erstellen
-    List<SDFAttribute> sourceSchemaList = new ArrayList(); 
-    SDFAttribute sid = new SDFAttribute(null, "a", SDFDatatype.INTEGER, null, null,null);
-    SDFAttribute ts = new SDFAttribute(null, "ts", SDFDatatype.STRING, null, null,null);
-    sourceSchemaList.add(sid);
-    sourceSchemaList.add(ts);
-    
-	SDFSchema sourceSchema = SDFSchemaFactory.createNewSchema("soccergame", Tuple.class, sourceSchemaList);
-*/
+
 	public static CodeFragmentInfo getCodeForSDFSchema(SDFSchema schema, String operatorVariable){
 		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
