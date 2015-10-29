@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.uniol.inf.is.odysseus.net.rcp.perspective.OdysseusNetPerspective"
+            icon="icons/odysseusNetSymbol.png"
+            id="de.uniol.inf.is.odysseus.net.rcp.Perspektive"
+            name="OdysseusNet">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="de.uniol.inf.is.odysseus.net.rcp.views.NodeViewPart"
+            icon="icons/node.png"
+            id="de.uniol.inf.is.odysseus.net.rcp.NodeView"
+            name="Nodes"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
