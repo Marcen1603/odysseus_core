@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class CSVParser {
-	
+
 	static public char determineDelimiter(String v) {
 		char ret;
 		if (v.equals("\\t")) {
@@ -16,27 +16,35 @@ public class CSVParser {
 		return ret;
 	}
 
-
 	static public List<String> parseCSV(final String line, final char textDelimiter, final char delimiter, final boolean trim) {
 		List<String> ret = new LinkedList<String>();
 		StringBuffer elem = new StringBuffer();
-		boolean overreadModus1 = false;
-		boolean overreadModus2 = false;
+		boolean readInsideOfText = false;
+		boolean readAfterText = false;
 
 		for (char c : line.toCharArray()) {
-
 			if (c == textDelimiter) {
-				overreadModus1 = !overreadModus1;
+				if (!readInsideOfText){
+					elem = new StringBuffer();
+				}else{
+					// Flag ignore between textDelimiter and delimiter (e.g. 'abc' ,1)
+					readAfterText = true;
+				}
+				readInsideOfText = !readInsideOfText;
+				
 				// elem.append(c);
 			} else {
-				if (overreadModus1 || overreadModus2) {
+				if (readInsideOfText) {
 					elem.append(c);
 				} else {
 					if (delimiter == c) {
 						ret.add(elem.toString());
 						elem = new StringBuffer();
+						readAfterText = false;
 					} else {
-						elem.append(c);
+						if (!readAfterText){
+							elem.append(c);
+						}
 					}
 				}
 
@@ -52,9 +60,9 @@ public class CSVParser {
 		}
 		return ret;
 	}
-	
+
 	static public String[] parseCSV(final String line, final char delimiter, final boolean trim) {
-		String[] ret = line.split(Pattern.quote(""+delimiter));
+		String[] ret = line.split(Pattern.quote("" + delimiter));
 		if (trim) {
 			String[] trimmed = new String[ret.length];
 			for (int i = 0; i < ret.length; i++) {
@@ -65,5 +73,12 @@ public class CSVParser {
 		return ret;
 	}
 
-	
+	public static void main(String[] args) {
+		String in = "4,  ' d' ,  ' e'";
+		List<String> ret = CSVParser.parseCSV(in, '\'', ',', false);
+		for (String string : ret) {
+			System.out.println("\'" + string + "\'");
+		}
+	}
+
 }
