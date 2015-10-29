@@ -127,9 +127,11 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 			nodeDiscoverer = null;
 		}
 		
-		ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
-		for( IOdysseusNode node : nodes ) {
-			nodeManager.removeNode(node);
+		if( nodeManager != null ) {
+			ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
+			for( IOdysseusNode node : nodes ) {
+				nodeManager.removeNode(node);
+			}
 		}
 	}
 

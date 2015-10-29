@@ -18,7 +18,7 @@ public final class BroadcastRequestSendThread extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BroadcastRequestSendThread.class);
 	
-	private static final InetSocketAddress BROADCAST_SOCKET_ADDRESS = new InetSocketAddress("255.255.255.255", BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT);
+	private static final InetSocketAddress BROADCAST_SOCKET_ADDRESS = new InetSocketAddress("255.255.255.255", BroadcastDiscoveryPlugIn.BROADCAST_PORT);
 	private final long intervalMillis;
 	private final DatagramChannel channel;
 

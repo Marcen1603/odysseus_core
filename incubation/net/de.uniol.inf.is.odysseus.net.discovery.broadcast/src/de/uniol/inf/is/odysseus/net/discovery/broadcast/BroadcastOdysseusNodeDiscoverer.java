@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.discovery.AbstractOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
-import de.uniol.inf.is.odysseus.net.discovery.broadcast.request.BroadcastRequestReceiver;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.request.BroadcastRequestSender;
 
 public class BroadcastOdysseusNodeDiscoverer extends AbstractOdysseusNodeDiscoverer {
@@ -15,22 +14,17 @@ public class BroadcastOdysseusNodeDiscoverer extends AbstractOdysseusNodeDiscove
 	private static final Logger LOG = LoggerFactory.getLogger(BroadcastOdysseusNodeDiscoverer.class);
 	
 	private BroadcastRequestSender requestSender;
-	private BroadcastRequestReceiver requestReceiver;
 	
 	@Override
 	protected void startImpl(IOdysseusNodeManager manager, OdysseusNetStartupData data) throws OdysseusNetDiscoveryException {
-		requestSender = new BroadcastRequestSender(manager);		
+		requestSender = new BroadcastRequestSender(data, manager);		
 		requestSender.start();
-		
-		requestReceiver = new BroadcastRequestReceiver(data);
-		requestReceiver.start();
 		
 		LOG.info("Started broadcast node discoverer");
 	}
 
 	@Override
 	protected void stopImpl() {
-		requestReceiver.stop();
 		requestSender.stop();
 		
 		LOG.info("Stopped broadcast node discoverer");

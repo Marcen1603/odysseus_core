@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfigurationKeys;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
@@ -31,15 +32,16 @@ public class BroadcastRequestSender {
 	private ChannelFuture channelFuture;
 	private BroadcastRequestSendThread sendThread;
 
-	public BroadcastRequestSender(IOdysseusNodeManager nodeManager) {
+	public BroadcastRequestSender(OdysseusNetStartupData data, IOdysseusNodeManager nodeManager) {
 		Preconditions.checkNotNull(nodeManager, "nodeManager must not be null!");
+		Preconditions.checkNotNull(data, "data must not be null!");
 	
 		b.group(workerGroup);
 		b.channel(NioDatagramChannel.class);
 		b.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new BroadcastRequestAnswerHandler(nodeManager));
+				ch.pipeline().addLast(new BroadcastRequestHandler(data, nodeManager));
 			}
 		});
 		b.option(ChannelOption.SO_BROADCAST, true);
@@ -47,8 +49,8 @@ public class BroadcastRequestSender {
 
 	public void start() throws OdysseusNetDiscoveryException {
 		try {
-			LOG.info("Binding request sender for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT);
-			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT).sync();
+			LOG.info("Binding request sender for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_PORT);
+			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_PORT).sync();
 			LOG.info("Binding was successful");
 
 			sendThread = new BroadcastRequestSendThread(determineSendInterval(), (DatagramChannel) channelFuture.channel());
