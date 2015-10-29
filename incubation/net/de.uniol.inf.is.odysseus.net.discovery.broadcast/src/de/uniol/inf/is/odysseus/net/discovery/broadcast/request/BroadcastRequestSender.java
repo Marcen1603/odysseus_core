@@ -30,6 +30,7 @@ public class BroadcastRequestSender {
 
 	private ChannelFuture channelFuture;
 	private BroadcastRequestSendThread sendThread;
+	private int usedPort = BroadcastDiscoveryPlugIn.BROADCAST_PORT_MIN;
 
 	public BroadcastRequestSender(OdysseusNetStartupData data, IOdysseusNodeManager nodeManager) {
 		Preconditions.checkNotNull(nodeManager, "nodeManager must not be null!");
@@ -40,26 +41,27 @@ public class BroadcastRequestSender {
 		b.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new BroadcastHandler(data, nodeManager));
+				ch.pipeline().addLast(new BroadcastHandler(data, nodeManager, usedPort));
 			}
 		});
 		b.option(ChannelOption.SO_BROADCAST, true);
 	}
 
 	public void start() throws OdysseusNetDiscoveryException {
-		for( int port = BroadcastDiscoveryPlugIn.BROADCAST_PORT_MIN; port <= BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX; port++) {
+		for( usedPort = BroadcastDiscoveryPlugIn.BROADCAST_PORT_MIN; usedPort <= BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX; usedPort++) {
 			try {
-				channelFuture = b.bind(port).sync();
-				LOG.info("Binding was successful with port {}", port);
+				LOG.debug("Trying binding port {}", usedPort);
+				channelFuture = b.bind(usedPort).sync();
+				LOG.info("Binding was successful with port {}", usedPort);
 				
 				break; // found port
 			} catch (Throwable t) {
-				if( port == BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX) {
+				LOG.debug("Binding port {} failed", usedPort, t);
+				if( usedPort == BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX) {
 					throw new OdysseusNetDiscoveryException("Could not find a free port between " + BroadcastDiscoveryPlugIn.BROADCAST_PORT_MIN + " and " + BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX);
 				}
 			}
 		}
-
 		sendThread = new BroadcastRequestSendThread(determineSendInterval(), (DatagramChannel) channelFuture.channel());
 		sendThread.start();
 	}

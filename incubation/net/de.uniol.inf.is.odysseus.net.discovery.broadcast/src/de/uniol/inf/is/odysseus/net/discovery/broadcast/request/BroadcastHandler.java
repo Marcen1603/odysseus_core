@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.net.discovery.broadcast.request;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,30 +29,48 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 
 	private final String ownNodeName;
 	private final OdysseusNodeID ownNodeID;
+	private final int ownPort;
+	
 	private final IOdysseusNodeManager manager;
+	
 
-	public BroadcastHandler(OdysseusNetStartupData data, IOdysseusNodeManager manager) {
+	public BroadcastHandler(OdysseusNetStartupData data, IOdysseusNodeManager manager, int usedPort) {
 		Preconditions.checkNotNull(manager, "manager must not be null!");
 		Preconditions.checkNotNull(data, "Data must not be null!");
 
 		this.ownNodeName = data.getNodeName();
 		this.ownNodeID = data.getNodeID();
 		this.manager = manager;
+		this.ownPort = usedPort;
 	}
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+		if( isOwnMessage(msg)) {
+			return;
+		}
+		
 		String msgText = msg.content().toString(CharsetUtil.UTF_8);
 		if (BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_CONTENT.equals(msgText)) {
+			LOG.debug("Got broadcast request message from {}", msg.sender());
 			sendAnswerMessage(ctx, msg.sender());
+			
 		} else {
+			LOG.debug("Process answer message from {}", msg.sender());
 			processAnswerMessage(msg.sender().getAddress(), msgText);
 		}
 	}
 
-	private void sendAnswerMessage(ChannelHandlerContext ctx, InetSocketAddress destination) throws JSONException {
-		LOG.debug("Got broadcast request message");
+	private boolean isOwnMessage(DatagramPacket msg) {
+		try {
+			InetSocketAddress sender = msg.sender();
+			return sender.getAddress().equals(InetAddress.getLocalHost()) && sender.getPort() == ownPort;
+		} catch (UnknownHostException e) {
+			return false;
+		}
+	}
 
+	private void sendAnswerMessage(ChannelHandlerContext ctx, InetSocketAddress destination) throws JSONException {
 		JSONObject json = new JSONObject();
 		json.put("nodeName", ownNodeName);
 		json.put("nodeID", ownNodeID);
@@ -64,7 +83,6 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 	}
 
 	private void processAnswerMessage(InetAddress sender, String msgText) throws JSONException {
-		LOG.debug("Process answer message from {}", sender);
 		JSONObject jsonObject = new JSONObject(msgText);
 		if (jsonObject.has("nodeName") && jsonObject.has("nodeID")) {
 			String nodeName = jsonObject.getString("nodeName");
@@ -83,4 +101,5 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 		super.channelReadComplete(ctx);
 		ctx.flush();
 	}
+
 }

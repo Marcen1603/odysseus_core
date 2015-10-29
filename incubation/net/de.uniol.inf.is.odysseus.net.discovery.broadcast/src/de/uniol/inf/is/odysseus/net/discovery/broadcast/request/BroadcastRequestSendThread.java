@@ -65,7 +65,7 @@ public final class BroadcastRequestSendThread extends Thread {
 	}
 
 	private void sendMessage(Channel channel) throws InterruptedException {
-		LOG.debug("Send broadcast request message");
+		//LOG.debug("Send broadcast request message");
 		
 		for( InetSocketAddress address : broadcastAddresses ) {
 			DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_CONTENT, CharsetUtil.UTF_8), address);
