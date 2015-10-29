@@ -11,7 +11,7 @@
       </programArgs>
       <programArgsLin>-os linux -ws gtk -arch x86_64
       </programArgsLin>
-      <vmArgs>-Xms1000M -Xmx1000M -Declipse.p2.mirrors=false -Dosgi.console.enable.builtin=true
+      <vmArgs>-Xms1000M -Xmx1000M -Declipse.p2.mirrors=false -Dosgi.console.enable.builtin=true -Declipse.log.level=ERROR
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
