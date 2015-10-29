@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.rcp.PlugIn">
+   <implementation class="de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn"/>
+   <reference bind="bindOdysseusNodeManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNodeManager" name="IOdysseusNodeManager" policy="static" unbind="unbindOdysseusNodeManager"/>
+   <reference bind="bindOdysseusNetStartupManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager" name="IOdysseusNetStartupManager" policy="static" unbind="unbindOdysseusNetStartupManager"/>
+</scr:component>
