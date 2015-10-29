@@ -1,33 +1,37 @@
 package de.uniol.inf.is.odysseus.net.impl;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 
 public final class OdysseusNodeManager implements IOdysseusNodeManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeManager.class);
 
-	private final Collection<IOdysseusNode> nodes = Lists.newLinkedList();
+	private final Map<OdysseusNodeID, IOdysseusNode> nodeMap = Maps.newHashMap();
 	private final Collection<IOdysseusNodeManagerListener> listeners = Lists.newLinkedList();
 
 	@Override
 	public void addNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 
-		synchronized (nodes) {
-			if (!nodes.contains(node)) {
-				nodes.add(node);
+		synchronized (nodeMap) {
+			if (!nodeMap.containsKey(node.getID())) {
+				nodeMap.put(node.getID(), node);
 				LOG.info("Node {} added", node);
 				
 				fireNodeAddedEvent(node);
@@ -55,9 +59,9 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	public void removeNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 		
-		synchronized (nodes) {
-			if (nodes.contains(node)) {
-				nodes.remove(node);
+		synchronized (nodeMap) {
+			if (nodeMap.containsKey(node.getID())) {
+				nodeMap.remove(node.getID());
 				LOG.info("Node {} removed", node);
 				
 				fireNodeRemovedEvent(node);
@@ -81,7 +85,7 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 
 	@Override
 	public ImmutableCollection<IOdysseusNode> getNodes() {
-		return ImmutableList.copyOf(nodes);
+		return ImmutableList.copyOf(nodeMap.values());
 	}
 
 	@Override
@@ -95,8 +99,8 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 		}
 
 		// call nodeAdded for new listener for already existing nodes
-		synchronized (nodes) {
-			for (IOdysseusNode node : nodes) {
+		synchronized (nodeMap) {
+			for (IOdysseusNode node : nodeMap.values()) {
 				listener.nodeAdded(this, node);
 			}
 		}
@@ -115,8 +119,15 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	
 	@Override
 	public boolean existsNode(IOdysseusNode node) {
-		synchronized( nodes ) {
-			return nodes.contains(node);
+		synchronized( nodeMap ) {
+			return nodeMap.containsKey(node.getID());
+		}
+	}
+	
+	@Override
+	public Optional<IOdysseusNode> getNode(OdysseusNodeID nodeID) {
+		synchronized( nodeMap ) {
+			return Optional.fromNullable(nodeMap.get(nodeID));
 		}
 	}
 }
