@@ -5,7 +5,9 @@ import org.osgi.framework.BundleContext;
 
 public class BroadcastDiscoveryPlugIn implements BundleActivator {
 
-	public static final int BROADCAST_PORT = 60100;
+	public static final int BROADCAST_PORT_MIN = 60100;
+	public static final int BROADCAST_PORT_MAX = 60106;
+	
 	public static final String BROADCAST_REQUEST_CONTENT = "BROADCAST_REQUEST";
 	public static final String DISCOVERER_INTERVAL_CONFIG_KEY = "net.discoverer.interval";
 	

@@ -34,7 +34,7 @@ public class BroadcastRequestSender {
 	public BroadcastRequestSender(OdysseusNetStartupData data, IOdysseusNodeManager nodeManager) {
 		Preconditions.checkNotNull(nodeManager, "nodeManager must not be null!");
 		Preconditions.checkNotNull(data, "data must not be null!");
-	
+
 		b.group(workerGroup);
 		b.channel(NioDatagramChannel.class);
 		b.handler(new ChannelInitializer<Channel>() {
@@ -47,34 +47,38 @@ public class BroadcastRequestSender {
 	}
 
 	public void start() throws OdysseusNetDiscoveryException {
-		try {
-			LOG.info("Binding request sender for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_PORT);
-			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_PORT).sync();
-			LOG.info("Binding was successful");
-
-			sendThread = new BroadcastRequestSendThread(determineSendInterval(), (DatagramChannel) channelFuture.channel());
-			sendThread.start();
-
-		} catch (InterruptedException e) {
-			throw new OdysseusNetDiscoveryException("Could not start sending request messages", e);
+		for( int port = BroadcastDiscoveryPlugIn.BROADCAST_PORT_MIN; port <= BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX; port++) {
+			try {
+				channelFuture = b.bind(port).sync();
+				LOG.info("Binding was successful with port {}", port);
+				
+				break; // found port
+			} catch (Throwable t) {
+				if( port == BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX) {
+					throw new OdysseusNetDiscoveryException("Could not find a free port between " + BroadcastDiscoveryPlugIn.BROADCAST_PORT_MIN + " and " + BroadcastDiscoveryPlugIn.BROADCAST_PORT_MAX);
+				}
+			}
 		}
+
+		sendThread = new BroadcastRequestSendThread(determineSendInterval(), (DatagramChannel) channelFuture.channel());
+		sendThread.start();
 	}
 
 	private static long determineSendInterval() {
 		String updateIntervalStr = OdysseusNetConfiguration.get(BroadcastDiscoveryPlugIn.DISCOVERER_INTERVAL_CONFIG_KEY, "" + DEFAULT_SEND_INTERVAL_MILLIS);
 		long updateInterval = tryCastToLong(updateIntervalStr, DEFAULT_SEND_INTERVAL_MILLIS);
-		if( updateInterval < 1 ) {
+		if (updateInterval < 1) {
 			LOG.error("Update interval must be positive, not {}", updateInterval);
 			return DEFAULT_SEND_INTERVAL_MILLIS;
 		}
-		
+
 		return updateInterval;
 	}
 
 	private static long tryCastToLong(String text, long defaultValue) {
 		try {
 			return Long.parseLong(text);
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 			LOG.error("Invalid value for time interval: {}", text);
 			return defaultValue;
 		}
