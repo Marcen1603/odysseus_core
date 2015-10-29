@@ -92,7 +92,7 @@ public class OdysseusNetConfiguration {
 		try {
 			FileOutputStream out = new FileOutputStream(ODYSSEUS_NET_CONFIGURATION_FILE);
 			try {
-				properties.storeToXML(out, "Odysseus Property File edit only if you know what you are doing");
+				properties.storeToXML(out, "OdysseusNet Property File edit only if you know what you are doing");
 			} finally {
 				try {
 					out.close();
