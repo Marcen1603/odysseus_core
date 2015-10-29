@@ -40,7 +40,7 @@ public class BroadcastRequestSender {
 		b.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new BroadcastRequestHandler(data, nodeManager));
+				ch.pipeline().addLast(new BroadcastHandler(data, nodeManager));
 			}
 		});
 		b.option(ChannelOption.SO_BROADCAST, true);

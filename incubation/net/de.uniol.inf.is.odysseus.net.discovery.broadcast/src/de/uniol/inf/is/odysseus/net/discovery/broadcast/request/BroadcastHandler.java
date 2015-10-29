@@ -22,15 +22,15 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 
-public class BroadcastRequestHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BroadcastRequestHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BroadcastHandler.class);
 
 	private final String ownNodeName;
 	private final OdysseusNodeID ownNodeID;
 	private final IOdysseusNodeManager manager;
 
-	public BroadcastRequestHandler(OdysseusNetStartupData data, IOdysseusNodeManager manager) {
+	public BroadcastHandler(OdysseusNetStartupData data, IOdysseusNodeManager manager) {
 		Preconditions.checkNotNull(manager, "manager must not be null!");
 		Preconditions.checkNotNull(data, "Data must not be null!");
 
