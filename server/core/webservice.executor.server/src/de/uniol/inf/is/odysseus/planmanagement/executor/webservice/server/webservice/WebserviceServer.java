@@ -847,7 +847,6 @@ public class WebserviceServer {
 		return new SourceListResponse(sourceInfos, true);
 	}
 
-
 	public OperatorBuilderListResponse getOperatorBuilderList(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
@@ -1127,7 +1126,7 @@ public class WebserviceServer {
 		ImmutableList<String> names = TransportHandlerRegistry.getHandlerNames();
 		return new StringListResponse(names, true);
 	}
-	
+
 	public StringListResponse getWindowTypes(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
@@ -1139,6 +1138,9 @@ public class WebserviceServer {
 	// Helper methods
 	// --------------------------------------------------------------------------------------------------
 	static public SDFSchemaInformation createSchemaInformation(SDFSchema schema) {
+		if (schema == null){
+			return null;
+		}
 		Collection<SDFAttribute> attributes = schema.getAttributes();
 		Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
 		for (SDFAttribute attribute : attributes) {
@@ -1150,10 +1152,16 @@ public class WebserviceServer {
 		return schemaInfo;
 	}
 
-	static public SDFDatatypeInformation createDatatypeInformation(SDFDatatype datatype) {	
+	static public SDFDatatypeInformation createDatatypeInformation(SDFDatatype datatype) {
+		if (datatype == null){
+			return null;
+		}
 		SDFDatatypeInformation subtype = null;
 		if (datatype.getSubType() != null) {
-			subtype = new SDFDatatypeInformation(datatype.getSubType().getURI(), datatype.getSubType().getType(), null, null);
+			SDFDatatypeInformation subtypetype = createDatatypeInformation(datatype.getSubType().getSubType());
+			SDFSchemaInformation subschema = createSchemaInformation(datatype.getSubType().getSchema());
+			subtype = new SDFDatatypeInformation(datatype.getSubType().getURI(), datatype.getSubType().getType(),subtypetype,
+					subschema);
 		}
 		SDFSchemaInformation subSchema = null;
 		if (datatype.getSchema() != null) {
@@ -1162,6 +1170,4 @@ public class WebserviceServer {
 		return new SDFDatatypeInformation(datatype.getURI(), datatype.getType(), subtype, subSchema);
 	}
 
-	
-	
 }
