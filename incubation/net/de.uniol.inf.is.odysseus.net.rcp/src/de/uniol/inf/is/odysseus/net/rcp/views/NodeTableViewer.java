@@ -65,6 +65,18 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener {
 		});
 		tableColumnLayout.setColumnData(ipColumn.getColumn(), new ColumnWeightData(10, 15, true));
 
+		/************* NodeID ****************/
+		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		idColumn.getColumn().setText("ID");
+		idColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, idColumn) {
+			@Override
+			protected String getValue(OdysseusNodeID nodeID) {
+				return nodeID.toString();
+			}
+		});
+		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(20, 15, true));
+
+		
 		hideSelectionIfNeeded(tableViewer);
 
 		tableViewer.setInput(nodeIDs);
