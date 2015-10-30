@@ -85,7 +85,9 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			if (keywords.contains(token)) {
 
 				List<String> parameters = OdysseusScriptStructureProvider.getParametersForKeyword(token);
-				words.addAll(parameters);
+				if (parameters != null) {
+					words.addAll(parameters);
+				}
 
 				// if we are not behind a #-Keyword, we try other things...
 			} else {
@@ -98,19 +100,24 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 					// providers
 					if (OdysseusRCPEditorTextPlugIn.getEditorCompletionProviders().size() > 0) {
 						String parser = DocumentUtils.findValidParserAtPosition(document, offset);
-						if(parser.isEmpty()){
-							
+						if (parser.isEmpty()) {
+
 						}
 						if (!parser.isEmpty()) {
-							IEditorLanguagePropertiesProvider ecp = OdysseusRCPEditorTextPlugIn.getEditorCompletionProvider(parser);
+							IEditorLanguagePropertiesProvider ecp = OdysseusRCPEditorTextPlugIn
+									.getEditorCompletionProvider(parser);
 							if (ecp != null) {
-								String currentToken = lastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
+								String currentToken = lastWord(document, offset, ecp.getTokenSplitters(),
+										ecp.ignoreWhitespaces());
 								// String beforeCurrentToken =
 								// lastLastWord(document, offset,
 								// ecp.getTokenSplitters(),
 								// ecp.ignoreWhitespaces());
-								String stopToken[] = lastStopTokens(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
-								List<ICompletionProposal> parserWords = ecp.getCompletionSuggestions(currentToken, stopToken, OdysseusRCPEditorTextPlugIn.getExecutor(), OdysseusRCPPlugIn.getActiveSession(), document, offset, selection);
+								String stopToken[] = lastStopTokens(document, offset, ecp.getTokenSplitters(),
+										ecp.ignoreWhitespaces());
+								List<ICompletionProposal> parserWords = ecp.getCompletionSuggestions(currentToken,
+										stopToken, OdysseusRCPEditorTextPlugIn.getExecutor(),
+										OdysseusRCPPlugIn.getActiveSession(), document, offset, selection);
 								result.addAll(parserWords);
 								// for (String s : parserWords) {
 								// result.add(new CompletionProposal(s, offset,
@@ -174,7 +181,8 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 		try {
 			for (int n = offset - 1; n >= 0; n--) {
 				char c = doc.getChar(n);
-				if (!(Character.isJavaIdentifierPart(c) || c == '#' || c == '=' || c == ',' || c == '\'' || c == '{' || c == '}' || c == '[' || c == ']' || c == '(' || c == ')'))
+				if (!(Character.isJavaIdentifierPart(c) || c == '#' || c == '=' || c == ',' || c == '\'' || c == '{'
+						|| c == '}' || c == '[' || c == ']' || c == '(' || c == ')'))
 					return doc.get(n + 1, offset - n - 1);
 			}
 		} catch (BadLocationException e) {
