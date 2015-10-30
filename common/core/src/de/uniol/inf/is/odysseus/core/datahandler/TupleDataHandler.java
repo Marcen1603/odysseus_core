@@ -355,7 +355,9 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				uri = "TUPLE";
 			} else if (type.isMultiValue()) {
 				uri = "MULTI_VALUE";
-			} 
+			} else if (type.isListValue()){
+				uri = "LIST";
+			}
 
 			if (!DataHandlerRegistry.containsDataHandler(uri)) {
 				throw new IllegalArgumentException("Datatype cannot be used in transport!"
@@ -365,9 +367,6 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			SDFSchema subSchema;
 			if (type.isTuple()) {
 				subSchema = attribute.getDatatype().getSchema();
-			} else if (type.isListValue() && type.getSubType().isTuple()){
-				subSchema = SDFSchemaFactory
-						.createNewTupleSchema("",attribute.getDatatype().getSchema().getAttributes());
 			} else {
 				subSchema = SDFSchemaFactory
 						.createNewTupleSchema("", attribute);
