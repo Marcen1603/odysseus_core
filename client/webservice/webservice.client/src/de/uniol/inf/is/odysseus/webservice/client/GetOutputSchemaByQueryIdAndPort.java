@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getOutputSchemaByQueryIdAndPort complex type.
+ * <p>Java-Klasse f�r getOutputSchemaByQueryIdAndPort complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="getOutputSchemaByQueryIdAndPort">
@@ -47,7 +48,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     protected int port;
 
     /**
-     * Gets the value of the securitytoken property.
+     * Ruft den Wert der securitytoken-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -59,7 +60,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Sets the value of the securitytoken property.
+     * Legt den Wert der securitytoken-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -71,7 +72,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Gets the value of the queryId property.
+     * Ruft den Wert der queryId-Eigenschaft ab.
      * 
      */
     public int getQueryId() {
@@ -79,7 +80,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Sets the value of the queryId property.
+     * Legt den Wert der queryId-Eigenschaft fest.
      * 
      */
     public void setQueryId(int value) {
@@ -87,7 +88,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Gets the value of the port property.
+     * Ruft den Wert der port-Eigenschaft ab.
      * 
      */
     public int getPort() {
@@ -95,7 +96,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Sets the value of the port property.
+     * Legt den Wert der port-Eigenschaft fest.
      * 
      */
     public void setPort(int value) {

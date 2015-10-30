@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getConnectionInformationWithMetadata complex type.
+ * <p>Java-Klasse f�r getConnectionInformationWithMetadata complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="getConnectionInformationWithMetadata">
@@ -50,7 +51,7 @@ public class GetConnectionInformationWithMetadata {
     protected boolean withMetadata;
 
     /**
-     * Gets the value of the securitytoken property.
+     * Ruft den Wert der securitytoken-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -62,7 +63,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Sets the value of the securitytoken property.
+     * Legt den Wert der securitytoken-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -74,7 +75,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Gets the value of the queryId property.
+     * Ruft den Wert der queryId-Eigenschaft ab.
      * 
      */
     public int getQueryId() {
@@ -82,7 +83,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Sets the value of the queryId property.
+     * Legt den Wert der queryId-Eigenschaft fest.
      * 
      */
     public void setQueryId(int value) {
@@ -90,7 +91,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Gets the value of the nullValues property.
+     * Ruft den Wert der nullValues-Eigenschaft ab.
      * 
      */
     public boolean isNullValues() {
@@ -98,7 +99,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Sets the value of the nullValues property.
+     * Legt den Wert der nullValues-Eigenschaft fest.
      * 
      */
     public void setNullValues(boolean value) {
@@ -106,7 +107,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Gets the value of the withMetadata property.
+     * Ruft den Wert der withMetadata-Eigenschaft ab.
      * 
      */
     public boolean isWithMetadata() {
@@ -114,7 +115,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Sets the value of the withMetadata property.
+     * Legt den Wert der withMetadata-Eigenschaft fest.
      * 
      */
     public void setWithMetadata(boolean value) {

@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for login2 complex type.
+ * <p>Java-Klasse f�r login2 complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="login2">
@@ -44,7 +45,7 @@ public class Login2 {
     protected String password;
 
     /**
-     * Gets the value of the username property.
+     * Ruft den Wert der username-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -56,7 +57,7 @@ public class Login2 {
     }
 
     /**
-     * Sets the value of the username property.
+     * Legt den Wert der username-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +69,7 @@ public class Login2 {
     }
 
     /**
-     * Gets the value of the password property.
+     * Ruft den Wert der password-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -80,7 +81,7 @@ public class Login2 {
     }
 
     /**
-     * Sets the value of the password property.
+     * Legt den Wert der password-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

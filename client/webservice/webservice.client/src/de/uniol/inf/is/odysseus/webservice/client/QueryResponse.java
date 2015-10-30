@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import java.util.ArrayList;
@@ -12,13 +13,14 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for queryResponse complex type.
+ * <p>Java-Klasse f�r queryResponse complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="queryResponse">
@@ -49,6 +51,7 @@ public class QueryResponse
     extends Response
 {
 
+    @XmlSchemaType(name = "string")
     protected QueryState queryState;
     protected LogicalQueryInfo responseValue;
     @XmlElement(nillable = true)
@@ -56,7 +59,7 @@ public class QueryResponse
     protected String username;
 
     /**
-     * Gets the value of the queryState property.
+     * Ruft den Wert der queryState-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -68,7 +71,7 @@ public class QueryResponse
     }
 
     /**
-     * Sets the value of the queryState property.
+     * Legt den Wert der queryState-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -80,7 +83,7 @@ public class QueryResponse
     }
 
     /**
-     * Gets the value of the responseValue property.
+     * Ruft den Wert der responseValue-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -92,7 +95,7 @@ public class QueryResponse
     }
 
     /**
-     * Sets the value of the responseValue property.
+     * Legt den Wert der responseValue-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -133,7 +136,7 @@ public class QueryResponse
     }
 
     /**
-     * Gets the value of the username property.
+     * Ruft den Wert der username-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -145,7 +148,7 @@ public class QueryResponse
     }
 
     /**
-     * Sets the value of the username property.
+     * Legt den Wert der username-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

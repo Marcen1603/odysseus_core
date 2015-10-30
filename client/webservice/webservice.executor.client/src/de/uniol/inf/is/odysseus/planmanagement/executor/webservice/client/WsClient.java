@@ -87,6 +87,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -837,7 +838,19 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	private SDFDatatype createDatatypeFromInformation(SdfDatatypeInformation info) {
-		return new SDFDatatype(info.getUri());
+		SDFDatatype ret = null;
+		SDFDatatype subtype = null;
+		if (info.getSubtype() != null){
+			subtype = new SDFDatatype(info.getSubtype().getUri());
+			ret = new SDFDatatype(info.getUri(), info.getType(), subtype);
+		}else if (info.getSubSchema() != null){
+			SDFSchema subschema = null;
+			subschema = createSchemaFromInformation(info.getSubSchema());
+			ret = new SDFDatatype(info.getUri(), info.getType(), subschema);
+		}else{
+			ret = new SDFDatatype(info.getUri());
+		}
+		return ret;
 	}
 
 	@Override

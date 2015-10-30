@@ -19,23 +19,28 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
+
 /**
  * @author Merlin Wasmann
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sdfDatatypeInformation", propOrder = {
-		"uri"
+		"uri", "type", "subtype", "subSchema"
 })
 public class SDFDatatypeInformation {
-
-	public SDFDatatypeInformation() {
-		
-	}
 	
 	public String uri;
-	
-	public SDFDatatypeInformation(String uri) {
+	public KindOfDatatype type;
+	public SDFDatatypeInformation subtype;
+	public SDFSchemaInformation subSchema;
+
+	public SDFDatatypeInformation(String uri, KindOfDatatype type, SDFDatatypeInformation subtype, SDFSchemaInformation subSchema) {
 		this.uri = uri;
+		this.type = type;
+		this.subtype = subtype;
+		this.subSchema = subSchema;
 	}
+	
 }

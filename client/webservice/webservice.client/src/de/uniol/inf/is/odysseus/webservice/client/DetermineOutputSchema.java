@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for determineOutputSchema complex type.
+ * <p>Java-Klasse f�r determineOutputSchema complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="determineOutputSchema">
@@ -53,7 +54,7 @@ public class DetermineOutputSchema {
     protected Object context;
 
     /**
-     * Gets the value of the query property.
+     * Ruft den Wert der query-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -65,7 +66,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Sets the value of the query property.
+     * Legt den Wert der query-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -77,7 +78,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Gets the value of the parserID property.
+     * Ruft den Wert der parserID-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -89,7 +90,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Sets the value of the parserID property.
+     * Legt den Wert der parserID-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -101,7 +102,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Gets the value of the securitytoken property.
+     * Ruft den Wert der securitytoken-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -113,7 +114,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Sets the value of the securitytoken property.
+     * Legt den Wert der securitytoken-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -125,7 +126,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Gets the value of the port property.
+     * Ruft den Wert der port-Eigenschaft ab.
      * 
      */
     public int getPort() {
@@ -133,7 +134,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Sets the value of the port property.
+     * Legt den Wert der port-Eigenschaft fest.
      * 
      */
     public void setPort(int value) {
@@ -141,7 +142,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Gets the value of the context property.
+     * Ruft den Wert der context-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -153,7 +154,7 @@ public class DetermineOutputSchema {
     }
 
     /**
-     * Sets the value of the context property.
+     * Legt den Wert der context-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -391,6 +391,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		this.subType = sType;
 	}
 
+	public SDFDatatype.KindOfDatatype getType(){
+		return type;
+	}
+	
 	public boolean isComplex() {
 		return this.type == SDFDatatype.KindOfDatatype.MULTI_VALUE
 				|| this.type == SDFDatatype.KindOfDatatype.TUPLE

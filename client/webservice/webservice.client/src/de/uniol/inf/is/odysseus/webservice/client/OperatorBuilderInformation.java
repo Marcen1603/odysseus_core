@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import java.util.ArrayList;
@@ -16,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for operatorBuilderInformation complex type.
+ * <p>Java-Klasse f�r operatorBuilderInformation complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="operatorBuilderInformation">
@@ -90,7 +91,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Gets the value of the doc property.
+     * Ruft den Wert der doc-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -102,7 +103,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Sets the value of the doc property.
+     * Legt den Wert der doc-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -114,7 +115,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Gets the value of the maxInputOperatorCount property.
+     * Ruft den Wert der maxInputOperatorCount-Eigenschaft ab.
      * 
      */
     public int getMaxInputOperatorCount() {
@@ -122,7 +123,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Sets the value of the maxInputOperatorCount property.
+     * Legt den Wert der maxInputOperatorCount-Eigenschaft fest.
      * 
      */
     public void setMaxInputOperatorCount(int value) {
@@ -130,7 +131,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Gets the value of the minInputOperatorCount property.
+     * Ruft den Wert der minInputOperatorCount-Eigenschaft ab.
      * 
      */
     public int getMinInputOperatorCount() {
@@ -138,7 +139,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Sets the value of the minInputOperatorCount property.
+     * Legt den Wert der minInputOperatorCount-Eigenschaft fest.
      * 
      */
     public void setMinInputOperatorCount(int value) {
@@ -146,7 +147,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -158,7 +159,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -27,6 +27,7 @@
 		<delete verbose="true" file="${source-dir}/${package-dir}/StoredProcedure.java"/>
 		<delete verbose="true" file="${source-dir}/${package-dir}/Pair.java"/>
 		<delete verbose="true" file="${source-dir}/${package-dir}/QueryState.java"/>
+		<delete verbose="true" file="${source-dir}/${package-dir}/KindOfDatatype.java"/>
 		<echo>Fixing imports again</echo>
 		<replace dir="${source-dir}">
 				<replacetoken>package de.uniol.inf.is.odysseus.webservice.client;</replacetoken>
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				</replacevalue>	
 	    </replace>
 

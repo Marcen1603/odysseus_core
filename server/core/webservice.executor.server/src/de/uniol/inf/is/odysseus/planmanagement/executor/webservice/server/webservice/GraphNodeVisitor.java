@@ -30,19 +30,12 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.GraphNode;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFAttributeInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFDatatypeInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaInformation;
 
 /**
  * 
@@ -70,7 +63,7 @@ public class GraphNodeVisitor<T extends IPhysicalOperator> implements IGraphNode
 			GraphNode gn = new GraphNode(node.getName()); 
 			gn.setId(idCounter);
 			gn.setParameterInfos(node.getParameterInfos());
-			gn.setOutputSchema(this.createSDFSchemaInformation(node.getOutputSchema()));
+			gn.setOutputSchema(WebserviceServer.createSchemaInformation(node.getOutputSchema()));
 			gn.setOpen(node.isOpen());
 			gn.setSource(node.isSource());
 			gn.setSink(node.isSink());
@@ -111,15 +104,6 @@ public class GraphNodeVisitor<T extends IPhysicalOperator> implements IGraphNode
 	public GraphNode getResult() {		
 		return this.rootNode;
 	}
-	
-	private SDFSchemaInformation createSDFSchemaInformation(SDFSchema schema) {
-		Collection<SDFAttribute> attributes = schema.getAttributes();
-		Collection<SDFAttributeInformation> attrInfo = new ArrayList<SDFAttributeInformation>();
-		for (SDFAttribute attr : attributes) {
-			attrInfo.add(new SDFAttributeInformation(attr.getSourceName(), attr.getAttributeName(), new SDFDatatypeInformation(attr.getDatatype().getURI())));
-		}
-		SDFSchemaInformation info = new SDFSchemaInformation(schema.getURI(), attrInfo, schema.getType());
-		return info;
-	}
+
 
 }

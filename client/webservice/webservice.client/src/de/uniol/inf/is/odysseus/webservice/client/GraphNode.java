@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import java.util.ArrayList;
@@ -16,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for graphNode complex type.
+ * <p>Java-Klasse f�r graphNode complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="graphNode">
@@ -154,7 +155,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the childsMap property.
+     * Ruft den Wert der childsMap-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -166,7 +167,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the childsMap property.
+     * Legt den Wert der childsMap-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -178,7 +179,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the className property.
+     * Ruft den Wert der className-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -190,7 +191,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the className property.
+     * Legt den Wert der className-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -202,7 +203,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the hash property.
+     * Ruft den Wert der hash-Eigenschaft ab.
      * 
      */
     public int getHash() {
@@ -210,7 +211,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the hash property.
+     * Legt den Wert der hash-Eigenschaft fest.
      * 
      */
     public void setHash(int value) {
@@ -218,7 +219,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      */
     public int getId() {
@@ -226,7 +227,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      */
     public void setId(int value) {
@@ -234,7 +235,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -246,7 +247,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -258,7 +259,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the open property.
+     * Ruft den Wert der open-Eigenschaft ab.
      * 
      */
     public boolean isOpen() {
@@ -266,7 +267,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the open property.
+     * Legt den Wert der open-Eigenschaft fest.
      * 
      */
     public void setOpen(boolean value) {
@@ -274,7 +275,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the outputSchema property.
+     * Ruft den Wert der outputSchema-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -286,7 +287,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the outputSchema property.
+     * Legt den Wert der outputSchema-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -298,7 +299,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the ownerIDs property.
+     * Ruft den Wert der ownerIDs-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -310,7 +311,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the ownerIDs property.
+     * Legt den Wert der ownerIDs-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -322,7 +323,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the parameterInfos property.
+     * Ruft den Wert der parameterInfos-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -334,7 +335,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the parameterInfos property.
+     * Legt den Wert der parameterInfos-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -346,7 +347,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the pipe property.
+     * Ruft den Wert der pipe-Eigenschaft ab.
      * 
      */
     public boolean isPipe() {
@@ -354,7 +355,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the pipe property.
+     * Legt den Wert der pipe-Eigenschaft fest.
      * 
      */
     public void setPipe(boolean value) {
@@ -362,7 +363,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the sink property.
+     * Ruft den Wert der sink-Eigenschaft ab.
      * 
      */
     public boolean isSink() {
@@ -370,7 +371,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the sink property.
+     * Legt den Wert der sink-Eigenschaft fest.
      * 
      */
     public void setSink(boolean value) {
@@ -378,7 +379,7 @@ public class GraphNode {
     }
 
     /**
-     * Gets the value of the source property.
+     * Ruft den Wert der source-Eigenschaft ab.
      * 
      */
     public boolean isSource() {
@@ -386,7 +387,7 @@ public class GraphNode {
     }
 
     /**
-     * Sets the value of the source property.
+     * Legt den Wert der source-Eigenschaft fest.
      * 
      */
     public void setSource(boolean value) {
@@ -395,9 +396,9 @@ public class GraphNode {
 
 
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>Java-Klasse f�r anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
      * 
      * <pre>
      * &lt;complexType>
@@ -463,9 +464,9 @@ public class GraphNode {
 
 
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>Java-Klasse f�r anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
          * 
          * <pre>
          * &lt;complexType>
@@ -493,7 +494,7 @@ public class GraphNode {
             protected Integer value;
 
             /**
-             * Gets the value of the key property.
+             * Ruft den Wert der key-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -505,7 +506,7 @@ public class GraphNode {
             }
 
             /**
-             * Sets the value of the key property.
+             * Legt den Wert der key-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -517,7 +518,7 @@ public class GraphNode {
             }
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -529,7 +530,7 @@ public class GraphNode {
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -546,9 +547,9 @@ public class GraphNode {
 
 
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>Java-Klasse f�r anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
      * 
      * <pre>
      * &lt;complexType>
@@ -614,9 +615,9 @@ public class GraphNode {
 
 
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>Java-Klasse f�r anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
          * 
          * <pre>
          * &lt;complexType>
@@ -644,7 +645,7 @@ public class GraphNode {
             protected String value;
 
             /**
-             * Gets the value of the key property.
+             * Ruft den Wert der key-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -656,7 +657,7 @@ public class GraphNode {
             }
 
             /**
-             * Sets the value of the key property.
+             * Legt den Wert der key-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -668,7 +669,7 @@ public class GraphNode {
             }
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -680,7 +681,7 @@ public class GraphNode {
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is

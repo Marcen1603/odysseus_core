@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import java.util.ArrayList;
@@ -16,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for logicalQueryInfo complex type.
+ * <p>Java-Klasse f�r logicalQueryInfo complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="logicalQueryInfo">
@@ -66,7 +67,7 @@ public class LogicalQueryInfo {
     protected List<Pair> parameters;
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      */
     public int getId() {
@@ -74,7 +75,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      */
     public void setId(int value) {
@@ -82,7 +83,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the queryText property.
+     * Ruft den Wert der queryText-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -94,7 +95,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the queryText property.
+     * Legt den Wert der queryText-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -106,7 +107,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the parserID property.
+     * Ruft den Wert der parserID-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -118,7 +119,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the parserID property.
+     * Legt den Wert der parserID-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -130,7 +131,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the containsCycles property.
+     * Ruft den Wert der containsCycles-Eigenschaft ab.
      * 
      */
     public boolean isContainsCycles() {
@@ -138,7 +139,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the containsCycles property.
+     * Legt den Wert der containsCycles-Eigenschaft fest.
      * 
      */
     public void setContainsCycles(boolean value) {
@@ -146,7 +147,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the priority property.
+     * Ruft den Wert der priority-Eigenschaft ab.
      * 
      */
     public int getPriority() {
@@ -154,7 +155,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the priority property.
+     * Legt den Wert der priority-Eigenschaft fest.
      * 
      */
     public void setPriority(int value) {
@@ -162,7 +163,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -174,7 +175,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -186,7 +187,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the notice property.
+     * Ruft den Wert der notice-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -198,7 +199,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the notice property.
+     * Legt den Wert der notice-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

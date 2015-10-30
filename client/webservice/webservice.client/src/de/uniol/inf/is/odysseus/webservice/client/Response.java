@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
 				
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for response complex type.
+ * <p>Java-Klasse f�r response complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="response">
@@ -37,22 +38,22 @@ import javax.xml.bind.annotation.XmlType;
     "successful"
 })
 @XmlSeeAlso({
-    OperatorBuilderListResponse.class,
-    SdfSchemaResponse.class,
-    SourceListResponse.class,
-    StoredProcedureListResponse.class,
-    BooleanResponse.class,
     StringListResponse.class,
-    ConnectionInformationResponse.class,
-    LogicalOperatorResponse.class,
-    StringMapStringListResponse.class,
-    IntegerCollectionResponse.class,
     LogicalOperatorInformationResponse.class,
-    SdfDatatypeListResponse.class,
+    LogicalOperatorInformationListResponse.class,
+    LogicalOperatorResponse.class,
+    BooleanResponse.class,
+    ConnectionInformationResponse.class,
+    SourceListResponse.class,
     StoredProcedureResponse.class,
+    StringMapStringListResponse.class,
+    SdfDatatypeListResponse.class,
+    OperatorBuilderListResponse.class,
+    StoredProcedureListResponse.class,
     StringResponse.class,
-    QueryResponse.class,
-    LogicalOperatorInformationListResponse.class
+    SdfSchemaResponse.class,
+    IntegerCollectionResponse.class,
+    QueryResponse.class
 })
 @SuppressWarnings(value = { "all" })
 public class Response {
@@ -60,7 +61,7 @@ public class Response {
     protected boolean successful;
 
     /**
-     * Gets the value of the successful property.
+     * Ruft den Wert der successful-Eigenschaft ab.
      * 
      */
     public boolean isSuccessful() {
@@ -68,7 +69,7 @@ public class Response {
     }
 
     /**
-     * Sets the value of the successful property.
+     * Legt den Wert der successful-Eigenschaft fest.
      * 
      */
     public void setSuccessful(boolean value) {
