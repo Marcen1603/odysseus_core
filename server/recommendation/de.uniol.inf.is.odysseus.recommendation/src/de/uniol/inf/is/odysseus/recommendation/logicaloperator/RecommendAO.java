@@ -167,9 +167,9 @@ public class RecommendAO extends UnaryLogicalOp {
 			// attributes.add(attr);
 			// }
 			attributes.add(new SDFAttribute(null, "topk",
-					SDFDatatype.LIST_TUPLE, subSchema));
-			attributes.add(new SDFAttribute(null, "trigger", SDFDatatype.TUPLE,
-					subSchema));
+					SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, subSchema)));
+			attributes.add(new SDFAttribute(null, "trigger", SDFDatatype.createTypeWithSubSchema(SDFDatatype.TUPLE,
+					subSchema)));
 			for (final SDFAttribute attr : subSchema.getAttributes()) {
 				if (getUserAttribute() == null) {
 					if (this.DEFAULT_USER_ATTRIBUTE_NAME.equals(attr
@@ -186,6 +186,7 @@ public class RecommendAO extends UnaryLogicalOp {
 		}
 		return null;
 	}
+
 
 	/*
 	 * (non-Javadoc)

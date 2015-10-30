@@ -31,8 +31,8 @@ public class WebCrawlerSourceAO extends AbstractAccessAO
 		
 		List<SDFAttribute> schema = new LinkedList<>();
 		
-		schema.add(new SDFAttribute(null,  "url", SDFDatatype.STRING, null));
-		schema.add(new SDFAttribute(null, "text", SDFDatatype.STRING, null));
+		schema.add(new SDFAttribute(null,  "url", SDFDatatype.STRING));
+		schema.add(new SDFAttribute(null, "text", SDFDatatype.STRING));
 		
 		setAttributes(schema);
 	}

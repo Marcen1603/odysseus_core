@@ -51,7 +51,7 @@ final public class Probabilistic extends AbstractBaseMetaAttribute implements IP
 			CLASSES.length);
 	static{
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("Probabilistic", "existence", SDFDatatype.DOUBLE, null));
+		attributes.add(new SDFAttribute("Probabilistic", "existence", SDFDatatype.DOUBLE));
 		schema.add(SDFSchemaFactory.createNewMetaSchema("Probabilistic", Tuple.class, attributes, IProbabilistic.class));
 	}
 	

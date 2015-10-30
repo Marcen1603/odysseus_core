@@ -34,15 +34,15 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements ISyst
 	static {
 
 		List<SDFAttribute> sysLoadAttributes = new ArrayList<SDFAttribute>();
-		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "Name", SDFDatatype.STRING, null));
-		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "CpuLoad", SDFDatatype.DOUBLE, null));
-		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "MemLoad", SDFDatatype.DOUBLE, null));
-		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "NetLoad", SDFDatatype.DOUBLE, null));
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "Name", SDFDatatype.STRING));
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "CpuLoad", SDFDatatype.DOUBLE));
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "MemLoad", SDFDatatype.DOUBLE));
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "NetLoad", SDFDatatype.DOUBLE));
 
 		SDFSchema sysLoadEntry = SDFSchemaFactory.createNewSchema("SystemloadEntry", Tuple.class, sysLoadAttributes);
 
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("Systemload", "EntryList", SDFDatatype.LIST_TUPLE, sysLoadEntry));
+		attributes.add(new SDFAttribute("Systemload", "EntryList", SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, sysLoadEntry)));
 		schema.add(SDFSchemaFactory.createNewMetaSchema("Systemload", Tuple.class, attributes, ISystemLoad.class));
 	}
 

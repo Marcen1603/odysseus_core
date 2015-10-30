@@ -47,9 +47,9 @@ public class Quality extends AbstractBaseMetaAttribute implements IQuality {
     public static final List<SDFMetaSchema> SCHEMA = new ArrayList<>(Quality.CLASSES.length);
     static {
         final List<SDFAttribute> attributes = new ArrayList<>();
-        attributes.add(new SDFAttribute("Quality", "completeness", SDFDatatype.DOUBLE, null));
-        attributes.add(new SDFAttribute("Quality", "consistency", SDFDatatype.DOUBLE, null));
-        attributes.add(new SDFAttribute("Quality", "frequency", SDFDatatype.DOUBLE, null));
+        attributes.add(new SDFAttribute("Quality", "completeness", SDFDatatype.DOUBLE));
+        attributes.add(new SDFAttribute("Quality", "consistency", SDFDatatype.DOUBLE));
+        attributes.add(new SDFAttribute("Quality", "frequency", SDFDatatype.DOUBLE));
         Quality.SCHEMA.add(SDFSchemaFactory.createNewMetaSchema("Quality", Tuple.class, attributes, IQuality.class));
     }
 

@@ -34,7 +34,8 @@ import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
  * @author Dennis Geesen
  *
  */
-@LogicalOperator(name = "GENERATERULES", minInputPorts = 1, maxInputPorts = 1, doc="This operator uses a list of tuples and creates rules like \"x => y\". A rule is a special datatype called \"AssociationRule\", which is principally a tuple of two patterns (one for the premise and one for the consequnce of the rule)",category = {LogicalOperatorCategory.MINING})
+@LogicalOperator(name = "GENERATERULES", minInputPorts = 1, maxInputPorts = 1, doc = "This operator uses a list of tuples and creates rules like \"x => y\". A rule is a special datatype called \"AssociationRule\", which is principally a tuple of two patterns (one for the premise and one for the consequnce of the rule)", category = {
+		LogicalOperatorCategory.MINING })
 public class RuleGenerationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4443355945512399432L;
@@ -42,9 +43,8 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	private int supportposition;
 	private double confidence;
 
-	
 	public RuleGenerationAO() {
-		
+
 	}
 
 	public RuleGenerationAO(RuleGenerationAO old) {
@@ -52,33 +52,35 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 		this.confidence = old.confidence;
 		this.supportposition = old.supportposition;
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.
+	 * AbstractLogicalOperator#clone()
 	 */
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RuleGenerationAO(this);
 	}
-	
+
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ITEMSET")
 	public void setItemsetAttribute(SDFAttribute itemset) {
 		this.itemsetposition = this.getInputSchema(0).indexOf(itemset);
 	}
-	
+
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "SUPPORT")
 	public void setSupprtAttribute(SDFAttribute support) {
 		this.supportposition = this.getInputSchema(0).indexOf(support);
 	}
-	
-	
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (pos == 0) {
-			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();			
-			SDFSchema innerSchema = this.getInputSchema(0).get(itemsetposition).getDatatype().getSchema();			
-			SDFAttribute attributeSet = new SDFAttribute(null, "rule", MiningDatatypes.ASSOCIATION_RULE, innerSchema);			
+			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+			SDFSchema innerSchema = this.getInputSchema(0).get(itemsetposition).getDatatype().getSchema();
+			SDFAttribute attributeSet = new SDFAttribute(null, "rule",
+					SDFDatatype.createTypeWithSubSchema(MiningDatatypes.ASSOCIATION_RULE, innerSchema));
 			attributes.add(attributeSet);
 			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 			return outSchema;
@@ -102,10 +104,10 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 		return itemsetposition;
 	}
 
-	public int getSupportPosition(){
+	public int getSupportPosition() {
 		return supportposition;
 	}
-	
+
 	/**
 	 * @return the confidence
 	 */
@@ -114,13 +116,12 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	}
 
 	/**
-	 * @param confidence the confidence to set
+	 * @param confidence
+	 *            the confidence to set
 	 */
-	@Parameter(type=DoubleParameter.class, name="confidence")
+	@Parameter(type = DoubleParameter.class, name = "confidence")
 	public void setConfidence(double confidence) {
 		this.confidence = confidence;
 	}
-	
-
 
 }

@@ -52,9 +52,9 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("TimeInterval", "start",
-				SDFDatatype.TIMESTAMP, null));
+				SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("TimeInterval", "end",
-				SDFDatatype.TIMESTAMP, null));
+				SDFDatatype.TIMESTAMP));
 		schema.add(SDFSchemaFactory.createNewMetaSchema("TimeInterval",
 				Tuple.class, attributes, ITimeInterval.class));
 	}

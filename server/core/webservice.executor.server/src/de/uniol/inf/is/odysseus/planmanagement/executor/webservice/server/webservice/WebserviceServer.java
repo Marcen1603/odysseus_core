@@ -75,7 +75,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -1144,12 +1143,19 @@ public class WebserviceServer {
 		Collection<SDFAttribute> attributes = schema.getAttributes();
 		Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
 		for (SDFAttribute attribute : attributes) {
-			SDFDatatypeInformation dataTypeInformation = createDatatypeInformation(attribute.getDatatype());
-			attributeInfos.add(new SDFAttributeInformation(attribute.getSourceName(), attribute.getAttributeName(),
-					dataTypeInformation));
+			attributeInfos.add(createAttributeInformation(attribute));
 		}
 		SDFSchemaInformation schemaInfo = new SDFSchemaInformation(schema.getURI(), attributeInfos, schema.getType());
 		return schemaInfo;
+	}
+	
+
+
+	private static SDFAttributeInformation createAttributeInformation(SDFAttribute attribute) {
+		SDFDatatypeInformation dataTypeInformation = createDatatypeInformation(attribute.getDatatype());
+		SDFAttributeInformation attrInfo = new SDFAttributeInformation(attribute.getSourceName(), attribute.getAttributeName(),
+				dataTypeInformation, createSchemaInformation(attribute.getDatatype().getSchema()));
+		return attrInfo;
 	}
 
 	static public SDFDatatypeInformation createDatatypeInformation(SDFDatatype datatype) {

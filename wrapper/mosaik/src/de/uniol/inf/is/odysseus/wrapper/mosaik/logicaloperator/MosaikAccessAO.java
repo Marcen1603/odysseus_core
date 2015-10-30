@@ -103,7 +103,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 		this.setOptionMap(options);
 		
 		List<SDFAttribute> schemaAttributes = new ArrayList<>();
-		schemaAttributes.add(new SDFAttribute("", "timestamp", SDFDatatype.START_TIMESTAMP, null));
+		schemaAttributes.add(new SDFAttribute("", "timestamp", SDFDatatype.START_TIMESTAMP));
 		this.setOutputSchema(SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) KeyValueObject.class , schemaAttributes));
 	}
 

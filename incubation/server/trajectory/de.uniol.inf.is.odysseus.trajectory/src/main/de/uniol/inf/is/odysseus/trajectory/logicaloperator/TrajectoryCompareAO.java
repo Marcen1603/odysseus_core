@@ -173,7 +173,7 @@ public class TrajectoryCompareAO extends UnaryLogicalOp {
 	 */
 	private final static SDFSchema OUTPUT_SCHEMA = SDFSchemaFactory.createNewTupleSchema(
 			TrajectoryCompareAO.class.getName(), 
-			new SDFAttribute(null, "result", SDFDatatype.LIST, null)
+			new SDFAttribute(null, "result", SDFDatatype.LIST)
 	);
 	
 	@Override

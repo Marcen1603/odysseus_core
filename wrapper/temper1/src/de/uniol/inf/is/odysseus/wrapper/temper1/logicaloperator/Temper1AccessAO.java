@@ -31,8 +31,8 @@ public class Temper1AccessAO extends AbstractAccessAO {
 		
 		
 		List<SDFAttribute> schema = new LinkedList<>();
-		schema.add(new SDFAttribute(null, "EntityName", SDFDatatype.STRING, null));
-		schema.add(new SDFAttribute(null, "Temperature", SDFDatatype.DOUBLE, null));
+		schema.add(new SDFAttribute(null, "EntityName", SDFDatatype.STRING));
+		schema.add(new SDFAttribute(null, "Temperature", SDFDatatype.DOUBLE));
 		//schema.add(new SDFAttribute(null, "Timestamp", SDFDatatype.TIMESTAMP, null));
 		setAttributes(schema);
 	}

@@ -12,20 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ******************************************************************************/
-/** Copyright 2011 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client;
@@ -233,7 +219,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			WebserviceServerService service = new WebserviceServerService(wsdlLocation, serviceName);
 			// TODO keep realname;
 			this.server.put(connectString, service.getWebserviceServerPort());
-			generateEvents.start();
+			if (!generateEvents.isAlive()) {
+				generateEvents.start();
+			}
 		} catch (Exception e) {
 			INFO.error("Cannot connect to server", e);
 			throw e;
@@ -821,6 +809,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	private SDFSchema createSchemaFromInformation(SdfSchemaInformation info) {
+		if (info == null) {
+			return null;
+		}
 		String uri = info.getUri();
 		Collection<SdfAttributeInformation> attributeInfos = info.getAttributes();
 		Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -833,24 +824,20 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	private SDFAttribute createAttributeFromInformation(SdfAttributeInformation info) {
 		// TODO Extend SdfAttributeInformation
-		return new SDFAttribute(info.getSourcename(), info.getAttributename(),
-				createDatatypeFromInformation(info.getDatatype()), null, null, null);
+		return new SDFAttribute(info.getSourcename(), info.getAttributename(), SDFDatatype.createTypeWithSubSchema(
+				createDatatypeFromInformation(info.getDatatype()), createSchemaFromInformation(info.getSubschema())));
 	}
 
 	private SDFDatatype createDatatypeFromInformation(SdfDatatypeInformation info) {
-		SDFDatatype ret = null;
 		SDFDatatype subtype = null;
-		if (info.getSubtype() != null){
-			subtype = new SDFDatatype(info.getSubtype().getUri());
-			ret = new SDFDatatype(info.getUri(), info.getType(), subtype);
-		}else if (info.getSubSchema() != null){
-			SDFSchema subschema = null;
+		SDFSchema subschema = null;
+		if (info.getSubtype() != null) {
+			subtype = createDatatypeFromInformation(info.getSubtype());
+		} 
+		if (info.getSubSchema() != null) {
 			subschema = createSchemaFromInformation(info.getSubSchema());
-			ret = new SDFDatatype(info.getUri(), info.getType(), subschema);
-		}else{
-			ret = new SDFDatatype(info.getUri());
 		}
-		return ret;
+		return new SDFDatatype(info.getUri(), info.getType(), subtype, subschema);
 	}
 
 	@Override

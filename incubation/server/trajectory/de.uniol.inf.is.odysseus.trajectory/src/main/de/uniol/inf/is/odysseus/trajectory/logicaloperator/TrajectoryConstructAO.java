@@ -128,10 +128,10 @@ public class TrajectoryConstructAO extends UnaryLogicalOp {
 	 */
 	public final static SDFSchema OUTPUT_SCHEMA = SDFSchemaFactory.createNewTupleSchema(
 			TrajectoryConstructAO.class.getName(), 
-			new SDFAttribute(null, "VehicleId", SDFDatatype.STRING, null),
-			new SDFAttribute(null, "TrajectoryId", SDFDatatype.INTEGER, null),
-			new SDFAttribute(null, "Positions", SDFSpatialDatatype.LIST , null),
-			new SDFAttribute(null, "Textual Attributes", SDFSpatialDatatype.LIST, null)
+			new SDFAttribute(null, "VehicleId", SDFDatatype.STRING),
+			new SDFAttribute(null, "TrajectoryId", SDFDatatype.INTEGER),
+			new SDFAttribute(null, "Positions", SDFSpatialDatatype.LIST),
+			new SDFAttribute(null, "Textual Attributes", SDFSpatialDatatype.LIST)
 	);
 	
 	@Override

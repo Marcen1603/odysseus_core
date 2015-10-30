@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="sourcename" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="attributename" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="datatype" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}sdfDatatypeInformation" minOccurs="0"/>
+ *         &lt;element name="subschema" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}sdfSchemaInformation" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,7 +39,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "sdfAttributeInformation", propOrder = {
     "sourcename",
     "attributename",
-    "datatype"
+    "datatype",
+    "subschema"
 })
 @SuppressWarnings(value = { "all" })
 public class SdfAttributeInformation {
@@ -46,6 +48,7 @@ public class SdfAttributeInformation {
     protected String sourcename;
     protected String attributename;
     protected SdfDatatypeInformation datatype;
+    protected SdfSchemaInformation subschema;
 
     /**
      * Ruft den Wert der sourcename-Eigenschaft ab.
@@ -117,6 +120,30 @@ public class SdfAttributeInformation {
      */
     public void setDatatype(SdfDatatypeInformation value) {
         this.datatype = value;
+    }
+
+    /**
+     * Ruft den Wert der subschema-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link SdfSchemaInformation }
+     *     
+     */
+    public SdfSchemaInformation getSubschema() {
+        return subschema;
+    }
+
+    /**
+     * Legt den Wert der subschema-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link SdfSchemaInformation }
+     *     
+     */
+    public void setSubschema(SdfSchemaInformation value) {
+        this.subschema = value;
     }
 
 }

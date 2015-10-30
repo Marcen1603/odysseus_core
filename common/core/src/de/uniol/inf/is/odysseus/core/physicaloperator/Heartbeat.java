@@ -19,8 +19,8 @@ final public class Heartbeat extends AbstractPunctuation {
 
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("Heartbeat", "type", SDFDatatype.INTEGER, null));
-		attributes.add(new SDFAttribute("Heartbeat", "point", SDFDatatype.TIMESTAMP, null));
+		attributes.add(new SDFAttribute("Heartbeat", "type", SDFDatatype.INTEGER));
+		attributes.add(new SDFAttribute("Heartbeat", "point", SDFDatatype.TIMESTAMP));
 		schema = SDFSchemaFactory.createNewSchema("Heartbeat", Tuple.class, attributes);
 	}
 

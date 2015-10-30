@@ -63,11 +63,11 @@ public class ModbusTCPSource extends AbstractAccessAO {
 		switch (functionCode){
 			case Modbus.READ_INPUT_DISCRETES:
 			case Modbus.READ_COILS:
-				outputAttribute = new SDFAttribute(getName(),"value",SDFDatatype.BITVECTOR,null);
+				outputAttribute = new SDFAttribute(getName(),"value",SDFDatatype.BITVECTOR);
 				break;
 			case Modbus.READ_INPUT_REGISTERS:
 			case Modbus.READ_MULTIPLE_REGISTERS:
-				outputAttribute = new SDFAttribute(getName(),"value",SDFDatatype.LIST_INTEGER,null);
+				outputAttribute = new SDFAttribute(getName(),"value",SDFDatatype.LIST_INTEGER);
 				break;
 			default:
 				// Do nothing, schema must be set by hand

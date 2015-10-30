@@ -38,7 +38,7 @@ final public class Priority extends AbstractBaseMetaAttribute implements IPriori
 	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static{
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("Priority", "priority", SDFDatatype.BYTE, null));
+		attributes.add(new SDFAttribute("Priority", "priority", SDFDatatype.BYTE));
 		schema.add(SDFSchemaFactory.createNewMetaSchema("Priority", Tuple.class, attributes, IPriority.class));
 	}
 	

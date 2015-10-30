@@ -27,9 +27,9 @@ public class RDFSource extends AbstractAccessAO {
 		super();
 		setDataHandler(new TripleDataHandler().getSupportedDataTypes().get(0));
 		setProtocolHandler(RDFProtocolHandler.NAME);
-		SDFAttribute sub = new SDFAttribute("", "subject", SDFDatatype.STRING, null);
-		SDFAttribute pred = new SDFAttribute("", "predicate", SDFDatatype.STRING, null);
-		SDFAttribute obj = new SDFAttribute("", "object", SDFDatatype.STRING, null);
+		SDFAttribute sub = new SDFAttribute("", "subject", SDFDatatype.STRING);
+		SDFAttribute pred = new SDFAttribute("", "predicate", SDFDatatype.STRING);
+		SDFAttribute obj = new SDFAttribute("", "object", SDFDatatype.STRING);
 		List<SDFAttribute> attributes = new ArrayList<>();
 		attributes.add(sub);
 		attributes.add(pred);

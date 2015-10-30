@@ -39,13 +39,11 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Latency", "minlstart",
-				SDFDatatype.LONG, null));
+				SDFDatatype.LONG));
 		attributes.add(new SDFAttribute("Latency", "maxlstart",
-				SDFDatatype.LONG, null));
-		attributes.add(new SDFAttribute("Latency", "lend", SDFDatatype.LONG,
-				null));
-		attributes.add(new SDFAttribute("Latency", "latency", SDFDatatype.LONG,
-				null));
+				SDFDatatype.LONG));
+		attributes.add(new SDFAttribute("Latency", "lend", SDFDatatype.LONG));
+		attributes.add(new SDFAttribute("Latency", "latency", SDFDatatype.LONG));
 		schema.add(SDFSchemaFactory.createNewMetaSchema("Latency", Tuple.class,
 				attributes, ILatency.class));
 	}

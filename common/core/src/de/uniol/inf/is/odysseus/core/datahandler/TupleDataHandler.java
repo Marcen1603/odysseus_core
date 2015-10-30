@@ -361,9 +361,13 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				throw new IllegalArgumentException("Datatype cannot be used in transport!"
 						+ uri);
 			}
+			
 			SDFSchema subSchema;
 			if (type.isTuple()) {
-				subSchema = attribute.getSubSchema();
+				subSchema = attribute.getDatatype().getSchema();
+			} else if (type.isListValue() && type.getSubType().isTuple()){
+				subSchema = SDFSchemaFactory
+						.createNewTupleSchema("",attribute.getDatatype().getSchema().getAttributes());
 			} else {
 				subSchema = SDFSchemaFactory
 						.createNewTupleSchema("", attribute);

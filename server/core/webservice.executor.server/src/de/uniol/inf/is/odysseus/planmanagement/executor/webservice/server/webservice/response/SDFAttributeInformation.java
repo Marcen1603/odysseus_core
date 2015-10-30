@@ -27,7 +27,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "sdfAttributeInformation", propOrder = {
 	"sourcename",
 	"attributename",
-	"datatype"
+	"datatype",
+	"subschema"
 })
 public class SDFAttributeInformation {
 
@@ -38,10 +39,13 @@ public class SDFAttributeInformation {
 	public String sourcename;
 	public String attributename;
 	public SDFDatatypeInformation datatype;
+	public SDFSchemaInformation subschema;
 	
-	public SDFAttributeInformation(String sourceName, String attributeName, SDFDatatypeInformation datatype) {
+	public SDFAttributeInformation(String sourceName, String attributeName, SDFDatatypeInformation datatype, SDFSchemaInformation subschema) {
 		this.sourcename = sourceName;
 		this.attributename = attributeName;
 		this.datatype = datatype;
+		// I think, this should not be here, but as part of data type --> needs some work to refactor
+		this.subschema = subschema;
 	}
 }

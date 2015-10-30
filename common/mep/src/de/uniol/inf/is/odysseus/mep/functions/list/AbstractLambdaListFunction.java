@@ -66,7 +66,7 @@ abstract public class AbstractLambdaListFunction extends
 				List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 				for (int i = 0; i < getArity(); i++) {
 					attrs.add(new SDFAttribute("_gen", "_gen_" + i,
-							SDFDatatype.OBJECT, null));
+							SDFDatatype.OBJECT));
 				}
 				SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema(
 						"_gen", attrs);

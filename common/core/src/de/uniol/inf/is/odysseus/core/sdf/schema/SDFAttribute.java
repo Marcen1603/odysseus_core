@@ -61,8 +61,6 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	final private Map<String, SDFConstraint> dtConstraints;
 
-	private SDFSchema subSchema;
-
 	/**
 	 * Can be used for different thinks, e.g. position in statemap
 	 */
@@ -84,9 +82,8 @@ public class SDFAttribute extends SDFElement implements
 //	}
 
 	public SDFAttribute(String sourceName, String attributeName,
-			SDFDatatype datatype, SDFSchema subschema) {
+			SDFDatatype datatype) {
 		this(sourceName, attributeName, datatype, null, (Collection<SDFConstraint>) null);
-		this.subSchema = subschema;
 	}
 	
 	public SDFAttribute(SDFAttribute toCopyFrom, SDFDatatype newDatatype){
@@ -379,14 +376,6 @@ public class SDFAttribute extends SDFElement implements
 		}
 		
 		return ret.toString();
-	}
-
-	public SDFSchema getSubSchema() {
-		return subSchema;
-	}
-
-	public void setSubSchema(SDFSchema subSchema) {
-		this.subSchema = subSchema;
 	}
 
 }

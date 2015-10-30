@@ -56,7 +56,7 @@ public class TextProcessingAO extends UnaryLogicalOp  {
 		attrList.addAll(getInputSchema(0).getAttributes());
 		
 		SDFDatatype list = new SDFDatatype(this.inputText.toString(), SDFDatatype.KindOfDatatype.LIST, SDFDatatype.STRING);
-		SDFAttribute attr = new SDFAttribute("", this.inputText.getAttributeName().toString(), list, null);
+		SDFAttribute attr = new SDFAttribute("", this.inputText.getAttributeName().toString(), list);
 		attrList.set(posi, attr);
 
 		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attrList, getInputSchema(0)); 

@@ -117,7 +117,7 @@ public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelat
 	@Override
 	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		this.index = leftSchema.indexOf(listAttribute);
-		this.innerSchema = listAttribute.getSubSchema();
+		this.innerSchema = listAttribute.getDatatype().getSchema();
 		
 		DirectAttributeResolver resolver = new DirectAttributeResolver(innerSchema);
 		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());

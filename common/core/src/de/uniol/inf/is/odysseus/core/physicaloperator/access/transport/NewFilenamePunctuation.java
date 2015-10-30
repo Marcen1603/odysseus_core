@@ -21,9 +21,9 @@ public class NewFilenamePunctuation extends AbstractPunctuation {
 	
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("NewFilenamePunctuation", "type", SDFDatatype.INTEGER, null));
-		attributes.add(new SDFAttribute("NewFilenamePunctuation", "point", SDFDatatype.TIMESTAMP, null));
-		attributes.add(new SDFAttribute("NewFilenamePunctuation", "filename", SDFDatatype.STRING, null));
+		attributes.add(new SDFAttribute("NewFilenamePunctuation", "type", SDFDatatype.INTEGER));
+		attributes.add(new SDFAttribute("NewFilenamePunctuation", "point", SDFDatatype.TIMESTAMP));
+		attributes.add(new SDFAttribute("NewFilenamePunctuation", "filename", SDFDatatype.STRING));
 		schema = SDFSchemaFactory.createNewSchema("NewFilenamePunctuation", Tuple.class, attributes);
 	}
 

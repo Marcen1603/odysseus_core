@@ -23,7 +23,7 @@ public class TimerSource extends AbstractAccessAO {
 		setTransportHandler(TimerTransportHandler.NAME);
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PUSH);
-		SDFAttribute a = new SDFAttribute(getName(), "time", SDFDatatype.START_TIMESTAMP, null);
+		SDFAttribute a = new SDFAttribute(getName(), "time", SDFDatatype.START_TIMESTAMP);
 		List<SDFAttribute> attributes = new ArrayList<>();
 		attributes.add(a);
 		setAttributes(attributes);

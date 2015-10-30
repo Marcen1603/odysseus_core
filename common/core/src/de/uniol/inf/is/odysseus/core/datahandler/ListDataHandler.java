@@ -49,7 +49,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		if(this.handler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
 			SDFDatatype localSubType = subType.getAttribute(0).getDatatype().getSubType();
 			if (localSubType.isTuple()){
-				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE.toString(), subType.getAttribute(0).getSubSchema());
+				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE.toString(), subType.getAttribute(0).getDatatype().getSchema());
 			}else{
 				this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getDatatype().getSubType().toString(), subType);
 			}

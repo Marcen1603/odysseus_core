@@ -298,16 +298,16 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
 			SDFSchema schema, boolean requiresDeepClone) {
 		super(datatypeName);
-		if (type == SDFDatatype.KindOfDatatype.BASE) {
-			throw new IllegalArgumentException(
-					"Base types must not have a schema.");
-		}
+//		if (schema != null && type == SDFDatatype.KindOfDatatype.BASE) {
+//			throw new IllegalArgumentException(
+//					"Base types must not have a schema. "+datatypeName+" "+schema);
+//		}
 		this.type = type;
 
-		if (schema == null) {
-			throw new IllegalArgumentException(
-					"Complex types must have a schema.");
-		}
+//		if (schema == null && type != SDFDatatype.KindOfDatatype.BASE) {
+//			throw new IllegalArgumentException(
+//					"Complex types must have a schema.");
+//		}
 		this.schema = schema;
 		this.requiresDeepClone = requiresDeepClone;
 	}
@@ -347,6 +347,11 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			this.subType = sdfDatatype.subType.clone();
 		}
 		this.requiresDeepClone = sdfDatatype.requiresDeepClone;
+	}
+	
+	public SDFDatatype(String uri, KindOfDatatype type, SDFDatatype subType, SDFSchema subSchema) {
+		this(uri,type,subSchema);
+		this.subType = subType;
 	}
 
 	public static List<SDFDatatype> getTypes() {
@@ -609,5 +614,32 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			return super.toString();
 		}
 	}
+
+	public static SDFDatatype createTypeWithSubSchema(SDFDatatype type, SDFSchema subSchema) {
+		if (type.isListValue()){
+			if (type.subType.isTuple()){
+				return new SDFDatatype(type.getURI(), KindOfDatatype.LIST, type.subType, subSchema);
+			}
+		}
+		if (type.isTuple()){
+			return new SDFDatatype(type.getURI(), KindOfDatatype.TUPLE, subSchema);
+		}
+		return new SDFDatatype(type.getURI(), type.type, subSchema);
+	}
+	
+	public static SDFDatatype createTypeWithSubSchema(SDFDatatype type, SDFDatatype subType, SDFSchema subSchema) {
+		if (type.isListValue()){
+			if (subType.isTuple()){
+				return new SDFDatatype(type.getURI(), KindOfDatatype.LIST, subType, subSchema);
+			}
+		}
+		if (type.isTuple()){
+			return new SDFDatatype(type.getURI(), KindOfDatatype.TUPLE, subSchema);
+		}
+		return new SDFDatatype(type.getURI(), type.type, subSchema);
+
+	}
+
+
 
 }

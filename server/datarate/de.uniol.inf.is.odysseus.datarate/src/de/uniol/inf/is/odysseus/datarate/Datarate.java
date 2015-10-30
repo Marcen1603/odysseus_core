@@ -33,7 +33,7 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Datarate", "datarate",
-				SDFDatatype.DOUBLE, null));
+				SDFDatatype.DOUBLE));
 		schema.add(SDFSchemaFactory.createNewMetaSchema("Datarate", Tuple.class,
 				attributes, IDatarate.class));
 	}

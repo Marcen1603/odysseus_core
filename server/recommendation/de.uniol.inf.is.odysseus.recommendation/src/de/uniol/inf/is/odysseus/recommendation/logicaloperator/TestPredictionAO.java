@@ -234,7 +234,8 @@ public class TestPredictionAO extends UnaryLogicalOp {
 			final List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
 			attributes.add(new SDFAttribute(subSchema.getURI(),
 					TTestPredictionAORule.ERROR_ATTRIBUTE_NAME,
-					SDFDatatype.DOUBLE, subSchema));
+					// TODO: Is this really a DOUBLE with subSchema?
+					SDFDatatype.createTypeWithSubSchema(SDFDatatype.DOUBLE, subSchema)));
 			final SDFSchema outputSchema = SDFSchemaFactory
 					.createNewWithAttributes(attributes, subSchema);
 			return outputSchema;

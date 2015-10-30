@@ -47,8 +47,8 @@ public class RPiGPIOSourceAO extends AbstractAccessAO {
 		
 		//SDF Schema:
 		List<SDFAttribute> schema = new LinkedList<>();
-		schema.add(new SDFAttribute(null, "PinNumber", SDFDatatype.STRING, null));
-		schema.add(new SDFAttribute(null, "PinState", SDFDatatype.LONG, null));
+		schema.add(new SDFAttribute(null, "PinNumber", SDFDatatype.STRING));
+		schema.add(new SDFAttribute(null, "PinState", SDFDatatype.LONG));
 		setAttributes(schema);
 		//['PinNumber', 'String'],['PinState', 'String']
 	}

@@ -28,13 +28,13 @@ public class PlanModificationWatcherTransportHandler extends
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("", "ts",
-				SDFDatatype.START_TIMESTAMP, null));
+				SDFDatatype.START_TIMESTAMP));
 		attributes.add(new SDFAttribute("", "queryID",
-				SDFDatatype.INTEGER, null));
+				SDFDatatype.INTEGER));
 		attributes.add(new SDFAttribute("", "eventType",
-				SDFDatatype.STRING, null));
+				SDFDatatype.STRING));
 		attributes.add(new SDFAttribute("", "user",
-				SDFDatatype.STRING, null));
+				SDFDatatype.STRING));
 
 		schema = SDFSchemaFactory.createNewSchema("",
 				Tuple.class, attributes);	
