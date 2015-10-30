@@ -104,7 +104,7 @@ public class ChangeSettingsDialog extends TitleAreaDialog {
 				for (Entry<MethodSetting, Object> entry : getCurrentValues().entrySet()) {
 					String name = entry.getKey().getName();
 					String value = entry.getValue().toString();
-					preferences.put(name, value);					
+					preferences.put(name, value);
 				}
 				try {
 					// Forces the application to save the preferences
@@ -287,17 +287,16 @@ public class ChangeSettingsDialog extends TitleAreaDialog {
 			Class<?> type = entry.getKey().getGetterValueType();
 			if (Integer.class.isAssignableFrom(type)) {
 				entry.setValue(Integer.parseInt(value));
+			} else if (Double.class.isAssignableFrom(type)) {
+				entry.setValue(Double.parseDouble(value));
+			} else if (Float.class.isAssignableFrom(type)) {
+				entry.setValue(Float.parseFloat(value));
+			} else if (Long.class.isAssignableFrom(type)) {
+				entry.setValue(Long.parseLong(value));
 			} else {
-				if (Double.class.isAssignableFrom(type)) {
-					entry.setValue(Double.parseDouble(value));
-				} else {
-					if (Float.class.isAssignableFrom(type)) {
-						entry.setValue(Float.parseFloat(value));
-					} else {
-						// else: string
-						entry.setValue(value);
-					}
-				}
+				// else: string
+				entry.setValue(value);
+
 			}
 			okButton.setEnabled(true);
 			setMessage(DEFAULT_MESSAGE);
