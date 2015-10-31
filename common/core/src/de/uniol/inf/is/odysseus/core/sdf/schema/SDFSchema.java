@@ -102,11 +102,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			}
 			this.type = schema.type;
 			this.outOfOrder = schema.outOfOrder;
+			this.metaschema = schema.metaschema;
 		} else {
 			type = null;
 			this.outOfOrder = null;
 		}
-		this.metaschema = schema.metaschema;
 
 	}
 

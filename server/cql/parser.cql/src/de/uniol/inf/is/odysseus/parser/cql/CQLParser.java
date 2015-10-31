@@ -257,8 +257,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 						"inputs of set operator have different schemas");
 			}
 		}
-		setOperator.subscribeToSource(left, 0, 0, left.getOutputSchema());
-		setOperator.subscribeToSource(right, 1, 0, right.getOutputSchema());
+		if (setOperator != null) {
+			setOperator.subscribeToSource(left, 0, 0, left.getOutputSchema());
+			setOperator.subscribeToSource(right, 1, 0, right.getOutputSchema());
+		}
 		return setOperator;
 	}
 

@@ -82,7 +82,9 @@ abstract public class Histogram<K, V extends IStreamObject<? extends ITimeInterv
 				e = iter.next();
 				pos += e.getValue().size();	
 			}
-			values.add(e.getKey());
+			if (e != null) {
+				values.add(e.getKey());
+			}
 		}
 		return values;
 	}
@@ -96,7 +98,10 @@ abstract public class Histogram<K, V extends IStreamObject<? extends ITimeInterv
 			e = iter.next();
 			pos += e.getValue().size();
 		}
-		return e.getKey();
+		if (e != null) {
+			return e.getKey();
+		}
+		return null;
 	}
 
 	abstract K getMedian();

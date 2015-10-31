@@ -66,7 +66,7 @@ public class ASTStreamSQLWindow extends ASTWindow {
 			throw new IllegalArgumentException(
 					"cannot both of advance and slide parameters");
 		}
-		this.slide = slide == 1 ? null : slide;
+		this.slide = ((slide == null) || (slide == 1)) ? null : slide;
 	}
 
 	public void setUnbounded(boolean value) {

@@ -99,7 +99,7 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 				}
 				transfer(out, i);
 				found = true;
-				if(sendingHeartbeats) {
+				if ((sendingHeartbeats) && (routedToPorts != null)) {
 					routedToPorts.add(i);
 				}
 				if (!overlappingPredicates) {
@@ -109,12 +109,12 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 		}
 		if (!found) {
 			transfer(object, predicates.size());
-			if(sendingHeartbeats) {
+			if ((sendingHeartbeats) && (routedToPorts != null)) {
 				routedToPorts.add(predicates.size());
 			}
 		}
 		
-		if(sendingHeartbeats) {
+		if ((sendingHeartbeats) && (routedToPorts != null)) {
 			// Sending heartbeats to all other ports
 			for(int i = 0; i < predicates.size(); i++) {
 				

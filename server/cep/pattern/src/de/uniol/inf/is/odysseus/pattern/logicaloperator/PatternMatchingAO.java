@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -37,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 
@@ -67,7 +67,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	private Map<Integer, SDFSchema> inputSchemas;
 	// Bedingung
 	private List<SDFExpression> assertions;
-	// Expressions fürs Ausgabeschema
+	// Expressions fï¿½rs Ausgabeschema
 	private List<NamedExpression> returnExpressions;
 	private Integer count;
 	
@@ -232,7 +232,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 			
 			schema = SDFSchemaFactory.createNewTupleSchema("PATTERN", tuple);
 		} else if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
-			// EXPRESSIONS: Ausgabe hängt vom return-Parameter ab
+			// EXPRESSIONS: Ausgabe hï¿½ngt vom return-Parameter ab
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpression expr : returnExpressions) {
 				
@@ -306,7 +306,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				// type
 				if (isOnlyAttribute) {
 					if (!"".equals(expr.name)) {
-						if (!attr.getSourceName().startsWith("__")) {
+						if ((attr != null) && (!attr.getSourceName().startsWith("__"))) {
 							attr = new SDFAttribute(attr.getSourceName(),
 									expr.name, attr);
 						} else {
@@ -338,7 +338,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isValid() {
 		if (inputSchemas == null && inputTypeNames == null) {
-			// Input-Typen und Schemas für Ports speichern
+			// Input-Typen und Schemas fï¿½r Ports speichern
 	        inputTypeNames = new HashMap<Integer, String>();
 	        inputSchemas = new HashMap<Integer, SDFSchema>();
 			for (LogicalSubscription s : this.getSubscribedToSource()) {

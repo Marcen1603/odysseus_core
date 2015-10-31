@@ -79,9 +79,10 @@ public class RelationalReplacementPO
 					if (qualityAttributePos >= 0) {
 						newTuple.setAttribute(qualityAttributePos, "derived");
 					}
-					if (valueAttributePos >= 0) {
-						newTuple.setAttribute(valueAttributePos,
-								replacementValues.get(i - 1));
+					if (replacementValues != null) {
+						if (valueAttributePos >= 0) {
+							newTuple.setAttribute(valueAttributePos, replacementValues.get(i - 1));
+						}
 					}
 					transfer(newTuple);
 				}

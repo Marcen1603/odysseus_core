@@ -19,15 +19,15 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.pattern.util.AttributeMap;
 import de.uniol.inf.is.odysseus.pattern.util.EventBuffer;
 import de.uniol.inf.is.odysseus.pattern.util.EventObject;
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 
 /**
  * Abstrakter physischer Operator, der gemeinsam genutzte Methoden und Daten
- * fürs Pattern-Matching kapselt.
+ * fï¿½rs Pattern-Matching kapselt.
  * 
  * @author Michael Falk
  * @param <T>
@@ -221,7 +221,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 
 	@Override
 	public void process_internal(Tuple<T> event, int port) {
-		// Allgemeine Überprüfungen
+		// Allgemeine ï¿½berprï¿½fungen
 		if (inputTypeNames.get(port) == null) {
 			throw new InvalidEventException("Der Datentyp des Events ist null!");
 		}
@@ -258,7 +258,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	 */
 	protected boolean checkTimeElapsed() {
 		if (timeElapsed) {
-			// Zurücksetzen
+			// Zurï¿½cksetzen
 			timeElapsed = false;
 			return true;
 		}
@@ -272,7 +272,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	 */
 	protected boolean checkSizeMatched() {
 		if (sizeMatched) {
-			// Zurücksetzen
+			// Zurï¿½cksetzen
 			sizeMatched = false;
 			return true;
 		}
@@ -334,7 +334,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			}
 			return returnEvent;
 		}
-		if (outputMode == PatternOutput.EXPRESSIONS) {
+		if ((outputMode == PatternOutput.EXPRESSIONS) && (currentObj != null)) {
 			Tuple<T> outputVal = new Tuple<T>(returnExpressions.size(), false);
 			outputVal.setMetadata((T) currentObj.getEvent().getMetadata()
 					.clone());
@@ -353,7 +353,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 			}
 			return outputVal;
 		}
-		if (outputMode == PatternOutput.TUPLE_CONTAINER) {
+		if ((outputMode == PatternOutput.TUPLE_CONTAINER) && (currentObj != null)) {
 			Tuple<T> complexEvent = new Tuple<T>(1, false);
 			if (objectChoices != null && objectChoices.size() > 0) {
 				// create tuple with matching set
@@ -378,7 +378,9 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 					}
 				}
 			}
-			return currentObj.getEvent();
+			if (currentObj != null) {
+				return currentObj.getEvent();
+			}
 		}
 		return null;
 	}
@@ -455,9 +457,9 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	}
 
 	/**
-	 * Prüft für eine Liste von Events, ob die Bedingungen erfüllt sind. Als
-	 * Ausgabe liefert diese Methode eine Liste der Events zurück, die die
-	 * Bedingungen erfüllen.
+	 * Prï¿½ft fï¿½r eine Liste von Events, ob die Bedingungen erfï¿½llt sind. Als
+	 * Ausgabe liefert diese Methode eine Liste der Events zurï¿½ck, die die
+	 * Bedingungen erfï¿½llen.
 	 * 
 	 * @param eventBuffer
 	 * @return
@@ -466,7 +468,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		if (attrMappings == null)
 			return eventBuffer;
 		EventBuffer<T> output = new EventBuffer<T>();
-		// Expressions für jedes Objekt überprüfen
+		// Expressions fï¿½r jedes Objekt ï¿½berprï¿½fen
 		for (EventObject<T> event : eventBuffer) {
 			if (checkAssertions(event)) {
 				// MatchingSet in Ausgabemenge aufnehmen
@@ -477,8 +479,8 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	}
 	
 	/**
-	 * Sucht nach den Werten für die Attribute aus der Expression. Bei Erfolg
-	 * werden die Werte zurückgeliefert, bei misserfolg null.
+	 * Sucht nach den Werten fï¿½r die Attribute aus der Expression. Bei Erfolg
+	 * werden die Werte zurï¿½ckgeliefert, bei misserfolg null.
 	 * 
 	 * @param eventObjects
 	 *            Liste mit Event-Objekten.

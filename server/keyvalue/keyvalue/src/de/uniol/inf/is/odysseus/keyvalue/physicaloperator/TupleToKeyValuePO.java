@@ -56,12 +56,14 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 		if (getOutputSchema().getType() == NestedKeyValueObject.class)
 			output = new NestedKeyValueObject<M>();
 		
-		int pos = 0;
-		for (SDFAttribute attr : getOutputSchema()) {
-			output.setAttribute(attr.getQualName(), input.getAttribute(pos++));
+		if (output != null) {
+			int pos = 0;
+			for (SDFAttribute attr : getOutputSchema()) {
+				output.setAttribute(attr.getQualName(), input.getAttribute(pos++));
+			}
+			output.setMetadata((M) input.getMetadata().clone());
+			transfer(output);
 		}
-        output.setMetadata((M) input.getMetadata().clone());
-		transfer(output);
 	}
 	
 	@Override

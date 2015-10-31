@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.Iterator;
-import java.util.PriorityQueue;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -26,13 +26,15 @@ public class NumericalHistogram<K extends Number,V extends IStreamObject<? exten
 			}
 			
 			// Center is last element in current set
-			if (center == pos && iter.hasNext()){
-				Entry<K, PriorityQueue<V>> e2 = iter.next();
-				Double numMedian = (e.getKey().doubleValue()+e2.getKey().doubleValue())/2.0;
-				return (K) numMedian;
+			if (e != null) {
+				if (center == pos && iter.hasNext()) {
+					Entry<K, PriorityQueue<V>> e2 = iter.next();
+					Double numMedian = (e.getKey().doubleValue() + e2.getKey().doubleValue()) / 2.0;
+					return (K) numMedian;
+				}
+				return e.getKey();
 			}
-			
-			return e.getKey();			
+			return null;
 		}
 	}
 }

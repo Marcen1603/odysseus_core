@@ -78,23 +78,23 @@ public class TRelationalChangeDetectAORule extends AbstractRelationalIntervalTra
 
 			}
 		}
-		if (operator.getHeartbeatRate() > 0) {
-			po.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(operator.getHeartbeatRate()));
+		if (po != null) {
+			if (operator.getHeartbeatRate() > 0) {
+				po.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(operator.getHeartbeatRate()));
+			}
+			po.setDeliverFirstElement(operator.isDeliverFirstElement());
+			po.setSendLastOfSameObjects(operator.isSendLastOfSameObjects());
+			if (operator.getGroupingAttributes().size() > 0) {
+				RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(),
+						operator.getOutputSchema(), operator.getGroupingAttributes(), null, false);
+				po.setGroupProcessor(r);
+			}
+			SDFAttribute suppressAttribute = operator.getSuppressCountAttributeValue();
+			if (suppressAttribute != null) {
+				po.setSuppressAttribute(operator.getOutputSchema().indexOf(suppressAttribute));
+			}
+			defaultExecute(operator, po, config, true, true);
 		}
-		po.setDeliverFirstElement(operator.isDeliverFirstElement());
-		po.setSendLastOfSameObjects(operator.isSendLastOfSameObjects());
-		if (operator.getGroupingAttributes().size() > 0){
-			RelationalGroupProcessor r = new RelationalGroupProcessor(
-					operator.getInputSchema(), operator.getOutputSchema(),
-					operator.getGroupingAttributes(),
-					null, false);
-			po.setGroupProcessor(r);
-		}
-		SDFAttribute suppressAttribute = operator.getSuppressCountAttributeValue();
-		if (suppressAttribute != null) {
-			po.setSuppressAttribute(operator.getOutputSchema().indexOf(suppressAttribute));
-		}
-		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override

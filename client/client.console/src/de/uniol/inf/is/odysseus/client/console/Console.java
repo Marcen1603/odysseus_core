@@ -167,10 +167,10 @@ public class Console implements IApplication {
 			
 			login(username, password);
 			
-			if (command.toLowerCase().startsWith("exec")){
+			if ((command.toLowerCase().startsWith("exec")) && (params != null) && (params.length > 0)) {
 				runExecuteFileCommand(params[0]);
-			}else{
-				throw new RuntimeException("Unknown command "+command);
+			} else {
+				throw new RuntimeException("Unknown command " + command);
 			}
 			
 			

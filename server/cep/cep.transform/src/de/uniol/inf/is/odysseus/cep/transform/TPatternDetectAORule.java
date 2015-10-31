@@ -22,14 +22,14 @@ import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
 import de.uniol.inf.is.odysseus.cep.epa.PatternDetectPO;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational.RelationalCreator;
-import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
@@ -76,12 +76,13 @@ public class TPatternDetectAORule extends AbstractTransformationRule<PatternDete
 			e.printStackTrace();
 		}
 
-		if (cepAO.getHeartbeatRate() > 0) {
-			cepPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
-					cepAO.getHeartbeatRate()));
-		}
+		if (cepPO != null) {
+			if (cepAO.getHeartbeatRate() > 0) {
+				cepPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(cepAO.getHeartbeatRate()));
+			}
 
-		defaultExecute(cepAO, cepPO, transformConfig, true, true);
+			defaultExecute(cepAO, cepPO, transformConfig, true, true);
+		}
 	}
 
 	@Override

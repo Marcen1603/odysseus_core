@@ -649,7 +649,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			if (a == null && b == null){
 				continue;
 			}
-			if (!a.equals(b)) {
+			if ((a != null) && (!a.equals(b))) {
 				return false;
 			}				
 
