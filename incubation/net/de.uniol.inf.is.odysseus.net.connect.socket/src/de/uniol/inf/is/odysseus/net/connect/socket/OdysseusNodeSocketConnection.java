@@ -24,7 +24,8 @@ public class OdysseusNodeSocketConnection extends AbstractOdysseusNodeConnection
 		receiveThread.start();
 	}
 
-	public IOdysseusNode getNode() {
+	@Override
+	public IOdysseusNode getOdysseusNode() {
 		return node;
 	}
 

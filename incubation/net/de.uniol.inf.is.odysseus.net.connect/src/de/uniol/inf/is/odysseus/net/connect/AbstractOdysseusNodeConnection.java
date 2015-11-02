@@ -44,4 +44,15 @@ public abstract class AbstractOdysseusNodeConnection implements IOdysseusNodeCon
 		}
 	}
 
+	protected final void fireDisconnectedEvent() {
+		synchronized( listeners ) {
+			for( IOdysseusNodeConnectionListener listener : listeners ) {
+				try {
+					listener.disconnected(this);
+				} catch( Throwable t ) {
+					LOG.error("Exception in odysseus node connection listener", t);
+				}
+			}
+		}
+	}
 }
