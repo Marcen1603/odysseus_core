@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
-import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.discovery.AbstractOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 
@@ -22,7 +22,7 @@ public final class IPListOdysseusNodeDiscoverer extends AbstractOdysseusNodeDisc
 	private static final String IP_LIST_FILENAME = "nodeIPList.conf";
 
 	@Override
-	public void startImpl(IOdysseusNodeManager manager, OdysseusNetStartupData data) throws OdysseusNetDiscoveryException {
+	public void startImpl(IOdysseusNodeManager manager, IOdysseusNode localNode) throws OdysseusNetDiscoveryException {
 		LOG.info("Beginning node discovery with ip list from file");
 
 		String filename = determineFullFilename();

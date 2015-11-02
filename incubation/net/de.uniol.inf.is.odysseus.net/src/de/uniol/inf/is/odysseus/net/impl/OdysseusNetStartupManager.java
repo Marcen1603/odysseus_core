@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartup;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupListener;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
-import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 
 public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 
@@ -27,7 +27,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	private IOdysseusNetStartup startup;
 	private Boolean started = false;
 
-	private OdysseusNetStartupData startupData;
+	private IOdysseusNode localNode;
 
 	// called by OSGi-DS
 	public void bindOdysseusNetStartup(IOdysseusNetStartup serv) {
@@ -104,8 +104,8 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			}
 			
 			LOG.info("Beginning Startup of OdysseusNet");
-			startupData = tryStart();
-			LOG.info("Startupdata is {}", startupData);
+			localNode = tryStart();
+			LOG.info("Local odysseus node is {}", localNode);
 			LOG.info("Starting OdysseusNet components");
 			startComponents();
 
@@ -113,10 +113,10 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			LOG.info("Start of OdysseusNet finished");
 		}
 		
-		fireStartEvent(startupData);
+		fireStartEvent(localNode);
 	}
 
-	private OdysseusNetStartupData tryStart() throws OdysseusNetException {
+	private IOdysseusNode tryStart() throws OdysseusNetException {
 		try {
 			synchronized( startUpSyncObject ) {
 				return startup.start();
@@ -132,7 +132,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 				try {
 					LOG.info("Starting OdysseusNet component {}", component);
 					
-					component.start(startupData);
+					component.start(localNode);
 					startedComponents.add(component);
 					
 				} catch( Throwable t ) {
@@ -174,7 +174,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			
 			LOG.info("Stopping OdysseusNet startup");
 			tryStop();
-			startupData = null;
+			localNode = null;
 			LOG.info("Stopping OdysseusNet components");
 			stopComponents();
 
@@ -222,8 +222,8 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	}
 	
 	@Override
-	public OdysseusNetStartupData getStartupData() {
-		return startupData;
+	public IOdysseusNode getLocalOdysseusNode() {
+		return localNode;
 	}
 
 	@Override
@@ -242,11 +242,11 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 		}
 	}
 	
-	private void fireStartEvent(OdysseusNetStartupData data) {
+	private void fireStartEvent(IOdysseusNode localNode) {
 		synchronized( listeners ) {
 			for( IOdysseusNetStartupListener listener : listeners ) {
 				try {
-					listener.odysseusNetStarted(this, data);
+					listener.odysseusNetStarted(this, localNode);
 				} catch( Throwable t ) {
 					LOG.error("Exception in OdysseusNet startup listener", t);
 				}

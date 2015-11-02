@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.net.discovery.broadcast.request;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,10 +14,9 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
-import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
+import de.uniol.inf.is.odysseus.net.OdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn;
-import de.uniol.inf.is.odysseus.net.discovery.broadcast.impl.BroadcastOdysseusNode;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,24 +27,19 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 
 	private static final Logger LOG = LoggerFactory.getLogger(BroadcastHandler.class);
 
-	private final String ownNodeName;
-	private final OdysseusNodeID ownNodeID;
-	private final int ownCommunicationPort;
-	
+	private final IOdysseusNode localNode;
 	private final int ownBroadcastPort;
 	
 	private final IOdysseusNodeManager manager;
 	
 
-	public BroadcastHandler(OdysseusNetStartupData data, IOdysseusNodeManager manager, int broadcastPort, int communicationPort) {
+	public BroadcastHandler(IOdysseusNode localNode, IOdysseusNodeManager manager, int broadcastPort) {
 		Preconditions.checkNotNull(manager, "manager must not be null!");
-		Preconditions.checkNotNull(data, "Data must not be null!");
+		Preconditions.checkNotNull(localNode, "localNode must not be null!");
 
-		this.ownNodeName = data.getNodeName();
-		this.ownNodeID = data.getNodeID();
+		this.localNode = localNode;
 		this.manager = manager;
 		this.ownBroadcastPort = broadcastPort;
-		this.ownCommunicationPort = communicationPort;
 	}
 
 	@Override
@@ -75,10 +70,16 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 
 	private void sendAnswerMessage(ChannelHandlerContext ctx, InetSocketAddress destination) throws JSONException {
 		JSONObject json = new JSONObject();
-		json.put("nodeName", ownNodeName);
-		json.put("nodeID", ownNodeID);
-		json.put("communicationPort", ownCommunicationPort);
-
+		json.put("nodeName", localNode.getName());
+		json.put("nodeID", localNode.getID());
+		
+		JSONObject propertyJson = new JSONObject();
+		for( String propertyKey : localNode.getProperyKeys() ) {
+			String propertyValue = localNode.getProperty(propertyKey).get();
+			propertyJson.put(propertyKey, propertyValue);
+		}
+		json.put("properties", propertyJson);
+		
 		String jsonString = json.toString();
 		DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(jsonString, CharsetUtil.UTF_8), destination);
 
@@ -91,9 +92,16 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 		if (jsonObject.has("nodeName") && jsonObject.has("nodeID")) {
 			String nodeName = jsonObject.getString("nodeName");
 			String nodeIDStr = jsonObject.getString("nodeID");
-			int communicationPort = jsonObject.getInt("communicationPort");
+			IOdysseusNode newNode = new OdysseusNode(OdysseusNodeID.fromString(nodeIDStr), nodeName);
+			
+			JSONObject propertyJson = jsonObject.getJSONObject("properties");
+			Iterator<?> keyIterator = propertyJson.keys();
+			while( keyIterator.hasNext() ) {
+				String key = (String)keyIterator.next();
+				String value = propertyJson.getString(key);
+				newNode.addProperty(key, value);
+			}
 
-			IOdysseusNode newNode = new BroadcastOdysseusNode(OdysseusNodeID.fromString(nodeIDStr), nodeName, sender, communicationPort);
 			if (!manager.existsNode(newNode)) {
 				manager.addNode(newNode);
 				LOG.debug("New node added: {}", newNode);

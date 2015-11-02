@@ -54,17 +54,6 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener {
 		});
 		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 15, true));
 
-		/************* IP-Address ****************/
-		TableViewerColumn ipColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		ipColumn.getColumn().setText("IP");
-		ipColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, ipColumn) {
-			@Override
-			protected String getValue(OdysseusNodeID nodeID) {
-				return determineIPAddressName(nodeID);
-			}
-		});
-		tableColumnLayout.setColumnData(ipColumn.getColumn(), new ColumnWeightData(10, 15, true));
-
 		/************* NodeID ****************/
 		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		idColumn.getColumn().setText("ID");
@@ -96,16 +85,6 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener {
 		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
 		if (optNode.isPresent()) {
 			return optNode.get().getName();
-		}
-
-		return UNKNOWN_TEXT;
-	}
-	
-	private static String determineIPAddressName(OdysseusNodeID nodeID) {
-		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
-		if (optNode.isPresent()) {
-			IOdysseusNode node = optNode.get();
-			return node.getInetAddress().toString() + ":" + node.getCommunicationPort();
 		}
 
 		return UNKNOWN_TEXT;

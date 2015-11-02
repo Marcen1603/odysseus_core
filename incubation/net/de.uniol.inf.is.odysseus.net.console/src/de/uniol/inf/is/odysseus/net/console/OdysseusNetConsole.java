@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
-import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 
 public class OdysseusNetConsole implements CommandProvider {
@@ -575,13 +574,16 @@ public class OdysseusNetConsole implements CommandProvider {
 		ci.println("OdysseusNet stopped by console");
 	}
 	
-	public void _showStartupData(CommandInterpreter ci ) {
+	public void _showLocalNode(CommandInterpreter ci ) {
 		if( startupManager.isStarted() ) {
-			OdysseusNetStartupData startupData = startupManager.getStartupData();
+			IOdysseusNode localNode = startupManager.getLocalOdysseusNode();
 			
-			ci.println("NodeName = " + startupData.getNodeName());
-			ci.println("NodeID   = " + startupData.getNodeID());
-			ci.println("Port     = " + startupData.getCommunicationPort());
+			ci.println("NodeName\t= " + localNode.getName());
+			ci.println("NodeID\t= " + localNode.getID());
+			for( String propertyKey : localNode.getProperyKeys() ) {
+				Optional<String> optPropertyValue = localNode.getProperty(propertyKey);
+				ci.println(propertyKey + "\t= " + optPropertyValue.get());
+			}
 		} else {
 			ci.println("OdysseusNet is not started");
 		}

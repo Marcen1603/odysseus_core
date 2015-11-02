@@ -6,7 +6,7 @@ public interface IOdysseusNetStartupManager {
 	public void stop();
 	
 	public boolean isStarted();
-	public OdysseusNetStartupData getStartupData();
+	public IOdysseusNode getLocalOdysseusNode();
 	
 	public void addListener( IOdysseusNetStartupListener listener);
 	public void removeListener( IOdysseusNetStartupListener listener);

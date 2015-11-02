@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
-import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn;
@@ -32,16 +32,16 @@ public class BroadcastRequestSender {
 	private BroadcastRequestSendThread sendThread;
 	private int usedPort = BroadcastDiscoveryPlugIn.BROADCAST_PORT_MIN;
 
-	public BroadcastRequestSender(OdysseusNetStartupData data, IOdysseusNodeManager nodeManager) {
+	public BroadcastRequestSender(IOdysseusNode localNode, IOdysseusNodeManager nodeManager) {
 		Preconditions.checkNotNull(nodeManager, "nodeManager must not be null!");
-		Preconditions.checkNotNull(data, "data must not be null!");
+		Preconditions.checkNotNull(localNode, "localNode must not be null!");
 
 		b.group(workerGroup);
 		b.channel(NioDatagramChannel.class);
 		b.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new BroadcastHandler(data, nodeManager, usedPort, data.getCommunicationPort()));
+				ch.pipeline().addLast(new BroadcastHandler(localNode, nodeManager, usedPort));
 			}
 		});
 		b.option(ChannelOption.SO_BROADCAST, true);

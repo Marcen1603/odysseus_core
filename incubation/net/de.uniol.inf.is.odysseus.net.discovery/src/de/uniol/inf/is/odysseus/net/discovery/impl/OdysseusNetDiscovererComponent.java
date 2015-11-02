@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableCollection;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
-import de.uniol.inf.is.odysseus.net.OdysseusNetStartupData;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
@@ -55,7 +54,7 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	}
 
 	@Override
-	public void start(OdysseusNetStartupData data) {
+	public void start(IOdysseusNode localNode) {
 		LOG.info("Starting node discovery");
 
 		waitForServices();
@@ -68,7 +67,7 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 				LOG.info("Using node discoverer {}", nodeDiscoverer);
 
 				try {
-					nodeDiscoverer.start(nodeManager, data);
+					nodeDiscoverer.start(nodeManager, localNode);
 				} catch (Throwable t) {
 					LOG.error("Could not start node discoverer", t);
 					return;
