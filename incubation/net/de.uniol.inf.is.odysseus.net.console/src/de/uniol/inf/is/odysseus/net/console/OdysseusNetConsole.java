@@ -546,7 +546,7 @@ public class OdysseusNetConsole implements CommandProvider {
 		ci.println("Saved odysseus net configuration");
 	}
 	
-	public void _lsFoundOdysseusNodes(CommandInterpreter ci ) {
+	public void _lsNodes(CommandInterpreter ci ) {
 		ImmutableCollection<IOdysseusNode> foundNodes = nodeManager.getNodes();
 		
 		for( IOdysseusNode foundNode : foundNodes ) {
@@ -554,8 +554,8 @@ public class OdysseusNetConsole implements CommandProvider {
 		}
 	}
 	
-	public void _listFoundOdysseusNodes(CommandInterpreter ci ) {
-		_lsFoundOdysseusNodes(ci);
+	public void _listNodes(CommandInterpreter ci ) {
+		_lsNodes(ci);
 	}
 	
 	public void _startOdysseusNet(CommandInterpreter ci ) {

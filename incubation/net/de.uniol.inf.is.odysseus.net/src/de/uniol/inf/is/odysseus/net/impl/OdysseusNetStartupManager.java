@@ -195,6 +195,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 
 			started = true;
 			LOG.info("Start of OdysseusNet finished");
+			LOG.info("Resulting local odysseus node: {}", localNode);
 		}
 		
 		fireStartEvent(localNode);

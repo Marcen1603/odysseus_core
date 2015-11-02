@@ -9,9 +9,11 @@ import com.google.common.collect.ImmutableCollection;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
+import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 import de.uniol.inf.is.odysseus.net.discovery.activator.OdysseusNetDiscoveryPlugIn;
 
 public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
@@ -55,12 +57,12 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	}
 
 	@Override
-	public void init(IOdysseusNode localNode) {
+	public void init(IOdysseusNode localNode) throws OdysseusNetException {
 		this.localNode = localNode;
 	}
 
 	@Override
-	public void start() {
+	public void start() throws OdysseusNetException {
 		LOG.info("Starting node discovery");
 
 		waitForServices();
@@ -75,14 +77,12 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 				try {
 					nodeDiscoverer.start(nodeManager, localNode);
 				} catch (Throwable t) {
-					LOG.error("Could not start node discoverer", t);
-					return;
+					throw new OdysseusNetDiscoveryException("Could not start node discoverer", t);
 				}
 
 			} else {
 				if (currentWaitingTime >= MAX_WAIT_TIME_FOR_NODE_DISCOVERER_MILLIS) {
-					LOG.error("Could not get a node discoverer after {} ms. Aborting.", MAX_WAIT_TIME_FOR_NODE_DISCOVERER_MILLIS);
-					return;
+					throw new OdysseusNetDiscoveryException("Could not get a node discoverer after " + MAX_WAIT_TIME_FOR_NODE_DISCOVERER_MILLIS + " ms.");
 				}
 
 				LOG.debug("No node discoverer available at the moment. Waiting {} ms. Total: {} ms", WAIT_TIME_FOR_NODE_DISCOVERER_MILLIS, currentWaitingTime);

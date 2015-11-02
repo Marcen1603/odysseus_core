@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.net;
 
 public interface IOdysseusNetComponent {
 
-	public void init( IOdysseusNode localNode );
+	public void init( IOdysseusNode localNode ) throws OdysseusNetException;
 	
-	public void start();
+	public void start() throws OdysseusNetException;
 	public void stop();
 	
 	public void terminate( IOdysseusNode localNode );
