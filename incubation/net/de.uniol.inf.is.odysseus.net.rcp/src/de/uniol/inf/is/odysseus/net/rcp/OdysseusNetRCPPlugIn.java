@@ -5,11 +5,13 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 
 public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 
 	private static IOdysseusNodeManager nodeManager;
 	private static IOdysseusNetStartupManager startupManager;
+	private static IOdysseusNodeConnectionManager connectionManager;
 
 	// called by OSGi-DS
 	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
@@ -22,7 +24,7 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 			nodeManager = null;
 		}
 	}
-	
+
 	public static IOdysseusNodeManager getOdysseusNodeManager() {
 		return nodeManager;
 	}
@@ -38,11 +40,27 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 			startupManager = null;
 		}
 	}
-	
+
 	public static IOdysseusNetStartupManager getOdysseusNetStartupManager() {
 		return startupManager;
 	}
+
+	// called by OSGi-DS
+	public static void bindOdysseusNodeConnectionManager(IOdysseusNodeConnectionManager serv) {
+		connectionManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNodeConnectionManager(IOdysseusNodeConnectionManager serv) {
+		if (connectionManager == serv) {
+			connectionManager = null;
+		}
+	}
 	
+	public static IOdysseusNodeConnectionManager getOdysseusNodeConnectionManager() {
+		return connectionManager;
+	}
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 	}

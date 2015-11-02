@@ -22,9 +22,11 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListener;
 import de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn;
 
-public final class NodeTableViewer implements IOdysseusNodeManagerListener {
+public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdysseusNodeConnectionManagerListener {
 
 	private static final String UNKNOWN_TEXT = "<unknown>";
 
@@ -65,6 +67,27 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener {
 		});
 		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(20, 15, true));
 
+		/************* Connected? ****************/
+		TableViewerColumn connectedColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		connectedColumn.getColumn().setText("Connected");
+		connectedColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, connectedColumn) {
+			@Override
+			protected String getValue(OdysseusNodeID nodeID) {
+				return determineConnectedStatus(nodeID);
+			}
+		});
+		tableColumnLayout.setColumnData(connectedColumn.getColumn(), new ColumnWeightData(5, 15, true));
+
+		/************* Properties ****************/
+		TableViewerColumn propertiesColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		propertiesColumn.getColumn().setText("Properties");
+		propertiesColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, propertiesColumn) {
+			@Override
+			protected String getValue(OdysseusNodeID nodeID) {
+				return determineProperties(nodeID);
+			}
+		});
+		tableColumnLayout.setColumnData(propertiesColumn.getColumn(), new ColumnWeightData(20, 15, true));
 		
 		hideSelectionIfNeeded(tableViewer);
 
@@ -74,11 +97,14 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener {
 		for (IOdysseusNode node : OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNodes()) {
 			nodeAdded(OdysseusNetRCPPlugIn.getOdysseusNodeManager(), node);
 		}
+		OdysseusNetRCPPlugIn.getOdysseusNodeConnectionManager().addListener(this);
+		
 		tableViewer.refresh();
 	}
 
 	public void dispose() {
 		OdysseusNetRCPPlugIn.getOdysseusNodeManager().removeListener(this);
+		OdysseusNetRCPPlugIn.getOdysseusNodeConnectionManager().removeListener(this);
 	}
 
 	private static String determinePeerName(OdysseusNodeID nodeID) {
@@ -87,6 +113,35 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener {
 			return optNode.get().getName();
 		}
 
+		return UNKNOWN_TEXT;
+	}
+	
+
+	private static String determineProperties(OdysseusNodeID nodeID) {
+		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
+		if (optNode.isPresent()) {
+			StringBuilder sb = new StringBuilder();
+			
+			IOdysseusNode node = optNode.get();
+			for( String propertyKey : node.getProperyKeys()) {
+				sb.append(propertyKey).append("=").append(node.getProperty(propertyKey).get()).append(" ");
+			}
+			
+			return sb.toString();
+		}
+
+		return UNKNOWN_TEXT;
+	}
+
+	private static String determineConnectedStatus(OdysseusNodeID nodeID) {
+		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
+
+		if( optNode.isPresent() ) {
+			IOdysseusNode node = optNode.get();
+			boolean connected = OdysseusNetRCPPlugIn.getOdysseusNodeConnectionManager().isConnected(node);
+			return connected ? "Yes" : "No";
+		}
+		
 		return UNKNOWN_TEXT;
 	}
 
@@ -139,5 +194,15 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener {
 			nodeIDs.remove(node.getID());
 			refreshTableAsync();
 		}
+	}
+
+	@Override
+	public void nodeConnected(IOdysseusNodeConnection connection) {
+		refreshTableAsync();
+	}
+
+	@Override
+	public void nodeDisconnected(IOdysseusNodeConnection connection) {
+		refreshTableAsync();
 	}
 }
