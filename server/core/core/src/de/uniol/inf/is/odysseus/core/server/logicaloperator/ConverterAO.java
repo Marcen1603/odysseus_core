@@ -44,6 +44,7 @@ public class ConverterAO extends UnaryLogicalOp {
 		this.inputDataHandler = converterAO.inputDataHandler;
 		this.outputDataHandler = converterAO.outputDataHandler;
 		this.options = new HashMap<String, String>(converterAO.options);
+		this.optionMap.addAll(converterAO.optionMap);
 		this.outputAttributes = converterAO.outputAttributes;
 		this.source = converterAO.source;
 	}
