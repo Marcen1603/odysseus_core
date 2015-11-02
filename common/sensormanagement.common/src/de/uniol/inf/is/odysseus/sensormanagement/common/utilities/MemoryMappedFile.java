@@ -17,7 +17,8 @@ public class MemoryMappedFile
 	}
 	
 	private int size;
-	private String filename;
+	private String fileName;
+	private boolean deleteOnExit;
 	private Direction direction;
 	
 	private RandomAccessFile memoryMappedFile;
@@ -25,72 +26,27 @@ public class MemoryMappedFile
 	private Thread thread;
 	
 	final public Callback<MemoryMappedFile, ByteBuffer> callback = new Callback<>(this);
+	public String getFileName() { return fileName; }
+	public int getSize() { return size; }
 	
-	public MemoryMappedFile(String filename, int size, Direction direction) throws IOException 
+	public MemoryMappedFile(String fileName, int size, Direction direction) throws IOException 
 	{
-		this.filename = filename;
-		this.size = size;
-		
-		createFile();
-		
-		if (direction == Direction.READ)
-			startThread();
-	}
-	
-    private void startThread() {
-    	thread = new Thread()
+    	File file;
+    	if (fileName == null)
     	{
-    		@Override public void run()
-    		{
-    			while (isAlive())
-    			{
-    				MemoryMappedFile.this.process();
-    				try {
-						sleep(1);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-    			}
-    		}
-    	};
-    	thread.start();
-    }
-    
-    protected void process() 
-    {
-    	try
-    	{
-    		mapBuffer.rewind();
-    		int size = mapBuffer.getInt();
-    		if (size != 0)
-    		{
-    			ByteBuffer message = mapBuffer.slice();
-    			message.position(size);
-    			callback.raise(this, message);
-    			
-    			mapBuffer.putInt(0, 0);
-    		}
+    		file = File.createTempFile("memorymap", ".tmp");
+    		fileName = file.getAbsolutePath();
+    		deleteOnExit = true;
     	}
-    	catch (Exception e)
+    	else
     	{
-    		e.printStackTrace();
+    		file = new File(fileName);
+    		deleteOnExit = false;
     	}
-	}
 
-	private void stopThread() 
-	{
-		try {
-			thread.join(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		thread = null;
-    }	
-	
-    private void createFile() throws IOException
-    {
-    	File file = new File(filename); 
+		this.fileName = fileName;
+		this.size = size;    	
+    	
     	if (!file.exists() || file.length() < size)
     	{
     		byte[] data = new byte[size];
@@ -99,18 +55,61 @@ public class MemoryMappedFile
     		stream.close();
     	}
     	
-		memoryMappedFile = new RandomAccessFile(filename, "rw");
+		memoryMappedFile = new RandomAccessFile(fileName, "rw");
         mapBuffer = memoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, size);		    	
-    }
+		
+		if (direction == Direction.READ) {
+	    	thread = new Thread()
+	    	{
+	    		@Override public void run()
+	    		{
+	    			while (isAlive()) {
+	    				MemoryMappedFile.this.process();
+	    				try {
+							sleep(1);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+	    			}
+	    		}
+	    	};
+	    	thread.start();			
+		}
+	}
+	
     
-	public void close(boolean deleteFile) throws IOException
+    protected void process() 
+    {
+    	try {
+    		mapBuffer.rewind();
+    		int size = mapBuffer.getInt();
+    		if (size != 0) {
+    			ByteBuffer message = mapBuffer.slice();
+    			message.position(size);
+    			callback.raise(this, message);
+    			
+    			mapBuffer.putInt(0, 0);
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+	}
+
+	public void close() throws IOException
 	{
 		if (direction == Direction.READ)
-			stopThread();
+		{
+			try {
+				thread.join(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			thread = null;
+	    }	
 		
 		memoryMappedFile.close();
-		if (deleteFile)
-			new File(filename).delete();
+		if (deleteOnExit)
+			new File(fileName).delete();
 	}
 
 	public void write(ByteBuffer message) throws IOException 

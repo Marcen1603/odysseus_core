@@ -31,36 +31,46 @@ public class SensorFactory
 		String simulatedDataQuery =
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"				
-				+ "%(sourceName) := ACCESS({source='%(sourceName)',\n"
-		    	+ "               wrapper='GenericPush',\n"
-				+ "               transport='UDPServer',\n"
-				+ "               protocol='LMS1xx',\n"
-				+ "               dataHandler='KeyValueObject',\n"
-				+ "               options=[%(optionsEx) ['passiveMode', 'true'], ['rawData','true']]})\n";		
+				+ "input = ACCESS({source='%(sourceName)',\n"
+		    	+ "                wrapper='GenericPush',\n"
+				+ "                transport='UDPServer',\n"
+				+ "                protocol='CSV',\n"
+				+ "                dataHandler='Tuple',\n"
+				+ "                options=[%(optionsEx) ['csv.textDelimiter', '\\'']],\n"
+				+ "                schema=[['timestamp', 'STARTTIMESTAMP'], ['RawData', 'String']]})\n"
+				+ "input2 = PROJECT({attributes=['RawData']}, input)\n"
+				+ "%(sourceName) := CONVERTER({protocol='LMS1xx',\n"
+				+ "                            inputDataHandler='Tuple',\n"
+				+ "                            outputDataHandler='KeyValueObject',\n"
+				+ "                            options=[['passiveMode', 'true'], ['rawData','true']]}, input2)\n";		
 		
 		String logQuery = 
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"			
-				+ "raw = KEYVALUETOTUPLE({schema=[['TIMESTAMP', 'Long'], ['RAWDATA', 'String']], type='Tuple', keepinput='false'}, %(sourceName))"
+				+ "raw = KEYVALUETOTUPLE({schema=[['RAWDATA', 'String']], type='Tuple', keepinput='false'}, %(sourceName))"
+				+ "rawWithTime = MAP({expressions=[['TimeInterval.Start', 'TIMESTAMP'], ['RAWDATA', 'RAWDATA']]}, raw)\n"
+				
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
 				+ "                      transport='none',\n"
 				+ "			             protocol='TextFileLogger',\n"
 				+ "                      dataHandler='Tuple',\n"
 				+ "                      options=[%(options)]},\n"
-				+ "                     raw)\n";
+				+ "                     rawWithTime)\n";
 		
 		String liveViewQuery = 
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"
-				+ "raw = KEYVALUETOTUPLE({schema=[['TIMESTAMP', 'Long'], ['RAWDATA','String']], type='Tuple', keepinput='false'}, %(sourceName))"
+				+ "raw = KEYVALUETOTUPLE({schema=[['RAWDATA', 'String']], type='Tuple', keepinput='false'}, %(sourceName))"
+				+ "rawWithTime = MAP({expressions=[['TimeInterval.Start', 'TIMESTAMP'], ['RAWDATA', 'RAWDATA']]}, raw)\n"
+				
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
 				+ "                      transport='UDPClient',\n"
 				+ "			             protocol='CSV',\n"
 				+ "                      dataHandler='Tuple',\n"
 				+ "                      options=[['host', '%(host)'], ['port', '%(port)'], ['write', '20480']]},\n"
-				+ "              SAMPLE({samplerate=5}, raw))\n";
+				+ "              SAMPLE({samplerate=1}, rawWithTime))\n";
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		
@@ -140,13 +150,14 @@ public class SensorFactory
 		String simulatedDataQuery =
 				"#PARSER PQL\n"		
 			  + "#RUNQUERY\n"				
-			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
+			  + "input = ACCESS({source='%(sourceName)',\n"
 	    	  + "               wrapper='GenericPush',\n"
 			  + "               transport='MemoryMappedFile',\n"
 			  + "               protocol='None',\n"
 			  + "               dataHandler='Tuple',\n"
-  			  + "               schema=[['Image', 'ImageJCV']],\n"
-			  + "               options=[%(options)]})\n";						
+  			  + "               schema=[['Image', 'ImageJCV'], ['timestamp', 'STARTTIMESTAMP']],\n"
+			  + "               options=[%(options)]})\n"
+			  + "%(sourceName) := PROJECT({attributes=['Image']}, input)\n";
 		
 		String logQuery = 
 				"#PARSER PQL\n"
@@ -345,7 +356,7 @@ public class SensorFactory
 		  + "Signal = KEYVALUETOTUPLE({schema=[['signalIntegrity', 'String']], type='Tuple', keepinput='false'}, RMC)	\n"
 						      
 		  + "Input = JOIN({card='ONE_ONE', assureOrder=false}, Pos, Signal)	\n"      
-		  + "out = MAP({expressions=[['streamtime()', 'timestamp'], 'signalIntegrity', 'longitude', 'latitude', 'longitudeHem', 'latitudeHem', 	\n"
+		  + "out = MAP({expressions=[['TimeInterval.start', 'timestamp'], 'signalIntegrity', 'longitude', 'latitude', 'longitudeHem', 'latitudeHem', 	\n"
 		  + "                        ['ToString(time.hours) + \":\" + ToString(time.minutes) + \":\" + ToString(time.seconds)', 'time']]}, Input)	\n"           						
 		  + "%(sourceName) := out\n";
 
