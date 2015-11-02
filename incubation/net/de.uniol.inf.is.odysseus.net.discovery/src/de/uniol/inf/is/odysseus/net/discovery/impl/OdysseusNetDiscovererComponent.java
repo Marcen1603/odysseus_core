@@ -24,6 +24,7 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	private IOdysseusNodeManager nodeManager;
 	private IOdysseusNodeDiscovererManager discovererManager;
 	private IOdysseusNodeDiscoverer nodeDiscoverer;
+	private IOdysseusNode localNode;
 
 	// called by OSGi-DS
 	public void bindNodeManager(IOdysseusNodeManager serv) {
@@ -54,7 +55,12 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 	}
 
 	@Override
-	public void start(IOdysseusNode localNode) {
+	public void init(IOdysseusNode localNode) {
+		this.localNode = localNode;
+	}
+
+	@Override
+	public void start() {
 		LOG.info("Starting node discovery");
 
 		waitForServices();
@@ -86,6 +92,27 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 		}
 	}
 
+	@Override
+	public void stop() {
+		if (nodeDiscoverer != null) {
+			nodeDiscoverer.stop();
+
+			nodeDiscoverer = null;
+		}
+
+		if (nodeManager != null) {
+			ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
+			for (IOdysseusNode node : nodes) {
+				nodeManager.removeNode(node);
+			}
+		}
+	}
+	
+	@Override
+	public void terminate(IOdysseusNode localNode) {
+		// do nothing
+	}
+
 	private void waitForServices() {
 		while (nodeManager == null) {
 			waitSomeTime();
@@ -115,22 +142,6 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 		LOG.error("Selected node discoverer name '{}' not found", optDiscoverer.get());
 
 		return Optional.absent();
-	}
-
-	@Override
-	public void stop() {
-		if (nodeDiscoverer != null) {
-			nodeDiscoverer.stop();
-
-			nodeDiscoverer = null;
-		}
-
-		if (nodeManager != null) {
-			ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
-			for (IOdysseusNode node : nodes) {
-				nodeManager.removeNode(node);
-			}
-		}
 	}
 
 }
