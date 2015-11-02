@@ -21,8 +21,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 
-	static final private Logger LOG = LoggerFactory
-			.getLogger(TConverterAORule.class);
+	static final private Logger LOG = LoggerFactory.getLogger(TConverterAORule.class);
 
 	@Override
 	public int getPriority() {
@@ -32,51 +31,44 @@ public class TConverterAORule extends AbstractTransformationRule<ConverterAO> {
 	@Override
 	public void execute(ConverterAO operator, TransformationConfiguration config) throws RuleException {
 
-		if (getTimestampAOAsFather(operator)==null) {
-			insertTimestampAO(operator, operator.getDateFormat());
+		if (operator.isUpdateMeta()) {
+			if (getTimestampAOAsFather(operator) == null) {
+				insertTimestampAO(operator, operator.getDateFormat());
+			}
 		}
-		
+
 		OptionMap options = new OptionMap(operator.getOptionMap());
-		
-		IStreamObjectDataHandler<?> outputDataHandler = DataHandlerRegistry.getStreamObjectDataHandler(
-				operator.getOutputDataHandler(), operator.getOutputSchema());
+
+		IStreamObjectDataHandler<?> outputDataHandler = DataHandlerRegistry
+				.getStreamObjectDataHandler(operator.getOutputDataHandler(), operator.getOutputSchema());
 		if (outputDataHandler == null) {
-			LOG.error("No output data handler {} found.",
-					operator.getOutputDataHandler());
-			throw new TransformationException("No data handler "
-					+ operator.getOutputDataHandler() + " found.");
+			LOG.error("No output data handler {} found.", operator.getOutputDataHandler());
+			throw new TransformationException("No data handler " + operator.getOutputDataHandler() + " found.");
 		}
 
-		IStreamObjectDataHandler<?> inputDataHandler = DataHandlerRegistry.getStreamObjectDataHandler(
-				operator.getInputDataHandler(), operator.getInputSchema());
+		IStreamObjectDataHandler<?> inputDataHandler = DataHandlerRegistry
+				.getStreamObjectDataHandler(operator.getInputDataHandler(), operator.getInputSchema());
 		if (inputDataHandler == null) {
-			LOG.error("No input data handler {} found.",
-					operator.getInputDataHandler());
-			throw new TransformationException("No data handler "
-					+ operator.getInputDataHandler() + " found.");
+			LOG.error("No input data handler {} found.", operator.getInputDataHandler());
+			throw new TransformationException("No data handler " + operator.getInputDataHandler() + " found.");
 		}
 
-		IProtocolHandler<?> protocolHandler = ProtocolHandlerRegistry
-				.getInstance(operator.getProtocolHandler(),
-						ITransportDirection.IN, IAccessPattern.PULL,
-						options, outputDataHandler);
+		IProtocolHandler<?> protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+				ITransportDirection.IN, IAccessPattern.PULL, options, outputDataHandler);
 
 		if (protocolHandler == null) {
-			LOG.error("No protocol handler {} found.",
-					operator.getProtocolHandler());
-			throw new TransformationException("No protocol handler "
-					+ operator.getProtocolHandler() + " found.");
+			LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
+			throw new TransformationException("No protocol handler " + operator.getProtocolHandler() + " found.");
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		ConverterPO converter = new ConverterPO(inputDataHandler,
-				outputDataHandler, protocolHandler, operator.getOptionMap());
+		ConverterPO converter = new ConverterPO(inputDataHandler, outputDataHandler, protocolHandler,
+				operator.getOptionMap());
 		defaultExecute(operator, converter, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(ConverterAO operator,
-			TransformationConfiguration config) {
+	public boolean isExecutable(ConverterAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

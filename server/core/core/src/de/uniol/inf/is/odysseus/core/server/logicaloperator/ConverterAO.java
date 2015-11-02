@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -15,8 +16,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -29,6 +30,7 @@ public class ConverterAO extends UnaryLogicalOp {
 	private String outputDataHandler;
 	private String dateFormat;
 	private String source;
+	private boolean updateMeta = true;
 	final private Map<String, String> options;
 	private final List<Option> optionMap = Lists.newArrayList();
 	private List<SDFAttribute> outputAttributes;
@@ -47,6 +49,7 @@ public class ConverterAO extends UnaryLogicalOp {
 		this.optionMap.addAll(converterAO.optionMap);
 		this.outputAttributes = converterAO.outputAttributes;
 		this.source = converterAO.source;
+		this.updateMeta = converterAO.updateMeta;
 	}
 
 	@Parameter(name = "protocol", type = StringParameter.class, doc = "Protocol handler to use.")
@@ -146,6 +149,15 @@ public class ConverterAO extends UnaryLogicalOp {
 		return source;
 	}
 	
+	public boolean isUpdateMeta() {
+		return updateMeta;
+	}
+
+	@Parameter(name="updateMeta", type = BooleanParameter.class, optional = true, doc="If set to false, existing meta data will not be touched.")
+	public void setUpdateMeta(boolean updateMeta) {
+		this.updateMeta = updateMeta;
+	}
+
 	@Override
 	public ConverterAO clone() {
 		return new ConverterAO(this);
