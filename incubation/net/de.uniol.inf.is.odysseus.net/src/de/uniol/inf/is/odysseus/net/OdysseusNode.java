@@ -89,11 +89,7 @@ public class OdysseusNode implements IOdysseusNode {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{Node ").append(nodeID).append(": ").append(nodeName).append(" [");
-		for(String propertyKey : propertyMap.keySet() ) {
-			sb.append("\n").append(propertyKey).append("=").append(propertyMap.get(propertyKey));
-		}
-		sb.append("]}");
+		sb.append("{Node ").append(nodeID).append(": ").append(nodeName).append("}");
 		return sb.toString();
 	}
 }

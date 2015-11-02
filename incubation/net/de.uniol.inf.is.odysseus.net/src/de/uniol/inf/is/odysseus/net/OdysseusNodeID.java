@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
-public final class OdysseusNodeID {
+public final class OdysseusNodeID implements Comparable<OdysseusNodeID> {
 
 	private final UUID uuid;
 	
@@ -44,6 +44,11 @@ public final class OdysseusNodeID {
 	@Override
 	public int hashCode() {
 		return uuid.hashCode();
+	}
+
+	@Override
+	public int compareTo(OdysseusNodeID other) {
+		return uuid.compareTo(other.uuid);
 	}
 
 }

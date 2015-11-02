@@ -59,14 +59,14 @@ public class OdysseusNodeConnectionManager implements IOdysseusNodeManagerListen
 	}
 
 	// called by OSGi-DS
-	public static void bindIOdysseusNodeConnector(IOdysseusNodeConnector serv) {
+	public static void bindOdysseusNodeConnector(IOdysseusNodeConnector serv) {
 		nodeConnector = serv;
 		
 		LOG.debug("Bound odysseus node connector {}", serv);
 	}
 
 	// called by OSGi-DS
-	public static void unbindIOdysseusNodeConnector(IOdysseusNodeConnector serv) {
+	public static void unbindOdysseusNodeConnector(IOdysseusNodeConnector serv) {
 		if (nodeConnector == serv) {
 			nodeConnector = null;
 			
@@ -82,6 +82,7 @@ public class OdysseusNodeConnectionManager implements IOdysseusNodeManagerListen
 		Optional<IOdysseusNodeConnectionSelector> optSelector = connectionSelectorManager.getSelector(selectorName);
 		if (optSelector.isPresent()) {
 			connectionSelector = optSelector.get();
+			LOG.info("Selected node connection selector {}", selectorName);
 		} else {
 			LOG.error("Could not find connection selector called '{}'", selectorName);
 		}
@@ -108,6 +109,8 @@ public class OdysseusNodeConnectionManager implements IOdysseusNodeManagerListen
 			} catch (OdysseusNetConnectionException e) {
 				LOG.error("Could not connect to node {}", node, e);
 			}
+		} else {
+			LOG.info("Did not connect to node {}", node);
 		}
 	}
 

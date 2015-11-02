@@ -3,4 +3,5 @@
    <implementation class="de.uniol.inf.is.odysseus.net.connect.impl.OdysseusNodeConnectionManager"/>
    <reference bind="bindOdysseusNodeManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNodeManager" name="IOdysseusNodeManager" policy="static" unbind="unbindOdysseusNodeManager"/>
    <reference bind="bindOdysseusNodeConnectionSelectorManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionSelectorManager" name="IOdysseusNodeConnectionSelectorManager" policy="static" unbind="unbindOdysseusNodeConnectionSelectorManager"/>
+   <reference bind="bindOdysseusNodeConnector" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnector" name="IOdysseusNodeConnector" policy="static" unbind="unbindOdysseusNodeConnector"/>
 </scr:component>
