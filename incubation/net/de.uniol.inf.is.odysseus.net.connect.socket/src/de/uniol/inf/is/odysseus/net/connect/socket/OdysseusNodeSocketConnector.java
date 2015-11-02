@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
@@ -289,5 +291,17 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 	@Override
 	public void disconnected(IOdysseusNodeConnection connection) {
 		connections.remove(connection.getOdysseusNode());
+	}
+	
+	@Override
+	public Optional<IOdysseusNodeConnection> getConnection(IOdysseusNode node) {
+		Preconditions.checkNotNull(node, "node must not be null!");
+
+		return Optional.fromNullable(connections.get(node));
+	}
+	
+	@Override
+	public Collection<IOdysseusNodeConnection> getConnections() {
+		return Lists.newArrayList(connections.values());
 	}
 }

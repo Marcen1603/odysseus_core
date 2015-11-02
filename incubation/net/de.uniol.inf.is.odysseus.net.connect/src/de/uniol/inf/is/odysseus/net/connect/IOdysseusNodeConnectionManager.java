@@ -6,14 +6,13 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 
-public interface IOdysseusNodeConnector {
+public interface IOdysseusNodeConnectionManager {
 
-	public IOdysseusNodeConnection connect( IOdysseusNode node ) throws OdysseusNetConnectionException;
-	public void disconnect( IOdysseusNode node );
-	
-	public Optional<IOdysseusNodeConnection> getConnection(IOdysseusNode node);
 	public Collection<IOdysseusNodeConnection> getConnections();
+	public Optional<IOdysseusNodeConnection> getConnection(IOdysseusNode node);
 	
 	public boolean isConnected(IOdysseusNode node);
 	
+	public void addListener(IOdysseusNodeConnectionManagerListener listener);
+	public void removeListener(IOdysseusNodeConnectionManagerListener listener);
 }
