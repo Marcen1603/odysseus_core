@@ -22,6 +22,8 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeSocketConnector.class);
 
 	private int serverPort;
+	private ServerSocket serverSocket;
+	private ServerSocketAcceptThread acceptThread;
 
 	@Override
 	public void init(IOdysseusNode localNode) throws OdysseusNetException {
@@ -34,7 +36,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 
 	@Override
 	public void start() throws OdysseusNetException {
-//		startServer(serverPort);
+		startServer(serverPort);
 	}
 
 	@Override
@@ -42,6 +44,8 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 		int nodeServerPort = determineServerPort(node);
 		LOG.info("Connection to node {} at its server port {}", node.getID(), nodeServerPort);
 
+		// TODO: Connect to node as a client
+		
 		return null;
 	}
 
@@ -51,9 +55,9 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 			Optional<Integer> optNodeServerPort = tryConvertToInt(optNodeServerPortStr.get());
 			if (optNodeServerPort.isPresent()) {
 				return optNodeServerPort.get();
-			} 
+			}
 			throw new OdysseusNetConnectionException("Could not determine server port of node " + node);
-		} 
+		}
 		throw new OdysseusNetConnectionException("Property 'serverPort' is not available for node " + node);
 	}
 
@@ -64,8 +68,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 
 	@Override
 	public void stop() {
-		// TODO: Stop server
-
+		stopServer();
 	}
 
 	@Override
@@ -75,7 +78,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 
 	@Override
 	public boolean isConnected(IOdysseusNode node) {
-		// TODO
+		// TODO check connection
 		return false;
 	}
 
@@ -87,16 +90,34 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 		}
 	}
 
-//	private void startServer(int port) throws OdysseusNetConnectionException {
-//		 try {
-//		LOG.info("Starting server at port {}", port);
-//		 ServerSocket s = new ServerSocket(port);
-//		
-//		 } catch (IOException e) {
-//		 throw new OdysseusNetConnectionException("Could not start server for
-//		 connections", e);
-//		 }
-//	}
+	private void startServer(int port) throws OdysseusNetConnectionException {
+		try {
+			LOG.info("Starting server at port {}", port);
+			serverSocket = new ServerSocket(port);
+			acceptThread = new ServerSocketAcceptThread(serverSocket);
+			acceptThread.start();
+
+			LOG.info("Starting server finished");
+		} catch (IOException e) {
+			throw new OdysseusNetConnectionException("Could not start server for connections", e);
+		}
+	}
+
+	private void stopServer() {
+		if( acceptThread != null ) {
+			LOG.info("Stopping server");
+			
+			acceptThread.stopRunning();
+			acceptThread = null;
+			
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
+			}
+			serverSocket = null;
+			LOG.info("Stopping server finished");
+		}
+	}
 
 	private static int findFreePort() throws OdysseusNetException {
 		try {
