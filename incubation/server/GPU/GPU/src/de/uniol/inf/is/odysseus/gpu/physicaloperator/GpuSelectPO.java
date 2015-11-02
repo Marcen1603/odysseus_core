@@ -52,21 +52,13 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 	
 	private IPredicate<? super T> predicateI = super.getPredicate();
 	
-	private String predikatObj;
-	
 	private SDFDatatype attributeDatatype;
-	
-	private  int a[] = new int [2];
-	
-	private int values[];
-	
+		
 	//CUDA Variablen
 	private CUdeviceptr predDevicePtr, inputDevicePtr, outputDevicePtr;
 	
 	private long SIZE;
-	
-	private Object elementeListe[] = new Object[100];
-	
+		
 	private int gridDimX = 1;
 	
 	private int blockDimX = 1;
@@ -75,7 +67,6 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 	
 	
 	//CUDA Init Variablen
-	private String ptxFileName;
 
 	private CUcontext context = new CUcontext();
 	
@@ -94,7 +85,6 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 		super(po);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void process_open() throws OpenFailedException {
 
@@ -102,7 +92,7 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 
 		setName("GPU Select");
 
-		System.out.println("Beginn CUDA");
+		System.out.println("Beginn CUDA - Select");
 
 		attributeDatatype = getInputSchema(0).getAttribute(attributeIndex).getDatatype();	
 		
@@ -124,11 +114,11 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 		
 		if (getInputSchema(0).findAttributeIndex(predicate[2]) != -1) {
 			attributeIndex = getInputSchema(0).findAttributeIndex(predicate[2]);
-			predikatObj = predicate[0];
+			
 			
 		} else {
 			attributeIndex = getInputSchema(0).findAttributeIndex(predicate[0]);
-			predikatObj = predicate[2];
+			
 		}
 		
 			
@@ -140,7 +130,7 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 //CUDA-Vorbereitung
 						// CUDA .ptx laden
 						
-						ptxFileName = Prepare.ptxFile("CUDA/Select.cu");
+						String ptxFileName = Prepare.ptxFile("CUDA/Select.cu");
 						
 						
 						// Initialisieren des Treibers und schaffen eines Kontext für das
@@ -243,7 +233,6 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 						modul = Prepare.getModul();
 						function = Prepare.getFunction();
 						
-						// usw.
 						
 			//________________________TEST_____________________________________________________________________
 						
@@ -265,13 +254,6 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		finally{
-			//allekolierten Speicher freigeben
-			
-		}
-
-		
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -281,6 +263,7 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 			System.err.println("GPU kann nur mit Tupel arbeiten");
 			return;
 		}
+		
 		Tuple<?> inputTuple = (Tuple<?>)element;
 
 		// CUDA Zeitmessen
@@ -289,12 +272,13 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 		
 		// Elemente sammeln
 		
-		Tuple<?> result = CUDA_process(inputTuple, attributeIndex);
+		if(CUDA_process(inputTuple, attributeIndex)){
 		
 //		Tuple<?> outputTuple = new Tuple(new Object[] {1,2,3}, inputTuple.requiresDeepClone());
 		
-		transfer((T) result);
-
+		transfer((T) inputTuple);
+		}
+		
 		try {
 			Thread.sleep(150);
 		} catch (InterruptedException e) {
@@ -335,7 +319,7 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 	}
 
 	@SuppressWarnings("unused")
-	private Tuple<?> CUDA_process(Tuple<?> element, int attributeIndex) {		
+	private boolean CUDA_process(Tuple<?> element, int attributeIndex) {		
 		
 		cuCtxPushCurrent(context);
 		
@@ -427,11 +411,11 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 			
 			if(erg[0]!= -1){
 				
-				return element;
+				return true;
 				
 			}else{
 				
-				return null;
+				return false;
 			}
 			
 		} else if (attributeDatatype.equals(SDFDatatype.FLOAT)) {
@@ -442,11 +426,11 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 			
 			if(erg[0]!= -1){
 				
-				return element;
+				return true;
 				
 			}else{
 				
-				return null;
+				return false;
 			}
 			
 		} else if (attributeDatatype.equals(SDFDatatype.DOUBLE)) {								
@@ -457,11 +441,11 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 			
 			if(erg[0]!= -1){
 				
-				return element;
+				return true;
 				
 			}else{
 				
-				return null;
+				return false;
 			}
 			
 			
@@ -473,11 +457,11 @@ public class GpuSelectPO<T extends IStreamObject<?>> extends SelectPO<T> {
 			
 			if(erg[0]!= -1){
 				
-				return element;
+				return true;
 				
 			}else{
 				
-				return null;
+				return false;
 			}
 			
 		} else {
