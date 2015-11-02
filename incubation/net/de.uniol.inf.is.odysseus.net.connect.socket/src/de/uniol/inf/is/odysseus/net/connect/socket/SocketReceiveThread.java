@@ -21,12 +21,15 @@ public class SocketReceiveThread extends Thread {
 	private final InputStream inFromSocket;
 	private final OutputStream outToSocket;
 	private final byte[] READING_BUFFER = new byte[BUFFER_SIZE_BYTES];
+	private final ISocketReceiveThreadListener listener;
 	
 	private boolean running;
 	
-	public SocketReceiveThread(Socket clientSocket) throws IOException {
+	public SocketReceiveThread(Socket clientSocket, ISocketReceiveThreadListener listener) throws IOException {
 		Preconditions.checkNotNull(clientSocket, "clientSocket must not be null!");
+		Preconditions.checkNotNull(listener, "listener must not be null!");
 
+		this.listener = listener;
 		this.clientSocket = clientSocket;
 		this.inFromSocket = clientSocket.getInputStream();
 		this.outToSocket = clientSocket.getOutputStream();
@@ -55,10 +58,8 @@ public class SocketReceiveThread extends Thread {
 				} else if (bytesRead > 0) {
 					byte[] msg = new byte[bytesRead];
 					System.arraycopy(READING_BUFFER, 0, msg, 0, bytesRead);
-
-					System.err.println("Read " + bytesRead + " bytes!");
-					String str = new String(msg);
-					System.err.println(str);
+					
+					listener.bytesReceived(msg);
 //					mb.put(msg);
 //
 //					List<byte[]> packets = mb.getPackets();

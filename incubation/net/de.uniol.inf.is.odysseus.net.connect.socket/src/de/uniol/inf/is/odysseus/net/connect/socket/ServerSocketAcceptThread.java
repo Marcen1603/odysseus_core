@@ -3,27 +3,27 @@ package de.uniol.inf.is.odysseus.net.connect.socket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 public class ServerSocketAcceptThread extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ServerSocketAcceptThread.class);
 	
 	private final ServerSocket serverSocket;
-	private final Collection<SocketReceiveThread> receiveThreads = Lists.newArrayList();
+	private final IServerSocketAcceptListener listener;
 	
 	private boolean running = false;
 	
-	public ServerSocketAcceptThread(ServerSocket serverSocket) {
+	public ServerSocketAcceptThread(ServerSocket serverSocket, IServerSocketAcceptListener listener) {
 		Preconditions.checkNotNull(serverSocket, "serverSocket must not be null!");
+		Preconditions.checkNotNull(listener, "listener must not be null!");
 
 		this.serverSocket = serverSocket;
+		this.listener = listener;
 		
 		setName("Server socket accept thread on port " + serverSocket.getLocalPort());
 		setDaemon(true);
@@ -37,12 +37,11 @@ public class ServerSocketAcceptThread extends Thread {
 		try {
 			
 			while( running ) {
+				LOG.debug("Waiting for next connection");
 				Socket clientSocket = serverSocket.accept();
 				LOG.debug("Accepted connection from {}", clientSocket.getInetAddress());
 				
-				SocketReceiveThread receiveThread = new SocketReceiveThread(clientSocket);
-				receiveThread.start();
-				receiveThreads.add(receiveThread);
+				listener.acceptedConnection(clientSocket);
 			}
 			
 		} catch( IOException e ) {
@@ -54,17 +53,6 @@ public class ServerSocketAcceptThread extends Thread {
 	
 	public void stopRunning() {
 		running = false;
-		
-		for( SocketReceiveThread thread : receiveThreads ) {
-			thread.stopRunning();
-			
-			try {
-				thread.getClientSocket().close();
-			} catch (IOException e) {
-			}
-		}
-		
-		receiveThreads.clear();
 	}
 
 }
