@@ -70,6 +70,7 @@ public class SocketReceiveThread extends Thread {
 			}
 		} catch( IOException e ) {
 			LOG.error("Could not read from inputstream from socket {}", clientSocket, e);
+			listener.socketDisconnected();
 		}
 		
 		LOG.info("Stopped client socket receive thread for {}", clientSocket.getInetAddress());
@@ -80,6 +81,8 @@ public class SocketReceiveThread extends Thread {
 			outToSocket.write(data);
 			outToSocket.flush();
 		} catch( IOException e ) {
+			listener.socketDisconnected();
+			
 			throw new OdysseusNetConnectionException("Could not write data", e);
 		}
 	}

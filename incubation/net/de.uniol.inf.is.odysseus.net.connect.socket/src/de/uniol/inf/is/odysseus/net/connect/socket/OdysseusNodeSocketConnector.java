@@ -20,10 +20,11 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionListener;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnector;
 import de.uniol.inf.is.odysseus.net.connect.OdysseusNetConnectionException;
 
-public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdysseusNetComponent, IServerSocketAcceptListener {
+public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdysseusNetComponent, IServerSocketAcceptListener, IOdysseusNodeConnectionListener {
 
 	private static final String SERVER_ADDRESS_PROPERTY_KEY = "serverAddress";
 	private static final String SERVER_PORT_PROPERTY_KEY = "serverPort";
@@ -106,6 +107,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 			try {
 				IOdysseusNodeConnection connection = new OdysseusNodeSocketConnection(clientSocket, node);
 				LOG.info("Connection to node {} where other node is client", node.getID());
+				connection.addListener(this);
 
 				connections.put(node, connection);
 				return connection;
@@ -126,6 +128,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 			LOG.info("Connection to node {} where other node is server with port {}", node.getID(), nodeServerPort);
 
 			LOG.debug("Sending our node id {}", localNode.getID());
+			connection.addListener(this);
 			connection.send(localNode.getID().toString().getBytes());
 
 			connections.put(node, connection);
@@ -161,6 +164,8 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 		Preconditions.checkNotNull(node, "node must not be null!");
 
 		if (connections.containsKey(node)) {
+			LOG.info("Disconnecting node {}", node);
+			
 			IOdysseusNodeConnection connection = connections.remove(node);
 			connection.disconnect();
 		}
@@ -178,8 +183,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 
 	@Override
 	public boolean isConnected(IOdysseusNode node) {
-		// TODO check connection
-		return false;
+		return connections.containsKey(node);
 	}
 
 	private static Optional<Integer> tryConvertToInt(String text) {
@@ -273,5 +277,17 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 		t.setName("Accepting connection to client waiting: " + clientSocket.getInetAddress());
 		t.setDaemon(true);
 		t.start();
+	}
+
+	// called for node connections
+	@Override
+	public void messageReceived(IOdysseusNodeConnection connection, byte[] data) {
+		// do nothing
+	}
+
+	// called for node connections
+	@Override
+	public void disconnected(IOdysseusNodeConnection connection) {
+		connections.remove(connection.getOdysseusNode());
 	}
 }

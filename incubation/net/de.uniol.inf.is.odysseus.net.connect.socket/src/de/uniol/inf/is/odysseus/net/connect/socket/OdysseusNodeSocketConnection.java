@@ -40,6 +40,12 @@ public class OdysseusNodeSocketConnection extends AbstractOdysseusNodeConnection
 		fireMessageReceivedEvent(data);
 	}
 
+	// called from SocketReceiveThread
+	@Override
+	public void socketDisconnected() {
+		disconnect();
+	}
+
 	@Override
 	public void disconnect() {
 		receiveThread.stopRunning();
@@ -48,6 +54,8 @@ public class OdysseusNodeSocketConnection extends AbstractOdysseusNodeConnection
 			receiveThread.getClientSocket().close();
 		} catch (IOException e) {
 		}
+		
+		fireDisconnectedEvent();
 	}
 
 }
