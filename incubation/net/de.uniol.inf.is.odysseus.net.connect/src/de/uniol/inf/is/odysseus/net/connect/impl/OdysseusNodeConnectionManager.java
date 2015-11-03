@@ -237,6 +237,8 @@ public class OdysseusNodeConnectionManager implements IOdysseusNodeConnectionMan
 	// called by OdysseusNodeConnections...
 	@Override
 	public void disconnected(IOdysseusNodeConnection connection) {
+		nodeManager.removeNode(connection.getOdysseusNode());
+		
 		fireNodeDisconnectedEvent(connection);
 	}
 }
