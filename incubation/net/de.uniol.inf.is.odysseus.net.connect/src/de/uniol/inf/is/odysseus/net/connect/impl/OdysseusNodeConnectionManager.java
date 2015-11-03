@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListen
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionSelector;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionSelectorManager;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnector;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectorCallback;
 import de.uniol.inf.is.odysseus.net.connect.OdysseusNetConnectionException;
 
 public class OdysseusNodeConnectionManager implements IOdysseusNodeConnectionManager, IOdysseusNodeManagerListener, IOdysseusNodeConnectionListener {
@@ -128,9 +129,19 @@ public class OdysseusNodeConnectionManager implements IOdysseusNodeConnectionMan
 		if (connectionSelector != null && connectionSelector.doConnect(node)) {
 			try {
 				LOG.info("Trying to connect to node {}", node);
-				IOdysseusNodeConnection connection = nodeConnector.connect(node);
-				connection.addListener(this);
-				fireNodeConnectedEvent(connection);
+				nodeConnector.connect(node, new IOdysseusNodeConnectorCallback() {
+					
+					@Override
+					public void successfulConnection(IOdysseusNodeConnection establishedConnection) {
+						establishedConnection.addListener(OdysseusNodeConnectionManager.this);
+						fireNodeConnectedEvent(establishedConnection);
+					}
+					
+					@Override
+					public void failedConnection(Throwable cause) {
+						LOG.error("Could not connect to node {}", node, cause);
+					}
+				});
 				
 			} catch (OdysseusNetConnectionException e) {
 				LOG.error("Could not connect to node {}", node, e);

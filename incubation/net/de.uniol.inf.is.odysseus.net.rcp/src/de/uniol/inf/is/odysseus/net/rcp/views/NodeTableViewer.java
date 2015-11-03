@@ -56,6 +56,17 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 		});
 		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 15, true));
 
+		/************* Node Group ****************/
+		TableViewerColumn nodeGroupColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		nodeGroupColumn.getColumn().setText("Group");
+		nodeGroupColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, nodeGroupColumn) {
+			@Override
+			protected String getValue(OdysseusNodeID nodeID) {
+				return determinePropertyValue(nodeID, "nodeGroup");
+			}
+		});
+		tableColumnLayout.setColumnData(nodeGroupColumn.getColumn(), new ColumnWeightData(10, 15, true));
+
 		/************* NodeID ****************/
 		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		idColumn.getColumn().setText("ID");
@@ -88,7 +99,7 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 			}
 		});
 		tableColumnLayout.setColumnData(propertiesColumn.getColumn(), new ColumnWeightData(20, 15, true));
-		
+
 		hideSelectionIfNeeded(tableViewer);
 
 		tableViewer.setInput(nodeIDs);
@@ -98,7 +109,7 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 			nodeAdded(OdysseusNetRCPPlugIn.getOdysseusNodeManager(), node);
 		}
 		OdysseusNetRCPPlugIn.getOdysseusNodeConnectionManager().addListener(this);
-		
+
 		tableViewer.refresh();
 	}
 
@@ -115,18 +126,27 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 
 		return UNKNOWN_TEXT;
 	}
-	
+
+	private String determinePropertyValue(OdysseusNodeID nodeID, String propertyKey) {
+		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
+		if (optNode.isPresent()) {
+			Optional<String> optPropertyValue = optNode.get().getProperty(propertyKey);
+			return optPropertyValue.isPresent() ? optPropertyValue.get() : "";
+		}
+		
+		return "";
+	}
 
 	private static String determineProperties(OdysseusNodeID nodeID) {
 		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
 		if (optNode.isPresent()) {
 			StringBuilder sb = new StringBuilder();
-			
+
 			IOdysseusNode node = optNode.get();
-			for( String propertyKey : node.getProperyKeys()) {
+			for (String propertyKey : node.getProperyKeys()) {
 				sb.append(propertyKey).append("=").append(node.getProperty(propertyKey).get()).append(" ");
 			}
-			
+
 			return sb.toString();
 		}
 
@@ -136,12 +156,12 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 	private static String determineConnectedStatus(OdysseusNodeID nodeID) {
 		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
 
-		if( optNode.isPresent() ) {
+		if (optNode.isPresent()) {
 			IOdysseusNode node = optNode.get();
 			boolean connected = OdysseusNetRCPPlugIn.getOdysseusNodeConnectionManager().isConnected(node);
 			return connected ? "Yes" : "No";
 		}
-		
+
 		return UNKNOWN_TEXT;
 	}
 
@@ -166,7 +186,7 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 		}
 
 		if (!tableViewer.getTable().isDisposed()) {
-			
+
 			refreshing = true;
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
@@ -182,7 +202,7 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 
 	@Override
 	public void nodeAdded(IOdysseusNodeManager sender, IOdysseusNode node) {
-		if( !nodeIDs.contains(node.getID())) {
+		if (!nodeIDs.contains(node.getID())) {
 			nodeIDs.add(node.getID());
 			refreshTableAsync();
 		}
@@ -190,7 +210,7 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 
 	@Override
 	public void nodeRemoved(IOdysseusNodeManager sender, IOdysseusNode node) {
-		if( nodeIDs.contains(node.getID())) {
+		if (nodeIDs.contains(node.getID())) {
 			nodeIDs.remove(node.getID());
 			refreshTableAsync();
 		}

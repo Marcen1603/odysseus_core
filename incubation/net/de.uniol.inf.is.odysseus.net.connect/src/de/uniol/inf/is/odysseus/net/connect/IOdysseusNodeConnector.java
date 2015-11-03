@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 
 public interface IOdysseusNodeConnector {
 
-	public IOdysseusNodeConnection connect( IOdysseusNode node ) throws OdysseusNetConnectionException;
+	public void connect( IOdysseusNode node, IOdysseusNodeConnectorCallback callback ) throws OdysseusNetConnectionException;
 	public void disconnect( IOdysseusNode node );
 	
 	public Optional<IOdysseusNodeConnection> getConnection(IOdysseusNode node);
