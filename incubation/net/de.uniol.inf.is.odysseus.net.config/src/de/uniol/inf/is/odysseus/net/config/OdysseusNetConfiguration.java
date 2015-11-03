@@ -138,6 +138,12 @@ public class OdysseusNetConfiguration {
 	public static Optional<String> get(String key) {
 		loadFirstIfNeeded();
 		
+		// configs can be overwritten in system.properties
+		String propertyValue = System.getProperty(key);
+		if( propertyValue != null ) {
+			return Optional.of(propertyValue);
+		}
+		
 		Object value = properties.get(key);
 		if( value == null ) {
 			// backwards compatible
