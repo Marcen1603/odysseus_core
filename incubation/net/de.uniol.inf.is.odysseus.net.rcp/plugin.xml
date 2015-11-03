@@ -12,8 +12,13 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
+      <category
+            id="de.uniol.inf.is.odysseus.net.rcp.OdysseusNetCategory"
+            name="OdysseusNet">
+      </category>
       <view
             allowMultiple="false"
+            category="de.uniol.inf.is.odysseus.net.rcp.OdysseusNetCategory"
             class="de.uniol.inf.is.odysseus.net.rcp.views.NodeViewPart"
             icon="icons/node.png"
             id="de.uniol.inf.is.odysseus.net.rcp.NodeView"
