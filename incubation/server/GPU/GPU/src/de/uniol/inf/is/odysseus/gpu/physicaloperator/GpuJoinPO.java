@@ -44,13 +44,11 @@ public abstract class GpuJoinPO<T extends IStreamObject<?>> extends AbstractPipe
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO Auto-generated method stub
-		
+		sendPunctuation(punctuation);		
 	}
 
 	@Override
 	public OutputMode getOutputMode() {
-		// TODO Auto-generated method stub
 		return OutputMode.NEW_ELEMENT;
 	}
 
@@ -97,79 +95,17 @@ public abstract class GpuJoinPO<T extends IStreamObject<?>> extends AbstractPipe
 			
 			if (attributeDatatype.equals(SDFDatatype.INTEGER)) {
 				
-				Prepare.cuLoad(ptxFileName, "Integer");								
-				
-				SIZE = 1 * Sizeof.INT;
-				
-				double predikat[] = new double[]{150};
-							
-				cuMemAlloc(predDevicePtr, SIZE);
-				
-				cuMemAlloc(rightInputDevicePtr, SIZE);
-				
-				cuMemAlloc(leftInputDevicePtr, SIZE);
-				
-				cuMemAlloc(outputDevicePtr, SIZE);
-				
-				cuMemcpyHtoD(predDevicePtr, Pointer.to(predikat), SIZE);
 				
 			} else if (attributeDatatype.equals(SDFDatatype.FLOAT)) {
 
-				Prepare.cuLoad(ptxFileName, "Float");	
-				
-				SIZE = 1 * Sizeof.FLOAT;
-				
-				double predikat[] = new double[]{150};
-							
-				cuMemAlloc(predDevicePtr, SIZE);
-				
-				cuMemAlloc(rightInputDevicePtr, SIZE);
-				
-				cuMemAlloc(leftInputDevicePtr, SIZE);
-				
-				cuMemAlloc(outputDevicePtr, SIZE);
-				
-				cuMemcpyHtoD(predDevicePtr, Pointer.to(predikat), SIZE);
 				
 			} else if (attributeDatatype.equals(SDFDatatype.DOUBLE)) {								
 				
-				Prepare.cuLoad(ptxFileName, "Double");			
-				
-				
-				SIZE = 1 * Sizeof.DOUBLE;
-				
-				double predikat[] = new double[]{150};
-							
-				cuMemAlloc(predDevicePtr, SIZE);
-				
-				cuMemAlloc(rightInputDevicePtr, SIZE);
-				
-				cuMemAlloc(leftInputDevicePtr, SIZE);
-				
-				cuMemAlloc(outputDevicePtr, SIZE);
-				
-				cuMemcpyHtoD(predDevicePtr, Pointer.to(predikat), SIZE);	
 				
 				
 			} else if(attributeDatatype.equals(SDFDatatype.CHAR)){
 				
-				Prepare.cuLoad(ptxFileName, "Char");
 				
-				//int zeichen = predicate.length;
-				
-				//SIZE = zeichen * Sizeof.CHAR;
-				
-				double predikat[] = new double[]{150};
-							
-				cuMemAlloc(predDevicePtr, SIZE);
-				
-				cuMemAlloc(rightInputDevicePtr, SIZE);
-				
-				cuMemAlloc(leftInputDevicePtr, SIZE);
-				
-				cuMemAlloc(outputDevicePtr, SIZE);
-				
-				cuMemcpyHtoD(predDevicePtr, Pointer.to(predikat), SIZE);
 				
 			} else {
 				throw new OpenFailedException("Nicht unterstützter Datentyp " + attributeDatatype);		

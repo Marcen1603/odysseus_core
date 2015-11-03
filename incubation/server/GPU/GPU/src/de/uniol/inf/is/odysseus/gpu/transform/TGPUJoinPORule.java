@@ -5,6 +5,8 @@ package de.uniol.inf.is.odysseus.gpu.transform;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.gpu.physicaloperator.GpuJoinPO;
+import de.uniol.inf.is.odysseus.gpu.physicaloperator.GpuProjectionPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -21,9 +23,8 @@ public class TGPUJoinPORule extends AbstractTransformationRule<JoinAO> {
 	}
 	
 	@Override
-	public void execute(JoinAO operator, TransformationConfiguration config)
+	public void execute(JoinAO joinAO, TransformationConfiguration config)
 			throws RuleException {
-		// TODO Auto-generated method stub
 		
 	}
 
