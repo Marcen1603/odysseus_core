@@ -73,14 +73,14 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.net.connect.select.all"
+         id="de.uniol.inf.is.odysseus.net.connect.socket"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.net.connect.socket"
+         id="de.uniol.inf.is.odysseus.net.connect.select.group"
          download-size="0"
          install-size="0"
          version="0.0.0"
