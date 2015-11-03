@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
-import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn;
@@ -30,15 +29,15 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 	private final IOdysseusNode localNode;
 	private final int ownBroadcastPort;
 	
-	private final IOdysseusNodeManager manager;
-	
+	private final FoundOdysseusNodesContainer container;
 
-	public BroadcastHandler(IOdysseusNode localNode, IOdysseusNodeManager manager, int broadcastPort) {
-		Preconditions.checkNotNull(manager, "manager must not be null!");
+	public BroadcastHandler(IOdysseusNode localNode, FoundOdysseusNodesContainer container, int broadcastPort) {
 		Preconditions.checkNotNull(localNode, "localNode must not be null!");
+		Preconditions.checkNotNull(container, "container must not be null!");
+
 
 		this.localNode = localNode;
-		this.manager = manager;
+		this.container = container;
 		this.ownBroadcastPort = broadcastPort;
 	}
 
@@ -102,10 +101,7 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 				newNode.addProperty(key, value);
 			}
 
-			if (!manager.existsNode(newNode)) {
-				manager.addNode(newNode);
-				LOG.debug("New node added: {}", newNode);
-			}
+			container.addFoundNode(newNode);
 		}
 	}
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.discovery.broadcast.PlugIn">
+   <implementation class="de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn"/>
+   <reference bind="bindOdysseusNodeConnectionManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager" name="IOdysseusNodeConnectionManager" policy="static" unbind="unbindOdysseusNodeConnectionManager"/>
+</scr:component>
