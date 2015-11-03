@@ -27,7 +27,6 @@ public class BroadcastRequestSender {
 
 	private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 	private final Bootstrap b = new Bootstrap();
-	private final FoundOdysseusNodesContainer nodeContainer;
 
 	private ChannelFuture channelFuture;
 	private BroadcastRequestSendThread sendThread;
@@ -38,14 +37,12 @@ public class BroadcastRequestSender {
 		Preconditions.checkNotNull(nodeManager, "nodeManager must not be null!");
 		Preconditions.checkNotNull(localNode, "localNode must not be null!");
 
-		nodeContainer = new FoundOdysseusNodesContainer(nodeManager);
-		
 		b.group(workerGroup);
 		b.channel(NioDatagramChannel.class);
 		b.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new BroadcastHandler(localNode, nodeContainer, usedPort));
+				ch.pipeline().addLast(new BroadcastHandler(localNode, usedPort));
 			}
 		});
 		b.option(ChannelOption.SO_BROADCAST, true);
@@ -66,7 +63,7 @@ public class BroadcastRequestSender {
 				}
 			}
 		}
-		sendThread = new BroadcastRequestSendThread(determineSendInterval(), (DatagramChannel) channelFuture.channel(), nodeContainer);
+		sendThread = new BroadcastRequestSendThread(determineSendInterval(), (DatagramChannel) channelFuture.channel());
 		sendThread.start();
 	}
 

@@ -29,15 +29,10 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 	private final IOdysseusNode localNode;
 	private final int ownBroadcastPort;
 	
-	private final FoundOdysseusNodesContainer container;
-
-	public BroadcastHandler(IOdysseusNode localNode, FoundOdysseusNodesContainer container, int broadcastPort) {
+	public BroadcastHandler(IOdysseusNode localNode, int broadcastPort) {
 		Preconditions.checkNotNull(localNode, "localNode must not be null!");
-		Preconditions.checkNotNull(container, "container must not be null!");
-
 
 		this.localNode = localNode;
-		this.container = container;
 		this.ownBroadcastPort = broadcastPort;
 	}
 
@@ -101,7 +96,7 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 				newNode.addProperty(key, value);
 			}
 
-			container.addFoundNode(newNode);
+			OdysseusNodesChecker.addAndRefreshFoundNode(newNode);
 		}
 	}
 

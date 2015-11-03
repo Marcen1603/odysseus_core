@@ -23,19 +23,16 @@ public final class BroadcastRequestSendThread extends Thread {
 	private final long intervalMillis;
 	private final DatagramChannel channel;
 	private final Collection<InetSocketAddress> broadcastAddresses;
-	private final FoundOdysseusNodesContainer container;
 	
 	private boolean isRunning = false;
 
-	public BroadcastRequestSendThread(long timeIntervalMillis, DatagramChannel datagramChannel, FoundOdysseusNodesContainer nodeContainer) {
+	public BroadcastRequestSendThread(long timeIntervalMillis, DatagramChannel datagramChannel) {
 		Preconditions.checkArgument(timeIntervalMillis > 0, "Time interval (in ms) must be positive and non-zero");
 		Preconditions.checkNotNull(datagramChannel, "datagramChannel must not be null!");
-		Preconditions.checkNotNull(nodeContainer, "nodeContainer must not be null!");
 
 		this.channel =  Preconditions.checkNotNull(datagramChannel, "channel must not be null!");
 		this.intervalMillis = timeIntervalMillis;
 		this.broadcastAddresses = buildBroadcastAddresses();
-		this.container = nodeContainer;
 		
 		setName("Broadcast Request sender");
 		setDaemon(true);
@@ -61,7 +58,8 @@ public final class BroadcastRequestSendThread extends Thread {
 				
 				waitTimeInterval(intervalMillis);
 				
-				container.processFoundNodes();
+				OdysseusNodesChecker.detectLostNodes();
+				
 			} catch (InterruptedException e) {
 				LOG.error("Exception during sending broadcast request message", e);
 				isRunning = false;
