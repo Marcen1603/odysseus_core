@@ -133,6 +133,8 @@ public class OdysseusNodeConnectionManager implements IOdysseusNodeConnectionMan
 					
 					@Override
 					public void successfulConnection(IOdysseusNodeConnection establishedConnection) {
+						LOG.debug("Connecting was successful!");
+						
 						establishedConnection.addListener(OdysseusNodeConnectionManager.this);
 						fireNodeConnectedEvent(establishedConnection);
 					}

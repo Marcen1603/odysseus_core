@@ -34,7 +34,7 @@ public class SocketReceiveThread extends Thread {
 		this.inFromSocket = clientSocket.getInputStream();
 		this.outToSocket = clientSocket.getOutputStream();
 		
-		setName("Client socket receive: " + clientSocket.getInetAddress());
+		setName("Client socket receive: " + clientSocket.getInetAddress() + ":" + clientSocket.getPort());
 		setDaemon(true);
 	}
 	
@@ -44,7 +44,7 @@ public class SocketReceiveThread extends Thread {
 	
 	@Override
 	public void run() {
-		LOG.info("Starting client socket receive thread for {}", clientSocket.getInetAddress());
+		LOG.info("Starting client socket receive thread for {}:", clientSocket.getInetAddress(), clientSocket.getPort());
 		
 		running = true;
 		try {
@@ -74,7 +74,7 @@ public class SocketReceiveThread extends Thread {
 			listener.socketDisconnected();
 		}
 		
-		LOG.info("Stopped client socket receive thread for {}", clientSocket.getInetAddress());
+		LOG.info("Stopped client socket receive thread for {}:{}", clientSocket.getInetAddress(), clientSocket.getPort());
 	}
 	
 	public void write( byte[] data ) throws OdysseusNetConnectionException {

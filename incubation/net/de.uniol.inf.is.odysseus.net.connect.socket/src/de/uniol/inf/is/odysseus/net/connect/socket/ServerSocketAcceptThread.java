@@ -39,7 +39,7 @@ public class ServerSocketAcceptThread extends Thread {
 			while( running ) {
 				LOG.debug("Waiting for next connection");
 				Socket clientSocket = serverSocket.accept();
-				LOG.debug("Accepted connection from {}", clientSocket.getInetAddress());
+				LOG.debug("Accepted connection from {}:{}", clientSocket.getInetAddress(), clientSocket.getPort());
 				
 				listener.acceptedConnection(clientSocket);
 			}

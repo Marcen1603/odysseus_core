@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.net.connect.socket;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,8 +34,6 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 
 	private static final String SERVER_ADDRESS_PROPERTY_KEY = "serverAddress";
 	private static final String SERVER_PORT_PROPERTY_KEY = "serverPort";
-
-	private static final long MAX_WAIT_TIME_MILLIS = 60 * 1000;
 
 	private final Map<IOdysseusNode, IOdysseusNodeConnection> connections = Maps.newHashMap();
 	private final Map<OdysseusNodeID, Socket> acceptedSocketsMap = Maps.newHashMap();
@@ -76,81 +75,78 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 		Thread waitingThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				if (localNode.getID().compareTo(node.getID()) == 1) {
-					// we are server and do nothing special
-					// the other node has to connect to us
-					LOG.info("Connection to node {} where other node is client", node);
-					LOG.debug("Waiting for accepted connection from node {}", node);
-					long startWaitTime = System.currentTimeMillis();
-					while (true) {
-						boolean accepted = false;
-
-						synchronized (acceptedSocketsMap) {
-							accepted = acceptedSocketsMap.containsKey(node.getID());
-						}
-
-						if (accepted) {
-							break;
-						}
-
-						try {
-							Thread.sleep(200);
-						} catch (InterruptedException e) {
-						}
-
-						if (System.currentTimeMillis() - startWaitTime > MAX_WAIT_TIME_MILLIS) {
-							callback.failedConnection(new OdysseusNetConnectionException("Node " + node + " did not connect as client to us"));
-							return;
-						}
-					}
-
-					LOG.debug("Got client socket for {}", node);
-					Socket clientSocket = null;
-					synchronized (acceptedSocketsMap) {
-						clientSocket = acceptedSocketsMap.remove(node.getID());
-					}
-
-					try {
-						IOdysseusNodeConnection connection = new OdysseusNodeSocketConnection(clientSocket, node);
-						LOG.info("Connection to node {} where other node is client", node.getID());
-						connection.addListener(OdysseusNodeSocketConnector.this);
-
-						connections.put(node, connection);
-						callback.successfulConnection(connection);
-
-					} catch (IOException e) {
-						callback.failedConnection(new OdysseusNetConnectionException("Could not connect to node " + node, e));
-					}
-					return;
-				}
-				
-				// we are client and have to connect to the node (which is the server in this case)
-
+				Socket asClientSocket = null;
+				Socket asServerSocket = null;
 				try {
-					int nodeServerPort = determineServerPort(node);
-					String nodeServerAddress = determineServerAddress(node);
+					LOG.debug("Beginning connecting to node {}", node);
+
+					// 1. Connect to their server
+					String serverAddress = determineServerAddress(node);
+					int serverPort = determineServerPort(node);
+					LOG.debug("Address is {}, port is {}", serverAddress, serverPort);
+
+					asClientSocket = new Socket(serverAddress, serverPort);
+					LOG.debug("Socket created for node {}", node);
+
+					// 2. Send own id
+					OutputStream clientOut = asClientSocket.getOutputStream();
+					byte[] idBytes = localNode.getID().toString().getBytes();
+					clientOut.write(idBytes);
+					clientOut.flush();
+					LOG.debug("Send own id {} to node {}", localNode.getID(), node);
+
+					// 3. Wait for them connecting to us
+					LOG.debug("Waiting for client-connection from other node {}", node);
+					while (asServerSocket == null) {
+						synchronized (acceptedSocketsMap) {
+							asServerSocket = acceptedSocketsMap.remove(node.getID());
+						}
+						if (asServerSocket == null) {
+							waitSomeTime();
+						}
+					}
+					LOG.debug("Got socket from other node {}", node);
 					
-					Socket clientSocket = new Socket(nodeServerAddress, nodeServerPort);
-					IOdysseusNodeConnection connection = new OdysseusNodeSocketConnection(clientSocket, node);
-					LOG.info("Connection to node {} where other node is server with port {}", node.getID(), nodeServerPort);
-
-					LOG.debug("Sending our node id {}", localNode.getID());
+					// 4. Return connection to caller
+					OdysseusNodeSocketConnection connection = new OdysseusNodeSocketConnection(asClientSocket, asServerSocket, node);
 					connection.addListener(OdysseusNodeSocketConnector.this);
-					connection.send(localNode.getID().toString().getBytes());
-
+					
 					connections.put(node, connection);
 					callback.successfulConnection(connection);
-
+					
+					LOG.debug("Connection to node {} finished", node);
+					
 				} catch (IOException e) {
-					callback.failedConnection(new OdysseusNetConnectionException("Could not connect to node " + node, e));
+					callback.failedConnection(new OdysseusNetConnectionException("Could not connect to node " + node));
+					tryCloseSocket(asClientSocket);
+					tryCloseSocket(asServerSocket);
 				} catch (OdysseusNetConnectionException e) {
 					callback.failedConnection(e);
+					tryCloseSocket(asClientSocket);
+					tryCloseSocket(asServerSocket);
 				}
 			}
+
 		});
 		waitingThread.setName("Connecting to " + node.getID());
 		waitingThread.setDaemon(true);
 		waitingThread.start();
+	}
+
+	private static void tryCloseSocket(Socket socket) {
+		if (socket != null) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	private static void waitSomeTime() {
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	private static String determineServerAddress(IOdysseusNode node) throws OdysseusNetConnectionException {
@@ -271,6 +267,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 					System.arraycopy(buffer, 0, uuidStrBuffer, 0, readBytes);
 
 					if (readBytes > 0) {
+						LOG.debug("Read {} bytes", readBytes);
 						String uuidStr = new String(uuidStrBuffer);
 						OdysseusNodeID nodeID = OdysseusNodeID.fromString(uuidStr);
 						LOG.debug("Got nodeID {}", nodeID);
@@ -286,7 +283,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 				} catch (IOException e) {
 					LOG.error("Could not accept connection from unknown client {}", clientSocket.getInetAddress(), e);
 				}
-				
+
 				// if we are here, something got wrong
 				try {
 					clientSocket.close();
