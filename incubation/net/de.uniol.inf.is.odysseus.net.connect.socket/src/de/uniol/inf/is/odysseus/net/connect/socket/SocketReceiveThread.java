@@ -54,6 +54,7 @@ public class SocketReceiveThread extends Thread {
 				if (bytesRead == -1) {
 					LOG.debug("Reached end of data stream. Socket closed...");
 					running = false;
+					listener.socketDisconnected();
 					
 				} else if (bytesRead > 0) {
 					byte[] msg = new byte[bytesRead];
