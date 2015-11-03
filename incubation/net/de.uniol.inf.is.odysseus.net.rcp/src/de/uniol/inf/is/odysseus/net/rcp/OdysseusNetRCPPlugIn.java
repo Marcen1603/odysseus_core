@@ -5,13 +5,16 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
+import de.uniol.inf.is.odysseus.net.rcp.views.ChatMessage;
 
 public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 
 	private static IOdysseusNodeManager nodeManager;
 	private static IOdysseusNetStartupManager startupManager;
 	private static IOdysseusNodeConnectionManager connectionManager;
+	private static IOdysseusNodeCommunicator nodeCommunicator;
 
 	// called by OSGi-DS
 	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
@@ -59,6 +62,24 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 	
 	public static IOdysseusNodeConnectionManager getOdysseusNodeConnectionManager() {
 		return connectionManager;
+	}
+	
+	// called by OSGi-DS
+	public static void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
+		nodeCommunicator = serv;
+		nodeCommunicator.registerMessageType(ChatMessage.class);
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
+		if (nodeCommunicator == serv) {
+			nodeCommunicator.unregisterMessageType(ChatMessage.class);
+			nodeCommunicator = null;
+		}
+	}
+	
+	public static IOdysseusNodeCommunicator getOdysseusNodeCommunicator() {
+		return nodeCommunicator;
 	}
 
 	@Override
