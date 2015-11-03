@@ -42,6 +42,7 @@ public class SensorFactory
 				+ "%(sourceName) := CONVERTER({protocol='LMS1xx',\n"
 				+ "                            inputDataHandler='Tuple',\n"
 				+ "                            outputDataHandler='KeyValueObject',\n"
+				+ "                            updateMeta='false',\n"
 				+ "                            options=[['passiveMode', 'true'], ['rawData','true']]}, input2)\n";		
 		
 		String logQuery = 
