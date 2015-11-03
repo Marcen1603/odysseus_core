@@ -44,23 +44,6 @@ public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 		IOdysseusNode localNode = new OdysseusNode(generatedID, nodeName);
 		return localNode;
 	}
-//
-//
-//	private static int findFreePort() throws OdysseusNetException {
-//		try {
-//			ServerSocket s = new ServerSocket(0);
-//			s.setReuseAddress(true);
-//			int port = s.getLocalPort();
-//			try {
-//				s.close();
-//			} catch( IOException ignore ) {
-//			}
-//			
-//			return port;
-//		} catch (IOException e) {
-//			throw new OdysseusNetException("Could not find a free port", e);
-//		}
-//	}
 
 	@Override
 	public void stop() {
