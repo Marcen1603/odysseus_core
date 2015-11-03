@@ -14,9 +14,15 @@ import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 
 public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 
-	private static final String NODE_DEFAULT_NAME = "OdysseusNode";
 	private static final String NODE_NAME_CONFIG_KEY = "net.node.name";
+	private static final String NODE_DEFAULT_NAME = "OdysseusNode";
+	
+	private static final String PRESERVE_ID_CONFIG_KEY = "net.node.preserveid";
+	private static final String PRESERVE_ID_DEFAULT_VALUE = "false";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConfigStartup.class);
+	
+	private OdysseusNodeID generatedID = null;
 	
 	@Override
 	public IOdysseusNode start() throws OdysseusNetException {
@@ -25,8 +31,17 @@ public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 			LOG.error("Invalid node name. Using default " + NODE_DEFAULT_NAME);
 			nodeName = NODE_DEFAULT_NAME;
 		}
+	
+		String preserveID = OdysseusNetConfiguration.get(PRESERVE_ID_CONFIG_KEY, PRESERVE_ID_DEFAULT_VALUE);
+		if( Strings.isNullOrEmpty(preserveID)) {
+			LOG.error("Invalid value '{}' for " + PRESERVE_ID_CONFIG_KEY + ". Must be 'true' or 'false'. Using default " + PRESERVE_ID_DEFAULT_VALUE);
+			preserveID = PRESERVE_ID_DEFAULT_VALUE;
+		}
+		if( generatedID == null || !Boolean.getBoolean(preserveID)) {
+			generatedID = OdysseusNodeID.generateNew();
+		}
 		
-		IOdysseusNode localNode = new OdysseusNode(OdysseusNodeID.generateNew(), nodeName);
+		IOdysseusNode localNode = new OdysseusNode(generatedID, nodeName);
 		return localNode;
 	}
 //
