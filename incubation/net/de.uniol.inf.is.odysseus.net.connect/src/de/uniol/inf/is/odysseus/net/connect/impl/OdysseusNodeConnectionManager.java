@@ -27,7 +27,7 @@ public class OdysseusNodeConnectionManager implements IOdysseusNodeConnectionMan
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeConnectionManager.class);
 	private static final String SELECTOR_CONFIG_KEY = "net.connect.selector.name";
-	private static final String DEFAULT_SELECTOR_NAME = "ConnectAllSelector";
+	private static final String DEFAULT_SELECTOR_NAME = "GroupSelectorComponent";
 	private static final Collection<IOdysseusNodeConnectionManagerListener> LISTENERS = Lists.newArrayList();
 
 	private static IOdysseusNodeManager nodeManager;
