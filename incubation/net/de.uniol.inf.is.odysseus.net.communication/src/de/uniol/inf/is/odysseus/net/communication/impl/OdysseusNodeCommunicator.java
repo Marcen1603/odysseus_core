@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
@@ -26,6 +27,8 @@ public class OdysseusNodeCommunicator implements IOdysseusNodeCommunicator, IOdy
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeCommunicator.class);
 
 	private static IOdysseusNodeConnectionManager connectionManager;
+	
+	private final Collection<IOdysseusNode> destinationNodes = Lists.newArrayList();
 
 	private final Map<Class<? extends IMessage>, Integer> messageTypeMap = Maps.newHashMap();
 	private final Map<Integer, Class<? extends IMessage>> messageIDMap = Maps.newHashMap();
@@ -174,12 +177,20 @@ public class OdysseusNodeCommunicator implements IOdysseusNodeCommunicator, IOdy
 	@Override
 	public void nodeConnected(IOdysseusNodeConnection connection) {
 		connection.addListener(this);
+		
+		synchronized( destinationNodes ) {
+			destinationNodes.add(connection.getOdysseusNode());
+		}
 	}
 
 	// called by odysseus node connection manager
 	@Override
 	public void nodeDisconnected(IOdysseusNodeConnection connection) {
 		connection.removeListener(this);
+		
+		synchronized(destinationNodes) {
+			destinationNodes.remove(connection.getOdysseusNode());
+		}
 	}
 
 	// called by one node connection
@@ -223,4 +234,17 @@ public class OdysseusNodeCommunicator implements IOdysseusNodeCommunicator, IOdy
 		connection.removeListener(this);
 	}
 
+	@Override
+	public Collection<IOdysseusNode> getDestinationNodes() {
+		synchronized( destinationNodes ) {
+			return Lists.newArrayList(destinationNodes);
+		}
+	}
+	
+	@Override
+	public boolean canSend(IOdysseusNode node) {
+		synchronized(destinationNodes ) {
+			return destinationNodes.contains(node);
+		}
+	}
 }
