@@ -31,13 +31,13 @@ public class ConverterAO extends UnaryLogicalOp {
 	private String dateFormat;
 	private String source;
 	private boolean updateMeta = true;
-	final private Map<String, String> options;
-	private final List<Option> optionMap = Lists.newArrayList();
+	final private Map<String, String> optionsMap;
+	private final List<Option> options = Lists.newArrayList();
 	private List<SDFAttribute> outputAttributes;
 
 	public ConverterAO() {
 		super();
-		options = new HashMap<>();
+		optionsMap = new HashMap<>();
 	}
 
 	public ConverterAO(ConverterAO converterAO) {
@@ -45,8 +45,8 @@ public class ConverterAO extends UnaryLogicalOp {
 		this.protocolHandler = converterAO.protocolHandler;
 		this.inputDataHandler = converterAO.inputDataHandler;
 		this.outputDataHandler = converterAO.outputDataHandler;
-		this.options = new HashMap<String, String>(converterAO.options);
-		this.optionMap.addAll(converterAO.optionMap);
+		this.optionsMap = new HashMap<String, String>(converterAO.optionsMap);
+		this.options.addAll(converterAO.options);
 		this.outputAttributes = converterAO.outputAttributes;
 		this.source = converterAO.source;
 		this.updateMeta = converterAO.updateMeta;
@@ -80,19 +80,24 @@ public class ConverterAO extends UnaryLogicalOp {
 	}
 
 	@Parameter(name = "options", isList = true, type = OptionParameter.class, optional = true, doc = "Additional options. See help doc for further information")
-	public void setOptionMap(List<Option> ops) {
+	public void setOptions(List<Option> ops) {
 		for (Option option : ops) {
-			options.put(option.getName().toLowerCase(), option.getValue());
+			optionsMap.put(option.getName().toLowerCase(), option.getValue());
 		}
-		optionMap.addAll(ops);
+		options.addAll(ops);
 	}
 	
 	public List<Option> getOptions() {
-		return optionMap;
+		return options;
 	}
 
+	public void setOptionMap(Map<String, String> ops) {
+		optionsMap.clear();
+		optionsMap.putAll(ops);
+	}	
+	
 	public Map<String, String> getOptionMap() {
-		return options;
+		return optionsMap;
 	}
 
     @Parameter(name = "schema", type = CreateSDFAttributeParameter.class, isList = true, optional = true, doc = "The output schema of this operator")
