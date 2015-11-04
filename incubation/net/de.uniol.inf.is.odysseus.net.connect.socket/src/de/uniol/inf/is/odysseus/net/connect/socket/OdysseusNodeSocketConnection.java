@@ -91,4 +91,13 @@ public class OdysseusNodeSocketConnection extends AbstractOdysseusNodeConnection
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("{Connection to ").append(getOdysseusNode()).append(", inPort=").append(asClientSocket.getLocalPort()).append(", ");
+		sb.append("outPort=").append(asServerSocket.getLocalPort()).append("}");
+		
+		return sb.toString();
+	}
 }
