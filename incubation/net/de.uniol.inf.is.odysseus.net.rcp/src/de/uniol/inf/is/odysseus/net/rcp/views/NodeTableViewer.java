@@ -88,6 +88,17 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 			}
 		});
 		tableColumnLayout.setColumnData(connectedColumn.getColumn(), new ColumnWeightData(5, 15, true));
+		
+		/************* Ping ****************/
+		TableViewerColumn pingColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		pingColumn.getColumn().setText("Ping");
+		pingColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, pingColumn) {
+			@Override
+			protected String getValue(OdysseusNodeID nodeID) {
+				return determinePing(nodeID);
+			}
+		});
+		tableColumnLayout.setColumnData(pingColumn.getColumn(), new ColumnWeightData(5, 15, true));
 
 		/************* Properties ****************/
 		TableViewerColumn propertiesColumn = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -163,6 +174,20 @@ public final class NodeTableViewer implements IOdysseusNodeManagerListener, IOdy
 		}
 
 		return UNKNOWN_TEXT;
+	}
+
+	private static String determinePing(OdysseusNodeID nodeID) {
+		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(nodeID);
+
+		if (optNode.isPresent()) {
+			IOdysseusNode node = optNode.get();
+			Optional<Double> optPing = OdysseusNetRCPPlugIn.getPingMap().getPing(node);
+			if( optPing.isPresent() ) {
+				return String.format("%-4.0f", optPing.get());
+			}
+		}
+		
+		return "";
 	}
 
 	private static void hideSelectionIfNeeded(final TableViewer tableViewer) {
