@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 public class SocketDataTransmissionSender extends EndpointDataTransmissionSender {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketDataTransmissionSender.class);
-	
+
 	private static final byte DATA_FLAG = 0;
 	private static final byte PUNC_FLAG = 1;
 	private static final byte DONE_FLAG = 2;
@@ -46,7 +46,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	private Object semaphore = new Object();
 
 	private RepeatingMessageSend portMessageRepeater;
-	
+
 	public SocketDataTransmissionSender(IPeerCommunicator communicator, String peerID, String id) {
 		super(communicator, peerID, id);
 
@@ -57,11 +57,11 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 	protected void processOpenMessage(final PeerID senderPeer, OpenMessage message) {
 		super.processOpenMessage(senderPeer, message);
 
-		//Do not open a second accept Thread/ Add Duplicate open callers
-		if(openCallers.contains(senderPeer)) {
+		// Do not open a second accept Thread/ Add Duplicate open callers
+		if (openCallers.contains(senderPeer)) {
 			return;
 		}
-		
+
 		openCallers.add(senderPeer);
 		waitingBuffer.put(senderPeer, Lists.<byte[]> newArrayList());
 
@@ -77,9 +77,9 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 
 					Socket clientSocket = serverSocket.accept();
 					LOG.debug("Server socket on port {} was accepted from peer {}", serverSocket.getLocalPort(), senderPeer);
-					
+
 					SocketDataChannel channel = new SocketDataChannel(clientSocket);
-					
+
 					clientSocketMap.put(senderPeer, channel);
 					for (PeerID peerID : clientSocketMap.keySet()) {
 						LOG.debug("clientSocketMap contains " + peerID.toString());
@@ -136,7 +136,7 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 		for (PeerID pid : clientSocketMap.keySet()) {
 			clientSocketMap.get(pid).close();
 		}
-		
+
 		clientSocketMap.clear();
 		openCallers.remove(senderPeer);
 		waitingBuffer.remove(senderPeer);
@@ -154,10 +154,10 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 		byte[] data = ObjectByteConverter.objectToBytes(punctuation);
 		sendImpl(data, PUNC_FLAG);
 	}
-	
+
 	@Override
 	public void sendDone() throws DataTransmissionException {
-		sendImpl( new byte[0], DONE_FLAG );
+		sendImpl(new byte[0], DONE_FLAG);
 	}
 
 	private void sendImpl(byte[] data, byte flag) {
@@ -175,93 +175,93 @@ public class SocketDataTransmissionSender extends EndpointDataTransmissionSender
 			globalBuffer.add(rawData);
 			return;
 		}
-			List<PeerID> openCallerCopy = new ArrayList<PeerID>(openCallers);
-			toRemoveList.clear();
-			for (PeerID pid : openCallerCopy) {
-	
-				if (clientSocketMap.containsKey(pid)) {
-	
-					try {
-						SocketDataChannel cs = clientSocketMap.get(pid);
-						
-						if (!globalBuffer.isEmpty()) {
-							for (byte[] bufferedData : globalBuffer) {
-								cs.write(bufferedData);
-							}
-							globalBuffer.clear();
+		List<PeerID> openCallerCopy = new ArrayList<PeerID>(openCallers);
+		toRemoveList.clear();
+		for (PeerID pid : openCallerCopy) {
+
+			if (clientSocketMap.containsKey(pid)) {
+
+				try {
+					SocketDataChannel cs = clientSocketMap.get(pid);
+
+					if (!globalBuffer.isEmpty()) {
+						for (byte[] bufferedData : globalBuffer) {
+							cs.write(bufferedData);
 						}
-	
-						if (waitingBuffer.containsKey(pid)) {
-							for (byte[] bufferedData : waitingBuffer.remove(pid)) {
-								cs.write(bufferedData);
-							}
-						}
-						cs.write(rawData);
-						
-					} catch (IOException e) {
-						LOG.error("Could not send data", e.getMessage());
-						toRemoveList.add(pid);
+						globalBuffer.clear();
 					}
+
+					if (waitingBuffer.containsKey(pid)) {
+						for (byte[] bufferedData : waitingBuffer.remove(pid)) {
+							cs.write(bufferedData);
+						}
+					}
+					cs.write(rawData);
+
+				} catch (IOException e) {
+					LOG.error("Could not send data", e.getMessage());
+					toRemoveList.add(pid);
+				}
+			} else {
+				if (waitingBuffer.containsKey(pid)) {
+					waitingBuffer.get(pid).add(rawData);
 				} else {
-					if( waitingBuffer.containsKey(pid)) {
-						waitingBuffer.get(pid).add(rawData);
-					} else {
-						LOG.warn("Wanted to send a message to non-opened peer");
-					}
+					LOG.warn("Wanted to send a message to non-opened peer");
 				}
 			}
-	
-			if (!toRemoveList.isEmpty()) {
-				for (PeerID pid : toRemoveList) {
-					SocketDataChannel socket = clientSocketMap.remove(pid);
-					if (socket != null) {
-						socket.close();
-					}
-	
-					ServerSocket serverSocket = serverSocketMap.remove(pid);
-					if (serverSocket != null) {
-						try {
-							serverSocket.close();
-						} catch (IOException e) {
-						}
-					}
-	
-					openCallers.remove(pid);
-					waitingBuffer.remove(pid);
+		}
+
+		if (!toRemoveList.isEmpty()) {
+			for (PeerID pid : toRemoveList) {
+				SocketDataChannel socket = clientSocketMap.remove(pid);
+				if (socket != null) {
+					socket.close();
 				}
+
+				ServerSocket serverSocket = serverSocketMap.remove(pid);
+				if (serverSocket != null) {
+					try {
+						serverSocket.close();
+					} catch (IOException e) {
+					}
+				}
+
+				openCallers.remove(pid);
+				waitingBuffer.remove(pid);
 			}
-		
+		}
+
 	}
-	
+
 	@Override
 	public void flushBuffers() {
-			for (PeerID pid : openCallers) {
-	
-				if (clientSocketMap.containsKey(pid)) {
-	
-					try {
-						SocketDataChannel cs = clientSocketMap.get(pid);
-						
-						if (!globalBuffer.isEmpty()) {
-							for (byte[] bufferedData : globalBuffer) {
-								cs.write(bufferedData);
-							}
-							globalBuffer.clear();
+		for (PeerID pid : openCallers) {
+
+			if (clientSocketMap.containsKey(pid)) {
+
+				try {
+					SocketDataChannel cs = clientSocketMap.get(pid);
+
+					if (!globalBuffer.isEmpty()) {
+						for (byte[] bufferedData : globalBuffer) {
+							cs.write(bufferedData);
 						}
-	
-						if (waitingBuffer.containsKey(pid)) {
-							for (byte[] bufferedData : waitingBuffer.remove(pid)) {
-								cs.write(bufferedData);
-							}
-						}
-						
-					} catch (IOException e) {
-						LOG.error("Could not send data", e);
-						toRemoveList.add(pid);
+						globalBuffer.clear();
 					}
-				} 
+
+					if (waitingBuffer.containsKey(pid)) {
+						for (byte[] bufferedData : waitingBuffer.remove(pid)) {
+							cs.write(bufferedData);
+						}
+					}
+
+				} catch (IOException e) {
+					LOG.error("Could not send data", e);
+					toRemoveList.add(pid);
+				}
 			}
-		
+		}
+
 	}
 
 	private static void insertInt(byte[] destArray, int offset, int value) {
