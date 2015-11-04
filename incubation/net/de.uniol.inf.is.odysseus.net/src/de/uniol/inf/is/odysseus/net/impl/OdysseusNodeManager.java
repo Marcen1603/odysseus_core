@@ -173,7 +173,11 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	public boolean isLocalNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 		if( startupManager.isStarted() ) {
-			return startupManager.getLocalOdysseusNode().equals(node);
+			try {
+				return startupManager.getLocalOdysseusNode().equals(node);
+			} catch (OdysseusNetException e) {
+				// no happen here
+			}
 		}
 		
 		return false;

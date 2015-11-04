@@ -35,6 +35,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
@@ -224,6 +225,8 @@ public class ChatView extends ViewPart implements IOdysseusNodeCommunicatorListe
 
 		} catch (OdysseusNodeCommunicationException e) {
 			LOG.error("Cannot send message", e);
+		} catch (OdysseusNetException e) {
+			LOG.error("Could not send message", e);
 		}
 	}
 

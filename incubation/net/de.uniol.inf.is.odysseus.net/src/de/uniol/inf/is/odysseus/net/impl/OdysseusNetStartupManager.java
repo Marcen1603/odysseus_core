@@ -312,7 +312,10 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	}
 	
 	@Override
-	public IOdysseusNode getLocalOdysseusNode() {
+	public IOdysseusNode getLocalOdysseusNode() throws OdysseusNetException {
+		if( localNode == null ) {
+			throw new OdysseusNetException("Local node not available since odysseus net is not started");
+		}
 		return localNode;
 	}
 

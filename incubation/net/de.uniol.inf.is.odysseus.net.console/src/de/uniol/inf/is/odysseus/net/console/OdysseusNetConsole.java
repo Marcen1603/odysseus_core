@@ -111,7 +111,7 @@ public class OdysseusNetConsole implements CommandProvider {
 		sb.append("\n");
 		sb.append("    listNetConfiguration/ls...           - Prints the current odysseus net configuration\n");
 		sb.append("    setNetConfiguration <key> <value>    - Sets key in the odysseus net configuration to spezified value\n");
-		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");	
+		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");
 		sb.append("    listNodes/ls..                       - Lists all found (!) nodes\n");
 		sb.append("\n");
 		sb.append("---Utility commands---\n");
@@ -561,26 +561,26 @@ public class OdysseusNetConsole implements CommandProvider {
 		OdysseusNetConfiguration.save();
 		ci.println("Saved odysseus net configuration");
 	}
-	
-	public void _lsNodes(CommandInterpreter ci ) {
+
+	public void _lsNodes(CommandInterpreter ci) {
 		ImmutableCollection<IOdysseusNode> foundNodes = nodeManager.getNodes();
-		
-		for( IOdysseusNode foundNode : foundNodes ) {
+
+		for (IOdysseusNode foundNode : foundNodes) {
 			ci.print(foundNode);
-			
-			if( connectionManager.isConnected(foundNode)) {
+
+			if (connectionManager.isConnected(foundNode)) {
 				ci.println(" (connected)");
 			} else {
 				ci.println();
 			}
 		}
 	}
-	
-	public void _listNodes(CommandInterpreter ci ) {
+
+	public void _listNodes(CommandInterpreter ci) {
 		_lsNodes(ci);
 	}
-	
-	public void _startOdysseusNet(CommandInterpreter ci ) {
+
+	public void _startOdysseusNet(CommandInterpreter ci) {
 		try {
 			startupManager.start();
 			ci.println("OdysseusNet started by console");
@@ -589,52 +589,51 @@ public class OdysseusNetConsole implements CommandProvider {
 			ci.println(e);
 		}
 	}
-	
-	public void _stopOdysseusNet(CommandInterpreter ci ) {
+
+	public void _stopOdysseusNet(CommandInterpreter ci) {
 		startupManager.stop();
-		
+
 		ci.println("OdysseusNet stopped by console");
 	}
-	
-	public void _showLocalNode(CommandInterpreter ci ) {
-		if( startupManager.isStarted() ) {
+
+	public void _showLocalNode(CommandInterpreter ci) {
+		try {
 			IOdysseusNode localNode = startupManager.getLocalOdysseusNode();
-			
 			ci.println("NodeName\t= " + localNode.getName());
 			ci.println("NodeID\t= " + localNode.getID());
-			for( String propertyKey : localNode.getProperyKeys() ) {
+			for (String propertyKey : localNode.getProperyKeys()) {
 				Optional<String> optPropertyValue = localNode.getProperty(propertyKey);
 				ci.println(propertyKey + "\t= " + optPropertyValue.get());
 			}
-		} else {
+		} catch (OdysseusNetException e) {
 			ci.println("OdysseusNet is not started");
 		}
 	}
-	
-	public void _listConnectedNodes( CommandInterpreter ci ) {
+
+	public void _listConnectedNodes(CommandInterpreter ci) {
 		Collection<IOdysseusNodeConnection> connections = connectionManager.getConnections();
-		for( IOdysseusNodeConnection connection : connections ) {
+		for (IOdysseusNodeConnection connection : connections) {
 			ci.println(connection);
 		}
 	}
-	
-	public void _lsConnectedNodes(CommandInterpreter ci ) {
+
+	public void _lsConnectedNodes(CommandInterpreter ci) {
 		_listConnectedNodes(ci);
 	}
-	
-	public void _isConnected(CommandInterpreter ci ) {
+
+	public void _isConnected(CommandInterpreter ci) {
 		String node = ci.nextArgument();
-		if( Strings.isNullOrEmpty(node)) {
+		if (Strings.isNullOrEmpty(node)) {
 			ci.println("usage: isConnected <nodeName | nodeID>");
 			return;
 		}
-		
+
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, node);
-		if( !optNode.isPresent() ) {
+		if (!optNode.isPresent()) {
 			return;
 		}
-		
-		if( connectionManager.isConnected(optNode.get()) ) {
+
+		if (connectionManager.isConnected(optNode.get())) {
 			ci.println("Node " + optNode.get() + " is connected to us");
 		} else {
 			ci.println("Node " + optNode.get() + " is NOT connected to us");
@@ -642,27 +641,27 @@ public class OdysseusNetConsole implements CommandProvider {
 	}
 
 	private static Optional<IOdysseusNode> determineFirstSelectedNode(CommandInterpreter ci, String node) {
-		Collection<IOdysseusNode> selectedNodes= determineNode(node);
-		if( selectedNodes.isEmpty() ) {
+		Collection<IOdysseusNode> selectedNodes = determineNode(node);
+		if (selectedNodes.isEmpty()) {
 			ci.println("There is no such node with '" + node + "'");
-		} else if( selectedNodes.size() > 1 ) {
+		} else if (selectedNodes.size() > 1) {
 			ci.println("Identifiere is ambiguous:");
-			for( IOdysseusNode selectedNode : selectedNodes ) {
+			for (IOdysseusNode selectedNode : selectedNodes) {
 				ci.println("\t" + selectedNode);
 			}
 		} else {
-			return Optional.of( selectedNodes.iterator().next());
+			return Optional.of(selectedNodes.iterator().next());
 		}
-		
+
 		return Optional.absent();
 	}
 
 	private static Collection<IOdysseusNode> determineNode(String nodeText) {
 		Collection<IOdysseusNode> selectedNodes = Lists.newArrayList();
 		ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
-		
-		for( IOdysseusNode node : nodes ) {
-			if(node.getID().toString().equals(nodeText) || node.getName().equals(nodeText)) {
+
+		for (IOdysseusNode node : nodes) {
+			if (node.getID().toString().equals(nodeText) || node.getName().equals(nodeText)) {
 				selectedNodes.add(node);
 			}
 		}
