@@ -566,7 +566,13 @@ public class OdysseusNetConsole implements CommandProvider {
 		ImmutableCollection<IOdysseusNode> foundNodes = nodeManager.getNodes();
 		
 		for( IOdysseusNode foundNode : foundNodes ) {
-			ci.println(foundNode);
+			ci.print(foundNode);
+			
+			if( connectionManager.isConnected(foundNode)) {
+				ci.println(" (connected)");
+			} else {
+				ci.println();
+			}
 		}
 	}
 	
