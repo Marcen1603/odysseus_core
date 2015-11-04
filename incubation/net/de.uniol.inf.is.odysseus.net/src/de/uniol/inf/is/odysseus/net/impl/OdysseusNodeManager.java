@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
@@ -25,6 +26,20 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	private final Map<OdysseusNodeID, IOdysseusNode> nodeMap = Maps.newHashMap();
 	private final Collection<IOdysseusNodeManagerListener> listeners = Lists.newLinkedList();
 
+	private static IOdysseusNetStartupManager startupManager;
+
+	// called by OSGi-DS
+	public static void bindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
+		startupManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
+		if (startupManager == serv) {
+			startupManager = null;
+		}
+	}
+	
 	@Override
 	public void addNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
@@ -143,5 +158,10 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 		synchronized( nodeMap ) {
 			return ImmutableList.copyOf(nodeMap.keySet());
 		}
+	}
+	
+	@Override
+	public IOdysseusNode getLocalNode() {
+		return startupManager.getLocalOdysseusNode();
 	}
 }
