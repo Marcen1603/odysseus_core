@@ -47,7 +47,10 @@ public final class OdysseusNodesChecker {
 		long currentTime = System.currentTimeMillis();
 		IOdysseusNodeManager nodeManager = BroadcastDiscoveryPlugIn.getOdysseusNodeManager();
 		IOdysseusNodeConnectionManager connectionManager = BroadcastDiscoveryPlugIn.getOdysseusNodeConnectionManager();
-
+		if( nodeManager == null || connectionManager == null ) {
+			return;
+		}
+		
 		synchronized (TIMESTAMP_MAP) {
 
 			List<IOdysseusNode> nodesToRemove = Lists.newArrayList();
