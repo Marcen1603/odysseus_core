@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
+import de.uniol.inf.is.odysseus.net.ping.IPingMap;
+import de.uniol.inf.is.odysseus.net.ping.IPingMapNode;
 
 public class OdysseusNetConsole implements CommandProvider {
 
@@ -42,6 +44,7 @@ public class OdysseusNetConsole implements CommandProvider {
 	private static IOdysseusNodeManager nodeManager;
 	private static IOdysseusNetStartupManager startupManager;
 	private static IOdysseusNodeConnectionManager connectionManager;
+	private static IPingMap pingMap;
 
 	// called by OSGi-DS
 	public static void bindServerExecutor(IExecutor serv) {
@@ -88,6 +91,18 @@ public class OdysseusNetConsole implements CommandProvider {
 	public static void unbindOdysseusNodeConnectionManager(IOdysseusNodeConnectionManager serv) {
 		if (connectionManager == serv) {
 			connectionManager = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindPingMap(IPingMap serv) {
+		pingMap = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPingMap(IPingMap serv) {
+		if (pingMap == serv) {
+			pingMap = null;
 		}
 	}
 
@@ -666,5 +681,38 @@ public class OdysseusNetConsole implements CommandProvider {
 			}
 		}
 		return selectedNodes;
+	}
+	
+	public void _ping(CommandInterpreter ci) {
+		Collection<IOdysseusNode> nodes = pingMap.getOdysseusNodes();
+		ci.println("Current known ping(s):");
+
+		List<String> output = Lists.newLinkedList();
+		for (IOdysseusNode node : nodes) {
+			Optional<Double> optPing = pingMap.getPing(node);
+			if (optPing.isPresent()) {
+				output.add(node + " : " + optPing.get());
+			} else {
+				output.add(node + " : <unknown>");
+			}
+		}
+
+		sortAndPrintList(ci, output);
+	}
+
+	public void _lsPingPositions(CommandInterpreter ci) {
+		Collection<IPingMapNode> pingNodes = pingMap.getPingNodes();
+		ci.println("Current known ping position(s):");
+
+		List<String> output = Lists.newLinkedList();
+		for (IPingMapNode pingNode : pingNodes) {
+			output.add(pingNode.toString());
+		}
+
+		sortAndPrintList(ci, output);
+	}
+
+	public void _listPingPositions(CommandInterpreter ci) {
+		_lsPingPositions(ci);
 	}
 }
