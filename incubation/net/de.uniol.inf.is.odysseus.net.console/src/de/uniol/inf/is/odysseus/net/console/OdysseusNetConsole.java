@@ -635,7 +635,7 @@ public class OdysseusNetConsole implements CommandProvider {
 		}
 	}
 
-	private Optional<IOdysseusNode> determineFirstSelectedNode(CommandInterpreter ci, String node) {
+	private static Optional<IOdysseusNode> determineFirstSelectedNode(CommandInterpreter ci, String node) {
 		Collection<IOdysseusNode> selectedNodes= determineNode(node);
 		if( selectedNodes.isEmpty() ) {
 			ci.println("There is no such node with '" + node + "'");
