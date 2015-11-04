@@ -281,7 +281,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 					}
 
 				} catch (IOException e) {
-					LOG.error("Could not accept connection from unknown client {}", clientSocket.getInetAddress(), e);
+					LOG.warn("Could not accept connection from unknown client {}", clientSocket.getInetAddress(), e);
 				}
 
 				// if we are here, something got wrong

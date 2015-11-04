@@ -45,7 +45,7 @@ public class ServerSocketAcceptThread extends Thread {
 			}
 			
 		} catch( IOException e ) {
-			LOG.error("Can not accept connections from other nodes", e);
+			LOG.warn("Can not accept connections from other nodes", e);
 		}
 		
 		LOG.info("Server socket accept thread finished");

@@ -71,7 +71,7 @@ public class SocketReceiveThread extends Thread {
 				}
 			}
 		} catch( IOException e ) {
-			LOG.error("Could not read from inputstream from socket {}", clientSocket, e);
+			LOG.warn("Could not read from inputstream from socket {}", clientSocket, e);
 			listener.socketDisconnected();
 		}
 		
