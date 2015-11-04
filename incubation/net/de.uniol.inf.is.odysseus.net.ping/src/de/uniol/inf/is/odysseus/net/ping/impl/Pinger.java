@@ -110,6 +110,8 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 		synchronized (waitingPongMap) {
 			waitingPongMap.clear();
 		}
+		
+		connectionManager.removeListener(this);
 	}
 
 	public static Pinger getInstance() {
