@@ -40,7 +40,7 @@ public class PlanModificationActionAO extends AbstractLogicalOperator {
 		return commandExpression;
 	}
 
-	@Parameter(name="QueryIDExpression", type = SDFExpressionParameter.class, doc="Exprssion to calculate the query id to execute the commands on")
+	@Parameter(name="QueryIDExpression", type = SDFExpressionParameter.class, doc="Expression to calculate the query id to execute the commands on")
 	public void setQueryIDExpression2( NamedExpression attribute ) {
 		queryIDExpression = attribute.expression;
 	}
