@@ -2,8 +2,11 @@ package de.uniol.inf.is.odysseus.net.console;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -35,16 +38,20 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.ping.IPingMapNode;
+import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
+import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
 
 public class OdysseusNetConsole implements CommandProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConsole.class);
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
 	private static IServerExecutor executor;
 	private static IOdysseusNodeManager nodeManager;
 	private static IOdysseusNetStartupManager startupManager;
 	private static IOdysseusNodeConnectionManager connectionManager;
 	private static IPingMap pingMap;
+	private static IOdysseusNodeResourceUsageManager resourceUsageManager;
 
 	// called by OSGi-DS
 	public static void bindServerExecutor(IExecutor serv) {
@@ -93,7 +100,7 @@ public class OdysseusNetConsole implements CommandProvider {
 			connectionManager = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPingMap(IPingMap serv) {
 		pingMap = serv;
@@ -103,6 +110,18 @@ public class OdysseusNetConsole implements CommandProvider {
 	public static void unbindPingMap(IPingMap serv) {
 		if (pingMap == serv) {
 			pingMap = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindOdysseusNodeResourceUsageManager(IOdysseusNodeResourceUsageManager serv) {
+		resourceUsageManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNodeResourceUsageManager(IOdysseusNodeResourceUsageManager serv) {
+		if (resourceUsageManager == serv) {
+			resourceUsageManager = null;
 		}
 	}
 
@@ -128,6 +147,10 @@ public class OdysseusNetConsole implements CommandProvider {
 		sb.append("    setNetConfiguration <key> <value>    - Sets key in the odysseus net configuration to spezified value\n");
 		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");
 		sb.append("    listNodes/ls..                       - Lists all found (!) nodes\n");
+		sb.append("    listConnectedNodes/ls...             - Lists all connected nodes\n");
+		sb.append("    isConnected <nodeID | nodeName>      - Checks, if the given node is connected to this node\n");
+		sb.append("    ping                                 - Lists pings to all connected nodes\n");
+		sb.append("    listPingPositions/ls...              - Lists the positions of the connected nodes in the ping map\n");
 		sb.append("\n");
 		sb.append("---Utility commands---\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
@@ -682,7 +705,7 @@ public class OdysseusNetConsole implements CommandProvider {
 		}
 		return selectedNodes;
 	}
-	
+
 	public void _ping(CommandInterpreter ci) {
 		Collection<IOdysseusNode> nodes = pingMap.getOdysseusNodes();
 		ci.println("Current known ping(s):");
@@ -714,5 +737,26 @@ public class OdysseusNetConsole implements CommandProvider {
 
 	public void _listPingPositions(CommandInterpreter ci) {
 		_lsPingPositions(ci);
+	}
+	
+	public void _resourceStatus(CommandInterpreter ci) {
+		IResourceUsage u = resourceUsageManager.getLocalResourceUsage();
+
+		ci.println("Version " + toVersionString(u.getVersion()));
+		ci.println("Startup timestamp is " + convertTimestampToDate(u.getStartupTimestamp()));
+		ci.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( " + (((double) u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0) + " %)");
+		ci.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( " + ((u.getCpuFree() / u.getCpuMax()) * 100.0) + " %)");
+		ci.println("NET: Max   = " + u.getNetBandwidthMax());
+		ci.println("NET: Input = " + u.getNetInputRate());
+		ci.println("NET: Output= " + u.getNetOutputRate());
+		ci.println(u.getStoppedQueriesCount() + " queries stopped");
+		ci.println(u.getRunningQueriesCount() + " queries running");
+	}
+
+	private static String toVersionString(int[] version) {
+		return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
+	}
+	private static String convertTimestampToDate(long startupTimestamp) {
+		return DATE_FORMAT.format(new Date(startupTimestamp));
 	}
 }
