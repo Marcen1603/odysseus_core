@@ -235,5 +235,9 @@ public class PingMap implements IPingMap  {
 		
 		firePingMapChangeEvent();
 	}
-
+	
+	@Override
+	public Collection<IPingMapNode> getPingNodes() {
+		return Lists.newArrayList(pingNodeMap.values());
+	}
 }

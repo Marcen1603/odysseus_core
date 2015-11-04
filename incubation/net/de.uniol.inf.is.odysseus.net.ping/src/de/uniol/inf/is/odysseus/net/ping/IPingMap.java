@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.net.ping;
 
+import java.util.Collection;
+
 import org.apache.commons.math.geometry.Vector3D;
 
 import com.google.common.base.Optional;
@@ -12,6 +14,8 @@ public interface IPingMap {
 	public Optional<Double> getRemotePing( IOdysseusNode startNode, IOdysseusNode endNode);
 
 	public Optional<IPingMapNode> getPingNode(IOdysseusNode peer);
+	public Collection<IPingMapNode> getPingNodes();
+	
 	public Vector3D getLocalPosition();
 	public void setPosition(IOdysseusNode node, Vector3D position);
 
