@@ -33,4 +33,18 @@ public final class PingMapNode implements IPingMapNode {
 		
 		this.position = position;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(node);
+		sb.append(":");
+		sb.append(toString(position));
+		return sb.toString();
+	}
+	
+	private static String toString(Vector3D v) {
+		return v.getX() + " / " + v.getY() + " / " + v.getZ();
+	}
+
 }

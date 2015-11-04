@@ -240,4 +240,9 @@ public class PingMap implements IPingMap  {
 	public Collection<IPingMapNode> getPingNodes() {
 		return Lists.newArrayList(pingNodeMap.values());
 	}
+	
+	@Override
+	public Collection<IOdysseusNode> getOdysseusNodes() {
+		return Lists.newArrayList(pingNodeMap.keySet());
+	}
 }

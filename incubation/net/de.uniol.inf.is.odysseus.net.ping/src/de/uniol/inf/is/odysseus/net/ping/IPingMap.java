@@ -15,6 +15,7 @@ public interface IPingMap {
 
 	public Optional<IPingMapNode> getPingNode(IOdysseusNode peer);
 	public Collection<IPingMapNode> getPingNodes();
+	public Collection<IOdysseusNode> getOdysseusNodes();
 	
 	public Vector3D getLocalPosition();
 	public void setPosition(IOdysseusNode node, Vector3D position);
