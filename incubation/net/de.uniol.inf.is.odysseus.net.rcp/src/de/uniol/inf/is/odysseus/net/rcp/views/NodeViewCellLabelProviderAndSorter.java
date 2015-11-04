@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 
-import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 
 public abstract class NodeViewCellLabelProviderAndSorter<T> extends CellLabelProvider {
 
@@ -17,8 +17,8 @@ public abstract class NodeViewCellLabelProviderAndSorter<T> extends CellLabelPro
 		sorter = new ColumnViewerSorter(tableViewer, column) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				T val1 = getValue((OdysseusNodeID) e1);
-				T val2 = getValue((OdysseusNodeID) e2);
+				T val1 = getValue((IOdysseusNode) e1);
+				T val2 = getValue((IOdysseusNode) e2);
 				
 				return compareValuesImpl(val1, val2); 
 			}
@@ -28,20 +28,18 @@ public abstract class NodeViewCellLabelProviderAndSorter<T> extends CellLabelPro
 	
 	@Override
 	public void update(ViewerCell cell) {
-		OdysseusNodeID pid = (OdysseusNodeID) cell.getElement();
+		IOdysseusNode pid = (IOdysseusNode) cell.getElement();
 		T value = getValue(pid);
 		if( value == null ) {
 			cell.setText("");
 		} else {
 			cell.setText(toString(value));
 			Image img = getImage( value );
-			if( img != null ) {
-				cell.setImage(img);
-			}
+			cell.setImage(img);
 		}
 	}
 
-	protected abstract T getValue( OdysseusNodeID pid );
+	protected abstract T getValue( IOdysseusNode pid );
 	
 	private int compareValuesImpl( T a, T b ) {
 		if (a == null && b == null ) {

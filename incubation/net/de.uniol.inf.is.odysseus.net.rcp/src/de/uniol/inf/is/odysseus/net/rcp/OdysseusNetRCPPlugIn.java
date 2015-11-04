@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.rcp.views.ChatMessage;
+import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
 
 public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 
@@ -19,6 +20,7 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 	private static IOdysseusNodeConnectionManager connectionManager;
 	private static IOdysseusNodeCommunicator nodeCommunicator;
 	private static IPingMap pingMap;
+	private static IOdysseusNodeResourceUsageManager resourceUsageManager;
 
 	// called by OSGi-DS
 	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
@@ -99,9 +101,25 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 			pingMap = null;
 		}
 	}
-	
+
 	public static IPingMap getPingMap() {
 		return pingMap;
+	}
+
+	// called by OSGi-DS
+	public static void bindOdysseusNodeResourceUsageManager(IOdysseusNodeResourceUsageManager serv) {
+		resourceUsageManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNodeResourceUsageManager(IOdysseusNodeResourceUsageManager serv) {
+		if (resourceUsageManager == serv) {
+			resourceUsageManager = null;
+		}
+	}
+	
+	public static IOdysseusNodeResourceUsageManager getOdysseusNodeResourceUsageManager() {
+		return resourceUsageManager;
 	}
 
 	@Override
