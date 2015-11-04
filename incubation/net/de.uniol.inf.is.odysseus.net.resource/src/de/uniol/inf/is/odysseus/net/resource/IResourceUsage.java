@@ -10,7 +10,7 @@ public interface IResourceUsage {
 	
 	public int getRunningQueriesCount();
 	public int getStoppedQueriesCount();
-	public int getRemotePeerCount();
+	public int getRemoteNodeCount();
 
 	public double getNetBandwidthMax();
 	public double getNetInputRate();
