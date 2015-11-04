@@ -7,16 +7,18 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
+import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.rcp.views.ChatMessage;
 
 public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 
 	private static final OdysseusNetStartupRCPListener RCP_STARTUP_LISTENER = new OdysseusNetStartupRCPListener();
-	
+
 	private static IOdysseusNodeManager nodeManager;
 	private static IOdysseusNetStartupManager startupManager;
 	private static IOdysseusNodeConnectionManager connectionManager;
 	private static IOdysseusNodeCommunicator nodeCommunicator;
+	private static IPingMap pingMap;
 
 	// called by OSGi-DS
 	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
@@ -63,11 +65,11 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 			connectionManager = null;
 		}
 	}
-	
+
 	public static IOdysseusNodeConnectionManager getOdysseusNodeConnectionManager() {
 		return connectionManager;
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
 		nodeCommunicator = serv;
@@ -81,9 +83,25 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 			nodeCommunicator = null;
 		}
 	}
-	
+
 	public static IOdysseusNodeCommunicator getOdysseusNodeCommunicator() {
 		return nodeCommunicator;
+	}
+
+	// called by OSGi-DS
+	public static void bindPingMap(IPingMap serv) {
+		pingMap = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPingMap(IPingMap serv) {
+		if (pingMap == serv) {
+			pingMap = null;
+		}
+	}
+	
+	public static IPingMap getPingMap() {
+		return pingMap;
 	}
 
 	@Override

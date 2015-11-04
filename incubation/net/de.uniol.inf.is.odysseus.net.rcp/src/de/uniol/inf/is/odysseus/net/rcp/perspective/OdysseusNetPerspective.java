@@ -6,7 +6,9 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
+import de.uniol.inf.is.odysseus.net.rcp.views.ChatView;
 import de.uniol.inf.is.odysseus.net.rcp.views.NodeViewPart;
+import de.uniol.inf.is.odysseus.net.rcp.views.PingMapView;
 
 public class OdysseusNetPerspective implements IPerspectiveFactory {
 
@@ -21,11 +23,15 @@ public class OdysseusNetPerspective implements IPerspectiveFactory {
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.75f, editorArea);
 		right.addView(IPageLayout.ID_OUTLINE);
 		
+		IFolderLayout bottomRight = layout.createFolder("bottomRight", IPageLayout.BOTTOM, 0.33f, IPageLayout.ID_OUTLINE);
+		bottomRight.addView(PingMapView.VIEW_ID);
+		
 		// Bottom right: Task List view
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.60f, editorArea);
 		bottom.addView(NodeViewPart.VIEW_ID);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		bottom.addView("org.eclipse.pde.runtime.LogView");
+		bottom.addView(ChatView.VIEW_ID);
 	}
 
 }

@@ -34,6 +34,14 @@
             name="Chat"
             restorable="true">
       </view>
+      <view
+            category="de.uniol.inf.is.odysseus.net.rcp.OdysseusNetCategory"
+            class="de.uniol.inf.is.odysseus.net.rcp.views.PingMapView"
+            icon="icons/ping.gif"
+            id="de.uniol.inf.is.odysseus.net.rcp.PingMap"
+            name="Ping Map"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

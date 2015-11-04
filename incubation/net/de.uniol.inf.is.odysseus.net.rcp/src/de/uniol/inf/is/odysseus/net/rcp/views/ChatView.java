@@ -45,6 +45,8 @@ import de.uniol.inf.is.odysseus.net.util.RepeatingJobThread;
 
 public class ChatView extends ViewPart implements IOdysseusNodeCommunicatorListener {
 
+	public static final String VIEW_ID = "de.uniol.inf.is.odysseus.net.rcp.ChatView";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(ChatView.class);
 	
 	private final List<IOdysseusNode> nodes = Lists.newArrayList();
