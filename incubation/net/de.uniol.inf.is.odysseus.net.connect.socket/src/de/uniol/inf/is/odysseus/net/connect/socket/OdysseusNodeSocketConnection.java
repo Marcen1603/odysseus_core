@@ -48,9 +48,14 @@ public class OdysseusNodeSocketConnection extends AbstractOdysseusNodeConnection
 
 	@Override
 	public void send(byte[] data) throws OdysseusNetConnectionException {
+		byte[] rawData = new byte[data.length + 4];
+		insertInt(rawData, 0, data.length);
+		System.arraycopy(data, 0, rawData, 4, data.length);
+		
 		try {
-			outputStream.write(data);
+			outputStream.write(rawData);
 			outputStream.flush();
+			
 		} catch (IOException e) {
 			throw new OdysseusNetConnectionException("Could not write to socket for node " + node, e);
 		}
@@ -100,4 +105,12 @@ public class OdysseusNodeSocketConnection extends AbstractOdysseusNodeConnection
 		
 		return sb.toString();
 	}
+	
+	private static void insertInt(byte[] destArray, int offset, int value) {
+		destArray[offset] = (byte) (value >>> 24);
+		destArray[offset + 1] = (byte) (value >>> 16);
+		destArray[offset + 2] = (byte) (value >>> 8);
+		destArray[offset + 3] = (byte) (value);
+	}
+
 }

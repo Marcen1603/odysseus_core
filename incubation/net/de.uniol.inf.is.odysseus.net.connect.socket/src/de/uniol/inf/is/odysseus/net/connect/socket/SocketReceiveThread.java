@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class SocketReceiveThread extends Thread {
 	@Override
 	public void run() {
 		LOG.info("Starting client socket receive thread for {}:", clientSocket.getInetAddress(), clientSocket.getPort());
+		MessageByteBuffer mb = new MessageByteBuffer();
 		
 		running = true;
 		try {
@@ -60,13 +62,12 @@ public class SocketReceiveThread extends Thread {
 					byte[] msg = new byte[bytesRead];
 					System.arraycopy(READING_BUFFER, 0, msg, 0, bytesRead);
 					
-					listener.bytesReceived(msg);
-//					mb.put(msg);
-//
-//					List<byte[]> packets = mb.getPackets();
-//					for (byte[] packet : packets) {
-//						processBytes(packet);
-//					}
+					mb.put(msg);
+
+					List<byte[]> packets = mb.getPackets();
+					for (byte[] packet : packets) {
+						listener.bytesReceived(packet);
+					}
 				}
 			}
 		} catch( IOException e ) {
