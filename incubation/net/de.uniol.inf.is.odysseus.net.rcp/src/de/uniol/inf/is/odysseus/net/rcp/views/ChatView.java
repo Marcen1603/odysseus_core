@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
 import de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn;
-import de.uniol.inf.is.odysseus.net.rcp.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.net.util.RepeatingJobThread;
 
 public class ChatView extends ViewPart implements IOdysseusNodeCommunicatorListener {
 

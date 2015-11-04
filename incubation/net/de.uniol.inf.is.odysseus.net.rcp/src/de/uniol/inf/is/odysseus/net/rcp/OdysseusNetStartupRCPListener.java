@@ -9,6 +9,7 @@ import com.google.common.base.Optional;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupListener;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 
 public class OdysseusNetStartupRCPListener implements IOdysseusNetStartupListener {
 
@@ -32,14 +33,22 @@ public class OdysseusNetStartupRCPListener implements IOdysseusNetStartupListene
 		return sb.toString(); 
 	}
 	
-	private static Object determineLocalNodeName() {
-		return OdysseusNetRCPPlugIn.getOdysseusNodeManager().getLocalNode().getName();
+	private static String determineLocalNodeName() {
+		try {
+			return OdysseusNetRCPPlugIn.getOdysseusNodeManager().getLocalNode().getName();
+		} catch (OdysseusNetException e) {
+			return "<no name>";
+		}
 	}
 
 	private static Object determineLocalNodeGroup() {
-		IOdysseusNode localNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getLocalNode();
-		Optional<String> optNodeGroup = localNode.getProperty("nodeGroup");
-		return optNodeGroup.isPresent() ? optNodeGroup.get() : "<no group>" ;
+		try {
+			IOdysseusNode localNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getLocalNode();
+			Optional<String> optNodeGroup = localNode.getProperty("nodeGroup");
+			return optNodeGroup.isPresent() ? optNodeGroup.get() : "<no group>" ;
+		} catch (OdysseusNetException e) {
+			return "<no group>";
+		}
 	}
 
 	public void setWindowTitle(final String title, boolean replace) {
