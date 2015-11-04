@@ -223,6 +223,8 @@ public class PingMap implements IPingMap  {
 	public void removePingNode( IOdysseusNode node ) {
 		pingNodeMap.remove(node);
 		ownPings.remove(node);
+		
+		firePingMapChangeEvent();
 	}
 
 	public void clearPingNodes() {
