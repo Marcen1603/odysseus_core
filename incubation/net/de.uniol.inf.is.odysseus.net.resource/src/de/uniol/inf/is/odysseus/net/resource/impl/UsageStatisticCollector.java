@@ -140,7 +140,7 @@ public class UsageStatisticCollector {
 		try {
 			return Integer.valueOf(string);
 		} catch( Throwable t ) {
-			LOG.error("Illegal version digit string: {}", string);
+			LOG.warn("Illegal version digit string: {}", string);
 			return 0;
 		}
 	}
