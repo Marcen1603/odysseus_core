@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.net.rcp.views.ChatMessage;
 
 public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 
+	private static final OdysseusNetStartupRCPListener RCP_STARTUP_LISTENER = new OdysseusNetStartupRCPListener();
+	
 	private static IOdysseusNodeManager nodeManager;
 	private static IOdysseusNetStartupManager startupManager;
 	private static IOdysseusNodeConnectionManager connectionManager;
@@ -35,11 +37,13 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 	// called by OSGi-DS
 	public static void bindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
 		startupManager = serv;
+		startupManager.addListener(RCP_STARTUP_LISTENER);
 	}
 
 	// called by OSGi-DS
 	public static void unbindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
 		if (startupManager == serv) {
+			startupManager.removeListener(RCP_STARTUP_LISTENER);
 			startupManager = null;
 		}
 	}
