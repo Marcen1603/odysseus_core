@@ -92,11 +92,12 @@ public class OdysseusNetConsole implements CommandProvider {
 
 		sb.append("---Odysseus net commands---\n");
 		sb.append("    startOdysseusNet/stop...             - Starts/Stops OdysseusNet\n");
-		sb.append("    showStartupData                      - Shows selected startup data of started OdysseusNet\n");
+		sb.append("    showLocalNode                        - Shows data of own node\n");
 		sb.append("\n");
 		sb.append("    listNetConfiguration/ls...           - Prints the current odysseus net configuration\n");
 		sb.append("    setNetConfiguration <key> <value>    - Sets key in the odysseus net configuration to spezified value\n");
 		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");	
+		sb.append("    listNodes/ls..                       - Lists all found (!) nodes\n");
 		sb.append("\n");
 		sb.append("---Utility commands---\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
