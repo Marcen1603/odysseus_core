@@ -13,3 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
 Import-Package: org.apache.commons.math.geometry
 Service-Component: OSGI-INF/pinger.xml,
  OSGI-INF/pingMap.xml
+Export-Package: de.uniol.inf.is.odysseus.net.ping
