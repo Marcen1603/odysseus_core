@@ -28,7 +28,7 @@ public class PingMap implements IPingMap  {
 	private static PingMap instance;
 	private static IOdysseusNodeManager nodeManager;
 	
-	private final Map<IOdysseusNode, PingMapNode> nodes = Maps.newHashMap();
+	private final Map<IOdysseusNode, PingMapNode> pingNodeMap = Maps.newConcurrentMap();
 	private final Map<IOdysseusNode, NumberAverager> ownPings = Maps.newConcurrentMap();
 	private final Collection<IPingMapListener> listeners = Lists.newArrayList();
 	
@@ -76,7 +76,7 @@ public class PingMap implements IPingMap  {
 			localPingMapNode.setPosition(getLocalPosition());
 			return Optional.<IPingMapNode>of(localPingMapNode);
 		}
-		return Optional.fromNullable((IPingMapNode)nodes.get(node));
+		return Optional.fromNullable((IPingMapNode)pingNodeMap.get(node));
 	}
 	
 	@Override
@@ -133,10 +133,10 @@ public class PingMap implements IPingMap  {
 	}
 
 	private PingMapNode getPingMapNode(IOdysseusNode node) {
-		PingMapNode pingNode = nodes.get(node);
+		PingMapNode pingNode = pingNodeMap.get(node);
 		if( pingNode == null ) {
 			pingNode = new PingMapNode(node);
-			nodes.put(node, pingNode);
+			pingNodeMap.put(node, pingNode);
 		}
 		return pingNode;
 	}
@@ -188,8 +188,8 @@ public class PingMap implements IPingMap  {
 			return Optional.of(0.0);
 		}
 		
-		PingMapNode startPingNode = nodes.get(startNode);
-		PingMapNode endPingNode = nodes.get(endNode);
+		PingMapNode startPingNode = pingNodeMap.get(startNode);
+		PingMapNode endPingNode = pingNodeMap.get(endNode);
 		
 		if( startPingNode == null || endPingNode == null ) {
 			return Optional.absent();
@@ -218,6 +218,20 @@ public class PingMap implements IPingMap  {
 	
 	private static String toString(Vector3D v) {
 		return v.getX() + "/" + v.getY() + "/" + v.getZ();
+	}
+	
+	public void removePingNode( IOdysseusNode node ) {
+		pingNodeMap.remove(node);
+		ownPings.remove(node);
+	}
+
+	public void clearPingNodes() {
+		pingNodeMap.clear();
+		ownPings.clear();
+		
+		timestep = 1.0;
+		
+		firePingMapChangeEvent();
 	}
 
 }

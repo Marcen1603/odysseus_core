@@ -19,22 +19,24 @@ import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
-import de.uniol.inf.is.odysseus.net.ping.IPingMap;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListener;
 import de.uniol.inf.is.odysseus.net.util.RepeatingJobThread;
 
-public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunicatorListener, IOdysseusNetComponent {
+public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunicatorListener, IOdysseusNetComponent, IOdysseusNodeConnectionManagerListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Pinger.class);
 	private static final Random RAND = new Random();
 	private static final int MIN_NODES_TO_PING = 10;
-	private static final double NODES_TO_PING_PERCENTAGE = 0.70; 
+	private static final double NODES_TO_PING_PERCENTAGE = 0.70;
 
 	private static final int PING_INTERVAL = 5000;
 	private static final int MAX_PONG_WAIT_MILLIS = 30000;
 
 	private static IOdysseusNodeManager nodeManager;
 	private static IOdysseusNodeCommunicator nodeCommunicator;
-	private static PingMap pingMap;
+	private static IOdysseusNodeConnectionManager connectionManager;
 	private static Pinger instance;
 
 	private final Map<IOdysseusNode, Long> waitingPongMap = Maps.newHashMap();
@@ -75,14 +77,14 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 	}
 
 	// called by OSGi-DS
-	public static void bindPingMap(IPingMap serv) {
-		pingMap = (PingMap) serv;
+	public static void bindOdysseusNodeConnectionManager(IOdysseusNodeConnectionManager serv) {
+		connectionManager = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindPingMap(IPingMap serv) {
-		if (pingMap == serv) {
-			pingMap = null;
+	public static void unbindOdysseusNodeConnectionManager(IOdysseusNodeConnectionManager serv) {
+		if (connectionManager == serv) {
+			connectionManager = null;
 		}
 	}
 
@@ -92,6 +94,8 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 
 		nodeCommunicator.addListener(this, PingMessage.class);
 		nodeCommunicator.addListener(this, PongMessage.class);
+
+		connectionManager.addListener(this);
 	}
 
 	// called by OSGi-DS
@@ -132,10 +136,10 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 					}
 				}
 			} else {
-				if( LOG.isDebugEnabled() ) {
+				if (LOG.isDebugEnabled()) {
 					synchronized (waitingPongMap) {
 						LOG.debug("No nodes for pinging currently available.");
-						if( !waitingPongMap.isEmpty() ) {
+						if (!waitingPongMap.isEmpty()) {
 							LOG.debug("Waiting for {} pong messages...", waitingPongMap.size());
 						}
 					}
@@ -162,9 +166,9 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 		synchronized (waitingPongMap) {
 			availableNodes.removeAll(waitingPongMap.keySet());
 		}
-		
-		int nodesToPingCount = Math.max(MIN_NODES_TO_PING, (int)(availableNodes.size() * NODES_TO_PING_PERCENTAGE)); 
-				
+
+		int nodesToPingCount = Math.max(MIN_NODES_TO_PING, (int) (availableNodes.size() * NODES_TO_PING_PERCENTAGE));
+
 		if (availableNodes.size() <= nodesToPingCount) {
 			return Lists.newArrayList(availableNodes);
 		}
@@ -185,7 +189,7 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 			LOG.debug("Got ping message from node {}", senderNode);
 			PingMessage pingMessage = (PingMessage) message;
 
-			IMessage pongMessage = new PongMessage(pingMessage, pingMap.getLocalPosition());
+			IMessage pongMessage = new PongMessage(pingMessage, PingMap.getInstance().getLocalPosition());
 			try {
 				communicator.send(senderNode, pongMessage);
 			} catch (OdysseusNodeCommunicationException e) {
@@ -200,24 +204,37 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 
 			long latency = System.currentTimeMillis() - pongMessage.getTimestamp();
 			LOG.debug("Latency to node {} is now {} ms", senderNode, latency);
-			pingMap.update(senderNode, pongMessage.getPosition(), latency);
+			PingMap.getInstance().update(senderNode, pongMessage.getPosition(), latency);
 		}
 	}
-	
-	// Important: start is called in RepeatingJobThread from OdysseusNetComponent
+
+	// Important: start is called in RepeatingJobThread from
+	// OdysseusNetComponent
 
 	@Override
 	public void init(IOdysseusNode localNode) throws OdysseusNetException {
-		
+		// do nothing
 	}
 
 	@Override
 	public void stop() {
 		stopRunning();
+
+		PingMap.getInstance().clearPingNodes();
 	}
 
 	@Override
 	public void terminate(IOdysseusNode localNode) {
-		
+		// do nothing
+	}
+
+	@Override
+	public void nodeConnected(IOdysseusNodeConnection connection) {
+		// do nothing
+	}
+
+	@Override
+	public void nodeDisconnected(IOdysseusNodeConnection connection) {
+		PingMap.getInstance().removePingNode(connection.getOdysseusNode());
 	}
 }
