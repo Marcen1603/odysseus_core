@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManagerListener;
+import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 
 public final class OdysseusNodeManager implements IOdysseusNodeManager {
@@ -161,7 +162,20 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	}
 	
 	@Override
-	public IOdysseusNode getLocalNode() {
+	public IOdysseusNode getLocalNode() throws OdysseusNetException {
+		if( !startupManager.isStarted() ) {
+			throw new OdysseusNetException("OdysseusNet must be started to get local node");
+		}
 		return startupManager.getLocalOdysseusNode();
+	}
+	
+	@Override
+	public boolean isLocalNode(IOdysseusNode node) {
+		Preconditions.checkNotNull(node, "node must not be null!");
+		if( startupManager.isStarted() ) {
+			return startupManager.getLocalOdysseusNode().equals(node);
+		}
+		
+		return false;
 	}
 }

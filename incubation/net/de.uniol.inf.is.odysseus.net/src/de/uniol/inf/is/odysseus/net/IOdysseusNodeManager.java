@@ -12,7 +12,9 @@ public interface IOdysseusNodeManager {
 	public boolean existsNode(IOdysseusNode node);
 	public boolean existsNode(OdysseusNodeID nodeID);
 	public Optional<IOdysseusNode> getNode(OdysseusNodeID nodeID);
-	public IOdysseusNode getLocalNode();
+	
+	public IOdysseusNode getLocalNode() throws OdysseusNetException;
+	public boolean isLocalNode(IOdysseusNode node);
 	
 	public void addListener( IOdysseusNodeManagerListener listener );
 	public void removeListener( IOdysseusNodeManagerListener listener );
