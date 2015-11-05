@@ -12,15 +12,15 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  * @author Henrik Surm
  */
-public class ToImage4Function extends AbstractFunction<ImageJCV> {
+public class ToImage5Function extends AbstractFunction<ImageJCV> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 282271378681582656L;
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {SDFDatatype.NUMBERS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS};
 	
-	public ToImage4Function() {
-		super("toImageCV", 5, ToImage4Function.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
+	public ToImage5Function() {
+		super("toImageCV", 5, ToImage5Function.ACC_TYPES, SDFImageJCVDatatype.IMAGEJCV);
 	}
 	
 	/**
