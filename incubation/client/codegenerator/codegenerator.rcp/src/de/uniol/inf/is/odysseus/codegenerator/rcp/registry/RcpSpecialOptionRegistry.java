@@ -3,35 +3,41 @@ package de.uniol.inf.is.odysseus.codegenerator.rcp.registry;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RcpSpecialOptionRegistry {
 	
-	static Map<String, IRcpSpecialOption> rcpSpeicalOptionList= new HashMap<String, IRcpSpecialOption>();
+	private static Logger LOG = LoggerFactory.getLogger(RcpSpecialOptionRegistry.class);
+	static Map<String, IRcpSpecialOption> rcpSpecialOptionList= new HashMap<String, IRcpSpecialOption>();
 	
-	
-	public static void registerRCPSpeicalOption(IRcpSpecialOption specialOption){
+	public static void registerRCPSpecialOption(IRcpSpecialOption specialOption){
 		
-		if(!rcpSpeicalOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
-			rcpSpeicalOptionList.put(specialOption.getTargetPlatform().toLowerCase(), specialOption);
+		if(!rcpSpecialOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
+			rcpSpecialOptionList.put(specialOption.getTargetPlatform().toLowerCase(), specialOption);
+			LOG.info("RCP specialsOption for "+specialOption.getTargetPlatform() +" added!");
+		}else{
+			LOG.info("Targetplatform "+specialOption.getTargetPlatform() +" not found!");
 		}
 		
 	}
 	
 	public static void unregisterRCPSpeicalOption(IRcpSpecialOption specialOption){
 		
-		if(rcpSpeicalOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
-			rcpSpeicalOptionList.remove(specialOption.getTargetPlatform().toLowerCase());
+		if(rcpSpecialOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
+			rcpSpecialOptionList.remove(specialOption.getTargetPlatform().toLowerCase());
+		}else{
+			
 		}
 	}
 	
 	public static IRcpSpecialOption getRCPSpeicalOption(String targetPlatform){
-		
-		if(rcpSpeicalOptionList.containsKey(targetPlatform.toLowerCase())){
-			return rcpSpeicalOptionList.get(targetPlatform.toLowerCase());
+		if(rcpSpecialOptionList.containsKey(targetPlatform.toLowerCase())){
+			return rcpSpecialOptionList.get(targetPlatform.toLowerCase());
 			
 		}else{
 			return null;
 		}
-		
 	}
 
 }
