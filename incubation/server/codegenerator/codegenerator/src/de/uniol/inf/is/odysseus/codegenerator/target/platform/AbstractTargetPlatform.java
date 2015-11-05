@@ -102,8 +102,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 				generateOperatorCodeOperatorReady(operator,parameter,transformationConfiguration,queryAnalseInformation, opTrans);
 			}
 			
-			
-			 	generateOperatorSubscription(operator, queryAnalseInformation);
+			 generateOperatorSubscription(operator, queryAnalseInformation);
 
 		}else{
 			sendMessageEvent(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,UpdateMessageEventType.WARNING);

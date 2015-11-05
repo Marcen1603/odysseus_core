@@ -183,6 +183,7 @@ public class QueryAnalyseInformation {
 	
 
 	public void addProtocolHandler(String protocolHandlerString) {
+		
 		if(protocolHandlerString != null &&  !protocolHandlerString.equals("")){
 			String fullClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getName();
 			String simpleClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getSimpleName();
