@@ -20,7 +20,7 @@ public class TargetPlatformRegistry {
 			supportedTargetPlattforms.put(targetPlatform.getTargetPlatformName().toLowerCase(), targetPlatform);
 			LOG.info("Target platform "+targetPlatform.getTargetPlatformName() +" added!");
 		}else{
-			LOG.info("Target platform "+targetPlatform.getTargetPlatformName() +" already added!");
+			LOG.info("Targetplatform "+targetPlatform.getTargetPlatformName() +" already added!");
 		}
 	}
 	
@@ -29,7 +29,7 @@ public class TargetPlatformRegistry {
 		if(supportedTargetPlattforms.containsKey(targetPlatform.getTargetPlatformName().toLowerCase())){
 			supportedTargetPlattforms.remove(targetPlatform.getTargetPlatformName().toLowerCase());
 		}else{
-			LOG.info("No target platform "+targetPlatform.getTargetPlatformName() +" found!");
+			LOG.info("No targetplatform "+targetPlatform.getTargetPlatformName() +" found!");
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class TargetPlatformRegistry {
 		if(supportedTargetPlattforms.containsKey(platformName.toLowerCase())){
 			return supportedTargetPlattforms.get(platformName.toLowerCase());
 		}else{
-			LOG.info("No target platform "+platformName +" found!");
+			LOG.info("No targetplatform "+platformName +" found!");
 			return null;
 		}	
 	}
