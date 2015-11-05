@@ -22,7 +22,7 @@ public class RcpSpecialOptionRegistry {
 		
 	}
 	
-	public static void unregisterRCPSpeicalOption(IRcpSpecialOption specialOption){
+	public static void unregisterRCPSpecialOption(IRcpSpecialOption specialOption){
 		
 		if(rcpSpecialOptionList.containsKey(specialOption.getTargetPlatform().toLowerCase())){
 			rcpSpecialOptionList.remove(specialOption.getTargetPlatform().toLowerCase());
