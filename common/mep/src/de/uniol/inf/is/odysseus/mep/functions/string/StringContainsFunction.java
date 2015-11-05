@@ -15,10 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.string;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
-public class StringContainsFunction extends AbstractBinaryStringFunction<Boolean> {
+public class StringContainsFunction extends AbstractBinaryStringFunction<Boolean> implements IHasAlias {
 
 	private static final long serialVersionUID = -2241632788238873550L;
 
@@ -31,5 +32,9 @@ public class StringContainsFunction extends AbstractBinaryStringFunction<Boolean
 		return ((String)getInputValue(0)).toLowerCase().contains(((String)getInputValue(1)).toLowerCase());
 	}
 
+	@Override
+	public String getAliasName() {
+		return "contains";
+	}
 
 }
