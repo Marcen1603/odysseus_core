@@ -53,7 +53,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 	
 	private int style; 
 	
-	private static String rcpConfig = "CODEGEN";
+	private static String rcpConfig = "codegen";
 
 	public QueryTransformationParameterComposite(
 			final QueryTransformationWindow window, Composite parent,
@@ -133,6 +133,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 				DirectoryDialog dlg = new DirectoryDialog(
 						parentShell, SWT.OPEN);
+				dlg.setFilterPath(txtTargetDirectory.getText());
 				dlg.setText("Open");
 				String path = dlg.open();
 				if (path == null)
@@ -154,6 +155,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 				DirectoryDialog dlg = new DirectoryDialog(
 						parentShell, SWT.OPEN);
+				dlg.setFilterPath(txtOdysseusCode.getText());
 				dlg.setText("Open");
 				String path = dlg.open();
 				if (path == null)
@@ -285,7 +287,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		
 			
 			try {
-				String targetDirectoryRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"targetDirectory");
+				String targetDirectoryRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"TargetDirectory");
 				txtTargetDirectory.setText(targetDirectoryRCPConfig);
 				
 			} catch (OdysseusRCPConfiguartionException e) {
@@ -293,7 +295,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 			}
 			
 			try {
-				String odysseusDirectoryRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"odysseusDirectory");
+				String odysseusDirectoryRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"OdysseusDirectory");
 				txtOdysseusCode.setText(odysseusDirectoryRCPConfig);
 			} catch (OdysseusRCPConfiguartionException e) {
 				e.printStackTrace();
@@ -301,7 +303,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 			
 			
 			try {
-				String targetPlatformRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"targetPlatform");
+				String targetPlatformRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"TargetPlatform");
 				String[] items = targetPlatform.getItems();
 				
 				for(int i=0;i<items.length; i++){
@@ -320,10 +322,10 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 	
 	
 	private void saveInputFields(){
-		OdysseusRCPConfiguration.set(rcpConfig+"targetDirectory", txtTargetDirectory.getText());
-		OdysseusRCPConfiguration.set(rcpConfig+"odysseusDirectory", txtOdysseusCode.getText());
-		OdysseusRCPConfiguration.set(rcpConfig+"targetPlatform", targetPlatform.getText());
-		OdysseusRCPConfiguration.set(rcpConfig+"scheduler", comboScheduler.getText());
+		OdysseusRCPConfiguration.set(rcpConfig+"TargetDirectory", txtTargetDirectory.getText());
+		OdysseusRCPConfiguration.set(rcpConfig+"OdysseusDirectory", txtOdysseusCode.getText());
+		OdysseusRCPConfiguration.set(rcpConfig+"TargetPlatform", targetPlatform.getText());
+		OdysseusRCPConfiguration.set(rcpConfig+"Scheduler", comboScheduler.getText());
 	}
 	
 	
@@ -337,7 +339,7 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 			
 			for(int i=0; i<schedulers.length;i++){
 				 try {
-					if (schedulers[i].toLowerCase().equals(OdysseusRCPConfiguration.get(rcpConfig+"scheduler").toLowerCase())) {
+					if (schedulers[i].toLowerCase().equals(OdysseusRCPConfiguration.get(rcpConfig+"Scheduler").toLowerCase())) {
 						comboScheduler.select(i);
 					 }
 				} catch (OdysseusRCPConfiguartionException e) {
