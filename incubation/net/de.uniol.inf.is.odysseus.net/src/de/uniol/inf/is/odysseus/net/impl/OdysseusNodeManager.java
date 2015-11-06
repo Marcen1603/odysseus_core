@@ -27,20 +27,6 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	private final Map<OdysseusNodeID, IOdysseusNode> nodeMap = Maps.newHashMap();
 	private final Collection<IOdysseusNodeManagerListener> listeners = Lists.newLinkedList();
 
-	private static IOdysseusNetStartupManager startupManager;
-
-	// called by OSGi-DS
-	public static void bindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
-		startupManager = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindOdysseusNetStartupManager(IOdysseusNetStartupManager serv) {
-		if (startupManager == serv) {
-			startupManager = null;
-		}
-	}
-	
 	@Override
 	public void addNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
@@ -163,18 +149,21 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	
 	@Override
 	public IOdysseusNode getLocalNode() throws OdysseusNetException {
-		if( !startupManager.isStarted() ) {
+		Optional<IOdysseusNetStartupManager> optStartupManager = OdysseusNetStartupManager.getInstance();
+		if( optStartupManager.isPresent() && !optStartupManager.get().isStarted() ) {
 			throw new OdysseusNetException("OdysseusNet must be started to get local node");
 		}
-		return startupManager.getLocalOdysseusNode();
+		return optStartupManager.get().getLocalOdysseusNode();
 	}
 	
 	@Override
 	public boolean isLocalNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
-		if( startupManager.isStarted() ) {
+		Optional<IOdysseusNetStartupManager> optStartupManager = OdysseusNetStartupManager.getInstance();
+		
+		if( optStartupManager.isPresent() && optStartupManager.get().isStarted() ) {
 			try {
-				return startupManager.getLocalOdysseusNode().equals(node);
+				return optStartupManager.get().getLocalOdysseusNode().equals(node);
 			} catch (OdysseusNetException e) {
 				// no happen here
 			}

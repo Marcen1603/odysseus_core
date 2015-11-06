@@ -9,7 +9,7 @@
    <launcherArgs>
       <programArgs>-console -debug -nl en -data @noDefault -clean -debug -profile OdysseusProfile
       </programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dosgi.console.enable.builtin=true -Declipse.log.level=ERROR -Dnet.node.name=OdysseusServerNode
+      <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dosgi.console.enable.builtin=true -Declipse.log.level=ERROR -Dnet.node.name=OdysseusServerNode -Dnet.autostart=true
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>

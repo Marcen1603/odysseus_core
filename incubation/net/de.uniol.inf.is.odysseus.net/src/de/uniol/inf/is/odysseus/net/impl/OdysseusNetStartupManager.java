@@ -18,10 +18,13 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNetComponentStatus;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
+import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 
 public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetStartupManager.class);
+	private static final String AUTOSTART_CONFIG_KEY = "net.autostart";
+	private static final Boolean AUTOSTART_DEFAULT_VALUE = false;
 	
 	private final Map<IOdysseusNetComponent, OdysseusNetComponentStatus> componentMap = Maps.newHashMap();
 	private final Object startUpSyncObject = new Object();
@@ -29,8 +32,11 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 
 	private IOdysseusNetStartup startup;
 	private Boolean started = false;
+	private Boolean autostart = null;
 
 	private IOdysseusNode localNode;
+	
+	private static IOdysseusNetStartupManager instance;
 
 	// called by OSGi-DS
 	public void bindOdysseusNetStartup(IOdysseusNetStartup serv) {
@@ -58,6 +64,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 				componentMap.put(serv, OdysseusNetComponentStatus.ADDED);
 				
 				LOG.debug("Added odysseus net component {}", serv);
+				
 			}
 		}
 	}
@@ -65,12 +72,8 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	// called by OSGi-DS
 	public void unbindOdysseusNetComponent(IOdysseusNetComponent serv) {
 		synchronized (componentMap) {
-			OdysseusNetComponentStatus status = componentMap.get(serv);
-			if( status == OdysseusNetComponentStatus.INITED) {
-				serv.terminate(localNode);
-			} else if( status == OdysseusNetComponentStatus.RUNNING) {
-				serv.stop();
-			}
+			tryStopComponent(serv);
+			tryTerminateComponent(serv);
 			
 			componentMap.remove(serv);
 			
@@ -90,9 +93,38 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	
 	// called by OSGi-DS
 	public void activate() {
-		// do nothing
+		if( isAutostart() ) {
+			LOG.debug("Autostart of OdysseusNet is activated. Starting now...");
+			
+			try {
+				start();
+			} catch (OdysseusNetException e) {
+				LOG.error("Could not autostart OdysseusNet", e);
+			}
+		} else {
+			LOG.debug("Autostart of OdysseusNet is deactivated");
+		}
+		
+		instance = this;
+	}
+
+	private boolean isAutostart() {
+		if( autostart == null ) {
+			String doAutostartStr = OdysseusNetConfiguration.get(AUTOSTART_CONFIG_KEY, AUTOSTART_DEFAULT_VALUE.toString());
+			autostart = tryToBoolean(doAutostartStr, AUTOSTART_DEFAULT_VALUE);
+		} 
+		
+		return autostart;
 	}
 	
+	private static boolean tryToBoolean(String text, boolean defaultValue) {
+		try {
+			return Boolean.valueOf(text);
+		} catch( Throwable t ) {
+			return defaultValue;
+		}
+	}
+
 	// called by OSGi-DS
 	public void deactivate() {
 		synchronized( started ) {
@@ -100,19 +132,26 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 				stop();
 			}
 		}
+		instance = null;
+	}
+	
+	public static Optional<IOdysseusNetStartupManager> getInstance() {
+		return Optional.fromNullable(instance);
 	}
 
 	private boolean tryInitComponent(IOdysseusNetComponent component) {
 		try {
-			if( componentMap.get(component) != OdysseusNetComponentStatus.ADDED ) {
-				return false;
+			synchronized( componentMap ) {
+				if( componentMap.get(component) != OdysseusNetComponentStatus.ADDED ) {
+					return false;
+				}
+				
+				LOG.info("Initializing OdysseusNet component {}", component);
+				component.init(localNode);
+				
+				componentMap.put(component, OdysseusNetComponentStatus.INITED);
+				return true;
 			}
-			
-			LOG.info("Initializing OdysseusNet component {}", component);
-			component.init(localNode);
-			
-			componentMap.put(component, OdysseusNetComponentStatus.INITED);
-			return true;
 			
 		} catch( Throwable t ) {
 			LOG.error("Exception during initializing OysseusNet component", t);
@@ -122,15 +161,17 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 
 	private boolean tryStartComponent(IOdysseusNetComponent component) {
 		try {
-			if( componentMap.get(component) != OdysseusNetComponentStatus.INITED && componentMap.get(component) != OdysseusNetComponentStatus.STOPPED ) {
-				return false;
+			synchronized( componentMap ) {
+				if( componentMap.get(component) != OdysseusNetComponentStatus.INITED && componentMap.get(component) != OdysseusNetComponentStatus.STOPPED ) {
+					return false;
+				}
+				
+				LOG.info("Starting OdysseusNet component {}", component);
+				
+				component.start();
+				componentMap.put(component, OdysseusNetComponentStatus.RUNNING);
+				return true;
 			}
-			
-			LOG.info("Starting OdysseusNet component {}", component);
-			
-			component.start();
-			componentMap.put(component, OdysseusNetComponentStatus.RUNNING);
-			return true;
 			
 		} catch( Throwable t ) {
 			LOG.error("Exception during starting odysseus net component", t);
@@ -140,15 +181,17 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 
 	private boolean tryStopComponent(IOdysseusNetComponent component) {
 		try {
-			if( componentMap.get(component) != OdysseusNetComponentStatus.RUNNING ) {
-				return false;
+			synchronized( componentMap ) {
+				if( componentMap.get(component) != OdysseusNetComponentStatus.RUNNING ) {
+					return false;
+				}
+				
+				LOG.info("Stopping OdysseusNet component {}", component);
+				componentMap.put(component, OdysseusNetComponentStatus.STOPPED);
+				component.stop();
+	
+				return true;
 			}
-			
-			LOG.info("Stopping OdysseusNet component {}", component);
-			componentMap.put(component, OdysseusNetComponentStatus.STOPPED);
-			component.stop();
-
-			return true;
 		} catch( Throwable t ) {
 			LOG.error("Exception during stopping odysseus net component", t);
 			return false;
@@ -157,14 +200,16 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 	
 	private boolean tryTerminateComponent(IOdysseusNetComponent component) {
 		try {
-			if( componentMap.get(component) != OdysseusNetComponentStatus.STOPPED && componentMap.get(component) != OdysseusNetComponentStatus.INITED) {
-				return false;
+			synchronized( componentMap ) {
+				if( componentMap.get(component) != OdysseusNetComponentStatus.STOPPED && componentMap.get(component) != OdysseusNetComponentStatus.INITED) {
+					return false;
+				}
+				
+				LOG.info("Terminating OdysseusNet component {}", component);
+				component.terminate(localNode);
+				componentMap.put(component, OdysseusNetComponentStatus.ADDED);
+				return true;
 			}
-			
-			LOG.info("Terminating OdysseusNet component {}", component);
-			component.terminate(localNode);
-			componentMap.put(component, OdysseusNetComponentStatus.ADDED);
-			return true;
 			
 		} catch( Throwable t ) {
 			LOG.error("Exception during terminating OysseusNet component", t);
@@ -179,7 +224,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 
 		synchronized (started) {
 			if( started ) {
-				LOG.error("OdysseusNet already started. Stop first");
+				LOG.warn("OdysseusNet already started. Stop first");
 				return;
 			}
 			
@@ -269,7 +314,7 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 		
 		synchronized (started) {
 			if( !started ) {
-				LOG.error("OdysseusNet already stopped. Start first");
+				LOG.warn("OdysseusNet already stopped. Start first");
 				return;
 			}
 			
