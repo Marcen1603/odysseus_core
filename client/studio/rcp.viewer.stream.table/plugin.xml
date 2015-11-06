@@ -43,7 +43,7 @@
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTableTimeEditor"
             icon="icons/application-table.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.TableTime"
-            label="Table - Show last elements (time)">
+            label="Table - Show recent observation point">
       </editor>
    </extension>
    <extension

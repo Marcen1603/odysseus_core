@@ -119,7 +119,12 @@ public class StreamTableEditor implements IStreamEditorType {
 		}
 
 		updateTuples((Tuple<?>) element);
+		
+		refresh();
+	}
 
+
+	protected void refresh() {
 		synchronized (isRefreshing) {
 			if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
 
