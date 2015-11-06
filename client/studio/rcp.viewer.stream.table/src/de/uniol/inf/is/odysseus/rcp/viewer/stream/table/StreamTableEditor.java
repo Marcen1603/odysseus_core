@@ -46,7 +46,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -120,9 +119,10 @@ public class StreamTableEditor implements IStreamEditorType {
 		}
 
 		updateTuples((Tuple<?>) element);
-
+		
 		refresh();
 	}
+
 
 	protected void refresh() {
 		synchronized (isRefreshing) {
@@ -154,7 +154,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	public void updateTuples(Tuple<?> element) {
 
 		synchronized (filterMonitor) {
-			if (filter != null && filter.isFiltered(element)) {
+			if( filter != null && filter.isFiltered(element)) {
 				return; // discared filtered elements
 			}
 		}
@@ -170,8 +170,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
-			int port) {
+	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override
@@ -194,8 +193,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		filterButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, shownAttributes,
-						filterExpressionString);
+				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, shownAttributes, filterExpressionString);
 				window.show();
 
 				if (!window.isCanceled()) {
@@ -203,8 +201,7 @@ public class StreamTableEditor implements IStreamEditorType {
 					if (!window.getSelectedAttributeIndices().isEmpty()) {
 						createColumns(getTableViewer(), window.getSelectedAttributeIndices());
 						if (getSchema().size() != window.getSelectedAttributeIndices().size()) {
-							toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of "
-									+ getSchema().size() + " attributes show.");
+							toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of " + getSchema().size() + " attributes show.");
 						} else {
 							toolbarLabel.setText("");
 						}
@@ -214,16 +211,16 @@ public class StreamTableEditor implements IStreamEditorType {
 
 					if (!Strings.isNullOrEmpty(filterExpressionString)) {
 						try {
-							synchronized (filterMonitor) {
+							synchronized( filterMonitor) {
 								filter = new TupleFilter(filterExpressionString, getSchema());
 							}
-
+							
 							toolbarLabel.setText(toolbarLabel.getText() + " [ " + filter.getExpressionString() + " ]");
 						} catch (ParseException e1) {
 							new ExceptionWindow("Could not apply filter '" + filterExpressionString + "'", e1);
 						}
 					} else {
-						synchronized (filterMonitor) {
+						synchronized( filterMonitor ) {
 							filter = null;
 						}
 					}
@@ -277,9 +274,9 @@ public class StreamTableEditor implements IStreamEditorType {
 
 		});
 
+		
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
-		toolbarLabel.setText(
-				"                                                                                                                                                                                     ");
+		toolbarLabel.setText("                                                                                                                                                                                     ");
 	}
 
 	public final SDFSchema getSchema() {
@@ -325,13 +322,15 @@ public class StreamTableEditor implements IStreamEditorType {
 				try {
 					Object attr = ((Tuple<?>) cell.getElement()).getAttribute(attributeIndex);
 					if (attr != null) {
-						if (attr instanceof Object[]) {
-							cell.setText(Arrays.deepToString((Object[]) attr));
-						} else if (attr.getClass().isArray()) {
-							cell.setText(Arrays.toString((double[]) attr));
-						} else {
-							cell.setText(attr.toString());
-						}
+                        if (attr instanceof Object[]) {
+                            cell.setText(Arrays.deepToString((Object[]) attr));
+                        }
+                        else if (attr.getClass().isArray()) {
+                            cell.setText(Arrays.toString((double[]) attr));
+                        }
+                        else {
+                            cell.setText(attr.toString());
+                        }
 					} else {
 						cell.setText("<null>");
 					}
@@ -418,45 +417,31 @@ public class StreamTableEditor implements IStreamEditorType {
 				TableViewerColumn col = createColumn(tableViewer, getSchema().get(attributeIndex));
 				layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
-
+			
 			if (isShowingMetadata) {
+				
 				List<SDFMetaSchema> metaschemaList = getSchema().getMetaschema();
-				if (metaschemaList != null) {
-					for (int i = 0; i < metaschemaList.size(); i++) {
+				if( metaschemaList != null ) {
+					for( int i = 0; i < metaschemaList.size(); i++) {
 						SDFSchema metaschema = metaschemaList.get(i);
-						for (int j = 0; j < metaschema.size(); j++) {
+						for (int j = 0; j < metaschema.size(); j++ ) {
 							SDFAttribute metaAttribute = metaschema.get(j);
-							TableViewerColumn metadataColumn = createMetadataAttributeColumn(tableViewer, metaAttribute,
-									i, j);
+							TableViewerColumn metadataColumn = createMetadataAttributeColumn(tableViewer, metaAttribute, i, j);
 							layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
 						}
 					}
 				} else {
 					TableViewerColumn metadataColumn = createMetadataColumn(tableViewer);
 					layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
-
+	
 					TableViewerColumn metadataMapColumn = createMetadataMapColumn(tableViewer);
 					layout.setColumnData(metadataMapColumn.getColumn(), new ColumnWeightData(weight, 25, true));
 				}
 			}
 			
-			// TODO Timo: isShowingIntervalViz muesste irgendwo vorher durch einen Button gesetzt werden
-			boolean isShowingIntervalViz = false;
-			if(isShowingIntervalViz) {
-				int intervalMetadataPos = getSchema().getMetaAttributeNames().indexOf(ITimeInterval.class.getName());
-				if (intervalMetadataPos >= 0) {
-					SDFSchema metaschema = getSchema().getMetaschema().get(intervalMetadataPos);
-					SDFAttribute metaAttribute1 = metaschema.get(0);
-					SDFAttribute metaAttribute2 = metaschema.get(1);
-					TableViewerColumn metadataColumn = createTimeIntervalVizColumn(tableViewer, metaAttribute1,
-							metaAttribute2, intervalMetadataPos);
-					layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
-				}
-			}
-
-			if (isShowingHashCode) {
+			if (isShowingHashCode){
 				TableViewerColumn hashCodeColumn = createHashCodeColumn(tableViewer);
-				layout.setColumnData(hashCodeColumn.getColumn(), new ColumnWeightData(weight, 10, true));
+				layout.setColumnData(hashCodeColumn.getColumn(), new ColumnWeightData(weight,10,true));
 			}
 
 		} finally {
@@ -502,8 +487,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		return col;
 	}
 
-	private TableViewerColumn createMetadataAttributeColumn(TableViewer tableViewer, SDFAttribute metadataAttribute,
-			final int metaschemaIndex, final int metaAttributeIndex) {
+	private TableViewerColumn createMetadataAttributeColumn(TableViewer tableViewer, SDFAttribute metadataAttribute, final int metaschemaIndex, final int metaAttributeIndex) {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		col.getColumn().setText(metadataAttribute.getAttributeName());
 		col.getColumn().setAlignment(SWT.CENTER);
@@ -513,7 +497,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			public void update(ViewerCell cell) {
 				try {
 					Tuple<?> tuple = (Tuple<?>) cell.getElement();
-					if (tuple.getMetadata() != null) {
+					if( tuple.getMetadata() != null ) {
 						Object metadata = tuple.getMetadata().getValue(metaschemaIndex, metaAttributeIndex);
 						if (metadata != null) {
 							cell.setText(metadata.toString());
@@ -534,50 +518,6 @@ public class StreamTableEditor implements IStreamEditorType {
 
 		return col;
 	}
-
-
-	private TableViewerColumn createTimeIntervalVizColumn(TableViewer tableViewer, SDFAttribute metadataAttribute1,
-			SDFAttribute metadataAttribute2, final int metaschemaIndex) {
-		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
-
-		col.getColumn().setText("Interval Viz");
-		col.getColumn().setAlignment(SWT.CENTER);
-
-		col.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				try {
-					Tuple<?> tuple = (Tuple<?>) cell.getElement();
-					/*Image image = new Image(Display.getCurrent(), cell.getBounds());
-					GC gc = new GC(image);
-					Rectangle bounds = image.getBounds();
-					gc.drawLine(0, 0, bounds.width, bounds.height);
-					gc.drawLine(0, bounds.height, bounds.width, 0);
-					gc.dispose();
-					//image.dispose();
-					cell.setImage(image);*/
-					
-					// TODO Timo: Hier moechte ich in der Zelle Linien zeichnen koennen, statt den folgenden Text zu setzen.
-					
-					if (tuple.getMetadata() != null) {
-						Object metadata1 = tuple.getMetadata().getValue(metaschemaIndex, 0);
-						Object metadata2 = tuple.getMetadata().getValue(metaschemaIndex, 1);
-						cell.setText("" + metadata1 + " - " + metadata2);
-					} else {
-						cell.setText("<null>");
-					}
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-
-				} catch (Throwable t) {
-					LOG.error("Could not retrieve metadata attribute ", t);
-					cell.setText("<Error>");
-				}
-			}
-		});
-
-		return col;
-	}
-
 	private TableViewerColumn createMetadataMapColumn(TableViewer tableViewer) {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		col.getColumn().setText("MetadataMap");
@@ -615,8 +555,8 @@ public class StreamTableEditor implements IStreamEditorType {
 			public void update(ViewerCell cell) {
 				int hashCode = ((Tuple<?>) cell.getElement()).hashCode();
 				int hashCode2 = System.identityHashCode(cell.getElement());
-
-				cell.setText(hashCode + " / " + hashCode2);
+				
+				cell.setText(hashCode+" / "+hashCode2);
 				cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 			}
 		});
@@ -624,6 +564,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		return col;
 	}
 
+	
 	private void stopRefreshThread() {
 		if (desyncThread != null) {
 			desyncThread.stopRunning();
