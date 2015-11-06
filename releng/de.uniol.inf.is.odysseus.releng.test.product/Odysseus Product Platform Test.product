@@ -3,6 +3,7 @@
 
 <product name="Test Runner Product" uid="de.uniol.inf.is.odysseus.product.test" id="de.uniol.inf.is.odysseus.test.odysseustestproduct" application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -11,7 +12,7 @@
       </programArgs>
       <programArgsLin>-os linux -ws gtk -arch x86_64
       </programArgsLin>
-      <vmArgs>-Xms1000M -Xmx1000M -Declipse.p2.mirrors=false -Dosgi.console.enable.builtin=true -Declipse.log.level=ERROR
+      <vmArgs>-Xms1000M -Xmx1000M -Declipse.p2.mirrors=false -Declipse.log.level=ERROR
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
@@ -26,6 +27,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
@@ -50,5 +52,12 @@
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="3" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="1" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>
