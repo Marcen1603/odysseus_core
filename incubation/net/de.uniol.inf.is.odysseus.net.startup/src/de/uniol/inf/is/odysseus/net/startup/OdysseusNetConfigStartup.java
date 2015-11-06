@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.net.startup;
 
+import java.util.Random;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +28,11 @@ public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 	
 	@Override
 	public IOdysseusNode start() throws OdysseusNetException {
-		String nodeName = OdysseusNetConfiguration.get(NODE_NAME_CONFIG_KEY, NODE_DEFAULT_NAME);
+		String randNumStr = generateRandomNumber();
+		String nodeName = OdysseusNetConfiguration.get(NODE_NAME_CONFIG_KEY, NODE_DEFAULT_NAME + "_" + generateRandomNumber());
 		if( Strings.isNullOrEmpty(nodeName)) {
-			LOG.error("Invalid node name. Using default " + NODE_DEFAULT_NAME);
-			nodeName = NODE_DEFAULT_NAME;
+			LOG.error("Invalid node name. Using default " + NODE_DEFAULT_NAME + "_" + randNumStr);
+			nodeName = NODE_DEFAULT_NAME + "_" + randNumStr;
 		}
 	
 		String preserveID = OdysseusNetConfiguration.get(PRESERVE_ID_CONFIG_KEY, PRESERVE_ID_DEFAULT_VALUE);
@@ -43,6 +46,11 @@ public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 		
 		IOdysseusNode localNode = new OdysseusNode(generatedID, nodeName);
 		return localNode;
+	}
+
+	// "1000" to "9999"
+	private static String generateRandomNumber() {
+		return String.valueOf(new Random().nextInt(8999) + 1000); 
 	}
 
 	@Override
