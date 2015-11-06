@@ -297,7 +297,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		}
 		
 		ITransportHandler th = TransportHandlerRegistry.getITransportHandlerClass(transportHandler);
-		SDFSchema thSchema = th.getSchema();
+		SDFSchema thSchema = th != null ? th.getSchema() : null;
 		
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 
