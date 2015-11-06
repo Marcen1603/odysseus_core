@@ -29,9 +29,11 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.OdysseusNetComponentStatus;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
@@ -738,7 +740,7 @@ public class OdysseusNetConsole implements CommandProvider {
 	public void _listPingPositions(CommandInterpreter ci) {
 		_lsPingPositions(ci);
 	}
-	
+
 	public void _resourceStatus(CommandInterpreter ci) {
 		IResourceUsage u = resourceUsageManager.getLocalResourceUsage();
 
@@ -756,7 +758,31 @@ public class OdysseusNetConsole implements CommandProvider {
 	private static String toVersionString(int[] version) {
 		return version[0] + "." + version[1] + "." + version[2] + "." + version[3];
 	}
+
 	private static String convertTimestampToDate(long startupTimestamp) {
 		return DATE_FORMAT.format(new Date(startupTimestamp));
+	}
+	
+	public void _listOdysseusNetComponents( CommandInterpreter ci ) {
+		if( !startupManager.isStarted() ) {
+			ci.println("WARNING: OdysseusNet is not started!");
+		}
+		
+		Collection<IOdysseusNetComponent> netComponents = startupManager.getComponents();
+		List<String> output = Lists.newArrayList();
+		for( IOdysseusNetComponent netComponent : netComponents ) {
+			Optional<OdysseusNetComponentStatus> optStatus = startupManager.getComponentStatus(netComponent);
+			if( optStatus.isPresent() ) {
+				output.add(netComponent.getClass().getName() + ": " + optStatus.get());
+			} else {
+				output.add(netComponent.getClass().getName() + ": <unknown>");
+			}
+		}
+		
+		sortAndPrintList(ci, output);
+	}
+	
+	public void _lsOdysseusNetComponents( CommandInterpreter ci ) {
+		_listOdysseusNetComponents(ci);
 	}
 }
