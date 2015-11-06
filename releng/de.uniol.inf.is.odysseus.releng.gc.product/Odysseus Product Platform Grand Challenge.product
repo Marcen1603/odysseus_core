@@ -69,80 +69,80 @@ limitations under the License.
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.debs2012.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.debs2013.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.debsgc2015.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.spatial.client.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.database.datasource.hive2.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.database.rcp.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.textprocessing.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.sentimentanalysis.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.sentimentdetection.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.modbus.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.probabilistic.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.nmea.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.actisense.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.baslercamera.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.dds.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.facebook.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.ferrybox.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.fnirs.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.hdfs.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.lms1xx.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.mail.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.mosaik.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.navicoradar.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.opcda.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.optriscamera.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.rabbitmq.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.rdf.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.rpi.gpio.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.rs232.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.snet.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.speech.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.sunspot.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.system.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.temper1.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.tika.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.twitter.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.web.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.webcrawler.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.xovis.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.zeromq.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.datarate.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.datarate_systemload.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.systemload.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.image.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.imagejcv.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.security.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.complexnumber.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wsenrich.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.video.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.developer.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.nosql.elasticsearch.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.nosql.mongodb.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.condition.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.parallelization.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.parallelization.rcp.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.sparql.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.rdf" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.monolithic.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.latency.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.cep.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.debs2012.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.debs2013.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.debsgc2015.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.spatial.client.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.spatial.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.database.datasource.hive2.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.database.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.database.rcp.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.textprocessing.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.common.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.sentimentanalysis.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.sentimentdetection.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.modbus.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.probabilistic.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.nmea.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.actisense.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.baslercamera.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.dds.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.facebook.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.ferrybox.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.fnirs.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.hdfs.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.lms1xx.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.mail.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.mosaik.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.navicoradar.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.opcda.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.optriscamera.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rabbitmq.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rdf.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rpi.gpio.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rs232.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.snet.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.speech.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.sunspot.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.system.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.temper1.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.tika.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.twitter.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.web.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.webcrawler.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.xovis.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.zeromq.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.datarate.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.datarate_systemload.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.systemload.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.image.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.imagejcv.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.security.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.complexnumber.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.context.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wsenrich.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.video.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.developer.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.nosql.elasticsearch.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.nosql.mongodb.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.windrose.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.condition.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.parallelization.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.parallelization.rcp.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.sparql.feature" installMode="root" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.rdf" installMode="root" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
