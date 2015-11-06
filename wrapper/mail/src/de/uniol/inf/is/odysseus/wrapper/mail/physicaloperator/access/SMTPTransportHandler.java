@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.wrapper.mail.physicaloperator.access;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -16,6 +17,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.geronimo.mail.util.StringBufferOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +34,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	public static final String NAME = "SMTP";
 
 	/** Logger */
-	private final Logger LOG = LoggerFactory
-			.getLogger(SMTPTransportHandler.class);
+	private final Logger LOG = LoggerFactory.getLogger(SMTPTransportHandler.class);
 
 	public static final String HOST = "host";
 	public static final String PORT = "port";
@@ -55,14 +56,13 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	private Transport transport;
 
 	/**
-     * 
-     */
+	 * 
+	 */
 	public SMTPTransportHandler() {
 		super();
 	}
 
-	public SMTPTransportHandler(final IProtocolHandler<?> protocolHandler,
-			OptionMap options) {
+	public SMTPTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
@@ -70,15 +70,13 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	@Override
 	public void send(final byte[] message) throws IOException {
 		try {
+			String str = new String(message, StandardCharsets.UTF_8);
 			final Message mimeMessage = new MimeMessage(this.session);
 			mimeMessage.setSubject(this.getSubject());
-			mimeMessage.setText(ByteBuffer.wrap(message).asCharBuffer()
-					.toString());
+			mimeMessage.setText(str);
 			mimeMessage.setFrom(new InternetAddress(this.getFrom()));
-			mimeMessage.setRecipient(Message.RecipientType.TO,
-					new InternetAddress(this.getTo()));
-			this.transport.sendMessage(mimeMessage,
-					mimeMessage.getAllRecipients());
+			mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(this.getTo()));
+			this.transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
 		} catch (final MessagingException e) {
 			this.LOG.error(e.getMessage(), e);
 			this.LOG.debug(ByteBuffer.wrap(message).asCharBuffer().toString());
@@ -87,10 +85,8 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	}
 
 	@Override
-	public ITransportHandler createInstance(
-			final IProtocolHandler<?> protocolHandler, final OptionMap options) {
-		final SMTPTransportHandler handler = new SMTPTransportHandler(
-				protocolHandler, options);
+	public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
+		final SMTPTransportHandler handler = new SMTPTransportHandler(protocolHandler, options);
 		return handler;
 	}
 
@@ -231,7 +227,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	}
 
 	private boolean isAuth() {
-		return ((this.getUsername() != null) && (this.getPassword() != null));
+		return ((this.getUsername() != "") && (this.getPassword() != ""));
 	}
 
 	@Override
@@ -242,23 +238,23 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	@Override
 	public void processOutOpen() throws IOException {
 		final Properties properties = System.getProperties();
-		properties.setProperty("mail.smtp.auth",
-				Boolean.toString(this.isAuth()));
-		properties.setProperty("mail.smtp.starttls.enable",
-				Boolean.toString(this.isTLS()));
+		properties.setProperty("mail.smtp.auth", Boolean.toString(this.isAuth()));
+		properties.setProperty("mail.smtp.starttls.enable", Boolean.toString(this.isTLS()));
 		properties.setProperty("mail.smtp.host", this.getHost());
-		properties.setProperty("mail.smtp.port",
-				Integer.toString(this.getPort()));
+		properties.setProperty("mail.smtp.port", Integer.toString(this.getPort()));
+
 		try {
-			this.session = Session.getDefaultInstance(properties,
-					new javax.mail.Authenticator() {
-						@Override
-						protected PasswordAuthentication getPasswordAuthentication() {
-							return new PasswordAuthentication(
-									SMTPTransportHandler.this.getUsername(),
-									SMTPTransportHandler.this.getPassword());
-						}
-					});
+			if (this.isAuth()) {
+				this.session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+					@Override
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(SMTPTransportHandler.this.getUsername(),
+								SMTPTransportHandler.this.getPassword());
+					}
+				});
+			} else {
+				this.session = Session.getInstance(properties);
+			}
 			this.transport = this.session.getTransport("smtp");
 			this.transport.connect();
 		} catch (final MessagingException e) {
