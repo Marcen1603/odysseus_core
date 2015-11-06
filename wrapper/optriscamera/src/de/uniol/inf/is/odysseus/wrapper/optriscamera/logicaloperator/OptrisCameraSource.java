@@ -26,7 +26,7 @@ public class OptrisCameraSource extends AbstractAccessAO
 		setTransportHandler(OptrisCameraTransportHandler.NAME);
 		setProtocolHandler(NoProtocolHandler.NAME);
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
-		setWrapper(Constants.GENERIC_PULL);
+		setWrapper(Constants.GENERIC_PUSH);
 		
 		List<SDFAttribute> attributes = new ArrayList<>();
 		attributes.add(new SDFAttribute(getName(), "image", SDFImageJCVDatatype.IMAGEJCV));

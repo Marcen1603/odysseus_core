@@ -35,11 +35,11 @@ public class ReinterpretImageFunction extends AbstractFunction<ImageJCV>
 	@Override public ImageJCV getValue() 
 	{
 		ImageJCV oldImage = (ImageJCV) getInputValue(0);
-		int newWidth = (Integer) getInputValue(1);
-		int newHeight = (Integer) getInputValue(1);
-		int newDepth = (Integer) getInputValue(1);
-		int newNumChannels = (Integer) getInputValue(1);
-		int newPixelFormat = (Integer) getInputValue(1);
+		int newWidth = ((Number) getInputValue(1)).intValue();
+		int newHeight = ((Number) getInputValue(2)).intValue();
+		int newDepth = ((Number) getInputValue(3)).intValue();
+		int newNumChannels = ((Number) getInputValue(4)).intValue();
+		int newPixelFormat = ((Number) getInputValue(5)).intValue();
 		
 		Objects.requireNonNull(oldImage);
 		
