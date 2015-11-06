@@ -638,7 +638,7 @@ public class OdysseusNetConsole implements CommandProvider {
 		try {
 			IOdysseusNode localNode = startupManager.getLocalOdysseusNode();
 			ci.println("NodeName\t= " + localNode.getName());
-			ci.println("NodeID\t= " + localNode.getID());
+			ci.println("NodeID  \t= " + localNode.getID());
 			for (String propertyKey : localNode.getProperyKeys()) {
 				Optional<String> optPropertyValue = localNode.getProperty(propertyKey);
 				ci.println(propertyKey + "\t= " + optPropertyValue.get());
