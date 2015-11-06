@@ -16,52 +16,42 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 public class OpenCVVideoStreamProtocolHandler extends AbstractVideoStreamProtocolHandler 
 {
-	private static final String NAME = "OpenCVVideoStream";
+	public static final String NAME = "OpenCVVideoStream";
 	public static final String CAMERA_URL_PREFIX = "camera://";
-			
-	public OpenCVVideoStreamProtocolHandler() 
-	{
+
+	@Override public String getName() { return NAME; }
+	
+	public OpenCVVideoStreamProtocolHandler() {
 		super();
 	}
 
-	public OpenCVVideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, OptionMap options) 
-	{
+	public OpenCVVideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, OptionMap options) {
 		super(direction, access, dataHandler, options);
 	}
 	
 	@Override
-	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<Tuple<?>> dataHandler)
-	{
+	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<Tuple<?>> dataHandler) {
 		return new OpenCVVideoStreamProtocolHandler(direction, access, dataHandler, options);
 	}	
 	
-	public FrameRecorder createRecorder(ImageJCV image)
-	{
+	public FrameRecorder createRecorder(ImageJCV image) {
 		return new OpenCVFrameRecorder(getStreamUrl(), image.getWidth(), image.getHeight());
 	}
 		
-	public FrameGrabber createGrabber()
-	{
-		if (getStreamUrl().startsWith(CAMERA_URL_PREFIX))
-		{
+	public FrameGrabber createGrabber() {
+		if (getStreamUrl().startsWith(CAMERA_URL_PREFIX)) {
 			int deviceId = Integer.parseInt(getStreamUrl().substring(CAMERA_URL_PREFIX.length()));
 			return new OpenCVFrameGrabber(deviceId);
 		}
-		else
+		else {
 			return new OpenCVFrameGrabber(getStreamUrl());
+		}
 	}
-
-	@Override
-	public String getName() { return NAME; }
 	
 	@Override
-	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
-	{
-		if (!(o instanceof OpenCVVideoStreamProtocolHandler)) 
-			return false;
-		
-		if (!super.isSemanticallyEqualImpl(o)) 
-			return false;
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if (!(o instanceof OpenCVVideoStreamProtocolHandler)) return false;
+		if (!super.isSemanticallyEqualImpl(o)) return false;
 				
 		return true;
 	}	

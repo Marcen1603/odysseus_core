@@ -29,6 +29,14 @@ import de.uniol.inf.is.odysseus.video.AbstractVideoImplementation;
 
 public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>> 
 {
+	public static final String USEDELAY = "usedelay";
+	public static final String STREAMURL = "streamurl";	
+	public static final String TIMESTAMPMODE = "timestampmode";	
+	public static final String TIMESTAMPMODE_NONE = "none";
+	public static final String TIMESTAMPMODE_SYNCFILE = "syncfile";
+	public static final String TIMESTAMPMODE_FILETIME = "filetime";
+	public static final String TIMESTAMPMODE_START = "start";
+
 	private enum TimeStampMode
 	{
 		start, fileTime, syncFile, none
@@ -63,7 +71,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	{
 		super(direction, access, dataHandler, optionMap);
 
-		optionMap.checkRequiredException("streamurl");
+		optionMap.checkRequiredException(STREAMURL);
 
 		videoImpl = new AbstractVideoImplementation()
 		{
@@ -101,14 +109,14 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 		};
 		videoImpl.getOptions(optionMap);
 
-		streamUrl = optionMap.get("streamurl");
-		useDelay = optionMap.getBoolean("usedelay",  false);		
-		String timeStampModeStr = optionMap.get("timestampmode", "start");
+		streamUrl = optionMap.get(STREAMURL);
+		useDelay = optionMap.getBoolean(USEDELAY,  false);		
+		String timeStampModeStr = optionMap.get(TIMESTAMPMODE, TIMESTAMPMODE_START);
 		
-			 if (timeStampModeStr.equals("start"))		timeStampMode = TimeStampMode.start;
-		else if (timeStampModeStr.equals("filetime"))	timeStampMode = TimeStampMode.fileTime;
-		else if (timeStampModeStr.equals("syncfile"))	timeStampMode = TimeStampMode.syncFile;
-		else if (timeStampModeStr.equals("none"))		timeStampMode = TimeStampMode.none;
+			 if (timeStampModeStr.equals(TIMESTAMPMODE_START))		timeStampMode = TimeStampMode.start;
+		else if (timeStampModeStr.equals(TIMESTAMPMODE_FILETIME))	timeStampMode = TimeStampMode.fileTime;
+		else if (timeStampModeStr.equals(TIMESTAMPMODE_SYNCFILE))	timeStampMode = TimeStampMode.syncFile;
+		else if (timeStampModeStr.equals(TIMESTAMPMODE_NONE))		timeStampMode = TimeStampMode.none;
 		else
 			throw new IllegalArgumentException("timeStampMode has an invalid value: " + timeStampModeStr);		
 	}

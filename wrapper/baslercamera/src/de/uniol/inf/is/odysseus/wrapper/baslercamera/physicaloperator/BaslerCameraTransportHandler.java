@@ -28,7 +28,9 @@ import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera.Operation
 
 public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> implements ICommandProvider  
 {
-	private final Logger LOG = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
+	public static final String NAME = "BaslerCamera";
+	public static final String SERIALNUMBER = "serialnumber";
 
 	private String serialNumber;
 	private BaslerCamera.OperationMode operationMode;
@@ -37,6 +39,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	private Tuple<IMetaAttribute> currentTuple;
 	private ImageJCV imageJCV;
 	private final Object processLock = new Object();
+	
+	@Override public String getName() { return NAME; }
 	
 	public BaslerCameraTransportHandler() 
 	{
@@ -50,7 +54,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		super(protocolHandler, options);
 		
-		serialNumber = options.get("serialnumber", "");
+		serialNumber = options.get(SERIALNUMBER, "");
 		
 		if ((protocolHandler.getAccessPattern() == IAccessPattern.ROBUST_PULL) || 
 			(protocolHandler.getAccessPattern() == IAccessPattern.PULL))
@@ -64,10 +68,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
 		return new BaslerCameraTransportHandler(protocolHandler, options);
-	}
-
-
-	@Override public String getName() { return "BaslerCamera"; }
+	}	
 
 	long startupTimeStamp = 0;
 	
@@ -224,10 +225,8 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
     	{
 	    	case "trigger":
 	    	{
-	    		return new Command()
-	    		{
-	    			@Override public boolean run(IStreamObject<?> input) 
-	    			{
+	    		return new Command() {
+	    			@Override public boolean run(IStreamObject<?> input) {
 	    				return cameraCapture.trigger();
 	    			}
 	    		};

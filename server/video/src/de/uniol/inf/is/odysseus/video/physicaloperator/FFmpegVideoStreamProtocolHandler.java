@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 public class FFmpegVideoStreamProtocolHandler extends AbstractVideoStreamProtocolHandler 
 {
-	private static final String NAME = "FFmpegVideoStream";
+	public static final String NAME = "FFmpegVideoStream";
 	
 	public FFmpegVideoStreamProtocolHandler() 
 	{

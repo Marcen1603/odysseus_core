@@ -24,36 +24,34 @@ import de.uniol.inf.is.odysseus.wrapper.optriscamera.swig.TFlagState;
 
 public class OptrisCameraTransportHandler extends AbstractPushTransportHandler 
 {
+	public static final String ATTRNAME_FLAGSTATE = "FlagState";
+	public static final String NAME = "OptrisCamera";
+	public static final String SERIALNUMBER = "serialnumber";
+	
 	@SuppressWarnings("unused")
-	private final Logger logger = LoggerFactory.getLogger(OptrisCameraTransportHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(OptrisCameraTransportHandler.class);
 	private final Object processLock = new Object();
 
-	private String ethernetAddress;
+	private String serialNumber;
 	private OptrisCamera cameraCapture;
 	private ImageJCV image;
+
+	@Override public String getName() { return NAME; }
 	
-	public OptrisCameraTransportHandler() 
-	{
+	public OptrisCameraTransportHandler() {
 		super();
 	}
 	
-	/**
-	 * @param protocolHandler
-	 */
-	public OptrisCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) 
-	{
-		super(protocolHandler, options);
-		
-		ethernetAddress = options.get("ethernetaddress", "");
+	public OptrisCameraTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
+		super(protocolHandler, options);		
+		serialNumber = options.get(SERIALNUMBER, "");
 	}
 	
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) 
 	{
 		return new OptrisCameraTransportHandler(protocolHandler, options);
-	}
-
-	@Override public String getName() { return "OptrisCamera"; }
+	}	
 
 	@Override public void processInOpen() throws IOException 
 	{
@@ -61,7 +59,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		{
 			try
 			{
-		 		cameraCapture = new OptrisCamera("", ethernetAddress)
+		 		cameraCapture = new OptrisCamera("", serialNumber)
 		 						{		 			
 		 							@Override public void onNewFrame(long timeStamp, TFlagState flagState, ByteBuffer buffer)
 		 							{
@@ -142,7 +140,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 		for (int i=0; i<getSchema().size(); i++)
 		{
 			SDFAttribute attr = getSchema().getAttribute(i);
-			if (attr.getAttributeName().equalsIgnoreCase("FlagState"))
+			if (attr.getAttributeName().equalsIgnoreCase(ATTRNAME_FLAGSTATE))
 			{
 				newTuple.setAttribute(i, flagState.toString());
 				break;
@@ -160,7 +158,7 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
     		return false;
     	}
     	OptrisCameraTransportHandler other = (OptrisCameraTransportHandler)o;
-    	if(!this.ethernetAddress.equals(other.ethernetAddress))
+    	if(!this.serialNumber.equals(other.serialNumber))
     		return false;
     	
     	return true;

@@ -21,6 +21,14 @@ import de.uniol.inf.is.odysseus.imagejcv.util.ImageFunctions;
 
 public abstract class AbstractVideoImplementation 
 {
+	public static final String BITSPERPIXEL = "bitsPerPixel";
+	public static final String FRAMESIZEMULTIPLE = "frameSizeMultiple";
+	public static final String PIXELFORMAT = "pixelFormat";
+	public static final String FRAMERATE = "framerate";
+	public static final String FORMAT = "format";
+	public static final String VIDEOQUALITY = "videoQuality";
+	public static final String VIDEOCODEC = "videoCodec";
+	public static final String BITRATE = "bitRate";
 	public static final String OPTIONS_PREFIX = "codec:";
 	
 	public String format;	
@@ -60,14 +68,14 @@ public abstract class AbstractVideoImplementation
 	
 	public void getOptions(OptionMap optionMap) 
 	{
-		frameRate = optionMap.getDouble("framerate", 0.0);
-		bitRate = optionMap.getInt("bitRate", 0);
-		videoCodec = optionMap.getInt("videoCodec", 13);
-		videoQuality = optionMap.getDouble("videoQuality", 0);
-		format = optionMap.get("format", null); 
-		pixelFormat = optionMap.getInt("pixelFormat", AV_PIX_FMT_NONE);
-		frameSizeMultiple = optionMap.getInt("frameSizeMultiple", 1);
-		bitsPerPixel = optionMap.getInt("bitsPerPixel", 0);
+		frameRate = optionMap.getDouble(FRAMERATE, 0.0);
+		bitRate = optionMap.getInt(BITRATE, 0);
+		videoCodec = optionMap.getInt(VIDEOCODEC, 13);
+		videoQuality = optionMap.getDouble(VIDEOQUALITY, 0);
+		format = optionMap.get(FORMAT, null); 
+		pixelFormat = optionMap.getInt(PIXELFORMAT, AV_PIX_FMT_NONE);
+		frameSizeMultiple = optionMap.getInt(FRAMESIZEMULTIPLE, 1);
+		bitsPerPixel = optionMap.getInt(BITSPERPIXEL, 0);
 		
 		for (String key : optionMap.getUnreadOptions())
 		{
