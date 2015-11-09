@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.state.JoinTIPOState;
+import de.uniol.inf.is.odysseus.sweeparea.AbstractTimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -506,6 +507,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		Map<String, String> map = new HashMap<>();
 		map.put("Left Area Size", areas[0].size() + "");
 		map.put("Right Area Size", areas[1].size() + "");
+		if (areas[0] instanceof AbstractTimeIntervalSweepArea && areas[1] instanceof AbstractTimeIntervalSweepArea) {
+			map.put("Left Area Has End TS Order", ((AbstractTimeIntervalSweepArea<?>) areas[0]).hasEndTsOrder() + "");
+			map.put("Right Area Has End TS Order", ((AbstractTimeIntervalSweepArea<?>) areas[1]).hasEndTsOrder() + "");
+		}
+		
 		map.put("OutputQueue", transferFunction.size() + "");
 		map.put("Watermark", transferFunction.getWatermark() + "");
 		return map;

@@ -169,7 +169,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 
 		synchronized (getElements()) {
 
-			if (getElements().size() > 10) {
+			if (getElements().size() > 10 && hasEndTsOrder) {
 				// System.err.println("Remove before " + element);
 				// System.err.println("before remove " + getElements().size());
 				// binary search returns

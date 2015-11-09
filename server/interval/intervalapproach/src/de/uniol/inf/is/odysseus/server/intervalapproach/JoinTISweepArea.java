@@ -53,6 +53,7 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
     @Override
 	public void insert(T s) {
 		synchronized (this.getElements()) {
+			hasEndTsOrder = isStillInEndTsOrderAfterInsert(s, this.getElements().size());
 			setLatestTimeStamp(s);
 			this.getElements().add(s);
 		}
