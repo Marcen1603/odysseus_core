@@ -47,11 +47,13 @@ public class GpuProjectionPO<T extends IMetaAttribute> extends AbstractPipe<IStr
 	
 	private int[] restrictList;
 	
-	private CUdeviceptr inputDevicePtr;
-	private CUdeviceptr outputDevicePtr;
+	private CUdeviceptr []inputDevicePtr;
+	
 	private CUdeviceptr restrictDevicePtr;
 
 	private int SIZE;
+	
+	private int tupleZahl = 3;
 
 	private CUcontext context;
 
@@ -59,12 +61,12 @@ public class GpuProjectionPO<T extends IMetaAttribute> extends AbstractPipe<IStr
 
 	private CUfunction function;
 
-	private int gridDimX = 1;
+	private GpuManager<T> gpuManager;
 
-	private int blockDimX = 1;
+	private String ptxFileName;
 
 	public GpuProjectionPO(int [] restrictList) {
-		this.restrictList = restrictList;
+		this.restrictList = restrictList;			
 	}
 
 	public GpuProjectionPO(GpuProjectionPO<T> gpuProject) {
@@ -73,6 +75,24 @@ public class GpuProjectionPO<T extends IMetaAttribute> extends AbstractPipe<IStr
 		int length = gpuProject.restrictList.length;
 		restrictList = new int[length];
 		System.arraycopy(gpuProject.restrictList, 0, restrictList, 0, length);	
+		
+		//open auslagern
+		try {
+			ptxFileName = Prepare.ptxFile("CUDA/Project.cu");				
+		
+			//Für ein Puffer muss die Size geändert werden
+			SIZE = getInputSchema(0).getAttributes().size() * Sizeof.DOUBLE;
+			
+			GpuManager<T> gpuManager = new GpuManager<>(tupleZahl, getInputSchema(0).getAttributes().size() -1, getInputSchema(0));
+			this.gpuManager = gpuManager;
+			
+			CUdeviceptr restrictDevicePtr = new CUdeviceptr();
+			this.restrictDevicePtr = restrictDevicePtr;		
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 	}
 
 	@Override
@@ -98,62 +118,60 @@ public class GpuProjectionPO<T extends IMetaAttribute> extends AbstractPipe<IStr
 	protected void process_open() throws OpenFailedException {		
 		super.process_open();
 		
-		try {
-			String ptxFileName = Prepare.ptxFile("CUDA/Select.cu");		
-		
-			CUdeviceptr restrictDevicePtr = new CUdeviceptr();
-			CUdeviceptr inputDevicePtr = new CUdeviceptr();			
-			CUdeviceptr outputDevicePtr = new CUdeviceptr();
-			
-			//Vor dem input müssen alle Attr bestimmt werden
-			Attr();
-			this.inputDevicePtr = inputDevicePtr;
-			
-			this.outputDevicePtr = outputDevicePtr;
-			this.restrictDevicePtr = restrictDevicePtr;
+// Enum erstellen mit allen zulässigen Datentypen
+		//open auslagern
+				try {
+					ptxFileName = Prepare.ptxFile("CUDA/Project.cu");				
+				
+					//Für ein Puffer muss die Size geändert werden
+					SIZE = getInputSchema(0).getAttributes().size() * Sizeof.DOUBLE;
 					
-			Prepare.cuLoad(ptxFileName, "Project");			
-			
-			//Bei projection sind viele unterschiedliche Datentypen
-			//Lösungsmöglichkeit jeden Datentyp init. und allokieren und falls benötigt nutzen
-			int [] restrict = getRestrictList();
-			
-			//Für ein Puffer muss die Size geändert werden
-			SIZE = restrict.length * Sizeof.INT;
-			
-			cuMemAlloc(restrictDevicePtr, SIZE);
-			
-			cuMemAlloc(outputDevicePtr, SIZE);
-			
-			cuMemcpyHtoD(restrictDevicePtr, Pointer.to(restrict), SIZE);
+					GpuManager<T> gpuManager = new GpuManager<>(tupleZahl, getInputSchema(0).getAttributes().size(), getInputSchema(0));
+					this.gpuManager = gpuManager;
+					
+					CUdeviceptr restrictDevicePtr = new CUdeviceptr();
+					this.restrictDevicePtr = restrictDevicePtr;		
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					
+					
+		//Vor dem input müssen alle Attr bestimmt werden
+					
+		Prepare.cuLoad(ptxFileName, "Project");			
 		
+		//Bei projection sind viele unterschiedliche Datentypen
+		//Lösungsmöglichkeit jeden Datentyp init. und allokieren und falls benötigt nutzen
+		@SuppressWarnings("unused")
+		int [] restrict = getRestrictList();			
+		
+		cuMemAlloc(restrictDevicePtr, restrict.length * Sizeof.INT);
+		
+		cuMemcpyHtoD(restrictDevicePtr, Pointer.to(restrict), restrict.length * Sizeof.INT);	
 
-			context = Prepare.getContext();			
-			modul = Prepare.getModul();
-			function = Prepare.getFunction();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(CudaException e){
-			
-		}
+		context = Prepare.getContext();			
+		modul = Prepare.getModul();
+		function = Prepare.getFunction();
+		
 	}
 	
 	@Override
-	protected void process_next(IStreamObject<T> inputElement, int port) {
-	
-		System.out.println("GPU Stopp");
+	protected void process_next(IStreamObject<T> inputElement, int port) {	
 		
-		transfer(CUDA_process((Tuple<T>) inputElement));
+		gpuManager.AddTuple((Tuple<T>) inputElement);	
 		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(gpuManager.getCount() == tupleZahl){
+			try{
+				CUDA_process();
+			}catch(CudaException e){
+				
+			}
+			while(0 < gpuManager.getCount()){
+				transfer((IStreamObject<T>) gpuManager.getTuple());
+			}
 		}
-		
 	}
 
 	@Override
@@ -161,74 +179,50 @@ public class GpuProjectionPO<T extends IMetaAttribute> extends AbstractPipe<IStr
 		
 		super.process_close();
 		
-		// CUDA-Nachbereitung
-
-		cuMemFree(inputDevicePtr);
-		cuMemFree(outputDevicePtr);
-		cuMemFree(restrictDevicePtr);
+//		// CUDA-Nachbereitung
 		
+		gpuManager.destroy();
+		
+		cuMemFree(restrictDevicePtr);
+		cuMemFree(restrictDevicePtr);
 		cuModuleUnload(modul);
 		
 		if (context != null) {
 				cuCtxDestroy(context);
 		}
-		// Speicher auf der GPU freigeben
+//		// Speicher auf der GPU freigeben
 				
 	}
 
-	private IStreamObject<T> CUDA_process(Tuple<T> inputElement) {
+	private void CUDA_process() { 
 		
+		//JCUDA
 		cuCtxPushCurrent(context);
 		
-		//Input übertragen
+		CUdeviceptr outputPtr = new CUdeviceptr();
+		JCudaDriver.cuMemAlloc(outputPtr, Sizeof.DOUBLE);
 		
 		Pointer kernelParameter = Pointer.to(
-				Pointer.to(restrictDevicePtr),
-				Pointer.to(inputDevicePtr),
-				Pointer.to(outputDevicePtr)
+				Pointer.to(restrictDevicePtr),			//
+//				Pointer.to(new int []{restrictList.length}),	// Size ist die Größe der Restrict
+				Pointer.to(gpuManager.getInputPtr())					//
+//				Pointer.to(outputPtr)					//
 				);
+		
+		
 		
 		//Start Kernel auf der GPU
 		cuLaunchKernel(function,
-		gridDimX, 1, 1,
-		blockDimX, 1, 1,
+		1, 1, 1,							//blöcke
+		1, 1,1,							//threads soviele wie Attribute 
 		0, null,
 		kernelParameter, null);
 		
 		//blockiert bis alle Grids abgeschloßen sind
 		cuCtxSynchronize();
 		
-		Object[] newAttr;
-		
-		IStreamObject<T> outputElement = inputElement;
-		
-		return outputElement;
-	}	
-	
-	private void Attr(){
-		SDFSchema input = getInputSchema(0);
-		
-		for(int i = 0; i < input.size(); i++){
+//		gpuManager.setOutputPtr(outputPtr);
 			
-			SDFDatatype attributeDatatype = input.getAttribute(i).getDatatype() ;
 		
-			if (attributeDatatype.equals(SDFDatatype.INTEGER)){
-				
-			}else if (attributeDatatype.equals(SDFDatatype.FLOAT)) {
-
-				
-				
-			} else if (attributeDatatype.equals(SDFDatatype.DOUBLE)) {								
-				
-								
-				
-				
-			} else if(attributeDatatype.equals(SDFDatatype.CHAR)){
-				
-				
-			} else {
-				throw new OpenFailedException("Nicht unterstützter Datentyp " + attributeDatatype);		
-			}
-		}
-	}
+	}	
 }

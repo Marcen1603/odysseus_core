@@ -1,7 +1,9 @@
 extern "C"
 
-__global__ void ProjectCU (int predict, int *input_right, int *input_left, int *output)
+__global__ void Project(int* beschr, double** tuple)
 {
+	
+	printf("Hello World %d \n %d", beschr[1], tuple[1][1]);
 
-	__syncthread();
+	__syncthreads();
 }

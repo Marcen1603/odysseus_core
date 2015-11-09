@@ -10,12 +10,12 @@
 .target sm_20
 .address_size 64
 
-	// .globl	Double
+	// .globl	Integer
 
-.visible .entry Double(
-	.param .u64 Double_param_0,
-	.param .u64 Double_param_1,
-	.param .u64 Double_param_2
+.visible .entry Integer(
+	.param .u64 Integer_param_0,
+	.param .u64 Integer_param_1,
+	.param .u64 Integer_param_2
 )
 {
 	.reg .pred 	%p<2>;
@@ -23,9 +23,36 @@
 	.reg .b64 	%rd<7>;
 
 
-	ld.param.u64 	%rd1, [Double_param_0];
-	ld.param.u64 	%rd2, [Double_param_1];
-	ld.param.u64 	%rd3, [Double_param_2];
+	ld.param.u64 	%rd1, [Integer_param_0];
+	ld.param.u64 	%rd2, [Integer_param_1];
+	ld.param.u64 	%rd3, [Integer_param_2];
+	cvta.to.global.u64 	%rd4, %rd3;
+	cvta.to.global.u64 	%rd5, %rd1;
+	cvta.to.global.u64 	%rd6, %rd2;
+	ldu.global.f64 	%fd1, [%rd6];
+	ldu.global.f64 	%fd2, [%rd5];
+	setp.lt.f64	%p1, %fd1, %fd2;
+	selp.f64	%fd3, 0d3FF0000000000000, 0dBFF0000000000000, %p1;
+	st.global.f64 	[%rd4], %fd3;
+	bar.sync 	0;
+	ret;
+}
+
+	// .globl	_Z6DoublePdS_S_
+.visible .entry _Z6DoublePdS_S_(
+	.param .u64 _Z6DoublePdS_S__param_0,
+	.param .u64 _Z6DoublePdS_S__param_1,
+	.param .u64 _Z6DoublePdS_S__param_2
+)
+{
+	.reg .pred 	%p<2>;
+	.reg .f64 	%fd<4>;
+	.reg .b64 	%rd<7>;
+
+
+	ld.param.u64 	%rd1, [_Z6DoublePdS_S__param_0];
+	ld.param.u64 	%rd2, [_Z6DoublePdS_S__param_1];
+	ld.param.u64 	%rd3, [_Z6DoublePdS_S__param_2];
 	cvta.to.global.u64 	%rd4, %rd3;
 	cvta.to.global.u64 	%rd5, %rd1;
 	cvta.to.global.u64 	%rd6, %rd2;
