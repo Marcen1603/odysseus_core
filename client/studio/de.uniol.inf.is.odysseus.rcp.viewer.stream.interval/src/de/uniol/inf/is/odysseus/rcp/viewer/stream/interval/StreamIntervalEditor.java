@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.interval;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -39,9 +41,11 @@ public class StreamIntervalEditor implements IStreamEditorType {
 		intervalCanvas.dispose();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
-
+	public void streamElementReceived(IPhysicalOperator senderOperator, Object elementObject, int port) {
+		IStreamObject<? extends ITimeInterval> streamElement = (IStreamObject<? extends ITimeInterval>)elementObject;
+		intervalCanvas.addElement(streamElement);
 	}
 
 	@Override
