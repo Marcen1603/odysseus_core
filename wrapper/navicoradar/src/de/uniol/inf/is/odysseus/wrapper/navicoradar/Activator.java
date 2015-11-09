@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.wrapper.navicoradar;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.mep.MEP;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -19,6 +21,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception 
 	{
 		Activator.context = bundleContext;
+		MEP.searchBundleForMepFunctions(context.getBundle());
 		try 
 		{
 			System.loadLibrary("NavicoRadarJava");

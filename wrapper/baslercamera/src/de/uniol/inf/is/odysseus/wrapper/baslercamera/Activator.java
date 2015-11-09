@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.baslercamera;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera;
 
 public class Activator implements BundleActivator {
@@ -21,6 +22,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception 
 	{
 		Activator.context = bundleContext;
+		MEP.searchBundleForMepFunctions(context.getBundle());
 		try 
 		{
 			System.loadLibrary("BaslerJava");

@@ -1,146 +1,144 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import com.google.common.base.Preconditions;
+
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.command.Command;
-import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.command.TargetedCommand;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CommandAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class CommandPO<T extends IStreamObject<?>> extends AbstractSink<T> 
+public class CommandPO extends AbstractSink<Tuple<IMetaAttribute>> 
 {
 	static Logger LOG = LoggerFactory.getLogger(SenderPO.class);
 
-	Map<ICommandProvider, Command> listenerMap = new HashMap<>();
+	private final RelationalExpression<IMetaAttribute> commandExpression;
+	private final IServerExecutor executor;
+	private ISession caller;
 	
-	private final String commandName;
+	public CommandPO(CommandAO ao, IServerExecutor executor) {
+		Preconditions.checkNotNull(ao, "ao must not be null!");
+
+		this.executor = executor;
+		this.commandExpression = new RelationalExpression<IMetaAttribute>(ao.getCommandExpression());
+		this.commandExpression.initVars(ao.getInputSchema(0));
+	}
 	
-	public CommandPO(String commandName) 
-	{
-		this.commandName = commandName.toLowerCase();
+	public CommandPO(CommandPO other) {
+		this.executor = other.executor;
+		this.commandExpression = other.commandExpression;
 	}
-
-	public CommandPO(CommandPO<T> other) 
-	{
-		super(other);
-		
-		this.commandName = other.commandName;
-	}
-
-	@Override
-	protected void process_next(T object, int port) 
-	{
-		try
-		{
-			for (Entry<ICommandProvider, Command> e : listenerMap.entrySet())
-			{
-				Command cmd = null;
-				String curCommandName = null;
-				if (commandName == null)
-				{
-					if (object instanceof Tuple<?>)
-					{
-						for (SDFAttribute attr : getOutputSchema(port).getAttributes())
-						{
-							if (attr.getAttributeName().equalsIgnoreCase("Command"))
-								curCommandName = (String) ((Tuple<?>) object).getAttribute(attr.getNumber());
-						}
-					}
-					else
-					if (object instanceof KeyValueObject<?>)
-						curCommandName = (String) ((KeyValueObject<?>) object).getAttribute("Command");
-					else
-						throw new UnsupportedOperationException("Can only process Tuple or KeyValueObject");
-					
-					if (curCommandName == null)
-						throw new IllegalArgumentException("Could not get \"Command\" attribute");
-					
-					cmd = e.getKey().getCommandByName(curCommandName.toLowerCase(), getOutputSchema(port));
-					if (cmd == null)
-						throw new IllegalArgumentException("Could not find command \"" + commandName + "\"");					
-				}
-				else
-				{
-					cmd = e.getValue();
-					curCommandName = commandName;
-				}
-
-				System.out.print("Run command \"" + curCommandName + "\" with " + object);
-				
-				if (cmd.run(object))
-					System.out.println(" succeeded!");
-				else
-					System.out.println(" failed!");
-			}
-		}
-		catch (Exception e)
-		{
-			LOG.error(e.getMessage());
-		}
-	}
-
-	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) 
-	{
-	}
-
+	
 	@Override
 	protected void process_open() throws OpenFailedException 
 	{
-		if (!isOpen()) 
-		{
-			super.process_open();
+		List<ISession> callers = getSessions();
+		if (callers.size() != 1) {
+			throw new OpenFailedException("This operator cannot be sharded");
 		}
-	}
+		caller = callers.get(0);
+	}	
 
-	@Override
-	protected void process_close() 
+	// This method tries to resolve a name into an operator, a transport handler or a protocol handler
+	// TODO: Implement global Odysseus naming scheme?
+	@SuppressWarnings({ "rawtypes" })
+	private static Object resolveName(IServerExecutor executor, ISession caller, String name)
 	{
-		if (isOpen()) 
-		{
-			super.process_close();
-		}
-	}
-
-	@Override
-	public AbstractSink<T> clone() 
-	{
-		return new CommandPO<T>(this);
-	}
-
-	public void addCommandListener(ICommandProvider listener, SDFSchema schema) 
-	{
-		if (!listenerMap.containsKey(listener))
-		{
-			if (commandName == null)
-				listenerMap.put(listener, null);
-			else
-			{
-				Command command = listener.getCommandByName(commandName, schema);
-				
-				if (command == null)
-					throw new IllegalArgumentException("Could not find command \"" + commandName + "\"");
-					
-				listenerMap.put(listener, command);
-			}
-		}
-	}
-
-	public void removeCommandListener(ICommandProvider listener) 
-	{
-		listenerMap.remove(listener);
+		// Temporary hack to address transport and protocol handlers 
+		boolean isTransport = false, isProtocol = false;
+		if (name.endsWith(".transport")) {
+			isTransport = true;
+			name = name.substring(0, name.length() - ".transport".length());
+		} else
+		if (name.endsWith(".protocol")) {
+			isProtocol = true;
+			name = name.substring(0, name.length() - ".protocol".length());
+		}			
+		
+       	Resource id = new Resource(caller.getUser(), name);
+       	IPhysicalOperator targetOperator = executor.getDataDictionary(caller).getOperator(id, caller);
+       	if (targetOperator == null) 
+       	{
+       		LOG.warn("Could not resolve target " + name);
+       		return null;
+       	} 
+       	else if (!isTransport && !isProtocol) 
+       	{       	
+       		return targetOperator;
+       	} 
+       	else if (targetOperator instanceof ReceiverPO) 
+       	{
+			ReceiverPO receiver = (ReceiverPO) targetOperator;
+       		
+       		if (isProtocol) {
+       			return receiver.getProtocolHandler();
+       		} else {
+       			return ((AbstractProtocolHandler) receiver.getProtocolHandler()).getTransportHandler();
+       		}
+       	} 
+       	else 
+       	{
+       		LOG.warn("Operator must be ReceiverPO if .transport or .protocol is specified!");
+       		return null;
+       	}
 	}
 	
+	@Override
+	protected void process_next(Tuple<IMetaAttribute> object, int port) 
+	{
+		try {
+			List<Tuple<IMetaAttribute>> preProcessResult = null;
+			Command command = (Command) commandExpression.evaluate(object, getSessions(), preProcessResult);
+			
+			if (command instanceof TargetedCommand) {
+				TargetedCommand<?> tCommand = (TargetedCommand<?>) command;
+				if (tCommand.needsTargetsResolved())
+				{
+					List<Object> targets = tCommand.getTargets();
+					List<Object> resolvedTargets = new ArrayList<>(targets.size());
+					for (Object target : targets)
+						resolvedTargets.add(resolveName(executor, caller, target.toString()));
+					tCommand.setResolvedTargets(resolvedTargets);
+				}
+			}
+
+			command.setSession(caller);
+			command.setExecutor(executor);			
+			command.run();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}		
+	}
+		
+	@Override
+	public AbstractSink<Tuple<IMetaAttribute>> clone() {
+		return new CommandPO(this);
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		return false;
+	}	
 }
 

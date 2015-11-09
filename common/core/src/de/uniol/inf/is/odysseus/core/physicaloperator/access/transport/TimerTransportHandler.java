@@ -20,20 +20,14 @@ import java.nio.ByteBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.command.Command;
-import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TimerTransportHandler extends AbstractPushTransportHandler implements ICommandProvider {
+public class TimerTransportHandler extends AbstractPushTransportHandler {
     public static final String NAME = "Timer";
 	public static final String PERIOD = "period";
     public static final String TIMEFROMSTART = "timefromstart";
@@ -158,45 +152,6 @@ public class TimerTransportHandler extends AbstractPushTransportHandler implemen
         }
         return true;
     }
-    
-	@Override
-	public Command getCommandByName(String commandName, SDFSchema schema) 
-	{
-		switch (commandName)
-		{
-			case "setperiod":
-			{
-				final int periodAttribute = schema.findAttributeIndexException("Period");
-				
-				return new Command()
-				{
-					@Override public boolean run(IStreamObject<?> input) 
-					{
-						long period;
-
-						if (input instanceof Tuple<?>)
-						{
-							Tuple<?> tuple = (Tuple<?>) input;								 			
-							period = ((Number) tuple.getAttribute(periodAttribute)).longValue();
-						}
-						else
-						if (input instanceof KeyValueObject)
-						{
-							KeyValueObject<?> kv = (KeyValueObject<?>)input;
-							period = ((Number) kv.getAttribute("period")).longValue();
-						}
-						else
-							throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
-
-						TimerTransportHandler.this.setPeriod(period);
-						return true;
-					}
-				};
-			}
-			
- 		default: return null;
-		}
-	}
 
 	public void setPeriod(long period) {
 		this.period = period;

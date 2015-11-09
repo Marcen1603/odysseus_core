@@ -8,22 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.ByteBufferWrapper;
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.command.Command;
-import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.navicoradar.SWIG.NavicoRadarWrapper;
 
-
-
-public class NavicoRadarTransportHandler extends AbstractPushTransportHandler implements ICommandProvider
+public class NavicoRadarTransportHandler extends AbstractPushTransportHandler
 {
 	public static final String NAME = "NavicoRadar";
 	
@@ -183,91 +176,12 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 	{
 		throw new IllegalArgumentException("Sending Not Supported");
 	}
-	
-	@Override
-	public Command getCommandByName(String commandName, SDFSchema schema) 
-	{
-		switch (commandName)
-		{
-			case "setownshipdata": 
-			{
-				final int speedTypeAttribute = schema.findAttributeIndexException("speedType");
-				final int speedAttribute = schema.findAttributeIndexException("speed");
-				final int headingTypeAttribute = schema.findAttributeIndexException("speedType");
-				final int headingAttribute = schema.findAttributeIndexException("speedType");
-				
-				return new Command()
-						 {
-							@Override public boolean run(IStreamObject<?> input) 
-							{
-								int speedType,headingType;
-								double speed,heading;
-			
-			
-								if (input instanceof Tuple<?>)
-								{
-									Tuple<?> tuple = (Tuple<?>) input;								 			
-									speedType = ((Number) tuple.getAttribute(speedTypeAttribute)).intValue();
-									speed = ((Number) tuple.getAttribute(speedAttribute)).doubleValue();
-									headingType= ((Number) tuple.getAttribute(headingTypeAttribute)).intValue();
-									heading= ((Number) tuple.getAttribute(headingAttribute)).doubleValue();
-								}
-								else
-								if (input instanceof KeyValueObject)
-								{
-									KeyValueObject<?> kv = (KeyValueObject<?>)input;
-									speedType = (int) kv.getAttribute("speedType");
-									speed = (double) kv.getAttribute("speed");
-									headingType= (int) kv.getAttribute("headingType");
-									heading= (double) kv.getAttribute("heading");
-								}
-								else
-									throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
-			
-								return NavicoRadarTransportHandler.this.navico.SetBoatSpeed(speedType, speed, headingType, heading);
-							}
-						};
-			}
-			
-			case "settargetdata":	
-			{
-				final int TargetIdAttribute = schema.findAttributeIndexException("TargetId");
-				final int rangeAttribute = schema.findAttributeIndexException("range");
-				final int bearingAttribute = schema.findAttributeIndexException("bearing");
-				final int bearingtypeAttribute = schema.findAttributeIndexException("bearingtype");
-				
-				return new Command()
-						 {
-						 	@Override public boolean run(IStreamObject<?> input) 
-						 	{
-						 		int TargetId, range, bearing, bearingtype;
-						 		
-						 		if (input instanceof Tuple<?>)
-						 		{
-						 			Tuple<?> tuple = (Tuple<?>) input;								 			
-						 			TargetId = ((Number) tuple.getAttribute(TargetIdAttribute)).intValue();
-						 			range = ((Number) tuple.getAttribute(rangeAttribute)).intValue();
-						 			bearing = ((Number) tuple.getAttribute(bearingAttribute)).intValue();
-						 			bearingtype = ((Number) tuple.getAttribute(bearingtypeAttribute)).intValue();
-						 		}
-						 		else
-						 		if (input instanceof KeyValueObject)
-						 		{
-						 			KeyValueObject<?> kv = (KeyValueObject<?>)input;
-						 			TargetId = (int) kv.getAttribute("TargetId");
-						 			range = (int) kv.getAttribute("range");
-						 			bearing = (int) kv.getAttribute("bearing");
-						 			bearingtype = (int) kv.getAttribute("bearingtype");
-						 		}
-						 		else
-						 			throw new IllegalArgumentException("Cannot execute command on input type " + input.getClass().getName());
-						 		
-						 		return NavicoRadarTransportHandler.this.navico.AcquireTargets(TargetId, range, bearing, bearingtype);
-							}
-						 };					 
-			}
-			
-			default: return null;
-		}
+
+	public boolean setTargetData(int targetId, int range, int bearing, int bearingType) {
+		return navico.AcquireTargets(targetId, range, bearing, bearingType);
+	}
+
+	public boolean setOwnShipData(int speedType, double speed, int headingType, double heading) {
+		return navico.SetBoatSpeed(speedType, speed, headingType, heading);		
 	}
 }

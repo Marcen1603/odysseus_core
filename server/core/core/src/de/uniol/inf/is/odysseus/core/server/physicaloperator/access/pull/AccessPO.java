@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -45,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.Receive
  *            The Output that is written by this operator.
  */
 public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends ReceiverPO<W,M>
-		implements IMetadataInitializer<M, W>, ICommandProvider, IIterableSource<W>   {
+		implements IMetadataInitializer<M, W>, IIterableSource<W>   {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 

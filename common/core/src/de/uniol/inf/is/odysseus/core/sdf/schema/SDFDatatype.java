@@ -75,6 +75,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype BITVECTOR = new SDFDatatype("BitVector");
 	public static final SDFDatatype BYTEBUFFER = new SDFDatatype("ByteBuffer");
 	public static final SDFDatatype HEXSTRING = new SDFDatatype("HexString");
+	public static final SDFDatatype COMMAND = new SDFDatatype("Command");
 
 	public static final SDFDatatype KEYVALUEOBJECT = new SDFDatatype(
 			"KeyValueObject");

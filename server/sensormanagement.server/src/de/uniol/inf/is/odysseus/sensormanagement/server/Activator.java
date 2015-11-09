@@ -19,6 +19,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.slf4j.LoggingConfiguration;
 
 public class Activator implements BundleActivator {
@@ -37,9 +38,10 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	@Override
-	public void start(BundleContext bundleContext) throws Exception {		
+	public void start(BundleContext bundleContext) throws Exception {
 		LoggingConfiguration.load();
 		Activator.context = bundleContext;
+		MEP.searchBundleForMepFunctions(context.getBundle());
 		LoggerFactory.getLogger(SensorService.class).debug("Sarting sensor service...");
 		SensorServiceStarter.start();
 	}

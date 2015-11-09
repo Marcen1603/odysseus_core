@@ -11,22 +11,18 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.command.Command;
-import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera.OperationMode;
 
-public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> implements ICommandProvider  
+public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>>  
 {
 	private static final Logger LOG = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
 	public static final String NAME = "BaslerCamera";
@@ -218,21 +214,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
     	return serialNumber.equals(other.serialNumber) && operationMode.equals(other.operationMode); 
     }
     
-    @Override
-    public Command getCommandByName(String commandName, SDFSchema schema) 
-    {
-    	switch (commandName)
-    	{
-	    	case "trigger":
-	    	{
-	    		return new Command() {
-	    			@Override public boolean run(IStreamObject<?> input) {
-	    				return cameraCapture.trigger();
-	    			}
-	    		};
-	    	}
-
-	    	default: return null;
-    	}
+    public boolean trigger() {
+    	return cameraCapture.trigger();
     } 
 }
