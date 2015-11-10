@@ -356,7 +356,12 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 				context.addExceptions(constructor.exceptions)	
 				result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList,constructor.parameters, context)»)'''			
 			} else {
-				result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»)'''			
+				if (typeUtils.isArray(typeRef)) {
+					context.addImport(ArrayList.canonicalName)
+					result = '''new «ArrayList.simpleName»<>()'''
+				} else {
+					result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»)'''			
+				}
 			}
 		} else {
 			result = '''«exprCompiler.compile(init.value, context)»'''

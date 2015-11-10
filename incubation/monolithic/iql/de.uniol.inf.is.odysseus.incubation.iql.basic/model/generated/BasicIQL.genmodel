@@ -4,8 +4,8 @@
     editDirectory="/de.uniol.inf.is.odysseus.incubation.iql.basic.edit/src" editorDirectory="/de.uniol.inf.is.odysseus.incubation.iql.basic.editor/src"
     modelPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic" forceOverwrite="true"
     modelName="BasicIQL" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    complianceLevel="5.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic.edit"
-    editorPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic.editor" runtimeVersion="2.10"
+    complianceLevel="6.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic.edit"
+    editorPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic.editor" runtimeVersion="2.11"
     usedGenPackages="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types">
   <genPackages prefix="BasicIQL" basePackage="de.uniol.inf.is.odysseus.iql.basic"
       disposableProviderFactory="true" fileExtensions="basiciql" ecorePackage="BasicIQL.ecore#/">

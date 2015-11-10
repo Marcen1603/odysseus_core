@@ -61,7 +61,33 @@ public class TupleExtensions implements IIQLTypeExtensions {
 		return tuple.getAttribute(index);
 	}
 	
-	public static <T extends IMetaAttribute> List<Object> get(Tuple<T> tuple, List<Object> indices) {
+	public static <T extends IMetaAttribute> Tuple<T> get(Tuple<T> tuple, Range range) {
+		int[] attrList = new int[range.getTo()-range.getFrom()+1];
+		int counter = range.getFrom();
+		int i = 0;
+		while (counter<= range.getTo()) {
+			attrList[i++] = counter;
+			counter++;
+		}
+		return tuple.restrict(attrList, true);
+	}
+	
+	
+	public static <T extends IMetaAttribute> Tuple<T> get(Tuple<T> tuple, List<Object> indices) {
+		List<Integer> attrList = new ArrayList<>();
+		for (Object index : indices) {
+			if (index instanceof Range) {
+				Range range = (Range) index;
+				int counter = range.getFrom();
+				while (counter<= range.getTo()) {
+					attrList.add(counter);
+					counter++;
+				}
+			} else {
+				attrList.add((Integer) index);
+			}
+		}
+		
 		List<Object> result = new ArrayList<>();
 		for (Object index : indices) {
 			if (index instanceof Range) {
@@ -75,7 +101,11 @@ public class TupleExtensions implements IIQLTypeExtensions {
 				result.add(tuple.getAttribute((int) index));
 			}
 		}
-		return result;
+		int[] attributes = new int[attrList.size()];
+		for (int i = 0 ; i< attrList.size(); i++) {
+			attributes[i] = attrList.get(i);
+		}
+		return tuple.restrict(attributes, true);
 	}
 	
 	public static <T extends IMetaAttribute> void set(Tuple<T> tuple, Object value, int index) {
@@ -96,6 +126,16 @@ public class TupleExtensions implements IIQLTypeExtensions {
 				tuple.setAttribute((int) index, it.next());
 			}
 		}
+	}
+	
+	public static <T extends IMetaAttribute> void plus(Tuple<T> tuple, List<Object> values) {
+		for (Object value : values) {
+			tuple.append(value);
+		}
+	}
+	
+	public static <T extends IMetaAttribute> void plus(Tuple<T> tuple, Object value) {
+		tuple.append(value);
 	}
 
 

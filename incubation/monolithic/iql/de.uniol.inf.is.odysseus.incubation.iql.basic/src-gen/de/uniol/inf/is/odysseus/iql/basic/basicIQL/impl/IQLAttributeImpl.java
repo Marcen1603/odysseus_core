@@ -22,10 +22,10 @@ import org.eclipse.xtext.common.types.impl.JvmFieldImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLAttributeImpl#getInit <em>Init</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

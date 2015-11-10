@@ -22,11 +22,11 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableStatementImpl#getVar <em>Var</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableStatementImpl#getInit <em>Init</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

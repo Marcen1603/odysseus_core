@@ -469,16 +469,7 @@ public class BasicIQLValidator extends AbstractBasicIQLValidator {
 			LOG.error("Could not evaluate right expression. "+typeResult.getDiagnostic());
 		} else if (!typeResult.isNull()){
 			JvmTypeReference rightTypeRef = typeResult.getRef();
-			if (!expr.getOp().equals("=")) {
-				 if(typeUtils.isArray(leftTypeRef)) {
-					JvmTypeReference typeRef = typeUtils.getComponentType(leftTypeRef);
-					if (!(lookUp.isAssignable(typeRef, rightTypeRef) || lookUp.isCastable(typeRef, rightTypeRef))) {
-						error("Type mismatch: cannot convert from "+typeUtils.getShortName(rightTypeRef, true)+" to "+typeUtils.getShortName(typeRef, true), expr, BasicIQLPackage.eINSTANCE.getIQLAssignmentExpression_RightOperand(), TYPE_MISMATCH);
-					}
-				} else if (!(lookUp.isAssignable(leftTypeRef, rightTypeRef) || lookUp.isCastable(leftTypeRef, rightTypeRef))) {
-					error("Type mismatch: cannot convert from "+typeUtils.getShortName(rightTypeRef, true)+" to "+typeUtils.getShortName(leftTypeRef, true), expr, BasicIQLPackage.eINSTANCE.getIQLAssignmentExpression_RightOperand(), TYPE_MISMATCH);
-				}
-			} else {
+			if (expr.getOp().equals("=")) {
 				if (!(lookUp.isAssignable(leftTypeRef, rightTypeRef) || lookUp.isCastable(leftTypeRef, rightTypeRef))) {
 					error("Type mismatch: cannot convert from "+typeUtils.getShortName(rightTypeRef, true)+" to "+typeUtils.getShortName(leftTypeRef, true), expr, BasicIQLPackage.eINSTANCE.getIQLAssignmentExpression_RightOperand(), TYPE_MISMATCH);
 				}

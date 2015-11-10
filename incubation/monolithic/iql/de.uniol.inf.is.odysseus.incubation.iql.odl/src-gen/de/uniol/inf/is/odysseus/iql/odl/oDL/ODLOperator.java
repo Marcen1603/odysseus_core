@@ -13,10 +13,10 @@ import org.eclipse.xtext.common.types.JvmGenericType;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator#getMetadataList <em>Metadata List</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage#getODLOperator()
  * @model

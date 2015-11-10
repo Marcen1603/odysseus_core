@@ -570,10 +570,12 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		if (!left.^null && typeExtensionsDictionary.hasTypeExtensions(left.ref,methodName,helper.createGetterArguments(e.expressions))){
 			var typeOps = typeExtensionsDictionary.getTypeExtensions(left.ref,methodName,helper.createGetterArguments(e.expressions));
 			c.addImport(typeOps.class.canonicalName)
-			if (e.expressions.size == 1) {				
+			if (e.expressions.size == 1) {	
+				c.expectedTypeRef = null;			
 				'''«typeOps.class.simpleName».«methodName»(«compile(e.leftOperand, c)», «compile(e.expressions.get(0), c)»)'''
 			} else {
 				c.addImport(IQLUtils.canonicalName)
+				c.expectedTypeRef = null;
 				'''«typeOps.class.simpleName».«methodName»(«compile(e.leftOperand, c)», «IQLUtils.simpleName».createList(«e.expressions.map[el | compile(el, c)].join(", ")»))'''
 			}
 		} else if (!left.^null && typeUtils.isArray(left.ref)){
@@ -914,7 +916,9 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 			}
 		} else if (e.argsMap != null && e.argsMap.elements.size > 0) {		
 			var constructor = lookUp.findPublicConstructor(e.ref, new ArrayList())
-			c.addExceptions(constructor.exceptions)
+			if (constructor != null) {
+				c.addExceptions(constructor.exceptions)
+			} 
 			'''get«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, c, true)»(), «compile(e.argsMap, e.ref, c)»)'''
 		} else if (e.argsList != null) {
 			var constructor = lookUp.findPublicConstructor(e.ref, e.argsList.elements)

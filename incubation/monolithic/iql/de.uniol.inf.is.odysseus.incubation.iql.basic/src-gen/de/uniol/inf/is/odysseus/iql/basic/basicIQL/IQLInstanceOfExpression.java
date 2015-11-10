@@ -11,11 +11,11 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInstanceOfExpression#getLeftOperand <em>Left Operand</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInstanceOfExpression#getTargetRef <em>Target Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLInstanceOfExpression()
  * @model

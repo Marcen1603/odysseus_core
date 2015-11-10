@@ -28,11 +28,11 @@ import org.eclipse.xtext.common.types.impl.JvmTypeImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayTypeImpl#getComponentType <em>Component Type</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayTypeImpl#getDimensions <em>Dimensions</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

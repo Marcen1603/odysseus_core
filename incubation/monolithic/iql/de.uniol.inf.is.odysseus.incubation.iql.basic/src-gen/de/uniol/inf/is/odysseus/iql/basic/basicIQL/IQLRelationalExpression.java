@@ -10,12 +10,12 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLRelationalExpression#getLeftOperand <em>Left Operand</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLRelationalExpression#getOp <em>Op</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLRelationalExpression#getRightOperand <em>Right Operand</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLRelationalExpression()
  * @model

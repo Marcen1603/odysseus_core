@@ -242,7 +242,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 			typeRef = typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet());
 		}
 		
-		JvmType innerType = typeUtils.getInnerType(typeRef, true);
+		JvmType innerType = typeUtils.getInnerType(typeRef, false);
 		
 		Collection<IIQLTypeExtensions> col = typeExtensions.get(converter.toJavaString(typeUtils.getLongName(innerType, true)));
 

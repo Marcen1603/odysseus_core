@@ -13,11 +13,11 @@ import org.eclipse.xtext.common.types.JvmMember;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection#getMember <em>Member</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection#getArgs <em>Args</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMemberSelection()
  * @model

@@ -30,11 +30,11 @@ import org.eclipse.xtext.common.types.impl.JvmGenericTypeImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLClassImpl#getExtendedClass <em>Extended Class</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLClassImpl#getExtendedInterfaces <em>Extended Interfaces</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

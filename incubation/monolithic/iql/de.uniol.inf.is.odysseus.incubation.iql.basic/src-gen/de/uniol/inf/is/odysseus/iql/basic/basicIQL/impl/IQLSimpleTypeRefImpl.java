@@ -22,10 +22,10 @@ import org.eclipse.xtext.common.types.impl.JvmTypeReferenceImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLSimpleTypeRefImpl#getType <em>Type</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -23,12 +23,12 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLParameterImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLParameterImpl#isParameter <em>Parameter</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLParameterImpl#getMetadataList <em>Metadata List</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

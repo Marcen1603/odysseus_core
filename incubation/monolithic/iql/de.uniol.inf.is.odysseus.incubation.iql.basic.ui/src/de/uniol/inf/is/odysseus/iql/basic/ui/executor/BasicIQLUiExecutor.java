@@ -3,12 +3,15 @@ package de.uniol.inf.is.odysseus.iql.basic.ui.executor;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.jar.Manifest;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -18,6 +21,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.ui.util.ResourceUtil;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +76,43 @@ public class BasicIQLUiExecutor extends BasicIQLExecutor implements IIQLUiExecut
 		
 		return result;
 	}
+	
+	public static Collection<String> readRequiredBundles(IJavaProject project) {	
+		Collection<String> result = new HashSet<>();
+		IResource res = project.getProject().findMember("META-INF"+File.separator+"MANIFEST.MF");
+		if (res.exists()) {
+			try {
+				Manifest mf = new Manifest(res.getLocation().toFile().toURI().toURL().openStream());
+				String bundles = mf.getMainAttributes().getValue(Constants.REQUIRE_BUNDLE);
+				if (bundles != null) {
+					for (String entry : bundles.split(",")) {					
+						result.add(entry.split(";")[0]);
+					}
+				} 				
+			} catch (IOException e) {
+			}
+		}
+		return result;
+	}
+	
+	public static Collection<String> readBundleClasspath(IJavaProject project) {	
+		Collection<String> result = new HashSet<>();
+		IResource res = project.getProject().findMember("META-INF"+File.separator+"MANIFEST.MF");
+		if (res.exists()) {
+			try {
+				Manifest mf = new Manifest(res.getLocation().toFile().toURI().toURL().openStream());
+				String bundleClasspath = mf.getMainAttributes().getValue(Constants.BUNDLE_CLASSPATH);
+				if (bundleClasspath != null) {
+					for (String entry : bundleClasspath.split(",")) {
+						result.add(entry);
+					}
+				}				
+			} catch (IOException e) {
+			}
+		}
+		return result;
+	}
+
 	
 	public static void copyAndMoveUserEditiedFiles(EObject obj, String path, String name) {
 		IFile file = ResourceUtil.getFile(obj.eResource());

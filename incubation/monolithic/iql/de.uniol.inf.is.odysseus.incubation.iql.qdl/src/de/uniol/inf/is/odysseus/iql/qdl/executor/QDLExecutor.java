@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.slf4j.Logger;
@@ -67,6 +68,8 @@ public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTyp
 			throw new QueryParseException("error while parsing operator text: "+e.getMessage(),e);
 		}
 		
+		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
+		
 		List<QDLQuery> queryList = EcoreUtil2.getAllContentsOfType(model, QDLQuery.class);
 		if (queryList.size() == 0) {
 			throw new QueryParseException("No queries found");
@@ -78,9 +81,9 @@ public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTyp
 			Collection<IQLModelElement> modelElements = getModelElementsToCompile(EcoreUtil2.getResourceSet(model), outputPath,query);
 			generateJavaFiles(modelElements, outputPath);
 			
-			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(model)));
+			compileJavaFiles(outputPath, createClassPathEntries(resourceSet));
 			
-			IQDLQuery qdlQuery = loadQuery(query);
+			IQDLQuery qdlQuery = loadQuery(query, resourceSet);
 				
 			if (query.getMetadataList() == null || query.getMetadataList().getElements().size() == 0) {
 				Collection<ILogicalQuery> queries = generator.createLogicalQueries(qdlQuery, dd, session);
@@ -103,16 +106,8 @@ public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTyp
 	
 	
 	@SuppressWarnings("unchecked")
-	protected IQDLQuery loadQuery(QDLQuery query) {
-		Collection<URL> urls = new HashSet<>();
-		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+QUERIES_DIR+File.separator+query.getSimpleName();
-		File file = new File(outputPath);
-		try {
-			urls.add(file.toURI().toURL());
-		} catch (MalformedURLException e1) {
-			LOG.error("error while loading query " +query.getSimpleName(), e1);
-			throw new QueryParseException("error while loading query " +query.getSimpleName()+": "+System.lineSeparator()+e1.getMessage(),e1);
-		}			
+	protected IQDLQuery loadQuery(QDLQuery query, ResourceSet resourceSet) {
+		Collection<URL> urls = createClassloaderURLs(query, resourceSet);			
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), QDLExecutor.class.getClassLoader());
 		try {
 			String queryName = converter.toJavaString(typeUtils.getLongName(query, false));
@@ -122,6 +117,19 @@ public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTyp
 			LOG.error("error while loading query " +query.getSimpleName(), e);
 			throw new QueryParseException("error while loading query " +query.getSimpleName()+": "+System.lineSeparator()+e.getMessage(),e);
 		}
+	}
+	
+	protected Collection<URL> createClassloaderURLs(QDLQuery query, ResourceSet resourceSet) {
+		Collection<URL> urls = new HashSet<>();
+		String outputPath = BasicIQLTypeUtils.getIQLOutputPath()+File.separator+QUERIES_DIR+File.separator+query.getSimpleName();
+		File file = new File(outputPath);
+		try {
+			urls.add(file.toURI().toURL());
+		} catch (MalformedURLException e1) {
+			LOG.error("error while creating classloader urls" +query.getSimpleName(), e1);
+			throw new QueryParseException("error while creating classloader urls " +query.getSimpleName()+": "+System.lineSeparator()+e1.getMessage(),e1);
+		}
+		return urls;
 	}
 
 

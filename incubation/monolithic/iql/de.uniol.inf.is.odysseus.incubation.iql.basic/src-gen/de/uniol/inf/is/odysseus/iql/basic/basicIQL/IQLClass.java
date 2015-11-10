@@ -14,11 +14,11 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass#getExtendedClass <em>Extended Class</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass#getExtendedInterfaces <em>Extended Interfaces</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLClass()
  * @model

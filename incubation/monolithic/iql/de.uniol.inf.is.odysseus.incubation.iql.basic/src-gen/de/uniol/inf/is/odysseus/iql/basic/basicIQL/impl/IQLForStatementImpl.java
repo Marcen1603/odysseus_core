@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getVar <em>Var</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getValue <em>Value</em>}</li>
@@ -30,7 +31,6 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getUpdateExpr <em>Update Expr</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLForStatementImpl#getBody <em>Body</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

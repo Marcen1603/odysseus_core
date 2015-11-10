@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.iql.basic.scoping;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.common.types.JvmType;
-import org.eclipse.xtext.common.types.JvmVoid;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.IndexedJvmTypeAccess;
 
@@ -34,9 +33,6 @@ public class IQLClasspathTypeProvider extends ClasspathTypeProvider{
 			return type;
 		} else {
 			type = super.findTypeByName(name);
-		}
-		if (type instanceof JvmVoid) {
-			System.out.println();
 		}
 		return type;
 	}

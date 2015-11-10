@@ -11,6 +11,7 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement#getVar <em>Var</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement#getValue <em>Value</em>}</li>
@@ -18,7 +19,6 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement#getUpdateExpr <em>Update Expr</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement#getBody <em>Body</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLForStatement()
  * @model

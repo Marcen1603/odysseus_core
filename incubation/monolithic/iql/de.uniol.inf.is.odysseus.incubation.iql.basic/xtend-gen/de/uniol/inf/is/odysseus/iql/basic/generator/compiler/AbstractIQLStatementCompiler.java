@@ -887,23 +887,35 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
             _builder_3.append(")");
             result = _builder_3.toString();
           } else {
-            StringConcatenation _builder_4 = new StringConcatenation();
-            _builder_4.append("new ");
-            String _compile_10 = this.typeCompiler.compile(typeRef, context, true);
-            _builder_4.append(_compile_10, "");
-            _builder_4.append("(");
-            IQLArgumentsList _argsList_7 = init.getArgsList();
-            String _compile_11 = this.exprCompiler.compile(_argsList_7, context);
-            _builder_4.append(_compile_11, "");
-            _builder_4.append(")");
-            result = _builder_4.toString();
+            boolean _isArray = this.typeUtils.isArray(typeRef);
+            if (_isArray) {
+              String _canonicalName = ArrayList.class.getCanonicalName();
+              context.addImport(_canonicalName);
+              StringConcatenation _builder_4 = new StringConcatenation();
+              _builder_4.append("new ");
+              String _simpleName = ArrayList.class.getSimpleName();
+              _builder_4.append(_simpleName, "");
+              _builder_4.append("<>()");
+              result = _builder_4.toString();
+            } else {
+              StringConcatenation _builder_5 = new StringConcatenation();
+              _builder_5.append("new ");
+              String _compile_10 = this.typeCompiler.compile(typeRef, context, true);
+              _builder_5.append(_compile_10, "");
+              _builder_5.append("(");
+              IQLArgumentsList _argsList_7 = init.getArgsList();
+              String _compile_11 = this.exprCompiler.compile(_argsList_7, context);
+              _builder_5.append(_compile_11, "");
+              _builder_5.append(")");
+              result = _builder_5.toString();
+            }
           }
         } else {
-          StringConcatenation _builder_5 = new StringConcatenation();
+          StringConcatenation _builder_6 = new StringConcatenation();
           IQLExpression _value = init.getValue();
           String _compile_12 = this.exprCompiler.compile(_value, context);
-          _builder_5.append(_compile_12, "");
-          result = _builder_5.toString();
+          _builder_6.append(_compile_12, "");
+          result = _builder_6.toString();
         }
       }
     }

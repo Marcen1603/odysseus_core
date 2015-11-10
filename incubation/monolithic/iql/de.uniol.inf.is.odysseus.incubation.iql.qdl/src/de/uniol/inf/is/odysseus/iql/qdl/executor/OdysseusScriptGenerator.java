@@ -105,19 +105,23 @@ public class OdysseusScriptGenerator {
 		String queryCmd = null;
 		for (IPair<String, Object> metadata : query.getMetadata()) {
 			if (isPreParserKeyword(metadata.getE1())) {
-				if (metadata.getE2() != null) {
+				if (metadata.getE1().equalsIgnoreCase("query")) {
+					if (metadata.getE2() == null || metadata.getE2() == Boolean.TRUE) {
+						queryCmd = "#QUERY";
+					}
+				} else if (metadata.getE1().equalsIgnoreCase("addquery")) {
+					if (metadata.getE2() == null || metadata.getE2() == Boolean.TRUE) {
+						queryCmd = "#ADDQUERY";
+					}
+				} else if (metadata.getE1().equalsIgnoreCase("runquery")) {
+					if (metadata.getE2() == null || metadata.getE2() == Boolean.TRUE) {
+						queryCmd = "#RUNQUERY";
+					}
+				} else if (metadata.getE2() != null){
 					builder.append("#"+metadata.getE1().toUpperCase() +" "+getPreParserKeywordValue(metadata.getE2())+System.lineSeparator());
 				} else {
-					if (metadata.getE1().equalsIgnoreCase("query")) {
-						queryCmd = "query";
-					} else if (metadata.getE1().equalsIgnoreCase("addquery")) {
-						queryCmd = "addquery";
-					} else if (metadata.getE1().equalsIgnoreCase("runquery")) {
-						queryCmd = "runquery";
-					} else {
-						singleMetadata.add("#"+metadata.getE1().toUpperCase() +System.lineSeparator());
-					}
-				}
+					singleMetadata.add("#"+metadata.getE1().toUpperCase() +System.lineSeparator());
+				}				
 			}
 		}
 		for (ILogicalQuery logQuery : queries) {

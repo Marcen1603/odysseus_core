@@ -14,11 +14,11 @@ import org.eclipse.xtext.common.types.JvmGenericType;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery#getMetadataList <em>Metadata List</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery#getStatements <em>Statements</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage#getQDLQuery()
  * @model

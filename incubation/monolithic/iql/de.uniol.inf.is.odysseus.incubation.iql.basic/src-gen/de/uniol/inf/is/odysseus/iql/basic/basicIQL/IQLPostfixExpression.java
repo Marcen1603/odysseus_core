@@ -10,11 +10,11 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression#getOperand <em>Operand</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression#getOp <em>Op</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLPostfixExpression()
  * @model

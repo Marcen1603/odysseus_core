@@ -22,11 +22,11 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLInstanceOfExpressionImpl#getLeftOperand <em>Left Operand</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLInstanceOfExpressionImpl#getTargetRef <em>Target Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

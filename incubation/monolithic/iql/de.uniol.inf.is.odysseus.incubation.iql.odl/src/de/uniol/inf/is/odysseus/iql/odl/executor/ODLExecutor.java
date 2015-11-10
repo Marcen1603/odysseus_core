@@ -67,40 +67,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 
@@ -188,11 +155,13 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 			
 			cleanUpDir(outputPath);
 			
-			Collection<IQLModelElement> resources = getModelElementsToCompile(EcoreUtil2.getResourceSet(operator), outputPath,operator);
+			ResourceSet resourceSet = EcoreUtil2.getResourceSet(operator);
+
+			Collection<IQLModelElement> resources = getModelElementsToCompile(resourceSet, outputPath,operator);
 			generateJavaFiles(resources, outputPath);
 			
 			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator)));
-			loadOperator(operator);
+			loadOperator(operator, resourceSet);
 			
 			LOG.info("Adding operator "+operator.getSimpleName()+" using ODL done.");
 		}
@@ -203,19 +172,11 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 	
 	
 	@SuppressWarnings("unchecked")
-	protected void loadOperator(ODLOperator operator) {
-		Collection<URL> urls = new HashSet<>();
-		String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));		
-		String outputPath = getOperatorPath(operator);
-		File file = new File(outputPath);
-		try {
-			urls.add(file.toURI().toURL());
-		} catch (MalformedURLException e1) {
-			LOG.error("error while loading operator "+operator.getSimpleName(), e1);
-			throw new QueryParseException("error while loading operator "+operator.getSimpleName()+": "+System.lineSeparator()+e1.getMessage(),e1);
-		}			
+	protected void loadOperator(ODLOperator operator, ResourceSet resourceSet) {
+		Collection<URL> urls = createClassloaderURLs(operator, resourceSet);		
 		URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
 		try {
+			String operatorName = converter.toJavaString(typeUtils.getLongName(operator, false));		
 			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operatorName+IODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
 			Class<?> rule = Class.forName(operatorName+IODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
@@ -224,6 +185,19 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTyp
 			LOG.error("error while loading operator "+operator.getSimpleName(), e);
 			throw new QueryParseException("error while loading operator "+operator.getSimpleName()+": "+System.lineSeparator()+e.getMessage(),e);
 		}
+	}
+	
+	protected Collection<URL> createClassloaderURLs(ODLOperator operator, ResourceSet resourceSet) {
+		Collection<URL> urls = new HashSet<>();
+		String outputPath = getOperatorPath(operator);
+		File file = new File(outputPath);
+		try {
+			urls.add(file.toURI().toURL());
+		} catch (MalformedURLException e1) {
+			LOG.error("error while creating classloader urls "+operator.getSimpleName(), e1);
+			throw new QueryParseException("error while creating classloader urls "+operator.getSimpleName()+": "+System.lineSeparator()+e1.getMessage(),e1);
+		}	
+		return urls;
 	}
 	
 	private static void addLogicalOperator(Class<? extends ILogicalOperator> curOp) {

@@ -10,10 +10,10 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLReturnStatement#getExpression <em>Expression</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLReturnStatement()
  * @model

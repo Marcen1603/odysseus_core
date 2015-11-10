@@ -24,11 +24,11 @@ import org.eclipse.xtext.common.types.impl.JvmGenericTypeImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl#getMetadataList <em>Metadata List</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl#getStatements <em>Statements</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

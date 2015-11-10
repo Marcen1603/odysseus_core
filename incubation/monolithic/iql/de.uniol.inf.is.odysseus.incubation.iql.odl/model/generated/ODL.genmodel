@@ -4,8 +4,8 @@
     editDirectory="/de.uniol.inf.is.odysseus.incubation.iql.odl.edit/src" editorDirectory="/de.uniol.inf.is.odysseus.incubation.iql.odl.editor/src"
     modelPluginID="de.uniol.inf.is.odysseus.incubation.iql.odl" forceOverwrite="true"
     modelName="ODL" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    complianceLevel="5.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.incubation.iql.odl.edit"
-    editorPluginID="de.uniol.inf.is.odysseus.incubation.iql.odl.editor" runtimeVersion="2.10"
+    complianceLevel="6.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.incubation.iql.odl.edit"
+    editorPluginID="de.uniol.inf.is.odysseus.incubation.iql.odl.editor" runtimeVersion="2.11"
     usedGenPackages="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.genmodel#//basicIQL platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types">
   <genPackages prefix="ODL" basePackage="de.uniol.inf.is.odysseus.iql.odl" disposableProviderFactory="true"
       fileExtensions="odl" ecorePackage="ODL.ecore#/">

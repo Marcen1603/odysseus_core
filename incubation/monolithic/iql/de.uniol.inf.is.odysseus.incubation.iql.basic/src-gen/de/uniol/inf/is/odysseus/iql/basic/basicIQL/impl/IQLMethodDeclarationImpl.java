@@ -13,8 +13,6 @@ import org.eclipse.xtext.common.types.impl.JvmOperationImpl;
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>IQL Method Declaration</b></em>'.
  * <!-- end-user-doc -->
- * <p>
- * </p>
  *
  * @generated
  */

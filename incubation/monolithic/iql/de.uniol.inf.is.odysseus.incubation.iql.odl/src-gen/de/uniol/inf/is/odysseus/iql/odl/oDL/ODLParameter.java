@@ -12,12 +12,12 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter#isOptional <em>Optional</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter#isParameter <em>Parameter</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter#getMetadataList <em>Metadata List</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage#getODLParameter()
  * @model

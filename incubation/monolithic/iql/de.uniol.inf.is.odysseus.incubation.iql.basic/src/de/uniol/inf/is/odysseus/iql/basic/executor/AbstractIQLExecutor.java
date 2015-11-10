@@ -155,26 +155,32 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extend
 		
 		Collection<String> entries = new ArrayList<>();		
 		for (Bundle bundle : bundles) {
-			File file = getPluginDir(bundle);
-			if (file != null) {
-				File binFolder = new File(file.getAbsolutePath()+File.separator+"bin");
-				if (binFolder.exists()) {
-					entries.add(file.getAbsolutePath()+File.separator+"bin");
-				}
-				entries.add(file.getParentFile().getAbsolutePath());
-				String[] classPathEntries = typeDictionary.getBundleClasspath(bundle);
-				if (classPathEntries != null){
-					for (String e : classPathEntries) {
-						entries.add(file.getAbsolutePath()+File.separator+e);
-					}
-				}
-			}
-		}	
-		
+			entries.addAll(getBundleClassPathEntries(bundle));
+		}			
 		return entries;	
 	}
-
-	private File getPluginDir(Bundle bundle) {
+	
+	
+	protected Collection<String> getBundleClassPathEntries(Bundle bundle) {
+		Collection<String> entries = new ArrayList<>();		
+		File file = getPluginDir(bundle);
+		if (file != null) {
+			File binFolder = new File(file.getAbsolutePath()+File.separator+"bin");
+			if (binFolder.exists()) {
+				entries.add(file.getAbsolutePath()+File.separator+"bin");
+			}
+			entries.add(file.getParentFile().getAbsolutePath());
+			String[] classPathEntries = typeDictionary.getBundleClasspath(bundle);
+			if (classPathEntries != null){
+				for (String e : classPathEntries) {
+					entries.add(file.getAbsolutePath()+File.separator+e);
+				}
+			}
+		}
+		return entries;
+	}
+	
+	protected File getPluginDir(Bundle bundle) {
 		try {
 			URL url = FileLocator.toFileURL(FileLocator.find(bundle, new Path(""), null));
 			return new File(url.toURI());

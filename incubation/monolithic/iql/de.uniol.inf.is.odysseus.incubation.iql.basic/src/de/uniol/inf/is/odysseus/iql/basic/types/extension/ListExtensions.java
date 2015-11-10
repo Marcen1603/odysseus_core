@@ -35,6 +35,16 @@ public class ListExtensions extends CollectionExtensions {
 		return result;
 	}
 	
+	public static <T> List<T> get(List<T> col, Range range) {
+		List<T> result = new ArrayList<>();
+		int counter = range.getFrom();
+		while (counter<= range.getTo()) {
+			result.add(col.get(counter));
+			counter++;
+		}
+		return result;
+	}
+	
 	public static <T> void set(List<T> col, T element, int index) {
 		try {
 			col.set(index, element);
@@ -43,6 +53,18 @@ public class ListExtensions extends CollectionExtensions {
 		}
 	}
 	
+	public static <T> void set(List<T> col, Collection<T> elements, Range range) {
+		Iterator<T> it = elements.iterator();
+		int counter = range.getFrom();
+		while (counter<= range.getTo()) {
+			try {
+				col.set(counter, it.next());
+			} catch (Exception e) {
+				col.add(counter, it.next());
+			}
+			counter++;
+		}
+	}
 	
 	public static <T> void set(List<T> col, Collection<T> elements, List<Object> indices) {
 		Iterator<T> it = elements.iterator();

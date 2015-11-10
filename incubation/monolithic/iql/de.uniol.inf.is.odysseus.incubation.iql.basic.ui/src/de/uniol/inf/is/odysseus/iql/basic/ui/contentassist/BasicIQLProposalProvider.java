@@ -113,9 +113,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 					if (object.eIsProxy()) {
 						object = EcoreUtil.resolve(object,resourceSet);
 					}
-					if (object.eIsProxy()) {
-						continue;
-					}
+					
 					if (object instanceof JvmDeclaredType) {
 						JvmDeclaredType declaredType = (JvmDeclaredType) object;
 						if (lookUp.isInstantiateable(declaredType)) {
@@ -174,10 +172,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 				EObject object = desc.getEObjectOrProxy();		
 				if (object.eIsProxy()) {
 					object = EcoreUtil.resolve(object,resourceSet);
-				}
-				if (object.eIsProxy()) {
-					continue;
-				}
+				}				
 				String proposalStr = desc.getQualifiedName().getLastSegment();
 				String displayString = desc.getQualifiedName().getLastSegment()+ " - " +converter.toString(desc.getQualifiedName());
 				

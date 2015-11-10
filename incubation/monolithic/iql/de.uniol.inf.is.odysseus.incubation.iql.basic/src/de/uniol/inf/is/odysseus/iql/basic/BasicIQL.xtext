@@ -366,7 +366,7 @@ OpPostfix:
 
 IQLMemberCallExpression returns IQLExpression:
 	IQLOtherExpressions	
-	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)? ']') |
+	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)* ']') |
 		=>({IQLMemberSelectionExpression.leftOperand=current} '.') sel=IQLMemberSelection
 	)*
 ;

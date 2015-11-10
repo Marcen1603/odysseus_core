@@ -11,13 +11,13 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isOn <em>On</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isValidate <em>Validate</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isAo <em>Ao</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod#isPo <em>Po</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage#getODLMethod()
  * @model

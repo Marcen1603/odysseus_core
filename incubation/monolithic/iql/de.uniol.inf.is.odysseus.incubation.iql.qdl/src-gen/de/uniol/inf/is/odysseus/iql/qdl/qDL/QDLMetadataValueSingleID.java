@@ -11,10 +11,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage#getQDLMetadataValueSingleID()
  * @model

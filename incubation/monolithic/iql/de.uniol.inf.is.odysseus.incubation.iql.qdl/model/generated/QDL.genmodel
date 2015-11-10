@@ -4,8 +4,8 @@
     editDirectory="/de.uniol.inf.is.odysseus.incubation.iql.qdl.edit/src" editorDirectory="/de.uniol.inf.is.odysseus.incubation.iql.qdl.editor/src"
     modelPluginID="de.uniol.inf.is.odysseus.incubation.iql.qdl" forceOverwrite="true"
     modelName="QDL" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    complianceLevel="5.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.incubation.iql.qdl.edit"
-    editorPluginID="de.uniol.inf.is.odysseus.incubation.iql.qdl.editor" runtimeVersion="2.10"
+    complianceLevel="6.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.incubation.iql.qdl.edit"
+    editorPluginID="de.uniol.inf.is.odysseus.incubation.iql.qdl.editor" runtimeVersion="2.11"
     usedGenPackages="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.genmodel#//basicIQL platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types">
   <genPackages prefix="QDL" basePackage="de.uniol.inf.is.odysseus.iql.qdl" disposableProviderFactory="true"
       fileExtensions="qdl" ecorePackage="QDL.ecore#/">

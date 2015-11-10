@@ -423,10 +423,15 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends 
 //	}
 	
 	@Override
-	public boolean isCastable(JvmTypeReference targetRef, JvmTypeReference typeRef) {
-		if (!isArraySizeEqual(targetRef, typeRef)) {
+	public boolean isCastable(JvmTypeReference targetRef, JvmTypeReference typeRef) {	
+		if (typeUtils.isArray(targetRef) && typeUtils.isArray(typeRef) && !isArraySizeEqual(targetRef, typeRef)) {
+			return false;
+		}  else if(typeUtils.isArray(targetRef) && isCollection(typeRef)) {
+			return true;
+		} else if (typeUtils.isArray(targetRef) || typeUtils.isArray(typeRef)) {
 			return false;
 		}
+	
 		String targetName = converter.toJavaString(typeUtils.getLongName(targetRef, false));
 		String typeName = converter.toJavaString(typeUtils.getLongName(typeRef, false));
 		

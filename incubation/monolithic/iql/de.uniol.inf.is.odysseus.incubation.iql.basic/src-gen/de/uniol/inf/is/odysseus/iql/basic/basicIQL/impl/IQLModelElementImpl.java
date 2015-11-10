@@ -30,11 +30,11 @@ import org.eclipse.xtext.common.types.JvmGenericType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLModelElementImpl#getJavametadata <em>Javametadata</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLModelElementImpl#getInner <em>Inner</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
