@@ -82,10 +82,8 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 				while (this.comparator.compare(this.getElements().get(pos), element) == 0) {
 					++pos;
 				}
-				// insert after the last element with the same ordering key:
-				++pos;
 			} else {
-				pos = (pos + 1) * -1;
+				pos = (-(pos) - 1);
 			}
 			hasEndTsOrder = isStillInEndTsOrderAfterInsert(element, pos);
 			setLatestTimeStamp(element);

@@ -87,5 +87,5 @@ public class TICompareSink<T extends IStreamObject<ITimeInterval>> extends Abstr
 			logger.debug("expected data loaded");
 		}
 	}
-
+	
 }
