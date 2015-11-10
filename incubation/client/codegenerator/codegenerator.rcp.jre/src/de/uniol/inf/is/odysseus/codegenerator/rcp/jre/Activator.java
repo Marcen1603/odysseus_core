@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.codegenerator.rcp.jre;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * OSGi Activator class for this bundle
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;

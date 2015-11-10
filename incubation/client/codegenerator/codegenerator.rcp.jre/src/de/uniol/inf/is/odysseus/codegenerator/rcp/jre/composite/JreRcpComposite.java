@@ -11,11 +11,23 @@ import org.eclipse.swt.widgets.Label;
 
 import de.uniol.inf.is.odysseus.codegenerator.rcp.modell.AbstractRcpOptionComposite;
 
+/**
+ * this class define the gui elements for the 
+ * jre special options
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class JreRcpComposite extends AbstractRcpOptionComposite {
 	
 	private Button autoBuild;
 
-
+	/**
+	 * create a new JreRCPComposite
+	 * 
+	 * @param parent
+	 * @param style
+	 */
 	public JreRcpComposite(Composite parent,int style) {
 		super(parent, style);
 		
@@ -24,7 +36,6 @@ public class JreRcpComposite extends AbstractRcpOptionComposite {
 		this.setLayoutData(contentGridData);
 		setLayout(new GridLayout(1, false));
 		
-
 		// Create a horizontal separator
 		Label separator = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -35,10 +46,12 @@ public class JreRcpComposite extends AbstractRcpOptionComposite {
 	
 	}
 	
-
+	/**
+	 * return the input values of the special jre options
+	 * 
+	 */
 	public Map<String,String> getInput(){
 		Map<String,String>  options = new HashMap<String,String>();
-		
 		
 		options.put("autobuild", Boolean.toString(autoBuild.getSelection()));
 		
@@ -46,6 +59,10 @@ public class JreRcpComposite extends AbstractRcpOptionComposite {
 	}
 	
 	
+	/**
+	 * check if the parent window isDisposed
+	 * 
+	 */
 	public boolean isDisposed(){
 		return super.isDisposed();
 	}

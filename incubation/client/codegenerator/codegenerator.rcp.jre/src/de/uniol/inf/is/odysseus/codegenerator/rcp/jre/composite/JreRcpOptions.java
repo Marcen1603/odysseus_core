@@ -15,6 +15,9 @@ public class JreRcpOptions implements IRcpSpecialOption{
 		return targetPlatform;
 	}
 
+	/**
+	 * generate a new instanz of the JreRcpComposite 
+	 */
 	@Override
 	public AbstractRcpOptionComposite getComposite(Composite parent,int style) {
 		return new JreRcpComposite(parent,style);

@@ -28,6 +28,13 @@ import de.uniol.inf.is.odysseus.codegenerator.target.platform.registry.TargetPla
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguartionException;
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 
+
+/**
+ * composite class for configuration content of codegenerator UI
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class QueryTransformationParameterComposite extends AbstractParameterComposite {
 
 	private Text txtTargetDirectory;
@@ -42,10 +49,8 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 	private Composite inputOptionComposite;
 	
 	private Composite parentComposite;
-	
 
 	private IRcpOptionComposite optionComposite;
-	
 	
 	private Composite buttonComposite;
 	private QueryTransformationWindow window;
@@ -64,12 +69,14 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		this.style = style;
 		this.parentComposite = parent;
 
+		//set grid layout
 		GridData contentGridData = new GridData(GridData.FILL_BOTH);
 		contentGridData.horizontalAlignment = SWT.FILL;
 		contentGridData.widthHint = windowWidth;
 		this.setLayoutData(contentGridData);
 		setLayout(new GridLayout(1, false));
 
+		//set the composite layout
 		inputDirectoryComposite = new Composite(this, SWT.FILL);
 		inputDirectoryComposite.setLayoutData(new GridData(SWT.FILL,
 				SWT.CENTER, true, false, 1, 1));
@@ -95,24 +102,31 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		buttonComposite.setLayoutData(griDDatabuttonComposite);
 		buttonComposite.setLayout(new GridLayout(3, false));
 		
-
-	
+		//create foot buttons
 		createButton();
 		
+		//load the last codegeneration config
 		loadRCPConfig();
 		
+		//load the special options composite
 		IRcpSpecialOption rcpSpecialOption = RcpSpecialOptionRegistry.getRCPSpeicalOption(targetPlatform.getText());
 		
 		if(rcpSpecialOption != null){
 			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
 		}
 	
+		//refresh the scheduler combobox
 		refreshComboScheduler();
 		
+		//referesh and show the composite
 		parent.pack();
 		parent.setVisible(true);
 	}
-
+	
+	
+	/**
+	 * create the content of this composite
+	 */
 	private void createContent() {
 
 		inputDirectoryComposite.setLayout(new GridLayout(3, false));
@@ -170,21 +184,23 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		
 		targetPlatform.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent e) {
-	
+		    	 //if the targetPlatform changed, disable the special option children
 		    	 Control[] children = inputOptionComposite.getChildren();
 		    	    for (int i = 0 ; i < children.length; i++) {
 		    	        children[i].dispose();
 		    	    }
-		    	
-		    	  
+		    	 //load the new special options from the targetplatform 
 		  		IRcpSpecialOption rcpSpecialOption = RcpSpecialOptionRegistry.getRCPSpeicalOption(targetPlatform.getText());
 		  		
+		  		//if special option not null 
 		  		if(rcpSpecialOption != null){
 		  			optionComposite = rcpSpecialOption.getComposite(inputOptionComposite, style);
 		  		}
 		  		
+		  		//refresh the combo box
 		  		refreshComboScheduler();
 			
+		  		//refresh the gui
 		  		inputOptionComposite.layout();
 		  		parentComposite.pack();
 		  	
@@ -196,6 +212,10 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		
 	}
 
+	/**
+	 * create the ok and cancel button for the composite
+	 * 
+	 */
 	private void createButton() {
 
 		Button oklButton = new Button(buttonComposite, SWT.PUSH);
@@ -216,8 +236,6 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 						options= optionComposite.getInput();
 					}
 					
-					
-
 					TransformationParameter parameter = new TransformationParameter(
 							targetPlatform.getText(), txtTargetDirectory
 									.getText(),
@@ -248,6 +266,11 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 
 	}
 
+	/**
+	 * validate the configuration
+	 * 
+	 * @throws IllegalArgumentException
+	 */
 	private void checkInputFields() throws IllegalArgumentException {
 
 		if (!checkDirecotry(txtTargetDirectory.getText())) {
@@ -265,7 +288,13 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		
 
 	}
-
+	
+	/**
+	 * check if the directory exist and is readable
+	 * 
+	 * @param folder
+	 * @return
+	 */
 	private boolean checkDirecotry(String folder) {
 		File folderFile = new File(folder);
 
@@ -276,6 +305,11 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		}
 	}
 
+	/**
+	 * create a error dialog 
+	 * 
+	 * @param t
+	 */
 	private void createErrorDialog(Throwable t) {
 		MessageDialog dialog = new MessageDialog(parentShell, "Error", null,
 				t.getLocalizedMessage(), MessageDialog.ERROR,
@@ -283,9 +317,11 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		dialog.open();
 	}
 	
+	/**
+	 * load the last codegeneration config 
+	 */
 	private void loadRCPConfig(){
 		
-			
 			try {
 				String targetDirectoryRCPConfig = OdysseusRCPConfiguration.get(rcpConfig+"TargetDirectory");
 				txtTargetDirectory.setText(targetDirectoryRCPConfig);
@@ -311,8 +347,6 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 						 targetPlatform.select(i);
 				     }
 				}
-				
-		
 				refreshComboScheduler();
 				
 			} catch (OdysseusRCPConfiguartionException e) {
@@ -320,7 +354,10 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 			}
 	}
 	
-	
+	/**
+	 * save all inputfields in the codegeneration config
+	 * 
+	 */
 	private void saveInputFields(){
 		OdysseusRCPConfiguration.set(rcpConfig+"TargetDirectory", txtTargetDirectory.getText());
 		OdysseusRCPConfiguration.set(rcpConfig+"OdysseusDirectory", txtOdysseusCode.getText());
@@ -328,7 +365,9 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		OdysseusRCPConfiguration.set(rcpConfig+"Scheduler", comboScheduler.getText());
 	}
 	
-	
+	/**
+	 * refresh the scheduler combobox
+	 */
 	private void refreshComboScheduler(){
 		
 		if(CSchedulerRegistry.getAllScheduler(targetPlatform.getText())!=null){
@@ -353,6 +392,14 @@ public class QueryTransformationParameterComposite extends AbstractParameterComp
 		}
 	}
 	
+	/**
+	 * help function, stringArray to upperCase
+	 * used by the refreshComboScheduler function 
+	 * for a nice look
+	 * 
+	 * @param stringArray
+	 * @return
+	 */
 	private String[] stringArrayToUpperCase(String[] stringArray){
 		
 		for(int i=0; i< stringArray.length; i++){
