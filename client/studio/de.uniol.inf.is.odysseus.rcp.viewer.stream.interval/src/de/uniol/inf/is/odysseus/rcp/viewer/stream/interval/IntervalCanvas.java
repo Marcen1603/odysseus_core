@@ -37,8 +37,8 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 	private final Canvas elementDataCanvas;
 	private final IntervalCanvasDataContainer container;
 	
-	private final Color blackColor;
-	private final Color selectionColor;
+	private final Color lineColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+	private final Color selectionColor = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 	
 	private int mouseY;
 
@@ -95,9 +95,6 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 		intervalLineCanvas.setLayoutData(intervalLineCanvasFormData);
 
 		container = new IntervalCanvasDataContainer();
-		
-		blackColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-		selectionColor = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 	}
 
 	public void dispose() {
@@ -161,7 +158,7 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 		// space to the border of the canvas
 		int drawY = VERTICAL_MARGIN_PIXELS;
 
-		gc.setForeground(blackColor);
+		gc.setForeground(lineColor);
 		for (IStreamObject<? extends ITimeInterval> element : elements) {
 			// mouse highlights line?
 			if( mouseY >= drawY - halfIntervalLineHeight && mouseY <= drawY + halfIntervalLineHeight ) {
@@ -194,7 +191,7 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 		int halfIntervalLineHeight = intervalLineHeight / 2;
 		int drawY = VERTICAL_MARGIN_PIXELS;
 
-		gc.setForeground(blackColor);
+		gc.setForeground(lineColor);
 		
 		Color oldColor = gc.getBackground();
 		for (IStreamObject<? extends ITimeInterval> element : elements) {
