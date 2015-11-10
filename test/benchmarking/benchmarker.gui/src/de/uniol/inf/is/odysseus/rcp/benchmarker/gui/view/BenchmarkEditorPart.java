@@ -85,6 +85,7 @@ import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.StringUtils;
  * @author Stefanie Witzke
  * 
  */
+@SuppressWarnings("all")
 public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, PropertyChangeListener {
 
 	public static final String ID = "de.uniol.inf.is.odysseus.rcp.benchmarker.gui.editorBenchmark";
