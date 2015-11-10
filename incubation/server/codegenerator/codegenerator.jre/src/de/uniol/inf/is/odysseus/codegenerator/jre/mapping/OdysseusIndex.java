@@ -53,6 +53,10 @@ public class OdysseusIndex {
 		}
 	}
 	
+	/**
+	 * return a list with all resolved *.java files
+	 * @return
+	 */
 	public List<Path> getOdysseusIndex(){
 		return odysseusIndex;
 		

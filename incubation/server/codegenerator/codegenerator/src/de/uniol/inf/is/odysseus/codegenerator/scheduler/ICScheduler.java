@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 public interface ICScheduler {
 	
 	/**
-	 * return the startcode for the operator list
+	 * return the startcode for the given operator list
 	 * @param sourceOPs
 	 * @return
 	 */
@@ -31,7 +31,7 @@ public interface ICScheduler {
 	public String getTargetPlatform();
 	
 	/**
-	 * return the code for the scheduler
+	 * return the implementation code for the scheduler
 	 * @return
 	 */
 	public String getSchedulerCode();

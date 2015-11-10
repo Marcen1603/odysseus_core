@@ -7,8 +7,8 @@ import org.stringtemplate.v4.STGroupDir;
 import de.uniol.inf.is.odysseus.codegenerator.jre.model.CustomizedStringRenderer;
 
 /**
- * This class wrapp the StringTemplate engine for better and 
- * easyer access. This class is used from the operator rules.
+ * This class wrapp the StringTemplate engine for 
+ * easy access. This class is used from the operator rules.
  * 
  * @author MarcPreuschaft
  *
