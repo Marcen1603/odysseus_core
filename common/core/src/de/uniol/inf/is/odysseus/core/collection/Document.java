@@ -33,10 +33,14 @@ public class Document<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		// Document is immutable
 		return this;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "\""+content+"\"";
 	}
 	
+	@Override
+	public String toString(boolean printMetadata) {
+		return "\""+content+"\""+(printMetadata?getMetadata():"");
+	}
 }

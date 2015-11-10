@@ -76,6 +76,11 @@ public class PairMap<K1 extends IClone, K2 extends IClone, V extends IClone, M e
 	}
 	
 	@Override
+	public String toString(boolean printMetadata) {
+		return toString()+" "+(printMetadata?getMetadata():"");
+	}
+	
+	@Override
 	public PairMap<K1,K2,V,M> clone() {
 		return new PairMap<K1, K2, V, M>(this, false);
 	}

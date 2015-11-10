@@ -119,5 +119,10 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	public String toString() {	
 		return csvToString(new WriteOptions(';','\'',null,null, true));
 	}
+	
+	@Override
+	public String toString(boolean printMetadata) {
+		return toString()+" "+(printMetadata?getMetadata():"");
+	}
 
 }

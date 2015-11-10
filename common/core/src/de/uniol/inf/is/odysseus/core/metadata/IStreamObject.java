@@ -90,5 +90,6 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 
 	boolean equals(IStreamObject<IMetaAttribute> o, boolean compareMeta);
 
+	String toString(boolean printMetadata);
 
 }

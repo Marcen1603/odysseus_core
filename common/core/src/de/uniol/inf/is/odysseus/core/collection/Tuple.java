@@ -738,6 +738,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	@Override
 	public String toString() {
+		return toString(true);
+	}
+	
+	@Override
+	public String toString(boolean printMetadata) {
 		StringBuffer retBuff = new StringBuffer();
 		if (attributes.length > 0) {
 			retBuff.append(this.attributes[0] == null ? "" : this.attributes[0]);
@@ -750,7 +755,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute
 					.toString());
 		}
-		if (getMetadata() != null) {
+		if (printMetadata && getMetadata() != null) {
 			retBuff.append(" | META | " + getMetadata());
 		}
 		return retBuff.toString();

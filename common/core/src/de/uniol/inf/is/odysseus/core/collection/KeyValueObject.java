@@ -145,6 +145,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		return toString(true);
 	}
 	
+	@Override
 	public String toString(boolean withMetadata) {
 		StringBuffer retBuff = new StringBuffer();
 		retBuff.append(attributes);

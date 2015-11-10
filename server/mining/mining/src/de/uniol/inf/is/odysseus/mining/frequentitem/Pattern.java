@@ -187,6 +187,11 @@ public class Pattern<M extends ITimeInterval> extends AbstractStreamObject<M> {
 	public String toString() {
 		return this.support + ": " + this.pattern;
 	}
+	
+	@Override
+	public String toString(boolean printMetadata) {
+		return toString()+" "+(printMetadata?getMetadata():"");
+	}
 
 	/**
 	 * 
