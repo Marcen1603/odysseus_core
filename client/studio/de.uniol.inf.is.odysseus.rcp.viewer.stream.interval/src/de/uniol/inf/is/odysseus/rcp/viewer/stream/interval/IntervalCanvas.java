@@ -29,17 +29,17 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 
 	private static final int INTERVAL_LINE_MAX_HEIGHT_PIXELS = 100;
 	private static final int INTERVAL_LINE_MIN_HEIGHT_PIXELS = 15;
-	
+
 	private static final int VERTICAL_MARGIN_PIXELS = 20;
 	private static final int ELEMENT_DATA_HORIZONTAL_MARGIN_PIXELS = 10;
 
 	private final Canvas intervalLineCanvas;
 	private final Canvas elementDataCanvas;
 	private final IntervalCanvasDataContainer container;
-	
+
 	private final Color lineColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private final Color selectionColor = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
-	
+
 	private int mouseY;
 
 	public IntervalCanvas(Composite parent) {
@@ -161,26 +161,24 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 		gc.setForeground(lineColor);
 		for (IStreamObject<? extends ITimeInterval> element : elements) {
 			// mouse highlights line?
-			if( mouseY >= drawY - halfIntervalLineHeight && mouseY <= drawY + halfIntervalLineHeight ) {
+			if (mouseY >= drawY - halfIntervalLineHeight && mouseY <= drawY + halfIntervalLineHeight) {
 				Color oldColor = gc.getBackground();
 				gc.setBackground(selectionColor);
-				
+
 				gc.fillRectangle(0, drawY - halfIntervalLineHeight, intervalLineCanvas.getBounds().width, intervalLineHeight);
-				
+
 				gc.setBackground(oldColor);
 			}
-			
+
 			long start = element.getMetadata().getStart().getMainPoint();
 			long end = element.getMetadata().getEnd().getMainPoint();
 
 			int startPixels = VERTICAL_MARGIN_PIXELS + (int) (((double) (start - minimumTime) / (double) timeDiff) * drawAreaWidth);
 			int endPixels = VERTICAL_MARGIN_PIXELS + (int) (((double) (end - minimumTime) / (double) timeDiff) * drawAreaWidth);
 
-			
 			gc.drawLine(startPixels, drawY, endPixels, drawY);
 			gc.drawLine(startPixels, drawY - halfIntervalLineHeight, startPixels, drawY + halfIntervalLineHeight);
 			gc.drawLine(endPixels, drawY - halfIntervalLineHeight, endPixels, drawY + halfIntervalLineHeight);
-			
 
 			drawY += VERTICAL_MARGIN_PIXELS;
 		}
@@ -192,16 +190,16 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 		int drawY = VERTICAL_MARGIN_PIXELS;
 
 		gc.setForeground(lineColor);
-		
+
 		Color oldColor = gc.getBackground();
 		for (IStreamObject<? extends ITimeInterval> element : elements) {
-			if( mouseY >= drawY - halfIntervalLineHeight && mouseY <= drawY + halfIntervalLineHeight ) {
+			if (mouseY >= drawY - halfIntervalLineHeight && mouseY <= drawY + halfIntervalLineHeight) {
 				// mouse highlights line
-				gc.setBackground(selectionColor);	
+				gc.setBackground(selectionColor);
 				gc.fillRectangle(0, drawY - halfIntervalLineHeight, elementDataCanvas.getBounds().width, intervalLineHeight);
 			}
 
-			gc.drawText(element.toString(),ELEMENT_DATA_HORIZONTAL_MARGIN_PIXELS, drawY - intervalLineHeight / 2);
+			gc.drawText(element.toString(), ELEMENT_DATA_HORIZONTAL_MARGIN_PIXELS, drawY - intervalLineHeight / 2);
 			gc.setBackground(oldColor);
 
 			drawY += VERTICAL_MARGIN_PIXELS;
@@ -211,7 +209,7 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 	@Override
 	public void mouseMove(MouseEvent e) {
 		mouseY = e.y;
-		
+
 		redrawAllCanvasAsync();
 	}
 }
