@@ -28,7 +28,15 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAggregateF
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
-
+/**
+ * This rule generate from a AggregateAO the code for the 
+ * AggregateTIPO operator. 
+ * 
+ * template: operator/aggregateTIPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 	
 	public CAggregateTIPORule() {
@@ -37,9 +45,6 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 	
 	@Override
 	public CodeFragmentInfo getCode(AggregateAO operator) {
-		
-		
-		
 		CodeFragmentInfo aggregateTIPO = new CodeFragmentInfo();
 		
 		AggregateAO aggregateAO = (AggregateAO) operator;

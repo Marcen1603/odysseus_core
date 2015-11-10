@@ -8,6 +8,15 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.TopPO;
 
+/**
+ * This rule generate from a RenameAO the code for the 
+ * TopPO operator. 
+ * 
+ * template: operator/topPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CRenamePORule extends AbstractCRenameAORule<RenameAO>{
 
 	public CRenamePORule() {
@@ -17,11 +26,10 @@ public class CRenamePORule extends AbstractCRenameAORule<RenameAO>{
 
 	@Override
 	public CodeFragmentInfo getCode(RenameAO operator) {
-	CodeFragmentInfo topPO = new CodeFragmentInfo();
+		CodeFragmentInfo topPO = new CodeFragmentInfo();
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
-
 		StringTemplate topTemplate = new StringTemplate("operator","topPO");
 		topTemplate.getSt().add("operatorVariable", operatorVariable);
 		topPO.addCode(topTemplate.getSt().render());

@@ -15,6 +15,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.UnboundedWindowTIPO;
 
+/**
+ * This rule generate from a WindowAO the code for the 
+ * UnboundedWindowTIPO operator. 
+ * 
+ * template: operator/unboundedWindowTIPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CUnboundedWindowTIPORule extends AbstractCUnboundedWindowTIPORule<WindowAO>{
 	
 	

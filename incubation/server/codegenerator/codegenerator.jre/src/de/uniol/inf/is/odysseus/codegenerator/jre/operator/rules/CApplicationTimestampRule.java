@@ -9,6 +9,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
+
+/**
+ * This rule generate from a TimestampAO (systemtime and tupel) the code for the 
+ * applicationTimestamp. 
+ * 
+ * template: utils/applicationTimestamp.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<TimestampAO>{
 	
 	

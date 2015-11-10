@@ -8,6 +8,15 @@ import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.physicaloperator.HashFragmentPO;
 
+/**
+ * This rule generate from a HashFragmentAO the code for the 
+ * HashFragmentPO operator. 
+ * 
+ * template: operator/hashFragmentPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CHashFragmentPORule extends AbstractCHashFragmentAORule<HashFragmentAO>{
 
 	public CHashFragmentPORule() {

@@ -9,6 +9,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
+
+/**
+ * abstract rule for the SelectAO
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCSelectAORule<T extends SelectAO> extends AbstractCOperatorRule<SelectAO> {
 
 	public AbstractCSelectAORule(String name) {
@@ -18,9 +26,7 @@ public abstract class AbstractCSelectAORule<T extends SelectAO> extends Abstract
 	@Override
 	public boolean isExecutable(SelectAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-
 				return true;
-	
 	}
 
 
@@ -33,8 +39,10 @@ public abstract class AbstractCSelectAORule<T extends SelectAO> extends Abstract
 		String predicateValue = predicate.toString();
 		IExpression<?> mepExpression = MEP.getInstance().parse(predicateValue);
 
+		//get all mep expression from the logicalOperator
 		Map<String, IExpression<?>> mepFunctions = getAllMEPFunctions(mepExpression);
 
+		//add all detected expression
 		transformationInformation.addMEPFunction(mepFunctions);
 	}
 

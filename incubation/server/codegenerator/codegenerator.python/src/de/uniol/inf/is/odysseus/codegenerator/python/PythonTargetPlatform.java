@@ -10,10 +10,17 @@ import de.uniol.inf.is.odysseus.codegenerator.target.platform.AbstractTargetPlat
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * this is only a dummy class to demonstrate a 
+ * python targetPlatform
+ * 
+ * this codegenerator process create only one
+ * python file!
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class PythonTargetPlatform extends AbstractTargetPlatform{
-
-	
-	private static PythonFileWrite testWrite;
 
 	public PythonTargetPlatform() {
 		super("Python");
@@ -29,17 +36,15 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 	
 
 		
-		testWrite = new PythonFileWrite("TestFilePython.py",parameter);
+		PythonFileWrite pythonFileWrite = new PythonFileWrite("TestFilePython.py",parameter);
 		try {
-			testWrite.createFile();
-			
-			
 			transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 			
-			testWrite.closeFile();
+			
+			pythonFileWrite.createFile();
+			pythonFileWrite.closeFile();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -47,14 +52,16 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 	}
 
 
-
+	/**
+	 * impl here the python code generation prozess
+	 */
 	@Override
 	public void generateOperatorCodeOperatorReady(ILogicalOperator operator,
 			TransformationParameter parameter,
 			TransformationConfiguration transformationConfiguration,
 			QueryAnalyseInformation queryAnalseInformation,
 			ICOperatorRule<ILogicalOperator> opsTrans) {
-		// TODO Auto-generated method stub
+			
 		
 	}
 
@@ -62,7 +69,7 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 	@Override
 	public void generateOperatorSubscription(ILogicalOperator operator,
 			QueryAnalyseInformation queryAnalseInformation) {
-		// TODO Auto-generated method stub
+
 		
 	}
 

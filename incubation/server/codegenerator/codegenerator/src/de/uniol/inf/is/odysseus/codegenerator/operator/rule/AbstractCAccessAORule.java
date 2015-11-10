@@ -13,6 +13,13 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
+/**
+ * abstract rule for the StreamAO (PULL)
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCAccessAORule<T extends StreamAO> extends AbstractCOperatorRule<StreamAO> { 
 	
 	
@@ -39,8 +46,7 @@ public abstract class AbstractCAccessAORule<T extends StreamAO> extends Abstract
 	@Override
 	public void analyseOperator(StreamAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
-
-
+		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider
 				.getDataDictionary(tenant).getStreamForTransformation(
@@ -48,10 +54,12 @@ public abstract class AbstractCAccessAORule<T extends StreamAO> extends Abstract
 
 		AccessAO accessAO = (AccessAO) logicalPlan;
 
+		//get transportHandler, protocolHandler and dataHandler from accessAO
 		String transportHandler = accessAO.getTransportHandler();
 		String protocolHandler = accessAO.getProtocolHandler();
 		String dataHandler = accessAO.getDataHandler();
 
+		//add detected transportHandler, protocolHandler and dataHandler
 		transformationInformation.addTransportHandler(transportHandler);
 		transformationInformation.addProtocolHandler(protocolHandler);
 		transformationInformation.addDataHandler(dataHandler);
@@ -71,9 +79,11 @@ public abstract class AbstractCAccessAORule<T extends StreamAO> extends Abstract
 
 		AccessAO accessAO = (AccessAO) logicalPlan;
 		
+		//read optionMap for the external operationconfiguration
 		Map<String, String> optionMap = new HashMap<String, String>();
 		optionMap = accessAO.getOptionsMap();
 
+		//add logical operator an the optionMap
 		transformationInformation.addOperatorConfiguration(logicalOperator,optionMap);
 	}
 }

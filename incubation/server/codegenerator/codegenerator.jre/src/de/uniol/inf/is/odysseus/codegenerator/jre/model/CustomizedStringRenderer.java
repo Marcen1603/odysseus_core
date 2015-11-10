@@ -5,6 +5,12 @@ import java.util.Locale;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.stringtemplate.v4.StringRenderer;
 
+/**
+ * Customized stringRenderer for the StringRenderer engine.
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CustomizedStringRenderer extends StringRenderer
 {
     @Override

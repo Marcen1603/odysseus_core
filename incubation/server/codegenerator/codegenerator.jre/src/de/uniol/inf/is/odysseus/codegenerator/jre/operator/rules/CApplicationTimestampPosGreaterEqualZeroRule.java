@@ -9,6 +9,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
+/**
+ * This rule generate from a TimestampAO the code for the 
+ * applicationTimestampPosGreaterEqualZero. 
+ * 
+ * template: utils/applicationTimestampPosGreaterEqualZero.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CApplicationTimestampPosGreaterEqualZeroRule extends AbstractCApplicationTimestampPosGreaterEqualZeroRule<TimestampAO>{
 	
 	
@@ -18,7 +27,7 @@ public class CApplicationTimestampPosGreaterEqualZeroRule extends AbstractCAppli
 
 	@Override
 	public CodeFragmentInfo getCode(TimestampAO operator) {
-	CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
+		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator.getSubscribedToSource().iterator().next().getTarget());
 		

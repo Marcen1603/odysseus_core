@@ -5,6 +5,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * abstract rule for the inputSchema -> ITimeInterval
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCIntervalRule<T extends ILogicalOperator>  extends AbstractCOperatorRule<T>{
 
 	public AbstractCIntervalRule(String name) {
@@ -25,9 +32,5 @@ public abstract class AbstractCIntervalRule<T extends ILogicalOperator>  extends
 			return true;
 			
 	}
-	
-	
-
-	
 
 }

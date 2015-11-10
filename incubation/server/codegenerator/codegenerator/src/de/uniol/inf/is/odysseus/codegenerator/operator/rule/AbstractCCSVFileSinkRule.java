@@ -8,6 +8,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
+/**
+ * abstract rule for the CSVFileSink
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends AbstractCOperatorRule<CSVFileSink> {
 
 	public AbstractCCSVFileSinkRule(String name) {
@@ -39,6 +46,7 @@ public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends Ab
 	public void analyseOperator(CSVFileSink logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
+		//add detected transportHandler, protocolHandler and dataHandler
 		transformationInformation.addDataHandler(logicalOperator
 				.getDataHandler());
 		transformationInformation.addProtocolHandler(logicalOperator

@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.codegenerator.modell;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * modell class for codeFragmentInfo
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CodeFragmentInfo {
 	
 	private String code ="";
@@ -48,8 +54,7 @@ public class CodeFragmentInfo {
 		this.imports.add(imports);
 	}
 	
-	
-	
+
 	public void addCodeFragmentInfo(CodeFragmentInfo newFragment){
 		addCode(newFragment.getCode());
 		addFrameworkImports(newFragment.getFrameworkImports());	

@@ -5,16 +5,29 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 
+/**
+ * Untils class for the codegenerator feature
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class Utils {
 	
 	private static OS os = null;
 	
+	//enum to define the os 
 	public enum OS {
         WINDOWS, LINUX, MAC, SOLARIS
     };
     
  
-    
+    /**
+     * create a timeStampAO from a given logicalOperator
+     * 
+     * @param operator
+     * @param dateFormat
+     * @return
+     */
 	public static TimestampAO createTimestampAO(ILogicalOperator operator,
 			String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
@@ -46,7 +59,10 @@ public class Utils {
 	}
 	
 	
-
+	/**
+	 * return the detected os 
+	 * @return
+	 */
 	public static OS getOS() {
 	    if (os == null) {
 	        String operSys = System.getProperty("os.name").toLowerCase();

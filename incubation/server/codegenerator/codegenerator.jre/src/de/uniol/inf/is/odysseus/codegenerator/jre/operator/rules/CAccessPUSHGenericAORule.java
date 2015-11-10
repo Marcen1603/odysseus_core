@@ -15,6 +15,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 
+/**
+ * This rule generate from a AccessAO (PUSH) the code for the 
+ * receiverPO operator. 
+ * 
+ * template: operator/receiverPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CAccessPUSHGenericAORule extends AbstractCAccessPUSHGenericAORule<AccessAO>{
 	
 	public CAccessPUSHGenericAORule() {
@@ -24,7 +33,6 @@ public class CAccessPUSHGenericAORule extends AbstractCAccessPUSHGenericAORule<A
 	
 	@Override
 	public CodeFragmentInfo getCode(AccessAO operator) {
-		
 		CodeFragmentInfo receiverPO = new CodeFragmentInfo();
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);

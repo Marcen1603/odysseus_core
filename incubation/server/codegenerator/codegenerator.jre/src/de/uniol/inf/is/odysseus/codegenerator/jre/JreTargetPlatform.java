@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import de.uniol.inf.is.odysseus.codegenerator.jre.filewriter.JavaFileWrite;
-import de.uniol.inf.is.odysseus.codegenerator.jre.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.codegenerator.jre.model.JreTargetplatformOption;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
@@ -19,12 +18,22 @@ import de.uniol.inf.is.odysseus.codegenerator.utils.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * this class handel the codegeneration for the
+ * JRE targetPlatform
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class JreTargetPlatform extends AbstractTargetPlatform{
 	
 	public JreTargetPlatform(){
 		super("Jre");
 	}
 	
+	/**
+	 * start the codegeneration for the jre targetPlatform
+	 */
 	@Override
 	public void convertQueryToStandaloneSystem(
 			ILogicalOperator query,
@@ -35,6 +44,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 		//clear defaultCodegeneratorStatus 
 		DefaultCodegeneratorStatus.clear();
+		//set the operatorList for the codegenerator steps
 		DefaultCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
 		//init variables
@@ -50,10 +60,6 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		//add userfeedback
 		sendMessageEvent(10, "Start the transformation", UpdateMessageEventType.INFO);
 		
-		//Start Odysseus index
-		sendMessageEvent(15, "Index the Odysseus codepath",UpdateMessageEventType.INFO);
-		OdysseusIndex.getInstance().search(parameter.getOdysseusDirectory());
-	
 		//start query transformation
 		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
@@ -71,25 +77,29 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 	
 		sendMessageEvent(75, "Create Java files",UpdateMessageEventType.INFO);
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler(parameter.getProgramLanguage(), parameter.getScheduler()));
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler(parameter.getTargetPlatformName(), parameter.getScheduler()));
 		
 		try {
 			sendMessageEvent(80, "Create Java project",UpdateMessageEventType.INFO);
 			javaFileWrite.createProject();
 
-
+			//if autobuild is true , compile the java project with ant
 			if(jreTargetplatformOption.isAutobuild()){
 				sendMessageEvent(85, "Compile the Java project",UpdateMessageEventType.INFO);
 				ExecuteShellComand.executeAntScript(parameter.getTargetDirectory());	
 			}
 		
+			//send final message with summary of the transformation
 			sendMessageEvent(100, generateSummary(parameter,compiledProgramm(parameter)),UpdateMessageEventType.INFO);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	
+	/**
+	 * this function generate the code for a operator
+	 * 
+	 */
 	@Override
 	public void generateOperatorCodeOperatorReady(ILogicalOperator operator,
 			TransformationParameter parameter,
@@ -124,6 +134,12 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 	}
 	
+	/**
+	 * this function generate the subscription code
+	 * for the operator.
+	 * 
+	 */
+	@Override
 	public void generateOperatorSubscription(ILogicalOperator operator,QueryAnalyseInformation queryAnalseInformation){
 		//generate subscription
 		CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
@@ -140,7 +156,12 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		return "autobuild=true/false";
 	}
 
-	
+	/**
+	 * create a message event string
+	 * 
+	 * @param parameter
+	 * @return
+	 */
 	private String compiledProgramm(TransformationParameter parameter){
 		StringBuilder compiledProgramm = new StringBuilder();
 		compiledProgramm.append("Compiled programm: "+parameter.getTargetDirectory()+"\\target");

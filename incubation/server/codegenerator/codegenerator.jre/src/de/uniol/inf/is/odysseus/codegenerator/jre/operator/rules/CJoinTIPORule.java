@@ -24,6 +24,15 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreati
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
+/**
+ * This rule generate from a JoinAO the code for the 
+ * JoinTIPO operator. 
+ * 
+ * template: operator/joinTIPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 
 	public CJoinTIPORule() {

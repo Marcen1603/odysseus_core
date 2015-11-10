@@ -4,6 +4,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * abstract rule for the TimeWindowAO (SlidingAdvanceTimeWindow)
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule<T extends TimeWindowAO> extends
 		AbstractCOperatorRule<TimeWindowAO>{
 
@@ -17,7 +24,6 @@ public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule<T extends TimeWi
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator.getInputSchema().hasMetatype(ITimeInterval.class)){
-			
 				switch (logicalOperator.getWindowType()) {
 				case TIME:
 					if (logicalOperator.getWindowSlide() == null && logicalOperator.getWindowAdvance() != null) {

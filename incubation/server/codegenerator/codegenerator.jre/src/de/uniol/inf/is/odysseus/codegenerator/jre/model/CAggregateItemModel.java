@@ -4,6 +4,14 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
+
+/**
+ * helping modell for AggreateItem codegeneration. Used by the 
+ * AggreationTIPO rule
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CAggregateItemModel {
 	
 	String functionName = "";

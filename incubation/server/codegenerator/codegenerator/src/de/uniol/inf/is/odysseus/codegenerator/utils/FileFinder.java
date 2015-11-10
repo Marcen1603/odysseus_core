@@ -12,11 +12,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * This class is used by the {@link}OdysseusIndex class to
+ * find *.java files.
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class FileFinder extends SimpleFileVisitor<Path> {
 
 	private final PathMatcher matcher;
 	private List<Path> matchedPaths = new ArrayList<Path>();
 	
+	/**
+	 * set a file match pattern
+	 * 
+	 * @param pattern
+	 */
 	public FileFinder(String pattern) {
 		matcher = FileSystems.getDefault()
 				.getPathMatcher("glob:" + pattern);

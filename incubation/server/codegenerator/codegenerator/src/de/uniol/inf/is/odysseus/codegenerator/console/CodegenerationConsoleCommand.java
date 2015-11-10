@@ -16,12 +16,22 @@ import de.uniol.inf.is.odysseus.codegenerator.scheduler.registry.CSchedulerRegis
 import de.uniol.inf.is.odysseus.codegenerator.target.platform.ITargetPlatform;
 import de.uniol.inf.is.odysseus.codegenerator.target.platform.registry.TargetPlatformRegistry;
 
-
+/**
+ * This class provided console commands for the  codgeneration.feature.
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CodegenerationConsoleCommand implements CommandProvider {
 
+	// list for available transformation configs
 	static Map<String, TransformationParameter> configList = new HashMap<String, TransformationParameter>();
 	
-	
+	/**
+	 * Start the condegeneration for a special queryID.
+	 * 
+	 * @param ci
+	 */
 	 public void _queryCodegen(CommandInterpreter ci) {
 		 
 		 final String ERROR_USAGE  = "Usage: queryCodegen <configName> <queryId>";
@@ -36,13 +46,16 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 			}
 			
 			CAnalyseServiceBinding.getAnalyseComponent().startQueryTransformation(transformationParameter);
-			
 		}
 		 
 	 }
+	
 	 
-
-
+	 /**
+	  * Function to add new codegeneration configs
+	  * 
+	  * @param ci
+	  */
 	 public void _addCodegenConfig(CommandInterpreter ci){
 		 String configName  = ci.nextArgument();
 		 String targetPlatform = ci.nextArgument();
@@ -57,7 +70,11 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 	 }
 
 	 
-	 
+	 /**
+	  * displayed all available codegeneration configs with values
+	  * 
+	  * @param ci
+	  */
 	 public void _showAllConfigs(CommandInterpreter ci) {
 		 StringBuilder sb = new StringBuilder();
 		 sb.append("--Codegeneration configs--\n");
@@ -65,7 +82,7 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 			{
 				sb.append(config.getKey()).append("\n");
 				
-				sb.append("- targetPlatform: "+config.getValue().getProgramLanguage()).append("\n");
+				sb.append("- targetPlatform: "+config.getValue().getTargetPlatformName()).append("\n");
 				sb.append("- targetDirectory: "+config.getValue().getTargetDirectory()).append("\n");
 				sb.append("- queryId: "+config.getValue().getQueryId()).append("\n");
 				sb.append("- odysseusDirectory: "+config.getValue().getOdysseusDirectory()).append("\n");
@@ -79,7 +96,12 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 	 }
 	 
 	 
-	 
+	 /**
+	  * displayed all  available codegeneration registry
+	  * targetPlatformRegistry and schedulerRegistry 
+	  * 
+	  * @param ci
+	  */
 	 public void _showRegistrys(CommandInterpreter ci) {
 		 StringBuilder sb = new StringBuilder();
 		 sb.append("--Targetplatforms--\n");
@@ -110,6 +132,11 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 	 }
 	 
 	 
+	 /**
+	  * show the special options for a targetPlaform
+	  * 
+	  * @param ci
+	  */
 	 public void _showSpecialOptions(CommandInterpreter ci) {
 		 String targetPlatformString = ci.nextArgument();
 		 ITargetPlatform targetPlatform = TargetPlatformRegistry.getTargetPlatform(targetPlatformString);
@@ -126,6 +153,10 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 			
 		
 	 }
+	 
+	/**
+	 * show available commands for the codegeneration
+	 */
 	@Override
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
@@ -140,6 +171,13 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 	}
 
 	
+	/**
+	 * convert a string value to a integer value
+	 * 
+	 * @param ci
+	 * @param errorMessage
+	 * @return
+	 */
 	private Integer getIntegerParameter(CommandInterpreter ci,String errorMessage) {
 		String parameterAsString = ci.nextArgument();
 		if (Strings.isNullOrEmpty(parameterAsString)) {
@@ -160,6 +198,12 @@ public class CodegenerationConsoleCommand implements CommandProvider {
 	}
 	
 	
+	/**
+	 * parse the special options
+	 * 
+	 * @param options
+	 * @return
+	 */
 	private Map<String,String> parseOptions(String options){
 		 Map<String,String> optionMap = new  HashMap<String,String>();
 		 

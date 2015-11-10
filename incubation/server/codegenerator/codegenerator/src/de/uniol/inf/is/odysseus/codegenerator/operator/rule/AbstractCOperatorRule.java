@@ -13,12 +13,24 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 
+
+/**
+ * abstract class for operatorRules
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implements ICOperatorRule<T> {
 
-	private ComponentContext context;
-
+	//name of the rule
 	private String name = "";
+	
+	//name of the targetPlatform
 	private String targetPlatform = "";
+	
+	//component context
+	private ComponentContext context;
 
 	public AbstractCOperatorRule() {
 	}
@@ -35,15 +47,22 @@ public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implemen
 	public String getName() {
 		return this.name;
 	}
-
-	public void setTragetPlattform(String targetPlatform) {
-		this.targetPlatform = targetPlatform;
-	}
-
+	
+	/**
+	 * return the targetPlatform name 
+	 */
 	public String getTargetPlatform() {
 		return this.targetPlatform;
 	}
 
+	/**
+	 * is used by the initRule function to set the targetPlatform name
+	 * @param targetPlatform
+	 */
+	public void setTragetPlattform(String targetPlatform) {
+		this.targetPlatform = targetPlatform;
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -100,6 +119,12 @@ public abstract class AbstractCOperatorRule<T extends ILogicalOperator> implemen
 	}
 	
 	
+	/**
+	 * return all mep functions from a given epxression
+	 * 
+	 * @param expression
+	 * @return
+	 */
 	public  Map<String,IExpression<?>> getAllMEPFunctions( IExpression<?> expression){
 		   Map<String,IExpression<?>> functionList = new HashMap<String,IExpression<?>>();
 		

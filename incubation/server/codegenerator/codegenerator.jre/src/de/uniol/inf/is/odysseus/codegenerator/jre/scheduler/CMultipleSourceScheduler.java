@@ -9,11 +9,19 @@ import de.uniol.inf.is.odysseus.codegenerator.scheduler.AbstractCScheduler;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
+/**
+ * A MultipleSourceScheduler for the jre targetPlatform. The scheduler
+ * can handle one or more sources.
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CMultipleSourceScheduler extends AbstractCScheduler{
 
 	public CMultipleSourceScheduler() {
 		super("MultipleSourceScheduler");
 	}
+
 
 	@Override
 	public CodeFragmentInfo getStartCode(List<ILogicalOperator> operatorList) {
@@ -35,6 +43,9 @@ public class CMultipleSourceScheduler extends AbstractCScheduler{
 		return code;
 	}
 
+	/**
+	 * return the implementation code from the multipleSourceScheduler
+	 */
 	@Override
 	public String getSchedulerCode() {
 		

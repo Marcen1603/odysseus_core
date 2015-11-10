@@ -2,15 +2,22 @@ package de.uniol.inf.is.odysseus.codegenerator.scheduler;
 
 import org.osgi.service.component.ComponentContext;
 
-
+/**
+ * Abstract class for scheduler
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public abstract class AbstractCScheduler implements ICScheduler{
 	
-	private ComponentContext context;
-	
+	//name of the scheduler
 	private String name = "";
+	//name of the targetplatform 
 	private String targetPlatform = "";
+	//name of the packageName 
 	private String packageName = "";
 	
+	private ComponentContext context;
 	
 	public AbstractCScheduler(String name) {
 		this.name = name;

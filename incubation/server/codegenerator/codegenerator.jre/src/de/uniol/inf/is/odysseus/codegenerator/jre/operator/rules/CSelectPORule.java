@@ -11,6 +11,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
+/**
+ * This rule generate from a SelectAO (inputSchemaType = Tuple) the code for the 
+ * SelectPO operator. 
+ * 
+ * template: operator/selectPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CSelectPORule extends AbstractCSelectAORule<SelectAO>{
 
 	public CSelectPORule() {

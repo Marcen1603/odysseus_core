@@ -10,6 +10,13 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
+/**
+ * abstract rule for the StreamAO (!PULL)
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCStreamAORule<T extends StreamAO> extends AbstractCOperatorRule<StreamAO> {
 
 	public AbstractCStreamAORule(String name) {
@@ -44,11 +51,12 @@ public abstract class AbstractCStreamAORule<T extends StreamAO> extends Abstract
 						streamAO.getStreamname(), null);
 
 		AccessAO accessAO = (AccessAO) logicalPlan;
-
+		
 		String transportHandler = accessAO.getTransportHandler();
 		String protocolHandler = accessAO.getProtocolHandler();
 		String dataHandler = accessAO.getDataHandler();
 
+		//add detected transportHandler, protocolHandler and dataHandler
 		transformationInformation.addTransportHandler(transportHandler);
 		transformationInformation.addProtocolHandler(protocolHandler);
 		transformationInformation.addDataHandler(dataHandler);

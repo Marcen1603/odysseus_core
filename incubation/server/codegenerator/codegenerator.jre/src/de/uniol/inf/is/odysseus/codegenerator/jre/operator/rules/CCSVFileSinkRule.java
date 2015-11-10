@@ -10,6 +10,16 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 
+
+/**
+ * This rule generate from a CSVFileSink the code for the 
+ * SenderPO operator. 
+ * 
+ * template: operator/senderPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 	
 	public CCSVFileSinkRule() {

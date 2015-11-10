@@ -29,26 +29,51 @@ import de.uniol.inf.is.odysseus.codegenerator.utils.FileHelper;
 import de.uniol.inf.is.odysseus.codegenerator.utils.UnZip;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
+/**
+ * This class create all needed files for the
+ * jre targetplatform 
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class JavaFileWrite {
 	
+	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
 	
+	//name of the main file
 	private String fileName;
+	
 	private File file;
 	private FileWriter writer;
+	
+	//path to the target direcotry
 	private String targetDirectory;
+	
+	//transformation parameter
 	private TransformationParameter transformationParameter;
+	
+	//framework import list
 	private Set<String> frameworkImportList = new HashSet<String>();
+	
+	//java ee import list e.g java.uti
 	private Set<String> importList = new HashSet<String>();
 	
+	//list of all jars they are copied
 	private Set<String> copyJars = new HashSet<String>();
+	
+	//code for the osgi bindings
 	private String osgiBindCode;
+	
+	//code for the body
 	private String bodyCode;
+	
+	//startcode for the schueler
 	private String startCode;
+	
+	//scheduler
 	private ICScheduler scheduler;
 	
 	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList;
-	
-	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
 	
 	
 	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> frameworkImportList,Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICScheduler scheduler){
@@ -90,20 +115,15 @@ public class JavaFileWrite {
 		createClassFile();
 	}
 	
-
-	private void createSchedulerFile() {
-	
-		FileHelper fileHelper = new FileHelper(scheduler.getName()+".java", targetDirectory+"/src/main");
-		scheduler.setPackageName("main");
-		fileHelper.writeToFile(scheduler.getSchedulerCode());
-		
-	}
-
+	/**
+	 * unzip the JavaProject.zip file
+	 * located in templates/java/
+	 */
 	private void unzipProjectTemplate(){
 		UnZip unZip = new UnZip();
 		
+		//get JavaProject.zip file
 		Bundle bundle = Activator.getContext().getBundle();
-	
 		URL fileURL = bundle.getEntry("templates/java/JavaProject.zip");
 		File file = null;
 		try {
@@ -112,6 +132,7 @@ public class JavaFileWrite {
 		    e1.printStackTrace();
 		}
 		
+		//unzip the JavaProject file
 		if(file != null){
 			unZip.unZipIt(file.getAbsolutePath(),targetDirectory);
 		}else{
@@ -120,6 +141,10 @@ public class JavaFileWrite {
     	
 	}
 	
+	
+	/**
+	 * create the main.java file
+	 */
 	private void createMainJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(targetDirectory);
@@ -153,7 +178,9 @@ public class JavaFileWrite {
 
 	}
 	
-	
+	/**
+	 * create the Utils.java file
+	 */
 	private void createUtilsJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(targetDirectory);
@@ -178,7 +205,20 @@ public class JavaFileWrite {
 		
 	}
 	
+	/**
+	 * create the scheduler File
+	 */
+	private void createSchedulerFile() {
+		//create new scheduler file
+		FileHelper fileHelper = new FileHelper(scheduler.getName()+".java", targetDirectory+"/src/main");
+		scheduler.setPackageName("main");
+		fileHelper.writeToFile(scheduler.getSchedulerCode());
+		
+	}
 	
+	/**
+	 * create the build.xml file, this file is called by the ant build command
+	 */
 	private void createBuildScript(){
 
 		File buildFile = new File(targetDirectory+"/build.xml");
@@ -199,6 +239,9 @@ public class JavaFileWrite {
 	
 	}
 	
+	/**
+	 * create the .classpath file for the java project
+	 */
 	private void createClassFile(){
 		File classpathFile = new File(targetDirectory+"/.classpath");
 		
@@ -220,12 +263,18 @@ public class JavaFileWrite {
 	}
 	
 	
+	/**
+	 * copy the odysseus jar files
+	 */
 	private void copyOdysseusJar(){
 		ExtractOSGIBundle extractOSGIBundle =  new ExtractOSGIBundle();
 		copyJars = extractOSGIBundle.extractOSGIBundle(frameworkImportList, transformationParameter.getTargetDirectory(), "lib");
 	}
 	
 	
+	/**
+	 * create the operator configuration files
+	 */
 	private void createOperationConfigurationFiles() {
 		FileWriter infoFile = null;
 		
@@ -257,8 +306,4 @@ public class JavaFileWrite {
 		}
 		
 	}
-	
-	
-	
-
 }

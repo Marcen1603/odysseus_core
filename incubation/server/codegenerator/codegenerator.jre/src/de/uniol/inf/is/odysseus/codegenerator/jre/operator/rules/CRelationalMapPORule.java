@@ -9,6 +9,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 
+/**
+ * This rule generate from a MapAO (inputSchemaType = Tuple) the code for the 
+ * RelationalMapPO operator. 
+ * 
+ * template: operator/relationalMapPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 	
 	public CRelationalMapPORule() {

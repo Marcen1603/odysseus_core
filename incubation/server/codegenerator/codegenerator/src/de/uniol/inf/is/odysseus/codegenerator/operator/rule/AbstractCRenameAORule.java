@@ -5,6 +5,13 @@ import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * abstract rule for the RenameAO
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCRenameAORule <T extends RenameAO> extends AbstractCOperatorRule<RenameAO> {
 
 	public AbstractCRenameAORule(String name) {
@@ -17,7 +24,6 @@ public abstract class AbstractCRenameAORule <T extends RenameAO> extends Abstrac
 	
 		return logicalOperator.getInputSchema().getType() != KeyValueObject.class && 
 				logicalOperator.getInputSchema().getType() != NestedKeyValueObject.class;	
-	
 
 	}
 	

@@ -9,7 +9,14 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.codegenerator.utils.FileFinder;
-
+/**
+ * this class index all files in the odysseus code path
+ * Was a part of the automatic class import for the 
+ * codegeneration process.  
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class OdysseusIndex {
 	
 	private static List<Path> odysseusIndex = new ArrayList<Path>();

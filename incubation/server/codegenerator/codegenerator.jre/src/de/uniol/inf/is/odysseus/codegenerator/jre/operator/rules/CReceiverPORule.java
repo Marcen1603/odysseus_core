@@ -20,6 +20,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.Receive
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
+/**
+ * This rule generate from a StreamAO (!PULL) the code for the 
+ * ReceiverPO operator. 
+ * 
+ * template: operator/receiverPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CReceiverPORule extends AbstractCStreamAORule<StreamAO>{
 	
 	public CReceiverPORule() {

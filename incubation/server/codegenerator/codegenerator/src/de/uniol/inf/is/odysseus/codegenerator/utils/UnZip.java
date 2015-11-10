@@ -11,6 +11,12 @@ import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * With the class you can unzip a zip file
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class UnZip {
 	
 	
@@ -19,7 +25,7 @@ public class UnZip {
 	List<String> fileList;
 
 	/**
-	 * Unzip it
+	 * Unzip a zip file
 	 * 
 	 * @param zipFile
 	 *            input zip file
@@ -76,8 +82,6 @@ public class UnZip {
 
 			zis.closeEntry();
 			zis.close();
-
-			System.out.println("Done");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();

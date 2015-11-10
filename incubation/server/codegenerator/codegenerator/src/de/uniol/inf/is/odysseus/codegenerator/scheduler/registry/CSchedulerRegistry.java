@@ -9,14 +9,26 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.ICScheduler;
 
-
+/**
+ * Registry for scheduler for the codegenerator 
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CSchedulerRegistry {
 	
 	private static Logger LOG = LoggerFactory.getLogger(CSchedulerRegistry.class);
 	
+	//list of avaliable scheduler
 	static Map<String, Map<String,ICScheduler>> schedulerList= new HashMap<String, Map<String,ICScheduler>>();
 	
-
+	/**
+	 * return a scheduler 
+	 * 
+	 * @param targetPlatform
+	 * @param schedulerName
+	 * @return
+	 */
 	public static ICScheduler getScheduler(String targetPlatform, String schedulerName){
 	
 	if(!schedulerList.isEmpty()){
@@ -36,7 +48,11 @@ public class CSchedulerRegistry {
 		return null;
 	}
 	
-					   
+	/**
+	 *  registers a new scheduler (OSGI method)
+	 *  				   
+	 * @param scheduler
+	 */
 	public static void registerScheduler(ICScheduler scheduler){
 		LOG.debug("Operator" + scheduler.getName() +" für "+scheduler.getTargetPlatform() +" wird hinzugefügt");
 		
@@ -69,6 +85,10 @@ public class CSchedulerRegistry {
 		
 	}
 
+	/**
+	 * unregisters a scheduler (OSGI method)
+	 * @param scheduler
+	 */
 	public static void unregisterScheduler(ICScheduler scheduler){
 		if(schedulerList.containsKey(scheduler.getTargetPlatform().toLowerCase())){
 			if(schedulerList.get(scheduler.getTargetPlatform().toLowerCase()).containsKey(scheduler.getName())){

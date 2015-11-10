@@ -17,6 +17,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 
+/**
+ * This rule generate from a CSVFileSource the code for the 
+ * AccessPO operator. 
+ * 
+ * template: operator/accessPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource>{
 
 	public CCSVFileSourceRule() {

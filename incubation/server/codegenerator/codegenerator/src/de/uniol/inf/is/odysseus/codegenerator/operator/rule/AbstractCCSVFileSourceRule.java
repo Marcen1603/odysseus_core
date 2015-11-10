@@ -8,6 +8,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
+/**
+ * abstract rule for the CSVFileSource
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCCSVFileSourceRule<T extends CSVFileSource> extends AbstractCOperatorRule<CSVFileSource> {
 
 	public AbstractCCSVFileSourceRule(String name) {
@@ -28,8 +35,6 @@ public abstract class AbstractCCSVFileSourceRule<T extends CSVFileSource> extend
 					return true;
 				}
 			}
-
-
 		return false;
 	}
 
@@ -38,6 +43,7 @@ public abstract class AbstractCCSVFileSourceRule<T extends CSVFileSource> extend
 	public void analyseOperator(CSVFileSource logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
+		//add detected transportHandler, protocolHandler and dataHandler
 		transformationInformation
 				.addDataHandler(logicalOperator.getDataHandler());
 		transformationInformation.addProtocolHandler(logicalOperator

@@ -6,6 +6,13 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
+/**
+ * Helper class to save the current state of the 
+ * codegeneration steps.
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class DefaultCodegeneratorStatus{
 
 	private static DefaultCodegeneratorStatus instance = null;
@@ -14,7 +21,6 @@ public class DefaultCodegeneratorStatus{
 	private Map<ILogicalOperator,String> codeReady  = new HashMap<ILogicalOperator, String>();
 	private Map<ILogicalOperator, Integer> moreInputs = new HashMap<ILogicalOperator, Integer>();
 	private int uniqueId = 0;
-	
 	
 	public static DefaultCodegeneratorStatus getInstance() {
 		if (instance == null) {
@@ -34,8 +40,7 @@ public class DefaultCodegeneratorStatus{
 			return false;
 		}
 	}
-	
-	//TODO remove special chars in the operatorName e.g :
+
 	public void addOperator(ILogicalOperator operator){
 		
 		if(!operatorList.containsKey(operator)){
@@ -47,7 +52,6 @@ public class DefaultCodegeneratorStatus{
 		
 	}
 	
-	
 	public boolean allOperatorExistForSubscriptions(List<ILogicalOperator> operatorList){
 		if(operatorList.isEmpty()){
 			return false;
@@ -57,7 +61,6 @@ public class DefaultCodegeneratorStatus{
 			if(!codeReady.containsKey(op)){
 				return false;
 			}
-		
 		}
 		
 		return true;
@@ -83,7 +86,7 @@ public class DefaultCodegeneratorStatus{
 		this.operatorList = operatorList;
 	}
 	
-	public  String getVariable(ILogicalOperator operator){
+	public String getVariable(ILogicalOperator operator){
 		if(operatorList.containsKey(operator)){
 			return operatorList.get(operator);
 		}else{
@@ -91,12 +94,7 @@ public class DefaultCodegeneratorStatus{
 		}
 	}
 
-
-	private synchronized int getUniqueId(){  
-		 return uniqueId++;
-	}
-	
-	public  Map<ILogicalOperator, String> getOperatorList(){
+	public Map<ILogicalOperator, String> getOperatorList(){
 		return operatorList;
 	}
 
@@ -112,10 +110,14 @@ public class DefaultCodegeneratorStatus{
 			}
 		}
 		
-		int temp = operator.getSubscribedToSource().size();
-		moreInputs.put(operator, temp-1);
+		int inputPorts = operator.getSubscribedToSource().size();
+		moreInputs.put(operator, inputPorts-1);
 		
 		return false;
+	}
+	
+	private synchronized int getUniqueId(){  
+		 return uniqueId++;
 	}
 	
 }

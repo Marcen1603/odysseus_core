@@ -8,8 +8,12 @@ import de.uniol.inf.is.odysseus.codegenerator.message.bus.CodegeneratorMessageBu
 import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
 import de.uniol.inf.is.odysseus.codegenerator.modell.enums.UpdateMessageEventType;
 
-
-//TODO mac, unix support?
+/**
+ * Whith this class you can execute shell commands
+ * 
+ * @author MarcPreuschft
+ *
+ */
 public class ExecuteShellComand {
 
 	public static void excecuteCommand(String[] commands, boolean sendOkLineToMessageBus){
@@ -59,6 +63,10 @@ public class ExecuteShellComand {
 	}
 	
 	
+	/**
+	 * execute ant build 
+	 * @param tempDirectory
+	 */
 	public static void executeAntScript(String tempDirectory){
 	    String[] commands = new String[3];  
 	    

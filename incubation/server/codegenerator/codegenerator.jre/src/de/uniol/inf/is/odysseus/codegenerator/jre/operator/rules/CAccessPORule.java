@@ -21,7 +21,17 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
-public class CAccessPORule  extends AbstractCAccessAORule<StreamAO>{
+
+/**
+ * This rule generate from a SteamAO (PULL) the code for the 
+ * AccessPO operator. 
+ * 
+ * template: operator/accessPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
+public class CAccessPORule extends AbstractCAccessAORule<StreamAO>{
 	
 
 	public CAccessPORule() {
@@ -30,7 +40,6 @@ public class CAccessPORule  extends AbstractCAccessAORule<StreamAO>{
 
 	@Override
 	public CodeFragmentInfo getCode(StreamAO operator) {
-		
 		CodeFragmentInfo accessPO = new CodeFragmentInfo();
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);

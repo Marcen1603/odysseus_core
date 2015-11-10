@@ -4,6 +4,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * abstract rule for the WindowAO (UnboundedWindow)
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCUnboundedWindowTIPORule<T extends WindowAO> extends AbstractCOperatorRule<WindowAO> {
 
 	public AbstractCUnboundedWindowTIPORule(String name) {
@@ -23,7 +30,6 @@ public abstract class AbstractCUnboundedWindowTIPORule<T extends WindowAO> exten
 			}
 		}
 		return false;
-	
 	}
 
 }

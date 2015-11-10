@@ -4,6 +4,13 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupDir;
 
+/**
+ * Wrapper class for easy access to 
+ * the StringTemplate engine
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class StringTemplate {
 	
 	private STGroup group;

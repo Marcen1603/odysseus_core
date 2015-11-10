@@ -4,6 +4,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * abstract rule for the TimeWindowAO (SlidingElementWindow)
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCSlidingElementWindowTIPORule<T extends ElementWindowAO> extends
 AbstractCOperatorRule<ElementWindowAO>{
 	
@@ -17,7 +24,6 @@ AbstractCOperatorRule<ElementWindowAO>{
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator.getInputSchema().hasMetatype(ITimeInterval.class)){
-			
 				switch (logicalOperator.getWindowType()) {
 				case TUPLE:
 					return true;

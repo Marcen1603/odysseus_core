@@ -5,6 +5,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * abstract rule for the TimestampAO (not systemtime 
+ * and  Tuple.isAssignableFrom inputSchema )
+ *
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> extends AbstractCOperatorRule<TimestampAO> {
 
 	public AbstractCApplicationTimestamp(String name) {
@@ -13,7 +21,6 @@ public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> exten
 
 	public boolean isExecutable(TimestampAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-
 
 			if(!logicalOperator.isUsingSystemTime()){
 			
@@ -30,11 +37,5 @@ public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> exten
 			}
 	
 			return false;
-
-	
-
 	}
-
-
-
 }

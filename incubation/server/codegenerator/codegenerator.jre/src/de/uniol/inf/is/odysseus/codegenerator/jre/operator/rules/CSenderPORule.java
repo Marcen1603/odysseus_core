@@ -14,6 +14,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
+/**
+ * This rule generate from a SenderAO the code for the 
+ * SenderPO operator. 
+ * 
+ * template: operator/senderPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CSenderPORule extends AbstractCSenderAORule<SenderAO>{
 	
 	public CSenderPORule() {
@@ -23,7 +32,7 @@ public class CSenderPORule extends AbstractCSenderAORule<SenderAO>{
 	
 	@Override
 	public CodeFragmentInfo getCode(SenderAO logicalOperator) {
-	CodeFragmentInfo senderPO = new CodeFragmentInfo();
+		CodeFragmentInfo senderPO = new CodeFragmentInfo();
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(logicalOperator);
 		SenderAO dummySenderAO = (SenderAO) logicalOperator;

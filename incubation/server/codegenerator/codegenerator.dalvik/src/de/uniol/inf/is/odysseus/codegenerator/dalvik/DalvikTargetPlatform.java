@@ -15,9 +15,18 @@ import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * targetplatform for dalvik codegeneration. This class
+ * handel the codegeneration for dalvik.
+ * 
+ * Attention this codegeneration process use the
+ * jre codegenerator rules! This is defined over osgi  
+ * components definitions. Look at the OSGI-INF folder!
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class DalvikTargetPlatform extends AbstractTargetPlatform{
-
-
 	
 	public DalvikTargetPlatform() {
 		super("Dalvik");
@@ -54,14 +63,14 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		frameworkImportList.addAll(startStreams.getFrameworkImports());
 		importList.addAll(startStreams.getImports());
 		
+		//create a new instanz of the dalvikFileWrite
 		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,frameworkImportList,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CSchedulerRegistry.getScheduler("dalvik", parameter.getScheduler()));
 		
 		try {
+			//create all android project files 
 			dalvikFileWrite.createProject();
-
 			
 			sendMessageEvent(100, generateSummary(parameter,projectInfo(parameter)),UpdateMessageEventType.INFO);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -113,7 +122,13 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		}
 	}
 	
-	
+	/**
+	 * generate a info message string
+	 * this function is called when the transformation is finish
+	 * 
+	 * @param parameter
+	 * @return
+	 */
 	private String projectInfo(TransformationParameter parameter){
 		StringBuilder projectInfo = new StringBuilder();
 		projectInfo.append("\n\n------------------Info------------------\n\n");

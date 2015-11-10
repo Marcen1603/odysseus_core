@@ -7,9 +7,13 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
 
 
-
+/**
+ * dummy class to demonstrate a python filewriter
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class PythonFileWrite {
-	
 	
 	private String fileName;
 	private File file;
@@ -21,6 +25,12 @@ public class PythonFileWrite {
 		this.path = parameter.getTargetDirectory();
 	}
 	
+	/**
+	 * create a python test files
+	 * 
+	 * 
+	 * @throws IOException
+	 */
 	public void createFile() throws IOException{
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(path);

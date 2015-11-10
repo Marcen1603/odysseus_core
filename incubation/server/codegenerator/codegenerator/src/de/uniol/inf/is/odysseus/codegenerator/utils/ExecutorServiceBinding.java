@@ -33,7 +33,13 @@ package de.uniol.inf.is.odysseus.codegenerator.utils;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
-
+/**
+ * Binding class for the odysseus executor
+ * used in codegenerator feature
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class ExecutorServiceBinding {
 	
 	private static IServerExecutor executor = null;

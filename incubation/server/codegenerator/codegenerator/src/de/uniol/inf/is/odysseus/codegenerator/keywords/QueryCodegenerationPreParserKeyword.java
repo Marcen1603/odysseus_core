@@ -20,11 +20,22 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
+
+/**
+ * CODEGENERATION keyword. This keyword can used to start 
+ * codegeneration with odysseus script 
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserKeyword {
 
 	public static final String KEYWORD = "CODEGENERATION";	
 	private PreParserKeywordParameterHelper<QueryCodegenerationKeywordParameter> parameterHelper;
 
+	/**
+	 * validates the parameters defined in this keyword
+	 */
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context, IServerExecutor executor)
@@ -37,11 +48,15 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		
 		Map<IKeywordParameter, String> result = parameterHelper.parse(parameter);
 		
+		
+		//get all needed parameters
 		String targetPlatform =result.get(QueryCodegenerationKeywordParameter.TARGETPLATFROM);
 		String targetDirectory = result.get(QueryCodegenerationKeywordParameter.TARGETDIRECTORY);
 		String odysseusPath= result.get(QueryCodegenerationKeywordParameter.ODYSSEUSPATH);
 		String schedulerString =result.get(QueryCodegenerationKeywordParameter.SCHEDULER);
 		
+		
+		// check directorys 
 		if (!checkDirecotry(targetDirectory)) {
 			throw new IllegalArgumentException(
 					"Target directory "+targetDirectory+" not exist or not readable!");
@@ -52,6 +67,7 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 					"Odysseus code directory "+odysseusPath+" not exist or not readable!");
 		}
 		
+		//check the targetPlatform name
 		if(!TargetPlatformRegistry.existTargetPlatform(targetPlatform)){
 				StringBuilder availableTargetPlatform = new StringBuilder();
 			
@@ -66,7 +82,7 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 					+availableTargetPlatform.toString());
 		}
 	
-		
+		//check the scheduler name
 		if(!CSchedulerRegistry.existScheduler(targetPlatform, schedulerString)){
 			StringBuilder availableScheduler = new StringBuilder();
 			
@@ -83,7 +99,10 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 	
 	}
 	
-
+	/**
+	 * create a new execute command (QueryCodegenerationCommand). 
+	 * 
+	 */
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		
@@ -105,13 +124,13 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		return commands;
 	}
 
-	@Override
-	protected boolean startQuery() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
-	
+	/**
+	 * Checks if the folder exist and can read 
+	 * 
+	 * @param folder
+	 * @return
+	 */
 	private boolean checkDirecotry(String folder) {
 		File folderFile = new File(folder);
 
@@ -122,6 +141,12 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		}
 	}
 	
+	/**
+	 * parse the special options for the targetPlatform
+	 * 
+	 * @param options
+	 * @return
+	 */
 	private Map<String,String> parseOptions(String options){
 		 Map<String,String> optionMap = new  HashMap<String,String>();
 		 
@@ -141,4 +166,10 @@ public class QueryCodegenerationPreParserKeyword extends AbstractQueryPreParserK
 		
 		 return optionMap;	
 	}
+	
+	@Override
+	protected boolean startQuery() {
+		return false;
+	}
+
 }

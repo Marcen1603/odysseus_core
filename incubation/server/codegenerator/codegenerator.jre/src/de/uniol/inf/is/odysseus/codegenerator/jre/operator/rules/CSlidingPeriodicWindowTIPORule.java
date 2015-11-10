@@ -14,6 +14,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingPeriodicWindowTIPO;
 
+/**
+ * This rule generate from a TimeWindowAO the code for the 
+ * SlidingPeriodicWindowTIPO operator. 
+ * 
+ * template: operator/slidingPeriodicWindowTIPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWindowTIPORule<TimeWindowAO>{
 	
 	public CSlidingPeriodicWindowTIPORule(){

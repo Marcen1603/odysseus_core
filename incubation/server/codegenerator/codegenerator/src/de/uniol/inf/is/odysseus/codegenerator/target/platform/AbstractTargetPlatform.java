@@ -18,16 +18,36 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 
 public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
+	//targetPlatform name is set by osgi
 	private String targetPlatformName = "";
 	
 	protected Set<String> frameworkImportList = new HashSet<String>();
 	protected Set<String> importList = new HashSet<String>();
+	
+	
 	protected StringBuilder bodyCode;
 	protected StringBuilder sdfSchemaCode;
 	
+	/**
+	 * hook methode to generate operator code
+	 * 
+	 * @param operator
+	 * @param parameter
+	 * @param transformationConfiguration
+	 * @param queryAnalseInformation
+	 * @param opTrans
+	 */
 	public abstract void generateOperatorCodeOperatorReady(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation,ICOperatorRule<ILogicalOperator> opTrans);
+	
+	/**
+	 * hook methode to generate operator subscription code
+	 * 
+	 * @param operator
+	 * @param queryAnalseInformation
+	 */
 	public abstract void generateOperatorSubscription(ILogicalOperator operator,QueryAnalyseInformation queryAnalseInformation );
 
+	
 	public AbstractTargetPlatform(String targetPlatformName) {
 		this.setTargetPlatformName(targetPlatformName);
 	}
@@ -52,18 +72,24 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		return "";
 	}
 	
-	
+	/**
+	 * start the transformation from source to sink
+	 * 
+	 * @param queryAnalyseInformation
+	 * @param parameter
+	 * @param transformationConfiguration
+	 * @throws InterruptedException
+	 */
 	protected void transformQuery(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		CodegeneratorMessageBus.warningErrorDetected = false;
-	
-		
+
 		List<ILogicalOperator> operatorSources = queryAnalyseInformation.getSourceOpList();
 		
 		for(ILogicalOperator sourceOperator: operatorSources){
 				preCheckOperator(sourceOperator,parameter, transformationConfiguration,queryAnalyseInformation);
 		}
 		
-		//sdfschema nach oben schieben
+		//push the sdfSchema at the top
 		StringBuilder tempBodyCode = new StringBuilder();
 		tempBodyCode = bodyCode;
 		
@@ -72,7 +98,16 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		
 	}
 
-	
+	/**
+	 * pre check the logical operator. If all conditions are met then
+	 * call the generateOperatorCode method.
+	 * 
+	 * @param operator
+	 * @param parameter
+	 * @param transformationConfiguration
+	 * @param queryAnalseInformation
+	 * @throws InterruptedException
+	 */
 	protected void preCheckOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
 		
 		if(operator.getSubscribedToSource().size() >= 2){
@@ -93,9 +128,18 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 			
 	}
 	
+	/**
+	 * resolve the operatorRule to transform the logical operator
+	 * 
+	 * @param operator
+	 * @param parameter
+	 * @param transformationConfiguration
+	 * @param queryAnalseInformation
+	 * @throws InterruptedException
+	 */
 	protected void generateOperatorCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
 		
-		ICOperatorRule<ILogicalOperator> opTrans = COperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
+		ICOperatorRule<ILogicalOperator> opTrans = COperatorRuleRegistry.getOperatorRules(parameter.getTargetPlatformName(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
 			if(!DefaultCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
@@ -114,7 +158,14 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		}
 	}
 	
-	
+
+	/**
+	 * create a summary for the user after transformation is finished
+	 * 
+	 * @param parameter
+	 * @param optional
+	 * @return
+	 */
 	protected String generateSummary(TransformationParameter parameter, String optional){
 		StringBuilder summary = new StringBuilder();
 		summary.append("Transformation finish \n\n");
@@ -126,7 +177,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 		
 		summary.append("------------------Summary------------------\n\n");
 		summary.append("Target directory: "+parameter.getTargetDirectory()+"\n");
-		summary.append("Targetplatform: "+parameter.getProgramLanguage()+"\n");
+		summary.append("Targetplatform: "+parameter.getTargetPlatformName()+"\n");
 		summary.append(optional.toString());
 		return summary.toString();
 	}

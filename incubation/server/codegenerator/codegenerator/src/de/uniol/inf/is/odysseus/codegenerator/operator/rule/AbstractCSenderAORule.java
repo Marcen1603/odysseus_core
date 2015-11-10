@@ -12,6 +12,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
+/**
+ * abstract rule for the SenderAO
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCSenderAORule<T extends SenderAO> extends AbstractCOperatorRule<SenderAO> {
 
 	public AbstractCSenderAORule(String name) {
@@ -45,11 +52,13 @@ public abstract class AbstractCSenderAORule<T extends SenderAO> extends Abstract
 						logicalOperator.getSinkname(), null);
 
 		SenderAO senderAO = (SenderAO) logicalPlan;
-
+		
+		//get transportHandler, protocolHandler and dataHandler from senderAO
 		String transportHandler = senderAO.getTransportHandler();
 		String protocolHandler = senderAO.getProtocolHandler();
 		String dataHandler = senderAO.getDataHandler();
 
+		//add detected transportHandler, protocolHandler and dataHandler
 		transformationInformation.addTransportHandler(transportHandler);
 		transformationInformation.addProtocolHandler(protocolHandler);
 		transformationInformation.addDataHandler(dataHandler);

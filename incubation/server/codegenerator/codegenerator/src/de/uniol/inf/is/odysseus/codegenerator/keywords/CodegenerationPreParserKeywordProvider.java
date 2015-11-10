@@ -7,6 +7,12 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
+/**
+ * Provider class for odysseus script keywords
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CodegenerationPreParserKeywordProvider implements IPreParserKeywordProvider {
 	
 	@Override

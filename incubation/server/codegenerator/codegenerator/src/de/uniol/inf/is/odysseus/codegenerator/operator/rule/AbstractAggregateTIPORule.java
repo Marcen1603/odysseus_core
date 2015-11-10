@@ -12,6 +12,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 
+/**
+ * abstract rule for the AggregateAO
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractAggregateTIPORule<T extends AggregateAO> extends AbstractCIntervalRule<T> {
 
 	public AbstractAggregateTIPORule(String name) {
@@ -19,18 +26,19 @@ public abstract class AbstractAggregateTIPORule<T extends AggregateAO> extends A
 	}
 
 	
-	
 	@Override
 	public void analyseOperator(AggregateAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-
 		resovleAggregateFunctionBuilder(logicalOperator, transformationInformation);
-
-		System.out.println(logicalOperator.getDestinationName());
-
 	}
 	
+	/**
+	 * extract all AggreateFunction from a AggreateAO operator
+	 * 
+	 * @param logicalOperator
+	 * @param transformationInformation
+	 */
 	private void resovleAggregateFunctionBuilder(AggregateAO logicalOperator,QueryAnalyseInformation transformationInformation){
 		SDFSchema inputSchema = logicalOperator.getInputSchema();
         final Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = logicalOperator.getAggregations();

@@ -1,5 +1,12 @@
 package de.uniol.inf.is.odysseus.codegenerator.jre.model;
 
+
+/**
+ * Helping class to better access to the protoclHanderParameter
+ * used in the operator rules 
+ * @author MarcPreuschaft
+ *
+ */
 public class ProtocolHandlerParameter {
 	
 	private String filename = "";

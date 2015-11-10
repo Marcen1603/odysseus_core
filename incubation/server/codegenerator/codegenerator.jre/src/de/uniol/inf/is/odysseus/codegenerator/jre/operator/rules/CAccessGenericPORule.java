@@ -16,6 +16,15 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
+/**
+ * This rule generate from a AccessAO (PULL) the code for the 
+ * AccessPO operator. 
+ * 
+ * template: operator/accessPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CAccessGenericPORule extends AbstractCAccessGenericAORule<AccessAO>{
 	
 	public CAccessGenericPORule() {
@@ -25,7 +34,6 @@ public class CAccessGenericPORule extends AbstractCAccessGenericAORule<AccessAO>
 	
 	@Override
 	public CodeFragmentInfo getCode(AccessAO operator) {
-		
 		CodeFragmentInfo accessPO = new CodeFragmentInfo();
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);

@@ -10,7 +10,15 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SystemTimeIntervalFactory;
 
-
+/**
+ * This rule generate from a TimeWindowAO the code for the 
+ * SystemTimeTimestamp operator. 
+ * 
+ * template: operator/systemTimeTimestamp.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CSystemTimeStampRule extends AbstractCSystemTimeStampRule<TimestampAO>{
 
 	public CSystemTimeStampRule() {

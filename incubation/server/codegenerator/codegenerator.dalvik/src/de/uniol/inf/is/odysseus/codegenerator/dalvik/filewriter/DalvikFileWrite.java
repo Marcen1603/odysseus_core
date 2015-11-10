@@ -26,7 +26,12 @@ import de.uniol.inf.is.odysseus.codegenerator.utils.UnZip;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
 
-//TODO add mac support
+/**
+ * this class create all android project files
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class DalvikFileWrite {
 	
 	private String fileName;
@@ -78,7 +83,6 @@ public class DalvikFileWrite {
 	
 
 	private void createSchedulerFile() {
-	
 		FileHelper fileHelper = new FileHelper(scheduler.getName()+".java", tempPath+"/app/src/main/java/com/app/odysseus/odysseustest");
 		scheduler.setPackageName("com.app.odysseus.odysseustest");
 		fileHelper.writeToFile(scheduler.getSchedulerCode());
@@ -176,7 +180,4 @@ public class DalvikFileWrite {
 
 	}
 	
-	
-	
-
 }

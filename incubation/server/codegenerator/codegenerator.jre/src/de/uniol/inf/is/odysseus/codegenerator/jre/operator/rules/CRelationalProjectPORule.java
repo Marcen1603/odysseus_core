@@ -8,7 +8,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 
 
-//TProjectAORule
+/**
+ * This rule generate from a ProjectAO (inputSchemaType = Tuple) the code for the 
+ * RelationalProjectPO operator. 
+ * 
+ * template: operator/relationalProjectPO.st
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class CRelationalProjectPORule extends AbstractCRelationalProjectAORule<ProjectAO>{
 	
 	public CRelationalProjectPORule() {
@@ -19,20 +27,17 @@ public class CRelationalProjectPORule extends AbstractCRelationalProjectAORule<P
 	public CodeFragmentInfo getCode(ProjectAO operator) {
 		CodeFragmentInfo projectPO = new CodeFragmentInfo();
 		
-
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
 	
 		int[] restrictList = projectAO.determineRestrictList();
 		
-	
 		StringTemplate relationalProjectPOTemplate = new StringTemplate("operator","relationalProjectPO");
 		
 		relationalProjectPOTemplate.getSt().add("restrictList", restrictList);
 		relationalProjectPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		
-	
 		projectPO.addCode(relationalProjectPOTemplate.getSt().render());
 		projectPO.addFrameworkImport(RelationalProjectPO.class.getName());
 

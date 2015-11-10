@@ -15,32 +15,47 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
+/**
+ * This class holds the query analyse information and is
+ * used by the codegeneration.analyse component 
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class QueryAnalyseInformation {
 
+	//list of the detected dataHandler
 	private Map<String, String> dataHandler = new HashMap<String, String>();
+	//list of the detected mepFunktions
 	private Map<String, String> mepFunctions = new HashMap<String, String>();
+	//list of the detected protocolHandler
 	private Map<String, String> protocolHandler = new HashMap<String, String>();
+	//list of the detected transportHandler
 	private Map<String, String> transportHandler = new HashMap<String, String>();
+	//list of the detected metaDataTypes
 	private Map<String, String> metaDataTypes = new HashMap<String, String>();
+	//list of the detected sweepAreas
 	private Map<String, String> sweepAreas = new HashMap<String, String>();
+	//list of the detected aggreagteFunctions
 	private Map<String, String> aggregateFunctionBuilder = new HashMap<String, String>();
-	
-	
+	//list of iterableSources in the query
 	private List<ILogicalOperator> iIterableSource = new ArrayList<ILogicalOperator>();
-
+	//list of all detected operators
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
-
+	//for this operators we can create operatorConfugruation files
 	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList =  new HashMap<ILogicalOperator,Map<String,String>>();
 	
-
+	//all sources Ops
 	private List<ILogicalOperator> sourceOPs = new ArrayList<ILogicalOperator>();
+	
+	//all sink ops
 	private List<ILogicalOperator> sinkOPs = new ArrayList<ILogicalOperator>();;
 	
+	//a unique id for the operators
 	private int uniqueId = 0;
 	
 	
 	public void addAggregateFunctionBuilder(IAggregateFunctionBuilder builder) {
-		
 		  if(builder != null ){
 		
 			String fullClassName = builder.getClass().getName();
@@ -58,44 +73,6 @@ public class QueryAnalyseInformation {
 		return aggregateFunctionBuilder;
 	}
 	
-	
-	
-	public void addIterableSource(ILogicalOperator operator){
-		iIterableSource.add(operator);
-	}
-	
-	public List<ILogicalOperator> getIterableSources(){
-		return iIterableSource;
-	}
-	public void addOperatorConfiguration(ILogicalOperator operator, Map<String,String> optionMap){
-		operatorConfigurationList.put(operator,optionMap);
-	}
-	
-	public Map<ILogicalOperator,Map<String,String>> getOperatorConfigurationList(){
-		return operatorConfigurationList;
-	}
-	
-	public void addSourceOp(ILogicalOperator sourceOP){
-		sourceOPs.add(sourceOP);
-	}
-	
-
-	public void addSourceOp(List<ILogicalOperator> sourceOPList){
-		sourceOPs.addAll(sourceOPList);
-	}
-	
-	public List<ILogicalOperator> getSourceOpList(){
-		return sourceOPs;
-	}
-	
-	public void addSinkOp(ILogicalOperator sinkOP){
-		sinkOPs.add(sinkOP);
-	}
-	
-	public List<ILogicalOperator> getSinkOpList(){
-		return sinkOPs;
-	}
-
 	public void addSweepArea(String sweepArea){
 		String fullClassName = "";
 		String simpleClassName = "";
@@ -117,7 +94,7 @@ public class QueryAnalyseInformation {
 	public Map<String, String> getNeededSweepAreas() {
 		return sweepAreas;
 	}
-	
+
 	public void addMetaData(String metaData){
 		
 		if(metaData != null && !metaData.equals("")){
@@ -136,7 +113,6 @@ public class QueryAnalyseInformation {
 		return metaDataTypes;
 	}
 	
-	
 	public void addDataHandler(String datatype){
 		
 		if(datatype != null && !datatype.equals("")){
@@ -153,7 +129,6 @@ public class QueryAnalyseInformation {
 	public Map<String, String> getNeededDataHandler() {
 		return dataHandler;
 	}
-
 	
 	public void addMEPFunction(Map<String,IExpression<?>> expressions){
 		for (Entry<String, IExpression<?>> entry : expressions.entrySet())
@@ -161,7 +136,6 @@ public class QueryAnalyseInformation {
 			addMEPFunction(entry.getValue());
 		}
 	}
-	
 	
 	public void addMEPFunction(IExpression<?> mepExpression) {
 		
@@ -176,11 +150,9 @@ public class QueryAnalyseInformation {
 		
 	}
 	
-
 	public Map<String, String> getNeededMEPFunctions() {
 		return mepFunctions;
 	}
-	
 
 	public void addProtocolHandler(String protocolHandlerString) {
 		
@@ -193,15 +165,11 @@ public class QueryAnalyseInformation {
 			}
 		}
 	}
-	
-
 
 	public Map<String, String> getNeededProtocolHandler() {
 		return protocolHandler;
 	}
 
-	
-	
 	public void addTransportHandler(String transportHandlerString) {
 		if(transportHandlerString != null && !transportHandlerString.equals("")){
 			
@@ -216,13 +184,50 @@ public class QueryAnalyseInformation {
 
 	}
 	
+	
 
 	public Map<String, String> getNeededTransportHandler() {
 		return transportHandler;
 	}
 	
+	
+	public void addIterableSource(ILogicalOperator operator){
+		iIterableSource.add(operator);
+	}
+	
+	public List<ILogicalOperator> getIterableSources(){
+		return iIterableSource;
+	}
+	
+	public void addOperatorConfiguration(ILogicalOperator operator, Map<String,String> optionMap){
+		operatorConfigurationList.put(operator,optionMap);
+	}
+	
+	public Map<ILogicalOperator,Map<String,String>> getOperatorConfigurationList(){
+		return operatorConfigurationList;
+	}
+	
+	public void addSourceOp(ILogicalOperator sourceOP){
+		sourceOPs.add(sourceOP);
+	}
 
+	public void addSourceOp(List<ILogicalOperator> sourceOPList){
+		sourceOPs.addAll(sourceOPList);
+	}
+	
+	public List<ILogicalOperator> getSourceOpList(){
+		return sourceOPs;
+	}
+	
+	public void addSinkOp(ILogicalOperator sinkOP){
+		sinkOPs.add(sinkOP);
+	}
+	
+	public List<ILogicalOperator> getSinkOpList(){
+		return sinkOPs;
+	}
 
+	
 	public boolean isOperatorAdded(ILogicalOperator operator){
 		if(operatorList.containsKey(operator)){
 			return true;
@@ -232,9 +237,6 @@ public class QueryAnalyseInformation {
 	}
 	
 	public void addOperator(ILogicalOperator operator){
-
-		
-		
 		if(!operatorList.containsKey(operator)){
 			String operatorName = operator.getName().toLowerCase();
 			operatorName = operatorName.replaceAll("[^a-zA-Z0-9]", "");
@@ -252,15 +254,12 @@ public class QueryAnalyseInformation {
 		}
 	}
 
-
-	private synchronized int getUniqueId()
-	{  
-		 return uniqueId++;
-	   
-	}
-	
 	public  Map<ILogicalOperator, String> getOperatorList(){
 		return operatorList;
 	}
 
+	
+	private synchronized int getUniqueId(){  
+		 return uniqueId++;
+	}
 }

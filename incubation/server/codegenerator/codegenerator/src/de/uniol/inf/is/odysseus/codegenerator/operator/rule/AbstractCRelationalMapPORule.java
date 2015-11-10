@@ -7,6 +7,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCRelationalMapPORule<T extends MapAO> extends AbstractCOperatorRule<MapAO> {
 
 	public AbstractCRelationalMapPORule(String name) {
@@ -31,10 +37,11 @@ public abstract class AbstractCRelationalMapPORule<T extends MapAO> extends Abst
 	public void analyseOperator(MapAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
+		//read all expression from the logicalOperator
 		for (NamedExpression e : logicalOperator.getExpressions()) {
-
 			IExpression<?> temp = e.expression.getMEPExpression();
 			
+			//add the detected expression
 			transformationInformation.addMEPFunction(getAllMEPFunctions(temp));
 		}
 	}

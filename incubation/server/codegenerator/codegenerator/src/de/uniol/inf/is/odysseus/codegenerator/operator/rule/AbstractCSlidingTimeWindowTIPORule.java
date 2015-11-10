@@ -4,6 +4,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
+/**
+ * abstract rule for the TimeWindowAO (SlidingTimeWindow)
+ * 
+ * @author MarcPreuschaft
+ *
+ * @param <T>
+ */
 public abstract class AbstractCSlidingTimeWindowTIPORule<T extends TimeWindowAO> extends AbstractCOperatorRule<TimeWindowAO> {
 
 	public AbstractCSlidingTimeWindowTIPORule(String name) {
