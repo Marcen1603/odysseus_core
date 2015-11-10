@@ -5,8 +5,9 @@
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.interval.StreamIntervalEditor"
+            icon="icons/timeintervals.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.interval.IntervalStreamEditor"
-            label="Intervals">
+            label="Time Intervals (prototype)">
       </editor>
    </extension>
 
