@@ -30,12 +30,13 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 	public CodeFragmentInfo getCode(CSVFileSink operator) {
 		CodeFragmentInfo csvFileSink = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		CSVFileSink csvFileSinkOP = (CSVFileSink) operator;
 
 		String filename = "";
-	
+		//get needed access framework values
 		String transportHandler = csvFileSinkOP.getTransportHandler();
 		String dataHandler = csvFileSinkOP.getDataHandler();
 		String wrapper = csvFileSinkOP.getWrapper();
@@ -44,16 +45,18 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
+		//generate code for access framework
 		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, csvFileSinkOP.getOptionsMap(),operator, direction);
 		csvFileSink.addCodeFragmentInfo(codeAccessFramwork);
 		
-		
+		//generate code for senderPO
 		StringTemplate senderPOTemplate = new StringTemplate("operator","senderPO");
 		senderPOTemplate.getSt().add("operatorVariable", operatorVariable);
-
-		csvFileSink.addFrameworkImport(SenderPO.class.getName());
+		//render template
 		csvFileSink.addCode(senderPOTemplate.getSt().render());
 		
+		//add framework imports
+		csvFileSink.addFrameworkImport(SenderPO.class.getName());
 
 		
 		return csvFileSink;

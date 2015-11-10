@@ -31,31 +31,22 @@ public class CSystemTimeStampRule extends AbstractCSystemTimeStampRule<Timestamp
 	public CodeFragmentInfo getCode(TimestampAO operator) {
 		CodeFragmentInfo systemTimeCode = new CodeFragmentInfo();
 		
-		//OperatorVariable holen, auf den der Timestamp angewendet werden soll 
+		//get unique operator variable
 		String targetOperatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator.getSubscribedToSource().iterator().next().getTarget());
-		
 		
 		TimestampAO timestampAO = (TimestampAO)operator;
 		
-		//String targetOperatorVariable = "test";
-		
-	
+		//generate code for systemTimeTimestamp
 		StringTemplate systemTimeTimestampTemplate = new StringTemplate("operator","systemTimeTimestamp");
 		systemTimeTimestampTemplate.getSt().add("timestampAO", timestampAO);
 		systemTimeTimestampTemplate.getSt().add("targetOperatorVariable", targetOperatorVariable);
 		
-		
-	
-		
+		//add framework imports
 		systemTimeCode.addFrameworkImport(SystemTimeIntervalFactory.class.getName());
 		systemTimeCode.addFrameworkImport(ITimeInterval.class.getName());
 		systemTimeCode.addFrameworkImport(IStreamObject.class.getName());
 		
-		
-		
-		
 		systemTimeCode.addCode(systemTimeTimestampTemplate.getSt().render());
-		
 		
 		
 		return systemTimeCode;

@@ -28,21 +28,26 @@ public class CHashFragmentPORule extends AbstractCHashFragmentAORule<HashFragmen
 	public CodeFragmentInfo getCode(HashFragmentAO operator) {
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 	
-		
+		//generate code for the operator attributes (Fragment)
 		codeFragmentInfo.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFAttributeList(operator.getAttributes(), operatorVariable+"Fragment"));
+		
+		//generate code for the inputSchema
 		codeFragmentInfo.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(operator.getInputSchema(), operatorVariable+"Input"));
 
-		
+		//generate code for the hashFragmentPO
 		StringTemplate hashFragmentTemplate = new StringTemplate("operator","hashFragmentPO");
 		hashFragmentTemplate.getSt().add("operatorVariable", operatorVariable);
 		hashFragmentTemplate.getSt().add("optimizeDistribution", operator.isOptimizeDistribution());
 		hashFragmentTemplate.getSt().add("numFragments", operator.getNumberOfFragments());
 		hashFragmentTemplate.getSt().add("heartbeatRate", operator.getHeartbeatrate());
 		
-		
+		//render template
 		codeFragmentInfo.addCode(hashFragmentTemplate.getSt().render());
+		
+		//add framework imports
 		codeFragmentInfo.addFrameworkImport(HashFragmentPO.class.getName());
 		
 		return codeFragmentInfo;

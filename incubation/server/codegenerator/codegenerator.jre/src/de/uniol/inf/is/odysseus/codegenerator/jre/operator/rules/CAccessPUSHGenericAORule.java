@@ -35,8 +35,10 @@ public class CAccessPUSHGenericAORule extends AbstractCAccessPUSHGenericAORule<A
 	public CodeFragmentInfo getCode(AccessAO operator) {
 		CodeFragmentInfo receiverPO = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 
+		//get needed values for the access framework
 		String transportHandler = operator.getTransportHandler();
 		String dataHandler = operator.getDataHandler();
 		String wrapper = operator.getWrapper();
@@ -45,24 +47,24 @@ public class CAccessPUSHGenericAORule extends AbstractCAccessPUSHGenericAORule<A
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
+		//generate code for the access framework
 		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, operator.getOptionsMap(),operator, direction);
 		receiverPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
+		//generate code for receiverPO
 		StringTemplate receiverPOTemplate = new StringTemplate("operator","receiverPO");
 		receiverPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		receiverPOTemplate.getSt().add("readMetaData", operator.getReadMetaData());
 		
-			
+		//render template
 		receiverPO.addCode(receiverPOTemplate.getSt().render());
 		
 		//important add timestamp op
 		Utils.createTimestampAO(operator, operator.getDateFormat());
 		
-		
+		//add framework imports
 		receiverPO.addFrameworkImport(ReceiverPO.class.getName());
 		receiverPO.addFrameworkImport(IOException.class.getName());
-		
-		
 		receiverPO.addFrameworkImport(IMetaAttribute.class.getName());
 		receiverPO.addFrameworkImport(IMetadataInitializer.class.getName());
 			

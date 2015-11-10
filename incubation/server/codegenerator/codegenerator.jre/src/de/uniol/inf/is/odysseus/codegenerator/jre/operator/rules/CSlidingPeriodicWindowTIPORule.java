@@ -35,7 +35,8 @@ public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWind
 		CodeFragmentInfo slidingWindow = new CodeFragmentInfo();
 		
 		StringBuilder code = new StringBuilder();
-
+		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 
@@ -46,19 +47,23 @@ public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWind
 		TimeValueItem windowSlide = windowAO.getWindowSlide();
 		SDFSchema inputSchema = windowAO.getInputSchema();
 		
+		//generate SDFSchema code for the inputSchema
 		CodeFragmentInfo sdfInputSchema  = CreateJreDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
 		code.append(sdfInputSchema.getCode());
 		 
-		
+		//generate code for slidingPeriodicWindowTIPO
 		StringTemplate slidingTimeWindowTIPOTemplate = new StringTemplate("operator","slidingPeriodicWindowTIPO");
 		slidingTimeWindowTIPOTemplate.getSt().add("baseTimeUnit", baseTimeUnit);
 		slidingTimeWindowTIPOTemplate.getSt().add("windowSize", windowSize);
 		slidingTimeWindowTIPOTemplate.getSt().add("windowSlide", windowSlide);
 		slidingTimeWindowTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		 
+		//render template
 		code.append(slidingTimeWindowTIPOTemplate.getSt().render());
 	
 		slidingWindow.addCode(code.toString());
+		
+		//add framework imports
 		slidingWindow.addFrameworkImport(TimeValueItem.class.getName());
 		slidingWindow.addFrameworkImport(TimeUnit.class.getName());
 		slidingWindow.addFrameworkImport(WindowType.class.getName());

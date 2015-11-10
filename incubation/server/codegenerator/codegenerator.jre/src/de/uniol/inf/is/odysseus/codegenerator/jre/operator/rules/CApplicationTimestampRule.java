@@ -30,11 +30,14 @@ public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<Tim
 	public CodeFragmentInfo getCode(TimestampAO operator) {
 	CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator.getSubscribedToSource().iterator().next().getTarget());
 		
 		TimestampAO timestampAO = (TimestampAO)operator;
-		
+		//get inputSchema
 		SDFSchema schema = timestampAO.getInputSchema();
+		
+		//calc year, month, day, hour, minute, second, millisecond, and factor
 		boolean clearEnd = timestampAO.isClearEnd();
 		int year = schema.indexOf(timestampAO.getStartTimestampYear());
 		int month = schema
@@ -49,8 +52,8 @@ public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<Tim
 				.getStartTimestampMillisecond());
 		int factor = timestampAO.getFactor();
 		
+		//generate code for applicationTimestamp
 		StringTemplate relationalTimestampAttributeTimeIntervalMFactoryTemplate = new StringTemplate("utils","applicationTimestamp");
-		
 		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("operatorVariable", operatorVariable);			
 		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("year", year);	
 		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("month", month);	
@@ -64,12 +67,12 @@ public class CApplicationTimestampRule extends AbstractCApplicationTimestamp<Tim
 		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("clearEnd", clearEnd);	
 		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("timezone", timestampAO.getTimezone());	
 	
-		codeFragmentInfo.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
-		codeFragmentInfo.addFrameworkImport(IMetadataInitializer.class.getName());
-	
+		//render template
 		codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
 		
-		
+		//add framework imports
+		codeFragmentInfo.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
+		codeFragmentInfo.addFrameworkImport(IMetadataInitializer.class.getName());
 	
 	
 		return codeFragmentInfo;

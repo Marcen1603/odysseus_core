@@ -29,35 +29,39 @@ public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 		CodeFragmentInfo mapPO = new CodeFragmentInfo();
 	
 		if(logicalOperator instanceof MapAO){
-		
 	
 			MapAO mapAO = (MapAO)logicalOperator;
 		
+			//get unique operator variable
 			String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(logicalOperator);
 			
-			mapPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema( mapAO.getInputSchema(), operatorVariable+"Input"));
+			//generate code for inputSchema
+			mapPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(mapAO.getInputSchema(), operatorVariable+"Input"));
 			 
+			//get all needed values for the mapAO
 			boolean isAllowNullValue = mapAO.isAllowNullValue();
 			boolean isEvaluateOnPunctuation =	mapAO.isEvaluateOnPunctuation();
 			boolean isSuppressErrors = mapAO.isSuppressErrors(); 
 			
-		
+			//generate code for the sdfExpression list, is need for the relationalMapPO
 			StringTemplate sdfExpressionListTemplate = new StringTemplate("utils","sdfExpressionList");
 			sdfExpressionListTemplate.getSt().add("operatorVariable", operatorVariable);
 			sdfExpressionListTemplate.getSt().add("sdfExpressionList", mapAO.getExpressionList());
 	
+			//render template
 			mapPO.addCode(sdfExpressionListTemplate.getSt().render());
 			
+			//generate code for the relationalMapPO
 			StringTemplate relationalMapPOTemplate = new StringTemplate("operator","relationalMapPO");
 			relationalMapPOTemplate.getSt().add("operatorVariable", operatorVariable);
 			relationalMapPOTemplate.getSt().add("isAllowNullValue", isAllowNullValue);
 			relationalMapPOTemplate.getSt().add("isEvaluateOnPunctuation", isEvaluateOnPunctuation);
 			relationalMapPOTemplate.getSt().add("isSuppressErrors", isSuppressErrors);
 			
-			
+			//render template
 			mapPO.addCode(relationalMapPOTemplate.getSt().render());
 			
-			
+			//add framework imports
 			mapPO.addFrameworkImport(RelationalMapPO.class.getName());
 			mapPO.addFrameworkImport(SDFExpression.class.getName());
 		}

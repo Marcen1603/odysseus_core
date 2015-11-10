@@ -42,13 +42,14 @@ public class CAccessPORule extends AbstractCAccessAORule<StreamAO>{
 	public CodeFragmentInfo getCode(StreamAO operator) {
 		CodeFragmentInfo accessPO = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getStreamForTransformation(operator.getStreamname(),  null);
 
 		AccessAO accessAO = (AccessAO)logicalPlan;
-		
+		//get needed values for the access framework
 		String transportHandler = accessAO.getTransportHandler();
 		String dataHandler = accessAO.getDataHandler();
 		String wrapper = accessAO.getWrapper();
@@ -57,19 +58,23 @@ public class CAccessPORule extends AbstractCAccessAORule<StreamAO>{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
+		//generate code for the access framework
 		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
 		accessPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
+		//generate code for the accessPO
 		StringTemplate accessPOTemplate = new StringTemplate("operator","accessPO");
 		accessPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		accessPOTemplate.getSt().add("getMaxTimeToWaitForNewEventMS", accessAO.getMaxTimeToWaitForNewEventMS());
 		accessPOTemplate.getSt().add("readMetaData", accessAO.readMetaData());
 		
+		//render template
 		accessPO.addCode(accessPOTemplate.getSt().render());
 
 		//important add timestamp op
 		Utils.createTimestampAO(operator, accessAO.getDateFormat());
 				
+		//add framework imports
 		accessPO.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());	
 		accessPO.addFrameworkImport(AccessPO.class.getName());
 		accessPO.addFrameworkImport(IOException.class.getName());

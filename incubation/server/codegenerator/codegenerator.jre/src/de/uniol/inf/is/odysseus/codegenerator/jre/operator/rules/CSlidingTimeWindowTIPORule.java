@@ -37,6 +37,7 @@ public class CSlidingTimeWindowTIPORule extends AbstractCSlidingTimeWindowTIPORu
 		
 		StringBuilder code = new StringBuilder();
 
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 

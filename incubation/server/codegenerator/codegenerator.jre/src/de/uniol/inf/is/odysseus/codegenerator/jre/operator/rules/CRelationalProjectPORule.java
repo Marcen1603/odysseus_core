@@ -27,18 +27,23 @@ public class CRelationalProjectPORule extends AbstractCRelationalProjectAORule<P
 	public CodeFragmentInfo getCode(ProjectAO operator) {
 		CodeFragmentInfo projectPO = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
 	
+		//get restrictList
 		int[] restrictList = projectAO.determineRestrictList();
 		
+		//generate code for relationalProjectPO
 		StringTemplate relationalProjectPOTemplate = new StringTemplate("operator","relationalProjectPO");
-		
 		relationalProjectPOTemplate.getSt().add("restrictList", restrictList);
 		relationalProjectPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		
+		//render template
 		projectPO.addCode(relationalProjectPOTemplate.getSt().render());
+		
+		//add framework imports
 		projectPO.addFrameworkImport(RelationalProjectPO.class.getName());
 
 		return projectPO;

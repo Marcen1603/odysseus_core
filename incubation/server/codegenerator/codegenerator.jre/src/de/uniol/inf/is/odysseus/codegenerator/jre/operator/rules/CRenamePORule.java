@@ -28,12 +28,17 @@ public class CRenamePORule extends AbstractCRenameAORule<RenameAO>{
 	public CodeFragmentInfo getCode(RenameAO operator) {
 		CodeFragmentInfo topPO = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
+		//generate code for topPO
 		StringTemplate topTemplate = new StringTemplate("operator","topPO");
 		topTemplate.getSt().add("operatorVariable", operatorVariable);
+		
+		//render template
 		topPO.addCode(topTemplate.getSt().render());
 		
+		//add framework imports
 		topPO.addFrameworkImport(TopPO.class.getName());
 		topPO.addFrameworkImport(IStreamObject.class.getName());
 		

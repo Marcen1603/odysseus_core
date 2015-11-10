@@ -29,11 +29,14 @@ public class CApplicationTimestampPosGreaterEqualZeroRule extends AbstractCAppli
 	public CodeFragmentInfo getCode(TimestampAO operator) {
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator.getSubscribedToSource().iterator().next().getTarget());
 		
 		TimestampAO timestampAO = (TimestampAO)operator;
 		
+		//get inputSchema
 		SDFSchema schema = timestampAO.getInputSchema();
+		//calc clearEnd, pos and posEnd
 		boolean clearEnd = timestampAO.isClearEnd();
 		int pos = schema.indexOf(timestampAO.getStartTimestamp());
 
@@ -41,21 +44,21 @@ public class CApplicationTimestampPosGreaterEqualZeroRule extends AbstractCAppli
 				.getInputSchema()
 						.indexOf(timestampAO.getEndTimestamp()) : -1;	
 		
-			StringTemplate relationalTimestampAttributeTimeIntervalMFactoryTemplate = new StringTemplate("utils","applicationTimestampPosGreaterEqualZero");
+		//generate code for applicationTimestampPosGreaterEqualZero
+		StringTemplate relationalTimestampAttributeTimeIntervalMFactoryTemplate = new StringTemplate("utils","applicationTimestampPosGreaterEqualZero");
+		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("operatorVariable", operatorVariable);			
+		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("pos", pos);	
+		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("posEnd", posEnd);	
+		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("clearEnd", clearEnd);	
+		relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("timestampAO", timestampAO);	
 			
-			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("operatorVariable", operatorVariable);			
-			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("pos", pos);	
-			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("posEnd", posEnd);	
-			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("clearEnd", clearEnd);	
-			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("timestampAO", timestampAO);	
-			
-			codeFragmentInfo.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
-			codeFragmentInfo.addFrameworkImport(IMetadataInitializer.class.getName());
-			
-			codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
-			
+		//render template
+		codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
 		
-		
+		//add framework imports
+		codeFragmentInfo.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
+		codeFragmentInfo.addFrameworkImport(IMetadataInitializer.class.getName());
+			
 	
 		return codeFragmentInfo;
 	}

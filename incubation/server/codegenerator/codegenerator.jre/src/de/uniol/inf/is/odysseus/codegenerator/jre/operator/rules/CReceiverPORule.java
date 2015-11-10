@@ -41,6 +41,7 @@ public class CReceiverPORule extends AbstractCStreamAORule<StreamAO>{
 		
 		CodeFragmentInfo receiverPO = new CodeFragmentInfo();
 	
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
@@ -48,7 +49,7 @@ public class CReceiverPORule extends AbstractCStreamAORule<StreamAO>{
 
 		AccessAO accessAO = (AccessAO)logicalPlan;
 		
-
+		//get values for the access framework
 		String transportHandler = accessAO.getTransportHandler();
 		String dataHandler = accessAO.getDataHandler();
 		String wrapper = accessAO.getWrapper();
@@ -57,24 +58,24 @@ public class CReceiverPORule extends AbstractCStreamAORule<StreamAO>{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
+		//generate code for the access framework
 		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
 		receiverPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
+		//generate code for the receiverPO
 		StringTemplate receiverPOTemplate = new StringTemplate("operator","receiverPO");
 		receiverPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		receiverPOTemplate.getSt().add("readMetaData", accessAO.getReadMetaData());
 		
-			
+		//render template
 		receiverPO.addCode(receiverPOTemplate.getSt().render());
 		
 		//important add timestamp op
 		Utils.createTimestampAO(operator, accessAO.getDateFormat());
 		
-		
+		//add framework imports
 		receiverPO.addFrameworkImport(ReceiverPO.class.getName());
 		receiverPO.addFrameworkImport(IOException.class.getName());
-		
-		
 		receiverPO.addFrameworkImport(IMetaAttribute.class.getName());
 		receiverPO.addFrameworkImport(IMetadataInitializer.class.getName());
 			

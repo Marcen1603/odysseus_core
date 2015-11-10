@@ -34,16 +34,16 @@ public class CSenderPORule extends AbstractCSenderAORule<SenderAO>{
 	public CodeFragmentInfo getCode(SenderAO logicalOperator) {
 		CodeFragmentInfo senderPO = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(logicalOperator);
+		
 		SenderAO dummySenderAO = (SenderAO) logicalOperator;
-
-
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getSinkForTransformation(dummySenderAO.getSinkname(), null);
 		
 		SenderAO senderAO = (SenderAO)logicalPlan;
-	
-	
+		
+		//get needed handler from SenderAO
 		String transportHandler = senderAO.getTransportHandler();
 		String dataHandler = senderAO.getDataHandler();
 		String wrapper = senderAO.getWrapper();
@@ -53,13 +53,15 @@ public class CSenderPORule extends AbstractCSenderAORule<SenderAO>{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
+		//generate code for the access framework
 		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, senderAO.getOptionsMap(),logicalOperator, direction);
 		senderPO.addCodeFragmentInfo(codeAccessFramwork);
 		
-		
+		//generate code for the senderPO
 		StringTemplate senderPOTemplate = new StringTemplate("operator","senderPO");
 		senderPOTemplate.getSt().add("operatorVariable", operatorVariable);
 
+		//add framework imports
 		senderPO.addFrameworkImport(SenderPO.class.getName());
 		senderPO.addCode(senderPOTemplate.getSt().render());
 	

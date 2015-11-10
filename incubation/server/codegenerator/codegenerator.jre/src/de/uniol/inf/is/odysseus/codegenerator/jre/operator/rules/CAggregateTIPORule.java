@@ -49,52 +49,53 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 		
 		AggregateAO aggregateAO = (AggregateAO) operator;
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
+		//generate code for inputSchema
 		aggregateTIPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(aggregateAO.getInputSchema(), operatorVariable+"Input"));
 		
+		//generate code for outputSchema
 		aggregateTIPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(aggregateAO.getOutputSchemaIntern(0), operatorVariable+"OutputSchemaIntern"));
 		
+		//generate code for groupingAttributes
 		aggregateTIPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFAttributeList(aggregateAO.getGroupingAttributes(), operatorVariable+"GroupingAttribute"));
 		
-
+		//get metaAttribute names
 		List<String> metaAttributeNames = aggregateAO.getInputSchema().getMetaAttributeNames();
 		
+		//generate code for metaDataMergeFunction
 		StringTemplate aggregateMetaDataTemplate = new StringTemplate("utils","metaDataMergeFunction");
 		aggregateMetaDataTemplate.getSt().add("operatorVariable", operatorVariable);
 		aggregateMetaDataTemplate.getSt().add("metaAttributeNames", metaAttributeNames);
 
+		//render metaDataMergeFunction template 
 		aggregateTIPO.addCode(aggregateMetaDataTemplate.getSt().render());
 		
-	
-	
 		List<CAggregateItemModel> cAggregateItemModelList = new ArrayList<CAggregateItemModel>();
-	
-		
-		
+
 		List<AggregateItem> aggregateItemList = new ArrayList<AggregateItem>();
 		
 		
+		//get all aggregations an create new AggregateItem for better access
 		for (Entry<SDFSchema, Map<AggregateFunction, SDFAttribute>> entry : aggregateAO.getAggregations().entrySet())
 		{
 		    for (Entry<AggregateFunction, SDFAttribute> entryNeu : entry.getValue().entrySet())
 			{
 		    	SDFAttribute outAttribute = entryNeu.getValue();
 		    	SDFAttribute attribute =entry.getKey().get(0);
-		    
 		    	AggregateFunction function = entryNeu.getKey();
 		    	
 		    	aggregateItemList.add(new AggregateItem(function.getName(), attribute, outAttribute));
-
 			}
 		  
 		}
 		
 		
-	
 		if(aggregateItemList!=null){
 			for (AggregateItem item : aggregateItemList) {
 
+				//get aggreate function name
 				String functionName = item.aggregateFunction.getName();
 				List<SDFAttribute> inAttributes = item.inAttributes;
 				SDFAttribute outAttribute = item.outAttribute;
@@ -108,26 +109,26 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 			}
 		}
 		
-		
-	
-		
-		
+		//generate code for aggreateItemList (needed for the aggregateTIPO)
 		StringTemplate aggregateItemsTIPOTemplate = new StringTemplate("utils","aggregateItemListNeu");
 		aggregateItemsTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		aggregateItemsTIPOTemplate.getSt().add("cAggregateItemModelList", cAggregateItemModelList);
 	
+		//render aggregateItemListNeu template
 		aggregateTIPO.addCode(aggregateItemsTIPOTemplate.getSt().render());
 		
 
 		boolean fastGrouping = aggregateAO.isFastGrouping();
 		
+		//generate code for aggregateTIPO
 		StringTemplate aggregateTIPOTemplate = new StringTemplate("operator","aggregateTIPO");
 		aggregateTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		aggregateTIPOTemplate.getSt().add("fastGrouping", fastGrouping);
 		
-		
+		//render aggregateTIPO tempalte
 		aggregateTIPO.addCode(aggregateTIPOTemplate.getSt().render());
 		
+		//add framework imports
 		aggregateTIPO.addFrameworkImport(AggregateTIPO.class.getName());
 		aggregateTIPO.addFrameworkImport(ITimeInterval.class.getName());
 		aggregateTIPO.addFrameworkImport(IStreamObject.class.getName());
@@ -143,7 +144,7 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 		aggregateTIPO.addFrameworkImport(AggregateTISweepArea.class.getName());
 		aggregateTIPO.addFrameworkImport(AggregateFunctionBuilderRegistry.class.getName());
 		
-	
+		//add java imports
 		aggregateTIPO.addImport(java.util.Map.Entry.class.getCanonicalName());
 		aggregateTIPO.addImport(java.util.Map.class.getName());
 		

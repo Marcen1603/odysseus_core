@@ -38,6 +38,7 @@ public class CAccessGenericPORule extends AbstractCAccessGenericAORule<AccessAO>
 		
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
+		//get needed values for the access framework
 		String transportHandler = operator.getTransportHandler();
 		String dataHandler = operator.getDataHandler();
 		String wrapper = operator.getWrapper();
@@ -46,19 +47,23 @@ public class CAccessGenericPORule extends AbstractCAccessGenericAORule<AccessAO>
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
+		//create code for the access framework
 		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, operator.getOptionsMap(),operator, direction);
 		accessPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
+		//create code for the accessPO
 		StringTemplate accessPOTemplate = new StringTemplate("operator","accessPO");
 		accessPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		accessPOTemplate.getSt().add("getMaxTimeToWaitForNewEventMS", operator.getMaxTimeToWaitForNewEventMS());
 		accessPOTemplate.getSt().add("readMetaData", operator.readMetaData());
 		
+		//render the template
 		accessPO.addCode(accessPOTemplate.getSt().render());
 
 		//important add timestamp op
 		Utils.createTimestampAO(operator, operator.getDateFormat());
-				
+	
+		//add framework imports
 		accessPO.addFrameworkImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());	
 		accessPO.addFrameworkImport(AccessPO.class.getName());
 		accessPO.addFrameworkImport(IOException.class.getName());

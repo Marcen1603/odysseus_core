@@ -34,12 +34,14 @@ public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindow
 	@Override
 	public CodeFragmentInfo getCode(ElementWindowAO operator) {
 		CodeFragmentInfo slidingElementWindowCode = new CodeFragmentInfo();
-	
+		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 
 		boolean isWindowSlideNull = true;
 		
+		//get needed values from the elementWindowAO
 		TimeValueItem windowSize = operator.getWindowSize();
 		TimeValueItem windowAdvance = operator.getWindowAdvance();
 		TimeValueItem windowSlide = operator.getWindowSlide();
@@ -47,9 +49,9 @@ public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindow
 		List<SDFAttribute> partitonByList = operator.getPartitionBy();
 		TimeUnit baseTimeUnit =operator.getBaseTimeUnit();
 		
+		//generate code for the inputSchema 
 		CodeFragmentInfo sdfInputSchema  = CreateJreDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
 		slidingElementWindowCode.addCode(sdfInputSchema.getCode());
-		
 		
 		CodeFragmentInfo sdfPartitonSchema  = CreateJreDefaultCode.getCodeForSDFAttributeList(partitonByList, operatorVariable+"Partition");
 		slidingElementWindowCode.addCode(sdfPartitonSchema.getCode());
@@ -59,7 +61,7 @@ public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindow
 			isWindowSlideNull= false;
 		}
 		
-		
+		//generate code for slidingElementWindowTIPO
 		StringTemplate slidingTimeWindowTIPOTemplate = new StringTemplate("operator","slidingElementWindowTIPO");
 		slidingTimeWindowTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		slidingTimeWindowTIPOTemplate.getSt().add("windowSize", windowSize);
@@ -68,12 +70,10 @@ public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindow
 		slidingTimeWindowTIPOTemplate.getSt().add("isWindowSlideNull", isWindowSlideNull);
 		slidingTimeWindowTIPOTemplate.getSt().add("baseTimeUnit", baseTimeUnit);
 		
-		
-		
-		
+		//render the template
 		slidingElementWindowCode.addCode(slidingTimeWindowTIPOTemplate.getSt().render());
 	
-	
+		//add framework imports
 		slidingElementWindowCode.addFrameworkImport(TimeValueItem.class.getName());
 		slidingElementWindowCode.addFrameworkImport(TimeUnit.class.getName());
 		slidingElementWindowCode.addFrameworkImport(WindowType.class.getName());

@@ -35,29 +35,36 @@ public class CSlidingAdvanceTimeWindowTIPORule extends AbstractCSlidingAdvanceTi
 		CodeFragmentInfo slidingWindow = new CodeFragmentInfo();
 		
 		StringBuilder code = new StringBuilder();
-
+		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 
 		AbstractWindowWithWidthAO windowAO = (AbstractWindowWithWidthAO) operator;
 		
+		//get needed values from TimeWindowAO
 		TimeUnit baseTimeUnit =windowAO.getBaseTimeUnit();
 		TimeValueItem windowSize = windowAO.getWindowSize();
 		TimeValueItem windowAdvance = windowAO.getWindowAdvance();
 		SDFSchema inputSchema = windowAO.getInputSchema();
 		
+		//generate code for inputSchema
 		CodeFragmentInfo sdfInputSchema  = CreateJreDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
 		code.append(sdfInputSchema.getCode());
 		 
+		//generate code for slidingAdvanceTimeWindowTIPO
 		StringTemplate slidingAdvanceTimeWindowTIPOTemplate = new StringTemplate("operator","slidingAdvanceTimeWindowTIPO");
 		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("windowSize", windowSize);
 		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("windowAdvance", windowAdvance);
 		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("baseTimeUnit", baseTimeUnit);
 		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		 
+		//render template
 		code.append(slidingAdvanceTimeWindowTIPOTemplate.getSt().render());
 	
 		slidingWindow.addCode(code.toString());
+		
+		//add framework imports
 		slidingWindow.addFrameworkImport(TimeValueItem.class.getName());
 		slidingWindow.addFrameworkImport(TimeUnit.class.getName());
 		slidingWindow.addFrameworkImport(WindowType.class.getName());

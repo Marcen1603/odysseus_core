@@ -1,0 +1,2 @@
+The package de.uniol.inf.is.odysseus.codegenerator.jre.model.osgi was created to parse OSGi-Component definition files to a object. 
+This package was used to get all OSGi-Services (dynamic) that are used in odysseus.  

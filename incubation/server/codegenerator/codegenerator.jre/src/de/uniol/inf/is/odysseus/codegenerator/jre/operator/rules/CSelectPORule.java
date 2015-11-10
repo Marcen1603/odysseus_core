@@ -31,19 +31,22 @@ public class CSelectPORule extends AbstractCSelectAORule<SelectAO>{
 	public CodeFragmentInfo getCode(SelectAO operator) {
 		CodeFragmentInfo selectPO = new CodeFragmentInfo();
 		
+		//get unique operator variable
 		String operatorVariable = DefaultCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		SelectAO selectAO = (SelectAO) operator;
 		IPredicate<?> predicate = selectAO.getPredicate();
 	
+		//get predicate from the selectAO
 		String predicateValue = predicate.toString();
 
-	
+		//generate code for selectPO
 		StringTemplate selectTemplate = new StringTemplate("operator","selectPO");
 		selectTemplate.getSt().add("operatorVariable", operatorVariable);
 		selectTemplate.getSt().add("predicateValue", predicateValue);
 		selectPO.addCode(selectTemplate.getSt().render());
 		
+		//add framework imports
 		selectPO.addFrameworkImport(DirectAttributeResolver.class.getName());
 		selectPO.addFrameworkImport(RelationalPredicateBuilder.class.getName());
 		selectPO.addFrameworkImport(RelationalPredicate.class.getName());
