@@ -37,7 +37,7 @@ public abstract class AbstractTimeIntervalSweepArea<T extends IStreamObject<? ex
 	 * list. The alternative would be to check after the binary search if there
 	 * other elements with the same end ts.
 	 */
-	protected boolean hasEndTsOrder = true;
+	protected boolean hasEndTsOrder = false;
 
 	public AbstractTimeIntervalSweepArea() {
 		super();
