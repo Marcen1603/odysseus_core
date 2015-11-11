@@ -139,7 +139,7 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 			return optDiscoverer;
 		}
 
-		LOG.error("Selected node discoverer name '{}' not found", optDiscoverer.get());
+		LOG.error("Selected node discoverer name '{}' not found", discovererName);
 
 		return Optional.absent();
 	}
