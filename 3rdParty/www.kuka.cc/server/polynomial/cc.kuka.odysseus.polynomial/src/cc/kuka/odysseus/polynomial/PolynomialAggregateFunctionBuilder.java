@@ -24,8 +24,8 @@ import cc.kuka.odysseus.polynomial.physicaloperator.relational.RelationalPolynom
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @version $Id$
  *
  */
-public class PolynomialAggregateFunctionBuilder implements IAggregateFunctionBuilder {
+public class PolynomialAggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
 
     /** The REGRESSION aggregate. */
     private static final String REGRESSION = "Regression";

@@ -22,6 +22,7 @@ import java.util.Objects;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregationfuncti
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunctionBuilder {
+public class ProbabilisticAggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
     /** The AVG aggregate. */
     private final static String AVG = "AVG";
     /** The MEDIAN aggregate. */

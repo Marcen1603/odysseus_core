@@ -31,8 +31,8 @@ import cc.kuka.odysseus.statistic.physicaloperator.relational.RelationalSampleSt
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @version $Id$
  *
  */
-public class StatisticAggregateFunctionBuilder implements IAggregateFunctionBuilder {
+public class StatisticAggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
     /** The PSKEW aggregate. */
     private final static String POPULATIONSKEWNESS = "PSKEW";
     /** The SSKEW aggregate. */

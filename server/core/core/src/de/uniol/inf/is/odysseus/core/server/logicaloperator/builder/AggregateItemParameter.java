@@ -20,10 +20,13 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
@@ -64,9 +67,9 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 			}
 		} else {
 			String attributeStr = value.get(1);
-			if (attributeStr.equals("*")){
+			if (attributeStr.equals("*")) {
 				attributes.addAll(getAttributeResolver().getSchema().get(0).getAttributes());
-			}else{
+			} else {
 				attributes.add(getAttributeResolver().getAttribute(attributeStr));
 			}
 		}
@@ -82,9 +85,21 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 
 				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
 			} else {
-				// Fallback to old DOUBLE value for aggregation results
-				IDataDictionary dd = getDataDictionary();
-				SDFDatatype type = dd.getDatatype("double");
+
+				@SuppressWarnings("rawtypes")
+				Class<? extends IStreamObject> datamodell = getAttributeResolver().getSchema().get(0).getType();
+				IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry.getBuilder(datamodell, funcStr);
+				if (builder == null) {
+					throw new QueryParseException("Cannot find aggregate functio " + funcStr + " for " + datamodell);
+				}
+
+				SDFDatatype type = builder.getDatatype(funcStr);
+
+				if (type == null) {
+					// Fallback to old DOUBLE value for aggregation results
+					IDataDictionary dd = getDataDictionary();
+					type = dd.getDatatype("double");
+				}
 				outAttr = new SDFAttribute(null, outputName, type, null, null, null);
 			}
 		} catch (DataDictionaryException e) {
@@ -100,12 +115,12 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 
 			AggregateItem a = (AggregateItem) inputValue;
 			StringBuffer pql = new StringBuffer();
-			
+
 			List<String> value = Lists.newArrayList(a.aggregateFunction.getName());
 			if (a.inAttributes.size() == 1) {
 				value.add(a.inAttributes.get(0).getURI());
-				
-			} else { 
+
+			} else {
 				String attributes = "[";
 				for (SDFAttribute inAttribute : a.inAttributes) {
 					attributes += "'" + inAttribute.getURI() + "',";
@@ -118,7 +133,6 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 			value.add(a.outAttribute.getURI());
 			value.add(a.outAttribute.getDatatype().getURI());
 
-
 			pql.append(AggregateItemParameter.getPQLString(value));
 			pql.append(",");
 
@@ -130,7 +144,8 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 	static public String getPQLString(List<String> value) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append("'").append(value.get(0)).append("','").append((Object) value.get(1)).append("','").append(value.get(2)).append("'");
+		sb.append("'").append(value.get(0)).append("','").append((Object) value.get(1)).append("','")
+				.append(value.get(2)).append("'");
 		if (value.size() == 4) {
 			sb.append(",'").append(value.get(3)).append("'");
 		}

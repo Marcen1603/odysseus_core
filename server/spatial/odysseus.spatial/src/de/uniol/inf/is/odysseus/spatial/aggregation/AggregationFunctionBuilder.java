@@ -21,14 +21,14 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
+public class AggregationFunctionBuilder extends AbstractAggregateFunctionBuilder {
     private final static String       UNION_GEOMETRY = "UNIONGEOMETRY";
 
     private static Collection<String> names          = new LinkedList<String>();

@@ -21,13 +21,13 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
-public class RelationalAggregateFunctionBuilder implements
-		IAggregateFunctionBuilder {
+public class RelationalAggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
 	
     private final static String AVG = "AVG";
     private final static String SUM = "SUM";
@@ -47,6 +47,8 @@ public class RelationalAggregateFunctionBuilder implements
     private final static String COMPLETENESS = "COMPLETENESS";
     private final static String MEDIAN = "MEDIAN";
     private final static String AMEDIAN = "AMEDIAN";
+    
+    private final static int[] dummy = {-1};
     
 	private static Collection<String> names = new LinkedList<String>();
 	{
@@ -119,6 +121,16 @@ public class RelationalAggregateFunctionBuilder implements
 			throw new IllegalArgumentException("No such Aggregatefunction");
 		}
 		return aggFunc;
+	}
+	
+	@Override
+	public SDFDatatype getDatatype(String functionName) {
+		if (functionName.equalsIgnoreCase(NEST)){
+			RelationalNest n = new RelationalNest(dummy,false);
+			return n.getReturnType(null);
+		}
+		return null;
+		
 	}
 
 	@SuppressWarnings("rawtypes")

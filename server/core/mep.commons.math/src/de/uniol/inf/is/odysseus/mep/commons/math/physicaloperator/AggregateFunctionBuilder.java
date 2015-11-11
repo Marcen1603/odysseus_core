@@ -9,15 +9,15 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class AggregateFunctionBuilder implements IAggregateFunctionBuilder {
+public class AggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
 
     private final static String AMEDIAN2 = "AMEDIAN2";
 

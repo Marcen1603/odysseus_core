@@ -12,8 +12,8 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.signal.physicaloperator.aggregationfunctions.FFTransformation;
 
@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.signal.physicaloperator.aggregationfunctions.FFT
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SignalAggregateFunctionBuilder implements IAggregateFunctionBuilder {
+public class SignalAggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
 
     /** The FFT aggregate. */
     private static final String FFT = "FFT";

@@ -24,8 +24,8 @@ import cc.kuka.odysseus.financial.physicaloperator.relational.RelationalNetPrese
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @version $Id$
  *
  */
-public class FinancialAggregateFunctionBuilder implements IAggregateFunctionBuilder {
+public class FinancialAggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
 
     /** The NPV aggregate. */
     private static final String NPV = "NPV";
