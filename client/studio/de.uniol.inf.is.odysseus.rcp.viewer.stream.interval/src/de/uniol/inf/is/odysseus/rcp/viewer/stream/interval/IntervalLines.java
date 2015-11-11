@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.interval;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -18,10 +18,10 @@ public class IntervalLines {
 	private static final long DEFAULT_DRAWING_SPACE = 1000;
 	private static final int INTERVAL_LINE_MAX_HEIGHT_PIXELS = 100;
 	private static final int INTERVAL_LINE_MIN_HEIGHT_PIXELS = 15;
-	private static final int VERTICAL_MARGIN_PIXELS = 20;
+	private static final int VERTICAL_MARGIN_PIXELS = 5;
 	private static final int ELEMENT_DATA_HORIZONTAL_MARGIN_PIXELS = 10;
 
-	private final Collection<IntervalLine> storedElements = Lists.newArrayList();
+	private final List<IntervalLine> storedElements = Lists.newArrayList();
 
 	private final Color lineColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private final Color selectionColor = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
@@ -110,6 +110,9 @@ public class IntervalLines {
 			int intervalLineHeight = Math.min(Math.max(height / storedElements.size(), INTERVAL_LINE_MAX_HEIGHT_PIXELS), INTERVAL_LINE_MIN_HEIGHT_PIXELS);
 			int halfIntervalLineHeight = intervalLineHeight / 2;
 			int drawAreaWidth = width - (2 * VERTICAL_MARGIN_PIXELS);
+			
+			// determine if older elements should be removed
+			removeOldElementsIfNeeded(height, intervalLineHeight);
 	
 			// space to the border of the canvas
 			int drawY = VERTICAL_MARGIN_PIXELS;
@@ -167,7 +170,27 @@ public class IntervalLines {
 					gc.drawLine(endPixels, drawY - halfIntervalLineHeight, endPixels, drawY + halfIntervalLineHeight);
 				}
 				
-				drawY += VERTICAL_MARGIN_PIXELS;
+				drawY += ( VERTICAL_MARGIN_PIXELS + intervalLineHeight );
+			}
+		}
+	}
+
+	private void removeOldElementsIfNeeded(int height, int intervalLineHeight) {
+		int maxElementCount = height / ( intervalLineHeight + VERTICAL_MARGIN_PIXELS );
+		
+		boolean hasRemoved = false;
+		while( storedElements.size() > maxElementCount ) {
+			storedElements.remove(0);
+			hasRemoved = true;
+		}
+		
+		if( hasRemoved ) {
+			minimumEndTime = null;
+			maximumEndTime = null;
+			minimumStartTime = null;
+			maximumStartTime = null;
+			for( IntervalLine line : storedElements ) {
+				updateTimeBorders(line.getElement());
 			}
 		}
 	}
@@ -185,6 +208,8 @@ public class IntervalLines {
 			
 			gc.setForeground(lineColor);
 			
+			removeOldElementsIfNeeded(height, intervalLineHeight);
+			
 			Color oldColor = gc.getBackground();
 			for (IntervalLine intervalLine : storedElements) {
 				if (highlightY >= drawY - halfIntervalLineHeight && highlightY <= drawY + halfIntervalLineHeight) {
@@ -196,7 +221,7 @@ public class IntervalLines {
 				gc.drawText(intervalLine.getElement().toString(), ELEMENT_DATA_HORIZONTAL_MARGIN_PIXELS, drawY - intervalLineHeight / 2);
 				gc.setBackground(oldColor);
 				
-				drawY += VERTICAL_MARGIN_PIXELS;
+				drawY += ( VERTICAL_MARGIN_PIXELS + intervalLineHeight );
 			}
 		}
 	}

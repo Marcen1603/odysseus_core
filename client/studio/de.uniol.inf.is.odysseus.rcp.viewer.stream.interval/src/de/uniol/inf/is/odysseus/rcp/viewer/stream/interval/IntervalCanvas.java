@@ -123,7 +123,7 @@ public class IntervalCanvas implements PaintListener, MouseMoveListener {
 		if (e.widget == intervalLineCanvas) {
 			intervalLines.drawLines(e.gc, intervalLineCanvas.getBounds().width, intervalLineCanvas.getBounds().height, mouseY);
 		} else {
-			intervalLines.drawElements(e.gc, intervalLineCanvas.getBounds().width, intervalLineCanvas.getBounds().height, mouseY);
+			intervalLines.drawElements(e.gc, elementDataCanvas.getBounds().width, elementDataCanvas.getBounds().height, mouseY);
 		}
 	}
 
