@@ -15,13 +15,15 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractListAggregation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ListPartialAggregate;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings({"rawtypes"})
 public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
@@ -46,7 +48,16 @@ public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMet
 	public Tuple evaluate(IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {		
 		List<Tuple<?>> elems = ((ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p).getElems();
 		Tuple ret = new Tuple<IMetaAttribute>(1, false);
-		ret.setAttribute(0, elems);
+		if (restrictList.length == 1){
+			// unpack tuples
+			List<Object> elemsUnpacked = new ArrayList<Object>();
+			for (Iterator<Tuple<? extends IMetaAttribute>> iterator = elems.iterator(); iterator.hasNext();) {
+				elemsUnpacked.add(iterator.next().getAttribute(0));
+			}
+			ret.setAttribute(0,elemsUnpacked);
+		}else{
+			ret.setAttribute(0, elems);
+		}
 		return ret;
 	}
 
