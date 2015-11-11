@@ -19,6 +19,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Count;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CountPartialAggregate;
+
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings({ "rawtypes" })
@@ -67,5 +70,10 @@ public class RelationalCount extends Count<Tuple<?>, Tuple<?>> {
 	@Override
 	public SDFDatatype getPartialAggregateType() {
 		return SDFDatatype.COUNT_PARTIAL_AGGREGATE;
+	}
+	
+	@Override
+	public SDFDatatype getReturnType(List<SDFDatatype> inputTypes) {
+		return SDFDatatype.LONG;
 	}
 }

@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
@@ -32,32 +34,30 @@ public class RelationalMinMax extends AbstractAggregateFunction<Tuple<?>, Tuple<
 	final private boolean isMax;
 	final private String datatype;
 
-	
-	//static Map<Boolean, Map<Integer, RelationalMinMax>> instances = new HashMap<Boolean, Map<Integer, RelationalMinMax>>();
+	// static Map<Boolean, Map<Integer, RelationalMinMax>> instances = new
+	// HashMap<Boolean, Map<Integer, RelationalMinMax>>();
 
-	static public RelationalMinMax getInstance(int pos, boolean isMax,
-			boolean partialAggregateInput, String datatype) {
-//		Map<Integer, RelationalMinMax> in = instances.get(isMax);
-//		RelationalMinMax ret;
-//		if (in == null) {
-//			in = new HashMap<Integer, RelationalMinMax>();
-//			instances.put(isMax, in);
-//			ret = new RelationalMinMax(pos, isMax, partialAggregateInput);
-//			in.put(pos, ret);
-//		} else {
-//			ret = in.get(pos);
-//			if (ret == null) {
-//				ret = new RelationalMinMax(pos, isMax, partialAggregateInput);
-//				in.put(pos, ret);
-//			}
-//		}
-//		return ret;
+	static public RelationalMinMax getInstance(int pos, boolean isMax, boolean partialAggregateInput, String datatype) {
+		// Map<Integer, RelationalMinMax> in = instances.get(isMax);
+		// RelationalMinMax ret;
+		// if (in == null) {
+		// in = new HashMap<Integer, RelationalMinMax>();
+		// instances.put(isMax, in);
+		// ret = new RelationalMinMax(pos, isMax, partialAggregateInput);
+		// in.put(pos, ret);
+		// } else {
+		// ret = in.get(pos);
+		// if (ret == null) {
+		// ret = new RelationalMinMax(pos, isMax, partialAggregateInput);
+		// in.put(pos, ret);
+		// }
+		// }
+		// return ret;
 		return new RelationalMinMax(pos, isMax, partialAggregateInput, datatype);
 	}
 
-	private RelationalMinMax(int pos, boolean isMax,
-			boolean partialAggregateInput, String datatype) {
-		super (isMax?"MAX":"MIN",partialAggregateInput);
+	private RelationalMinMax(int pos, boolean isMax, boolean partialAggregateInput, String datatype) {
+		super(isMax ? "MAX" : "MIN", partialAggregateInput);
 		this.attrList[0] = pos;
 		this.isMax = isMax;
 		this.datatype = datatype;
@@ -71,39 +71,48 @@ public class RelationalMinMax extends AbstractAggregateFunction<Tuple<?>, Tuple<
 			return new RelationalElementPartialAggregate(in.restrict(attrList, true), datatype);
 		}
 	}
-	
+
 	@Override
 	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, Tuple<?> merge, boolean createNew) {
 		Tuple<?> toMerge = merge.restrict(attrList, true);
 		ElementPartialAggregate<Tuple<?>> pa = null;
-		if (createNew){
+		if (createNew) {
 			pa = new RelationalElementPartialAggregate(p);
-		}else{
-			pa = (RelationalElementPartialAggregate) p;	
-		}		
-		if (isMax){
-			if (pa.getElem().compareTo(toMerge) < 0){
+		} else {
+			pa = (RelationalElementPartialAggregate) p;
+		}
+		if (isMax) {
+			if (pa.getElem().compareTo(toMerge) < 0) {
 				pa.setElem(toMerge);
 			}
-		}else{
-			if (pa.getElem().compareTo(toMerge) > 0){
+		} else {
+			if (pa.getElem().compareTo(toMerge) > 0) {
 				pa.setElem(toMerge);
-			}			
+			}
 		}
 		return pa;
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
-			IPartialAggregate<Tuple<?>> toMerge, boolean createNew) {
-		return merge(p, ((RelationalElementPartialAggregate)toMerge).getElem(), createNew);
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, IPartialAggregate<Tuple<?>> toMerge,
+			boolean createNew) {
+		return merge(p, ((RelationalElementPartialAggregate) toMerge).getElem(), createNew);
 	}
 
 	@Override
 	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
-		return ((RelationalElementPartialAggregate)p).getElem();
+		return ((RelationalElementPartialAggregate) p).getElem();
 	}
-	
+
+	@Override
+	public SDFDatatype getReturnType(List<SDFDatatype> inputTypes) {
+		if (inputTypes != null && inputTypes.size() == 1) {
+			return inputTypes.get(0);
+		} else {
+			return null;
+		}
+	}
+
 	@Override
 	public SDFDatatype getPartialAggregateType() {
 		return SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE;

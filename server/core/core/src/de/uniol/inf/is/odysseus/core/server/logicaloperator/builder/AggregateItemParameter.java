@@ -90,7 +90,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 				Class<? extends IStreamObject> datamodell = getAttributeResolver().getSchema().get(0).getType();
 				IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry.getBuilder(datamodell, funcStr);
 				if (builder == null) {
-					throw new QueryParseException("Cannot find aggregate functio " + funcStr + " for " + datamodell);
+					throw new QueryParseException("Cannot find aggregate function " + funcStr + " for " + datamodell);
 				}
 
 				List<SDFDatatype> inputTypes = new ArrayList<>();
