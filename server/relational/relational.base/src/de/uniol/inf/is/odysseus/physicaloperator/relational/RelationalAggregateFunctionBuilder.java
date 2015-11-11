@@ -126,6 +126,8 @@ public class RelationalAggregateFunctionBuilder extends AbstractAggregateFunctio
 	
 	@Override
 	public SDFDatatype getDatatype(String functionName, List<SDFDatatype> inputTypes) {
+		// TODO: This is terrible! Two places where to compare ...
+		// Maybe the aggregatefunctions should be created similar to the mep functions!
 		if (functionName.equalsIgnoreCase(NEST)){
 			RelationalNest n = new RelationalNest(dummy,false);
 			return n.getReturnType(null);
