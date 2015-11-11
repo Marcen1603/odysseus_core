@@ -15,8 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
@@ -29,12 +29,12 @@ public class ListPartialAggregate<T> extends AbstractPartialAggregate<T> impleme
 	final List<T> elems;
 	
 	public ListPartialAggregate(T elem) {
-		elems = new LinkedList<T>();
+		elems = new ArrayList<T>();
 		addElem(elem);
 	}
 	
 	public ListPartialAggregate(ListPartialAggregate<T> p) {
-		this.elems = new LinkedList<T>(p.elems);
+		this.elems = new ArrayList<T>(p.elems);
 	}
 
 	public List<T> getElems() {
