@@ -16,8 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 
 import java.util.Collection;
-
-
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -30,5 +29,5 @@ public interface IAggregateFunctionBuilder {
 	Class<? extends IStreamObject> getDatamodel();
 	Collection<String> getFunctionNames();
 	IAggregateFunction<?,?> createAggFunction(AggregateFunction e2, SDFSchema e1, int[] posArray, boolean partialAggregateInput, String datatype);
-	SDFDatatype getDatatype(String functionName);
+	SDFDatatype getDatatype(String functionName, List<SDFDatatype> inputTypes);
 }

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -124,7 +125,7 @@ public class RelationalAggregateFunctionBuilder extends AbstractAggregateFunctio
 	}
 	
 	@Override
-	public SDFDatatype getDatatype(String functionName) {
+	public SDFDatatype getDatatype(String functionName, List<SDFDatatype> inputTypes) {
 		if (functionName.equalsIgnoreCase(NEST)){
 			RelationalNest n = new RelationalNest(dummy,false);
 			return n.getReturnType(null);
