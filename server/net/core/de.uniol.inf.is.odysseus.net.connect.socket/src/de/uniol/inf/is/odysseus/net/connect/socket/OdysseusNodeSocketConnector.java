@@ -117,7 +117,7 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 					LOG.debug("Connection to node {} finished", node);
 					
 				} catch (IOException e) {
-					callback.failedConnection(new OdysseusNetConnectionException("Could not connect to node " + node));
+					callback.failedConnection(new OdysseusNetConnectionException("Could not connect to node " + node, e));
 					tryCloseSocket(asClientSocket);
 					tryCloseSocket(asServerSocket);
 				} catch (OdysseusNetConnectionException e) {
