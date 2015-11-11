@@ -1,18 +1,25 @@
+/********************************************************************************** 
+  * Copyright 2011 The Odysseus Team
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 package de.uniol.inf.is.odysseus.wrapper.mosaik.logicaloperator;
 
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -37,7 +44,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 	
 	public MosaikAccessAO(Resource resource, String wrapper, String transport,
 			String protocol, String datahandler, Map<String, String> options) {
-		super();
+		super(resource, wrapper, transport, protocol, datahandler, options);
 		this.init();
 	}
 	
@@ -57,7 +64,6 @@ public class MosaikAccessAO extends AbstractAccessAO {
 		return new MosaikAccessAO(this);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void init() {
 		Map<String, String> options = new HashMap<String, String>();
 		if(this.type != null && this.type.equalsIgnoreCase("simapi")) {
@@ -102,9 +108,9 @@ public class MosaikAccessAO extends AbstractAccessAO {
 		}
 		this.setOptionMap(options);
 		
-		List<SDFAttribute> schemaAttributes = new ArrayList<>();
-		schemaAttributes.add(new SDFAttribute("", "timestamp", SDFDatatype.START_TIMESTAMP));
-		this.setOutputSchema(SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) KeyValueObject.class , schemaAttributes));
+//		List<SDFAttribute> schemaAttributes = new ArrayList<>();
+//		schemaAttributes.add(new SDFAttribute("timestamp", "timestamp", SDFDatatype.START_TIMESTAMP));
+//		this.setOutputSchema(SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) KeyValueObject.class, schemaAttributes));
 	}
 
 }
