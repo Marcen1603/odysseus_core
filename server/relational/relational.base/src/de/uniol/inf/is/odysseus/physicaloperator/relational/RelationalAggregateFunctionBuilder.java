@@ -133,6 +133,11 @@ public class RelationalAggregateFunctionBuilder extends AbstractAggregateFunctio
 			RelationalNest n = new RelationalNest(dummy,false);
 			return n.getReturnType(input);
 		}
+		if (functionName.equalsIgnoreCase(DISTINCTNEST)){
+			RelationalDistinctNest n = new RelationalDistinctNest(dummy,false);
+			return n.getReturnType(input);
+		}
+
 		if (functionName.equalsIgnoreCase(MIN) || functionName.equalsIgnoreCase(MAX)){
 			return RelationalMinMax.getInstance(0, false, false, null).getReturnType(input);
 		}
