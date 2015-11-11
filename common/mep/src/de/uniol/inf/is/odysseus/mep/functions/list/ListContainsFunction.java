@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class ListContainsFunction extends AbstractFunction<Boolean> {
 	
 	private static final long serialVersionUID = -871096326523245775L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.SIMPLE_TYPES,{SDFDatatype.LIST} };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.STRING, SDFDatatype.OBJECT},{SDFDatatype.LIST} };
 
 	public ListContainsFunction() {
 		super("contains", 2, accTypes, SDFDatatype.BOOLEAN, false);
