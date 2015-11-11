@@ -22,8 +22,8 @@ import java.util.Objects;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
+public class AggregationFunctionBuilder extends AbstractAggregateFunctionBuilder {
     private final static String SCRIPT = "SCRIPT";
     private final static String BEAN = "BEAN";
     private static Collection<String> names = new LinkedList<>();
