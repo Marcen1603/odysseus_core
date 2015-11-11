@@ -3,10 +3,8 @@ package de.uniol.inf.is.odysseus.net.connect.socket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -27,6 +25,7 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionListener;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnector;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectorCallback;
 import de.uniol.inf.is.odysseus.net.connect.OdysseusNetConnectionException;
+import de.uniol.inf.is.odysseus.net.util.InetAddressUtil;
 
 public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdysseusNetComponent, IServerSocketAcceptListener, IOdysseusNodeConnectionListener {
 
@@ -51,17 +50,14 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 
 		// port and address will be shared with other nodes
 		localNode.addProperty(SERVER_PORT_PROPERTY_KEY, "" + serverPort);
-		localNode.addProperty(SERVER_ADDRESS_PROPERTY_KEY, determineOwnInetAddress());
+		Optional<String> optAddress = InetAddressUtil.getRealInetAddress();
+		if( optAddress.isPresent() ) {
+			localNode.addProperty(SERVER_ADDRESS_PROPERTY_KEY, optAddress.get());
+		} else {
+			throw new OdysseusNetException("Could not determine own inet-address");
+		}
 
 		this.localNode = localNode;
-	}
-
-	private static String determineOwnInetAddress() throws OdysseusNetException {
-		try {
-			return InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			throw new OdysseusNetException("Could not determine own inet-address", e);
-		}
 	}
 
 	@Override
