@@ -29,10 +29,14 @@ public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 	@Override
 	public IOdysseusNode start() throws OdysseusNetException {
 		String randNumStr = generateRandomNumber();
-		String nodeName = OdysseusNetConfiguration.get(NODE_NAME_CONFIG_KEY, NODE_DEFAULT_NAME + "_" + generateRandomNumber());
+		String nodeName = OdysseusNetConfiguration.get(NODE_NAME_CONFIG_KEY, NODE_DEFAULT_NAME);
 		if( Strings.isNullOrEmpty(nodeName)) {
 			LOG.error("Invalid node name. Using default " + NODE_DEFAULT_NAME + "_" + randNumStr);
 			nodeName = NODE_DEFAULT_NAME + "_" + randNumStr;
+		}
+		
+		if( NODE_DEFAULT_NAME.equals(nodeName)) {
+			nodeName = nodeName + "_" + randNumStr;
 		}
 	
 		String preserveID = OdysseusNetConfiguration.get(PRESERVE_ID_CONFIG_KEY, PRESERVE_ID_DEFAULT_VALUE);
