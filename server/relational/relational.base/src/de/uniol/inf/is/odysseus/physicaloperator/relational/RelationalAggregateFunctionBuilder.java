@@ -22,6 +22,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
@@ -125,18 +126,18 @@ public class RelationalAggregateFunctionBuilder extends AbstractAggregateFunctio
 	}
 	
 	@Override
-	public SDFDatatype getDatatype(String functionName, List<SDFDatatype> inputTypes) {
+	public SDFDatatype getDatatype(String functionName, List<SDFAttribute> input) {
 		// TODO: This is terrible! Two places where to compare ...
 		// Maybe the aggregatefunctions should be created similar to the mep functions!
 		if (functionName.equalsIgnoreCase(NEST)){
 			RelationalNest n = new RelationalNest(dummy,false);
-			return n.getReturnType(null);
+			return n.getReturnType(input);
 		}
 		if (functionName.equalsIgnoreCase(MIN) || functionName.equalsIgnoreCase(MAX)){
-			return RelationalMinMax.getInstance(0, false, false, null).getReturnType(inputTypes);
+			return RelationalMinMax.getInstance(0, false, false, null).getReturnType(input);
 		}
 		if (functionName.equalsIgnoreCase(COUNT)){
-			return RelationalCount.getInstance(false).getReturnType(inputTypes);
+			return RelationalCount.getInstance(false).getReturnType(input);
 		}
 		return null;
 		

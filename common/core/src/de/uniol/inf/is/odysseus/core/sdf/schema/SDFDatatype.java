@@ -17,10 +17,12 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 
 /**
@@ -338,6 +340,12 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		this(datatypeName, type, subType, false);
 	}
 
+	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
+			Collection<SDFAttribute> attributes) {
+		this(datatypeName, type, SDFSchemaFactory.createNewSchema("", Tuple.class, attributes), false);
+	}
+
+	
 	public SDFDatatype(SDFDatatype sdfDatatype) {
 		super(sdfDatatype);
 		if (sdfDatatype.schema != null) {

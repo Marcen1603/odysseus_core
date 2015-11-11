@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -105,9 +106,9 @@ public class RelationalMinMax extends AbstractAggregateFunction<Tuple<?>, Tuple<
 	}
 
 	@Override
-	public SDFDatatype getReturnType(List<SDFDatatype> inputTypes) {
+	public SDFDatatype getReturnType(List<SDFAttribute> inputTypes) {
 		if (inputTypes != null && inputTypes.size() == 1) {
-			return inputTypes.get(0);
+			return inputTypes.get(0).getDatatype();
 		} else {
 			return null;
 		}

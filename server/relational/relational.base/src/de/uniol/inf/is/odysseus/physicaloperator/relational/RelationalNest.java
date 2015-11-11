@@ -21,7 +21,9 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractListAggregation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ListPartialAggregate;
@@ -77,8 +79,13 @@ public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMet
 	}
 	
 	@Override
-	public SDFDatatype getReturnType(List<SDFDatatype> inputTypes) {
-		return SDFDatatype.LIST;
+	public SDFDatatype getReturnType(List<SDFAttribute> inputTypes) {
+		if (inputTypes.size() == 1){
+			SDFDatatype t = inputTypes.get(0).getDatatype();
+			return new SDFDatatype("LIST_"+t.getURI(), KindOfDatatype.LIST, t);
+		}else{
+			return new SDFDatatype("LIST_TUPLE", KindOfDatatype.LIST, inputTypes);
+		}
 	}
 	
 }

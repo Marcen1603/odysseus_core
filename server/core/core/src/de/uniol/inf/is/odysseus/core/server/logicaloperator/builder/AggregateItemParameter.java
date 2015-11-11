@@ -92,13 +92,8 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 				if (builder == null) {
 					throw new QueryParseException("Cannot find aggregate function " + funcStr + " for " + datamodell);
 				}
-
-				List<SDFDatatype> inputTypes = new ArrayList<>();
-				for (SDFAttribute attribute:attributes){
-					inputTypes.add(attribute.getDatatype());
-				}
 				
-				SDFDatatype type = builder.getDatatype(funcStr, inputTypes);
+				SDFDatatype type = builder.getDatatype(funcStr, attributes);
 
 				if (type == null) {
 					// Fallback to old DOUBLE value for aggregation results

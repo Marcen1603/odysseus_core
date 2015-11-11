@@ -15,14 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Count;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CountPartialAggregate;
-
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings({ "rawtypes" })
 public class RelationalCount extends Count<Tuple<?>, Tuple<?>> {
@@ -73,7 +73,7 @@ public class RelationalCount extends Count<Tuple<?>, Tuple<?>> {
 	}
 	
 	@Override
-	public SDFDatatype getReturnType(List<SDFDatatype> inputTypes) {
+	public SDFDatatype getReturnType(List<SDFAttribute> inputTypes) {
 		return SDFDatatype.LONG;
 	}
 }
