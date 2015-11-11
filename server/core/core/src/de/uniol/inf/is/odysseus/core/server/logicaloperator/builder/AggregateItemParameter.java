@@ -64,7 +64,11 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 			}
 		} else {
 			String attributeStr = value.get(1);
-			attributes.add(getAttributeResolver().getAttribute(attributeStr));
+			if (attributeStr.equals("*")){
+				attributes.addAll(getAttributeResolver().getSchema().get(0).getAttributes());
+			}else{
+				attributes.add(getAttributeResolver().getAttribute(attributeStr));
+			}
 		}
 		String outputName = value.get(2);
 		SDFAttribute outAttr = null;
