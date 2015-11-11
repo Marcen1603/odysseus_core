@@ -79,7 +79,11 @@ public class RelationalAggregateFunctionBuilder implements
 			aggFunc = RelationalAvgSum.getInstance(pos[0],
 					(key.getName().equalsIgnoreCase(AVG)) ? true : false, partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(COUNT)) {
-			aggFunc = RelationalCount.getInstance(pos[0],partialAggregateInput);
+			if (pos.length == 1){
+				aggFunc = RelationalAttributeCount.getInstance(pos[0],partialAggregateInput);
+			}else{
+				aggFunc = RelationalCount.getInstance(partialAggregateInput);
+			}
 		} else if ((key.getName().equalsIgnoreCase(MIN))
 				|| (key.getName().equalsIgnoreCase(MAX))) {
 			aggFunc = RelationalMinMax.getInstance(pos[0],

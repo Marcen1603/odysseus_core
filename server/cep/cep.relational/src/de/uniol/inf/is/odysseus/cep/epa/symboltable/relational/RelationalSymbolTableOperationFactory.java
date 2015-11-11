@@ -16,14 +16,13 @@
 package de.uniol.inf.is.odysseus.cep.epa.symboltable.relational;
 
 import java.util.HashMap;
-
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAttributeCount;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAvgSum;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalCount;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMinMax;
 @SuppressWarnings({"rawtypes"})
 public class RelationalSymbolTableOperationFactory implements
@@ -43,7 +42,7 @@ public class RelationalSymbolTableOperationFactory implements
 	private static IAggregateFunction createNewFunction(String name) {
 		IAggregateFunction func = null;
 		if ("COUNT".equalsIgnoreCase(name)){
-			func = RelationalCount.getInstance(0, false);
+			func = RelationalAttributeCount.getInstance(0, false);
 		}else if ("SUM".equalsIgnoreCase(name)){
 			func = RelationalAvgSum.getInstance(0, false, false);
 		}else if ("AVG".equalsIgnoreCase(name)){

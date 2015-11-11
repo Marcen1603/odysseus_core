@@ -34,7 +34,7 @@ abstract public class Count<R, W> extends AbstractAggregateFunction<R, W> {
 
 	@Override
 	public IPartialAggregate<R> init(R in) {
-		IPartialAggregate<R> pa = new CountPartialAggregate<R>(1);
+		IPartialAggregate<R> pa = new CountPartialAggregate<R>(in!=null?1:0);
 		return pa;
 	}
 
@@ -55,7 +55,9 @@ abstract public class Count<R, W> extends AbstractAggregateFunction<R, W> {
 		} else {
 			pa = (CountPartialAggregate<R>) p;
 		}
-		pa.add();
+		if (toMerge != null){
+			pa.add();
+		}
 		return pa;
 	}
 
