@@ -16,6 +16,10 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import feature="de.uniol.inf.is.odysseus.net.feature" version="1.0.0.qualifier"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.net.querydistribute"
          download-size="0"
