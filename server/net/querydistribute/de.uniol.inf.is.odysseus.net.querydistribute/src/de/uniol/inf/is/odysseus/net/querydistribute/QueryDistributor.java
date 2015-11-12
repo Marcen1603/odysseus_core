@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -102,7 +101,7 @@ public class QueryDistributor implements IQueryDistributor {
 				
 				while( true ) {
 					try {
-						UUID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, determineQueryName(query), config);
+						UUID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, config);
 						
 						if( LOG.isInfoEnabled() ) {
 							logSuccess(allocationMapCopy);
@@ -146,14 +145,6 @@ public class QueryDistributor implements IQueryDistributor {
 			IOdysseusNode node = allocationMapCopy.get(part);
 			LOG.info("{}: {}", node, part);
 		}
-	}
-
-	private static String determineQueryName(ILogicalQuery query) {
-		String queryName = query.getName();
-		if( Strings.isNullOrEmpty(queryName)) {
-			return "Query " + query.getID();
-		}
-		return queryName;
 	}
 
 	private static Map<ILogicalQueryPart, IOdysseusNode> copyAllocationMap(Map<ILogicalQueryPart, IOdysseusNode> allocationMap) {

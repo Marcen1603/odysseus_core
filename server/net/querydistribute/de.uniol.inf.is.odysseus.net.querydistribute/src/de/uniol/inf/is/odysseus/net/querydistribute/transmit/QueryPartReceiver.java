@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -180,10 +179,6 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 
 		sb.append("#PARSER PQL").append("\n");
 
-		String queryName = message.getQueryName();
-		if (!Strings.isNullOrEmpty(queryName)) {
-			sb.append("#QNAME ").append(queryName).append("\n");
-		}
 		// TODO should not be set that way
 		sb.append("#ADDQUERY").append("\n");
 		sb.append(message.getPqlStatement()).append("\n");

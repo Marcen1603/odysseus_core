@@ -115,7 +115,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 		return instance != null;
 	}
 
-	public UUID transmit(Map<ILogicalQueryPart, IOdysseusNode> allocationMap, IServerExecutor serverExecutor, ISession caller, String queryName, QueryBuildConfiguration config) throws QueryPartTransmissionException, QueryDistributionException {
+	public UUID transmit(Map<ILogicalQueryPart, IOdysseusNode> allocationMap, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryPartTransmissionException, QueryDistributionException {
 		LOG.debug("Beginning transmission...");
 
 		IOdysseusNode localNode = null;
@@ -127,7 +127,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 		UUID sharedQueryID = UUID.randomUUID();
 
 		insertAccessAndSenderOperators(allocationMap);
-		distributeToRemotePeers(sharedQueryID, serverExecutor, caller, allocationMap, localNode, config, queryName);
+		distributeToRemotePeers(sharedQueryID, serverExecutor, caller, allocationMap, localNode, config);
 		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts(allocationMap, localNode);
 
 		if (localQueryParts.isEmpty()) {
@@ -140,7 +140,6 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 		LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
 
 		ILogicalQuery localQuery = buildLocalQuery(localQueryParts);
-		localQuery.setName(queryName);
 		localQuery.setUser(caller);
 
 		try {
@@ -229,18 +228,17 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 		});
 	}
 
-	private void distributeToRemotePeers(UUID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, IOdysseusNode> allocationMap, IOdysseusNode localNode, QueryBuildConfiguration parameters, String queryName) throws QueryPartTransmissionException {
+	private void distributeToRemotePeers(UUID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, IOdysseusNode> allocationMap, IOdysseusNode localNode, QueryBuildConfiguration parameters) throws QueryPartTransmissionException {
 		sendDestinationMap.clear();
 		sendResultMap.clear();
 		
-		int partNumber = 0;
 		for (ILogicalQueryPart part : allocationMap.keySet()) {
 			IOdysseusNode allocatedNode = allocationMap.get(part);
 
 			if (!allocatedNode.equals(localNode)) {
 				ParameterTransformationConfiguration paramConfiguration = parameters.get(ParameterTransformationConfiguration.class);
 				Collection<String> metaTypes = paramConfiguration.getValue().getDefaultMetaTypeSet();
-				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes, queryName + "_" + partNumber);
+				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes);
 
 				try {
 					nodeCommunicator.send(allocatedNode, msg);
@@ -255,8 +253,6 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 				LOG.debug("Sent query part {} to node {} (queryPartID = {})", new Object[] { part, allocatedNode, msg.getQueryPartID() });
 				LOG.trace("PQL-Query of query part {} is\n{}", part, msg.getPqlStatement());
 			}
-			
-			partNumber++;
 		}
 
 		waitForNodeAnswers();
@@ -408,7 +404,6 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("#PARSER PQL\n");
-			sb.append("#QNAME " + query.getName() + "\n");
 			sb.append("#ADDQUERY\n");
 			sb.append(query.getQueryText());
 			sb.append("\n");

@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.net.communication.IMessage;
 
 public class AddQueryPartMessage implements IMessage {
 
-	private String queryName;
 	private String pqlStatement;
 	private UUID sharedQueryID;
 	private String transCfgName;
@@ -21,13 +20,12 @@ public class AddQueryPartMessage implements IMessage {
 
 	}
 
-	public AddQueryPartMessage(UUID sharedQueryID, String pqlStatement, String transCfgName, int queryPartID, Collection<String> metadataTypes, String queryName) {
+	public AddQueryPartMessage(UUID sharedQueryID, String pqlStatement, String transCfgName, int queryPartID, Collection<String> metadataTypes) {
 		this.pqlStatement = pqlStatement;
 		this.sharedQueryID = sharedQueryID;
 		this.transCfgName = transCfgName;
 		this.queryPartID = queryPartID;
 		this.metadataTypes = metadataTypes;
-		this.queryName = queryName;
 	}
 
 	@Override
@@ -35,9 +33,8 @@ public class AddQueryPartMessage implements IMessage {
 		byte[] pqlStatementBytes = pqlStatement.getBytes();
 		byte[] sharedQueryIDBytes = sharedQueryID.toString().getBytes();
 		byte[] transCfgNameBytes = transCfgName.getBytes();
-		byte[] queryNameBytes = queryName.getBytes();
 
-		int bbSize = 4 + 4 + pqlStatementBytes.length + 4 + sharedQueryIDBytes.length + 4 + transCfgNameBytes.length + 4 + queryNameBytes.length;
+		int bbSize = 4 + 4 + pqlStatementBytes.length + 4 + sharedQueryIDBytes.length + 4 + transCfgNameBytes.length;
 		bbSize += (4 + (metadataTypes.size() * 4) + calcByteSize(metadataTypes));
 		ByteBuffer bb = ByteBuffer.allocate(bbSize);
 
@@ -45,12 +42,10 @@ public class AddQueryPartMessage implements IMessage {
 		bb.putInt(pqlStatementBytes.length);
 		bb.putInt(sharedQueryIDBytes.length);
 		bb.putInt(transCfgNameBytes.length);
-		bb.putInt(queryNameBytes.length);
 
 		bb.put(pqlStatementBytes);
 		bb.put(sharedQueryIDBytes);
 		bb.put(transCfgNameBytes);
-		bb.put(queryNameBytes);
 
 		bb.putInt(metadataTypes.size());
 		for (String metadataType : metadataTypes) {
@@ -80,22 +75,18 @@ public class AddQueryPartMessage implements IMessage {
 		int pqlStatementLength = bb.getInt();
 		int sharedQueryIDLength = bb.getInt();
 		int transCfgNameLength = bb.getInt();
-		int queryNameLength = bb.getInt();
 
 		byte[] pqlStatementBytes = new byte[pqlStatementLength];
 		byte[] sharedQueryIDBytes = new byte[sharedQueryIDLength];
 		byte[] transCfgNameBytes = new byte[transCfgNameLength];
-		byte[] queryNameBytes = new byte[queryNameLength];
 
 		bb.get(pqlStatementBytes);
 		bb.get(sharedQueryIDBytes);
 		bb.get(transCfgNameBytes);
-		bb.get(queryNameBytes);
 
 		pqlStatement = new String(pqlStatementBytes);
 		sharedQueryID = UUID.fromString(new String(sharedQueryIDBytes));
 		transCfgName = new String(transCfgNameBytes);
-		queryName = new String(queryNameBytes);
 		
 		int metadataTypeCount = bb.getInt();
 		metadataTypes = Lists.newArrayList();
@@ -125,9 +116,5 @@ public class AddQueryPartMessage implements IMessage {
 	
 	public Collection<String> getMetadataTypes() {
 		return metadataTypes;
-	}
-	
-	public String getQueryName() {
-		return queryName;
 	}
 }
