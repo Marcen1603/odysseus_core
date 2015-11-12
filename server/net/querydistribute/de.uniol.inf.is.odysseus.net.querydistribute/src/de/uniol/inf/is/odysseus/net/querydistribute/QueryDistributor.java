@@ -3,11 +3,13 @@ package de.uniol.inf.is.odysseus.net.querydistribute;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -23,6 +25,7 @@ import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.querydistribute.impl.QueryDistributionComponent;
 import de.uniol.inf.is.odysseus.net.querydistribute.parameter.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.net.querydistribute.parameter.ParameterHelper;
+import de.uniol.inf.is.odysseus.net.querydistribute.transmit.QueryPartSender;
 import de.uniol.inf.is.odysseus.net.querydistribute.util.LoggingHelper;
 import de.uniol.inf.is.odysseus.net.querydistribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.net.querydistribute.util.QueryDistributionNotifier;
@@ -31,7 +34,7 @@ import de.uniol.inf.is.odysseus.net.querydistribute.util.QueryDistributorHelper;
 public class QueryDistributor implements IQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
-//	private static final int MAX_TRANSMISSION_TRIES = 5;
+	private static final int MAX_TRANSMISSION_TRIES = 5;
 	
 	@Override
 	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) throws QueryDistributionException{
@@ -94,64 +97,64 @@ public class QueryDistributor implements IQueryDistributor {
 				QueryDistributorHelper.postProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
 				QueryDistributionNotifier.tryNotifyAfterPostProcessing(query, allocationMapCopy);
 				
-	//			List<IOdysseusNode> faultyPeers = Lists.newArrayList();
-	//			int tries = 0;
-	//			
-	//			while( true ) {
-	//				try {
-	//					ID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, determineQueryName(query), config);
-	//					
-	//					if( LOG.isInfoEnabled() ) {
-	//						logSuccess(allocationMapCopy);
-	//					}
-	//					
-	//					QueryDistributionNotifier.tryNotifyAfterTransmission(query, allocationMapCopy, sharedQueryId);
-	//					break;
-	//				} catch( QueryPartTransmissionException ex ) {
-	//					tries++;
-	//					if( tries == MAX_TRANSMISSION_TRIES ) {
-	//						throw new QueryDistributionException("Could not distribute query even after " + tries + " tries. See previous errors for details.");
-	//					}
-	//					
-	//					for( IOdysseusNode faultyPeer : ex.getFaultyPeers() ) {
-	//						if( !faultyPeers.contains(faultyPeer)) {
-	//							faultyPeers.add(faultyPeer);
-	//						}
-	//					}
-	//					
-	//					LOG.error("Exception during transmission query parts.");
-	//					LOG.error("Following peers are 'faulty' now: {}", QueryDistributorHelper.toNodeNames(faultyPeers));
-	//					LOG.error("Trying to reallocate. Try: {}", tries);
-	//					
-	//					allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyPeers);
-	//					QueryDistributionNotifier.tryNotifyAfterAllocation(query, allocationMap);
-	//					allocationMapCopy = copyAllocationMap(allocationMap);
-	//					
-	//					QueryDistributorHelper.tryPostProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
-	//					QueryDistributionNotifier.tryNotifyAfterPostProcessing(query, allocationMapCopy);
-	//				}
-	//			}
+				List<IOdysseusNode> faultyNodes = Lists.newArrayList();
+				int tries = 0;
+				
+				while( true ) {
+					try {
+						UUID sharedQueryId = QueryPartSender.getInstance().transmit(allocationMapCopy, serverExecutor, caller, determineQueryName(query), config);
+						
+						if( LOG.isInfoEnabled() ) {
+							logSuccess(allocationMapCopy);
+						}
+						
+						QueryDistributionNotifier.tryNotifyAfterTransmission(query, allocationMapCopy, sharedQueryId);
+						break;
+					} catch( QueryPartTransmissionException ex ) {
+						tries++;
+						if( tries == MAX_TRANSMISSION_TRIES ) {
+							throw new QueryDistributionException("Could not distribute query even after " + tries + " tries. See previous errors for details.");
+						}
+						
+						for( IOdysseusNode faultyPeer : ex.getFaultyNodes() ) {
+							if( !faultyNodes.contains(faultyPeer)) {
+								faultyNodes.add(faultyPeer);
+							}
+						}
+						
+						LOG.error("Exception during transmission query parts.");
+						LOG.error("Following nodes are 'faulty' now: {}", QueryDistributorHelper.toNodeNames(faultyNodes));
+						LOG.error("Trying to reallocate. Try: {}", tries);
+						
+						allocationMap = QueryDistributorHelper.tryReallocate(config, allocators, allocationMap, faultyNodes);
+						QueryDistributionNotifier.tryNotifyAfterAllocation(query, allocationMap);
+						allocationMapCopy = copyAllocationMap(allocationMap);
+						
+						QueryDistributorHelper.postProcess(serverExecutor, caller, allocationMapCopy, config, postProcessors, query);
+						QueryDistributionNotifier.tryNotifyAfterPostProcessing(query, allocationMapCopy);
+					}
+				}
 			} catch( OdysseusNetException e ) {
 				throw new QueryDistributionException("Could not distribute query", e);
 			}
 		}
 	}
 
-//	private static void logSuccess(Map<ILogicalQueryPart, IOdysseusNode> allocationMapCopy) {
-//		LOG.info("Query distributed successfully!");
-//		for(ILogicalQueryPart part : allocationMapCopy.keySet() ) {
-//			IOdysseusNode node = allocationMapCopy.get(part);
-//			LOG.info("{}: {}", node, part);
-//		}
-//	}
-//
-//	private static String determineQueryName(ILogicalQuery query) {
-//		String queryName = query.getName();
-//		if( Strings.isNullOrEmpty(queryName)) {
-//			return "Query " + query.getID();
-//		}
-//		return queryName;
-//	}
+	private static void logSuccess(Map<ILogicalQueryPart, IOdysseusNode> allocationMapCopy) {
+		LOG.info("Query distributed successfully!");
+		for(ILogicalQueryPart part : allocationMapCopy.keySet() ) {
+			IOdysseusNode node = allocationMapCopy.get(part);
+			LOG.info("{}: {}", node, part);
+		}
+	}
+
+	private static String determineQueryName(ILogicalQuery query) {
+		String queryName = query.getName();
+		if( Strings.isNullOrEmpty(queryName)) {
+			return "Query " + query.getID();
+		}
+		return queryName;
+	}
 
 	private static Map<ILogicalQueryPart, IOdysseusNode> copyAllocationMap(Map<ILogicalQueryPart, IOdysseusNode> allocationMap) {
 		Map<ILogicalQueryPart, IOdysseusNode> copy = Maps.newHashMap();
