@@ -132,6 +132,7 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 
 			LOG.debug("Allocated to node {} for query part {}", chosenNode, queryPart);
 			allocationMap.put(queryPart, chosenNode);
+			lastAllocatedNode = chosenNode;
 		}
 
 		LOG.debug("RoundRobinAllocation finished");
