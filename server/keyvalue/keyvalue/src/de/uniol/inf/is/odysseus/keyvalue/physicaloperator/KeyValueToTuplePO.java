@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -22,23 +23,24 @@ import de.uniol.inf.is.odysseus.keyvalue.logicaloperator.KeyValueToTupleAO;
  * @param <M>
  */
 
-public class KeyValueToTuplePO<M extends IMetaAttribute> extends
-		AbstractPipe<KeyValueObject<M>, Tuple<M>> {
+public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
 	private IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>> tHandler = new TupleDataHandler();
 	private List<RenameAttribute> renameAttributes;
-	
+
 	boolean keepInputObject;
 
 	public KeyValueToTuplePO(boolean keepInputObject, SDFSchema outputSchema) {
 		this.keepInputObject = keepInputObject;
-		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler.createInstance(outputSchema);
+		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler
+				.createInstance(outputSchema);
 		setOutputSchema(outputSchema);
 	}
 
 	public KeyValueToTuplePO(KeyValueToTupleAO operator) {
 		this.keepInputObject = operator.isKeepInputObject();
-		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler.createInstance(operator.getOutputSchema());
+		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler
+				.createInstance(operator.getOutputSchema());
 		this.renameAttributes = operator.getAttributes();
 		setOutputSchema(operator.getOutputSchema());
 	}
@@ -63,30 +65,33 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 	}
 
 	@SuppressWarnings({ "unchecked" })
-    @Override
+	@Override
 	protected void process_next(KeyValueObject<M> input, int port) {
-		String[] data = new String[getOutputSchema().size()];
-		for(int i = 0; i < getOutputSchema().size(); i++) {
-			data[i] = "";
+		List<String> dataValues = new ArrayList<String>();
+		for (int i = 0; i < getOutputSchema().size(); i++) {
 			String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
-			if(input.getAttributes().containsKey(attributeName)) {
+			if (input.getAttributes().containsKey(attributeName)) {
 				Object attribute = input.getAttribute(attributeName);
-				if(attribute instanceof List) {
-					for(Object object:(List<Object>) attribute) {
-						data[i] += object.toString() + "\n";
+				if (attribute instanceof List) {
+					for (Object object : (List<Object>) attribute) {
+						// Add data values as single values. The data handler
+						// handles this as a list. It will create a list over a
+						// couple of entries in the list. Only works if the list
+						// is the last element!
+						dataValues.add(object.toString());
 					}
 				} else {
-					data[i] = attribute.toString();
+					dataValues.add(attribute.toString());
 				}
 			}
 		}
-		Tuple<M> output = (Tuple<M>) tHandler.readData(data);
-		
+		Tuple<M> output = (Tuple<M>) tHandler.readData(dataValues);
+
 		if (input.getMetadata() != null)
 			output.setMetadata((M) input.getMetadata().clone());
 
 		if (keepInputObject) {
-			output.setMetadata("base",input.clone());
+			output.setMetadata("base", input.clone());
 		}
 		transfer(output);
 	}
@@ -95,16 +100,16 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof KeyValueToTuplePO<?>)) {
+		if (!(ipo instanceof KeyValueToTuplePO<?>)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
 		KeyValueToTuplePO<M> spo = (KeyValueToTuplePO<M>) ipo;
-		//Schema match
-		if(this.getOutputSchema().equals(spo.getOutputSchema())) {
+		// Schema match
+		if (this.getOutputSchema().equals(spo.getOutputSchema())) {
 			return true;
 		}
 
