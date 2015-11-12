@@ -5,4 +5,15 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.querydistribute
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.net.util;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.parser.pql.generator,
+ org.eclipse.osgi,
+ de.uniol.inf.is.odysseus.net.communication;bundle-version="1.0.0"
+Export-Package: de.uniol.inf.is.odysseus.net.querydistribute
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/QueryDistributionComponent.xml,OSGI-INF/QueryDistributorHelper.xml,OSGI-INF/QueryDistributor.xml,
+ OSGI-INF/ServiceBinder.xml
