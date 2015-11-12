@@ -32,19 +32,14 @@ public class PhysicalQueryViewData implements IQueryViewData {
 
 	private String status;
 
-	public PhysicalQueryViewData(int id, String status, int priority,
-			String parserId, String userName, String queryText, String queryName, long queryStartTS) {
+	public PhysicalQueryViewData(int id, String status, int priority, String parserId, String userName, String queryText, String queryName, long queryStartTS) {
 		this.id = id;
 		this.status = Strings.isNullOrEmpty(status) ? UNKNOWN_TEXT : status;
 		this.priority = priority;
-		this.parserId = Strings.isNullOrEmpty(parserId) ? UNKNOWN_TEXT
-				: parserId;
-		this.userName = Strings.isNullOrEmpty(userName) ? UNKNOWN_TEXT
-				: userName;
-		this.queryText = Strings.isNullOrEmpty(queryText) ? UNKNOWN_TEXT
-				: queryText;
-		this.queryName = Strings.isNullOrEmpty(queryName) ? UNKNOWN_TEXT
-				: queryName;
+		this.parserId = Strings.isNullOrEmpty(parserId) ? UNKNOWN_TEXT : parserId;
+		this.userName = Strings.isNullOrEmpty(userName) ? UNKNOWN_TEXT : userName;
+		this.queryText = Strings.isNullOrEmpty(queryText) ? UNKNOWN_TEXT : queryText;
+		this.queryName = Strings.isNullOrEmpty(queryName) ? "" : queryName;
 		this.queryStartTS = queryStartTS;
 	}
 
@@ -87,12 +82,12 @@ public class PhysicalQueryViewData implements IQueryViewData {
 		this.status = status;
 	}
 
-	public void setStartTS(long queryStartTS){
+	public void setStartTS(long queryStartTS) {
 		this.queryStartTS = queryStartTS;
 	}
-	
+
 	@Override
 	public long getStartTS() {
 		return queryStartTS;
-	}	
+	}
 }
