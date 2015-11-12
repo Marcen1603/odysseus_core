@@ -269,7 +269,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       {
         namingOp = topOperator.getSubscribedToSource(0).getTarget();
       }
-      query.setName(namingOp.getName());
+      //query.setName(namingOp.getName());
      // TODO:Find a better solution
      /// if (!commands.containsKey(namingOp.getName())){
       if (commands.isEmpty()){
