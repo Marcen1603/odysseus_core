@@ -13,11 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -25,17 +25,17 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractSetAggregation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.SetPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractListAggregation;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ListPartialAggregate;
 
 @SuppressWarnings({"rawtypes"})
-public class RelationalDistinctNest extends AbstractSetAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
 	private static final long serialVersionUID = -9172869315418294224L;
 	private int[] restrictList;
 
-	public RelationalDistinctNest(int[] restrictList, boolean partialAggregateInput){
-		super("DISTINCTNEST", partialAggregateInput);
+	public RelationalNest(int[] restrictList, boolean partialAggregateInput){
+		super("NEST", partialAggregateInput);
 		this.restrictList = restrictList;
 	}
 	
@@ -49,20 +49,29 @@ public class RelationalDistinctNest extends AbstractSetAggregation<Tuple<? exten
 	
 	@Override
 	public Tuple evaluate(IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {		
-		Set<Tuple<?>> elems = ((SetPartialAggregate<Tuple<? extends IMetaAttribute>>)p).getElems();
+		List<Tuple<?>> elems = ((ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p).getElems();
 		Tuple ret = new Tuple<IMetaAttribute>(1, false);
-		ret.setAttribute(0, new ArrayList<>(elems));
+		if (restrictList.length == 1){
+			// unpack tuples
+			List<Object> elemsUnpacked = new ArrayList<Object>();
+			for (Iterator<Tuple<? extends IMetaAttribute>> iterator = elems.iterator(); iterator.hasNext();) {
+				elemsUnpacked.add(iterator.next().getAttribute(0));
+			}
+			ret.setAttribute(0,elemsUnpacked);
+		}else{
+			ret.setAttribute(0, elems);
+		}
 		return ret;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(IPartialAggregate<Tuple<? extends IMetaAttribute>> p, Tuple<? extends IMetaAttribute> toMerge,
 			boolean createNew) {
-		final SetPartialAggregate<Tuple<? extends IMetaAttribute>> ret;
+		final ListPartialAggregate<Tuple<? extends IMetaAttribute>> ret;
 		if (createNew){
-			ret = new SetPartialAggregate<Tuple<? extends IMetaAttribute>>((SetPartialAggregate<Tuple<? extends IMetaAttribute>>)p);
+			ret = new ListPartialAggregate<Tuple<? extends IMetaAttribute>>((ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p);
 		}else{
-			ret = (SetPartialAggregate<Tuple<? extends IMetaAttribute>>)p;
+			ret = (ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p;
 		}
 		Tuple<? extends IMetaAttribute> t = toMerge.restrict(restrictList, true);
 		t.setMetadata(null);

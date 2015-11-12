@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;

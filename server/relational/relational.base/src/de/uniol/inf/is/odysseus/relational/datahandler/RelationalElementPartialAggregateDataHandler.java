@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.StringHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalElementPartialAggregate;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalElementPartialAggregate;
 
 public class RelationalElementPartialAggregateDataHandler extends AbstractDataHandler<RelationalElementPartialAggregate> {
 

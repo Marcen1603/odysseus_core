@@ -15,6 +15,7 @@ Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.server.intervalapproach,
  org.osgi.framework

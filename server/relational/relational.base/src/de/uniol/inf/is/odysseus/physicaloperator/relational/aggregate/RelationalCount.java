@@ -13,44 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Count;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CountPartialAggregate;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings({ "rawtypes" })
-public class RelationalAttributeCount extends Count<Tuple<?>, Tuple<?>> {
+public class RelationalCount extends Count<Tuple<?>, Tuple<?>> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -788185013111220731L;
-	private final int pos;
 
-	private RelationalAttributeCount(int pos, boolean partialAggregateInput) {
+	private RelationalCount(boolean partialAggregateInput) {
 		super(partialAggregateInput);
-		this.pos = pos;
 	}
 
-	public static RelationalAttributeCount getInstance(int pos,
+	public static RelationalCount getInstance(
 			boolean partialAggregateInput) {
-		return new RelationalAttributeCount(pos, partialAggregateInput);
+		return new RelationalCount(partialAggregateInput);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		if (isPartialAggregateInput()) {
-			return super.init((IPartialAggregate) in.getAttribute(pos));
+			return super.init((IPartialAggregate)in);
 		} else {
-			if (in.getAttribute(pos) != null){
-				return super.init(in);
-			}else{
-				return super.init((Tuple<?>)null);
-			}
+			return super.init(in);
 		}
 	}
 
@@ -59,13 +53,9 @@ public class RelationalAttributeCount extends Count<Tuple<?>, Tuple<?>> {
 	public synchronized IPartialAggregate<Tuple<?>> merge(
 			IPartialAggregate<Tuple<?>> p, Tuple<?> toMerge, boolean createNew) {
 		if (isPartialAggregateInput()) {
-			return super.init((IPartialAggregate) toMerge.getAttribute(pos));
+			return super.init((IPartialAggregate) toMerge);
 		} else {
-			if (toMerge.getAttribute(pos) != null){
-				return super.merge(p, toMerge, createNew);
-			}else{
-				return super.merge(p, (Tuple<?>) null, createNew);
-			}
+			return super.merge(p, toMerge, createNew);
 		}
 	}
 
@@ -80,5 +70,10 @@ public class RelationalAttributeCount extends Count<Tuple<?>, Tuple<?>> {
 	@Override
 	public SDFDatatype getPartialAggregateType() {
 		return SDFDatatype.COUNT_PARTIAL_AGGREGATE;
+	}
+	
+	@Override
+	public SDFDatatype getReturnType(List<SDFAttribute> inputTypes) {
+		return SDFDatatype.LONG;
 	}
 }

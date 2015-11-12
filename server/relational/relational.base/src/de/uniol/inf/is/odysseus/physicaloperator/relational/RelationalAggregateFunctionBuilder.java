@@ -28,6 +28,21 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AbstractAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalAttributeCount;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalAvgSum;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalCorr;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalCount;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalCov;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalDistinctNest;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalFirst;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalGreenwaldKhannaMedian;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalLast;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalMedian;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalMinMax;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalNest;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalNth;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalStdDev;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalVar;
 
 public class RelationalAggregateFunctionBuilder extends AbstractAggregateFunctionBuilder {
 	

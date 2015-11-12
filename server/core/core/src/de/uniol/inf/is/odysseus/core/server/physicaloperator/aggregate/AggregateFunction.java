@@ -21,6 +21,14 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
+/**
+ * This class wraps aggregate function *names* and
+ * allows to define properties for them
+ * 
+ * @author Christian Kuka
+ *
+ */
+
 public class AggregateFunction implements Serializable, IClone {
 
 	/**

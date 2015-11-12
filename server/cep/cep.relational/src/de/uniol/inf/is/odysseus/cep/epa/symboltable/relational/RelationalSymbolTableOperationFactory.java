@@ -21,9 +21,9 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAttributeCount;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAvgSum;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMinMax;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalAttributeCount;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalAvgSum;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate.RelationalMinMax;
 @SuppressWarnings({"rawtypes"})
 public class RelationalSymbolTableOperationFactory implements
 		ISymbolTableOperationFactory {

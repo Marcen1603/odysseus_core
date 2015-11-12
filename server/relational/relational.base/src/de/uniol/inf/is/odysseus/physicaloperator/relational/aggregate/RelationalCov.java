@@ -13,37 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.physicaloperator.relational.aggregate;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Variance;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.VariancePartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Covariance;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CovariancePartialAggregate;
 
 /**
- * Estimates the variance of an attribute.
+ * Estimates the covariance between two attributes.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
+public class RelationalCov extends Covariance<Tuple<?>, Tuple<?>> {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 6589183953860990158L;
-    private final int pos;
+    private static final long serialVersionUID = -5675774570393031124L;
+    private final int posA;
+    private final int posB;
 
-    static public RelationalVar getInstance(final int pos, final boolean partialAggregateInput) {
-        return new RelationalVar(pos, partialAggregateInput);
+    static public RelationalCov getInstance(final int posA, final int posB, final boolean partialAggregateInput) {
+        return new RelationalCov(posA, posB, partialAggregateInput);
     }
 
-    private RelationalVar(final int pos, final boolean partialAggregateInput) {
+    private RelationalCov(final int posA, final int posB, final boolean partialAggregateInput) {
         super(partialAggregateInput);
-        this.pos = pos;
+        this.posA = posA;
+        this.posB = posB;
     }
 
     /**
@@ -53,9 +55,9 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
     @Override
     public IPartialAggregate<Tuple<?>> init(final Tuple in) {
         if (this.isPartialAggregateInput()) {
-            return this.init((VariancePartialAggregate<Tuple<?>>) in.getAttribute(this.pos));
+            return this.init((CovariancePartialAggregate<Tuple<?>>) in.getAttribute(this.posA));
         }
-        return new VariancePartialAggregate<>(((Number) in.getAttribute(this.pos)));
+        return new CovariancePartialAggregate<>(((Number) in.getAttribute(this.posA)), ((Number) in.getAttribute(this.posB)));
     }
 
     /**
@@ -64,7 +66,7 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
-        return new VariancePartialAggregate<>((VariancePartialAggregate<Tuple<?>>) in);
+        return new CovariancePartialAggregate<>((CovariancePartialAggregate<Tuple<?>>) in);
     }
 
     /**
@@ -76,14 +78,14 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate p, final Tuple toMerge, final boolean createNew) {
-        VariancePartialAggregate<Tuple<?>> pa = null;
+        CovariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
-            final VariancePartialAggregate<Tuple<?>> h = (VariancePartialAggregate<Tuple<?>>) p;
-            pa = new VariancePartialAggregate<>(h);
+            final CovariancePartialAggregate<Tuple<?>> h = (CovariancePartialAggregate<Tuple<?>>) p;
+            pa = new CovariancePartialAggregate<>(h);
 
         }
         else {
-            pa = (VariancePartialAggregate<Tuple<?>>) p;
+            pa = (CovariancePartialAggregate<Tuple<?>>) p;
         }
         return this.merge(pa, toMerge);
     }
@@ -95,11 +97,11 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
      * @return
      */
     public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(final IPartialAggregate p, final Tuple<?> toMerge) {
-        final VariancePartialAggregate pa = (VariancePartialAggregate) p;
+        final CovariancePartialAggregate pa = (CovariancePartialAggregate) p;
         if (this.isPartialAggregateInput()) {
-            return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.pos), false);
+            return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.posA), false);
         }
-        pa.add(((Number) toMerge.getAttribute(this.pos)));
+        pa.add(((Number) toMerge.getAttribute(this.posA)), ((Number) toMerge.getAttribute(this.posB)));
         return pa;
     }
 
@@ -109,13 +111,13 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final IPartialAggregate<Tuple<?>> toMerge, final boolean createNew) {
-        VariancePartialAggregate<Tuple<?>> pa = null;
+        CovariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
-            final VariancePartialAggregate<Tuple<?>> h = (VariancePartialAggregate<Tuple<?>>) p;
-            pa = new VariancePartialAggregate<>(h);
+            final CovariancePartialAggregate<Tuple<?>> h = (CovariancePartialAggregate<Tuple<?>>) p;
+            pa = new CovariancePartialAggregate<>(h);
         }
         else {
-            pa = (VariancePartialAggregate<Tuple<?>>) p;
+            pa = (CovariancePartialAggregate<Tuple<?>>) p;
         }
         return this.merge(pa, toMerge);
     }
@@ -125,8 +127,8 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
      * @param toMerge
      * @return
      */
-    public IPartialAggregate<Tuple<?>> merge(final VariancePartialAggregate<Tuple<?>> pa, final IPartialAggregate<Tuple<?>> toMerge) {
-        final VariancePartialAggregate paToMerge = (VariancePartialAggregate) toMerge;
+    public IPartialAggregate<Tuple<?>> merge(final CovariancePartialAggregate<Tuple<?>> pa, final IPartialAggregate<Tuple<?>> toMerge) {
+        final CovariancePartialAggregate paToMerge = (CovariancePartialAggregate) toMerge;
         pa.add(paToMerge);
         return pa;
     }
@@ -137,7 +139,7 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
      */
     @Override
     public Tuple evaluate(final IPartialAggregate p) {
-        final VariancePartialAggregate pa = (VariancePartialAggregate) p;
+        final CovariancePartialAggregate pa = (CovariancePartialAggregate) p;
         final Tuple<? extends IMetaAttribute> r = new Tuple(1, false);
         r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
         return r;
@@ -145,7 +147,7 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
 
     @Override
     public SDFDatatype getPartialAggregateType() {
-        return SDFDatatype.VAR_PARTIAL_AGGREGATE;
+        return SDFDatatype.COV_PARTIAL_AGGREGATE;
     }
 
 }
