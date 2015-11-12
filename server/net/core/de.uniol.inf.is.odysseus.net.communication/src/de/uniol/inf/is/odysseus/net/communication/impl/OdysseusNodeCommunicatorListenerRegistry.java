@@ -27,7 +27,7 @@ public final class OdysseusNodeCommunicatorListenerRegistry {
 	}
 
 	public void add(IOdysseusNodeCommunicatorListener listener, Class<? extends IMessage> messageType) {
-		Preconditions.checkNotNull(listener, "Peer communicator listener to add to registry must not be null!");
+		Preconditions.checkNotNull(listener, "Odysseus node communicator listener to add to registry must not be null!");
 
 		synchronized (listenerMap) {
 			Collection<IOdysseusNodeCommunicatorListener> listeners = listenerMap.get(messageType);
@@ -40,7 +40,7 @@ public final class OdysseusNodeCommunicatorListenerRegistry {
 	}
 
 	public void remove(IOdysseusNodeCommunicatorListener listener, Class<? extends IMessage> messageType) {
-		Preconditions.checkNotNull(listener, "Peer communicator listener to remove from registry must not be null!");
+		Preconditions.checkNotNull(listener, "Odysseus node communicator listener to remove from registry must not be null!");
 
 		synchronized (listenerMap) {
 			Collection<IOdysseusNodeCommunicatorListener> listeners = listenerMap.get(messageType);

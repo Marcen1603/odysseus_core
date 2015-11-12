@@ -50,7 +50,7 @@ public class InetAddressUtil {
 			return optAddress.get();
 		}
 		
-		return "OdysseusPeer";
+		return "OdysseusNode";
 	}
 	
 	public static String replaceWithIPAddressIfNeeded( String text ) {

@@ -271,11 +271,11 @@ public class ChatView extends ViewPart implements IOdysseusNodeCommunicatorListe
 	public void receivedMessage(IOdysseusNodeCommunicator communciator, IOdysseusNode senderNode, IMessage message) {
 		ChatMessage chatMessage = (ChatMessage) message;
 
-		String senderPeerName = senderNode.getName();
+		String senderNodeName = senderNode.getName();
 		if (chatMessage.isWhisper()) {
-			appendToChatTextAsync(getCurrentTime() + " " + senderPeerName + " (whisper): " + chatMessage.getText());
+			appendToChatTextAsync(getCurrentTime() + " " + senderNodeName + " (whisper): " + chatMessage.getText());
 		} else {
-			appendToChatTextAsync(getCurrentTime() + " " + senderPeerName + ": " + chatMessage.getText());
+			appendToChatTextAsync(getCurrentTime() + " " + senderNodeName + ": " + chatMessage.getText());
 		}
 	}
 }

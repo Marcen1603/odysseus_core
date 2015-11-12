@@ -13,7 +13,7 @@ public interface IPingMap {
 	public Optional<Double> getPing(IOdysseusNode toNode);
 	public Optional<Double> getRemotePing( IOdysseusNode startNode, IOdysseusNode endNode);
 
-	public Optional<IPingMapNode> getPingNode(IOdysseusNode peer);
+	public Optional<IPingMapNode> getPingNode(IOdysseusNode node);
 	public Collection<IPingMapNode> getPingNodes();
 	public Collection<IOdysseusNode> getOdysseusNodes();
 	

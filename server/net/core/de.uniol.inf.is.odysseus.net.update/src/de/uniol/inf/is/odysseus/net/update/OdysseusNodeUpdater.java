@@ -22,56 +22,56 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeUpdater.class);
 	
-	private static IOdysseusNodeCommunicator peerCommunicator;
+	private static IOdysseusNodeCommunicator nodeCommunicator;
 	private static ISession activeSession;
 	
 	// called by OSGi-DS
 	public void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
-		peerCommunicator = serv;
+		nodeCommunicator = serv;
 		
-		peerCommunicator.registerMessageType(DoUpdateMessage.class);
-		peerCommunicator.registerMessageType(DoRestartMessage.class);
-		peerCommunicator.addListener(this, DoUpdateMessage.class);
-		peerCommunicator.addListener(this, DoRestartMessage.class);
+		nodeCommunicator.registerMessageType(DoUpdateMessage.class);
+		nodeCommunicator.registerMessageType(DoRestartMessage.class);
+		nodeCommunicator.addListener(this, DoUpdateMessage.class);
+		nodeCommunicator.addListener(this, DoRestartMessage.class);
 	}
 
 	// called by OSGi-DS
 	public void unbindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
-		if (peerCommunicator == serv) {
-			peerCommunicator.removeListener(this, DoUpdateMessage.class);
-			peerCommunicator.removeListener(this, DoRestartMessage.class);
-			peerCommunicator.unregisterMessageType(DoUpdateMessage.class);
-			peerCommunicator.unregisterMessageType(DoRestartMessage.class);
+		if (nodeCommunicator == serv) {
+			nodeCommunicator.removeListener(this, DoUpdateMessage.class);
+			nodeCommunicator.removeListener(this, DoRestartMessage.class);
+			nodeCommunicator.unregisterMessageType(DoUpdateMessage.class);
+			nodeCommunicator.unregisterMessageType(DoRestartMessage.class);
 
-			peerCommunicator = null;
+			nodeCommunicator = null;
 		}
 	}
 	
 	public static void sendUpdateMessageToRemotePeers() {
-		sendUpdateMessageToRemotePeers(peerCommunicator.getDestinationNodes());
+		sendUpdateMessageToRemotePeers(nodeCommunicator.getDestinationNodes());
 	}
 	
-	public static void sendUpdateMessageToRemotePeers(Collection<IOdysseusNode> remotePeers) {
-		Preconditions.checkNotNull(remotePeers, "List of remote peer ids must not be null!");
-		LOG.info("Sending update message to {} remote peers", remotePeers.size());
-		sendMessageToPeers(remotePeers, new DoUpdateMessage());
+	public static void sendUpdateMessageToRemotePeers(Collection<IOdysseusNode> remoteNodes) {
+		Preconditions.checkNotNull(remoteNodes, "List of remote nodes must not be null!");
+		LOG.info("Sending update message to {} remote nodes", remoteNodes.size());
+		sendMessageToPeers(remoteNodes, new DoUpdateMessage());
 	}
 	
 	public static void sendRestartMessageToRemotePeers() {
-		sendRestartMessageToRemotePeers(peerCommunicator.getDestinationNodes());
+		sendRestartMessageToRemotePeers(nodeCommunicator.getDestinationNodes());
 	}
 
-	public static void sendRestartMessageToRemotePeers(Collection<IOdysseusNode> remotePeerIDs) {
-		Preconditions.checkNotNull(remotePeerIDs, "List of remote peer ids must not be null!");
-		LOG.info("Sending restart message to {} remote peers", remotePeerIDs.size());
+	public static void sendRestartMessageToRemotePeers(Collection<IOdysseusNode> remoteNodes) {
+		Preconditions.checkNotNull(remoteNodes, "List of remote nodes must not be null!");
+		LOG.info("Sending restart message to {} remote nodes", remoteNodes.size());
 		
-		sendMessageToPeers(remotePeerIDs, new DoRestartMessage());
+		sendMessageToPeers(remoteNodes, new DoRestartMessage());
 	}
 
-	private static void sendMessageToPeers(Collection<IOdysseusNode> remotePeers, IMessage msg) {
-		for( IOdysseusNode remotePeer : remotePeers ) {
+	private static void sendMessageToPeers(Collection<IOdysseusNode> remoteNodes, IMessage msg) {
+		for( IOdysseusNode remoteNode : remoteNodes ) {
 			try {
-				peerCommunicator.send(remotePeer, msg);
+				nodeCommunicator.send(remoteNode, msg);
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Could not send message", e);
 			}
@@ -79,7 +79,7 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 	}
 	
 	@Override
-	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderPeer, IMessage message) {
+	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
 		if( message instanceof DoUpdateMessage ) {
 			LOG.info("Got message to update");
 			
