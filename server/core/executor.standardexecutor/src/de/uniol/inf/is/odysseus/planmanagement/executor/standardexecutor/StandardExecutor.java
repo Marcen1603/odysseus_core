@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryFunction;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
@@ -265,7 +266,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		// Distribution handler only for queries
 		if (parameters.get(ParameterDoDistribute.class).getValue()) {
-			queries = distributeQueries(parameters, user, queries);
+			try {
+				queries = distributeQueries(parameters, user, queries);
+			} catch (QueryDistributionException e) {
+				throw new QueryParseException(e);
+			}
 		}
 
 		// Recovery handler to modify the query plan
@@ -369,7 +374,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	}
 
 	private List<ILogicalQuery> distributeQueries(QueryBuildConfiguration parameters, ISession caller,
-			List<ILogicalQuery> queries) {
+			List<ILogicalQuery> queries) throws QueryDistributionException {
 		LOG.debug("Beginning distribution of queries");
 		if (hasQueryDistributor()) {
 			LOG.debug("Using new way to distribute (peer)");

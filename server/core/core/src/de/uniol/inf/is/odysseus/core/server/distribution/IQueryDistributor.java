@@ -9,5 +9,5 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IQueryDistributor {
 
-	public void distribute( IServerExecutor executor, ISession caller, Collection<ILogicalQuery> queries, QueryBuildConfiguration config); 
+	public void distribute( IServerExecutor executor, ISession caller, Collection<ILogicalQuery> queries, QueryBuildConfiguration config) throws QueryDistributionException; 
 }
