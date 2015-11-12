@@ -155,7 +155,6 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 		}
 
 		String script = buildOdysseusScriptText(message);
-		System.err.println(script);
 
 		Collection<Integer> ids = executor.addQuery(script, "OdysseusScript", QueryDistributionPlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
 
