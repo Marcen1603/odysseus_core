@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.net.querydistribute;
+package de.uniol.inf.is.odysseus.net.querydistribute.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +21,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
-import de.uniol.inf.is.odysseus.net.querydistribute.impl.QueryDistributionComponent;
+import de.uniol.inf.is.odysseus.net.querydistribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.net.querydistribute.IQueryDistributionPostProcessor;
+import de.uniol.inf.is.odysseus.net.querydistribute.IQueryDistributionPreProcessor;
+import de.uniol.inf.is.odysseus.net.querydistribute.IQueryPartAllocator;
+import de.uniol.inf.is.odysseus.net.querydistribute.IQueryPartModificator;
+import de.uniol.inf.is.odysseus.net.querydistribute.IQueryPartitioner;
+import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartTransmissionException;
 import de.uniol.inf.is.odysseus.net.querydistribute.parameter.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.net.querydistribute.parameter.ParameterHelper;
 import de.uniol.inf.is.odysseus.net.querydistribute.transmit.QueryPartSender;
