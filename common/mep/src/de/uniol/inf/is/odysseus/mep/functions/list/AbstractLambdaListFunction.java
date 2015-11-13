@@ -42,7 +42,6 @@ abstract public class AbstractLambdaListFunction extends
 			} else {
 				expression.bindVariables(o);
 			}
-			expression.bindVariables(o);
 			fillReturnList(out, o);
 		}
 
