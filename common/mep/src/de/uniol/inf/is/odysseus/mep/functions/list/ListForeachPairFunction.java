@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
-abstract public class ListForeachPairFunction extends AbstractFunction<List<Object>> {
+public class ListForeachPairFunction extends AbstractFunction<List<Object>> {
 
 	private static final long serialVersionUID = -8269748747594828192L;
 
@@ -19,7 +19,7 @@ abstract public class ListForeachPairFunction extends AbstractFunction<List<Obje
 	SDFExpression expression;
 
 	public ListForeachPairFunction() {
-		super("ForeachPair", 2, accTypes, SDFDatatype.LIST, false);
+		super("foreachpair", 2, accTypes, SDFDatatype.LIST, false);
 	}
 
 	@Override
