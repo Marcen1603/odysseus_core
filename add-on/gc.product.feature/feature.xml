@@ -38,10 +38,6 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.debs2012.feature"
          version="0.0.0"/>
 
