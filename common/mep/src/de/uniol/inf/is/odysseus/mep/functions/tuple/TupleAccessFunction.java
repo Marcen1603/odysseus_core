@@ -12,7 +12,7 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements
 
 	private static final long serialVersionUID = -6751879119439264427L;
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			new SDFDatatype[] { SDFDatatype.TUPLE }, SDFDatatype.NUMBERS };
+			new SDFDatatype[] { SDFDatatype.TUPLE, SDFDatatype.OBJECT }, SDFDatatype.NUMBERS };
 
 	public TupleAccessFunction() {
 		super("[]", 2, accTypes, null, false);
