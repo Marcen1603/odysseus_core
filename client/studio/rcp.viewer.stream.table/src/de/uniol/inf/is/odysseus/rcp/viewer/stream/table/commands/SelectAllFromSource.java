@@ -51,8 +51,8 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 						Resource sourceName = sourceEntry.getName();
 
 						Collection<Integer> queryIDs = createQueryToSelectAllDataFromSource(sourceName, activeUser);
-						startQueries(queryIDs, activeUser);
 						openEditor(queryIDs, event);
+						startQueries(queryIDs, activeUser);
 					}
 				} else {
 					throw new IllegalArgumentException("Called Select all data with " + selectedSourceEntries);
