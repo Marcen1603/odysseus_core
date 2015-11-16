@@ -43,7 +43,7 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 
 	@Override
     public Integer readData(String string) {
-        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+        if ((string == null) || ("null".equalsIgnoreCase(string)) || "".equals(string)) {
             return null;
         }
         return Integer.parseInt(string);
