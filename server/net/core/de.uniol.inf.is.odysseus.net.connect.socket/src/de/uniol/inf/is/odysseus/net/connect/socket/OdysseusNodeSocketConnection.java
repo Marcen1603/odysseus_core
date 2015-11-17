@@ -57,6 +57,8 @@ public class OdysseusNodeSocketConnection extends AbstractOdysseusNodeConnection
 			outputStream.flush();
 			
 		} catch (IOException e) {
+			disconnect();
+			
 			throw new OdysseusNetConnectionException("Could not write to socket for node " + node, e);
 		}
 	}
