@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;

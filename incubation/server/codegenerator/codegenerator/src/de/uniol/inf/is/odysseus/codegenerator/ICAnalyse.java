@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.codegenerator;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 
 /**
  * interface for the code analyse component

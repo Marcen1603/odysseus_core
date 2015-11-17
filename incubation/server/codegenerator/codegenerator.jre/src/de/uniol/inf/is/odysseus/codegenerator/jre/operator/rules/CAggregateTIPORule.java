@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.codegenerator.jre.model.CAggregateItemModel;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.AbstractAggregateTIPORule;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;

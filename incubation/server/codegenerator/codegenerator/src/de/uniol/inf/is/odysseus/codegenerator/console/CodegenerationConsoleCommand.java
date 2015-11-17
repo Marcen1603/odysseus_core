@@ -10,7 +10,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.codegenerator.CAnalyseServiceBinding;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.ICScheduler;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.codegenerator.target.platform.ITargetPlatform;

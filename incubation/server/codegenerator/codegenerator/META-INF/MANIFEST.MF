@@ -35,8 +35,8 @@ Service-Component: OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRe
  OSGI-INF/ConsolenMessage.xml
 Export-Package: de.uniol.inf.is.odysseus.codegenerator,
  de.uniol.inf.is.odysseus.codegenerator.message.bus,
- de.uniol.inf.is.odysseus.codegenerator.modell,
- de.uniol.inf.is.odysseus.codegenerator.modell.enums,
+ de.uniol.inf.is.odysseus.codegenerator.model,
+ de.uniol.inf.is.odysseus.codegenerator.model.enums,
  de.uniol.inf.is.odysseus.codegenerator.operator.rule,
  de.uniol.inf.is.odysseus.codegenerator.operator.rule.registry,
  de.uniol.inf.is.odysseus.codegenerator.scheduler,

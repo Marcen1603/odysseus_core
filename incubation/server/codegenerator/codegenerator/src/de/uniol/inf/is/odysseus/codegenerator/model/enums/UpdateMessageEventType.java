@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.codegenerator.modell.enums;
+package de.uniol.inf.is.odysseus.codegenerator.model.enums;
 
 /**
  * Enum for the messageEvents used by the 

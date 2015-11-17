@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.codegenerator.modell;
+package de.uniol.inf.is.odysseus.codegenerator.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;

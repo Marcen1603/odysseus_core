@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.codegenerator.operator.rule;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;

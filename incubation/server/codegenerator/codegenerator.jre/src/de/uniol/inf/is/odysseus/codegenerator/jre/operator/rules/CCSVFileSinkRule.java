@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.codegenerator.jre.operator.rules;
 import de.uniol.inf.is.odysseus.codegenerator.jre.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.AbstractCCSVFileSinkRule;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;

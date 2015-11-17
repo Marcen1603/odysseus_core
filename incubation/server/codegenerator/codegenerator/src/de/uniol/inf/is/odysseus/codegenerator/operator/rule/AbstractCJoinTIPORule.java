@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.codegenerator.operator.rule;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;

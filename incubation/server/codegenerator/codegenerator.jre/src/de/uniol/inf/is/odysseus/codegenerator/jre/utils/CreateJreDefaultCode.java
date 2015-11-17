@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.codegenerator.jre.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.AbstractCScheduler;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;

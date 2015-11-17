@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.codegenerator.modell;
+package de.uniol.inf.is.odysseus.codegenerator.model;
 
 import java.util.HashMap;
 import java.util.Map;

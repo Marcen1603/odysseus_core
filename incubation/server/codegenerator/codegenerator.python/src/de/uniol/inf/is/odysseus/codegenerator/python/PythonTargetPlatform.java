@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.codegenerator.python;
 
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.codegenerator.python.filewrite.PythonFileWrite;
 import de.uniol.inf.is.odysseus.codegenerator.target.platform.AbstractTargetPlatform;

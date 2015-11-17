@@ -6,7 +6,7 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.codegenerator.jre.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.AbstractCCSVFileSourceRule;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.codegenerator.utils.Utils;

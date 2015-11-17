@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.codegenerator.message.bus.CodegeneratorMessageBus;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.codegenerator.modell.enums.UpdateMessageEventType;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.enums.UpdateMessageEventType;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.registry.COperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;

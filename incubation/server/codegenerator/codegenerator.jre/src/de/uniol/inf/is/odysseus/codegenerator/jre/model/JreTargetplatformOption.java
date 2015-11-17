@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.codegenerator.jre.model;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.AbstractTargetPlatformOption;
+import de.uniol.inf.is.odysseus.codegenerator.model.AbstractTargetPlatformOption;
 /**
  * this class represented the model for the 
  * special options for the jre targetPlatform

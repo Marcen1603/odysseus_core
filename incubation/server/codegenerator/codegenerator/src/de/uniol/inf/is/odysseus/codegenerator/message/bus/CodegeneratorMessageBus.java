@@ -4,8 +4,8 @@ package de.uniol.inf.is.odysseus.codegenerator.message.bus;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
-import de.uniol.inf.is.odysseus.codegenerator.modell.enums.UpdateMessageEventType;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.model.enums.UpdateMessageEventType;
 
 /**
  * provided a central class for eventMessages in the codegenerator.feature

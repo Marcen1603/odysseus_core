@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.codegenerator.target.platform;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.codegenerator.modell.enums.UpdateMessageEventType;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.enums.UpdateMessageEventType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 

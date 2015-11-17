@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.codegenerator.CAnalyseServiceBinding;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;

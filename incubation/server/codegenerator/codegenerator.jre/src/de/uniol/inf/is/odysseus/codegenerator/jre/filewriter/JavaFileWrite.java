@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.codegenerator.jre.Activator;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.ICScheduler;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;

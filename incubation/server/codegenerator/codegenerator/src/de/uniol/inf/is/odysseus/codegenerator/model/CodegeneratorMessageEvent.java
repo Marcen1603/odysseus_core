@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.codegenerator.modell;
+package de.uniol.inf.is.odysseus.codegenerator.model;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.enums.UpdateMessageEventType;
+import de.uniol.inf.is.odysseus.codegenerator.model.enums.UpdateMessageEventType;
 
 
 /**

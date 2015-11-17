@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.codegenerator.operator.rule;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;

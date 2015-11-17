@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.codegenerator.commands.QueryCodegenerationCommand;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.codegenerator.target.platform.registry.TargetPlatformRegistry;
 import de.uniol.inf.is.odysseus.core.collection.Context;

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.codegenerator.message.bus;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodegeneratorMessageEvent;
 
 /**
  * interface to the CodegeneratorMessageConsumer

@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.codegenerator.python.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.codegenerator.jre.operator.rules,
- de.uniol.inf.is.odysseus.codegenerator.modell,
+ de.uniol.inf.is.odysseus.codegenerator.model,
  de.uniol.inf.is.odysseus.codegenerator.operator.rule,
  de.uniol.inf.is.odysseus.codegenerator.target.platform,
  de.uniol.inf.is.odysseus.core.logicaloperator,

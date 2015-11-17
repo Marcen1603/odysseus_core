@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.AbstractCSlidingTimeWindowTIPORule;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;

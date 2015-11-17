@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.codegenerator.scheduler;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 /**
  * Interface for the scheduler 

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.codegenerator.jre.operator.rules;
 
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.AbstractCRelationalProjectAORule;
 import de.uniol.inf.is.odysseus.codegenerator.utils.DefaultCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;

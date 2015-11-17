@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.codegenerator.dalvik.filewriter.DalvikFileWrite;
 import de.uniol.inf.is.odysseus.codegenerator.jre.utils.CreateJreDefaultCode;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.codegenerator.modell.enums.UpdateMessageEventType;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.codegenerator.model.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.enums.UpdateMessageEventType;
 import de.uniol.inf.is.odysseus.codegenerator.operator.rule.ICOperatorRule;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.registry.CSchedulerRegistry;
 import de.uniol.inf.is.odysseus.codegenerator.target.platform.AbstractTargetPlatform;

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.codegenerator.dalvik.Activator;
 import de.uniol.inf.is.odysseus.codegenerator.dalvik.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.codegenerator.scheduler.ICScheduler;
 import de.uniol.inf.is.odysseus.codegenerator.utils.FileHelper;
