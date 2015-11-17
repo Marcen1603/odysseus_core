@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.codegenerator.rcp.registry;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.uniol.inf.is.odysseus.codegenerator.rcp.modell.AbstractRcpOptionComposite;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.model.AbstractRcpOptionComposite;
 
 
 

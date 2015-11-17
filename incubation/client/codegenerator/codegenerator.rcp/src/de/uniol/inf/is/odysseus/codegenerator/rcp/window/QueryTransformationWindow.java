@@ -7,8 +7,8 @@ import org.eclipse.swt.widgets.Widget;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.composite.QueryTransformationParameterComposite;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.composite.QueryTransformationProgressComposite;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.thread.QueryTransformationThread;

@@ -5,8 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator.rcp.jre;singleton:=t
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.codegenerator.rcp.jre.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.codegenerator.modell,
- de.uniol.inf.is.odysseus.codegenerator.rcp.modell,
+Import-Package: de.uniol.inf.is.odysseus.codegenerator.model,
+ de.uniol.inf.is.odysseus.codegenerator.rcp.model,
  de.uniol.inf.is.odysseus.codegenerator.rcp.registry,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: org.eclipse.swt

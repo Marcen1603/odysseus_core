@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodegeneratorMessageEvent;
 
 /**
  * composite for the query analyse (progressbar and textfield for 

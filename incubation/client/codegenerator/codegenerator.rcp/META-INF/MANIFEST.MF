@@ -7,8 +7,8 @@ Bundle-Activator: de.uniol.inf.is.odysseus.codegenerator.rcp.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.codegenerator,
  de.uniol.inf.is.odysseus.codegenerator.message.bus,
- de.uniol.inf.is.odysseus.codegenerator.modell,
- de.uniol.inf.is.odysseus.codegenerator.modell.enums,
+ de.uniol.inf.is.odysseus.codegenerator.model,
+ de.uniol.inf.is.odysseus.codegenerator.model.enums,
  de.uniol.inf.is.odysseus.codegenerator.scheduler.registry,
  de.uniol.inf.is.odysseus.codegenerator.target.platform,
  de.uniol.inf.is.odysseus.codegenerator.target.platform.registry,
@@ -26,6 +26,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.rcp.base,
  de.uniol.inf.is.odysseus.rcp.config
 Export-Package: de.uniol.inf.is.odysseus.codegenerator.rcp,
  de.uniol.inf.is.odysseus.codegenerator.rcp.commands,
- de.uniol.inf.is.odysseus.codegenerator.rcp.modell,
+ de.uniol.inf.is.odysseus.codegenerator.rcp.model,
  de.uniol.inf.is.odysseus.codegenerator.rcp.registry
 Service-Component: OSGI-INF/CAnalyseServiceBinding.xml,OSGI-INF/RcpSpecialOptionRegistry.xml

@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
-import de.uniol.inf.is.odysseus.codegenerator.rcp.modell.IRcpOptionComposite;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.rcp.model.IRcpOptionComposite;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.registry.IRcpSpecialOption;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.registry.RcpSpecialOptionRegistry;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.window.QueryTransformationWindow;

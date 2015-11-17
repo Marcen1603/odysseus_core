@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.codegenerator.message.bus.CodegeneratorMessageBus;
 import de.uniol.inf.is.odysseus.codegenerator.message.bus.ICodegeneratorMessageConsumer;
-import de.uniol.inf.is.odysseus.codegenerator.modell.CodegeneratorMessageEvent;
-import de.uniol.inf.is.odysseus.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.codegenerator.model.CodegeneratorMessageEvent;
+import de.uniol.inf.is.odysseus.codegenerator.model.TransformationParameter;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.CAnalyseServiceBinding;
 import de.uniol.inf.is.odysseus.codegenerator.rcp.window.QueryTransformationWindow;
 

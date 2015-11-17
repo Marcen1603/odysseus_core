@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.codegenerator.rcp.modell;
+package de.uniol.inf.is.odysseus.codegenerator.rcp.model;
 
 import org.eclipse.swt.widgets.Composite;
 
