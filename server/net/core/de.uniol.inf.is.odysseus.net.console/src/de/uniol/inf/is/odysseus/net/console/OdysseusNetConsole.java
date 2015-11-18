@@ -170,6 +170,10 @@ public class OdysseusNetConsole implements CommandProvider {
 
 		return sb.toString();
 	}
+	
+	public void _helpNet(CommandInterpreter ci ) {
+		ci.println(getHelp());
+	}
 
 	public void _log(CommandInterpreter ci) {
 		String logLevel = ci.nextArgument();
