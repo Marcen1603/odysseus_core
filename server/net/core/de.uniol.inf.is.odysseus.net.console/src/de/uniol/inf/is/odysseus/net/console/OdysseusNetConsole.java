@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -220,6 +222,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");
 		sb.append("    listNodes/ls..                       - Lists all found (!) nodes\n");
 		sb.append("    listConnectedNodes/ls...             - Lists all connected nodes\n");
+		sb.append("    describeNode/descNode <nodeid|nodename> - Shows detailed info about the specified node\n");
 		sb.append("    isConnected <nodeID | nodeName>      - Checks, if the given node is connected to this node\n");
 		sb.append("    ping                                 - Lists pings to all connected nodes\n");
 		sb.append("    listPingPositions/ls...              - Lists the positions of the connected nodes in the ping map\n");
@@ -705,6 +708,67 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 	public void _listNodes(CommandInterpreter ci) {
 		_lsNodes(ci);
 	}
+	
+	public void _describeNode( CommandInterpreter ci ) {
+		String nodeText = ci.nextArgument();
+		if (Strings.isNullOrEmpty(nodeText)) {
+			ci.println("usage: describeNode <nodename | nodeid>");
+			return;
+		}
+
+		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeText);
+		if (optNode.isPresent()) {
+			IOdysseusNode node = optNode.get();
+			
+			ci.println("Name                : " + node.getName());
+			ci.println("ID                  : " + node.getID());
+			ci.println("Connected           : " + connectionManager.isConnected(node));
+			ci.println("Logged in from node : " + loggedInNodes.contains(node));
+			ci.println("Logged to node      : " + loggedToNodes.contains(node));
+			Optional<Double> optPing = pingMap.getPing(node);
+			if(optPing.isPresent() ) {
+				ci.println("Ping                : " + optPing.get());
+			} else {
+				ci.println("No ping info available");
+			}
+			ci.println("Properties");
+			for( String key : node.getProperyKeys()) {
+				Optional<String> optValue = node.getProperty(key);
+				if( optValue.isPresent() ) {
+					ci.println("\t" + key + " = " + optValue.get());
+				} else {
+					ci.println("\t" + key + " not set");
+				}
+			}
+
+			try {
+				Future<Optional<IResourceUsage>> futureOptUsage = resourceUsageManager.getRemoteResourceUsage(node, true);
+				Optional<IResourceUsage> optUsage = futureOptUsage.get();
+				if( optUsage.isPresent() ) {
+					IResourceUsage usage = optUsage.get();
+					
+					ci.println("Resource usage");
+					ci.println("\tCPU               : Free : " + usage.getCpuMax() + " Max: " + usage.getCpuMax());
+					ci.println("\tMEM               : Free : " + usage.getMemFreeBytes() + " Max: " + usage.getMemMaxBytes());
+					ci.println("\tNET               : In : " + usage.getNetInputRate() + " Out: " + usage.getNetOutputRate() + " Max: " + usage.getNetBandwidthMax());
+					ci.println("\tKnown remote nodes: " + usage.getRemoteNodeCount());
+					ci.println("\tStartup ts        : " + usage.getStartupTimestamp() + " [" + new Date(usage.getTimestamp()) + "]");
+					ci.println("\tRunning queries   : " + usage.getRunningQueriesCount());
+					ci.println("\tStopped queries   : " + usage.getStoppedQueriesCount());
+					ci.println("\tVersion           : " + toVersionString(usage.getVersion()));
+				} else {
+					ci.println("No resource usage info available");
+				}
+			} catch (InterruptedException | ExecutionException e) {
+				ci.println("Could not determine resource usage");
+			}
+			
+		}
+	}
+	
+	public void _descNode( CommandInterpreter ci ) {
+		_describeNode(ci);
+	}
 
 	public void _startOdysseusNet(CommandInterpreter ci) {
 		try {
@@ -767,6 +831,11 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 	}
 
 	private static Optional<IOdysseusNode> determineFirstSelectedNode(CommandInterpreter ci, String node) {
+		if( !startupManager.isStarted() ) {
+			ci.println("OdysseusNet not started");
+			return Optional.absent();
+		}
+		
 		Collection<IOdysseusNode> selectedNodes = determineNodes(node);
 		if (selectedNodes.isEmpty()) {
 			ci.println("There is no such node with '" + node + "'");
