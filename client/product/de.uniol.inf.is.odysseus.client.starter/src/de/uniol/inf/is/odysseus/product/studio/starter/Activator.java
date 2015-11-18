@@ -40,7 +40,7 @@ public class Activator extends AbstractUIPlugin {
 			@Override
 			public void run() {
 				for (Bundle bundle : context.getBundles()) {
-					logger.trace("Try to start bundle " + bundle.getSymbolicName());
+					logger.trace("Try to start bundle " + bundle.getSymbolicName()+" in Version "+bundle.getVersion());
 					boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
 					if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
 						try {
