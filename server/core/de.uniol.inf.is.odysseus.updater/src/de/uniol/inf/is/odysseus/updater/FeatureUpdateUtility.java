@@ -70,9 +70,8 @@ public class FeatureUpdateUtility {
 	public static final URI getRepositoryLocation() {
 		if (current_repository_location == null) {
 			return DEFAULT_REPOSITORY_LOC;
-		} else {
-			return current_repository_location;
-		}
+		} 
+		return current_repository_location;
 	}
 
 	public static final void setRepositoryLocation(String url, final ISession caller) {
@@ -448,9 +447,8 @@ public class FeatureUpdateUtility {
 		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			return Activator.getContext().getBundle().getVersion().toString();
-		} else {
-			throw new PermissionException("This user may not list the installed features!");
-		}
+		} 
+		throw new PermissionException("This user may not list the installed features!");
 	}
 
 	private static IProvisioningAgent getAgent(BundleContext context) {
