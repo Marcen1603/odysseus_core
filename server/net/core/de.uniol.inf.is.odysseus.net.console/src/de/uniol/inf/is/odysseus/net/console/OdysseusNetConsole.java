@@ -157,8 +157,6 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 	// called by OSGi-DS
 	public void unbindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
 		if (nodeCommunicator == serv) {
-			nodeCommunicator = null;
-
 			nodeCommunicator.removeListener(this, LoginMessage.class);
 			nodeCommunicator.removeListener(this, LoginOKMessage.class);
 			nodeCommunicator.removeListener(this, LogoutMessage.class);
@@ -167,6 +165,8 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			nodeCommunicator.unregisterMessageType(LoginOKMessage.class);
 			nodeCommunicator.unregisterMessageType(LogoutMessage.class);
 			nodeCommunicator.unregisterMessageType(LogoutOKMessage.class);
+			
+			nodeCommunicator = null;
 		}
 	}
 
