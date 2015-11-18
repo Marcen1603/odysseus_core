@@ -52,7 +52,7 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
 		// DWD data can only be read from string input
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
