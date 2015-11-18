@@ -28,6 +28,12 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * This handler can read information from sources of the German Weather Service (Deutscher Wetter Dienst)
+ * @author Marco Grawunder
+ *
+ */
+
 public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	static protected List<String> types = new ArrayList<String>();
