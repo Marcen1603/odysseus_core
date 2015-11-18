@@ -321,7 +321,7 @@ public class FeatureUpdateUtility {
 		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE,
 				UpdatePermission.objectURI)) {
 			try {
-				LOG.info("Looking for updates on " + current_repository_location);
+				LOG.info("Looking for updates on " + getRepositoryLocation());
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
 				IProgressMonitor monitor = getDefaultMonitor();
@@ -369,7 +369,7 @@ public class FeatureUpdateUtility {
 				UpdatePermission.objectURI)) {
 
 			try {
-				LOG.info("Looking for updates on " + current_repository_location);
+				LOG.info("Looking for updates on " + getRepositoryLocation());
 
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
