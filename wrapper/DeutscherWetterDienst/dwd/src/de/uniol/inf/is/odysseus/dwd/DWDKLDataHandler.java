@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * This handler can read information from sources of the German Weather Service (Deutscher Wetter Dienst)
+ * 
+ *  
  * @author Marco Grawunder
  *
  */
@@ -49,7 +51,7 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 	
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
-		// TODO Auto-generated method stub
+		// DWD data can only be read from string input
 		return null;
 	}
 
