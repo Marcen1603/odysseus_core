@@ -11,4 +11,5 @@
    <reference bind="bindPingMap" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.ping.IPingMap" name="IPingMap" policy="static" unbind="unbindPingMap"/>
    <reference bind="bindOdysseusNodeResourceUsageManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager" name="IOdysseusNodeResourceUsageManager" policy="static" unbind="unbindOdysseusNodeResourceUsageManager"/>
    <reference bind="bindOdysseusNodeCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator" name="IOdysseusNodeCommunicator" policy="static" unbind="unbindOdysseusNodeCommunicator"/>
+   <reference bind="bindConsoleCommandExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.console.executor.IConsoleCommandExecutor" name="IConsoleCommandExecutor" policy="static" unbind="unbindConsoleCommandExecutor"/>
 </scr:component>
