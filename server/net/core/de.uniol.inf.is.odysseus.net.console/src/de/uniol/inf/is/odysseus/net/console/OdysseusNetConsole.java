@@ -789,4 +789,8 @@ public class OdysseusNetConsole implements CommandProvider {
 	public void _lsOdysseusNetComponents( CommandInterpreter ci ) {
 		_listOdysseusNetComponents(ci);
 	}
+	
+	public void _updateNet(CommandInterpreter ci ) {
+		System.exit(1010);
+	}
 }
