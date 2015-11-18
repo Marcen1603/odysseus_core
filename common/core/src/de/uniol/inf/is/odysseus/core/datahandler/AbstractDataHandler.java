@@ -17,11 +17,8 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.ICSVToString;
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -88,39 +85,7 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
     public void writeData(List<String> output, Object data) {
         output.add(data.toString());
     }
-    
-    @Override
-    public void writeCSVData(StringBuilder string, Object data,
-    		WriteOptions options) {
-    	if (data instanceof ICSVToString){
-    		string.append(((ICSVToString)data).csvToString(options));
-    	}else{
-    		// TODO: Find another solution ...
-    	}    	
-    }
-    
-    @Override
-    @Deprecated
-    public void writeCSVData(StringBuilder string, Object data,
-    		char delimiter, Character textSeperator, DecimalFormat floatingFormatter,
-    		DecimalFormat numberFormat, boolean writeMetadata) {
-    	if (data instanceof ICSVToString){
-    		string.append(((ICSVToString)data).csvToString(new WriteOptions(delimiter,textSeperator,floatingFormatter,numberFormat,writeMetadata)));
-    	}else{
-    		// TODO: Find another solution ...
-    	}
-    }
-	
-	@Override
-	public void writeJSONData(StringBuilder string, Object data) {
-		throw new IllegalArgumentException("Writing JSON data is not implemented in this DataHandler!");
-	}
-	
-	@Override
-	public byte[] writeBSONData(Object data) {
-		throw new IllegalArgumentException("Writing BSON data is not implemented in this DataHandler!");
-	}
-	
+		
 	@Override
 	public SDFSchema getSchema() {
 		return schema;

@@ -17,7 +17,5 @@ package de.uniol.inf.is.odysseus.core;
 
 public interface ICSVToString {
 	public String csvToString(WriteOptions options);
-	//@Deprecated
-	//public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata);
 	public String getCSVHeader(char delimiter);
 }

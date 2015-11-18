@@ -18,10 +18,8 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.text.DecimalFormat;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -130,29 +128,8 @@ public interface IDataHandler<T> {
 	public T readData(T input);
 
 	
-	/**
-	 * Special function to create a CSV based representation of the value, typically only needed for complex types (e.g. Tuple)
-	 * @param string Add output to this builder
-	 * @param data What is the object to be written
-	 * @param delimiter The delimiter to use to separate entries (e.g. ",")
-	 * @param textSeperator The delimiter to use to define complex strings that can contain the delimiter
-	 * @param floatingFormatter How to format double, float etc.
-	 * @param numberFormat How to format integer, long etc.
-	 * @param writeMetadata If the object contains meta data, should it be written
-	 * 
-	 * @deprecated use writeCSVData(StringBuilder string, Object data, WriteOptions options) instead
-	 */
-	@Deprecated
-	public void writeCSVData(StringBuilder string, Object data, char delimiter, Character textSeperator,  DecimalFormat floatingFormatter, DecimalFormat numberFormat, boolean writeMetadata);
-
-	
-	public void writeCSVData(StringBuilder string, Object data, WriteOptions options);
-
-	
-	public void writeJSONData(StringBuilder string, Object data);
-	public byte[] writeBSONData(Object data);
-	
 	public List<String> getSupportedDataTypes();
+
 	int memSize(Object attribute);
 
 	Class<?> createsType();

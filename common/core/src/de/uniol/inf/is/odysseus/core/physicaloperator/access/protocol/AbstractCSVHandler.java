@@ -68,7 +68,9 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		if (options.containsKey(CSV_WRITE_METADATA)) {
 			writeMetadata = Boolean.parseBoolean(options
 					.get(CSV_WRITE_METADATA));
-		}
+		}else if (getDataHandler().isHandleMetadata()){
+			writeMetadata = true;
+		}	
 		if (options.containsKey(CSV_TRIM)) {
 			trim = Boolean.parseBoolean(options.get(CSV_TRIM));
 		}

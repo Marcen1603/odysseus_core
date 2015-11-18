@@ -127,10 +127,11 @@ public class CSVFileSink extends AbstractSenderAO {
 		}
 		return Integer.valueOf(valueStr);
 	}
-	
-	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.")
-	public void writeMetadata(Boolean value) {
-		addOption(AbstractCSVHandler.CSV_WRITE_METADATA, Boolean.toString(value));
+
+	@Parameter(type = BooleanParameter.class, name = "WRITEMETADATA", optional = true, doc = "Write metadata.")
+	public void setWriteMetaData(boolean writeMetaData){
+		addOption(AbstractCSVHandler.CSV_WRITE_METADATA, Boolean.toString(writeMetaData));
+		super.setWriteMetaData(writeMetaData);
 	}
 	
 

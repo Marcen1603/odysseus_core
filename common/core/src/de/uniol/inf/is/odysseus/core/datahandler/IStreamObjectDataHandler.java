@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
@@ -29,7 +30,14 @@ public interface IStreamObjectDataHandler<T extends IStreamObject<? extends IMet
 	void writeData(List<String> output, Object data, boolean handleMetaData);
 	
 	int memSize(Object attribute, boolean handleMetaData);
+
+	boolean isHandleMetadata();
 	
 	void setMetaAttribute(IMetaAttribute metaAttribute);
 	
+	public void writeCSVData(StringBuilder string, Object data, WriteOptions options);
+
+	public void writeJSONData(StringBuilder string, Object data);
+
+	public byte[] writeBSONData(Object data);
 }

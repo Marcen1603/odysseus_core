@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -22,11 +22,11 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 	Map<Long, OutputStream> filemap = new HashMap<>();
 	final String path;
 	final IGroupProcessor<R, R> groupProcessor;
-	final IDataHandler<R> dataHandler;
+	final IStreamObjectDataHandler<R> dataHandler;
 	final WriteOptions writeOptions;
 
 	public GroupSplitFileWriter(String path,
-			IGroupProcessor<R, R> groupProcessor, IDataHandler<R> dataHandler) {
+			IGroupProcessor<R, R> groupProcessor, IStreamObjectDataHandler<R> dataHandler) {
 		this.path = path;
 		this.groupProcessor = groupProcessor;
 		this.dataHandler = dataHandler;

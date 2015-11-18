@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.GroupSplitFileWriterAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.GroupSplitFileWriter;
@@ -22,7 +22,7 @@ public class TGroupSplitFileWriter extends
 			TransformationConfiguration config) throws RuleException {
 		IGroupProcessor<Tuple<IMetaAttribute>, Tuple<IMetaAttribute>> gp = new RelationalGroupProcessor<>(operator.getInputSchema(), operator.getInputSchema(), operator.getGroupAttributes(), null, false);
 		@SuppressWarnings("rawtypes")
-		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(
+		IStreamObjectDataHandler dataHandler = DataHandlerRegistry.getStreamObjectDataHandler(
 				operator.getDataHandler(), operator.getOutputSchema());
 		@SuppressWarnings("unchecked")
 		GroupSplitFileWriter<Tuple<IMetaAttribute>> physical = new GroupSplitFileWriter<>(operator.getPath(), gp, dataHandler);

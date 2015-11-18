@@ -128,21 +128,6 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return retval;
 	}
 
-	// public Iterator<T> queryElementsStartingBeforeReverse(PointInTime
-	// validity) {
-	// ArrayList<T> retval = new ArrayList<T>();
-	// synchronized (getElements()) {
-	// Iterator<T> iter = getElements().descendingIterator();
-	// while (iter.hasNext()) {
-	// T elem = iter.next();
-	// if (elem.getMetadata().getStart().before(validity)) {
-	// retval.add(elem);
-	// }
-	// }
-	// }
-	// return retval.iterator();
-	// }
-
 	public Iterator<T> queryElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
