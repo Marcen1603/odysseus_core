@@ -29,21 +29,30 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetComponentStatus;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
+import de.uniol.inf.is.odysseus.net.communication.IMessage;
+import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
+import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
+import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
+import de.uniol.inf.is.odysseus.net.console.message.LoginMessage;
+import de.uniol.inf.is.odysseus.net.console.message.LoginOKMessage;
+import de.uniol.inf.is.odysseus.net.console.message.LogoutMessage;
+import de.uniol.inf.is.odysseus.net.console.message.LogoutOKMessage;
 import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.ping.IPingMapNode;
 import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
 import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
 
-public class OdysseusNetConsole implements CommandProvider {
+public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConsole.class);
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
@@ -54,6 +63,10 @@ public class OdysseusNetConsole implements CommandProvider {
 	private static IOdysseusNodeConnectionManager connectionManager;
 	private static IPingMap pingMap;
 	private static IOdysseusNodeResourceUsageManager resourceUsageManager;
+	private static IOdysseusNodeCommunicator nodeCommunicator;
+
+	private final Collection<IOdysseusNode> loggedInNodes = Lists.newArrayList();
+	private final Collection<IOdysseusNode> loggedToNodes = Lists.newArrayList();
 
 	// called by OSGi-DS
 	public static void bindServerExecutor(IExecutor serv) {
@@ -128,6 +141,36 @@ public class OdysseusNetConsole implements CommandProvider {
 	}
 
 	// called by OSGi-DS
+	public void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
+		nodeCommunicator = serv;
+
+		nodeCommunicator.registerMessageType(LoginMessage.class);
+		nodeCommunicator.registerMessageType(LoginOKMessage.class);
+		nodeCommunicator.registerMessageType(LogoutMessage.class);
+		nodeCommunicator.registerMessageType(LogoutOKMessage.class);
+		nodeCommunicator.addListener(this, LoginMessage.class);
+		nodeCommunicator.addListener(this, LoginOKMessage.class);
+		nodeCommunicator.addListener(this, LogoutMessage.class);
+		nodeCommunicator.addListener(this, LogoutOKMessage.class);
+	}
+
+	// called by OSGi-DS
+	public void unbindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
+		if (nodeCommunicator == serv) {
+			nodeCommunicator = null;
+
+			nodeCommunicator.removeListener(this, LoginMessage.class);
+			nodeCommunicator.removeListener(this, LoginOKMessage.class);
+			nodeCommunicator.removeListener(this, LogoutMessage.class);
+			nodeCommunicator.removeListener(this, LogoutOKMessage.class);
+			nodeCommunicator.unregisterMessageType(LoginMessage.class);
+			nodeCommunicator.unregisterMessageType(LoginOKMessage.class);
+			nodeCommunicator.unregisterMessageType(LogoutMessage.class);
+			nodeCommunicator.unregisterMessageType(LogoutOKMessage.class);
+		}
+	}
+
+	// called by OSGi-DS
 	public void activate() {
 		LOG.debug("Odysseus net console activated");
 	}
@@ -142,6 +185,7 @@ public class OdysseusNetConsole implements CommandProvider {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("---Odysseus net commands---\n");
+		sb.append("    helpNet                              - Shows this help text.\n");
 		sb.append("    startOdysseusNet/stop...             - Starts/Stops OdysseusNet\n");
 		sb.append("    showLocalNode                        - Shows data of own node\n");
 		sb.append("\n");
@@ -153,6 +197,15 @@ public class OdysseusNetConsole implements CommandProvider {
 		sb.append("    isConnected <nodeID | nodeName>      - Checks, if the given node is connected to this node\n");
 		sb.append("    ping                                 - Lists pings to all connected nodes\n");
 		sb.append("    listPingPositions/ls...              - Lists the positions of the connected nodes in the ping map\n");
+		sb.append("    resourceStatus                       - Prints current resource usage information\n");
+		sb.append("    listOdysseusNetComponents/ls...      - Prints a list of all known OdysseusNet-components\n");
+		sb.append("\n");
+		sb.append("    loginNode <nodeID|nodename> <usr> <pass> - Logs in to specified node\n");
+		sb.append("    logoutNode <nodeID|nodename> <usr> <pass> - Logs out from specified node\n");
+		sb.append("    listLoggedInNodes/ls...              - Prints a list of all nodes which are logged in here\n");
+		sb.append("    listLoggedToNodes/ls...              - Prints a list of all nodes which we are logged in to\n");
+		sb.append("    revokeLogin <nodeID|nodename>        - Revokes the login of specified remote node\n");
+		sb.append("    loginStatus                          - Prints lists from 'lsLoggedInNodes' and 'lsLoggedToNodes'\n");
 		sb.append("\n");
 		sb.append("---Utility commands---\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
@@ -170,8 +223,8 @@ public class OdysseusNetConsole implements CommandProvider {
 
 		return sb.toString();
 	}
-	
-	public void _helpNet(CommandInterpreter ci ) {
+
+	public void _helpNet(CommandInterpreter ci) {
 		ci.println(getHelp());
 	}
 
@@ -685,11 +738,11 @@ public class OdysseusNetConsole implements CommandProvider {
 	}
 
 	private static Optional<IOdysseusNode> determineFirstSelectedNode(CommandInterpreter ci, String node) {
-		Collection<IOdysseusNode> selectedNodes = determineNode(node);
+		Collection<IOdysseusNode> selectedNodes = determineNodes(node);
 		if (selectedNodes.isEmpty()) {
 			ci.println("There is no such node with '" + node + "'");
 		} else if (selectedNodes.size() > 1) {
-			ci.println("Identifiere is ambiguous:");
+			ci.println("Identifier is ambiguous:");
 			for (IOdysseusNode selectedNode : selectedNodes) {
 				ci.println("\t" + selectedNode);
 			}
@@ -700,7 +753,7 @@ public class OdysseusNetConsole implements CommandProvider {
 		return Optional.absent();
 	}
 
-	private static Collection<IOdysseusNode> determineNode(String nodeText) {
+	private static Collection<IOdysseusNode> determineNodes(String nodeText) {
 		Collection<IOdysseusNode> selectedNodes = Lists.newArrayList();
 		ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
 
@@ -766,31 +819,200 @@ public class OdysseusNetConsole implements CommandProvider {
 	private static String convertTimestampToDate(long startupTimestamp) {
 		return DATE_FORMAT.format(new Date(startupTimestamp));
 	}
-	
-	public void _listOdysseusNetComponents( CommandInterpreter ci ) {
-		if( !startupManager.isStarted() ) {
+
+	public void _listOdysseusNetComponents(CommandInterpreter ci) {
+		if (!startupManager.isStarted()) {
 			ci.println("WARNING: OdysseusNet is not started!");
 		}
-		
+
 		Collection<IOdysseusNetComponent> netComponents = startupManager.getComponents();
 		List<String> output = Lists.newArrayList();
-		for( IOdysseusNetComponent netComponent : netComponents ) {
+		for (IOdysseusNetComponent netComponent : netComponents) {
 			Optional<OdysseusNetComponentStatus> optStatus = startupManager.getComponentStatus(netComponent);
-			if( optStatus.isPresent() ) {
+			if (optStatus.isPresent()) {
 				output.add(netComponent.getClass().getName() + ": " + optStatus.get());
 			} else {
 				output.add(netComponent.getClass().getName() + ": <unknown>");
 			}
 		}
-		
+
 		sortAndPrintList(ci, output);
 	}
-	
-	public void _lsOdysseusNetComponents( CommandInterpreter ci ) {
+
+	public void _lsOdysseusNetComponents(CommandInterpreter ci) {
 		_listOdysseusNetComponents(ci);
 	}
-	
-	public void _updateNet(CommandInterpreter ci ) {
+
+	public void _updateNet(CommandInterpreter ci) {
 		System.exit(1010);
+	}
+
+	public void _loginNode(CommandInterpreter ci) {
+		String nodeText = ci.nextArgument();
+		if (Strings.isNullOrEmpty(nodeText)) {
+			ci.println("usage: login <nodename | nodeid> <username> <password>");
+			return;
+		}
+
+		String username = ci.nextArgument();
+		if (Strings.isNullOrEmpty(username)) {
+			ci.println("usage: login <nodename | nodeid> <username> <password>");
+			return;
+		}
+
+		String password = ci.nextArgument();
+		if (Strings.isNullOrEmpty(password)) {
+			ci.println("usage: login <nodename | nodeid> <username> <password>");
+			return;
+		}
+
+
+		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeText);
+		if (optNode.isPresent()) {
+			IOdysseusNode node = optNode.get();
+			try {
+				LoginMessage loginMsg = new LoginMessage(username, password);
+				nodeCommunicator.send(node, loginMsg);
+				ci.println("Send login to node " + node);
+			} catch (OdysseusNodeCommunicationException e) {
+				ci.println("Could not send login to node " + node + ": " + e.getMessage());
+			}
+		}
+	}
+
+	public void _logoutNode(CommandInterpreter ci) {
+		String nodeText = ci.nextArgument();
+		if (Strings.isNullOrEmpty(nodeText)) {
+			ci.println("usage: logout <nodename | nodeid>");
+			return;
+		}
+
+		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeText);
+		if (optNode.isPresent()) {
+			IOdysseusNode node = optNode.get();
+			if (loggedToNodes.contains(node)) {
+				try {
+					nodeCommunicator.send(node, new LogoutMessage());
+				} catch (OdysseusNodeCommunicationException e) {
+					LOG.error("Could not send logout message to node {}", node, e);
+				}
+			} else {
+				ci.println("Not logged in node " + node);
+			}
+		}
+	}
+
+	@Override
+	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
+		if (message instanceof LoginMessage) {
+			if (loggedInNodes.contains(senderNode)) {
+				sendLoginOKMessage(senderNode);
+				LOG.debug("Node {} already logged in", senderNode);
+				return;
+			}
+
+			processLoginMessage(senderNode, message);
+		} else if (message instanceof LoginOKMessage) {
+			loggedToNodes.add(senderNode);
+			LOG.info("Login to node '" + senderNode + "' ok");
+		} else if (message instanceof LogoutMessage) {
+			loggedInNodes.remove(senderNode);
+			LOG.debug("Node '{}' logged out", senderNode);
+
+			sendLogoutOKMessage(senderNode);
+		} else if (message instanceof LogoutOKMessage) {
+			loggedToNodes.remove(senderNode);
+			LOG.info("Logout from node '" + senderNode + "' ok");
+		}
+	}
+
+	private static void sendLogoutOKMessage(IOdysseusNode senderNode) {
+		LogoutOKMessage msg = new LogoutOKMessage();
+		try {
+			nodeCommunicator.send(senderNode, msg);
+		} catch (OdysseusNodeCommunicationException e) {
+			LOG.error("Could not send logoutOK message to node '{}'", senderNode, e);
+		}
+	}
+
+	private void processLoginMessage(IOdysseusNode senderNode, IMessage message) {
+		LoginMessage loginMsg = (LoginMessage) message;
+		ISession session = executor.login(loginMsg.getUsername(), loginMsg.getPassword().getBytes());
+		if (session != null) {
+			loggedInNodes.add(senderNode);
+			sendLoginOKMessage(senderNode);
+		}
+	}
+
+	private static void sendLoginOKMessage(IOdysseusNode senderNode) {
+		LoginOKMessage okMsg = new LoginOKMessage();
+		try {
+			nodeCommunicator.send(senderNode, okMsg);
+		} catch (OdysseusNodeCommunicationException e) {
+			LOG.error("Could not send ok message to node {}", senderNode, e);
+		}
+	}
+
+	public void _lsLoggedInNodes(CommandInterpreter ci) {
+		if( loggedInNodes.isEmpty() ) {
+			ci.println("No remote nodes are logged in here");
+			return;
+		}
+		
+		List<String> output = Lists.newArrayList();
+		for (IOdysseusNode loggedInNode : loggedInNodes) {
+			output.add(loggedInNode.toString());
+		}
+
+		ci.println("Following remote nodes are logged in here:");
+		sortAndPrintList(ci, output);
+	}
+
+	public void _listLoggedInNodes(CommandInterpreter ci) {
+		_lsLoggedInNodes(ci);
+	}
+
+	public void _lsLoggedToNodes(CommandInterpreter ci) {
+		if( loggedToNodes.isEmpty() ) {
+			ci.println("We are not logged in to any remote node");
+			return;
+		}
+		
+		List<String> output = Lists.newArrayList();
+		for (IOdysseusNode loggedInNode : loggedToNodes) {
+			output.add(loggedInNode.toString());
+		}
+
+		ci.println("Following remote nodes we are logged in:");
+		sortAndPrintList(ci, output);
+	}
+
+	public void _listLoggedToNodes(CommandInterpreter ci) {
+		_lsLoggedToNodes(ci);
+	}
+
+	public void _revokeLogin(CommandInterpreter ci) {
+		String nodeText = ci.nextArgument();
+		if (Strings.isNullOrEmpty(nodeText)) {
+			ci.println("usage: revokeLogin <nodeid | nodename>");
+			return;
+		}
+
+		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeText);
+		if (optNode.isPresent()) {
+			IOdysseusNode node = optNode.get();
+			if (loggedInNodes.contains(node)) {
+				loggedInNodes.remove(node);
+				sendLogoutOKMessage(node);
+				ci.println("Login of node '" + node + "' revoked");
+			} else {
+				ci.println("Node '" + node + "' is not logged in here");
+			}
+		}
+	}
+	
+	public void _loginStatus(CommandInterpreter ci ) {
+		_lsLoggedInNodes(ci);
+		_lsLoggedToNodes(ci);
 	}
 }
