@@ -52,18 +52,15 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class FeatureUpdateUtility {
 
-	private static Logger LOG = LoggerFactory
-			.getLogger(FeatureUpdateUtility.class);
-	private static final InfoService INFO = InfoServiceFactory
-			.getInfoService(FeatureUpdateUtility.class);
+	private static Logger LOG = LoggerFactory.getLogger(FeatureUpdateUtility.class);
+	private static final InfoService INFO = InfoServiceFactory.getInfoService(FeatureUpdateUtility.class);
 
 	private static URI DEFAULT_REPOSITORY_LOC;
 	private static URI current_repository_location;
 
 	static {
 		try {
-			DEFAULT_REPOSITORY_LOC = new URI(OdysseusConfiguration.get(OdysseusConfiguration.DEFAULT_UPDATE_SITE,
-					"http://odysseus.informatik.uni-oldenburg.de/update/"));
+			DEFAULT_REPOSITORY_LOC = new URI(OdysseusConfiguration.get(OdysseusConfiguration.DEFAULT_UPDATE_SITE, "http://odysseus.informatik.uni-oldenburg.de/update/"));
 		} catch (final URISyntaxException e) {
 			LOG.error("URI invalid: " + e.getMessage());
 		}
@@ -72,15 +69,13 @@ public class FeatureUpdateUtility {
 	public static final URI getRepositoryLocation() {
 		if (current_repository_location == null) {
 			return DEFAULT_REPOSITORY_LOC;
-		} else {
-			return current_repository_location;
 		}
+
+		return current_repository_location;
 	}
 
-	public static final void setRepositoryLocation(String url,
-			final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.CONFIGURE, UpdatePermission.objectURI)) {
+	public static final void setRepositoryLocation(String url, final ISession caller) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.CONFIGURE, UpdatePermission.objectURI)) {
 
 			try {
 				current_repository_location = new URI(url);
@@ -89,24 +84,20 @@ public class FeatureUpdateUtility {
 				LOG.error("URI invalid: " + e.getMessage());
 			}
 		} else {
-			throw new PermissionException(
-					"This user is not allowed to change update site!");
+			throw new PermissionException("This user is not allowed to change update site!");
 		}
 	}
 
 	public static final void clearRepositoryLocation(final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.CONFIGURE, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.CONFIGURE, UpdatePermission.objectURI)) {
 			current_repository_location = null;
 		} else {
-			throw new PermissionException(
-					"This user is not allowed to change update site!");
+			throw new PermissionException("This user is not allowed to change update site!");
 		}
 	}
 
 	public static IStatus uninstallFeature(String id, final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.REMOVE, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.REMOVE, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			Collection<IInstallableUnit> toUninstall = new ArrayList<IInstallableUnit>();
 			for (IInstallableUnit u : units) {
@@ -122,18 +113,15 @@ public class FeatureUpdateUtility {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
 			final ProvisioningSession session = new ProvisioningSession(agent);
-			final UninstallOperation operation = new UninstallOperation(
-					session, toUninstall);
+			final UninstallOperation operation = new UninstallOperation(session, toUninstall);
 			return runOperation(caller, operation);
 
 		}
-		throw new PermissionException(
-				"This user is not allowed to remove features!");
+		throw new PermissionException("This user is not allowed to remove features!");
 	}
 
 	public static IStatus installFeature(String id, final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstallableUnits(id, caller);
 
 			if (units != null && !units.isEmpty()) {
@@ -143,17 +131,13 @@ public class FeatureUpdateUtility {
 				}
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
-				final ProvisioningSession session = new ProvisioningSession(
-						agent);
-				final InstallOperation operation = new InstallOperation(
-						session, units);
+				final ProvisioningSession session = new ProvisioningSession(agent);
+				final InstallOperation operation = new InstallOperation(session, units);
 
 				// set location of artifact and metadata repo
 
-				operation.getProvisioningContext().setArtifactRepositories(
-						new URI[] { getRepositoryLocation() });
-				operation.getProvisioningContext().setMetadataRepositories(
-						new URI[] { getRepositoryLocation() });
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { getRepositoryLocation() });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { getRepositoryLocation() });
 				return runOperation(caller, operation);
 
 			}
@@ -161,17 +145,14 @@ public class FeatureUpdateUtility {
 			return Status.CANCEL_STATUS;
 
 		}
-		throw new PermissionException(
-				"This user is not allowed to install new features!");
+		throw new PermissionException("This user is not allowed to install new features!");
 	}
 
-	private static IStatus runOperation(final ISession caller,
-			final ProfileChangeOperation operation) {
+	private static IStatus runOperation(final ISession caller, final ProfileChangeOperation operation) {
 		LOG.info("Starting install process...");
 		IStatus status = operation.resolveModal(getDefaultMonitor());
 		if (status.isOK()) {
-			final ProvisioningJob provisioningJob = operation
-					.getProvisioningJob(getDefaultMonitor());
+			final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
 			// updates cannot run from within Eclipse IDE!!!
 			if (provisioningJob == null) {
 				LOG.error("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
@@ -203,19 +184,14 @@ public class FeatureUpdateUtility {
 		return Status.CANCEL_STATUS;
 	}
 
-	private static List<IInstallableUnit> getInstallableUnits(String id,
-			ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+	private static List<IInstallableUnit> getInstallableUnits(String id, ISession caller) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
-			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent
-					.getService(IMetadataRepositoryManager.SERVICE_NAME);
+			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 			try {
-				IMetadataRepository repo = metadataManager.loadRepository(
-						getRepositoryLocation(), getDefaultMonitor());
-				IQueryResult<IInstallableUnit> units = repo.query(
-						QueryUtil.createIUGroupQuery(), getDefaultMonitor());
+				IMetadataRepository repo = metadataManager.loadRepository(getRepositoryLocation(), getDefaultMonitor());
+				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> toinstall = new ArrayList<>();
 				if (!id.endsWith("feature.group")) {
 					id = id + ".feature.group";
@@ -236,13 +212,11 @@ public class FeatureUpdateUtility {
 			return null;
 		}
 
-		throw new PermissionException(
-				"This user may not list the installed features!");
+		throw new PermissionException("This user may not list the installed features!");
 	}
 
 	public static boolean isFeatureInstalled(String id, ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			for (IInstallableUnit unit : units) {
 				if (unit.getId().startsWith(id)) {
@@ -252,17 +226,14 @@ public class FeatureUpdateUtility {
 			return false;
 		}
 
-		throw new PermissionException(
-				"This user may not list the installed features!");
+		throw new PermissionException("This user may not list the installed features!");
 	}
 
 	public static List<IInstallableUnit> getInstalledFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
-			IProfileRegistry regProfile = (IProfileRegistry) agent
-					.getService(IProfileRegistry.SERVICE_NAME);
+			IProfileRegistry regProfile = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 			IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
 
 			if (profileSelf == null) {
@@ -271,8 +242,7 @@ public class FeatureUpdateUtility {
 			}
 
 			IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
-			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query,
-					getDefaultMonitor());
+			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, getDefaultMonitor());
 
 			List<IInstallableUnit> units = new ArrayList<>();
 			units.addAll(allIUs.toUnmodifiableSet());
@@ -287,23 +257,18 @@ public class FeatureUpdateUtility {
 			return features;
 		}
 
-		throw new PermissionException(
-				"This user may not list the installed features!");
+		throw new PermissionException("This user may not list the installed features!");
 
 	}
 
 	public static List<IInstallableUnit> getInstallableFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
-			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent
-					.getService(IMetadataRepositoryManager.SERVICE_NAME);
+			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 			try {
-				IMetadataRepository repo = metadataManager.loadRepository(
-						getRepositoryLocation(), getDefaultMonitor());
-				IQueryResult<IInstallableUnit> units = repo.query(
-						QueryUtil.createIUGroupQuery(), getDefaultMonitor());
+				IMetadataRepository repo = metadataManager.loadRepository(getRepositoryLocation(), getDefaultMonitor());
+				IQueryResult<IInstallableUnit> units = repo.query(QueryUtil.createIUGroupQuery(), getDefaultMonitor());
 				List<IInstallableUnit> installable = new ArrayList<>();
 				String id = ".feature.group";
 				List<IInstallableUnit> alreadyInstalled = getInstalledFeatures(caller);
@@ -311,9 +276,7 @@ public class FeatureUpdateUtility {
 					// use starts with to ignore version and qualifier
 					String unitid = unit.getId().toLowerCase();
 
-					if (unitid.contains(id)
-							&& unitid.startsWith("de.uniol.inf.is")
-							&& !unitid.contains("source.feature")) {
+					if (unitid.contains(id) && unitid.startsWith("de.uniol.inf.is") && !unitid.contains("source.feature")) {
 						if (!containsWithSameID(alreadyInstalled, unit)) {
 							installable.add(unit);
 						}
@@ -329,12 +292,10 @@ public class FeatureUpdateUtility {
 			return null;
 		}
 
-		throw new PermissionException(
-				"This user may not list installable features!");
+		throw new PermissionException("This user may not list installable features!");
 	}
 
-	private static boolean containsWithSameID(
-			Collection<IInstallableUnit> list, IInstallableUnit unit) {
+	private static boolean containsWithSameID(Collection<IInstallableUnit> list, IInstallableUnit unit) {
 		for (IInstallableUnit inList : list) {
 			if (inList.getId().equalsIgnoreCase(unit.getId())) {
 				return true;
@@ -344,24 +305,19 @@ public class FeatureUpdateUtility {
 	}
 
 	public static boolean checkForUpdates(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
 			try {
 
 				BundleContext context = Activator.getContext();
 				IProvisioningAgent agent = getAgent(context);
 				IProgressMonitor monitor = getDefaultMonitor();
 
-				final ProvisioningSession session = new ProvisioningSession(
-						agent);
+				final ProvisioningSession session = new ProvisioningSession(agent);
 				final UpdateOperation operation = new UpdateOperation(session);
 
-				refreshArtifactRepositories(getRepositoryLocation(), context,
-						caller);
-				operation.getProvisioningContext().setArtifactRepositories(
-						new URI[] { getRepositoryLocation() });
-				operation.getProvisioningContext().setMetadataRepositories(
-						new URI[] { getRepositoryLocation() });
+				refreshArtifactRepositories(getRepositoryLocation(), context, caller);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { getRepositoryLocation() });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { getRepositoryLocation() });
 				final IStatus status = operation.resolveModal(monitor);
 
 				// failed to find updates (inform user and exit)
@@ -388,17 +344,14 @@ public class FeatureUpdateUtility {
 				e.printStackTrace();
 			}
 		} else {
-			throw new PermissionException(
-					"User is not allowed to update the system!");
+			throw new PermissionException("User is not allowed to update the system!");
 		}
 		return false;
 	}
 
-	public static IStatus checkForAndInstallUpdates(final ISession caller)
-			throws OperationCanceledException {
+	public static IStatus checkForAndInstallUpdates(final ISession caller) throws OperationCanceledException {
 
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE, UpdatePermission.objectURI)) {
 
 			try {
 
@@ -406,47 +359,42 @@ public class FeatureUpdateUtility {
 				IProvisioningAgent agent = getAgent(context);
 				IProgressMonitor monitor = getDefaultMonitor();
 
-				final ProvisioningSession session = new ProvisioningSession(
-						agent);
+				final ProvisioningSession session = new ProvisioningSession(agent);
 
 				final UpdateOperation operation = new UpdateOperation(session);
 
-				refreshArtifactRepositories(getRepositoryLocation(), context,
-						caller);
-				operation.getProvisioningContext().setArtifactRepositories(
-						new URI[] { getRepositoryLocation() });
-				operation.getProvisioningContext().setMetadataRepositories(
-						new URI[] { getRepositoryLocation() });
+				refreshArtifactRepositories(getRepositoryLocation(), context, caller);
+				operation.getProvisioningContext().setArtifactRepositories(new URI[] { getRepositoryLocation() });
+				operation.getProvisioningContext().setMetadataRepositories(new URI[] { getRepositoryLocation() });
 
 				final IStatus status = operation.resolveModal(monitor);
 
 				if (status.isOK() && status.getSeverity() != IStatus.ERROR) {
-					final ProvisioningJob provisioningJob = operation
-							.getProvisioningJob(getDefaultMonitor());
+					final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
 					// updates cannot run from within Eclipse IDE!!!
 					if (provisioningJob == null) {
-						System.err
-								.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
+						System.err.println("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
+						System.err.println("Resolution result: " + operation.getResolutionResult().getMessage());
+
 						throw new NullPointerException();
 					}
 
 					// register a job change listener to track
 					// installation progress and notify user upon success
-					provisioningJob
-							.addJobChangeListener(new JobChangeAdapter() {
-								@Override
-								public void done(IJobChangeEvent event) {
-									if (event.getResult().isOK()) {
-										boolean restart = true;
-										if (restart) {
-											LOG.info("Updates were installed. You have to restart Odysseus for the changed to take effekt!");
-											restart(caller);
-										}
-
-									}
-									super.done(event);
+					provisioningJob.addJobChangeListener(new JobChangeAdapter() {
+						@Override
+						public void done(IJobChangeEvent event) {
+							if (event.getResult().isOK()) {
+								boolean restart = true;
+								if (restart) {
+									LOG.info("Updates were installed. You have to restart Odysseus for the changed to take effekt!");
+									restart(caller);
 								}
-							});
+
+							}
+							super.done(event);
+						}
+					});
 
 					provisioningJob.schedule();
 				}
@@ -455,42 +403,34 @@ public class FeatureUpdateUtility {
 			}
 			return Status.OK_STATUS;
 		}
-		throw new PermissionException(
-				"User is not allowed to update the system!");
+		throw new PermissionException("User is not allowed to update the system!");
 	}
 
 	public static String getVersionNumberFromFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			for (IInstallableUnit unit : units) {
-				if (unit.getId().toLowerCase()
-						.startsWith("de.uniol.inf.is.odysseus.core")) {
+				if (unit.getId().toLowerCase().startsWith("de.uniol.inf.is.odysseus.core")) {
 					return unit.getVersion().toString();
 				}
 			}
 		} else {
-			throw new PermissionException(
-					"This user may not list the installed features!");
+			throw new PermissionException("This user may not list the installed features!");
 		}
 		return "-1";
 	}
 
 	public static String getVersionNumber(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			return Activator.getContext().getBundle().getVersion().toString();
-		} else {
-			throw new PermissionException(
-					"This user may not list the installed features!");
 		}
+		throw new PermissionException("This user may not list the installed features!");
 	}
 
 	private static IProvisioningAgent getAgent(BundleContext context) {
 		IProvisioningAgent agent = null;
 
-		ServiceReference<?> reference = context
-				.getServiceReference(IProvisioningAgent.SERVICE_NAME);
+		ServiceReference<?> reference = context.getServiceReference(IProvisioningAgent.SERVICE_NAME);
 		if (reference != null) {
 			agent = (IProvisioningAgent) context.getService(reference);
 			context.ungetService(reference);
@@ -502,15 +442,12 @@ public class FeatureUpdateUtility {
 	}
 
 	public static void restart(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
-			ServiceReference<?> eventAdminServiceReference = context
-					.getServiceReference(EventAdmin.class.getName());
+			ServiceReference<?> eventAdminServiceReference = context.getServiceReference(EventAdmin.class.getName());
 
 			// EventAdmin Service lookup
-			final EventAdmin eventAdmin = (EventAdmin) context
-					.getService(eventAdminServiceReference);
+			final EventAdmin eventAdmin = (EventAdmin) context.getService(eventAdminServiceReference);
 
 			Executors.newSingleThreadExecutor().execute(new Runnable() {
 
@@ -519,14 +456,11 @@ public class FeatureUpdateUtility {
 					LOG.info("Sending restart event");
 					Map<String, String> hashMap = new HashMap<>();
 					hashMap.put("TYPE", "RESTART");
-					eventAdmin.sendEvent(new Event(
-							"de/uniol/inf/odysseus/application/"
-									+ System.currentTimeMillis(), hashMap));
+					eventAdmin.sendEvent(new Event("de/uniol/inf/odysseus/application/" + System.currentTimeMillis(), hashMap));
 				}
 			});
 		} else {
-			throw new PermissionException(
-					"This user may not restart the system!");
+			throw new PermissionException("This user may not restart the system!");
 		}
 	}
 
@@ -600,32 +534,25 @@ public class FeatureUpdateUtility {
 		};
 	}
 
-	public static void refreshArtifactRepositories(URI location,
-			BundleContext context, ISession caller) throws ProvisionException {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(
-				caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
+	public static void refreshArtifactRepositories(URI location, BundleContext context, ISession caller) throws ProvisionException {
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST, UpdatePermission.objectURI)) {
 			IProvisioningAgent agent = getAgent(context);
 
 			if (agent != null) {
 				LOG.info("Reloading artifact repository...");
-				IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent
-						.getService(IArtifactRepositoryManager.SERVICE_NAME);
+				IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
 				manager.loadRepository(location, new NullProgressMonitor());
 				manager.refreshRepository(location, new NullProgressMonitor());
 				LOG.info("Reloading metadata repository...");
-				IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent
-						.getService(IMetadataRepositoryManager.SERVICE_NAME);
-				metadataManager.loadRepository(location,
-						new NullProgressMonitor());
-				metadataManager.refreshRepository(location,
-						new NullProgressMonitor());
+				IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+				metadataManager.loadRepository(location, new NullProgressMonitor());
+				metadataManager.refreshRepository(location, new NullProgressMonitor());
 				LOG.info("Repositories refreshed");
 			} else {
 				throw new ProvisionException("No repository manager found");
 			}
 		} else {
-			throw new PermissionException(
-					"User is not allowed to update the system!");
+			throw new PermissionException("User is not allowed to update the system!");
 		}
 	}
 }
