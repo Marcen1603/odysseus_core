@@ -72,8 +72,7 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		// TODO Auto-generated method stub
-
+		// DWD data are not written
 	}
 
 	@Override
