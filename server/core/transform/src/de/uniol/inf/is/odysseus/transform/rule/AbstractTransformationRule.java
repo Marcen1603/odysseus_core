@@ -215,6 +215,17 @@ public abstract class AbstractTransformationRule<T> extends
 		}
 	}
 
+	final protected TimestampAO insertTimestampAO(ILogicalOperator operator){
+		return insertTimestampAO(operator,null);
+	}
+	
+	
+	/**
+	 * Allows to insert a timestamp operator after the given operator
+	 * @param operator the operator after that a timestamp operator should be set
+	 * @param dateFormat an optional string that describes in case of string based timestamps in input the java format of the timestamp attribute value, can be null
+	 * @return
+	 */
 	protected TimestampAO insertTimestampAO(ILogicalOperator operator,
 			String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
