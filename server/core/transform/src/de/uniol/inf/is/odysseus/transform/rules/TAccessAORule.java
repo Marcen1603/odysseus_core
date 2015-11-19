@@ -145,6 +145,11 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				}
 
 			}
+		}else{
+			TimestampAO tsAO = getTimestampAOAsFather(operator);
+			if (tsAO == null) {
+				tsAO = insertTimestampAO(operator, operator.getDateFormat());
+			}
 		}
 	}
 
