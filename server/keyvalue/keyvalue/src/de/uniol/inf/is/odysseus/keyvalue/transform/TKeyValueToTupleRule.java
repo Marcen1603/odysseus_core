@@ -5,6 +5,9 @@ import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -44,7 +47,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 		if (inputPO instanceof IMetadataInitializer) {
 			// New: do no create meta data creation and update, if operator
 			// already read the meta data from the source
-			if (!config.hasOption("NO_METADATA") && !operator.readMetaData()) {
+			if (!config.hasOption("NO_METADATA") && !operator.readMetaData() && this.checkSchema(operator.getOutputSchema())) {
 //
 				IMetaAttribute type = operator.getLocalMetaAttribute();
 				if (type == null) {
@@ -60,13 +63,28 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 			}
 		} else {
-			TimestampAO tsAO = getTimestampAOAsFather(operator);
-			if (tsAO == null) {
-				tsAO = insertTimestampAO(operator, operator.getDateFormat());
+			if (this.checkSchema(operator.getOutputSchema())) {
+				TimestampAO tsAO = getTimestampAOAsFather(operator);
+				if (tsAO == null) {
+					tsAO = insertTimestampAO(operator, operator.getDateFormat());
+				}
 			}
-			
 		}
-			
+	}
+
+	/**
+	 * Checks if the schema contains starttimestamp or endtimestamp and metadata need to be updated.
+	 * 
+	 * @param sdfSchema
+	 * @return
+	 */
+	private boolean checkSchema(SDFSchema sdfSchema) {
+		for(SDFAttribute att: sdfSchema.getAttributes()) {
+			if(att.getDatatype() == SDFDatatype.START_TIMESTAMP || (att.getDatatype() == SDFDatatype.END_TIMESTAMP)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
