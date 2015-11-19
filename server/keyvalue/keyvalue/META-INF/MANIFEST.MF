@@ -13,6 +13,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.keyvalue.Activator
 Service-Component: OSGI-INF/*
 Import-Package: com.fasterxml.jackson.core,
  com.fasterxml.jackson.databind,
+ com.google.common.base,
  de.undercouch.bson4jackson,
  de.undercouch.bson4jackson.serializers,
  de.uniol.inf.is.odysseus.ruleengine.rule,

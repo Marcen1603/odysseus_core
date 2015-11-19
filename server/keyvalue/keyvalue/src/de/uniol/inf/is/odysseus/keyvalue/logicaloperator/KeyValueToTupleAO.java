@@ -3,8 +3,11 @@ package de.uniol.inf.is.odysseus.keyvalue.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -26,6 +29,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	private boolean keepInputObject = false;
 	private String type = "";
 	private List<RenameAttribute> attributes;
+	private String dateFormat;
 
 	public KeyValueToTupleAO() {
 	}
@@ -63,6 +67,21 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 		return keepInputObject;
 	}
 
+	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true, doc="If using a string for date information, use this format to parse the date (in Java syntax).")
+	public void setDateFormat(String dateFormat) {
+		if(!Strings.isNullOrEmpty(dateFormat)) {
+			addParameterInfo("DATEFORMAT", "'" + dateFormat + "'");
+		} else {
+			removeParameterInfo("DATEFORMAT");
+		}
+		
+		this.dateFormat = dateFormat;
+	}
+
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
@@ -84,6 +103,14 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new KeyValueToTupleAO(this);
+	}
+
+	public IMetaAttribute getLocalMetaAttribute() {
+		return null;
+	}
+
+	public boolean readMetaData() {
+		return false;
 	}
 
 }

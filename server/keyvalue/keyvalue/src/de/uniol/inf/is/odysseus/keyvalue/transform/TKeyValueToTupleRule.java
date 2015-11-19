@@ -3,6 +3,11 @@ package de.uniol.inf.is.odysseus.keyvalue.transform;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.keyvalue.logicaloperator.KeyValueToTupleAO;
 import de.uniol.inf.is.odysseus.keyvalue.physicaloperator.KeyValueToTuplePO;
@@ -20,7 +25,9 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 	@Override
 	public void execute(KeyValueToTupleAO operator, TransformationConfiguration config) throws RuleException {
-		defaultExecute(operator, new KeyValueToTuplePO<IMetaAttribute>(operator), config, true, false);
+		ISource<?> inputPO = new KeyValueToTuplePO<IMetaAttribute>(operator);
+		this.processMetaData(operator, config, inputPO);
+		defaultExecute(operator, inputPO, config, true, false);
 	}
 
 	@Override
@@ -31,6 +38,35 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 			return true;
 		}
 		return false;
+	}
+
+	private void processMetaData(KeyValueToTupleAO operator, TransformationConfiguration config, ISource<?> inputPO) {
+		if (inputPO instanceof IMetadataInitializer) {
+			// New: do no create meta data creation and update, if operator
+			// already read the meta data from the source
+			if (!config.hasOption("NO_METADATA") && !operator.readMetaData()) {
+//
+				IMetaAttribute type = operator.getLocalMetaAttribute();
+				if (type == null) {
+					type = MetadataRegistry.getMetadataType(config.getDefaultMetaTypeSet());
+				}
+				((IMetadataInitializer<?, ?>) inputPO).setMetadataType(type);
+
+				TimestampAO tsAO = getTimestampAOAsFather(operator);
+				Class<? extends IMetaAttribute> toC = ITimeInterval.class;
+				if (MetadataRegistry.contains(type.getClasses(), toC) && tsAO == null) {
+					tsAO = insertTimestampAO(operator, operator.getDateFormat());
+				}
+
+			}
+		} else {
+			TimestampAO tsAO = getTimestampAOAsFather(operator);
+			if (tsAO == null) {
+				tsAO = insertTimestampAO(operator, operator.getDateFormat());
+			}
+			
+		}
+			
 	}
 
 	@Override
