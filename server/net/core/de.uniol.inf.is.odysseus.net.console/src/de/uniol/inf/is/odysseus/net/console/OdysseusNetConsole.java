@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.ping.IPingMapNode;
 import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
 import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
+import de.uniol.inf.is.odysseus.net.update.OdysseusNodeUpdater;
 
 public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommunicatorListener {
 
@@ -1185,4 +1186,17 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			ci.println("Could not send command to node '" + destinationNode + "': " + e.getMessage());
 		}
 	}
+	
+	public void _remoteUpdateAll(CommandInterpreter ci) {
+		OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes();
+
+		ci.println("Send update message to remote peers");
+	}
+
+	public void _remoteRestartAll(CommandInterpreter ci) {
+		OdysseusNodeUpdater.sendRestartMessageToRemoteNodes();
+
+		ci.println("Send restart message to remote peers");
+	}
+
 }
