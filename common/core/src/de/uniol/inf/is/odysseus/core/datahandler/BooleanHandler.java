@@ -58,7 +58,14 @@ public class BooleanHandler  extends AbstractDataHandler<Boolean> {
         if ((string == null) || ("null".equalsIgnoreCase(string))) {
             return null;
         }
-		return Boolean.parseBoolean(string);
+        if (string.equalsIgnoreCase("true")){
+        	return Boolean.TRUE;
+        }
+        if (string.equalsIgnoreCase("1")){
+        	return Boolean.TRUE;
+        }
+        
+		return Boolean.FALSE;
 	}
 
 	@Override
