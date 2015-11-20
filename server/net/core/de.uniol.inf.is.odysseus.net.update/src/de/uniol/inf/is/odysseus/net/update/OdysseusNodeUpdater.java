@@ -47,7 +47,7 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 		}
 	}
 	
-	public static void sendUpdateMessageToRemotePeers() {
+	public static void sendUpdateMessageToRemoteNodes() {
 		sendUpdateMessageToRemotePeers(nodeCommunicator.getDestinationNodes());
 	}
 	
@@ -57,7 +57,7 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 		sendMessageToPeers(remoteNodes, new DoUpdateMessage());
 	}
 	
-	public static void sendRestartMessageToRemotePeers() {
+	public static void sendRestartMessageToRemoteNodes() {
 		sendRestartMessageToRemotePeers(nodeCommunicator.getDestinationNodes());
 	}
 
