@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.core.collection;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,7 +31,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	
 	final private static long serialVersionUID = -94667746890198612L;
 
-	final protected Map<String, Object> attributes = new HashMap<String, Object>();
+	final protected Map<String, Object> attributes = new LinkedHashMap<String, Object>();
 
 	final protected static Logger LOG = LoggerFactory.getLogger(KeyValueObject.class);
 	
@@ -41,7 +40,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	
 	public KeyValueObject(KeyValueObject<T> other){
 		super(other);
-		this.attributes.putAll(new HashMap<String, Object>(other.attributes));
+		this.attributes.putAll(new LinkedHashMap<String, Object>(other.attributes));
 	}
 	
 	public KeyValueObject(Map<String,Object> map) {
