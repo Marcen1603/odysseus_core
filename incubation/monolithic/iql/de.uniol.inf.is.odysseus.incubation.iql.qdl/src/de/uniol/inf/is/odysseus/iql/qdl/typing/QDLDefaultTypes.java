@@ -51,6 +51,7 @@ public class QDLDefaultTypes {
 	public static Collection<String> getImplicitStaticImports() {
 		Collection<String> types = new HashSet<>();
 		types.add(TimeUnit.class.getCanonicalName());
+		types.add(Runtime.class.getCanonicalName());
 		return types;
 	}
 
