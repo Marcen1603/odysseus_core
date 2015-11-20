@@ -184,7 +184,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		inputStreamSyncArea.init(this);
+		inputStreamSyncArea.init(this, getSubscribedToSource().size());
 		outputTransferArea.init(this, getSubscribedToSource().size());
 	}
 
@@ -196,7 +196,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		// if (logger.isDebugEnabled())
 		// logger.debug("read "+ event + " "+port);
 		// insertIntoInputBuffer(event, port);
-		inputStreamSyncArea.newElement(event, port);
+		inputStreamSyncArea.transfer(event,port);
 		outputTransferArea.newElement(event, port);
 	}
 
@@ -209,7 +209,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	public synchronized void processPunctuation(IPunctuation punctuation,
 			int port) {
 		// inputStreamSyncArea.newHeartbeat(punctuation.getTime(), port);
-		inputStreamSyncArea.newElement(punctuation, port);
+		inputStreamSyncArea.sendPunctuation(punctuation, port);
 	}
 
 	@Override

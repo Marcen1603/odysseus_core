@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.IHasName;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.event.IEventHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Marco Grawunder, Jonas Jacobi
  */
 public interface IPhysicalOperator extends IOwnedOperator,
-		IMonitoringDataProvider, IEventHandler {
+		IMonitoringDataProvider, IEventHandler, IHasName {
 
 	boolean isSource();
 

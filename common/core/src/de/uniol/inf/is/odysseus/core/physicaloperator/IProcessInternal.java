@@ -13,13 +13,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator;
+package de.uniol.inf.is.odysseus.core.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.IHasName;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
-public interface IProcessInternal<R> extends IHasName {
+public interface IProcessInternal<R> {
 	void process_internal(R event, int port);
 	void process_punctuation_intern(IPunctuation punctuation, int port);
 	void process_newHeartbeat(Heartbeat pointInTime);

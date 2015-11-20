@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
  * @author Michael Falk
  * @param <T>
  */
-public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchingPO<T> {
+public class AllPatternMatchingPO<T extends ITimeInterval> extends AbstractPatternMatchingPO<T> {
 	
 	/**
 	 * Port-Map, die für jeden Port eine Liste mit Event-Objekten enthält.

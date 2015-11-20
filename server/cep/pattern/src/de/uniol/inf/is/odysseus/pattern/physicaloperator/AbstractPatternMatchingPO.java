@@ -41,11 +41,11 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
  * @author Michael Falk
  * @param <T>
  */
-public abstract class PatternMatchingPO<T extends ITimeInterval> extends
+public abstract class AbstractPatternMatchingPO<T extends ITimeInterval> extends
 		AbstractPipe<Tuple<T>, Tuple<T>> implements IProcessInternal<Tuple<T>> {
 
 	protected static Logger logger = LoggerFactory
-			.getLogger(PatternMatchingPO.class);
+			.getLogger(AbstractPatternMatchingPO.class);
 
 	protected List<SDFExpression> assertions;
 	protected List<SDFExpression> returnExpressions;
@@ -76,7 +76,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	protected Map<SDFExpression, AttributeMap[]> attrMappings;
 	protected Map<SDFExpression, AttributeMap[]> returnAttrMappings;
 
-	public PatternMatchingPO(PatternType type, Integer time, Integer size,
+	public AbstractPatternMatchingPO(PatternType type, Integer time, Integer size,
 			TimeUnit timeUnit, PatternOutput outputMode,
 			List<String> eventTypes, List<SDFExpression> assertions,
 			List<SDFExpression> returnExpressions,
@@ -101,7 +101,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	}
 
 	// Copy-Konstruktor
-	public PatternMatchingPO(PatternMatchingPO<T> patternPO) {
+	public AbstractPatternMatchingPO(AbstractPatternMatchingPO<T> patternPO) {
 		this.type = patternPO.type;
 		this.time = patternPO.time;
 		this.size = patternPO.size;
@@ -209,13 +209,13 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	@Override
 	public void process_open() throws OpenFailedException {
 		super.process_open();
-		inputStreamSyncArea.init(this);
+		inputStreamSyncArea.init(this, getSubscribedToSource().size());
 		outputTransferArea.init(this, getSubscribedToSource().size());
 	}
 
 	@Override
 	protected void process_next(Tuple<T> event, int port) {
-		inputStreamSyncArea.newElement(event, port);
+		inputStreamSyncArea.transfer(event, port);
 		outputTransferArea.newElement(event, port);
 	}
 
@@ -281,7 +281,8 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
-		inputStreamSyncArea.newElement(punctuation, port);
+		//inputStreamSyncArea.newElement(punctuation, port);
+		outputTransferArea.sendPunctuation(punctuation, port);
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.pattern.physicaloperator.AllPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.AnyPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.ModalPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.NPatternMatchingPO;
-import de.uniol.inf.is.odysseus.pattern.physicaloperator.PatternMatchingPO;
+import de.uniol.inf.is.odysseus.pattern.physicaloperator.AbstractPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.SubsetSelectionPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.TrendPatternMatchingPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -33,7 +33,7 @@ public class TPatternMatchingAORule extends
 	public void execute(PatternMatchingAO operator,
 			TransformationConfiguration config) throws RuleException {
 		// physischen Operator auswählen
-		PatternMatchingPO pOperator = null;
+		AbstractPatternMatchingPO pOperator = null;
 		switch (operator.getType()) {
 		case ABSENCE:
 			pOperator = new AbsencePatternMatchingPO(operator.getType(),
@@ -42,8 +42,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()));
+					new TIInputStreamSyncArea());
 			break;
 		case ALL:
 			pOperator = new AllPatternMatchingPO(operator.getType(),
@@ -52,8 +51,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getInputPort());
 			break;
 		case ALWAYS:
 			pOperator = new ModalPatternMatchingPO(operator.getType(),
@@ -62,8 +60,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getInputPort());
 			break;
 		case ANY:
 			pOperator = new AnyPatternMatchingPO(operator.getType(),
@@ -72,8 +69,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getInputPort());
 			break;
 		case FIRST_N:
 			pOperator = new NPatternMatchingPO<>(operator.getType(), operator.getTime(),
@@ -81,8 +77,7 @@ public class TPatternMatchingAORule extends
 					operator.getOutputMode(), operator.getEventTypes(),
 					operator.getAssertions(), operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getCountEvents(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getCountEvents(), operator.getInputPort());
 			break;
 		case FUNCTOR:
 			pOperator = new AnyPatternMatchingPO(operator.getType(),
@@ -91,8 +86,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getInputPort());
 			break;
 		case LAST_N:
 			pOperator = new NPatternMatchingPO<>(operator.getType(), operator.getTime(),
@@ -100,8 +94,7 @@ public class TPatternMatchingAORule extends
 					operator.getOutputMode(), operator.getEventTypes(),
 					operator.getAssertions(), operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getCountEvents(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getCountEvents(), operator.getInputPort());
 			break;
 		case RELATIVE_N_HIGHEST:
 			pOperator = new SubsetSelectionPatternMatchingPO(
@@ -110,8 +103,7 @@ public class TPatternMatchingAORule extends
 					operator.getOutputMode(), operator.getEventTypes(),
 					operator.getAssertions(), operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getCountEvents(), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getCountEvents(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case RELATIVE_N_LOWEST:
 			pOperator = new SubsetSelectionPatternMatchingPO(
@@ -120,8 +112,7 @@ public class TPatternMatchingAORule extends
 					operator.getOutputMode(), operator.getEventTypes(),
 					operator.getAssertions(), operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getCountEvents(), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getCountEvents(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case SOMETIMES:
 			pOperator = new ModalPatternMatchingPO(operator.getType(),
@@ -130,8 +121,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getInputPort());
 			break;
 		case DECREASING:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
@@ -140,8 +130,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case INCREASING:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
@@ -150,8 +139,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case NON_DECREASING:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
@@ -160,8 +148,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case NON_INCREASING:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
@@ -170,8 +157,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case STABLE:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
@@ -180,8 +166,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case NON_STABLE:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
@@ -190,8 +175,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getAttribute(), operator.getInputPort());
 			break;
 		case MIXED:
 			pOperator = new TrendPatternMatchingPO(operator.getType(),
@@ -200,8 +184,7 @@ public class TPatternMatchingAORule extends
 					operator.getEventTypes(), operator.getAssertions(),
 					operator.getReturnExpressions(),
 					operator.getInputTypeNames(), operator.getInputSchemas(),
-					new TIInputStreamSyncArea(operator.getSubscribedToSource()
-							.size()), operator.getAttribute(), operator.getInputPort());
+					new TIInputStreamSyncArea(), operator.getAttribute(), operator.getInputPort());
 			break;
 		default:
 			break;

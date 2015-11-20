@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
  *
  * @param <T>
  */
-public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends PatternMatchingPO<T> {
+public abstract class BufferedPatternMatchingPO<T extends ITimeInterval> extends AbstractPatternMatchingPO<T> {
 	
 	/**
 	 * Buffers the relevant events for one interval.

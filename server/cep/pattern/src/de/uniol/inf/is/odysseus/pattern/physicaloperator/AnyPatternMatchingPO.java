@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
  * @author Michael Falk
  * @param <T>
  */
-public class AnyPatternMatchingPO<T extends ITimeInterval> extends PatternMatchingPO<T> {
+public class AnyPatternMatchingPO<T extends ITimeInterval> extends AbstractPatternMatchingPO<T> {
 	
 	public AnyPatternMatchingPO(PatternType type, Integer time, Integer size, TimeUnit timeUnit, PatternOutput outputMode, List<String> eventTypes,
 			List<SDFExpression> assertions, List<SDFExpression> returnExpressions, Map<Integer, String> inputTypeNames, Map<Integer, SDFSchema> inputSchemas,

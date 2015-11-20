@@ -69,8 +69,7 @@ public class TPatternDetectAORule extends AbstractTransformationRule<PatternDete
 		boolean onlyOneMatchPerInstance = cepAO.isOneMatchPerInstance();
 		try {
 			cepPO = new PatternDetectPO(m, cepAO.getSecondStateMachine(), rMap,
-					complexEventFactory, false, new TIInputStreamSyncArea(cepAO
-							.getSubscribedToSource().size()),
+					complexEventFactory, false, new TIInputStreamSyncArea(),
 					new TITransferArea(), onlyOneMatchPerInstance);
 		} catch (Exception e) {
 			e.printStackTrace();

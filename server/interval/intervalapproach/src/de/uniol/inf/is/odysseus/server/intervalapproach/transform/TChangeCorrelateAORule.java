@@ -52,8 +52,7 @@ public class TChangeCorrelateAORule extends
 	@Override
 	public void execute(ChangeCorrelateAO ccAO,
 			TransformationConfiguration transformConfig) throws RuleException {
-		TIInputStreamSyncArea inputStreamSyncArea = new TIInputStreamSyncArea(
-				ccAO.getSubscribedToSource().size());
+		TIInputStreamSyncArea inputStreamSyncArea = new TIInputStreamSyncArea();
 		TITransferArea outputTransferArea = new TITransferArea();
 
 		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry

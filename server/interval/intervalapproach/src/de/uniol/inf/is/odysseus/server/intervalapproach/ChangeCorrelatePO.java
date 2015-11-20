@@ -92,7 +92,7 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 
 	@Override
 	protected void process_next(R object, int port) {
-		inputStreamSyncArea.newElement(object, port);
+		inputStreamSyncArea.transfer(object, port);
 		outputTransferArea.newElement(object, port);
 	}
 
@@ -123,13 +123,13 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		inputStreamSyncArea.init(this);
+		inputStreamSyncArea.init(this, getSubscribedToSource().size());
 		outputTransferArea.init(this, getSubscribedToSource().size());
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		inputStreamSyncArea.newElement(punctuation, port);
+		inputStreamSyncArea.sendPunctuation(punctuation, port);
 	}
 
 	@Override

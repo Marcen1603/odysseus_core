@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISyncArea;
 
 /**
  *	This class can be used to generate time order over different input streams. 
@@ -27,57 +27,16 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
  *
  * @param <T> Elements that will be processed
  */
-public interface IInputStreamSyncArea<T extends IStreamObject<?>> extends IClone {
+public interface IInputStreamSyncArea<T extends IStreamObject<?>> extends ISyncArea<T, T>, IClone {
 	
-	/**
-	 * Adds a new element to the input area and determines if new elements can be generated
-	 * Drops out of order elements.
-	 * @param object the element top add
-	 * @param port the input port of the element
-	 */
-	public void newElement(IStreamable object, int inPort);
-
-//	/**
-//	 * Can be called to state time progress 
-//	 * @param heartbeat all following elements have a new time stamp 
-//	 * @param inPort on this port
-//	 */
-//	public void newHeartbeat(PointInTime heartbeat, int inPort);
-
-	/**
-	 * States the end of processing and leads to sending all elements from 
-	 * the input area to the next operator
-	 */
-	public void done();
-
 	/**
 	 * This method needs to be called before elements are send to the area
 	 * @param sink
 	 */
-	public void init(IProcessInternal<T> sink);
-
-	/** 
-	 * This method can be used to add another port at runtime. Out out time elements
-	 * will be removed and processing interrupted until all input streams are in sync again 
-	 */
-	void addInputPort(int port);	
-
-	/**
-	 * Removed the input port port from processing
-	 * @param pos
-	 */
-	void removeInputPort(int port);
-	
-	public int size();
-
+	public void init(IProcessInternal<T> sink, int inputSize);
 	
 	@Override
 	public IInputStreamSyncArea<T> clone();
-
-	boolean isInOrder();
-
-	void setInOrder(boolean isInOrder);
-	
 
 	
 }

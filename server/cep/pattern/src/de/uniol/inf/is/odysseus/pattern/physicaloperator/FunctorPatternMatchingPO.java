@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
  * @author Michael Falk
  * @param <T>
  */
-public class FunctorPatternMatchingPO<T extends ITimeInterval> extends PatternMatchingPO<T> {
+public class FunctorPatternMatchingPO<T extends ITimeInterval> extends AbstractPatternMatchingPO<T> {
 	
 	// FUNCTOR
 	private String attribute;

@@ -19,8 +19,6 @@ import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
  * Diese Klasse verarbeitet den in einem Operator u.U. notwendigen Heap, der die richtige Sortierung
@@ -29,77 +27,11 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  *
  * @param <R> Datentyp der Elemente, die Verarbeitet werden sollen.
  */
-public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObject<?>> extends IClone, Serializable {
+public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObject<?>> extends ISyncArea<R,W>,IClone, Serializable {
 	
-	/**
-	 * Anhand eines neuen Elementes, welches typischerweise aktuell aus dem
-	 * Eingabedatenstrom des Operators stammen sollte, werden alle Elemente in den
-	 * Ausgabedatenstrom des Operarors geschrieben, fuer die das moeglich ist.
-	 * 
-	 * @param object Das neue Objekt aus dem Eingabedatenstrom des Operators
-	 * @param port Port, auf dem das neue Objekt im Operator angekommen ist
-	 */
-	void newElement(IStreamable object, int inPort);
-
-	/**
-	 * Fuegt ein neues Element in den Heap ein.
-	 * @param object Objekt, das in den Heap eingefuegt werden soll.
-	 */
-	void transfer(W object);
-	void transfer(W object, int toPort);
-	/**
-	 * To avoid packing time stamps into a punctuation, this
-	 * method can be used. It will not create a new punctuation!
-	 * @param heartbeat
-	 * @param inPort
-	 */
-	void newHeartbeat(PointInTime heartbeat, int inPort);
-
-	PointInTime getMinTs(int inPort);
-	
-	/** Wenn eine Punctuation kommt, muss diese auch korrekt verwaltet werden
-	 * 
-	 * @param punctuation
-	 */
-	void sendPunctuation(IPunctuation punctuation);		
-	void sendPunctuation(IPunctuation punctuation, int toPort);
-
-	void done(int port);
-
 	void init(ITransfer<W> sendTo,  int inputPortCount);
 	void setTransfer(ITransfer<W> po);
 
-	
-	void addNewInput(int port);
-	void removeInput(int port);
-
-	
-	int size();
-	PointInTime getWatermark();
-	
-
 	@Override
 	ITransferArea<R,W> clone();
-
-	/**
-	 * Order
-	 */
-	void setInOrder(boolean isInOrder);
-	boolean isInOrder();
-	
-	/**
-	 * Debug
-	 */
-	void dump();
-	
-	long getElementsRead();
-
-	long getElementsWritten();
-
-	long getPunctuationsWritten();
-
-	long getPunctuationsRead();
-
-	long getPunctuationsSuppressed();
-		
 }
