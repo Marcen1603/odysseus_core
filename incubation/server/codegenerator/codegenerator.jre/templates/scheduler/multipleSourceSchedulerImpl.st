@@ -46,11 +46,9 @@ public class MultipleSourceScheduler extends Thread {
 
 	@Override
 	public void run() {
-	long startTime = System.currentTimeMillis();
 		try {
 			interrupt = false;
 			while (!interrupt) {
-				// waitForOpen();
 				updateSources();
 				while (sources.size() > 0) {
 					updateSources();
@@ -65,18 +63,11 @@ public class MultipleSourceScheduler extends Thread {
 				}// while sources.size() > 0
 
 				interrupt = true;
-			} // !interrupt && !isInterrupted() && caller.isRunning()
+			} 
 		} catch (Exception e) {
-			// TODO: Error Handler
 			e.printStackTrace();
 		}
 
-
-		// caller.removeSourceThread(this);
-
-		long endTime = System.currentTimeMillis();
-		long time = endTime-startTime;
-		System.out.println("Zeitmessung:"+time);
 	}
 
 	private void waitForProcessableSources() {
