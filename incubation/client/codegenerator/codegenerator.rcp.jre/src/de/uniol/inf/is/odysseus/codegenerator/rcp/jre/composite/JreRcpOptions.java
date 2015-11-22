@@ -6,8 +6,16 @@ import de.uniol.inf.is.odysseus.codegenerator.rcp.model.AbstractRcpOptionComposi
 import de.uniol.inf.is.odysseus.codegenerator.rcp.registry.IRcpSpecialOption;
 
 
+/**
+ * this class handel the speicalOptions (GUI) for 
+ * the JRE platform
+ * 
+ * @author MarcPreuschaft
+ *
+ */
 public class JreRcpOptions implements IRcpSpecialOption{
 
+	//targetplatform 
 	String targetPlatform = "JRE";
 	
 	@Override
