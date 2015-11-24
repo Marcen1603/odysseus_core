@@ -15,8 +15,8 @@ sim_config = {
 
 And the following code in the scenario setup:
 
-odysseusModel = world.start('ZMQ', step_size=60, duration=END)
-ody = odysseusModel.Socket(host='tcp://*:', port=5558, socket_type='PUB')
+zmqModel = world.start('ZMQ', step_size=60, duration=END)
+zmq = zmqModel.Socket(host='tcp://*:', port=5558, socket_type='PUB')
 
 
 To connect in Odysseus the MosaikAccessAO can be used.
