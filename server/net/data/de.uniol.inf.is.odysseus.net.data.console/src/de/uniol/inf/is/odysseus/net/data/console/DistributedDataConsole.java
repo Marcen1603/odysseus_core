@@ -44,15 +44,21 @@ public class DistributedDataConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("--- Distributed Data Commands ---\n");
+		sb.append("  listDistributedData/ls... <filter>                      - Lists stored data in distributed data container\n");
 		return sb.toString();
 	}
 
 	public void _listDistributedData( CommandInterpreter ci ) {
 		String filter = ci.nextArgument();
 		
+		if( ddContainer == null ) {
+			ci.println("Distributed data container not available");
+			return;
+		}
+		
 		Collection<String> names = ddContainer.getNames();
 		if( names.isEmpty() ) {
-			ci.println("Distributed DataContainer is empty");
+			ci.println("Distributed data container is empty");
 			return;
 		}
 		
