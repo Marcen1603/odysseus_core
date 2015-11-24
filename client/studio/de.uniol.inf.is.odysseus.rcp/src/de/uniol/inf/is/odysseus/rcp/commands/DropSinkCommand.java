@@ -31,7 +31,6 @@
 package de.uniol.inf.is.odysseus.rcp.commands;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
