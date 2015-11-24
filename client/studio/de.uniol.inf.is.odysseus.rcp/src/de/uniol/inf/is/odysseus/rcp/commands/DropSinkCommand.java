@@ -47,6 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -65,9 +66,9 @@ public class DropSinkCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		Logger logger = LoggerFactory.getLogger(DropSinkCommand.class);
-		List<Entry<?, ?>> selections = SelectionProvider.getSelection(event);
-		for (Entry<?, ?> selection : selections) {
-			final String param = selection.getKey().toString();
+		List<SinkInformation> selections = SelectionProvider.getSelection(event);
+		for (SinkInformation selection : selections) {
+			final String param = selection.getName().getResourceName().toString();
 			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if (executor != null) {
 				Job job = new Job("Drop sink") {
