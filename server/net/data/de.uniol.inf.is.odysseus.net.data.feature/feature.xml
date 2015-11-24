@@ -41,4 +41,32 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="de.uniol.inf.is.odysseus.net.data.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.net.data.create"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.net.data.message"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.net.data.server"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
