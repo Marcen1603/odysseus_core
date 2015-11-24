@@ -32,19 +32,21 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
 final public class Latency extends AbstractBaseMetaAttribute implements ILatency {
 
+	private static final String LATENCY = "Latency";
+
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ILatency.class };
 
 	public static final List<SDFMetaSchema> schema = new ArrayList<>(classes.length);
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("Latency", "minlstart",
+		attributes.add(new SDFAttribute(LATENCY, "minlstart",
 				SDFDatatype.LONG));
-		attributes.add(new SDFAttribute("Latency", "maxlstart",
+		attributes.add(new SDFAttribute(LATENCY, "maxlstart",
 				SDFDatatype.LONG));
-		attributes.add(new SDFAttribute("Latency", "lend", SDFDatatype.LONG));
-		attributes.add(new SDFAttribute("Latency", "latency", SDFDatatype.LONG));
-		schema.add(SDFSchemaFactory.createNewMetaSchema("Latency", Tuple.class,
+		attributes.add(new SDFAttribute(LATENCY, "lend", SDFDatatype.LONG));
+		attributes.add(new SDFAttribute(LATENCY, "latency", SDFDatatype.LONG));
+		schema.add(SDFSchemaFactory.createNewMetaSchema(LATENCY, Tuple.class,
 				attributes, ILatency.class));
 	}
 
@@ -198,6 +200,6 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 
 	@Override
 	public String getName() {
-		return "Latency";
+		return LATENCY;
 	}
 }
