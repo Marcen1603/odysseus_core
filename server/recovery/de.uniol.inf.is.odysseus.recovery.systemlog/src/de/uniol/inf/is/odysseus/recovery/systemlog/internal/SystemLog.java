@@ -56,7 +56,7 @@ public class SystemLog implements ISystemLog {
 	 *             if any error occurs.
 	 */
 	public static void loadSystemLogFile() throws Exception {
-		cLog.debug("Start loading system log from file...");
+		cLog.trace("Start loading system log from file...");
 
 		// Get the log file
 		File logFile = new File(SystemLogController.getSystemLogFile());
@@ -66,7 +66,7 @@ public class SystemLog implements ISystemLog {
 			if (dir == null || !logFile.createNewFile()) {
 				throw new IOException("Could not create file: " + SystemLogController.getSystemLogFile());
 			}
-			cLog.debug("Created system log file '{}'.", SystemLogController.getSystemLogFile());
+			cLog.trace("Created system log file '{}'.", SystemLogController.getSystemLogFile());
 			return;
 		}
 		// Read out file entry
@@ -95,7 +95,7 @@ public class SystemLog implements ISystemLog {
 					cEntries.add(entry);
 				}
 				// Information can be too long for log entry -> deadlock
-				cLog.debug("Loaded system log entry '{}' at '{}'", entry.getTag(), new Long(entry.getTimeStamp()));
+				cLog.trace("Loaded system log entry '{}' at '{}'", entry.getTag(), new Long(entry.getTimeStamp()));
 			}
 		} catch (Exception e) {
 			throw e;
@@ -110,7 +110,7 @@ public class SystemLog implements ISystemLog {
 			}
 		}
 		cLogLoaded = true;
-		cLog.debug("Finished loading system log from file.");
+		cLog.trace("Finished loading system log from file.");
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class SystemLog implements ISystemLog {
 			writer.append(entry.toString());
 			writer.newLine();
 			writer.flush();
-			cLog.debug("Wrote system log entry '{}, {}'", entry.getTag(), new Long(entry.getTimeStamp()));
+			cLog.trace("Wrote system log entry '{}, {}'", entry.getTag(), new Long(entry.getTimeStamp()));
 		} catch (IOException e) {
 			cLog.error("Could not write into system log file!", e);
 			return false;
@@ -257,7 +257,7 @@ public class SystemLog implements ISystemLog {
 						new FileWriter(new File(SystemLogController.getSystemLogFile()), false))) {
 					writer.write("");
 					writer.close();
-					cLog.debug("Cleared the system log file.");
+					cLog.trace("Cleared the system log file.");
 				} catch (IOException e) {
 					cLog.error("Could not write into system log file!", e);
 				}
@@ -266,7 +266,7 @@ public class SystemLog implements ISystemLog {
 
 			while (cEntries.get(indexOfOldestEntryToKeep).getTimeStamp() < before
 					&& indexOfOldestEntryToKeep < cEntries.size() - 1) {
-				cLog.debug("Entry to be deleted: ", cEntries.get(indexOfOldestEntryToKeep++));
+				cLog.trace("Entry to be deleted: ", cEntries.get(indexOfOldestEntryToKeep++));
 			}
 			if (indexOfOldestEntryToKeep == 0) {
 				return;
