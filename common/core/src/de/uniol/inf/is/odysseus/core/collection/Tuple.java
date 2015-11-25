@@ -383,7 +383,9 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			newAttrs = new Object[attrList.length];
 
 			for (int i = 0; i < attrList.length; i++) {
-				newAttrs[i] = this.attributes[attrList[i]];
+				if (attrList[i]>=0){
+					newAttrs[i] = this.attributes[attrList[i]];
+				}
 			}
 		}
 		return restrictCreation(createNew, newAttrs);
