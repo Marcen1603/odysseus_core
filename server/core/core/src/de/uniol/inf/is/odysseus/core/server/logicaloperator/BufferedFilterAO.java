@@ -20,8 +20,10 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
@@ -38,8 +40,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 public class BufferedFilterAO extends BinaryLogicalOp implements IHasPredicate{
 
 	private static final long serialVersionUID = 5312945034141719894L;
-	private long bufferTime;
-	private long deliverTime;
+	private TimeValueItem bufferTime;
+	private TimeValueItem deliverTime;
 		
 	private IPredicate<?> predicate;
 
@@ -72,21 +74,21 @@ public class BufferedFilterAO extends BinaryLogicalOp implements IHasPredicate{
 		return predicate;
 	}
 
-	public long getBufferTime() {
+	public TimeValueItem getBufferTime() {
 		return bufferTime;
 	}
 
-	@Parameter(type=LongParameter.class, name = "BUFFERTIME")
-	public void setBufferTime(long bufferTime) {
+	@Parameter(type=TimeParameter.class, name = "BUFFERTIME")
+	public void setBufferTime(TimeValueItem bufferTime) {
 		this.bufferTime = bufferTime;
 	}
 
-	public long getDeliverTime() {
+	public TimeValueItem getDeliverTime() {
 		return deliverTime;
 	}
 
-	@Parameter(type=LongParameter.class, name = "DELIVERTIME")
-	public void setDeliverTime(long deliverTime) {
+	@Parameter(type=TimeParameter.class, name = "DELIVERTIME")
+	public void setDeliverTime(TimeValueItem deliverTime) {
 		this.deliverTime = deliverTime;
 	}
 	

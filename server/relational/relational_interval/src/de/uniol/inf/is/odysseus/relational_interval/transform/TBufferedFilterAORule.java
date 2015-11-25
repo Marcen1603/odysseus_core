@@ -53,7 +53,7 @@ public class TBufferedFilterAORule extends
 //
 		BufferedFilterPO po = new BufferedFilterPO(operator.getPredicate(),
 				operator.getBufferTime(), operator.getDeliverTime(), dataMerge,
-				metaDataMerge);
+				metaDataMerge, operator.getBaseTimeUnit());
 		defaultExecute(operator, po, config, true, true);
 	}
 

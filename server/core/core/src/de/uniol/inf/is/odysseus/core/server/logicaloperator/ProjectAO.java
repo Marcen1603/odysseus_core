@@ -57,7 +57,8 @@ public class ProjectAO extends UnaryLogicalOp {
 	}
 
 	public int[] determineRestrictList() {
-		return SDFSchema.calcRestrictList(this.getInputSchema(), this.getOutputSchema());
+		int[] ret = SDFSchema.calcRestrictList(this.getInputSchema(), this.getOutputSchema());
+		return ret;
 	}
 
 	// Must be another name than setOutputSchema, else this method is not found!

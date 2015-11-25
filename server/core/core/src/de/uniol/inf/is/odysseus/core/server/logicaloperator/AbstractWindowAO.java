@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,8 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -40,7 +37,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 
 	private TimeValueItem windowSize = null;
 	private TimeValueItem windowAdvance = null;
-	private TimeUnit baseTimeUnit = null;
 
 	// For predicate based windows
 	private IPredicate<?> startCondition;
@@ -73,7 +69,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 			this.endCondition = windowPO.endCondition.clone();
 		}
 		this.sameStarttime = windowPO.sameStarttime;
-		this.baseTimeUnit = windowPO.baseTimeUnit;
 	}
 
 	public AbstractWindowAO() {
@@ -98,43 +93,6 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 
 	public void setWindowType(WindowType windowType) {
 		this.windowType = windowType;
-	}
-
-	public TimeUnit getBaseTimeUnit() {
-		if (baseTimeUnit == null) {
-			baseTimeUnit = TimeUnit.MILLISECONDS;
-
-			SDFConstraint c = getInputSchema().getConstraint(
-					SDFConstraint.BASE_TIME_UNIT);
-			if (c != null) {
-				baseTimeUnit = (TimeUnit) c.getValue();
-			} else {
-
-				// Find input schema attribute with type start timestamp
-				// It provides the correct base unit
-				// if not given use MILLISECONDS as default
-				Collection<SDFAttribute> attrs = getInputSchema()
-						.getSDFDatatypeAttributes(SDFDatatype.START_TIMESTAMP);
-				if (attrs.isEmpty()) {
-					attrs = getInputSchema().getSDFDatatypeAttributes(
-							SDFDatatype.START_TIMESTAMP_STRING);
-				}
-				if (attrs.size() > 0) {
-					SDFAttribute attr = attrs.iterator().next();
-					SDFConstraint constr = attr
-							.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
-					if (constr != null) {
-						baseTimeUnit = (TimeUnit) constr.getValue();
-					}
-				}
-			}
-
-		}
-		return baseTimeUnit;
-	}
-
-	public void setBaseTimeUnit(TimeUnit baseTimeUnit) {
-		this.baseTimeUnit = baseTimeUnit;
 	}
 
 	public List<String> getWindowTypes() {

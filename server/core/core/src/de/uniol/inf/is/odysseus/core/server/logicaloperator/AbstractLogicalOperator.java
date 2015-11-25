@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Maps;
 
@@ -44,6 +45,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -83,6 +87,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 //	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
+	private TimeUnit baseTimeUnit = null;
 	private IMetaAttribute metaattribute = null;
 	
 	
@@ -99,6 +104,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.destinationName = op.destinationName;
 		this.debug = op.debug;
 		this.suppressPunctuation = op.suppressPunctuation;
+		this.baseTimeUnit = op.baseTimeUnit;
 	}
 
 	public AbstractLogicalOperator() {
@@ -203,6 +209,47 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	final public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(0, outputSchema);
 	}
+	
+	public TimeUnit getBaseTimeUnit() {
+		if (baseTimeUnit == null) {
+			determineBaseTimeUnit();
+		}
+		return baseTimeUnit;
+	}
+
+	public void determineBaseTimeUnit() {
+		baseTimeUnit = TimeUnit.MILLISECONDS;
+
+		SDFConstraint c = getInputSchema(0).getConstraint(
+				SDFConstraint.BASE_TIME_UNIT);
+		if (c != null) {
+			baseTimeUnit = (TimeUnit) c.getValue();
+		} else {
+
+			// Find input schema attribute with type start timestamp
+			// It provides the correct base unit
+			// if not given use MILLISECONDS as default
+			Collection<SDFAttribute> attrs = getInputSchema(0)
+					.getSDFDatatypeAttributes(SDFDatatype.START_TIMESTAMP);
+			if (attrs.isEmpty()) {
+				attrs = getInputSchema(0).getSDFDatatypeAttributes(
+						SDFDatatype.START_TIMESTAMP_STRING);
+			}
+			if (attrs.size() > 0) {
+				SDFAttribute attr = attrs.iterator().next();
+				SDFConstraint constr = attr
+						.getDtConstraint(SDFConstraint.BASE_TIME_UNIT);
+				if (constr != null) {
+					baseTimeUnit = (TimeUnit) constr.getValue();
+				}
+			}
+		}
+	}
+	
+	public void setBaseTimeUnit(TimeUnit baseTimeUnit) {
+		this.baseTimeUnit = baseTimeUnit;
+	}
+
 
 	/*
 	 * (non-Javadoc)

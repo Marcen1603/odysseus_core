@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
@@ -26,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 
@@ -38,28 +40,22 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 	private final long bufferTime;
 	private final long deliverTime;
 	private PointInTime deliverUntil = null;
-
+	
 	final IDataMergeFunction<R, K> dataMerge;
 	final IMetadataMergeFunction<K> metadataMerge;
 
 	private R trigger = null;
 
-	public BufferedFilterPO(IPredicate<? super R> predicate, long bufferTime, long deliverTime, IDataMergeFunction<R, K> dataMerge, IMetadataMergeFunction<K> metadataMerge) {
+	public BufferedFilterPO(IPredicate<? super R> predicate, TimeValueItem bufferTime, TimeValueItem deliverTime, IDataMergeFunction<R, K> dataMerge, IMetadataMergeFunction<K> metadataMerge, TimeUnit baseTimeUnit) {
 		super();
 		this.predicate = predicate.clone();
-		this.bufferTime = bufferTime;
-		this.deliverTime = deliverTime;
+		if (baseTimeUnit == null){
+			baseTimeUnit = TimeUnit.MILLISECONDS;
+		}
+		this.bufferTime = baseTimeUnit.convert(bufferTime.getTime(), bufferTime.getUnit());
+		this.deliverTime = baseTimeUnit.convert(deliverTime.getTime(), deliverTime.getUnit());
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
-	}
-
-	public BufferedFilterPO(BufferedFilterPO<K, R> pipe) {
-		super(pipe);
-		this.predicate = pipe.predicate.clone();
-		this.bufferTime = pipe.bufferTime;
-		this.deliverTime = pipe.deliverTime;
-		this.dataMerge = pipe.dataMerge.clone();
-		this.metadataMerge = pipe.metadataMerge.clone();
 	}
 
 	@Override
@@ -98,7 +94,8 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		produceData(punctuation.getTime());
-		sendPunctuation(punctuation);
+		// TODO: Use Transfer Area to allow sending of punctuations
+		// sendPunctuation(punctuation);
 	}
 
 	private void produceData(PointInTime timestamp) {

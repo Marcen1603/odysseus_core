@@ -35,9 +35,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
- * Klasse repraesentiert ein Tupel im relationalen Modell und dient als
- * Austauschobjekt der relationalen Planoperatoren Kann mit Hilfe einer Oracle
- * Loader Zeile initialisiert werden
+ * This class represents a tuple, i.e. a collection of objects of different types that can be accessed
+ * via positions
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
@@ -55,7 +54,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private boolean valueChanged = true;
 
 	private boolean requiresDeepClone;
-   /// private Cloner cloner;
 
     private static List<Class<?>> immutables = new ArrayList<>();
     static {
@@ -69,7 +67,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
         immutables.add(Byte.class);
         immutables.add(Short.class);
     }
-    // private Cloner cloner;
 
 	/**
 	 * Allows subclasses to call the implicit super constructor. To not allow
@@ -77,7 +74,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 */
 	protected Tuple() {
 		requiresDeepClone = false;
-	///	cloner = null;
 	}
 
 	/**
@@ -92,11 +88,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public Tuple(int attributeCount, boolean requiresDeepClone) {
 		this.attributes = new Object[attributeCount];
 		this.requiresDeepClone = requiresDeepClone;
-		//if (this.requiresDeepClone) {
-			//this.cloner = new Cloner();
-		//} else {
-			//this.cloner = null;
-		//}
 	}
 
 	public Tuple(Tuple<T> copy) {
@@ -115,11 +106,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
-		//if (this.requiresDeepClone) {
-			//this.cloner = new Cloner();
-		//} else {
-			//this.cloner = null;
-		//}
 		if (newAttributes != null) {
 			this.attributes = newAttributes;
 		} else {
@@ -145,11 +131,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	protected Tuple(Tuple<T> copy, boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
-		//if (this.requiresDeepClone) {
-			//this.cloner = new Cloner();
-		//} else {
-			//this.cloner = null;
-		//}
 		this.valueChanged = copy.valueChanged;
 		this.containsNull = copy.containsNull;
 	}
@@ -166,12 +147,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public Tuple(Object[] attributes, boolean requiresDeepClone) {
 		this.attributes = attributes.clone();
 		this.requiresDeepClone = requiresDeepClone;
-		// calcSize();
-		//if (this.requiresDeepClone) {
-			//this.cloner = new Cloner();
-		//} else {
-			//this.cloner = null;
-		//}
 	}
 
 	/**
@@ -187,12 +162,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.attributes = new Object[1];
 		attributes[0] = attribute;
 		this.requiresDeepClone = requiresDeepClone;
-		// calcSize();
-		//if (this.requiresDeepClone) {
-			//this.cloner = new Cloner();
-		//} else {
-			//this.cloner = null;
-		//}
 	}
 
 	// -----------------------------------------------------------------
@@ -301,8 +270,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
                 }
                 catch (Throwable t) {
                    LOG.error(String.format("Instance of %s does not implement IClone interface", element.getClass()));
-//                    Cloner cloner = new Cloner();
-//                    clone.add(cloner.deepClone(element));
                 }
             }
         }
@@ -335,23 +302,10 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	}
 
 	public final void setAttribute(int pos, Object value) {
-		// if( this.attributes[pos] != null ) {
-		// if( !this.attributes[pos].getClass().equals(value.getClass()))
-		// throw new
-		// IllegalArgumentException("Typ eines Attributes änderte sich! Von " +
-		// this.attributes[pos].getClass().getName() + " zu " +
-		// value.getClass().getName() );
-		// }
 		this.attributes[pos] = value;
 		this.valueChanged = true;
-		// calcSize();
 	}
 
-	// Temp commented out ... who needs this??
-//	public final void setAttribute(int pos, CharBuffer value) {
-//		String stringValue = new String(value.array(), 0, value.position());
-//		setAttribute(pos, stringValue);
-//	}
 
 	public final int size() {
 		return this.attributes.length;
@@ -475,17 +429,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return this;
 	}
 
-	// /**
-	// * Sets the attribute values of this tuple to the specified values in
-	// * attributes.
-	// *
-	// * @param attributes
-	// * The new attribute values for this tuple.
-	// */
-	// public void setAttributes(Object[] attributes) {
-	// this.attributes = attributes;
-	// this.valueChanged = true;
-	// }
 
 	public Object[] getAttributes() {
 		return attributes;
@@ -505,12 +448,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	public void setRequiresDeepClone(boolean requiresDeepClone) {
 		this.requiresDeepClone = requiresDeepClone;
-        //if (this.requiresDeepClone) {
-            //this.cloner = new Cloner();
-        //}
-        //else {
-            //this.cloner = null;
-        //}
 	}
 
 	public boolean requiresDeepClone() {

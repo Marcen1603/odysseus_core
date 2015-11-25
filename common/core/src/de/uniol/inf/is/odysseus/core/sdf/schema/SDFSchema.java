@@ -644,8 +644,13 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 				throw new IllegalArgumentException("no such attribute: "
 						+ outAttribute);
 			}
-
-			ret[i++] = in.indexOf(foundAttribute);
+			
+			int indexOf = in.indexOf(foundAttribute);
+			if (indexOf == -1){
+				throw new IllegalArgumentException("attribute: "
+						+ outAttribute+ " cannot be used here!");				
+			}
+			ret[i++] = indexOf;
 		}
 		return ret;
 	}
