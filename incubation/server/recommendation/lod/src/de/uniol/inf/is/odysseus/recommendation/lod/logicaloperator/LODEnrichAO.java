@@ -22,7 +22,7 @@ public class LODEnrichAO extends UnaryLogicalOp {
 	private String attribute = null;
 	private String predicate = null;
 	private String title = null;
-//	private String type = null;
+	private String type = "XML";
 	private NamedExpression url = null;
 
 	/**
@@ -40,7 +40,7 @@ public class LODEnrichAO extends UnaryLogicalOp {
 		attribute = operator.getAttribute();
 		predicate = operator.getPredicate();
 		title = operator.getTitle();
-//		type = operator.getType();
+		type = operator.getType();
 		url = operator.getURL();
 	}
 	
@@ -91,14 +91,14 @@ public class LODEnrichAO extends UnaryLogicalOp {
 	    this.title = title;
 	}
 
-//	/**
-//	 * Defines the type of the source (currently only XML).
-//	 * @param type The source type.
-//	 */
-//	@Parameter(type = StringParameter.class, name = "type", optional = false, doc = "The type of the source (currently only XML).")
-//	public void setType(String type) {
-//	    this.type = type;
-//	}
+	/**
+	 * Defines the type of the source (currently only XML).
+	 * @param type The source type.
+	 */
+	@Parameter(type = StringParameter.class, name = "type", optional = true, doc = "The type of the source (currently only XML).")
+	public void setType(String type) {
+	    this.type = type;
+	}
 
 	/**
 	 * Defines the attribute name, in which the URL is stored.
@@ -121,9 +121,8 @@ public class LODEnrichAO extends UnaryLogicalOp {
 		return title;
 	}
 
-	//TODO: allow other types such as JSON, N3, ...
 	public String getType() {
-		return "XML";
+		return type;
 	}
 
 	public NamedExpression getURL() {

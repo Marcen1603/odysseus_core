@@ -5,17 +5,20 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -28,7 +31,9 @@ public class LODEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>
 	private String attribute = null;
 	private String predicate = null;
 	private String type = null;
-	private NamedExpression urlExpression = null;
+	private NamedExpression urlExpression;
+	
+	private int attributeIndex;
 	
 	public LODEnrichPO(NamedExpression urlExpression, String type, String predicate, String attribute) {
 		super();
@@ -36,9 +41,8 @@ public class LODEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>
 		this.predicate = predicate;
 		this.type = type;
 		this.urlExpression = urlExpression;
-		
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 	    return OutputMode.NEW_ELEMENT;
@@ -50,26 +54,47 @@ public class LODEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>
 	}
 
 	@Override
-	protected void process_next(Tuple<T> tuple, int port) {
-		int attributeIndex = getInputSchema(port).findAttributeIndex(urlExpression.expression.getExpressionString());
-		URL url = null;
-		try {
-			url = new URL(tuple.getAttributes()[attributeIndex].toString());
-		} catch (MalformedURLException e) {
-			tuple = tuple.append("<Error>", true);//TODO: better error handling
-			transfer(tuple, port);
-			return;
+	public boolean process_isSemanticallyEqual(IPhysicalOperator operator) {
+		if(operator == null || !(operator instanceof LODEnrichPO)) return false;
+		
+		@SuppressWarnings("rawtypes")
+		LODEnrichPO enrichOperator = (LODEnrichPO)operator;
+		if(this.hasSameSources(enrichOperator)
+		&& this.attribute.equals(enrichOperator.attribute)
+		&& this.predicate.equals(enrichOperator.predicate)
+		&& this.type.equals(enrichOperator.type)
+		&& this.urlExpression.equals(enrichOperator.urlExpression)) {
+			return true;
 		}
 
-		if(type.toLowerCase().equals("xml")) {
-			processXML(tuple, url, port);
-		} else {
+		return true;
+	}
+	
+	@Override
+	protected void process_open() {
+		super.process_open();
+		attributeIndex = getInputSchema(0).findAttributeIndex(urlExpression.expression.getExpressionString());
+	}
+
+	@Override
+	protected void process_next(Tuple<T> tuple, int port) {
+		try {
+			URL url = new URL(tuple.getAttributes()[attributeIndex].toString());
+			if(type.toLowerCase().equals("xml")) {
+				processXML(tuple, url, port);
+			} else {
+				tuple = tuple.append("<Error>", true);//TODO: better error handling
+				transfer(tuple, port);
+			}
+		} catch (MalformedURLException e) {
 			tuple = tuple.append("<Error>", true);//TODO: better error handling
 			transfer(tuple, port);
 		}
 	}
 
 	private void processXML(Tuple<T> tuple, URL url, int port) {
+		HashSet<String> attributes = new HashSet<String>();
+		
 		try {
 			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod("GET");
@@ -81,38 +106,17 @@ public class LODEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>
 			
 			NodeList tags = document.getDocumentElement().getElementsByTagName(predicate);
 			
-			
-			
-			
-			
-			//FIXME: from here on the code is just for testing some stuff and should be rewritten
-			if(tags.getLength() > 0) {
-				
-				String test = "";
-				
-				if(attribute != null) {
-					test = "" + tags.item(0).getAttributes().getNamedItem(attribute).getNodeValue();//FIXME: NullPointer
-				} else {
-					test = "no attribute specified";//FIXME
+			for(int i = 0; i < tags.getLength(); i++) {
+				Node node = tags.item(i).getAttributes().getNamedItem(attribute);
+				if(node != null) {
+					attributes.add(node.getNodeValue());
 				}
-				
-				
-				tuple = tuple.append(test, true);
-				transfer(tuple, port);
-				
-				
 			}
-			//FIXME: end of testing-stuff 
-			
-		
-		
-			
-			
-			tuple = tuple.append("null", true);
-			transfer(tuple, port);
 		} catch (IOException | ParserConfigurationException | SAXException e) {
-			tuple = tuple.append("<Error>", true);//TODO: better error handling
-			transfer(tuple, port);
+			//TODO: better error handling
 		}
+		
+		tuple = tuple.append(attributes, true);
+		transfer(tuple, port);
 	}
 }
