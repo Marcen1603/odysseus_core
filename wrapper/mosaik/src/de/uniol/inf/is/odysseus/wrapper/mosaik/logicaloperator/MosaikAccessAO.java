@@ -100,7 +100,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 				options.put("subscriptionfilter", "");
 			}
 			if(!options.containsKey("basetimeunit")) {
-				options.put("basetimeunit", "seconds");
+				options.put("basetimeunit", "SECONDS");
 			}
 		}
 		if(!options.containsKey("byteorder")) {
