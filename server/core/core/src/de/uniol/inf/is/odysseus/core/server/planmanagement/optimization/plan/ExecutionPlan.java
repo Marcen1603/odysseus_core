@@ -84,25 +84,18 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	public ExecutionPlan() {
 		leafSources = new ArrayList<IIterableSource<?>>();
-		queries = Collections
-				.synchronizedMap(new HashMap<Integer, IPhysicalQuery>());
-		namedQueries = Collections
-				.synchronizedMap(new HashMap<String, IPhysicalQuery>());
+		queries = Collections.synchronizedMap(new HashMap<Integer, IPhysicalQuery>());
+		namedQueries = Collections.synchronizedMap(new HashMap<String, IPhysicalQuery>());
 	}
 
 	private ExecutionPlan(ExecutionPlan otherPlan) {
 		this.open = otherPlan.open;
-		this.leafSources = new ArrayList<IIterableSource<?>>(
-				otherPlan.leafSources);
+		this.leafSources = new ArrayList<IIterableSource<?>>(otherPlan.leafSources);
 		if (otherPlan.roots != null) {
 			this.roots = new HashSet<IPhysicalOperator>(otherPlan.roots);
 		}
-		this.queries = Collections
-				.synchronizedMap(new HashMap<Integer, IPhysicalQuery>(
-						otherPlan.queries));
-		this.namedQueries = Collections
-				.synchronizedMap(new HashMap<String, IPhysicalQuery>(
-						otherPlan.namedQueries));
+		this.queries = Collections.synchronizedMap(new HashMap<Integer, IPhysicalQuery>(otherPlan.queries));
+		this.namedQueries = Collections.synchronizedMap(new HashMap<String, IPhysicalQuery>(otherPlan.namedQueries));
 		this.reoptimizeListener.addAll(otherPlan.reoptimizeListener);
 		this.reoptimizeRule.addAll(otherPlan.reoptimizeRule);
 	}
@@ -118,7 +111,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	public List<IIterableSource<?>> getLeafSources() {
 		return Collections.unmodifiableList(this.leafSources);
 	}
-	
+
 	@Override
 	public boolean isEmpty() {
 		return this.queries == null || this.queries.size() == 0;
@@ -183,14 +176,15 @@ public class ExecutionPlan implements IExecutionPlan {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan#removeQuery
-	 * (int)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan#
+	 * removeQuery (int)
 	 */
 	@Override
 	public synchronized IPhysicalQuery removeQuery(int queryID) {
 		IPhysicalQuery removed = this.queries.remove(queryID);
-		namedQueries.remove(removed.getName());
+		if (removed != null) {
+			namedQueries.remove(removed.getName());
+		}
 		updateLeafSources();
 		return removed;
 	}
@@ -246,8 +240,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * addReoptimizeListener(java.lang.Object)
 	 */
 	@Override
-	public void addReoptimizeListener(
-			IPlanReoptimizeListener reoptimizationListener) {
+	public void addReoptimizeListener(IPlanReoptimizeListener reoptimizationListener) {
 		synchronized (this.reoptimizeListener) {
 			if (!this.reoptimizeListener.contains(reoptimizationListener)) {
 				this.reoptimizeListener.add(reoptimizationListener);
@@ -263,8 +256,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * removeReoptimizeListener(java.lang.Object)
 	 */
 	@Override
-	public void removeReoptimizeListener(
-			IPlanReoptimizeListener reoptimizationListener) {
+	public void removeReoptimizeListener(IPlanReoptimizeListener reoptimizationListener) {
 		synchronized (this.reoptimizeListener) {
 			this.reoptimizeListener.remove(reoptimizationListener);
 		}
