@@ -32,6 +32,8 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 	Logger logger = LoggerFactory.getLogger(TimeStampOrderValidatorTIPO.class);
 	
 	PointInTime lastTimestamp = null;
+	T lastObject = null;
+	T currObject = null;
 
 	public TimeStampOrderValidatorTIPO(
 			TimeStampOrderValidatorTIPO<K, T> timeStampOrderValidator) {
@@ -63,8 +65,10 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 
 	@Override
 	protected void process_next(T object, int port) {
+		currObject = object;
 		if (validate(object.getMetadata(), port)) {
 			transfer(object);
+			lastObject = currObject;
 		}else{
 			transfer(object,Integer.MAX_VALUE);
 		}
@@ -78,10 +82,10 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		if (lastTimestamp != null) {
 			if (timestamp.before(lastTimestamp)) {
 				if (debug) {
-					System.err.println("Wrong timestamp order " + timestamp
+					logger.warn("Wrong timestamp order " + timestamp
 							+ " after " + lastTimestamp
 							+ " from previous operator: "
-							+ this.getSubscribedToSource(port).toString());
+							+ this.getSubscribedToSource(port).toString()+"\nlast Object = "+lastObject+"\ncurrent Object="+currObject);
 				}
 				return false;
 			}
