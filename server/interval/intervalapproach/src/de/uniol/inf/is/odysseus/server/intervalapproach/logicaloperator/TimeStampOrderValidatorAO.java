@@ -18,17 +18,30 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TimeStampOrderValidate", doc="Assure that all elements are ordered by start timestamp and eliminate out of order elements.", category = {LogicalOperatorCategory.PROCESSING})
 public class TimeStampOrderValidatorAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9204585315520513917L;
-	
+	private int debugMode;
+
 	public TimeStampOrderValidatorAO(){}
 	
 	public TimeStampOrderValidatorAO(
 			TimeStampOrderValidatorAO timeStampOrderValidatorAO) {
 		super(timeStampOrderValidatorAO);
+		this.debugMode = timeStampOrderValidatorAO.debugMode;
+	}
+	
+	@Parameter(optional = true, type = IntegerParameter.class, doc ="Set output mode: 0 = minimal, 1 = medium, 2 = maximum")
+	public void setDebugMode(int debugMode) {
+		this.debugMode = debugMode;
+	}
+	
+	public int getDebugMode() {
+		return debugMode;
 	}
 
 	@Override

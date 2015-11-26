@@ -30,25 +30,25 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		extends AbstractPipe<T, T> {
 
 	Logger logger = LoggerFactory.getLogger(TimeStampOrderValidatorTIPO.class);
-	
+
 	PointInTime lastTimestamp = null;
 	T lastObject = null;
 	T currObject = null;
+	int debugMode = 0;
+	boolean suppressMode = false;
 
-	public TimeStampOrderValidatorTIPO(
-			TimeStampOrderValidatorTIPO<K, T> timeStampOrderValidator) {
-		super(timeStampOrderValidator);
-		this.lastTimestamp = timeStampOrderValidator.lastTimestamp;
-	}
+	private int suppressed;
 
-	public TimeStampOrderValidatorTIPO() {
+	public TimeStampOrderValidatorTIPO(boolean debug, int debugMode) {
+		setDebug(debug);
+		this.debugMode = debugMode;
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (validate(punctuation.getTime(), port)){
+		if (validate(punctuation.getTime(), port)) {
 			sendPunctuation(punctuation);
-		}else{
+		} else {
 			sendPunctuation(punctuation, Integer.MAX_VALUE);
 		}
 	}
@@ -69,8 +69,8 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		if (validate(object.getMetadata(), port)) {
 			transfer(object);
 			lastObject = currObject;
-		}else{
-			transfer(object,Integer.MAX_VALUE);
+		} else {
+			transfer(object, Integer.MAX_VALUE);
 		}
 	}
 
@@ -82,18 +82,38 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		if (lastTimestamp != null) {
 			if (timestamp.before(lastTimestamp)) {
 				if (debug) {
-					logger.warn("Wrong timestamp order " + timestamp
-							+ " after " + lastTimestamp
-							+ " from previous operator: "
-							+ this.getSubscribedToSource(port).toString()+"\nlast Object = "+lastObject+"\ncurrent Object="+currObject);
+					switch (debugMode) {
+					case 0:
+						if (!suppressMode){
+							logger.warn("Wrong timestamp order " + timestamp + " after " + lastTimestamp);
+						}
+						break;
+					case 1:
+						logger.warn("Wrong timestamp order " + timestamp + " after " + lastTimestamp);
+						break;
+					case 2:
+						logger.warn("Wrong timestamp order " + timestamp + " after " + lastTimestamp
+								+ " from previous operator: " + this.getSubscribedToSource(port).toString()
+								+ "\nlast Object = " + lastObject + "\ncurrent Object=" + currObject);
+						break;
+					default:
+
+					}
 				}
+				suppressMode = true;
+				suppressed++;
 				return false;
+			}else{
+				if (suppressMode && debug){
+					logger.info("In Order again: "+timestamp+" after "+lastTimestamp+" suppressed "+suppressed);
+				}
+				suppressMode = false;
+				suppressed = 0;
 			}
 		}
 		lastTimestamp = timestamp.clone();
 		return true;
 	}
-
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {

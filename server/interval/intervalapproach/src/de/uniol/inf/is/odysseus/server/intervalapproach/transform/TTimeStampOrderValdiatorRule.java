@@ -30,8 +30,8 @@ public class TTimeStampOrderValdiatorRule extends
 	@Override
 	public void execute(TimeStampOrderValidatorAO operator,
 			TransformationConfiguration config) throws RuleException {
-		TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>>();
-		po.setDebug(operator.isDebug());
+		TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = 
+				new TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(operator.isDebug(), operator.getDebugMode());
 		defaultExecute(operator, po, config, true, true);
 	}
 
