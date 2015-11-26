@@ -45,13 +45,13 @@ public class TimeStampHelper {
 			RelationalTimestampAttributeTimeIntervalMFactory fac) {
 		if (fac.getStartAttrPos() != -1) {
 			return new RelationalTimestampAttributeTimeIntervalMFactory(fac.getStartAttrPos(), fac.getEndAttrPos(),
-					fac.isClearEnd(), fac.getDateFormat(), fac.getTimezone().getID(), fac.getLocale(), fac.getFactor(),
+					fac.isClearEnd(), fac.getDateFormat(), fac.getTimezone().getId(), fac.getLocale(), fac.getFactor(),
 					fac.getOffset());
 		}
 		return new RelationalTimestampAttributeTimeIntervalMFactory(fac.getStartTimestampYearPos(),
 				fac.getStartTimestampMonthPos(), fac.getStartTimestampDayPos(), fac.getStartTimestampHourPos(),
 				fac.getStartTimestampMinutePos(), fac.getStartTimestampSecondPos(),
-				fac.getStartTimestampMillisecondPos(), fac.getFactor(), fac.isClearEnd(), fac.getTimezone().getID());
+				fac.getStartTimestampMillisecondPos(), fac.getFactor(), fac.isClearEnd(), fac.getTimezone().getId());
 	}
 
 	public static IMetadataUpdater<?, ?> createInitializer(MetadataUpdatePO<?, ?> operator) {
