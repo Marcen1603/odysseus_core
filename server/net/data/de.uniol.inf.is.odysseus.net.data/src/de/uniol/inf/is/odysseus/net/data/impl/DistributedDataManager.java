@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
+import de.uniol.inf.is.odysseus.net.data.impl.container.DistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.create.LocalDistributedDataCreator;
 
 public class DistributedDataManager extends OdysseusNetComponentAdapter implements IDistributedDataManager {
@@ -28,6 +29,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	
 	@Override
 	public void start() throws OdysseusNetException {
+		container = new DistributedDataContainer();
 		creator = new LocalDistributedDataCreator(container, localNode);
 	}
 	
