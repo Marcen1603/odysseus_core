@@ -16,11 +16,11 @@
 package de.uniol.inf.is.odysseus.relational_interval;
 
 import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -36,7 +36,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	// Time is given in base format
 	final private int startAttrPos;
 	final private int endAttrPos;
-	final private SimpleDateFormat df;
+	final private DateTimeFormatter df;
 	final private String df_string;
 	final private Locale loc;
 
@@ -52,7 +52,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private long offset;
 
 	final private boolean clearEnd;
-	final private TimeZone timezone;
+	final private ZoneId timezone;
 
 	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
 			int endAttrPos, boolean clearEnd, String dateFormat,
@@ -61,20 +61,19 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		this.endAttrPos = endAttrPos;
 
 		if (timezone != null) {
-			this.timezone = TimeZone.getTimeZone(timezone);
+			this.timezone = ZoneId.of(timezone);
 		} else {
-			this.timezone = TimeZone.getTimeZone("UTC");
+			this.timezone = ZoneId.of("UTC");
 		}
 
 		df_string = dateFormat;
 		loc = locale;
 		if (dateFormat != null) {
 			if (locale != null) {
-				df = new SimpleDateFormat(dateFormat, locale);
+				df = DateTimeFormatter.ofPattern(dateFormat, locale);
 			} else {
-				df = new SimpleDateFormat(dateFormat);
+				df = DateTimeFormatter.ofPattern (dateFormat);
 			}
-			df.setTimeZone(this.timezone);
 		} else {
 			df = null;
 		}
@@ -116,9 +115,9 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		df_string = null;
 		loc = null;
 		if (timezone != null) {
-			this.timezone = TimeZone.getTimeZone(timezone);
+			this.timezone = ZoneId.of(timezone);
 		} else {
-			this.timezone = TimeZone.getTimeZone("UTC");
+			this.timezone = ZoneId.of("UTC");
 		}
 	}
 
@@ -130,7 +129,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 		if (startTimestampYearPos >= 0) {
 
-			Calendar cal = Calendar.getInstance(this.timezone);
+			//LocalDateTime cal = Calendar.getInstance(this.timezone);
 			int year = inElem.getAttribute(startTimestampYearPos);
 			int month = (Integer) (startTimestampMonthPos > 0 ? inElem
 					.getAttribute(startTimestampMonthPos) : 1);
@@ -142,8 +141,9 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 					.getAttribute(startTimestampMinutePos) : 0);
 			int second = (Integer) (startTimestampSecondPos > 0 ? inElem
 					.getAttribute(startTimestampSecondPos) : 0);
-			cal.set(year, month - 1, day, hour, minute, second);
-			long ts = cal.getTimeInMillis();
+			LocalDateTime ldt = LocalDateTime.of(year, month, day, hour, minute, second);
+			ZonedDateTime zdt = ldt.atZone(timezone);
+			long ts = zdt.toInstant().toEpochMilli();
 			// Round to millis because they cannot be set with cal.set
 			ts = (ts / 1000) * 1000;
 
@@ -180,11 +180,15 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		if (df != null) {
 			String timeString = (String) inElem.getAttribute(attrPos);
 			try {
-				timeN = df.parse(timeString).getTime();
+				LocalDateTime ldt = LocalDateTime.parse(timeString, df);
+				ZonedDateTime zdt = ldt.atZone(timezone);		
+				
+				timeN = zdt.toInstant().toEpochMilli();
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException("Date cannot be parsed! "
-						+ timeString + " with " + df.toPattern());
+						+ timeString + " with " + df);
 			}
 		} else {
 			timeN = (Number) inElem.getAttribute(attrPos);
@@ -272,23 +276,15 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 	public static void main(String[] args) throws ParseException {
 		String test = "2012-02-22T16:50:34.2669408+00:00";
-		String form = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-		SimpleDateFormat df = new SimpleDateFormat(form);
-		ParsePosition ps = new ParsePosition(0);
-		System.out.println(df.parse(test, ps) + " parse position " + ps + " "
-				+ test.substring(ps.getIndex()));
-
-		test = "Tue, 15 Oct 2013 09:55:21 +0200";
-		form = "EEE, d MMM yyyy HH:mm:ss Z";
-
-		test = "Tue, 15 Oct 2013 09:55:21 +0200";
-		form = "EEE, d MMM yyyy HH:mm:ss Z";
-
-		df = new SimpleDateFormat(form, Locale.ENGLISH);
-		ps = new ParsePosition(0);
-		System.out.println(df.parse(test, ps) + " parse position " + ps + " "
-				+ test.substring(ps.getIndex()));
-
+		String form = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSzzz";
+		DateTimeFormatter df = DateTimeFormatter.ofPattern(form);
+		
+		LocalDateTime ldt = LocalDateTime.parse(test, df);
+		ZonedDateTime zdt = ldt.atZone(ZoneId.of("UTC"));		
+		
+		long timeN = zdt.toInstant().toEpochMilli();
+		System.err.println(timeN);
+			
 	}
 
 	public int getStartTimestampYearPos() {
@@ -327,7 +323,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		return clearEnd;
 	}
 
-	public TimeZone getTimezone() {
+	public ZoneId getTimezone() {
 		return timezone;
 	}
 	
