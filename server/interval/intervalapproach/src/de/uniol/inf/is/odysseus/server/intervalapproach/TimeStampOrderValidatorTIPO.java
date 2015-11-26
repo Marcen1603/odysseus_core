@@ -35,7 +35,6 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 	T lastObject = null;
 	T currObject = null;
 	int debugMode = 0;
-	boolean suppressMode = false;
 
 	private int suppressed;
 
@@ -84,7 +83,7 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 				if (debug) {
 					switch (debugMode) {
 					case 0:
-						if (!suppressMode){
+						if (suppressed==0){
 							logger.warn("Wrong timestamp order " + timestamp + " after " + lastTimestamp);
 						}
 						break;
@@ -100,14 +99,12 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 
 					}
 				}
-				suppressMode = true;
 				suppressed++;
 				return false;
 			}else{
-				if (suppressMode && debug){
-					logger.info("In Order again: "+timestamp+" after "+lastTimestamp+" suppressed "+suppressed);
+				if (suppressed>0 && debug){
+					logger.info("In Order again: "+timestamp+" after "+lastTimestamp+" suppressed "+suppressed+" elements");
 				}
-				suppressMode = false;
 				suppressed = 0;
 			}
 		}
