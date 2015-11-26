@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -115,7 +117,7 @@ public class DistributedDataConsole implements CommandProvider {
 			}
 		}
 	}
-
+	
 	private void printDistributedDataDetails(CommandInterpreter ci, IDistributedData distributedData) {
 		ci.println("UUID          : " + distributedData.getUUID());
 		ci.println("Name          : " + distributedData.getName());
@@ -140,5 +142,37 @@ public class DistributedDataConsole implements CommandProvider {
 	
 	public void _descDistributedData( CommandInterpreter ci ) {
 		_describeDistributedData(ci);
+	}
+	
+	public void _createDistributedData( CommandInterpreter ci ) {
+		if( distributedDataManager == null ) {
+			ci.println("Distributed data manager not available");
+			return;
+		}
+
+		String name = ci.nextArgument();
+		if( Strings.isNullOrEmpty(name)) {
+			ci.println("usage: createDistributedData <name> <someText>");
+			return;
+		}
+		
+		String text = ci.nextArgument();
+		if( Strings.isNullOrEmpty(text)) {
+			ci.println("usage: createDistributedData <name> <someText>");
+			return;
+		}
+		
+		try {
+			JSONObject obj = new JSONObject();
+			obj.put("text", text);
+			
+			IDistributedData createdDistributedData = distributedDataManager.create(obj, name, false);
+			
+			ci.println("Distributed data created. UUID is " + createdDistributedData.getUUID());
+			
+		} catch (JSONException e) {
+			ci.println("Could not create distributed data: " + e.getMessage());
+			ci.printStackTrace(e);
+		}
 	}
 }
