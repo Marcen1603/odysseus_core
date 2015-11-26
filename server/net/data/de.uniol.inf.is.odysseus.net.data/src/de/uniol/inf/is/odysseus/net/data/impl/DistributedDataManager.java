@@ -7,69 +7,83 @@ import org.json.JSONObject;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
+import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
+import de.uniol.inf.is.odysseus.net.data.impl.create.LocalDistributedDataCreator;
 
-public class DistributedDataManager implements IDistributedDataManager {
-
-	// called by OSGi-DS
-	public void activate() {
-
+public class DistributedDataManager extends OdysseusNetComponentAdapter implements IDistributedDataManager {
+	
+	private IOdysseusNode localNode;
+	
+	private IDistributedDataContainer container;
+	private IDistributedDataCreator creator;
+	
+	@Override
+	public void init(IOdysseusNode localNode) throws OdysseusNetException {
+		this.localNode = localNode;
 	}
-
-	// called by OSGi-DS
-	public void deactivate() {
-
+	
+	@Override
+	public void start() throws OdysseusNetException {
+		creator = new LocalDistributedDataCreator(container, localNode);
+	}
+	
+	@Override
+	public void terminate(IOdysseusNode localNode) {
+		this.localNode = null;
 	}
 
 	@Override
 	public IDistributedData create(JSONObject data, String name, boolean persistent, long lifetime) {
-		return null;
+		return creator.create(data, name, persistent, lifetime);
 	}
 
 	@Override
 	public IDistributedData create(JSONObject data, String name, boolean persistent) {
-		return null;
+		return creator.create(data, name, persistent);
 	}
 
 	@Override
 	public Optional<IDistributedData> destroy(UUID uuid) {
-		return null;
+		return creator.destroy(uuid);
 	}
 
 	@Override
 	public Collection<IDistributedData> destory(String name) {
-		return null;
+		return creator.destory(name);
 	}
 
 	@Override
 	public Collection<UUID> getUUIDs() {
-		return null;
+		return container.getUUIDs();
 	}
 
 	@Override
 	public Collection<String> getNames() {
-		return null;
+		return container.getNames();
 	}
 
 	@Override
 	public Optional<IDistributedData> get(UUID uuid) {
-		return null;
+		return container.get(uuid);
 	}
 
 	@Override
 	public Collection<IDistributedData> get(String name) {
-		return null;
+		return container.get(name);
 	}
 
 	@Override
 	public boolean containsUUID(UUID uuid) {
-		return false;
+		return container.containsUUID(uuid);
 	}
 
 	@Override
 	public boolean containsName(String name) {
-		return false;
+		return container.containsName(name);
 	}
 
 }
