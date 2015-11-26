@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.net.data.container.impl;
+package de.uniol.inf.is.odysseus.net.data.impl.container;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
-import de.uniol.inf.is.odysseus.net.data.container.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
 
 public class DistributedDataContainer implements IDistributedDataContainer {
 

@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.json.JSONObject;
 
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
+
 public interface IDistributedData {
 
 	public String getName();
@@ -14,4 +16,5 @@ public interface IDistributedData {
 	public long getLifetime();
 	
 	public long getTimestamp();
+	public OdysseusNodeID getCreator();
 }

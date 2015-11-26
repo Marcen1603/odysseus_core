@@ -9,12 +9,10 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
-import de.uniol.inf.is.odysseus.net.data.container.IDistributedDataContainer;
 
 public class DistributedDataConsole implements CommandProvider {
 
 	private static IDistributedDataManager distributedDataManager;
-	private static IDistributedDataContainer ddContainer;
 
 	// called by OSGi-DS
 	public static void bindDistributedDataManager(IDistributedDataManager serv) {
@@ -25,18 +23,6 @@ public class DistributedDataConsole implements CommandProvider {
 	public static void unbindDistributedDataManager(IDistributedDataManager serv) {
 		if (distributedDataManager == serv) {
 			distributedDataManager = null;
-		}
-	}
-	
-	// called by OSGi-DS
-	public static void bindDistributedDataContainer(IDistributedDataContainer serv) {
-		ddContainer = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindDistributedDataContainer(IDistributedDataContainer serv) {
-		if (ddContainer == serv) {
-			ddContainer = null;
 		}
 	}
 	
@@ -51,12 +37,12 @@ public class DistributedDataConsole implements CommandProvider {
 	public void _listDistributedData( CommandInterpreter ci ) {
 		String filter = ci.nextArgument();
 		
-		if( ddContainer == null ) {
-			ci.println("Distributed data container not available");
+		if( distributedDataManager == null ) {
+			ci.println("Distributed data manager not available");
 			return;
 		}
 		
-		Collection<String> names = ddContainer.getNames();
+		Collection<String> names = distributedDataManager.getNames();
 		if( names.isEmpty() ) {
 			ci.println("Distributed data container is empty");
 			return;
@@ -65,7 +51,7 @@ public class DistributedDataConsole implements CommandProvider {
 		for( String name : names ) {
 			
 			if( Strings.isNullOrEmpty(filter) || name.contains(filter)) {
-				Collection<IDistributedData> datas = ddContainer.get(name);
+				Collection<IDistributedData> datas = distributedDataManager.get(name);
 				if( !datas.isEmpty() ) {
 					ci.println(name);
 					for( IDistributedData data : datas ) {

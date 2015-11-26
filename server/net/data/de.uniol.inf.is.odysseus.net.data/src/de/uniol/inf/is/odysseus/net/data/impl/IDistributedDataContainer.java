@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.net.data.container;
+package de.uniol.inf.is.odysseus.net.data.impl;
 
 import java.util.Collection;
 import java.util.UUID;
