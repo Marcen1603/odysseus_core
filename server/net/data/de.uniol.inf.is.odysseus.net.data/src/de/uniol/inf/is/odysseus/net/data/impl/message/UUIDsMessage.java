@@ -37,7 +37,6 @@ public class UUIDsMessage implements IMessage {
 		
 		ByteBuffer bb = ByteBuffer.allocate(size + uuidStrs.size() * 4);
 		for( String uuidStr : uuidStrs ) {
-			bb.putInt(uuidStr.length());
 			MessageUtils.putString(bb, uuidStr);
 		}
 		
@@ -50,11 +49,7 @@ public class UUIDsMessage implements IMessage {
 		
 		uuids = Lists.newArrayList();
 		while( bb.remaining() > 0 ) {
-			int uuidStrLength = bb.getInt();
-			byte[] uuidStrBytes = new byte[uuidStrLength];
-			bb.get(uuidStrBytes);
-			
-			uuids.add(UUID.fromString(new String(uuidStrBytes)));
+			uuids.add(UUID.fromString(MessageUtils.getString(bb)));
 		}
 	}
 	
