@@ -22,9 +22,11 @@ import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDestroyedMessage;
 
 public class RemoteDistributedDataCreator implements IDistributedDataCreator, IOdysseusNodeConnectionManagerListener {
 
@@ -90,8 +92,18 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 			throw new DistributedDataException("There is no remote node with a distributed data container");
 		}
 
+		if( nodeWithContainer == null ) {
+			throw new DistributedDataException("There is no remote node with a distributed data container");
+		}
+
+		DestroyDistributedDataWithNameMessage msg = new DestroyDistributedDataWithNameMessage(name);
 		
-		return null;
+		try {
+			MultipleDistributedDataDestroyedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, MultipleDistributedDataDestroyedMessage.class);
+			return answer.getDistributedData();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not send request and receive answer for destroying distributed data", e);
+		}
 	}
 
 	@Override

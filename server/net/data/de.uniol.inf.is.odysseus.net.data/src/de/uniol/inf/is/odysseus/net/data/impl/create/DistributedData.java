@@ -1,17 +1,24 @@
 package de.uniol.inf.is.odysseus.net.data.impl.create;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
+import de.uniol.inf.is.odysseus.net.communication.MessageUtils;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 
 public final class DistributedData implements IDistributedData {
 
+	private static final Logger LOG = LoggerFactory.getLogger(DistributedData.class);
+	
 	private final String name;
 	private final UUID uuid;
 	private final JSONObject data;
@@ -69,5 +76,68 @@ public final class DistributedData implements IDistributedData {
 	@Override
 	public OdysseusNodeID getCreator() {
 		return creator;
+	}
+	
+	public byte[] toBytes() {
+		String creatorStr = creator.toString();
+		String jsonStr = data.toString();
+		String uuidStr = uuid.toString();
+		
+		int creatorStrLength = creatorStr.length();
+		int jsonStrLength = jsonStr.length();
+		int uuidStrLength = uuidStr.length();
+		int nameLength = name.length();
+		
+		ByteBuffer bb = ByteBuffer.allocate( 4 + creatorStrLength
+										   + 4 + jsonStrLength
+										   + 8
+										   + 4 + nameLength
+										   + 8
+										   + 4 + uuidStrLength
+										   + 1 );
+		
+		MessageUtils.putString(bb, creatorStr);
+		MessageUtils.putString(bb, jsonStr);
+		
+		bb.putLong(lifetime);
+		
+		MessageUtils.putString(bb, name);
+		
+		bb.putLong(timestamp);
+		
+		MessageUtils.putString(bb, uuidStr);
+		
+		bb.put(isPersistent? (byte)1 : (byte)0);
+		
+		return bb.array();
+	}
+	
+	public static IDistributedData fromBytes(byte[] data) {
+		ByteBuffer bb = ByteBuffer.wrap(data);
+		
+		String creatorStr = MessageUtils.getString(bb);
+		OdysseusNodeID nodeID = OdysseusNodeID.fromString(creatorStr);
+
+		String jsonStr = MessageUtils.getString(bb);
+		JSONObject jsonObject = null;
+		try {
+			jsonObject = new JSONObject(jsonStr);
+		} catch (JSONException e) {
+			LOG.error("Could not create JSON Object from bytes", e);
+			jsonObject = new JSONObject();
+		}
+		
+		long lifetime = bb.getLong();
+		
+		String name = MessageUtils.getString(bb);
+		
+		long timestamp = bb.getLong();
+
+		String uuidStr = MessageUtils.getString(bb);
+		UUID uuid = UUID.fromString(uuidStr);
+		
+		boolean isPersistent = (bb.get() == (byte)1 ? true : false);
+		
+		return new DistributedData(uuid, name, jsonObject, isPersistent, lifetime, timestamp, nodeID);
 	}
 }

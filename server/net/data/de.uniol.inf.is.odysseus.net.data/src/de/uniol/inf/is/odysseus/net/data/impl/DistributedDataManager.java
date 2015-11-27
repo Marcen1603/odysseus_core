@@ -21,9 +21,11 @@ import de.uniol.inf.is.odysseus.net.data.impl.container.RemoteDistributedDataCon
 import de.uniol.inf.is.odysseus.net.data.impl.create.LocalDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.create.RemoteDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDestroyedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.server.DistributedDataServer;
 
 public class DistributedDataManager extends OdysseusNetComponentAdapter implements IDistributedDataManager {
@@ -49,7 +51,9 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		communicator.registerMessageType(CreateDistributedDataMessage.class);
 		communicator.registerMessageType(DistributedDataCreatedMessage.class);
 		communicator.registerMessageType(DestroyDistributedDataWithUUIDMessage.class);
+		communicator.registerMessageType(DestroyDistributedDataWithNameMessage.class);
 		communicator.registerMessageType(DistributedDataDestroyedMessage.class);
+		communicator.registerMessageType(MultipleDistributedDataDestroyedMessage.class);
 	}
 
 	// called by OSGi-DS
@@ -58,7 +62,9 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			communicator.unregisterMessageType(CreateDistributedDataMessage.class);
 			communicator.unregisterMessageType(DistributedDataCreatedMessage.class);
 			communicator.unregisterMessageType(DestroyDistributedDataWithUUIDMessage.class);
+			communicator.unregisterMessageType(DestroyDistributedDataWithNameMessage.class);
 			communicator.unregisterMessageType(DistributedDataDestroyedMessage.class);
+			communicator.unregisterMessageType(MultipleDistributedDataDestroyedMessage.class);
 
 			communicator = null;
 		}
