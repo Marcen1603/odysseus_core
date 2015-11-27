@@ -54,28 +54,33 @@ public class DistributedDataConsole implements CommandProvider {
 			ci.println("Distributed data manager not available");
 			return;
 		}
+		try {
+			Collection<String> names = distributedDataManager.getNames();
+			if (names.isEmpty()) {
+				ci.println("Distributed data container is empty");
+				return;
+			}
 
-		Collection<String> names = distributedDataManager.getNames();
-		if (names.isEmpty()) {
-			ci.println("Distributed data container is empty");
-			return;
-		}
+			for (String name : names) {
 
-		for (String name : names) {
-
-			if (Strings.isNullOrEmpty(filter) || name.contains(filter)) {
-				Collection<IDistributedData> datas = distributedDataManager.get(name);
-				if (!datas.isEmpty()) {
-					ci.println(name);
-					for (IDistributedData data : datas) {
-						ci.print("\t");
-						ci.print(data.getUUID());
-						ci.print(":");
-						ci.println(data.getData().toString());
+				if (Strings.isNullOrEmpty(filter) || name.contains(filter)) {
+					Collection<IDistributedData> datas = distributedDataManager.get(name);
+					if (!datas.isEmpty()) {
+						ci.println(name);
+						for (IDistributedData data : datas) {
+							ci.print("\t");
+							ci.print(data.getUUID());
+							ci.print(":");
+							ci.println(data.getData().toString());
+						}
+						ci.println();
 					}
-					ci.println();
 				}
 			}
+			
+		} catch (DistributedDataException e) {
+			ci.println("Could not determine distributed data: " + e);
+			ci.printStackTrace(e);
 		}
 	}
 
@@ -105,24 +110,29 @@ public class DistributedDataConsole implements CommandProvider {
 	}
 
 	private static Collection<IDistributedData> determineDistributedData(String dataText, CommandInterpreter ci) {
-		Optional<UUID> optUUID = tryToUUID(dataText);
-		if (optUUID.isPresent()) {
-			UUID distributedDataUUID = optUUID.get();
+		try {
+			Optional<UUID> optUUID = tryToUUID(dataText);
+			if (optUUID.isPresent()) {
+				UUID distributedDataUUID = optUUID.get();
 
-			Optional<IDistributedData> optDistributedData = distributedDataManager.get(distributedDataUUID);
-			if (optDistributedData.isPresent()) {
-				return Lists.newArrayList(optDistributedData.get());
+				Optional<IDistributedData> optDistributedData = distributedDataManager.get(distributedDataUUID);
+				if (optDistributedData.isPresent()) {
+					return Lists.newArrayList(optDistributedData.get());
+				}
+				ci.println("Distributed data with UUID " + distributedDataUUID + " not found");
+				return Lists.newArrayList();
+
 			}
-			ci.println("Distributed data with UUID " + distributedDataUUID + " not found");
-			return Lists.newArrayList();
 
+			Collection<IDistributedData> distributedDatas = distributedDataManager.get(dataText);
+			if (!distributedDatas.isEmpty()) {
+				return distributedDatas;
+			}
+			ci.println("There is no distributed data with name " + dataText);
+		} catch (DistributedDataException e) {
+			ci.println("Could not determine distributed data: " + e);
+			ci.printStackTrace(e);
 		}
-
-		Collection<IDistributedData> distributedDatas = distributedDataManager.get(dataText);
-		if (!distributedDatas.isEmpty()) {
-			return distributedDatas;
-		}
-		ci.println("There is no distributed data with name " + dataText);
 		return Lists.newArrayList();
 	}
 
@@ -216,6 +226,9 @@ public class DistributedDataConsole implements CommandProvider {
 				Collection<IDistributedData> destroyedDistributedDatas = distributedDataManager.destroy(dataText);
 				if (!destroyedDistributedDatas.isEmpty()) {
 					ci.println("Destroyed " + destroyedDistributedDatas.size() + " distributed data");
+					for (IDistributedData destroyedDistributedData : destroyedDistributedDatas) {
+						ci.println("\t" + destroyedDistributedData.getUUID());
+					}
 				} else {
 					ci.println("There is no distributed data with name " + dataText);
 				}

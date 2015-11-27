@@ -17,14 +17,14 @@ public interface IDistributedDataManager {
 	public Collection<IDistributedData> destroy( String name ) throws DistributedDataException;
 
 	// container
-	public Collection<UUID> getUUIDs();
-	public Collection<String> getNames();
+	public Collection<UUID> getUUIDs() throws DistributedDataException;
+	public Collection<String> getNames() throws DistributedDataException;
 	
-	public Optional<IDistributedData> get(UUID uuid);
-	public Collection<IDistributedData> get(String name);
+	public Optional<IDistributedData> get(UUID uuid) throws DistributedDataException;
+	public Collection<IDistributedData> get(String name) throws DistributedDataException;
 	
-	public boolean containsUUID( UUID uuid );
-	public boolean containsName( String name );
+	public boolean containsUUID( UUID uuid ) throws DistributedDataException;
+	public boolean containsName( String name ) throws DistributedDataException;
 	
 	// control
 	public boolean isLocal();

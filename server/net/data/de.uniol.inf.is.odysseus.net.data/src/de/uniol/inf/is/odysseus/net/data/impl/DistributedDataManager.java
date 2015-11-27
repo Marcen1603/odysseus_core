@@ -26,34 +26,38 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWith
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.server.DistributedDataServer;
 
 public class DistributedDataManager extends OdysseusNetComponentAdapter implements IDistributedDataManager {
-	
+
 	public static final String LOCAL_DISTRIBUTED_DATA_CONTAINER_KEY = "net.dd.local";
-	
+
 	private static final boolean IS_LOCAL_DEFAULT_VALUE = true;
 
 	private static IOdysseusNodeCommunicator communicator;
 	private static IOdysseusNodeConnectionManager connectionManager;
-	
+
 	private IOdysseusNode localNode;
-	
+
 	private IDistributedDataContainer container;
 	private IDistributedDataCreator creator;
-	
+
 	private DistributedDataServer server;
-	
+
 	// called by OSGi-DS
 	public static void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
 		communicator = serv;
-		
+
 		communicator.registerMessageType(CreateDistributedDataMessage.class);
 		communicator.registerMessageType(DistributedDataCreatedMessage.class);
 		communicator.registerMessageType(DestroyDistributedDataWithUUIDMessage.class);
 		communicator.registerMessageType(DestroyDistributedDataWithNameMessage.class);
 		communicator.registerMessageType(DistributedDataDestroyedMessage.class);
 		communicator.registerMessageType(MultipleDistributedDataDestroyedMessage.class);
+		communicator.registerMessageType(RequestUUIDsMessage.class);
+		communicator.registerMessageType(UUIDsMessage.class);
 	}
 
 	// called by OSGi-DS
@@ -65,6 +69,8 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			communicator.unregisterMessageType(DestroyDistributedDataWithNameMessage.class);
 			communicator.unregisterMessageType(DistributedDataDestroyedMessage.class);
 			communicator.unregisterMessageType(MultipleDistributedDataDestroyedMessage.class);
+			communicator.unregisterMessageType(RequestUUIDsMessage.class);
+			communicator.unregisterMessageType(UUIDsMessage.class);
 
 			communicator = null;
 		}
@@ -81,39 +87,39 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			connectionManager = null;
 		}
 	}
-	
+
 	@Override
 	public void init(IOdysseusNode localNode) throws OdysseusNetException {
 		localNode.addProperty(LOCAL_DISTRIBUTED_DATA_CONTAINER_KEY, String.valueOf(isLocal()));
-		
+
 		this.localNode = localNode;
 	}
-	
+
 	@Override
 	public void start() throws OdysseusNetException {
-		if( isLocal() ) {
+		if (isLocal()) {
 			container = new LocalDistributedDataContainer();
 			creator = new LocalDistributedDataCreator(container);
-			server = new DistributedDataServer(communicator, creator);
+			server = new DistributedDataServer(communicator, creator, this);
 		} else {
-			container = new RemoteDistributedDataContainer(communicator); 
+			container = new RemoteDistributedDataContainer(communicator, connectionManager);
 			creator = new RemoteDistributedDataCreator(communicator, connectionManager);
 		}
 	}
-	
+
 	@Override
 	public void stop() {
-		if( server != null ) {
+		if (server != null) {
 			server.stop();
 		}
-		if( creator != null ) {
+		if (creator != null) {
 			creator.dispose();
 		}
-		if( container != null ) {
+		if (container != null) {
 			container.dispose();
 		}
 	}
-	
+
 	@Override
 	public void terminate(IOdysseusNode localNode) {
 		this.localNode = null;
@@ -140,32 +146,32 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	}
 
 	@Override
-	public Collection<UUID> getUUIDs() {
+	public Collection<UUID> getUUIDs() throws DistributedDataException {
 		return container.getUUIDs();
 	}
 
 	@Override
-	public Collection<String> getNames() {
+	public Collection<String> getNames() throws DistributedDataException {
 		return container.getNames();
 	}
 
 	@Override
-	public Optional<IDistributedData> get(UUID uuid) {
+	public Optional<IDistributedData> get(UUID uuid) throws DistributedDataException {
 		return container.get(uuid);
 	}
 
 	@Override
-	public Collection<IDistributedData> get(String name) {
+	public Collection<IDistributedData> get(String name) throws DistributedDataException {
 		return container.get(name);
 	}
 
 	@Override
-	public boolean containsUUID(UUID uuid) {
+	public boolean containsUUID(UUID uuid) throws DistributedDataException {
 		return container.containsUUID(uuid);
 	}
 
 	@Override
-	public boolean containsName(String name) {
+	public boolean containsName(String name) throws DistributedDataException {
 		return container.containsName(name);
 	}
 
@@ -178,7 +184,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	private static boolean tryToBoolean(String isLocalStr, boolean def) {
 		try {
 			return Boolean.valueOf(isLocalStr);
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 			return def;
 		}
 	}

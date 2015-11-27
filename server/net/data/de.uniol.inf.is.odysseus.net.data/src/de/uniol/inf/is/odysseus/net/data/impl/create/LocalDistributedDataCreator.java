@@ -52,7 +52,7 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 	}
 
 	@Override
-	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid) {
+	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid) throws DistributedDataException {
 		Preconditions.checkNotNull(creator, "creator must not be null!");
 		Preconditions.checkNotNull(uuid, "uuid must not be null!");
 
@@ -69,7 +69,7 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 	}
 
 	@Override
-	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name) {
+	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name) throws DistributedDataException {
 		Preconditions.checkNotNull(creator, "creator must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
 

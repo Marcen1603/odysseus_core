@@ -42,6 +42,8 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		this.communicator = communicator;
 		this.connectionManager = connectionManager;
 		this.connectionManager.addListener(this);
+
+		updateConnection();
 	}
 
 	@Override
@@ -51,9 +53,7 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 
 	@Override
 	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException {
-		if( nodeWithContainer == null ) {
-			throw new DistributedDataException("There is no remote node with a distributed data container");
-		}
+		checkConnection();
 
 		CreateDistributedDataMessage msg = new CreateDistributedDataMessage(data, name, persistent, lifetime);
 
@@ -71,13 +71,11 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 	}
 
 	@Override
-	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid) throws DistributedDataException{
-		if( nodeWithContainer == null ) {
-			throw new DistributedDataException("There is no remote node with a distributed data container");
-		}
+	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid) throws DistributedDataException {
+		checkConnection();
 
 		DestroyDistributedDataWithUUIDMessage msg = new DestroyDistributedDataWithUUIDMessage(uuid);
-		
+
 		try {
 			DistributedDataDestroyedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataDestroyedMessage.class);
 			return Optional.of(answer.getDistributedData());
@@ -88,16 +86,10 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 
 	@Override
 	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name) throws DistributedDataException {
-		if( nodeWithContainer == null ) {
-			throw new DistributedDataException("There is no remote node with a distributed data container");
-		}
-
-		if( nodeWithContainer == null ) {
-			throw new DistributedDataException("There is no remote node with a distributed data container");
-		}
+		checkConnection();
 
 		DestroyDistributedDataWithNameMessage msg = new DestroyDistributedDataWithNameMessage(name);
-		
+
 		try {
 			MultipleDistributedDataDestroyedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, MultipleDistributedDataDestroyedMessage.class);
 			return answer.getDistributedData();
@@ -125,6 +117,15 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		}
 	}
 
+	private void updateConnection() {
+		Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
+		if (optConnection.isPresent()) {
+			nodeWithContainer = optConnection.get().getOdysseusNode();
+		} else {
+			nodeWithContainer = null;
+		}
+	}
+
 	private Optional<IOdysseusNodeConnection> determineNewConnection() {
 		Collection<IOdysseusNodeConnection> connections = connectionManager.getConnections();
 		for (IOdysseusNodeConnection con : connections) {
@@ -138,4 +139,14 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		}
 		return Optional.absent();
 	}
+
+	private void checkConnection() throws DistributedDataException {
+		if (nodeWithContainer == null) {
+			updateConnection();
+			if (nodeWithContainer == null) {
+				throw new DistributedDataException("There is no remote node with a distributed data container");
+			}
+		}
+	}
+
 }
