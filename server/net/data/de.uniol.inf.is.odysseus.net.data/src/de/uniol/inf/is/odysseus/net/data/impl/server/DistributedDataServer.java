@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.net.data.impl.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
@@ -14,7 +15,9 @@ import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
 
 public class DistributedDataServer implements IOdysseusNodeCommunicatorListener {
 
@@ -29,6 +32,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		this.creator = creator;
 		
 		communicator.addListener(this, CreateDistributedDataMessage.class);
+		communicator.addListener(this, DestroyDistributedDataWithUUIDMessage.class);
 	}
 
 	public void stop() {
@@ -51,6 +55,24 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 				
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Could not send answer of create distributed data message", e);
+			}
+		} else if( message instanceof DestroyDistributedDataWithUUIDMessage ) {
+			DestroyDistributedDataWithUUIDMessage msg = (DestroyDistributedDataWithUUIDMessage)message;
+			
+			try {
+				Optional<IDistributedData> optDestroyedData = creator.destroy(senderNode.getID(), msg.getUUID());
+				if( optDestroyedData.isPresent() ) {
+					IDistributedData destroyedData = optDestroyedData.get();
+					
+					DistributedDataDestroyedMessage answer = new DistributedDataDestroyedMessage(destroyedData);
+					communicator.send(senderNode, answer);
+				}
+				
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
+				
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of destroy distributed data message", e);
 			}
 		}
 	}

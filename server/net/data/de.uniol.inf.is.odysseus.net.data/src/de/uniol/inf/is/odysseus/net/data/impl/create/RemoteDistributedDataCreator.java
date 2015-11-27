@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
 
 public class RemoteDistributedDataCreator implements IDistributedDataCreator, IOdysseusNodeConnectionManagerListener {
 
@@ -67,12 +69,28 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 	}
 
 	@Override
-	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid) {
-		return null;
+	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid) throws DistributedDataException{
+		if( nodeWithContainer == null ) {
+			throw new DistributedDataException("There is no remote node with a distributed data container");
+		}
+
+		DestroyDistributedDataWithUUIDMessage msg = new DestroyDistributedDataWithUUIDMessage(uuid);
+		
+		try {
+			DistributedDataDestroyedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataDestroyedMessage.class);
+			return Optional.of(answer.getDistributedData());
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not send request and receive answer for destroying distributed data", e);
+		}
 	}
 
 	@Override
-	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name) {
+	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name) throws DistributedDataException {
+		if( nodeWithContainer == null ) {
+			throw new DistributedDataException("There is no remote node with a distributed data container");
+		}
+
+		
 		return null;
 	}
 

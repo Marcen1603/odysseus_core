@@ -21,7 +21,9 @@ import de.uniol.inf.is.odysseus.net.data.impl.container.RemoteDistributedDataCon
 import de.uniol.inf.is.odysseus.net.data.impl.create.LocalDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.create.RemoteDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.server.DistributedDataServer;
 
 public class DistributedDataManager extends OdysseusNetComponentAdapter implements IDistributedDataManager {
@@ -46,6 +48,8 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		
 		communicator.registerMessageType(CreateDistributedDataMessage.class);
 		communicator.registerMessageType(DistributedDataCreatedMessage.class);
+		communicator.registerMessageType(DestroyDistributedDataWithUUIDMessage.class);
+		communicator.registerMessageType(DistributedDataDestroyedMessage.class);
 	}
 
 	// called by OSGi-DS
@@ -53,6 +57,8 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		if (communicator == serv) {
 			communicator.unregisterMessageType(CreateDistributedDataMessage.class);
 			communicator.unregisterMessageType(DistributedDataCreatedMessage.class);
+			communicator.unregisterMessageType(DestroyDistributedDataWithUUIDMessage.class);
+			communicator.unregisterMessageType(DistributedDataDestroyedMessage.class);
 
 			communicator = null;
 		}
@@ -118,12 +124,12 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	}
 
 	@Override
-	public Optional<IDistributedData> destroy(UUID uuid) {
+	public Optional<IDistributedData> destroy(UUID uuid) throws DistributedDataException {
 		return creator.destroy(localNode.getID(), uuid);
 	}
 
 	@Override
-	public Collection<IDistributedData> destory(String name) {
+	public Collection<IDistributedData> destroy(String name) throws DistributedDataException {
 		return creator.destroy(localNode.getID(), name);
 	}
 

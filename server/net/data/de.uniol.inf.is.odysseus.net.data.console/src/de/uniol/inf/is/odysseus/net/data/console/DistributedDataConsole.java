@@ -196,28 +196,42 @@ public class DistributedDataConsole implements CommandProvider {
 			return;
 		}
 
-		Collection<IDistributedData> distributedDatas = determineDistributedData(dataText, ci);
-		if (!distributedDatas.isEmpty()) {
-			int count = 0;
-			for (IDistributedData distributedData : distributedDatas) {
-				if (distributedDataManager.destroy(distributedData.getUUID()).isPresent()) {
-					count++;
+		Optional<UUID> optUUID = tryToUUID(dataText);
+		if (optUUID.isPresent()) {
+			UUID distributedDataUUID = optUUID.get();
+
+			try {
+				Optional<IDistributedData> optDistributedData = distributedDataManager.destroy(distributedDataUUID);
+				if (optDistributedData.isPresent()) {
+					ci.println("Distributed data destroyed");
+				} else {
+					ci.println("No distributed data with UUID " + dataText + " found");
 				}
+			} catch (DistributedDataException e) {
+				ci.println("Could not destroy distributed data: " + e);
+				ci.printStackTrace(e);
 			}
-			if (count > 0) {
-				ci.println("Destroyed " + count + " distribted data");
-			} else {
-				ci.println("No distributed data destroyed");
+		} else {
+			try {
+				Collection<IDistributedData> destroyedDistributedDatas = distributedDataManager.destroy(dataText);
+				if (!destroyedDistributedDatas.isEmpty()) {
+					ci.println("Destroyed " + destroyedDistributedDatas.size() + " distributed data");
+				} else {
+					ci.println("There is no distributed data with name " + dataText);
+				}
+			} catch (DistributedDataException e) {
+				ci.println("Could not destroy distributed data: " + e);
+				ci.printStackTrace(e);
 			}
 		}
 	}
-	
-	public void _isDistributedDataLocal(CommandInterpreter ci ) {
+
+	public void _isDistributedDataLocal(CommandInterpreter ci) {
 		if (distributedDataManager == null) {
 			ci.println("Distributed data manager not available");
 			return;
 		}
-		
+
 		ci.println(distributedDataManager.isLocal());
 	}
 }

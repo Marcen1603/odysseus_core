@@ -16,8 +16,8 @@ public interface IDistributedDataCreator {
 	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException;
 	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent) throws DistributedDataException;
 	
-	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid );
-	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name );
+	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid ) throws DistributedDataException;
+	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name ) throws DistributedDataException;
 	
 	public void dispose();
 }

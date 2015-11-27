@@ -13,8 +13,8 @@ public interface IDistributedDataManager {
 	public IDistributedData create(JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException;
 	public IDistributedData create(JSONObject data, String name, boolean persistent) throws DistributedDataException;
 	
-	public Optional<IDistributedData> destroy( UUID uuid );
-	public Collection<IDistributedData> destory( String name );
+	public Optional<IDistributedData> destroy( UUID uuid ) throws DistributedDataException;
+	public Collection<IDistributedData> destroy( String name ) throws DistributedDataException;
 
 	// container
 	public Collection<UUID> getUUIDs();
