@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
+import de.uniol.inf.is.odysseus.net.communication.MessageUtils;
 
 public class CreateDistributedDataMessage implements IMessage {
 
@@ -46,11 +47,8 @@ public class CreateDistributedDataMessage implements IMessage {
 		
 		ByteBuffer bb = ByteBuffer.allocate(4 + jsonStringLength + 4 + nameLength + 1 + 8 + 4);
 		
-		bb.putInt(jsonStringLength);
-		bb.put(jsonString.getBytes());
-		
-		bb.putInt(nameLength);
-		bb.put(name.getBytes());
+		MessageUtils.putString(bb, jsonString);
+		MessageUtils.putString(bb, name);
 		
 		bb.put(persistent ? (byte)1 : (byte)0);
 		bb.putLong(lifetime);
@@ -64,10 +62,7 @@ public class CreateDistributedDataMessage implements IMessage {
 	public void fromBytes(byte[] msg) {
 		ByteBuffer bb = ByteBuffer.wrap(msg);
 		
-		int jsonStringLength = bb.getInt();
-		byte[] jsonStringByteArray = new byte[jsonStringLength];
-		bb.get(jsonStringByteArray);
-		String jsonString = new String(jsonStringByteArray);
+		String jsonString = MessageUtils.getString(bb);
 		try {
 			data = new JSONObject(jsonString);
 		} catch (JSONException e) { 
@@ -75,10 +70,7 @@ public class CreateDistributedDataMessage implements IMessage {
 			data = null;
 		}
 		
-		int nameLength = bb.getInt();
-		byte[] nameByteArray = new byte[nameLength];
-		bb.get(nameByteArray);
-		name = new String(nameByteArray);
+		name = MessageUtils.getString(bb);
 		
 		persistent = bb.get() == (byte)1 ? true : false;
 		lifetime = bb.getLong();

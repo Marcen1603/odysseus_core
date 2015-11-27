@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
+import de.uniol.inf.is.odysseus.net.communication.MessageUtils;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.create.DistributedData;
 
@@ -60,21 +61,16 @@ public class DistributedDataCreatedMessage implements IMessage {
 										   + 1
 										   + 4 );
 		
-		bb.putInt(creatorStrLength);
-		bb.put(creatorStr.getBytes());
-		
-		bb.putInt(jsonStrLength);
-		bb.put(jsonStr.getBytes());
+		MessageUtils.putString(bb, creatorStr);
+		MessageUtils.putString(bb, jsonStr);
 		
 		bb.putLong(lifetime);
 		
-		bb.putInt(nameLength);
-		bb.put(name.getBytes());
+		MessageUtils.putString(bb, name);
 		
 		bb.putLong(timestamp);
 		
-		bb.putInt(uuidStrLength);
-		bb.put(uuidStr.getBytes());
+		MessageUtils.putString(bb, uuidStr);
 		
 		bb.put(data.isPersistent() ? (byte)1 : (byte)0);
 		
@@ -87,16 +83,10 @@ public class DistributedDataCreatedMessage implements IMessage {
 	public void fromBytes(byte[] dd) {
 		ByteBuffer bb = ByteBuffer.wrap(dd);
 		
-		int creatorStrLength = bb.getInt();
-		byte[] creatorStrByteArray = new byte[creatorStrLength];
-		bb.get(creatorStrByteArray);
-		String creatorStr = new String(creatorStrByteArray);
+		String creatorStr = MessageUtils.getString(bb);
 		OdysseusNodeID nodeID = OdysseusNodeID.fromString(creatorStr);
-		
-		int jsonStrLength = bb.getInt();
-		byte[] jsonStrByteArray = new byte[jsonStrLength];
-		bb.get(jsonStrByteArray);
-		String jsonStr = new String(jsonStrByteArray);
+
+		String jsonStr = MessageUtils.getString(bb);
 		JSONObject jsonObject = null;
 		try {
 			jsonObject = new JSONObject(jsonStr);
@@ -107,17 +97,11 @@ public class DistributedDataCreatedMessage implements IMessage {
 		
 		long lifetime = bb.getLong();
 		
-		int nameLength = bb.getInt();
-		byte[] nameByteArray = new byte[nameLength];
-		bb.get(nameByteArray);
-		String name = new String(nameByteArray);
+		String name = MessageUtils.getString(bb);
 		
 		long timestamp = bb.getLong();
-		
-		int uuidStrLength = bb.getInt();
-		byte[] uuidStrByteArray = new byte[uuidStrLength];
-		bb.get(uuidStrByteArray);
-		String uuidStr = new String(uuidStrByteArray);
+
+		String uuidStr = MessageUtils.getString(bb);
 		UUID uuid = UUID.fromString(uuidStr);
 		
 		boolean isPersistent = (bb.get() == (byte)1 ? true : false);
