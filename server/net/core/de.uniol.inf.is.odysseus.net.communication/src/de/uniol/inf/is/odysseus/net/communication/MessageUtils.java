@@ -16,4 +16,12 @@ public class MessageUtils {
 		bb.get(bytes);
 		return new String(bytes);
 	}
+	
+	public static void insertInt(byte[] destArray, int offset, int value) {
+		destArray[offset] = (byte) (value >>> 24);
+		destArray[offset + 1] = (byte) (value >>> 16);
+		destArray[offset + 2] = (byte) (value >>> 8);
+		destArray[offset + 3] = (byte) (value);
+	}
+
 }
