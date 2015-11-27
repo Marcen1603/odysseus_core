@@ -94,7 +94,8 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	public List<?> readData(String[] list, int from, int to) {
 		ArrayList<Object> values = new ArrayList<Object>();
 		for (int i=from; i<to;i++){
-			values.add(list[i]);
+			Object value = this.handler.readData(list[i]);
+			values.add(value);
 		}
 		return values;
 	}
@@ -102,7 +103,8 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	public List<?> readData(List<String> list, int from, int to) {
 		ArrayList<Object> values = new ArrayList<Object>();
 		for (int i=from; i<to;i++){
-			values.add(list.get(i));
+			Object value = this.handler.readData(list.get(i));
+			values.add(value);
 		}
 		return values;
 	}
