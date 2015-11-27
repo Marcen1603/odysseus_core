@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.net.communication;
 
-public interface IMessageAnswerCallback<T extends IMessage> {
+public interface IGenericMessageAnswerCallback {
 
-	public void answerReceived(T message);
+	public void answerReceived(IMessage message);
 	public void answerFailed(OdysseusNodeCommunicationException cause);
 
 }

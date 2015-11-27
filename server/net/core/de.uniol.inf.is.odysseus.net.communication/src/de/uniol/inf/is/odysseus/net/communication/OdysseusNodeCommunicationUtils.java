@@ -9,10 +9,15 @@ public class OdysseusNodeCommunicationUtils {
 	private static final long MAX_WAIT_TIME_MILLIS = 20 * 1000;
 
 	@SuppressWarnings("unchecked")
-	public static <T extends IMessage> T sendAndWaitForAnswer(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, Class<T>... answerMessageTypes) throws OdysseusNodeCommunicationException {
-		return (T) sendAndWaitForAnswer(communicator, destination, message, MAX_WAIT_TIME_MILLIS, answerMessageTypes);
+	public static <T extends IMessage> T sendAndWaitForAnswer(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, Class<T> answerMessageType) throws OdysseusNodeCommunicationException {
+		return (T) sendAndWaitForAnswer(communicator, destination, message, MAX_WAIT_TIME_MILLIS, answerMessageType);
 	}
 
+	@SafeVarargs
+	public static IMessage sendAndWaitForAnswer(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, Class<? extends IMessage>... answerMessageTypes) throws OdysseusNodeCommunicationException {
+		return sendAndWaitForAnswer(communicator, destination, message, MAX_WAIT_TIME_MILLIS, answerMessageTypes);
+	}
+	
 	@SafeVarargs
 	public static IMessage sendAndWaitForAnswer(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, long waitTimeMillis, Class<? extends IMessage>... answerMessageTypes) throws OdysseusNodeCommunicationException {
 		Preconditions.checkNotNull(communicator, "communicator must not be null!");
@@ -39,12 +44,28 @@ public class OdysseusNodeCommunicationUtils {
 	}
 
 	@SafeVarargs
-	public static void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, IMessageAnswerCallback callback, Class<? extends IMessage>... answerMessageTypes) {
+	public static void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, IGenericMessageAnswerCallback callback, Class<? extends IMessage>... answerMessageTypes) {
 		sendAndWaitForAnswerAsync(communicator, destination, message, MAX_WAIT_TIME_MILLIS, callback, answerMessageTypes);
 	}
 
+	public static <T extends IMessage> void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, IMessageAnswerCallback<T> callback, Class<T> answerMessageType) {
+		sendAndWaitForAnswerAsync(communicator, destination, message, MAX_WAIT_TIME_MILLIS, new IGenericMessageAnswerCallback() {
+			
+			@SuppressWarnings("unchecked")
+			@Override
+			public void answerReceived(IMessage message) {
+				callback.answerReceived((T)message);
+			}
+			
+			@Override
+			public void answerFailed(OdysseusNodeCommunicationException cause) {
+				callback.answerFailed(cause);
+			}
+		}, answerMessageType);
+	}
+
 	@SafeVarargs
-	public static void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, long waitTimeMillis, IMessageAnswerCallback callback, Class<? extends IMessage>... answerMessageTypes) {
+	public static void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, long waitTimeMillis, IGenericMessageAnswerCallback callback, Class<? extends IMessage>... answerMessageTypes) {
 		Preconditions.checkNotNull(communicator, "communicator must not be null!");
 		Preconditions.checkNotNull(destination, "destination must not be null!");
 		Preconditions.checkNotNull(message, "message must not be null!");
@@ -61,8 +82,7 @@ public class OdysseusNodeCommunicationUtils {
 					}
 					communicator.send(destination, message);
 
-					IMessage answer = listener.waitForAnswer(waitTimeMillis);
-					callback.answerReceived(answer);
+					callback.answerReceived(listener.waitForAnswer(waitTimeMillis));
 
 				} catch (OdysseusNodeCommunicationException e) {
 					callback.answerFailed(e);
