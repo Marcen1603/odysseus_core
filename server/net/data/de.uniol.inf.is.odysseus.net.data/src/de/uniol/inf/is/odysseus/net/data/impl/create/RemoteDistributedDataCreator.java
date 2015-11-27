@@ -26,8 +26,6 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMess
 
 public class RemoteDistributedDataCreator implements IDistributedDataCreator, IOdysseusNodeConnectionManagerListener {
 
-	private static int messageIDCounter = 0;
-
 	private final IOdysseusNodeCommunicator communicator;
 	private final IOdysseusNodeConnectionManager connectionManager;
 
@@ -49,13 +47,11 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 
 	@Override
 	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException {
-		int messageID = messageIDCounter++;
-		
 		if( nodeWithContainer == null ) {
 			throw new DistributedDataException("There is no remote node with a distributed data container");
 		}
 
-		CreateDistributedDataMessage msg = new CreateDistributedDataMessage(data, name, persistent, lifetime, messageID);
+		CreateDistributedDataMessage msg = new CreateDistributedDataMessage(data, name, persistent, lifetime);
 
 		try {
 			DistributedDataCreatedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataCreatedMessage.class);

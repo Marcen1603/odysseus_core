@@ -43,7 +43,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 			try {
 				IDistributedData createdData = creator.create(senderNode.getID(), msg.getData(), msg.getName(), msg.isPersistent(), msg.getLifetime());
 				
-				DistributedDataCreatedMessage answer = new DistributedDataCreatedMessage(createdData, msg.getMessageID());
+				DistributedDataCreatedMessage answer = new DistributedDataCreatedMessage(createdData);
 				communicator.send(senderNode, answer);
 				
 			} catch( DistributedDataException e ) {

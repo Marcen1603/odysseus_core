@@ -21,17 +21,15 @@ public class DistributedDataCreatedMessage implements IMessage {
 	private static final Logger LOG = LoggerFactory.getLogger(DistributedDataCreatedMessage.class);
 	
 	private IDistributedData data;
-	private int requestMessageID;
 	
 	public DistributedDataCreatedMessage() {
 		
 	}
 	
-	public DistributedDataCreatedMessage( IDistributedData data, int requestMessageID ) {
+	public DistributedDataCreatedMessage( IDistributedData data) {
 		Preconditions.checkNotNull(data, "data must not be null!");
 
 		this.data = data;
-		this.requestMessageID = requestMessageID;
 	}
 	
 	@Override
@@ -58,8 +56,7 @@ public class DistributedDataCreatedMessage implements IMessage {
 										   + 4 + nameLength
 										   + 8
 										   + 4 + uuidStrLength
-										   + 1
-										   + 4 );
+										   + 1 );
 		
 		MessageUtils.putString(bb, creatorStr);
 		MessageUtils.putString(bb, jsonStr);
@@ -73,8 +70,6 @@ public class DistributedDataCreatedMessage implements IMessage {
 		MessageUtils.putString(bb, uuidStr);
 		
 		bb.put(data.isPersistent() ? (byte)1 : (byte)0);
-		
-		bb.putInt(requestMessageID);
 		
 		return bb.array();
 	}
@@ -106,15 +101,10 @@ public class DistributedDataCreatedMessage implements IMessage {
 		
 		boolean isPersistent = (bb.get() == (byte)1 ? true : false);
 		
-		requestMessageID = bb.getInt();		
 		data = new DistributedData(uuid, name, jsonObject, isPersistent, lifetime, timestamp, nodeID);
 	}
 
 	public IDistributedData getDistributedData() {
 		return data;
-	}
-	
-	public int getRequestMessageID() {
-		return requestMessageID;
 	}
 }

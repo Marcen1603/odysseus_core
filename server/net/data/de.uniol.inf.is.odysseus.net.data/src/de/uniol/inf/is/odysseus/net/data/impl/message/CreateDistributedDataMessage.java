@@ -22,13 +22,11 @@ public class CreateDistributedDataMessage implements IMessage {
 	private boolean persistent;
 	private long lifetime;
 	
-	private int messageID;
-	
 	public CreateDistributedDataMessage() {
 		
 	}
 	
-	public CreateDistributedDataMessage(JSONObject data, String name, boolean persistent, long lifetime, int messageID ) {
+	public CreateDistributedDataMessage(JSONObject data, String name, boolean persistent, long lifetime ) {
 		Preconditions.checkNotNull(data, "data must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
 		 
@@ -36,7 +34,6 @@ public class CreateDistributedDataMessage implements IMessage {
 		this.name = name;
 		this.persistent = persistent;
 		this.lifetime = lifetime;
-		this.messageID = messageID;
 	}
 	
 	@Override
@@ -45,15 +42,13 @@ public class CreateDistributedDataMessage implements IMessage {
 		int jsonStringLength = jsonString.length();
 		int nameLength = name.length();
 		
-		ByteBuffer bb = ByteBuffer.allocate(4 + jsonStringLength + 4 + nameLength + 1 + 8 + 4);
+		ByteBuffer bb = ByteBuffer.allocate(4 + jsonStringLength + 4 + nameLength + 1 + 8);
 		
 		MessageUtils.putString(bb, jsonString);
 		MessageUtils.putString(bb, name);
 		
 		bb.put(persistent ? (byte)1 : (byte)0);
 		bb.putLong(lifetime);
-		
-		bb.putInt(messageID);
 		
 		return bb.array();
 	}
@@ -74,8 +69,6 @@ public class CreateDistributedDataMessage implements IMessage {
 		
 		persistent = bb.get() == (byte)1 ? true : false;
 		lifetime = bb.getLong();
-		
-		messageID = bb.getInt();
 	}
 
 	public JSONObject getData() {
@@ -94,7 +87,4 @@ public class CreateDistributedDataMessage implements IMessage {
 		return lifetime;
 	}
 
-	public int getMessageID() {
-		return messageID;
-	}
 }
