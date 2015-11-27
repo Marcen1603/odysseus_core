@@ -56,6 +56,7 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 			IDistributedData distributedData = optDistributedData.get();
 			if( distributedData.getCreator().equals(localNode.getID())) {
 				container.remove(distributedData);
+				return Optional.of(distributedData);
 			}
 		}
 		
