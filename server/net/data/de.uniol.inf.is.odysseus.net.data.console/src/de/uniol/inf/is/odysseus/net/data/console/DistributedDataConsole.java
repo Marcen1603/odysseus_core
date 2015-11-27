@@ -129,7 +129,7 @@ public class DistributedDataConsole implements CommandProvider {
 	private static void printDistributedDataDetails(CommandInterpreter ci, IDistributedData distributedData) {
 		ci.println("UUID          : " + distributedData.getUUID());
 		ci.println("Name          : " + distributedData.getName());
-		ci.println("Creater NodeID: " + distributedData.getCreator());
+		ci.println("Creator NodeID: " + distributedData.getCreator());
 		ci.println("Persistent    : " + distributedData.isPersistent());
 		ci.println("Lifetime      : " + distributedData.getLifetime());
 		ci.println("Timestamp     : " + distributedData.getTimestamp() + " (" + convertTimestampToDate(distributedData.getTimestamp()) + ")");
