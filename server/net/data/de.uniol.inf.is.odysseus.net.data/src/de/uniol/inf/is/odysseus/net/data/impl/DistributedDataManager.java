@@ -94,6 +94,12 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		if( server != null ) {
 			server.stop();
 		}
+		if( creator != null ) {
+			creator.dispose();
+		}
+		if( container != null ) {
+			container.dispose();
+		}
 	}
 	
 	@Override

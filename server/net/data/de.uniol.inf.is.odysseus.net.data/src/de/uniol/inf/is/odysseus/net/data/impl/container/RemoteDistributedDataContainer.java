@@ -70,4 +70,9 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		return false;
 	}
 
+	@Override
+	public void dispose() {
+		
+	}
+
 }

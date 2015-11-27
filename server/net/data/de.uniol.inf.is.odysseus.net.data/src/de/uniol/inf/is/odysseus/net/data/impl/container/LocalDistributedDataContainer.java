@@ -165,4 +165,9 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer 
 		}
 	}
 	
+	@Override
+	public void dispose() {
+		// do nothing
+	}
+	
 }

@@ -23,5 +23,7 @@ public interface IDistributedDataContainer {
 	
 	public boolean containsUUID( UUID uuid );
 	public boolean containsName( String name );
+
+	public void dispose();
 	
 }

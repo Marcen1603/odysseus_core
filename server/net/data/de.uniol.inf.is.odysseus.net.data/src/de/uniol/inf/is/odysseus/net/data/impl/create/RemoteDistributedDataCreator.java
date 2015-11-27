@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.net.data.impl.create;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.json.JSONObject;
@@ -10,15 +8,12 @@ import org.json.JSONObject;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
-import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
-import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
+import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationUtils;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListener;
@@ -29,19 +24,12 @@ import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 
-public class RemoteDistributedDataCreator implements IDistributedDataCreator, IOdysseusNodeConnectionManagerListener, IOdysseusNodeCommunicatorListener {
-
-	private static final long MAX_WAIT_TIME_MILLIS = 20 * 1000;
+public class RemoteDistributedDataCreator implements IDistributedDataCreator, IOdysseusNodeConnectionManagerListener {
 
 	private static int messageIDCounter = 0;
 
 	private final IOdysseusNodeCommunicator communicator;
 	private final IOdysseusNodeConnectionManager connectionManager;
-
-	private final Object syncObject = new Object();
-
-	private final Map<Integer, Object> answerMap = Maps.newHashMap();
-	private final List<Integer> waitingMessages = Lists.newArrayList();
 
 	private IOdysseusNode nodeWithContainer;
 
@@ -50,8 +38,6 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		Preconditions.checkNotNull(connectionManager, "connectionManager must not be null!");
 
 		this.communicator = communicator;
-		this.communicator.addListener(this, DistributedDataCreatedMessage.class);
-
 		this.connectionManager = connectionManager;
 		this.connectionManager.addListener(this);
 	}
@@ -64,65 +50,18 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 	@Override
 	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException {
 		int messageID = messageIDCounter++;
+		
+		if( nodeWithContainer == null ) {
+			throw new DistributedDataException("There is no remote node with a distributed data container");
+		}
 
 		CreateDistributedDataMessage msg = new CreateDistributedDataMessage(data, name, persistent, lifetime, messageID);
 
-		synchronized (syncObject) {
-			if (nodeWithContainer == null) {
-				throw new DistributedDataException("No connection to remote distributed data container");
-			}
-
-			synchronized (waitingMessages) {
-				waitingMessages.add(messageID);
-			}
-
-			try {
-				communicator.send(nodeWithContainer, msg);
-			} catch (OdysseusNodeCommunicationException e) {
-				synchronized (waitingMessages) {
-					waitingMessages.remove(messageID);
-				}
-				throw new DistributedDataException("Could not create distributed data remotely", e);
-			}
-		}
-
-		Optional<IDistributedData> optAnswer = waitForAnswerMessage(messageID);
-		if (optAnswer.isPresent()) {
-			return optAnswer.get();
-		}
-		
-		throw new DistributedDataException("Could not create distributed data successfully (maybe)");
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T> Optional<T> waitForAnswerMessage(int messageID) {
-		long waitTime = 0;
-
-		Object answer = null;
-		do {
-			synchronized (answerMap) {
-				answer = answerMap.get(messageID);
-			}
-
-			if (answer == null) {
-				waitSomeTime();
-				waitTime += 100;
-			}
-		} while (answer == null && waitTime < MAX_WAIT_TIME_MILLIS);
-
-		if (answer != null) {
-			synchronized (answerMap) {
-				answerMap.remove(messageID);
-			}
-		}
-
-		return Optional.fromNullable((T) answer);
-	}
-
-	private void waitSomeTime() {
 		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
+			DistributedDataCreatedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataCreatedMessage.class);
+			return answer.getDistributedData();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not send request and receive answer for creating distributed data", e);
 		}
 	}
 
@@ -143,23 +82,19 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 
 	@Override
 	public void nodeConnected(IOdysseusNodeConnection connection) {
-		synchronized (syncObject) {
-			if (nodeWithContainer == null) {
-				nodeWithContainer = connection.getOdysseusNode();
-			}
+		if (nodeWithContainer == null) {
+			nodeWithContainer = connection.getOdysseusNode();
 		}
 	}
 
 	@Override
 	public void nodeDisconnected(IOdysseusNodeConnection connection) {
-		synchronized (syncObject) {
-			if (nodeWithContainer == connection.getOdysseusNode()) {
-				Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
-				if (optConnection.isPresent()) {
-					nodeWithContainer = optConnection.get().getOdysseusNode();
-				} else {
-					nodeWithContainer = null;
-				}
+		if (nodeWithContainer == connection.getOdysseusNode()) {
+			Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
+			if (optConnection.isPresent()) {
+				nodeWithContainer = optConnection.get().getOdysseusNode();
+			} else {
+				nodeWithContainer = null;
 			}
 		}
 	}
@@ -177,25 +112,4 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		}
 		return Optional.absent();
 	}
-
-	@Override
-	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
-		if (message instanceof DistributedDataCreatedMessage) {
-			DistributedDataCreatedMessage msg = (DistributedDataCreatedMessage) message;
-			int messageID = msg.getRequestMessageID();
-
-			synchronized (waitingMessages) {
-				if (waitingMessages.contains(messageID)) {
-					waitingMessages.remove(messageID);
-				} else {
-					return;
-				}
-			}
-
-			synchronized (answerMap) {
-				answerMap.put(messageID, msg.getDistributedData());
-			}
-		}
-	}
-
 }
