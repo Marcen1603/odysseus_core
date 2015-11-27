@@ -205,7 +205,7 @@ public class DistributedDataConsole implements CommandProvider {
 				if (optDistributedData.isPresent()) {
 					ci.println("Distributed data destroyed");
 				} else {
-					ci.println("No distributed data with UUID " + dataText + " found");
+					ci.println("No distributed data destroyed");
 				}
 			} catch (DistributedDataException e) {
 				ci.println("Could not destroy distributed data: " + e);
