@@ -15,6 +15,6 @@ public interface IDistributedDataCreator {
 	public IDistributedData create(JSONObject data, String name, boolean persistent);
 	
 	public Optional<IDistributedData> destroy( UUID uuid );
-	public Collection<IDistributedData> destory( String name );
+	public Collection<IDistributedData> destroy( String name );
 	
 }

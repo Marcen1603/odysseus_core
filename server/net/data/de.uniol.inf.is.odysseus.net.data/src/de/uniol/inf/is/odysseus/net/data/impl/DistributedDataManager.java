@@ -55,7 +55,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 
 	@Override
 	public Collection<IDistributedData> destory(String name) {
-		return creator.destory(name);
+		return creator.destroy(name);
 	}
 
 	@Override

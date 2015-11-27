@@ -64,7 +64,7 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 	}
 
 	@Override
-	public Collection<IDistributedData> destory(String name) {
+	public Collection<IDistributedData> destroy(String name) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
 
 		Collection<IDistributedData> destroyedData = Lists.newArrayList();
