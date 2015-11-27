@@ -95,8 +95,6 @@ public class DistributedDataConsole implements CommandProvider {
 
 		Collection<IDistributedData> distributedDatas = determineDistributedData(dataText, ci);
 		if (!distributedDatas.isEmpty()) {
-			ci.println("There are " + distributedDatas.size() + " entries with name " + dataText);
-			ci.println();
 			for (IDistributedData distributedData : distributedDatas) {
 				printDistributedDataDetails(ci, distributedData);
 				ci.println();
