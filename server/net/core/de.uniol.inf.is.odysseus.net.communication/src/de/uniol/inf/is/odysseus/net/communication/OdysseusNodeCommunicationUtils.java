@@ -48,8 +48,8 @@ public class OdysseusNodeCommunicationUtils {
 		sendAndWaitForAnswerAsync(communicator, destination, message, MAX_WAIT_TIME_MILLIS, callback, answerMessageTypes);
 	}
 
-	public static <T extends IMessage> void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, IMessageAnswerCallback<T> callback, Class<T> answerMessageType) {
-		sendAndWaitForAnswerAsync(communicator, destination, message, MAX_WAIT_TIME_MILLIS, new IGenericMessageAnswerCallback() {
+	public static <T extends IMessage> void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, long waitMillis, IMessageAnswerCallback<T> callback, Class<T> answerMessageType) {
+		sendAndWaitForAnswerAsync(communicator, destination, message, waitMillis, new IGenericMessageAnswerCallback() {
 			
 			@SuppressWarnings("unchecked")
 			@Override
@@ -62,6 +62,10 @@ public class OdysseusNodeCommunicationUtils {
 				callback.answerFailed(cause);
 			}
 		}, answerMessageType);
+	}
+	
+	public static <T extends IMessage> void sendAndWaitForAnswerAsync(IOdysseusNodeCommunicator communicator, IOdysseusNode destination, IMessage message, IMessageAnswerCallback<T> callback, Class<T> answerMessageType) {
+		sendAndWaitForAnswerAsync(communicator, destination, message, MAX_WAIT_TIME_MILLIS, callback, answerMessageType);
 	}
 
 	@SafeVarargs
