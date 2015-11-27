@@ -7,14 +7,17 @@ import org.json.JSONObject;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
+import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 
 public interface IDistributedDataCreator {
 
-	public IDistributedData create(JSONObject data, String name, boolean persistent, long lifetime);
-	public IDistributedData create(JSONObject data, String name, boolean persistent);
+	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException;
+	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent) throws DistributedDataException;
 	
-	public Optional<IDistributedData> destroy( UUID uuid );
-	public Collection<IDistributedData> destroy( String name );
+	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid );
+	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name );
 	
+	public void dispose();
 }

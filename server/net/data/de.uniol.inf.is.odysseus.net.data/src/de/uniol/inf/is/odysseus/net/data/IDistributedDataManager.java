@@ -10,8 +10,8 @@ import com.google.common.base.Optional;
 public interface IDistributedDataManager {
 	
 	// creator
-	public IDistributedData create(JSONObject data, String name, boolean persistent, long lifetime);
-	public IDistributedData create(JSONObject data, String name, boolean persistent);
+	public IDistributedData create(JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException;
+	public IDistributedData create(JSONObject data, String name, boolean persistent) throws DistributedDataException;
 	
 	public Optional<IDistributedData> destroy( UUID uuid );
 	public Collection<IDistributedData> destory( String name );
@@ -25,5 +25,8 @@ public interface IDistributedDataManager {
 	
 	public boolean containsUUID( UUID uuid );
 	public boolean containsName( String name );
+	
+	// control
+	public boolean isLocal();
 
 }

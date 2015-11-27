@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
 
-public class DistributedDataContainer implements IDistributedDataContainer {
+public class LocalDistributedDataContainer implements IDistributedDataContainer {
 
 	private final Map<String, Collection<IDistributedData>> ddNameMap = Maps.newHashMap();
 	private final Map<UUID, IDistributedData> ddUUIDMap = Maps.newHashMap();

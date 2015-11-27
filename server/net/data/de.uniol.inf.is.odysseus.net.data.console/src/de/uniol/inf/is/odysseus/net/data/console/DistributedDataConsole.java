@@ -15,6 +15,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 
@@ -42,6 +43,7 @@ public class DistributedDataConsole implements CommandProvider {
 		sb.append("--- Distributed Data Commands ---\n");
 		sb.append("  listDistributedData/ls... <filter>                      - Lists stored data in distributed data container\n");
 		sb.append("  describeDistributedData/desc... <ddid | ddname>         - Prints more details about a specific distributed data element\n");
+		sb.append("  isDistributedDataLocal                                  - Shows if distributed data is used locally\n");
 		return sb.toString();
 	}
 
@@ -176,7 +178,7 @@ public class DistributedDataConsole implements CommandProvider {
 
 			ci.println("Distributed data created. UUID is " + createdDistributedData.getUUID());
 
-		} catch (JSONException e) {
+		} catch (JSONException | DistributedDataException e) {
 			ci.println("Could not create distributed data: " + e.getMessage());
 			ci.printStackTrace(e);
 		}
@@ -197,16 +199,25 @@ public class DistributedDataConsole implements CommandProvider {
 		Collection<IDistributedData> distributedDatas = determineDistributedData(dataText, ci);
 		if (!distributedDatas.isEmpty()) {
 			int count = 0;
-			for( IDistributedData distributedData : distributedDatas ) {
-				if( distributedDataManager.destroy(distributedData.getUUID()).isPresent() ) {
+			for (IDistributedData distributedData : distributedDatas) {
+				if (distributedDataManager.destroy(distributedData.getUUID()).isPresent()) {
 					count++;
 				}
 			}
-			if( count > 0 ) {
+			if (count > 0) {
 				ci.println("Destroyed " + count + " distribted data");
 			} else {
 				ci.println("No distributed data destroyed");
 			}
 		}
+	}
+	
+	public void _isDistributedDataLocal(CommandInterpreter ci ) {
+		if (distributedDataManager == null) {
+			ci.println("Distributed data manager not available");
+			return;
+		}
+		
+		ci.println(distributedDataManager.isLocal());
 	}
 }
