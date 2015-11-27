@@ -50,10 +50,6 @@ public class DistributedDataConsole implements CommandProvider {
 	public void _listDistributedData(CommandInterpreter ci) {
 		String filter = ci.nextArgument();
 
-		if (distributedDataManager == null) {
-			ci.println("Distributed data manager not available");
-			return;
-		}
 		try {
 			Collection<String> names = distributedDataManager.getNames();
 			if (names.isEmpty()) {
@@ -89,11 +85,6 @@ public class DistributedDataConsole implements CommandProvider {
 	}
 
 	public void _describeDistributedData(CommandInterpreter ci) {
-		if (distributedDataManager == null) {
-			ci.println("Distributed data manager not available");
-			return;
-		}
-
 		String dataText = ci.nextArgument();
 		if (Strings.isNullOrEmpty(dataText)) {
 			ci.println("usage: describeDistributedData <ddname | ddid>");
@@ -163,11 +154,6 @@ public class DistributedDataConsole implements CommandProvider {
 	}
 
 	public void _createDistributedData(CommandInterpreter ci) {
-		if (distributedDataManager == null) {
-			ci.println("Distributed data manager not available");
-			return;
-		}
-
 		String name = ci.nextArgument();
 		if (Strings.isNullOrEmpty(name)) {
 			ci.println("usage: createDistributedData <name> <someText>");
@@ -195,11 +181,6 @@ public class DistributedDataConsole implements CommandProvider {
 	}
 
 	public void _destroyDistributedData(CommandInterpreter ci) {
-		if (distributedDataManager == null) {
-			ci.println("Distributed data manager not available");
-			return;
-		}
-
 		String dataText = ci.nextArgument();
 		if (Strings.isNullOrEmpty(dataText)) {
 			ci.println("usage: destroyDistributedData <ddname | ddid>");
@@ -240,11 +221,26 @@ public class DistributedDataConsole implements CommandProvider {
 	}
 
 	public void _isDistributedDataLocal(CommandInterpreter ci) {
-		if (distributedDataManager == null) {
-			ci.println("Distributed data manager not available");
-			return;
-		}
-
 		ci.println(distributedDataManager.isLocal());
+	}
+	
+	public void _lsDistributedDataUUIDs(CommandInterpreter ci ) {
+		try {
+			Collection<UUID> uuids = distributedDataManager.getUUIDs();
+			if( !uuids.isEmpty() ) {
+				for( UUID uuid : uuids ) {
+					ci.println("\t" + uuid.toString());
+				}
+			} else {
+				ci.println("No distributed data with uuids available");
+			}
+		} catch (DistributedDataException e) {
+			ci.println("Could not determine list of distributed data UUIDs" + e);
+			ci.printStackTrace(e);
+		}
+	}
+	
+	public void _listDistributedDataUUIDs(CommandInterpreter ci ) {
+		_lsDistributedDataUUIDs(ci);
 	}
 }
