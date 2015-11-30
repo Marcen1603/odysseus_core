@@ -291,7 +291,7 @@ public class SensorFactory
 				"#PARSER PQL\n"
 			  + "#RUNQUERY\n"
 			
-			  + "encoded = MAP({expressions = [['convert16BitToRGBCV(image)', 'image'], ['timestamp', 'timestamp'], ['flagState', 'flagState']]}, %(sourceName))\n"
+			  + "encoded = MAP({expressions = [['reinterpretCV(image, getWidthCV(image)/2, getHeightCV(image), 8, 4, 28)', 'image'], ['timestamp', 'timestamp'], ['flagState', 'flagState']]}, %(sourceName))\n"
 			  + "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 			  + "			           wrapper='GenericPush',\n"
 			  + "                      transport='none',\n"
@@ -301,11 +301,11 @@ public class SensorFactory
 			  + "								['videoExtension', 'avi'],\n"
 			  + "                               ['metadata_decoder', 'RGB2Gray16'],\n"
 			  + "                               ['metadata_bitsperpixel', '32'],\n"
-			  + "                               ['metadata_pixelformat', '30'],\n"
+			  + "                               ['metadata_pixelformat', '28'],\n"	// RGBA
 			  + "								['videoCodec', '34'],\n"			// FFV1
 			  + "								['frameRate', '27'],\n"
 			  + "								['videoQuality', '0'],\n"
-			  + "								['pixelformat', '30'],\n"			// RGBA
+			  + "								['pixelformat', '30'],\n"			// BGRA must be supplied, but images written as RGBA. See http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/OptrisCamera+transport+handler
 			  + "								['codec:preset', 'veryslow'],\n"
 			  + "								['frameSizeMultiple', '2']\n"
 			  + "                              ]},\n"

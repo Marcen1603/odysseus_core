@@ -54,6 +54,8 @@ public class Sensor
 		safeRemoveQuery(queryName, session);
 		
 		try	{
+			queryText = "#QNAME " + queryName + "\n" + queryText;
+			
 			executor.addQuery(queryText, "OdysseusScript", session, Context.empty());
 		} catch (Exception e) {
 			try {
