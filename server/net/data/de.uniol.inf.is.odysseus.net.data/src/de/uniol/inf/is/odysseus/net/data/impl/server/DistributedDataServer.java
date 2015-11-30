@@ -23,8 +23,10 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWith
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.GetUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDestroyedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.NamesMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.OptionalDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
@@ -51,6 +53,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.addListener(this, DestroyDistributedDataWithNameMessage.class);
 		communicator.addListener(this, RequestUUIDsMessage.class);
 		communicator.addListener(this, RequestNamesMessage.class);
+		communicator.addListener(this, GetUUIDMessage.class);
 	}
 
 	public void stop() {
@@ -59,6 +62,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.removeListener(this, DestroyDistributedDataWithNameMessage.class);
 		communicator.removeListener(this, RequestUUIDsMessage.class);
 		communicator.removeListener(this, RequestNamesMessage.class);
+		communicator.removeListener(this, GetUUIDMessage.class);
 	}
 
 	@Override
@@ -135,6 +139,20 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 				
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Could not send answer of request names message", e);
+			}
+		} else if( message instanceof GetUUIDMessage ) {
+			GetUUIDMessage msg = (GetUUIDMessage)message;
+			
+			try {
+				Optional<IDistributedData> optData = manager.get(msg.getUUID());
+				OptionalDistributedDataMessage answer = new OptionalDistributedDataMessage(optData);
+				
+				communicator.send(senderNode, answer);
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
+				
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of get distributed data with uuid message", e);
 			}
 		}
 	}

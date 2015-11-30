@@ -18,7 +18,9 @@ import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.message.GetUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.NamesMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.OptionalDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
@@ -94,8 +96,17 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 
 	@Override
 	public Optional<IDistributedData> get(UUID uuid) throws DistributedDataException {
-		// TODO
-		return null;
+		Preconditions.checkNotNull(uuid, "uuid must not be null!");
+
+		checkConnection();
+		
+		GetUUIDMessage msg = new GetUUIDMessage(uuid);
+		try {
+			OptionalDistributedDataMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, OptionalDistributedDataMessage.class);
+			return answer.getDistributedData();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not get distributed data from specified uuid", e);
+		}
 	}
 
 	@Override
