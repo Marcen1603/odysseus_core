@@ -18,6 +18,9 @@ import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.message.BooleanMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCollectionMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetUUIDMessage;
@@ -129,14 +132,32 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 
 	@Override
 	public boolean containsUUID(UUID uuid) throws DistributedDataException {
-		// TODO
-		return false;
+		Preconditions.checkNotNull(uuid, "uuid must not be null!");
+
+		checkConnection();
+		
+		ContainsUUIDMessage msg = new ContainsUUIDMessage(uuid);
+		try {
+			BooleanMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, BooleanMessage.class);
+			return answer.getValue();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not retrieve containment of distributed data from specified uuid", e);
+		}
 	}
 
 	@Override
 	public boolean containsName(String name) throws DistributedDataException {
-		// TODO
-		return false;
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
+
+		checkConnection();
+		
+		ContainsNameMessage msg = new ContainsNameMessage(name);
+		try {
+			BooleanMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, BooleanMessage.class);
+			return answer.getValue();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not retrieve containment of distributed data from specified name", e);
+		}
 	}
 
 	@Override

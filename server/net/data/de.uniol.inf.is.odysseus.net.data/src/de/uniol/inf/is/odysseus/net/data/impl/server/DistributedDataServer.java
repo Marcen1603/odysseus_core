@@ -18,6 +18,9 @@ import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
+import de.uniol.inf.is.odysseus.net.data.impl.message.BooleanMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
@@ -57,6 +60,8 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.addListener(this, RequestNamesMessage.class);
 		communicator.addListener(this, GetUUIDMessage.class);
 		communicator.addListener(this, GetNameMessage.class);
+		communicator.addListener(this, ContainsUUIDMessage.class);
+		communicator.addListener(this, ContainsNameMessage.class);
 	}
 
 	public void stop() {
@@ -67,6 +72,8 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.removeListener(this, RequestNamesMessage.class);
 		communicator.removeListener(this, GetUUIDMessage.class);
 		communicator.removeListener(this, GetNameMessage.class);
+		communicator.removeListener(this, ContainsUUIDMessage.class);
+		communicator.removeListener(this, ContainsNameMessage.class);
 	}
 
 	@Override
@@ -171,6 +178,30 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 				
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Could not send answer of get distributed data with name message", e);
+			}
+		} else if ( message instanceof ContainsUUIDMessage ) {
+			ContainsUUIDMessage msg = (ContainsUUIDMessage) message;
+			
+			try {
+				boolean value = manager.containsUUID(msg.getUUID());
+				
+				communicator.send(senderNode, new BooleanMessage(value));
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of containment of distributed data with uuid", e);
+			}
+		} else if ( message instanceof ContainsNameMessage ) {
+			ContainsNameMessage msg = (ContainsNameMessage) message;
+			
+			try {
+				boolean value = manager.containsName(msg.getName());
+				
+				communicator.send(senderNode, new BooleanMessage(value));
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of containment of distributed data with name", e);
 			}
 		}
 	}

@@ -20,6 +20,9 @@ import de.uniol.inf.is.odysseus.net.data.impl.container.LocalDistributedDataCont
 import de.uniol.inf.is.odysseus.net.data.impl.container.RemoteDistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.create.LocalDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.create.RemoteDistributedDataCreator;
+import de.uniol.inf.is.odysseus.net.data.impl.message.BooleanMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
@@ -71,6 +74,10 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		communicator.registerMessageType(GetNameMessage.class);
 		communicator.registerMessageType(OptionalDistributedDataMessage.class);
 		communicator.registerMessageType(DistributedDataCollectionMessage.class);
+		communicator.registerMessageType(ContainsUUIDMessage.class);
+		communicator.registerMessageType(ContainsNameMessage.class);
+		communicator.registerMessageType(BooleanMessage.class);
+		
 	}
 
 	// called by OSGi-DS
@@ -91,6 +98,9 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			communicator.unregisterMessageType(GetNameMessage.class);
 			communicator.unregisterMessageType(OptionalDistributedDataMessage.class);
 			communicator.unregisterMessageType(DistributedDataCollectionMessage.class);
+			communicator.unregisterMessageType(ContainsUUIDMessage.class);
+			communicator.unregisterMessageType(ContainsNameMessage.class);
+			communicator.unregisterMessageType(BooleanMessage.class);
 
 			communicator = null;
 		}
