@@ -29,4 +29,8 @@ public interface IDistributedDataManager {
 	// control
 	public boolean isLocal();
 
+	// listeners
+	public void addListener(IDistributedDataListener listener);
+	public void removeListener(IDistributedDataListener listener);
+
 }

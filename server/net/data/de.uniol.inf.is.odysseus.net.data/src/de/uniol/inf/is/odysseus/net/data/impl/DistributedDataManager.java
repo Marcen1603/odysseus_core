@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.json.JSONObject;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
@@ -15,6 +16,7 @@ import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
+import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.container.LocalDistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.container.RemoteDistributedDataContainer;
@@ -219,4 +221,17 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		}
 	}
 
+	@Override
+	public void addListener(IDistributedDataListener listener) {
+		Preconditions.checkNotNull(listener, "listener must not be null!");
+
+		container.addListener(listener);
+	}
+	
+	@Override
+	public void removeListener(IDistributedDataListener listener) {
+		Preconditions.checkNotNull(listener, "listener must not be null!");
+
+		container.removeListener(listener);
+	}
 }

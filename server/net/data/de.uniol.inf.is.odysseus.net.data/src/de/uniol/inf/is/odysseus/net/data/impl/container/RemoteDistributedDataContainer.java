@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListener;
 import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
+import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.message.BooleanMessage;
@@ -209,5 +210,15 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 				throw new DistributedDataException("There is no remote node with a distributed data container");
 			}
 		}
+	}
+	
+	@Override
+	public void addListener(IDistributedDataListener listener) {
+		// TODO
+	}
+	
+	@Override
+	public void removeListener(IDistributedDataListener listener) {
+		// TODO
 	}
 }
