@@ -27,6 +27,7 @@ public interface IDistributedDataManager {
 	public Optional<IDistributedData> get(UUID uuid) throws DistributedDataException;
 	public Collection<IDistributedData> get(String name) throws DistributedDataException;
 	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException;
+	public Collection<IDistributedData> getOwn() throws DistributedDataException;
 	
 	public boolean containsUUID( UUID uuid ) throws DistributedDataException;
 	public boolean containsName( String name ) throws DistributedDataException;

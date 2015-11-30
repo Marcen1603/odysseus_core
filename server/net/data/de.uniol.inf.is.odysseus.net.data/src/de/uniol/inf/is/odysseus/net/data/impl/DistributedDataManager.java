@@ -245,6 +245,11 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException {
 		return container.get(nodeID);
 	}
+	
+	@Override
+	public Collection<IDistributedData> getOwn() throws DistributedDataException {
+		return container.get(localNode.getID());
+	}
 
 	@Override
 	public boolean containsUUID(UUID uuid) throws DistributedDataException {
