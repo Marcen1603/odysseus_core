@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.net.data.impl.message;
+package de.uniol.inf.is.odysseus.net.data.impl;
 
 import com.google.common.base.Preconditions;
 

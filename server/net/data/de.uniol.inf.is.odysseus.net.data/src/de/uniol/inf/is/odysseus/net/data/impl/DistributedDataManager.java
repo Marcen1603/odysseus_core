@@ -128,7 +128,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	@Override
 	public void start() throws OdysseusNetException {
 		if (isLocal()) {
-			container = new LocalDistributedDataContainer();
+			container = new LocalDistributedDataContainer(communicator, connectionManager);
 			creator = new LocalDistributedDataCreator(container);
 			server = new DistributedDataServer(communicator, creator, this);
 		} else {

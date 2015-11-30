@@ -4,21 +4,75 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.communication.IMessage;
+import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
+import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
+import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
+import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
+import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveDistributedDataMessage;
 
-public class LocalDistributedDataContainer implements IDistributedDataContainer {
+public class LocalDistributedDataContainer implements IDistributedDataContainer, IOdysseusNodeConnectionManagerListener, IOdysseusNodeCommunicatorListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(LocalDistributedDataContainer.class);
+	
 	private final Map<String, Collection<IDistributedData>> ddNameMap = Maps.newHashMap();
 	private final Map<UUID, IDistributedData> ddUUIDMap = Maps.newHashMap();
 	
 	private final Object syncObject = new Object();
+	private final IOdysseusNodeConnectionManager connectionManager;
+	private final IOdysseusNodeCommunicator communicator;
+	
+	private final Collection<IOdysseusNode> otherContainers = Lists.newArrayList();
+	
+	public LocalDistributedDataContainer(IOdysseusNodeCommunicator communicator, IOdysseusNodeConnectionManager connectionManager) {
+		Preconditions.checkNotNull(connectionManager, "connectionManager must not be null!");
+		Preconditions.checkNotNull(communicator, "communicator must not be null!");
+
+		this.connectionManager = connectionManager;
+		for(IOdysseusNodeConnection connection : this.connectionManager.getConnections() ) {
+			nodeConnected(connection);
+		}
+		
+		this.communicator = communicator;
+		this.communicator.registerMessageType(AddDistributedDataMessage.class);
+		this.communicator.registerMessageType(RemoveDistributedDataMessage.class);
+		
+		this.communicator.addListener(this, AddDistributedDataMessage.class);
+		this.communicator.addListener(this, RemoveDistributedDataMessage.class);
+
+		this.connectionManager.addListener(this);
+		
+		LOG.info("Local distributed data container created");
+	}
+	
+	@Override
+	public void dispose() {
+		connectionManager.removeListener(this);
+		
+		communicator.removeListener(this, AddDistributedDataMessage.class);
+		communicator.removeListener(this, RemoveDistributedDataMessage.class);
+		
+		communicator.unregisterMessageType(AddDistributedDataMessage.class);
+		communicator.unregisterMessageType(RemoveDistributedDataMessage.class);
+		
+		LOG.info("Local distributed data container disposed");
+	}
 		
 	@Override
 	public void add(IDistributedData data) {
@@ -28,6 +82,8 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer 
 		String name = data.getName();
 		
 		synchronized( syncObject ) {
+			LOG.info("Trying to add distributed data {}", data
+					);
 			if( ddUUIDMap.containsKey(uuid)) {
 				IDistributedData oldData = ddUUIDMap.get(uuid);
 				long oldts = oldData.getTimestamp();
@@ -37,6 +93,12 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer 
 					Collection<IDistributedData> dataCollection = ddNameMap.get(name);
 					dataCollection.remove(oldData);
 					dataCollection.add(data);
+					
+					LOG.info("Distributed data added with younger timestamp");
+					
+					sendMessageToOtherContainers(new AddDistributedDataMessage(data));
+				} else {
+					LOG.info("Timestamp of distributed data is too old");
 				}
 				
 			} else {
@@ -48,6 +110,9 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer 
 					ddNameMap.put(name, dataCollection);
 				}
 				dataCollection.add(data);
+				LOG.info("Distributed data added as new element");
+
+				sendMessageToOtherContainers(new AddDistributedDataMessage(data));
 			}
 		}
 	}
@@ -57,6 +122,8 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer 
 		Preconditions.checkNotNull(data, "data must not be null!");
 
 		synchronized( syncObject ) {
+			LOG.info("Trying to remove distributed data {}", data);
+			
 			Collection<IDistributedData> dataCollection = ddNameMap.get(data.getName());
 			if( dataCollection != null ) {
 				dataCollection.remove(data);
@@ -68,6 +135,10 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer 
 			IDistributedData data2 = ddUUIDMap.get(data.getUUID());
 			if( data2 != null ) {
 				ddUUIDMap.remove(data2.getUUID());
+				
+				LOG.info("Distributed data removed");
+				
+				sendMessageToOtherContainers(new RemoveDistributedDataMessage(data));
 				return Optional.of(data2);
 			}
 			
@@ -164,10 +235,66 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer 
 			return ddNameMap.containsKey(name);
 		}
 	}
-	
+
 	@Override
-	public void dispose() {
-		// do nothing
+	public void nodeConnected(IOdysseusNodeConnection connection) {
+		IOdysseusNode node = connection.getOdysseusNode();
+		Optional<String> optProperty = node.getProperty(DistributedDataManager.LOCAL_DISTRIBUTED_DATA_CONTAINER_KEY);
+		if( optProperty.isPresent() ) {
+			String property = optProperty.get();
+			if( property.equalsIgnoreCase("true")) {
+				
+				synchronized(otherContainers) {
+					otherContainers.add(node);
+					
+					LOG.info("Added node {} as new remote container", node);
+				}
+				
+			}
+		}
+	}
+
+	@Override
+	public void nodeDisconnected(IOdysseusNodeConnection connection) {
+		IOdysseusNode node = connection.getOdysseusNode();
+		synchronized( otherContainers ) {
+			if( otherContainers.contains(node)) {
+				otherContainers.remove(node);
+				
+				LOG.info("Removed node as other container {}", node);
+			}
+		}
+		
 	}
 	
+	private void sendMessageToOtherContainers(IMessage message) {
+		LOG.debug("Sending message {} to other containers", message);
+		
+		synchronized( otherContainers ) {
+			for( IOdysseusNode otherContainer : otherContainers ) {
+				try {
+					communicator.send(otherContainer, message);
+				} catch (OdysseusNodeCommunicationException e) {
+					LOG.error("Could not send message {} to other container {}", new Object[]{message, otherContainer, e});
+				}
+			}
+		}
+	}
+
+	@Override
+	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
+		if( message instanceof AddDistributedDataMessage ) {
+			AddDistributedDataMessage msg = (AddDistributedDataMessage)message;
+			
+			LOG.info("Adding distribted data remotely from {}", senderNode);
+			
+			add(msg.getDistributedData());
+		} else if( message instanceof RemoveDistributedDataMessage ) {
+			RemoveDistributedDataMessage msg = (RemoveDistributedDataMessage)message;
+			
+			LOG.info("Removing distributed data remotely from {}", senderNode);
+			
+			remove(msg.getDistributedData());
+		}
+	}
 }
