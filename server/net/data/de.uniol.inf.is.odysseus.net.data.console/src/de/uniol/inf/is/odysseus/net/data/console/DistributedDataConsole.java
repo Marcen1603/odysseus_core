@@ -46,6 +46,7 @@ public class DistributedDataConsole implements CommandProvider {
 		sb.append("  isDistributedDataLocal                                  - Shows if distributed data is used locally\n");
 		sb.append("  listDistributedDataUUIDs/ls...                          - Lists all UUIDs of distributed data\n");
 		sb.append("  listDistributedDataNames/ls...                          - Lists all names of distributed data\n");
+		sb.append("  isDistributedData <ddid | ddname>                       - Shows if the identifier is reserved for distributed data\n");
 		return sb.toString();
 	}
 
