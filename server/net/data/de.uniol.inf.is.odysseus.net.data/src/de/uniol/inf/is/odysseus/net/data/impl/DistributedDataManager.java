@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
@@ -20,6 +21,11 @@ import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.container.LocalDistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.container.RemoteDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddListenerMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.ModifiedDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveListenerMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.create.LocalDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.create.RemoteDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.BooleanMessage;
@@ -50,6 +56,8 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	private static IOdysseusNodeCommunicator communicator;
 	private static IOdysseusNodeConnectionManager connectionManager;
 
+	private final Collection<IDistributedDataListener> listenerCache = Lists.newArrayList();
+
 	private IOdysseusNode localNode;
 
 	private IDistributedDataContainer container;
@@ -71,7 +79,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		communicator.registerMessageType(UUIDsMessage.class);
 		communicator.registerMessageType(RequestNamesMessage.class);
 		communicator.registerMessageType(NamesMessage.class);
-		
+
 		communicator.registerMessageType(GetUUIDMessage.class);
 		communicator.registerMessageType(GetNameMessage.class);
 		communicator.registerMessageType(OptionalDistributedDataMessage.class);
@@ -79,7 +87,14 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		communicator.registerMessageType(ContainsUUIDMessage.class);
 		communicator.registerMessageType(ContainsNameMessage.class);
 		communicator.registerMessageType(BooleanMessage.class);
-		
+
+		communicator.registerMessageType(AddDistributedDataMessage.class);
+		communicator.registerMessageType(ModifiedDistributedDataMessage.class);
+		communicator.registerMessageType(RemoveDistributedDataMessage.class);
+
+		communicator.registerMessageType(AddListenerMessage.class);
+		communicator.registerMessageType(RemoveListenerMessage.class);
+
 	}
 
 	// called by OSGi-DS
@@ -103,6 +118,13 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			communicator.unregisterMessageType(ContainsUUIDMessage.class);
 			communicator.unregisterMessageType(ContainsNameMessage.class);
 			communicator.unregisterMessageType(BooleanMessage.class);
+
+			communicator.unregisterMessageType(AddDistributedDataMessage.class);
+			communicator.unregisterMessageType(ModifiedDistributedDataMessage.class);
+			communicator.unregisterMessageType(RemoveDistributedDataMessage.class);
+
+			communicator.unregisterMessageType(AddListenerMessage.class);
+			communicator.unregisterMessageType(RemoveListenerMessage.class);
 
 			communicator = null;
 		}
@@ -129,13 +151,24 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 
 	@Override
 	public void start() throws OdysseusNetException {
-		if (isLocal()) {
-			container = new LocalDistributedDataContainer(communicator, connectionManager);
-			creator = new LocalDistributedDataCreator(container);
-			server = new DistributedDataServer(communicator, creator, this);
-		} else {
-			container = new RemoteDistributedDataContainer(communicator, connectionManager);
-			creator = new RemoteDistributedDataCreator(communicator, connectionManager);
+		synchronized (listenerCache) {
+			
+			if (isLocal()) {
+				container = new LocalDistributedDataContainer(communicator, connectionManager);
+				creator = new LocalDistributedDataCreator(container);
+				server = new DistributedDataServer(communicator, creator, this);
+			} else {
+				container = new RemoteDistributedDataContainer(communicator, connectionManager);
+				creator = new RemoteDistributedDataCreator(communicator, connectionManager);
+			}
+
+			if (!listenerCache.isEmpty()) {
+				for (IDistributedDataListener listener : listenerCache) {
+					container.addListener(listener);
+				}
+
+				listenerCache.clear();
+			}
 		}
 	}
 
@@ -225,13 +258,22 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	public void addListener(IDistributedDataListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		container.addListener(listener);
+		synchronized (listenerCache) {
+			if (container != null) {
+				container.addListener(listener);
+			} else {
+				listenerCache.add(listener);
+			}
+		}
 	}
-	
+
 	@Override
 	public void removeListener(IDistributedDataListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		container.removeListener(listener);
+		synchronized (listenerCache) {
+			container.removeListener(listener);
+			listenerCache.remove(listener);
+		}
 	}
 }

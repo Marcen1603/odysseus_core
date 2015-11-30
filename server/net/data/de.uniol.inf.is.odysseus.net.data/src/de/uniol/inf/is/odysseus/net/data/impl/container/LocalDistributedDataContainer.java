@@ -26,7 +26,10 @@ import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddListenerMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.ModifiedDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveListenerMessage;
 
 public class LocalDistributedDataContainer implements IDistributedDataContainer, IOdysseusNodeConnectionManagerListener, IOdysseusNodeCommunicatorListener {
 
@@ -41,6 +44,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 	private final Collection<IOdysseusNode> otherContainers = Lists.newArrayList();
 	private final Collection<IDistributedDataListener> listeners = Lists.newArrayList();
+	private final Collection<IOdysseusNode> remoteListeners = Lists.newArrayList();
 
 	public LocalDistributedDataContainer(IOdysseusNodeCommunicator communicator, IOdysseusNodeConnectionManager connectionManager) {
 		Preconditions.checkNotNull(connectionManager, "connectionManager must not be null!");
@@ -52,12 +56,13 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		}
 
 		this.communicator = communicator;
-		this.communicator.registerMessageType(AddDistributedDataMessage.class);
-		this.communicator.registerMessageType(RemoveDistributedDataMessage.class);
-
 		this.communicator.addListener(this, AddDistributedDataMessage.class);
+		this.communicator.addListener(this, ModifiedDistributedDataMessage.class);
 		this.communicator.addListener(this, RemoveDistributedDataMessage.class);
 
+		this.communicator.addListener(this, AddListenerMessage.class);
+		this.communicator.addListener(this, RemoveListenerMessage.class);
+		
 		this.connectionManager.addListener(this);
 
 		LOG.info("Local distributed data container created");
@@ -68,10 +73,11 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		connectionManager.removeListener(this);
 
 		communicator.removeListener(this, AddDistributedDataMessage.class);
+		communicator.removeListener(this, ModifiedDistributedDataMessage.class);
 		communicator.removeListener(this, RemoveDistributedDataMessage.class);
-
-		communicator.unregisterMessageType(AddDistributedDataMessage.class);
-		communicator.unregisterMessageType(RemoveDistributedDataMessage.class);
+		
+		communicator.removeListener(this, AddListenerMessage.class);
+		communicator.removeListener(this, RemoveListenerMessage.class);
 
 		LOG.info("Local distributed data container disposed");
 	}
@@ -97,7 +103,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 					LOG.info("Distributed data added with younger timestamp");
 
-					sendMessageToOtherContainers(new AddDistributedDataMessage(data));
+					sendMessageToOtherContainers(new ModifiedDistributedDataMessage(oldData, data));
 					fireModifiedEvent(oldData, data);
 					
 				} else {
@@ -280,6 +286,14 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 				LOG.info("Removed node as other container {}", node);
 			}
 		}
+		
+		synchronized( remoteListeners ) {
+			if( remoteListeners.contains(node)) {
+				remoteListeners.remove(node);
+				
+				LOG.info("Removed node as remote listener: {}", node);
+			}
+		}
 
 	}
 
@@ -313,6 +327,28 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 			LOG.info("Removing distributed data remotely from {}", senderNode);
 
 			remove(msg.getDistributedData());
+		} else if( message instanceof ModifiedDistributedDataMessage ) {
+			ModifiedDistributedDataMessage msg = (ModifiedDistributedDataMessage)message;
+			
+			LOG.info("Modifying distributed data remotely from {}", senderNode);
+			
+			add(msg.getNewData());
+		} else if( message instanceof AddListenerMessage ) {
+			synchronized( remoteListeners ) {
+				if( !remoteListeners.contains(senderNode)) {
+					remoteListeners.add(senderNode);
+					
+					LOG.info("Added remote listener node {}", senderNode);
+				}
+			}
+		} else if( message instanceof RemoveListenerMessage ) {
+			synchronized( remoteListeners ) {
+				if( remoteListeners.contains(senderNode)) {
+					remoteListeners.remove(senderNode);
+					
+					LOG.info("Removed remote listener node {}", senderNode);
+				}
+			}
 		}
 	}
 	
@@ -344,6 +380,8 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 				}
 			}
 		}
+		
+		sendMessageToRemoteListeners(new AddDistributedDataMessage(addedData));
 	}
 	
 	private void fireModifiedEvent( IDistributedData oldData, IDistributedData newData) {
@@ -356,6 +394,9 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 				}
 			}
 		}
+		
+		sendMessageToRemoteListeners(new ModifiedDistributedDataMessage(oldData, newData));
+
 	}
 	
 	private void fireRemovedEvent( IDistributedData removedData) {
@@ -368,5 +409,22 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 				}
 			}
 		}
+		
+		sendMessageToRemoteListeners(new RemoveDistributedDataMessage(removedData));
+	}
+	
+	private void sendMessageToRemoteListeners( IMessage message ) {
+		LOG.info("Sending message to remote listeners: {}", message);
+		
+		synchronized( remoteListeners ) {
+			for( IOdysseusNode remoteListener : remoteListeners ) {
+				try {
+					communicator.send(remoteListener, message);
+				} catch (OdysseusNodeCommunicationException e) {
+					LOG.error("Could not send message {} to remote node {}", new Object[] {message, remoteListener, e});
+				}
+			}
+		}
+
 	}
 }

@@ -3,12 +3,18 @@ package de.uniol.inf.is.odysseus.net.data.impl.container;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
+import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationUtils;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
@@ -19,6 +25,11 @@ import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddListenerMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.ModifiedDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveDistributedDataMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveListenerMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.BooleanMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsUUIDMessage;
@@ -31,10 +42,13 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
 
-public class RemoteDistributedDataContainer implements IDistributedDataContainer, IOdysseusNodeConnectionManagerListener {
+public class RemoteDistributedDataContainer implements IDistributedDataContainer, IOdysseusNodeConnectionManagerListener, IOdysseusNodeCommunicatorListener {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RemoteDistributedDataContainer.class);
 
 	private final IOdysseusNodeCommunicator communicator;
 	private final IOdysseusNodeConnectionManager connectionManager;
+	private final Collection<IDistributedDataListener> listeners = Lists.newArrayList();
 
 	private IOdysseusNode nodeWithContainer;
 
@@ -42,15 +56,27 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		Preconditions.checkNotNull(communicator, "communicator must not be null!");
 
 		this.communicator = communicator;
+		this.communicator.addListener(this, AddDistributedDataMessage.class);
+		this.communicator.addListener(this, ModifiedDistributedDataMessage.class);
+		this.communicator.addListener(this, RemoveDistributedDataMessage.class);
+
 		this.connectionManager = connectionManager;
 		this.connectionManager.addListener(this);
 
 		updateConnection();
+
+		LOG.info("Remote distributed data container created");
 	}
 
 	@Override
 	public void dispose() {
+		this.communicator.removeListener(this, AddDistributedDataMessage.class);
+		this.communicator.removeListener(this, ModifiedDistributedDataMessage.class);
+		this.communicator.removeListener(this, RemoveDistributedDataMessage.class);
+
 		this.connectionManager.removeListener(this);
+
+		LOG.info("Remote distributed data container removed");
 	}
 
 	@Override
@@ -89,9 +115,9 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	@Override
 	public Collection<String> getNames() throws DistributedDataException {
 		checkConnection();
-		
+
 		RequestNamesMessage msg = new RequestNamesMessage();
-		
+
 		try {
 			NamesMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, NamesMessage.class);
 			return answer.getNames();
@@ -105,7 +131,7 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		Preconditions.checkNotNull(uuid, "uuid must not be null!");
 
 		checkConnection();
-		
+
 		GetUUIDMessage msg = new GetUUIDMessage(uuid);
 		try {
 			OptionalDistributedDataMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, OptionalDistributedDataMessage.class);
@@ -120,9 +146,9 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
 
 		checkConnection();
-		
+
 		GetNameMessage msg = new GetNameMessage(name);
-		
+
 		try {
 			DistributedDataCollectionMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataCollectionMessage.class);
 			return answer.getDistributedData();
@@ -136,7 +162,7 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		Preconditions.checkNotNull(uuid, "uuid must not be null!");
 
 		checkConnection();
-		
+
 		ContainsUUIDMessage msg = new ContainsUUIDMessage(uuid);
 		try {
 			BooleanMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, BooleanMessage.class);
@@ -151,7 +177,7 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
 
 		checkConnection();
-		
+
 		ContainsNameMessage msg = new ContainsNameMessage(name);
 		try {
 			BooleanMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, BooleanMessage.class);
@@ -163,19 +189,36 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 
 	@Override
 	public void nodeConnected(IOdysseusNodeConnection connection) {
+		LOG.info("Node {} connected", connection.getOdysseusNode());
 		if (nodeWithContainer == null) {
 			nodeWithContainer = connection.getOdysseusNode();
+
+			LOG.info("Selected node {} as active connection to remote distributed data container", nodeWithContainer);
+
+			synchronized (listeners) {
+				if (!listeners.isEmpty()) {
+					trySendAddListenerMessage();
+				}
+			}
 		}
 	}
 
 	@Override
 	public void nodeDisconnected(IOdysseusNodeConnection connection) {
+		LOG.info("Node {} disconnected", connection.getOdysseusNode());
+
 		if (nodeWithContainer == connection.getOdysseusNode()) {
 			Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
 			if (optConnection.isPresent()) {
 				nodeWithContainer = optConnection.get().getOdysseusNode();
+				if( !listeners.isEmpty() ) {
+					trySendAddListenerMessage();
+				}
+				
+				LOG.info("Replaced active connection to remote distributed data container with node {}", nodeWithContainer);
 			} else {
 				nodeWithContainer = null;
+				LOG.info("Currently, no active connection to a remote distributed data container available");
 			}
 		}
 	}
@@ -198,8 +241,14 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
 		if (optConnection.isPresent()) {
 			nodeWithContainer = optConnection.get().getOdysseusNode();
+			if( !listeners.isEmpty() ) {
+				trySendAddListenerMessage();
+			}
+			
+			LOG.info("Updated connection to {}", nodeWithContainer);
 		} else {
 			nodeWithContainer = null;
+			LOG.info("Currently, no active connection to a remote distributed data container available");
 		}
 	}
 
@@ -211,14 +260,111 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			}
 		}
 	}
-	
+
 	@Override
 	public void addListener(IDistributedDataListener listener) {
-		// TODO
+		Preconditions.checkNotNull(listener, "listener must not be null!");
+
+		synchronized (listeners) {
+			if (!listeners.contains(listener)) {
+				listeners.add(listener);
+
+				if (listeners.size() == 1) {
+					trySendAddListenerMessage();
+				}
+
+				LOG.info("Added listener for remote distributed data container");
+			}
+		}
 	}
-	
+
+	private void trySendAddListenerMessage() {
+		if( nodeWithContainer != null ) {
+			try {
+				communicator.send(nodeWithContainer, new AddListenerMessage());
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send add listener message to node {}", nodeWithContainer, e);
+			}
+		}
+	}
+
 	@Override
 	public void removeListener(IDistributedDataListener listener) {
-		// TODO
+		Preconditions.checkNotNull(listener, "listener must not be null!");
+
+		synchronized (listeners) {
+			if (listeners.contains(listener)) {
+				listeners.remove(listener);
+
+				if (listeners.isEmpty() ) {
+					trySendRemoveListenerMessage();
+				}
+
+				LOG.info("Removed listener for remote distributed data container");
+			}
+		}
+	}
+
+	private void trySendRemoveListenerMessage() {
+		if( nodeWithContainer != null ) {
+			try {
+				communicator.send(nodeWithContainer, new RemoveListenerMessage());
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send remove listener message to node {}", nodeWithContainer, e);
+			}
+		}
+	}
+
+	@Override
+	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
+		if( message instanceof AddDistributedDataMessage ) {
+			AddDistributedDataMessage msg = (AddDistributedDataMessage)message;
+			
+			fireAddedEvent(msg.getDistributedData());
+		} else if( message instanceof RemoveDistributedDataMessage ) {
+			RemoveDistributedDataMessage msg = (RemoveDistributedDataMessage)message;
+			
+			fireRemovedEvent(msg.getDistributedData());
+		} else if( message instanceof ModifiedDistributedDataMessage ) {
+			ModifiedDistributedDataMessage msg = (ModifiedDistributedDataMessage) message;
+			
+			fireModifiedEvent(msg.getOldData(), msg.getNewData());
+		}
+	}
+	
+	private void fireAddedEvent( IDistributedData addedData) {
+		synchronized( listeners ) {
+			for( IDistributedDataListener listener : listeners ) {
+				try {
+					listener.distributedDataAdded(addedData);
+				} catch( Throwable t ) {
+					LOG.error("Exception in distributed data listener", t);
+				}
+			}
+		}
+	}
+	
+	private void fireModifiedEvent( IDistributedData oldData, IDistributedData newData) {
+		synchronized( listeners ) {
+			for( IDistributedDataListener listener : listeners ) {
+				try {
+					listener.distributedDataModified(oldData, newData);
+				} catch( Throwable t ) {
+					LOG.error("Exception in distributed data listener", t);
+				}
+			}
+		}
+	}
+	
+	private void fireRemovedEvent( IDistributedData removedData) {
+		synchronized( listeners ) {
+			for( IDistributedDataListener listener : listeners ) {
+				try {
+					listener.distributedDataRemoved(removedData);
+				} catch( Throwable t ) {
+					LOG.error("Exception in distributed data listener", t);
+				}
+			}
+		}
 	}
 }
