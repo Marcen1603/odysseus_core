@@ -21,8 +21,10 @@ import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCollectionMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.GetNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDestroyedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.NamesMessage;
@@ -54,6 +56,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.addListener(this, RequestUUIDsMessage.class);
 		communicator.addListener(this, RequestNamesMessage.class);
 		communicator.addListener(this, GetUUIDMessage.class);
+		communicator.addListener(this, GetNameMessage.class);
 	}
 
 	public void stop() {
@@ -63,6 +66,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.removeListener(this, RequestUUIDsMessage.class);
 		communicator.removeListener(this, RequestNamesMessage.class);
 		communicator.removeListener(this, GetUUIDMessage.class);
+		communicator.removeListener(this, GetNameMessage.class);
 	}
 
 	@Override
@@ -153,6 +157,20 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 				
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Could not send answer of get distributed data with uuid message", e);
+			}
+		} else if( message instanceof GetNameMessage ) {
+			GetNameMessage msg = (GetNameMessage)message;
+			
+			try {
+				Collection<IDistributedData> dataCollection = manager.get(msg.getName());
+				DistributedDataCollectionMessage answer = new DistributedDataCollectionMessage(dataCollection);
+				
+				communicator.send(senderNode, answer);
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
+				
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of get distributed data with name message", e);
 			}
 		}
 	}

@@ -18,6 +18,8 @@ import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCollectionMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.GetNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.NamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.OptionalDistributedDataMessage;
@@ -111,8 +113,18 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 
 	@Override
 	public Collection<IDistributedData> get(String name) throws DistributedDataException {
-		// TODO
-		return null;
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
+
+		checkConnection();
+		
+		GetNameMessage msg = new GetNameMessage(name);
+		
+		try {
+			DistributedDataCollectionMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataCollectionMessage.class);
+			return answer.getDistributedData();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not get distributed data from specified name", e);
+		}
 	}
 
 	@Override
