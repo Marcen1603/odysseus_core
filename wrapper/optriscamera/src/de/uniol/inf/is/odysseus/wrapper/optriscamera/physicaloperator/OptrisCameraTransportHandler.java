@@ -60,10 +60,37 @@ public class OptrisCameraTransportHandler extends AbstractPushTransportHandler
 			try
 			{
 		 		cameraCapture = new OptrisCamera("", serialNumber)
-		 						{		 			
+		 						{		 		
+		 							Thread firstFrameThread = null;
+		 							boolean firstFrameProcessed = false;
+		 			
 		 							@Override public void onNewFrame(long timeStamp, TFlagState flagState, ByteBuffer buffer)
 		 							{
-	 									fireProcess(generateTuple(timeStamp, flagState, buffer));		 								
+		 								Tuple<IMetaAttribute> tuple = generateTuple(timeStamp, flagState, buffer);
+		 								
+		 								// TODO: Since this handler is often used with streaming, which may take some seconds to set up, the Optris SDK stops sending images.
+		 								// Until the first image has been processed, subsequent images get discarded until the first image has been written.
+		 								// Use load shedding instead!
+		 								if (!firstFrameProcessed)
+		 								{
+		 									if (firstFrameThread == null) {
+			 									firstFrameThread = new Thread()
+			 									{
+			 										@Override
+			 										public void run()
+			 										{
+			 											fireProcess(tuple);
+			 											firstFrameProcessed = true;
+			 											firstFrameThread = null;
+			 										}
+			 									};
+			 									firstFrameThread.start();
+		 									}
+/*		 									else
+		 										System.out.println("Drop frame since first frame didn't finish yet!");*/
+		 								}
+		 								else
+		 									fireProcess(tuple);		 								
 		 							}
 		 						};		 		
 				cameraCapture.start();

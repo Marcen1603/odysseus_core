@@ -234,6 +234,7 @@ OptrisCamera::OptrisCamera(const std::string& instanceName, const std::string& e
 {
 	this->instanceName = instanceName;
 	this->ethernetAddr = ethernetAddr;
+	this->ipcThread = NULL;
 
 	instanceID = 0;
 }
