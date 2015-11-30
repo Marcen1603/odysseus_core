@@ -12,6 +12,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
@@ -98,6 +99,11 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	public Collection<IDistributedData> remove(String name) {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public Collection<IDistributedData> remove(OdysseusNodeID nodeID) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public Collection<UUID> getUUIDs() throws DistributedDataException {
@@ -124,6 +130,12 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		} catch (OdysseusNodeCommunicationException e) {
 			throw new DistributedDataException("Could not get names of distributed data", e);
 		}
+	}
+	
+	@Override
+	public Collection<OdysseusNodeID> getOdysseusNodeIDs() throws DistributedDataException {
+		// TODO 
+		return null;
 	}
 
 	@Override
@@ -156,6 +168,12 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			throw new DistributedDataException("Could not get distributed data from specified name", e);
 		}
 	}
+	
+	@Override
+	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException {
+		// TODO
+		return null;
+	}
 
 	@Override
 	public boolean containsUUID(UUID uuid) throws DistributedDataException {
@@ -185,6 +203,12 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		} catch (OdysseusNodeCommunicationException e) {
 			throw new DistributedDataException("Could not retrieve containment of distributed data from specified name", e);
 		}
+	}
+	
+	@Override
+	public boolean containsOdysseusNodeID(OdysseusNodeID nodeID) throws DistributedDataException {
+		// TODO
+		return false;
 	}
 
 	@Override

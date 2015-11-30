@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
@@ -152,7 +153,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	@Override
 	public void start() throws OdysseusNetException {
 		synchronized (listenerCache) {
-			
+
 			if (isLocal()) {
 				container = new LocalDistributedDataContainer(communicator, connectionManager);
 				creator = new LocalDistributedDataCreator(container);
@@ -211,6 +212,11 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	}
 
 	@Override
+	public Collection<IDistributedData> destroyOwn() throws DistributedDataException {
+		return creator.destroy(localNode.getID());
+	}
+
+	@Override
 	public Collection<UUID> getUUIDs() throws DistributedDataException {
 		return container.getUUIDs();
 	}
@@ -218,6 +224,11 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	@Override
 	public Collection<String> getNames() throws DistributedDataException {
 		return container.getNames();
+	}
+	
+	@Override
+	public Collection<OdysseusNodeID> getOdysseusNodeIDs() throws DistributedDataException {
+		return container.getOdysseusNodeIDs();
 	}
 
 	@Override
@@ -229,6 +240,11 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	public Collection<IDistributedData> get(String name) throws DistributedDataException {
 		return container.get(name);
 	}
+	
+	@Override
+	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException {
+		return container.get(nodeID);
+	}
 
 	@Override
 	public boolean containsUUID(UUID uuid) throws DistributedDataException {
@@ -238,6 +254,11 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	@Override
 	public boolean containsName(String name) throws DistributedDataException {
 		return container.containsName(name);
+	}
+	
+	@Override
+	public boolean containsOdysseusNodeID(OdysseusNodeID nodeID) throws DistributedDataException {
+		return container.containsOdysseusNodeID(nodeID);
 	}
 
 	@Override

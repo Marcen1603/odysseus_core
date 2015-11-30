@@ -98,6 +98,14 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		}
 	}
 
+	
+	@Override
+	public Collection<IDistributedData> destroy(OdysseusNodeID id) throws DistributedDataException {
+		// TODO: destroy own distributed data remotely
+		
+		return null;
+	}
+	
 	@Override
 	public void nodeConnected(IOdysseusNodeConnection connection) {
 		if (nodeWithContainer == null) {

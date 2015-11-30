@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
@@ -21,6 +22,7 @@ import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationExcep
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListener;
+import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
@@ -37,6 +39,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 	private final Map<String, Collection<IDistributedData>> ddNameMap = Maps.newHashMap();
 	private final Map<UUID, IDistributedData> ddUUIDMap = Maps.newHashMap();
+	private final Map<OdysseusNodeID, Collection<IDistributedData>> ddNodeMap = Maps.newHashMap();
 
 	private final Object syncObject = new Object();
 	private final IOdysseusNodeConnectionManager connectionManager;
@@ -62,7 +65,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 		this.communicator.addListener(this, AddListenerMessage.class);
 		this.communicator.addListener(this, RemoveListenerMessage.class);
-		
+
 		this.connectionManager.addListener(this);
 
 		LOG.info("Local distributed data container created");
@@ -75,7 +78,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		communicator.removeListener(this, AddDistributedDataMessage.class);
 		communicator.removeListener(this, ModifiedDistributedDataMessage.class);
 		communicator.removeListener(this, RemoveDistributedDataMessage.class);
-		
+
 		communicator.removeListener(this, AddListenerMessage.class);
 		communicator.removeListener(this, RemoveListenerMessage.class);
 
@@ -101,11 +104,15 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 					dataCollection.remove(oldData);
 					dataCollection.add(data);
 
+					Collection<IDistributedData> nodeCollection = ddNodeMap.get(data.getCreator());
+					nodeCollection.remove(oldData);
+					nodeCollection.add(data);
+
 					LOG.info("Distributed data added with younger timestamp");
 
 					sendMessageToOtherContainers(new ModifiedDistributedDataMessage(oldData, data));
 					fireModifiedEvent(oldData, data);
-					
+
 				} else {
 					LOG.info("Timestamp of distributed data is too old");
 				}
@@ -119,6 +126,14 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 					ddNameMap.put(name, dataCollection);
 				}
 				dataCollection.add(data);
+
+				Collection<IDistributedData> nodeCollection = ddNodeMap.get(data.getCreator());
+				if (nodeCollection == null) {
+					nodeCollection = Lists.newArrayList();
+					ddNodeMap.put(data.getCreator(), nodeCollection);
+				}
+				nodeCollection.add(data);
+
 				LOG.info("Distributed data added as new element");
 
 				sendMessageToOtherContainers(new AddDistributedDataMessage(data));
@@ -139,6 +154,14 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 				dataCollection.remove(data);
 				if (dataCollection.isEmpty()) {
 					ddNameMap.remove(data.getName());
+				}
+			}
+
+			Collection<IDistributedData> nodeCollection = ddNodeMap.get(data.getCreator());
+			if (nodeCollection != null) {
+				nodeCollection.remove(data);
+				if (nodeCollection.isEmpty()) {
+					ddNodeMap.remove(data.getCreator());
 				}
 			}
 
@@ -179,8 +202,9 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		Collection<IDistributedData> removedData = Lists.newArrayList();
 
 		synchronized (syncObject) {
-			Collection<IDistributedData> dataCollection = Lists.newArrayList(ddNameMap.get(name));
-			if (dataCollection != null) {
+			Collection<IDistributedData> nameCollection = ddNameMap.get(name);
+			if (nameCollection != null) {
+				Collection<IDistributedData> dataCollection = Lists.newArrayList(nameCollection);
 				for (IDistributedData data : dataCollection) {
 					remove(data);
 				}
@@ -190,6 +214,13 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		}
 
 		return removedData;
+	}
+	
+	@Override
+	public Collection<IDistributedData> remove(OdysseusNodeID nodeID) {
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+		
+		return removeImpl(nodeID, false);
 	}
 
 	@Override
@@ -203,6 +234,13 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 	public Collection<String> getNames() {
 		synchronized (syncObject) {
 			return Lists.newArrayList(ddNameMap.keySet());
+		}
+	}
+	
+	@Override
+	public Collection<OdysseusNodeID> getOdysseusNodeIDs() throws DistributedDataException {
+		synchronized( syncObject ) {
+			return Lists.newArrayList(ddNodeMap.keySet());
 		}
 	}
 
@@ -228,6 +266,20 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 			return Lists.newArrayList(dataCollection);
 		}
 	}
+	
+	@Override
+	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException {
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+
+		synchronized( syncObject ) {
+			Collection<IDistributedData> dataCollection = ddNodeMap.get(nodeID);
+			if( dataCollection == null || dataCollection.isEmpty()) {
+				return Lists.newArrayList();
+			}
+			
+			return Lists.newArrayList(dataCollection);
+		}
+	}
 
 	@Override
 	public boolean containsUUID(UUID uuid) {
@@ -244,6 +296,15 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 		synchronized (syncObject) {
 			return ddNameMap.containsKey(name);
+		}
+	}
+	
+	@Override
+	public boolean containsOdysseusNodeID(OdysseusNodeID nodeID) throws DistributedDataException {
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+
+		synchronized( syncObject ) {
+			return ddNodeMap.containsKey(nodeID);
 		}
 	}
 
@@ -286,15 +347,37 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 				LOG.info("Removed node as other container {}", node);
 			}
 		}
-		
-		synchronized( remoteListeners ) {
-			if( remoteListeners.contains(node)) {
+
+		synchronized (remoteListeners) {
+			if (remoteListeners.contains(node)) {
 				remoteListeners.remove(node);
-				
+
 				LOG.info("Removed node as remote listener: {}", node);
 			}
 		}
 
+		removeImpl(connection.getOdysseusNode().getID(), true);
+	}
+
+	private Collection<IDistributedData> removeImpl(OdysseusNodeID nodeID, boolean preservePersistent) {
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+
+		Collection<IDistributedData> removedData = Lists.newArrayList();
+
+		synchronized (syncObject) {
+			Collection<IDistributedData> nameCollection = ddNodeMap.get(nodeID);
+			if (nameCollection != null) {
+				Collection<IDistributedData> dataCollection = Lists.newArrayList(nameCollection);
+				for (IDistributedData data : dataCollection) {
+					if (!preservePersistent || !data.isPersistent()) {
+						remove(data);
+						removedData.add(data);
+					}
+				}
+			}
+		}
+
+		return removedData;
 	}
 
 	private void sendMessageToOtherContainers(IMessage message) {
@@ -327,101 +410,101 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 			LOG.info("Removing distributed data remotely from {}", senderNode);
 
 			remove(msg.getDistributedData());
-		} else if( message instanceof ModifiedDistributedDataMessage ) {
-			ModifiedDistributedDataMessage msg = (ModifiedDistributedDataMessage)message;
-			
+		} else if (message instanceof ModifiedDistributedDataMessage) {
+			ModifiedDistributedDataMessage msg = (ModifiedDistributedDataMessage) message;
+
 			LOG.info("Modifying distributed data remotely from {}", senderNode);
-			
+
 			add(msg.getNewData());
-		} else if( message instanceof AddListenerMessage ) {
-			synchronized( remoteListeners ) {
-				if( !remoteListeners.contains(senderNode)) {
+		} else if (message instanceof AddListenerMessage) {
+			synchronized (remoteListeners) {
+				if (!remoteListeners.contains(senderNode)) {
 					remoteListeners.add(senderNode);
-					
+
 					LOG.info("Added remote listener node {}", senderNode);
 				}
 			}
-		} else if( message instanceof RemoveListenerMessage ) {
-			synchronized( remoteListeners ) {
-				if( remoteListeners.contains(senderNode)) {
+		} else if (message instanceof RemoveListenerMessage) {
+			synchronized (remoteListeners) {
+				if (remoteListeners.contains(senderNode)) {
 					remoteListeners.remove(senderNode);
-					
+
 					LOG.info("Removed remote listener node {}", senderNode);
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	public void addListener(IDistributedDataListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		synchronized( listeners ) {
+		synchronized (listeners) {
 			listeners.add(listener);
 		}
 	}
-	
+
 	@Override
 	public void removeListener(IDistributedDataListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		synchronized( listeners ) {
+		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 	}
-	
-	private void fireAddedEvent( IDistributedData addedData) {
-		synchronized( listeners ) {
-			for( IDistributedDataListener listener : listeners ) {
+
+	private void fireAddedEvent(IDistributedData addedData) {
+		synchronized (listeners) {
+			for (IDistributedDataListener listener : listeners) {
 				try {
 					listener.distributedDataAdded(addedData);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
 			}
 		}
-		
+
 		sendMessageToRemoteListeners(new AddDistributedDataMessage(addedData));
 	}
-	
-	private void fireModifiedEvent( IDistributedData oldData, IDistributedData newData) {
-		synchronized( listeners ) {
-			for( IDistributedDataListener listener : listeners ) {
+
+	private void fireModifiedEvent(IDistributedData oldData, IDistributedData newData) {
+		synchronized (listeners) {
+			for (IDistributedDataListener listener : listeners) {
 				try {
 					listener.distributedDataModified(oldData, newData);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
 			}
 		}
-		
+
 		sendMessageToRemoteListeners(new ModifiedDistributedDataMessage(oldData, newData));
 
 	}
-	
-	private void fireRemovedEvent( IDistributedData removedData) {
-		synchronized( listeners ) {
-			for( IDistributedDataListener listener : listeners ) {
+
+	private void fireRemovedEvent(IDistributedData removedData) {
+		synchronized (listeners) {
+			for (IDistributedDataListener listener : listeners) {
 				try {
 					listener.distributedDataRemoved(removedData);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
 			}
 		}
-		
+
 		sendMessageToRemoteListeners(new RemoveDistributedDataMessage(removedData));
 	}
-	
-	private void sendMessageToRemoteListeners( IMessage message ) {
+
+	private void sendMessageToRemoteListeners(IMessage message) {
 		LOG.info("Sending message to remote listeners: {}", message);
-		
-		synchronized( remoteListeners ) {
-			for( IOdysseusNode remoteListener : remoteListeners ) {
+
+		synchronized (remoteListeners) {
+			for (IOdysseusNode remoteListener : remoteListeners) {
 				try {
 					communicator.send(remoteListener, message);
 				} catch (OdysseusNodeCommunicationException e) {
-					LOG.error("Could not send message {} to remote node {}", new Object[] {message, remoteListener, e});
+					LOG.error("Could not send message {} to remote node {}", new Object[] { message, remoteListener, e });
 				}
 			}
 		}
