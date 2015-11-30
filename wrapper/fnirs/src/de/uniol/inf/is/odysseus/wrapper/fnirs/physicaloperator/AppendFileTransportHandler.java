@@ -119,7 +119,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 		
 	@Override public Tuple<IMetaAttribute> getNext() 
 	{
-		System.out.println("Call getNext");
+//		System.out.println("Call getNext");
 		
 		if (currentLine == null)
 			return null;
@@ -168,10 +168,10 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 	
 	@Override public boolean hasNext() 
 	{
-		System.out.println("Call hasNext");		
+//		System.out.println("Call hasNext");		
    		if (checkNext())
    		{   			   		
-   			System.out.println("Call hasNext returned true");   			
+//   			System.out.println("Call hasNext returned true");   			
    			return true;
    		}
    		else
@@ -185,7 +185,7 @@ public class AppendFileTransportHandler extends AbstractSimplePullTransportHandl
 	    		Thread.currentThread().interrupt();
 			}	         
 	    	
-	    	System.out.println("Call hasNext returned false");
+//	    	System.out.println("Call hasNext returned false");
 	    	return false;
    		}
 	}	
