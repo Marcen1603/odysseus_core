@@ -56,8 +56,6 @@ public class ImageJCVFunctionProvider implements IFunctionProvider {
 		functions.add(new ToImage5Function());
 		functions.add(new ToImageMatrixFunction());
 		functions.add(new ToMatrixFunction());
-		functions.add(new Convert16BitToRGBFunction());
-		functions.add(new ConvertEncodedRGBTo16BitFunction());
 		functions.add(new TestImageFunction());
 		
 		// Try to add Image->ImagJCV conversion function

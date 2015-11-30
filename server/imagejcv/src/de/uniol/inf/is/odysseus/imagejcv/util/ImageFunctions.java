@@ -13,46 +13,6 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 
 public class ImageFunctions {
 
-	public static ImageJCV convertEncodedRGBTo16Bit(ImageJCV input) 
-	{
-		if (((input.getDepth() != IPL_DEPTH_8S) && (input.getDepth() != IPL_DEPTH_8U)) || (input.getNumChannels() != 4))
-			throw new UnsupportedOperationException("convertEncodedRGBTo16BitCV requires a 4-channel RGBA image");
-
-		if (input.getPixelFormat() != AV_PIX_FMT_RGBA)
-		{
-			// Image needs to be converted
-			int conversion;
-			switch (input.getPixelFormat())
-			{
-			case AV_PIX_FMT_BGRA: conversion = CV_BGRA2RGBA; break;
-			default: throw new UnsupportedOperationException("No conversion specified from pixel format " + input.getPixelFormat() + " to RGBA");
-			}
-						
-			ImageJCV converted = ImageJCV.createCompatible(input);			
-			cvCvtColor(input.getImage(), converted.getImage(), conversion);			
-			input = converted;
-		}
-
-		ImageJCV newImage = new ImageJCV(input.getWidth()*2, input.getHeight(), IPL_DEPTH_16U, 1, AV_PIX_FMT_GRAY16);
-
-		ByteBuffer oldBuffer = input.getImageData();
-		ByteBuffer newBuffer = newImage.getImageData();
-
-		if (newBuffer.limit() != oldBuffer.limit())
-			throw new UnsupportedOperationException("Image buffers are not the same size...?");		
-
-		// Bytes can be copied directly
-		// One pass when width steps are the same, otherwise line by line
-		if (newImage.getWidthStep() == input.getWidthStep())
-		{
-			newBuffer.put(oldBuffer);
-		}
-		else
-			throw new UnsupportedOperationException("Not implemented yet!");
-
-		return newImage;
-	}
-	
 	public static ImageJCV reinterpret(ImageJCV input, int width, int height, int depth, int channels, int pixelFormat)
 	{
 		ImageJCV newImage = new ImageJCV(width, height, depth, channels, pixelFormat);
@@ -63,15 +23,7 @@ public class ImageFunctions {
 		if (newBuffer.limit() != oldBuffer.limit())
 			throw new IllegalArgumentException("Buffer size of reinterpreted image doesn't match original buffer size!");		
 
-		// Bytes can be copied directly
-		// One pass when width steps are the same, otherwise line by line
-//		if (newImage.getImage().widthStep() == input.getImage().widthStep())
-		{
-			newBuffer.put(oldBuffer);
-		}
-/*		else
-			throw new UnsupportedOperationException("Unequal width steps not implemented yet");*/
-
+		newBuffer.put(oldBuffer);
 		return newImage;		
 	}
 
@@ -81,8 +33,6 @@ public class ImageFunctions {
 			throw new UnsupportedOperationException("StretchContrast not implemented for images with depth != 16!");
 
 		ImageJCV newImage = new ImageJCV(input.getWidth(), input.getHeight(), IPL_DEPTH_8U, 3, AV_PIX_FMT_BGR24);		
-
-		//			long lastTime = System.nanoTime();
 
 		ByteBuffer oldBuffer = input.getImageData();
 		ByteBuffer newBuffer = newImage.getImageData();
@@ -104,9 +54,6 @@ public class ImageFunctions {
 				newBuffer.put(newIndex + 1, 	(byte) (newVal));
 				newBuffer.put(newIndex + 2, 	(byte) (newVal));
 			}		
-
-		/*		long curTime = System.nanoTime();
-			System.out.println("dt = " + (curTime - lastTime) / 1.0e6 + "ms");*/		
 
 		return newImage;		
 	}
