@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
+import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 
 public class DistributedDataConsole implements CommandProvider {
@@ -28,6 +29,25 @@ public class DistributedDataConsole implements CommandProvider {
 	// called by OSGi-DS
 	public static void bindDistributedDataManager(IDistributedDataManager serv) {
 		distributedDataManager = serv;
+		if( !distributedDataManager.isLocal() ) {
+			distributedDataManager.addListener(new IDistributedDataListener() {
+
+				@Override
+				public void distributedDataAdded(IDistributedData addedData) {
+					System.err.println("Remotely added distributed data: " + addedData);
+				}
+
+				@Override
+				public void distributedDataModified(IDistributedData oldData, IDistributedData newData) {
+					System.err.println("Remotely modified distributed data: " + oldData + " to " + newData);
+				}
+
+				@Override
+				public void distributedDataRemoved(IDistributedData removedData) {
+					System.err.println("Remotely removed distributed data: " + removedData);
+				}
+			});
+		}
 	}
 
 	// called by OSGi-DS
