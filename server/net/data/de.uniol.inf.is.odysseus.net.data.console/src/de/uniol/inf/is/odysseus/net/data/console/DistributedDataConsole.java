@@ -265,4 +265,31 @@ public class DistributedDataConsole implements CommandProvider {
 	public void _listDistributedDataNames( CommandInterpreter ci ) {
 		_listDistributedDataNames(ci);
 	}
+	
+	public void _isDistributedData( CommandInterpreter ci ) {
+		String dataText = ci.nextArgument();
+		if( Strings.isNullOrEmpty(dataText)) {
+			ci.println("usage: isDistributedData <ddid|ddname>");
+			return;
+		}
+		
+		Optional<UUID> optUUID = tryToUUID(dataText);
+		if( optUUID.isPresent() ) {
+			UUID uuid = optUUID.get();
+			try {
+				ci.println(distributedDataManager.containsUUID(uuid));
+			} catch (DistributedDataException e) {
+				ci.println("Could not determine if specified uuid is present: " + e);
+				ci.printStackTrace(e);
+			}
+		} else {
+			try {
+				ci.println(distributedDataManager.containsName(dataText));
+			} catch (DistributedDataException e) {
+				ci.println("Could not determine if specified name is present: " + e);
+				ci.printStackTrace(e);
+			}
+		}
+	}
+	
 }
