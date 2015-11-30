@@ -250,6 +250,17 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 					LOG.info("Added node {} as new remote container", node);
 				}
 				
+				synchronized(syncObject) {
+					if( !ddUUIDMap.isEmpty() ) {
+						for( IDistributedData data : ddUUIDMap.values()) {
+							try {
+								communicator.send(node, new AddDistributedDataMessage(data));
+							} catch (OdysseusNodeCommunicationException e) {
+								LOG.error("Could not send add message to node {}", node);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -268,14 +279,16 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 	}
 	
 	private void sendMessageToOtherContainers(IMessage message) {
-		LOG.debug("Sending message {} to other containers", message);
-		
 		synchronized( otherContainers ) {
-			for( IOdysseusNode otherContainer : otherContainers ) {
-				try {
-					communicator.send(otherContainer, message);
-				} catch (OdysseusNodeCommunicationException e) {
-					LOG.error("Could not send message {} to other container {}", new Object[]{message, otherContainer, e});
+			if( !otherContainers.isEmpty() ) {
+				LOG.debug("Sending message {} to other containers", message);
+				
+				for( IOdysseusNode otherContainer : otherContainers ) {
+					try {
+						communicator.send(otherContainer, message);
+					} catch (OdysseusNodeCommunicationException e) {
+						LOG.error("Could not send message {} to other container {}", new Object[]{message, otherContainer, e});
+					}
 				}
 			}
 		}
