@@ -243,4 +243,24 @@ public class DistributedDataConsole implements CommandProvider {
 	public void _listDistributedDataUUIDs(CommandInterpreter ci ) {
 		_lsDistributedDataUUIDs(ci);
 	}
+	
+	public void _lsDistributedDataNames( CommandInterpreter ci )  {
+		try {
+			Collection<String> names = distributedDataManager.getNames();
+			if( !names.isEmpty() ) {
+				for( String name : names ) {
+					ci.println(name);
+				}
+			} else {
+				ci.println("No distributed data with names available");
+			}
+		} catch (DistributedDataException e) {
+			ci.println("Could not determine list of distributed data names " + e);
+			ci.printStackTrace(e);
+		}
+	}
+	
+	public void _listDistributedDataNames( CommandInterpreter ci ) {
+		_listDistributedDataNames(ci);
+	}
 }
