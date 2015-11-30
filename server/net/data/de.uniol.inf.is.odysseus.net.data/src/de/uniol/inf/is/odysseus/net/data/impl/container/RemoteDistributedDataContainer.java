@@ -18,6 +18,8 @@ import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
+import de.uniol.inf.is.odysseus.net.data.impl.message.NamesMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
 
@@ -78,8 +80,16 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 
 	@Override
 	public Collection<String> getNames() throws DistributedDataException {
-		// TODO
-		return null;
+		checkConnection();
+		
+		RequestNamesMessage msg = new RequestNamesMessage();
+		
+		try {
+			NamesMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, NamesMessage.class);
+			return answer.getNames();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not get names of distributed data", e);
+		}
 	}
 
 	@Override

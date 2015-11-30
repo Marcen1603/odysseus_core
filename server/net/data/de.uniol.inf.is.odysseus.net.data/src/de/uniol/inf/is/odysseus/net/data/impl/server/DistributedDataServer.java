@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWith
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.NamesMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
 
@@ -48,6 +50,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.addListener(this, DestroyDistributedDataWithUUIDMessage.class);
 		communicator.addListener(this, DestroyDistributedDataWithNameMessage.class);
 		communicator.addListener(this, RequestUUIDsMessage.class);
+		communicator.addListener(this, RequestNamesMessage.class);
 	}
 
 	public void stop() {
@@ -55,6 +58,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.removeListener(this, DestroyDistributedDataWithUUIDMessage.class);
 		communicator.removeListener(this, DestroyDistributedDataWithNameMessage.class);
 		communicator.removeListener(this, RequestUUIDsMessage.class);
+		communicator.removeListener(this, RequestNamesMessage.class);
 	}
 
 	@Override
@@ -119,6 +123,18 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 				
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Could not send answer of request uuids message", e);
+			}
+		} else if( message instanceof RequestNamesMessage ) {
+			try {
+				Collection<String> names = manager.getNames();
+				NamesMessage answer = new NamesMessage(names);
+				
+				communicator.send(senderNode, answer);
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
+				
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of request names message", e);
 			}
 		}
 	}
