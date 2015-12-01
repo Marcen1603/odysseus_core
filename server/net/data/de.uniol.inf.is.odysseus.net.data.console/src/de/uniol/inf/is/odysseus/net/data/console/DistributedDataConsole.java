@@ -15,6 +15,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
@@ -29,7 +30,7 @@ public class DistributedDataConsole implements CommandProvider {
 	// called by OSGi-DS
 	public static void bindDistributedDataManager(IDistributedDataManager serv) {
 		distributedDataManager = serv;
-		if( !distributedDataManager.isLocal() ) {
+		if (!distributedDataManager.isLocal()) {
 			distributedDataManager.addListener(new IDistributedDataListener() {
 
 				@Override
@@ -96,7 +97,7 @@ public class DistributedDataConsole implements CommandProvider {
 					}
 				}
 			}
-			
+
 		} catch (DistributedDataException e) {
 			ci.println("Could not determine distributed data: " + e);
 			ci.printStackTrace(e);
@@ -246,12 +247,12 @@ public class DistributedDataConsole implements CommandProvider {
 	public void _isDistributedDataLocal(CommandInterpreter ci) {
 		ci.println(distributedDataManager.isLocal());
 	}
-	
-	public void _lsDistributedDataUUIDs(CommandInterpreter ci ) {
+
+	public void _lsDistributedDataUUIDs(CommandInterpreter ci) {
 		try {
 			Collection<UUID> uuids = distributedDataManager.getUUIDs();
-			if( !uuids.isEmpty() ) {
-				for( UUID uuid : uuids ) {
+			if (!uuids.isEmpty()) {
+				for (UUID uuid : uuids) {
 					ci.println("\t" + uuid.toString());
 				}
 			} else {
@@ -262,16 +263,16 @@ public class DistributedDataConsole implements CommandProvider {
 			ci.printStackTrace(e);
 		}
 	}
-	
-	public void _listDistributedDataUUIDs(CommandInterpreter ci ) {
+
+	public void _listDistributedDataUUIDs(CommandInterpreter ci) {
 		_lsDistributedDataUUIDs(ci);
 	}
-	
-	public void _lsDistributedDataNames( CommandInterpreter ci )  {
+
+	public void _lsDistributedDataNames(CommandInterpreter ci) {
 		try {
 			Collection<String> names = distributedDataManager.getNames();
-			if( !names.isEmpty() ) {
-				for( String name : names ) {
+			if (!names.isEmpty()) {
+				for (String name : names) {
 					ci.println(name);
 				}
 			} else {
@@ -282,20 +283,40 @@ public class DistributedDataConsole implements CommandProvider {
 			ci.printStackTrace(e);
 		}
 	}
-	
-	public void _listDistributedDataNames( CommandInterpreter ci ) {
+
+	public void _listDistributedDataNames(CommandInterpreter ci) {
 		_listDistributedDataNames(ci);
 	}
-	
-	public void _isDistributedData( CommandInterpreter ci ) {
+
+	public void _lsDistributedDataNodeIDs(CommandInterpreter ci) {
+		try {
+			Collection<OdysseusNodeID> nodeIDs = distributedDataManager.getOdysseusNodeIDs();
+			if (!nodeIDs.isEmpty()) {
+				for (OdysseusNodeID nodeID : nodeIDs) {
+					ci.println("\t" + nodeID.toString());
+				}
+			} else {
+				ci.println("No distributed data with specified node id available");
+			}
+		} catch (DistributedDataException e) {
+			ci.println("Could not determine list of distributed data node ids" + e);
+			ci.printStackTrace(e);
+		}
+	}
+
+	public void _listDistributedDataNodeIDs(CommandInterpreter ci) {
+		_lsDistributedDataNodeIDs(ci);
+	}
+
+	public void _isDistributedData(CommandInterpreter ci) {
 		String dataText = ci.nextArgument();
-		if( Strings.isNullOrEmpty(dataText)) {
+		if (Strings.isNullOrEmpty(dataText)) {
 			ci.println("usage: isDistributedData <ddid|ddname>");
 			return;
 		}
-		
+
 		Optional<UUID> optUUID = tryToUUID(dataText);
-		if( optUUID.isPresent() ) {
+		if (optUUID.isPresent()) {
 			UUID uuid = optUUID.get();
 			try {
 				ci.println(distributedDataManager.containsUUID(uuid));
@@ -312,5 +333,5 @@ public class DistributedDataConsole implements CommandProvider {
 			}
 		}
 	}
-	
+
 }
