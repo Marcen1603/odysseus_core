@@ -33,13 +33,17 @@ import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveDistribute
 import de.uniol.inf.is.odysseus.net.data.impl.container.message.RemoveListenerMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.BooleanMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsOdysseusNodeIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCollectionMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.GetOdysseusNodeIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.NamesMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.OdysseusNodeIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.OptionalDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.RequestOdysseusNodeIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
 
@@ -134,8 +138,14 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	
 	@Override
 	public Collection<OdysseusNodeID> getOdysseusNodeIDs() throws DistributedDataException {
-		// TODO 
-		return null;
+		RequestOdysseusNodeIDsMessage msg = new RequestOdysseusNodeIDsMessage();
+		
+		try {
+			OdysseusNodeIDsMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, OdysseusNodeIDsMessage.class);
+			return answer.getOdysseusNodeIDs();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not get odysseus node ids of distributed data", e);
+		}
 	}
 
 	@Override
@@ -171,8 +181,18 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	
 	@Override
 	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException {
-		// TODO
-		return null;
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+
+		checkConnection();
+		
+		GetOdysseusNodeIDMessage msg = new GetOdysseusNodeIDMessage(nodeID);
+		
+		try {
+			DistributedDataCollectionMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataCollectionMessage.class);
+			return answer.getDistributedData();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not get distributed data from specified odysseus node id", e);
+		}
 	}
 
 	@Override
@@ -207,8 +227,17 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	
 	@Override
 	public boolean containsOdysseusNodeID(OdysseusNodeID nodeID) throws DistributedDataException {
-		// TODO
-		return false;
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+
+		checkConnection();
+		
+		ContainsOdysseusNodeIDMessage msg = new ContainsOdysseusNodeIDMessage(nodeID);
+		try {
+			BooleanMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, BooleanMessage.class);
+			return answer.getValue();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not retrieve containment of distributed data from specified name", e);
+		}
 	}
 
 	@Override
