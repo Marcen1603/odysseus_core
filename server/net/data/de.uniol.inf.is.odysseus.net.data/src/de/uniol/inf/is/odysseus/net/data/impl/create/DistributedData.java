@@ -78,6 +78,30 @@ public final class DistributedData implements IDistributedData {
 		return creator;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof DistributedData)) {
+			return false;
+		}
+		if( obj == this ) {
+			return true;
+		}
+		
+		return ((DistributedData)obj).getUUID().equals(this.uuid);
+	}
+	
+	@Override
+	public int hashCode() {
+		return uuid.hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<").append(uuid).append(":").append(data.toString()).append(">");
+		return sb.toString();
+	}
+	
 	public byte[] toBytes() {
 		String creatorStr = creator.toString();
 		String jsonStr = data.toString();

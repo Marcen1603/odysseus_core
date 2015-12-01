@@ -497,14 +497,17 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 	}
 
 	private void sendMessageToRemoteListeners(IMessage message) {
-		LOG.info("Sending message to remote listeners: {}", message);
 
 		synchronized (remoteListeners) {
-			for (IOdysseusNode remoteListener : remoteListeners) {
-				try {
-					communicator.send(remoteListener, message);
-				} catch (OdysseusNodeCommunicationException e) {
-					LOG.error("Could not send message {} to remote node {}", new Object[] { message, remoteListener, e });
+			if( !remoteListeners.isEmpty() ) {
+				LOG.info("Sending message to remote listeners: {}", message);
+				
+				for (IOdysseusNode remoteListener : remoteListeners) {
+					try {
+						communicator.send(remoteListener, message);
+					} catch (OdysseusNodeCommunicationException e) {
+						LOG.error("Could not send message {} to remote node {}", new Object[] { message, remoteListener, e });
+					}
 				}
 			}
 		}

@@ -18,7 +18,7 @@ public interface IDistributedDataCreator {
 	
 	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid ) throws DistributedDataException;
 	public Collection<IDistributedData> destroy(OdysseusNodeID creator, String name ) throws DistributedDataException;
-	public Collection<IDistributedData> destroy(OdysseusNodeID id) throws DistributedDataException;
+	public Collection<IDistributedData> destroy(OdysseusNodeID creator, OdysseusNodeID id) throws DistributedDataException;
 	
 	public void dispose();
 }

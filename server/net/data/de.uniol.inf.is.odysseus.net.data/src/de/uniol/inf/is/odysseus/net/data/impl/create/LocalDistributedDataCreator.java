@@ -86,13 +86,14 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 	}
 
 	@Override
-	public Collection<IDistributedData> destroy(OdysseusNodeID id) throws DistributedDataException {
-		Preconditions.checkNotNull(id, "id must not be null!");
+	public Collection<IDistributedData> destroy(OdysseusNodeID creator, OdysseusNodeID nodeID) throws DistributedDataException {
+		Preconditions.checkNotNull(creator, "creator must not be null!");
+		Preconditions.checkNotNull(nodeID, "id must not be null!");
 
 		Collection<IDistributedData> destroyedDatas = Lists.newArrayList();
-		Collection<IDistributedData> distributedDatas = container.get(id);
+		Collection<IDistributedData> distributedDatas = container.get(nodeID);
 		for (IDistributedData distributedData : distributedDatas) {
-			Optional<IDistributedData> optDestroyed = destroy(id, distributedData.getUUID());
+			Optional<IDistributedData> optDestroyed = destroy(creator, distributedData.getUUID());
 			if (optDestroyed.isPresent()) {
 				destroyedDatas.add(optDestroyed.get());
 			}
