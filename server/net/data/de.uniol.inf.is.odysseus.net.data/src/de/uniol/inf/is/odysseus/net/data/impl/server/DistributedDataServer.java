@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsOdysseusNodeIDMess
 import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithOwnNodeIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCollectionMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
@@ -61,6 +62,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.addListener(this, CreateDistributedDataMessage.class);
 		communicator.addListener(this, DestroyDistributedDataWithUUIDMessage.class);
 		communicator.addListener(this, DestroyDistributedDataWithNameMessage.class);
+		communicator.addListener(this, DestroyDistributedDataWithOwnNodeIDMessage.class);
 		communicator.addListener(this, RequestUUIDsMessage.class);
 		communicator.addListener(this, RequestNamesMessage.class);
 		communicator.addListener(this, RequestOdysseusNodeIDsMessage.class);
@@ -76,6 +78,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.removeListener(this, CreateDistributedDataMessage.class);
 		communicator.removeListener(this, DestroyDistributedDataWithUUIDMessage.class);
 		communicator.removeListener(this, DestroyDistributedDataWithNameMessage.class);
+		communicator.removeListener(this, DestroyDistributedDataWithOwnNodeIDMessage.class);
 		communicator.removeListener(this, RequestUUIDsMessage.class);
 		communicator.removeListener(this, RequestNamesMessage.class);
 		communicator.removeListener(this, RequestOdysseusNodeIDsMessage.class);
@@ -129,6 +132,18 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 
 			try {
 				Collection<IDistributedData> destroyedData = creator.destroy(senderNode.getID(), msg.getName());
+
+				MultipleDistributedDataDestroyedMessage answer = new MultipleDistributedDataDestroyedMessage(destroyedData);
+				communicator.send(senderNode, answer);
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
+
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of destroy distributed data message", e);
+			}
+		} else if (message instanceof DestroyDistributedDataWithOwnNodeIDMessage) {
+			try {
+				Collection<IDistributedData> destroyedData = creator.destroy(senderNode.getID());
 
 				MultipleDistributedDataDestroyedMessage answer = new MultipleDistributedDataDestroyedMessage(destroyedData);
 				communicator.send(senderNode, answer);

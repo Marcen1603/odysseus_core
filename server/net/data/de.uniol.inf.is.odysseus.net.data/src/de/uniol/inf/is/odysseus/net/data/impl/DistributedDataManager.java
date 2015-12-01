@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsOdysseusNodeIDMess
 import de.uniol.inf.is.odysseus.net.data.impl.message.ContainsUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithOwnNodeIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCollectionMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
@@ -78,6 +79,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		communicator.registerMessageType(DistributedDataCreatedMessage.class);
 		communicator.registerMessageType(DestroyDistributedDataWithUUIDMessage.class);
 		communicator.registerMessageType(DestroyDistributedDataWithNameMessage.class);
+		communicator.registerMessageType(DestroyDistributedDataWithOwnNodeIDMessage.class);
 		communicator.registerMessageType(DistributedDataDestroyedMessage.class);
 		communicator.registerMessageType(MultipleDistributedDataDestroyedMessage.class);
 		communicator.registerMessageType(RequestUUIDsMessage.class);
@@ -113,6 +115,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			communicator.unregisterMessageType(DistributedDataCreatedMessage.class);
 			communicator.unregisterMessageType(DestroyDistributedDataWithUUIDMessage.class);
 			communicator.unregisterMessageType(DestroyDistributedDataWithNameMessage.class);
+			communicator.unregisterMessageType(DestroyDistributedDataWithOwnNodeIDMessage.class);
 			communicator.unregisterMessageType(DistributedDataDestroyedMessage.class);
 			communicator.unregisterMessageType(MultipleDistributedDataDestroyedMessage.class);
 			communicator.unregisterMessageType(RequestUUIDsMessage.class);

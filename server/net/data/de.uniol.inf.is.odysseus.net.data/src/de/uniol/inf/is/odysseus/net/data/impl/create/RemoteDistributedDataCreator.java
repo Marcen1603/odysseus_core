@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
 import de.uniol.inf.is.odysseus.net.data.impl.message.CreateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithNameMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithOwnNodeIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
@@ -101,9 +102,17 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 	
 	@Override
 	public Collection<IDistributedData> destroy(OdysseusNodeID id) throws DistributedDataException {
-		// TODO: destroy own distributed data remotely
+		// Remark: You can only destroy your own distributed data --> parameter ignored here
 		
-		return null;
+		checkConnection();
+		
+		DestroyDistributedDataWithOwnNodeIDMessage msg = new DestroyDistributedDataWithOwnNodeIDMessage();
+		try {
+			MultipleDistributedDataDestroyedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, MultipleDistributedDataDestroyedMessage.class);
+			return answer.getDistributedData();
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not send request and receive answer for destroying own distributed data", e);
+		}
 	}
 	
 	@Override
