@@ -243,6 +243,23 @@ public class DistributedDataConsole implements CommandProvider {
 			}
 		}
 	}
+	
+	public void _destroyAllDistributedData( CommandInterpreter ci ) {
+		try {
+			Collection<IDistributedData> destroyedDistributedData = distributedDataManager.destroyOwn();
+			if( !destroyedDistributedData.isEmpty() ) {
+				ci.println("Destroyed " + destroyedDistributedData.size() + " distributed data:");
+				for( IDistributedData data : destroyedDistributedData ) {
+					ci.println("\t" + data.getUUID());
+				}
+			} else {
+				ci.println("No distributed data destroyed");
+			}
+		} catch (DistributedDataException e) {
+			ci.println("Could not destroy own distributed data: " + e);
+			ci.printStackTrace(e);
+		}
+	}
 
 	public void _isDistributedDataLocal(CommandInterpreter ci) {
 		ci.println(distributedDataManager.isLocal());
