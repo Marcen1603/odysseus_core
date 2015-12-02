@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
@@ -16,6 +18,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+import de.uniol.inf.is.odysseus.trust.ITrust;
 
 @SuppressWarnings("nls")
 public class TConvergenceDetectorAORule extends AbstractTransformationRule<ConvergenceDetectorAO> {
@@ -50,12 +53,19 @@ public class TConvergenceDetectorAORule extends AbstractTransformationRule<Conve
 
 	@Override
 	public boolean isExecutable(ConvergenceDetectorAO logical, TransformationConfiguration config) {
-		// Logical all input set AND there is a window operator before it
+		// Logical all input set AND there is a window operator before it.
+		// Additionally, meta types must match!
 		if (!logical.isAllPhysicalInputSet() || logical.getSubscribedToSource().size() != 1) {
 			return false;
 		}
+
 		ILogicalOperator source = logical.getSubscribedToSource().iterator().next().getTarget();
-		return TimeWindowAO.class.isInstance(source) || ElementWindowAO.class.isInstance(source);
+		if (!TimeWindowAO.class.isInstance(source) && !ElementWindowAO.class.isInstance(source)) {
+			return false;
+		}
+
+		SDFSchema schema = logical.getInputSchema();
+		return schema.hasMetatype(ITimeInterval.class) && schema.hasMetatype(ITrust.class);
 	}
 
 	@Override
