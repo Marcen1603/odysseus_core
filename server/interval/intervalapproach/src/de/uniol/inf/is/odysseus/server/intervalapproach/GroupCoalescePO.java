@@ -42,7 +42,7 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(IStreamObject<? extends M> object, int port) {
+	protected void process_next(IStreamObject<M> object, int port) {
 //		System.err.println("IN [" + port + "] : TUPL: " + object.getMetadata().getStart());
 		
 		super.process_next(object, port);
@@ -59,7 +59,7 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 				&& currentGroupID == lastGroupID
 				&& (maxElementsPerGroup == -1 || currentCount < maxElementsPerGroup)) {
 			// TODO: Is it really neceessary to create a new partial aggregate?
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> newP = calcMerge(
 					currentPartialAggregates, object, true);
 			M newMeta = (M) object.getMetadata().clone();
 			// keep start

@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? extends M>, W extends IStreamObject<?>>
+public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W extends IStreamObject<M>>
 		extends AbstractPipe<R, W> {
 
 	// PartialAggregate functions for different combinations of attributes and
@@ -59,7 +59,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 	private final boolean fastGrouping;
 
 	private final Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> groups = new HashMap<>();
-	
+
 	/**
 	 * When combining different elements the meta data must be merged. Because
 	 * the operator does not know, which meta data is used, the metadataMerge
@@ -67,7 +67,6 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 	 */
 	final protected IMetadataMergeFunction<M> metadataMerge;
 
-	
 	public IGroupProcessor<R, W> getGroupProcessor() {
 		return groupProcessor;
 	}
@@ -76,10 +75,9 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 		this.groupProcessor = groupProcessor;
 	}
 
-	public AggregatePO(SDFSchema inputSchema, SDFSchema outputSchema,
-			List<SDFAttribute> groupingAttributes,
-			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			boolean fastGrouping, IMetadataMergeFunction<M> mf) {
+	public AggregatePO(SDFSchema inputSchema, SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping,
+			IMetadataMergeFunction<M> mf) {
 		this.inputSchema = inputSchema;
 		this.internalOutputSchema = outputSchema;
 		this.aggregations = aggregations;
@@ -87,7 +85,6 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 		this.fastGrouping = fastGrouping;
 		this.metadataMerge = mf;
 	}
-	
 
 	public SDFSchema getInputSchema() {
 		return inputSchema;
@@ -105,63 +102,52 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 		return internalOutputSchema;
 	}
 
-	public void setInitFunction(
-			FESortedClonablePair<SDFSchema, AggregateFunction> p,
-			IInitializer<R> i) {
+	public void setInitFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IInitializer<R> i) {
 		init.put(p, i);
 	}
 
-	public void setMergeFunction(
-			FESortedClonablePair<SDFSchema, AggregateFunction> p, IMerger<R> m) {
+	public void setMergeFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IMerger<R> m) {
 		merger.put(p, m);
 	}
 
-	public void setEvalFunction(
-			FESortedClonablePair<SDFSchema, AggregateFunction> p,
-			IEvaluator<R, W> e) {
+	public void setEvalFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IEvaluator<R, W> e) {
 		eval.put(p, e);
 	}
 
 	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> getAllInitFunctions() {
 		return init;
 	}
-	
+
 	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> getAllMergerFunctions() {
 		return merger;
 	}
-	
-	protected IEvaluator<R, W> getEvalFunction(
-			FESortedClonablePair<SDFSchema, AggregateFunction> p) {
+
+	protected IEvaluator<R, W> getEvalFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
 		return eval.get(p);
 	}
-	
+
 	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> getAllEvalFunctions() {
 		return eval;
 	}
 
-	protected IMerger<R> getMergeFunction(
-			FESortedClonablePair<SDFSchema, AggregateFunction> p) {
+	protected IMerger<R> getMergeFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
 		return merger.get(p);
 	}
 
-	protected IInitializer<R> getInitFunction(
-			FESortedClonablePair<SDFSchema, AggregateFunction> p) {
+	protected IInitializer<R> getInitFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
 		return init.get(p);
 	}
 
 	// Erzeugen der initialen Map f�r alle
 	// Attribut/Aggregierungsfunktion-Paare,
 	// abgebildet auf Partielle Aggregate
-	protected PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> calcInit(
-			R element) {
+	protected PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> calcInit(R element) {
 		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> ret = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>();
 		// Hier ggf. direkt die Liste der zu aggregierenden Attribute auslesen
 		for (SDFSchema attrList : aggregations.keySet()) {
 			if (SDFSchema.subset(attrList, inputSchema)) {
-				Map<AggregateFunction, SDFAttribute> funcs = aggregations
-						.get(attrList);
-				for (Entry<AggregateFunction, SDFAttribute> e : funcs
-						.entrySet()) {
+				Map<AggregateFunction, SDFAttribute> funcs = aggregations.get(attrList);
+				for (Entry<AggregateFunction, SDFAttribute> e : funcs.entrySet()) {
 					// Achtung! Das Eingabeattribut, nicht das Ausgabeattribut
 					FESortedClonablePair<SDFSchema, AggregateFunction> toFind = new FESortedClonablePair<SDFSchema, AggregateFunction>(
 							attrList, e.getKey());
@@ -180,14 +166,12 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 	// Mergen aller Elemente in der toMerge-Map mit dem element vom Typ R (mit
 	// dem passenden Merger)
 	protected synchronized PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> calcMerge(
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toMerge,
-			R element, boolean createNew) {
-		
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toMerge, R element, boolean createNew) {
+
 		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> ret = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>();
 
 		// Jedes Element in toMerge mit element mergen
-		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toMerge
-				.entrySet()) {
+		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toMerge.entrySet()) {
 			IMerger<R> mf = getMergeFunction(e.getKey());
 			IPartialAggregate<R> pa = mf.merge(e.getValue(), element, createNew);
 			ret.put(e.getKey(), pa);
@@ -200,12 +184,11 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 	protected PairMap<SDFSchema, AggregateFunction, W, M> calcEval(
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toEval, boolean clearPartialAggregate) {
 		PairMap<SDFSchema, AggregateFunction, W, M> ret = new PairMap<SDFSchema, AggregateFunction, W, M>();
-		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toEval
-				.entrySet()) {
+		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toEval.entrySet()) {
 			IEvaluator<R, W> eval = getEvalFunction(e.getKey());
 			W value = eval.evaluate(e.getValue());
 			ret.put(e.getKey(), value);
-			if (clearPartialAggregate){
+			if (clearPartialAggregate) {
 				e.getValue().clear();
 			}
 		}
@@ -214,16 +197,13 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 
 	public IInitializer<R> getInitFunction(SDFAttribute outAttribute) {
 		FESortedClonablePair<SDFSchema, AggregateFunction> pair = null;
-		for (Entry<SDFSchema, Map<AggregateFunction, SDFAttribute>> vs : aggregations
-				.entrySet()) {
+		for (Entry<SDFSchema, Map<AggregateFunction, SDFAttribute>> vs : aggregations.entrySet()) {
 			if (pair != null) {
 				break;
 			}
-			for (Entry<AggregateFunction, SDFAttribute> v : vs.getValue()
-					.entrySet()) {
+			for (Entry<AggregateFunction, SDFAttribute> v : vs.getValue().entrySet()) {
 				if (v.getValue().equals(outAttribute)) {
-					pair = new FESortedClonablePair<SDFSchema, AggregateFunction>(
-							vs.getKey(), v.getKey());
+					pair = new FESortedClonablePair<SDFSchema, AggregateFunction>(vs.getKey(), v.getKey());
 					break;
 				}
 			}
@@ -245,7 +225,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof AggregatePO)) {
@@ -260,13 +240,10 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 			return false;
 		}
 
-		if (((this.groupProcessor == null && apo.groupProcessor == null) || this.groupProcessor
-				.equals(apo.groupProcessor))
-				&& this.inputSchema.compareTo(apo.inputSchema) == 0
-				&& this.internalOutputSchema
-						.compareTo(apo.internalOutputSchema) == 0
-				&& this.groupingAttributes.size() == apo.groupingAttributes
-						.size()) {
+		if (((this.groupProcessor == null && apo.groupProcessor == null)
+				|| this.groupProcessor.equals(apo.groupProcessor)) && this.inputSchema.compareTo(apo.inputSchema) == 0
+				&& this.internalOutputSchema.compareTo(apo.internalOutputSchema) == 0
+				&& this.groupingAttributes.size() == apo.groupingAttributes.size()) {
 
 			// Vergleich der groupingAttributes
 			for (SDFAttribute a : this.groupingAttributes) {
@@ -293,10 +270,8 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 					// Gleichen Key gefunden
 					if (a.compareTo(b) == 0) {
 						// Vergleichen der Werte
-						Map<AggregateFunction, SDFAttribute> m1 = this.aggregations
-								.get(a);
-						Map<AggregateFunction, SDFAttribute> m2 = apo.aggregations
-								.get(b);
+						Map<AggregateFunction, SDFAttribute> m1 = this.aggregations.get(a);
+						Map<AggregateFunction, SDFAttribute> m2 = apo.aggregations.get(b);
 						Set<AggregateFunction> k1 = m1.keySet();
 						Set<AggregateFunction> k2 = m2.keySet();
 						if (k1.size() != k2.size()) {
@@ -330,7 +305,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// Nothing to do in this case		
+		// Nothing to do in this case
 	}
 
 	@Override
@@ -342,7 +317,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 		}
 	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(R object, int port) {
 		IGroupProcessor<R, W> g = getGroupProcessor();
@@ -351,17 +326,21 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 			// Determine group ID from input object
 			groupID = g.getGroupID(object);
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> paList = groups.get(groupID);
-			if (paList == null){
+			if (paList == null) {
 				// Create init version of partial aggregates
 				paList = calcInit(object);
+				paList.setMetadata((M) object.getMetadata().clone());
 				groups.put(groupID, paList);
-			}else{
+			} else {
 				// Merge current object with partial aggregates
 				calcMerge(paList, object, false);
+				if (metadataMerge != null) {
+					paList.setMetadata(metadataMerge.mergeMetadata(paList.getMetadata(), object.getMetadata()));
+				}
 			}
 		}
 	}
-	
+
 	@Override
 	protected void process_done() {
 		createOutput();
@@ -369,14 +348,15 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? ext
 
 	private void createOutput() {
 		IGroupProcessor<R, W> g = getGroupProcessor();
-		for(Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> entry:groups.entrySet()){
-			PairMap<SDFSchema, AggregateFunction, W, M> result = calcEval(entry.getValue(), false);	
-			W out = g.createOutputElement(entry.getKey(), result );
+		for (Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> entry : groups.entrySet()) {
+			PairMap<SDFSchema, AggregateFunction, W, M> result = calcEval(entry.getValue(), false);
+			W out = g.createOutputElement(entry.getKey(), result);
+			out.setMetadata(result.getMetadata());
 			transfer(out);
 		}
 		groups.clear();
 	}
-	
+
 	@Override
 	protected void process_close() {
 		createOutput();

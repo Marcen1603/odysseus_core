@@ -56,7 +56,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(IStreamObject<? extends M> object, int port) {
+	protected void process_next(IStreamObject<M> object, int port) {
 		super.process_next(object, port);
 
 		// The created object is a combiniation of all objects before
@@ -70,7 +70,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 					.clone());
 		} else {
 			// TODO: Is it really neceessary to create a new partial aggregate?
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> newP = calcMerge(
 					currentPartialAggregates, object, true);
 			newP.setMetadata((M) currentPartialAggregates.getMetadata().clone());
 			currentPartialAggregates = newP;

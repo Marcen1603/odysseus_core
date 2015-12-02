@@ -21,22 +21,21 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
-		AggregatePO<M, IStreamObject<? extends M>, IStreamObject<M>> {
+		AggregatePO<M, IStreamObject<M>, IStreamObject<M>> {
 
 	final static int START = 0;
 	final static int END = 1;
 
 	@SuppressWarnings("rawtypes")
 	final private List<IPredicate> predicates = new LinkedList<IPredicate>();
-	final private Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M>> currentPAs = new HashMap<>();
+	final private Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M>> currentPAs = new HashMap<>();
 
 	public StartStopPredicateCoalescePO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
 			@SuppressWarnings("rawtypes") IPredicate startPredicate,
 			@SuppressWarnings("rawtypes") IPredicate endPredicate) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations,
-				false, null);
+		super(inputSchema, outputSchema, groupingAttributes, aggregations, false, null);
 		predicates.add(startPredicate);
 		predicates.add(endPredicate);
 	}
@@ -57,9 +56,9 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void process_next(IStreamObject<? extends M> object, int port) {
+	protected void process_next(IStreamObject<M> object, int port) {
 		Long groupID = getGroupProcessor().getGroupID(object);
-		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> pas = currentPAs
+		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> pas = currentPAs
 				.get(groupID);
 		// when calcuation is running
 		if (pas != null) {
@@ -75,7 +74,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 				currentPAs.remove(groupID);
 			} else {
 				// merge
-				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> newP = calcMerge(
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> newP = calcMerge(
 						pas, object, true);
 				M newMeta = (M) object.getMetadata().clone();
 				// keep start
@@ -115,9 +114,9 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 
 	private void dumpGroups() {
 		synchronized (currentPAs) {
-			for (Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M>> e : currentPAs
+			for (Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M>> e : currentPAs
 					.entrySet()) {
-				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> currentPartialAggregates = e
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> currentPartialAggregates = e
 						.getValue();
 				PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(
 						currentPartialAggregates, false);

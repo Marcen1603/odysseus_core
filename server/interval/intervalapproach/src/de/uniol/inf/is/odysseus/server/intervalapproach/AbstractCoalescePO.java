@@ -18,9 +18,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class AbstractCoalescePO<M extends ITimeInterval> extends AggregatePO<M, IStreamObject<? extends M>, IStreamObject<M>> {
+abstract public class AbstractCoalescePO<M extends ITimeInterval> extends AggregatePO<M, IStreamObject<M>, IStreamObject<M>> {
 
-	PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<? extends M>>, M> currentPartialAggregates = null;
+	PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> currentPartialAggregates = null;
 
 	protected PriorityQueue<IPunctuation> punctuationsOutputQueue = new PriorityQueue<IPunctuation>(11, new Comparator<IPunctuation>() {
 		@Override
@@ -50,7 +50,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends Aggreg
 	}
 
 	@Override
-	protected void process_next(IStreamObject<? extends M> object, int port) {
+	protected void process_next(IStreamObject<M> object, int port) {
 		watermark = object.getMetadata().getStart();
 	}
 	
