@@ -25,8 +25,11 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -35,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? extends M>, W extends IStreamObject<?>>
+public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<? extends M>, W extends IStreamObject<?>>
 		extends AbstractPipe<R, W> {
 
 	// PartialAggregate functions for different combinations of attributes and
@@ -55,8 +58,16 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 	private final List<SDFAttribute> groupingAttributes;
 	private final boolean fastGrouping;
 
-	// private AggregateAO algebraOp;
+	private final Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> groups = new HashMap<>();
+	
+	/**
+	 * When combining different elements the meta data must be merged. Because
+	 * the operator does not know, which meta data is used, the metadataMerge
+	 * function is injection at transformation time
+	 */
+	final protected IMetadataMergeFunction<M> metadataMerge;
 
+	
 	public IGroupProcessor<R, W> getGroupProcessor() {
 		return groupProcessor;
 	}
@@ -68,13 +79,15 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 	public AggregatePO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			boolean fastGrouping) {
+			boolean fastGrouping, IMetadataMergeFunction<M> mf) {
 		this.inputSchema = inputSchema;
 		this.internalOutputSchema = outputSchema;
 		this.aggregations = aggregations;
 		this.groupingAttributes = groupingAttributes;
 		this.fastGrouping = fastGrouping;
+		this.metadataMerge = mf;
 	}
+	
 
 	public SDFSchema getInputSchema() {
 		return inputSchema;
@@ -90,21 +103,6 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 
 	public SDFSchema getInternalOutputSchema() {
 		return internalOutputSchema;
-	}
-
-	public AggregatePO(AggregatePO<M, R, W> agg) {
-		init = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>>(
-				agg.init);
-		merger = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>>(
-				agg.merger);
-		eval = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>>(
-				agg.eval);
-		this.inputSchema = agg.inputSchema;
-		this.internalOutputSchema = agg.internalOutputSchema;
-		this.groupingAttributes = agg.groupingAttributes;
-		this.aggregations = agg.aggregations;
-		this.groupProcessor = agg.groupProcessor;
-		this.fastGrouping = agg.fastGrouping;
 	}
 
 	public void setInitFunction(
@@ -239,6 +237,15 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 
 	}
 
+	/**
+	 * The aggregation creates always a new element. So no input data needs to
+	 * be cloned.
+	 */
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
+	}
+	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof AggregatePO)) {
@@ -319,5 +326,59 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 
 	public boolean isFastGrouping() {
 		return fastGrouping;
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		// Nothing to do in this case		
+	}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (groups) {
+			g.init();
+			groups.clear();
+		}
+	}
+
+
+	@Override
+	protected void process_next(R object, int port) {
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		Long groupID;
+		synchronized (groups) {
+			// Determine group ID from input object
+			groupID = g.getGroupID(object);
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> paList = groups.get(groupID);
+			if (paList == null){
+				// Create init version of partial aggregates
+				paList = calcInit(object);
+				groups.put(groupID, paList);
+			}else{
+				// Merge current object with partial aggregates
+				calcMerge(paList, object, false);
+			}
+		}
+	}
+	
+	@Override
+	protected void process_done() {
+		createOutput();
+	}
+
+	private void createOutput() {
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		for(Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> entry:groups.entrySet()){
+			PairMap<SDFSchema, AggregateFunction, W, M> result = calcEval(entry.getValue(), false);	
+			W out = g.createOutputElement(entry.getKey(), result );
+			transfer(out);
+		}
+		groups.clear();
+	}
+	
+	@Override
+	protected void process_close() {
+		createOutput();
 	}
 }

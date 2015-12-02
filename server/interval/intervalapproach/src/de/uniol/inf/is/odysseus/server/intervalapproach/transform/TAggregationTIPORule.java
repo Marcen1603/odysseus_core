@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.threaded.ThreadedAggregateTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
-public class TStreamGroupingWithAggregationTIPORule extends
+public class TAggregationTIPORule extends
 		AbstractIntervalTransformationRule<AggregateAO> {
 
 	@SuppressWarnings("unchecked")

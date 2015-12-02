@@ -36,7 +36,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 			@SuppressWarnings("rawtypes") IPredicate startPredicate,
 			@SuppressWarnings("rawtypes") IPredicate endPredicate) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
-				false);
+				false, null);
 		predicates.add(startPredicate);
 		predicates.add(endPredicate);
 	}

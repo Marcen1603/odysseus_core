@@ -69,13 +69,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		extends AggregatePO<Q, R, W>implements IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 
 	/**
-	 * When combining different elements the meta data must be merged. Because
-	 * the operator does not know, which meta data is used, the metadataMerge
-	 * function is injection at transformation time
-	 */
-	final private IMetadataMergeFunction<Q> metadataMerge;
-
-	/**
 	 * if set to a value higher than -1, every dumpAtValueCount elements are
 	 * also written, even if no new elements has reached its final value. The
 	 * result element has a shorter validity.
@@ -150,8 +143,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public AggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations, boolean fastGrouping,
 			IMetadataMergeFunction<Q> metadataMerge) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations, fastGrouping);
-		this.metadataMerge = metadataMerge;
+		super(inputSchema, outputSchema, groupingAttributes, aggregations, fastGrouping, metadataMerge);
 		transferArea = new TITransferArea<W, W>();
 	}
 
@@ -207,15 +199,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 */
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
-	}
-
-	/**
-	 * The aggregation creates always a new element. So no input data needs to
-	 * be cloned.
-	 */
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
 	}
 
 	@Override

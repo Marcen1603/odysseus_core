@@ -35,7 +35,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends Aggreg
 	private long counter = 0;
 
 	public AbstractCoalescePO(SDFSchema inputSchema, SDFSchema outputSchema, List<SDFAttribute> groupingAttributes, Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
-		super(inputSchema, outputSchema, groupingAttributes, aggregations, false);
+		super(inputSchema, outputSchema, groupingAttributes, aggregations, false, null);
 	}
 
 	@Override
