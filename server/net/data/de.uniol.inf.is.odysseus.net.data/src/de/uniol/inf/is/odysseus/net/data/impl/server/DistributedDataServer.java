@@ -72,6 +72,8 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.addListener(this, ContainsUUIDMessage.class);
 		communicator.addListener(this, ContainsNameMessage.class);
 		communicator.addListener(this, ContainsOdysseusNodeIDMessage.class);
+		
+		LOG.info("Created distributed data server");
 	}
 
 	public void stop() {
@@ -88,10 +90,14 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		communicator.removeListener(this, ContainsUUIDMessage.class);
 		communicator.removeListener(this, ContainsNameMessage.class);
 		communicator.removeListener(this, ContainsOdysseusNodeIDMessage.class);
+		
+		LOG.info("Stopped distributed data server");
 	}
 
 	@Override
 	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
+		LOG.info("Received message of type {}", message.getClass());
+		
 		if (message instanceof CreateDistributedDataMessage) {
 			CreateDistributedDataMessage msg = (CreateDistributedDataMessage) message;
 

@@ -57,6 +57,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		for (IOdysseusNodeConnection connection : this.connectionManager.getConnections()) {
 			nodeConnected(connection);
 		}
+		this.connectionManager.addListener(this);
 
 		this.communicator = communicator;
 		this.communicator.addListener(this, AddDistributedDataMessage.class);
@@ -66,7 +67,6 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		this.communicator.addListener(this, AddListenerMessage.class);
 		this.communicator.addListener(this, RemoveListenerMessage.class);
 
-		this.connectionManager.addListener(this);
 
 		LOG.info("Local distributed data container created");
 	}
@@ -108,13 +108,13 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 					nodeCollection.remove(oldData);
 					nodeCollection.add(data);
 
-					LOG.info("Distributed data added with younger timestamp");
+					LOG.info("Distributed data added with younger timestamp {}", ts);
 
 					sendMessageToOtherContainers(new ModifiedDistributedDataMessage(oldData, data));
 					fireModifiedEvent(oldData, data);
 
 				} else {
-					LOG.info("Timestamp of distributed data is too old");
+					LOG.info("Timestamp of distributed data is too old: {} >= {}", oldts, ts);
 				}
 
 			} else {
@@ -324,6 +324,8 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 				synchronized (syncObject) {
 					if (!ddUUIDMap.isEmpty()) {
+						LOG.info("Sending our distributed data of {} items", ddUUIDMap.size());
+						
 						for (IDistributedData data : ddUUIDMap.values()) {
 							try {
 								communicator.send(node, new AddDistributedDataMessage(data));
@@ -398,6 +400,8 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 	@Override
 	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
+		LOG.debug("Got message of type {}", message.getClass());
+		
 		if (message instanceof AddDistributedDataMessage) {
 			AddDistributedDataMessage msg = (AddDistributedDataMessage) message;
 
@@ -432,6 +436,8 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 					LOG.info("Removed remote listener node {}", senderNode);
 				}
 			}
+		} else {
+			LOG.warn("Got unknown message {}", message);
 		}
 	}
 

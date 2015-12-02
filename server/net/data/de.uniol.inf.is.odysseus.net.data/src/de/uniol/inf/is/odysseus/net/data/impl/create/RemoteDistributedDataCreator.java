@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -31,6 +33,8 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDes
 
 public class RemoteDistributedDataCreator implements IDistributedDataCreator, IOdysseusNodeConnectionManagerListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(RemoteDistributedDataCreator.class);
+	
 	private final IOdysseusNodeCommunicator communicator;
 	private final IOdysseusNodeConnectionManager connectionManager;
 
@@ -45,11 +49,15 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		this.connectionManager.addListener(this);
 
 		updateConnection();
+		
+		LOG.info("Created remote distributed data creator");
 	}
 
 	@Override
 	public void dispose() {
 		this.connectionManager.removeListener(this);
+		
+		LOG.info("Remote distributed data creator disposed");
 	}
 
 	@Override
@@ -117,6 +125,8 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 	public void nodeConnected(IOdysseusNodeConnection connection) {
 		if (nodeWithContainer == null) {
 			nodeWithContainer = connection.getOdysseusNode();
+			
+			LOG.info("Got a node to use its distributed data container: {}", nodeWithContainer);
 		}
 	}
 
@@ -126,8 +136,12 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 			Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
 			if (optConnection.isPresent()) {
 				nodeWithContainer = optConnection.get().getOdysseusNode();
+				LOG.info("Replaced node to use its distributed data container: {}", nodeWithContainer);
+				
 			} else {
 				nodeWithContainer = null;
+				
+				LOG.info("No node to use its distributed data container found");
 			}
 		}
 	}
@@ -136,8 +150,12 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 		Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
 		if (optConnection.isPresent()) {
 			nodeWithContainer = optConnection.get().getOdysseusNode();
+
+			LOG.info("Got a node to use its distributed data container: {}", nodeWithContainer);
 		} else {
 			nodeWithContainer = null;
+			
+			LOG.info("No node to use its distributed data container found");
 		}
 	}
 

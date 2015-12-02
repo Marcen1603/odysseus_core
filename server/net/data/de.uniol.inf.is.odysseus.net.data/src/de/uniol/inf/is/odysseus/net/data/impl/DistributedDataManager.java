@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -55,8 +57,8 @@ import de.uniol.inf.is.odysseus.net.data.impl.server.DistributedDataServer;
 
 public class DistributedDataManager extends OdysseusNetComponentAdapter implements IDistributedDataManager {
 
+	private static final Logger LOG = LoggerFactory.getLogger(DistributedDataManager.class);
 	public static final String LOCAL_DISTRIBUTED_DATA_CONTAINER_KEY = "net.dd.local";
-
 	private static final boolean IS_LOCAL_DEFAULT_VALUE = true;
 
 	private static IOdysseusNodeCommunicator communicator;
@@ -166,6 +168,8 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 
 	@Override
 	public void start() throws OdysseusNetException {
+		LOG.info("Starting distributed data manager");
+		
 		synchronized (listenerCache) {
 
 			if (isLocal()) {
@@ -198,6 +202,8 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		if (container != null) {
 			container.dispose();
 		}
+		
+		LOG.info("Stopped distributed data manager");
 	}
 
 	@Override

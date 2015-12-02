@@ -370,6 +370,8 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 
 	@Override
 	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
+		LOG.debug("Received a message of type {}", message.getClass());
+		
 		if( message instanceof AddDistributedDataMessage ) {
 			AddDistributedDataMessage msg = (AddDistributedDataMessage)message;
 			
@@ -382,6 +384,8 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			ModifiedDistributedDataMessage msg = (ModifiedDistributedDataMessage) message;
 			
 			fireModifiedEvent(msg.getOldData(), msg.getNewData());
+		} else {
+			LOG.warn("Got a message of unknown type: {}", message);
 		}
 	}
 	

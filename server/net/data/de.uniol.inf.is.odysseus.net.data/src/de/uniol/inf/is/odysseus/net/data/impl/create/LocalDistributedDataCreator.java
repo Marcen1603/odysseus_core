@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -18,17 +20,21 @@ import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataCreator;
 
 public class LocalDistributedDataCreator implements IDistributedDataCreator {
 
+	private static final Logger LOG = LoggerFactory.getLogger(LocalDistributedDataCreator.class);
+
 	private final IDistributedDataContainer container;
 
 	public LocalDistributedDataCreator(IDistributedDataContainer container) {
 		Preconditions.checkNotNull(container, "container must not be null!");
 
 		this.container = container;
+
+		LOG.info("Local distributed data creator created");
 	}
 
 	@Override
 	public void dispose() {
-		// do nothing
+		LOG.info("Local distributed data created disposed");
 	}
 
 	@Override
@@ -43,6 +49,8 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 
 		container.add(distributedData);
 
+		LOG.info("Created new distributed data: {}", distributedData);
+
 		return distributedData;
 	}
 
@@ -56,13 +64,21 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 		Preconditions.checkNotNull(creator, "creator must not be null!");
 		Preconditions.checkNotNull(uuid, "uuid must not be null!");
 
+		LOG.info("Trying to destroy distributed data with uuid {}", uuid);
+		
 		Optional<IDistributedData> optDistributedData = container.get(uuid);
 		if (optDistributedData.isPresent()) {
 			IDistributedData distributedData = optDistributedData.get();
 			if (distributedData.getCreator().equals(creator)) {
 				container.remove(distributedData);
+
+				LOG.info("Destroyed distributed data {}", distributedData);
 				return Optional.of(distributedData);
 			}
+
+			LOG.info("Did not destroy distributed data since it has an other creator node: {} instead of {}", creator, distributedData.getCreator());
+		} else {
+			LOG.info("Specified distributed data with uuid {} not found for destroy", uuid);
 		}
 
 		return Optional.absent();
@@ -73,13 +89,19 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 		Preconditions.checkNotNull(creator, "creator must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
 
+		LOG.info("Trying to destroy distributed data with name {}", name);
+		
 		Collection<IDistributedData> destroyedData = Lists.newArrayList();
 		Collection<IDistributedData> distributedDatas = container.get(name);
-		for (IDistributedData distributedData : distributedDatas) {
-			Optional<IDistributedData> optDestroyed = destroy(creator, distributedData.getUUID());
-			if (optDestroyed.isPresent()) {
-				destroyedData.add(optDestroyed.get());
+		if (!distributedDatas.isEmpty()) {
+			for (IDistributedData distributedData : distributedDatas) {
+				Optional<IDistributedData> optDestroyed = destroy(creator, distributedData.getUUID());
+				if (optDestroyed.isPresent()) {
+					destroyedData.add(optDestroyed.get());
+				}
 			}
+		} else {
+			LOG.info("No distributed data with name {} found", name);
 		}
 
 		return destroyedData;
@@ -90,13 +112,19 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 		Preconditions.checkNotNull(creator, "creator must not be null!");
 		Preconditions.checkNotNull(nodeID, "id must not be null!");
 
+		LOG.info("Trying to destroy distributed data with nodeID {}", nodeID);
+		
 		Collection<IDistributedData> destroyedDatas = Lists.newArrayList();
 		Collection<IDistributedData> distributedDatas = container.get(nodeID);
-		for (IDistributedData distributedData : distributedDatas) {
-			Optional<IDistributedData> optDestroyed = destroy(creator, distributedData.getUUID());
-			if (optDestroyed.isPresent()) {
-				destroyedDatas.add(optDestroyed.get());
+		if( !distributedDatas.isEmpty() ) {
+			for (IDistributedData distributedData : distributedDatas) {
+				Optional<IDistributedData> optDestroyed = destroy(creator, distributedData.getUUID());
+				if (optDestroyed.isPresent()) {
+					destroyedDatas.add(optDestroyed.get());
+				}
 			}
+		} else {
+			LOG.info("No distributed data with nodeID {} found", nodeID);
 		}
 
 		return destroyedDatas;
