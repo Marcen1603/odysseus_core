@@ -322,21 +322,20 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 	protected void process_next(R object, int port) {
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		Long groupID;
-		synchronized (groups) {
-			// Determine group ID from input object
-			groupID = g.getGroupID(object);
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> paList = groups.get(groupID);
-			if (paList == null) {
-				// Create init version of partial aggregates
-				paList = calcInit(object);
-				paList.setMetadata((M) object.getMetadata().clone());
-				groups.put(groupID, paList);
-			} else {
-				// Merge current object with partial aggregates
-				calcMerge(paList, object, false);
-				if (metadataMerge != null) {
-					paList.setMetadata(metadataMerge.mergeMetadata(paList.getMetadata(), object.getMetadata()));
-				}
+		// Determine group ID from input object
+		groupID = g.getGroupID(object);
+		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> paList = groups.get(groupID);
+		if (paList == null) {
+			// Create init version of partial aggregates
+			paList = calcInit(object);
+			paList.setMetadata((M) object.getMetadata().clone());
+			groups.put(groupID, paList);
+		} else {
+			// Merge current object with partial aggregates
+			calcMerge(paList, object, false);
+			if (metadataMerge != null) {
+				M newMeta = metadataMerge.mergeMetadata(paList.getMetadata(), object.getMetadata());
+				paList.setMetadata(newMeta);
 			}
 		}
 	}
@@ -351,7 +350,8 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 		for (Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> entry : groups.entrySet()) {
 			PairMap<SDFSchema, AggregateFunction, W, M> result = calcEval(entry.getValue(), false);
 			W out = g.createOutputElement(entry.getKey(), result);
-			out.setMetadata(result.getMetadata());
+			M metadata = entry.getValue().getMetadata();
+			out.setMetadata(metadata);
 			transfer(out);
 		}
 		groups.clear();
