@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListen
 import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
+import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddDistributedDataMessage;
@@ -44,15 +45,19 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 	private final Object syncObject = new Object();
 	private final IOdysseusNodeConnectionManager connectionManager;
 	private final IOdysseusNodeCommunicator communicator;
+	private final IDistributedDataManager dataManager;
 
 	private final Collection<IOdysseusNode> otherContainers = Lists.newArrayList();
 	private final Collection<IDistributedDataListener> listeners = Lists.newArrayList();
 	private final Collection<IOdysseusNode> remoteListeners = Lists.newArrayList();
 
-	public LocalDistributedDataContainer(IOdysseusNodeCommunicator communicator, IOdysseusNodeConnectionManager connectionManager) {
+	public LocalDistributedDataContainer(IDistributedDataManager dataManager, IOdysseusNodeCommunicator communicator, IOdysseusNodeConnectionManager connectionManager) {
+		Preconditions.checkNotNull(dataManager, "dataManager must not be null!");
 		Preconditions.checkNotNull(connectionManager, "connectionManager must not be null!");
 		Preconditions.checkNotNull(communicator, "communicator must not be null!");
 
+		this.dataManager = dataManager;
+		
 		this.connectionManager = connectionManager;
 		for (IOdysseusNodeConnection connection : this.connectionManager.getConnections()) {
 			nodeConnected(connection);
@@ -463,7 +468,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		synchronized (listeners) {
 			for (IDistributedDataListener listener : listeners) {
 				try {
-					listener.distributedDataAdded(addedData);
+					listener.distributedDataAdded(dataManager, addedData);
 				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
@@ -477,7 +482,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		synchronized (listeners) {
 			for (IDistributedDataListener listener : listeners) {
 				try {
-					listener.distributedDataModified(oldData, newData);
+					listener.distributedDataModified(dataManager, oldData, newData);
 				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
@@ -492,7 +497,7 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		synchronized (listeners) {
 			for (IDistributedDataListener listener : listeners) {
 				try {
-					listener.distributedDataRemoved(removedData);
+					listener.distributedDataRemoved(dataManager, removedData);
 				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}

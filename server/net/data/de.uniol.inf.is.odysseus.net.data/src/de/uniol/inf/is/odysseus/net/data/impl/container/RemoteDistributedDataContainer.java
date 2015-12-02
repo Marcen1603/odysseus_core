@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManagerListen
 import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
+import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.DistributedDataManager;
 import de.uniol.inf.is.odysseus.net.data.impl.IDistributedDataContainer;
 import de.uniol.inf.is.odysseus.net.data.impl.container.message.AddDistributedDataMessage;
@@ -53,12 +54,16 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 
 	private final IOdysseusNodeCommunicator communicator;
 	private final IOdysseusNodeConnectionManager connectionManager;
+	private final IDistributedDataManager dataManager;
 	private final Collection<IDistributedDataListener> listeners = Lists.newArrayList();
 
 	private IOdysseusNode nodeWithContainer;
 
-	public RemoteDistributedDataContainer(IOdysseusNodeCommunicator communicator, IOdysseusNodeConnectionManager connectionManager) {
+	public RemoteDistributedDataContainer(IDistributedDataManager dataManager, IOdysseusNodeCommunicator communicator, IOdysseusNodeConnectionManager connectionManager) {
+		Preconditions.checkNotNull(dataManager, "dataManager must not be null!");
 		Preconditions.checkNotNull(communicator, "communicator must not be null!");
+
+		this.dataManager = dataManager;
 
 		this.communicator = communicator;
 		this.communicator.addListener(this, AddDistributedDataMessage.class);
@@ -103,7 +108,7 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	public Collection<IDistributedData> remove(String name) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public Collection<IDistributedData> remove(OdysseusNodeID nodeID) {
 		throw new UnsupportedOperationException();
@@ -135,11 +140,11 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			throw new DistributedDataException("Could not get names of distributed data", e);
 		}
 	}
-	
+
 	@Override
 	public Collection<OdysseusNodeID> getOdysseusNodeIDs() throws DistributedDataException {
 		RequestOdysseusNodeIDsMessage msg = new RequestOdysseusNodeIDsMessage();
-		
+
 		try {
 			OdysseusNodeIDsMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, OdysseusNodeIDsMessage.class);
 			return answer.getOdysseusNodeIDs();
@@ -178,15 +183,15 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			throw new DistributedDataException("Could not get distributed data from specified name", e);
 		}
 	}
-	
+
 	@Override
 	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException {
 		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
 
 		checkConnection();
-		
+
 		GetOdysseusNodeIDMessage msg = new GetOdysseusNodeIDMessage(nodeID);
-		
+
 		try {
 			DistributedDataCollectionMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataCollectionMessage.class);
 			return answer.getDistributedData();
@@ -224,13 +229,13 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			throw new DistributedDataException("Could not retrieve containment of distributed data from specified name", e);
 		}
 	}
-	
+
 	@Override
 	public boolean containsOdysseusNodeID(OdysseusNodeID nodeID) throws DistributedDataException {
 		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
 
 		checkConnection();
-		
+
 		ContainsOdysseusNodeIDMessage msg = new ContainsOdysseusNodeIDMessage(nodeID);
 		try {
 			BooleanMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, BooleanMessage.class);
@@ -264,10 +269,10 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
 			if (optConnection.isPresent()) {
 				nodeWithContainer = optConnection.get().getOdysseusNode();
-				if( !listeners.isEmpty() ) {
+				if (!listeners.isEmpty()) {
 					trySendAddListenerMessage();
 				}
-				
+
 				LOG.info("Replaced active connection to remote distributed data container with node {}", nodeWithContainer);
 			} else {
 				nodeWithContainer = null;
@@ -294,10 +299,10 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 		Optional<IOdysseusNodeConnection> optConnection = determineNewConnection();
 		if (optConnection.isPresent()) {
 			nodeWithContainer = optConnection.get().getOdysseusNode();
-			if( !listeners.isEmpty() ) {
+			if (!listeners.isEmpty()) {
 				trySendAddListenerMessage();
 			}
-			
+
 			LOG.info("Updated connection to {}", nodeWithContainer);
 		} else {
 			nodeWithContainer = null;
@@ -332,7 +337,7 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	}
 
 	private void trySendAddListenerMessage() {
-		if( nodeWithContainer != null ) {
+		if (nodeWithContainer != null) {
 			try {
 				communicator.send(nodeWithContainer, new AddListenerMessage());
 			} catch (OdysseusNodeCommunicationException e) {
@@ -349,7 +354,7 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 			if (listeners.contains(listener)) {
 				listeners.remove(listener);
 
-				if (listeners.isEmpty() ) {
+				if (listeners.isEmpty()) {
 					trySendRemoveListenerMessage();
 				}
 
@@ -359,7 +364,7 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	}
 
 	private void trySendRemoveListenerMessage() {
-		if( nodeWithContainer != null ) {
+		if (nodeWithContainer != null) {
 			try {
 				communicator.send(nodeWithContainer, new RemoveListenerMessage());
 			} catch (OdysseusNodeCommunicationException e) {
@@ -371,54 +376,54 @@ public class RemoteDistributedDataContainer implements IDistributedDataContainer
 	@Override
 	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
 		LOG.debug("Received a message of type {}", message.getClass());
-		
-		if( message instanceof AddDistributedDataMessage ) {
-			AddDistributedDataMessage msg = (AddDistributedDataMessage)message;
-			
+
+		if (message instanceof AddDistributedDataMessage) {
+			AddDistributedDataMessage msg = (AddDistributedDataMessage) message;
+
 			fireAddedEvent(msg.getDistributedData());
-		} else if( message instanceof RemoveDistributedDataMessage ) {
-			RemoveDistributedDataMessage msg = (RemoveDistributedDataMessage)message;
-			
+		} else if (message instanceof RemoveDistributedDataMessage) {
+			RemoveDistributedDataMessage msg = (RemoveDistributedDataMessage) message;
+
 			fireRemovedEvent(msg.getDistributedData());
-		} else if( message instanceof ModifiedDistributedDataMessage ) {
+		} else if (message instanceof ModifiedDistributedDataMessage) {
 			ModifiedDistributedDataMessage msg = (ModifiedDistributedDataMessage) message;
-			
+
 			fireModifiedEvent(msg.getOldData(), msg.getNewData());
 		} else {
 			LOG.warn("Got a message of unknown type: {}", message);
 		}
 	}
-	
-	private void fireAddedEvent( IDistributedData addedData) {
-		synchronized( listeners ) {
-			for( IDistributedDataListener listener : listeners ) {
+
+	private void fireAddedEvent(IDistributedData addedData) {
+		synchronized (listeners) {
+			for (IDistributedDataListener listener : listeners) {
 				try {
-					listener.distributedDataAdded(addedData);
-				} catch( Throwable t ) {
+					listener.distributedDataAdded(dataManager, addedData);
+				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
 			}
 		}
 	}
-	
-	private void fireModifiedEvent( IDistributedData oldData, IDistributedData newData) {
-		synchronized( listeners ) {
-			for( IDistributedDataListener listener : listeners ) {
+
+	private void fireModifiedEvent(IDistributedData oldData, IDistributedData newData) {
+		synchronized (listeners) {
+			for (IDistributedDataListener listener : listeners) {
 				try {
-					listener.distributedDataModified(oldData, newData);
-				} catch( Throwable t ) {
+					listener.distributedDataModified(dataManager, oldData, newData);
+				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
 			}
 		}
 	}
-	
-	private void fireRemovedEvent( IDistributedData removedData) {
-		synchronized( listeners ) {
-			for( IDistributedDataListener listener : listeners ) {
+
+	private void fireRemovedEvent(IDistributedData removedData) {
+		synchronized (listeners) {
+			for (IDistributedDataListener listener : listeners) {
 				try {
-					listener.distributedDataRemoved(removedData);
-				} catch( Throwable t ) {
+					listener.distributedDataRemoved(dataManager, removedData);
+				} catch (Throwable t) {
 					LOG.error("Exception in distributed data listener", t);
 				}
 			}

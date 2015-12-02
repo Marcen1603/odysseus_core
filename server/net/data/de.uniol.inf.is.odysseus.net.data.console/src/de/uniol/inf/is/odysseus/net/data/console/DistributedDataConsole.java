@@ -34,17 +34,17 @@ public class DistributedDataConsole implements CommandProvider {
 			distributedDataManager.addListener(new IDistributedDataListener() {
 
 				@Override
-				public void distributedDataAdded(IDistributedData addedData) {
+				public void distributedDataAdded(IDistributedDataManager manager, IDistributedData addedData) {
 					System.err.println("Remotely added distributed data: " + addedData);
 				}
 
 				@Override
-				public void distributedDataModified(IDistributedData oldData, IDistributedData newData) {
+				public void distributedDataModified(IDistributedDataManager manager, IDistributedData oldData, IDistributedData newData) {
 					System.err.println("Remotely modified distributed data: " + oldData + " to " + newData);
 				}
 
 				@Override
-				public void distributedDataRemoved(IDistributedData removedData) {
+				public void distributedDataRemoved(IDistributedDataManager manager, IDistributedData removedData) {
 					System.err.println("Remotely removed distributed data: " + removedData);
 				}
 			});

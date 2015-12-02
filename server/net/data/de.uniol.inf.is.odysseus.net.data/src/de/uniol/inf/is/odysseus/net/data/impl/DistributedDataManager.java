@@ -146,6 +146,16 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			communicator = null;
 		}
 	}
+	
+	// called by OSGi-DS
+	public void bindDistributedDataListener(IDistributedDataListener serv) {
+		addListener(serv);
+	}
+
+	// called by OSGi-DS
+	public void unbindDistributedDataListener(IDistributedDataListener serv) {
+		removeListener(serv);
+	}
 
 	// called by OSGi-DS
 	public static void bindOdysseusNodeConnectionManager(IOdysseusNodeConnectionManager serv) {
@@ -173,11 +183,11 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		synchronized (listenerCache) {
 
 			if (isLocal()) {
-				container = new LocalDistributedDataContainer(communicator, connectionManager);
+				container = new LocalDistributedDataContainer(this, communicator, connectionManager);
 				creator = new LocalDistributedDataCreator(container);
 				server = new DistributedDataServer(communicator, creator, this);
 			} else {
-				container = new RemoteDistributedDataContainer(communicator, connectionManager);
+				container = new RemoteDistributedDataContainer(this, communicator, connectionManager);
 				creator = new RemoteDistributedDataCreator(communicator, connectionManager);
 			}
 
