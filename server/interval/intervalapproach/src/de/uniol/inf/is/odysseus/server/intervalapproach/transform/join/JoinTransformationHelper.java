@@ -26,21 +26,21 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.IEqualsOperator;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.AbstractWindowTIPO;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class JoinTransformationHelper {
@@ -147,12 +147,12 @@ public class JoinTransformationHelper {
 			return checkPredicate(((AndOperator)mepExpr).getArgument(0), neededAttrs, ownSchema, otherSchema) &&
 					checkPredicate(((AndOperator)mepExpr).getArgument(1), neededAttrs, ownSchema, otherSchema);
 		}
-		if(mepExpr instanceof EqualsOperator){
+		if(mepExpr instanceof IEqualsOperator){
 			
 			// get left and right argument
 			// if these are variables
 			// return true
-			EqualsOperator eq = (EqualsOperator)mepExpr;
+			IEqualsOperator eq = (IEqualsOperator)mepExpr;
 			IExpression arg1 = eq.getArgument(0);
 			IExpression arg2 = eq.getArgument(1);
 			

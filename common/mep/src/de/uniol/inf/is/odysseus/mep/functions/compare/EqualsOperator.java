@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryNumberInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class EqualsOperator extends AbstractBinaryNumberInputOperator<Boolean> implements IHasAlias {
+public class EqualsOperator extends AbstractBinaryNumberInputOperator<Boolean> implements IHasAlias, IEqualsOperator{
 
 	private static final long serialVersionUID = 6011800156304578501L;
 

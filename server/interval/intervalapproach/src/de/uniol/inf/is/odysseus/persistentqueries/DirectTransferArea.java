@@ -89,14 +89,9 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 		this.po = po;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void newElement(IStreamable object, int inPort) {
-		if (object.isPunctuation()) {
-			newHeartbeat(((IPunctuation) object).getTime(), inPort);
-		} else {
-			newHeartbeat(((R) object).getMetadata().getStart(), inPort);
-		}
+		// No need here
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AbstractBinaryBooleanOperator;
 
-public class BooleanEqualsOperator extends AbstractBinaryBooleanOperator implements IHasAlias {
+public class BooleanEqualsOperator extends AbstractBinaryBooleanOperator implements IHasAlias, IEqualsOperator {
 
 	private static final long serialVersionUID = 5646511007554927109L;
 

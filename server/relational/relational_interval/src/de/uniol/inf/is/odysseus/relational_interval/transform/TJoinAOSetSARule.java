@@ -15,112 +15,120 @@
   */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-@SuppressWarnings({"unchecked","rawtypes"})
+
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	@Override
-	public int getPriority() {		
+	public int getPriority() {
 		return 0;
 	}
 
 	@Override
 	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) throws RuleException {
 		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
-		
+
 		// check, which sweep area to use
 		// if the join is an equi join
 		// and there is not window in one
 		// path to the source, use
 		// a hash sweep area
 		// otherwise use a JoinTISweepArea
-		//IPredicate pred = joinPO.getJoinPredicate();
-		String areaName = "TIJoinSA";		
-		
-		if (joinPO.getSweepAreaName() != null){
+		// IPredicate pred = joinPO.getJoinPredicate();
+
+		String areaName = "";
+
+		if (joinPO.getSweepAreaName() != null) {
 			areaName = joinPO.getSweepAreaName();
 		}
-		
-		try {
-			areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
-			areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);;
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new TransformationException("Cannot find sweep area of type "+areaName);
-		};
-		
-		if (areas[0] == null || areas[1]==null){
-			throw new TransformationException("Cannot find sweep area of type "+areaName);
+
+		// TMP-Hack
+		if (areaName.equalsIgnoreCase("HashJoinSA")) {
+			try {
+				// check the paths
+				for (int port = 0; port < 2; port++) {
+					int otherPort = port ^ 1;
+					// check the predicate and calculate
+					// the restrictList
+					Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+
+					if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs,
+							joinPO.getSubscribedToSource(port).getSchema(),
+							joinPO.getSubscribedToSource(otherPort).getSchema())) {
+
+						// transform the set into a list to guarantee the
+						// same order of attributes for both restrict lists
+						List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+						for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+							neededAttrsList.add(pair);
+						}
+
+						Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO,
+								neededAttrsList, port);
+						areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2());
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				areaName = "TIJoinSA";
+			}
+
 		}
-		
-		// This will only work, if the current plan is not distributed! 
-		// FIXME: Find a better solution !
-		
-//		try{
-//		// check the paths
-//		for(int port = 0; port<2; port++){
-//			int otherPort = port^1;
-//			if(JoinTransformationHelper.checkPhysicalPath(joinPO.getSubscribedToSource(port).getTarget())){
-//				// check the predicate and calculate
-//				// the restrictList
-//				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();				
-//				
-//				if(JoinTransformationHelper.checkPredicate(
-//						joinPO.getPredicate(),
-//						neededAttrs,
-//						joinPO.getSubscribedToSource(port).getSchema(),
-//						joinPO.getSubscribedToSource(otherPort).getSchema())){
-//				
-//					// transform the set into a list to guarantee the
-//					// same order of attributes for both restrict lists
-//					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
-//					for(Pair<SDFAttribute, SDFAttribute> pair: neededAttrs){
-//						neededAttrsList.add(pair);
-//					}
-//					
-//					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO, neededAttrsList, port);
-//					areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2());
-//				}
-//			}
-//		}
-//		}catch(Exception e){
-//			// can fail --> set default areas
-//		}
-		
-		
+
+		if (areas[0] == null || areas[1] == null) {
+
+			try {
+				areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
+				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
+				;
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new TransformationException("Cannot find sweep area of type " + areaName);
+			}
+			;
+		}
+
+		if (areas[0] == null || areas[1] == null) {
+			throw new TransformationException("Cannot find sweep area of type " + areaName);
+		}
+
 		joinPO.setAreas(areas);
 		/*
-		# no update, because otherwise
-		# other rules may overwrite this rule
-		# example: rule with priority 5 setting the areas has been
-		# processed, update causes rule engine to search for other
-		# rules applicable for the updated object. The rule with
-		# priority 5 cannot be processed because of no-loop term, however
-		# other rules with lower priority could be used of the updated
-		# objects fulfills the when clause. However, these lower priority
-		# rules should not be used because of the high priority rule
-		# 
-		# do not use retract also, because
-		# other fields of the object should still be modified
-		*/
-		
+		 * # no update, because otherwise # other rules may overwrite this rule
+		 * # example: rule with priority 5 setting the areas has been #
+		 * processed, update causes rule engine to search for other # rules
+		 * applicable for the updated object. The rule with # priority 5 cannot
+		 * be processed because of no-loop term, however # other rules with
+		 * lower priority could be used of the updated # objects fulfills the
+		 * when clause. However, these lower priority # rules should not be used
+		 * because of the high priority rule # # do not use retract also,
+		 * because # other fields of the object should still be modified
+		 */
+
 	}
-	
-	
 
 	@Override
 	public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
-		if(operator.getOutputSchema().getType() == Tuple.class && operator.getInputSchema(0).hasMetatype(ITimeInterval.class)){
-			if(operator.getAreas()==null){
+		if (operator.getOutputSchema().getType() == Tuple.class) {
+			if (operator.getAreas() == null) {
 				return true;
 			}
 		}
@@ -131,14 +139,14 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	public String getName() {
 		return "JoinTIPO set SweepArea";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
 	}
-	
+
 	@Override
-	public Class<? super JoinTIPO> getConditionClass() {	
+	public Class<? super JoinTIPO> getConditionClass() {
 		return JoinTIPO.class;
 	}
 
