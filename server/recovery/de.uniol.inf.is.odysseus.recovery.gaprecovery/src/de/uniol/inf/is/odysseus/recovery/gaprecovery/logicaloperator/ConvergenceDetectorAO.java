@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * {@link GapRecoveryExecutor}). <br />
  * <br />
  * It checks for each element, if it is inside a convergence phase or not. If an
- * element is inside a convergence phase, it's trust value ({@link Trust}) will
+ * element is inside a convergence phase, its trust value ({@link Trust}) will
  * be decreased. <br />
  * <br />
  * In a logical plan, a {@link ConvergenceDetectorAO} should be placed directly

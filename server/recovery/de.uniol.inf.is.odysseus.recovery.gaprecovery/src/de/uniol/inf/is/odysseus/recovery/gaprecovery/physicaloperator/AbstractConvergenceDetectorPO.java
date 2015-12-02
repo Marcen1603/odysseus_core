@@ -4,9 +4,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.interval_trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.GapRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.logicaloperator.ConvergenceDetectorAO;
-import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * {@link GapRecoveryExecutor}). <br />
  * <br />
  * It checks for each element, if it is inside a convergence phase or not. If an
- * element is inside a convergence phase, it's trust value ({@link Trust}) will
+ * element is inside a convergence phase, its trust value ({@link Trust}) will
  * be decreased. <br />
  * <br />
  * In a logical plan, a {@link ConvergenceDetectorAO} should be placed directly
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * @author Michael Brand
  *
  */
-public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<ITrust>>
+public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeIntervalTrust>>
 		extends AbstractPipe<StreamObject, StreamObject> implements IStatefulPO {
 
 	/**
@@ -35,6 +35,11 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	 * The advance of the windows (time instants or elements).
 	 */
 	private final long mBeta;
+	
+	/**
+	 * True, if the end of the convergence phase is reached.
+	 */
+	protected boolean mEndReached = false;
 
 	/**
 	 * Creates a new {@link AbstractConvergenceDetectorPO} as a copy of an
@@ -47,6 +52,7 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 		super(other);
 		this.mBeta = other.mBeta;
 		this.mOmega = other.mOmega;
+		this.mEndReached = other.mEndReached;
 	}
 
 	/**
