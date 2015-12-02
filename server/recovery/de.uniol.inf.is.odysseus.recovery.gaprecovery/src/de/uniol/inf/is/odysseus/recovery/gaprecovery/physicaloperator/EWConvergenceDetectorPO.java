@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
-import de.uniol.inf.is.odysseus.interval_trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.GapRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.logicaloperator.ConvergenceDetectorAO;
 import de.uniol.inf.is.odysseus.trust.Trust;
