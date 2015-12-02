@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
-public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITimeInterval, ITrust {
+public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITimeIntervalTrust {
 
 	private static final long serialVersionUID = 1599620389994530920L;
 
