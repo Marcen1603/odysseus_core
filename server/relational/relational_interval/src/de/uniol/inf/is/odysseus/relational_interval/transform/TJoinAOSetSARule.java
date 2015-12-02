@@ -89,13 +89,14 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				areaName = "TIJoinSA";
 			}
 
 		}
 
 		if (areas[0] == null || areas[1] == null) {
-
+			if (areaName == null || areaName == ""){
+				areaName = "TIJoinSA";
+			}
 			try {
 				areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
 				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
