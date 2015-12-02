@@ -61,13 +61,17 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	public void removeNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 		
+		boolean removed = false;
 		synchronized (nodeMap) {
 			if (nodeMap.containsKey(node.getID())) {
 				nodeMap.remove(node.getID());
-				LOG.info("Node {} removed", node);
-				
-				fireNodeRemovedEvent(node);
+				removed = true;
 			}
+		}
+			
+		if( removed ) {
+			LOG.info("Node {} removed", node);
+			fireNodeRemovedEvent(node);
 		}
 	}
 
