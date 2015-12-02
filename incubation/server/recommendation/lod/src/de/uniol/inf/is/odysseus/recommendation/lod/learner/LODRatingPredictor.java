@@ -10,11 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.recommendation.lod.learner.LODRatingPredictor.UserItemRatingMap.ImmutableUserItemRatingMap;
 import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.AbstractTupleBasedRatingPredictor;
 
 /**
@@ -24,21 +22,18 @@ public class LODRatingPredictor<T extends Tuple<M>, M extends IMetaAttribute, U,
 
 	protected static Logger logger = LoggerFactory.getLogger(LODRatingPredictor.class);
 
-	private final ImmutableUserItemRatingMap<U, I> userItemRatings;
+	private final UserItemRatingMap<U, I> userItemRatings;
 	private final Map<I, D> additionalData;
 
-	public LODRatingPredictor(final ImmutableUserItemRatingMap<U, I> userItemRatings, final ImmutableMap<I, D> additionalData) {
+	public LODRatingPredictor(final UserItemRatingMap<U, I> userItemRatings, final ImmutableMap<I, D> additionalData) {
 		this.userItemRatings = userItemRatings;
 		this.additionalData = additionalData;
-		
-		
-		System.err.println(toString());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Double predict(final U user, final I item) {
-		
+
 		//get data about the item
 		D itemData = additionalData.get(item);
 		Set itemDataSet;
@@ -46,7 +41,9 @@ public class LODRatingPredictor<T extends Tuple<M>, M extends IMetaAttribute, U,
 			itemDataSet = (Set)itemData;
 		} else {
 			itemDataSet = new HashSet();
-			itemDataSet.add(itemData);
+			if(itemData != null) {
+				itemDataSet.add(itemData);
+			}
 		}
 		
 		//get other items rated by user
@@ -81,14 +78,15 @@ public class LODRatingPredictor<T extends Tuple<M>, M extends IMetaAttribute, U,
 			cumulatedRatings += (weight * rating);
 			weights += weight;
 		}
-		
+
 		//generate weighted mean
+		if(weights == 0) return 0.0;
 		return cumulatedRatings / weights;
 	}
 
 	@Override
 	public String toString() {
-		return "LODRatingPredictor [UIR-tuples: " + userItemRatings.userCount() + ", ID-tuples: " + additionalData.size() + "";
+		return "LODRatingPredictor [UIR-tuples: " + userItemRatings.userCount() + ", ID-tuples: " + additionalData.size() + "]";
 	}
 
 	public static class UserItemRatingMap<U, I> {
@@ -102,6 +100,9 @@ public class LODRatingPredictor<T extends Tuple<M>, M extends IMetaAttribute, U,
 		}
 
 		public Set<I> getRatedItems(U user) {
+			if(ratings.get(user) == null) {
+				return new HashSet<I>();
+			}
 			return ratings.get(user).keySet();
 		}
 
@@ -113,40 +114,6 @@ public class LODRatingPredictor<T extends Tuple<M>, M extends IMetaAttribute, U,
 		
 		public int userCount() {
 			return ratings.size();
-		}
-
-		public static class ImmutableUserItemRatingMap<U, I> {
-			private HashMap<U, HashMap<I, Double>> immutableRatings;
-
-			private ImmutableUserItemRatingMap(HashMap<U, HashMap<I, Double>> originalRatings) {
-				immutableRatings = new HashMap<U, HashMap<I, Double>>();
-
-				for(U user : originalRatings.keySet()) {
-					HashMap<I, Double> userMap = new HashMap<I, Double>();
-					for(I item : originalRatings.get(user).keySet()) {
-						userMap.put(item, originalRatings.get(user).get(item));
-					}
-					immutableRatings.put(user, userMap);
-				}
-			}
-
-			public static <U, I> ImmutableUserItemRatingMap<U, I> copyOf(UserItemRatingMap<U, I> map) {
-				return new ImmutableUserItemRatingMap<U, I>(map.ratings);
-			}
-
-			public Set<I> getRatedItems(U user) {
-				return ImmutableSet.copyOf(immutableRatings.get(user).keySet());
-			}
-
-			public double getRating(U user, I item) {
-				if(!immutableRatings.containsKey(user)) return 0.0f;
-				if(!immutableRatings.get(user).containsKey(item)) return 0.0f;
-				return immutableRatings.get(user).get(item);
-			}
-			
-			public int userCount() {
-				return immutableRatings.size();
-			}
 		}
 	}
 }

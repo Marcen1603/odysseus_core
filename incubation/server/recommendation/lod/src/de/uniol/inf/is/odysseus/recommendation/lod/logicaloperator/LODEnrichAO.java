@@ -51,8 +51,7 @@ public class LODEnrichAO extends UnaryLogicalOp {
 	
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		//TODO: change 'tbd' to something that makes more sense
-		SDFAttribute sttribute = new SDFAttribute("tbd", (title == null ? "undefined" : title), SDFDatatype.STRING);
+		SDFAttribute sttribute = new SDFAttribute("lod", (title == null ? "undefined" : title), SDFDatatype.STRING);
 		SDFSchema inputSchema = getInputSchema();
 
 		SDFSchema outputSchema = SDFSchemaFactory.createNewAddAttribute(sttribute, inputSchema);

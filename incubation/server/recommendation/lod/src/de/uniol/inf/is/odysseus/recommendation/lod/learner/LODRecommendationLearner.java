@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.recommendation.learner.AbstractTupleBasedRecommendationLearner;
 import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner;
 import de.uniol.inf.is.odysseus.recommendation.lod.learner.LODRatingPredictor.UserItemRatingMap;
-import de.uniol.inf.is.odysseus.recommendation.lod.learner.LODRatingPredictor.UserItemRatingMap.ImmutableUserItemRatingMap;
 import de.uniol.inf.is.odysseus.recommendation.model.rating_predictor.RatingPredictor;
 
 /**
@@ -22,15 +21,20 @@ public class LODRecommendationLearner<T extends Tuple<M>, M extends IMetaAttribu
 
 	private final int dataAttributeIndex;
 	private RatingPredictor<T, M, U, I, Double> model;
-	
+
 	public LODRecommendationLearner(final SDFSchema inputschema,
 									final SDFAttribute userAttribute,
 									final SDFAttribute itemAttribute,
 									final SDFAttribute ratingAttribute,
 									final Map<String, String> options) {
 		super(inputschema, userAttribute, itemAttribute, ratingAttribute);
+		
+		if(options.get("data") != null) {
+			this.dataAttributeIndex = inputschema.findAttributeIndex(options.get("data"));
+		} else {
+			this.dataAttributeIndex = inputschema.findAttributeIndex("data");
+		}
 
-		this.dataAttributeIndex = inputschema.findAttributeIndex("data"); //FIXME: use options to determine the attribute name
 		if (this.dataAttributeIndex == -1) {
 			throw new IllegalArgumentException("Data attribute not found.");
 		}
@@ -59,14 +63,12 @@ public class LODRecommendationLearner<T extends Tuple<M>, M extends IMetaAttribu
 			I item = getItemInTuple(tuple);
 			D data = getDataInTuple(tuple);
 			double rating = getRatingInTuple(tuple);
-			
-			System.err.println(data.getClass());
 
 			userItemRatings.addUserItemRating(user, item, rating);
 			additionalData.put(item, data);
 		}
 
-		this.model = new LODRatingPredictor<>(ImmutableUserItemRatingMap.copyOf(userItemRatings), ImmutableMap.copyOf(additionalData));
+		this.model = new LODRatingPredictor<>(userItemRatings, ImmutableMap.copyOf(additionalData));
 		isModelUpToDate = true;
 	}
 
