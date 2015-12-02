@@ -66,9 +66,9 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeInt
 	 * Creates a new {@link TWConvergenceDetectorPO}.
 	 * 
 	 * @param omega
-	 *            The width of the window (time instants or elements).
+	 *            The width of the window (time instants in milliseconds).
 	 * @param beta
-	 *            The advance of the window (time instants or elements).
+	 *            The advance of the window (time instants in milliseconds).
 	 */
 	public TWConvergenceDetectorPO(long omega, long beta) {
 		super(omega, beta);

@@ -26,15 +26,15 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 		extends AbstractPipe<StreamObject, StreamObject> implements IStatefulPO {
 
 	/**
-	 * The width of the windows (time instants or elements).
+	 * The width of the windows (time instants in milliseconds or elements).
 	 */
 	private final long mOmega;
 
 	/**
-	 * The advance of the windows (time instants or elements).
+	 * The advance of the windows (time instants in milliseconds or elements).
 	 */
 	private final long mBeta;
-	
+
 	/**
 	 * True, if the end of the convergence phase is reached.
 	 */
@@ -58,9 +58,11 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	 * Creates a new {@link AbstractConvergenceDetectorPO}.
 	 * 
 	 * @param omega
-	 *            The width of the window (time instants or elements).
+	 *            The width of the window (time instants in milliseconds or
+	 *            elements).
 	 * @param beta
-	 *            The advance of the window (time instants or elements).
+	 *            The advance of the window (time instants in milliseconds or
+	 *            elements).
 	 */
 	public AbstractConvergenceDetectorPO(long omega, long beta) {
 		super();
@@ -77,18 +79,22 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
+
 	/**
 	 * Gets the window width.
-	 * @return The width of the windows (time instants or elements).
+	 * 
+	 * @return The width of the windows (time instants in milliseconds or
+	 *         elements).
 	 */
 	protected final long getWindowWidth() {
 		return this.mOmega;
 	}
-	
+
 	/**
 	 * Gets the window advance.
-	 * @return The advance of the windows (time instants or elements).
+	 * 
+	 * @return The advance of the windows (time instants in milliseconds or
+	 *         elements).
 	 */
 	protected final long getWindowAdvance() {
 		return this.mBeta;
