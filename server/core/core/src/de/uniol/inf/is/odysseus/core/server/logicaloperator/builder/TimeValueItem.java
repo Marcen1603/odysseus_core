@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-public class TimeValueItem {
+public class TimeValueItem implements Serializable {
 	
+	private static final long serialVersionUID = 3307110537461936968L;
 	private final long time;
 	private final TimeUnit unit;
 	
