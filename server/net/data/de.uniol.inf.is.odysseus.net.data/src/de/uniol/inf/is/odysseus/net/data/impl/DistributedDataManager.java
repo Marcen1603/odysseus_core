@@ -171,17 +171,13 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 
 	@Override
 	public void init(IOdysseusNode localNode) throws OdysseusNetException {
+		LOG.info("Initializing distributed data manager");
+		
 		localNode.addProperty(LOCAL_DISTRIBUTED_DATA_CONTAINER_KEY, String.valueOf(isLocal()));
-
 		this.localNode = localNode;
-	}
-
-	@Override
-	public void start() throws OdysseusNetException {
-		LOG.info("Starting distributed data manager");
 		
 		synchronized (listenerCache) {
-
+			
 			if (isLocal()) {
 				container = new LocalDistributedDataContainer(this, communicator, connectionManager);
 				creator = new LocalDistributedDataCreator(container);
@@ -190,19 +186,19 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 				container = new RemoteDistributedDataContainer(this, communicator, connectionManager);
 				creator = new RemoteDistributedDataCreator(communicator, connectionManager);
 			}
-
+			
 			if (!listenerCache.isEmpty()) {
 				for (IDistributedDataListener listener : listenerCache) {
 					container.addListener(listener);
 				}
-
+				
 				listenerCache.clear();
 			}
 		}
 	}
 
 	@Override
-	public void stop() {
+	public void terminate(IOdysseusNode localNode) {
 		if (server != null) {
 			server.stop();
 		}
@@ -213,11 +209,8 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			container.dispose();
 		}
 		
-		LOG.info("Stopped distributed data manager");
-	}
-
-	@Override
-	public void terminate(IOdysseusNode localNode) {
+		LOG.info("Terminated distributed data manager");
+		
 		this.localNode = null;
 	}
 
