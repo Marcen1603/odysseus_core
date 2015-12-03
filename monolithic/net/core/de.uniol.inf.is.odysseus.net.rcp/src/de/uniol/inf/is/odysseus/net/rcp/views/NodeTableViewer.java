@@ -51,7 +51,7 @@ public final class NodeTableViewer {
 		TableViewerColumn activityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		activityColumn.getColumn().setText("Act");
 		tableColumnLayout.setColumnData(activityColumn.getColumn(), new ColumnWeightData(3, 15, true));
-		activityColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<Boolean>(tableViewer, activityColumn) {
+		activityColumn.setLabelProvider(new CellLabelProviderAndSorter<IOdysseusNode, Boolean>(tableViewer, activityColumn) {
 			@Override
 			protected Boolean getValue(IOdysseusNode node) {
 				return container.isNodeActive(node);
