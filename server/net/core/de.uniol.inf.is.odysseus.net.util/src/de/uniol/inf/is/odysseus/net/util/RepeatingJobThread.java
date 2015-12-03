@@ -18,13 +18,21 @@ package de.uniol.inf.is.odysseus.net.util;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 public class RepeatingJobThread extends StoppableThread {
 
-	private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(20);
+	private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(20, new ThreadFactory() {
+		@Override
+		public Thread newThread(Runnable runnable) {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		}
+	});
 	
 	private static final String DEFAULT_THREAD_NAME = "Repeating job";
 
@@ -48,6 +56,8 @@ public class RepeatingJobThread extends StoppableThread {
 		this.executionIntervalMillis = executionIntervalMillis;
 
 		this.threadName = threadName;
+		
+		
 	}
 
 	public void afterJob() {
