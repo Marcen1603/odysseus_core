@@ -321,7 +321,10 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
 		synchronized (listenerCache) {
-			container.removeListener(listener);
+			if( container != null ) {
+				container.removeListener(listener);
+			}
+			
 			listenerCache.remove(listener);
 		}
 	}
