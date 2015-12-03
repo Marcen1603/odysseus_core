@@ -7,6 +7,7 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 import de.uniol.inf.is.odysseus.net.rcp.views.ChatView;
+import de.uniol.inf.is.odysseus.net.rcp.views.DistributedDataView;
 import de.uniol.inf.is.odysseus.net.rcp.views.NodeViewPart;
 import de.uniol.inf.is.odysseus.net.rcp.views.PingMapView;
 
@@ -32,6 +33,7 @@ public class OdysseusNetPerspective implements IPerspectiveFactory {
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		bottom.addView("org.eclipse.pde.runtime.LogView");
 		bottom.addView(ChatView.VIEW_ID);
+		bottom.addView(DistributedDataView.VIEW_ID);
 	}
 
 }

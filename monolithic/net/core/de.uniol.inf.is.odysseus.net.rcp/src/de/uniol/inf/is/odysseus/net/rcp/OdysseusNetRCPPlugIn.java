@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNetStartupManager;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
+import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.rcp.views.ChatMessage;
 import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
@@ -21,7 +22,8 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 	private static IOdysseusNodeCommunicator nodeCommunicator;
 	private static IPingMap pingMap;
 	private static IOdysseusNodeResourceUsageManager resourceUsageManager;
-
+	private static IDistributedDataManager distributedDataManager;
+	
 	// called by OSGi-DS
 	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
 		nodeManager = serv;
@@ -120,6 +122,22 @@ public class OdysseusNetRCPPlugIn extends AbstractUIPlugin {
 	
 	public static IOdysseusNodeResourceUsageManager getOdysseusNodeResourceUsageManager() {
 		return resourceUsageManager;
+	}
+
+	// called by OSGi-DS
+	public static void bindDistributedDataManager(IDistributedDataManager serv) {
+		distributedDataManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindDistributedDataManager(IDistributedDataManager serv) {
+		if (distributedDataManager == serv) {
+			distributedDataManager = null;
+		}
+	}
+	
+	public static IDistributedDataManager getDistributedDataManager() {
+		return distributedDataManager;
 	}
 
 	@Override

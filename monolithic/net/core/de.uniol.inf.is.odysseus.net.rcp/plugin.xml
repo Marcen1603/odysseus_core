@@ -42,6 +42,15 @@
             name="Ping Map"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="de.uniol.inf.is.odysseus.net.rcp.OdysseusNetCategory"
+            class="de.uniol.inf.is.odysseus.net.rcp.views.DistributedDataView"
+            icon="icons/distributedData.png"
+            id="de.uniol.inf.is.odysseus.net.rcp.DistributedData"
+            name="Distributed Data"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

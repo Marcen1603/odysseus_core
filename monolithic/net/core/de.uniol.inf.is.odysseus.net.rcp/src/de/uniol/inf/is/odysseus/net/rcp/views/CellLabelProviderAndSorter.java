@@ -11,7 +11,15 @@ public abstract class CellLabelProviderAndSorter<D,T> extends CellLabelProvider 
 
 	private ColumnViewerSorter sorter;
 	
+	public CellLabelProviderAndSorter() {
+		// call prepare() manually instead
+	}
+	
 	public CellLabelProviderAndSorter(TableViewer tableViewer, TableViewerColumn column) {
+		prepare(tableViewer, column);
+	}
+	
+	public void prepare( TableViewer tableViewer, TableViewerColumn column ) {
 		sorter = new ColumnViewerSorter(tableViewer, column) {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -39,7 +47,7 @@ public abstract class CellLabelProviderAndSorter<D,T> extends CellLabelProvider 
 		}
 	}
 
-	protected abstract T getValue( D pid );
+	protected abstract T getValue( D data );
 	
 	private int compareValuesImpl( T a, T b ) {
 		if (a == null && b == null ) {
