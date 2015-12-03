@@ -35,7 +35,7 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 			if (!nodeMap.containsKey(node.getID())) {
 				nodeMap.put(node.getID(), node);
 				LOG.info("Node {} added", node);
-				
+
 				fireNodeAddedEvent(node);
 			} else {
 				LOG.error("Node {} was already added to the node manager", node);
@@ -46,7 +46,7 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	private void fireNodeAddedEvent(IOdysseusNode node) {
 		synchronized (listeners) {
 			LOG.debug("Fire node add event to listeners");
-			
+
 			for (IOdysseusNodeManagerListener listener : listeners) {
 				try {
 					listener.nodeAdded(this, node);
@@ -60,7 +60,7 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	@Override
 	public void removeNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
-		
+
 		boolean removed = false;
 		synchronized (nodeMap) {
 			if (nodeMap.containsKey(node.getID())) {
@@ -68,8 +68,8 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 				removed = true;
 			}
 		}
-			
-		if( removed ) {
+
+		if (removed) {
 			LOG.info("Node {} removed", node);
 			fireNodeRemovedEvent(node);
 		}
@@ -78,7 +78,7 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	private void fireNodeRemovedEvent(IOdysseusNode node) {
 		synchronized (listeners) {
 			LOG.debug("Fire node remove event to listeners");
-			
+
 			for (IOdysseusNodeManagerListener listener : listeners) {
 				try {
 					listener.nodeRemoved(this, node);
@@ -100,7 +100,7 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 
 		synchronized (listeners) {
 			listeners.add(listener);
-			
+
 			LOG.debug("Added node manager listener {}", listener);
 		}
 
@@ -115,64 +115,85 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	@Override
 	public void removeListener(IOdysseusNodeManagerListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
-		
+
 		synchronized (listeners) {
 			listeners.remove(listener);
-			
+
 			LOG.debug("Added node manager listener {}", listener);
 		}
 	}
-	
+
 	@Override
 	public boolean existsNode(IOdysseusNode node) {
-		synchronized( nodeMap ) {
+		Preconditions.checkNotNull(node, "node must not be null!");
+
+		synchronized (nodeMap) {
 			return nodeMap.containsKey(node.getID());
 		}
 	}
-	
+
 	@Override
 	public Optional<IOdysseusNode> getNode(OdysseusNodeID nodeID) {
-		synchronized( nodeMap ) {
-			return Optional.fromNullable(nodeMap.get(nodeID));
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+
+		IOdysseusNode node = null;
+		synchronized (nodeMap) {
+			node = nodeMap.get(nodeID);
 		}
+
+		if (node == null) {
+			try {
+				IOdysseusNode localNode = getLocalNode();
+				if (localNode.getID().equals(nodeID)) {
+					return Optional.of(localNode);
+				}
+			} catch (OdysseusNetException e) {
+				return Optional.absent();
+			}
+		}
+
+		return Optional.fromNullable(node);
 	}
-	
+
 	@Override
 	public boolean existsNode(OdysseusNodeID nodeID) {
-		synchronized( nodeMap ) {
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+
+		synchronized (nodeMap) {
 			return nodeMap.containsKey(nodeID);
 		}
 	}
-	
+
 	@Override
 	public ImmutableCollection<OdysseusNodeID> getNodeIDs() {
-		synchronized( nodeMap ) {
+		synchronized (nodeMap) {
 			return ImmutableList.copyOf(nodeMap.keySet());
 		}
 	}
-	
+
 	@Override
 	public IOdysseusNode getLocalNode() throws OdysseusNetException {
 		Optional<IOdysseusNetStartupManager> optStartupManager = OdysseusNetStartupManager.getInstance();
-		if( optStartupManager.isPresent() && !optStartupManager.get().isStarted() ) {
+		if (optStartupManager.isPresent() && !optStartupManager.get().isStarted()) {
 			throw new OdysseusNetException("OdysseusNet must be started to get local node");
 		}
 		return optStartupManager.get().getLocalOdysseusNode();
 	}
-	
+
 	@Override
 	public boolean isLocalNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
+
 		Optional<IOdysseusNetStartupManager> optStartupManager = OdysseusNetStartupManager.getInstance();
-		
-		if( optStartupManager.isPresent() && optStartupManager.get().isStarted() ) {
+
+		if (optStartupManager.isPresent() && optStartupManager.get().isStarted()) {
 			try {
 				return optStartupManager.get().getLocalOdysseusNode().equals(node);
 			} catch (OdysseusNetException e) {
-				// no happen here
+				// not happen here
 			}
 		}
-		
+
 		return false;
 	}
 }
