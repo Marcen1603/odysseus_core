@@ -6,11 +6,11 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
+import de.uniol.inf.is.odysseus.net.data.DistributedDataAdapter;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
-import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 
-public class LogDestinationDistributedDataListener implements IDistributedDataListener {
+public class LogDestinationDistributedDataListener extends DistributedDataAdapter {
 
 	private static IOdysseusNodeManager nodeManager;
 
@@ -65,4 +65,5 @@ public class LogDestinationDistributedDataListener implements IDistributedDataLi
 	private static boolean isLoggingDistributedData( IDistributedData data ) {
 		return data.getName().equals(OdysseusNetLoggingComponent.LOGGING_DISTRIBUTED_DATA_NAME);
 	}
+
 }

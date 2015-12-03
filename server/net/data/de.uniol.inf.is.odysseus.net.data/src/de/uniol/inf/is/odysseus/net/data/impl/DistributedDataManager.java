@@ -64,7 +64,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	private static IOdysseusNodeCommunicator communicator;
 	private static IOdysseusNodeConnectionManager connectionManager;
 
-	private final Collection<IDistributedDataListener> listenerCache = Lists.newArrayList();
+	private final Collection<IDistributedDataListener> listeners = Lists.newArrayList();
 
 	private IOdysseusNode localNode;
 
@@ -177,7 +177,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		localNode.addProperty(LOCAL_DISTRIBUTED_DATA_CONTAINER_KEY, String.valueOf(isLocal()));
 		this.localNode = localNode;
 		
-		synchronized (listenerCache) {
+		synchronized (listeners) {
 			
 			if (isLocal()) {
 				container = new LocalDistributedDataContainer(this, communicator, connectionManager);
@@ -188,12 +188,10 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 				creator = new RemoteDistributedDataCreator(communicator, connectionManager);
 			}
 			
-			if (!listenerCache.isEmpty()) {
-				for (IDistributedDataListener listener : listenerCache) {
+			if (!listeners.isEmpty()) {
+				for (IDistributedDataListener listener : listeners) {
 					container.addListener(listener);
 				}
-				
-				listenerCache.clear();
 			}
 		}
 	}
@@ -201,10 +199,14 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	@Override
 	public void start() throws OdysseusNetException {
 		isStarted = true;
+		
+		fireStartEvent();
 	}
 	
 	@Override
 	public void stop() {
+		fireStopEvent();
+		
 		isStarted = false;
 	}
 
@@ -383,12 +385,11 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	public void addListener(IDistributedDataListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		synchronized (listenerCache) {
+		synchronized (listeners) {
 			if (container != null) {
 				container.addListener(listener);
-			} else {
-				listenerCache.add(listener);
 			}
+			listeners.add(listener);
 		}
 	}
 
@@ -396,12 +397,36 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	public void removeListener(IDistributedDataListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		synchronized (listenerCache) {
+		synchronized (listeners) {
 			if( container != null ) {
 				container.removeListener(listener);
 			}
 			
-			listenerCache.remove(listener);
+			listeners.remove(listener);
+		}
+	}
+	
+	private void fireStartEvent() {
+		synchronized( listeners ) {
+			for( IDistributedDataListener listener : listeners ) {
+				try {
+					listener.distributedDataManagerStarted(this);
+				} catch( Throwable t ) {
+					LOG.error("Exception in distributed data listener", t);
+				}
+			}
+		}
+	}
+	
+	private void fireStopEvent() {
+		synchronized( listeners ) {
+			for( IDistributedDataListener listener : listeners ) {
+				try {
+					listener.distributedDataManagerStopped(this);
+				} catch( Throwable t ) {
+					LOG.error("Exception in distributed data listener", t);
+				}
+			}
 		}
 	}
 }

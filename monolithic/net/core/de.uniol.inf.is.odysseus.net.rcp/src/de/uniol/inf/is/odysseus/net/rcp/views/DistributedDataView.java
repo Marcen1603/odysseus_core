@@ -43,7 +43,10 @@ public class DistributedDataView extends ViewPart implements IDistributedDataLis
 			for (UUID uuid : uuids) {
 				Optional<IDistributedData> optData = OdysseusNetRCPPlugIn.getDistributedDataManager().get(uuid);
 				if (optData.isPresent()) {
-					dataContainer.add(optData.get());
+					IDistributedData dd = optData.get();
+					if( !dataContainer.contains(dd)) {
+						dataContainer.add(dd);
+					}
 				}
 			}
 		} catch (DistributedDataException e) {
@@ -92,6 +95,20 @@ public class DistributedDataView extends ViewPart implements IDistributedDataLis
 			dataContainer.remove(removedData);
 		}
 
+		ddViewer.refreshTableAsync();
+	}
+
+	@Override
+	public void distributedDataManagerStarted(IDistributedDataManager sender) {
+		fillTable();
+	}
+
+	@Override
+	public void distributedDataManagerStopped(IDistributedDataManager sender) {
+		synchronized( dataContainer ) {
+			dataContainer.clear();
+		}
+		
 		ddViewer.refreshTableAsync();
 	}
 }

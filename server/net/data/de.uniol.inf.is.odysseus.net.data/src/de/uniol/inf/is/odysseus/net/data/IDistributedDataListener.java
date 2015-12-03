@@ -6,4 +6,6 @@ public interface IDistributedDataListener {
 	public void distributedDataModified( IDistributedDataManager sender, IDistributedData oldData, IDistributedData newData );
 	public void distributedDataRemoved( IDistributedDataManager sender, IDistributedData removedData );
 	
+	public void distributedDataManagerStarted( IDistributedDataManager sender );
+	public void distributedDataManagerStopped( IDistributedDataManager sender );
 }

@@ -47,6 +47,16 @@ public class DistributedDataConsole implements CommandProvider {
 				public void distributedDataRemoved(IDistributedDataManager manager, IDistributedData removedData) {
 					System.err.println("Remotely removed distributed data: " + removedData);
 				}
+
+				@Override
+				public void distributedDataManagerStarted(IDistributedDataManager sender) {
+					System.err.println("Distributed data manager started");
+				}
+
+				@Override
+				public void distributedDataManagerStopped(IDistributedDataManager sender) {
+					System.err.println("Distributed data manager stopped");
+				}
 			});
 		}
 	}
