@@ -126,20 +126,37 @@ public class SensorService
 		SensorFactory.getInstance().removeSensor(session, sensorId);
 	}
 	
-	public void startLogging(@WebParam(name = "securityToken") String securityToken, 
-							@WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+/*	public void startLogging(@WebParam(name = "securityToken") String securityToken, 
+							@WebParam(name = "sensorId") String sensorId,
+							@WebParam(name = "loggingStyle") String loggingStyle) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
-		SensorFactory.getInstance().startLogging(session, sensorId);
+		SensorFactory.getInstance().startLogging(session, sensorId, loggingStyle);
+	}*/
+
+	public void startLogging(@WebParam(name = "securityToken") String securityToken, 
+			@WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+	{
+		ISession session = loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().startLogging(session, sensorId, Sensor.DEFAULT_LOGGING_STYLE);
 	}
+	
+	
+/*	public void stopLogging(@WebParam(name = "securityToken") String securityToken, 
+							@WebParam(name = "sensorId") String sensorId,
+							@WebParam(name = "loggingStyle") String loggingStyle) throws InvalidUserDataException
+	{
+		ISession session = loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().stopLogging(session, sensorId, loggingStyle);
+	}*/	
 
 	public void stopLogging(@WebParam(name = "securityToken") String securityToken, 
-							@WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
+			@WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
-		SensorFactory.getInstance().stopLogging(session, sensorId);
-	}	
-
+		SensorFactory.getInstance().stopLogging(session, sensorId, Sensor.DEFAULT_LOGGING_STYLE);
+	}		
+	
 	@WebResult(name = "streamUrl")
 	public String startLiveView(@WebParam(name = "securityToken") String securityToken, 
 							  @WebParam(name = "sensorId") String sensorId,

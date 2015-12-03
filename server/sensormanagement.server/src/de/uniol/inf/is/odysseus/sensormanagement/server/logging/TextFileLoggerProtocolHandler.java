@@ -141,7 +141,7 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
 	{
 		if (!(o instanceof TextFileLoggerProtocolHandler)) return false;
-		if (!super.isSemanticallyEqual(o)) return false;
+		if (!super.isSemanticallyEqualImpl(o)) return false;
 		
 		TextFileLoggerProtocolHandler other = (TextFileLoggerProtocolHandler) o; 
 		if (extension.equals(other.extension)) return false;

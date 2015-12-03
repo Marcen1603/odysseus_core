@@ -17,6 +17,8 @@ public class Sensor
 {
 	private final static IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 
+	public static final String DEFAULT_LOGGING_STYLE = "default";
+
 	String ownerName;
 	SensorModel config;
 	SensorType type;
@@ -28,9 +30,14 @@ public class Sensor
 		return config.id;
 	}
 
-	public String getLoggingQueryName()
+	private String getLoggingQueryNameBase()
 	{
-		return config.id + "_log";
+		return config.id + "_log_";
+	}	
+	
+	public String getLoggingQueryName(String loggingStyle)
+	{
+		return getLoggingQueryNameBase() + loggingStyle;
 	}	
 	
 	private String getLiveViewQueryNameBase()
@@ -92,22 +99,27 @@ public class Sensor
 		
 		safeAddQuery(getDataQueryName(), queryText, session);
 	}
-	
-	public void remove(ISession session)
+
+	private void stopMultipleQueries(ISession session, String queryNameSuffix)
 	{
-		stopLogging(session);
-		
 		Collection<Integer> querys = executor.getLogicalQueryIds(session);		
 		for (int id : querys)
 		{
-			if (executor.getLogicalQueryById(id, session).getName().startsWith(getLiveViewQueryNameBase())) {
+			if (executor.getLogicalQueryById(id, session).getName().startsWith(queryNameSuffix)) {
 				try {
 					executor.removeQuery(id, session);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-		}
+		}		
+	}
+	
+	
+	public void remove(ISession session)
+	{
+		stopMultipleQueries(session, getLoggingQueryNameBase());
+		stopMultipleQueries(session, getLiveViewQueryNameBase());
 				
 		try {
 			executor.removeViewOrStream(getDataQueryName(), session);
@@ -134,13 +146,14 @@ public class Sensor
 		config = newSensorInfo;
 	}
 	
-	public void startLogging(ISession session, String directory)
+	public void startLogging(ISession session, String directory, String loggingStyle)
 	{
-		String queryName = getLoggingQueryName();		
+		String queryName = getLoggingQueryName(loggingStyle);		
 		if (executor.getLogicalQueryByName(queryName, session) != null) return;
 		
 		Map<String, String> loggingOptionsMap = new HashMap<>();
 		loggingOptionsMap.put("sensorXml", XmlMarshalHelper.toXml(config));
+		loggingOptionsMap.put("loggingStyle", loggingStyle);
 		loggingOptionsMap.put("directory", directory);
 		loggingOptionsMap.put("sizeLimit", Integer.toString(300*1024*1024)); // 300MB		
 		
@@ -148,7 +161,7 @@ public class Sensor
 		
 		Map<String, Object> formatMap = new HashMap<>();
 		formatMap.put("sourceName", ownerName + "." + getDataQueryName());
-		formatMap.put("sinkName", getLoggingQueryName());
+		formatMap.put("sinkName", queryName);
 		formatMap.put("options", options);
 		formatMap.put("optionsEx", (options.length() > 0) ? (options + ",") : "");
 		
@@ -157,9 +170,9 @@ public class Sensor
 		isLogging = true;
 	}
 	
-	public void stopLogging(ISession session)
+	public void stopLogging(ISession session, String loggingStyle)
 	{
-		safeRemoveQuery(getLoggingQueryName(), session);
+		safeRemoveQuery(getLoggingQueryName(loggingStyle), session);
 	}
 	
 	public String startLiveView(ISession session, String targetHost, int targetPort)

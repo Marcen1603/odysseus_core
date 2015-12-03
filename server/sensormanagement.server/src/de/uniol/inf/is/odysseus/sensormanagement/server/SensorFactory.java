@@ -563,22 +563,22 @@ public class SensorFactory
 		saveServerInstance();
 	}
 
-	public void startLogging(ISession session, String sensorId) 
+	public void startLogging(ISession session, String sensorId, String loggingStyle) 
 	{
 		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
 		
 		Sensor s = getSensorByIdException(sensorId);
-		s.startLogging(session, loggingDirectory);
+		s.startLogging(session, loggingDirectory, loggingStyle);
 		
 		serverInstance.recordingSet.add(s.config);
 	}
 
-	public void stopLogging(ISession session, String sensorId) 
+	public void stopLogging(ISession session, String sensorId, String loggingStyle) 
 	{
 		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
 		
 		Sensor s = getSensorByIdException(sensorId);
-		s.stopLogging(session);		
+		s.stopLogging(session, loggingStyle);		
 	}
 	
 	public String startLiveView(ISession session, String sensorId, String targetHost, int targetPort) 

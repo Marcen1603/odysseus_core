@@ -30,6 +30,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	private String fileNameBase;
 	private long logfileSizeLimit;	
 	private SensorModel	sensorModel;
+	private String loggingStyle;
 	
 	private boolean logSetUp;	
 	private LogMetaData logMetaData;
@@ -39,8 +40,10 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	private BufferedWriter additionalFileWriter;
 	private WriteOptions csvWriteOptions = new WriteOptions(',', '\'', null, null, false);
 	
-	public String getFileNameBase() 	{ return fileNameBase; }
-	public long   getLogfileSizeLimit() { return logfileSizeLimit; }
+	public String getFileNameBase() { return fileNameBase; }
+	public long getLogfileSizeLimit() { return logfileSizeLimit; }
+	public String getLoggingStyle() { return loggingStyle; }
+	public SensorModel getSensorModel() { return sensorModel; }
 	
 	// Returns the current log file size in bytes 
 	protected abstract long getLogFileSize();
@@ -66,6 +69,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		sensorModel = XmlMarshalHelper.fromXml(options.get("sensorxml"), SensorModel.class);
 		
 		loggingDirectory = options.get("directory");
+		loggingStyle = options.get("loggingStyle", "Default");
 		logfileSizeLimit = options.getLong("sizelimit", Long.MAX_VALUE);		
 	}
 	
@@ -196,8 +200,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
 	{
-		if (!(o instanceof LoggerProtocolHandler)) return false;
-		if (!super.isSemanticallyEqual(o)) return false;
+		if (!(o instanceof LoggerProtocolHandler)) return false;		
 		
 		LoggerProtocolHandler other = (LoggerProtocolHandler) o;		
 		if (!sensorModel.equals(other.sensorModel)) return false;		

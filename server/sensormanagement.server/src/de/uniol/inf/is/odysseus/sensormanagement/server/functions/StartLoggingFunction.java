@@ -13,9 +13,11 @@ public class StartLoggingFunction extends AbstractTargetedCommandFunction
 	}
 	
 	@Override public TargetedCommand<?> getValue() {
+		final String loggingStyle = (String) getInputValue(1);
+		
 		return new TargetedCommand<String>(getTargets(), false) {
 			@Override public boolean run(String sensorId) {
-				SensorFactory.getInstance().startLogging(getSession(), sensorId);
+				SensorFactory.getInstance().startLogging(getSession(), sensorId, loggingStyle);
 				return true;
 			}
 		};

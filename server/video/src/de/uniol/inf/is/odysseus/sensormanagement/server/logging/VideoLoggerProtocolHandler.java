@@ -120,6 +120,7 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 	@Override public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
 	{
 		if (!(o instanceof VideoLoggerProtocolHandler)) return false;
+		if (!super.isSemanticallyEqualImpl(o)) return false;
 		
 		VideoLoggerProtocolHandler other = (VideoLoggerProtocolHandler) o;
 		if (!videoExtension.equals(other.videoExtension)) return false;

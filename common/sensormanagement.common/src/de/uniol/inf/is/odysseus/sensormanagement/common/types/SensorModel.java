@@ -3,12 +3,14 @@ package de.uniol.inf.is.odysseus.sensormanagement.common.types;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.Position;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.SimpleMapXmlAdapter;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.StringMapMapXmlAdapter;
 
 @XmlRootElement(name = "sensor")
 public class SensorModel 
@@ -21,6 +23,10 @@ public class SensorModel
 	@XmlJavaTypeAdapter(SimpleMapXmlAdapter.class)
 	public Map<String, String> options = new HashMap<>();
 	public Position position;
+	
+	@XmlJavaTypeAdapter(StringMapMapXmlAdapter.class)
+	@XmlElement(name = "loggingStyle")
+	public Map<String, Map<String, String>> loggingStyles = new HashMap<>();	
 	
 	// If this value is set, this sensor will be set up as a simulated sensor in Odysseus which receives simulated data
 	public String simulationConfig;
@@ -48,5 +54,8 @@ public class SensorModel
 		options = new HashMap<>(other.options);
 		position = other.position == null ? null : other.position.clone();
 		simulationConfig = other.simulationConfig;
+		loggingStyles = new HashMap<>(other.loggingStyles);
 	}
+	
+	// TODO: Implement equals and hashCode
 }
