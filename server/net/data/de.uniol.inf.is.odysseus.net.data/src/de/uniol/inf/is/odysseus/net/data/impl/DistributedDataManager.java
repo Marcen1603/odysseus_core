@@ -72,6 +72,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	private IDistributedDataCreator creator;
 
 	private DistributedDataServer server;
+	private boolean isStarted;
 
 	// called by OSGi-DS
 	public static void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
@@ -196,6 +197,16 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			}
 		}
 	}
+	
+	@Override
+	public void start() throws OdysseusNetException {
+		isStarted = true;
+	}
+	
+	@Override
+	public void stop() {
+		isStarted = false;
+	}
 
 	@Override
 	public void terminate(IOdysseusNode localNode) {
@@ -213,80 +224,145 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		
 		this.localNode = null;
 	}
+	
+	@Override
+	public boolean isStarted() {
+		return isStarted;
+	}
 
 	@Override
 	public IDistributedData create(JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException {
+		if( creator == null ) {
+			throw new DistributedDataException("Distributed data manager is not started");
+		}
+		
 		return creator.create(localNode.getID(), data, name, persistent, lifetime);
 	}
 
 	@Override
 	public IDistributedData create(JSONObject data, String name, boolean persistent) throws DistributedDataException {
+		if( creator == null ) {
+			throw new DistributedDataException("Distributed data manager is not started");
+		}
+
 		return creator.create(localNode.getID(), data, name, persistent);
 	}
 
 	@Override
 	public Optional<IDistributedData> destroy(UUID uuid) throws DistributedDataException {
-		return creator.destroy(localNode.getID(), uuid);
+		if( creator != null ) {
+			return creator.destroy(localNode.getID(), uuid);
+		} 
+		
+		return Optional.absent();
 	}
 
 	@Override
 	public Collection<IDistributedData> destroy(String name) throws DistributedDataException {
-		return creator.destroy(localNode.getID(), name);
+		if( creator != null ) {
+			return creator.destroy(localNode.getID(), name);
+		}
+		
+		return Lists.newArrayList();
 	}
 
 	@Override
 	public Collection<IDistributedData> destroyOwn() throws DistributedDataException {
-		return creator.destroy(localNode.getID(), localNode.getID());
+		if( creator != null ) {
+			return creator.destroy(localNode.getID(), localNode.getID());
+		}
+		
+		return Lists.newArrayList();
 	}
 
 	@Override
 	public Collection<UUID> getUUIDs() throws DistributedDataException {
-		return container.getUUIDs();
+		if( container != null ) {
+			return container.getUUIDs();
+		}
+		
+		return Lists.newArrayList();
 	}
 
 	@Override
 	public Collection<String> getNames() throws DistributedDataException {
-		return container.getNames();
+		if( container != null ) {
+			return container.getNames();
+		}
+		
+		return Lists.newArrayList();
 	}
 	
 	@Override
 	public Collection<OdysseusNodeID> getOdysseusNodeIDs() throws DistributedDataException {
-		return container.getOdysseusNodeIDs();
+		if( container != null ) {
+			return container.getOdysseusNodeIDs();
+		} 
+		
+		return Lists.newArrayList();
 	}
 
 	@Override
 	public Optional<IDistributedData> get(UUID uuid) throws DistributedDataException {
-		return container.get(uuid);
+		if( container != null ) {
+			return container.get(uuid);
+		}
+		
+		return Optional.absent();
 	}
 
 	@Override
 	public Collection<IDistributedData> get(String name) throws DistributedDataException {
-		return container.get(name);
+		if( container != null ) {
+			return container.get(name);
+		}
+		
+		return Lists.newArrayList();
 	}
 	
 	@Override
 	public Collection<IDistributedData> get(OdysseusNodeID nodeID) throws DistributedDataException {
-		return container.get(nodeID);
+		if( container != null ) {
+			return container.get(nodeID);
+		}
+		
+		return Lists.newArrayList();
 	}
 	
 	@Override
 	public Collection<IDistributedData> getOwn() throws DistributedDataException {
-		return container.get(localNode.getID());
+		if( container != null ) {
+			return container.get(localNode.getID());
+		}
+		
+		return Lists.newArrayList();
 	}
 
 	@Override
 	public boolean containsUUID(UUID uuid) throws DistributedDataException {
-		return container.containsUUID(uuid);
+		if( container != null ) {
+			return container.containsUUID(uuid);
+		}
+		
+		return false;
 	}
 
 	@Override
 	public boolean containsName(String name) throws DistributedDataException {
-		return container.containsName(name);
+		if( container != null ) {
+			return container.containsName(name);
+		}
+		
+		return false;
 	}
 	
 	@Override
 	public boolean containsOdysseusNodeID(OdysseusNodeID nodeID) throws DistributedDataException {
-		return container.containsOdysseusNodeID(nodeID);
+		if( container != null ) {
+			return container.containsOdysseusNodeID(nodeID);
+		}
+		
+		return false;
 	}
 
 	@Override

@@ -39,5 +39,6 @@ public interface IDistributedDataManager {
 	// listeners
 	public void addListener(IDistributedDataListener listener);
 	public void removeListener(IDistributedDataListener listener);
-
+	
+	public boolean isStarted();
 }
