@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.sensormanagement.common.types;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
@@ -26,7 +28,7 @@ public class SensorModel
 	
 	@XmlJavaTypeAdapter(StringMapMapXmlAdapter.class)
 	@XmlElement(name = "loggingStyle")
-	public Map<String, Map<String, String>> loggingStyles = new HashMap<>();	
+	private Map<String, Map<String, String>> loggingStyles = new HashMap<>();	
 	
 	// If this value is set, this sensor will be set up as a simulated sensor in Odysseus which receives simulated data
 	public String simulationConfig;
@@ -54,8 +56,30 @@ public class SensorModel
 		options = new HashMap<>(other.options);
 		position = other.position == null ? null : other.position.clone();
 		simulationConfig = other.simulationConfig;
-		loggingStyles = new HashMap<>(other.loggingStyles);
+		loggingStyles = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+		loggingStyles.putAll(other.loggingStyles);
 	}
+	
+	public void removeLoggingStyle(String loggingStyle)
+	{
+		loggingStyles.remove(loggingStyle.toLowerCase());
+	}
+
+	public void putLoggingStyle(String loggingStyle, Map<String, String> loggingStyleOptions)
+	{
+		loggingStyles.put(loggingStyle.toLowerCase(), loggingStyleOptions);
+	}
+
+	public Map<String, String> getLoggingStyle(String loggingStyle)
+	{
+		return loggingStyles.get(loggingStyle.toLowerCase());
+	}
+
+	public Set<String> getLoggingStyles() 
+	{
+		return loggingStyles.keySet();
+	}
+
 	
 	// TODO: Implement equals and hashCode
 }

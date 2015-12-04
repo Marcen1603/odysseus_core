@@ -100,12 +100,12 @@ public class Sensor
 		safeAddQuery(getDataQueryName(), queryText, session);
 	}
 
-	private void stopMultipleQueries(ISession session, String queryNameSuffix)
+	private void stopMultipleQueries(ISession session, String queryNamePrefix)
 	{
 		Collection<Integer> querys = executor.getLogicalQueryIds(session);		
 		for (int id : querys)
 		{
-			if (executor.getLogicalQueryById(id, session).getName().startsWith(queryNameSuffix)) {
+			if (executor.getLogicalQueryById(id, session).getName().startsWith(queryNamePrefix)) {
 				try {
 					executor.removeQuery(id, session);
 				} catch (Exception e) {

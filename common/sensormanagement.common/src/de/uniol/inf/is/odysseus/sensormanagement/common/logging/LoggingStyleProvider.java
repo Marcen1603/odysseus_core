@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.sensormanagement.common.logging;
 
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+// TODO: Dynamically add logging styles etc.
 public class LoggingStyleProvider 
 {
 	static private Map<String, Map<String, String>> loggingStyles = new HashMap<>();
@@ -31,5 +33,15 @@ public class LoggingStyleProvider
 	static public Set<String> getLoggingStyleOptions(String loggingStyle)
 	{
 		return loggingStyles.get(loggingStyle).keySet();
+	}
+	
+	static public AbstractLoggingStyle createLoggingStyle(Map<String, String> options)
+	{
+		String loggingStyleBase = options.get("baseStyle");
+		
+		if (loggingStyleBase.equalsIgnoreCase("Default")) 	return new DefaultLoggingStyle(options);
+		if (loggingStyleBase.equalsIgnoreCase("Interval"))	return new IntervalLoggingStyle(options);
+			
+		throw new InvalidParameterException("Unknown logging style: " + loggingStyleBase);
 	}
 }

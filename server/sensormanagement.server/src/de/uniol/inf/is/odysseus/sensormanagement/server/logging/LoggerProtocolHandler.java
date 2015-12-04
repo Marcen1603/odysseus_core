@@ -11,13 +11,15 @@ import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.sensormanagement.common.logging.AbstractLoggingStyle;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LoggingStyleProvider;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.StreamObjectUtilities;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
 public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
@@ -30,7 +32,8 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	private String fileNameBase;
 	private long logfileSizeLimit;	
 	private SensorModel	sensorModel;
-	private String loggingStyle;
+	private String loggingStyleName;
+	private AbstractLoggingStyle loggingStyle;
 	
 	private boolean logSetUp;	
 	private LogMetaData logMetaData;
@@ -42,7 +45,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	
 	public String getFileNameBase() { return fileNameBase; }
 	public long getLogfileSizeLimit() { return logfileSizeLimit; }
-	public String getLoggingStyle() { return loggingStyle; }
+	public AbstractLoggingStyle getLoggingStyle() { return loggingStyle; }
 	public SensorModel getSensorModel() { return sensorModel; }
 	
 	// Returns the current log file size in bytes 
@@ -69,7 +72,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		sensorModel = XmlMarshalHelper.fromXml(options.get("sensorxml"), SensorModel.class);
 		
 		loggingDirectory = options.get("directory");
-		loggingStyle = options.get("loggingStyle", "Default");
+		loggingStyleName = options.get("loggingStyle", "Default");
 		logfileSizeLimit = options.getLong("sizelimit", Long.MAX_VALUE);		
 	}
 	
@@ -80,6 +83,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		{
 			logSetUp = false;
 			lastTimeStamp = 0;
+			loggingStyle = LoggingStyleProvider.createLoggingStyle(sensorModel.getLoggingStyle(loggingStyleName));
 		}
 	}
 	
@@ -92,6 +96,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		{
 			stopLogging(lastTimeStamp);
 			logSetUp = false;
+			loggingStyle = null;
 		}
 	}
 	
@@ -172,28 +177,24 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	{
 		synchronized (processLock)
 		{
-	        TimeInterval timeStamp = (TimeInterval)object.getMetadata();
-	        if (timeStamp != null)
-	        	lastTimeStamp = timeStamp.getStart().getMainPoint();
-	        else
-	        {
-	        	lastTimeStamp = System.currentTimeMillis();
-	        	System.out.println("Warning: No timestamp provided!");
-	        }
+			lastTimeStamp = StreamObjectUtilities.getTimeStamp(object);
 			
 			if (!logSetUp)
 				startLogging(object, lastTimeStamp);
 		
-			
-			writeInternal(object, lastTimeStamp);
-			if (remainingAttributes.length > 0)
+			if (loggingStyle.process(object))
 			{
-				Tuple<?> remainingTuple = object.restrict(remainingAttributes, true);
-				additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
+//				System.out.println("Log " + lastTimeStamp);
+				writeInternal(object, lastTimeStamp);
+				if (remainingAttributes.length > 0)
+				{
+					Tuple<?> remainingTuple = object.restrict(remainingAttributes, true);
+					additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
+				}
+			
+				if (getLogFileSize() >= getLogfileSizeLimit())
+					stopLogging(lastTimeStamp);
 			}
-		
-			if (getLogFileSize() >= getLogfileSizeLimit())
-				stopLogging(lastTimeStamp);
 		}
 	}
 		
