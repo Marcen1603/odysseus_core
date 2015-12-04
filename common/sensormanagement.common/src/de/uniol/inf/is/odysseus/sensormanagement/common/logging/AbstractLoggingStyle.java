@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.sensormanagement.common.logging;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -61,4 +63,23 @@ public abstract class AbstractLoggingStyle
 		
 		return (long) (Double.parseDouble(timeStr.trim()) * factor);
 	}
+	
+	public static long parseDate(String dateStr)
+	{
+		// Try to parse as long timestamp
+		try {
+			return Long.parseLong(dateStr);
+		} catch (Exception e) {			
+		}
+		
+		// Try to parse as date
+		String format = "yyyy-MM-dd HH:mm:ss"; 
+		try {
+			System.out.println(new SimpleDateFormat(format).parse(dateStr));
+			return new SimpleDateFormat(format).parse(dateStr).getTime();
+		} catch (ParseException e) {
+		}
+		
+		throw new IllegalArgumentException("Cant parse \"" + dateStr + "\" as long or " + format + " date!");
+	}	
 }

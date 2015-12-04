@@ -191,10 +191,10 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 					Tuple<?> remainingTuple = object.restrict(remainingAttributes, true);
 					additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
 				}
-			}
-			
-			if (getLogFileSize() >= loggingStyle.sizeLimit || result.splitChunk)
-				stopLogging(lastTimeStamp);
+				
+				if (getLogFileSize() >= loggingStyle.sizeLimit || result.splitChunk)
+					stopLogging(lastTimeStamp);				
+			}			
 		}
 	}
 		
