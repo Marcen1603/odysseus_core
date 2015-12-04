@@ -25,7 +25,7 @@ public class DefaultLoggingStyle extends AbstractLoggingStyle
 	private long lastTimeStamp = -1;
 	private int sampleCount = 0;
 	
-	@Override public boolean process(Tuple<?> object)
+	@Override public ProcessResult process(Tuple<?> object)
 	{		
 		if (minTimeDiff != 0)
 		{
@@ -34,7 +34,7 @@ public class DefaultLoggingStyle extends AbstractLoggingStyle
 			{
 				long curTimeStamp = StreamObjectUtilities.getTimeStamp(object);				
 				if (curTimeStamp - lastTimeStamp < minTimeDiff)
-					return false;
+					return new ProcessResult(false, false);
 			}
 			lastTimeStamp = StreamObjectUtilities.getTimeStamp(object);
 		}
@@ -48,9 +48,9 @@ public class DefaultLoggingStyle extends AbstractLoggingStyle
 			if (sampleCount == sampleRate)
 				sampleCount = 0;
 			if (skip)
-				return false;
+				return new ProcessResult(false, false);
 		}
 		
-		return true;
+		return new ProcessResult(true, false);
 	}	
 }

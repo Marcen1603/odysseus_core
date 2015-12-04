@@ -7,23 +7,32 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.StreamObjectUt
 
 // This logging style alternates between up- and downtimes.
 // The default setting of 1000 / 1000 loggs all elements for 1000ms, 
-// then discards all elements for 1000ms, and so on  
+// then discards all elements for 1000ms, and so on.
+// If splitChunks is true, a new raw data chunk will be generated for each uptime
 public class IntervalLoggingStyle extends DefaultLoggingStyle
 {
 	private long upTime = 1000;
 	private long downTime = 1000;
+	public boolean splitChunks; 
 	
 	private long startTime = -1;
+	private boolean isUp = true;
 	
 	public IntervalLoggingStyle(Map<String, String> options) 
 	{
 		super(options);
+
+		String upTimeStr = options.get("upTime");
+		upTime = upTimeStr != null && !upTimeStr.equals("") ? parseTime(options.get("upTime")) : 1000;		
 		
-		upTime = parseTime(options.get("upTime"));		
-		downTime = parseTime(options.get("downTime"));		
+		String downTimeStr = options.get("downTime");
+		downTime = downTimeStr != null && !downTimeStr.equals("") ? parseTime(options.get("downTime")) : 1000;
+		
+		String splitChunksStr = options.get("splitChunks");
+		splitChunks = splitChunksStr != null && splitChunksStr.equals("1");
 	}
 	
-	@Override public boolean process(Tuple<?> object)
+	@Override public ProcessResult process(Tuple<?> object)
 	{
 		long curTimeStamp = StreamObjectUtilities.getTimeStamp(object);
 		if (startTime == -1)
@@ -35,9 +44,16 @@ public class IntervalLoggingStyle extends DefaultLoggingStyle
 		long timeInPeriod = runTime % periodLength;
 
 		if (timeInPeriod < upTime)
+		{
+			isUp = true;
 			return super.process(object);
+		}
 		else
-			return false;
+		{
+			boolean sendSplitChunk = isUp;
+			isUp = false;
+			return new ProcessResult(false, sendSplitChunk);
+		}
 	}	
 	
 }

@@ -21,6 +21,7 @@ public class LoggingStyleProvider
 		intervalLoggingStyle.putAll(defaultLoggingStyle);
 		intervalLoggingStyle.put("upTime", "Duration during which all elements are logged according to minTimeDiff and sapleRate");
 		intervalLoggingStyle.put("downTime", "Duration during which all elements are discarded");
+		intervalLoggingStyle.put("splitChunks", "If set to 1, creates a new raw data chunk for each uptime");
 		
 		loggingStyles.put("Default", defaultLoggingStyle);
 		loggingStyles.put("Interval", intervalLoggingStyle);

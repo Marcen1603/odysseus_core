@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.AbstractLoggingStyle;
+import de.uniol.inf.is.odysseus.sensormanagement.common.logging.AbstractLoggingStyle.ProcessResult;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LoggingStyleProvider;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
@@ -177,11 +178,12 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		{
 			lastTimeStamp = StreamObjectUtilities.getTimeStamp(object);
 			
-			if (!logSetUp)
-				startLogging(object, lastTimeStamp);
-		
-			if (loggingStyle.process(object))
+			ProcessResult result = loggingStyle.process(object);
+			if (result.log)
 			{
+				if (!logSetUp)
+					startLogging(object, lastTimeStamp);				
+				
 				System.out.println("Log " + loggingStyleName + " " + lastTimeStamp);
 				writeInternal(object, lastTimeStamp);
 				if (remainingAttributes.length > 0)
@@ -189,10 +191,10 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 					Tuple<?> remainingTuple = object.restrict(remainingAttributes, true);
 					additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
 				}
-			
-				if (getLogFileSize() >= loggingStyle.sizeLimit)
-					stopLogging(lastTimeStamp);
 			}
+			
+			if (getLogFileSize() >= loggingStyle.sizeLimit || result.splitChunk)
+				stopLogging(lastTimeStamp);
 		}
 	}
 		

@@ -13,8 +13,19 @@ public abstract class AbstractLoggingStyle
 		String sizeLimitStr = options.get("sizeLimit");
 		sizeLimit = sizeLimitStr != null && sizeLimitStr.length() > 0 ? Long.parseLong(sizeLimitStr) : 300*1024*1024; // 300 MB		
 	}
+
+	public static class ProcessResult
+	{
+		public boolean log;
+		public boolean splitChunk;
+		
+		ProcessResult(boolean log, boolean splitChunk) {
+			this.log = log;
+			this.splitChunk = splitChunk;
+		}
+	}
 	
-	public abstract boolean process(Tuple<?> object);
+	public abstract ProcessResult process(Tuple<?> object);
 	
 	public static long parseTime(String timeStr)
 	{
