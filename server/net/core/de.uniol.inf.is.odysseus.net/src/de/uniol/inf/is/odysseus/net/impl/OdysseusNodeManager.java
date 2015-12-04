@@ -196,4 +196,16 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 
 		return false;
 	}
+	
+	@Override
+	public boolean isLocalNode(OdysseusNodeID nodeID) {
+		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
+		
+		Optional<IOdysseusNode> optNode = getNode(nodeID);
+		if( optNode.isPresent() ) {
+			return isLocalNode(optNode.get());
+		}
+		
+		return false;
+	}
 }

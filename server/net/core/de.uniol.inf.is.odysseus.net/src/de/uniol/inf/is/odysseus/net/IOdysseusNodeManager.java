@@ -15,6 +15,7 @@ public interface IOdysseusNodeManager {
 	
 	public IOdysseusNode getLocalNode() throws OdysseusNetException;
 	public boolean isLocalNode(IOdysseusNode node);
+	public boolean isLocalNode(OdysseusNodeID nodeID);
 	
 	public void addListener( IOdysseusNodeManagerListener listener );
 	public void removeListener( IOdysseusNodeManagerListener listener );
