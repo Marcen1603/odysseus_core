@@ -32,6 +32,7 @@ public class SensorModel
 	
 	// If this value is set, this sensor will be set up as a simulated sensor in Odysseus which receives simulated data
 	public String simulationConfig;
+	public static final String DEFAULT_LOGGING_STYLE = "default";
 			
 	public SensorModel()
 	{

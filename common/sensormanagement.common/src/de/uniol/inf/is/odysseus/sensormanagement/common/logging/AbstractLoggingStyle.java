@@ -1,9 +1,19 @@
 package de.uniol.inf.is.odysseus.sensormanagement.common.logging;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public abstract class AbstractLoggingStyle 
 {
+	public long sizeLimit;
+	
+	AbstractLoggingStyle(Map<String, String> options)
+	{
+		String sizeLimitStr = options.get("sizeLimit");
+		sizeLimit = sizeLimitStr != null && sizeLimitStr.length() > 0 ? Long.parseLong(sizeLimitStr) : 300*1024*1024; // 300 MB		
+	}
+	
 	public abstract boolean process(Tuple<?> object);
 	
 	public static long parseTime(String timeStr)

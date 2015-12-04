@@ -580,6 +580,14 @@ public class SensorFactory
 		Sensor s = getSensorByIdException(sensorId);
 		s.stopLogging(session, loggingStyle);		
 	}
+
+	public void stopAllLogging(ISession session, String sensorId) 
+	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
+		Sensor s = getSensorByIdException(sensorId);
+		s.stopAllLogging(session);		
+	}	
 	
 	public String startLiveView(ISession session, String sensorId, String targetHost, int targetPort) 
 	{

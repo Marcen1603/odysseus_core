@@ -30,7 +30,6 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 
 	private String loggingDirectory;
 	private String fileNameBase;
-	private long logfileSizeLimit;	
 	private SensorModel	sensorModel;
 	private String loggingStyleName;
 	private AbstractLoggingStyle loggingStyle;
@@ -44,7 +43,6 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	private WriteOptions csvWriteOptions = new WriteOptions(',', '\'', null, null, false);
 	
 	public String getFileNameBase() { return fileNameBase; }
-	public long getLogfileSizeLimit() { return logfileSizeLimit; }
 	public AbstractLoggingStyle getLoggingStyle() { return loggingStyle; }
 	public SensorModel getSensorModel() { return sensorModel; }
 	
@@ -73,7 +71,6 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		
 		loggingDirectory = options.get("directory");
 		loggingStyleName = options.get("loggingStyle", "Default");
-		logfileSizeLimit = options.getLong("sizelimit", Long.MAX_VALUE);		
 	}
 	
 	@Override
@@ -105,7 +102,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		if (logSetUp) return;		
 			        
         String startTimeString = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss").format(new Date(firstTimeStamp));
-        fileNameBase = loggingDirectory + "/" + sensorModel.id + "_" + startTimeString;
+        fileNameBase = loggingDirectory + "/" + sensorModel.id + "_" + startTimeString + "_" + loggingStyleName;
         logMetaDataFileName = fileNameBase + ".cfg";		
 		
 		try
@@ -114,6 +111,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 			logMetaData.startTime = firstTimeStamp;
 			logMetaData.endTime = 0;
 			logMetaData.sensorId = sensorModel.id;
+			logMetaData.loggingStyle = loggingStyleName;
 			
 			remainingAttributes = getRemainingAttributes();
 			if (remainingAttributes.length > 0)
@@ -184,7 +182,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		
 			if (loggingStyle.process(object))
 			{
-//				System.out.println("Log " + lastTimeStamp);
+				System.out.println("Log " + loggingStyleName + " " + lastTimeStamp);
 				writeInternal(object, lastTimeStamp);
 				if (remainingAttributes.length > 0)
 				{
@@ -192,7 +190,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 					additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
 				}
 			
-				if (getLogFileSize() >= getLogfileSizeLimit())
+				if (getLogFileSize() >= loggingStyle.sizeLimit)
 					stopLogging(lastTimeStamp);
 			}
 		}
@@ -206,7 +204,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		LoggerProtocolHandler other = (LoggerProtocolHandler) o;		
 		if (!sensorModel.equals(other.sensorModel)) return false;		
 		if (!loggingDirectory.equals(other.loggingDirectory)) return false;
-		if (logfileSizeLimit != other.logfileSizeLimit) return false;		
+		if (!loggingStyleName.equals(other.loggingStyleName)) return false;
 	
 		return true;
 	}	

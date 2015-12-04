@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="securityToken" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sensorId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="loggingStyle" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +30,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "startLogging", propOrder = {
     "securityToken",
-    "sensorId"
+    "sensorId",
+    "loggingStyle"
 })
 @SuppressWarnings(value = { "all" })
 public class StartLogging {
 
     protected String securityToken;
     protected String sensorId;
+    protected String loggingStyle;
 
     /**
      * Ruft den Wert der securityToken-Eigenschaft ab.
@@ -83,6 +86,30 @@ public class StartLogging {
      */
     public void setSensorId(String value) {
         this.sensorId = value;
+    }
+
+    /**
+     * Ruft den Wert der loggingStyle-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getLoggingStyle() {
+        return loggingStyle;
+    }
+
+    /**
+     * Legt den Wert der loggingStyle-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setLoggingStyle(String value) {
+        this.loggingStyle = value;
     }
 
 }

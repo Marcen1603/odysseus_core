@@ -1,8 +1,16 @@
 package de.uniol.inf.is.odysseus.sensormanagement.client.executor;
 
-@SuppressWarnings(value = { "all" })
 public interface ILoggable 
 {
+	// Start logging with default style
 	public void startLogging();
-	public void stopLogging();
+	
+	// Start logging with specified style
+	public void startLogging(String loggingStyle);
+	
+	// Stops all logging
+	public void stopAllLogging();
+	
+	// Stops logging for specified style
+	public void stopLogging(String loggingStyle);	
 }

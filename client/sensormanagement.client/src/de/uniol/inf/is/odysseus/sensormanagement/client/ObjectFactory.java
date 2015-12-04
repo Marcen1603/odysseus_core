@@ -32,6 +32,7 @@ public class ObjectFactory {
     private final static QName _GetSensorByIdResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorByIdResponse");
     private final static QName _GetSensorType_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorType");
     private final static QName _StopLoggingResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "stopLoggingResponse");
+    private final static QName _StopAllLoggingResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "stopAllLoggingResponse");
     private final static QName _GetSensorIds_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorIds");
     private final static QName _RemoveSensorResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "removeSensorResponse");
     private final static QName _RemoveSensor_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "removeSensor");
@@ -39,6 +40,7 @@ public class ObjectFactory {
     private final static QName _InitServiceResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "initServiceResponse");
     private final static QName _GetSensorById_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorById");
     private final static QName _StartLoggingResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "startLoggingResponse");
+    private final static QName _StopAllLogging_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "stopAllLogging");
     private final static QName _GetSensorTypes_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "getSensorTypes");
     private final static QName _ModifySensorResponse_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "modifySensorResponse");
     private final static QName _StartLiveView_QNAME = new QName("http://server.sensormanagement.odysseus.is.inf.uniol.de/", "startLiveView");
@@ -72,6 +74,14 @@ public class ObjectFactory {
      */
     public AddSensorResponse createAddSensorResponse() {
         return new AddSensorResponse();
+    }
+
+    /**
+     * Create an instance of {@link StopAllLoggingResponse }
+     * 
+     */
+    public StopAllLoggingResponse createStopAllLoggingResponse() {
+        return new StopAllLoggingResponse();
     }
 
     /**
@@ -144,6 +154,14 @@ public class ObjectFactory {
      */
     public RemoveSensorResponse createRemoveSensorResponse() {
         return new RemoveSensorResponse();
+    }
+
+    /**
+     * Create an instance of {@link StopAllLogging }
+     * 
+     */
+    public StopAllLogging createStopAllLogging() {
+        return new StopAllLogging();
     }
 
     /**
@@ -322,6 +340,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link StopAllLoggingResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "stopAllLoggingResponse")
+    public JAXBElement<StopAllLoggingResponse> createStopAllLoggingResponse(StopAllLoggingResponse value) {
+        return new JAXBElement<StopAllLoggingResponse>(_StopAllLoggingResponse_QNAME, StopAllLoggingResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSensorIds }{@code >}}
      * 
      */
@@ -382,6 +409,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "startLoggingResponse")
     public JAXBElement<StartLoggingResponse> createStartLoggingResponse(StartLoggingResponse value) {
         return new JAXBElement<StartLoggingResponse>(_StartLoggingResponse_QNAME, StartLoggingResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link StopAllLogging }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server.sensormanagement.odysseus.is.inf.uniol.de/", name = "stopAllLogging")
+    public JAXBElement<StopAllLogging> createStopAllLogging(StopAllLogging value) {
+        return new JAXBElement<StopAllLogging>(_StopAllLogging_QNAME, StopAllLogging.class, null, value);
     }
 
     /**

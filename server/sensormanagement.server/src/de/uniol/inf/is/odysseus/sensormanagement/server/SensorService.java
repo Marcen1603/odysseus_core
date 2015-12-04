@@ -126,36 +126,36 @@ public class SensorService
 		SensorFactory.getInstance().removeSensor(session, sensorId);
 	}
 	
-/*	public void startLogging(@WebParam(name = "securityToken") String securityToken, 
+	public void startLogging(@WebParam(name = "securityToken") String securityToken, 
 							@WebParam(name = "sensorId") String sensorId,
 							@WebParam(name = "loggingStyle") String loggingStyle) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
 		SensorFactory.getInstance().startLogging(session, sensorId, loggingStyle);
-	}*/
+	}
 
-	public void startLogging(@WebParam(name = "securityToken") String securityToken, 
+/*	public void startLogging(@WebParam(name = "securityToken") String securityToken, 
 			@WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
 		SensorFactory.getInstance().startLogging(session, sensorId, Sensor.DEFAULT_LOGGING_STYLE);
-	}
+	}*/
 	
 	
-/*	public void stopLogging(@WebParam(name = "securityToken") String securityToken, 
+	public void stopLogging(@WebParam(name = "securityToken") String securityToken, 
 							@WebParam(name = "sensorId") String sensorId,
 							@WebParam(name = "loggingStyle") String loggingStyle) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
 		SensorFactory.getInstance().stopLogging(session, sensorId, loggingStyle);
-	}*/	
+	}	
 
-	public void stopLogging(@WebParam(name = "securityToken") String securityToken, 
+	public void stopAllLogging(@WebParam(name = "securityToken") String securityToken, 
 			@WebParam(name = "sensorId") String sensorId) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
-		SensorFactory.getInstance().stopLogging(session, sensorId, Sensor.DEFAULT_LOGGING_STYLE);
-	}		
+		SensorFactory.getInstance().stopAllLogging(session, sensorId);
+	}	
 	
 	@WebResult(name = "streamUrl")
 	public String startLiveView(@WebParam(name = "securityToken") String securityToken, 

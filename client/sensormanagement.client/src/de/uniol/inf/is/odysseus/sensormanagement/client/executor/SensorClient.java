@@ -106,21 +106,40 @@ public abstract class SensorClient implements ILoggable
 	@Override public void startLogging() 
 	{
 		for (RemoteSensor sensor : sensors) 
-			sensorClient.startLogging(odysseusSession, sensor.getId());
+			sensorClient.startLogging(odysseusSession, sensor.getId(), SensorModel.DEFAULT_LOGGING_STYLE);
 		
 		if (isInitialized())
 			onClientChanged();
 	}
 
-	@Override public void stopLogging() 
+	@Override public void startLogging(String loggingStyle) 
 	{
 		for (RemoteSensor sensor : sensors) 
-			sensorClient.stopLogging(odysseusSession, sensor.getId());
+			sensorClient.startLogging(odysseusSession, sensor.getId(), loggingStyle);
+		
+		if (isInitialized())
+			onClientChanged();
+	}
+	
+	
+	@Override public void stopLogging(String loggingStyle) 
+	{
+		for (RemoteSensor sensor : sensors) 
+			sensorClient.stopLogging(odysseusSession, sensor.getId(), loggingStyle);
 		
 		if (isInitialized())
 			onClientChanged();
 	}	
 
+	@Override public void stopAllLogging() 
+	{
+		for (RemoteSensor sensor : sensors) 
+			sensorClient.stopAllLogging(odysseusSession, sensor.getId());
+		
+		if (isInitialized())
+			onClientChanged();
+	}		
+	
 	protected abstract void onSensorAdded(RemoteSensor sensor);
 	protected abstract void onSensorChanged(RemoteSensor sensor);
 	protected abstract void onSensorRemoved(RemoteSensor sensor);

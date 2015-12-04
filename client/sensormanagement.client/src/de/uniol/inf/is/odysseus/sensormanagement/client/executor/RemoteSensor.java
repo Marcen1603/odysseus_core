@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.NetUtilities;
 
+@SuppressWarnings(value = { "all" })
 public class RemoteSensor implements ILoggable 
 {
 	private boolean loggingRunning;
@@ -26,18 +27,28 @@ public class RemoteSensor implements ILoggable
 		this.client = client;
 	}
 
-	@Override
-	public void startLogging() 
+	@Override public void startLogging() 
 	{
-		client.sensorClient.startLogging(client.odysseusSession, sensor.id);		
-		client.onSensorChanged(this);
-		loggingRunning = true;
+		startLogging(SensorModel.DEFAULT_LOGGING_STYLE);
 	}
 
-	@Override
-	public void stopLogging() 
+	@Override public void startLogging(String loggingStyle) 
 	{
-		client.sensorClient.stopLogging(client.odysseusSession, sensor.id);		
+		client.sensorClient.startLogging(client.odysseusSession, sensor.id, loggingStyle);		
+		client.onSensorChanged(this);
+		loggingRunning = true;
+	}	
+
+	@Override public void stopLogging(String loggingStyle) 
+	{
+		client.sensorClient.stopLogging(client.odysseusSession, sensor.id, loggingStyle);		
+		client.onSensorChanged(this);
+		loggingRunning = false;
+	}	
+	
+	@Override public void stopAllLogging() 
+	{
+		client.sensorClient.stopAllLogging(client.odysseusSession, sensor.id);		
 		client.onSensorChanged(this);
 		loggingRunning = false;
 	}

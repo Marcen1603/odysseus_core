@@ -17,8 +17,6 @@ public class Sensor
 {
 	private final static IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 
-	public static final String DEFAULT_LOGGING_STYLE = "default";
-
 	String ownerName;
 	SensorModel config;
 	SensorType type;
@@ -173,6 +171,11 @@ public class Sensor
 	public void stopLogging(ISession session, String loggingStyle)
 	{
 		safeRemoveQuery(getLoggingQueryName(loggingStyle), session);
+	}
+
+	public void stopAllLogging(ISession session)
+	{
+		stopMultipleQueries(session, getLoggingQueryNameBase());
 	}
 	
 	public String startLiveView(ISession session, String targetHost, int targetPort)

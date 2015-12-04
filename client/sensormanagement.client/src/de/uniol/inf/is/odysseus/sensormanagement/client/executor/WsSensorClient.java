@@ -152,23 +152,33 @@ public class WsSensorClient
 		}	
 	}				
 	
-	public void startLogging(ISession caller, String sensorId)
+	public void startLogging(ISession caller, String sensorId, String loggingStyle)
 	{
 		try {
-			server.startLogging(caller.getToken(), sensorId);
+			server.startLogging(caller.getToken(), sensorId, loggingStyle);
 		} catch (InvalidUserDataException_Exception e) 	{
 			throw new PlanManagementException(e);				
 		}
 	}
 	
-	public void stopLogging(ISession caller, String sensorId)
+	public void stopLogging(ISession caller, String sensorId, String loggingStyle)
 	{
 		try {
-			server.stopLogging(caller.getToken(), sensorId);
+			server.stopLogging(caller.getToken(), sensorId, loggingStyle);
 		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}
 	}	
+	
+	public void stopAllLogging(ISession caller, String sensorId)
+	{
+		try {
+			server.stopAllLogging(caller.getToken(), sensorId);
+		} catch (InvalidUserDataException_Exception e) {
+			throw new PlanManagementException(e);				
+		}
+	}	
+	
 	
 	public String startLiveView(ISession caller, String sensorId, String targetHost, int targetPort)
 	{

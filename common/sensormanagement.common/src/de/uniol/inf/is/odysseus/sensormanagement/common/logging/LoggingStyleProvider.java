@@ -15,6 +15,7 @@ public class LoggingStyleProvider
 		Map<String, String> defaultLoggingStyle = new HashMap<>();
 		defaultLoggingStyle.put("minTimeDiff", "minimal time difference of start time stamps of two elements");
 		defaultLoggingStyle.put("sampleRate", "sampling rate of logged elements");
+		defaultLoggingStyle.put("sizeLimit", "size limit of each raw data chunk");
 		
 		Map<String, String> intervalLoggingStyle = new HashMap<>();
 		intervalLoggingStyle.putAll(defaultLoggingStyle);
@@ -37,6 +38,9 @@ public class LoggingStyleProvider
 	
 	static public AbstractLoggingStyle createLoggingStyle(Map<String, String> options)
 	{
+		if (options == null)
+			return new DefaultLoggingStyle(new HashMap<String, String>());
+		
 		String loggingStyleBase = options.get("baseStyle");
 		
 		if (loggingStyleBase.equalsIgnoreCase("Default")) 	return new DefaultLoggingStyle(options);

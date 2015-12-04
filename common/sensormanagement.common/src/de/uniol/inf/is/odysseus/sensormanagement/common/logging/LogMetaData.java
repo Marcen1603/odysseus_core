@@ -17,6 +17,7 @@ public class LogMetaData implements XmlMarshalHelperHandler
 	public String sensorId;
 	public long startTime;
 	public long endTime = 0;
+	public String loggingStyle;
 	
 	public static class AdditionalData
 	{
