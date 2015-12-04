@@ -14,6 +14,7 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.communication.MessageUtils;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
+import de.uniol.inf.is.odysseus.net.data.impl.OdysseusNetDataPlugIn;
 
 public final class DistributedData implements IDistributedData {
 
@@ -163,5 +164,10 @@ public final class DistributedData implements IDistributedData {
 		boolean isPersistent = (bb.get() == (byte)1 ? true : false);
 		
 		return new DistributedData(uuid, name, jsonObject, isPersistent, lifetime, timestamp, nodeID);
+	}
+
+	@Override
+	public boolean isCreatorLocal() {
+		return OdysseusNetDataPlugIn.getNodeManager().isLocalNode(creator);
 	}
 }

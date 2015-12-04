@@ -17,4 +17,6 @@ public interface IDistributedData {
 	
 	public long getTimestamp();
 	public OdysseusNodeID getCreator();
+	public boolean isCreatorLocal();
+	
 }
