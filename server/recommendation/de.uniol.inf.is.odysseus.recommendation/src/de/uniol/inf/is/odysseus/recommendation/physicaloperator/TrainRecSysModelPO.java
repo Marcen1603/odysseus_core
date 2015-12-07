@@ -50,6 +50,8 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	protected static Logger logger = LoggerFactory
 			.getLogger(TrainRecSysModelPO.class);
 
+	private Tuple<M> modelTuple; 
+	private Tuple<M> recommCandTuple;
 	/**
 	 * The point in time of the interval start of these learning tuples that
 	 * were currently buffered. When a tuple arrives, whose interval start is
@@ -101,6 +103,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	 * (decaying tuple), this variable is decreased.
 	 */
 	private long noOfActiveLearningTuples = 0;
+
 
 	/**
 	 *
@@ -336,14 +339,12 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 
 		final RatingPredictor<Tuple<M>, M, U, I, P> model = this.learner
 				.getModel(true);
-
 		final long endOfModelLearning = System.currentTimeMillis();
 
 		final RecommendationCandidates<U, I> recommCandModel = this.outputRecomCandObj ? this.learner
 				.getRecommendationCandidatesModel() : null;
 
 		final long endOfRecomModelLearning = System.currentTimeMillis();
-
 		transferNewModel(model, recommCandModel, currentBufferingPointInTime,
 				ts, metadata, endOfModelLearning - startOfModelLearning,
 				endOfRecomModelLearning - endOfModelLearning);
@@ -413,7 +414,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 					+ "): " + model);
 		}
 
-		final Tuple<M> modelTuple = new Tuple<M>(1, false);
+		this.modelTuple = new Tuple<M>(1, false);
 		if (model != null) {
 			modelTuple.setAttribute(0, model);
 		} else {
@@ -424,11 +425,11 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		modelTuple.getMetadata().setStartAndEnd(startP, endP);
 		modelTuple
 				.setMetadata("model learning duration", modelLearningDuration);
-		transfer(modelTuple);
+//		transfer(modelTuple);
 
 		@SuppressWarnings("unchecked")
 		final M metadataCopy2 = (M) metadataCopy.clone();
-		final Tuple<M> recommCandTuple = new Tuple<M>(1, false);
+		this.recommCandTuple = new Tuple<M>(1, false);
 		if (recommendationCandidatesModel != null) {
 			recommCandTuple.setAttribute(0, recommendationCandidatesModel);
 		} else {
@@ -439,7 +440,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		recommCandTuple.getMetadata().setStartAndEnd(startP, endP);
 		recommCandTuple.setMetadata("recomm cand model learning",
 				recomCandModelLearningDuration);
-		transfer(recommCandTuple, 1);
+//		transfer(recommCandTuple, 1);
 	}
 
 	/**
@@ -490,8 +491,10 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	@Override
 	public void processPunctuation(final IPunctuation punctuation,
 			final int port) {
-		// FIXME Process punctuation
-
+		this.modelTuple.getMetadata().setStartAndEnd(this.modelTuple.getMetadata().getEnd(), punctuation.getTime());
+		this.recommCandTuple.getMetadata().setStartAndEnd(this.recommCandTuple.getMetadata().getEnd(), punctuation.getTime());
+		transfer(this.modelTuple);
+		transfer(this.recommCandTuple, 1);
 	}
 
 	/*

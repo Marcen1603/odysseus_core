@@ -83,7 +83,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 			final List<SDFAttribute> groupingAttributes = new ArrayList<>();
 			groupingAttributes.add(userAttribute);
 			topKAo.setGroupingAttributes(groupingAttributes);
-
+			topKAo.setSuppressDuplicates(false);
 			topKAo.setTriggerByPunctuation(true);
 
 			RestructHelper.insertOperatorBefore(topKAo, operator);
