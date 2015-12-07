@@ -7,6 +7,7 @@ package de.uniol.inf.is.odysseus.imagejcv.common.cache;
 //
 //NOTE: If the GC is triggered by normal java heap allocations, native code objects destroyed by java finalizers will also be collected.
 //    If there is enough "other" memory activity, this class may not be needed.
+@SuppressWarnings(value = { "unused" })
 public class ImageGarbageCollector
 {
 	private static final int startThreshold = 20; //20;	// Only start thread when imageCount>startThreshold. Stop running thread when imageCount<=startThreshold. 
