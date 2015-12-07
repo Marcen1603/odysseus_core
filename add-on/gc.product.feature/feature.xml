@@ -194,10 +194,6 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.wrapper.temper1.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.wrapper.tika.feature"
          version="0.0.0"/>
 
