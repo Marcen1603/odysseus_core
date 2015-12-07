@@ -18,7 +18,7 @@ public class Sensor
 	private final static IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 
 	String ownerName;
-	SensorModel config;
+	final SensorModel config;
 	SensorType type;
 	
 	boolean isLogging;
@@ -141,7 +141,7 @@ public class Sensor
 		}
 
 		// TODO: things like ethernetAddr etc. can have changed. Restart query then!
-		config = newSensorInfo;
+		config.assign(newSensorInfo);
 	}
 	
 	public void startLogging(ISession session, String directory, String loggingStyle)

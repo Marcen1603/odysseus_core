@@ -103,7 +103,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		if (logSetUp) return;		
 			        
         String startTimeString = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss").format(new Date(firstTimeStamp));
-        fileNameBase = loggingDirectory + "/" + sensorModel.id + "_" + startTimeString + "_" + loggingStyleName;
+        fileNameBase = loggingDirectory + "/" + sensorModel.id + "_" + loggingStyleName + "_" + startTimeString;
         logMetaDataFileName = fileNameBase + ".cfg";		
 		
 		try
