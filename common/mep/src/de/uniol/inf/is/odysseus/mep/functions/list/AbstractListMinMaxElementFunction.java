@@ -11,7 +11,7 @@ abstract public class AbstractListMinMaxElementFunction extends AbstractFunction
 	private static final long serialVersionUID = 758116340731496107L;
 
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-		{ SDFDatatype.LIST }, { SDFDatatype.INTEGER} };
+		{ SDFDatatype.LIST_TUPLE }, SDFDatatype.DISCRETE_NUMBERS };
 
 	
 	public AbstractListMinMaxElementFunction(String name){

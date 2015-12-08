@@ -69,10 +69,24 @@ public class FunctionSignature {
         for (int i = 0; i < parameters.size(); i++) {
             Objects.requireNonNull(parameters.get(i));
             SDFDatatype[] datatypes = this.parameters.get(i);
-            if (!Arrays.asList(datatypes).contains(parameters.get(i))) {
-                contains = false;
-                break;
+            // this makes problems with e.g. LIST or TUPLE with subtypes 
+            // that can be ignored here.
+//            if (!Arrays.asList(datatypes).contains(parameters.get(i))) {
+//                contains = false;
+//                break;
+//            }
+
+            boolean found = false;
+            for (SDFDatatype dt : datatypes) {
+            	if (dt.getURI().equalsIgnoreCase(parameters.get(i).getURI())){
+            		found = true;
+            	}
+			}
+            if (!found){
+            	contains = false;
+            	break;
             }
+            
         }
         return contains;
     }
