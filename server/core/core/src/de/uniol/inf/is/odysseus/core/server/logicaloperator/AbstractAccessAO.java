@@ -26,6 +26,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -295,10 +297,18 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		if (type == null) {
 			type = Tuple.class;
 		}
-		
-		ITransportHandler th = TransportHandlerRegistry.getITransportHandlerClass(transportHandler);
-		SDFSchema thSchema = th != null ? th.getSchema() : null;
-		
+
+		SDFSchema overWrittenSchema = null;
+
+		@SuppressWarnings("rawtypes")
+		IProtocolHandler ph = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandler);
+		if (ph != null) {
+			overWrittenSchema = ph.getSchema();
+		}
+		if (overWrittenSchema == null) {
+			ITransportHandler th = TransportHandlerRegistry.getITransportHandlerClass(transportHandler);
+			overWrittenSchema = th != null ? th.getSchema() : null;
+		}
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 
 		if (optionsMap.containsKey(SDFConstraint.BASE_TIME_UNIT)) {
@@ -318,7 +328,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			strictOrder = Boolean.parseBoolean(sorder);
 		}
 
-		List<SDFAttribute> attributes = thSchema!=null?thSchema.getAttributes():outputSchema.get(pos);
+		List<SDFAttribute> attributes = overWrittenSchema != null ? overWrittenSchema.getAttributes()
+				: outputSchema.get(pos);
 		List<SDFAttribute> s2 = new ArrayList<>();
 		if (attributes != null && attributes.size() > 0) {
 			// Add source name to attributes

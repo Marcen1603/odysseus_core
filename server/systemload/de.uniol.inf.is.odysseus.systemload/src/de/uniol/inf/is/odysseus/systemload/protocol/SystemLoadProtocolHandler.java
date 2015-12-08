@@ -12,7 +12,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.systemload.impl.SystemLoadMeasurement;
 import de.uniol.inf.is.odysseus.systemload.impl.SystemLoadMeasurement.MeasureType;
 
@@ -21,14 +24,40 @@ public class SystemLoadProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 	public static final String NAME = "SystemLoad";
 
 	private List<MeasureType> outputElements;
+	
+	private static SDFSchema defaultSchema;
+	static {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("", "ts",
+				SDFDatatype.START_TIMESTAMP));
+		attributes.add(new SDFAttribute("", "CPU_MAX",
+				SDFDatatype.DOUBLE));
+		attributes.add(new SDFAttribute("", "CPU_FREE",
+				SDFDatatype.DOUBLE));
+		attributes.add(new SDFAttribute("", "NET_INPUT_RATE",
+				SDFDatatype.DOUBLE));
+		attributes.add(new SDFAttribute("", "NET_MAX",
+				SDFDatatype.DOUBLE));
+		attributes.add(new SDFAttribute("", "NET_OUTPUT_RATE",
+				SDFDatatype.DOUBLE));
+		attributes.add(new SDFAttribute("", "MEM_FREE",
+				SDFDatatype.DOUBLE));
+		attributes.add(new SDFAttribute("", "MEM_TOTAL",
+				SDFDatatype.DOUBLE));
+
+		defaultSchema = SDFSchemaFactory.createNewSchema("",
+				Tuple.class, attributes);	
+	}
 
 	public SystemLoadProtocolHandler() {
 		super();
+		setSchema(defaultSchema);
 	}
 
 	public SystemLoadProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<Tuple<?>> dataHandler) {
 		super(direction, access, dataHandler, options);
 		init_internal();
+		setSchema(defaultSchema);
 	}
 
 	private void init_internal() {
@@ -38,6 +67,14 @@ public class SystemLoadProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 	@Override
 	public String getName() {
 		return NAME;
+	}
+	
+	@Override
+	public void setSchema(SDFSchema schema) {
+		if (schema != null && schema.size()>0){
+			super.setSchema(schema);
+		}
+		
 	}
 
 	@Override
@@ -59,7 +96,7 @@ public class SystemLoadProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 		outputElements = new ArrayList<MeasureType>(schema.size());
 		for (int i = 0; i < schema.size(); i++) {
 			String name = schema.getAttribute(i).getAttributeName();
-			if (name.equalsIgnoreCase("TIME")) {
+			if (name.equalsIgnoreCase("TIME") || name.equalsIgnoreCase("TS")) {
 				outputElements.add(MeasureType.TIME);
 			} else if (name.equalsIgnoreCase("CPU_MAX")) {
 				outputElements.add(MeasureType.CPU_MAX);
