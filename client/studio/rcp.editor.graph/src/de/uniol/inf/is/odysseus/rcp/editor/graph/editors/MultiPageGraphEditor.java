@@ -300,6 +300,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		IDE.gotoMarker(getEditor(0), marker);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		// if (adapter == CommandStack.class) {

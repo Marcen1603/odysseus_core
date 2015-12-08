@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerCo
 /**
  * Edit dialog for Basic and RasterLayers 
  */
+@SuppressWarnings("unused")
 public class EditDialog extends TitleAreaDialog {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TitleAreaDialog.class);

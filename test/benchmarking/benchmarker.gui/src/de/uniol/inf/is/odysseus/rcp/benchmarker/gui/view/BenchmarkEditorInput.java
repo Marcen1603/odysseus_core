@@ -48,7 +48,7 @@ public class BenchmarkEditorInput implements IEditorInput {
 		return benchmark;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object getAdapter(Class adapter) {
 		return null;

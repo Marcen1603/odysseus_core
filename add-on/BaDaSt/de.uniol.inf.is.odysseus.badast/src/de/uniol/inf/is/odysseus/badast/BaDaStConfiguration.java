@@ -90,7 +90,7 @@ public class BaDaStConfiguration {
 		try {
 			stream = new FileInputStream(file);
 			cConfig.loadFromXML(stream);
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 			try {
 				cConfig.load(stream);
 			} catch (IOException e1) {

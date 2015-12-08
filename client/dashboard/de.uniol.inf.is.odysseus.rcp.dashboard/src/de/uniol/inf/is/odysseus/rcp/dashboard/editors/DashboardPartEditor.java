@@ -166,6 +166,7 @@ public class DashboardPartEditor extends EditorPart implements
 	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		Object dbAdapter = dashboardPart.getAdapter(adapter);

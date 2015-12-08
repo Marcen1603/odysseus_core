@@ -48,7 +48,7 @@ public class ResultEditorInput implements IEditorInput {
 		return result.getId();
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object getAdapter(Class adapter) {
 		return null;

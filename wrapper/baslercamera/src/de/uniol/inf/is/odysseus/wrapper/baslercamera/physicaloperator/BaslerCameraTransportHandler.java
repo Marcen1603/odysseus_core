@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.imagejcv.common.sdf.schema.SDFImageJCVDatatype;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera;
 import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera.OperationMode;
 
+@SuppressWarnings("unused")
 public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>>  
 {
 	private static final Logger LOG = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);

@@ -150,6 +150,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {

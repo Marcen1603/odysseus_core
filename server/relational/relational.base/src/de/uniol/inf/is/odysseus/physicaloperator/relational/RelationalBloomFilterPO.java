@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  *
  * @param <M>
  */
+@SuppressWarnings("unused")
 public class RelationalBloomFilterPO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(RelationalBloomFilterPO.class);

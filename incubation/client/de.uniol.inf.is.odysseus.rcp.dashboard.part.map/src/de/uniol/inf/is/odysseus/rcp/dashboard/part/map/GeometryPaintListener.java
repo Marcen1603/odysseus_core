@@ -35,9 +35,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
  * @author Kai Pancratz
  * 
  */
+@SuppressWarnings("unused")
 final class GeometryPaintListener implements PaintListener {
 
-	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory
 			.getLogger(GeometryPaintListener.class);
 	
@@ -67,7 +67,6 @@ final class GeometryPaintListener implements PaintListener {
 //		double scale = this.mapDashboardPart.getScreenManager().getScale();
 		Point dpi = canvas.getDisplay().getDPI();
 		Point screenSize = this.mapDashboardPart.getScreenManager().getCanvas().getSize();
-		@SuppressWarnings("unused")
 		Coordinate sizeInCm = new Coordinate(screenSize.x / dpi.x * 25.4, screenSize.x / dpi.x * 25.4);
 		int dpcm = (int) Math.floor(dpi.x / 2.54);
 		int ypos = (screenSize.y - 10);

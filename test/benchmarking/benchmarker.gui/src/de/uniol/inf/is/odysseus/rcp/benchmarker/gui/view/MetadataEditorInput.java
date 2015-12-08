@@ -42,7 +42,7 @@ public class MetadataEditorInput implements IEditorInput {
 		return metadata;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object getAdapter(Class adapter) {
 		return null;

@@ -58,6 +58,7 @@ public class ThresholdFunction extends AbstractFunction<ImageJCV> {
 		return result;*/
 	}
 	
+	@SuppressWarnings("deprecation")
 	protected double getThreshold(IplImage image, boolean dark) {
 		int[] values = new int[256];
 		int[] temp_values = new int[256];

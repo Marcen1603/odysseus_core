@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * 
  * @author Henrik Surm
  */
+@SuppressWarnings("unused")
 public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<IMetaAttribute>> {
 	private static final Logger LOG = LoggerFactory.getLogger(FerryBoxProtocolHandler.class);
 	public static final String NAME = "FerryBox";

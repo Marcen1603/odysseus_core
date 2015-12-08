@@ -48,6 +48,7 @@ import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_m
  * @author Cornelius Ludmann
  *
  */
+@SuppressWarnings("unused")
 public class BasicMFLearner
 		implements
 		RecommendationLearner<Tuple<ITimeInterval>, ITimeInterval, Long, Long, Double> {

@@ -53,6 +53,7 @@ public class PhysicalGraphEditorInput implements IEditorInput {
 		view = (IOdysseusGraphView) GRAPH_VIEW_FACTORY.createGraphView(model, OdysseusRCPViewerPlugIn.SYMBOL_CONFIGURATION, SYMBOL_FACTORY);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		return null;

@@ -95,7 +95,7 @@ public class SystemStateLogger {
 	 * @param executor
 	 *            The implementation to bind.
 	 */
-	public static void bindExecutor(@SuppressWarnings("unused") IExecutor executor) {
+	public static void bindExecutor(IExecutor executor) {
 		cExecutorBound = true;
 		tryLogStartup();
 	}
@@ -107,7 +107,7 @@ public class SystemStateLogger {
 	 * @param executor
 	 *            The implementation to unbind.
 	 */
-	public static void unbindExecutor(@SuppressWarnings("unused") IExecutor executor) {
+	public static void unbindExecutor(IExecutor executor) {
 		cExecutorBound = false;
 		tryLogShutDown();
 	}

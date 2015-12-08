@@ -296,6 +296,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		return mapModel;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (MapEditorModel.class.equals(adapter)){

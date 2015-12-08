@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
  * 
  * @author Michael Brand
  */
-@SuppressWarnings(value = { "nls" })
+@SuppressWarnings(value = { "nls"})
 public abstract class AbstractBaDaStRecorder implements IBaDaStRecorder {
 
 	/**
@@ -60,7 +60,7 @@ public abstract class AbstractBaDaStRecorder implements IBaDaStRecorder {
 			validate();
 			out.append("_");
 			out.append(this.mCfg.get(SOURCENAME_CONFIG));
-		} catch (@SuppressWarnings("unused") BaDaStException e) {
+		} catch (BaDaStException e) {
 			// Nothing to do
 		}
 		return out.toString();
