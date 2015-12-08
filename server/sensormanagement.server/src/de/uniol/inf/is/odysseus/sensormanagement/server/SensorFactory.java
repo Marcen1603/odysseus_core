@@ -133,7 +133,7 @@ public class SensorFactory
 		Map<String, String> optionsInformation = new HashMap<>();
 		
 		return new SensorType("Dummy", liveDataQuery, simulatedDataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
-	}	
+	}
 	
 	static private SensorType getIntegratedCamera()
 	{
@@ -176,7 +176,7 @@ public class SensorFactory
 		String liveViewQuery = 
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"
-				+ "resizedVideo = MAP({expressions=['resizeCV(image,300,300)']}, %(sourceName))\n"
+//				+ "resizedVideo = MAP({expressions=['resizeCV(image,300,300)']}, %(sourceName))\n"
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
 				+ "                      transport='none',\n"
@@ -186,7 +186,7 @@ public class SensorFactory
 				+ "                               ['format', 'h264'],\n"
 				+ "                               ['codec:tune', 'zerolatency'],\n"
 				+ "                               ['codec:preset', 'ultrafast']]},\n"
-				+ "                     resizedVideo)\n";		
+				+ "                     %(sourceName))\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		

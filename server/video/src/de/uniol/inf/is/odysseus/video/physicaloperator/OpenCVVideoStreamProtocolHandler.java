@@ -5,6 +5,7 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameRecorder;
+import org.bytedeco.javacv.VideoInputFrameGrabber;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -41,7 +42,7 @@ public class OpenCVVideoStreamProtocolHandler extends AbstractVideoStreamProtoco
 	public FrameGrabber createGrabber() {
 		if (getStreamUrl().startsWith(CAMERA_URL_PREFIX)) {
 			int deviceId = Integer.parseInt(getStreamUrl().substring(CAMERA_URL_PREFIX.length()));
-			return new OpenCVFrameGrabber(deviceId);
+			return new VideoInputFrameGrabber(deviceId);
 		}
 		else {
 			return new OpenCVFrameGrabber(getStreamUrl());
