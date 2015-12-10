@@ -99,7 +99,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 				}
 			} catch (NullPointerException e) {
 				// ignore null pointer could be when value in attribute is null
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			this.currentElement = null;
 			return false;
