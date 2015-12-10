@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.codegenerator.dalvik.operator.rules.CCSVFileSinkRule">
-   <implementation class="de.uniol.inf.is.odysseus.codegenerator.jre.operator.rules.CCSVFileSinkRule"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.codegenerator.operator.rule.ICOperatorRule"/>
-   </service>
-   <property name="targetPlatform" type="String" value="Dalvik"/>
-</scr:component>
