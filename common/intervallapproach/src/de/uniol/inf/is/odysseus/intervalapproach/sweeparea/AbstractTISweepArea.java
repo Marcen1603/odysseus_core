@@ -524,8 +524,12 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		if (pos == 0) {
 			// insertion at start of the list
-			PointInTime nextEndTs = this.getElements().get(1).getMetadata().getEnd();
-			return nextEndTs.after(element.getMetadata().getEnd());
+			if (getElements().size() > 1){
+				PointInTime nextEndTs = this.getElements().get(1).getMetadata().getEnd();
+				return nextEndTs.after(element.getMetadata().getEnd());
+			}else{
+				return true;
+			}
 		} else if (pos == this.getElements().size()) {
 			// insertion at the end of the list
 			PointInTime prevEndTs = this.getElements().get(this.getElements().size() - 1).getMetadata().getEnd();
