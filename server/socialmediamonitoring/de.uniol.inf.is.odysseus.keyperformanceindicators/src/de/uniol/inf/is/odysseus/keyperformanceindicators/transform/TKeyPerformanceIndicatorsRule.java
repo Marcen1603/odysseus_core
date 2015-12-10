@@ -6,24 +6,33 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.logicaloperator.KeyPerformanceIndicatorsAO;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator.KeyPerformanceIndicatorsPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class KeyPerformanceIndicatorsRule extends AbstractTransformationRule<KeyPerformanceIndicatorsAO> {
+public class TKeyPerformanceIndicatorsRule extends AbstractTransformationRule<KeyPerformanceIndicatorsAO> {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(KeyPerformanceIndicatorsAO operator,
 			TransformationConfiguration config) throws RuleException {
 
-		@SuppressWarnings("rawtypes")
 		IMetadataMergeFunction metaDataMerge = MetadataRegistry.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames());
 		
-		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();
+		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();		
+
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
 		
 		defaultExecute(
 				operator,
@@ -36,7 +45,7 @@ public class KeyPerformanceIndicatorsRule extends AbstractTransformationRule<Key
 											   operator.getUserNames(),
 											   operator.getInputPorts(),
 											   metaDataMerge,
-											   transferFunction
+											   transferFunction, sa
 											   ),
 											  config, true, true		
 						);

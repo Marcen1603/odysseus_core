@@ -10,10 +10,9 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TextProcessingAORule extends AbstractTransformationRule<TextProcessingAO> {
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void execute(TextProcessingAO textProcessingAO, TransformationConfiguration config) throws RuleException {
-		
 		defaultExecute(
 				textProcessingAO,
 				new TextProcessingPO(	textProcessingAO.getOutputPort(),

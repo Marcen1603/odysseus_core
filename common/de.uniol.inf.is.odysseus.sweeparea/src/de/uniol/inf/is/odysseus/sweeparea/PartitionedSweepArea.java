@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -341,6 +342,10 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 			throw new RuntimeException("Clone error");
 		}
 	}
+	
+	public ISweepArea<T> newInstance(OptionMap options) {
+		return new PartitionedSweepArea<>();
+	};
 
 	@Override
 	final public int hashCode() {
@@ -389,5 +394,11 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 			}
 		}
 		return retList.iterator();
+	}
+
+	@Override
+	public Iterator<T> extractAllElements() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

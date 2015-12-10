@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class Puffer extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
 
@@ -34,11 +35,16 @@ public class Puffer extends ArrayList<ILayer> implements  Serializable, Property
 
 	private List<Tuple<? extends ITimeInterval>> elementList;
 
+	@SuppressWarnings("unchecked")
 	public Puffer(IMapDashboardAdapter mapDashboardPart) {
 		super();
 		this.mapDashboardPart = mapDashboardPart;
 
-		this.puffer = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
+		try {
+			this.puffer = (DefaultTISweepArea<Tuple<? extends ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**

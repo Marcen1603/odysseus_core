@@ -9,21 +9,21 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.relational_interval.tupleaggregate.IRelationalTupleAggregateMethod;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class RelationalTupleAggregatePO extends AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
 
-	ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> sa = new DefaultTISweepArea<>();
+	final ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> sa;
 	
 	final IRelationalTupleAggregateMethod method;
 	final int pos;
 	final List<Tuple<? extends ITimeInterval>> retList = new LinkedList<>();
 	
-	public RelationalTupleAggregatePO(IRelationalTupleAggregateMethod method, int pos){
+	public RelationalTupleAggregatePO(IRelationalTupleAggregateMethod method, int pos, ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> sa){
 		this.method = method;
 		this.pos = pos;
+		this.sa = sa;
 	}
 	
 	@Override

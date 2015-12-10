@@ -32,11 +32,14 @@ package de.uniol.inf.is.odysseus.statistics.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.statistics.logicaloperator.RegressionAO;
 import de.uniol.inf.is.odysseus.statistics.physicaloperator.RegressionPO;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -53,10 +56,17 @@ public class TRegressionAORule extends AbstractTransformationRule<RegressionAO>{
 	}
 
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(RegressionAO operator, TransformationConfiguration config) throws RuleException {
 		int x = operator.getInputSchema().indexOf(operator.getAttributeX());
 		int y = operator.getInputSchema().indexOf(operator.getAttributeY());
-		RegressionPO<ITimeInterval, Tuple<ITimeInterval>> po = new RegressionPO<ITimeInterval, Tuple<ITimeInterval>>(x, y);
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+		RegressionPO<ITimeInterval, Tuple<ITimeInterval>> po = new RegressionPO<ITimeInterval, Tuple<ITimeInterval>>(x, y, sa);
 		defaultExecute(operator, po, config, true, true);
 	}
 

@@ -5,17 +5,21 @@ import java.util.Iterator;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class RelationalDistinctPO<R extends Tuple<? extends ITimeInterval>>
 		extends AbstractPipe<R, R> {
 
-	DefaultTISweepArea<R> sweepArea = new DefaultTISweepArea<>();
-	ITransferArea<R, R> transfer = new TITransferArea<>();
+	final ITimeIntervalSweepArea<R> sweepArea;
+	final ITransferArea<R, R> transfer;
 
+	public RelationalDistinctPO(ITimeIntervalSweepArea<R> sweepArea, ITransferArea<R,R> transfer) {
+		this.sweepArea = sweepArea;
+		this.transfer = transfer;
+	}
+	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;

@@ -17,9 +17,11 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.Collections;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 
 public class ExistenceSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends JoinTISweepArea<T>{
 
@@ -32,5 +34,10 @@ public class ExistenceSweepArea<T extends IStreamObject<? extends ITimeInterval>
 			MetadataComparator<ITimeInterval> comp = new MetadataComparator<ITimeInterval>();
 			Collections.sort(this.getElements(), comp);
 		}
+	}
+	
+	@Override
+	public ISweepArea<T> newInstance(OptionMap options) {
+		return new ExistenceSweepArea<>();
 	}
 }

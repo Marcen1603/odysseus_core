@@ -34,11 +34,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * A store with no history, but with more than one valid item at the same time
@@ -50,10 +50,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  */
 public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends AbstractContextStore<T> {
 
-	private DefaultTISweepArea<T> sweepArea = new DefaultTISweepArea<T>();
+	final private ITimeIntervalSweepArea<T> sweepArea;
 
-	public MultiElementStore(String name, SDFSchema schema, int size) {
+	public MultiElementStore(String name, SDFSchema schema, int size, ITimeIntervalSweepArea<T> sweepArea) {
 		super(name, schema, size);		
+		this.sweepArea = sweepArea;
 	}
 
 	@Override

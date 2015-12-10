@@ -42,9 +42,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AbstractTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.state.JoinTIPOState;
-import de.uniol.inf.is.odysseus.sweeparea.AbstractTimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -428,7 +427,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		PointInTime max = null;
 		for (int i = 0; i < 2; i++) {
 			synchronized (this.areas[i]) {
-				PointInTime maxi = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
+				PointInTime maxi = ((ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
 						.getMaxEndTs();
 				if (max == null || (maxi != null && maxi.after(max))) {
 					max = maxi;
@@ -472,8 +471,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				for (int i = 0; i < state.getSweepAreas().length; i++) {
 					// save the remove predicate
 					IPredicate<? super IStreamObject<? extends ITimeInterval>> tempRemovePredicate = null;
-					if (this.areas[i] instanceof DefaultTISweepArea) {
-						tempRemovePredicate = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
+					if (this.areas[i] instanceof ITimeIntervalSweepArea) {
+						tempRemovePredicate = ((ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
 								.getRemovePredicate();
 					} else {
 						throw new IllegalArgumentException(
@@ -507,9 +506,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		Map<String, String> map = new HashMap<>();
 		map.put("Left Area Size", areas[0].size() + "");
 		map.put("Right Area Size", areas[1].size() + "");
-		if (areas[0] instanceof AbstractTimeIntervalSweepArea && areas[1] instanceof AbstractTimeIntervalSweepArea) {
-			map.put("Left Area Has End TS Order", ((AbstractTimeIntervalSweepArea<?>) areas[0]).hasEndTsOrder() + "");
-			map.put("Right Area Has End TS Order", ((AbstractTimeIntervalSweepArea<?>) areas[1]).hasEndTsOrder() + "");
+		if (areas[0] instanceof AbstractTISweepArea && areas[1] instanceof AbstractTISweepArea) {
+			map.put("Left Area Has End TS Order", ((AbstractTISweepArea<?>) areas[0]).hasEndTsOrder() + "");
+			map.put("Right Area Has End TS Order", ((AbstractTISweepArea<?>) areas[1]).hasEndTsOrder() + "");
 		}
 		
 		map.put("OutputQueue", transferFunction.size() + "");

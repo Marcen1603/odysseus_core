@@ -12,31 +12,25 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
 import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
-import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class FrequentPatternMiningPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();
 	private IFrequentPatternMiner<M> fpm;
 	final private IMetadataMergeFunction<M> metamergeFunction;
 	private int maxtransactions;
 	private LinkedList<List<Tuple<M>>> transactions = new LinkedList<>();
 
-	public FrequentPatternMiningPO(IFrequentPatternMiner<M> fpm, int maxtransactions, IMetadataMergeFunction<M> metamergeFunction) {
+	public FrequentPatternMiningPO(IFrequentPatternMiner<M> fpm, int maxtransactions, IMetadataMergeFunction<M> metamergeFunction, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.fpm = fpm;
 		this.maxtransactions = maxtransactions;
 		this.metamergeFunction = metamergeFunction;
-	}
-
-	public FrequentPatternMiningPO(FrequentPatternMiningPO<M> old) {
-		this.fpm = old.fpm;
-		this.maxtransactions = old.maxtransactions;
-		this.metamergeFunction = old.metamergeFunction;
+		this.sweepArea = sweepArea;
 	}
 
 	@Override

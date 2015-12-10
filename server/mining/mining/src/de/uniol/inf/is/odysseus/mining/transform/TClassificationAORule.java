@@ -21,10 +21,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -39,13 +42,13 @@ public class TClassificationAORule extends AbstractTransformationRule<Classifica
 		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(ClassificationAO operator, TransformationConfiguration config) throws RuleException {
-		
-		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
-				.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames(),
-						operator.getInputSchema(1).getMetaAttributeNames());
-	
+
+		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry.getMergeFunction(
+				operator.getInputSchema(0).getMetaAttributeNames(), operator.getInputSchema(1).getMetaAttributeNames());
+
 		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();
 		int portofclassifier = 0;
 		int positionofclassifier = -1;
@@ -58,9 +61,20 @@ public class TClassificationAORule extends AbstractTransformationRule<Classifica
 			portofclassifier = -1;
 			throw new IllegalArgumentException("the classifier attribute must be either one of port 0 or port 1!");
 		}
-		@SuppressWarnings("unchecked")
-		ClassificationPO<ITimeInterval> po = 
-				new ClassificationPO<ITimeInterval>(positionofclassifier, portofclassifier, (IMetadataMergeFunction<ITimeInterval>) metaDataMerge, transferFunction);
+
+		ITimeIntervalSweepArea<Tuple<ITimeInterval>> elementSA;
+		ITimeIntervalSweepArea<Tuple<ITimeInterval>> treeSA;
+		try {
+			elementSA = (ITimeIntervalSweepArea<Tuple<ITimeInterval>>) SweepAreaRegistry
+					.getSweepArea(DefaultTISweepArea.NAME);
+			treeSA = (ITimeIntervalSweepArea<Tuple<ITimeInterval>>) SweepAreaRegistry
+					.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+
+		ClassificationPO<ITimeInterval> po = new ClassificationPO<ITimeInterval>(positionofclassifier, portofclassifier,
+				(IMetadataMergeFunction<ITimeInterval>) metaDataMerge, transferFunction, elementSA, treeSA);
 		po.setOneClassifier(operator.isOneClassifier());
 		defaultExecute(operator, po, config, true, true);
 	}

@@ -10,13 +10,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.IKeyPerformanceIndicators;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.KPIRegistry;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class ConversationReachPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 	
-	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private IKeyPerformanceIndicators<M> kpiType;
 	
 	private List<String> concreteTopic;
@@ -28,7 +28,7 @@ public class ConversationReachPO<M extends ITimeInterval> extends AbstractPipe<T
 	private int positionOfIncomingText = -1;
 	private int positionOfUserIDs = -1;
 	
-	public ConversationReachPO(List<String> concreteTopic, List<String> allTopics, SDFAttribute incomingText, SDFAttribute userIDs, double thresholdValue)
+	public ConversationReachPO(List<String> concreteTopic, List<String> allTopics, SDFAttribute incomingText, SDFAttribute userIDs, double thresholdValue, ITimeIntervalSweepArea<Tuple<M>> sweepArea )
 	{
 		super();
 		
@@ -37,19 +37,10 @@ public class ConversationReachPO<M extends ITimeInterval> extends AbstractPipe<T
 		this.incomingText = incomingText;
 		this.userIDs = userIDs;
 		this.thresholdValue = thresholdValue;
+		this.sweepArea = sweepArea;
 	}
 	
-	public ConversationReachPO(ConversationReachPO<M> conversationReachPO)
-	{
-		super(conversationReachPO);
-		
-		this.concreteTopic = conversationReachPO.concreteTopic;
-		this.allTopics = conversationReachPO.allTopics;
-		this.incomingText = conversationReachPO.incomingText;
-		this.userIDs = conversationReachPO.userIDs;
-		this.thresholdValue = conversationReachPO.thresholdValue;
-	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -79,7 +70,7 @@ public class ConversationReachPO<M extends ITimeInterval> extends AbstractPipe<T
 		//Aufräumen
 		
 		@SuppressWarnings("unused")
-		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
+		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsBefore(object.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
 		{

@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.CompareSinkSweepArea;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 
 /**
@@ -45,7 +45,7 @@ public abstract class AbstractCompareSink<T extends IStreamObject<? extends ITim
 	protected boolean tracing = false;
 	protected String dataHandler = "TUPLE";
     protected List<Pair<String, String>> expectedOriginals = new ArrayList<>();
-    protected DefaultTISweepArea<T> expected = new DefaultTISweepArea<>();
+    protected CompareSinkSweepArea<T> expected = new CompareSinkSweepArea<>();
     protected List<T> inputdata = new ArrayList<>();
     protected List<ICompareSinkListener> listeners = new ArrayList<>();
 

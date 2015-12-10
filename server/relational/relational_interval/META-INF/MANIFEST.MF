@@ -25,6 +25,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.relational_interval.logicaloperator,
+ de.uniol.inf.is.odysseus.relational_interval.physicaloperator,
  de.uniol.inf.is.odysseus.relational_interval.replacement,
  de.uniol.inf.is.odysseus.relational_interval.transform
 Bundle-ClassPath: .

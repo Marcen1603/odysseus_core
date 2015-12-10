@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 import de.uniol.inf.is.odysseus.mining.evaluation.metric.AccuracyMetric;
 import de.uniol.inf.is.odysseus.mining.evaluation.metric.IEvaluationMetric;
@@ -43,6 +42,7 @@ import de.uniol.inf.is.odysseus.mining.evaluation.metric.RMSEMetric;
 import de.uniol.inf.is.odysseus.mining.evaluation.metric.RRSEMetric;
 import de.uniol.inf.is.odysseus.mining.evaluation.metric.RSEMetric;
 import de.uniol.inf.is.odysseus.mining.evaluation.metric.RecallMetric;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Stephan Wessels
@@ -54,10 +54,10 @@ public class ClassificationEvaluatePO<M extends ITimeInterval> extends AbstractP
 	private final static String[] REGRESSION_METRICS = {"MSE", "RMSE", "MAE", "RAE", "RSE", "RRSE"};
 
 	protected static Logger logger = LoggerFactory.getLogger(ClassificationEvaluatePO.class);	
-	private DefaultTISweepArea<Tuple<M>> classifierSA = new DefaultTISweepArea<Tuple<M>>();
-	private DefaultTISweepArea<Tuple<M>> tupleSA = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> classifierSA;
+	final private ITimeIntervalSweepArea<Tuple<M>> tupleSA;
 	@SuppressWarnings("unchecked")
-	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];
+	private ITimeIntervalSweepArea<Tuple<M>> areas[] = new ITimeIntervalSweepArea[2];
 	
 	private int indexOfClassifier;
 	private int indexOfClass;
@@ -67,7 +67,9 @@ public class ClassificationEvaluatePO<M extends ITimeInterval> extends AbstractP
 	private List<String> metricsList;
 	private IEvaluationMetric[] metrics;
 
-	public ClassificationEvaluatePO(int indexOfClassifier, int indexOfClass, SDFAttribute classAttribute, Map<SDFAttribute, List<String>> nominals, List<String> metricsList, Double fadingFactor) {
+	public ClassificationEvaluatePO(int indexOfClassifier, int indexOfClass, 
+				SDFAttribute classAttribute, Map<SDFAttribute, List<String>> nominals, List<String> metricsList, Double fadingFactor, 
+				ITimeIntervalSweepArea<Tuple<M>> classifierSA, ITimeIntervalSweepArea<Tuple<M>> tupleSA) {
 		this.indexOfClassifier = indexOfClassifier;
 		this.indexOfClass = indexOfClass;
 		this.classAttribute = classAttribute;
@@ -75,17 +77,10 @@ public class ClassificationEvaluatePO<M extends ITimeInterval> extends AbstractP
 		this.metricsList = metricsList;
 		this.fadingFactor = fadingFactor;
 		this.checkAvailableMetrics(metricsList);
+		this.classifierSA = classifierSA;
+		this.tupleSA = tupleSA;
 	}
 
-	public ClassificationEvaluatePO(ClassificationEvaluatePO<M> classificationEvaluatePO) {
-		this.indexOfClassifier = classificationEvaluatePO.indexOfClassifier;
-		this.indexOfClass = classificationEvaluatePO.indexOfClassifier;
-		this.classAttribute = classificationEvaluatePO.classAttribute;
-		this.nominals = classificationEvaluatePO.nominals;
-		this.metricsList = classificationEvaluatePO.metricsList;
-		this.fadingFactor = classificationEvaluatePO.fadingFactor;
-	}
-	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;

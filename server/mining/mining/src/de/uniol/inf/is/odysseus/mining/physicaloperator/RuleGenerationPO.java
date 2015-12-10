@@ -29,10 +29,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
+import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
@@ -43,22 +43,14 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 	private int itemposition = -1;
 	private int supportposition = -1;
 	private double minconfidence = 0.9d;
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();	
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;	
 	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();
 
-	public RuleGenerationPO(int itemposition, int supportposition, double confidence) {
+	public RuleGenerationPO(int itemposition, int supportposition, double confidence, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.itemposition = itemposition;
 		this.minconfidence = confidence;
 		this.supportposition = supportposition;
-	}
-
-	/**
-	 * @param ruleGenerationPO
-	 */
-	public RuleGenerationPO(RuleGenerationPO<M> ruleGenerationPO) {
-		this.itemposition = ruleGenerationPO.itemposition;
-		this.minconfidence = ruleGenerationPO.minconfidence;
-		this.supportposition = ruleGenerationPO.supportposition;
+		this.sweepArea = sweepArea;
 	}
 
 	/*

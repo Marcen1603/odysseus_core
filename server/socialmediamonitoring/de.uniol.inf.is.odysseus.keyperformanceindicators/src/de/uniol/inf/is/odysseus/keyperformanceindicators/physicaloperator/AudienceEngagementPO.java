@@ -10,43 +10,35 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.IKeyPerformanceIndicators;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.KPIRegistry;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 	
-	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private IKeyPerformanceIndicators<M> kpiType;
 	
 	private List<String> concreteTopics;
 	private List<String> allTopics;
 	private double thresholdValue;
-	private int countOfAllTopics = 0;
+	//private int countOfAllTopics = 0;
 	private SDFAttribute incomingText;
 	
 	private int positionOfInputText = -1;
 	
-	public AudienceEngagementPO(List<String> concreteTopics, List<String> allTopics, SDFAttribute incomingText, double thresholdValue, int countOfAllTopics)
+	public AudienceEngagementPO(List<String> concreteTopics, List<String> allTopics, 
+			SDFAttribute incomingText, double thresholdValue, int countOfAllTopics, ITimeIntervalSweepArea<Tuple<M>> sweepArea)
 	{
 		super();
 		this.concreteTopics = concreteTopics;
 		this.allTopics = allTopics;
 		this.incomingText = incomingText;
 		this.thresholdValue = thresholdValue;
-		this.countOfAllTopics = countOfAllTopics;
+		//this.countOfAllTopics = countOfAllTopics;
+		this.sweepArea = sweepArea;
 	}
-	
-	public AudienceEngagementPO(AudienceEngagementPO<M> audienceEngagementPO)
-	{
-		super(audienceEngagementPO);
-		this.concreteTopics = audienceEngagementPO.concreteTopics;
-		this.allTopics = audienceEngagementPO.allTopics;
-		this.incomingText = audienceEngagementPO.incomingText;
-		this.thresholdValue = audienceEngagementPO.thresholdValue;
-		this.countOfAllTopics = audienceEngagementPO.countOfAllTopics;
-	}
-	
+		
 	
 	@Override
 	public OutputMode getOutputMode() {
@@ -74,7 +66,7 @@ public class AudienceEngagementPO<M extends ITimeInterval> extends AbstractPipe<
 		
 		//Aufräumen
 		@SuppressWarnings("unused")
-		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
+		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsBefore(object.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
 		{

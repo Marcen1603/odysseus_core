@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class LayerUpdater extends ArrayList<ILayer> implements
 		IStreamElementListener<Object>, Serializable, PropertyChangeListener {
@@ -49,13 +50,18 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	private List<Tuple<? extends ITimeInterval>> elementList;
 
+	@SuppressWarnings("unchecked")
 	public LayerUpdater(IStreamMapEditor streamMapEditor, IQuery query,
 			IStreamConnection<Object> connection) {
 		super();
 		this.streamMapEditor = streamMapEditor;
 		this.connection = connection;
 		this.query = query;
-		this.puffer = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
+		try {
+			this.puffer = (DefaultTISweepArea<Tuple<? extends ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 		connection.addStreamElementListener(this);
 		if (!connection.isConnected()) {
 			connection.connect();

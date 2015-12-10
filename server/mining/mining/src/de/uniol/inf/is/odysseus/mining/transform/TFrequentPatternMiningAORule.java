@@ -34,12 +34,15 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.FrequentPatternMiningAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentPatternMiningPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -50,6 +53,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TFrequentPatternMiningAORule extends AbstractTransformationRule<FrequentPatternMiningAO> {
 
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(FrequentPatternMiningAO operator, TransformationConfiguration config) throws RuleException {
 
 		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
@@ -59,8 +63,14 @@ public class TFrequentPatternMiningAORule extends AbstractTransformationRule<Fre
 		IFrequentPatternMiner<ITimeInterval> fpm = MiningAlgorithmRegistry.getInstance().getFrequentPatternMiner(operator.getLearner());
 		fpm.setOptions(operator.getOptionsMap());
 		fpm.init(operator.getInputSchema(0), operator.getMinSupport());
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		FrequentPatternMiningPO po = new FrequentPatternMiningPO(fpm, operator.getMaxTransactions(), metaDataMerge);
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+		// TODO: ITimeIntervalSweepArea sa = new DefaultTISweepArea(new FastLinkedList());
+		FrequentPatternMiningPO po = new FrequentPatternMiningPO(fpm, operator.getMaxTransactions(), metaDataMerge, sa);
 		defaultExecute(operator, po, config, false, false);
 		po.setOutputSchema(operator.getOutputSchema(0), 0);
 		po.setOutputSchema(operator.getOutputSchema(1), 1);

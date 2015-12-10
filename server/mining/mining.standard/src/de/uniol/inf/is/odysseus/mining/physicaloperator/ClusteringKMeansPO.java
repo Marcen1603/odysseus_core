@@ -30,10 +30,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.clustering.Cluster;
 import de.uniol.inf.is.odysseus.mining.distance.EuclidianDistance;
 import de.uniol.inf.is.odysseus.mining.distance.IDistance;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
@@ -42,26 +42,23 @@ import de.uniol.inf.is.odysseus.mining.distance.IDistance;
 public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private int[] attributePositions;
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private int k = 2;
 	private IDistance distanceFunction = new EuclidianDistance();
 	private SDFSchema schema;
 	private TITransferArea<Tuple<M>, Tuple<M>> transferFunctionTuples = new TITransferArea<Tuple<M>, Tuple<M>>();
 	private TITransferArea<Tuple<M>, Tuple<M>> transferFunctionMeans = new TITransferArea<Tuple<M>, Tuple<M>>();
 
-	public ClusteringKMeansPO(int k, SDFSchema schema, int[] attributePositions) {
+	public ClusteringKMeansPO(int k, SDFSchema schema, int[] attributePositions, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.k = k;
 		this.schema = schema;
 		this.attributePositions = attributePositions;
+		this.sweepArea = sweepArea;
 		init();
+		
 	}
 
-	public ClusteringKMeansPO(ClusteringKMeansPO<M> po) {
-		this.k = po.k;
-		this.attributePositions = po.attributePositions;
-		this.schema = po.schema;
-		init();
-	}
+
 
 	private void init() {
 		transferFunctionTuples.setOutputPort(0);

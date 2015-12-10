@@ -32,10 +32,13 @@ package de.uniol.inf.is.odysseus.mining.transform;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.RuleGenerationAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.RuleGenerationPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -52,8 +55,15 @@ public class TRuleGenerationAORule extends AbstractTransformationRule<RuleGenera
 	}
 
 	@Override
-	public void execute(RuleGenerationAO operator, TransformationConfiguration config) throws RuleException {		
-		RuleGenerationPO<ILatencyTimeInterval> po = new RuleGenerationPO<ILatencyTimeInterval>(operator.getItemsetPosition(), operator.getSupportPosition(), operator.getConfidence());
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void execute(RuleGenerationAO operator, TransformationConfiguration config) throws RuleException {	
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+		RuleGenerationPO<ILatencyTimeInterval> po = new RuleGenerationPO<ILatencyTimeInterval>(operator.getItemsetPosition(), operator.getSupportPosition(), operator.getConfidence(), sa);
 		po.setOutputSchema(operator.getOutputSchema(0), 0);		
 		replace(operator, po, config);
 		retract(operator);

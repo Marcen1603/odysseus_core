@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+
 public class SweepAreaRegistry {
 	static Logger logger = LoggerFactory.getLogger(SweepAreaRegistry.class);
 
@@ -39,9 +41,14 @@ public class SweepAreaRegistry {
 
 	static public ISweepArea<?> getSweepArea(String name)
 			throws InstantiationException, IllegalAccessException {
+		return getSweepArea(name, null);
+	}
+	
+	static public ISweepArea<?> getSweepArea(String name, OptionMap options)
+			throws InstantiationException, IllegalAccessException {
 		ISweepArea<?> a = areas.get(name.toLowerCase());
 		if (a != null) {
-			return a.getClass().newInstance();
+			return a.newInstance(options);
 		}
 		return null;
 	}

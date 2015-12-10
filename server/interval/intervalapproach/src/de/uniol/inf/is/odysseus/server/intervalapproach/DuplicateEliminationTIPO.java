@@ -18,14 +18,14 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.Order;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * This is an operator for removing duplicates that are valid
@@ -56,10 +56,10 @@ public class DuplicateEliminationTIPO<T extends IStreamObject<? extends ITimeInt
 	/**
 	 * the sweep area for this operator;
 	 */
-	private DefaultTISweepArea<T> sa;
+	private ITimeIntervalSweepArea<T> sa;
 	
 	
-	public DuplicateEliminationTIPO(DefaultTISweepArea<T> sweepArea){
+	public DuplicateEliminationTIPO(ITimeIntervalSweepArea<T> sweepArea){
 		this.sa = sweepArea;
 		
 		this.nextElems = new LinkedList<T>();

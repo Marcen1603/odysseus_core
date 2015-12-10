@@ -30,11 +30,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FList;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FPTree;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Transaction;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Transaction;
 public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>>{
 
 	private Lock processLock = new ReentrantLock();
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private List<Transaction<M>> transactions = new ArrayList<Transaction<M>>();
 	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
@@ -59,20 +59,15 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	final private IMetadataMergeFunction<M> metadatamergefunction;
 	private M lastMetadata;
 
-	public FrequentItemsetFPGrowthPO(IMetadataMergeFunction<M> metadatamergefunction) {
+	public FrequentItemsetFPGrowthPO(IMetadataMergeFunction<M> metadatamergefunction, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.metadatamergefunction = metadatamergefunction;
+		this.sweepArea = sweepArea;
 	}
 
-	public FrequentItemsetFPGrowthPO(FrequentItemsetFPGrowthPO<M> old) {
-		this.minsupport = old.minsupport;
-		this.maxTransactions = old.maxTransactions;
-		this.metadatamergefunction = old.metadatamergefunction.clone();
-	}
-
-	public FrequentItemsetFPGrowthPO(int minSupport, int maxTransactions, IMetadataMergeFunction<M> metadatamergefunction) {
+	public FrequentItemsetFPGrowthPO(int minSupport, int maxTransactions, IMetadataMergeFunction<M> metadatamergefunction, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
+		this(metadatamergefunction, sweepArea);
 		this.minsupport = minSupport;
 		this.maxTransactions = maxTransactions;
-		this.metadatamergefunction = metadatamergefunction;
 	}
 
 	@Override

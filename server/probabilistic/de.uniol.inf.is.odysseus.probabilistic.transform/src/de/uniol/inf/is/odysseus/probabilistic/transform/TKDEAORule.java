@@ -21,11 +21,14 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.KDEAO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.KDEPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -53,10 +56,17 @@ public class TKDEAORule extends AbstractTransformationRule<KDEAO> {
      * java.lang.Object)
      */
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public final void execute(final KDEAO operator, final TransformationConfiguration config) throws RuleException {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
-        final IPhysicalOperator kdePO = new KDEPO<ITimeInterval>(operator.determineAttributesList());
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+        final IPhysicalOperator kdePO = new KDEPO<ITimeInterval>(operator.determineAttributesList(), sa);
         this.defaultExecute(operator, kdePO, config, true, true);
     }
 

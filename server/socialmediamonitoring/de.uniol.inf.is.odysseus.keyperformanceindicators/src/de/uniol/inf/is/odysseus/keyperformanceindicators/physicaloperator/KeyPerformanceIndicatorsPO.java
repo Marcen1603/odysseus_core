@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -19,11 +18,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.IKeyPerformanceIndicators;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.KPIRegistry;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 @SuppressWarnings("unchecked") 
 public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 	
-	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 
 	protected ITransferArea<Tuple<M>, Tuple<M>> tranferFunction;
 	protected IMetadataMergeFunction<M> metaDataMerge;
@@ -38,12 +38,13 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	private SDFAttribute userNames;
 	
 	private int outputPort = 0;
+	@SuppressWarnings("unused")
 	private int totalInputPorts = 1;
 	private int positionOfIncomingText = -1;
 	private int positionOfUserNames = -1;
 		
 	public KeyPerformanceIndicatorsPO(int outputPort, String kpiName, List<String> subsetOfTerms, List<String> totalQuantityOfTerms, SDFAttribute incomingText, double thresholdValue, SDFAttribute userNames, int totalInputPorts, IMetadataMergeFunction<M> metaDataMerge,
-									  ITransferArea<Tuple<M>, Tuple<M>> transferFunction)
+									  ITransferArea<Tuple<M>, Tuple<M>> transferFunction, ITimeIntervalSweepArea<Tuple<M>> sweepArea)
 	{
 		super();
 		this.outputPort = outputPort;
@@ -56,21 +57,7 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 		this.totalInputPorts = totalInputPorts;
 		this.metaDataMerge = metaDataMerge;
 		this.tranferFunction = transferFunction;
-	}
-	
-	public KeyPerformanceIndicatorsPO(KeyPerformanceIndicatorsPO<M> splitPO)
-	{
-		super(splitPO);
-		this.outputPort = splitPO.outputPort;
-		this.kpiName = splitPO.kpiName;
-		this.subsetOfTerms = splitPO.subsetOfTerms;
-		this.totalQuantityOfTerms = splitPO.totalQuantityOfTerms;
-		this.incomingText = splitPO.incomingText;
-		this.thresholdValue = splitPO.thresholdValue;
-		this.userNames = splitPO.userNames;
-		this.totalInputPorts = splitPO.totalInputPorts;
-		this.metaDataMerge = splitPO.metaDataMerge;
-		this.tranferFunction = splitPO.tranferFunction;
+		this.sweepArea = sweepArea;
 	}
 
 	@Override
@@ -116,7 +103,7 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 
 		//Aufräumen
 		@SuppressWarnings("unused")
-		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(tuple.getMetadata().getStart());
+		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsBefore(tuple.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
 		{

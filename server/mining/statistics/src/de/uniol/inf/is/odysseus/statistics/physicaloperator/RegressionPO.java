@@ -34,12 +34,12 @@ import java.util.Iterator;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * 
@@ -50,22 +50,12 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 	private SimpleRegression regression;
 	private int xAttribute;
 	private int yAttribute;
-	private DefaultTISweepArea<R> sweepArea = new DefaultTISweepArea<R>();
-//	private double lastSlope = Double.NaN;
-//	private double lastIntercept = Double.NaN;
+	final private ITimeIntervalSweepArea<R> sweepArea;
 
-	public RegressionPO() {
-		super();
-	}
-
-	public RegressionPO(int xAttribute, int yAttribute) {
+	public RegressionPO(int xAttribute, int yAttribute, ITimeIntervalSweepArea<R> sweepArea) {
 		this.xAttribute = xAttribute;
 		this.yAttribute = yAttribute;
-	}
-
-	public RegressionPO(RegressionPO<M, R> regressionPO) {
-		this.xAttribute = regressionPO.xAttribute;
-		this.yAttribute = regressionPO.yAttribute;
+		this.sweepArea = sweepArea;
 	}
 
 	@Override

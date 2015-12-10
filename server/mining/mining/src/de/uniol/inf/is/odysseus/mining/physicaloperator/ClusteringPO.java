@@ -42,10 +42,9 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
-import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * 
@@ -53,17 +52,14 @@ import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
  */
 public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
-	// private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
+	// private ITimeIntervalSweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();	
 	private IClusterer<M> clusterer;
 
-	public ClusteringPO(IClusterer<M> clusterer) {
+	public ClusteringPO(IClusterer<M> clusterer, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.clusterer = clusterer;		
-	}
-
-	public ClusteringPO(ClusteringPO<M> clusteringPO) {
-		this.clusterer = clusteringPO.clusterer;		
+		this.sweepArea = sweepArea;
 	}
 
 	@Override

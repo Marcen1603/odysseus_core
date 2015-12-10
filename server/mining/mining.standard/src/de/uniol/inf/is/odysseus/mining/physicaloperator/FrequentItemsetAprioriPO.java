@@ -10,14 +10,14 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.apriori.FrequentItemSet;
 import de.uniol.inf.is.odysseus.mining.frequentitem.apriori.FrequentItemSetContainer;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Transaction;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class FrequentItemsetAprioriPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<ITimeInterval>> {
 
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private List<Transaction<M>> transactions = new ArrayList<Transaction<M>>();
 	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
@@ -26,17 +26,10 @@ public class FrequentItemsetAprioriPO<M extends ITimeInterval> extends AbstractP
 	private long lastTime = 0L;
 	private long startTime = 0L;
 
-	public FrequentItemsetAprioriPO() {
-
-	}
-
-	public FrequentItemsetAprioriPO(FrequentItemsetAprioriPO<M> old) {
-		this.minsupport = old.minsupport;
-	}
-
 	
-	public FrequentItemsetAprioriPO(int minSupport) {
+	public FrequentItemsetAprioriPO(int minSupport, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.minsupport = minSupport;
+		this.sweepArea = sweepArea;
 	}
 
 	@Override

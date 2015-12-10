@@ -35,8 +35,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
-import de.uniol.inf.is.odysseus.context.store.types.PartitionedMultiElementStore;
 import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
+import de.uniol.inf.is.odysseus.context.store.types.PartitionedMultiElementStore;
 //import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
 import de.uniol.inf.is.odysseus.context.store.types.SingleElementStore;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -48,6 +48,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTContextStoreType;
@@ -58,6 +59,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIfExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 //import de.uniol.inf.is.odysseus.wrapper.ivef.contextmodel.contextstore.HistoryContextStore;
 
 /**
@@ -71,6 +74,7 @@ public class ContextVisitor implements IVisitor {
 	private IMetaAttribute metaAttribute;
 	private List<IExecutorCommand> commands;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object visit(ASTCreateContextStore node, Object data) {
 		String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ASTAttributeDefinitions definitions = (ASTAttributeDefinitions) node.jjtGetChild(1);
@@ -79,6 +83,12 @@ public class ContextVisitor implements IVisitor {
 		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary, commands, metaAttribute);
 		csv.visit(definitions, null);
 		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("ContextStore:" + name, csv.getAttributes());
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e1) {
+			throw new QueryParseException(e1);
+		}
 		
 		int size = visit(typeNode, schema);
         IContextStore<Tuple<? extends ITimeInterval>> store;
@@ -87,7 +97,7 @@ public class ContextVisitor implements IVisitor {
         }
         else {
         	if(typeNode.jjtGetNumChildren() == 1)
-        		store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size);
+        		store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size, sa);
         	else{
         		int partitionBy = ((ASTInteger) typeNode.jjtGetChild(1)).getValue().intValue();
         		if(partitionBy < 0 || partitionBy >= schema.size())

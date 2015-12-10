@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DistinctTIPO;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 /**
@@ -32,9 +34,15 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
  */
 public class TDistinctAORule extends AbstractIntervalTransformationRule<DistinctAO> {
     @Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
     public void execute(DistinctAO operator, TransformationConfiguration configuration) throws RuleException {
-        DefaultTISweepArea<IStreamObject<ITimeInterval>> sweepArea = new DefaultTISweepArea<>();
-        DistinctTIPO<IStreamObject<ITimeInterval>> po = new DistinctTIPO<>(sweepArea);
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+        DistinctTIPO<IStreamObject<ITimeInterval>> po = new DistinctTIPO<>(sa);
         defaultExecute(operator, po, configuration, true, true);
     }
 

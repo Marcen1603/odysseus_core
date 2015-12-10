@@ -10,13 +10,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.IKeyPerformanceIndicators;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.kpicalculation.KPIRegistry;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class ShareOfVoicePO <M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private IKeyPerformanceIndicators<M> kpiType;
 	
 	private List<String> ownCompany;
@@ -27,25 +27,16 @@ public class ShareOfVoicePO <M extends ITimeInterval> extends AbstractPipe<Tuple
 	
 	private int positionOfInputText = -1;
 	
-	public ShareOfVoicePO(List<String> ownCompany, List<String> allCompanies, SDFAttribute incomingText, double thresholdValue)
+	public ShareOfVoicePO(List<String> ownCompany, List<String> allCompanies, SDFAttribute incomingText, double thresholdValue, ITimeIntervalSweepArea<Tuple<M>> sweepArea)
 	{
 		super();
 		this.ownCompany = ownCompany;
 		this.allCompanies = allCompanies;
 		this.incomingText = incomingText;
 		this.thresholdValue = thresholdValue;
+		this.sweepArea = sweepArea;
 	}
-	
-	public ShareOfVoicePO(ShareOfVoicePO<M> shareOfVoicePO)
-	{
-		super(shareOfVoicePO);
-		this.ownCompany = shareOfVoicePO.ownCompany;
-		this.allCompanies = shareOfVoicePO.allCompanies;
-		this.incomingText = shareOfVoicePO.incomingText;
-		this.thresholdValue = shareOfVoicePO.thresholdValue;
-	}
-	
-	
+		
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -71,7 +62,7 @@ public class ShareOfVoicePO <M extends ITimeInterval> extends AbstractPipe<Tuple
 		
 		//Aufräumen
 		@SuppressWarnings("unused")
-		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
+		Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsBefore(object.getMetadata().getStart());
 					
 		synchronized(this.sweepArea)
 		{

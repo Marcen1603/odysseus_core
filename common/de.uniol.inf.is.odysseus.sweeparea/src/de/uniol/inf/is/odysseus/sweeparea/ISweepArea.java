@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 public interface ISweepArea<T> extends Iterable<T>, Serializable {
@@ -154,6 +155,15 @@ public interface ISweepArea<T> extends Iterable<T>, Serializable {
 	 */
 	void setRemovePredicate(IPredicate<? super T> removePredicate);
 
+	IPredicate<? super T> getRemovePredicate();
+	
+	/**
+	 * Remove all elements of this sweep area and deliver an iterator
+	 * @return
+	 */
+	Iterator<T> extractAllElements();
+
+	
 	/**
 	 * Create an identical copy of this area (no deep clone!) Elements are not cloned!
 	 * @return
@@ -161,4 +171,6 @@ public interface ISweepArea<T> extends Iterable<T>, Serializable {
 	ISweepArea<T> clone();
 
 	String getName();
+	
+	ISweepArea<T> newInstance(OptionMap options);
 }

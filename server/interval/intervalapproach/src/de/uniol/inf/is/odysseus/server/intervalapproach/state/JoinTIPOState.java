@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractOperatorState {
@@ -176,8 +175,9 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 			return getSizeInBytesOfSerializable((Serializable)area);
 		}
 		
-		ITimeIntervalSweepArea<T> oneElementArea = new DefaultTISweepArea<T>();
-		ITimeIntervalSweepArea<T> fullElementArea = new DefaultTISweepArea<T>();
+		ITimeIntervalSweepArea<T> oneElementArea = originalArea.clone();
+		oneElementArea.clear();
+		ITimeIntervalSweepArea<T> fullElementArea = oneElementArea.clone();
 		
 		oneElementArea.insert(area.peek());
 		

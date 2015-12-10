@@ -27,10 +27,10 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * Physical operator for Expectation Maximization (EM) classifier.
@@ -43,7 +43,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(EMPO.class);
     /** The sweep area to hold the data. */
-    private final DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
+    private final ITimeIntervalSweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
     /** The attribute positions. */
     private final int[] attributes;
 

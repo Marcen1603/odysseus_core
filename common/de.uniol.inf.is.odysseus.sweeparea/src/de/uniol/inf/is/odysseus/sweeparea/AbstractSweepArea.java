@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * @author Jonas Jacobi
  */
 public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
-		ITemporalSweepArea<T>, Serializable {
+		ISweepArea<T>, Serializable {
 
 	private static final long serialVersionUID = 1054820871977159904L;
 
@@ -99,6 +99,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 				}
 			} catch (NullPointerException e) {
 				// ignore null pointer could be when value in attribute is null
+				e.printStackTrace();
 			}
 			this.currentElement = null;
 			return false;
@@ -357,7 +358,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 	}
 
 	@Override
-	abstract public AbstractSweepArea<T> clone();
+	abstract public ISweepArea<T> clone();
 
 	@Override
 	final public int hashCode() {

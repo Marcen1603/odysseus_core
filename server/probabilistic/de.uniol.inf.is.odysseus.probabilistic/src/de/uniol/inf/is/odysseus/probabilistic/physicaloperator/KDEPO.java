@@ -28,13 +28,13 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.kde.BandwidthSelectionRule;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -45,7 +45,7 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(KDEPO.class);
     /** The sweep area to hold the data. */
-    private final DefaultTISweepArea<Tuple<? extends ITimeInterval>> area;
+    private final ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> area;
     /** The attribute positions. */
     private final int[] attributes;
     /** partial parameter to estimate the covariance matrix. */
@@ -56,11 +56,11 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
     /**
  * 
  */
-    public KDEPO(final int[] attributes) {
+    public KDEPO(final int[] attributes, ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> area) {
         this.attributes = attributes;
         this.covariance = new double[this.attributes.length][attributes.length];
         this.covarianceParameter = new Parameter[this.attributes.length][attributes.length];
-        this.area = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
+        this.area = area;
         for (int i = 0; i < this.attributes.length; i++) {
             for (int j = 0; j < this.attributes.length; j++) {
                 this.covarianceParameter[i][j] = new Parameter();
@@ -102,7 +102,7 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
         final ProbabilisticTuple<T> outputVal = object.clone();
         final Tuple<T> restrictedObject = object.restrict(this.attributes, true);
         synchronized (this.area) {
-            final Iterator<Tuple<? extends ITimeInterval>> iter = this.area.extractElementsEndBefore(restrictedObject.getMetadata().getStart());
+            final Iterator<Tuple<? extends ITimeInterval>> iter = this.area.extractElementsBefore(restrictedObject.getMetadata().getStart());
             while (iter.hasNext()) {
                 final Tuple<? extends ITimeInterval> attr = iter.next();
                 for (int i = 0; i < this.attributes.length; i++) {

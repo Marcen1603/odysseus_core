@@ -17,12 +17,15 @@ package de.uniol.inf.is.odysseus.mining.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClassificationLearnAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClassificationLearnPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -38,11 +41,20 @@ public class TClassificationLearnAORule extends AbstractTransformationRule<Class
 	}
 
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(ClassificationLearnAO operator, TransformationConfiguration config) throws RuleException {
 		IClassificationLearner<ITimeInterval> learner = MiningAlgorithmRegistry.getInstance().createClassificationLearner(operator.getLearner());		
 		learner.init(operator.getAlgorithm(), operator.getInputSchema(0), operator.getClassAttribute(), operator.getNominals());
 		learner.setOptions(operator.getOptionsMap());
-		ClassificationLearnPO<ITimeInterval> po = new ClassificationLearnPO<>(learner);
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+		// TODO:
+		// ITimeIntervalSweepArea<Tuple<ITimeInterval>> sa = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<ITimeInterval>>());
+		ClassificationLearnPO<ITimeInterval> po = new ClassificationLearnPO<>(learner, sa);
 		defaultExecute(operator, po, config, true, false);
 	}
 

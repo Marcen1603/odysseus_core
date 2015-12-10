@@ -40,11 +40,10 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
-import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * 
@@ -52,17 +51,14 @@ import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
  */
 public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
-	// private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
+	// private ITimeIntervalSweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();
 	private IClassificationLearner<M> learn;
 
-	public ClassificationLearnPO(IClassificationLearner<M> learn) {
+	public ClassificationLearnPO(IClassificationLearner<M> learn, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.learn = learn;
-	}
-
-	public ClassificationLearnPO(ClassificationLearnPO<M> clusteringPO) {
-		this.learn = clusteringPO.learn;
+		this.sweepArea = sweepArea;
 	}
 
 	@Override

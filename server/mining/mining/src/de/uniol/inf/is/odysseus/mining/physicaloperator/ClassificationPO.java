@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
@@ -40,21 +41,24 @@ import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	protected static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);	
-	private DefaultTISweepArea<Tuple<M>> treeSA = new DefaultTISweepArea<>();
-	private DefaultTISweepArea<Tuple<M>> elementSA = new DefaultTISweepArea<Tuple<M>>();
+	final private ITimeIntervalSweepArea<Tuple<M>> treeSA;
+	final private ITimeIntervalSweepArea<Tuple<M>> elementSA;
 	@SuppressWarnings("unchecked")
-	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];
+	private ITimeIntervalSweepArea<Tuple<M>> areas[] = new ITimeIntervalSweepArea[2];
 	final protected IMetadataMergeFunction<M> metadataMerge;
 	protected ITransferArea<Tuple<M>, Tuple<M>> transferFunction;
 	private int classifierAttribute;
 	private boolean oneClassifier = false;
 	private int portofclassifier = 1;
 
-	public ClassificationPO(int indexOfClassifier, int portOfClassifier, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction) {
+	public ClassificationPO(int indexOfClassifier, int portOfClassifier, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction,
+			ITimeIntervalSweepArea<Tuple<M>> treeSA, ITimeIntervalSweepArea<Tuple<M>> elementSA) {
 		this.portofclassifier  = portOfClassifier;
 		this.classifierAttribute = indexOfClassifier;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
+		this.treeSA = treeSA;
+		this.elementSA = elementSA;
 	}
 
 	public ClassificationPO(ClassificationPO<M> classificationTreePO) {
@@ -62,6 +66,8 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		this.portofclassifier = classificationTreePO.portofclassifier;
 		this.metadataMerge = classificationTreePO.metadataMerge.clone();
 		this.transferFunction = classificationTreePO.transferFunction.clone();
+		this.treeSA = classificationTreePO.treeSA.clone();
+		this.elementSA = classificationTreePO.elementSA.clone();
 	}
 
 	@Override

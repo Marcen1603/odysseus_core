@@ -26,20 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mining.classification.TreeNode;
 import de.uniol.inf.is.odysseus.mining.util.CounterList;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
@@ -50,8 +49,8 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	private static Logger logger = LoggerFactory.getLogger(ClassificationLearnC45PO.class);
 
 	private SDFAttribute classAttribute;
-	private IMetadataMergeFunction<M> metadatamergefunction;
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	//private IMetadataMergeFunction<M> metadatamergefunction;
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 
 	private SDFSchema inputSchema;
 	private Map<SDFAttribute, List<Object>> seenvalues = new HashMap<SDFAttribute, List<Object>>();
@@ -62,16 +61,12 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	/**
 	 * @param classAttribute
 	 */
-	public ClassificationLearnC45PO(SDFAttribute classAttribute, SDFSchema inputschema) {
+	public ClassificationLearnC45PO(SDFAttribute classAttribute, SDFSchema inputschema, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		this.classAttribute = classAttribute;
 		this.inputSchema = inputschema;
+		this.sweepArea = sweepArea;
 	}
 
-	public ClassificationLearnC45PO(ClassificationLearnC45PO<M> old) {
-		this.classAttribute = old.classAttribute;
-		this.inputSchema = old.inputSchema;
-		this.metadatamergefunction = old.metadatamergefunction.clone();
-	}
 
 	@Override
 	public OutputMode getOutputMode() {

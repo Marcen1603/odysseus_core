@@ -19,20 +19,29 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AbstractTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
 import de.uniol.inf.is.odysseus.sweeparea.IFastList;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
-		extends DefaultTISweepArea<T> {
+		extends AbstractTISweepArea<T> {
 
 	private static final long serialVersionUID = -2596467130143190355L;
 
 	public JoinTISweepArea() {
 		super(new FastArrayList<T>());
+	}
+	
+	@Override
+	public ISweepArea<T> newInstance(OptionMap options) {
+		// TODO: Read options
+		return new JoinTISweepArea<>();
 	}
 	
 	public JoinTISweepArea(IFastList<T> list){
@@ -109,6 +118,15 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 			}
 		}
 		return result.iterator();
+	}
+	
+	@Override
+	public ITimeIntervalSweepArea<T> clone() {
+		try {
+			return new JoinTISweepArea<>(this);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@Override

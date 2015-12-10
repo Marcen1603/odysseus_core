@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 
 public class CompareSinkPO
 		extends
@@ -17,7 +16,7 @@ public class CompareSinkPO
 	boolean sameOutputAsInputPort = true;
 
 	@SuppressWarnings("unchecked")
-	private DefaultTISweepArea<Tuple<? extends ITimeInterval>>[] sweepArea = new DefaultTISweepArea[2];
+	private CompareSinkSweepArea<Tuple<? extends ITimeInterval>>[] sweepArea = new CompareSinkSweepArea[2];
 
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
@@ -26,8 +25,8 @@ public class CompareSinkPO
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		sweepArea[0] = new DefaultTISweepArea<>();
-		sweepArea[1] = new DefaultTISweepArea<>();
+		sweepArea[0] = new CompareSinkSweepArea<>();
+		sweepArea[1] = new CompareSinkSweepArea<>();
 	}
 
 	@Override

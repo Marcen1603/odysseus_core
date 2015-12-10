@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 
 ///**
@@ -66,18 +65,16 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 
     //
     @SuppressWarnings("unchecked")
-    public AntiJoinTIPO(DifferenceAO ao) {
+    public AntiJoinTIPO(DifferenceAO ao, ISweepArea<T> leftArea, ISweepArea<T> rightArea) {
         super();
-        ISweepArea<T> leftSA = new DefaultTISweepArea<>();
-        ISweepArea<T> rightSA = new DefaultTISweepArea<>();
+        this.sa = new ISweepArea[] { leftArea, rightArea };
         IPredicate<? super T> predicate = ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), EqualsPredicate.getInstance());
         if (ao.getPredicate() != null) {
             predicate = ComplexPredicateHelper.createOrPredicate(predicate, ComplexPredicateHelper.createNotPredicate(ao.getPredicate()));
         }
 
-        leftSA.setQueryPredicate(predicate);
-        rightSA.setQueryPredicate(predicate);
-        this.sa = new ISweepArea[] { leftSA, rightSA };
+        leftArea.setQueryPredicate(predicate);
+        rightArea.setQueryPredicate(predicate);
         this.returnBuffer = new PriorityQueue<>(10, new MetadataComparator<ITimeInterval>());
         PointInTime startTime = PointInTime.getZeroTime();
         this.highestStart = new PointInTime[] { startTime, startTime };

@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AntiJoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
@@ -34,8 +35,14 @@ public class TExistenceAORule extends AbstractIntervalTransformationRule<Existen
 
 	@Override
 	public void execute(ExistenceAO existenceAO, TransformationConfiguration transformConfig) throws RuleException {
-		ISweepArea<IStreamObject<ITimeInterval>> leftSA = new DefaultTISweepArea<IStreamObject<ITimeInterval>>();
-		ISweepArea<IStreamObject<ITimeInterval>> rightSA = new DefaultTISweepArea<IStreamObject<ITimeInterval>>();
+		ISweepArea<IStreamObject<ITimeInterval>> leftSA;
+		ISweepArea<IStreamObject<ITimeInterval>> rightSA;
+		try {
+			leftSA = (ISweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			rightSA = (ISweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
 		IPredicate<?> predicate = existenceAO.getPredicate();
 		if (existenceAO.getType() == ExistenceAO.Type.NOT_EXISTS) {
 			predicate = ComplexPredicateHelper.createNotPredicate(predicate);
@@ -50,7 +57,7 @@ public class TExistenceAORule extends AbstractIntervalTransformationRule<Existen
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
 	public Class<? super ExistenceAO> getConditionClass() {	
 		return ExistenceAO.class;

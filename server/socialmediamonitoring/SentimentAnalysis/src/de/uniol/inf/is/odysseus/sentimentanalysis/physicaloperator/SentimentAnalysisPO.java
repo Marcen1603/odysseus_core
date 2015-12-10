@@ -14,6 +14,18 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
+import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
+import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaAttributeResolver;
+import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaConverter;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
@@ -31,18 +43,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.StringToNominal;
 import weka.filters.unsupervised.attribute.StringToWordVector;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
-import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
-import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaAttributeResolver;
-import de.uniol.inf.is.odysseus.mining.weka.mapping.WekaConverter;
 
 /**
  * 
@@ -54,7 +54,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	
 	private boolean isTrained = false;
 	private boolean isEvaluated = false;
-	DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
+	private final ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	
 	IClassificationLearner<ITimeInterval> learner;
 	WekaAttributeResolver resolver;
@@ -90,7 +90,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 
 	static Logger logger = LoggerFactory.getLogger(SentimentAnalysisPO.class);
 
-	public SentimentAnalysisPO(String userClassifier, SDFAttribute attributeTextToBeClassified, int totalInputports, SDFAttribute attributeTrainSetText, SDFAttribute attributeTrainSetTrueDecision, List<String>userNominals, int maxTrainSize, double thresholdValue) {
+	public SentimentAnalysisPO(String userClassifier, SDFAttribute attributeTextToBeClassified, int totalInputports, SDFAttribute attributeTrainSetText, SDFAttribute attributeTrainSetTrueDecision, List<String>userNominals, int maxTrainSize, double thresholdValue, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
 		super();
 
 		this.attributeTextToBeClassified = attributeTextToBeClassified;
@@ -101,17 +101,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 		this.attributeTrainSetTrueDecision = attributeTrainSetTrueDecision;
 		this.userNominals = userNominals;
 		this.thresholdValue = thresholdValue;
-	}
-
-	public SentimentAnalysisPO(SentimentAnalysisPO<M> senti) {
-		super(senti);
-		this.userClassifier = senti.userClassifier;
-		this.maxTrainSize = senti.maxTrainSize;
-		this.attributeTextToBeClassified = senti.attributeTextToBeClassified;
-		this.attributeTrainSetText = senti.attributeTrainSetText;
-		this.attributeTrainSetTrueDecision = senti.attributeTrainSetTrueDecision;
-		this.userNominals = senti.userNominals;
-		this.thresholdValue = senti.thresholdValue;
+		this.sweepArea = sweepArea;
 	}
 
 	@Override
@@ -242,7 +232,7 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 			this.sweepArea.insert(object);
 			
 			@SuppressWarnings("unused")
-			Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsEndBefore(object.getMetadata().getStart());
+			Iterator<Tuple<M>> oldElements = this.sweepArea.extractElementsBefore(object.getMetadata().getStart());
 			
 			List<Tuple<M>> list = this.sweepArea.queryOverlapsAsList(object.getMetadata());
 			

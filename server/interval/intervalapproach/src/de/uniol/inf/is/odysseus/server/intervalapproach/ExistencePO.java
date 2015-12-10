@@ -26,11 +26,11 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.sweeparea.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * Works the same way as JoinTIPO, but only the left elements are passed to the
@@ -65,7 +65,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 	//
 	private static final int RIGHT = 1;
 
-	private ITemporalSweepArea<T>[] areas;
+	private ITimeIntervalSweepArea<T>[] areas;
 	private IPredicate<? super T> joinPredicate;
 
 	protected ITransferArea<T, T> transferFunction;
@@ -75,9 +75,9 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 	private int otherport = 0;
 
 	@SuppressWarnings("unchecked")
-	public ExistencePO(ITemporalSweepArea<T> leftArea,
-			ITemporalSweepArea<T> rightArea) {
-		this.areas = new ITemporalSweepArea[2];
+	public ExistencePO(ITimeIntervalSweepArea<T> leftArea,
+			ITimeIntervalSweepArea<T> rightArea) {
+		this.areas = new ITimeIntervalSweepArea[2];
 		this.areas[0] = leftArea;
 		this.areas[1] = rightArea;
 	}
@@ -90,7 +90,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 		super(join);
 		this.areas = join.areas.clone();
 		int i = 0;
-		for (ITemporalSweepArea<T> ja : join.areas) {
+		for (ITimeIntervalSweepArea<T> ja : join.areas) {
 			this.areas[i] = ja.clone();
 			i++;
 		}
@@ -102,7 +102,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	}
 
-	public void setAreas(ITemporalSweepArea<T>[] areas) {
+	public void setAreas(ITimeIntervalSweepArea<T>[] areas) {
 		this.areas = areas;
 		if (this.joinPredicate != null) {
 			areas[0].setQueryPredicate(this.joinPredicate);
@@ -279,7 +279,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 	}
 
-	public ITemporalSweepArea<T>[] getAreas() {
+	public ITimeIntervalSweepArea<T>[] getAreas() {
 		return areas;
 	}
 

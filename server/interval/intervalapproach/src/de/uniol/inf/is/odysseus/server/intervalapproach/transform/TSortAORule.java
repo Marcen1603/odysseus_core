@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.SortTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 /**
@@ -33,9 +34,15 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
  */
 public class TSortAORule extends AbstractIntervalTransformationRule<SortAO> {
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void execute(SortAO operator, TransformationConfiguration configuration) throws RuleException {
-        ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> sweepArea = new DefaultTISweepArea<>();
-        SortTIPO<? extends IStreamObject<? extends ITimeInterval>> po = new SortTIPO<>(sweepArea, operator.getSortAttributePos(), operator.getAscendingArray());
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+        SortTIPO<? extends IStreamObject<? extends ITimeInterval>> po = new SortTIPO<>(sa, operator.getSortAttributePos(), operator.getAscendingArray());
         defaultExecute(operator, po, configuration, true, true);
     }
 

@@ -23,10 +23,13 @@ import java.util.List;
 
 import com.google.common.collect.LinkedHashMultimap;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends Tuple<K>>
@@ -38,6 +41,12 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	final private int storedIdPosition;
 	final private int externalIdPosition;
 
+	@Override
+	public ISweepArea<T> newInstance(OptionMap options) {
+		throw new UnsupportedOperationException();
+		//return null;
+	}
+	
 	public PriorityIdHashSweepArea(int externalIdPosition, int storedIdPosition) {
 		this.storedIdPosition = storedIdPosition;
 		this.externalIdPosition = externalIdPosition;
@@ -97,6 +106,11 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 
 	@Override
 	public IPredicate<? super T> getQueryPredicate() {
+		return null;
+	}
+	
+	@Override
+	public IPredicate<? super T> getRemovePredicate() {
 		return null;
 	}
 
@@ -232,5 +246,77 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public String getName() {
 		return "PrioIdHashSA";
+	}
+
+	@Override
+	public T peekLast() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<T> extractAllElements() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<T> extractElementsStartingBefore(PointInTime time) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<T> queryElementsStartingBefore(PointInTime validity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<T> extractElementsStartingBeforeOrEquals(PointInTime time) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<T> extractElementsStartingEquals(PointInTime validity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<T> queryOverlapsAsList(ITimeInterval interval) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<T> queryOverlaps(ITimeInterval interval) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<T> extractOverlaps(ITimeInterval t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<T> extractOverlapsAsList(ITimeInterval t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSweepAreaAsString(PointInTime baseTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSweepAreaAsString(String tab, int max, boolean tail) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

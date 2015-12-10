@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -30,16 +30,15 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
  */
 public class DistinctTIPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T> {
     /** The sweep area to hold the data. */
-    private DefaultTISweepArea<T> area;
+    final private ITimeIntervalSweepArea<T> area;
 
-    public DistinctTIPO(DefaultTISweepArea<T> area) {
+    public DistinctTIPO(ITimeIntervalSweepArea<T> area) {
         this.area = area;
     }
 
     public DistinctTIPO(DistinctTIPO<T> po) {
         super(po);
         this.area = po.area.clone();
-
     }
 
     @Override
@@ -74,8 +73,4 @@ public class DistinctTIPO<T extends IStreamObject<? extends ITimeInterval>> exte
 		sendPunctuation(punctuation);
 	}
     
-    public void setArea(DefaultTISweepArea<T> area) {
-        this.area = area;
-    }
-
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TupleAggregateAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.relational_interval.physicaloperator.RelationalTupleAggregatePO;
 import de.uniol.inf.is.odysseus.relational_interval.tupleaggregate.FirstRelationalTupleAggregateMethod;
 import de.uniol.inf.is.odysseus.relational_interval.tupleaggregate.IRelationalTupleAggregateMethod;
@@ -14,6 +15,8 @@ import de.uniol.inf.is.odysseus.relational_interval.tupleaggregate.MaxRelational
 import de.uniol.inf.is.odysseus.relational_interval.tupleaggregate.MinRelationalTupleAggregateMethod;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class TRelationalTupleAggregateTransformationRule extends
@@ -22,6 +25,7 @@ public class TRelationalTupleAggregateTransformationRule extends
 	static final Map<String, IRelationalTupleAggregateMethod> aggMethods = new HashMap<>();
 	
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(TupleAggregateAO operator,
 			TransformationConfiguration config) throws RuleException {
 		IRelationalTupleAggregateMethod m = getMethod(operator.getMethod());
@@ -30,7 +34,13 @@ public class TRelationalTupleAggregateTransformationRule extends
 		if (attribute != null){
 			pos = operator.getOutputSchema().indexOf(attribute);
 		}
-		RelationalTupleAggregatePO po = new RelationalTupleAggregatePO(m,pos);
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+		RelationalTupleAggregatePO po = new RelationalTupleAggregatePO(m,pos, sa);
 		defaultExecute(operator, po, config, true, true);
 	}
 

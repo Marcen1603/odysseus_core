@@ -20,17 +20,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyAfterPredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AbstractTISweepArea;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 //should be K extends IPriority & ITimeInterval, but suns compiler (1.6) is buggy and doens't accept it:(
 public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObject<K>>
-		extends DefaultTISweepArea<T> {
+		extends AbstractTISweepArea<T> {
 
 	private static final long serialVersionUID = -7061083657732137083L;
 
@@ -203,5 +206,15 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObjec
 				}
 			}
 		}
+	}
+
+	@Override
+	public ISweepArea<T> newInstance(OptionMap options) {
+		return null;
+	}
+
+	@Override
+	public ITimeIntervalSweepArea<T> clone() {
+		return null;
 	}
 }

@@ -34,12 +34,15 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClusteringAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -50,11 +53,20 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> {
 
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(ClusteringAO operator, TransformationConfiguration config) throws RuleException {
 		IClusterer<ITimeInterval> clusterer = MiningAlgorithmRegistry.getInstance().createClusterer(operator.getLearner());
 		clusterer.init(operator.getAlgorithm(), operator.getInputSchema(0));
 		clusterer.setOptions(operator.getOptionsMap());
-		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new ClusteringPO<ITimeInterval>(clusterer);
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+		// TODO:
+		//ITimeIntervalSweepArea sa = new DefaultTISweepArea(new FastLinkedList());
+		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new ClusteringPO<ITimeInterval>(clusterer, sa);
 		defaultExecute(operator, po, config, true, true);
 	}
 

@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DuplicateEliminationTIPO;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 /**
@@ -36,9 +38,15 @@ public class TDuplicateEliminationAORule extends AbstractIntervalTransformationR
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void execute(DuplicateEliminationAO operator, TransformationConfiguration config) throws RuleException {
-		DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea = new DefaultTISweepArea<Tuple<ITimeInterval>>();
-		DuplicateEliminationTIPO<Tuple<ITimeInterval>> po = new DuplicateEliminationTIPO<Tuple<ITimeInterval>>(sweepArea);
+		ITimeIntervalSweepArea sa;
+		try {
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuleException(e);
+		}
+		DuplicateEliminationTIPO<Tuple<ITimeInterval>> po = new DuplicateEliminationTIPO<Tuple<ITimeInterval>>(sa);
 		po.setOutputSchema(operator.getOutputSchema());
 		replace(operator, po, config);
 		retract(operator);		

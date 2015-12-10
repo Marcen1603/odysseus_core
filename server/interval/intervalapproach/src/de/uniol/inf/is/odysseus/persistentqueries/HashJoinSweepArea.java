@@ -24,11 +24,13 @@ import java.util.List;
 import com.google.common.collect.LinkedHashMultimap;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -77,6 +79,12 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	 * not used, only for compatibility and debug
 	 */
 	IPredicate<? super Tuple<? extends ITimeInterval>> removePredicate;
+	
+	
+	@Override
+	public ISweepArea<Tuple<? extends ITimeInterval>> newInstance(OptionMap options) {
+		throw new UnsupportedOperationException();
+	}
 	
 	public HashJoinSweepArea(int[] insertRestrictList, int[] queryRestrictList){
 		this.elements = LinkedHashMultimap.create();		
@@ -238,6 +246,11 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	}
 	
 	@Override
+	public IPredicate<? super Tuple<? extends ITimeInterval>> getRemovePredicate() {
+		return removePredicate;
+	}
+	
+	@Override
     public HashJoinSweepArea clone(){
 		return new HashJoinSweepArea(this);
 	}
@@ -296,5 +309,77 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	@Override
 	public String getName() {
 		return "HashJoinSA";
+	}
+
+	@Override
+	public Tuple<? extends ITimeInterval> peekLast() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<Tuple<? extends ITimeInterval>> extractAllElements() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<Tuple<? extends ITimeInterval>> extractElementsStartingBefore(PointInTime time) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<Tuple<? extends ITimeInterval>> queryElementsStartingBefore(PointInTime validity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<Tuple<? extends ITimeInterval>> extractElementsStartingBeforeOrEquals(PointInTime time) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<Tuple<? extends ITimeInterval>> extractElementsStartingEquals(PointInTime validity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Tuple<? extends ITimeInterval>> queryOverlapsAsList(ITimeInterval interval) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<Tuple<? extends ITimeInterval>> queryOverlaps(ITimeInterval interval) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<Tuple<? extends ITimeInterval>> extractOverlaps(ITimeInterval t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Tuple<? extends ITimeInterval>> extractOverlapsAsList(ITimeInterval t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSweepAreaAsString(PointInTime baseTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSweepAreaAsString(String tab, int max, boolean tail) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
