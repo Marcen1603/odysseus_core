@@ -22,11 +22,20 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class ExistenceSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends JoinTISweepArea<T>{
 
 	private static final long serialVersionUID = -9093153099994338083L;
 
+	public ExistenceSweepArea(){
+		super();
+	}
+	
+	private ExistenceSweepArea(ExistenceSweepArea<T> other) throws InstantiationException, IllegalAccessException{
+		super(other);
+	}
+	
 	@Override
 	public void insert(T object){
 		synchronized(this.getElements()){
@@ -39,5 +48,14 @@ public class ExistenceSweepArea<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public ISweepArea<T> newInstance(OptionMap options) {
 		return new ExistenceSweepArea<>();
+	}
+	
+	@Override
+	public ITimeIntervalSweepArea<T> clone() {
+		try {
+			return new ExistenceSweepArea<>(this);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

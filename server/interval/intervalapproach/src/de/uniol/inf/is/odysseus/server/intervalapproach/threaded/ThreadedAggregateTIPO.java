@@ -35,8 +35,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * Physical operator for aggregation which supports multithreading. Works only
@@ -147,7 +148,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		}
 
 		IGroupProcessor<R, W> g = getGroupProcessor();
-		AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
+		ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 
 		Long groupID = null;
 		synchronized (groups) {
@@ -157,7 +158,8 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			synchronized (groups) {
 				sa = groups.get(groupID);
 				if (sa == null) {
-					sa = new AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
+					// TODO: Make flexible
+					sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
 					groups.put(groupID, sa);
 				}
 			}
@@ -169,7 +171,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 			// each worker has a subset of the groups
 			if (!worker.getGroupsToProcess().containsKey(groupID)) {
-				Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = worker
+				Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = worker
 						.getGroupsToProcess();
 				synchronized (groupsToProcess) {
 					groupsToProcess.put(groupID, sa);
@@ -290,7 +292,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			Long groupID,
 			PointInTime timestamp,
 			int inPort,
-			Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
+			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
 			IGroupProcessor<R, W> g) {
 		super.createOutput(existingResults, groupID, timestamp, inPort,
 				groupsToProcess, g);
@@ -298,7 +300,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 	@Override
 	public List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd, boolean outputPA) {
 		return super.updateSA(sa, elemToAdd, outputPA);
 	}

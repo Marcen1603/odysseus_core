@@ -48,8 +48,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.state.AggregateTIPOState;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * This class represents the physical implementation of the aggregation
@@ -111,7 +112,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * For every group exists a sweep area that keeps the state for the
 	 * aggregation
 	 */
-	protected Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
+	protected Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 
 	
 
@@ -234,9 +235,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
 	public void drainGroups(IGroupProcessor<R, W> g,
-			Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
+			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
 		synchronized (groups) {
-			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+			for (Entry<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
 				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue()
 						.iterator();
@@ -284,10 +285,11 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			// Determine group ID from input object
 			groupID = g.getGroupID(object);
 			// Find or create sweep area for group
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 					.get(groupID);
 			if (sa == null) {
-				sa = new AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
+				// TODO: make flexible
+				sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
 				groups.put(groupID, sa);
 			}
 
@@ -310,7 +312,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	protected void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Long groupID,
 			PointInTime timestamp, int inPort,
-			Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
+			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
 			IGroupProcessor<R, W> g) {
 
 		// Check if additional output should be created
@@ -341,10 +343,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				produceResults(existingResults, groupID, g);
 			}
 
-			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
+			for (Entry<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
 					.entrySet()) {
 
-				AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
+				ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
 						.getValue();
 
 				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue()
@@ -363,7 +365,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					}
 				}
 
-				PointInTime sa_min_ts = sa.calcMinTs();
+				PointInTime sa_min_ts = sa.getMinTs();
 
 				if (sa_min_ts != null) {
 					if (sa_min_ts.before(border)) {
@@ -452,7 +454,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * 
 	 * @return State of {@link StreamGroupingWithAggregationPO}.
 	 */
-	public Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
+	public Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
 		return this.groups;
 	}
 
@@ -485,7 +487,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 *         of the progress of time
 	 */
 	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
 			boolean outputPA) {
 		// The list of found elements that cannot be changed anymore
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
@@ -600,7 +602,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * @return
 	 */
 	private PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> updateSAEndEnd(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p1,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> partialAggregate) {
@@ -641,7 +643,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	private void updateSAEndStart(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p1,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2) {
 		// New element has a part that is newer than the partial
@@ -654,7 +656,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@SuppressWarnings("unchecked")
 	private void updateSAStartEnd(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
 			boolean outputPA, List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues, Q t_probe,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p1,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2,
@@ -679,7 +681,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	private PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> updateSAStartStart(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p1,
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggr) {
@@ -738,7 +740,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	// Updates SA by splitting all partial aggregates before split point
 	@SuppressWarnings("unchecked")
 	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PointInTime splitPoint, boolean allowElementsWithEmptyValidTime) {
 		// System.err.println("BEFORE "+splitPoint);
 		// System.err.println(sa.toString());
@@ -769,7 +771,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return returnValues;
 	}
 
-	private void saInsert(AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+	private void saInsert(ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> elem, Q t) {
 		// System.out.println("SA Insert "+elem+" "+t);
 		elem.setMetadata(t);
@@ -820,7 +822,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return map;
 	}
 
-	public AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> getSweepAreaForGroup(
+	public ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> getSweepAreaForGroup(
 			Long groupId) {
 		return groups.get(groupId);
 	}

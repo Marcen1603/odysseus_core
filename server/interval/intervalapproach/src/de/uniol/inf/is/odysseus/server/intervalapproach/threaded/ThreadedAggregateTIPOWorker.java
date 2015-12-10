@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * Worker thread for processing data stream objects, gets elements from blocking
@@ -55,7 +55,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 	// every worker need own groups and an own groupProcessor (no
 	// synchronization needed)
-	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
+	private Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
 	private IGroupProcessor<R, W> g = null;
 
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
@@ -118,7 +118,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 			this.g.setGroup(groupId, object);
 
 			// get sweep area from groupId
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa;
 			synchronized (groupsToProcess) {
 				sa = groupsToProcess.get(groupId);
 
@@ -161,7 +161,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	 * 
 	 * @return
 	 */
-	public Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroupsToProcess() {
+	public Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroupsToProcess() {
 		return groupsToProcess;
 	}
 }

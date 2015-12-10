@@ -16,8 +16,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * The current state of an {@link AggregateTIPO} is defined by 
@@ -32,7 +32,7 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 
 	private ITransferArea<W,W> transferArea;
 	
-	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
+	private Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
 	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> eval = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>>();
 	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> init = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>>();
 	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> merger = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>>();
@@ -71,11 +71,11 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 		this.transferArea = transferArea;
 	}
 
-	public Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroups() {
+	public Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
+	public void setGroups(Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
 		this.groups = groups;
 	}
 
