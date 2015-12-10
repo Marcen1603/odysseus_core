@@ -153,7 +153,9 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		long timestamp = startupTimeStamp + (long) (cameraTimePassed * 1000);
 		double systemTimePassed = (System.currentTimeMillis() - startupTimeStamp) / 1000.0;
 		
-		logStats(timestamp);
+		if (LOG.isTraceEnabled()){
+			logStats(timestamp);
+		}
 		
 //		LOG.debug("Grabbed frame from Basler camera " + serialNumber);
 //		System.out.println("Grabbed frame from Basler camera " + serialNumber + " grab timestamp = " + cameraTimePassed + " systime = " + systemTimePassed + " diff = " + (systemTimePassed - cameraTimePassed) * 1000 + "ms");
