@@ -137,6 +137,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			"MatrixFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
 	public static final SDFDatatype MATRIX_BYTE = new SDFDatatype("MatrixByte",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
+	public static final SDFDatatype MATRIX_SHORT = new SDFDatatype("MatrixShort",
+			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.SHORT);
+	public static final SDFDatatype MATRIX_LONG = new SDFDatatype("MatrixLong",
+			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.LONG);
 	public static final SDFDatatype MATRIX_BOOLEAN = new SDFDatatype(
 			"MatrixBoolean", SDFDatatype.KindOfDatatype.BASE,
 			SDFDatatype.BOOLEAN);
@@ -150,6 +154,12 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			"VectorFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
 	public static final SDFDatatype VECTOR_BYTE = new SDFDatatype("VectorByte",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
+	public static final SDFDatatype VECTOR_SHORT = new SDFDatatype("VectorShort",
+			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.SHORT);
+	public static final SDFDatatype VECTOR_INTEGER = new SDFDatatype("VectorInteger",
+			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.INTEGER);
+	public static final SDFDatatype VECTOR_LONG = new SDFDatatype("VectorLong",
+			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.LONG);
 	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype(
 			"VectorBoolean", SDFDatatype.KindOfDatatype.BASE,
 			SDFDatatype.BOOLEAN);
