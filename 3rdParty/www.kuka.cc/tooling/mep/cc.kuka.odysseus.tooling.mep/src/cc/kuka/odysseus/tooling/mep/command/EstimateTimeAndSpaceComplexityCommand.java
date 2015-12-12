@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
@@ -89,6 +88,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 					try {
 						buildMEPFunctions(root, filter, monitor); // $NON-NLS-1$
 					} catch (final Throwable e) {
+						e.printStackTrace();
 						EstimateTimeAndSpaceComplexityCommand.LOG.error(e.getMessage(), e);
 					}
 					syncWithUi();
@@ -125,25 +125,17 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 
 		});
 
-		final List<IFunction<?>> symbols = new ArrayList<>();
 		final Map<String, List<IFunction<?>>> functions = new HashMap<>();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, functionSignatures.size());
 		subMonitor.setTaskName("Collecting functions"); //$NON-NLS-1$
 
 		for (final FunctionSignature functionSignature : functionSignatures) {
 			final IFunction<?> function = MEP.getFunction(functionSignature);
-			if (((function.getSymbol().charAt(0) >= 'A') && (function.getSymbol().charAt(0) <= 'Z'))
-					|| ((function.getSymbol().charAt(0) >= 'a') && (function.getSymbol().charAt(0) <= 'z'))) {
-				final String packageName = function.getClass().getPackage().getName();
-				if (!functions.containsKey(packageName)) {
-					functions.put(packageName, new ArrayList<IFunction<?>>());
-				}
-				functions.get(packageName).add(function);
-			} else {
-				if (function.getSymbol().charAt(0) != '_') {
-					symbols.add(function);
-				}
+			final String packageName = function.getClass().getPackage().getName();
+			if (!functions.containsKey(packageName)) {
+				functions.put(packageName, new ArrayList<IFunction<?>>());
 			}
+			functions.get(packageName).add(function);
 		}
 		final List<String> packages = new ArrayList<>(functions.keySet());
 		Collections.sort(packages);
@@ -197,13 +189,13 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 					if (!Double.isNaN(entry.getValue()[0])) {
 						time = (normalize(entry.getValue()[0], minTime, maxTime));
 					} else {
-						time = 10;
+						time = 9;
 					}
 					int space;
 					if (!Double.isNaN(entry.getValue()[1])) {
 						space = (normalize(entry.getValue()[1], minSpace, maxSpace));
 					} else {
-						space = 10;
+						space = 9;
 					}
 
 					out.write(
@@ -217,13 +209,19 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 	}
 
 	private static int normalize(double value, double min, double max) {
-		return (int) Math.round(Math.log(((value - min) / (max - min)) * Math.exp(10.0) + 1.0));
+		double p = (value - min) / (max - min);
+		if (p <= 0.2) {
+			return (int) (p * 10);
+		} else if (p <= 0.5) {
+			return (int) (Math.log(p * Math.exp(5.0) + 1.0));
+		} else {
+			return (int) (Math.log(p * Math.exp(9.0) + 1.0));
+		}
 	}
-
 
 	private static double[] generateFunctionResults(final IFunction<?> function, final Object[][] values) {
 		EstimateTimeAndSpaceComplexityCommand.LOG.info("Generated cases for {}", function.getSymbol()); //$NON-NLS-1$
-		RUNTIME.gc();
+		// RUNTIME.gc();
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -246,7 +244,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 					 */
 					@Override
 					public Long call() throws Exception {
-						int runs = 100;
+						int runs = 1000;
 						long time = System.nanoTime();
 						try {
 							for (int i = 0; i < runs; i++) {
@@ -254,35 +252,39 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 								Object result = function.getValue();
 							}
 						} catch (final Throwable e) {
-							System.out.println(function.getSymbol() + " " + Arrays.toString(value));
-							for (int i = 0; i < function.getArity(); i++) {
-								final List<SDFDatatype> types = Arrays.asList(function.getAcceptedTypes(i));
-								System.out.println(types);
-							}
-							EstimateTimeAndSpaceComplexityCommand.LOG.debug("Function {} with input {}, {}", //$NON-NLS-1$
+							EstimateTimeAndSpaceComplexityCommand.LOG.debug("Function {} with input {}", //$NON-NLS-1$
 									function.getSymbol(), Arrays.toString(value));
 							EstimateTimeAndSpaceComplexityCommand.LOG.error(e.getMessage(), e);
+							return null;
 						}
-						return Long.valueOf(System.nanoTime() - time) / runs;
+						return Long.valueOf((System.nanoTime() - time) / runs);
 					}
 				}));
 			}
 			double space = free - RUNTIME.freeMemory();
-			if (space < 0) {
+			if (space < 0.0) {
 				free = (long) (free - space);
-				space = 0;
+				space = 0.0;
 			}
-			double time = 0;
+			double time = 0.0;
 			for (final Future<Long> future : futures) {
 				try {
+					Thread.sleep(0, 100);
+				} catch (InterruptedException e) {
+					EstimateTimeAndSpaceComplexityCommand.LOG.error(e.getMessage(), e);
+				}
+				try {
+					if (!Double.isNaN(space)) {
+						space = Math.max(space, free - RUNTIME.freeMemory());
+					}
 					Long result = future.get(50, TimeUnit.MILLISECONDS);
 					if (result != null) {
 						if (!Double.isNaN(time)) {
 							time += result.doubleValue();
 						}
-					}
-					if (!Double.isNaN(space)) {
-						space = Math.max(space, free - RUNTIME.freeMemory());
+					} else {
+						space = Double.NaN;
+						time = Double.NaN;
 					}
 				} catch (final Throwable e) {
 					EstimateTimeAndSpaceComplexityCommand.LOG.debug("Timeout for function {}", function.getSymbol()); //$NON-NLS-1$
@@ -340,7 +342,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 
 			this.txtPath = new Text(container, SWT.BORDER);
 			this.txtPath.setLayoutData(dataPath);
-			final Path root = Paths.get(System.getProperty("user.home")); //$NON-NLS-1$ 
+			final Path root = Paths.get(System.getProperty("user.home")); //$NON-NLS-1$
 			this.txtPath.setText(root.resolve("mep_functions.csv").toString()); //$NON-NLS-1$
 
 			Label lbtFilter = new Label(container, SWT.NONE);
