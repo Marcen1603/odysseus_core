@@ -491,10 +491,14 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	@Override
 	public void processPunctuation(final IPunctuation punctuation,
 			final int port) {
-		this.modelTuple.getMetadata().setStartAndEnd(this.modelTuple.getMetadata().getEnd(), punctuation.getTime());
-		this.recommCandTuple.getMetadata().setStartAndEnd(this.recommCandTuple.getMetadata().getEnd(), punctuation.getTime());
-		transfer(this.modelTuple);
-		transfer(this.recommCandTuple, 1);
+		if(this.modelTuple!=null){
+			this.modelTuple.getMetadata().setStartAndEnd(this.modelTuple.getMetadata().getEnd(), punctuation.getTime());
+			transfer(this.modelTuple);
+		}
+		if(this.recommCandTuple!=null){
+			this.recommCandTuple.getMetadata().setStartAndEnd(this.recommCandTuple.getMetadata().getEnd(), punctuation.getTime());
+			transfer(this.recommCandTuple, 1);
+		}
 	}
 
 	/*
