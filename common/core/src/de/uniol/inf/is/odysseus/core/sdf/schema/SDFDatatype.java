@@ -62,6 +62,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 * predefined datatypes
 	 */
 	public static final SDFDatatype STRING = new SDFDatatype("String");
+	public static final SDFDatatype DSTRING = new SDFDatatype("DString");
 	public static final SDFDatatype DOCUMENT = new SDFDatatype("Document");
 	public static final SDFDatatype LONG = new SDFDatatype("Long");
 	public static final SDFDatatype INTEGER = new SDFDatatype("Integer");
@@ -223,7 +224,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	public static final SDFDatatype[] SIMPLE_TYPES = new SDFDatatype[] {
 			OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP,
-			END_TIMESTAMP, TIMESTAMP, STRING };
+			END_TIMESTAMP, TIMESTAMP, STRING, DSTRING };
 
 	static final List<SDFDatatype> types = new ArrayList<>();
 	static final Map<String, SDFDatatype> nameMap = new HashMap<>();
@@ -256,6 +257,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		}
 		
 		types.add(SDFDatatype.STRING);
+		types.add(SDFDatatype.DSTRING);
 		types.add(SDFDatatype.DOCUMENT);
 		types.add(SDFDatatype.MV);
 		types.add(SDFDatatype.TIMESTAMP);
