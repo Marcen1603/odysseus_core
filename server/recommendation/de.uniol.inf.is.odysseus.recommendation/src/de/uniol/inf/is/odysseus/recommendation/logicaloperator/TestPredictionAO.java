@@ -38,7 +38,8 @@ import de.uniol.inf.is.odysseus.recommendation.transform.TTestPredictionAORule;
  * @author Cornelius Ludmann
  *
  */
-@LogicalOperator(name = "TEST_PREDICTION", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.MINING }, doc = "This operator computes a set of recommendations.")
+@LogicalOperator(name = "TEST_PREDICTION", minInputPorts = 1, maxInputPorts = 1, category = {
+		LogicalOperatorCategory.MINING }, doc = "This operator computes a set of recommendations.")
 public class TestPredictionAO extends UnaryLogicalOp {
 
 	/**
@@ -65,8 +66,7 @@ public class TestPredictionAO extends UnaryLogicalOp {
 	/**
 	 * These attributes store the user, item and rating.
 	 */
-	private SDFAttribute userAttribute, itemAttribute, ratingAttribute,
-			predictedRatingAttribute;
+	private SDFAttribute userAttribute, itemAttribute, ratingAttribute, predictedRatingAttribute;
 
 	/**
 	 * The evaluation metric.
@@ -145,8 +145,8 @@ public class TestPredictionAO extends UnaryLogicalOp {
 	 */
 	public SDFAttribute getRatingAttribute() {
 		if (this.ratingAttribute == null) {
-			this.ratingAttribute = FindAttributeHelper.findAttributeByName(
-					this, TestPredictionAO.DEFAULT_RATING_ATTRIBUTE_NAME);
+			this.ratingAttribute = FindAttributeHelper.findAttributeByName(this,
+					TestPredictionAO.DEFAULT_RATING_ATTRIBUTE_NAME);
 		}
 		return this.ratingAttribute;
 	}
@@ -166,10 +166,8 @@ public class TestPredictionAO extends UnaryLogicalOp {
 	 */
 	public SDFAttribute getPredictedRatingAttribute() {
 		if (this.predictedRatingAttribute == null) {
-			this.predictedRatingAttribute = FindAttributeHelper
-					.findAttributeByName(
-							this,
-							TestPredictionAO.DEFAULT_PREDICTED_RATING_ATTRIBUTE_NAME);
+			this.predictedRatingAttribute = FindAttributeHelper.findAttributeByName(this,
+					TestPredictionAO.DEFAULT_PREDICTED_RATING_ATTRIBUTE_NAME);
 		}
 		return this.predictedRatingAttribute;
 	}
@@ -180,8 +178,7 @@ public class TestPredictionAO extends UnaryLogicalOp {
 	 */
 	@Parameter(name = "predicted_rating", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the predicted ratings. Default: "
 			+ DEFAULT_PREDICTED_RATING_ATTRIBUTE_NAME, optional = true)
-	public void setPredictedRatingAttribute(
-			final SDFAttribute predictedRatingAttribute) {
+	public void setPredictedRatingAttribute(final SDFAttribute predictedRatingAttribute) {
 		this.predictedRatingAttribute = predictedRatingAttribute;
 	}
 
@@ -215,29 +212,23 @@ public class TestPredictionAO extends UnaryLogicalOp {
 	 *            the aggregationWindowSize to set
 	 */
 	@Parameter(name = "aggregation_window_size", type = TimeParameter.class, doc = "Size of the aggregation window. Default: unbounded", optional = true)
-	public void setAggregationWindowSize(
-			final TimeValueItem aggregationWindowSize) {
+	public void setAggregationWindowSize(final TimeValueItem aggregationWindowSize) {
 		this.aggregationWindowSize = aggregationWindowSize;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-	 * #getOutputSchemaIntern(int)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.
+	 * AbstractLogicalOperator #getOutputSchemaIntern(int)
 	 */
 	@Override
 	protected SDFSchema getOutputSchemaIntern(final int pos) {
 		if (pos == 0) {
 			final SDFSchema subSchema = getInputSchema(0);
 			final List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
-			attributes.add(new SDFAttribute(subSchema.getURI(),
-					TTestPredictionAORule.ERROR_ATTRIBUTE_NAME,
-					// TODO: Is this really a DOUBLE with subSchema?
-					SDFDatatype.createTypeWithSubSchema(SDFDatatype.DOUBLE, subSchema)));
-			final SDFSchema outputSchema = SDFSchemaFactory
-					.createNewWithAttributes(attributes, subSchema);
+			attributes.add(new SDFAttribute(null, TTestPredictionAORule.ERROR_ATTRIBUTE_NAME, SDFDatatype.DOUBLE));
+			final SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, subSchema);
 			return outputSchema;
 		}
 		return null;
@@ -246,9 +237,8 @@ public class TestPredictionAO extends UnaryLogicalOp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-	 * #clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.
+	 * AbstractLogicalOperator #clone()
 	 */
 	@Override
 	public AbstractLogicalOperator clone() {
