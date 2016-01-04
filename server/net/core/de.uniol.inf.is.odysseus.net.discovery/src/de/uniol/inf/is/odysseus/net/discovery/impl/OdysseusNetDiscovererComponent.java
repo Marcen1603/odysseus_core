@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableCollection;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscoverer;
@@ -16,7 +17,7 @@ import de.uniol.inf.is.odysseus.net.discovery.IOdysseusNodeDiscovererManager;
 import de.uniol.inf.is.odysseus.net.discovery.OdysseusNetDiscoveryException;
 import de.uniol.inf.is.odysseus.net.discovery.activator.OdysseusNetDiscoveryPlugIn;
 
-public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
+public class OdysseusNetDiscovererComponent extends OdysseusNetComponentAdapter implements IOdysseusNetComponent {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetDiscovererComponent.class);
 
@@ -108,11 +109,6 @@ public class OdysseusNetDiscovererComponent implements IOdysseusNetComponent {
 		}
 	}
 	
-	@Override
-	public void terminate(IOdysseusNode localNode) {
-		// do nothing
-	}
-
 	private void waitForServices() {
 		while (nodeManager == null) {
 			waitSomeTime();

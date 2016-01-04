@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectorCallback;
 import de.uniol.inf.is.odysseus.net.connect.OdysseusNetConnectionException;
 import de.uniol.inf.is.odysseus.net.util.InetAddressUtil;
 
-public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdysseusNetComponent, IServerSocketAcceptListener, IOdysseusNodeConnectionListener {
+public class OdysseusNodeSocketConnector extends OdysseusNetComponentAdapter implements IOdysseusNodeConnector, IOdysseusNetComponent, IServerSocketAcceptListener, IOdysseusNodeConnectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeSocketConnector.class);
 
@@ -180,11 +181,6 @@ public class OdysseusNodeSocketConnector implements IOdysseusNodeConnector, IOdy
 	@Override
 	public void stop() {
 		stopServer();
-	}
-
-	@Override
-	public void terminate(IOdysseusNode localNode) {
-		// do nothing
 	}
 
 	@Override

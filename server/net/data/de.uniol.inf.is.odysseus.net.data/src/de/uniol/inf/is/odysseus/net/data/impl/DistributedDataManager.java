@@ -199,7 +199,10 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	@Override
 	public void start() throws OdysseusNetException {
 		isStarted = true;
-		
+	}
+	
+	@Override
+	public void startFinished() throws OdysseusNetException {
 		fireStartEvent();
 	}
 	

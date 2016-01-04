@@ -2,9 +2,10 @@ package de.uniol.inf.is.odysseus.net.querydistribute.impl;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 
-public class QueryDistributionComponent implements IOdysseusNetComponent {
+public class QueryDistributionComponent extends OdysseusNetComponentAdapter implements IOdysseusNetComponent {
 
 	private static IOdysseusNode localNode;
 	private static boolean isStarted = false;

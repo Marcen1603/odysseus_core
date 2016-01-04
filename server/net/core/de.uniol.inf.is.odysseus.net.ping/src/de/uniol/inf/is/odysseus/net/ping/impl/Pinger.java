@@ -217,6 +217,11 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 	public void init(IOdysseusNode localNode) throws OdysseusNetException {
 		// do nothing
 	}
+	
+	@Override
+	public void startFinished() throws OdysseusNetException {
+		// do nothing
+	}
 
 	@Override
 	public void stop() {

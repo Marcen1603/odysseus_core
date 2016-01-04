@@ -11,6 +11,11 @@ public class OdysseusNetComponentAdapter implements IOdysseusNetComponent {
 	public void start() throws OdysseusNetException {
 		// do nothing
 	}
+	
+	@Override
+	public void startFinished() throws OdysseusNetException {
+		// do nothing
+	}
 
 	@Override
 	public void stop() {

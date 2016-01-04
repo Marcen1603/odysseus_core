@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.net.logging;
 import org.json.JSONObject;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
-import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNetComponentAdapter;
 import de.uniol.inf.is.odysseus.net.OdysseusNetException;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 
-public class OdysseusNetLoggingComponent implements IOdysseusNetComponent {
+public class OdysseusNetLoggingComponent extends OdysseusNetComponentAdapter implements IOdysseusNetComponent {
 
 	private static final String IS_RECEIVING_LOGGING_CONFIG_KEY = "net.logging.receive";
 	private static final boolean IS_RECEIVING_LOGGING_DEFAULT_VALUE = false;
@@ -57,11 +57,6 @@ public class OdysseusNetLoggingComponent implements IOdysseusNetComponent {
 	}
 
 	@Override
-	public void init(IOdysseusNode localNode) throws OdysseusNetException {
-
-	}
-
-	@Override
 	public void start() throws OdysseusNetException {
 		if (IS_RECEIVING_LOGGING) {
 //			System.err.println("Logging-Mode: Receiving");
@@ -92,11 +87,6 @@ public class OdysseusNetLoggingComponent implements IOdysseusNetComponent {
 	@Override
 	public void stop() {
 		removeListeners();
-	}
-
-	@Override
-	public void terminate(IOdysseusNode localNode) {
-
 	}
 
 	private static void removeListeners() {

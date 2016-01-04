@@ -176,6 +176,25 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			return false;
 		}
 	}
+	
+	private boolean tryStartFinishedComponent(IOdysseusNetComponent component) {
+		try {
+			synchronized (componentMap) {
+				if (componentMap.get(component) != OdysseusNetComponentStatus.RUNNING ) {
+					return false;
+				}
+
+				component.startFinished();
+				LOG.info("Starting OdysseusNet component finished {}", component);
+				
+				return true;
+			}
+
+		} catch (Throwable t) {
+			LOG.error("Exception during finish starting odysseus net component", t);
+			return false;
+		}
+	}
 
 	private boolean tryStopComponent(IOdysseusNetComponent component) {
 		try {
@@ -240,6 +259,8 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 			LOG.info("Start of OdysseusNet finished");
 			LOG.info("Resulting local odysseus node: {}", localNode);
 		}
+		
+		startFinishedComponents();
 
 		fireStartEvent(localNode);
 	}
@@ -266,6 +287,14 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 		synchronized (componentMap) {
 			for (IOdysseusNetComponent component : componentMap.keySet()) {
 				tryStartComponent(component);
+			}
+		}
+	}
+	
+	private void startFinishedComponents() {
+		synchronized (componentMap) {
+			for (IOdysseusNetComponent component : componentMap.keySet()) {
+				tryStartFinishedComponent(component);
 			}
 		}
 	}

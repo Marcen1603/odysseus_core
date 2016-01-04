@@ -161,6 +161,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 
 	@Override
 	public void distributedDataManagerStopped(IDistributedDataManager sender) {
+		getDataDictionary().removeListener(this);
+		
 		DataDictionaryProvider.unsubscribe(this);
 	}
 
@@ -175,9 +177,9 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 
 			ILogicalOperator operator = streamOrView.getValue();
 			
-			boolean isView = (dd.getView(streamOrView.getKey(), getActiveSession()) != null);
+			boolean isStream = (dd.getStreamForTransformation(streamOrView.getKey(), getActiveSession()) != null);
 
-			createDistributedData(name, operator, username, !isView);
+			createDistributedData(name, operator, username, isStream);
 		}
 	}
 
