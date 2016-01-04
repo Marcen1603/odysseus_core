@@ -174,8 +174,10 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			String username = streamOrView.getKey().getUser();
 
 			ILogicalOperator operator = streamOrView.getValue();
+			
+			boolean isView = (dd.getView(streamOrView.getKey(), getActiveSession()) != null);
 
-			createDistributedData(name, operator, username);
+			createDistributedData(name, operator, username, !isView);
 		}
 	}
 
@@ -196,7 +198,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		synchronized (importedSourcesBiMap) {
 			if (!importedSourcesBiMap.containsValue(name)) {
-				createDistributedData(name, op, session.getUser().getName());
+				createDistributedData(name, op, session.getUser().getName(), !isView);
 			}
 		}
 	}
@@ -210,7 +212,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 		}
 	}
 
-	private void createDistributedData(String name, ILogicalOperator op, String username) {
+	private void createDistributedData(String name, ILogicalOperator op, String username, boolean isPersistent) {
 		String realSourceName = removeUserFromName(name);
 		String pqlStatement = pqlGenerator.generatePQLStatement(op);
 
@@ -220,7 +222,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			json.put("user", username);
 			json.put("pql", pqlStatement);
 
-			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, false);
+			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent);
 			synchronized (createdSourcesMap) {
 				createdSourcesMap.put(username + "." + realSourceName, distributedData.getUUID());
 			}
