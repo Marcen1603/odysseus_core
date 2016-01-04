@@ -1,20 +1,13 @@
 package de.uniol.inf.is.odysseus.wrapper.json;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonParser.NumberType;
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -30,9 +23,9 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 
 	protected String name;
 
-	protected BufferedReader reader;
-	protected ArrayList<String> jsonArray;
+	protected InputStreamReader reader;
 	protected ObjectMapper mapper;
+	String next = null;
 
 	protected boolean isDone = false;
 
@@ -41,7 +34,8 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 	public AbstractJSONProtocolHandler() {
 	}
 
-	public AbstractJSONProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
+	public AbstractJSONProtocolHandler(ITransportDirection direction, IAccessPattern access,
+			IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 	}
 
@@ -50,8 +44,8 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 		getTransportHandler().open();
 		if (this.getDirection() == ITransportDirection.IN) {
 			if (this.getAccessPattern() == IAccessPattern.PULL) {
-				reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
-			} 
+				reader = new InputStreamReader(getTransportHandler().getInputStream());
+			}
 		}
 		isDone = false;
 	}
@@ -64,112 +58,133 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 		super.close();
 	}
 
-	/**
-	 * Specification for read in: http://json.org/json-de.html
-	 */
 	@Override
 	public boolean hasNext() throws IOException {
-		if (jsonArray != null && jsonArray.size() > 0) {
-			return true;
+		if (next == null) {
+			next = getNextJsonObjectOrArray();
 		}
-		try {
-			if (!reader.ready()) {
-				throw new IOException("Reader in AbstractJSONProtocolHandler not ready (could be caused by end of file)");
-			}
-			if (jsonArray == null) {
-				jsonArray = new ArrayList<String>();
-			}
-			
-			JsonParser jp = mapper.getFactory().createParser(reader);
-			while(jp.nextToken() != null) {
-				if(jp.getCurrentToken() == JsonToken.START_OBJECT) {
-					jsonArray.add(parseJsonObject(jp));
-				} else if(jp.getCurrentToken() == JsonToken.START_ARRAY) {
-					while(jp.nextToken() != JsonToken.END_ARRAY) {
-						if(jp.getCurrentToken() == JsonToken.START_OBJECT) {
-							jsonArray.add(parseJsonObject(jp));
-						} else {
-							LOG.debug("Wrong JSON format? File starts with array, but no object is following.");
-							return false;
-						}
-					}
-				} else {
-					LOG.debug("Data didn't begin with Json-Object or Json-Array! Trying to find one of them...");
-				}
-			}
-			jp.close();
-			if(jsonArray.size() > 0) {
-				return true;   
-			}
-		} catch (IOException e) {
-//			e.printStackTrace();
-			LOG.debug(e.getMessage());
-			this.isDone = true;
-		} 
-		return false;
 
-	}
-		
-	private String parseJsonObject(JsonParser jp) throws JsonGenerationException, IOException {
-		StringWriter stringWriter = new StringWriter();
-		JsonGenerator jg = mapper.getFactory().createGenerator(stringWriter);
-		jg.writeStartObject();
-		while (jp.nextToken() != JsonToken.END_OBJECT) {
-			jg.writeFieldName(jp.getCurrentName());
-			if(jp.nextToken() == JsonToken.START_OBJECT) {
-				jg.writeRawValue(this.parseJsonObject(jp));
-			} else if(jp.getCurrentToken() == JsonToken.START_ARRAY) {
-				this.parseArray(jp, jg);
-			} else {
-				if(jp.getCurrentToken().isNumeric()) {
-					NumberType numberType = jp.getNumberType();
-					if (numberType == NumberType.LONG) {
-						jg.writeNumber((Long) jp.getNumberValue());
-					} else if(numberType == NumberType.DOUBLE) {
-						jg.writeNumber(jp.getDoubleValue());
-					} else if(numberType == NumberType.FLOAT) {
-						jg.writeNumber(jp.getFloatValue());
-					} else {
-						jg.writeNumber((Integer) jp.getNumberValue());
-					}
-				} else if (jp.getCurrentToken().isBoolean()) {
-					jg.writeBoolean(jp.getBooleanValue());
-				} else if(jp.getCurrentToken() == null) {
-					jg.writeNull();
-				} else 	{
-					jg.writeString(jp.getText());
-				}
-			}
-		}
-		jg.writeEndObject();
-		jg.flush();
-		String retVal = stringWriter.toString();
-		jg.close();
-		return retVal;
-	}
-	
-	private void parseArray(JsonParser jp, JsonGenerator jg) throws JsonGenerationException, IOException {
-		jg.writeStartArray();
-		while (jp.nextToken() != JsonToken.END_ARRAY) {
-			if(jp.getCurrentToken().isNumeric()) {
-				jg.writeNumber((Integer) jp.getNumberValue());
-			} else if (jp.getCurrentToken().isBoolean()) {
-				jg.writeBoolean(jp.getBooleanValue());
-			} else if(jp.getCurrentToken() == null) {
-				jg.writeNull();
-			} else 	{
-				jg.writeString(jp.getText());
-			}
-		}
-		jg.writeEndArray();
+		return !(next == null);
 	}
 
 	@Override
 	public T getNext() throws IOException {
-		if (jsonArray != null && jsonArray.size() > 0) {
-			return getDataHandler().readData(jsonArray.remove(0));
+		if (hasNext()) {
+			return getDataHandler().readData(getNextJsonObjectOrArray());
 		}
 		return null;
+	}
+
+	/**
+	 * <p>
+	 * Reads the next complete JSON object/array from InputStreamReader. This
+	 * method skips all chars of the stream reader until the start of a JSON
+	 * object/array.
+	 * 
+	 * <p>
+	 * Note: Finding the next JSON object/array in the input stream fails when
+	 * the input stream starts in between two quotation marks of a string value
+	 * that has an opening bracket.
+	 * 
+	 * Specification for read in: http://json.org/
+	 * 
+	 * @return The next complete JSON object or array as string or {@code null}
+	 *         when no next object or array exists.
+	 */
+	private String getNextJsonObjectOrArray() throws IOException {
+		if (next != null) {
+			String returnValue = next;
+			next = null;
+			return returnValue;
+		}
+		if (reader == null) {
+			LOG.error("Reader is null.");
+			return null;
+		}
+		if (!reader.ready()) {
+			isDone = true;
+			return null;
+		}
+
+		synchronized (this.reader) {
+			try {
+				StringBuilder str = new StringBuilder();
+				StringBuilder skippedChars = new StringBuilder();
+
+				char c = readNextChar(reader);
+
+				// skip all chars that are not '{' or '[' (start of JSON
+				// objects)
+				while (c != '{' && c != '[') {
+					if (!Character.isWhitespace(c)) {
+						skippedChars.append(c);
+					}
+					c = readNextChar(reader);
+				}
+				if (skippedChars.length() > 0 && !"".equals(skippedChars.toString().trim()))
+					LOG.warn("Skipped chars: " + skippedChars.toString());
+
+				str.append(c);
+
+				int openCurlyBrackets = 0;
+				int openSquareBrackets = 0;
+
+				if (c == '{') {
+					++openCurlyBrackets;
+				} else if (c == '[') {
+					++openSquareBrackets;
+				}
+
+				// Read all chars until the end of the object. The end of the
+				// object is reached then all open brackets are closed.
+				while (openCurlyBrackets != 0 || openSquareBrackets != 0) {
+					c = readNextChar(reader);
+					str.append(c);
+					switch (c) {
+					case '{':
+						++openCurlyBrackets;
+						break;
+					case '}':
+						--openCurlyBrackets;
+						break;
+					case '[':
+						++openSquareBrackets;
+						break;
+					case ']':
+						--openSquareBrackets;
+						break;
+					case '"':
+						// skip string value
+						// JSON specification allows only double but not single
+						// quotation marks for string values, should this
+						// implementation also support single marks?
+						char prev = ' ';
+						do {
+							prev = c;
+							c = readNextChar(reader);
+							str.append(c);
+						} while (!(c == '"' && prev != '\\'));
+						break;
+					default:
+						break;
+					}
+				}
+
+				return str.toString();
+			} catch (IllegalStateException e) {
+				isDone = true;
+				return null;
+			}
+		}
+	}
+
+	private char readNextChar(InputStreamReader reader) throws IllegalStateException, IOException {
+		int data = reader.read();
+		if (data == -1) {
+			// LOG.info("End of stream.");
+			throw new IllegalStateException("End of stream.");
+		}
+		return (char) data;
 	}
 
 	@Override
@@ -180,7 +195,7 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 	public void process(ArrayList<T> objects) {
 		if (objects.size() > 0) {
 			for (T object : objects) {
-				if(object != null) {
+				if (object != null) {
 					getTransfer().transfer(object);
 				}
 			}
