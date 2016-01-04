@@ -262,6 +262,12 @@ public class JoinTransformationHelper {
 			if (!usedOwnAttributes.contains(ownAttr) && !usedOtherAttributes.contains(otherAttr)) {
 				int ownIndex = ownSchema.indexOf(ownAttr);
 				int otherIndex = otherSchema.indexOf(otherAttr);
+				
+				// TMP-HACK
+				if (ownIndex == -1 && otherSchema.indexOf(ownAttr) > 0){
+					otherIndex = otherSchema.indexOf(ownAttr);
+					ownIndex = ownSchema.indexOf(otherAttr);
+				}
 
 				insertRestrictList.add(ownIndex);
 				queryRestrictList.add(otherIndex);
