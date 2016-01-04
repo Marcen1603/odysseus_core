@@ -105,6 +105,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
             switch (this.method) {
                 case PUT:
                     request = new HttpPut(this.uri);
+                    // TODO: should the message length in case of chunked = false set to message.length() ?
                     final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
                     putRequestEntity.setContentType("binary/octet-stream");
                     putRequestEntity.setChunked(chunked);
@@ -122,6 +123,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                 case POST:
                 default:
                     request = new HttpPost(this.uri);
+                    // TODO: should the message length in case of chunked = false set to message.length() ?
                     final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
                     postRequestEntity.setContentType("binary/octet-stream");
                     postRequestEntity.setChunked(chunked);
