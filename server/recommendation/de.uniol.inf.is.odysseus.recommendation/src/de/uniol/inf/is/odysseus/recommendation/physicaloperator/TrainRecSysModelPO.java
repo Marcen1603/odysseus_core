@@ -50,6 +50,8 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	protected static Logger logger = LoggerFactory
 			.getLogger(TrainRecSysModelPO.class);
 
+	private boolean transferModelOnlyOnPunctuation;
+	
 	private Tuple<M> modelTuple; 
 	private Tuple<M> recommCandTuple;
 	/**
@@ -169,6 +171,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 			final TrainRecSysModelPO<M, U, I, P> recommendationLearnPO) {
 		this.learner = recommendationLearnPO.learner;
 		this.outputRecomCandObj = recommendationLearnPO.outputRecomCandObj;
+		this.transferModelOnlyOnPunctuation = recommendationLearnPO.transferModelOnlyOnPunctuation;
 		// this.recommCandBuilder = recommendationLearnPO.recommCandBuilder;
 		// TODO: save copy of fields?
 	}
@@ -425,7 +428,9 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		modelTuple.getMetadata().setStartAndEnd(startP, endP);
 		modelTuple
 				.setMetadata("model learning duration", modelLearningDuration);
-//		transfer(modelTuple);
+		if(!transferModelOnlyOnPunctuation) {
+			transfer(modelTuple);
+		}
 
 		@SuppressWarnings("unchecked")
 		final M metadataCopy2 = (M) metadataCopy.clone();
@@ -440,7 +445,9 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		recommCandTuple.getMetadata().setStartAndEnd(startP, endP);
 		recommCandTuple.setMetadata("recomm cand model learning",
 				recomCandModelLearningDuration);
-//		transfer(recommCandTuple, 1);
+		if(!transferModelOnlyOnPunctuation) {
+			transfer(recommCandTuple, 1);
+		}
 	}
 
 	/**
@@ -514,6 +521,20 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		// return super.getName();
 	}
 
+	/**
+	 * @return the transferModelOnlyOnPunctuation
+	 */
+	public boolean isTransferModelOnlyOnPunctuation() {
+		return transferModelOnlyOnPunctuation;
+	}
+
+	/**
+	 * @param transferModelOnlyOnPunctuation the transferModelOnlyOnPunctuation to set
+	 */
+	public void setTransferModelOnlyOnPunctuation(boolean transferModelOnlyOnPunctuation) {
+		this.transferModelOnlyOnPunctuation = transferModelOnlyOnPunctuation;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -526,6 +547,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		keyValues.put("Tuples in Model",
 				String.valueOf(this.noOfActiveLearningTuples));
 		keyValues.putAll(this.learner.getInfo());
+		keyValues.put("transferModelOnlyOnPunctuation", String.valueOf(transferModelOnlyOnPunctuation));
 		return keyValues;
 	}
 }

@@ -28,8 +28,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Cornelius Ludmann
  *
  */
-public class TTrainRecSysModelAORule extends
-		AbstractTransformationRule<TrainRecSysModelAO> {
+public class TTrainRecSysModelAORule extends AbstractTransformationRule<TrainRecSysModelAO> {
 
 	/*
 	 * (non-Javadoc)
@@ -39,18 +38,16 @@ public class TTrainRecSysModelAORule extends
 	 * java.lang.Object)
 	 */
 	@Override
-	public void execute(final TrainRecSysModelAO operator,
-			final TransformationConfiguration config) throws RuleException {
+	public void execute(final TrainRecSysModelAO operator, final TransformationConfiguration config)
+			throws RuleException {
 
-		final TrainRecSysModelPO<?, ?, ?, ?> trainRecSysModelPO = RecommendationLearnerRegistry
-				.getInstance().createTrainRecSysModelPO(operator.getLearner(),
-						operator.getInputSchema(0),
-						operator.getUserAttribute(),
-						operator.getItemAttribute(),
-						operator.getRatingAttribute(), operator.getOptions(),
-						operator.getOutputUsedItems());
+		final TrainRecSysModelPO<?, ?, ?, ?> trainRecSysModelPO = RecommendationLearnerRegistry.getInstance()
+				.createTrainRecSysModelPO(operator.getLearner(), operator.getInputSchema(0),
+						operator.getUserAttribute(), operator.getItemAttribute(), operator.getRatingAttribute(),
+						operator.getOptions(), operator.getOutputUsedItems());
 		trainRecSysModelPO.setOutputSchema(operator.getOutputSchema(0), 0);
 		trainRecSysModelPO.setOutputSchema(operator.getOutputSchema(1), 1);
+		trainRecSysModelPO.setTransferModelOnlyOnPunctuation(Boolean.parseBoolean(operator.getOptions().getOrDefault("transferModelOnlyOnPunctuation", "false")));
 
 		defaultExecute(operator, trainRecSysModelPO, config, true, false);
 	}
@@ -63,8 +60,7 @@ public class TTrainRecSysModelAORule extends
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isExecutable(final TrainRecSysModelAO operator,
-			final TransformationConfiguration config) {
+	public boolean isExecutable(final TrainRecSysModelAO operator, final TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
