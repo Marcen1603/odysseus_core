@@ -391,7 +391,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 		Collection<IOdysseusNode> slaveNodes = Lists.newArrayList();
 		for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
 			IOdysseusNode node = allocationMap.get(queryPart);
-			if (!slaveNodes.contains(node) && localNode.equals(node)) {
+			if (!slaveNodes.contains(node) && !localNode.equals(node)) {
 				slaveNodes.add(node);
 			}
 		}
