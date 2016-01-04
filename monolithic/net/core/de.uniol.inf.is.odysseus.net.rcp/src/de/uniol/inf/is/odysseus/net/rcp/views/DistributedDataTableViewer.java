@@ -63,6 +63,27 @@ public class DistributedDataTableViewer extends AbstractTableViewer<IDistributed
 				return convertTimestampToString(data.getTimestamp());
 			}
 		});
+		
+		createColumn("Persist", 10, new CellLabelProviderAndSorter<IDistributedData, String>() {
+			@Override
+			protected String getValue(IDistributedData data) {
+				return String.valueOf(data.isPersistent());
+			}
+		});
+
+		createColumn("Lifetime", 10, new CellLabelProviderAndSorter<IDistributedData, String>() {
+			@Override
+			protected String getValue(IDistributedData data) {
+				if( data.isPersistent() ) {
+					long lifetime = data.getLifetime();
+					if( lifetime < 0 ) {
+						return "inf";
+					}
+					return String.valueOf(lifetime);
+				} 
+				return null;
+			}
+		});
 	}
 
 	private static String convertTimestampToString(long ts) {
