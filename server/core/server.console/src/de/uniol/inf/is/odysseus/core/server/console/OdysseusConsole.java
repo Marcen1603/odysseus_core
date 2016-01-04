@@ -872,9 +872,9 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		addCommand();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance();
 		try {
-			ci.println("Current registered queries (ID | STATE | START DATE/TIME | LAST QUERY STATE CHANGE):");
+			ci.println("Current registered queries (ID | NAME | STATE | START DATE/TIME | LAST QUERY STATE CHANGE):");
 			for (IPhysicalQuery query : this.executor.getExecutionPlan().getQueries()) {
-				ci.println(query.getID() + " | " + query.getState().name() +
+				ci.println(query.getID() + " | " + query.getName() + " | " + query.getState().name() +
 						" | " + dateFormat.format(new Date(query.getQueryStartTS())) + 
 						" | " + dateFormat.format(new Date(query.getLastQueryStateChangeTS())));
 			}
