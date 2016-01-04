@@ -45,6 +45,11 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> e
 		if (inputSchema != null && !inputSchema.isEmpty()) {
 			sb.append(", inputschema=").append(convertInputSchema(inputSchema));
 		}
+		
+		String metaAttributeName = operator.getLocalMetaAttribute().getName();
+		if( !Strings.isNullOrEmpty(metaAttributeName)) {
+			sb.append(", metaAttribute='").append(metaAttributeName).append("'");
+		}
 
 		return sb.toString();
 	}
