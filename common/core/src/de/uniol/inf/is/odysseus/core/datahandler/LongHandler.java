@@ -46,7 +46,7 @@ public class LongHandler extends AbstractDataHandler<Long> {
 	
 	@Override
 	public Long readData(String string) {
-        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+        if ((string == null) || (string.equals(""))|| ("null".equalsIgnoreCase(string))) {
             return null;
         }
 		return Long.parseLong(string);
