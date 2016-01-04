@@ -198,6 +198,8 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler {
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().println("{\"status\": \"OK\"}");
                 ServletInputStream inputStream = request.getInputStream();
+                // TODO: Consider alternative:
+                // fireProcess(inputStream);
                 ByteBuffer buffer = ByteBuffer.allocate(inputStream.available() + Integer.SIZE / 8);
                 buffer.putInt(inputStream.available());
                 while (inputStream.available() > 0) {
