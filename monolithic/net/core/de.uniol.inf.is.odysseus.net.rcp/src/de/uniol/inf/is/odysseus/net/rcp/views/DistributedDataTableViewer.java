@@ -92,6 +92,10 @@ public class DistributedDataTableViewer extends AbstractTableViewer<IDistributed
 	}
 
 	private String determineNodeName(OdysseusNodeID odysseusNodeID) {
+		if( OdysseusNetRCPPlugIn.getOdysseusNodeManager().isLocalNode(odysseusNodeID)) {
+			return "<local>";
+		}
+		
 		if( nodeNameMap.containsKey(odysseusNodeID)) {
 			return nodeNameMap.get(odysseusNodeID);
 		}
