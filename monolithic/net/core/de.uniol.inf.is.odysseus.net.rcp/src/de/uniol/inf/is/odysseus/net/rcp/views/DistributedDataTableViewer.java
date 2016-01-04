@@ -4,20 +4,25 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
+import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn;
 
 public class DistributedDataTableViewer extends AbstractTableViewer<IDistributedData> {
 
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+	
+	private final Map<OdysseusNodeID, String> nodeNameMap = Maps.newHashMap();
 
 	public DistributedDataTableViewer(Composite parent, Collection<IDistributedData> dataContainer) {
 		super(parent, dataContainer);
@@ -49,11 +54,7 @@ public class DistributedDataTableViewer extends AbstractTableViewer<IDistributed
 		createColumn("Creator", 10, new CellLabelProviderAndSorter<IDistributedData, String>() {
 			@Override
 			protected String getValue(IDistributedData data) {
-				Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(data.getCreator());
-				if( optNode.isPresent() ) {
-					return optNode.get().getName();
-				} 
-				return "<unknown>";
+				return determineNodeName(data.getCreator());
 			}
 		});
 		
@@ -77,7 +78,7 @@ public class DistributedDataTableViewer extends AbstractTableViewer<IDistributed
 				if( data.isPersistent() ) {
 					long lifetime = data.getLifetime();
 					if( lifetime < 0 ) {
-						return "inf";
+						return "infinite";
 					}
 					return String.valueOf(lifetime);
 				} 
@@ -90,4 +91,17 @@ public class DistributedDataTableViewer extends AbstractTableViewer<IDistributed
 		return TIME_FORMAT.format(new Date(ts));
 	}
 
+	private String determineNodeName(OdysseusNodeID odysseusNodeID) {
+		if( nodeNameMap.containsKey(odysseusNodeID)) {
+			return nodeNameMap.get(odysseusNodeID);
+		}
+		
+		Optional<IOdysseusNode> optNode = OdysseusNetRCPPlugIn.getOdysseusNodeManager().getNode(odysseusNodeID);
+		if( optNode.isPresent() ) {
+			nodeNameMap.put(odysseusNodeID, optNode.get().getName());
+			
+			return optNode.get().getName();
+		} 
+		return "<unknown>";
+	}
 }
