@@ -32,6 +32,7 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -58,6 +59,14 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
     private String uri;
     private Method method;
     private String body;
+    
+    /**
+     * Specifies the 'chunked' flag of the {@linkplain InputStreamEntity}. This option will be set by {@link HTTPTransportHandler#init(OptionMap)}.
+     * 
+     * @see AbstractHttpEntity#setChunked(boolean)
+     */
+    private boolean chunked = true;
+    
     @SuppressWarnings("unused")
     private IAccessPattern transportPattern;
 
@@ -98,7 +107,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                     request = new HttpPut(this.uri);
                     final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
                     putRequestEntity.setContentType("binary/octet-stream");
-                    putRequestEntity.setChunked(true);
+                    putRequestEntity.setChunked(chunked);
                     ((HttpPut) request).setEntity(putRequestEntity);
                     break;
                 case DELETE:
@@ -115,7 +124,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
                     request = new HttpPost(this.uri);
                     final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
                     postRequestEntity.setContentType("binary/octet-stream");
-                    postRequestEntity.setChunked(true);
+                    postRequestEntity.setChunked(chunked);
                     ((HttpPost) request).setEntity(postRequestEntity);
             }
             this.client.execute(request);
@@ -149,6 +158,8 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
         else {
             setBody("");
         }
+        
+        chunked = options.getBoolean("chunked", true);
     }
 
     @Override
