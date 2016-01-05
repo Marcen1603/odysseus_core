@@ -127,9 +127,7 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	public boolean existsNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 
-		synchronized (nodeMap) {
-			return nodeMap.containsKey(node.getID());
-		}
+		return existsNode(node.getID());
 	}
 
 	@Override
@@ -148,8 +146,8 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 					return Optional.of(localNode);
 				}
 			} catch (OdysseusNetException e) {
-				return Optional.absent();
 			}
+			return Optional.absent();
 		}
 
 		return Optional.fromNullable(node);
@@ -158,10 +156,8 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	@Override
 	public boolean existsNode(OdysseusNodeID nodeID) {
 		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
-
-		synchronized (nodeMap) {
-			return nodeMap.containsKey(nodeID);
-		}
+		
+		return getNode(nodeID).isPresent();
 	}
 
 	@Override
