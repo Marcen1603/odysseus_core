@@ -52,7 +52,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 
 	private static final Logger LOG = LoggerFactory.getLogger(DistributedDataSourceManager.class);
 	private static final String DATA_SOURCE_DISTRIBUTION_NAME = "net.data.source";
-	private static final String DISTRIBUTED_DATA_LIFETIME_CONFIG_KEY = "net.data.lifetime";
+	private static final String DISTRIBUTED_DATA_LIFETIME_CONFIG_KEY = "net.source.lifetime";
 	private static final long DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS = 60 * 60 * 1000; // 1 hour
 
 	private static IDistributedDataManager dataManager;
