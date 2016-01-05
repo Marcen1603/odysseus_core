@@ -126,13 +126,20 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 				String sourceName = data.getString("name");
 				String userName = data.getString("user");
 				String pqlStatement = data.getString("pql");
+				boolean isStream = data.getBoolean("isStream");
 
 				Optional<ILogicalOperator> optLogicalOp = parsePQLStatement(sourceName, pqlStatement);
 				if (optLogicalOp.isPresent()) {
 					synchronized (importedSourcesBiMap) {
 						importedSourcesBiMap.put(addedData.getUUID(), userName + "." + sourceName);
 					}
-					getDataDictionary().setStream(sourceName, optLogicalOp.get(), getActiveSession());
+					
+					if( isStream ) {
+						getDataDictionary().setStream(sourceName, optLogicalOp.get(), getActiveSession());
+					} else {
+						getDataDictionary().setView(sourceName, optLogicalOp.get(), getActiveSession());
+					}
+					
 				} else {
 					LOG.error("No data source from distributed data created");
 				}
@@ -182,7 +189,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			
 			boolean isStream = (dd.getStreamForTransformation(streamOrView.getKey(), getActiveSession()) != null);
 
-			createDistributedData(name, operator, username, isStream);
+			createDistributedData(name, operator, username, isStream, isStream);
 		}
 	}
 
@@ -203,7 +210,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
 		synchronized (importedSourcesBiMap) {
 			if (!importedSourcesBiMap.containsValue(name)) {
-				createDistributedData(name, op, session.getUser().getName(), !isView);
+				createDistributedData(name, op, session.getUser().getName(), !isView, !isView);
 			}
 		}
 	}
@@ -217,7 +224,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 		}
 	}
 
-	private void createDistributedData(String name, ILogicalOperator op, String username, boolean isPersistent) {
+	private void createDistributedData(String name, ILogicalOperator op, String username, boolean isStream, boolean isPersistent) {
 		String realSourceName = removeUserFromName(name);
 		String pqlStatement = pqlGenerator.generatePQLStatement(op);
 
@@ -226,6 +233,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			json.put("name", realSourceName);
 			json.put("user", username);
 			json.put("pql", pqlStatement);
+			json.put("isStream", isStream);
 
 			long lifetime = determineLifetime();
 			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent, lifetime);
