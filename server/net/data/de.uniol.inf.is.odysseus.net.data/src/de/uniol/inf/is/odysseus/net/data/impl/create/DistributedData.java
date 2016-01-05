@@ -24,11 +24,11 @@ public final class DistributedData implements IDistributedData {
 	private final UUID uuid;
 	private final JSONObject data;
 	private final boolean isPersistent;
-	private final long lifetime;
+	private final long lifetimeMillis;
 	private final long timestamp;
 	private final OdysseusNodeID creator;
 	
-	public DistributedData(UUID uuid, String name, JSONObject data, boolean isPersistent, long lifetime, long timestamp, OdysseusNodeID creator) {
+	public DistributedData(UUID uuid, String name, JSONObject data, boolean isPersistent, long lifetimeMillis, long timestamp, OdysseusNodeID creator) {
 		Preconditions.checkNotNull(uuid, "uuid must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name must not be null or empty!");
 		Preconditions.checkNotNull(data, "data must not be null!");
@@ -39,7 +39,7 @@ public final class DistributedData implements IDistributedData {
 		this.uuid = uuid;
 		this.data = data;
 		this.isPersistent = isPersistent;
-		this.lifetime = lifetime;
+		this.lifetimeMillis = lifetimeMillis;
 		this.timestamp = timestamp;
 		this.creator = creator;
 	}
@@ -65,8 +65,8 @@ public final class DistributedData implements IDistributedData {
 	}
 
 	@Override
-	public long getLifetime() {
-		return lifetime;
+	public long getLifetimeMillis() {
+		return lifetimeMillis;
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public final class DistributedData implements IDistributedData {
 		MessageUtils.putString(bb, creatorStr);
 		MessageUtils.putString(bb, jsonStr);
 		
-		bb.putLong(lifetime);
+		bb.putLong(lifetimeMillis);
 		
 		MessageUtils.putString(bb, name);
 		

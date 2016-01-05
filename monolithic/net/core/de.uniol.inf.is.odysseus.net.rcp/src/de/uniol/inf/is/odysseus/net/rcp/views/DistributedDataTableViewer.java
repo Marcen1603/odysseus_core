@@ -76,7 +76,7 @@ public class DistributedDataTableViewer extends AbstractTableViewer<IDistributed
 			@Override
 			protected String getValue(IDistributedData data) {
 				if( data.isPersistent() ) {
-					long lifetime = data.getLifetime();
+					long lifetime = data.getLifetimeMillis();
 					if( lifetime < 0 ) {
 						return "infinite";
 					}

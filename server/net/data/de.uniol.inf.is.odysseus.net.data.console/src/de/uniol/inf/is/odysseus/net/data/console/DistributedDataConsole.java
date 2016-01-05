@@ -166,7 +166,7 @@ public class DistributedDataConsole implements CommandProvider {
 		ci.println("Name          : " + distributedData.getName());
 		ci.println("Creator NodeID: " + distributedData.getCreator());
 		ci.println("Persistent    : " + distributedData.isPersistent());
-		ci.println("Lifetime      : " + distributedData.getLifetime());
+		ci.println("Lifetime      : " + distributedData.getLifetimeMillis());
 		ci.println("Timestamp     : " + distributedData.getTimestamp() + " (" + convertTimestampToDate(distributedData.getTimestamp()) + ")");
 		ci.println("Data          : " + distributedData.getData());
 	}
