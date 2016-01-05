@@ -14,6 +14,7 @@ public interface IDistributedData {
 	public JSONObject getData();
 	public boolean isPersistent();
 	public long getLifetimeMillis();
+	public boolean isValid();
 	
 	public long getTimestamp();
 	public OdysseusNodeID getCreator();

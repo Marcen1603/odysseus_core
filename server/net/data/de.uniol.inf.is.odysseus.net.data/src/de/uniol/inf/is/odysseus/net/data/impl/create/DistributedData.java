@@ -170,4 +170,13 @@ public final class DistributedData implements IDistributedData {
 	public boolean isCreatorLocal() {
 		return OdysseusNetDataPlugIn.getNodeManager().isLocalNode(creator);
 	}
+	
+	@Override
+	public boolean isValid() {
+		if( lifetimeMillis < 0 ) {
+			return true;
+		}
+		
+		return (System.currentTimeMillis() - timestamp < lifetimeMillis);
+	}
 }
