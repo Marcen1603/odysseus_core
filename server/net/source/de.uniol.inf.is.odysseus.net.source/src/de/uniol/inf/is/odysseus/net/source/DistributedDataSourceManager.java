@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.C
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.data.DistributedDataException;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
@@ -51,6 +52,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 
 	private static final Logger LOG = LoggerFactory.getLogger(DistributedDataSourceManager.class);
 	private static final String DATA_SOURCE_DISTRIBUTION_NAME = "net.data.source";
+	private static final String DISTRIBUTED_DATA_LIFETIME_CONFIG_KEY = "net.data.lifetime";
+	private static final long DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS = 60 * 60 * 1000; // 1 hour
 
 	private static IDistributedDataManager dataManager;
 	private static IPQLGenerator pqlGenerator;
@@ -224,7 +227,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			json.put("user", username);
 			json.put("pql", pqlStatement);
 
-			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent);
+			long lifetime = determineLifetime();
+			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent, lifetime);
 			synchronized (createdSourcesMap) {
 				createdSourcesMap.put(username + "." + realSourceName, distributedData.getUUID());
 			}
@@ -233,6 +237,15 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			LOG.error("Could not create json object", e);
 		} catch (DistributedDataException e) {
 			LOG.error("Could not create distributed data", e);
+		}
+	}
+
+	private static long determineLifetime() {
+		String lifetimeStr = OdysseusNetConfiguration.get(DISTRIBUTED_DATA_LIFETIME_CONFIG_KEY, "" + DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS);
+		try {
+			return Long.valueOf(lifetimeStr);
+		} catch( Throwable t ) {
+			return DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS;
 		}
 	}
 
