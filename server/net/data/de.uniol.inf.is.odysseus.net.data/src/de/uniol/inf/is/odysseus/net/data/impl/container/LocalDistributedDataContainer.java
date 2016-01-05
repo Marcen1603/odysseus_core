@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.net.data.impl.container;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -50,7 +52,9 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 	private final Collection<IOdysseusNode> otherContainers = Lists.newArrayList();
 	private final Collection<IDistributedDataListener> listeners = Lists.newArrayList();
 	private final Collection<IOdysseusNode> remoteListeners = Lists.newArrayList();
-
+	
+	private final InvalidDistributedDataChecker checker;
+	
 	public LocalDistributedDataContainer(IDistributedDataManager dataManager, IOdysseusNodeCommunicator communicator, IOdysseusNodeConnectionManager connectionManager) {
 		Preconditions.checkNotNull(dataManager, "dataManager must not be null!");
 		Preconditions.checkNotNull(connectionManager, "connectionManager must not be null!");
@@ -72,7 +76,9 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 		this.communicator.addListener(this, AddListenerMessage.class);
 		this.communicator.addListener(this, RemoveListenerMessage.class);
 
-
+		checker = new InvalidDistributedDataChecker(this);
+		checker.start();
+		
 		LOG.info("Local distributed data container created");
 	}
 
@@ -86,6 +92,8 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 
 		communicator.removeListener(this, AddListenerMessage.class);
 		communicator.removeListener(this, RemoveListenerMessage.class);
+		
+		checker.stopRunning();
 
 		LOG.info("Local distributed data container disposed");
 	}
@@ -523,5 +531,21 @@ public class LocalDistributedDataContainer implements IDistributedDataContainer,
 			}
 		}
 
+	}
+	
+	// called asynchronously from InvalidDistributedDataChecker
+	void checkForInvalidDistributedData() {
+		synchronized( syncObject ) {
+			List<IDistributedData> toRemoveList = Lists.newArrayList();
+			for (Entry<UUID, IDistributedData> entry : ddUUIDMap.entrySet()) {
+				if( !entry.getValue().isValid() ) {
+					toRemoveList.add(entry.getValue());
+				}
+			}
+			
+			for( IDistributedData toRemove : toRemoveList ) {
+				remove(toRemove);
+			}
+		}
 	}
 }
