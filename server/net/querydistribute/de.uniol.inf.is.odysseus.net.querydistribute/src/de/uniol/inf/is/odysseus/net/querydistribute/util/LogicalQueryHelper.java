@@ -20,15 +20,12 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.querydistribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.net.querydistribute.LogicalQueryPart;
-import de.uniol.inf.is.odysseus.net.querydistribute.activator.QueryDistributionPlugIn;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public final class LogicalQueryHelper {
@@ -141,61 +138,6 @@ public final class LogicalQueryHelper {
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
 				collectOperatorsImpl(subscription.getTarget(), list);
 			}
-		}
-	}
-
-	public static Collection<ILogicalOperator> replaceStreamAOs(Collection<ILogicalOperator> operators) {
-		Preconditions.checkNotNull(operators);
-
-		List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
-		List<ILogicalOperator> operatorsToAdd = Lists.newArrayList();
-
-		for (ILogicalOperator operator : operators) {
-
-			if (operator instanceof StreamAO) {
-				ISession activeSession = QueryDistributionPlugIn.getActiveSession();
-				ILogicalOperator streamPlan = serverExecutor.getDataDictionary(activeSession.getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), activeSession);
-
-				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
-
-				// WORKAROUND:
-				streamPlanCopy.unsubscribeFromAllSinks();
-
-				operatorsToRemove.add(operator);
-				operatorsToAdd.addAll(getAllOperators(streamPlanCopy));
-
-				setDestinationNames(operator, streamPlanCopy);
-				replaceWithSubplan(operator, streamPlanCopy);
-
-			}
-		}
-
-		operators.removeAll(operatorsToRemove);
-		operators.addAll(operatorsToAdd);
-
-		return operators;
-	}
-
-	private static void setDestinationNames(ILogicalOperator fromOperator, ILogicalOperator toOperator) {
-		Collection<ILogicalOperator> streamPlanOperators = getAllOperators(toOperator);
-		String destinationName = fromOperator.getDestinationName();
-		if (destinationName == null && toOperator.getDestinationName() != null)
-			destinationName = toOperator.getDestinationName();
-		for (ILogicalOperator streamPlanOperator : streamPlanOperators) {
-			streamPlanOperator.setDestinationName(destinationName);
-		}
-	}
-
-	public static void replaceWithSubplan(ILogicalOperator leafOp, ILogicalOperator newOp) {
-		if (leafOp.getSubscribedToSource().size() > 0) {
-			throw new IllegalArgumentException("Method can only be called for a leaf");
-		}
-
-		for (LogicalSubscription subToSink : leafOp.getSubscriptions()) {
-			ILogicalOperator target = subToSink.getTarget();
-
-			target.unsubscribeFromSource(leafOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
-			target.subscribeToSource(newOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
 		}
 	}
 
