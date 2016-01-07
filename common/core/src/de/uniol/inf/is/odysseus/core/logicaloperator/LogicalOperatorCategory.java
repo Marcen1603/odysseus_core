@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.core.logicaloperator;
 
 public class LogicalOperatorCategory {
+	
 	public static final String ADVANCED="ADVANCED"; // TODO: Bad name ;-)
+	public static final String APPLICATION="APPLICATION";
 	
 	public static final String BASE="BASE";
 	public static final String BENCHMARK="BENCHMARK";
