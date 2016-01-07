@@ -214,7 +214,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 				}
 				receiverAO.setConnectionID(connectionID.toString());
 				receiverAO.setAttributes(sourceOp.getOutputSchema().getAttributes());
-				receiverAO.setMetadata(MetadataRegistry.getMetadataType(sourceOp.getOutputSchema().getMetaAttributeNames()));
+				receiverAO.setLocalMetaAttribute(MetadataRegistry.getMetadataType(sourceOp.getOutputSchema().getMetaAttributeNames()));
 				receiverAO.setSchemaName(sourceOp.getOutputSchema().getURI());
 				receiverAO.setOdysseusNodeID(allocationMap.get(sourceQueryPart).getID().toString());
 

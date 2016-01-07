@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "SHAREDQUERYSENDER", doc = "Send datato other node of same query", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK}, hidden = true)
+@LogicalOperator(name = "SHAREDQUERYSENDER", doc = "Send data to other node of same query", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK}, hidden = true)
 public class SharedQuerySenderAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1L;
@@ -15,10 +15,12 @@ public class SharedQuerySenderAO extends AbstractLogicalOperator {
 	private String odysseusNodeID;
 
 	public SharedQuerySenderAO() {
-		
+		super();
 	}
 	
 	public SharedQuerySenderAO( SharedQuerySenderAO other ) {
+		super(other);
+		
 		this.connectionID = other.connectionID;
 		this.odysseusNodeID = other.odysseusNodeID;
 	}
