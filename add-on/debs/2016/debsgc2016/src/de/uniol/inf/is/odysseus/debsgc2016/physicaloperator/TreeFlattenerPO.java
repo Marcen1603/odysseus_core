@@ -11,17 +11,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class GCQuery1PO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
+public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
 
 	// ID pos of the root key in root object
-	final private int rootNodeKeyPos = 1;
+	final private int rootNodeKeyPos;
 
 	// ID pos of the non root key in non root object
-	final private int nRootNodeKeyPos = 1;
+	final private int nRootNodeKeyPos;
 	// Pos of reference to non root node in non root object
-	final private int nRootNodeNodeKeyPos = 5;
+	final private int nRootRefToNRootPos;
 	// Pos of reference to root node in non root object
-	final private int nRootNodeRootKeyPos = 6;
+	final private int nRootRefToRootPos;
 
 	// -----------------------------------------------------------
 
@@ -30,10 +30,17 @@ public class GCQuery1PO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeIn
 
 	final private Map<Long, Long> nodeToRoot = new HashMap<>();
 
+	public TreeFlattenerPO(int rootNodeKeyPos, int nRootNodeKeyPos, int nRootRefToRootPos, int nRootRefToNRootPos){
+		this.rootNodeKeyPos = rootNodeKeyPos;
+		this.nRootNodeKeyPos = nRootNodeKeyPos;
+		this.nRootRefToRootPos = nRootRefToRootPos;
+		this.nRootRefToNRootPos = nRootRefToNRootPos;
+	}
+	
+	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO Auto-generated method stub
-
+		sendPunctuation(punctuation);
 	}
 
 	@Override
@@ -66,6 +73,7 @@ public class GCQuery1PO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeIn
 	private void cleanup() {
 		// TODO Auto-generated method stub
 
+		
 	}
 
 	private void processRoot(Tuple<ITimeInterval> object) {
@@ -80,11 +88,11 @@ public class GCQuery1PO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeIn
 		Long nRootKey = object.getAttribute(nRootNodeKeyPos);
 		// two cases
 		// 1) a direct reference to a root node
-		Long rootNodeRef = object.getAttribute(nRootNodeRootKeyPos);
+		Long rootNodeRef = object.getAttribute(nRootRefToRootPos);
 		if (rootNodeRef == null || rootNodeRef < 0) {
 			// 2) a reference to a node
 			// in this case there must already be a reference to the root node
-			Long nRootNodeRef = object.getAttribute(nRootNodeNodeKeyPos);
+			Long nRootNodeRef = object.getAttribute(nRootRefToNRootPos);
 			rootNodeRef = nodeToRoot.get(nRootNodeRef);
 		}
 		nodeToRoot.put(nRootKey, rootNodeRef);

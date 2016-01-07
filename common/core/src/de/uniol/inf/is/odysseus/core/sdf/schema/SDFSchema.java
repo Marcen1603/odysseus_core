@@ -331,6 +331,15 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return super.indexOf(attribute);
 	}
 
+	public int indexOfWithException(SDFAttribute attribute) {
+		int index = super.indexOf(attribute);
+		if (index == -1){
+			throw new IllegalArgumentException("Attribute "+attribute+" not found in "+this);
+		}
+		return index;
+	}
+
+	
 	/**
 	 * @param requiredAttributes
 	 * @param requiredAttributes2
