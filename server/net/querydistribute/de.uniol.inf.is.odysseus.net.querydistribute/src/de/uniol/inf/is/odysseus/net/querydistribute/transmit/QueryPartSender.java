@@ -19,9 +19,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
@@ -41,6 +40,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartTransmissionExcepti
 import de.uniol.inf.is.odysseus.net.querydistribute.activator.QueryDistributionPlugIn;
 import de.uniol.inf.is.odysseus.net.querydistribute.impl.QueryDistributionComponent;
 import de.uniol.inf.is.odysseus.net.querydistribute.logicaloperator.DistributedQueryRepresentationAO;
+import de.uniol.inf.is.odysseus.net.querydistribute.logicaloperator.SharedQueryReceiverAO;
+import de.uniol.inf.is.odysseus.net.querydistribute.logicaloperator.SharedQuerySenderAO;
 import de.uniol.inf.is.odysseus.net.querydistribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.net.querydistribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -126,7 +127,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 		}
 		UUID sharedQueryID = UUID.randomUUID();
 
-		insertAccessAndSenderOperators(allocationMap);
+		insertSenderAndReceiverOperators(allocationMap);
 		distributeToRemotePeers(sharedQueryID, serverExecutor, caller, allocationMap, localNode, config);
 		Collection<ILogicalQueryPart> localQueryParts = determineLocalQueryParts(allocationMap, localNode);
 
@@ -149,7 +150,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 			LOG.error("Exception is ", t);
 			removeDistributedQueryParts(sharedQueryID);
 		}
-		
+
 		LOG.debug("Transmission finished");
 		return sharedQueryID;
 	}
@@ -179,22 +180,18 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 			QueryPartAddFailMessage failMessage = (QueryPartAddFailMessage) message;
 			sendResultMap.put(failMessage.getQueryPartID(), failMessage.getMessage());
 
-		} 
+		}
 	}
 
-	private static void insertAccessAndSenderOperators(final Map<ILogicalQueryPart, IOdysseusNode> allocationMap) {
+	private static void insertSenderAndReceiverOperators(final Map<ILogicalQueryPart, IOdysseusNode> allocationMap) {
 		Set<ILogicalQueryPart> queryParts = allocationMap.keySet();
 
 		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
 
-			@SuppressWarnings("unused")
 			private UUID connectionID;
-			@SuppressWarnings("unused")
 			private ILogicalOperator sourceOp;
 
-			@SuppressWarnings("unused")
 			private ILogicalQueryPart sourceQueryPart;
-			@SuppressWarnings("unused")
 			private ILogicalQueryPart sinkQueryPart;
 
 			@Override
@@ -210,14 +207,26 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 
 			@Override
 			public ILogicalOperator createSourceofSink(ILogicalQueryPart sinkQueryPart, ILogicalOperator sink) {
-				// TODO: create decent receiver-operator using connectionID
-				return new AccessAO();
+				SharedQueryReceiverAO receiverAO = new SharedQueryReceiverAO();
+				Optional<String> optString = LogicalQueryHelper.getBaseTimeunitString(sink.getOutputSchema());
+				if (optString.isPresent()) {
+					receiverAO.setBaseTimeunit(optString.get());
+				}
+				receiverAO.setConnectionID(connectionID.toString());
+				receiverAO.setAttributes(sourceOp.getOutputSchema().getAttributes());
+				receiverAO.setMetadata(MetadataRegistry.getMetadataType(sourceOp.getOutputSchema().getMetaAttributeNames()));
+				receiverAO.setSchemaName(sourceOp.getOutputSchema().getURI());
+				receiverAO.setOdysseusNodeID(allocationMap.get(sourceQueryPart).getID().toString());
+
+				return receiverAO;
 			}
 
 			@Override
 			public ILogicalOperator createSinkOfSource(ILogicalQueryPart sourceQueryPart, ILogicalOperator source) {
-				// TODO: create decent sender-operator using connectionID
-				return new SenderAO();
+				SharedQuerySenderAO senderAO = new SharedQuerySenderAO();
+				senderAO.setConnectionID(connectionID.toString());
+				senderAO.setOdysseusNodeID(allocationMap.get(sinkQueryPart).getID().toString());
+				return senderAO;
 			}
 
 			@Override
@@ -231,7 +240,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 	private void distributeToRemotePeers(UUID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, IOdysseusNode> allocationMap, IOdysseusNode localNode, QueryBuildConfiguration parameters) throws QueryPartTransmissionException {
 		sendDestinationMap.clear();
 		sendResultMap.clear();
-		
+
 		for (ILogicalQueryPart part : allocationMap.keySet()) {
 			IOdysseusNode allocatedNode = allocationMap.get(part);
 
@@ -242,12 +251,12 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 
 				try {
 					nodeCommunicator.send(allocatedNode, msg);
-				
+
 				} catch (OdysseusNodeCommunicationException e) {
 					removeDistributedQueryParts(sharedQueryID);
 					throw new QueryPartTransmissionException(Lists.newArrayList(allocatedNode), "Could not send add query part message to " + allocatedNode, e);
 				}
-				
+
 				sendDestinationMap.put(msg.getQueryPartID(), allocatedNode);
 
 				LOG.debug("Sent query part {} to node {} (queryPartID = {})", new Object[] { part, allocatedNode, msg.getQueryPartID() });
@@ -280,7 +289,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 					LOG.error("\t{}", missingNode);
 				}
 			}
-			
+
 			removeDistributedQueryParts(sharedQueryID);
 
 			throw new QueryPartTransmissionException(missingNodes);
@@ -304,7 +313,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 					LOG.error("\t{}: {}", faultyNodes.get(index), faultMessages.get(index));
 				}
 			}
-			
+
 			removeDistributedQueryParts(sharedQueryID);
 
 			throw new QueryPartTransmissionException(faultyNodes);
@@ -315,17 +324,17 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 
 	private void waitForNodeAnswers() {
 		long waitTime = 0;
-		
+
 		// if they are equal, every node we contacted has answered
-		while( sendResultMap.size() != sendDestinationMap.size() ) {
+		while (sendResultMap.size() != sendDestinationMap.size()) {
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {
 			}
-			
+
 			// we do not want to wait too long
 			waitTime += 300;
-			if( waitTime > 15 * 1000 ) {
+			if (waitTime > 15 * 1000) {
 				break;
 			}
 		}
@@ -343,7 +352,7 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 				LOG.debug("Send abort to node {}", destination);
 				try {
 					nodeCommunicator.send(destination, new AbortQueryPartAddMessage(sharedQueryID));
-				} catch( OdysseusNodeCommunicationException e ) {
+				} catch (OdysseusNodeCommunicationException e) {
 					LOG.error("Could not send abort query part add message to node {}", destination, e);
 				}
 			}
