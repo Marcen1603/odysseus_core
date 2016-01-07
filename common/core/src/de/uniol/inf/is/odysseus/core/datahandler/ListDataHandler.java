@@ -45,7 +45,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	public ListDataHandler(SDFSchema subType){
 
 		// hmmm ... this should be more generic !!
-		if (subType.getAttribute(0).getDatatype().isTuple()){
+		if (subType.getAttribute(0).getDatatype().isTuple() || subType.getAttribute(0).getDatatype().getSubType().isTuple()){
 			this.handler = DataHandlerRegistry.getDataHandler("TUPLE", subType.getAttribute(0).getDatatype().getSchema());
 		}else{
 			this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getAttributeName(), subType);
