@@ -228,7 +228,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		if (debug) {
 			System.err.println(this + " done");
 		}
-		transferArea.done(0);
+		transferArea.done(port);
 	}
 
 	/**
@@ -253,6 +253,11 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			logger.debug("closing " + this.getName());
 			if (drainAtClose) {
 				drainGroups(getGroupProcessor(), groups);
+				if(transferArea.size() > 0) {
+					for(int i = getSubscribedToSource().size() -1; i >= 0; --i) {
+						transferArea.done(i);
+					}
+				}
 			}
 			logger.debug("closing " + this.getName() + " done");
 		}
