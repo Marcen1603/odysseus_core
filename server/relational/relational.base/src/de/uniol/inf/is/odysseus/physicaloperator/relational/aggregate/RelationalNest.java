@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractListAggregation;
@@ -84,7 +85,8 @@ public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMet
 			SDFDatatype t = inputTypes.get(0).getDatatype();
 			return new SDFDatatype("LIST_"+t.getURI(), KindOfDatatype.LIST, t);
 		}else{
-			return new SDFDatatype("LIST_TUPLE", KindOfDatatype.LIST, inputTypes);
+			// FIXME: Metadata schema of subtype is missing.
+			return SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST, SDFDatatype.TUPLE, SDFSchemaFactory.createNewSchema("", Tuple.class, inputTypes));
 		}
 	}
 	
