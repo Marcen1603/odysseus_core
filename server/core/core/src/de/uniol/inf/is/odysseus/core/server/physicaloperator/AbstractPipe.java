@@ -131,6 +131,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
 	private boolean metadataCalculated = false;
 	
+	/**
+	 * In case of circular dependencies, done should propagate only once (to prevent endless loops).
+	 */
+	private boolean didNotPropagateDoneBefore = true;
+	
 	// ------------------------------------------------------------------------
 
 	public AbstractPipe() {
@@ -316,7 +321,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	final public void done(int port) {
 		process_done(port);
 		this.delegateSink.done(port);
-		if (isDone()) {
+		if (isDone() && didNotPropagateDoneBefore) {
+			didNotPropagateDoneBefore = false;
 			propagateDone();
 		}
 	}
