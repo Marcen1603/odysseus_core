@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
 public interface IInitializer<R> {
-	IPartialAggregate<R> init(R in);
-	IPartialAggregate<R> init(IPartialAggregate<R> in);
+	IPartialAggregate<R> doInit(R in);
+	IPartialAggregate<R> doInit(IPartialAggregate<R> in);
 	SDFDatatype getPartialAggregateType();
 }

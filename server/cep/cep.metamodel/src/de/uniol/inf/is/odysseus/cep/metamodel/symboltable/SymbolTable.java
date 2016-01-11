@@ -96,7 +96,7 @@ public class SymbolTable<T> {
 	public Object getValue(CepVariable name) {
 		IPartialAggregate<T> v = entries.get(name.getVariableName());
 		if (v  != null){
-			return name.getOperation().evaluate(v);
+			return name.getOperation().doEvaluate(v);
 		}
         return null;
 	}
@@ -104,10 +104,10 @@ public class SymbolTable<T> {
 	public void updateValue(CepVariable variable, T value) {
 		IPartialAggregate<T> e = entries.get(variable.getVariableName());
 		if (e==null){
-			e = variable.getOperation().init(value);
+			e = variable.getOperation().doInit(value);
 		}else{
 			IPartialAggregate<T> e_new = null;
-			e_new = variable.getOperation().merge(e, value, true);
+			e_new = variable.getOperation().doMerge(e, value, true);
 			e = e_new;
 		}
 		entries.put(variable.getVariableName(), e);

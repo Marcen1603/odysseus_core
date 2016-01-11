@@ -155,7 +155,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 					if (initFktn == null) {
 						throw new RuntimeException("Aggregation runtime error ");
 					}
-					IPartialAggregate<R> pa = initFktn.init(element);
+					IPartialAggregate<R> pa = initFktn.doInit(element);
 					ret.put(attrList, e.getKey(), pa);
 				}
 			}
@@ -173,7 +173,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 		// Jedes Element in toMerge mit element mergen
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toMerge.entrySet()) {
 			IMerger<R> mf = getMergeFunction(e.getKey());
-			IPartialAggregate<R> pa = mf.merge(e.getValue(), element, createNew);
+			IPartialAggregate<R> pa = mf.doMerge(e.getValue(), element, createNew);
 			ret.put(e.getKey(), pa);
 		}
 
@@ -186,7 +186,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 		PairMap<SDFSchema, AggregateFunction, W, M> ret = new PairMap<SDFSchema, AggregateFunction, W, M>();
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toEval.entrySet()) {
 			IEvaluator<R, W> eval = getEvalFunction(e.getKey());
-			W value = eval.evaluate(e.getValue());
+			W value = eval.doEvaluate(e.getValue());
 			ret.put(e.getKey(), value);
 			if (clearPartialAggregate) {
 				e.getValue().clear();

@@ -17,5 +17,5 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunc
 
 
 public interface IEvaluator<R, W> {
-	public W evaluate(IPartialAggregate<R> p);
+	public W doEvaluate(IPartialAggregate<R> p);
 }

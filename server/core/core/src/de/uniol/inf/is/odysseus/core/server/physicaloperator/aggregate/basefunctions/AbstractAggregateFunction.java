@@ -23,13 +23,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 abstract public class AbstractAggregateFunction<R, W> implements
 		IAggregateFunction<R, W> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1420819068822674498L;
 	final private String name;
 	final private boolean partialAggregateInput;
-
+		
 	@Override
 	public String getName() {
 		return name;
@@ -44,38 +41,75 @@ abstract public class AbstractAggregateFunction<R, W> implements
 	public boolean isPartialAggregateInput() {
 		return partialAggregateInput;
 	}
+	
+	// Remark MG (2016/01/11): New delegate methods. Normally, this should be init here and doInit in 
+	// inheritated methods, but this would potentially need to must refactoring
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-	 * .IInitializer#init(de.uniol.inf.is.odysseus.core.server.physicaloperator.
-	 * aggregate.basefunctions.IPartialAggregate)
-	 */
+	// -----------------------------------------------------------------
+	// Init methods
+	// -----------------------------------------------------------------
+	
 	@Override
-	public IPartialAggregate<R> init(IPartialAggregate<R> in) {
-		throw new RuntimeException(
-				"Sorry. Cannot process partial aggregates as input");
+	final public IPartialAggregate<R> doInit(R in) {
+		IPartialAggregate<R> pa = init(in);
+		pa.setDirty(true);
+		return pa;
+	}
+	
+	@Override
+	final public  IPartialAggregate<R> doInit(IPartialAggregate<R> in) {
+		IPartialAggregate<R> pa = init(in);
+		pa.setDirty(true);
+		return init(in);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-	 * .
-	 * IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-	 * .basefunctions.IPartialAggregate,
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator
-	 * .aggregate.basefunctions.IPartialAggregate, boolean)
-	 */
+	abstract protected IPartialAggregate<R> init(R in);
+	
+	protected IPartialAggregate<R> init(IPartialAggregate<R> in){
+		throw new RuntimeException(
+				"Sorry. Cannot process partial aggregates as input");		
+	}
+
+
+	// -------------------------------------------------------------------
+	// merge methods
+	// -------------------------------------------------------------------
+	
 	@Override
-	public IPartialAggregate<R> merge(IPartialAggregate<R> p,
+	final public IPartialAggregate<R> doMerge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
+		IPartialAggregate<R> pa = merge(p, toMerge, createNew);
+		pa.setDirty(true);
+		return pa;
+	}
+	
+	@Override
+	final public IPartialAggregate<R> doMerge(IPartialAggregate<R> p, IPartialAggregate<R> toMerge, boolean createNew) {
+		IPartialAggregate<R> pa = merge(p, toMerge, createNew);
+		pa.setDirty(true);
+		return pa;
+	}
+	
+	abstract protected IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew);
+	
+
+	protected IPartialAggregate<R> merge(IPartialAggregate<R> p,
 			IPartialAggregate<R> toMerge, boolean createNew) {
 		throw new RuntimeException(
 				"Sorry. Cannot process partial aggregates as input");
 	}
+	
+	// -------------------------------------------------------------------
+	// eval method
+	// -------------------------------------------------------------------
+	
+	@Override
+	final public W doEvaluate(IPartialAggregate<R> p) {
+		return evaluate(p);
+	}
+	
+	abstract protected W evaluate(IPartialAggregate<R> p);
+	
+	// ------------------------------------------------------------------------
 
 	@Override
 	public SDFDatatype getPartialAggregateType() {

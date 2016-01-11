@@ -26,6 +26,10 @@ public interface IPartialAggregate<T> extends IClone, Serializable{
 	 * Method will be called after removing a partial aggregate from sweep area
 	 */
 	void clear();
+	
+	void setDirty(boolean dirty);
+	boolean isDirty();
+	
 	@Override
 	IPartialAggregate<T> clone();
 	
