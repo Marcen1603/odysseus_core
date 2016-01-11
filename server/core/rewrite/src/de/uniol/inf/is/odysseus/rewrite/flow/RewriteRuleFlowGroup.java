@@ -21,6 +21,7 @@ public enum RewriteRuleFlowGroup implements IRuleFlowGroup {
 	PREPARE,
 	DELETE,
 	SPLIT,
+	PREGROUP,
 	SWITCH,
 	GROUP,
 	CLEANUP		

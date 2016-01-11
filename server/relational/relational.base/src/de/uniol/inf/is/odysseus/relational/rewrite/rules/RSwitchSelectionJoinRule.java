@@ -57,7 +57,7 @@ public class RSwitchSelectionJoinRule extends
 		return sel != null && canSwitch(sel, join);
 	}
 
-	private static boolean canSwitch(SelectAO sel, JoinAO join) {
+	public static boolean canSwitch(SelectAO sel, JoinAO join) {
 		return RelationalRestructHelper.subsetPredicate(sel.getPredicate(),
 				join.getInputSchema(0))
 				|| RelationalRestructHelper.subsetPredicate(sel.getPredicate(),

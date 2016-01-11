@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionJoinRule
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.ROptimizeJoinPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.ROptimizeSelectionPredicate;
+import de.uniol.inf.is.odysseus.relational.rewrite.rules.RPregroupJoinSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RPrepareJoinCNF;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RPrepareSelectionCNF;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSplitSelectionRule;
@@ -64,6 +65,7 @@ public class RuleProvider implements IRewriteRuleProvider {
         rules.add(new ROptimizeSelectionPredicate());
         rules.add(new ROptimizeJoinPredicate());
         rules.add(new RDeleteRenameAORule());
+        rules.add(new RPregroupJoinSelectionRule());
         return rules;
     }
 
