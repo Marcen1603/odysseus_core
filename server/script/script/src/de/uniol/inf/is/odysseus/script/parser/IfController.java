@@ -316,7 +316,7 @@ public class IfController {
 
 	private static Optional<String> determinePrint(String textLine) {
 		String strToFind = PARAMETER_KEY + PRINT_KEY + " ";
-		int pos = textLine.indexOf(strToFind);
+		int pos = textLine.toUpperCase().indexOf(strToFind.toUpperCase());
 		if (pos != -1) {
 			return Optional.of(textLine.substring(pos + strToFind.length()));
 		}
@@ -325,7 +325,7 @@ public class IfController {
 
 	private static Optional<String> determineIf(String textLine) {
 		String strToFind = PARAMETER_KEY + IF_KEY + " ";
-		int pos = textLine.indexOf(strToFind);
+		int pos = textLine.toUpperCase().indexOf(strToFind.toUpperCase());
 		if (pos != -1) {
 			return Optional.of(textLine.substring(pos + strToFind.length()));
 		}
@@ -333,11 +333,11 @@ public class IfController {
 	}
 
 	private static boolean hasPreParserKeyword(String keyword, String textLine) {
-		return textLine.indexOf(keyword) != -1;
+		return textLine.toUpperCase().indexOf(keyword.toUpperCase()) != -1;
 	}
 
 	private static Optional<String> determineReplacement(String keyword, String textLine) throws OdysseusScriptException {
-		int definePos = textLine.indexOf(keyword);
+		int definePos = textLine.toUpperCase().indexOf(keyword.toUpperCase());
 		if (definePos != -1) {
 			String[] parts = textLine.split(" |\t", 3);
 			if (parts.length < 2) {
