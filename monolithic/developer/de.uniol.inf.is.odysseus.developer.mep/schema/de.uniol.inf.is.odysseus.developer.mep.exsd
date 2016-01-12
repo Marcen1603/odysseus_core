@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="cc.kuka.odysseus.tooling.mep" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.uniol.inf.is.odysseus.developer.mep" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="cc.kuka.odysseus.tooling.mep" id="cc.kuka.odysseus.tooling.mep" name="Time and Space Complexity Estimator"/>
+         <meta.schema plugin="de.uniol.inf.is.odysseus.developer.mep" id="de.uniol.inf.is.odysseus.developer.mep" name="MEP Developer Tools"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]

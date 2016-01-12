@@ -21,7 +21,7 @@
          point="org.eclipse.ui.menus">
             <menuContribution
             allPopups="false"
-            locationURI="menu:help">
+            locationURI="menu:de.uniol.inf.is.odysseus.developer.menu.developer">
          <command
                commandId="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GeneratePDFCheatSheetCommand"
                label="Generate Cheat Sheet (PDF)"

@@ -1,20 +1,19 @@
 /*******************************************************************************
- * Copyright (C) 2015  Christian Kuka <christian@kuka.cc>
+ * Copyright 2016 The Odysseus Team
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
-package cc.kuka.odysseus.tooling.mep.command;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package de.uniol.inf.is.odysseus.developer.mep.command;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -88,7 +87,6 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 					try {
 						buildMEPFunctions(root, filter, monitor); // $NON-NLS-1$
 					} catch (final Throwable e) {
-						e.printStackTrace();
 						EstimateTimeAndSpaceComplexityCommand.LOG.error(e.getMessage(), e);
 					}
 					syncWithUi();
@@ -210,13 +208,14 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 
 	private static int normalize(double value, double min, double max) {
 		double p = (value - min) / (max - min);
-		if (p <= 0.2) {
-			return (int) (p * 10);
-		} else if (p <= 0.5) {
-			return (int) (Math.log(p * Math.exp(5.0) + 1.0));
-		} else {
-			return (int) (Math.log(p * Math.exp(9.0) + 1.0));
+		double b = 1.0;
+		for (int i = 9; i >= 0; i--) {
+			b = 2.0 / 3.0 * b;
+			if (p >= b) {
+				return i;
+			}
 		}
+		return 0;
 	}
 
 	private static double[] generateFunctionResults(final IFunction<?> function, final Object[][] values) {
@@ -246,16 +245,19 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 					public Long call() throws Exception {
 						int runs = 1000;
 						long time = System.nanoTime();
-						try {
-							for (int i = 0; i < runs; i++) {
+						Throwable exception = null;
+						for (int i = 0; i < runs; i++) {
+							try {
 								@SuppressWarnings("unused")
 								Object result = function.getValue();
+							} catch (final Throwable e) {
+								exception = e;
 							}
-						} catch (final Throwable e) {
+						}
+						if (exception != null) {
 							EstimateTimeAndSpaceComplexityCommand.LOG.debug("Function {} with input {}", //$NON-NLS-1$
 									function.getSymbol(), Arrays.toString(value));
-							EstimateTimeAndSpaceComplexityCommand.LOG.error(e.getMessage(), e);
-							return null;
+							EstimateTimeAndSpaceComplexityCommand.LOG.error(exception.getMessage(), exception);
 						}
 						return Long.valueOf((System.nanoTime() - time) / runs);
 					}
@@ -343,7 +345,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 			this.txtPath = new Text(container, SWT.BORDER);
 			this.txtPath.setLayoutData(dataPath);
 			final Path root = Paths.get(System.getProperty("user.home")); //$NON-NLS-1$
-			this.txtPath.setText(root.resolve("mep_functions.csv").toString()); //$NON-NLS-1$
+			this.txtPath.setText(root.resolve("report.csv").toString()); //$NON-NLS-1$
 
 			Label lbtFilter = new Label(container, SWT.NONE);
 			lbtFilter.setText("Filter:"); //$NON-NLS-1$
@@ -382,4 +384,5 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 			return this.path;
 		}
 	}
+
 }

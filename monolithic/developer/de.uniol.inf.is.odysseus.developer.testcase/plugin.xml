@@ -39,4 +39,24 @@
          <enablement></enablement>
       </commonWizard>
    </extension>
+                 <extension
+         point="org.eclipse.ui.commands">
+              <command
+            defaultHandler="de.uniol.inf.is.odysseus.developer.testcase.command.TestWizardCommand"
+            id="de.uniol.inf.is.odysseus.developer.testcase.command.TestWizardCommand"
+            name="Test Case Wizard">
+          </command>     
+       </extension>
+              <extension
+         point="org.eclipse.ui.menus">
+            <menuContribution
+            allPopups="false"
+            locationURI="menu:de.uniol.inf.is.odysseus.developer.menu.developer">
+         <command
+               commandId="de.uniol.inf.is.odysseus.developer.testcase.command.TestWizardCommand"
+               label="Create Test Case"
+               style="push">
+         </command>
+      </menuContribution>
+      </extension>
 </plugin>
