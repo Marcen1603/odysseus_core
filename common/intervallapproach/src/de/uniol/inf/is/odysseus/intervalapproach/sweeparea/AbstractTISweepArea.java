@@ -208,7 +208,12 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	}
 	
 	@Override
-	public Iterator<T> extractElementsBefore(PointInTime validity) {
+	public Iterator<T> extractElementsBefore(PointInTime time) {
+		return extractElementsBeforeAsList(time).iterator();
+	}
+	
+	@Override
+	public List<T> extractElementsBeforeAsList(PointInTime time) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
@@ -216,7 +221,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 				T s_hat = li.next();
 				// Alle Elemente entfernen, die nicht mehr verschnitten werden
 				// k�nnen (also davor liegen)
-				if (TimeInterval.totallyBefore(s_hat.getMetadata(), validity)) {
+				if (TimeInterval.totallyBefore(s_hat.getMetadata(), time)) {
 					retval.add(s_hat);
 					li.remove();
 				} else {
@@ -228,7 +233,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 				}
 			}
 		}
-		return retval.iterator();
+		return retval;
 	}
 	
 	@Override
@@ -310,31 +315,25 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	
 	@Override
 	public Iterator<T> queryOverlaps(ITimeInterval t) {
+		return queryOverlapsAsList(t).iterator();
+	}
+	
+	@Override
+	public List<T> queryContains(PointInTime point) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			for (T s : getElements()) {
-				if (TimeInterval.overlaps(s.getMetadata(), t)) {
+				if (((TimeInterval) s.getMetadata()).includes(point)) {
 					retval.add(s);
 				}
 			}
 		}
-		return retval.iterator();
+		return retval;
 	}
 	
 	@Override
 	public Iterator<T> extractOverlaps(ITimeInterval t) {
-		ArrayList<T> retval = new ArrayList<T>();
-		synchronized (getElements()) {
-			Iterator<T> iter = getElements().iterator();
-			while (iter.hasNext()) {
-				T elem = iter.next();
-				if (TimeInterval.overlaps(elem.getMetadata(), t)) {
-					retval.add(elem);
-					iter.remove();
-				}
-			}
-		}
-		return retval.iterator();
+		return extractOverlapsAsList(t).iterator();
 	}
 	
 	@Override
@@ -583,6 +582,11 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	
 	@Override
 	public Iterator<T> extractAllElements() {
+		return extractAllElementsAsList().iterator();
+	}
+	
+	@Override
+	public List<T> extractAllElementsAsList() {
 		LinkedList<T> result = new LinkedList<T>();
 		synchronized (getElements()) {
 			Iterator<T> it = this.getElements().iterator();
@@ -592,7 +596,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 				result.add(next);
 			}
 		}
-		return result.iterator();
+		return result;
 	}
 	
 	abstract public ITimeIntervalSweepArea<T> clone();

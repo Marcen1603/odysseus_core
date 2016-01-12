@@ -104,7 +104,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 			// only drain the buffer if it is set in configuration
 			if ((tipoIsDone && tipo.isDrainAtDone())
 					|| (tipoIsClosed && tipo.isDrainAtClose())) {
-				tipo.drainGroups(g, groupsToProcess);
+				tipo.drainGroups(g, groupsToProcess, threadNumber);
 			}
 		}
 	}

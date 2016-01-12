@@ -29,23 +29,20 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO2;
 import de.uniol.inf.is.odysseus.server.intervalapproach.threaded.ThreadedAggregateTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
-public class TAggregationTIPORule extends
-		AbstractIntervalTransformationRule<AggregateAO> {
+public class TAggregationTIPORule extends AbstractIntervalTransformationRule<AggregateAO> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void execute(AggregateAO aggregateAO,
-			TransformationConfiguration transformConfig) throws RuleException {
-		List<String> metadataSet = aggregateAO.getInputSchema()
-				.getMetaAttributeNames();
+	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) throws RuleException {
+		List<String> metadataSet = aggregateAO.getInputSchema().getMetaAttributeNames();
 		// Attention: Time meta data is set in aggregation
 		metadataSet.remove(ITimeInterval.class.getName());
 		@SuppressWarnings("rawtypes")
-		IMetadataMergeFunction mf = MetadataRegistry
-				.getMergeFunction(metadataSet);
+		IMetadataMergeFunction mf = MetadataRegistry.getMergeFunction(metadataSet);
 
 		AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = null;
 
@@ -62,12 +59,10 @@ public class TAggregationTIPORule extends
 			degree = aggregateAO.getNumberOfThreads();
 			maxBuffersize = aggregateAO.getMaxBufferSize();
 			useRoundRobinAllocation = aggregateAO.isUseRoundRobinAllocation();
-		} else if (transformConfig.getOption(ParallelIntraOperatorSetting.class
-				.getName()) != null) {
+		} else if (transformConfig.getOption(ParallelIntraOperatorSetting.class.getName()) != null) {
 			// if configuration is done via odysseus script
 			ParallelIntraOperatorSettingValue value = ((ParallelIntraOperatorSetting) transformConfig
-					.getOption(ParallelIntraOperatorSetting.class.getName()))
-					.getValue();
+					.getOption(ParallelIntraOperatorSetting.class.getName())).getValue();
 			if (value != null) {
 				if (!value.hasIndividualSettings()) {
 					// if configuration is done for every operator use global
@@ -83,8 +78,7 @@ public class TAggregationTIPORule extends
 						ParallelIntraOperatorSettingValueElement individualSettings = value
 								.getIndividualSettings(operatorId);
 						degree = individualSettings.getIndividualDegree();
-						maxBuffersize = individualSettings
-								.getIndividualBuffersize();
+						maxBuffersize = individualSettings.getIndividualBuffersize();
 						useThreadedOperator = true;
 					}
 				}
@@ -95,25 +89,26 @@ public class TAggregationTIPORule extends
 		// and buffersize are valid
 		if (useThreadedOperator && degree > 1 && maxBuffersize > 1) {
 			po = new ThreadedAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
-					aggregateAO.getInputSchema(),
-					aggregateAO.getOutputSchemaIntern(0),
-					aggregateAO.getGroupingAttributes(),
-					aggregateAO.getAggregations(),
-					aggregateAO.isFastGrouping(), mf, degree, maxBuffersize,
-					useRoundRobinAllocation);
+					aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0),
+					aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations(), aggregateAO.isFastGrouping(),
+					mf, degree, maxBuffersize, useRoundRobinAllocation);
 		} else {
 			// otherwise create normal aggregate (non threaded)
-			po = new AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
-					aggregateAO.getInputSchema(),
-					aggregateAO.getOutputSchemaIntern(0),
-					aggregateAO.getGroupingAttributes(),
-					aggregateAO.getAggregations(),
-					aggregateAO.isFastGrouping(), mf);
+			if (aggregateAO.isLatencyOptimized()) {
+				po = new AggregateTIPO2<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
+						aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0),
+						aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations(),
+						aggregateAO.isFastGrouping(), mf);
+			} else {
+				po = new AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
+						aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0),
+						aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations(),
+						aggregateAO.isFastGrouping(), mf);
+			}
 		}
 		if (po != null) {
 			po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
-			po.setAllowElementsWithEmptyValidTime(aggregateAO.isAllowElementsWithEmptyValidTime());
-			
+
 			po.setOutputPA(aggregateAO.isOutputPA());
 			po.setDrainAtDone(aggregateAO.isDrainAtDone());
 			po.setDrainAtClose(aggregateAO.isDrainAtClose());

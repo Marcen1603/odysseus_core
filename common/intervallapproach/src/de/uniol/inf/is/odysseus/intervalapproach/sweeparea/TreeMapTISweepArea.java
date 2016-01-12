@@ -272,14 +272,19 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * @see de.uniol.inf.is.odysseus.sweeparea.ISweepArea#extractAllElements()
 	 */
 	@Override
-	public Iterator<T> extractAllElements() {
+	public List<T> extractAllElementsAsList() {
 		LinkedList<T> result;
 		synchronized (elements) {
 			result = new LinkedList<T>(elements.values());
 			elements.clear();
 			elementsByEndTs.clear();
 		}
-		return result.iterator();
+		return result;
+	}
+	
+	@Override
+	public Iterator<T> extractAllElements() {
+		return extractAllElementsAsList().iterator();
 	}
 
 	/* (non-Javadoc)
@@ -318,7 +323,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * @see de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#extractElementsBefore(de.uniol.inf.is.odysseus.core.metadata.PointInTime)
 	 */
 	@Override
-	public Iterator<T> extractElementsBefore(PointInTime time) {
+	public List<T> extractElementsBeforeAsList(PointInTime time) {
 		List<T> result = new LinkedList<>();
 		synchronized (elements) {
 			NavigableSet<Long> keys = elementsByEndTs.keySet().headSet(time.getMainPoint(), true);
@@ -327,7 +332,12 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 			}
 		}
 		removeAll(result);
-		return result.iterator();
+		return result;
+	}
+	
+	@Override
+	public Iterator<T> extractElementsBefore(PointInTime time) {
+		return extractAllElementsAsList().iterator();
 	}
 
 	/* (non-Javadoc)
@@ -433,6 +443,12 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public Iterator<T> queryOverlaps(ITimeInterval interval) {
 		return overlaps(interval, false).iterator();
+	}
+	
+	@Override
+	public List<T> queryContains(PointInTime point) {
+		// TODO: IMPLEMENT ME!
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)

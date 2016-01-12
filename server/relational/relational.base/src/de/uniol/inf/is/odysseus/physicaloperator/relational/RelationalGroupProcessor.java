@@ -182,6 +182,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, Tuple<T>> e : r.entrySet()) {
 			int pos = getOutputPos(e.getKey());
 			returnTuple.setAttribute(pos, e.getValue().getAttribute(0));
+
 		}
 
 		// Jetzt die Gruppierungsattribute

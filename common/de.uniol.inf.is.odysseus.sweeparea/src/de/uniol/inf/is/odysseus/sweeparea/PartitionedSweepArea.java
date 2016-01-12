@@ -401,4 +401,10 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public List<T> extractAllElementsAsList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

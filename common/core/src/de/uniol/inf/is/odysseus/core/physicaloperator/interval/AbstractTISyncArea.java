@@ -267,12 +267,13 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 					minTs.put(inPort, heartbeat);
 				}
 				sendData();
-			} else {
-				if (!isAllDone()) {
-					logger.warn("Out of order element read " + heartbeat + " from port " + inPort
-							+ " before last send element " + watermark + " ! Ignoring" + " - (" + this.operator +" "+this.operator.getName() + ")");
-				}
-			}
+			} 
+//			else {
+//				if (!isAllDone()) {
+//					logger.warn("Out of order element read " + heartbeat + " from port " + inPort
+//							+ " before last send element " + watermark + " ! Ignoring" + " - (" + this.operator +" "+this.operator.getName() + ")");
+//				}
+//			}
 		}
 	}
 

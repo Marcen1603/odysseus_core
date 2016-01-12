@@ -28,6 +28,7 @@ public interface ITimeIntervalSweepArea<T> extends ISweepArea<T>{
 	 * @param time a given time
 	 */
 	void purgeElementsBefore(PointInTime time);
+
 	/**
 	 * This method returns and removes all elements from the sweep area that
 	 * have a time interval that lies totally before the passed interval.
@@ -40,6 +41,19 @@ public interface ITimeIntervalSweepArea<T> extends ISweepArea<T>{
 	 */
 	Iterator<T> extractElementsBefore(PointInTime time);
 
+	/**
+	 * This method returns and removes all elements from the sweep area that
+	 * have a time interval that lies totally before the passed interval.
+	 * 
+	 * @param validity All elements with a time interval that lies totally before
+	 *            this interval will be returned and removed from this
+	 *            sweeparea.
+	 * 
+	 * @return an iterator of all extracted elements
+	 */
+	List<T> extractElementsBeforeAsList(PointInTime time);
+
+	
 	/**
 	 * Delivers the newest element without removing
 	 * 
@@ -90,6 +104,7 @@ public interface ITimeIntervalSweepArea<T> extends ISweepArea<T>{
 	List<T> queryOverlapsAsList(ITimeInterval interval);
 	List<T> extractOverlapsAsList(ITimeInterval t);
 
+	List<T> queryContains(PointInTime point);
 	
 	PointInTime getMaxTs();
 	PointInTime getMinTs();

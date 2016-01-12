@@ -163,6 +163,11 @@ public interface ISweepArea<T> extends Iterable<T>, Serializable {
 	 */
 	Iterator<T> extractAllElements();
 
+	/**
+	 * Remove all elements of this sweep area and deliver a list
+	 * @return
+	 */
+	List<T> extractAllElementsAsList();
 	
 	/**
 	 * Create an identical copy of this area (no deep clone!) Elements are not cloned!

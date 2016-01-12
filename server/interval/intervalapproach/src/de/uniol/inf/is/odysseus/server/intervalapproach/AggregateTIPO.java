@@ -82,12 +82,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	protected long createOutputCounter = 0;
 
 	/**
-	 * If set to true, element with same start and end time stamp can be produced with
-	 * dumpAtValueCount function
-	 */
-	private boolean allowElementsWithEmptyValidTime = false;
-	
-	/**
 	 * The aggregation could output values or partial aggregates.
 	 */
 	protected boolean outputPA = false;
@@ -113,8 +107,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * aggregation
 	 */
 	protected Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
-
-	
 
 	static final Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
@@ -160,10 +152,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		this.dumpAtValueCount = dumpAtValueCount;
 	}
 
-	public void setAllowElementsWithEmptyValidTime(boolean allowElementsWithEmptyValidTime){
-		this.allowElementsWithEmptyValidTime = allowElementsWithEmptyValidTime;
-	}
-	
 	/**
 	 * The aggreation can created concrete values as output, e.g. 20 for an AVG
 	 * aggregation. If the aggregation is splitted partial aggregates can be
@@ -220,7 +208,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		synchronized (groups) {
 			if (drainAtDone) {
 				// Drain all groups
-				drainGroups(getGroupProcessor(), groups);
+				drainGroups(getGroupProcessor(), groups, port);
 			}
 		}
 		// Send information to transfer area that no more elements will be
@@ -235,13 +223,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
 	public void drainGroups(IGroupProcessor<R, W> g,
-			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
+			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups, int inPort) {
 		synchronized (groups) {
 			for (Entry<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
-				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue()
-						.iterator();
-				produceResults(results, entry.getKey(), g);
+				List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue()
+						.extractAllElementsAsList();
+				produceResults(results, entry.getKey(), g, PointInTime.INFINITY, groups, inPort);
 				entry.getValue().clear();
 			}
 		}
@@ -252,9 +240,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		synchronized (groups) {
 			logger.debug("closing " + this.getName());
 			if (drainAtClose) {
-				drainGroups(getGroupProcessor(), groups);
-				if(transferArea.size() > 0) {
-					for(int i = getSubscribedToSource().size() -1; i >= 0; --i) {
+				if (transferArea.size() > 0) {
+					for (int i = getSubscribedToSource().size() - 1; i >= 0; --i) {
+						drainGroups(getGroupProcessor(), groups,i);
 						transferArea.done(i);
 					}
 				}
@@ -354,17 +342,16 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
 						.getValue();
 
-				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue()
-						.extractElementsBefore(timestamp);
+				List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = sa
+						.extractElementsBeforeAsList(timestamp);
 				if (debug) {
 					System.err.println("AREA FOR GROUP " + entry.getKey());
 					System.err.println(entry.getValue().toString());
 				}
-				produceResults(results, entry.getKey(), g);
+				produceResults(results, entry.getKey(), g, timestamp, groupsToProcess, inPort);
 
 				if (createAdditionalOutput) {
-					List<PairMap<SDFSchema, AggregateFunction, W, Q>> addResults = updateSA(entry.getValue(),
-							timestamp, allowElementsWithEmptyValidTime);
+					List<PairMap<SDFSchema, AggregateFunction, W, Q>> addResults = updateSA(sa, timestamp);
 					if (addResults.size() > 0) {
 						produceResults(addResults, entry.getKey(), g);
 					}
@@ -401,10 +388,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	/**
-	 * The output data is build from the result of the current aggregation, the
-	 * values of the grouping attributes in this group and the meta data of the
-	 * partial aggregate This function creates output elements and sends them to
-	 * the transferArea
+	 * The output data is build from *the result* of the current aggregation,
+	 * the values of the grouping attributes in this group and the meta data of
+	 * the partial aggregate This function creates output elements and sends
+	 * them to the transferArea
 	 * 
 	 * @param results
 	 *            The calculated aggregation values
@@ -412,7 +399,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 *            for which group should the output
 	 * @param g
 	 */
-	private void produceResults(List<PairMap<SDFSchema, AggregateFunction, W, Q>> results, Long groupID,
+	protected void produceResults(List<PairMap<SDFSchema, AggregateFunction, W, Q>> results, Long groupID,
 			IGroupProcessor<R, W> g) {
 		for (PairMap<SDFSchema, AggregateFunction, W, Q> e : results) {
 			W out = g.createOutputElement(groupID, e);
@@ -424,20 +411,23 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	/**
-	 * The output data is build from the current partial aggregates, the values
-	 * of the grouping attributes in this group and the meta data of the partial
-	 * aggregate This function creates output elements and sends them to the
-	 * transferArea
+	 * The output data is build *from the current partial aggregates*, the
+	 * values of the grouping attributes in this group and the meta data of the
+	 * partial aggregate This function creates output elements and sends them to
+	 * the transferArea
 	 * 
 	 * @param results
 	 *            : The partial aggregates for the input attributes
 	 * @param groupID
 	 *            : The group for which the result should be created
 	 */
-	private void produceResults(Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
-			Long groupID, IGroupProcessor<R, W> g) {
-		while (results.hasNext()) {
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results.next();
+	protected void produceResults(List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
+			Long groupID, IGroupProcessor<R, W> g, PointInTime trigger,
+			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
+			int inPort) {
+		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> iter = results.iterator();
+		while (iter.hasNext()) {
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = iter.next();
 			W out = null;
 			if (outputPA) {
 				out = g.createOutputElement2(groupID, e);
@@ -670,10 +660,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		final boolean createNew;
 		if (!outputPA && p2.before(t_probe.getStart())) {
 			createNew = false;
-			PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate, false);
-			v.setMetadata((Q) lastPartialAggregate.getMetadata().clone());
-			v.getMetadata().setEnd(p2.getPoint());
-			returnValues.add(v);
+			preCalcEval(p2, lastPartialAggregate, returnValues);
 		} else {
 			createNew = !(p1.getPoint().equals(lastPartialAggregate.getMetadata().getStart())
 					&& p2.getPoint().equals(lastPartialAggregate.getMetadata().getEnd()));
@@ -683,6 +670,16 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				.clone();
 		newMeta.setStartAndEnd(p1.getPoint(), p2.getPoint());
 		saInsert(sa, calcMerge(lastPartialAggregate, elemToAdd, createNew), newMeta);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void preCalcEval(_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2,
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate,
+			List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues) {
+		PairMap<SDFSchema, AggregateFunction, W, Q> v = calcEval(lastPartialAggregate, false);
+		v.setMetadata((Q) lastPartialAggregate.getMetadata().clone());
+		v.getMetadata().setEnd(p2.getPoint());
+		returnValues.add(v);
 	}
 
 	private PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> updateSAStartStart(
@@ -746,7 +743,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	@SuppressWarnings("unchecked")
 	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-			PointInTime splitPoint, boolean allowElementsWithEmptyValidTime) {
+			PointInTime splitPoint) {
 		// System.err.println("BEFORE "+splitPoint);
 		// System.err.println(sa.toString());
 		ITimeInterval t_probe = new TimeInterval(splitPoint, splitPoint.plus(1));
@@ -758,8 +755,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		while (qualifies.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies.next();
 			Q meta = element_agg.getMetadata();
-			if ((!allowElementsWithEmptyValidTime && meta.getStart().before(splitPoint))
-					|| (allowElementsWithEmptyValidTime && meta.getStart().beforeOrEquals(splitPoint))) {
+			if ((meta.getStart().before(splitPoint))) {
 				PairMap<SDFSchema, AggregateFunction, W, Q> e = calcEval(element_agg, false);
 				Q outputMeta = (Q) meta.clone();
 				outputMeta.setEnd(splitPoint);

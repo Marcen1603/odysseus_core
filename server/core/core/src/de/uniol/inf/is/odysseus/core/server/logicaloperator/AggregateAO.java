@@ -57,12 +57,12 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 
 	private List<AggregateItem> aggregationItems;
 	private int dumpAtValueCount = -1;
-	boolean allowElementsWithEmptyValidTime;
 
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
 	private boolean fastGrouping = false;
+	private boolean latencyOptimized = false;
 	
 	private int numberOfThreads = 1;
 	private int maxBufferSize = 10000;
@@ -95,7 +95,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		this.useRoundRobinAllocation = op.useRoundRobinAllocation;
 		this.aggregationItems = op.aggregationItems != null ? Lists
 				.newArrayList(op.aggregationItems) : null;
-		this.allowElementsWithEmptyValidTime = op.allowElementsWithEmptyValidTime;
+		this.latencyOptimized = op.latencyOptimized;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -277,16 +277,17 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		return dumpAtValueCount;
 	}
 
-	@Parameter(type = BooleanParameter.class, optional = true, doc = "If set to true and dumpAtValueCount is used, also elements with same start and end timestamp are produced as additional output")
-	public void setAllowElementsWithEmptyValidTime(boolean allowElementsWithEmptyValidTime){
-		this.allowElementsWithEmptyValidTime = allowElementsWithEmptyValidTime;
-	}
 	
-	public boolean isAllowElementsWithEmptyValidTime() {
-		return allowElementsWithEmptyValidTime;
+	
+	public boolean isLatencyOptimized() {
+		return latencyOptimized;
 	}
 
-	
+	@Parameter(type = BooleanParameter.class, optional = true, doc = "if set to true (default is false) the output elements are not annotated with intervals but only with timestamps")
+	public void setLatencyOptimized(boolean latencyOptimized) {
+		this.latencyOptimized = latencyOptimized;
+	}
+
 	@Parameter(type = BooleanParameter.class, optional = true)
 	public void setOutputPA(boolean outputPA) {
 		this.outputPA = outputPA;

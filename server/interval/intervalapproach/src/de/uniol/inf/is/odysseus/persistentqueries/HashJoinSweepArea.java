@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.persistentqueries;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -264,6 +265,11 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	}
 
 	@Override
+	public List<Tuple<? extends ITimeInterval>> extractElementsBeforeAsList(PointInTime time) {
+		return new ArrayList<Tuple<? extends ITimeInterval>>();
+	}
+	
+	@Override
 	public PointInTime getMaxTs() {
 		// always 0, since we assume same
 		// time when using this sweep area
@@ -317,6 +323,12 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public List<Tuple<? extends ITimeInterval>> extractAllElementsAsList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractElementsStartingBefore(PointInTime time) {
@@ -350,6 +362,12 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> queryOverlaps(ITimeInterval interval) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<Tuple<? extends ITimeInterval>> queryContains(PointInTime point) {
 		// TODO Auto-generated method stub
 		return null;
 	}
