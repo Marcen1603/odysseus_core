@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -54,6 +55,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	
 	private Tuple<M> modelTuple; 
 	private Tuple<M> recommCandTuple;
+	private IPunctuation previousPunctuation = Heartbeat.createNewHeartbeat(0);
 	/**
 	 * The point in time of the interval start of these learning tuples that
 	 * were currently buffered. When a tuple arrives, whose interval start is
@@ -499,13 +501,14 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	public void processPunctuation(final IPunctuation punctuation,
 			final int port) {
 		if(this.modelTuple!=null){
-			this.modelTuple.getMetadata().setStartAndEnd(this.modelTuple.getMetadata().getEnd(), punctuation.getTime());
+			this.modelTuple.getMetadata().setStartAndEnd(this.previousPunctuation.getTime(), punctuation.getTime());
 			transfer(this.modelTuple);
 		}
 		if(this.recommCandTuple!=null){
-			this.recommCandTuple.getMetadata().setStartAndEnd(this.recommCandTuple.getMetadata().getEnd(), punctuation.getTime());
+			this.recommCandTuple.getMetadata().setStartAndEnd(this.previousPunctuation.getTime(), punctuation.getTime());
 			transfer(this.recommCandTuple, 1);
 		}
+		this.previousPunctuation = punctuation;
 	}
 
 	/*
