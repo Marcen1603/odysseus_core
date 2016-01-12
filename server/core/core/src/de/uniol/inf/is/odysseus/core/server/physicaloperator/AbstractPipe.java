@@ -196,6 +196,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	
 	@Override
 	final synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
+		didNotPropagateDoneBefore = true;
 		reconnectSinks();
 		this.delegateSink.open(owner);
 	}
@@ -204,6 +205,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	final synchronized public void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
+		didNotPropagateDoneBefore = true;
 		// First: Call open for the source part. Activate subscribers and call
 		// process_open
 		super.open(caller, sourcePort, sinkPort, callPath, forOwners);
