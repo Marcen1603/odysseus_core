@@ -84,7 +84,11 @@ public class PairMap<K1 extends IClone, K2 extends IClone, V extends IClone, M e
 	public PairMap<K1,K2,V,M> clone() {
 		return new PairMap<K1, K2, V, M>(this, false);
 	}
-	
+
+	public PairMap<K1,K2,V,M> deepClone() {
+		return new PairMap<K1, K2, V, M>(this, true);
+	}
+
     /**
      * {@inheritDoc}
      */

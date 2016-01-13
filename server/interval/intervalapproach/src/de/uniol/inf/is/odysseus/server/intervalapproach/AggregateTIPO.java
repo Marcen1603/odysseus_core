@@ -627,7 +627,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			// ----------- newElement
 			// The partial aggregate must be cloned (because value is already
 			// inside with shorter interval)
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> newPA = partialAggregate.clone();
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> newPA = partialAggregate.deepClone();
+			for(Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e:newPA.entrySet()){
+				e.getValue().setDirty(true);
+			}
 			@SuppressWarnings("unchecked")
 			Q newTI = (Q) partialAggregate.getMetadata().clone();
 			newTI.setStartAndEnd(p1.getPoint(), p2.getPoint());
