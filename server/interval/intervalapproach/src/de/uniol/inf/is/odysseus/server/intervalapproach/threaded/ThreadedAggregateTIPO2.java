@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO2;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -45,8 +45,8 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  * 
  * @author ChrisToenjesDeye
  */
-public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
-		extends AggregateTIPO<Q, R, W> implements IThreadedPO {
+public class ThreadedAggregateTIPO2<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
+		extends AggregateTIPO2<Q, R, W> implements IThreadedPO {
 
 	private int degree;
 	private int maxBufferSize;
@@ -80,7 +80,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	 * @param buffersize
 	 * @param useRoundRobinAllocation
 	 */
-	public ThreadedAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
+	public ThreadedAggregateTIPO2(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
 			boolean fastGrouping, IMetadataMergeFunction<Q> metadataMerge,
@@ -296,6 +296,13 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			IGroupProcessor<R, W> g) {
 		super.createOutput(existingResults, groupID, timestamp, inPort,
 				groupsToProcess, g);
+	}
+
+	@Override
+	public List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
+			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			R elemToAdd, boolean outputPA) {
+		return super.updateSA(sa, elemToAdd, outputPA);
 	}
 
 	public int getDegree() {

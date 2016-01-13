@@ -303,7 +303,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 	}
 
-	protected void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Long groupID,
+	public void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Long groupID,
 			PointInTime timestamp, int inPort,
 			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
 			IGroupProcessor<R, W> g) {
@@ -481,7 +481,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * @return a list of aggregations that cannot be modified anymore, because
 	 *         of the progress of time
 	 */
-	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
+	public List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R elemToAdd,
 			boolean outputPA) {
 		// The list of found elements that cannot be changed anymore

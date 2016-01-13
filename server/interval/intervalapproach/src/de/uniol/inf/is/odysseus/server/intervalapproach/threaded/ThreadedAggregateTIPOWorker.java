@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -43,7 +44,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	// number of this thread, needed for identification and for createOutput
 	private int threadNumber;
 
-	private ThreadedAggregateTIPO<Q, R, W> tipo;
+	private AggregateTIPO<Q, R, W> tipo;
 	// queue for elements, needed for decoupling
 	private ArrayBlockingQueue<Pair<Long, R>> queue;
 	// queue for last elements after done or close is called
@@ -59,7 +60,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	private IGroupProcessor<R, W> g = null;
 
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
-			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
+			AggregateTIPO<Q, R, W> threadedAggregateTIPO,
 			int threadNumber, ArrayBlockingQueue<Pair<Long, R>> queue) {
 		super(threadGroup, "Threaded aggregate worker thread " + threadNumber);
 		super.setDaemon(true);
