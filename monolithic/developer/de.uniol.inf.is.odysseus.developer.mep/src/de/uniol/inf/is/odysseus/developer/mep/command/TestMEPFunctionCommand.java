@@ -141,7 +141,7 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 				try {
 					IDE.openEditorOnFileStore(page, fileStore);
 				} catch (PartInitException e) {
-					e.printStackTrace();
+					LOG.error(e.getMessage(), e);
 				}
 			}
 		});
