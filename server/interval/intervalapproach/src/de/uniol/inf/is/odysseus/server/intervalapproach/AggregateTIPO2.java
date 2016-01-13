@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -41,6 +42,11 @@ public class AggregateTIPO2<Q extends ITimeInterval, R extends IStreamObject<Q>,
 	}
 
 	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
+	@Override
 	protected void produceResults(List<PairMap<SDFSchema, AggregateFunction, W, Q>> results, Long groupID,
 			IGroupProcessor<R, W> g) {
 		// Remark: These are the results from already evaluated events, because
@@ -55,7 +61,8 @@ public class AggregateTIPO2<Q extends ITimeInterval, R extends IStreamObject<Q>,
 			// remove time interval!
 			newMeta.setEnd(PointInTime.INFINITY);
 			out.setMetadata(newMeta);
-			transferArea.transfer(out);
+			//transferArea.transfer(out);
+			transfer(out);
 		}
 
 	}
@@ -97,12 +104,12 @@ public class AggregateTIPO2<Q extends ITimeInterval, R extends IStreamObject<Q>,
 					// remove time interval!
 					newMeta.setEnd(PointInTime.INFINITY);
 					out.setMetadata(newMeta);
-					transferArea.transfer(out);
+					//transferArea.transfer(out);
+					transfer(out);
 				}
 			}
 		}
-		
-		transferArea.newHeartbeat(trigger, inPort);
+		//transferArea.newHeartbeat(trigger, inPort);
 
 	}
 
