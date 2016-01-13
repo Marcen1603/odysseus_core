@@ -614,12 +614,11 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 	@SuppressWarnings("nls")
 	private static String sanitize(final String string) {
 		String result = string;
-
+		result = result.replace("&", "&amp;");
 		result = result.replace("\\", "&bsol;");
 		result = result.replace("{", "&lcub;");
 		result = result.replace("}", "&rcub;");
 		result = result.replace("$", "&dollar;");
-		result = result.replace("&", "&amp;");
 		result = result.replace("#", "&num;");
 		result = result.replace("^", "&caret;");
 		result = result.replace("~", "&tilde;");
