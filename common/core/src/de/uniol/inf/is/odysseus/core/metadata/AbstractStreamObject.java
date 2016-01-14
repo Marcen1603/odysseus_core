@@ -95,7 +95,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 			mergeInternal(right, left, ret);
 		}
 
-		this.timeOrderMarker = left.isTimeOrderMarker() && right.isTimeOrderMarker();
+		this.timeOrderMarker = left.isTimeProgressMarker() && right.isTimeProgressMarker();
 		
 		return ret;
 	}
@@ -118,12 +118,12 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	}
 	
 	@Override
-	public boolean isTimeOrderMarker() {
+	public boolean isTimeProgressMarker() {
 		return timeOrderMarker;
 	}
 	
 	@Override
-	public void setTimeOrderMarker(boolean timeOrderMarker) {
+	public void setTimeProgressMarker(boolean timeOrderMarker) {
 		this.timeOrderMarker = timeOrderMarker;
 	}
 

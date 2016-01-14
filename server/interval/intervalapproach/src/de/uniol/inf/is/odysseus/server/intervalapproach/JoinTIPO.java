@@ -214,7 +214,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		// Avoid removing elements while querying for potential hits
 		synchronized (this) {
 
-			if (inOrder && object.isTimeOrderMarker()) {
+			if (inOrder && object.isTimeProgressMarker()) {
 				areas[otherport].purgeElements(object, order);
 			}
 

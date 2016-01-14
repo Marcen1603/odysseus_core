@@ -322,7 +322,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 							this.outputQueue.poll();
 							lastSendObject = ((W) elem.getE1()).getMetadata().getStart();
 							elementsWritten++;
-							((W)elem.getE1()).setTimeOrderMarker(true);
+							((W)elem.getE1()).setTimeProgressMarker(true);
 							transfer(elem);
 							elem = this.outputQueue.peek();
 						} else {
