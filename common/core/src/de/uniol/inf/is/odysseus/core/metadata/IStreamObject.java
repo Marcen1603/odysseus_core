@@ -63,6 +63,9 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	void setMetadataMap(Map<String, Object> metaMap);
 	Map<String, Object> getMetadataMap();
     
+	boolean isTimeOrderMarker();
+	void setTimeOrderMarker(boolean timeOrderMarker);
+	
     /**
      * 
      */

@@ -13,7 +13,8 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	private Map<String, Object> metadataMap;
 	private T metadata = null;
-
+	private boolean timeOrderMarker = true;
+	
 	public AbstractStreamObject() {
 	}
 
@@ -94,6 +95,8 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 			mergeInternal(right, left, ret);
 		}
 
+		this.timeOrderMarker = left.isTimeOrderMarker() && right.isTimeOrderMarker();
+		
 		return ret;
 	}
 
@@ -112,6 +115,16 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isTimeOrderMarker() {
+		return timeOrderMarker;
+	}
+	
+	@Override
+	public void setTimeOrderMarker(boolean timeOrderMarker) {
+		this.timeOrderMarker = timeOrderMarker;
 	}
 
 	protected IStreamObject<T> process_merge(IStreamObject<T> left, IStreamObject<T> right, Order order) {
