@@ -24,6 +24,7 @@ public class SetTimeProgessMarkerPO<R extends IStreamObject<?>> extends Abstract
 	@Override
 	protected void process_next(R object, int port) {
 		object.setTimeProgressMarker(newValue);
+		transfer(object);
 	}
 
 }
