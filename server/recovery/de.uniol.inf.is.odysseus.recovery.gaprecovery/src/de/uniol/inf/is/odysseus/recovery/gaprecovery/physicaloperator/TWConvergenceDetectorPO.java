@@ -1,16 +1,13 @@
 package de.uniol.inf.is.odysseus.recovery.gaprecovery.physicaloperator;
 
-import java.io.Serializable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.interval_trust.IntervalTrust;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.GapRecoveryExecutor;
-import de.uniol.inf.is.odysseus.recovery.gaprecovery.logicaloperator.ConvergenceDetectorAO;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -21,14 +18,14 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * element is inside a convergence phase, its trust value ({@link Trust}) will
  * be decreased. <br />
  * <br />
- * In a logical plan, a {@link ConvergenceDetectorAO} should be placed directly
- * after {@link TimeWindowAO}s
+ * In a logical plan, a {@link TWConvergenceDetectorAO} should be placed
+ * directly after {@link TimeWindowAO}s.
  * 
  * @author Michael Brand
  *
  */
 @SuppressWarnings("nls")
-public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeIntervalTrust>>
+public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<IntervalTrust>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
@@ -40,15 +37,6 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeInt
 	 * The time stamp of the first element after recovery.
 	 */
 	private PointInTime mTrec = null;
-
-	/**
-	 * Gets the recovery time stamp.
-	 * 
-	 * @return The time stamp of the first element after recovery.
-	 */
-	protected synchronized PointInTime getRecoveryTimeStamp() {
-		return this.mTrec;
-	}
 
 	/**
 	 * Creates a new {@link TWConvergenceDetectorPO} as a copy of an existing
@@ -66,45 +54,17 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeInt
 	 * Creates a new {@link TWConvergenceDetectorPO}.
 	 * 
 	 * @param omega
-	 *            The width of the window (time instants in milliseconds).
+	 *            The width of the window (time instants).
 	 * @param beta
-	 *            The advance of the window (time instants in milliseconds).
+	 *            The advance of the window (time instants).
 	 */
 	public TWConvergenceDetectorPO(long omega, long beta) {
 		super(omega, beta);
 	}
 
 	@Override
-	public IOperatorState getState() {
-		return new IOperatorState() {
-
-			@Override
-			public Serializable getSerializedState() {
-				return getRecoveryTimeStamp();
-			}
-
-			@Override
-			public long estimateSizeInBytes() {
-				return 8l; // PiT is nothing more as a long
-			}
-
-		};
-
-	}
-
-	@Override
-	public void setState(Serializable state) {
-		try {
-			this.mTrec = (PointInTime) state;
-		} catch (Throwable t) {
-			cLog.error("Can not set operator state!", t);
-		}
-
-	}
-
-	@Override
 	protected void process_next(StreamObject object, int port) {
-		if (this.mEndReached) {
+		if (isEndReached()) {
 			// We're done - shortcut
 			transfer(object);
 			return;
@@ -116,17 +76,23 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeInt
 			 * First element after gap recovery, so its time stamp is Trec
 			 */
 			this.mTrec = ts;
+			if (cLog.isDebugEnabled()) {
+				cLog.debug("Start of convergence phase is {}.", ts);
+			}
 		} else if (ts.afterOrEquals(PointInTime.plus(this.mTrec, getWindowWidth()))) {
 			/*
 			 * The time stamp of the element is at least omega time instants
 			 * after Trec. So it can not be part of a convergence phase. Same
 			 * for subsequent elements.
 			 */
-			this.mEndReached = true;
+			setEndReached();
+			if (cLog.isDebugEnabled()) {
+				cLog.debug("End of convergence phase is {}.", ts);
+			}
 		}
 		// Else we are in a convergence phase
 
-		if (!this.mEndReached) {
+		if (!isEndReached()) {
 			/*
 			 * We can not trust that element, e.g., a wrong aggregation due to
 			 * the gap. TODO What, if all operations are repeatable. Results are

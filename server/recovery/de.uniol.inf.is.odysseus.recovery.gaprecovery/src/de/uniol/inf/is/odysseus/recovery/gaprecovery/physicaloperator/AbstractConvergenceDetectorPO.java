@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.recovery.gaprecovery.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.interval_trust.IntervalTrust;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.GapRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.logicaloperator.ConvergenceDetectorAO;
 import de.uniol.inf.is.odysseus.trust.Trust;
@@ -22,23 +22,23 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * @author Michael Brand
  *
  */
-public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeIntervalTrust>>
-		extends AbstractPipe<StreamObject, StreamObject> implements IStatefulPO {
+public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<IntervalTrust>>
+		extends AbstractPipe<StreamObject, StreamObject> {
 
 	/**
-	 * The width of the windows (time instants in milliseconds or elements).
+	 * The width of the windows (time instants or elements).
 	 */
 	private final long mOmega;
 
 	/**
-	 * The advance of the windows (time instants in milliseconds or elements).
+	 * The advance of the windows (time instants or elements).
 	 */
 	private final long mBeta;
 
 	/**
 	 * True, if the end of the convergence phase is reached.
 	 */
-	protected boolean mEndReached = false;
+	private boolean mEndReached = false;
 
 	/**
 	 * Creates a new {@link AbstractConvergenceDetectorPO} as a copy of an
@@ -83,8 +83,7 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	/**
 	 * Gets the window width.
 	 * 
-	 * @return The width of the windows (time instants in milliseconds or
-	 *         elements).
+	 * @return The width of the windows (time instants or elements).
 	 */
 	protected final long getWindowWidth() {
 		return this.mOmega;
@@ -93,11 +92,27 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	/**
 	 * Gets the window advance.
 	 * 
-	 * @return The advance of the windows (time instants in milliseconds or
-	 *         elements).
+	 * @return The advance of the windows (time instants or elements).
 	 */
 	protected final long getWindowAdvance() {
 		return this.mBeta;
 	}
 
+	/**
+	 * Checks, if the end of the convergence phase is reached.
+	 * 
+	 * @return True, if the end of the convergence phase is already reached;
+	 *         false, else.
+	 */
+	protected final boolean isEndReached() {
+		return this.mEndReached;
+	}
+
+	/**
+	 * The end of the convergence phase is reached. {@link #isEndReached()} will
+	 * return true from now on.
+	 */
+	protected final void setEndReached() {
+		this.mEndReached = true;
+	}
 }

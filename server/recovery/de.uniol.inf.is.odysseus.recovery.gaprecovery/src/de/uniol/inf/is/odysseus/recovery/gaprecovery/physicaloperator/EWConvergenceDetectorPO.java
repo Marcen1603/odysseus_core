@@ -1,13 +1,11 @@
 package de.uniol.inf.is.odysseus.recovery.gaprecovery.physicaloperator;
 
-import java.io.Serializable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
+import de.uniol.inf.is.odysseus.interval_trust.IntervalTrust;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.GapRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.logicaloperator.ConvergenceDetectorAO;
 import de.uniol.inf.is.odysseus.trust.Trust;
@@ -27,7 +25,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  *
  */
 @SuppressWarnings("nls")
-public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeIntervalTrust>>
+public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<IntervalTrust>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
@@ -39,15 +37,6 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeInt
 	 * Amount of elements after recovery.
 	 */
 	private int mCounter = 0;
-
-	/**
-	 * Gets the elements counter.
-	 * 
-	 * @return Amount of elements after recovery.
-	 */
-	protected synchronized Integer getElementsCounter() {
-		return new Integer(this.mCounter);
-	}
 
 	/**
 	 * Creates a new {@link EWConvergenceDetectorPO} as a copy of an existing
@@ -74,36 +63,8 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeInt
 	}
 
 	@Override
-	public IOperatorState getState() {
-		return new IOperatorState() {
-
-			@Override
-			public Serializable getSerializedState() {
-				return getElementsCounter();
-			}
-
-			@Override
-			public long estimateSizeInBytes() {
-				return 4l;
-			}
-
-		};
-
-	}
-
-	@Override
-	public void setState(Serializable state) {
-		try {
-			this.mCounter = ((Integer) state).intValue();
-		} catch (Throwable t) {
-			cLog.error("Can not set operator state!", t);
-		}
-
-	}
-
-	@Override
 	protected void process_next(StreamObject object, int port) {
-		if (this.mEndReached) {
+		if (isEndReached()) {
 			// We're done - shortcut
 			transfer(object);
 			return;
@@ -113,14 +74,20 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<ITimeInt
 			 * can not be part of a convergence phase. Same for subsequent
 			 * elements.
 			 */
-			this.mEndReached = true;
+			setEndReached();
+			if (cLog.isDebugEnabled()) {
+				cLog.debug("End of convergence phase is {}.", object.getMetadata().getStart());
+			}
 		} else {
 			/*
-			 * we are in a convergence phase and we can not trust that element,
+			 * We are in a convergence phase and we can not trust that element,
 			 * e.g., a wrong aggregation due to the gap. TODO What, if all
 			 * operations are repeatable. Results are by definition correct.
 			 * Trust would be changed anyway. TODO Change trust always to 0?
 			 */
+			if (cLog.isDebugEnabled() && this.mCounter == 1) {
+				cLog.debug("Start of convergence phase is {}.", object.getMetadata().getStart());
+			}
 			object.getMetadata().setTrust(0);
 		}
 		transfer(object);

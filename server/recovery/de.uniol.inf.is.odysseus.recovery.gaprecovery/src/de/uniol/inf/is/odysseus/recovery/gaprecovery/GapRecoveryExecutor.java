@@ -40,15 +40,13 @@ public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 		return "GapRecovery";
 	}
 
-	/**
-	 * Nothing to do, because recovery of query states (incl. sinks and sources)
-	 * is done globally.
-	 */
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
 		// Insert convergence detectors, if needed
 		// TODO Here, operator classes should be checked, if a convergence phase
 		// can happen. What about query sharing? is there a problem?
+		// TODO what abound convergence detectors, which ARE ALREADY in the
+		// plan? Crash after Crash
 		for (ILogicalQuery query : queries) {
 			// For all time and element windows: insert a convergence detector
 			// after it.
@@ -61,21 +59,23 @@ public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 				public void walk(ILogicalOperator operator) {
 					if (TimeWindowAO.class.isInstance(operator)) {
 						TimeWindowAO tw = (TimeWindowAO) operator;
-						insertConvergenceDetector(tw, tw.getWindowSizeMillis(), tw.getWindowAdvanceMillis());
+						ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(tw.getWindowSize(),
+								tw.getWindowAdvance(), tw.getBaseTimeUnit());
+						insertConvergenceDetector(tw, convergenceDetector);
 					} else if (ElementWindowAO.class.isInstance(operator)) {
 						ElementWindowAO ew = (ElementWindowAO) operator;
-						insertConvergenceDetector(ew, ew.getWindowSizeE().longValue(),
-								ew.getWindowAdvanceE().longValue());
+						ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(
+								ew.getWindowSizeE().longValue(), ew.getWindowAdvanceE().longValue());
+						insertConvergenceDetector(ew, convergenceDetector);
 					}
 				}
 
-				private void insertConvergenceDetector(AbstractWindowAO windowAO, long omega, long beta) {
-					// check meta data
+				private void insertConvergenceDetector(AbstractWindowAO windowAO,
+						ConvergenceDetectorAO convergenceDetector) {
 					SDFSchema schema = windowAO.getInputSchema();
-					if (!schema.hasMetatype(ITimeInterval.class) || schema.hasMetatype(ITrust.class)) {
+					if (!schema.hasMetatype(ITimeInterval.class) || !schema.hasMetatype(ITrust.class)) {
 						return;
 					}
-					ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(omega, beta);
 					Collection<LogicalSubscription> subs = Lists.newArrayList(windowAO.getSubscriptions());
 					windowAO.unsubscribeFromAllSinks();
 					convergenceDetector.subscribeToSource(windowAO, 0, 0, schema);
@@ -87,7 +87,7 @@ public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 
 			});
 		}
-		
+
 		return queries;
 	}
 

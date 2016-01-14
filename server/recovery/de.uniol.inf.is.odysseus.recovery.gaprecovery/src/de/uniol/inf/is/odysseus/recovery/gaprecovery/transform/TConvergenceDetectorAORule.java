@@ -34,18 +34,21 @@ public class TConvergenceDetectorAORule extends AbstractTransformationRule<Conve
 		// if it's a time window or element window
 		// Assumption that this rule is executable
 		AbstractConvergenceDetectorPO<?> physical = null;
-		final String errorMessage = "No time window or element window as only source for convergence detector!";
 		try {
 			AbstractWindowAO windowAO = (AbstractWindowAO) logical.getSubscribedToSource().iterator().next()
 					.getTarget();
 			if (TimeWindowAO.class.isInstance(windowAO)) {
 				physical = new TWConvergenceDetectorPO<>(logical.getWindowWidth(), logical.getWindowAdvance());
-			} else {
-				// element window
+			} else if (TimeWindowAO.class.isInstance(windowAO)) {
 				physical = new EWConvergenceDetectorPO<>(logical.getWindowWidth(), logical.getWindowAdvance());
+			} else {
+				// unknown window type
+				cLog.warn("Unknown window type ({}). Transformation of convergence detector aborted.", windowAO);
+				return;
 			}
 			defaultExecute(logical, physical, config, true, true);
 		} catch (Throwable t) {
+			final String errorMessage = "No time window or element window as only source for convergence detector!";
 			cLog.error(errorMessage);
 			throw new RuleException(errorMessage, t);
 		}
