@@ -39,7 +39,7 @@ public class TConvergenceDetectorAORule extends AbstractTransformationRule<Conve
 					.getTarget();
 			if (TimeWindowAO.class.isInstance(windowAO)) {
 				physical = new TWConvergenceDetectorPO<>(logical.getWindowWidth(), logical.getWindowAdvance());
-			} else if (TimeWindowAO.class.isInstance(windowAO)) {
+			} else if (ElementWindowAO.class.isInstance(windowAO)) {
 				physical = new EWConvergenceDetectorPO<>(logical.getWindowWidth(), logical.getWindowAdvance());
 			} else {
 				// unknown window type

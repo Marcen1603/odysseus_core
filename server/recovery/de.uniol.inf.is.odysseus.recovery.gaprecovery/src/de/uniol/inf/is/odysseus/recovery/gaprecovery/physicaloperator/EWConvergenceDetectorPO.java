@@ -50,6 +50,11 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<Interval
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
+		/*
+		 * We can not trust that element, e.g., a wrong aggregation due to
+		 * the gap. TODO What, if all operations are repeatable. Results are
+		 * by definition correct. Trust would be changed anyway.
+		 */
 		object.getMetadata().setTrust(0.5);
 		transfer(object);
 
