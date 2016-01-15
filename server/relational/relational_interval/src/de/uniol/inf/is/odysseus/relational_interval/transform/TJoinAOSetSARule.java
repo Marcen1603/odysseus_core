@@ -84,7 +84,9 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 						Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO,
 								neededAttrsList, port);
-						areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2());
+						// TODO: Flag to set if input is sorted 
+						// currently, default is false --> to be sure
+						areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), false);
 					}
 				}
 			} catch (Exception e) {
