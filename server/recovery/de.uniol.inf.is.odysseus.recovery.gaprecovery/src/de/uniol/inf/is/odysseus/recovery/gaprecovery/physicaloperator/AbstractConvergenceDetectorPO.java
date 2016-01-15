@@ -36,11 +36,6 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	private final long mBeta;
 
 	/**
-	 * True, if the end of the convergence phase is reached.
-	 */
-	private boolean mEndReached = false;
-
-	/**
 	 * Creates a new {@link AbstractConvergenceDetectorPO} as a copy of an
 	 * existing one.
 	 * 
@@ -51,7 +46,6 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 		super(other);
 		this.mBeta = other.mBeta;
 		this.mOmega = other.mOmega;
-		this.mEndReached = other.mEndReached;
 	}
 
 	/**
@@ -98,21 +92,4 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 		return this.mBeta;
 	}
 
-	/**
-	 * Checks, if the end of the convergence phase is reached.
-	 * 
-	 * @return True, if the end of the convergence phase is already reached;
-	 *         false, else.
-	 */
-	protected final boolean isEndReached() {
-		return this.mEndReached;
-	}
-
-	/**
-	 * The end of the convergence phase is reached. {@link #isEndReached()} will
-	 * return true from now on.
-	 */
-	protected final void setEndReached() {
-		this.mEndReached = true;
-	}
 }

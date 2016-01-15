@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * <br />
  * It checks for each element, if it is inside a convergence phase or not. If an
  * element is inside a convergence phase, its trust value ({@link Trust}) will
- * be decreased. <br />
+ * be decreased (to 0.0). <br />
  * <br />
  * In a logical plan, a {@link TWConvergenceDetectorAO} should be placed
  * directly after {@link TimeWindowAO}s.
@@ -34,9 +34,15 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<Interval
 	private static final Logger cLog = LoggerFactory.getLogger("ConvergenceDetector");
 
 	/**
-	 * The time stamp of the first element after recovery.
+	 * The time stamp, which marks the end of the convergence phase. Inclusive,
+	 * so all time stamps AFTER this are outside the convergence phase.
 	 */
-	private PointInTime mTrec = null;
+	private PointInTime mTconv = null;
+
+	/**
+	 * Shortcut to check, if we are AFTER {@link #mTconv}.
+	 */
+	private boolean mEndReached = false;
 
 	/**
 	 * Creates a new {@link TWConvergenceDetectorPO} as a copy of an existing
@@ -47,7 +53,8 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<Interval
 	 */
 	public TWConvergenceDetectorPO(TWConvergenceDetectorPO<StreamObject> other) {
 		super(other);
-		this.mTrec = other.mTrec;
+		this.mTconv = other.mTconv;
+		this.mEndReached = other.mEndReached;
 	}
 
 	/**
@@ -64,40 +71,56 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<Interval
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
-		if (isEndReached()) {
+		if (this.mEndReached) {
 			// We're done - shortcut
 			transfer(object);
 			return;
 		}
 
 		PointInTime ts = object.getMetadata().getStart();
-		if (this.mTrec == null) {
+		if (this.mTconv == null) {
 			/*
-			 * First element after gap recovery, so its time stamp is Trec
+			 * First element after gap recovery, so we have to calculate Tconv:
+			 * 
+			 * Tconf = ts + lc
+			 * 
+			 * lc is the length of the convergence phase, so its endpoint is at
+			 * ts + lc.
+			 * 
+			 * lc = omega - pos(e)
+			 * 
+			 * pos(e) is the position of the element within the latest open
+			 * window measured in time instants, so omega - pos(e) is the time
+			 * span left in window and therefore it is the convergence phase
+			 * length.
+			 * 
+			 * pos(e) = (ts-t0) mod b
+			 * 
+			 * t0 is the point in time opening the first window (in Odysseus t0
+			 * is always 0).
 			 */
-			this.mTrec = ts;
+			this.mTconv = PointInTime.plus(ts, getWindowWidth() - (ts.getMainPoint() % getWindowAdvance()));
+
 			if (cLog.isDebugEnabled()) {
 				cLog.debug("Start of convergence phase is {}.", ts);
+				cLog.debug("End of convergence phase is calculated as {}.", this.mTconv);
 			}
-		} else if (ts.afterOrEquals(PointInTime.plus(this.mTrec, getWindowWidth()))) {
+		} else if (ts.after(this.mTconv)) {
 			/*
-			 * The time stamp of the element is at least omega time instants
-			 * after Trec. So it can not be part of a convergence phase. Same
-			 * for subsequent elements.
+			 * Were are after the convergence phase
 			 */
-			setEndReached();
+			this.mEndReached = true;
 			if (cLog.isDebugEnabled()) {
-				cLog.debug("End of convergence phase is {}.", ts);
+				cLog.debug("First point in time after convergence phase is {}.", ts);
 			}
 		}
 		// Else we are in a convergence phase
 
-		if (!isEndReached()) {
+		if (!this.mEndReached) {
 			/*
 			 * We can not trust that element, e.g., a wrong aggregation due to
 			 * the gap. TODO What, if all operations are repeatable. Results are
-			 * by definition correct. Trust would be changed anyway. TODO Change
-			 * trust always to 0?
+			 * by definition correct. Trust would be changed anyway.
 			 */
 			object.getMetadata().setTrust(0);
 		}
