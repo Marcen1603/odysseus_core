@@ -325,7 +325,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		// Attention: Priority Queue iterator does not retrieve values in
 		// sort order
 		Tuple<? extends ITimeInterval> top = timeIndex.peek();
-		while (top.getMetadata().getEnd() != null && top.getMetadata().getEnd().beforeOrEquals(time)) {
+		while (top!=null && top.getMetadata().getEnd() != null && top.getMetadata().getEnd().beforeOrEquals(time)) {
 			timeIndex.poll();
 			remove(top);
 			timeIndex.peek();
