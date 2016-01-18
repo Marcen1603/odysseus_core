@@ -62,15 +62,11 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 			PointInTime l = left.getMetadata().getEnd();
 			PointInTime r = right.getMetadata().getEnd();
 
-			if (l != null && r != null) {
-
-				int c = l.compareTo(r);
-				if (c == 0) {
-					return Long.compare(l.tiBreaker, r.tiBreaker);
-				}
-				return c;
+			int c = l.compareTo(r);
+			if (c == 0) {
+				return Long.compare(l.tiBreaker, r.tiBreaker);
 			}
-			return 0;
+			return c;
 		}
 
 	}
@@ -191,7 +187,9 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	private void addToTimeIndex(Tuple<? extends ITimeInterval> element) {
 		// TODO: Update MIN/MAX
-		this.timeIndex.add(element);
+		if (element.getMetadata().getEnd() != null) {
+			this.timeIndex.add(element);
+		}
 	}
 
 	/*
@@ -325,7 +323,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		// Attention: Priority Queue iterator does not retrieve values in
 		// sort order
 		Tuple<? extends ITimeInterval> top = timeIndex.peek();
-		while (top!=null && top.getMetadata().getEnd() != null && top.getMetadata().getEnd().beforeOrEquals(time)) {
+		while (top != null && top.getMetadata().getEnd().beforeOrEquals(time)) {
 			timeIndex.poll();
 			remove(top);
 			timeIndex.peek();
