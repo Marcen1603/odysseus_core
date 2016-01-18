@@ -35,6 +35,17 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	public static final String CSV_TRIM = "csv.trim";
 	public static final String ADDLINENUMBERS = "addlinenumber";
 	public static final String NULL_VALUE_TEXT = "nullvaluetext";
+	
+	static byte[] newline;
+	static{
+		StringBuilder out = new StringBuilder();
+		out.append(System.lineSeparator());
+		CharBuffer cb = CharBuffer.wrap(out);
+		ByteBuffer encoded = charset.encode(cb);
+		byte[] encodedBytes1 = encoded.array();
+		newline = new byte[cb.limit()];
+		System.arraycopy(encodedBytes1, 0, newline, 0, cb.limit());
+	}
 
 	public AbstractCSVHandler() {
 		super();
@@ -109,13 +120,13 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	public void write(T object) throws IOException {
 		StringBuilder out = new StringBuilder();
 		getDataHandler().writeCSVData(out, object, writeOptions);
-		out.append(System.lineSeparator());
 		CharBuffer cb = CharBuffer.wrap(out);
 		ByteBuffer encoded = charset.encode(cb);
 		byte[] encodedBytes1 = encoded.array();
 		byte[] encodedBytes = new byte[cb.limit()];
 		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
 		getTransportHandler().send(encodedBytes);
+		getTransportHandler().send(newline);
 	}
 	
 	@Override
