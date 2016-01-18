@@ -92,6 +92,12 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 
 		}		
 	}
+	
+	@Override
+	protected void process_done(int port) {
+		inputStreamSyncArea.done(port);
+	} 
+		
 
 	private void cleanup() {
 		// TODO Auto-generated method stub
