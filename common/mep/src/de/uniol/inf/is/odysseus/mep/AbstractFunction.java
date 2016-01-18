@@ -232,6 +232,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	final protected Double getNumericalInputValue(int argumentPos) {
 		try {
+			if(arguments[argumentPos].getValue() == null)
+				return null;
 			double val = ((Number) arguments[argumentPos].getValue()).doubleValue();
 			return val;
 		} catch (ClassCastException e) {

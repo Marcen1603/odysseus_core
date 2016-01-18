@@ -37,7 +37,15 @@ public class NotEqualsOperator extends AbstractBinaryNumberInputOperator<Boolean
 
 	@Override
 	public Boolean getValue() {
-		return !getNumericalInputValue(0).equals(getNumericalInputValue(1));
+		Double val0 = getNumericalInputValue(0); 
+		Double val1 = getNumericalInputValue(1);
+		if(val0 == null && val1 == null) {
+			return false;
+		}
+		if(val0 == null || val1 == null) {
+			return true;
+		}
+		return !val0.equals(val1);
 	}
 
 
