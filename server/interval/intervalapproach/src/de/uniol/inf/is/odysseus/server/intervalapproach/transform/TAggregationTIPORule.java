@@ -55,6 +55,7 @@ public class TAggregationTIPORule extends AbstractIntervalTransformationRule<Agg
 					aggregateAO.getAggregations(),
 					mf);
 			defaultExecute(aggregateAO, po, transformConfig, true, true);
+			// TODO: add element time window of size 1 unless latencyOptimized is set to true.
 		} else {
 
 			AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = null;
