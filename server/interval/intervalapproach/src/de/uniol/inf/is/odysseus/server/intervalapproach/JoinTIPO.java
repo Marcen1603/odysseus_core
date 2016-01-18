@@ -159,6 +159,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public void setCardinalities(Cardinalities card) {
 		this.card = card;
 	}
+	
+	public Cardinalities getCardinalities() {
+		return this.card;
+	}
 
 	public void setSweepAreaName(String name) {
 		this.sweepAreaName = name;
@@ -504,6 +508,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
+		map.put("Left Area Implementation", areas[0].getName());
+		map.put("Right Area Implementation", areas[1].getName());
 		map.put("Left Area Size", areas[0].size() + "");
 		map.put("Right Area Size", areas[1].size() + "");
 		if (areas[0] instanceof AbstractTISweepArea && areas[1] instanceof AbstractTISweepArea) {
