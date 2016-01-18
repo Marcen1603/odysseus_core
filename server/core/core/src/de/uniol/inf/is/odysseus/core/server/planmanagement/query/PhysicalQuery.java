@@ -312,6 +312,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setRoot
 	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> roots) {
 		List<IPhysicalOperator> newRoots = new ArrayList<>();
