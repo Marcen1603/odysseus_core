@@ -314,7 +314,17 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	@Override
 	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> roots) {
-		this.roots = roots;
+		List<IPhysicalOperator> newRoots = new ArrayList<>();
+		for(IPhysicalOperator p:roots){
+			// there are sometimes cases where root operators are not really root operators (e.g. when using append_to in PQL)
+			if (p instanceof ISource){
+				if (((ISource)p).getSubscriptions() != null && ((ISource)p).getSubscriptions().size() > 0){
+					continue;
+				}
+			}
+			newRoots.add(p);
+		}
+		this.roots = newRoots;
 		return this.roots;
 	}
 
@@ -338,7 +348,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	@Override
 	public void initializePhysicalRoots(List<IPhysicalOperator> roots) {
-		// set root of this querie
+		// set root of this query
 		setRoots(roots);
 
 		this.physicalChilds.clear();
