@@ -22,6 +22,8 @@ public interface ILatency extends IMetaAttribute{
 	void setMinLatencyStart(long timestamp);
 	void setMaxLatencyStart(long timestamp);
 	void setLatencyEnd(long timestamp);
+	// TODO allow distinct latency time stamps 
+	//void setLatency(String key, long timestamp);
 	long getLatencyStart();
 	long getMaxLatency();
 	long getLatencyEnd();
