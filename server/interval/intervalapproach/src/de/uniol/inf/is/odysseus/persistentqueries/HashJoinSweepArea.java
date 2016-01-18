@@ -182,7 +182,9 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	private void removeFromTimeIndex(Tuple<? extends ITimeInterval> tuple) {
 		// TODO: Find a better solution?
 		// TODO: Update MIN/MAX
-		timeIndex.remove(tuple);
+		if (tuple.getMetadata().getEnd() != null) {
+			timeIndex.remove(tuple);
+		}
 	}
 
 	private void addToTimeIndex(Tuple<? extends ITimeInterval> element) {
