@@ -18,8 +18,11 @@ public class TreeFlatenerAOTransformationRule extends AbstractTransformationRule
 		int nRootNodeNodeKeyPos = operator.getInputSchema(1).indexOfWithException(operator.getnRootRefToRoot());
 		int nRootNodeRootKeyPos = operator.getInputSchema(1).indexOfWithException(operator.getnRootRefToNRoot());
 
+		boolean keepAlive = operator.isKeepAlive();
+		long cleanUpRate = operator.getCleanUpRate();
+	
 		defaultExecute(operator,
-				new TreeFlattenerPO(rootNodeKeyPos, nRootNodeKeyPos, nRootNodeNodeKeyPos, nRootNodeRootKeyPos), config,
+				new TreeFlattenerPO(rootNodeKeyPos, nRootNodeKeyPos, nRootNodeNodeKeyPos, nRootNodeRootKeyPos, keepAlive, cleanUpRate), config,
 				true, true);
 	}
 

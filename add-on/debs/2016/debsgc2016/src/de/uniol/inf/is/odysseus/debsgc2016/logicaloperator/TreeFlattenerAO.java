@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -20,6 +22,9 @@ public class TreeFlattenerAO extends AbstractLogicalOperator {
 	private SDFAttribute nRootNodeKey;
 	private SDFAttribute nRootRefToRoot;
 	private SDFAttribute nRootRefToNRoot;
+	
+	private boolean keepAlive = true;
+	private long cleanUpRate = 1000;
 	
 	private String outputListAttributeName = "List";
 	
@@ -84,6 +89,24 @@ public class TreeFlattenerAO extends AbstractLogicalOperator {
 	
 	public String getOutputListAttributeName() {
 		return outputListAttributeName;
+	}
+	
+	public boolean isKeepAlive() {
+		return keepAlive;
+	}
+
+	@Parameter(type=BooleanParameter.class, optional = true, doc="Typically, every time a child is added to the root, the root timestamp will be kept alive by extending the time interval. Set to false to avoid this.")
+	public void setKeepAlive(boolean keepAlive) {
+		this.keepAlive = keepAlive;
+	}
+	
+	public long getCleanUpRate() {
+		return cleanUpRate;
+	}
+
+	@Parameter(type=LongParameter.class, optional = true, doc="After a number of elements the state is cleaned. Typically, every element is too expensive. 0 means no cleanup.")
+	public void setCleanUpRate(long cleanUpRate) {
+		this.cleanUpRate = cleanUpRate;
 	}
 
 	@Override

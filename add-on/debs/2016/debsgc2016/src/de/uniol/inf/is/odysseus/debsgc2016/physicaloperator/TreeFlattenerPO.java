@@ -2,11 +2,14 @@ package de.uniol.inf.is.odysseus.debsgc2016.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -15,7 +18,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncAre
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIInputStreamSyncArea;
 
-public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> implements IProcessInternal<Tuple<ITimeInterval>> {
+public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>>
+		implements IProcessInternal<Tuple<ITimeInterval>> {
 
 	// ID pos of the root key in root object
 	final private int rootNodeKeyPos;
@@ -36,11 +40,19 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 
 	final private Map<Long, Long> nodeToRoot = new HashMap<>();
 
-	public TreeFlattenerPO(int rootNodeKeyPos, int nRootNodeKeyPos, int nRootRefToRootPos, int nRootRefToNRootPos) {
+	final private boolean keepAlive;
+
+	private long cleanUpCounter;
+	final private long cleanupRate;
+
+	public TreeFlattenerPO(int rootNodeKeyPos, int nRootNodeKeyPos, int nRootRefToRootPos, int nRootRefToNRootPos,
+			boolean keepAlive, long cleanUpRate) {
 		this.rootNodeKeyPos = rootNodeKeyPos;
 		this.nRootNodeKeyPos = nRootNodeKeyPos;
 		this.nRootRefToRootPos = nRootRefToRootPos;
 		this.nRootRefToNRootPos = nRootRefToNRootPos;
+		this.keepAlive = keepAlive;
+		this.cleanupRate = cleanUpRate;
 		inputStreamSyncArea = new TIInputStreamSyncArea<>();
 	}
 
@@ -56,13 +68,13 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 	@Override
 	public void process_punctuation_intern(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
-		
+
 	}
 
 	@Override
 	public void process_newHeartbeat(Heartbeat pointInTime) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -77,10 +89,10 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 	protected synchronized void process_next(Tuple<ITimeInterval> object, int port) {
 		inputStreamSyncArea.transfer(object, port);
 	}
-	
+
 	@Override
 	public void process_internal(Tuple<ITimeInterval> object, int port) {
-		cleanup();
+		
 		switch (port) {
 		case 0:
 			processRoot(object);
@@ -90,18 +102,45 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 			break;
 		default:
 
-		}		
+		}
+		// Cleanup only if element have end time stamps and if cleanup should be done
+		if (object.getMetadata().getEnd() == PointInTime.INFINITY || cleanupRate == 0){
+			return;
+		}
+		if (cleanUpCounter == cleanupRate){
+			cleanUpCounter = 0;
+			cleanup(object.getMetadata().getStart());
+		}
+		cleanUpCounter++;
 	}
-	
+
 	@Override
 	protected void process_done(int port) {
 		inputStreamSyncArea.done(port);
-	} 
-		
+	}
 
-	private void cleanup() {
-		// TODO Auto-generated method stub
-
+	private void cleanup(PointInTime time) {
+		// Remove all roots with end time stamps before object.start
+		Iterator<Entry<Long, Tuple<ITimeInterval>>> entries = roots.entrySet().iterator();
+		while (entries.hasNext()) {
+			Tuple<ITimeInterval> v = entries.next().getValue();
+			if (v.getMetadata().getEnd().beforeOrEquals(time)) {
+				entries.remove();
+				// and remove potential comments
+				nodeLists.remove(v.getAttribute(rootNodeKeyPos));
+			}
+		}
+		// Same for comments
+		Iterator<Entry<Long, List<Tuple<ITimeInterval>>>> iter = nodeLists.entrySet().iterator();
+		while (iter.hasNext()) {
+			List<Tuple<ITimeInterval>> e = iter.next().getValue();
+			if (e.size() > 0) {
+				PointInTime end = e.get(e.size() - 1).getMetadata().getEnd();
+				if (end != null && end.afterOrEquals(time)) {
+					iter.remove();
+				}
+			}
+		}
 	}
 
 	private void processRoot(Tuple<ITimeInterval> object) {
@@ -137,7 +176,7 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 
 		// REMOVE AGAIN LATER
 		object.setAttribute(nRootRefToRootPos, rootNodeRef);
-		
+
 		createOutput(rootNodeRef, object);
 	}
 
@@ -145,6 +184,9 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 		Tuple<ITimeInterval> root = roots.get(key);
 		// Could be a node for a root not seen
 		if (root != null) {
+			if (keepAlive) {
+				root.getMetadata().setEnd(object.getMetadata().getEnd());
+			}
 			List<Tuple<ITimeInterval>> outList = new ArrayList<>(nodeLists.get(key));
 			// Transfer only object with at leat one node
 			if (outList != null && outList.size() > 0) {
@@ -155,7 +197,5 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 			}
 		}
 	}
-
-
 
 }
