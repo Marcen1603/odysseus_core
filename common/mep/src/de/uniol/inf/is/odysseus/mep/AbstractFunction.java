@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mep;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private final int spaceComplexity;
 
 	private List<ISession> sessions;
+	
+	protected static final Map<String, Object> keyValueStore = new HashMap<String, Object>();
 
 	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
 		this(symbol, arity, acceptedTypes, returnType, true);
