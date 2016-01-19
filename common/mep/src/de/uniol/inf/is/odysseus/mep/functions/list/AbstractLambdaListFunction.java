@@ -68,11 +68,11 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 
 			// Test if input is Tuple with schema
 			SDFDatatype inputType = args[0].getReturnType();
+			List<SDFAttribute> attributes = expression.getAllAttributes();
+			this.positions = new int[attributes.size()];
 
 			if (inputType != null && inputType.getSubType() != null && inputType.getSubType().isTuple()) {
 				SDFSchema subSchema = inputType.getSchema();
-				List<SDFAttribute> attributes = expression.getAllAttributes();
-				this.positions = new int[attributes.size()];
 				if (subSchema != null) {
 					int pos = 0;
 					for (SDFAttribute in : attributes) {
