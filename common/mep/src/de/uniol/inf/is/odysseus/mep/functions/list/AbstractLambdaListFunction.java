@@ -14,15 +14,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
-abstract public class AbstractLambdaListFunction extends
-		AbstractFunction<List<Object>> {
+abstract public class AbstractLambdaListFunction extends AbstractFunction<List<Object>> {
 
 	private static final long serialVersionUID = -8269748747594828192L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.LIST }, { SDFDatatype.STRING } };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.LIST },
+			{ SDFDatatype.STRING } };
 
 	SDFExpression expression;
+
+	private int[] positions;
 
 	public AbstractLambdaListFunction(String name) {
 		super(name, 2, accTypes, SDFDatatype.LIST, false);
@@ -38,7 +39,12 @@ abstract public class AbstractLambdaListFunction extends
 		List<Object> in = getInputValue(0);
 		for (Object o : in) {
 			if (o instanceof Tuple) {
-				expression.bindVariables(((Tuple<?>) o).getAttributes());
+				// TODO: use RelationalExpression
+				Object[] objects = new Object[positions.length];
+				for (int i=0;i<positions.length;i++) {
+					objects[i] = ((Tuple<?>) o).getAttribute(positions[i]);
+				}
+				expression.bindVariables(objects);
 			} else {
 				expression.bindVariables(o);
 			}
@@ -59,20 +65,44 @@ abstract public class AbstractLambdaListFunction extends
 		if (args != null && args.length == 2) {
 			String expr = getInputValue(1);
 			init(expr);
+
+			// Test if input is Tuple with schema
+			SDFDatatype inputType = args[0].getReturnType();
+
+			if (inputType != null && inputType.getSubType() != null && inputType.getSubType().isTuple()) {
+				SDFSchema subSchema = inputType.getSchema();
+				List<SDFAttribute> attributes = expression.getAllAttributes();
+				this.positions = new int[attributes.size()];
+				if (subSchema != null) {
+					int pos = 0;
+					for (SDFAttribute in : attributes) {
+						SDFAttribute a = subSchema.findAttribute(in.getAttributeName());
+						int index = subSchema.indexOf(a);
+						if (index == -1) {
+							throw new IllegalArgumentException("Attribute " + a + " cannot be found in schema");
+						}
+						positions[pos] = index;
+					}
+				}else{
+					// When no schema --> use order of attributes
+					for(int i=0;i<positions.length; i++){
+						positions[i] = i;
+					}
+				}
+
+			}
+
 			SDFDatatype subtype = expression.getType();
 
 			if (subtype == SDFDatatype.TUPLE) {
 				List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 				for (int i = 0; i < getArity(); i++) {
-					attrs.add(new SDFAttribute("_gen", "_gen_" + i,
-							SDFDatatype.OBJECT));
+					attrs.add(new SDFAttribute("_gen", "_gen_" + i, SDFDatatype.OBJECT));
 				}
-				SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema(
-						"_gen", attrs);
-				SDFDatatype tuple_dt = new SDFDatatype(SDFDatatype.TUPLE + "_"
-						+ subtype, KindOfDatatype.TUPLE, subSchema, false);
-				SDFDatatype dt = new SDFDatatype("LIST_TUPLE",
-						KindOfDatatype.LIST, tuple_dt);
+				SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("_gen", attrs);
+				SDFDatatype tuple_dt = new SDFDatatype(SDFDatatype.TUPLE + "_" + subtype, KindOfDatatype.TUPLE,
+						subSchema, false);
+				SDFDatatype dt = new SDFDatatype("LIST_TUPLE", KindOfDatatype.LIST, tuple_dt);
 				return dt;
 			} else {
 				for (SDFDatatype d : SDFDatatype.LISTS) {
@@ -84,8 +114,7 @@ abstract public class AbstractLambdaListFunction extends
 
 			return SDFDatatype.LIST;
 		}
-		throw new IllegalArgumentException("Types cannot be determined with "
-				+ args);
+		throw new IllegalArgumentException("Types cannot be determined with " + args);
 	}
 
 	@Override
