@@ -34,7 +34,7 @@ public class ListPartialAggregate<T> extends AbstractPartialAggregate<T> impleme
 	}
 	
 	public ListPartialAggregate(ListPartialAggregate<T> p) {
-		this.elems = new ArrayList<T>(p.elems);
+		this.elems = (List<T>) ((ArrayList)p.elems).clone();
 	}
 
 	public List<T> getElems() {
