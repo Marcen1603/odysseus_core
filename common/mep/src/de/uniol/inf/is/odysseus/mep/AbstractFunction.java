@@ -183,6 +183,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			if (arguments != null) {
 				return determineType(arguments);
 			}
+		}else{
+			// Must be called for cases where the subtype need argument determination
+			if (arguments != null){
+				initSubTypes(arguments);
+			}
 		}
 		return returnType;
 	}
@@ -376,6 +381,13 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	@Override
 	public SDFDatatype determineType(IExpression<?>[] args) {
 		throw new RuntimeException("Function " + this + " must implement determineType function");
+	}
+	
+	private void initSubTypes(IExpression<?>[] args){
+		// Must be called to init subtypes that are potentially created when calling determine subtype
+		for (IExpression<?> arg:args){
+			arg.getReturnType();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
