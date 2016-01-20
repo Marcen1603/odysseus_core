@@ -23,7 +23,13 @@ public class TopKAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 8852471127806000337L;
 
+	private NamedExpression setupFunction;
+	private NamedExpression preScoreFunction;
 	private NamedExpression scoringFunction;
+	private NamedExpression tearDownFunction;
+	// TODO: This expression is typically defined over the input schema --> must be defined over the output schema ...
+	private NamedExpression cleanupPredicate;
+	
 	private int k;
 	private boolean descending = true;
 	private boolean suppressDuplicates = true;
@@ -31,13 +37,18 @@ public class TopKAO extends AbstractLogicalOperator {
 	private boolean fastGrouping = false;
 	private boolean tieWithTimestamp = false;
 	private boolean triggerOnlyByPunctuation = false;
-
+	private boolean recalcScore = false;
+	
 	public TopKAO() {
 	}
 
 	public TopKAO(TopKAO other) {
 		super(other);
 		this.scoringFunction = other.scoringFunction;
+		this.preScoreFunction = other.preScoreFunction;
+		this.setupFunction = other.setupFunction;
+		this.tearDownFunction = other.tearDownFunction;
+		this.cleanupPredicate = other.cleanupPredicate;
 		this.k = other.k;
 		this.descending = other.descending;
 		this.setSuppressDuplicates(other.isSuppressDuplicates());
@@ -46,6 +57,36 @@ public class TopKAO extends AbstractLogicalOperator {
 		}
 		this.fastGrouping = other.fastGrouping;
 		this.tieWithTimestamp = other.tieWithTimestamp;
+		this.recalcScore = other.recalcScore;
+	}
+	
+
+	
+	public NamedExpression getSetupFunction() {
+		return setupFunction;
+	}
+
+	@Parameter(name = "setupFunction", optional = true, type = SDFExpressionParameter.class, doc = "This function is called for every input element before calculating the score.")
+	public void setSetupFunction(NamedExpression setupFunction) {
+		this.setupFunction = setupFunction;
+	}
+
+	public NamedExpression getTearDownFunction() {
+		return tearDownFunction;
+	}
+
+	@Parameter(name = "tearDownFunction", optional = true, type = SDFExpressionParameter.class, doc = "This function is called for every input element after calculating the score.")
+	public void setTearDownFunction(NamedExpression tearDownFunction) {
+		this.tearDownFunction = tearDownFunction;
+	}
+
+	public NamedExpression getCleanupPredicate() {
+		return cleanupPredicate;
+	}
+
+	@Parameter(name = "cleanUpPredicate", optional = true, type = SDFExpressionParameter.class, doc = "This (optional) predicate is used to clean up the state after processing the input.")
+	public void setCleanupPredicate(NamedExpression cleanupPredicate) {
+		this.cleanupPredicate = cleanupPredicate;
 	}
 
 	public NamedExpression getScoringFunction() {
@@ -57,6 +98,15 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.scoringFunction = scoringFunction;
 	}
 
+	public NamedExpression getPreScoreFunction() {
+		return preScoreFunction;
+	}
+	
+	@Parameter(name = "preScoreFunction", optional = true, type = SDFExpressionParameter.class, doc = "This function be will called on the input before each element is scored. Typically used in case where recalcScore is set to true.")
+	public void setPreScoreFunction(NamedExpression preScoreFunction) {
+		this.preScoreFunction = preScoreFunction;
+	}
+	
 	public int getK() {
 		return k;
 	}
@@ -82,6 +132,15 @@ public class TopKAO extends AbstractLogicalOperator {
 	@Parameter(name = "tieWithTimestamp", optional = true, type = BooleanParameter.class, doc = "If two elements have the same score, this value can be used to define an order by time stamps. (Default is false)")
 	public void setTiWithTimestamp(boolean tieWithTimestamp) {
 		this.tieWithTimestamp = tieWithTimestamp;
+	}
+	
+	public boolean isRecalcScore() {
+		return recalcScore;
+	}
+	
+	@Parameter(name = "recalcScore", optional = true, type = BooleanParameter.class, doc = "Sometime the score for an elements depends on state information. Set recalcScore to true to update for each (!) stored element every time a new output is triggered.")
+	public void setRecalcScore(boolean recalcScore) {
+		this.recalcScore = recalcScore;
 	}
 
 	/**
