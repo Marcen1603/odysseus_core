@@ -174,7 +174,7 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 		}
 		l.add(object);
 
-		// REMOVE AGAIN LATER
+		// TODO: REMOVE AGAIN LATER
 		object.setAttribute(nRootRefToRootPos, rootNodeRef);
 
 		createOutput(rootNodeRef, object);
