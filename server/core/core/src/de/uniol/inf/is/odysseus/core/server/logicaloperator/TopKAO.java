@@ -30,7 +30,7 @@ public class TopKAO extends AbstractLogicalOperator {
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping = false;
 	private boolean tieWithTimestamp = false;
-	private boolean triggerByPunctuation = false;
+	private boolean triggerOnlyByPunctuation = false;
 
 	public TopKAO() {
 	}
@@ -148,8 +148,9 @@ public class TopKAO extends AbstractLogicalOperator {
 	/**
 	 * @return triggerByPunctuation
 	 */
+	@Deprecated
 	public boolean isTriggerByPunctuation() {
-		return triggerByPunctuation;
+		return triggerOnlyByPunctuation;
 	}
 
 	/**
@@ -158,9 +159,30 @@ public class TopKAO extends AbstractLogicalOperator {
 	 * such a punctuation arrives, the top-K of this group is output. If this
 	 * attribute is unset, the top-K set is output by every tuple that arrives.
 	 */
-	@Parameter(name = "triggerByPunctuation", optional = true, type = BooleanParameter.class, doc = "If set to true, output is only generated when punctuation arrives.")
+	@Parameter(name = "triggerByPunctuation", optional = true, type = BooleanParameter.class, doc = "If set to true, output is only generated when punctuation arrives.", deprecated=true)
+	@Deprecated
 	public void setTriggerByPunctuation(boolean triggerByPunctuation) {
-		this.triggerByPunctuation = triggerByPunctuation;
+		this.triggerOnlyByPunctuation = triggerByPunctuation;
 	}
 
+	/**
+	 * @return triggerByPunctuation
+	 */
+	public boolean isTriggerOnlyByPunctuation() {
+		return triggerOnlyByPunctuation;
+	}
+
+	/**
+	 * If triggerByPunctuation is set, the operator waits for a punctuation of
+	 * type TuplePunctuation that holds the grouping attributes as tuple. If
+	 * such a punctuation arrives, the top-K of this group is output. If this
+	 * attribute is unset, the top-K set is output by every tuple that arrives.
+	 */
+	@Parameter(name = "triggerOnlyByPunctuation", optional = true, type = BooleanParameter.class, doc = "If set to true, output is only generated when punctuation arrives.")
+	public void setTriggerOnlyByPunctuation(boolean triggerByPunctuation) {
+		this.triggerOnlyByPunctuation = triggerByPunctuation;
+	}
+
+	
+	
 }

@@ -32,7 +32,7 @@ public class TTopKAORule extends
 		}
 		RelationalTopKPO<Tuple<ITimeInterval>,ITimeInterval> po = new RelationalTopKPO<>(
 				operator.getInputSchema(0), operator.getScoringFunction().expression,
-				operator.getK(), operator.isDescending(), operator.isSuppressDuplicates(), groupProcessor, operator.isTriggerByPunctuation());
+				operator.getK(), operator.isDescending(), operator.isSuppressDuplicates(), groupProcessor, operator.isTriggerOnlyByPunctuation());
 		po.setOrderByTimestamp(operator.isTiWithTimestamp());
 		defaultExecute(operator, po, config, true, true);
 	}
