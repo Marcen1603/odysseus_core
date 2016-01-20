@@ -56,7 +56,7 @@ public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelat
 	 * .Object)
 	 */
 	@Override
-	public boolean evaluate(Tuple<?> input) {
+	public Boolean evaluate(Tuple<?> input) {
 		AssociationRule<ITimeInterval> rule = input.getAttribute(index);
 		List<Tuple<ITimeInterval>> premiseTuples = rule.getPremise().getPattern();
 		List<Tuple<ITimeInterval>> consequenceTuples = rule.getConsequence().getPattern();
@@ -102,7 +102,7 @@ public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelat
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
+	public Boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		return evaluate(left);
 	}
 

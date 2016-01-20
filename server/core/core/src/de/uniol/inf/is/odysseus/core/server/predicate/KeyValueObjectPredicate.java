@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.predicate;
 
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -55,14 +56,14 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(KeyValueObject<?> input) {
+	public Boolean evaluate(KeyValueObject<?> input) {
         Object[] values = new Object[this.neededAttributes.size()];
         for (int i = 0; i < values.length; ++i) {
             values[i] = input.getAttribute(this.neededAttributes.get(i).getURI());
         }
 //        this.expression.bindAdditionalContent(input.getAdditionalContent());
         this.expression.bindVariables(values);
-        return ((Boolean) this.expression.getValue()).booleanValue();
+		return ((Boolean) this.expression.getValue());
     }
 
     /**
@@ -70,7 +71,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(KeyValueObject<?> left, KeyValueObject<?> right) {
+	public Boolean evaluate(KeyValueObject<?> left, KeyValueObject<?> right) {
         Object[] values = new Object[this.neededAttributes.size()];
         for (int i = 0; i < values.length; ++i) {
             values[i] = left.getAttribute(this.neededAttributes.get(i).getURI());
@@ -79,7 +80,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
             }
         }
         this.expression.bindVariables(values);
-        return ((Boolean) this.expression.getValue()).booleanValue();
+		return ((Boolean) this.expression.getValue());
     }
 
     /**

@@ -40,8 +40,8 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(Object input) {
-        return true;
+	public Boolean evaluate(Object input) {
+		return Boolean.TRUE;
     }
 
     /**
@@ -49,8 +49,8 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(Object left, Object right) {
-        return true;
+	public Boolean evaluate(Object left, Object right) {
+		return Boolean.TRUE;
     }
 
     /**

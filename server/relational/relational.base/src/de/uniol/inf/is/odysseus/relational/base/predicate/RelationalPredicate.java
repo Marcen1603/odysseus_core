@@ -109,7 +109,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 	}
 
 	@Override
-	public boolean evaluate(Tuple<?> input) {
+	public Boolean evaluate(Tuple<?> input) {
 		Object[] values;
 		try {
 			values = new Object[this.attributePositions.length];
@@ -143,7 +143,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 	}
 
 	@Override
-	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
+	public Boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		// TODO: IMetaAttribute
 		for (int i = 0; i < values.length; ++i) {

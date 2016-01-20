@@ -38,12 +38,12 @@ public class OverlapsPredicate extends AbstractTimeIntervalPredicate {
     }
 
     @Override
-    public boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
         return TimeInterval.overlaps(left.getMetadata(), right.getMetadata());
     }
 

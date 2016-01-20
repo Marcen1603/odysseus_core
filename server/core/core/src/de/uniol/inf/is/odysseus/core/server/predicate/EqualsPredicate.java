@@ -29,12 +29,12 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 	final private static EqualsPredicate predicate = new EqualsPredicate();
 
 	@Override
-	public boolean evaluate(T input) {
+	public Boolean evaluate(T input) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean evaluate(T left, T right) {
+	public Boolean evaluate(T left, T right) {
 		return left.equals(right);
 	}
 

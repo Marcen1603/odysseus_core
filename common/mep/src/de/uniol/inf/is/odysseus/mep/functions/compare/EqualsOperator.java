@@ -40,7 +40,12 @@ public class EqualsOperator extends AbstractBinaryNumberInputOperator<Boolean> i
 
 	@Override
 	public Boolean getValue() {
-		return getNumericalInputValue(0).equals(getNumericalInputValue(1));
+		Number left = getInputValue(0);
+		Number right = getInputValue(1);
+		if ((left == null) || (right == null)) {
+			return null;
+		}
+		return Boolean.valueOf(left.doubleValue() == right.doubleValue());
 	}
 
 

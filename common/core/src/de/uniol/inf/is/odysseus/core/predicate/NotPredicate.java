@@ -59,23 +59,31 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
         this.predicate = predicate;
     }
     
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean evaluate(T input) {
-        return !this.predicate.evaluate(input);
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Boolean evaluate(T input) {
+		Boolean result = this.predicate.evaluate(input);
+		if (result == null) {
+			return null;
+		}
+		return Boolean.valueOf(!result);
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean evaluate(T left, T right) {
-        return !this.predicate.evaluate(left, right);
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Boolean evaluate(T left, T right) {
+		Boolean result = this.predicate.evaluate(left, right);
+		if (result == null) {
+			return null;
+		}
+		return Boolean.valueOf(!result);
+	}
 
     /**
      * {@inheritDoc}

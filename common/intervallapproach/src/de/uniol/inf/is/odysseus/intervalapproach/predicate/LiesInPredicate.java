@@ -33,7 +33,7 @@ public class LiesInPredicate extends AbstractTimeIntervalPredicate {
 	private static final LiesInPredicate instance = new LiesInPredicate();
 	
 	@Override
-	public boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right){
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
 		if(left.getMetadata().getStart().beforeOrEquals(right.getMetadata().getStart()) &&
 				left.getMetadata().getEnd().afterOrEquals(right.getMetadata().getEnd())){
 			return true;
@@ -46,7 +46,7 @@ public class LiesInPredicate extends AbstractTimeIntervalPredicate {
 	 */
 	@Deprecated
 	@Override
-	public boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
 		throw new UnsupportedOperationException();
 	}
 	

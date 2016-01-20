@@ -40,7 +40,12 @@ public class GreaterEqualsOperator extends AbstractBinaryNumberInputOperator<Boo
 
 	@Override
 	public Boolean getValue() {
-		return getNumericalInputValue(0) >= getNumericalInputValue(1);
+		Number left = getInputValue(0);
+		Number right = getInputValue(1);
+		if ((left == null) || (right == null)) {
+			return null;
+		}
+		return Boolean.valueOf(left.doubleValue() >= right.doubleValue());
 	}
 
 	@Override

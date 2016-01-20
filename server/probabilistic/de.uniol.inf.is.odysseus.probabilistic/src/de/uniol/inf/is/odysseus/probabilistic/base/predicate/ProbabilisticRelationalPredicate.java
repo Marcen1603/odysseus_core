@@ -107,7 +107,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 	}
 
 	@Override
-	public boolean evaluate(final ProbabilisticTuple<?> input) {
+	public Boolean evaluate(final ProbabilisticTuple<?> input) {
 		Objects.requireNonNull(input);
 		final Object[] values = new Object[this.attributePositions.length];
 		final IMetaAttribute[] meta = new IMetaAttribute[this.attributePositions.length];
@@ -195,7 +195,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 	}
 
 	@Override
-	public boolean evaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
+	public Boolean evaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
 		Objects.requireNonNull(left);
 		Objects.requireNonNull(right);
 		// FIXME 20140319 christian@kuka.cc Restrict tuple before concatenate

@@ -46,13 +46,13 @@ public class RelatedTuplesPredicate<T extends Tuple<? extends IMetaAttribute>> e
 	}
 
 	@Override
-	public boolean evaluate(T input) {
+	public Boolean evaluate(T input) {
 		//any tuple is related to itself
-		return true;
+		return Boolean.TRUE;
 	}
 
 	@Override
-	public boolean evaluate(T left, T right) {
+	public Boolean evaluate(T left, T right) {
 		for(int i=0; i<this.keysPositions.size(); i+=2){
 			int leftKey = this.keysPositions.get(i);
 			int rightKey = this.keysPositions.get(i+1);
@@ -61,9 +61,9 @@ public class RelatedTuplesPredicate<T extends Tuple<? extends IMetaAttribute>> e
 			if(left.getAttribute(leftKey).getClass() != right.getAttribute(rightKey).getClass())
 				throw new IncompatibleClassChangeError("keys and tuples types are not compatible");
 			if(!left.getAttribute(leftKey).equals(right.getAttribute(rightKey) ) )
-				return false;
+				return Boolean.FALSE;
 		}
-		return true;
+		return Boolean.TRUE;
 	}
 
 	@Override

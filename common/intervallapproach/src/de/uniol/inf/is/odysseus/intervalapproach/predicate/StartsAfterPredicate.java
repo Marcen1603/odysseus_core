@@ -38,12 +38,12 @@ public class StartsAfterPredicate extends AbstractTimeIntervalPredicate {
 	}
 	
 	@Override
-	public boolean evaluate(IStreamObject<? extends ITimeInterval> elem){
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> elem) {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right){
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
 		return left.getMetadata().getStart().afterOrEquals(right.getMetadata().getStart());
 	}
 	

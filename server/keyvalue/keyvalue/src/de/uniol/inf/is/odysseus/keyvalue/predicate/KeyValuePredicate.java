@@ -40,7 +40,7 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPred
 	}
 	
 	@Override
-	public boolean evaluate(T input) {
+	public Boolean evaluate(T input) {
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(neededAttributes.get(i).getURI());
@@ -52,7 +52,7 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPred
 	}
 
 	@Override
-	public boolean evaluate(T left, T right) {
+	public Boolean evaluate(T left, T right) {
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = left.getAttribute(neededAttributes.get(i).getURI());

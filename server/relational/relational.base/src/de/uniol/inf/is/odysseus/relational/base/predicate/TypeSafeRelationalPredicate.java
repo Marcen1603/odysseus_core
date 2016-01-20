@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
 import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
@@ -38,7 +39,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	}
 	
 	@Override
-	public boolean evaluate(Tuple<?> input) {
+	public Boolean evaluate(Tuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		ArrayList<Variable> vars = this.expression.getVariables();
 		for (int i = 0; i < values.length; ++i) {
@@ -69,7 +70,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	}
 
 	@Override
-	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
+	public Boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			Tuple<?> r = fromRightChannel[i] ? right : left;

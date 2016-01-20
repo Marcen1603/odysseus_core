@@ -44,12 +44,12 @@ public class QuantificationPredicate extends
 	}
 
 	@Override
-	public boolean evaluate(Tuple<?> input) {
+	public Boolean evaluate(Tuple<?> input) {
 		throw new RuntimeException("Not implemented");
 	}
 
 	@Override
-	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
+	public Boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		throw new RuntimeException("Not implemented");
 	}
 

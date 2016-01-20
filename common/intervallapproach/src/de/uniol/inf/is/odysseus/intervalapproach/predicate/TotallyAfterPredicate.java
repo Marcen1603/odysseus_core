@@ -38,12 +38,12 @@ public class TotallyAfterPredicate extends AbstractTimeIntervalPredicate {
     private static final TotallyAfterPredicate predicate = new TotallyAfterPredicate();
 
     @Override
-    public boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
         return TimeInterval.totallyAfter(left.getMetadata(), right.getMetadata());
     }
 

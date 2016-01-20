@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatchingAO;
  * In the following operators the graph variable attribute will also be checked
  * in the predicates (e. g. a join prediate).
  * 
- * @author André Bolles <andre.bolles@uni-oldenburg.de>
+ * @author Andrï¿½ Bolles <andre.bolles@uni-oldenburg.de>
  * 
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -233,7 +233,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 			return false;
 		}
 		
-		return left.equals(right);
+		return left != null && left.equals(right);
 	}	
 	
 

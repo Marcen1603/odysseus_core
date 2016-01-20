@@ -42,7 +42,7 @@ public interface IPredicate<T> extends IClone, Serializable {
      * @return <code>true</code> if the input fulfills the predicate,
      *         <code>false</code> otherwise
      */
-    boolean evaluate(T input);
+	Boolean evaluate(T input);
 
     /**
      * Evaluate the predicate with a left and a right input (e.g. in joins)
@@ -54,7 +54,7 @@ public interface IPredicate<T> extends IClone, Serializable {
      * @return <code>true</code> if the left and right inputs fulfills the
      *         predicate, <code>false</code> otherwise
      */
-    boolean evaluate(T left, T right);
+	Boolean evaluate(T left, T right);
 
     /**
      * Checks if this predicate is contained in another predicate.

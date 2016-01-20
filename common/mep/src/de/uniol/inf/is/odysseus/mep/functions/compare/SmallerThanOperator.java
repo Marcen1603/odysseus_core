@@ -35,9 +35,12 @@ public class SmallerThanOperator extends AbstractBinaryNumberInputOperator<Boole
 
 	@Override
 	public Boolean getValue() {
-		Double val0 = getNumericalInputValue(0);
-		Double val1 = getNumericalInputValue(1);
-		return val0 < val1;
+		Number left = getInputValue(0);
+		Number right = getInputValue(1);
+		if ((left == null) || (right == null)) {
+			return null;
+		}
+		return Boolean.valueOf(left.doubleValue() < right.doubleValue());
 	}
 
 

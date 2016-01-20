@@ -38,12 +38,12 @@ public class TotallyBeforePredicate extends AbstractTimeIntervalPredicate {
     private static final TotallyBeforePredicate predicate = new TotallyBeforePredicate();
 
     @Override
-    public boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> input) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
+	public Boolean evaluate(IStreamObject<? extends ITimeInterval> left, IStreamObject<? extends ITimeInterval> right) {
         return TimeInterval.totallyBefore(left.getMetadata(), right.getMetadata());
     }
 

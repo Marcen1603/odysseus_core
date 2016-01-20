@@ -36,13 +36,13 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
     }
 
     @Override
-    public boolean evaluate(T input) {
-        return false;
+	public Boolean evaluate(T input) {
+		return Boolean.FALSE;
     }
 
     @Override
-    public boolean evaluate(T left, T right) {
-        return false;
+	public Boolean evaluate(T left, T right) {
+		return Boolean.FALSE;
     }
 
     @Override

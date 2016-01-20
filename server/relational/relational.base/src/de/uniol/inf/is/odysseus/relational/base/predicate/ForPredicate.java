@@ -76,7 +76,7 @@ public class ForPredicate extends AbstractPredicate<Tuple<?>> implements IRelati
 	 * .Object)
 	 */
 	@Override
-	public boolean evaluate(Tuple<?> input) {
+	public Boolean evaluate(Tuple<?> input) {
 		List<Tuple<?>> tuples = input.getAttribute(index);
 		if (type == Type.ALL) {
 			for (Tuple<?> tuple : tuples) {
@@ -88,18 +88,17 @@ public class ForPredicate extends AbstractPredicate<Tuple<?>> implements IRelati
 			}
 			// all true -> result is true
 			return true;
-		}else{
-			// type == ANY
-			for (Tuple<?> tuple : tuples) {
-				boolean res = this.relationalPredicate.evaluate(tuple);
-				if (res) {
-					// for any : if one is true, all are true
-					return true;
-				}
+		}
+		// type == ANY
+		for (Tuple<?> tuple : tuples) {
+			boolean res = this.relationalPredicate.evaluate(tuple);
+			if (res) {
+				// for any : if one is true, all are true
+				return true;
 			}
-			// all false -> result is false
-			return false;
-		}		
+		}
+		// all false -> result is false
+		return false;
 	}
 
 	/*
@@ -110,7 +109,7 @@ public class ForPredicate extends AbstractPredicate<Tuple<?>> implements IRelati
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
+	public Boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		return evaluate(left);
 	}
 

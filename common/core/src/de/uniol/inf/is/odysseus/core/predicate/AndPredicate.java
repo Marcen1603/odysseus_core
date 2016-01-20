@@ -59,8 +59,17 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(T input) {
-        return getLeft().evaluate(input) && getRight().evaluate(input);
+	public Boolean evaluate(T input) {
+		Boolean left = getLeft().evaluate(input);
+		Boolean right = getRight().evaluate(input);
+		if ((left == null) || (right == null)) {
+			if (((left == null) && (right == null)) || ((left == null) && (right != null) && (right == true))
+					|| ((right == null) && (left != null) && (left == true))) {
+				return null;
+			}
+			return Boolean.FALSE;
+		}
+		return Boolean.valueOf(left && right);
     }
 
     /**
@@ -68,9 +77,18 @@ public class AndPredicate<T> extends ComplexPredicate<T> {
      * {@inheritDoc}
      */
     @Override
-    public boolean evaluate(T left, T right) {
-        return getLeft().evaluate(left, right) && getRight().evaluate(left, right);
-    }
+	public Boolean evaluate(T leftInput, T rightInput) {
+		Boolean left = getLeft().evaluate(leftInput, rightInput);
+		Boolean right = getRight().evaluate(leftInput, rightInput);
+		if ((left == null) || (right == null)) {
+			if (((left == null) && (right == null)) || ((left == null) && (right != null) && (right == true))
+					|| ((right == null) && (left != null) && (left == true))) {
+				return null;
+			}
+			return Boolean.FALSE;
+		}
+		return Boolean.valueOf(left && right);
+	}
 
     /**
      * {@inheritDoc}

@@ -29,7 +29,12 @@ public class BooleanEqualsOperator extends AbstractBinaryBooleanOperator impleme
 
 	@Override
 	public Boolean getValue() {
-		return getInputValue(0).equals(getInputValue(1));
+		Object left = getInputValue(0);
+		Object right = getInputValue(1);
+		if ((left == null) || (right == null)) {
+			return null;
+		}
+		return Boolean.valueOf(left.equals(right));
 	}
 
 
