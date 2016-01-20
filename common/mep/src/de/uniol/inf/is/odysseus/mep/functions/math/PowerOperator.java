@@ -33,7 +33,12 @@ public class PowerOperator extends AbstractBinaryNumberInputOperator<Double> {
 	
 	@Override
 	public Double getValue() {
-		return Math.pow(getNumericalInputValue(0), getNumericalInputValue(1));
+		Number a = getInputValue(0);
+		Number b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
+		return Math.pow(a.doubleValue(), b.doubleValue());
 	}
 
 

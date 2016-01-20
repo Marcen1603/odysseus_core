@@ -33,7 +33,11 @@ public class ExpFunction extends AbstractUnaryNumberInputFunction<Double> {
 
     @Override
     public Double getValue() {
-        return Math.exp(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.exp(a.doubleValue());
     }
 
 }

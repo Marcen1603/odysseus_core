@@ -28,7 +28,11 @@ public class CeilFunction extends AbstractUnaryNumberInputFunction<Double> {
 	
 	@Override
 	public Double getValue() {
-		return Math.ceil(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.ceil(a.doubleValue());
 	}
 
 }

@@ -37,7 +37,11 @@ public class HyperbolicTangensFunction extends
 
 	@Override
 	public Double getValue() {
-		return Math.tanh(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.tanh(a.doubleValue());
 	}
 
 }

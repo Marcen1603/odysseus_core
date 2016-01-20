@@ -12,9 +12,12 @@ public class StringIndexOfFunction extends AbstractBinaryStringFunction<Integer>
 
 	@Override
 	public Integer getValue() {
-		String op1 = getInputValue(0);
-		String op2 = getInputValue(1);
-		return op1.indexOf(op2);
+		String a = getInputValue(0);
+		String b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
+		return a.indexOf(b);
 	}
 
 }

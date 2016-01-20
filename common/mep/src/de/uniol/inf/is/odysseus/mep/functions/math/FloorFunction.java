@@ -28,7 +28,11 @@ public class FloorFunction extends AbstractUnaryNumberInputFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		return Math.floor(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.floor(a.doubleValue());
 	}
 
 }

@@ -32,7 +32,11 @@ public class LowerFunction  extends AbstractUnaryStringFunction<String> {
 	
 	@Override
 	public String getValue() {
-		return getInputValue(0).toString().toLowerCase();
+		String a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return a.toLowerCase();
 	}
 
 }

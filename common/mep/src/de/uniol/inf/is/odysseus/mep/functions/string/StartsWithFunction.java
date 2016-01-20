@@ -13,15 +13,12 @@ public class StartsWithFunction extends AbstractBinaryStringFunction<Boolean> {
 		
 	@Override
 	public Boolean getValue() {
-		
-		String left = getInputValue(0);
-		String right = getInputValue(1);
-		
-		if (left != null){
-			return left.startsWith(right);
+		String a = getInputValue(0);
+		String b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
 		}
-		
-		return false;
+		return Boolean.valueOf(a.startsWith(b));
 	}
 
 }

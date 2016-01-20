@@ -27,10 +27,14 @@ public class StringPlusOperator extends AbstractBinaryOperator<String> {
 
 	@Override
 	public String getValue() {
+		String a = getInputValue(0);
+		String b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
 		StringBuilder sb = new StringBuilder();
-		// We know, this must be a string!
-		sb.append((String)getInputValue(0));
-		sb.append((String)getInputValue(1));
+		sb.append(a);
+		sb.append(b);
 		return sb.toString();
 	}
 

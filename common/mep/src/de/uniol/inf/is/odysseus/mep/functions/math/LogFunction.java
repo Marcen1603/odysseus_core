@@ -33,7 +33,11 @@ public class LogFunction extends AbstractUnaryNumberInputFunction<Double> {
     
     @Override
     public Double getValue() {
-        return Math.log(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.log(a.doubleValue());
     }
 
 }

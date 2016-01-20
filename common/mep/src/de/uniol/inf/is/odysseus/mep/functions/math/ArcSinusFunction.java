@@ -33,7 +33,11 @@ public class ArcSinusFunction extends AbstractUnaryNumberInputFunction<Double> {
 
     @Override
     public Double getValue() {
-        return Math.asin(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.asin(a.doubleValue());
     }
 
 

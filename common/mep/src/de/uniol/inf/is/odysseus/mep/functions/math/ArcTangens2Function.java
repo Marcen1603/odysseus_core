@@ -35,7 +35,12 @@ public class ArcTangens2Function extends
 
 	@Override
 	public Double getValue() {
-		return Math.atan2(getNumericalInputValue(0), getNumericalInputValue(1));
+		Number a = getInputValue(0);
+		Number b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
+		return Math.atan2(a.doubleValue(), b.doubleValue());
 	}
 
 }

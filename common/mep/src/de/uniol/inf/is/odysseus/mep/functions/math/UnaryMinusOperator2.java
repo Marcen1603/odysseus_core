@@ -34,7 +34,11 @@ public class UnaryMinusOperator2 extends AbstractUnaryOperator<Long> {
 
 	@Override
 	public Long getValue() {
-		return -getNumericalInputValue(0).longValue();
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return -a.longValue();
 	}
 
 	@Override

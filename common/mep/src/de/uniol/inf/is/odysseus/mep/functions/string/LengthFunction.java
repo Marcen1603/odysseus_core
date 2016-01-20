@@ -32,7 +32,11 @@ public class LengthFunction extends AbstractUnaryStringFunction<Integer> {
 	
 	@Override
 	public Integer getValue() {
-		return getInputValue(0).toString().length();
+		String a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return a.length();
 	}
 
 }

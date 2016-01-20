@@ -36,8 +36,12 @@ public class SubStringFunction2 extends AbstractFunction<String> {
 
 	@Override
 	public String getValue() {
-		return ((String) getInputValue(0)).substring(getNumericalInputValue(1)
-				.intValue());
+		String a = getInputValue(0);
+		Integer b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
+		return a.substring(b);
 	}
 
 }

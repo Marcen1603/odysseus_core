@@ -30,7 +30,11 @@ public class AbsoluteFunction extends AbstractFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		return Math.abs(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.abs(a.doubleValue());
 	}
 
 }

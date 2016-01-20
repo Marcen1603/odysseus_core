@@ -36,7 +36,12 @@ public class PlusOperator extends AbstractBinaryNumberInputOperator<Double> {
 
 	@Override
 	public Double getValue() {
-		return getNumericalInputValue(0) + getNumericalInputValue(1);
+		Number a = getInputValue(0);
+		Number b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
+		return a.doubleValue() + b.doubleValue();
 	}
 
 	@Override

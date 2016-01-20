@@ -28,6 +28,10 @@ public class SinusFunction extends AbstractUnaryNumberInputFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		return Math.sin(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.sin(a.doubleValue());
 	}
 }

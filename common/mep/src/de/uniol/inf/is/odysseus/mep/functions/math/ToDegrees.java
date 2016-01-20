@@ -31,8 +31,11 @@ public class ToDegrees extends AbstractUnaryNumberInputFunction<Double> {
 	
 	@Override
 	public Double getValue() {
-	    Double val = getNumericalInputValue(0).doubleValue();
-		return Math.toDegrees(val);
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.toDegrees(a.doubleValue());
 	}
 
 }

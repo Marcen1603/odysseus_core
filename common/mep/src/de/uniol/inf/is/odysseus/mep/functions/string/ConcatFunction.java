@@ -13,9 +13,14 @@ public class ConcatFunction extends AbstractFunction<String> {
 	
 	@Override
 	public String getValue() {
+		String a = getInputValue(0);
+		String b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.valueOf(getInputValue(0)));
-		sb.append(String.valueOf(getInputValue(1)));
+		sb.append(a);
+		sb.append(b);
 		return sb.toString();
 	}
 

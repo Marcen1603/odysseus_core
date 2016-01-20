@@ -33,7 +33,11 @@ public class HyperbolicSinusFunction extends AbstractUnaryNumberInputFunction<Do
 
     @Override
     public Double getValue() {
-        return Math.sinh(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.sinh(a.doubleValue());
     }
 
 }

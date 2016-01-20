@@ -32,8 +32,11 @@ public class StringDivisionOperator extends AbstractBinaryOperator<Integer> {
 
 	@Override
 	public Integer getValue() {
-		String a = getInputValue(0).toString();
-		String b = getInputValue(1).toString();
+		String a = getInputValue(0);
+		String b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
 		Pattern pattern = Pattern.compile(b, Pattern.LITERAL);
 		Matcher matcher = pattern.matcher(a);
 		int count = 0;

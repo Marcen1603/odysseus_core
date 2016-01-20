@@ -29,7 +29,11 @@ public class CosinusFunction extends AbstractUnaryNumberInputFunction<Double> {
 	
 	@Override
 	public Double getValue() {
-		return Math.cos(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.cos(a.doubleValue());
 	}
 
 }

@@ -29,9 +29,12 @@ public class StringMultiplicationOperator extends AbstractBinaryOperator<String>
 
     @Override
     public String getValue() {
+		String a = getInputValue(0);
+		Integer b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
         StringBuilder sb = new StringBuilder();
-        String a = getInputValue(0).toString();
-        int b = getNumericalInputValue(1).intValue();
         for (int i = 0; i < b; i++) {
             sb.append(a);
         }

@@ -34,7 +34,11 @@ public class ArcTangensFunction extends AbstractUnaryNumberInputFunction<Double>
     
     @Override
     public Double getValue() {
-        return Math.atan(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.atan(a.doubleValue());
     }
 
 }

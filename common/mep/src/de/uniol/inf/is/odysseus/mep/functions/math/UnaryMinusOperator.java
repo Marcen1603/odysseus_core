@@ -34,7 +34,11 @@ public class UnaryMinusOperator extends AbstractUnaryOperator<Double> {
 
 	@Override
 	public Double getValue() {
-		return -getNumericalInputValue(0);
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return -a.doubleValue();
 	}
 
 	@Override

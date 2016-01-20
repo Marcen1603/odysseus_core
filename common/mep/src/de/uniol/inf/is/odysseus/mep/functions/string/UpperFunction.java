@@ -31,7 +31,11 @@ public class UpperFunction  extends AbstractUnaryStringFunction<String> {
 	
 	@Override
 	public String getValue() {
-		return getInputValue(0).toString().toUpperCase();
+		Object a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return String.valueOf(a).toUpperCase();
 	}
 
 }

@@ -29,7 +29,12 @@ public class StringContainsFunction extends AbstractBinaryStringFunction<Boolean
 	
 	@Override
 	public Boolean getValue() {
-		return ((String)getInputValue(0)).toLowerCase().contains(((String)getInputValue(1)).toLowerCase());
+		String a = getInputValue(0);
+		String b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
+		return Boolean.valueOf(a.toLowerCase().contains(b.toLowerCase()));
 	}
 
 	@Override

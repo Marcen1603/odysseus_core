@@ -33,7 +33,11 @@ public class SqrtFunction extends AbstractUnaryNumberInputFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		return Math.sqrt(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.sqrt(a.doubleValue());
 	}
 
 }

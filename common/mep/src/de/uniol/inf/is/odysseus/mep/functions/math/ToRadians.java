@@ -30,8 +30,11 @@ public class ToRadians extends AbstractUnaryNumberInputFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		Double val = getNumericalInputValue(0).doubleValue();
-		return Math.toRadians(val);
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.toRadians(a.doubleValue());
 	}
 
 }

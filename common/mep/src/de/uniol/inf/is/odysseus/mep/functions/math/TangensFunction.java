@@ -33,7 +33,11 @@ public class TangensFunction extends AbstractUnaryNumberInputFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		return Math.tan(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.tan(a.doubleValue());
 	}
 
 }

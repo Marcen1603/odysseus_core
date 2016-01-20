@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class SubStringFunction extends AbstractFunction<String> {
 
 	private static final long serialVersionUID = 2270358376473789092L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.STRING, SDFDatatype.OBJECT}, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING, SDFDatatype.OBJECT },
+			SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
 	public SubStringFunction() {
 		super("substring", 3, accTypes, SDFDatatype.STRING);
@@ -35,8 +35,14 @@ public class SubStringFunction extends AbstractFunction<String> {
 
 	@Override
 	public String getValue() {
-		return ((String) getInputValue(0)).substring(getNumericalInputValue(1)
-				.intValue(), getNumericalInputValue(2).intValue());
+		String a = getInputValue(0);
+		Integer b = getInputValue(1);
+		Integer c = getInputValue(2);
+
+		if ((a == null) || (b == null) || (c == null)) {
+			return null;
+		}
+		return a.substring(b, c);
 	}
 
 }

@@ -29,8 +29,11 @@ public class StringMinusOperator extends AbstractBinaryOperator<String> {
 
     @Override
     public String getValue() {
-        String a = getInputValue(0);
-        String b = getInputValue(1);
+		String a = getInputValue(0);
+		String b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
         return a.replace(b, "");
     }
 

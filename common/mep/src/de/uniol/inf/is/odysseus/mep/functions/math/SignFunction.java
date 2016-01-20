@@ -21,7 +21,11 @@ public class SignFunction extends AbstractUnaryNumberInputFunction<Double> {
     
     @Override
     public Double getValue() {
-        return Math.signum(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.signum(a.doubleValue());
     }
  
 }

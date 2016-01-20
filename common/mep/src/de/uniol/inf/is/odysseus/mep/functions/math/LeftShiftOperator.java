@@ -18,8 +18,13 @@ public class LeftShiftOperator extends AbstractBinaryNumberInputOperator<Long> {
 	
 	@Override
 	public Long getValue() {
-		Long in = getNumericalInputValue(0).longValue();
-		Integer shift = getNumericalInputValue(1).intValue();
+		Number a = getInputValue(0);
+		Number b = getInputValue(1);
+		if ((a == null) || (b == null)) {
+			return null;
+		}
+		Long in = a.longValue();
+		Integer shift = b.intValue();
 		
 		return in << shift;
 	}

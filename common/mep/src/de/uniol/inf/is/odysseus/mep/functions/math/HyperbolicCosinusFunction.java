@@ -33,7 +33,11 @@ public class HyperbolicCosinusFunction extends AbstractUnaryNumberInputFunction<
     
     @Override
     public Double getValue() {
-        return Math.cosh(getNumericalInputValue(0));
+		Number a = getInputValue(0);
+		if (a == null) {
+			return null;
+		}
+		return Math.cosh(a.doubleValue());
     }
 
 }
