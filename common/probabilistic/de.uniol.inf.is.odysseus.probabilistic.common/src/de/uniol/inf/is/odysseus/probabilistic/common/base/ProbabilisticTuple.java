@@ -181,15 +181,10 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
         super(copy);
         Preconditions.checkNotNull(copy);
         Preconditions.checkNotNull(copy.distributions);
-        if (copy.distributions != null) {
-            this.distributions = new MultivariateMixtureDistribution[copy.distributions.length];
-            for (int i = 0; i < copy.distributions.length; i++) {
-                this.distributions[i] = copy.distributions[i].clone();
-            }
-        }
-        else {
-            this.distributions = new MultivariateMixtureDistribution[0];
-        }
+		this.distributions = new MultivariateMixtureDistribution[copy.distributions.length];
+		for (int i = 0; i < copy.distributions.length; i++) {
+			this.distributions[i] = copy.distributions[i].clone();
+		}
     }
 
     /**
@@ -500,7 +495,11 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
             System.arraycopy(leftAttributes, 0, newAttributes, 0, leftAttributes.length);
         }
         if (rightAttributes != null) {
-            System.arraycopy(rightAttributes, 0, newAttributes, leftAttributes.length, rightAttributes.length);
+			int leftAttributesLength = 0;
+			if (leftAttributes != null) {
+				leftAttributesLength += leftAttributes.length;
+			}
+			System.arraycopy(rightAttributes, 0, newAttributes, leftAttributesLength, rightAttributes.length);
         }
         for (int i = start; i < length; i++) {
             if (newAttributes[i].getClass() == ProbabilisticDouble.class) {
@@ -541,8 +540,12 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
             // leftDistributions.length);
         }
         if (rightDistributions != null) {
+			int leftDistributionsLength = 0;
+			if (leftDistributions != null) {
+				leftDistributionsLength += leftDistributions.length;
+			}
             for (int i = 0; i < rightDistributions.length; i++) {
-                newDistributions[leftDistributions.length + i] = rightDistributions[i].clone();
+				newDistributions[leftDistributionsLength + i] = rightDistributions[i].clone();
             }
             // System.arraycopy(rightDistributions, 0, newDistributions,
             // leftDistributions.length, rightDistributions.length);
