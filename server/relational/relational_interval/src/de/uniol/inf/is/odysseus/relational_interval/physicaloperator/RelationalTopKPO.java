@@ -88,7 +88,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
-	final private RelationalExpression<M> expression;
+	final private RelationalExpression<M> scoreExpression;
 	final private int k;
 	final private Map<Long, ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double, T>>>();
 	final private Comparator<SerializablePair<Double, T>> comparator;
@@ -100,15 +100,15 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	private boolean suppressDuplicates;
 	private boolean orderByTimestamp = true;
 
-	private boolean triggerByPunctuation = false;
+	private boolean triggerOnlyByPunctuation = false;
 
 	public RelationalTopKPO(SDFSchema inputSchema,
 			SDFExpression scoringFunction, int k, boolean descending,
 			boolean suppressDuplicates, IGroupProcessor<T, T> groupProcessor,
-			boolean triggerByPunctuation) {
+			boolean triggerOnlyByPunctuation) {
 		super();
-		this.expression = new RelationalExpression<M>(scoringFunction);
-		expression.initVars(inputSchema);
+		this.scoreExpression = new RelationalExpression<M>(scoringFunction);
+		scoreExpression.initVars(inputSchema);
 		this.k = k;
 		if (isOrderByTimestamp()) {
 			comparator = descending ? new TopKComparatorDescTS()
@@ -119,7 +119,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 		this.suppressDuplicates = suppressDuplicates;
 		this.groupProcessor = groupProcessor;
-		this.triggerByPunctuation = triggerByPunctuation;
+		this.triggerOnlyByPunctuation = triggerOnlyByPunctuation;
 	}
 
 	@Override
@@ -148,9 +148,9 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 		cleanUp(object.getMetadata().getStart(), topK);
 
-		addObject(calcScore(object), topK);
+		addObject(object, topK);
 
-		if (!triggerByPunctuation) {
+		if (!triggerOnlyByPunctuation) {
 			produceResult(object, topK, gId);
 		}
 	}
@@ -165,7 +165,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO: how to handle punctuations
 		// sendPunctuation(punctuation);
-		if (triggerByPunctuation && punctuation instanceof TuplePunctuation) {
+		if (triggerOnlyByPunctuation && punctuation instanceof TuplePunctuation) {
 			@SuppressWarnings("unchecked")
 			T object = ((TuplePunctuation<T, M>) punctuation).getTuple();
 			Long gId = groupProcessor.getGroupID(object);
@@ -180,15 +180,22 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			ArrayList<SerializablePair<Double, T>> topK) {
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		while (iter.hasNext()) {
-			if (iter.next().getE2().getMetadata().getEnd()
+			M metadata = iter.next().getE2().getMetadata();
+			if (metadata.getEnd()
 					.beforeOrEquals(start)) {
 				iter.remove();
 			}
+			if (metadata.getStart().afterOrEquals(start)){
+				break;
+			}
+			
 		}
 	}
 
-	private void addObject(SerializablePair<Double, T> scoredObject,
+	private void addObject(T object,
 			ArrayList<SerializablePair<Double, T>> topK) {
+		SerializablePair<Double, T> scoredObject = calcScore(object);
+		
 		// add object to list
 
 		// 1. find position to insert with binary search
@@ -274,13 +281,13 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		LinkedList<Tuple<M>> history = null;
 
 		try {
-			score = ((Number) this.expression.evaluate(object, getSessions(),
+			score = ((Number) this.scoreExpression.evaluate(object, getSessions(),
 					history)).doubleValue();
 
 		} catch (Exception e) {
 			if (!(e instanceof NullPointerException)) {
 				sendWarning("Cannot calc result for " + object
-						+ " with expression " + expression, e);
+						+ " with expression " + scoreExpression, e);
 			}
 		}
 
