@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
@@ -117,6 +119,7 @@ public class RunMEPCalculatorCommand extends AbstractHandler {
 
             this.txtReturnType = new Text(container, SWT.BORDER);
             this.txtReturnType.setLayoutData(dataReturnType);
+            this.txtReturnType.setEditable(false);
             this.txtReturnType.setText(""); //$NON-NLS-1$
 
             final Label lbtOptimizedForm = new Label(container, SWT.NONE);
@@ -128,6 +131,7 @@ public class RunMEPCalculatorCommand extends AbstractHandler {
 
             this.txtOptimizedForm = new Text(container, SWT.BORDER);
             this.txtOptimizedForm.setLayoutData(dataOptimizedForm);
+            this.txtOptimizedForm.setEditable(false);
             this.txtOptimizedForm.setText(""); //$NON-NLS-1$
 
             final Label lbtConjunctiveNormalForm = new Label(container, SWT.NONE);
@@ -139,6 +143,7 @@ public class RunMEPCalculatorCommand extends AbstractHandler {
 
             this.txtConjunctiveNormalForm = new Text(container, SWT.BORDER);
             this.txtConjunctiveNormalForm.setLayoutData(dataConjunctiveNormalForm);
+            this.txtConjunctiveNormalForm.setEditable(false);
             this.txtConjunctiveNormalForm.setText(""); //$NON-NLS-1$
 
             final Label lbtDisjunctiveNormalForm = new Label(container, SWT.NONE);
@@ -150,28 +155,29 @@ public class RunMEPCalculatorCommand extends AbstractHandler {
 
             this.txtDisjunctiveNormalForm = new Text(container, SWT.BORDER);
             this.txtDisjunctiveNormalForm.setLayoutData(dataDisjunctiveNormalForm);
+            this.txtDisjunctiveNormalForm.setEditable(false);
             this.txtDisjunctiveNormalForm.setText(""); //$NON-NLS-1$
 
             this.txtExpression.addKeyListener(new KeyListener() {
 
                 @Override
                 public void keyPressed(final KeyEvent e) {
-
+                    // Empty block
                 }
 
                 @Override
                 public void keyReleased(final KeyEvent event) {
-                    String text = txtExpression.getText();
-                    if ((text != null) && (!"".equals(text))) {
+                    String text = MEPCalculatorDialog.this.txtExpression.getText();
+                    if (!Strings.isNullOrEmpty(text)) {
                         try {
-                            IExpression<?> parsedExpression = mep.parse(text);
-                            txtReturnType.setText(parsedExpression.getReturnType().getQualName());
-                            txtOptimizedForm.setText(ExpressionOptimizer.optimize(parsedExpression).toString());
-                            txtConjunctiveNormalForm.setText(ExpressionOptimizer.toConjunctiveNormalForm(parsedExpression).toString());
-                            txtDisjunctiveNormalForm.setText(ExpressionOptimizer.toDisjunctiveNormalForm(parsedExpression).toString());
+                            IExpression<?> parsedExpression = MEPCalculatorDialog.this.mep.parse(text);
+                            MEPCalculatorDialog.this.txtReturnType.setText(parsedExpression.getReturnType().getQualName());
+                            MEPCalculatorDialog.this.txtOptimizedForm.setText(ExpressionOptimizer.optimize(parsedExpression).toString());
+                            MEPCalculatorDialog.this.txtConjunctiveNormalForm.setText(ExpressionOptimizer.toConjunctiveNormalForm(parsedExpression).toString());
+                            MEPCalculatorDialog.this.txtDisjunctiveNormalForm.setText(ExpressionOptimizer.toDisjunctiveNormalForm(parsedExpression).toString());
                         }
-                        catch (Throwable e) {
-                            e.printStackTrace();
+                        catch (@SuppressWarnings("unused") Throwable e) {
+                            // Empty block
                         }
                     }
 
