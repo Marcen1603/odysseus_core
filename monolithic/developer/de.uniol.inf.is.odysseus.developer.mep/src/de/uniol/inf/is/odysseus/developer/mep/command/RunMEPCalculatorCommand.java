@@ -180,7 +180,12 @@ public class RunMEPCalculatorCommand extends AbstractHandler {
                             // Empty block
                         }
                     }
-
+                    else {
+                        MEPCalculatorDialog.this.txtReturnType.setText("");
+                        MEPCalculatorDialog.this.txtOptimizedForm.setText("");
+                        MEPCalculatorDialog.this.txtConjunctiveNormalForm.setText("");
+                        MEPCalculatorDialog.this.txtDisjunctiveNormalForm.setText("");
+                    }
                 }
             });
             return area;
