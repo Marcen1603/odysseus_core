@@ -8,8 +8,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @deprecated Use {@link ToBooleanFromNumberFunction}
  */
+@Deprecated
 public class DoubleToBooleanFunction extends AbstractFunction<Boolean> {
 
    

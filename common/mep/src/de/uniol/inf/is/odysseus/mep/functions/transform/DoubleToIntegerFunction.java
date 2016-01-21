@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * Returns the value of the specified number as a <code>integer</code>.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
+ * @deprecated Use {@link ToIntegerFromNumberFunction}
  */
+@Deprecated
 public class DoubleToIntegerFunction extends AbstractFunction<Integer> {
 
 	private static final long serialVersionUID = 903337299667941417L;

@@ -18,6 +18,12 @@ package de.uniol.inf.is.odysseus.mep.functions.transform;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * 
+ *
+ * @deprecated Use {@link ToFloatFromNumberFunction}
+ */
+@Deprecated
 public class DoubleToFloatFunction  extends AbstractFunction<Float> {
 
 	private static final long serialVersionUID = 6665008272296004433L;

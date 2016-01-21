@@ -21,7 +21,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
+ * @deprecated Use {@link ToCharFromNumberFunction}
  */
+@Deprecated
 public class DoubleToCharFunction extends AbstractFunction<Character> {
 
     /**

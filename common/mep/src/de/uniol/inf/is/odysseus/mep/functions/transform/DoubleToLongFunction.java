@@ -18,6 +18,12 @@ package de.uniol.inf.is.odysseus.mep.functions.transform;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * 
+ *
+ * @deprecated Use {@link ToLongFromNumberFunction}
+ */
+@Deprecated
 public class DoubleToLongFunction extends AbstractFunction<Long> {
 
 	private static final long serialVersionUID = 5823317721010331105L;
