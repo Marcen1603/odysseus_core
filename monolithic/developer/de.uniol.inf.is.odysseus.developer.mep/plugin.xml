@@ -41,7 +41,7 @@
                   locationURI="menu:de.uniol.inf.is.odysseus.developer.menu.developer">
                <command
                      commandId="de.uniol.inf.is.odysseus.developer.mep.command.TestMEPFunctionCommand"
-                     label="Test MEP Function"
+                     label="MEP Function Test"
                              style="push">
                </command>
                <command
@@ -50,10 +50,31 @@
                      style="push">
                </command>
                <command
-                     commandId="de.uniol.inf.is.odysseus.developer.mep.command.RunMEPCalculatorCommand"
-                     label="MEP Calculator"
-                     style="push">
-               </command>
+                  commandId="org.eclipse.ui.views.showView"
+                  icon="icons/mep.png"
+                  label="MEP Calculator"
+                  style="push">
+               <parameter
+                     name="org.eclipse.ui.views.showView.viewId"
+                     value="de.uniol.inf.is.odysseus.developer.mep.view.MEPCalculatorView">
+               </parameter>
+            </command>
             </menuContribution>
       </extension>
+         <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="Odysseus"
+            name="Odysseus">
+      </category>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.developer.mep.view.MEPCalculatorView"
+            icon="icons/mep.png"
+            id="de.uniol.inf.is.odysseus.developer.mep.view.MEPCalculatorView"
+            name="MEP Calculator"
+            restorable="true">
+      </view>
+            </extension>
+      
 </plugin>
