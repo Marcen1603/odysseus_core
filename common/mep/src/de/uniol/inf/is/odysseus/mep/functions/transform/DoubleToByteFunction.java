@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * Returns the value of the specified number as a <code>byte</code>.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
+ * @deprecated Use {@link ToByteFromNumberFunction}
  */
+@Deprecated
 public class DoubleToByteFunction extends AbstractFunction<Byte> {
 
 	private static final long serialVersionUID = -3472340389470448274L;

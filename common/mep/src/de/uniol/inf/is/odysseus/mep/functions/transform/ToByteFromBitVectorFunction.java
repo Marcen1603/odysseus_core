@@ -15,28 +15,29 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryBitvectorInputFunction;
 
 /**
- * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} CHAR
- * value.
+ * Converts a {@link SDFDatatype} BITVECTOR value into a {@link SDFDatatype}
+ * BYTE value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
  */
-public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character> {
+public class ToByteFromBitVectorFunction extends AbstractUnaryBitvectorInputFunction<Byte> {
+
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1956450848515723544L;
+	private static final long serialVersionUID = 3486708935696469812L;
 
 	/**
 	 * 
 	 */
-	public ToCharFromNumberFunction() {
-		super("toChar", SDFDatatype.CHAR);
+	public ToByteFromBitVectorFunction() {
+		super("toByte",  SDFDatatype.BYTE);
 	}
 
 	/**
@@ -44,12 +45,11 @@ public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Character getValue() {
-		Number input = getInputValue(0);
+	public Byte getValue() {
+		BitVector input = getInputValue(0);
 		if (input == null) {
 			return null;
 		}
-		return Character.valueOf((char) input.longValue());
+		return input.asByte();
 	}
-
 }

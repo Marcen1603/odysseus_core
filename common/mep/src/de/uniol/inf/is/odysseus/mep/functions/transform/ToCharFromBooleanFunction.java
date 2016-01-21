@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,40 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryBooleanInputFunction;
 
 /**
- * Converts a given value to a byte value.
+ * Converts a {@link SDFDatatype} BOOLEAN value into a {@link SDFDatatype} CHAR
+ * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
+ *
  */
-public class ToByteFunction extends AbstractFunction<Byte> {
+public class ToCharFromBooleanFunction extends AbstractUnaryBooleanInputFunction<Character> {
 
-	private static final long serialVersionUID = 6268335067252659860L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1956450848515723544L;
 
-	public ToByteFunction() {
-		super("toByte", 1, getAllTypes(1), SDFDatatype.BYTE);
-	}
+	/**
+	 * 
+	 */
+    public ToCharFromBooleanFunction() {
+        super("toChar", SDFDatatype.CHAR);
+    }
 
-	@Override
-	public Byte getValue() {
-		String s = getInputValue(0).toString();
-		if (s.equalsIgnoreCase("true")) {
-            return new Byte((byte) 0x1);
-		} else if (s.equalsIgnoreCase("false")) {
-            return new Byte((byte) 0x0);
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+    @Override
+    public Character getValue() {
+		Boolean input = getInputValue(0);
+		if (input == null) {
+			return null;
 		}
-        return new Byte((new Double(Double.parseDouble(s))).byteValue());
-	}
+		return new Character(input.toString().charAt(0));
+    }
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,38 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
- * Converts a given value to a float value.
+ * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} LONG
+ * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ToFloatFunction extends AbstractFunction<Float> {
+public class ToShortFromNumberFunction extends AbstractUnaryNumberInputFunction<Short> {
 
-    private static final long serialVersionUID = 1201584883722391034L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1851175539500609948L;
 
-    public ToFloatFunction() {
-        super("toFloat", 1, getAllTypes(1), SDFDatatype.FLOAT);
-    }
+	/**
+	 * 
+	 */
+	public ToShortFromNumberFunction() {
+		super("toShort", SDFDatatype.SHORT);
+	}
 
-    @Override
-    public Float getValue() {
-        String s = getInputValue(0).toString();
-        if (s.equalsIgnoreCase("true")) {
-            return new Float(1f);
-        }
-        else if (s.equalsIgnoreCase("false")) {
-            return new Float(0f);
-        }
-        return new Float((new Double(Double.parseDouble(s))).floatValue());
-    }
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Short getValue() {
+		Number input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		return Short.valueOf(input.shortValue());
+	}
 }

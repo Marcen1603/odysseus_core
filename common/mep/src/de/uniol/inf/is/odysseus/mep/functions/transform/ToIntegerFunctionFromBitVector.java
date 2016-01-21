@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.bool;
+package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryBitvectorInputFunction;
 
 /**
- * Converts a given value to an integer value.
+ * Converts a {@link SDFDatatype} BITVECTOR value into a {@link SDFDatatype}
+ * INTEGER value.
  * 
  * @author Marco Grawunder
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ToIntegerFunctionFromBitVector extends AbstractUnaryBitvectorInputFunction<Integer> {
 
-    private static final long serialVersionUID = 2799997996073155068L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3104385272551767913L;
 
-    public ToIntegerFunctionFromBitVector() {
-        super("toInteger", SDFDatatype.INTEGER);
-    }
+	/**
+	 * 
+	 */
+	public ToIntegerFunctionFromBitVector() {
+		super("toInteger", SDFDatatype.INTEGER);
+	}
 
-    @Override
-    public Integer getValue() {
-    	BitVector s = getInputValue(0);
-    	return s.asInteger();
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer getValue() {
+		BitVector input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		return input.asInteger();
+	}
 }

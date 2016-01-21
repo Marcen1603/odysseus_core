@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,36 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
- * Converts a given value to an integer value.
+ * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype}
+ * INTEGER value.
  * 
  * @author Marco Grawunder
+ * @author Christian Kuka <christian@kuka.cc>
  */
-public class ToIntegerFromNumberFunction extends
-		AbstractUnaryNumberInputFunction<Integer> {
+public class ToIntegerFromNumberFunction extends AbstractUnaryNumberInputFunction<Integer> {
 
-	private static final long serialVersionUID = 2799997996073155068L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6801899835117573228L;
 
+	/**
+	 * 
+	 */
 	public ToIntegerFromNumberFunction() {
 		super("toInteger", SDFDatatype.INTEGER);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Integer getValue() {
-		return getNumericalInputValue(0).intValue();
+		Number input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		return Integer.valueOf(input.intValue());
 	}
 }

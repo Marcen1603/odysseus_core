@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.bool;
+package de.uniol.inf.is.odysseus.mep.functions.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryBitvectorInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
- * Converts a given value to a byte value.
+ * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype}
+ * BOOLEAN value.
  * 
+ * @author Marco Grawunder
  * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
-public class ToByteFromBitVectorFunction extends AbstractUnaryBitvectorInputFunction<Byte> {
+public class ToBooleanFromNumberFunction extends AbstractUnaryNumberInputFunction<Boolean> {
 
-	private static final long serialVersionUID = 6268335067252659860L;
 
-	public ToByteFromBitVectorFunction() {
-		super("toByte",  SDFDatatype.BYTE);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -251453554339475667L;
+
+	/**
+	 * 
+	 */
+	public ToBooleanFromNumberFunction() {
+		super("toBoolean", SDFDatatype.BOOLEAN);
+    }
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+    @Override
+	public Boolean getValue() {
+		Number input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		return new Boolean(input.intValue() != 0);
 	}
 
-	@Override
-	public Byte getValue() {
-		BitVector v = getInputValue(0);
-		return v.asByte();
-	}
 }

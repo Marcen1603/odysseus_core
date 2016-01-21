@@ -15,27 +15,30 @@
  */
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringObjectInputFunction;
 
 /**
- * Converts any {@link SDFDatatype} value into a {@link SDFDatatype} DOUBLE
+ * Converts a {@link SDFDatatype} String value into a {@link SDFDatatype} LONG
  * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToNumberFunction extends AbstractFunction<Double> {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6921898506120412818L;
+public class ToLongFromStringFunction extends AbstractUnaryStringObjectInputFunction<Long> {
 
 	/**
 	 * 
 	 */
-	public ToNumberFunction() {
-		super("toNumber", 1, getAllTypes(1), SDFDatatype.DOUBLE);
+	private static final long serialVersionUID = 5821981405121288359L;
+
+	/**
+	 * 
+	 */
+	public ToLongFromStringFunction() {
+		super("toLong", SDFDatatype.LONG);
 	}
 
 	/**
@@ -43,12 +46,17 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Double getValue() {
-		Object input = getInputValue(0);
-		if ((input == null) || ("".equals(input.toString()))) {
+	public Long getValue() {
+		String input = getInputValue(0);
+		if (Strings.isNullOrEmpty(input)) {
 			return null;
 		}
-		return new Double(Double.parseDouble(input.toString()));
+		if (Boolean.TRUE.toString().equalsIgnoreCase(input)) {
+			return new Long(1l);
+		} else if (Boolean.FALSE.toString().equalsIgnoreCase(input)) {
+			return new Long(0l);
+		}
+		return Long.valueOf(Double.valueOf(input).longValue());
 	}
 
 }

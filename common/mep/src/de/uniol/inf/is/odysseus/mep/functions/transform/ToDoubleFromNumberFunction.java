@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,28 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
- * Converts a given value to a double value.
+ * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} DOUBLE
+ * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ToDoubleFunction extends AbstractFunction<Double> {
+public class ToDoubleFromNumberFunction extends AbstractUnaryNumberInputFunction<Double> {
 
-    private static final long serialVersionUID = -8540214231248350115L;
 
-    public ToDoubleFunction() {
-        super("toDouble", 1, getAllTypes(1), SDFDatatype.DOUBLE);
+    public ToDoubleFromNumberFunction() {
+		super("toDouble", SDFDatatype.DOUBLE);
     }
 
     @Override
     public Double getValue() {
-        String s = getInputValue(0).toString();
-        if (s.equalsIgnoreCase("true")) {
-            return new Double(1.0);
-        }
-        else if (s.equalsIgnoreCase("false")) {
-            return new Double(0.0);
-        }
-        return new Double(Double.parseDouble(s));
+		Number input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		return Double.valueOf(input.doubleValue());
     }
 }

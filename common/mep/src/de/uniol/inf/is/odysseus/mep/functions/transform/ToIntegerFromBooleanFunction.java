@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,40 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryBooleanInputFunction;
 
 /**
- * Converts a given value to an integer value.
+ * Converts a {@link SDFDatatype} BOOLEAN value into a {@link SDFDatatype}
+ * INTEGER value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- * @author Marco Grawunder 
+ * @author Marco Grawunder
  */
 public class ToIntegerFromBooleanFunction extends AbstractUnaryBooleanInputFunction<Integer> {
 
-    private static final long serialVersionUID = 2799997996073155068L;
+	/**
+		 * 
+		 */
+	private static final long serialVersionUID = -683136476559970448L;
 
-    public ToIntegerFromBooleanFunction() {
-        super("toInteger", SDFDatatype.INTEGER);
-    }
+	/**
+	 * 
+	 */
+	public ToIntegerFromBooleanFunction() {
+		super("toInteger", SDFDatatype.INTEGER);
+	}
 
-    @Override
-    public Integer getValue() {
-        String s = getInputValue(0).toString();
-        if (s.equalsIgnoreCase("true")) {
-            return new Integer(1);
-        }
-        return new Integer(0);
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer getValue() {
+		Boolean input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		if (input.booleanValue()) {
+			return new Integer(1);
+		}
+		return new Integer(0);
+
+	}
 }

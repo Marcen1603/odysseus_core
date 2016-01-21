@@ -21,9 +21,11 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements
 	@Override
 	public Object getValue() {
 		Tuple<?> l = (Tuple<?>) getInputValue(0);
-		int pos = getNumericalInputValue(1).intValue();
-
-		return l.getAttribute(pos);
+		Number pos = getInputValue(1);
+		if ((l == null) || (pos == null)) {
+			return null;
+		}
+		return l.getAttribute(pos.intValue());
 	}
 
 	@Override

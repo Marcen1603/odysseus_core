@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,44 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringInputFunction;
 
 /**
- * Converts a given value to short value.
+ * Converts a {@link SDFDatatype} STRING value into a {@link SDFDatatype} CHAR
+ * value by returning the first character of the string or <code>null</code> if
+ * the string is null or empty.
  * 
  * @author Christian Kuka <christian@kuka.cc>
+ *
  */
-public class ToShortFunction extends AbstractFunction<Short> {
+public class ToCharFromStringFunction extends AbstractUnaryStringInputFunction<Character> {
 
-    private static final long serialVersionUID = 2336013385553930997L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1956450848515723544L;
 
-    public ToShortFunction() {
-        super("toShort", 1, getAllTypes(1), SDFDatatype.SHORT);
-    }
+	/**
+	 * 
+	 */
+	public ToCharFromStringFunction() {
+		super("toChar", SDFDatatype.CHAR);
+	}
 
-    @Override
-    public Short getValue() {
-        String s = getInputValue(0).toString();
-        if (s.equalsIgnoreCase("true")) {
-            return new Short((short) 1);
-        }
-        else if (s.equalsIgnoreCase("false")) {
-            return new Short((short) 0);
-        }
-        return new Short((new Double(Double.parseDouble(s))).shortValue());
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Character getValue() {
+		String input = getInputValue(0);
+		if (Strings.isNullOrEmpty(input)) {
+			return null;
+		}
+		return new Character(input.charAt(0));
+	}
+
 }

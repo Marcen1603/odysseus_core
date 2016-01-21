@@ -16,27 +16,26 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryBooleanInputFunction;
 
 /**
- * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} CHAR
+ * Converts a {@link SDFDatatype} BOOLEAN value into a {@link SDFDatatype} FLOAT
  * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
  */
-public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character> {
+public class ToFloatFromBooleanFunction extends AbstractUnaryBooleanInputFunction<Float> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1956450848515723544L;
+	private static final long serialVersionUID = -7398396296845001521L;
 
 	/**
 	 * 
 	 */
-	public ToCharFromNumberFunction() {
-		super("toChar", SDFDatatype.CHAR);
+	public ToFloatFromBooleanFunction() {
+		super("toFloat", SDFDatatype.FLOAT);
 	}
 
 	/**
@@ -44,12 +43,15 @@ public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Character getValue() {
-		Number input = getInputValue(0);
+	public Float getValue() {
+		Boolean input = getInputValue(0);
 		if (input == null) {
 			return null;
 		}
-		return Character.valueOf((char) input.longValue());
+		if (input.booleanValue()) {
+			return new Float(1f);
+		}
+		return new Float(0f);
 	}
 
 }

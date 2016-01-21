@@ -15,28 +15,31 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringObjectInputFunction;
 
 /**
- * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} CHAR
- * value.
+ * Converts a {@link SDFDatatype} STRING value into a {@link SDFDatatype}
+ * BOOLEAN value.
  * 
+ * @author Marco Grawunder
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
-public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character> {
+public class ToBooleanFromStringFunction extends AbstractUnaryStringObjectInputFunction<Boolean> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1956450848515723544L;
+	private static final long serialVersionUID = -6177493222222959011L;
 
 	/**
 	 * 
 	 */
-	public ToCharFromNumberFunction() {
-		super("toChar", SDFDatatype.CHAR);
+	public ToBooleanFromStringFunction() {
+		super("toBoolean", SDFDatatype.BOOLEAN);
 	}
 
 	/**
@@ -44,12 +47,12 @@ public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Character getValue() {
-		Number input = getInputValue(0);
-		if (input == null) {
+	public Boolean getValue() {
+		String input = getInputValue(0);
+		if (Strings.isNullOrEmpty(input)) {
 			return null;
 		}
-		return Character.valueOf((char) input.longValue());
+		return Boolean.valueOf(input);
 	}
 
 }

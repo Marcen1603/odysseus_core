@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2014 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.bool;
+package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
- * Converts a given value to a boolean value.
+ * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype}
+ * UNSIGNEDINT16 value.
  * 
- * @author Marco Grawunder
  * @author Christian Kuka <christian@kuka.cc>
- * 
  */
-public class ToBooleanFunction extends AbstractFunction<Boolean> {
+public class ToUnsignedInt16FromNumberFunction extends AbstractUnaryNumberInputFunction<Integer> {
 
-    private static final long serialVersionUID = 6172939691360862021L;
+	/**
+		 * 
+		 */
+	private static final long serialVersionUID = -4810334309596125628L;
 
-    public ToBooleanFunction() {
-        super("toBoolean", 1,getAllTypes(1), SDFDatatype.BOOLEAN);
-    }
-
-    @Override
-	public Boolean getValue() {
-		String s = getInputValue(0);
-		if (s == null) {
-			return null;
-		}
-		return new Boolean(Boolean.parseBoolean(s));
+	/**
+	 * 
+	 */
+	public ToUnsignedInt16FromNumberFunction() {
+		super("toUnsignedInt16", SDFDatatype.UNSIGNEDINT16);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer getValue() {
+		Number input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		return Integer.valueOf(input.intValue());
+	}
 }

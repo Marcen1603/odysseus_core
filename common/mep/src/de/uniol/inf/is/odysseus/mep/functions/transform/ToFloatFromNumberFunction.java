@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2014 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,39 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
- * Converts a given value to a char value.
- * 
+ * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} FLOAT
+ * value. 
  * @author Christian Kuka <christian@kuka.cc>
- *
  */
-public class ToCharFunction extends AbstractUnaryStringInputFunction<Character> {
+public class ToFloatFromNumberFunction extends AbstractUnaryNumberInputFunction<Float> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1956450848515723544L;
 
-    public ToCharFunction() {
-        super("toChar", SDFDatatype.CHAR);
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6312033640298198014L;
 
-    @Override
-    public Character getValue() {
-        String s = getInputValue(0).toString();
-        return new Character(s.charAt(0));
-    }
+	/**
+	 * 
+	 */
+	public ToFloatFromNumberFunction() {
+		super("toFloat", SDFDatatype.FLOAT);
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Float getValue() {
+		Number input = getInputValue(0);
+		if (input == null) {
+			return null;
+		}
+		return Float.valueOf(input.floatValue());
+	}
 
 }

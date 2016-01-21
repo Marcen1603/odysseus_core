@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,46 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringObjectInputFunction;
 
 /**
- * Converts a given value to an integer value.
+ * Converts a {@link SDFDatatype} STRING value into a {@link SDFDatatype} BYTE
+ * value.
  * 
- * @author Marco Grawunder
+ * @author Christian Kuka <christian@kuka.cc>
  */
-public class ToIntegerFromStringObjectFunction extends
-		AbstractUnaryStringObjectInputFunction<Integer> {
+public class ToByteFromStringFunction extends AbstractUnaryStringObjectInputFunction<Byte> {
 
-	private static final long serialVersionUID = 2799997996073155068L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4622976717245236388L;
 
-	public ToIntegerFromStringObjectFunction() {
-		super("toInteger", SDFDatatype.INTEGER);
+	/**
+	 * 
+	 */
+	public ToByteFromStringFunction() {
+		super("toByte", SDFDatatype.BYTE);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Integer getValue() {
-		String s = getInputValue(0).toString();
-		return Integer.parseInt(s);
+	public Byte getValue() {
+		String input = getInputValue(0);
+		if (Strings.isNullOrEmpty(input)) {
+			return null;
+		}
+		if (Boolean.TRUE.toString().equalsIgnoreCase(input)) {
+			return new Byte((byte) 0x1);
+		} else if (Boolean.FALSE.toString().equalsIgnoreCase(input)) {
+			return new Byte((byte) 0x0);
+		}
+		return Byte.valueOf(Double.valueOf(input).byteValue());
 	}
 }

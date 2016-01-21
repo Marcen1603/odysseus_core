@@ -16,27 +16,25 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryBooleanInputFunction;
 
 /**
- * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} CHAR
+ * Converts a {@link SDFDatatype} BOOLEAN value into a {@link SDFDatatype} SHORT
  * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
  */
-public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character> {
+public class ToShortFromBooleanFunction extends AbstractUnaryBooleanInputFunction<Short> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5836290013022087638L;
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1956450848515723544L;
-
-	/**
-	 * 
-	 */
-	public ToCharFromNumberFunction() {
-		super("toChar", SDFDatatype.CHAR);
+	public ToShortFromBooleanFunction() {
+		super("toShort", SDFDatatype.SHORT);
 	}
 
 	/**
@@ -44,12 +42,14 @@ public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Character getValue() {
-		Number input = getInputValue(0);
+	public Short getValue() {
+		Boolean input = getInputValue(0);
 		if (input == null) {
 			return null;
 		}
-		return Character.valueOf((char) input.longValue());
+		if (input.booleanValue()) {
+			return new Short((short) 1);
+		}
+		return new Short((short) 0);
 	}
-
 }

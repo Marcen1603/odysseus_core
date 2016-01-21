@@ -15,28 +15,29 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringObjectInputFunction;
 
 /**
- * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} CHAR
+ * Converts a {@link SDFDatatype} String value into a {@link SDFDatatype} SHORT
  * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
  */
-public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character> {
+public class ToShortFromStringFunction extends AbstractUnaryStringObjectInputFunction<Short> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1956450848515723544L;
+	private static final long serialVersionUID = 969531567233600587L;
 
 	/**
 	 * 
 	 */
-	public ToCharFromNumberFunction() {
-		super("toChar", SDFDatatype.CHAR);
+	public ToShortFromStringFunction() {
+		super("toShort", SDFDatatype.SHORT);
 	}
 
 	/**
@@ -44,12 +45,16 @@ public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Character getValue() {
-		Number input = getInputValue(0);
-		if (input == null) {
+	public Short getValue() {
+		String input = getInputValue(0);
+		if (Strings.isNullOrEmpty(input)) {
 			return null;
 		}
-		return Character.valueOf((char) input.longValue());
+		if (Boolean.TRUE.toString().equalsIgnoreCase(input)) {
+			return new Short((short) 1);
+		} else if (Boolean.FALSE.toString().equalsIgnoreCase(input)) {
+			return new Short((short) 0);
+		}
+		return Short.valueOf(Double.valueOf(input).shortValue());
 	}
-
 }

@@ -1,5 +1,5 @@
 /********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+ * Copyright 2016 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,13 @@ public class ToStringFunction extends AbstractFunction<String> implements IHasAl
     }
 
     @Override
-    public String getValue() {
-        return getInputValue(0).toString();
-    }
+	public String getValue() {
+		Object input = getInputValue(0);
+		if (input == null) {
+			return "";
+		}
+		return input.toString();
+	}
     
     @Override
     public String getAliasName() {

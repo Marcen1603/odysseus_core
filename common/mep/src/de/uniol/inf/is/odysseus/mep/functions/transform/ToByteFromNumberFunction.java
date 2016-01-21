@@ -16,27 +16,28 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
- * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} CHAR
+ * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} BYTE
  * value.
  * 
  * @author Christian Kuka <christian@kuka.cc>
+ * @version $Id$ *
  *
  */
-public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character> {
+public class ToByteFromNumberFunction extends AbstractUnaryNumberInputFunction<Byte> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1956450848515723544L;
+	private static final long serialVersionUID = 5568284175562603618L;
 
 	/**
 	 * 
 	 */
-	public ToCharFromNumberFunction() {
-		super("toChar", SDFDatatype.CHAR);
+	public ToByteFromNumberFunction() {
+		super("toByte", SDFDatatype.BYTE);
 	}
 
 	/**
@@ -44,12 +45,11 @@ public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Character getValue() {
+	public Byte getValue() {
 		Number input = getInputValue(0);
 		if (input == null) {
 			return null;
 		}
-		return Character.valueOf((char) input.longValue());
+		return Byte.valueOf(input.byteValue());
 	}
-
 }

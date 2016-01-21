@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * Returns the value of the specified number as a <code>short</code>.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
+ * @deprecated Use {@link ToShortFromNumberFunction}
  */
+@Deprecated
 public class DoubleToShortFunction extends AbstractFunction<Short> {
 
 	private static final long serialVersionUID = 6684569578991865699L;
