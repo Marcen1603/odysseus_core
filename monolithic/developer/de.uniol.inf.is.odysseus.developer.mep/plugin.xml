@@ -18,7 +18,14 @@
             name="Test MEP Function">
       </command>     
        </extension>
-       
+       <extension
+         point="org.eclipse.ui.commands">
+              <command
+            defaultHandler="de.uniol.inf.is.odysseus.developer.mep.command.RunMEPCalculatorCommand"
+            id="de.uniol.inf.is.odysseus.developer.mep.command.RunMEPCalculatorCommand"
+            name="MEP Calculator">
+      </command>     
+       </extension>
            <extension
          point="org.eclipse.ui.menus">
             <menuContribution
@@ -39,7 +46,12 @@
                </command>
                <command
                      commandId="de.uniol.inf.is.odysseus.developer.mep.command.EstimateTimeAndSpaceComplexityCommand"
-                     label="Run MEP Time/Space Estimation"
+                     label="MEP Time/Space Estimation"
+                     style="push">
+               </command>
+               <command
+                     commandId="de.uniol.inf.is.odysseus.developer.mep.command.RunMEPCalculatorCommand"
+                     label="MEP Calculator"
                      style="push">
                </command>
             </menuContribution>
