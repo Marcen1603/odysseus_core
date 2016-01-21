@@ -130,19 +130,11 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.wrapper.navicoradar.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.feature"
          version="0.0.0"/>
 
    <includes
          id="de.uniol.inf.is.odysseus.wrapper.opcda.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.wrapper.optriscamera.feature"
          version="0.0.0"/>
 
    <includes
@@ -195,10 +187,6 @@
 
    <includes
          id="de.uniol.inf.is.odysseus.wrapper.webcrawler.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.wrapper.xovis.feature"
          version="0.0.0"/>
 
    <includes
