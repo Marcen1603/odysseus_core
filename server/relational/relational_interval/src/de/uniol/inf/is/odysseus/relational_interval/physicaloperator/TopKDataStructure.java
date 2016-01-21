@@ -94,4 +94,8 @@ public class TopKDataStructure<T extends Tuple<M>, M extends ITimeInterval> {
 		return topK.get(index);
 	}
 
+	@Override
+	public String toString() {
+		return topK.toString();
+	}
 }
