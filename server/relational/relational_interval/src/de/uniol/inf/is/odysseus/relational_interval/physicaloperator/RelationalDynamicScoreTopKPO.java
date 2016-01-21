@@ -13,7 +13,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 
 /**
  * This operator calculates the top k elements from the input with a scoring
- * function. This operator is a special version that recalcs the scores for every new input 
+ * function. This operator is a special version that recalcs the scores for
+ * every new input
  * 
  * @author Marco Grawunder
  * 
@@ -26,41 +27,46 @@ public class RelationalDynamicScoreTopKPO<T extends Tuple<M>, M extends ITimeInt
 	public RelationalDynamicScoreTopKPO(SDFSchema inputSchema, SDFSchema outputSchema, SDFExpression setupFunction,
 			SDFExpression preScoringFunction, SDFExpression scoringFunction, SDFExpression tearDownFunction,
 			SDFExpression cleanupPredicate, int k, boolean descending, boolean suppressDuplicates,
-			List<SDFAttribute> uniqueAttributes,IGroupProcessor<T, T> groupProcessor, boolean triggerOnlyByPunctuation) {
+			List<SDFAttribute> uniqueAttributes, IGroupProcessor<T, T> groupProcessor,
+			boolean triggerOnlyByPunctuation) {
 		super(inputSchema, outputSchema, setupFunction, preScoringFunction, scoringFunction, tearDownFunction,
-				cleanupPredicate, k, descending, suppressDuplicates, uniqueAttributes, groupProcessor, triggerOnlyByPunctuation);
+				cleanupPredicate, k, descending, suppressDuplicates, uniqueAttributes, groupProcessor,
+				triggerOnlyByPunctuation);
 	}
 
 	@Override
-	protected void updateTopKList(T object, TopKDataStructure<T,M> topK) {
+	protected void updateTopKList(T object, TopKDataStructure<T, M> topK) {
 		ArrayList<SerializablePair<Double, T>> oldTopK = topK.getCopyOfTopkList();
 		topK.clear();
-		
+
 		SerializablePair<Double, T> scoredObject = calcScore(object);
-		topK.add(scoredObject, false);
-		
-		int elemsToProcess = Math.min(oldTopK.size()+1,k);
-		
-		// the first k-1 objects needs to be added to the list
-		for (int i=0;i<elemsToProcess-1;i++){
-		 	SerializablePair<Double, T> reScoredObject = calcScore(oldTopK.get(i).getE2());
-		 	topK.insertSorted(reScoredObject);
+		if (scoredObject.getE1() != null) {
+
+			topK.add(scoredObject, false);
+
+			int elemsToProcess = Math.min(oldTopK.size() + 1, k);
+
+			// the first k-1 objects needs to be added to the list
+			for (int i = 0; i < elemsToProcess - 1; i++) {
+				SerializablePair<Double, T> reScoredObject = calcScore(oldTopK.get(i).getE2());
+				topK.insertSorted(reScoredObject);
+			}
+
+			double minScore = topK.get(topK.size() - 1).getE1();
+
+			// The other need only be added sorted if score is higher than min
+			// score
+			for (int i = elemsToProcess; i < oldTopK.size(); i++) {
+				SerializablePair<Double, T> reScoredObject = calcScore(oldTopK.get(i).getE2());
+				if (reScoredObject.getE1() > minScore) {
+					minScore = reScoredObject.getE1();
+					topK.insertSorted(reScoredObject);
+				} else {
+					topK.add(topK.size(), reScoredObject, false);
+				}
+			}
+
 		}
 
-		double minScore = topK.get(topK.size()-1).getE1();
-		
-		// The other need only be added sorted if score is higher than min score
-		for (int i=elemsToProcess;i<oldTopK.size();i++){
-		 	SerializablePair<Double, T> reScoredObject = calcScore(oldTopK.get(i).getE2());
-		 	if (reScoredObject.getE1()>minScore){
-		 		minScore = reScoredObject.getE1();
-		 		topK.insertSorted(reScoredObject);
-		 	}else{
-		 		topK.add(topK.size(),reScoredObject, false);
-		 	}
-		}
-		
-		
-		
 	}
 }

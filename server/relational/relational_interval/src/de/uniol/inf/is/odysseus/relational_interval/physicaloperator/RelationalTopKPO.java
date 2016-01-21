@@ -19,23 +19,26 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
  * @param <T>
  * @param <M>
  */
-public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
-		extends AbstractRelationalTopKPO<T, M> {
+public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractRelationalTopKPO<T, M> {
 
 	public RelationalTopKPO(SDFSchema inputSchema, SDFSchema outputSchema, SDFExpression setupFunction,
 			SDFExpression preScoringFunction, SDFExpression scoringFunction, SDFExpression tearDownFunction,
 			SDFExpression cleanupPredicate, int k, boolean descending, boolean suppressDuplicates,
-			List<SDFAttribute> uniqueAttributes,IGroupProcessor<T, T> groupProcessor, boolean triggerOnlyByPunctuation) {
+			List<SDFAttribute> uniqueAttributes, IGroupProcessor<T, T> groupProcessor,
+			boolean triggerOnlyByPunctuation) {
 		super(inputSchema, outputSchema, setupFunction, preScoringFunction, scoringFunction, tearDownFunction,
-				cleanupPredicate, k, descending, suppressDuplicates, uniqueAttributes, groupProcessor, triggerOnlyByPunctuation);
+				cleanupPredicate, k, descending, suppressDuplicates, uniqueAttributes, groupProcessor,
+				triggerOnlyByPunctuation);
 	}
 
 	@Override
-	protected void updateTopKList(T object, TopKDataStructure<T,M> topK) {
+	protected void updateTopKList(T object, TopKDataStructure<T, M> topK) {
 		SerializablePair<Double, T> scoredObject = calcScore(object);
 
-		// add object to list
-		topK.insertSorted(scoredObject);
+		if (scoredObject.getE1() != null) {
+			// add object to list
+			topK.insertSorted(scoredObject);
+		}
 	}
 
 }

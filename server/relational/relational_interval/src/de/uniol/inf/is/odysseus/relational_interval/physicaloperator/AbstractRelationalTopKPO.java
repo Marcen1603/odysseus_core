@@ -333,12 +333,18 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		try {
 			score = ((Number) this.scoreExpression.evaluate(object, getSessions(),
 					history)).doubleValue();
-
+			
 		} catch (Exception e) {
 			if (!(e instanceof NullPointerException)) {
 				sendWarning("Cannot calc result for " + object
 						+ " with expression " + scoreExpression, e);
 			}
+			e.printStackTrace();
+		}
+		
+		if (score == null){
+			sendWarning("Cannot calc result for " + object
+						+ " with expression " + scoreExpression);
 		}
 
 		scoredObject.setE1(score);
