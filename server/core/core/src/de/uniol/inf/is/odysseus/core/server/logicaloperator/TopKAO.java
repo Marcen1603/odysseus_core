@@ -200,9 +200,12 @@ public class TopKAO extends AbstractLogicalOperator {
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema subSchema = getInputSchema(0);
+		// TODO addScore flag
+		
 		List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
 		attributes.add(new SDFAttribute(subSchema.getURI(), "topk",
 				SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, subSchema)));
+		
 		attributes.add(new SDFAttribute(subSchema.getURI(), "trigger",
 				SDFDatatype.createTypeWithSubSchema(SDFDatatype.TUPLE, subSchema)));
 		if (groupingAttributes != null) {

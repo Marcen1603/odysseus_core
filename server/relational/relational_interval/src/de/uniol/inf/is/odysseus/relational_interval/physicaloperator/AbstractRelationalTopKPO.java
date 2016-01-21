@@ -93,7 +93,8 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	final private Map<Long, TopKDataStructure<T,M>> topKMap = new HashMap<Long, TopKDataStructure<T,M>>();
 	final Comparator<SerializablePair<Double, T>> comparator;
 	final private IGroupProcessor<T, T> groupProcessor;
-
+	final boolean addScore;
+	
 	private Map<Long, LinkedList<T>> lastResultMap = new HashMap<>();
 	private long elementsRead;
 
@@ -107,6 +108,10 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 			boolean suppressDuplicates, List<SDFAttribute> uniqueAttributes, IGroupProcessor<T, T> groupProcessor,
 			boolean triggerOnlyByPunctuation) {
 		super();
+		
+		// TODO: REMOVE!!
+		addScore = true;
+		
 		if (setupFunction != null){
 			this.setupExpression = new RelationalExpression<>(setupFunction);
 			this.setupExpression.initVars(inputSchema);
@@ -273,7 +278,13 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		List<T> resultList = new LinkedList<T>();
 		for (int i = 0; i < k && iter.hasNext(); i++) {
-			T out = (T) iter.next().getE2().clone();
+			SerializablePair<Double, T> next = iter.next();		
+			T out;
+			if (addScore){
+				out = (T) next.getE2().append(next.getE1());
+			}else{
+				out = (T) next.getE2().clone();				
+			}
 			out.setMetadata(null);
 			resultList.add(out);
 		}

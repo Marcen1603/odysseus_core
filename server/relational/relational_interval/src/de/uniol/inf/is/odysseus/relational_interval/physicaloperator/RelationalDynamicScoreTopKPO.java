@@ -36,6 +36,8 @@ public class RelationalDynamicScoreTopKPO<T extends Tuple<M>, M extends ITimeInt
 
 	@Override
 	protected void updateTopKList(T object, TopKDataStructure<T, M> topK) {
+		// TODO: Think about option: Update the scores and call Collections.sort
+		
 		ArrayList<SerializablePair<Double, T>> oldTopK = topK.getCopyOfTopkList();
 		topK.clear();
 
