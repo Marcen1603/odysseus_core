@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.transform;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
 
 /**
  * Converts a {@link SDFDatatype} NUMBER value into a {@link SDFDatatype} CHAR
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryDiscreteInputFunction;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ToCharFromNumberFunction extends AbstractUnaryDiscreteInputFunction<Character> {
+public class ToCharFromNumberFunction extends AbstractUnaryNumberInputFunction<Character> {
 
 	/**
 	 * 
