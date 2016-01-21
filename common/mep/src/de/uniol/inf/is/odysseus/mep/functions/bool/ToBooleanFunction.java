@@ -34,9 +34,12 @@ public class ToBooleanFunction extends AbstractFunction<Boolean> {
     }
 
     @Override
-    public Boolean getValue() {
-        String s = getInputValue(0).toString();
-        return new Boolean(Boolean.parseBoolean(s));
-    }
+	public Boolean getValue() {
+		String s = getInputValue(0);
+		if (s == null) {
+			return null;
+		}
+		return new Boolean(Boolean.parseBoolean(s));
+	}
 
 }

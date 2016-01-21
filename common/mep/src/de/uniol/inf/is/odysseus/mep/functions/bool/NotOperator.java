@@ -34,7 +34,11 @@ public class NotOperator extends AbstractUnaryOperator<Boolean> {
 
 	@Override
 	public Boolean getValue() {
-		return !((Boolean) getInputValue(0));
+		Boolean result = getInputValue(0);
+		if (result == null) {
+			return null;
+		}
+		return Boolean.valueOf(!result);
 	}
 
 	@Override

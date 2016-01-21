@@ -60,9 +60,12 @@ public class XorOperator extends AbstractBinaryBooleanOperator {
 
 	@Override
 	public Boolean getValue() {
-		Boolean a = (Boolean) getInputValue(0);
-		Boolean b = (Boolean) getInputValue(1);
-		return (a && !b) || (!a && b);
+		Boolean left = getInputValue(0);
+		Boolean right = getInputValue(1);
+		if ((left == null) || (right == null)) {
+			return null;
+		}
+		return (left && !right) || (!left && right);
 	}
 
 }

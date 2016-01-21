@@ -73,6 +73,9 @@ public class Constant<T> implements IExpression<T> {
 
 	@Override
 	public String toString() {
+		if (value == null) {
+			return "null";
+		}
 		if( type.isDouble() ) {
 			return DOUBLE_FORMATTER.format(value);
 		}
@@ -150,6 +153,7 @@ public class Constant<T> implements IExpression<T> {
 		return false;
 	}
 	
+	@Override
 	public IExpression<T> clone(Map<Variable, Variable> vars){
 		return this;
 	}

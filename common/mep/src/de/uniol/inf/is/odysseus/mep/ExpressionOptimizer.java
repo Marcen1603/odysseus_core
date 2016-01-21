@@ -327,12 +327,11 @@ public class ExpressionOptimizer {
             return function;
 		}
 
-		private static boolean isConstantPredicate(IExpression<?>[] iExpression,
-				Boolean value) {
-			return iExpression[0] instanceof Constant
+		private static boolean isConstantPredicate(IExpression<?>[] iExpression, Boolean value) {
+			return iExpression[0] instanceof Constant && iExpression[0].getValue() != null
 					&& iExpression[0].getValue().equals(value)
-					|| iExpression[1] instanceof Constant
-					&& iExpression[1].getValue().equals(value);
+					|| iExpression[1] instanceof Constant && iExpression[1].getValue() != null
+							&& iExpression[1].getValue().equals(value);
 		}
 
 	}

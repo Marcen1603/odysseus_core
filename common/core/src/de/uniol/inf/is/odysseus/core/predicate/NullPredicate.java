@@ -94,7 +94,10 @@ public class NullPredicate<T> extends AbstractPredicate<T> {
 	 */
 	@Override
 	public IPredicate<T> and(IPredicate<T> predicate) {
-		return predicate;
+		if (predicate.getClass().equals(FalsePredicate.class)) {
+			return predicate;
+		}
+		return new AndPredicate<>(this, predicate);
 	}
 
 	/**
@@ -102,15 +105,17 @@ public class NullPredicate<T> extends AbstractPredicate<T> {
 	 */
 	@Override
 	public IPredicate<T> or(IPredicate<T> predicate) {
-		return this;
+		if (predicate.getClass().equals(TruePredicate.class)) {
+			return predicate;
+		}
+		return new OrPredicate<>(this, predicate);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public IPredicate<T> not() {
-		return NullPredicate.getInstance();
+		return this;
 	}
 }

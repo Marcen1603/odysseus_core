@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.predicate.optimizer;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.NullPredicate;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -34,6 +35,9 @@ public class ReduceNotRule extends AbstractPredicateOptimizerRule<NotPredicate<?
         if (child instanceof NotPredicate) {
             return ((NotPredicate<?>) child).getChild();
         }
+		if (child instanceof NullPredicate) {
+			return NullPredicate.getInstance();
+		}
         return expression;
     }
 

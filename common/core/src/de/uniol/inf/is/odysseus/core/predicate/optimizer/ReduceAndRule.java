@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.NullPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 
 /**
@@ -60,6 +61,9 @@ public class ReduceAndRule extends AbstractPredicateOptimizerRule<AndPredicate<?
         if ((left.isAlwaysTrue()) && (right.isAlwaysTrue())) {
             return TruePredicate.getInstance();
         }
+		if ((left instanceof NullPredicate) && (right instanceof NullPredicate)) {
+			return NullPredicate.getInstance();
+		}
         return expression;
     }
 

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.predicate.optimizer;
 import de.uniol.inf.is.odysseus.core.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.NullPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 
@@ -63,6 +64,9 @@ public class ReduceOrRule extends AbstractPredicateOptimizerRule<OrPredicate<?>>
         if ((left.isAlwaysTrue()) || (right.isAlwaysTrue())) {
             return TruePredicate.getInstance();
         }
+		if ((left instanceof NullPredicate) && (right instanceof NullPredicate)) {
+			return NullPredicate.getInstance();
+		}
         return expression;
     }
 

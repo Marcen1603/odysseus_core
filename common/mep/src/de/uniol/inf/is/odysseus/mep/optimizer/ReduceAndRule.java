@@ -54,18 +54,26 @@ public class ReduceAndRule extends AbstractExpressionOptimizerRule<AndOperator> 
         if (left.toString().equals(right.toString())) {
             return left;
         }
-        if ((left.isConstant()) && (left.toConstant().getValue().equals(Boolean.FALSE))) {
+		if ((left.isConstant()) && (left.toConstant().getValue() != null)
+				&& (left.toConstant().getValue().equals(Boolean.FALSE))) {
             return new Constant<>(Boolean.FALSE, SDFDatatype.BOOLEAN);
         }
-        if ((right.isConstant()) && (right.toConstant().getValue().equals(Boolean.FALSE))) {
+		if ((right.isConstant()) && (right.toConstant().getValue() != null)
+				&& (right.toConstant().getValue().equals(Boolean.FALSE))) {
             return new Constant<>(Boolean.FALSE, SDFDatatype.BOOLEAN);
         }
-        if ((left.isConstant()) && (left.toConstant().getValue().equals(Boolean.TRUE))) {
+		if ((left.isConstant()) && (left.toConstant().getValue() != null)
+				&& (left.toConstant().getValue().equals(Boolean.TRUE))) {
             return right;
         }
-        if ((right.isConstant()) && (right.toConstant().getValue().equals(Boolean.TRUE))) {
+		if ((right.isConstant()) && (right.toConstant().getValue() != null)
+				&& (right.toConstant().getValue().equals(Boolean.TRUE))) {
             return left;
         }
+		if ((right.isConstant()) && (right.toConstant().getValue() == null) && (left.isConstant())
+				&& (left.toConstant().getValue() == null)) {
+			return new Constant<>(null, SDFDatatype.BOOLEAN);
+		}
         return expression;
     }
 

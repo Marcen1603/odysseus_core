@@ -57,7 +57,16 @@ public class AndOperator extends AbstractBinaryBooleanOperator {
 
 	@Override
 	public Boolean getValue() {
-		return (Boolean) getInputValue(0) && (Boolean) getInputValue(1);
+		Boolean left = getInputValue(0);
+		Boolean right = getInputValue(1);
+		if ((left == null) || (right == null)) {
+			if (((left == null) && (right == null)) || ((left == null) && (right != null) && (right == true))
+					|| ((right == null) && (left != null) && (left == true))) {
+				return null;
+			}
+			return Boolean.FALSE;
+		}
+		return Boolean.valueOf(left && right);
 	}
 	
 }
