@@ -322,9 +322,15 @@ public class CheatSheetGenerator {
                     }
                     sb.append(CheatSheetGenerator.concatDatatypes(function.getAcceptedTypes(i)));
                 }
-
-                builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{").append(CheatSheetGenerator.sanitize(sb.toString())).append("})}");
-                builder.append(" $\\rightarrow$ ").append(CheatSheetGenerator.sanitize(returnType)).append("\\\\\n");
+				Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
+				if (annotation != null) {
+					builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{")
+							.append(CheatSheetGenerator.sanitize(sb.toString())).append("})   \\textit{(Deprecated)}}");
+				} else {
+					builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{")
+							.append(CheatSheetGenerator.sanitize(sb.toString())).append("})}");
+				}
+				builder.append(" $\\rightarrow$ ").append(CheatSheetGenerator.sanitize(returnType)).append("\\\\\n");
             }
             // builder.append("\\end{multicols}\n\n");
         }

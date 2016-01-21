@@ -439,9 +439,16 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 					}
 					sb.append(GenerateHTMLCheatSheetCommand.concatDatatypes(function.getAcceptedTypes(i)));
 				}
-
-				builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(name)).append("</td><td>")
-						.append(sb.toString()).append("</td>");
+				Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
+				if (annotation != null) {
+					builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(name))
+							.append(" <span class='label label-danger'>Deprecated</span></td><td>")
+							.append(sb.toString())
+							.append("</td>");
+				} else {
+					builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(name)).append("</td><td>")
+							.append(sb.toString()).append("</td>");
+				}
 				builder.append("<td>").append(GenerateHTMLCheatSheetCommand.sanitize(returnType))
 						.append("</td></tr>\n");
 			}

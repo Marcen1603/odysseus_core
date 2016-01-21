@@ -434,9 +434,17 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
                     }
                     sb.append(GeneratePDFCheatSheetCommand.concatDatatypes(function.getAcceptedTypes(i)));
                 }
-
-                builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(name)).append("(\\textit{").append(GeneratePDFCheatSheetCommand.sanitize(sb.toString())).append("})}");
-                builder.append(" $\\rightarrow$ ").append(GeneratePDFCheatSheetCommand.sanitize(returnType)).append("\\\\\n");
+				Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
+				if (annotation != null) {
+					builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(name)).append("(\\textit{")
+							.append(GeneratePDFCheatSheetCommand.sanitize(sb.toString()))
+							.append("})  \\textit{(Deprecated)}}");
+				} else {
+					builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(name)).append("(\\textit{")
+							.append(GeneratePDFCheatSheetCommand.sanitize(sb.toString())).append("})}");
+				}
+				builder.append(" $\\rightarrow$ ").append(GeneratePDFCheatSheetCommand.sanitize(returnType))
+						.append("\\\\\n");
             }
         }
 
