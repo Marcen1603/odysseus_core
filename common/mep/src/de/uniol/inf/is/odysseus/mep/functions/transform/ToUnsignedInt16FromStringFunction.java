@@ -46,8 +46,12 @@ public class ToUnsignedInt16FromStringFunction extends AbstractUnaryStringObject
 	 */
 	@Override
 	public Integer getValue() {
-		String input = getInputValue(0);
-		if (Strings.isNullOrEmpty(input)) {
+        Object oIn = getInputValue(0);
+        if (oIn == null) {
+            return null;
+        }
+        String input = oIn.toString();
+        if (Strings.isNullOrEmpty(input)) {
 			return null;
 		}
 		if (Boolean.TRUE.toString().equalsIgnoreCase(input)) {

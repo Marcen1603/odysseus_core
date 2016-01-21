@@ -48,7 +48,11 @@ public class ToBooleanFromStringFunction extends AbstractUnaryStringObjectInputF
 	 */
 	@Override
 	public Boolean getValue() {
-		String input = getInputValue(0);
+        Object oIn = getInputValue(0);
+        if (oIn == null) {
+            return null;
+        }
+        String input = oIn.toString();
 		if (Strings.isNullOrEmpty(input)) {
 			return null;
 		}
