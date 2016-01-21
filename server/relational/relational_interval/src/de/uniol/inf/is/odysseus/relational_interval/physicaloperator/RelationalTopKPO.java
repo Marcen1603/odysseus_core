@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
@@ -24,17 +25,17 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	public RelationalTopKPO(SDFSchema inputSchema, SDFSchema outputSchema, SDFExpression setupFunction,
 			SDFExpression preScoringFunction, SDFExpression scoringFunction, SDFExpression tearDownFunction,
 			SDFExpression cleanupPredicate, int k, boolean descending, boolean suppressDuplicates,
-			IGroupProcessor<T, T> groupProcessor, boolean triggerOnlyByPunctuation) {
+			List<SDFAttribute> uniqueAttributes,IGroupProcessor<T, T> groupProcessor, boolean triggerOnlyByPunctuation) {
 		super(inputSchema, outputSchema, setupFunction, preScoringFunction, scoringFunction, tearDownFunction,
-				cleanupPredicate, k, descending, suppressDuplicates, groupProcessor, triggerOnlyByPunctuation);
+				cleanupPredicate, k, descending, suppressDuplicates, uniqueAttributes, groupProcessor, triggerOnlyByPunctuation);
 	}
 
 	@Override
-	protected void updateTopKList(T object, ArrayList<SerializablePair<Double, T>> topK) {
+	protected void updateTopKList(T object, TopKDataStructure<T,M> topK) {
 		SerializablePair<Double, T> scoredObject = calcScore(object);
 
 		// add object to list
-		insertSorted(topK, scoredObject);
+		topK.insertSorted(scoredObject);
 	}
 
 }

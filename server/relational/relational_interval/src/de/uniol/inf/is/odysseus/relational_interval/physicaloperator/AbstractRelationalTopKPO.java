@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueP
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.TuplePunctuation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -36,12 +35,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider {
 
-	private class TopKComparatorAsc implements
-			Comparator<SerializablePair<Double, T>> {
+	private class TopKComparatorAsc implements Comparator<SerializablePair<Double, T>> {
 
 		@Override
-		public int compare(SerializablePair<Double, T> left,
-				SerializablePair<Double, T> right) {
+		public int compare(SerializablePair<Double, T> left, SerializablePair<Double, T> right) {
 			return left.getE1().compareTo(right.getE1());
 		}
 	}
@@ -49,8 +46,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	private class TopKComparatorAscTS extends TopKComparatorAsc {
 
 		@Override
-		public int compare(SerializablePair<Double, T> left,
-				SerializablePair<Double, T> right) {
+		public int compare(SerializablePair<Double, T> left, SerializablePair<Double, T> right) {
 			int v = super.compare(left, right);
 			if (v == 0) {
 				PointInTime leftTS = left.getE2().getMetadata().getStart();
@@ -62,12 +58,10 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		}
 	}
 
-	private class TopKComparatorDesc implements
-			Comparator<SerializablePair<Double, T>> {
+	private class TopKComparatorDesc implements Comparator<SerializablePair<Double, T>> {
 
 		@Override
-		public int compare(SerializablePair<Double, T> left,
-				SerializablePair<Double, T> right) {
+		public int compare(SerializablePair<Double, T> left, SerializablePair<Double, T> right) {
 			return right.getE1().compareTo(left.getE1());
 		}
 	}
@@ -75,8 +69,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	private class TopKComparatorDescTS extends TopKComparatorDesc {
 
 		@Override
-		public int compare(SerializablePair<Double, T> left,
-				SerializablePair<Double, T> right) {
+		public int compare(SerializablePair<Double, T> left, SerializablePair<Double, T> right) {
 			int v = super.compare(left, right);
 			if (v == 0) {
 				PointInTime leftTS = left.getE2().getMetadata().getStart();
@@ -93,10 +86,12 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	final private RelationalExpression<M> scoreExpression;
 	final private RelationalExpression<M> tearDownExpression;
 	final private RelationalExpression<M> cleanupPredicate;
+	
+	final private int[] uniqueAttributePos;
 
 	protected final int k;
-	final private Map<Long, ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double, T>>>();
-	protected final Comparator<SerializablePair<Double, T>> comparator;
+	final private Map<Long, TopKDataStructure<T,M>> topKMap = new HashMap<Long, TopKDataStructure<T,M>>();
+	final Comparator<SerializablePair<Double, T>> comparator;
 	final private IGroupProcessor<T, T> groupProcessor;
 
 	private Map<Long, LinkedList<T>> lastResultMap = new HashMap<>();
@@ -109,7 +104,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 
 	public AbstractRelationalTopKPO(SDFSchema inputSchema, SDFSchema outputSchema, SDFExpression setupFunction,
 			SDFExpression preScoringFunction, SDFExpression scoringFunction, SDFExpression tearDownFunction, SDFExpression cleanupPredicate, int k, boolean descending,
-			boolean suppressDuplicates, IGroupProcessor<T, T> groupProcessor,
+			boolean suppressDuplicates, List<SDFAttribute> uniqueAttributes, IGroupProcessor<T, T> groupProcessor,
 			boolean triggerOnlyByPunctuation) {
 		super();
 		if (setupFunction != null){
@@ -150,6 +145,15 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		}
 		this.suppressDuplicates = suppressDuplicates;
 		this.groupProcessor = groupProcessor;
+		if (uniqueAttributes != null){
+			this.uniqueAttributePos = new int[uniqueAttributes.size()];
+			int counter=0;
+			for (SDFAttribute a:uniqueAttributes){
+				this.uniqueAttributePos[counter++] = inputSchema.indexOf(a);
+			}
+		}else{
+			this.uniqueAttributePos = null;
+		}
 		this.triggerOnlyByPunctuation = triggerOnlyByPunctuation;
 	}
 
@@ -175,12 +179,16 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		elementsRead++;
 		Long gId = groupProcessor.getGroupID(object);
 
-		ArrayList<SerializablePair<Double, T>> topK = topKMap.get(gId);
+		TopKDataStructure<T,M> topK = topKMap.get(gId);
 		if (topK == null) {
-			topK = new ArrayList<SerializablePair<Double, T>>();
+			topK = new TopKDataStructure<T,M>(comparator, orderByTimestamp, uniqueAttributePos);
 			topKMap.put(gId, topK);
 		}
 
+		if (uniqueAttributePos!=null){
+			topK.removeSame(object);
+		}
+		
 		updateTopKList(object, topK);
 		
 		if (tearDownExpression != null){
@@ -213,7 +221,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 			@SuppressWarnings("unchecked")
 			T object = ((TuplePunctuation<T, M>) punctuation).getTuple();
 			Long gId = groupProcessor.getGroupID(object);
-			ArrayList<SerializablePair<Double, T>> topK = topKMap.get(gId);
+			TopKDataStructure<T,M> topK = topKMap.get(gId);
 			if (topK != null) {
 				produceResult(object, topK, gId);
 			}
@@ -221,7 +229,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	}
 
 	private void cleanUp(PointInTime start,
-			ArrayList<SerializablePair<Double, T>> topK) {
+			TopKDataStructure<T,M> topK) {
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		while (iter.hasNext()) {
 			M metadata = iter.next().getE2().getMetadata();
@@ -236,7 +244,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		}
 	}
 	
-	private void cleanUp(ArrayList<SerializablePair<Double, T>> topK) {
+	private void cleanUp(TopKDataStructure<T,M> topK) {
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		while (iter.hasNext()) {
 			T elem = iter.next().getE2();
@@ -247,27 +255,12 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	}
 	
 	protected abstract void updateTopKList(T object,
-			ArrayList<SerializablePair<Double, T>> topK);
+			TopKDataStructure<T,M> topK);
 	
-	protected void insertSorted(ArrayList<SerializablePair<Double, T>> topK, SerializablePair<Double, T> scoredObject) {
-		// 1. find position to insert with binary search
-		int pos = Collections.binarySearch(topK, scoredObject, comparator);
-		if (pos < 0) {
-			topK.add((-(pos) - 1), scoredObject);
-		} else {
-			if (orderByTimestamp) {
-				while (pos > 0 && topK.get(pos).getE1().equals(scoredObject.getE1())) {
-					pos--;
-				}
-			}
-			topK.add(pos, scoredObject);
-		}
-	}
-
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void produceResult(T object,
-			ArrayList<SerializablePair<Double, T>> topK, Long groupID) {
+			TopKDataStructure<T,M> topK, Long groupID) {
 		// Produce result
 		T groupingPart = groupProcessor.getGroupingPart(object);
 		final T result;
@@ -360,7 +353,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		kv.put("No Of Groups", topKMap.size() + "");
 		// Show at least 10 groups
 		int i = 10;
-		for (Entry<Long, ArrayList<SerializablePair<Double, T>>> e : topKMap
+		for (Entry<Long, TopKDataStructure<T,M>> e : topKMap
 				.entrySet()) {
 			kv.put("Top-k-Map size group " + e.getKey(), e.getValue().size()
 					+ "");

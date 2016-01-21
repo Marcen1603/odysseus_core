@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.relational_interval.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
@@ -24,26 +26,25 @@ public class RelationalDynamicScoreTopKPO<T extends Tuple<M>, M extends ITimeInt
 	public RelationalDynamicScoreTopKPO(SDFSchema inputSchema, SDFSchema outputSchema, SDFExpression setupFunction,
 			SDFExpression preScoringFunction, SDFExpression scoringFunction, SDFExpression tearDownFunction,
 			SDFExpression cleanupPredicate, int k, boolean descending, boolean suppressDuplicates,
-			IGroupProcessor<T, T> groupProcessor, boolean triggerOnlyByPunctuation) {
+			List<SDFAttribute> uniqueAttributes,IGroupProcessor<T, T> groupProcessor, boolean triggerOnlyByPunctuation) {
 		super(inputSchema, outputSchema, setupFunction, preScoringFunction, scoringFunction, tearDownFunction,
-				cleanupPredicate, k, descending, suppressDuplicates, groupProcessor, triggerOnlyByPunctuation);
+				cleanupPredicate, k, descending, suppressDuplicates, uniqueAttributes, groupProcessor, triggerOnlyByPunctuation);
 	}
 
 	@Override
-	protected void updateTopKList(T object, ArrayList<SerializablePair<Double, T>> topK) {
-		@SuppressWarnings("unchecked")
-		ArrayList<SerializablePair<Double, T>> oldTopK = (ArrayList<SerializablePair<Double, T>>) topK.clone();
+	protected void updateTopKList(T object, TopKDataStructure<T,M> topK) {
+		ArrayList<SerializablePair<Double, T>> oldTopK = topK.getCopyOfTopkList();
 		topK.clear();
 		
 		SerializablePair<Double, T> scoredObject = calcScore(object);
-		topK.add(scoredObject);
+		topK.add(scoredObject, false);
 		
 		int elemsToProcess = Math.min(oldTopK.size()+1,k);
 		
 		// the first k-1 objects needs to be added to the list
 		for (int i=0;i<elemsToProcess-1;i++){
 		 	SerializablePair<Double, T> reScoredObject = calcScore(oldTopK.get(i).getE2());
-		 	insertSorted(topK, reScoredObject);
+		 	topK.insertSorted(reScoredObject);
 		}
 
 		double minScore = topK.get(topK.size()-1).getE1();
@@ -53,9 +54,9 @@ public class RelationalDynamicScoreTopKPO<T extends Tuple<M>, M extends ITimeInt
 		 	SerializablePair<Double, T> reScoredObject = calcScore(oldTopK.get(i).getE2());
 		 	if (reScoredObject.getE1()>minScore){
 		 		minScore = reScoredObject.getE1();
-		 		insertSorted(topK, reScoredObject);
+		 		topK.insertSorted(reScoredObject);
 		 	}else{
-		 		topK.add(topK.size(),reScoredObject);
+		 		topK.add(topK.size(),reScoredObject, false);
 		 	}
 		}
 		

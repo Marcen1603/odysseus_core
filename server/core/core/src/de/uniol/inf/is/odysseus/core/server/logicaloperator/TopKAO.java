@@ -34,6 +34,7 @@ public class TopKAO extends AbstractLogicalOperator {
 	private boolean descending = true;
 	private boolean suppressDuplicates = true;
 	private List<SDFAttribute> groupingAttributes;
+	private List<SDFAttribute> uniqueAttributes;
 	private boolean fastGrouping = false;
 	private boolean tieWithTimestamp = false;
 	private boolean triggerOnlyByPunctuation = false;
@@ -54,6 +55,9 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.setSuppressDuplicates(other.isSuppressDuplicates());
 		if (other.groupingAttributes != null) {
 			this.groupingAttributes = new ArrayList<SDFAttribute>(other.groupingAttributes);
+		}
+		if (other.uniqueAttributes != null){
+			this.uniqueAttributes = new ArrayList<>(other.uniqueAttributes);
 		}
 		this.fastGrouping = other.fastGrouping;
 		this.tieWithTimestamp = other.tieWithTimestamp;
@@ -166,6 +170,15 @@ public class TopKAO extends AbstractLogicalOperator {
 
 	public List<SDFAttribute> getGroupingAttributes() {
 		return groupingAttributes;
+	}
+
+	public List<SDFAttribute> getUniqueAttributes() {
+		return uniqueAttributes;
+	}
+
+	@Parameter(name = "uniqueAttributes", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setUniqueAttributes(List<SDFAttribute> uniqueAttributes) {
+		this.uniqueAttributes = uniqueAttributes;
 	}
 
 	/**
