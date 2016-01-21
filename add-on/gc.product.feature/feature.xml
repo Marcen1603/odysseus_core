@@ -102,23 +102,11 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.wrapper.actisense.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.wrapper.baslercamera.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.wrapper.dds.feature"
          version="0.0.0"/>
 
    <includes
          id="de.uniol.inf.is.odysseus.wrapper.facebook.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.wrapper.ferrybox.feature"
          version="0.0.0"/>
 
    <includes
@@ -251,10 +239,6 @@
 
    <includes
          id="de.uniol.inf.is.odysseus.wsenrich.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.video.feature"
          version="0.0.0"/>
 
    <includes
