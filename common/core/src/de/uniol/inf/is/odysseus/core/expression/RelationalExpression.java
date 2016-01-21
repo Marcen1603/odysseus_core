@@ -45,6 +45,8 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		for (SDFAttribute curAttribute : neededAttributes) {
 			newArray[j++] = initAttribute(schema, curAttribute);
 		}
+		// Call once to init all type calculations
+		this.getType();
 	}
 	
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history ){
