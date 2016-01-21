@@ -35,9 +35,11 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.bytedeco.javacv" version="0.8.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava"/>
-      <import plugin="de.uniol.inf.is.odysseus.mep"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+      <import plugin="com.jogamp.jogl" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.imagejcv.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.slf4j.api"/>
    </requires>
 
    <plugin
@@ -56,6 +58,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="org.bytedeco.javacv"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.jogamp.jogl"
          download-size="0"
          install-size="0"
          version="0.0.0"

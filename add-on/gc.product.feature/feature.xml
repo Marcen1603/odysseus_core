@@ -285,4 +285,8 @@
          id="de.uniol.inf.is.odysseus.server.rdf"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.mining.feature"
+         version="0.0.0"/>
+
 </feature>
