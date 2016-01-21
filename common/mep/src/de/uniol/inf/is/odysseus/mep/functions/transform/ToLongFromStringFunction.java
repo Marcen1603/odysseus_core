@@ -47,7 +47,11 @@ public class ToLongFromStringFunction extends AbstractUnaryStringObjectInputFunc
 	 */
 	@Override
 	public Long getValue() {
-		String input = getInputValue(0);
+		Object oIn = getInputValue(0);
+		if (oIn == null){
+			return null;
+		}
+		String input = oIn.toString();
 		if (Strings.isNullOrEmpty(input)) {
 			return null;
 		}
