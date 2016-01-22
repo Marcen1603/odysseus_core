@@ -77,6 +77,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 		imageManager.register("string", "icons/string.jpg");
 		imageManager.register("subscription", "icons/arrow-000-small.png");
 		imageManager.register("information", "icons/information-white.png");
+        imageManager.register("heart", "icons/heart.png");
 
 		XMLResourceLoader.loadImages(bundle.getEntry("viewer_cfg/resources.xml"), bundle.getEntry("viewer_cfg/resourcesSchema.xsd"));
 

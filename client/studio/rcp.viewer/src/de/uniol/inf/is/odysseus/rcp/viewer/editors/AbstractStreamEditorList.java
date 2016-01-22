@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
@@ -144,7 +145,8 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	@Override
 	public void initToolbar(ToolBar toolbar) {
 		final ToolItem showHeartbeatsToolbarItem = new ToolItem(toolbar, SWT.CHECK);
-		showHeartbeatsToolbarItem.setText("\u2764");
+        showHeartbeatsToolbarItem.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("heart"));
+        // showHeartbeatsToolbarItem.setText("\u2764");
 		showHeartbeatsToolbarItem.setToolTipText("Toogle heartbeat printing");
 		showHeartbeatsToolbarItem.setSelection(showHeartbeats);
 		showHeartbeatsToolbarItem.addSelectionListener(new SelectionAdapter() {
