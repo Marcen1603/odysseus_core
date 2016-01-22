@@ -106,7 +106,8 @@ public class CheatSheetGenerator {
         builder.append("\\usepackage{ifthen}\n");
         builder.append("\\usepackage[landscape]{geometry}\n");
         builder.append("\\usepackage{textcomp}\n");
-
+        builder.append("\\usepackage[english]{babel}\n");
+        builder.append("\\usepackage[svgnames]{xcolor}\n");
         builder.append("\\usepackage{ifxetex,ifluatex}\n");
         builder.append("\\ifxetex\n");
         builder.append("  \\usepackage{fontspec,xltxtra,xunicode}\n");
@@ -123,6 +124,8 @@ public class CheatSheetGenerator {
         builder.append("\\else\n");
         builder.append("  \\usepackage[unicode=true]{hyperref}\n");
         builder.append("\\fi\n\n");
+
+        builder.append("\\definecolor{uniolblue}{rgb}{0.0, 0.31765, 0.61961}\n");
 
         builder.append("\\ifthenelse{\\lengthtest { \\paperwidth = 11in}}\n");
         builder.append("{ \\geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }\n");
@@ -164,7 +167,7 @@ public class CheatSheetGenerator {
         builder.append("\\setlength{\\columnsep}{2pt}\n\n");
 
         builder.append("\\begin{center}\n");
-        builder.append("\\Large{\\textbf{Odysseus\\ Cheat Sheet}} \\\\\n");
+        builder.append("\\textcolor{uniolblue}{\\huge{\\textbf{Odysseus\\ Cheat Sheet}}} \\\\\n");
         builder.append("\\end{center}\n\n");
 
         builder.append("\\newlength{\\MyLen}\n");
@@ -243,7 +246,7 @@ public class CheatSheetGenerator {
                                         .append(" \\\\\n");
                             }
                             else {
-                                builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  & -- \\\\\n");
+                                builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(parameter.getName())).append("}  &  \\\\\n");
                             }
                         }
                     }
@@ -323,14 +326,13 @@ public class CheatSheetGenerator {
                     sb.append(CheatSheetGenerator.concatDatatypes(function.getAcceptedTypes(i)));
                 }
 				Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
-				if (annotation != null) {
-					builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{")
-							.append(CheatSheetGenerator.sanitize(sb.toString())).append("})   \\textit{(Deprecated)}}");
-				} else {
-					builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{")
-							.append(CheatSheetGenerator.sanitize(sb.toString())).append("})}");
-				}
-				builder.append(" $\\rightarrow$ ").append(CheatSheetGenerator.sanitize(returnType)).append("\\\\\n");
+                builder.append("\\texttt{").append(CheatSheetGenerator.sanitize(name)).append("(\\textit{").append(CheatSheetGenerator.sanitize(sb.toString())).append("})}");
+                if (annotation != null) {
+                    builder.append(" $\\rightarrow$ ").append(CheatSheetGenerator.sanitize(returnType)).append(" \\textit{(Deprecated)}\\\\\n");
+                }
+                else {
+                    builder.append(" $\\rightarrow$ ").append(CheatSheetGenerator.sanitize(returnType)).append("\\\\\n");
+                }
             }
             // builder.append("\\end{multicols}\n\n");
         }
@@ -512,7 +514,7 @@ public class CheatSheetGenerator {
             sb.append("Vector");
         }
         else {
-            if (types.length >= 1) {
+            if ((types.length >= 1) && (types[0] != null)) {
                 sb.append(types[0].getQualName());
             }
         }

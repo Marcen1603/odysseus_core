@@ -194,7 +194,7 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
 
         builder.append("\\raggedright\n");
         builder.append("\\footnotesize\n");
-        builder.append("\\begin{multicols}{2}\n");
+        builder.append("\\begin{multicols}{3}\n");
         builder.append("\\setlength{\\premulticols}{1pt}\n");
         builder.append("\\setlength{\\postmulticols}{1pt}\n");
         builder.append("\\setlength{\\multicolsep}{1pt}\n");
@@ -346,7 +346,7 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
                                         .append(GeneratePDFCheatSheetCommand.sanitize(parameter.getDoc())).append(" \\\\\n");
                             }
                             else {
-                                builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(parameter.getName())).append("}  & -- \\\\\n");
+                                builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(parameter.getName())).append("}  &  \\\\\n");
                             }
                         }
                     }
@@ -434,17 +434,14 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
                     }
                     sb.append(GeneratePDFCheatSheetCommand.concatDatatypes(function.getAcceptedTypes(i)));
                 }
-				Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
-				if (annotation != null) {
-					builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(name)).append("(\\textit{")
-							.append(GeneratePDFCheatSheetCommand.sanitize(sb.toString()))
-							.append("})  \\textit{(Deprecated)}}");
-				} else {
-					builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(name)).append("(\\textit{")
-							.append(GeneratePDFCheatSheetCommand.sanitize(sb.toString())).append("})}");
-				}
-				builder.append(" $\\rightarrow$ ").append(GeneratePDFCheatSheetCommand.sanitize(returnType))
-						.append("\\\\\n");
+                Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
+                builder.append("\\texttt{").append(GeneratePDFCheatSheetCommand.sanitize(name)).append("(\\textit{").append(GeneratePDFCheatSheetCommand.sanitize(sb.toString())).append("})}");
+                if (annotation != null) {
+                    builder.append(" $\\rightarrow$ ").append(GeneratePDFCheatSheetCommand.sanitize(returnType)).append(" \\textit{(Deprecated)}\\\\\n");
+                }
+                else {
+                    builder.append(" $\\rightarrow$ ").append(GeneratePDFCheatSheetCommand.sanitize(returnType)).append("\\\\\n");
+                }
             }
         }
 
@@ -624,7 +621,7 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
             sb.append("Vector");
         }
         else {
-            if (types.length >= 1) {
+            if ((types.length >= 1) && (types[0] != null)) {
                 sb.append(types[0].getQualName());
             }
         }
