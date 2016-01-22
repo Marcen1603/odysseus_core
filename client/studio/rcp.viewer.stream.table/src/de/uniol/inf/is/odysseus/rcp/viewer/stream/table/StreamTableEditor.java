@@ -15,6 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.table;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +39,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
@@ -275,6 +283,21 @@ public class StreamTableEditor implements IStreamEditorType {
 		});
 
 		
+        final ToolItem exportButton = new ToolItem(toolbar, SWT.PUSH);
+        exportButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("export"));
+        exportButton.setToolTipText("Export");
+        exportButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                try {
+                    export(getTableViewer());
+                }
+                catch (IOException e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+        });
+
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
 		toolbarLabel.setText("                                                                                                                                                                                     ");
 	}
@@ -571,6 +594,45 @@ public class StreamTableEditor implements IStreamEditorType {
 			desyncThread = null;
 		}
 	}
+
+    private void export(TableViewer tableViewer) throws IOException {
+        String CSV_SEPARATOR = ";";
+        Table table = tableViewer.getTable();
+        int columns = table.getColumnCount();
+        TableItem[] items = table.getItems();
+        FileDialog fd = new FileDialog(table.getShell(), SWT.SAVE);
+        fd.setText("Save");
+        fd.setFilterPath(Paths.get(System.getProperty("user.home")).toString());
+        String[] filterExt = { "*.csv", "*.*" };
+        fd.setFilterExtensions(filterExt);
+        String selected = fd.open();
+        File output = Paths.get(selected).toFile();
+        output.createNewFile();
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
+            StringBuilder line = new StringBuilder();
+            for (int i = 0; i < columns; i++) {
+                if (i > 0) {
+                    line.append(CSV_SEPARATOR);
+                }
+                String text = table.getColumns()[i].getText();
+                line.append(text);
+            }
+            out.write(line.toString());
+            out.newLine();
+            for (TableItem item : items) {
+                line = new StringBuilder();
+                for (int i = 0; i < columns; i++) {
+                    if (i > 0) {
+                        line.append(CSV_SEPARATOR);
+                    }
+                    String text = item.getText(i);
+                    line.append(text);
+                }
+                out.write(line.toString());
+                out.newLine();
+            }
+        }
+    }
 
 	private static List<Integer> createIdentity(int max) {
 		List<Integer> list = new ArrayList<Integer>();
