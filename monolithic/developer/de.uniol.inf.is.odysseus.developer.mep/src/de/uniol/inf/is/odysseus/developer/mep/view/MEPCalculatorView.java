@@ -15,12 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.developer.mep.view;
 
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
@@ -136,6 +138,7 @@ public class MEPCalculatorView extends ViewPart {
             @Override
             public void keyReleased(final KeyEvent event) {
                 String text = MEPCalculatorView.this.txtExpression.getText();
+                MEPCalculatorView.this.txtExpression.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
                 if (!Strings.isNullOrEmpty(text)) {
                     try {
                         IExpression<?> parsedExpression = MEPCalculatorView.this.mep.parse(text);
@@ -145,7 +148,11 @@ public class MEPCalculatorView extends ViewPart {
                         MEPCalculatorView.this.txtDisjunctiveNormalForm.setText(ExpressionOptimizer.toDisjunctiveNormalForm(parsedExpression).toString());
                     }
                     catch (@SuppressWarnings("unused") Throwable e) {
-                        // Empty block
+                        MEPCalculatorView.this.txtExpression.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+                        MEPCalculatorView.this.txtReturnType.setText("");
+                        MEPCalculatorView.this.txtOptimizedForm.setText("");
+                        MEPCalculatorView.this.txtConjunctiveNormalForm.setText("");
+                        MEPCalculatorView.this.txtDisjunctiveNormalForm.setText("");
                     }
                 }
                 else {
