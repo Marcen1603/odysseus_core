@@ -415,6 +415,19 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 					break;
 				case QUERYSTATE_CHANGED:
 					String queryName = ((AbstractQueryCommand) command).getQueryName();
+					if (!commandsPerQuery.containsKey(queryName)) {
+						// FIXME There is a probblem, if the Odysseus Script
+						// keyword #RUNQUERY is used. Because than the following
+						// commands are provided by the executor in the
+						// following order: (1) CreateQuery, (2) StartQuery, (3)
+						// AddQuery. For recovery, it is a problem, that Start
+						// comes before Add. The reason for that order is, that
+						// the StartQuery command is created and executed as a
+						// part of the AddQueryCommand, which is fired after its
+						// execution.
+						cLog.error("Could not recovery query state change '{}'", command);
+						break;
+					}
 					if (commandsPerQuery.get(queryName).getE2() != null) {
 						executionOrder.remove(commandsPerQuery.get(queryName).getE2());
 					}
