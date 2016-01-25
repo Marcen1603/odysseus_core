@@ -23,12 +23,11 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITrust.class };
 
 	public static final List<SDFMetaSchema> schema = new ArrayList<>(classes.length);
+
 	static {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute(NAME, TRUSTVALUE,
-				SDFDatatype.DOUBLE));
-		schema.add(SDFSchemaFactory.createNewMetaSchema(NAME, Tuple.class,
-				attributes, ITrust.class));
+		List<SDFAttribute> attributes = new ArrayList<>();
+		attributes.add(new SDFAttribute(NAME, TRUSTVALUE, SDFDatatype.DOUBLE));
+		schema.add(SDFSchemaFactory.createNewMetaSchema(NAME, Tuple.class, attributes, ITrust.class));
 	}
 
 	@Override
@@ -40,15 +39,15 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return classes;
 	}
-	
+
 	private static final long serialVersionUID = -426212407481918604L;
 	private double trustValue;
-	
-	public Trust(){
-		trustValue = 1;
+
+	public Trust() {
+		this.trustValue = 1;
 	}
-	
-	public Trust(Trust trust){
+
+	public Trust(Trust trust) {
 		this.trustValue = trust.trustValue;
 	}
 
@@ -61,13 +60,13 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(1, false);
-		t.setAttribute(0, trustValue);
-		values.add(t);	
+		t.setAttribute(0, new Double(this.trustValue));
+		values.add(t);
 	}
 
 	@Override
 	public void writeValue(Tuple<?> value) {
-		this.trustValue = value.getAttribute(0);
+		this.trustValue = ((Double) (value.getAttribute(0))).doubleValue();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -75,9 +74,10 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 	public <K> K getValue(int subtype, int index) {
 		switch (index) {
 		case 0:
-			return (K)(Double)trustValue;
+			return (K) new Double(this.trustValue);
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -98,13 +98,13 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 	}
 
 	@Override
-	public void setTrust(double trustValue) {
-		this.trustValue = trustValue;
+	public void setTrust(double value) {
+		this.trustValue = value;
 	}
 
 	@Override
 	public double getTrust() {
-		return trustValue;
+		return this.trustValue;
 	}
 
 	@Override
@@ -116,10 +116,10 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 	public ITrust clone() {
 		return new Trust(this);
 	}
-	
+
 	@Override
 	public String toString() {
-		return ""+trustValue;
+		return "" + this.trustValue;
 	}
 
 }

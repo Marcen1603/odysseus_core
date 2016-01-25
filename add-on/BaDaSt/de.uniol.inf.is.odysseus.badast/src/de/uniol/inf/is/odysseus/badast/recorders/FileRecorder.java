@@ -23,13 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = FileRecorder.TYPE, parameters = { FileRecorder.FILENAME_CONFIG })
+@ABaDaStRecorder(type = "FileRecorder", parameters = { FileRecorder.FILENAME_CONFIG })
 public class FileRecorder extends AbstractBaDaStRecorder {
-
-	/**
-	 * The type of the recorder.
-	 */
-	public static final String TYPE = "FileRecorder";
 
 	/**
 	 * The key for configuration, where the file name is set.

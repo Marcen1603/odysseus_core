@@ -25,14 +25,9 @@ import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG,
+@ABaDaStRecorder(type = "TCPRecorder", parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG,
 		TCPRecorder.BUFFERSIZE_CONFIG })
 public class TCPRecorder extends AbstractBaDaStRecorder {
-
-	/**
-	 * The type of the recorder.
-	 */
-	public static final String TYPE = "TCPRecorder";
 
 	/**
 	 * The key for configuration, where the host is set.

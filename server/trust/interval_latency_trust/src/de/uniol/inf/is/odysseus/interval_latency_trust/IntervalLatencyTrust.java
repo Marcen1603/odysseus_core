@@ -31,7 +31,7 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 		return classes;
 	}
 	
-	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<>(classes.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Latency.schema);
@@ -53,9 +53,9 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	private final ITrust trust;
 	
 	public IntervalLatencyTrust() {
-		timeInterval = new TimeInterval();
-		latency = new Latency();
-		trust = new Trust();
+		this.timeInterval = new TimeInterval();
+		this.latency = new Latency();
+		this.trust = new Trust();
 	}
 	
 	public IntervalLatencyTrust(IntervalLatencyTrust clone) {
@@ -75,24 +75,24 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
-		timeInterval.retrieveValues(values);
-		latency.retrieveValues(values);
-		trust.retrieveValues(values);
+		this.timeInterval.retrieveValues(values);
+		this.latency.retrieveValues(values);
+		this.trust.retrieveValues(values);
 	}
 	
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
-		timeInterval.writeValue(values.get(0));
-		latency.writeValue(values.get(1));
-		trust.writeValue(values.get(2));
+		this.timeInterval.writeValue(values.get(0));
+		this.latency.writeValue(values.get(1));
+		this.trust.writeValue(values.get(2));
 	}
 	
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
-		list.addAll(timeInterval.getInlineMergeFunctions());
-		list.addAll(latency.getInlineMergeFunctions());
-		list.addAll(trust.getInlineMergeFunctions());
+		list.addAll(this.timeInterval.getInlineMergeFunctions());
+		list.addAll(this.latency.getInlineMergeFunctions());
+		list.addAll(this.trust.getInlineMergeFunctions());
 		return list;
 	}
 
@@ -101,33 +101,34 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	public <K> K getValue(int subtype, int index) {
 		switch(subtype){
 			case 0:
-				return timeInterval.getValue(0, index);
+				return this.timeInterval.getValue(0, index);
 			case 1:
-				return latency.getValue(0, index);
+				return this.latency.getValue(0, index);
 			case 2:
-				return trust.getValue(0, index);
+				return this.trust.getValue(0, index);
+			default:
+				return null;
 		}
-		return null;
 	}
 	
 	@Override
 	public String toString() {
-		return "( i= " +timeInterval.toString() + " | " + " l="+ this.latency+" | " + " t="+ this.trust+ ")";
+		return "( i= " +this.timeInterval.toString() + " | " + " l="+ this.latency+" | " + " t="+ this.trust+ ")";
 	}
 	
 	@Override
 	public String toString(PointInTime baseTime) {
-		return "( i= " +timeInterval.toString(baseTime) + " | " + " l="+ this.latency+" | " + " t="+ this.trust+ ")";
+		return "( i= " +this.timeInterval.toString(baseTime) + " | " + " l="+ this.latency+" | " + " t="+ this.trust+ ")";
 	}
 
 	@Override
 	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options)+options.getDelimiter()+this.latency.csvToString(options)+this.trust.csvToString(options);
+		return this.timeInterval.csvToString(options)+options.getDelimiter()+this.latency.csvToString(options)+this.trust.csvToString(options);
 	}
 	
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return timeInterval.getCSVHeader(delimiter)+delimiter+this.latency.getCSVHeader(delimiter)+this.trust.getCSVHeader(delimiter);
+		return this.timeInterval.getCSVHeader(delimiter)+delimiter+this.latency.getCSVHeader(delimiter)+this.trust.getCSVHeader(delimiter);
 	}
 
 	// ------------------------------------------------------------------------------
@@ -136,32 +137,32 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	
 	@Override
 	public PointInTime getStart() {
-		return timeInterval.getStart();
+		return this.timeInterval.getStart();
 	}
 
 	@Override
 	public PointInTime getEnd() {
-		return timeInterval.getEnd();
+		return this.timeInterval.getEnd();
 	}
 
 	@Override
 	public void setStart(PointInTime point) {
-		timeInterval.setStart(point);
+		this.timeInterval.setStart(point);
 	}
 
 	@Override
 	public void setEnd(PointInTime point) {
-		timeInterval.setEnd(point);
+		this.timeInterval.setEnd(point);
 	}
 
 	@Override
 	public void setStartAndEnd(PointInTime start, PointInTime end) {
-		timeInterval.setStartAndEnd(start, end);
+		this.timeInterval.setStartAndEnd(start, end);
 	}
 
 	@Override
 	public int compareTo(ITimeInterval o) {
-		return timeInterval.compareTo(o);
+		return this.timeInterval.compareTo(o);
 	}
 	
 	// ------------------------------------------------------------------------------
@@ -171,42 +172,42 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	
 	@Override
 	public final long getLatency() {
-		return latency.getLatency();
+		return this.latency.getLatency();
 	}
 	
 	@Override
 	public long getMaxLatency() {
-		return latency.getMaxLatency();
+		return this.latency.getMaxLatency();
 	}
 
 	@Override
 	public final long getLatencyEnd() {
-		return latency.getLatencyEnd();
+		return this.latency.getLatencyEnd();
 	}
 
 	@Override
 	public final long getLatencyStart() {
-		return latency.getLatencyStart();
+		return this.latency.getLatencyStart();
 	}
 	
 	@Override
 	public long getMaxLatencyStart() {
-		return latency.getMaxLatencyStart();
+		return this.latency.getMaxLatencyStart();
 	}
 
 	@Override
 	public final void setLatencyEnd(long timestamp) {
-		latency.setLatencyEnd(timestamp);
+		this.latency.setLatencyEnd(timestamp);
 	}
 
 	@Override
 	public final void setMinLatencyStart(long timestamp) {
-		latency.setMinLatencyStart(timestamp);
+		this.latency.setMinLatencyStart(timestamp);
 	}
 	
 	@Override
 	public void setMaxLatencyStart(long timestamp) {
-		latency.setMaxLatencyStart(timestamp);
+		this.latency.setMaxLatencyStart(timestamp);
 	}
 	
 	// ------------------------------------------------------------------------------
@@ -215,7 +216,7 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 
 	@Override
 	public double getTrust() {
-		return trust.getTrust();
+		return this.trust.getTrust();
 	}
 	
 	@Override

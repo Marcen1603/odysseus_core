@@ -27,7 +27,7 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 		return classes;
 	}
 
-	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<>(classes.length);
 
 	static {
 		schema.addAll(TimeInterval.schema);
@@ -48,8 +48,8 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 	private final ITimeInterval timeInterval;
 
 	public IntervalTrust() {
-		trust = new Trust();
-		timeInterval = new TimeInterval();
+		this.trust = new Trust();
+		this.timeInterval = new TimeInterval();
 	}
 
 	public IntervalTrust(IntervalTrust other) {
@@ -57,6 +57,7 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 		this.timeInterval = other.timeInterval.clone();
 	}
 
+	@Override
 	public IntervalTrust clone() {
 		return new IntervalTrust(this);
 	}
@@ -67,21 +68,21 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
-		timeInterval.retrieveValues(values);
-		trust.retrieveValues(values);
+		this.timeInterval.retrieveValues(values);
+		this.trust.retrieveValues(values);
 	}
 
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
-		timeInterval.writeValue(values.get(0));
-		trust.writeValue(values.get(1));
+		this.timeInterval.writeValue(values.get(0));
+		this.trust.writeValue(values.get(1));
 	}
 
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
-		list.addAll(timeInterval.getInlineMergeFunctions());
-		list.addAll(trust.getInlineMergeFunctions());
+		list.addAll(this.timeInterval.getInlineMergeFunctions());
+		list.addAll(this.trust.getInlineMergeFunctions());
 		return list;
 	}
 
@@ -89,31 +90,32 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {
 		case 0:
-			return timeInterval.getValue(0, index);
+			return this.timeInterval.getValue(0, index);
 		case 1:
-			return trust.getValue(0, index);
-		}
-		return null;
+			return this.trust.getValue(0, index);
+		default:
+			return null;
+		}		
 	}
 
 	@Override
 	public String toString() {
-		return "( i= " + timeInterval.toString() + " | " + " l=" + this.trust + ")";
+		return "( i= " + this.timeInterval.toString() + " | " + " l=" + this.trust + ")";
 	}
 
 	@Override
 	public String toString(PointInTime baseTime) {
-		return "( i= " + timeInterval.toString(baseTime) + " | " + " l=" + this.trust + ")";
+		return "( i= " + this.timeInterval.toString(baseTime) + " | " + " l=" + this.trust + ")";
 	}
 
 	@Override
 	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter() + this.trust.csvToString(options);
+		return this.timeInterval.csvToString(options) + options.getDelimiter() + this.trust.csvToString(options);
 	}
 
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter + this.trust.getCSVHeader(delimiter);
+		return this.timeInterval.getCSVHeader(delimiter) + delimiter + this.trust.getCSVHeader(delimiter);
 	}
 
 	// ------------------------------------------------------------------------------
@@ -122,32 +124,32 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 
 	@Override
 	public PointInTime getStart() {
-		return timeInterval.getStart();
+		return this.timeInterval.getStart();
 	}
 
 	@Override
 	public PointInTime getEnd() {
-		return timeInterval.getEnd();
+		return this.timeInterval.getEnd();
 	}
 
 	@Override
 	public void setStart(PointInTime point) {
-		timeInterval.setStart(point);
+		this.timeInterval.setStart(point);
 	}
 
 	@Override
 	public void setEnd(PointInTime point) {
-		timeInterval.setEnd(point);
+		this.timeInterval.setEnd(point);
 	}
 
 	@Override
 	public void setStartAndEnd(PointInTime start, PointInTime end) {
-		timeInterval.setStartAndEnd(start, end);
+		this.timeInterval.setStartAndEnd(start, end);
 	}
 
 	@Override
 	public int compareTo(ITimeInterval o) {
-		return timeInterval.compareTo(o);
+		return this.timeInterval.compareTo(o);
 	}
 
 	// ------------------------------------------------------------------------------
@@ -156,7 +158,7 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 
 	@Override
 	public double getTrust() {
-		return trust.getTrust();
+		return this.trust.getTrust();
 	}
 
 	@Override

@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.trust.Trust;
 public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 		implements ITimeInterval, ILatency, IDatarate, ITrust {
 
+	private static final long serialVersionUID = -4702722342378689458L;
+	
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class, ILatency.class,
 			IDatarate.class, ITrust.class };
@@ -31,7 +33,7 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 		return classes;
 	}
 
-	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<>(classes.length);
 
 	static {
 		schema.addAll(TimeInterval.schema);
@@ -56,10 +58,10 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	private final ITrust trust;
 
 	public IntervalLatencyDatarateTrust() {
-		timeInterval = new TimeInterval();
-		latency = new Latency();
-		datarate = new Datarate();
-		trust = new Trust();
+		this.timeInterval = new TimeInterval();
+		this.latency = new Latency();
+		this.datarate = new Datarate();
+		this.trust = new Trust();
 	}
 
 	public IntervalLatencyDatarateTrust(IntervalLatencyDatarateTrust clone) {
@@ -80,27 +82,27 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
-		timeInterval.retrieveValues(values);
-		latency.retrieveValues(values);
-		datarate.retrieveValues(values);
-		trust.retrieveValues(values);
+		this.timeInterval.retrieveValues(values);
+		this.latency.retrieveValues(values);
+		this.datarate.retrieveValues(values);
+		this.trust.retrieveValues(values);
 	}
 
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
-		timeInterval.writeValue(values.get(0));
-		latency.writeValue(values.get(1));
-		datarate.writeValue(values.get(2));
-		trust.writeValue(values.get(3));
+		this.timeInterval.writeValue(values.get(0));
+		this.latency.writeValue(values.get(1));
+		this.datarate.writeValue(values.get(2));
+		this.trust.writeValue(values.get(3));
 	}
 
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
-		list.addAll(timeInterval.getInlineMergeFunctions());
-		list.addAll(latency.getInlineMergeFunctions());
-		list.addAll(datarate.getInlineMergeFunctions());
-		list.addAll(trust.getInlineMergeFunctions());
+		list.addAll(this.timeInterval.getInlineMergeFunctions());
+		list.addAll(this.latency.getInlineMergeFunctions());
+		list.addAll(this.datarate.getInlineMergeFunctions());
+		list.addAll(this.trust.getInlineMergeFunctions());
 		return list;
 	}
 
@@ -108,38 +110,39 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {
 		case 0:
-			return timeInterval.getValue(0, index);
+			return this.timeInterval.getValue(0, index);
 		case 1:
-			return latency.getValue(0, index);
+			return this.latency.getValue(0, index);
 		case 2:
-			return datarate.getValue(0, index);
+			return this.datarate.getValue(0, index);
 		case 3:
-			return trust.getValue(0, index);
+			return this.trust.getValue(0, index);
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	@Override
 	public String toString() {
-		return "( i= " + timeInterval.toString() + " | " + " l= " + this.latency + " | " + " | d= " + this.datarate
+		return "( i= " + this.timeInterval.toString() + " | " + " l= " + this.latency + " | " + " | d= " + this.datarate
 				+ " | " + " t= " + this.trust + ")";
 	}
 
 	@Override
 	public String toString(PointInTime baseTime) {
-		return "( i= " + timeInterval.toString(baseTime) + " | " + " l= " + this.latency + " | " + " | d= "
+		return "( i= " + this.timeInterval.toString(baseTime) + " | " + " l= " + this.latency + " | " + " | d= "
 				+ this.datarate + " | " + " t= " + this.trust + ")";
 	}
 
 	@Override
 	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter() + this.latency.csvToString(options)
+		return this.timeInterval.csvToString(options) + options.getDelimiter() + this.latency.csvToString(options)
 				+ this.datarate.csvToString(options) + this.trust.csvToString(options);
 	}
 
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter + this.latency.getCSVHeader(delimiter)
+		return this.timeInterval.getCSVHeader(delimiter) + delimiter + this.latency.getCSVHeader(delimiter)
 				+ this.datarate.getCSVHeader(delimiter) + this.trust.getCSVHeader(delimiter);
 	}
 
@@ -149,32 +152,32 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 
 	@Override
 	public PointInTime getStart() {
-		return timeInterval.getStart();
+		return this.timeInterval.getStart();
 	}
 
 	@Override
 	public PointInTime getEnd() {
-		return timeInterval.getEnd();
+		return this.timeInterval.getEnd();
 	}
 
 	@Override
 	public void setStart(PointInTime point) {
-		timeInterval.setStart(point);
+		this.timeInterval.setStart(point);
 	}
 
 	@Override
 	public void setEnd(PointInTime point) {
-		timeInterval.setEnd(point);
+		this.timeInterval.setEnd(point);
 	}
 
 	@Override
 	public void setStartAndEnd(PointInTime start, PointInTime end) {
-		timeInterval.setStartAndEnd(start, end);
+		this.timeInterval.setStartAndEnd(start, end);
 	}
 
 	@Override
 	public int compareTo(ITimeInterval o) {
-		return timeInterval.compareTo(o);
+		return this.timeInterval.compareTo(o);
 	}
 
 	// ------------------------------------------------------------------------------
@@ -183,42 +186,42 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 
 	@Override
 	public final long getLatency() {
-		return latency.getLatency();
+		return this.latency.getLatency();
 	}
 
 	@Override
 	public long getMaxLatency() {
-		return latency.getMaxLatency();
+		return this.latency.getMaxLatency();
 	}
 
 	@Override
 	public final long getLatencyEnd() {
-		return latency.getLatencyEnd();
+		return this.latency.getLatencyEnd();
 	}
 
 	@Override
 	public final long getLatencyStart() {
-		return latency.getLatencyStart();
+		return this.latency.getLatencyStart();
 	}
 
 	@Override
 	public long getMaxLatencyStart() {
-		return latency.getMaxLatencyStart();
+		return this.latency.getMaxLatencyStart();
 	}
 
 	@Override
 	public final void setLatencyEnd(long timestamp) {
-		latency.setLatencyEnd(timestamp);
+		this.latency.setLatencyEnd(timestamp);
 	}
 
 	@Override
 	public final void setMinLatencyStart(long timestamp) {
-		latency.setMinLatencyStart(timestamp);
+		this.latency.setMinLatencyStart(timestamp);
 	}
 
 	@Override
 	public void setMaxLatencyStart(long timestamp) {
-		latency.setMaxLatencyStart(timestamp);
+		this.latency.setMaxLatencyStart(timestamp);
 	}
 
 	// ------------------------------------------------------------------------------
@@ -226,8 +229,8 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void setDatarate(double datarate) {
-		this.datarate.setDatarate(datarate);
+	public void setDatarate(double value) {
+		this.datarate.setDatarate(value);
 	}
 
 	@Override
@@ -241,7 +244,7 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 
 	@Override
 	public double getTrust() {
-		return trust.getTrust();
+		return this.trust.getTrust();
 	}
 
 	@Override

@@ -14,13 +14,8 @@ import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
 
 // TODO javaDoc
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = TCPStringRecorder.TYPE, parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG })
+@ABaDaStRecorder(type = "TCPStringRecorder", parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG })
 public class TCPStringRecorder extends TCPRecorder {
-	
-	/**
-	 * The type of the recorder.
-	 */
-	public static final String TYPE = "TCPStringRecorder";
 
 	@Override
 	public void start() throws BaDaStException {
