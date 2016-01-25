@@ -44,12 +44,16 @@ public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
 		// Insert convergence detectors
+
 		// First idea was to insert them only, if stateful operators are used.
 		// But not all operators, which may result in a convergence phase
 		// implement IStatefulAO/PO. Even if all stateful operators would, what
 		// about non-deterministic, stateless operators?
-		// TODO what abound convergence detectors, which ARE ALREADY in the
-		// plan? Crash after Crash
+
+		// Second idea was to check, if convergence detectors are already
+		// inserted (would be for a crash after a crash). This is not the case,
+		// because this method is called after the backup of the query, so the
+		// modification is not logged
 		for (ILogicalQuery query : queries) {
 			// For all time and element windows: insert a convergence detector
 			// after it.
