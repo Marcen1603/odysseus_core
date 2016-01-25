@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -16,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
@@ -42,9 +44,11 @@ public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
-		// Insert convergence detectors, if needed
-		// TODO Here, operator classes should be checked, if a convergence phase
-		// can happen. What about query sharing? is there a problem?
+		// Insert convergence detectors
+		// First idea was to insert them only, if stateful operators are used.
+		// But not all operators, which may result in a convergence phase
+		// implement IStatefulAO/PO. Even if all stateful operators would, what
+		// about non-deterministic, stateless operators?
 		// TODO what abound convergence detectors, which ARE ALREADY in the
 		// plan? Crash after Crash
 		for (ILogicalQuery query : queries) {
@@ -59,13 +63,23 @@ public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 				public void walk(ILogicalOperator operator) {
 					if (TimeWindowAO.class.isInstance(operator)) {
 						TimeWindowAO tw = (TimeWindowAO) operator;
+						// Advance may be null
+						TimeValueItem advance = tw.getWindowAdvance();
+						if (advance == null) {
+							advance = new TimeValueItem(1, tw.getBaseTimeUnit());
+						}
 						ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(tw.getWindowSize(),
-								tw.getWindowAdvance(), tw.getBaseTimeUnit());
+								advance, tw.getBaseTimeUnit());
 						insertConvergenceDetector(tw, convergenceDetector);
 					} else if (ElementWindowAO.class.isInstance(operator)) {
 						ElementWindowAO ew = (ElementWindowAO) operator;
+						// Advance may be null
+						Long advance = ew.getWindowAdvanceE();
+						if (advance == null) {
+							advance = new Long(1);
+						}
 						ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(
-								ew.getWindowSizeE().longValue(), ew.getWindowAdvanceE().longValue());
+								ew.getWindowSizeE().longValue(), advance.longValue());
 						insertConvergenceDetector(ew, convergenceDetector);
 					}
 				}
