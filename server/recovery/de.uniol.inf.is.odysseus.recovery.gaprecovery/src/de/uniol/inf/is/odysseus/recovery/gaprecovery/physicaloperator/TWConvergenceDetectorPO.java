@@ -118,9 +118,9 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<Interval
 
 		if (!this.mEndReached) {
 			/*
-			 * We can not trust that element, e.g., a wrong aggregation due to
-			 * the gap. TODO What, if all operations are repeatable. Results are
-			 * by definition correct. Trust would be changed anyway.
+			 * We can not trust that element, e.g., a wrong aggregation due to the
+			 * gap. At this juncture, there is no possibility in Odysseus to
+			 * determine Repeatable operators.
 			 */
 			object.getMetadata().setTrust(0);
 		}
