@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandle
  */
 @SuppressWarnings(value = { "nls" })
 public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>>
-		extends AbstractPipe<StreamObject, StreamObject>implements IStatefulPO, IProtectionPointHandler {
+		extends AbstractPipe<StreamObject, StreamObject> implements IStatefulPO, IProtectionPointHandler {
 
 	/**
 	 * The version of this class for serialization.
@@ -116,11 +116,25 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	 */
 	protected boolean mNeedToAdjustOffset = false;
 
-	// TODO javaDoc. Those objects are to sync the offset setting and saving it
-	// as operator state
-	Object mSynchronizer = new Object();
+	/**
+	 * True, if {@link #onProtectionPointReached()} is called, but
+	 * {@link #getState()} has not been called yet.
+	 */
 	boolean mProtectionPointReached = false;
+
+	/**
+	 * True, if {@link #mOffset} is set, but {@link #onProtectionPointReached()}
+	 * is not called yet.
+	 */
 	boolean mOffsetSet = false;
+
+	/**
+	 * Sleeps, if state should be read out, but either
+	 * {@link #mProtectionPointReached} is false or {@link #mOffsetSet} is
+	 * false. <br />
+	 * Notified after {@link #mOffsetSet} is set.
+	 */
+	Object mSynchronizer = new Object();
 
 	/**
 	 * Reference is the first element to be backed up. So the offset of

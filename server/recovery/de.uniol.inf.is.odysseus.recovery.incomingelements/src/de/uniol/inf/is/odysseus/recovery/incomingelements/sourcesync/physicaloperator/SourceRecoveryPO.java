@@ -39,17 +39,23 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	 * The version of this class for serialization.
 	 */
 	private static final long serialVersionUID = -2660605545656846436L;
-	
+
 	/**
 	 * Transfer handler for the objects from public subscribe system in recovery
 	 * mode. Not for the objects from the source operator.
 	 */
-	private class RecoveryTransferHandler extends AbstractSourceRecoveryTransferHandler implements IMetadataInitializer<IMetaAttribute, StreamObject> {
-		
-		// TODO javaDoc
+	private class RecoveryTransferHandler extends AbstractSourceRecoveryTransferHandler
+			implements IMetadataInitializer<IMetaAttribute, StreamObject> {
+
+		/**
+		 * Initializer for the meta data. Needed to set the meta data correct
+		 * for elements, which are sent by BaDaSt.
+		 */
 		private final IMetadataInitializer<IMetaAttribute, StreamObject> mMetaDataInitializer = new MetadataInitializerAdapter<>();
 
-		// TODO javaDoc
+		/**
+		 * Empty default constructor.
+		 */
 		public RecoveryTransferHandler() {
 			// Empty default constructor
 		}
@@ -146,25 +152,26 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	protected void process_open() throws OpenFailedException {
 		// Handle metadata
 		IMetaAttribute metaDate = this.mSourceAccess.getLocalMetaAttribute();
-		if(metaDate != null) {
+		if (metaDate != null) {
 			this.mRecoveryTransferHandler.setMetadataType(metaDate);
-			if(TimeStampHelper.isTimeIntervalUsed(metaDate)) {
+			if (TimeStampHelper.isTimeIntervalUsed(metaDate)) {
 				IMetadataUpdater<?, ?> updater = null;
 				MetadataUpdatePO<?, ?> updatePO = TimeStampHelper.searchMetaDataUpdatePO(this);
-				if(updatePO != null) {
-					updater = TimeStampHelper.createInitializer(updatePO);
+				if (updatePO != null) {
+					updater = TimeStampHelper.copyInitializer(updatePO);
 				} else {
 					ReceiverPO<?, ?> receiverPO = TimeStampHelper.searchReceiverPO(this);
-					if(receiverPO != null) {
-						updater = TimeStampHelper.createInitializer(receiverPO);
+					if (receiverPO != null) {
+						updater = TimeStampHelper.copyInitializer(receiverPO);
 					}
 				}
-				if(updater != null) {
-					this.mRecoveryTransferHandler.addMetadataUpdater((IMetadataUpdater<IMetaAttribute, StreamObject>) updater);
+				if (updater != null) {
+					this.mRecoveryTransferHandler
+							.addMetadataUpdater((IMetadataUpdater<IMetaAttribute, StreamObject>) updater);
 				}
 			}
 		}
-		
+
 		// offset should be loaded as operator state
 		this.mNeedToAdjustOffset = false;
 		this.mRecoverySubscriberController = SubscriberControllerFactory.createController(

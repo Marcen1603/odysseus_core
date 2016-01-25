@@ -12,7 +12,18 @@ import de.uniol.inf.is.odysseus.core.server.recovery.badast.ABaDaStRecorder;
 import de.uniol.inf.is.odysseus.core.server.recovery.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
 
-// TODO javaDoc
+/**
+ * BaDaSt recorders act as subscriber for data sources and as publisher for the
+ * used publish subscribe system. <br />
+ * <br />
+ * This recorder is for sources, which send data by TCP in a string format
+ * (e.g., nexmark). It needs {@link #SOURCENAME_CONFIG}, {@link #HOST_CONFIG}
+ * and {@link #PORT_CONFIG} as entries of the configuration.
+ * {@link #BUFFERSIZE_CONFIG} can be ignored. The recorder publishes the read
+ * string lines as strings plus "\n" to the used publish subscribe system.
+ * 
+ * @author Michael Brand
+ */
 @SuppressWarnings(value = { "nls" })
 @ABaDaStRecorder(type = "TCPStringRecorder", parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG })
 public class TCPStringRecorder extends TCPRecorder {

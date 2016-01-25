@@ -8,17 +8,44 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
-// TODO javaDoc
-// If TimeInterval is used, a MetadataUpdatePO exists or the Access can handle the meta data. In the second case, I need the metadata updater of the access po.
+/**
+ * Helper class for the {@link SourceRecoveryPO} to handle meta data and time
+ * stamps for the elements, which are sent by BaDaSt. <br />
+ * <br />
+ * If {@link ITimeInterval} is used, a {@link MetadataUpdatePO} exists or the
+ * {@link AccessPO} can handle the meta data. In the second case, we need the
+ * {@link IMetadataUpdater} of the {@link AccessPO}
+ * 
+ * @author Michael Brand
+ *
+ */
 public class TimeStampHelper {
 
+	/**
+	 * Checks, if {@link ITimeInterval} is used.
+	 * 
+	 * @param attr
+	 *            The meta schema.
+	 * @return True, if {@code attr} contains {@link ITimeInterval} as class.
+	 */
 	public static boolean isTimeIntervalUsed(IMetaAttribute attr) {
 		return Arrays.asList(attr.getClasses()).contains(ITimeInterval.class);
 	}
 
+	/**
+	 * Searches for any {@link MetadataUpdatePO} recursively downwards to
+	 * sources.
+	 * 
+	 * @param operator
+	 *            The root of the plan to check.
+	 * @return A {@link MetadataUpdatePO}, if {@code operator} or any operator
+	 *         between {@code operator} and sources in a
+	 *         {@link MetadataUpdatePO}; else: {@code null}.
+	 */
 	public static MetadataUpdatePO<?, ?> searchMetaDataUpdatePO(AbstractSource<?> operator) {
 		if (MetadataUpdatePO.class.isInstance(operator)) {
 			return (MetadataUpdatePO<?, ?>) operator;
@@ -30,6 +57,15 @@ public class TimeStampHelper {
 				(AbstractSource<?>) ((AbstractPipe<?, ?>) operator).getSubscribedToSource(0).getTarget());
 	}
 
+	/**
+	 * Searches for any {@link ReceiverPO} recursively downwards to sources.
+	 * 
+	 * @param operator
+	 *            The root of the plan to check.
+	 * @return A {@link ReceiverPO}, if {@code operator} or any operator between
+	 *         {@code operator} and sources in a {@link ReceiverPO}; else:
+	 *         {@code null}.
+	 */
 	public static ReceiverPO<?, ?> searchReceiverPO(AbstractSource<?> operator) {
 		if (ReceiverPO.class.isInstance(operator)) {
 			return (ReceiverPO<?, ?>) operator;
@@ -41,6 +77,13 @@ public class TimeStampHelper {
 				(AbstractSource<?>) ((AbstractPipe<?, ?>) operator).getSubscribedToSource(0).getTarget());
 	}
 
+	/**
+	 * Clones a {@link RelationalTimestampAttributeTimeIntervalMFactory}.
+	 * 
+	 * @param fac
+	 *            The factory to clone.
+	 * @return A copy of {@code fac}.
+	 */
 	private static RelationalTimestampAttributeTimeIntervalMFactory cloneIntervalFactory(
 			RelationalTimestampAttributeTimeIntervalMFactory fac) {
 		if (fac.getStartAttrPos() != -1) {
@@ -54,13 +97,29 @@ public class TimeStampHelper {
 				fac.getStartTimestampMillisecondPos(), fac.getFactor(), fac.isClearEnd(), fac.getTimezone().getId());
 	}
 
-	public static IMetadataUpdater<?, ?> createInitializer(MetadataUpdatePO<?, ?> operator) {
+	/**
+	 * Creates a copy of an {@link IMetadataUpdater}.
+	 * 
+	 * @param operator
+	 *            The {@link MetadataUpdatePO}, of which
+	 *            {@link MetadataUpdatePO#getMetadataFactory()} shall be copied.
+	 * @return A clone of the original metadata factory.
+	 */
+	public static IMetadataUpdater<?, ?> copyInitializer(MetadataUpdatePO<?, ?> operator) {
 		RelationalTimestampAttributeTimeIntervalMFactory fac = (RelationalTimestampAttributeTimeIntervalMFactory) operator
 				.getMetadataFactory();
 		return cloneIntervalFactory(fac);
 	}
 
-	public static IMetadataUpdater<?, ?> createInitializer(ReceiverPO<?, ?> operator) {
+	/**
+	 * Creates a copy of an {@link IMetadataUpdater}.
+	 * 
+	 * @param operator
+	 *            The {@link ReceiverPO}, of which
+	 *            {@link ReceiverPO#getMetadataFactory()} shall be copied.
+	 * @return A clone of the original metadata factory.
+	 */
+	public static IMetadataUpdater<?, ?> copyInitializer(ReceiverPO<?, ?> operator) {
 		RelationalTimestampAttributeTimeIntervalMFactory fac = (RelationalTimestampAttributeTimeIntervalMFactory) operator
 				.getMetadataFactory();
 		return cloneIntervalFactory(fac);

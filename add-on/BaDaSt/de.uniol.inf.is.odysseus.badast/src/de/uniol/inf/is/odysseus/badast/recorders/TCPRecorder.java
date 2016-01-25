@@ -18,8 +18,8 @@ import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
  * <br />
  * This recorder is for sources, which send data by TCP. It needs
  * {@link #SOURCENAME_CONFIG}, {@link #HOST_CONFIG} and {@link #PORT_CONFIG} as
- * entries of the configuration. {@link #BUFFERSIZE_CONFIG} must also be
- * set. The recorder publishes the read bytes as byte arrays to the used publish
+ * entries of the configuration. {@link #BUFFERSIZE_CONFIG} must also be set.
+ * The recorder publishes the read bytes as byte arrays to the used publish
  * subscribe system.
  * 
  * @author Michael Brand
@@ -69,8 +69,18 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 		writer.initialize(cfg);
 		return writer;
 	}
-	
-	// TODO javaDoc
+
+	/**
+	 * Checks, if the recorder is ready ignoring the key value pair for the
+	 * buffer size (key = {@link #BUFFERSIZE_CONFIG}). Called by
+	 * {@link #validate()} after checking, that a configuration is set. <br />
+	 * <br />
+	 * May use {@link #validate(String)}.
+	 * 
+	 * @throws BaDaStException
+	 *             if any error occurs, e.g., any configuration entry is
+	 *             missing.
+	 */
 	protected void validate_withoutBufferSize() throws BaDaStException {
 		validate(HOST_CONFIG);
 		validate(PORT_CONFIG);
@@ -92,8 +102,8 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 		try {
 			Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG));
 		} catch (NumberFormatException e) {
-			throw new BaDaStException(this.getConfig().getProperty(BUFFERSIZE_CONFIG)
-					+ " is not a valid buffer size!", e);
+			throw new BaDaStException(this.getConfig().getProperty(BUFFERSIZE_CONFIG) + " is not a valid buffer size!",
+					e);
 		}
 	}
 
