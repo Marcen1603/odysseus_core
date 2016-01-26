@@ -97,9 +97,11 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	public void send(byte[] message, ChannelHandlerContext ctx) {
 		// System.err.println(this + " Sending to "
 		// + ctx.channel().remoteAddress());
-		final ByteBuf send = ctx.alloc().buffer(message.length);
-		send.writeBytes(message);
-		ctx.writeAndFlush(send);
+		synchronized (ctx) {
+			final ByteBuf send = ctx.alloc().buffer(message.length);
+			send.writeBytes(message);
+			ctx.writeAndFlush(send);
+		}
 	}
 
 	@Override
@@ -283,10 +285,10 @@ class MyTCPServer {
 					}
 				}).option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
 
-		bootsTraps.put(port,b);
+		bootsTraps.put(port, b);
 		bossGroups.put(port, bossGroup);
 		workerGroups.put(port, workerGroup);
-		
+
 		ChannelFuture f = null;
 		f = b.bind(port).sync();
 		portMapping.put(port, f);
