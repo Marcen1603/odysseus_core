@@ -97,11 +97,21 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	public void send(byte[] message, ChannelHandlerContext ctx) {
 		// System.err.println(this + " Sending to "
 		// + ctx.channel().remoteAddress());
-		synchronized (ctx) {
-			final ByteBuf send = ctx.alloc().buffer(message.length);
-			send.writeBytes(message);
-			ctx.writeAndFlush(send);
+		final ByteBuf send = ctx.alloc().buffer(message.length);
+		send.writeBytes(message);
+		// wait until channel is writable to avoid out of memory
+		// Problem: Blocks all other (potentially faster) clients
+		// Solution could be: Keep elements for channel if not writable and send later until a fixed size and delay than...
+		while (!ctx.channel().isWritable()) {
+			synchronized (this) {
+				try {
+					this.wait(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+		ctx.writeAndFlush(send);
 	}
 
 	@Override
