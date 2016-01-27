@@ -106,6 +106,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	public HashJoinSweepArea(int[] insertRestrictList, int[] queryRestrictList, boolean inputOrderedByTime) {
 		this.elements = LinkedHashMultimap.create();
 		this.insertRestrictList = insertRestrictList;
+		check(insertRestrictList);
 		this.queryRestrictList = queryRestrictList;
 		this.inputOrderedByTime = inputOrderedByTime;
 		if (inputOrderedByTime) {
@@ -115,9 +116,18 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		}
 	}
 
+	private void check(int[] insertRestrictList) {
+		for (int v: insertRestrictList){
+			if (v == -1){
+				throw new IllegalArgumentException("Restrictlist cannot not contain -1");
+			}
+		}
+	}
+
 	public HashJoinSweepArea(HashJoinSweepArea original) {
 		this.elements = original.elements;
 		this.insertRestrictList = original.insertRestrictList;
+		check(original.insertRestrictList);
 		this.queryRestrictList = original.queryRestrictList;
 		this.inputOrderedByTime = original.inputOrderedByTime;
 		if (inputOrderedByTime) {
