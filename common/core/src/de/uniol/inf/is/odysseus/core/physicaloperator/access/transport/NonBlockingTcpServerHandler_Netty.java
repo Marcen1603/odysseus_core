@@ -43,6 +43,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	boolean shareTCPServer = true;
 	final List<byte[]> buffer = new LinkedList<>();
 	final int maxBufferSize;
+	boolean shutdown = false;
 
 	/**
 	 * @return the tcpServer
@@ -102,7 +103,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		// wait until channel is writable to avoid out of memory
 		// Problem: Blocks all other (potentially faster) clients
 		// Solution could be: Keep elements for channel if not writable and send later until a fixed size and delay than...
-		while (!ctx.channel().isWritable()) {
+		while (!shutdown && !ctx.channel().isWritable()) {
 			synchronized (this) {
 				try {
 					this.wait(1000);
@@ -171,6 +172,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	private void processInOutOpen() throws IOException {
+		shutdown = false;
 		try {
 			getTcpServer().add(port, this);
 		} catch (InterruptedException e) {
@@ -189,6 +191,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	private void processInOutClose() throws IOException {
+		shutdown = true;
 		try {
 			Iterator<ChannelHandlerContext> channelIter = this.channels.iterator();
 			while (channelIter.hasNext()) {
