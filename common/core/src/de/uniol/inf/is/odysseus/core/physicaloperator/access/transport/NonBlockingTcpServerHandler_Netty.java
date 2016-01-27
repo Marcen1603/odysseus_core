@@ -106,7 +106,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		while (!shutdown && !ctx.channel().isWritable()) {
 			synchronized (this) {
 				try {
-					this.wait(1000);
+					this.wait(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
