@@ -70,12 +70,20 @@ public class OptionMap {
 		}
 		return optionMap.get(key.toLowerCase());
 	}
+	
+	public String getString(String key){
+		return get(key);
+	}
 
 	public String get(String key, String defaultValue) {
 		String v = get(key.toLowerCase());
 		return v != null ? v : defaultValue;
 	}
 
+	public String getString(String key, String defaultValue){
+		return getString(key, defaultValue);
+	}
+	
     public boolean getBoolean(String key, boolean defaultValue) {
 		String v = get(key);
 		return v != null ? Boolean.parseBoolean(v) : defaultValue;
