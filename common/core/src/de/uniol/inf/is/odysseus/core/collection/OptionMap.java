@@ -81,7 +81,7 @@ public class OptionMap {
 	}
 
 	public String getString(String key, String defaultValue){
-		return getString(key, defaultValue);
+		return get(key, defaultValue);
 	}
 	
     public boolean getBoolean(String key, boolean defaultValue) {
