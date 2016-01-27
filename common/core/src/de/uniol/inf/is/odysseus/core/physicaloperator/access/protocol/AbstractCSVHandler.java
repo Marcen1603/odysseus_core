@@ -123,10 +123,11 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		CharBuffer cb = CharBuffer.wrap(out);
 		ByteBuffer encoded = charset.encode(cb);
 		byte[] encodedBytes1 = encoded.array();
-		byte[] encodedBytes = new byte[cb.limit()];
+		byte[] encodedBytes = new byte[cb.limit()+newline.length];
 		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
+		System.arraycopy(newline, 0, encodedBytes, cb.limit(), newline.length);
 		getTransportHandler().send(encodedBytes);
-		getTransportHandler().send(newline);
+		//getTransportHandler().send(newline);
 	}
 	
 	@Override
