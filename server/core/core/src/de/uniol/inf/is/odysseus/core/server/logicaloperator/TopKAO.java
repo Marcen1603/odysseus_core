@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressio
 @LogicalOperator(name = "TOPK", maxInputPorts = 1, minInputPorts = 1, category = {
 		LogicalOperatorCategory.ADVANCED }, doc = "Calculate the top k elements of the input")
 public class TopKAO extends AbstractLogicalOperator {
-
+	
 	private static final long serialVersionUID = 8852471127806000337L;
 
 	private NamedExpression setupFunction;
@@ -39,6 +39,7 @@ public class TopKAO extends AbstractLogicalOperator {
 	private boolean tieWithTimestamp = false;
 	private boolean triggerOnlyByPunctuation = false;
 	private boolean recalcScore = false;
+	private boolean addScore = false;
 	
 	public TopKAO() {
 	}
@@ -62,6 +63,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.fastGrouping = other.fastGrouping;
 		this.tieWithTimestamp = other.tieWithTimestamp;
 		this.recalcScore = other.recalcScore;
+		this.addScore = other.addScore;
 	}
 	
 
@@ -127,6 +129,15 @@ public class TopKAO extends AbstractLogicalOperator {
 	@Parameter(name = "descending", optional = true, type = BooleanParameter.class, doc = "Sort descending (default is true)")
 	public void setDescending(boolean ascending) {
 		this.descending = ascending;
+	}
+
+	public boolean isAddScore() {
+		return addScore;
+	}
+
+	@Parameter(optional = true, type = BooleanParameter.class, doc = "If set to true, the score value will be added to each output element in the top k list. Default is false.")
+	public void setAddScore(boolean addScore) {
+		this.addScore = addScore;
 	}
 
 	public boolean isTiWithTimestamp() {
@@ -201,6 +212,11 @@ public class TopKAO extends AbstractLogicalOperator {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema subSchema = getInputSchema(0);
 		// TODO addScore flag
+		if (addScore){
+
+			SDFAttribute score = new SDFAttribute(subSchema.getAttribute(0).getSourceName(), "score", SDFDatatype.DOUBLE);
+			subSchema = SDFSchemaFactory.createNewAddAttribute(score, subSchema);
+		}
 		
 		List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
 		attributes.add(new SDFAttribute(subSchema.getURI(), "topk",

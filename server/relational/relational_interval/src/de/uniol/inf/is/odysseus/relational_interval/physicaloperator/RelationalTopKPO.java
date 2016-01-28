@@ -25,10 +25,10 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval> exten
 			SDFExpression preScoringFunction, SDFExpression scoringFunction, SDFExpression tearDownFunction,
 			SDFExpression cleanupPredicate, int k, boolean descending, boolean suppressDuplicates,
 			List<SDFAttribute> uniqueAttributes, IGroupProcessor<T, T> groupProcessor,
-			boolean triggerOnlyByPunctuation) {
+			boolean triggerOnlyByPunctuation, boolean addScore) {
 		super(inputSchema, outputSchema, setupFunction, preScoringFunction, scoringFunction, tearDownFunction,
 				cleanupPredicate, k, descending, suppressDuplicates, uniqueAttributes, groupProcessor,
-				triggerOnlyByPunctuation);
+				triggerOnlyByPunctuation, addScore);
 	}
 
 	@Override

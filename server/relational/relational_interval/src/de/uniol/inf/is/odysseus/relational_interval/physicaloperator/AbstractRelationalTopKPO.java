@@ -106,11 +106,10 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	public AbstractRelationalTopKPO(SDFSchema inputSchema, SDFSchema outputSchema, SDFExpression setupFunction,
 			SDFExpression preScoringFunction, SDFExpression scoringFunction, SDFExpression tearDownFunction, SDFExpression cleanupPredicate, int k, boolean descending,
 			boolean suppressDuplicates, List<SDFAttribute> uniqueAttributes, IGroupProcessor<T, T> groupProcessor,
-			boolean triggerOnlyByPunctuation) {
+			boolean triggerOnlyByPunctuation, boolean addScore) {
 		super();
 		
-		// TODO: REMOVE!!
-		addScore = true;
+		this.addScore = addScore;
 		
 		if (setupFunction != null){
 			this.setupExpression = new RelationalExpression<>(setupFunction);

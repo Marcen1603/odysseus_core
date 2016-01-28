@@ -47,13 +47,15 @@ public class TTopKAORule extends AbstractRelationalIntervalTransformationRule<To
 			po = new RelationalTopKPO<>(
 					operator.getInputSchema(0), operator.getOutputSchema(), setupFunction, preScoreFunction,
 					scoringFunction, tearDownFunction, cleanUpPredicate, operator.getK(), operator.isDescending(),
-					operator.isSuppressDuplicates(), operator.getUniqueAttributes(), groupProcessor, operator.isTriggerOnlyByPunctuation());
+					operator.isSuppressDuplicates(), operator.getUniqueAttributes(), groupProcessor, operator.isTriggerOnlyByPunctuation(),
+					operator.isAddScore());
 		} else {
 			// TODO: different Implemenations for TopK 
 			po = new RelationalDynamicScoreTopKPO<>(
 					operator.getInputSchema(0), operator.getOutputSchema(), setupFunction, preScoreFunction,
 					scoringFunction, tearDownFunction, cleanUpPredicate, operator.getK(), operator.isDescending(),
-					operator.isSuppressDuplicates(), operator.getUniqueAttributes(), groupProcessor, operator.isTriggerOnlyByPunctuation());
+					operator.isSuppressDuplicates(), operator.getUniqueAttributes(), groupProcessor, operator.isTriggerOnlyByPunctuation(),
+					operator.isAddScore());
 		}
 		po.setOrderByTimestamp(operator.isTiWithTimestamp());
 		defaultExecute(operator, po, config, true, true);
