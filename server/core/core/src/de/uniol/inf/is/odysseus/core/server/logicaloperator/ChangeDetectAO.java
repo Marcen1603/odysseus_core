@@ -76,8 +76,8 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	}
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTR", isList = true)
-	public void setAttr(List<SDFAttribute> outputSchema) {
-		this.attributes = outputSchema;
+	public void setAttr(List<SDFAttribute> attributes) {
+		this.attributes = attributes;
 	}
 
 	public List<SDFAttribute> getAttr() {
