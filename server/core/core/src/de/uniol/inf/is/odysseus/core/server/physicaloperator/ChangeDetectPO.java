@@ -93,6 +93,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		}
 
 		lastElem = lastElements.get(groupID);
+		newLastElement = lastElem;
 
 		if (lastElem == null) {
 			newLastElement = object;
