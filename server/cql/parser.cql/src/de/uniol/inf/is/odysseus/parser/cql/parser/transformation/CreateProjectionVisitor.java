@@ -123,7 +123,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				// all real expressions
 				List<NamedExpression> outputExpressions = new ArrayList<NamedExpression>();
 				for (SDFExpression expression : expressions) {
-					outputExpressions.add(new NamedExpression("", expression));
+					outputExpressions.add(new NamedExpression("", expression,null));
 					// outputExpressions.add(new NamedExpressionItem("", new
 					// SDFExpression("", expression.getExpressionString(), new
 					// DirectAttributeResolver(_outputSchema),

@@ -189,7 +189,7 @@ public class MapAO extends UnaryLogicalOp {
 						}
 
 					} else {
-						SDFDatatype retType = mepExpression.getReturnType();
+						SDFDatatype retType = expr.datatype!=null?expr.datatype:mepExpression.getReturnType();
 						attr = new SDFAttribute(null,
 								!"".equals(expr.name) ? expr.name : exprString,
 								retType, null, null, null);

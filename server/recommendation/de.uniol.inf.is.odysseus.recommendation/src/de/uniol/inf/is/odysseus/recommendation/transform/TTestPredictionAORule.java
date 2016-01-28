@@ -199,7 +199,7 @@ public class TTestPredictionAORule extends
 		for (int i = 0; i < expression.length; ++i) {
 			final NamedExpression namedExpression = new NamedExpression(
 					expressionName[i], new SDFExpression(expression[i],
-							MEP.getInstance()));
+							MEP.getInstance()),null);
 			namedExpressions.add(namedExpression);
 		}
 

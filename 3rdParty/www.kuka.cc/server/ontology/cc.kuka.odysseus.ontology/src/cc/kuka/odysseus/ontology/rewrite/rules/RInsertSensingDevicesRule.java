@@ -266,7 +266,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         final IAttributeResolver attrRes = new DirectAttributeResolver(mapAO.getInputSchema());
         for (int i = 0; i < parent.getOutputSchema().size(); i++) {
             final SDFExpression expr = new SDFExpression(parent.getExpressions()[i].getMEPExpression(), attrRes, MEP.getInstance());
-            namedExpressions.add(new NamedExpression(parent.getOutputSchema().get(i).getURI(), expr));
+            namedExpressions.add(new NamedExpression(parent.getOutputSchema().get(i).getURI(), expr, null));
         }
         mapAO.setExpressions(namedExpressions);
         if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {

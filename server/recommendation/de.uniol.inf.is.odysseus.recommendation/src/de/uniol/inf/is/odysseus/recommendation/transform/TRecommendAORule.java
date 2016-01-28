@@ -67,7 +67,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 			// top n
 			final NamedExpression scoringFunction = new NamedExpression(
 					"scoringFunction", new SDFExpression(
-							predictRatingAttributeName, MEP.getInstance()));
+							predictRatingAttributeName, MEP.getInstance()),null);
 
 			final TopKAO topKAo = new TopKAO();
 			// topKAo.setName(topKAo.getClass().getSimpleName());
