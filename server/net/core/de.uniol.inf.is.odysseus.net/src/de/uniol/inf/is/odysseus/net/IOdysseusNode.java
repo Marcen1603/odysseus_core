@@ -14,4 +14,6 @@ public interface IOdysseusNode {
 	public Optional<String> getProperty( String key );
 	public boolean existsProperty( String key );
 	public Collection<String> getProperyKeys();
+	
+	public boolean isLocal();
 }

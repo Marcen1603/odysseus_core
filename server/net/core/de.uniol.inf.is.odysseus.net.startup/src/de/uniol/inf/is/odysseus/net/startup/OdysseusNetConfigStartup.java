@@ -48,7 +48,7 @@ public class OdysseusNetConfigStartup implements IOdysseusNetStartup {
 			generatedID = OdysseusNodeID.generateNew();
 		}
 		
-		IOdysseusNode localNode = new OdysseusNode(generatedID, nodeName);
+		IOdysseusNode localNode = new OdysseusNode(generatedID, nodeName, true);
 		return localNode;
 	}
 

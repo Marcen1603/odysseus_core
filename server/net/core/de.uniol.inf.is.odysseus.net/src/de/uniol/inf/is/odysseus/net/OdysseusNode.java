@@ -14,13 +14,15 @@ public class OdysseusNode implements IOdysseusNode {
 	private final OdysseusNodeID nodeID;
 	private final String nodeName;
 	private final Map<String, String> propertyMap = Maps.newConcurrentMap();
+	private final boolean isLocal;
 	
-	public OdysseusNode( OdysseusNodeID nodeID, String nodeName ) {
+	public OdysseusNode( OdysseusNodeID nodeID, String nodeName, boolean isLocal ) {
 		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(nodeName), "NodeName must not be null or empty!");
 		
 		this.nodeID = nodeID;
 		this.nodeName = nodeName;
+		this.isLocal = isLocal;
 	}
 	
 	@Override
@@ -89,7 +91,17 @@ public class OdysseusNode implements IOdysseusNode {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{").append(nodeID).append(": ").append(nodeName).append("}");
+		sb.append("{").append(nodeID);
+		if( isLocal) {
+			sb.append("*");
+		}
+		sb.append(": ").append(nodeName).append("}");
+		
 		return sb.toString();
+	}
+	
+	@Override
+	public boolean isLocal() {
+		return isLocal;
 	}
 }

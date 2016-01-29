@@ -102,6 +102,14 @@ public class OdysseusNodeCommunicator implements IOdysseusNodeCommunicator, IOdy
 	public void send(IOdysseusNode destinationNode, IMessage message) throws OdysseusNodeCommunicationException {
 		Preconditions.checkNotNull(destinationNode, "destinationNode must not be null!");
 		Preconditions.checkNotNull(message, "message must not be null!");
+		
+		if( destinationNode.isLocal() ) {
+			Collection<IOdysseusNodeCommunicatorListener> listeners = OdysseusNodeCommunicatorListenerRegistry.getInstance().getListeners(message.getClass());
+			if (!listeners.isEmpty()) {
+				fireMessageReceivedEvent(destinationNode, listeners, message);
+			}
+			return;
+		}
 
 		if (!connectionManager.isConnected(destinationNode)) {
 			throw new OdysseusNodeCommunicationException("Node " + destinationNode + " is not connected");
@@ -210,13 +218,7 @@ public class OdysseusNodeCommunicator implements IOdysseusNodeCommunicator, IOdy
 						IMessage msg = optMsg.get();
 						msg.fromBytes(msgBytes);
 
-						for (IOdysseusNodeCommunicatorListener listener : listeners) {
-							try {
-								listener.receivedMessage(this, connection.getOdysseusNode(), msg);
-							} catch (Throwable t) {
-								LOG.error("Exception in odysseus node communicator listener", t);
-							}
-						}
+						fireMessageReceivedEvent(connection.getOdysseusNode(), listeners, msg);
 					}
 				}
 			} else {
@@ -225,6 +227,16 @@ public class OdysseusNodeCommunicator implements IOdysseusNodeCommunicator, IOdy
 		} catch (Throwable t) {
 			LOG.error("Exception during processing incoming message", t);
 			throw t;
+		}
+	}
+
+	private void fireMessageReceivedEvent(IOdysseusNode node, Collection<IOdysseusNodeCommunicatorListener> listeners, IMessage msg) {
+		for (IOdysseusNodeCommunicatorListener listener : listeners) {
+			try {
+				listener.receivedMessage(this, node, msg);
+			} catch (Throwable t) {
+				LOG.error("Exception in odysseus node communicator listener", t);
+			}
 		}
 	}
 

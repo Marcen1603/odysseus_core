@@ -91,7 +91,7 @@ public class BroadcastHandler extends SimpleChannelInboundHandler<DatagramPacket
 		if (jsonObject.has("nodeName") && jsonObject.has("nodeID")) {
 			String nodeName = jsonObject.getString("nodeName");
 			String nodeIDStr = jsonObject.getString("nodeID");
-			IOdysseusNode newNode = new OdysseusNode(OdysseusNodeID.fromString(nodeIDStr), nodeName);
+			IOdysseusNode newNode = new OdysseusNode(OdysseusNodeID.fromString(nodeIDStr), nodeName, false);
 
 			JSONObject propertyJson = jsonObject.getJSONObject("properties");
 			Iterator<?> keyIterator = propertyJson.keys();

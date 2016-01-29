@@ -5,26 +5,67 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
+import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
+import de.uniol.inf.is.odysseus.net.querydistribute.physicaloperator.data.PortMessage;
 
 public class QueryDistributionPlugIn implements BundleActivator {
 
 	private static ISession activeSession;
+	private static IOdysseusNodeCommunicator nodeCommunicator;
+	private static IOdysseusNodeManager nodeManager;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		
+
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		
+
 	}
 
 	public static ISession getActiveSession() {
-		if(activeSession == null || !activeSession.isValid()) {	
+		if (activeSession == null || !activeSession.isValid()) {
 			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
 		}
-		
+
 		return activeSession;
+	}
+
+	// called by OSGi-DS
+	public static void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
+		nodeCommunicator = serv;
+		
+		nodeCommunicator.registerMessageType(PortMessage.class);
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
+		if (nodeCommunicator == serv) {
+			nodeCommunicator.unregisterMessageType(PortMessage.class);
+			
+			nodeCommunicator = null;
+		}
+	}
+
+	public static IOdysseusNodeCommunicator getNodeCommunicator() {
+		return nodeCommunicator;
+	}
+
+	// called by OSGi-DS
+	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
+		nodeManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindOdysseusNodeManager(IOdysseusNodeManager serv) {
+		if (nodeManager == serv) {
+			nodeManager = null;
+		}
+	}
+	
+	public static IOdysseusNodeManager getNodeManager() {
+		return nodeManager;
 	}
 }

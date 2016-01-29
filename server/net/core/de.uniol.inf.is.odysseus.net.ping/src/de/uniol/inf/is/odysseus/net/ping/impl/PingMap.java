@@ -14,7 +14,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
-import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.ping.IPingMapListener;
 import de.uniol.inf.is.odysseus.net.ping.IPingMapNode;
@@ -26,7 +25,6 @@ public class PingMap implements IPingMap  {
 	private static final Random RAND = new Random();
 	
 	private static PingMap instance;
-	private static IOdysseusNodeManager nodeManager;
 	
 	private final Map<IOdysseusNode, PingMapNode> pingNodeMap = Maps.newConcurrentMap();
 	private final Map<IOdysseusNode, NumberAverager> ownPings = Maps.newConcurrentMap();
@@ -35,18 +33,6 @@ public class PingMap implements IPingMap  {
 	private Vector3D localPosition = new Vector3D(0,0,0);
 	private double timestep = 1.0;
 	
-	// called by OSGi-DS
-	public static void bindOdysseusNodeManager(IOdysseusNodeManager serv) {
-		nodeManager = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindOdysseusNodeManager(IOdysseusNodeManager serv) {
-		if (nodeManager == serv) {
-			nodeManager = null;
-		}
-	}
-
 	public void activate() {
 		LOG.debug("PingMap activated");
 		
@@ -71,7 +57,7 @@ public class PingMap implements IPingMap  {
 	public Optional<IPingMapNode> getPingNode(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node for pingMap must not be null!");
 		
-		if( nodeManager.isLocalNode(node)) {
+		if( node.isLocal() ) {
 			PingMapNode localPingMapNode = new PingMapNode(node);
 			localPingMapNode.setPosition(getLocalPosition());
 			return Optional.<IPingMapNode>of(localPingMapNode);
@@ -145,7 +131,7 @@ public class PingMap implements IPingMap  {
 	public void setPosition( IOdysseusNode node, Vector3D position ) {
 		Preconditions.checkNotNull(node, "node must not be null!");
 		Preconditions.checkNotNull(position, "Position must not be null!");
-		Preconditions.checkArgument(!nodeManager.isLocalNode(node), "Cannot set position of local node directly!");
+		Preconditions.checkArgument(!node.isLocal(), "Cannot set position of local node directly!");
 		
 		PingMapNode pingNode = getPingMapNode(node);
 		pingNode.setPosition(position);
@@ -171,7 +157,7 @@ public class PingMap implements IPingMap  {
 	public Optional<Double> getPing(IOdysseusNode node) {
 		Preconditions.checkNotNull(node, "node to get ping must not be null!");
 		
-		if( nodeManager.isLocalNode(node)) {
+		if( node.isLocal()) {
 			return Optional.of(0.0);
 		}
 		

@@ -68,7 +68,6 @@ public class OdysseusNodeSocketConnector extends OdysseusNetComponentAdapter imp
 
 	@Override
 	public void connect(IOdysseusNode node, IOdysseusNodeConnectorCallback callback) throws OdysseusNetConnectionException {
-
 		Thread waitingThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
