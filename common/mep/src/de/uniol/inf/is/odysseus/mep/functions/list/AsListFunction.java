@@ -27,14 +27,14 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ToListFunction extends AbstractFunction<List> {
+public class AsListFunction extends AbstractFunction<List> {
 
 	private static final long serialVersionUID = -6921898506120412818L;
 
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.OBJECT } };
 
-	public ToListFunction() {
-		super("toList", 1, accTypes, SDFDatatype.LIST);
+	public AsListFunction() {
+		super("asList", 1, accTypes, SDFDatatype.LIST);
 	}
 
 	@Override
