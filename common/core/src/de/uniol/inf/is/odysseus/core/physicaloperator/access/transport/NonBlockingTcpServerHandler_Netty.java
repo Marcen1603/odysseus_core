@@ -103,7 +103,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		// wait until channel is writable to avoid out of memory
 		// Problem: Blocks all other (potentially faster) clients
 		// Solution could be: Keep elements for channel if not writable and send later until a fixed size and delay than...
-		while (!shutdown && !ctx.channel().isWritable()) {
+		while (!shutdown && !ctx.channel().isWritable() && ctx.channel().isOpen()) {
 			synchronized (this) {
 				try {
 					this.wait(10);
