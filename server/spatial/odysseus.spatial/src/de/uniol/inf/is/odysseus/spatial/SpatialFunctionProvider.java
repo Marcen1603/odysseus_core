@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.spatial.functions.AsCartesianCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.AsGeometry;
 import de.uniol.inf.is.odysseus.spatial.functions.AsGeometryCollection;
 import de.uniol.inf.is.odysseus.spatial.functions.AsLineString;
@@ -27,12 +28,16 @@ import de.uniol.inf.is.odysseus.spatial.functions.AsMultiLineString;
 import de.uniol.inf.is.odysseus.spatial.functions.AsMultiPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.AsMultiPolygon;
 import de.uniol.inf.is.odysseus.spatial.functions.AsPoint;
+import de.uniol.inf.is.odysseus.spatial.functions.AsPolarCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.AsPolygon;
 import de.uniol.inf.is.odysseus.spatial.functions.CalculateBearing;
 import de.uniol.inf.is.odysseus.spatial.functions.CalculateDistance;
 import de.uniol.inf.is.odysseus.spatial.functions.CalculateEndingCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.FromWKT;
+import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCoordinate;
+import de.uniol.inf.is.odysseus.spatial.functions.GetXFromSpatial;
+import de.uniol.inf.is.odysseus.spatial.functions.GetYFromSpatial;
 import de.uniol.inf.is.odysseus.spatial.functions.ST_SetSRID;
 import de.uniol.inf.is.odysseus.spatial.functions.ST_Transform;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialBuffer;
@@ -52,13 +57,10 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialTouches;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnion;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
-import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
 import de.uniol.inf.is.odysseus.spatial.functions.ToCartesianCoordinate;
-import de.uniol.inf.is.odysseus.spatial.functions.AsCartesianCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.ToEllipsoid;
 import de.uniol.inf.is.odysseus.spatial.functions.ToPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.ToPolarCoordinate;
-import de.uniol.inf.is.odysseus.spatial.functions.AsPolarCoordinates;
 
 public class SpatialFunctionProvider implements IFunctionProvider {
 
@@ -114,6 +116,10 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new CalculateDistance());
 		functions.add(new ToEllipsoid());
 		functions.add(new GetCoordinate());
+		
+		functions.add(new GetXFromSpatial());
+		functions.add(new GetYFromSpatial());
+		
 		return functions;
 	}
 
