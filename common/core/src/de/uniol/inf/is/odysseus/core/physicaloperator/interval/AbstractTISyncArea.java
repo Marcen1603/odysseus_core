@@ -27,7 +27,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 
 	private static final long serialVersionUID = 1314105668558226625L;
 
-	private IHasName operator;
+	private transient IHasName operator;
 	
 	protected long elementsRead;
 	protected long puncRead;
