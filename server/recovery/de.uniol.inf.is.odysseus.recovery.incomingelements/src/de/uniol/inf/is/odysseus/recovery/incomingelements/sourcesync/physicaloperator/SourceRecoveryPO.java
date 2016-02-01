@@ -1,10 +1,17 @@
 package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -41,6 +48,27 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	private static final long serialVersionUID = -2660605545656846436L;
 
 	/**
+	 * Compares the start time stamps
+	 */
+	private class Comparator implements java.util.Comparator<StreamObject> {
+
+		/**
+		 * Empty default constructor.
+		 */
+		public Comparator() {
+		}
+
+		@SuppressWarnings({ "cast", "rawtypes", "unchecked" })
+		@Override
+		public int compare(StreamObject o1, StreamObject o2) {
+			IStreamObject<ITimeInterval> elem1 = (IStreamObject<ITimeInterval>) (IStreamObject) o1;
+			IStreamObject<ITimeInterval> elem2 = (IStreamObject<ITimeInterval>) (IStreamObject) o2;
+			return elem1.getMetadata().getStart().compareTo(elem2.getMetadata().getStart());
+		}
+
+	}
+
+	/**
 	 * Transfer handler for the objects from public subscribe system in recovery
 	 * mode. Not for the objects from the source operator.
 	 */
@@ -54,6 +82,20 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		private final IMetadataInitializer<IMetaAttribute, StreamObject> mMetaDataInitializer = new MetadataInitializerAdapter<>();
 
 		/**
+		 * Call {@link SourceRecoveryPO#delta(IStreamObject, IStreamObject)}
+		 * every DELAY milliseconds.
+		 */
+		private static final long DELAY = 30000;
+
+		/**
+		 * {@link SourceRecoveryPO#delta(IStreamObject, IStreamObject)} should
+		 * not be called for every new element. It should be called every
+		 * {@link #DELAY} milliseconds. If this field is false, it should be
+		 * called for the next element.
+		 */
+		boolean mTimeToEvaluateDelta = true;
+
+		/**
 		 * Empty default constructor.
 		 */
 		public RecoveryTransferHandler() {
@@ -63,7 +105,9 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		@SuppressWarnings("unchecked")
 		@Override
 		public void transfer_intern(IStreamable object, int port) {
-			if (object.isPunctuation()) {
+			if (!SourceRecoveryPO.this.mTransferFromBaDaSt) {
+				return;
+			} else if (object.isPunctuation()) {
 				SourceRecoveryPO.this.sendPunctuation((IPunctuation) object, port);
 			} else {
 				StreamObject strObj = (StreamObject) object;
@@ -73,7 +117,112 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 					e.printStackTrace();
 				}
 				updateMetadata(strObj);
-				SourceRecoveryPO.this.transfer(strObj, port);
+
+				if (this.mTimeToEvaluateDelta) {
+					synchronized (SourceRecoveryPO.this.mLastSeenElementsFromSource) {
+						if (!SourceRecoveryPO.this.mLastSeenElementsFromSource.isEmpty()) {
+							evaluate(SourceRecoveryPO.this.mLastSeenElementsFromSource, strObj, port);
+						}
+					}
+				} else {
+					SourceRecoveryPO.this.transfer(strObj, port);
+				}
+			}
+		}
+
+		/**
+		 * Evaluates the delta of the time stamps from BaDaSt and original
+		 * source as follows: <br />
+		 * <br />
+		 * if the oldest buffered element from original source is newer as the
+		 * newest element from BaDaSt, BaDaSt did not catch up with the original
+		 * source yet. Set {@link #mTimeToEvaluateDelta} in {@link #DELAY}
+		 * milliseconds. <br />
+		 * <br />
+		 * else if the newest buffered element from original source is newer
+		 * than the newest element from BaDaSt. Than, the newest element from
+		 * BaDaSt must be within {@code objectsFromSource}. BaDaSt caught up
+		 * with the original source. So (1) stop transferring from BaDaSt, (2)
+		 * transfer all buffered elements from that element on, (3) transfer new
+		 * elements from the original source, (4) stop consuming from BaDaSt.
+		 * <br />
+		 * <br />
+		 * else: <br />
+		 * BaDaSt caught up with the original source.Reaction:(1) keep the first
+		 * element from BaDaSt in mind, which is not transferred anymore, (2)
+		 * stop transferring from BaDaSt,(3) watch incoming elements from the
+		 * original source until we see the element from (1), (4) transfer from
+		 * the original source (the element from (1) should be the first to
+		 * transfer), (5) stop consuming from BaDaSt.
+		 * 
+		 * @param objectsFromSource
+		 *            The last elements from the original source, which has been
+		 *            recognized.
+		 * @param objectFromBaDaSt
+		 *            The last seen element from BaDaSt.
+		 * @param port
+		 *            Port number at which {@code objectFromBaDaSt} arrived.
+		 */
+
+		private void evaluate(ArrayList<StreamObject> objectsFromSource, StreamObject objectFromBaDaSt, int port) {
+			Comparator comp = new Comparator();
+			int delta = comp.compare(objectsFromSource.get(0), objectFromBaDaSt);
+			if (delta > 0) {
+				// The oldest buffered element from original source is newer as
+				// the newest element from BaDaSt.
+				// BaDaSt did not catch up with the original source yet. Let's
+				// wait some time and check again.
+				this.mTimeToEvaluateDelta = false;
+				SourceRecoveryPO.this.transfer(objectFromBaDaSt, port);
+				new Timer("SourceRecoveryDeltaEvaluator", true).schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						RecoveryTransferHandler.this.mTimeToEvaluateDelta = true;
+					}
+				}, RecoveryTransferHandler.DELAY);
+				return;
+			}
+
+			delta = comp.compare(objectsFromSource.get(objectsFromSource.size() - 1), objectFromBaDaSt);
+			if (delta >= 0) {
+				// The newest buffered element from original source is newer
+				// than
+				// the newest element from BaDaSt. The newest element from
+				// BaDaSt must be within objectsFromSource.
+
+				/*
+				 * BaDaSt caught up with the original source. Let's (1) stop
+				 * transferring from BaDaSt, (2) transfer all buffered elements
+				 * from that element on, (3) transfer new elements from the
+				 * original source, (4) stop consuming from BaDaSt.
+				 */
+				SourceRecoveryPO.this.mTransferFromBaDaSt = false;
+				int indexOfFirstToTransfer = Collections.binarySearch(objectsFromSource, objectFromBaDaSt, comp);
+				for (int i = indexOfFirstToTransfer; i < objectsFromSource.size(); i++) {
+					SourceRecoveryPO.this.transfer(objectsFromSource.get(i), port);
+				}
+				SourceRecoveryPO.this.mTransferFromSource = true;
+				SourceRecoveryPO.this.mBackupSubscriberController.interrupt();
+				objectsFromSource.clear();
+
+			} else /* delta < 0 */ {
+				// The newest buffered element from original source is older
+				// than the newest element from BaDaSt.
+
+				/*
+				 * BaDaSt caught up with the original source. Let's (1) keep the
+				 * first element from BaDaSt in mind, which is not transferred
+				 * anymore, (2) stop transferring from BaDaSt, (3) watch
+				 * incoming elements from the original source until we see the
+				 * element from (1), (4) transfer from the original source (the
+				 * element from (1) should be the first to transfer), (5) stop
+				 * consuming from BaDaSt.
+				 */
+				SourceRecoveryPO.this.mFirstNotTransferredElementFromBaDaSt = Optional.fromNullable(objectFromBaDaSt);
+				SourceRecoveryPO.this.mTransferFromBaDaSt = false;
+				// (3) and (4) is done in SourceRecoveryPO.process_next
+				SourceRecoveryPO.this.mBackupSubscriberController.interrupt();
 			}
 		}
 
@@ -135,6 +284,31 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	private final RecoveryTransferHandler mRecoveryTransferHandler = new RecoveryTransferHandler();
 
 	/**
+	 * Max. number of elements from the original source to buffer.
+	 */
+	private static final int BUFFRSIZE = 1000;
+
+	/**
+	 * The last elements from the original source, which has been recognized.
+	 */
+	ArrayList<StreamObject> mLastSeenElementsFromSource = new ArrayList<>(BUFFRSIZE);
+
+	/**
+	 * The first element from BaDaSt, which is not transferred any more.
+	 */
+	Optional<StreamObject> mFirstNotTransferredElementFromBaDaSt = Optional.absent();
+
+	/**
+	 * True, if elements from BaDaSt shall be transferred.
+	 */
+	boolean mTransferFromBaDaSt = true;
+
+	/**
+	 * True, if elements from the original source shall be transferred.
+	 */
+	boolean mTransferFromSource = false;
+
+	/**
 	 * Creates a new {@link SourceRecoveryPO}.
 	 * 
 	 * @param logical
@@ -182,19 +356,37 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
-		// Do not transfer, because elements from publish subscribe system will
-		// be transfered with
-		// another transfer handler.
-		// XXX SourceRecovery: Shall it be possible to get live again?
+		if (this.mTransferFromSource) {
+			// (4) transfer from the original source (the element from (1)
+			// should be the first to transfer)
+			this.transfer(object, port);
+		} else if (this.mTransferFromBaDaSt) {
+			// Do not transfer, because elements from publish subscribe system
+			// will be transfered with another transfer handler.
+			synchronized (this.mLastSeenElementsFromSource) {
+				if (this.mLastSeenElementsFromSource.size() == BUFFRSIZE) {
+					this.mLastSeenElementsFromSource.clear();
+				}
+				this.mLastSeenElementsFromSource.add(object);
+			}
+		} else if (object.equals(this.mFirstNotTransferredElementFromBaDaSt)) {
+			// (3) watch incoming elements from the original source until we see
+			// the element from (1)
+			this.mTransferFromSource = true;
+		}
 		adjustOffsetIfNeeded(object);
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// Do not transfer, because elements from publish subscribe system will
-		// be transfered with
-		// another transfer handler.
-		// XXX SourceRecovery: Shall it be possible to get live again?
+		if (this.mTransferFromSource) {
+			// (4) transfer from the original source (the element from (1)
+			// should be the first to transfer)
+			this.sendPunctuation(punctuation, port);
+		}
+
+		// Otherwise do not transfer, because elements from publish subscribe
+		// system will be transfered with another transfer handler.
 		adjustOffsetIfNeeded(punctuation);
 	}
 
