@@ -9,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="de.uniol.inf.is.odysseus.badast.internal.BaDaStApplication">
+               class="de.uniol.inf.is.odysseus.badast.BaDaStApplication">
          </run>
       </application>
    </extension>

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.badast.internal;
+package de.uniol.inf.is.odysseus.badast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,9 +13,9 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.badast.BaDaStConfiguration;
-import de.uniol.inf.is.odysseus.badast.kafka.KafkaSystem;
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.BaDaStException;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStConfiguration;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStException;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.kafka.KafkaSystem;
 
 // XXX Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
 /**

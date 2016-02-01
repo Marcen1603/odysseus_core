@@ -1,7 +1,7 @@
-package de.uniol.inf.is.odysseus.badast;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.badast;
 
-import de.uniol.inf.is.odysseus.badast.kafka.ByteArrayKafkaPublisher;
-import de.uniol.inf.is.odysseus.badast.kafka.StringKafkaPublisher;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.kafka.ByteArrayKafkaPublisher;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.kafka.StringKafkaPublisher;
 
 /**
  * Factory to create {@code IPublishers}.

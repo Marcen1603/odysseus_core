@@ -27,7 +27,6 @@
    <vm>
    </vm>
 
-
    <plugins>
       <plugin id="com.google.guava"/>
       <plugin id="com.google.protobuf"/>
@@ -62,10 +61,14 @@
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.badast.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
       <feature id="org.eclipse.equinox.p2.core.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
+      <feature id="org.eclipse.ecf.core.ssl.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
+      <feature id="org.eclipse.ecf.core.feature"/>
+      <feature id="org.eclipse.ecf.filetransfer.feature"/>
+      <feature id="org.eclipse.equinox.p2.extras.feature" version="1.2.100.v20150601-1708"/>
    </features>
 
 

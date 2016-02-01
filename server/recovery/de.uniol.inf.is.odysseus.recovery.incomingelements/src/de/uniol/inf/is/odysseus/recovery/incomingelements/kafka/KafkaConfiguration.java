@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.badast.kafka;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.kafka;
 
 import java.util.Properties;
 
-import de.uniol.inf.is.odysseus.badast.BaDaStConfiguration;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStConfiguration;
 
 /**
  * Access to the configuration of the ZooKeeper and Kafka servers

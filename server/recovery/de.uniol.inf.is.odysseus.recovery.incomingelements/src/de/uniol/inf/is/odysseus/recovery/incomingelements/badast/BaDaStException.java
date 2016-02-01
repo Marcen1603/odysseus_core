@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.recovery.badast;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.badast;
 
 /**
  * BaDaSt exceptions indicate that something went wrong within the BaDaSt

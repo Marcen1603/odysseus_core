@@ -14,9 +14,13 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.recovery.protectionpoints;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.script.parser,
  org.apache.kafka;bundle-version="0.8.2",
- de.uniol.inf.is.odysseus.relational_interval
-Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,OSGI-INF/KeywordProvider.xml,
- OSGI-INF/BaDaStRecorderKeyword.xml
-Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder,
+ de.uniol.inf.is.odysseus.relational_interval,
+ org.apache.kafka.clients,
+ org.apache.zookeeper
+Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,OSGI-INF/KeywordProvider.xml,OSGI-INF/BaDaStRecorderKeyword.xml,OSGI-INF/FileRecorder.xml,OSGI-INF/TCPRecorder.xml,
+ OSGI-INF/TCPStringRecorder.xml
+Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.badast,
+ de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder,
+ de.uniol.inf.is.odysseus.recovery.incomingelements.kafka,
  de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator,
  de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator

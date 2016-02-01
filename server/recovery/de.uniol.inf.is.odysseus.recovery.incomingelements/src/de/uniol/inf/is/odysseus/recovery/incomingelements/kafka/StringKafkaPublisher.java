@@ -1,13 +1,13 @@
-package de.uniol.inf.is.odysseus.badast.kafka;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.kafka;
 
 import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import de.uniol.inf.is.odysseus.badast.IPublisher;
-import de.uniol.inf.is.odysseus.badast.Record;
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.BaDaStException;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStException;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.IPublisher;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.Record;
 
 /**
  * A {@code StringStringKafkaPublisher} uses a {@code KafkaProducer} to publish

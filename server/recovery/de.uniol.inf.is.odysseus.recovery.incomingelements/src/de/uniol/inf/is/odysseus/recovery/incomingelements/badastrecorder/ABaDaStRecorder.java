@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.recovery.badast;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

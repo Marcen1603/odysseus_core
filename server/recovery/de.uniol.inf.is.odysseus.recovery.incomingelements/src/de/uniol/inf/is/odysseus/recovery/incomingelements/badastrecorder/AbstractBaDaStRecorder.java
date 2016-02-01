@@ -1,10 +1,8 @@
-package de.uniol.inf.is.odysseus.badast;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
 
 import java.util.Properties;
 
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.ABaDaStRecorder;
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.BaDaStException;
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStException;
 
 /**
  * BaDaSt recorders act as subscriber for data sources and as publisher for the

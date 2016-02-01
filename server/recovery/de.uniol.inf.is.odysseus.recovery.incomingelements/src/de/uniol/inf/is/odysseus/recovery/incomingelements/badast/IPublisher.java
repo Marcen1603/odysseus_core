@@ -1,6 +1,4 @@
-package de.uniol.inf.is.odysseus.badast;
-
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.BaDaStException;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.badast;
 
 /**
  * An {@code IPublisher} uses {@code IRecords} to publish a given message with a

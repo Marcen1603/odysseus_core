@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.badast.internal;
+package de.uniol.inf.is.odysseus.badast;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -12,13 +12,13 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
-import de.uniol.inf.is.odysseus.badast.recorders.FileRecorder;
-import de.uniol.inf.is.odysseus.badast.recorders.TCPRecorder;
-import de.uniol.inf.is.odysseus.badast.recorders.TCPStringRecorder;
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.ABaDaStRecorder;
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.BaDaStException;
-import de.uniol.inf.is.odysseus.core.server.recovery.badast.IBaDaStRecorder;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStException;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.ABaDaStRecorder;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.AbstractBaDaStRecorder;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.FileRecorder;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.IBaDaStRecorder;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.TCPRecorder;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.TCPStringRecorder;
 import kafka.api.FetchRequest;
 import kafka.api.FetchRequestBuilder;
 import kafka.javaapi.FetchResponse;
