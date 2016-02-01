@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointManager;
+import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
  * Logical operator to be placed directly after source access operators. <br />
@@ -22,7 +23,15 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointManage
  * elements from public subscribe system to it's next operators, until it gets
  * the same elements from both public subscribe system and original source.
  * Elements from the original source will be discarded in this time. But they
- * are not lost, since they are backed up by BaDaSt.
+ * are not lost, since they are backed up by BaDaSt. <br />
+ * <br />
+ * Additionally, the operator decreases the {@link Trust} value for elements,
+ * which are consumed from BaDaSt and for which there is a possibility, that
+ * they are duplicates. In a rollback recovery, all elements are duplicates,
+ * which are between the last checkpoint and the system failure. But they can
+ * not be determined precisely. The first element, which is for sure not a
+ * duplicate, is the first element received from the original source after
+ * system restart.
  * 
  * @author Michael Brand
  */

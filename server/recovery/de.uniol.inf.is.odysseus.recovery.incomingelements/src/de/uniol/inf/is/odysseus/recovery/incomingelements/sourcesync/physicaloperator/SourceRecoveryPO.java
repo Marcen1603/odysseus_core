@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicalop
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,6 +25,8 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriber;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriberController;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.SubscriberControllerFactory;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
+import de.uniol.inf.is.odysseus.trust.ITrust;
+import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
  * Physical operator to be placed directly after source access operators. <br />
@@ -32,7 +35,15 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloper
  * subscribe system to it's next operators, until it gets the same elements from
  * both public subscribe system and original source. Elements from the original
  * source will be discarded in this time. But they are not lost, since they are
- * backed up by BaDaSt.
+ * backed up by BaDaSt. <br />
+ * <br />
+ * Additionally, the operator decreases the {@link Trust} value for elements,
+ * which are consumed from BaDaSt and for which there is a possibility, that
+ * they are duplicates. In a rollback recovery, all elements are duplicates,
+ * which are between the last checkpoint and the system failure. But they can
+ * not be determined precisely. The first element, which is for sure not a
+ * duplicate, is the first element received from the original source after
+ * system restart.
  * 
  * @author Michael Brand
  * 
@@ -94,6 +105,11 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		 * called for the next element.
 		 */
 		boolean mTimeToEvaluateDelta = true;
+		
+		/**
+		 * Value for the decreased trust for potential duplicates.
+		 */
+		private static final double DECREASEDTRUST = 0.5;
 
 		/**
 		 * Empty default constructor.
@@ -117,8 +133,18 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 					e.printStackTrace();
 				}
 				updateMetadata(strObj);
-
-				if (this.mTimeToEvaluateDelta) {
+				
+				StreamObject firstElementFromSourceAfterRestart = null;
+				synchronized (SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart) {
+					if(SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart.isPresent()) {
+						firstElementFromSourceAfterRestart = SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart.get();
+					}
+				}
+				if(firstElementFromSourceAfterRestart != null && new Comparator().compare(firstElementFromSourceAfterRestart, strObj) > 0) {
+					// Element from BaDaSt is older than the first element after recovery from the original source. Decrease trust
+					decreaseTrust(strObj);
+					SourceRecoveryPO.this.transfer(strObj, port);
+				} else if (this.mTimeToEvaluateDelta) {
 					synchronized (SourceRecoveryPO.this.mLastSeenElementsFromSource) {
 						if (!SourceRecoveryPO.this.mLastSeenElementsFromSource.isEmpty()) {
 							evaluate(SourceRecoveryPO.this.mLastSeenElementsFromSource, strObj, port);
@@ -127,6 +153,17 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				} else {
 					SourceRecoveryPO.this.transfer(strObj, port);
 				}
+			}
+		}
+
+		/**
+		 * Decrease the {@link Trust} value for the given object.
+		 * @param object The given object
+		 */
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		private void decreaseTrust(StreamObject object) {
+			if(Arrays.asList(object.getMetadata().getClasses()).contains(ITrust.class)) {
+				((IStreamObject<ITrust>) (IStreamObject) object).getMetadata().setTrust(DECREASEDTRUST);
 			}
 		}
 
@@ -297,6 +334,11 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	 * The first element from BaDaSt, which is not transferred any more.
 	 */
 	Optional<StreamObject> mFirstNotTransferredElementFromBaDaSt = Optional.absent();
+	
+	/**
+	 * The first element from BaDaSt, which has been received by this operator.
+	 */
+	Optional<StreamObject> mFirstElementFromSourceAfterRestart = Optional.absent();
 
 	/**
 	 * True, if elements from BaDaSt shall be transferred.
@@ -356,6 +398,12 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
+		if(!this.mFirstElementFromSourceAfterRestart.isPresent()) {
+			// First element, which is for sure not a duplicate
+			synchronized (this.mFirstElementFromSourceAfterRestart) {
+				this.mFirstElementFromSourceAfterRestart = Optional.of(object);
+			}
+		}
 		if (this.mTransferFromSource) {
 			// (4) transfer from the original source (the element from (1)
 			// should be the first to transfer)
