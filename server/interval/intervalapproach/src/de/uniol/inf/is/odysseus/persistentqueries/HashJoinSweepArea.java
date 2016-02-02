@@ -338,7 +338,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		while (top != null && top.getMetadata().getEnd().beforeOrEquals(time)) {
 			timeIndex.poll();
 			remove(top);
-			timeIndex.peek();
+			top = timeIndex.peek();
 		}
 	}
 
