@@ -305,4 +305,27 @@ public class AggregationFunctionParseOptionsHelper {
 		return true;
 	}
 
+	/**
+	 * @param parameters
+	 * @param string
+	 * @param i
+	 * @return
+	 */
+	public static int getFunctionParameterAsInt(final Map<String, Object> parameters, final String key,
+			final int defaultValue) {
+		if (key == null) {
+			return defaultValue;
+		}
+		final Object value = getFunctionParameter(parameters, key);
+		if (value == null) {
+			return defaultValue;
+		}
+		if (value instanceof String) {
+			return Integer.parseInt((String) value);
+		}
+
+		throw new IllegalArgumentException(
+				"Could not parse parameter " + key + ". Value should be of type Integer but is: " + value.getClass());
+	}
+
 }

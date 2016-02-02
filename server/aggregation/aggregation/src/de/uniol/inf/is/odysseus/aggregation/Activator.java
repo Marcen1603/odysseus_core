@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.aggregation.functions.impl.Count;
 import de.uniol.inf.is.odysseus.aggregation.functions.impl.DistinctNest;
 import de.uniol.inf.is.odysseus.aggregation.functions.impl.Nest;
 import de.uniol.inf.is.odysseus.aggregation.functions.impl.Sum;
+import de.uniol.inf.is.odysseus.aggregation.functions.impl.TopK;
+import de.uniol.inf.is.odysseus.aggregation.functions.impl.Trigger;
 import de.uniol.inf.is.odysseus.aggregation.logicaloperator.builder.AggregationFunctionRegistry;
 
 public class Activator implements BundleActivator {
@@ -30,6 +32,8 @@ public class Activator implements BundleActivator {
 		AggregationFunctionRegistry.getInstance().addFunction(new DistinctNest<>());
 		AggregationFunctionRegistry.getInstance().addFunction(new Nest<>());
 		AggregationFunctionRegistry.getInstance().addFunction(new Sum<>());
+		AggregationFunctionRegistry.getInstance().addFunction(new TopK<>());
+		AggregationFunctionRegistry.getInstance().addFunction(new Trigger<>());
 	}
 
 	/*
