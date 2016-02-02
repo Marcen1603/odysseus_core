@@ -33,8 +33,9 @@ public class ListPartialAggregate<T> extends AbstractPartialAggregate<T> impleme
 		addElem(elem);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public ListPartialAggregate(ListPartialAggregate<T> p) {
-		this.elems = (List<T>) ((ArrayList)p.elems).clone();
+		this.elems = (List<T>) ((ArrayList<T>)p.elems).clone();
 	}
 
 	public List<T> getElems() {
@@ -57,8 +58,8 @@ public class ListPartialAggregate<T> extends AbstractPartialAggregate<T> impleme
 	}
 	
 	@Override
-	public ElementPartialAggregate<T> clone(){
-		return new ElementPartialAggregate<T>(this);
+	public ListPartialAggregate<T> clone(){
+		return new ListPartialAggregate<T>(this);
 	}
 
 	@Override
