@@ -26,6 +26,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		if (other.metadata != null) {
 			this.metadata = (T) other.metadata.clone();
 		}
+		this.timeOrderMarker = other.timeOrderMarker;
 	}
 
 	@Override
