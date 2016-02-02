@@ -183,7 +183,9 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		elementsRead++;
 		Long gId = groupProcessor.getGroupID(object);
 
+		
 		TopKDataStructure<T,M> topK = topKMap.get(gId);
+		
 		if (topK == null) {
 			topK = new TopKDataStructure<T,M>(comparator, orderByTimestamp, uniqueAttributePos);
 			topKMap.put(gId, topK);
@@ -192,19 +194,18 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		if (uniqueAttributePos!=null){
 			topK.removeSame(object);
 		}
-		
-		updateTopKList(object, topK);
-		
-		if (tearDownExpression != null){
-			tearDownExpression.evaluate(object, getSessions(), null);
-		}
 
 		if (cleanupPredicate != null){
 			cleanUp(topK);
 		}else{
 			cleanUp(object.getMetadata().getStart(), topK);
 		}
-
+		
+		updateTopKList(object, topK);
+		
+		if (tearDownExpression != null){
+			tearDownExpression.evaluate(object, getSessions(), null);
+		}
 		
 		if (!triggerOnlyByPunctuation) {
 			produceResult(object, topK, gId);
