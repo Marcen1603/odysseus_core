@@ -106,8 +106,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 			}
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		ISink<?> senderPO = new SenderPO(protocolHandler);
+		ISink<?> senderPO = this.getSenderPO(protocolHandler);
 		if (!config.isVirtualTransformation()) {
 			getDataDictionary().putSinkplan(senderPOName, senderPO);
 			if (!getDataDictionary().containsSink(senderPOName, getCaller())) {
@@ -243,5 +242,18 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 		}
 		return null;
 	}
+	
+	/**
+	 * Instantiates a new SenderPO. <br />
+	 * <br />
+	 * Override this method to use other implementations for the SenderPO.
+	 * @param protocolHandler The protocol handler based on the configuration
+	 * @return A new {@link SenderPO} implementation
+	 */
+	@SuppressWarnings("static-method")
+	protected SenderPO<?> getSenderPO(IProtocolHandler<?> protocolHandler) {
+		return new SenderPO<>(protocolHandler);
+	}
+
 
 }
