@@ -47,6 +47,9 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 				LOG.error("Could not write {} into {}", new Object[] { object,
 						protocolHandler, e });
 			}
+			
+			// Post processing stuff
+			this.postProcessElement(object, port);
 		}
 
 	}
@@ -59,6 +62,9 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 			LOG.error("Could not write {} into {}", new Object[] { punctuation,
 					protocolHandler, e });
 		}
+		
+		// Post processing stuff
+		this.postProcessPunctuation(punctuation, port);
 	}
 
 	@Override
@@ -91,6 +97,29 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	@Override
 	public AbstractSink<T> clone() {
 		return new SenderPO<T>(this);
+	}
+	
+	/**
+	 * Override this method to post process elements. <br />
+	 * <br />
+	 * This method is called by {@link #process_next(IStreamObject, int)} after writing the element by the protocol handler.
+	 * @param element See {@link #process_next(IStreamObject, int)}.
+	 * @param port See {@link #process_next(IStreamObject, int)}.
+	 */
+	protected void postProcessElement(@SuppressWarnings("unused") T element, @SuppressWarnings("unused") int port) {
+		return;
+	}
+	
+	/**
+	 * Override this method to post process punctuations. <br />
+	 * <br />
+	 * This method is called by {@link #processPunctuation(IPunctuation, int)} after writing the punctuation by the protocol handler.
+	 * @param punctuation See {@link #processPunctuation(IPunctuation, int)}.
+	 * @param port See {@link #processPunctuation(IPunctuation, int)}.
+	 */
+	@SuppressWarnings("static-method")
+	protected void postProcessPunctuation(@SuppressWarnings("unused") IPunctuation punctuation, @SuppressWarnings("unused") int port) {
+		return;
 	}
 
 }
