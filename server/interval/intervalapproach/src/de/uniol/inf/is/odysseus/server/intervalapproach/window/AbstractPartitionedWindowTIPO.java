@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupPr
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.state.SlidingElementWindowTIPOState;
 
 abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITimeInterval>>
-		extends AbstractWindowTIPO<T> implements IStatefulPO {
+		extends AbstractWindowTIPO<T> implements IStatefulPO, IPhysicalOperatorKeyValueProvider {
 
 	static final Logger LOG = LoggerFactory
 			.getLogger(AbstractPartitionedWindowTIPO.class);
@@ -227,5 +228,15 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		}
 	}
 	
-
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider#getKeyValues()
+	 */
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> result = new HashMap<>();
+		result.put("Buffers Size:", "" + buffers.size());
+		result.put("Transferarea Size:", "" + transferArea.size());
+		result.put("Last TS:", "" + lastTs);
+		return result;
+	}
 }
