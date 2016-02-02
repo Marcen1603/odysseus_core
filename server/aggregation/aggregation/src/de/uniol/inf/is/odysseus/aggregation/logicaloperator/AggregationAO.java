@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
@@ -49,6 +50,25 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 
 	private List<IAggregationFunction> functions;
 
+	/**
+	 * This flag is set if this operator should output new elements when
+	 * elements get outdated.
+	 */
+	private boolean evaluateAtOutdatingElements = true;
+
+	/**
+	 * This flag is set if this operator should output new elements when
+	 * elements get valid.
+	 */
+	private boolean evaluateAtNewElement = true;
+
+	/**
+	 * This flag is set if this operator should output the last output element
+	 * at done. This can be used when you want only the final aggr. value in an
+	 * evaluation. E. g., the final AVG of the latency.
+	 */
+	private boolean evaluateAtDone = false;
+
 	public AggregationAO() {
 		super();
 	}
@@ -63,6 +83,9 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 		super(op);
 		groupingAttributes = op.groupingAttributes;
 		functions = op.functions;
+		evaluateAtDone = op.evaluateAtDone;
+		evaluateAtNewElement = op.evaluateAtNewElement;
+		evaluateAtOutdatingElements = op.evaluateAtOutdatingElements;
 	}
 
 	/*
@@ -97,6 +120,57 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 	@GetParameter(name = "AGGREGATIONS")
 	public List<IAggregationFunction> getAggregations() {
 		return Collections.unmodifiableList(functions);
+	}
+
+	/**
+	 * @return the evaluateAtOutdatingElements
+	 */
+	@GetParameter(name = "EVAL_AT_OUTDATING")
+	public boolean isEvaluateAtOutdatingElements() {
+		return evaluateAtOutdatingElements;
+	}
+
+	/**
+	 * @param evaluateAtOutdatingElements
+	 *            the evaluateAtOutdatingElements to set
+	 */
+	@Parameter(name = "EVAL_AT_OUTDATING", type = BooleanParameter.class, optional = true)
+	public void setEvaluateAtOutdatingElements(final boolean evaluateAtOutdatingElements) {
+		this.evaluateAtOutdatingElements = evaluateAtOutdatingElements;
+	}
+
+	/**
+	 * @return the evaluateAtNewElement
+	 */
+	@GetParameter(name = "EVAL_AT_NEW_ELEMENT")
+	public boolean isEvaluateAtNewElement() {
+		return evaluateAtNewElement;
+	}
+
+	/**
+	 * @param evaluateAtNewElement
+	 *            the evaluateAtNewElement to set
+	 */
+	@Parameter(name = "EVAL_AT_NEW_ELEMENT", type = BooleanParameter.class, optional = true)
+	public void setEvaluateAtNewElement(final boolean evaluateAtNewElement) {
+		this.evaluateAtNewElement = evaluateAtNewElement;
+	}
+
+	/**
+	 * @return the evaluateAtDone
+	 */
+	@GetParameter(name = "EVAL_AT_DONE")
+	public boolean isEvaluateAtDone() {
+		return evaluateAtDone;
+	}
+
+	/**
+	 * @param evaluateAtDone
+	 *            the evaluateAtDone to set
+	 */
+	@Parameter(name = "EVAL_AT_DONE", type = BooleanParameter.class, optional = true)
+	public void setEvaluateAtDone(final boolean evaluateAtDone) {
+		this.evaluateAtDone = evaluateAtDone;
 	}
 
 	/*

@@ -330,7 +330,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		if (evaluate || hasIncrementalFunctions) {
 			@SuppressWarnings("unchecked")
-			final T result = evaluate ? (T) new Tuple<>(outputSchema.size(), false) : null;
+			final T result = evaluate ? (T) new Tuple<>(outputSchema.size(), true) : null;
 
 			final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
@@ -384,7 +384,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// We use this object to store the results of the functions. This object
 		// is null iff no output should be created.
 		@SuppressWarnings("unchecked")
-		final T result = evaluateAtNewElement ? (T) new Tuple<>(outputSchema.size(), false) : null;
+		final T result = evaluateAtNewElement ? (T) new Tuple<>(outputSchema.size(), true) : null;
 
 		IAggregationSweepArea<M, T> sa = null;
 
@@ -455,6 +455,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				}
 			}
 		}
+		result.put("eval outdating", "" + evaluateAtOutdatingElements);
 		return result;
 	}
 
@@ -563,6 +564,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @param result
 	 */
 	private void transferResult(final T result, final T trigger, final PointInTime startTs, final T sampleOfGroup) {
+
+		if (onlyNullAttributes(result)) {
+			return;
+		}
+
 		if (watermarkOut > startTs.getMainPoint()) {
 			LOG.warn("Out element " + result + " triggerd by " + trigger + " for start ts " + startTs
 					+ " is out of order!");
@@ -578,6 +584,19 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		meta.setEnd(PointInTime.INFINITY);
 		result.setMetadata(meta);
 		transfer(result);
+	}
+
+	/**
+	 * @param result
+	 * @return
+	 */
+	private boolean onlyNullAttributes(final T result) {
+		for(final Object attr : result.getAttributes()) {
+			if(attr != null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -682,4 +701,5 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// TODO Auto-generated method stub
 		return super.process_isSemanticallyEqual(ipo);
 	}
+
 }

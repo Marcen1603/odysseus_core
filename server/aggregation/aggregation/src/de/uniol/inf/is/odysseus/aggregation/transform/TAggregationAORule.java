@@ -62,9 +62,9 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 			}
 		}
 
-		final boolean evaluateAtOutdatingElements = true;
-		final boolean evaluateAtNewElement = true;
-		final boolean evaluateAtDone = false;
+		final boolean evaluateAtOutdatingElements = operator.isEvaluateAtOutdatingElements();
+		final boolean evaluateAtNewElement = operator.isEvaluateAtNewElement();
+		final boolean evaluateAtDone = operator.isEvaluateAtDone();
 		final SDFSchema outputSchema = operator.getOutputSchema();
 		final SDFSchema inputSchema = operator.getInputSchema();
 		final List<SDFAttribute> groupingAttributes = operator.getGroupingAttributes();
