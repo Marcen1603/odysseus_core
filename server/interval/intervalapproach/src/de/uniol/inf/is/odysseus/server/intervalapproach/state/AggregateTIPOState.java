@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IEvaluator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger;
@@ -33,36 +34,16 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 	private ITransferArea<W,W> transferArea;
 	
 	private Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
-	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> eval = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>>();
-	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> init = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>>();
-	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> merger = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>>();
-	
-	
-	
-	public Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> getEval() {
-		return eval;
-	}
-	
-	public Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> getMerger() {
-		return merger;
-	}
-	
-	public void setMerger(Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> merger) {
-		this.merger = merger;
-	}
-	
-	public Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> getInit() {
+	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> init = new HashMap<>();
+			
+	public Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> getAggregateFunctions() {
 		return init;
 	}
 	
-	public void setInit(Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> init) {
+	public void setAggregateFunctions(Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> init) {
 		this.init = init;
 	}
 	
-	public void setEval(Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> eval) {
-		this.eval = eval;
-	}
-
 	public ITransferArea<W,W> getTransferArea() {
 		return transferArea;
 	}

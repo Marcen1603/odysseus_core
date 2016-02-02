@@ -91,9 +91,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 					IAggregateFunction aggFunction = builder.createAggFunction(
 							p.getE2(), p.getE1(), posArray, partialAggregateInput,
 							datatype);
-					aggregatePO.setInitFunction(p, aggFunction);
-					aggregatePO.setMergeFunction(p, aggFunction);
-					aggregatePO.setEvalFunction(p, aggFunction);
+					aggregatePO.setAggregateFunction(p, aggFunction);
 				}
 			}
 		}

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.intervalapproach.sweeparea;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.sweeparea.IFastList;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 
 public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractTISweepArea<T> {
@@ -16,6 +17,10 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 
 	public DefaultTISweepArea() {
 		super();
+	}
+	
+	public DefaultTISweepArea(IFastList<T> list){
+		super(list);
 	}
 
 	public ISweepArea<T> newInstance(OptionMap options) {

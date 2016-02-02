@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IEvaluator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger;
@@ -43,9 +44,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 
 	// PartialAggregate functions for different combinations of attributes and
 	// aggregations functions
-	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> init = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>>();
-	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> merger = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>>();
-	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> eval = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>>();
+	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> aggregateFunctions = new HashMap<>();
 
 	//
 	private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = null;
@@ -102,40 +101,16 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 		return internalOutputSchema;
 	}
 
-	public void setInitFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IInitializer<R> i) {
-		init.put(p, i);
+	public void setAggregateFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IAggregateFunction<R,W> i) {
+		aggregateFunctions.put(p, i);
+	}
+	
+	public IAggregateFunction<R, W> getAggregateFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p){
+		return aggregateFunctions.get(p);
 	}
 
-	public void setMergeFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IMerger<R> m) {
-		merger.put(p, m);
-	}
-
-	public void setEvalFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IEvaluator<R, W> e) {
-		eval.put(p, e);
-	}
-
-	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IInitializer<R>> getAllInitFunctions() {
-		return init;
-	}
-
-	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IMerger<R>> getAllMergerFunctions() {
-		return merger;
-	}
-
-	protected IEvaluator<R, W> getEvalFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
-		return eval.get(p);
-	}
-
-	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>> getAllEvalFunctions() {
-		return eval;
-	}
-
-	protected IMerger<R> getMergeFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
-		return merger.get(p);
-	}
-
-	protected IInitializer<R> getInitFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
-		return init.get(p);
+	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> getAllAggregateFunctions() {
+		return aggregateFunctions;
 	}
 
 	// Erzeugen der initialen Map f�r alle
@@ -151,7 +126,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 					// Achtung! Das Eingabeattribut, nicht das Ausgabeattribut
 					FESortedClonablePair<SDFSchema, AggregateFunction> toFind = new FESortedClonablePair<SDFSchema, AggregateFunction>(
 							attrList, e.getKey());
-					IInitializer<R> initFktn = getInitFunction(toFind);
+					IInitializer<R> initFktn = getAggregateFunction(toFind);
 					if (initFktn == null) {
 						throw new RuntimeException("Aggregation runtime error ");
 					}
@@ -172,7 +147,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 
 		// Jedes Element in toMerge mit element mergen
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toMerge.entrySet()) {
-			IMerger<R> mf = getMergeFunction(e.getKey());
+			IMerger<R> mf = getAggregateFunction(e.getKey());
 			IPartialAggregate<R> pa = mf.doMerge(e.getValue(), element, createNew);
 			ret.put(e.getKey(), pa);
 		}
@@ -186,7 +161,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 			Boolean dirtyFlag) {
 		PairMap<SDFSchema, AggregateFunction, W, M> ret = new PairMap<SDFSchema, AggregateFunction, W, M>();
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toEval.entrySet()) {
-			IEvaluator<R, W> eval = getEvalFunction(e.getKey());
+			IEvaluator<R, W> eval = getAggregateFunction(e.getKey());
 			W value = eval.doEvaluate(e.getValue());
 			ret.put(e.getKey(), value);
 			if (clearPartialAggregate) {
@@ -219,7 +194,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 		}
 
 		if (pair != null) {
-			return getInitFunction(pair);
+			return getAggregateFunction(pair);
 		} else {
 			return null;
 		}

@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -31,10 +32,24 @@ public class DateToStringFunction2 extends AbstractFunction<String> {
     	Date date = (Date) getInputValue(0);
     	if (dateFormat == null){
     		String dateFormatString = (String) getInputValue(1);
-    		dateFormat = new SimpleDateFormat(dateFormatString);
-    		dateFormat.setTimeZone(TimeZone.getTimeZone((String)getInputValue(2)));
+    		String timezone = (String)getInputValue(2);
+    		init(dateFormatString, timezone);
     	}
         return dateFormat.format(date);
     }
 
+	private void init(String dateFormatString, String timezone) {
+		dateFormat = new SimpleDateFormat(dateFormatString);
+		dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
+	}
+
+    @Override
+    public SDFDatatype determineType(IExpression<?>[] args) {
+    	// just used to init dateFormat
+    	if (args.length == 3 && args[0] != null){
+    		init((String)args[1].getValue(), (String)args[2].getValue());
+    	}
+    	return super.determineType(args);
+    }
+    
 }

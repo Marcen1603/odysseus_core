@@ -103,9 +103,7 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
                     }
                     @SuppressWarnings("rawtypes")
                     final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), p.getE1(), posArray, partialAggregateInput, inDatatype);
-                    operator.setInitFunction(p, aggFunction);
-                    operator.setMergeFunction(p, aggFunction);
-                    operator.setEvalFunction(p, aggFunction);
+                    operator.setAggregateFunction(p, aggFunction);
                 }
             }
         }
