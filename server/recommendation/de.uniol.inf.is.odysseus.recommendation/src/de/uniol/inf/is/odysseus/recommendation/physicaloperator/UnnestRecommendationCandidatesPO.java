@@ -53,7 +53,8 @@ public class UnnestRecommendationCandidatesPO<M extends ITimeInterval, U, I> ext
 				++j;
 			}
 		}
-		sendPunctuation(new TuplePunctuation<Tuple<M>, M>(tuple.getMetadata().getStart().plus(1000), tuple.restrict(restr, true)));
+		sendPunctuation(new TuplePunctuation<Tuple<M>, M>(tuple.getMetadata().getStart().plus(1), tuple.restrict(restr, true)));
+
 	}
 	
 	@Override
