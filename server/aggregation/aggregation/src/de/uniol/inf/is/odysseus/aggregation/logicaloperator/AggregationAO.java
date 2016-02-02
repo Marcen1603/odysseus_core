@@ -83,6 +83,9 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 
 	@GetParameter(name = "GROUP_BY")
 	public List<SDFAttribute> getGroupingAttributes() {
+		if (groupingAttributes == null) {
+			return Collections.emptyList();
+		}
 		return Collections.unmodifiableList(groupingAttributes);
 	}
 
