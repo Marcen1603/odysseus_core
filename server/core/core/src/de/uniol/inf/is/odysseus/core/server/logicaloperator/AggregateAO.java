@@ -64,8 +64,6 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 	private boolean fastGrouping = false;
 	private boolean latencyOptimized = false;
 	
-	private boolean simpleAggregate = false;
-	
 	private int numberOfThreads = 1;
 	private int maxBufferSize = 10000;
 	private boolean useRoundRobinAllocation = false;
@@ -91,7 +89,6 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		this.outputPA = op.outputPA;
 		this.drainAtDone = op.drainAtDone;
 		this.fastGrouping = op.fastGrouping;
-		this.simpleAggregate = op.simpleAggregate;
 		this.drainAtClose = op.drainAtClose;
 		this.numberOfThreads = op.numberOfThreads;
 		this.maxBufferSize = op.maxBufferSize;
@@ -334,21 +331,6 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 	@Parameter(name = "fastGrouping", type = BooleanParameter.class, optional = true, doc = "Use hash code instead of tuple compare to create group. Potentially unsafe!")
 	public void setFastGrouping(boolean fastGrouping) {
 		this.fastGrouping = fastGrouping;
-	}
-
-	/**
-	 * @return the simpleAggregate
-	 */
-	public boolean isSimpleAggregate() {
-		return simpleAggregate;
-	}
-
-	/**
-	 * @param simpleAggregate the simpleAggregate to set
-	 */
-	@Parameter(name = "simple", type = BooleanParameter.class, optional = true, doc = "")
-	public void setSimpleAggregate(boolean simpleAggregate) {
-		this.simpleAggregate = simpleAggregate;
 	}
 
 	@Parameter(type = IntegerParameter.class, optional = true, doc = "Use multiple threads for execution (only possible if grouping attributes are set)")
