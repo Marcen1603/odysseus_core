@@ -106,7 +106,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 			}
 		}
 
-		ISink<?> senderPO = this.getSenderPO(protocolHandler);
+		ISink<?> senderPO = this.getSenderPO(protocolHandler, operator);
 		if (!config.isVirtualTransformation()) {
 			getDataDictionary().putSinkplan(senderPOName, senderPO);
 			if (!getDataDictionary().containsSink(senderPOName, getCaller())) {
@@ -186,7 +186,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            the current protocol handler
 	 * @return The transport handler
 	 */
-	private ITransportHandler getTransportHandler(AbstractSenderAO operator, IProtocolHandler<?> protocolHandler,
+	private static ITransportHandler getTransportHandler(AbstractSenderAO operator, IProtocolHandler<?> protocolHandler,
 			OptionMap options) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
@@ -205,7 +205,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            The current data handler
 	 * @return The protocol handler
 	 */
-	private IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator, IStreamObjectDataHandler<?> dataHandler,
+	private static IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator, IStreamObjectDataHandler<?> dataHandler,
 			OptionMap options) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
@@ -227,7 +227,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            The {@link AbstractSenderAO}
 	 * @return The data handler
 	 */
-	private IStreamObjectDataHandler<?> getDataHandler(AbstractSenderAO operator) {
+	private static IStreamObjectDataHandler<?> getDataHandler(AbstractSenderAO operator) {
 		IDataHandler<?> dataHandler = null;
 		if (operator.getDataHandler() != null) {
 			if (operator.getOutputSchema() != null) {
@@ -247,11 +247,16 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 * Instantiates a new SenderPO. <br />
 	 * <br />
 	 * Override this method to use other implementations for the SenderPO.
-	 * @param protocolHandler The protocol handler based on the configuration
+	 * 
+	 * @param protocolHandler
+	 *            The protocol handler based on the configuration
+	 * @param senderAO
+	 *            The logical operator
 	 * @return A new {@link SenderPO} implementation
 	 */
 	@SuppressWarnings("static-method")
-	protected SenderPO<?> getSenderPO(IProtocolHandler<?> protocolHandler) {
+	protected SenderPO<?> getSenderPO(IProtocolHandler<?> protocolHandler,
+			@SuppressWarnings("unused") AbstractSenderAO senderAO) {
 		return new SenderPO<>(protocolHandler);
 	}
 
