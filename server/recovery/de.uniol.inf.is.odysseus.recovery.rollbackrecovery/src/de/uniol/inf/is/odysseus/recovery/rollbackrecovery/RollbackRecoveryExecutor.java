@@ -120,16 +120,29 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	 * The initialized recovery component for the queue states.
 	 */
 	private IRecoveryComponent mQueueStateComponent;
+	
+	/**
+	 * Empty default constructor for OSGi-DS.
+	 */
+	public RollbackRecoveryExecutor() {}
+
+	/**
+	 * Constructor, which initializes all bound recovery components.
+	 * 
+	 * @param config
+	 *            The configuration for the executor.
+	 */
+	public RollbackRecoveryExecutor(Properties config) {
+		this.mConfig = config;
+		this.mProtectionPointsComponent = cProtectionPointsComponent.newInstance(config);
+		this.mSourceRecoveryComponent = cIncomingElementsComponent.newInstance(config);
+		this.mOperatorStateComponent = cOperatorStateComponent.newInstance(config);
+		this.mQueueStateComponent = cQueueStateComponent.newInstance(config);
+	}
 
 	@Override
 	public IRecoveryExecutor newInstance(Properties config) {
-		RollbackRecoveryExecutor executor = new RollbackRecoveryExecutor();
-		executor.mConfig = config;
-		executor.mProtectionPointsComponent = cProtectionPointsComponent.newInstance(config);
-		executor.mSourceRecoveryComponent = cIncomingElementsComponent.newInstance(config);
-		executor.mOperatorStateComponent = cOperatorStateComponent.newInstance(config);
-		executor.mQueueStateComponent = cQueueStateComponent.newInstance(config);
-		return executor;
+		return new RollbackRecoveryExecutor(config);
 	}
 
 	@Override
