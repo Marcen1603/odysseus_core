@@ -187,7 +187,7 @@ public class NMEAProtocolHandler extends
 				// Important to parse the decodedAIS as a sentence in order to
 				// prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
-				decodedAIS.setMetadata("decodedAIS",
+				decodedAIS.setKeyValue("decodedAIS",
 						this.aishandler.getDecodedAISMessage());
 				this.aishandler.resetDecodedAISMessage();
 				// The decoded message
@@ -197,7 +197,7 @@ public class NMEAProtocolHandler extends
 			Map<String, Object> originalEvent = sentence.toMap();
 			KeyValueObject<IMetaAttribute> originalAIS = new KeyValueObject<>(
 					originalEvent);
-			originalAIS.setMetadata("originalNMEA", sentence);
+			originalAIS.setKeyValue("originalNMEA", sentence);
 			// ensure the order, original fragment (if it's the second fragment,
 			// then it should follow the first original fragment) then the
 			// decoded message
@@ -211,7 +211,7 @@ public class NMEAProtocolHandler extends
 			event = sentence.toMap();
 			KeyValueObject<IMetaAttribute> undecodedNMEA = new KeyValueObject<>(
 					event);
-			undecodedNMEA.setMetadata("originalNMEA", sentence);
+			undecodedNMEA.setKeyValue("originalNMEA", sentence);
 			res.add(undecodedNMEA);
 		}
 		this.nextList.addAll(res);
@@ -223,10 +223,10 @@ public class NMEAProtocolHandler extends
 		try {
 			//Case1: Avoid writing decoded AIS messages, because such messages are only processed 
 			//and transfered between the operators (transfered, not transported, from operator to another)
-			if(object.getMetadata("decodedAIS") != null)
+			if(object.getKeyValue("decodedAIS") != null)
 				return;
 			//Case2: get the sentence from MetaData if existed  
-			Object obj = object.getMetadata("originalNMEA");
+			Object obj = object.getKeyValue("originalNMEA");
 			if (obj instanceof Sentence)
 			{
 				Sentence sentence = (Sentence) obj;

@@ -25,7 +25,7 @@ public class KMeansClusterer<M extends ILatencyTimeInterval> implements ICluster
 
 		for (Tuple<M> newTuple : tuples) {
 			// initially, all is part of cluster -1!
-			newTuple.setMetadata("CLUSTERID", -1);
+			newTuple.setKeyValue("CLUSTERID", -1);
 			pool.add(newTuple);
 		}
 		// we need at least k tuples for a k-means clustering
@@ -35,7 +35,7 @@ public class KMeansClusterer<M extends ILatencyTimeInterval> implements ICluster
 			Random random = new Random();
 			for (int i = 0; i < k; i++) {
 				Tuple<M> initialMean = pool.remove(random.nextInt(pool.size()));
-				initialMean.setMetadata("CLUSTERID", i);
+				initialMean.setKeyValue("CLUSTERID", i);
 				means.put(i, new Cluster<M>(i, initialMean));
 			}
 			boolean changed = true;
@@ -55,7 +55,7 @@ public class KMeansClusterer<M extends ILatencyTimeInterval> implements ICluster
 						}
 					}
 					// add tuple to nearest, if it was not the old one!
-					int oldId = (int) tuple.getMetadata("CLUSTERID");
+					int oldId = (int) tuple.getKeyValue("CLUSTERID");
 					if (oldId != nearest.getNumber()) {
 						// we have a change
 						changed = true;
@@ -63,7 +63,7 @@ public class KMeansClusterer<M extends ILatencyTimeInterval> implements ICluster
 						if (oldId != -1) {
 							means.get(oldId).removeTuple(tuple);
 						}
-						tuple.setMetadata("CLUSTERID", nearest.getNumber());
+						tuple.setKeyValue("CLUSTERID", nearest.getNumber());
 					}
 				}
 

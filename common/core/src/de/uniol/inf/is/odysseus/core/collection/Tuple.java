@@ -186,10 +186,10 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		@SuppressWarnings("unchecked")
 		T meta = (T) from.getMetadata().clone();
 		outputVal.setMetadata(meta);
-		if (from.getMetadataMap() != null) {
-			for (Entry<String, Object> entry : from.getMetadataMap()
+		if (from.getGetValueMap() != null) {
+			for (Entry<String, Object> entry : from.getGetValueMap()
 					.entrySet()) {
-				outputVal.setMetadata(entry.getKey(), entry.getValue());
+				outputVal.setKeyValue(entry.getKey(), entry.getValue());
 			}
 		}
 		return outputVal;
@@ -774,8 +774,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		if (options.isWithMetadata()) {
 			retBuff.append(options.getDelimiter()).append(
 					getMetadata().csvToString(options));
-			if (getMetadataMap() != null && getMetadataMap().size() > 0) {
-				for (Entry<String, Object> e : getMetadataMap().entrySet()) {
+			if (getGetValueMap() != null && getGetValueMap().size() > 0) {
+				for (Entry<String, Object> e : getGetValueMap().entrySet()) {
 					if (e.getValue() == null) {
 						// add empty value
 						retBuff.append(options.getDelimiter());

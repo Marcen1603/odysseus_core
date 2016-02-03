@@ -550,7 +550,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			@Override
 			public void update(ViewerCell cell) {
 				try {
-					Object metadataMap = ((Tuple<?>) cell.getElement()).getMetadataMap();
+					Object metadataMap = ((Tuple<?>) cell.getElement()).getGetValueMap();
 					if (metadataMap != null) {
 						cell.setText(metadataMap.toString());
 					} else {

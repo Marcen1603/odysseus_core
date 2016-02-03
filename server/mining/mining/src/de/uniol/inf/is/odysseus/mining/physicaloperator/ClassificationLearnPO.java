@@ -106,8 +106,8 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 						newTuple.getMetadata().setStartAndEnd(startP, endP);
 						// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
 						// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
-						newTuple.setMetadata("LATENCY_BEFORE", tillLearn);
-						newTuple.setMetadata("LATENCY_AFTER", afterLearn);						
+						newTuple.setKeyValue("LATENCY_BEFORE", tillLearn);
+						newTuple.setKeyValue("LATENCY_AFTER", afterLearn);						
 						transfer(newTuple);
 					}
 					// System.out.println("TRANSFER: " + (System.currentTimeMillis() - time - duration));

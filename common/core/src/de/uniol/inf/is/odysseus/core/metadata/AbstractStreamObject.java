@@ -11,7 +11,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	private static final long serialVersionUID = 1480009485404803793L;
 
-	private Map<String, Object> metadataMap;
+	private Map<String, Object> keyValueMap;
 	private T metadata = null;
 	private boolean timeOrderMarker = true;
 	
@@ -20,8 +20,8 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	@SuppressWarnings("unchecked")
 	protected AbstractStreamObject(AbstractStreamObject<T> other) {
-		if (other.metadataMap != null) {
-			this.metadataMap = new HashMap<>(other.metadataMap);
+		if (other.keyValueMap != null) {
+			this.keyValueMap = new HashMap<>(other.keyValueMap);
 		}
 		if (other.metadata != null) {
 			this.metadata = (T) other.metadata.clone();
@@ -30,35 +30,35 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	}
 
 	@Override
-	final public Object getMetadata(String name) {
-		return metadataMap.get(name);
+	final public Object getKeyValue(String name) {
+		return keyValueMap.get(name);
 	}
 	
 	@Override
-	final public boolean hasMetadata(String name) {
-		return this.metadataMap.containsKey(name);
+	final public boolean hasKeyValue(String name) {
+		return this.keyValueMap.containsKey(name);
 	}
 
 	@Override
-	final public void setMetadata(String name, Object content) {
-		if (metadataMap == null) {
-			metadataMap = new HashMap<>();
+	final public void setKeyValue(String name, Object content) {
+		if (keyValueMap == null) {
+			keyValueMap = new HashMap<>();
 		}
-		metadataMap.put(name, content);
+		keyValueMap.put(name, content);
 	}
 
 	@Override
-	final public void setMetadataMap(Map<String, Object> metaMap) {
-		metadataMap = new HashMap<>();
+	final public void setKeyValueMap(Map<String, Object> metaMap) {
+		keyValueMap = new HashMap<>();
 		if (metaMap != null) {
-			this.metadataMap.putAll(metaMap);
+			this.keyValueMap.putAll(metaMap);
 		}
 	}
 
 	@Override
-	final public Map<String, Object> getMetadataMap() {
-		if (metadataMap != null){
-			return Collections.unmodifiableMap(metadataMap);
+	final public Map<String, Object> getGetValueMap() {
+		if (keyValueMap != null){
+			return Collections.unmodifiableMap(keyValueMap);
 		}else{
 			return null;
 		}
@@ -104,15 +104,15 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	private void mergeInternal(IStreamObject<T> left, IStreamObject<T> right, IStreamObject<T> ret) {
 		// TODO: Merge function in cases where key is same!!
 
-		if (right.getMetadataMap() != null) {
-			ret.setMetadataMap(right.getMetadataMap());
+		if (right.getGetValueMap() != null) {
+			ret.setKeyValueMap(right.getGetValueMap());
 		}
-		if (left.getMetadataMap() != null) {
-			if (right.getMetadataMap() == null) {
-				ret.setMetadataMap(left.getMetadataMap());
+		if (left.getGetValueMap() != null) {
+			if (right.getGetValueMap() == null) {
+				ret.setKeyValueMap(left.getGetValueMap());
 			} else {
-				for (Entry<String, Object> a : left.getMetadataMap().entrySet()) {
-					ret.setMetadata(a.getKey(), a.getValue());
+				for (Entry<String, Object> a : left.getGetValueMap().entrySet()) {
+					ret.setKeyValue(a.getKey(), a.getValue());
 				}
 			}
 		}

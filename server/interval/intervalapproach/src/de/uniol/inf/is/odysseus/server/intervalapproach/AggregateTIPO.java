@@ -67,7 +67,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  *            The type of the element that is written
  */
 public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
-		extends AggregatePO<Q, R, W>implements IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
+		extends AggregatePO<Q, R, W> implements IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 
 	/**
 	 * if set to a value higher than -1, every dumpAtValueCount elements are
@@ -223,7 +223,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
 	public void drainGroups(IGroupProcessor<R, W> g,
-			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups, int inPort) {
+			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups,
+			int inPort) {
 		synchronized (groups) {
 			for (Entry<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
@@ -242,7 +243,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			if (drainAtClose) {
 				if (transferArea.size() > 0) {
 					for (int i = getSubscribedToSource().size() - 1; i >= 0; --i) {
-						drainGroups(getGroupProcessor(), groups,i);
+						drainGroups(getGroupProcessor(), groups, i);
 						transferArea.done(i);
 					}
 				}
@@ -486,7 +487,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			boolean outputPA) {
 		// The list of found elements that cannot be changed anymore
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
-		assert(elemToAdd != null);
+		assert (elemToAdd != null);
 
 		Q t_probe = elemToAdd.getMetadata();
 
@@ -628,7 +629,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			// The partial aggregate must be cloned (because value is already
 			// inside with shorter interval)
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> newPA = partialAggregate.deepClone();
-			for(Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e:newPA.entrySet()){
+			for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : newPA.entrySet()) {
 				e.getValue().setDirty(true);
 			}
 			@SuppressWarnings("unchecked")
@@ -813,6 +814,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
 		map.put("OutputQueueSize", transferArea.size() + "");
+//		if (groups.size() > 0) {
+//			map.put("Size Group 1", groups.entrySet().iterator().next().getValue().size() + "");
+//		}
 		map.put("Groups", groups.size() + "");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;

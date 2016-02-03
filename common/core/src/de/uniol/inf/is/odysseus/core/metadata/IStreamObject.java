@@ -48,7 +48,7 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 * content will be overwritten
 	 * @param content The content to be stored
 	 */
-	void setMetadata(String name, Object content);
+	void setKeyValue(String name, Object content);
 	
 	/**
 	 * Retrieve attached meta data object with name
@@ -56,12 +56,12 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 * @param name The name (key) of the meta data
 	 * @return the stored meta data object
 	 */
-	Object getMetadata(String name);
+	Object getKeyValue(String name);
 	
-	boolean hasMetadata(String name);
+	boolean hasKeyValue(String name);
 
-	void setMetadataMap(Map<String, Object> metaMap);
-	Map<String, Object> getMetadataMap();
+	void setKeyValueMap(Map<String, Object> metaMap);
+	Map<String, Object> getGetValueMap();
     
 	boolean isTimeProgressMarker();
 	void setTimeProgressMarker(boolean timeProgressMarker);

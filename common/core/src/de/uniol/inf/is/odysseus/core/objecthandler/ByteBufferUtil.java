@@ -55,7 +55,7 @@ public class ByteBufferUtil {
 							.bytesToObject(metadataMapBytes);
 					System.err.println(metadataMap);
 
-					retval.setMetadataMap(metadataMap);
+					retval.setKeyValueMap(metadataMap);
 				}
 			}
 		} finally {
@@ -79,7 +79,7 @@ public class ByteBufferUtil {
 				buffer.put(metadataBytes);
 			}
 
-			Map<String, Object> metadataMap = object.getMetadataMap();
+			Map<String, Object> metadataMap = object.getGetValueMap();
 			if (!metadataMap.isEmpty()) {
 				byte[] metadataMapBytes = ObjectByteConverter
 						.objectToBytes(metadataMap);

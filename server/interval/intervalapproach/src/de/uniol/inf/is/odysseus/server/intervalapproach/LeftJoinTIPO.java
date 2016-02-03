@@ -98,7 +98,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					Iterator<T> extracted = this.areas[otherport].extractElements(object, order);
 					while (extracted.hasNext()) {
 						T next = extracted.next();
-						if (next.getMetadataMap() == null || !next.hasMetadata(cMetaDataKey)) {
+						if (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey)) {
 							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
 							this.transferFunction.transfer(out);
 						}
@@ -147,7 +147,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 			// Left Join: if this is the left input port, mark the object as
 			// join partner found
 			if (hit && port == 0) {
-				object.setMetadata(cMetaDataKey, new Boolean(true));
+				object.setKeyValue(cMetaDataKey, new Boolean(true));
 			}
 
 			while (qualifies.hasNext()) {
@@ -157,9 +157,9 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 
 				// Left Join: if "next" is from the left sweep area, mark it as
 				// join partner found
-				if (hit && otherport == 0 && (next.getMetadataMap() == null || !next.hasMetadata(cMetaDataKey))) {
+				if (hit && otherport == 0 && (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey))) {
 					this.areas[otherport].remove(next);
-					next.setMetadata(cMetaDataKey, new Boolean(true));
+					next.setKeyValue(cMetaDataKey, new Boolean(true));
 					this.areas[otherport].insert(next);
 				}
 
@@ -210,7 +210,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					Iterator<T> extracted = this.areas[port^1].extractElementsBefore(punctuation.getTime());
 					while (extracted.hasNext()) {
 						T next = extracted.next();
-						if (next.getMetadataMap() == null || !next.hasMetadata(cMetaDataKey)) {
+						if (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey)) {
 							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
 							this.transferFunction.transfer(out);
 						}

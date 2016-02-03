@@ -561,7 +561,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 							Tuple lastTuple = (Tuple) lastDataTuple;
 							Tuple tuple = new Tuple(lastTuple);
-							tuple.setMetadata("start", punctuation.getTime());
+							tuple.setKeyValue("start", punctuation.getTime());
 							double anomalyScore = calcAnomalyScore(time.getMainPoint(), info.mean,
 									info.standardDeviation, interval);
 							transferTuple(tuple, time.getMainPoint(), anomalyScore, info.mean, info.standardDeviation);

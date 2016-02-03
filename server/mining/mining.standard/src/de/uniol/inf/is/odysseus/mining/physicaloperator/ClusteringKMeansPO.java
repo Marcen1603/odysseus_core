@@ -85,7 +85,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 		while (qualifies.hasNext()) {
 			Tuple<M> newTuple = qualifies.next();
 			// initially, all is part of cluster -1!
-			newTuple.setMetadata("CLUSTERID", -1);
+			newTuple.setKeyValue("CLUSTERID", -1);
 			pool.add(newTuple);
 		}
 		// we need at least k tuples for a k-means clustering
@@ -95,7 +95,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 			Random random = new Random();
 			for (int i = 0; i < k; i++) {
 				Tuple<M> initialMean = pool.remove(random.nextInt(pool.size()));
-				initialMean.setMetadata("CLUSTERID", i);
+				initialMean.setKeyValue("CLUSTERID", i);
 				means.put(i, new Cluster<>(i, initialMean));
 			}
 			boolean changed = true;
@@ -115,7 +115,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 						}
 					}
 					// add tuple to nearest, if it was not the old one!
-					int oldId = (int) tuple.getMetadata("CLUSTERID");
+					int oldId = (int) tuple.getKeyValue("CLUSTERID");
 					if (oldId != nearest.getNumber()) {
 						// we have a change
 						changed = true;
@@ -123,7 +123,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 						if(oldId!=-1){
 							means.get(oldId).removeTuple(tuple);
 						}
-						tuple.setMetadata("CLUSTERID", nearest.getNumber());
+						tuple.setKeyValue("CLUSTERID", nearest.getNumber());
 					}
 				}
 
@@ -145,7 +145,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 				for (Tuple<M> tuple : cluster.getTuples()) {
 					min = PointInTime.min(min, tuple.getMetadata().getStart());
 					@SuppressWarnings("unchecked")
-					Tuple<M> t = ((Tuple<M>)tuple.getMetadata("ORIGINAL")).append(cluster.getNumber(), true);
+					Tuple<M> t = ((Tuple<M>)tuple.getKeyValue("ORIGINAL")).append(cluster.getNumber(), true);
 					t.getMetadata().setEnd(currentTime);						
 					this.transferFunctionTuples.transfer(t);
 				}
@@ -164,7 +164,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 		sweepArea.purgeElementsBefore(currentTime);
 		// cut the object to given attributes (and clone it)
 		Tuple<M> cloned = object.restrict(this.attributePositions, true);
-		cloned.setMetadata("ORIGINAL", object);
+		cloned.setKeyValue("ORIGINAL", object);
 		// and insert the current
 		sweepArea.insert(cloned);
 

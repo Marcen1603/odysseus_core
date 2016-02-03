@@ -100,8 +100,8 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 						M metadata = (M) element.getMetadata().clone();
 						newtuple.setMetadata(metadata);
 						newtuple.getMetadata().setStartAndEnd(startP, endP);
-						newtuple.setMetadata("LATENCY_BEFORE", tillGenerate);
-						newtuple.setMetadata("LATENCY_AFTER", afterGenerate);
+						newtuple.setKeyValue("LATENCY_BEFORE", tillGenerate);
+						newtuple.setKeyValue("LATENCY_AFTER", afterGenerate);
 						transfer(newtuple);
 
 					}

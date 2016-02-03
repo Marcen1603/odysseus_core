@@ -119,19 +119,19 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
 
 				// Use from right and overwrite with left
 				if (order == Order.LeftRight) {
-					if (object.getMetadataMap() != null) {
-						for (final Entry<String, Object> a : object.getMetadataMap().entrySet()) {
-							next.setMetadata(a.getKey(), a.getValue());
+					if (object.getGetValueMap() != null) {
+						for (final Entry<String, Object> a : object.getGetValueMap().entrySet()) {
+							next.setKeyValue(a.getKey(), a.getValue());
 						}
 					}
 				} else if (order == Order.RightLeft) { // Use from Left and
 														// overwrite with right
-					Map<String, Object> metadataMap = object.getMetadataMap();
+					Map<String, Object> metadataMap = object.getGetValueMap();
 					if (metadataMap != null) {
-						for (final Entry<String, Object> a : next.getMetadataMap().entrySet()) {
+						for (final Entry<String, Object> a : next.getGetValueMap().entrySet()) {
 							metadataMap.put(a.getKey(), a.getValue());
 						}
-						next.setMetadataMap(metadataMap);
+						next.setKeyValueMap(metadataMap);
 					}
 				}
 				this.transferFunction.transfer(next);

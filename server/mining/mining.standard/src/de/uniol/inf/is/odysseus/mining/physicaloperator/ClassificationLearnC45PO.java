@@ -142,8 +142,8 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				meta.setStartAndEnd(totalMin, PointInTime.getInfinityTime());
 				newtuple.setMetadata(meta);
 				newtuple.setAttribute(0, root);
-				newtuple.setMetadata("LATENCY_BEFORE", tillTime);
-				newtuple.setMetadata("LATENCY_AFTER", afterTime);
+				newtuple.setKeyValue("LATENCY_BEFORE", tillTime);
+				newtuple.setKeyValue("LATENCY_AFTER", afterTime);
 				// root.printSubTree();
 				transfer(newtuple);
 

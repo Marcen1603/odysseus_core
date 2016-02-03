@@ -429,7 +429,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		modelTuple.setMetadata(metadataCopy);
 		modelTuple.getMetadata().setStartAndEnd(startP, endP);
 		modelTuple
-				.setMetadata("model learning duration", modelLearningDuration);
+				.setKeyValue("model learning duration", modelLearningDuration);
 		if(!transferModelOnlyOnPunctuation) {
 			transfer(modelTuple);
 		}
@@ -445,7 +445,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		}
 		recommCandTuple.setMetadata(metadataCopy2);
 		recommCandTuple.getMetadata().setStartAndEnd(startP, endP);
-		recommCandTuple.setMetadata("recomm cand model learning",
+		recommCandTuple.setKeyValue("recomm cand model learning",
 				recomCandModelLearningDuration);
 		if(!transferModelOnlyOnPunctuation) {
 			transfer(recommCandTuple, 1);

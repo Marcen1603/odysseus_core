@@ -91,7 +91,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 			output.setMetadata((M) input.getMetadata().clone());
 
 		if (keepInputObject) {
-			output.setMetadata("base", input.clone());
+			output.setKeyValue("base", input.clone());
 		}
 		transfer(output);
 	}

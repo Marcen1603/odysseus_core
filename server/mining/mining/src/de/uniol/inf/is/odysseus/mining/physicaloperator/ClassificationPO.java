@@ -134,8 +134,8 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		Tuple<M> newtuple = toClassify.append(clazz);
 		M metadata = this.metadataMerge.mergeMetadata(newtuple.getMetadata(), classifierTuple.getMetadata());
 		newtuple.setMetadata(metadata);
-		newtuple.setMetadata("LATENCY_BEFORE", tillLearn);
-		newtuple.setMetadata("LATENCY_AFTER", afterLearn);
+		newtuple.setKeyValue("LATENCY_BEFORE", tillLearn);
+		newtuple.setKeyValue("LATENCY_AFTER", afterLearn);
 		transfer(newtuple);
 	}
 

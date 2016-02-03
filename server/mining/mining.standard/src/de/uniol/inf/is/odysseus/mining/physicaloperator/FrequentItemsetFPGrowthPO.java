@@ -195,8 +195,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 						newtuple.setAttribute(0, i);
 						newtuple.setAttribute(1, p.getPattern());
 						newtuple.setAttribute(2, p.getSupport());
-						newtuple.setMetadata("LATENCY_BEFORE", beforeFPM);
-						newtuple.setMetadata("LATENCY_AFTER", afterFPM);
+						newtuple.setKeyValue("LATENCY_BEFORE", beforeFPM);
+						newtuple.setKeyValue("LATENCY_AFTER", afterFPM);
 						i++;
 						
 						transfer(newtuple);

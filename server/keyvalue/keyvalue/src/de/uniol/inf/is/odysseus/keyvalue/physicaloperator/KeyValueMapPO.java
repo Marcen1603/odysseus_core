@@ -90,9 +90,9 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 				outputVal = (T) new KeyValueObject<>();
 			}
 			outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
-			if (object.getMetadataMap() != null) {
-				for (Entry<String, Object> entry : object.getMetadataMap().entrySet()) {
-					outputVal.setMetadata(entry.getKey(), entry.getValue());
+			if (object.getGetValueMap() != null) {
+				for (Entry<String, Object> entry : object.getGetValueMap().entrySet()) {
+					outputVal.setKeyValue(entry.getKey(), entry.getValue());
 				}
 			}
 		}
