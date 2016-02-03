@@ -34,6 +34,7 @@ public class Session extends AbstractSession implements ISession {
 	}
 
 
+	@SuppressWarnings("unused")
 	private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong(
 			"sessionTimeout", 10 * 60000);
 	
@@ -41,7 +42,9 @@ public class Session extends AbstractSession implements ISession {
 	
 	@Override
 	protected long getSessionTimeout() {
-		return SESSION_TIMEOUT;
+		// TODO: Currently, there are problems with long running queries and a session timeout
+		return 0;
+		//		return SESSION_TIMEOUT;
 	}
 	
 }
