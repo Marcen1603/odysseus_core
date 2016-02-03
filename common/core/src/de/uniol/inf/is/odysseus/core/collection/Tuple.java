@@ -227,6 +227,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
                 System.arraycopy(attr[i], 0, clone[i], 0, length);
             }
             // Handle List datatype
+            // TODO: LinkedList?
             else if ((attr[i].getClass() == ArrayList.class)) {
                 clone[i] = cloneList((List<?>) attr[i]);
             }
@@ -490,27 +491,15 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	// -----------------------------------------------------------------
 	@Override
 	public final boolean equals(Object o) {
+		if	(this == o){
+			// o is a reference of this and therefore equal
+			return true;
+		}
 		if (!(o instanceof Tuple)) {
 			return false;
 		}
 		Tuple<?> t = (Tuple<?>) o;
-		if (this.attributes.length != t.attributes.length) {
-			return false;
-		}
-		for (int i = 0; i < attributes.length; i++) {
-			// test if attributes are not null and equal
-			// or both null (order is imporantant!)
-			if (this.attributes[i] != null) {
-				if (!this.attributes[i].equals(t.attributes[i])) {
-					return false;
-				}
-			} else {
-				if (t.attributes[i] != null) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return Arrays.deepEquals(this.attributes, t.attributes);
 	}
 
 	/**
