@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.recovery.gaprecovery.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.interval_trust.IntervalTrust;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.GapRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.logicaloperator.ConvergenceDetectorAO;
+import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -22,8 +24,13 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * @author Michael Brand
  *
  */
-public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<IntervalTrust>>
+public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<IMetaAttribute>>
 		extends AbstractPipe<StreamObject, StreamObject> {
+
+	/**
+	 * Array of all needed meta data classes.
+	 */
+	protected static final Class<?>[] NEEDED_METADATA_CLASSES = new Class[] { ITimeInterval.class, ITrust.class };
 
 	/**
 	 * The width of the windows (time instants or elements).
@@ -36,6 +43,12 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	private final long mBeta;
 
 	/**
+	 * True, if the elements have the correct meta data, null, if not checked
+	 * yet.
+	 */
+	protected Boolean correctMetaData = null;
+
+	/**
 	 * Creates a new {@link AbstractConvergenceDetectorPO} as a copy of an
 	 * existing one.
 	 * 
@@ -46,6 +59,7 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 		super(other);
 		this.mBeta = other.mBeta;
 		this.mOmega = other.mOmega;
+		this.correctMetaData = other.correctMetaData;
 	}
 
 	/**

@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.recovery.gaprecovery.physicaloperator;
 
+import java.util.Arrays;
+
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
-import de.uniol.inf.is.odysseus.interval_trust.IntervalTrust;
 import de.uniol.inf.is.odysseus.recovery.gaprecovery.GapRecoveryExecutor;
+import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -22,7 +25,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  *
  */
 @SuppressWarnings("nls")
-public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<IntervalTrust>>
+public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<IMetaAttribute>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
@@ -50,12 +53,23 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<Interval
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
+		if(this.correctMetaData == null) {
+			// Check meta data
+			this.correctMetaData = new Boolean(Arrays.asList(object.getMetadata().getClasses()).containsAll(Arrays.asList(NEEDED_METADATA_CLASSES)));
+		}
+		
+		if (!this.correctMetaData.booleanValue()) {
+			// We're done - shortcut
+			transfer(object);
+			return;
+		}
+		
 		/*
 		 * We can not trust that element, e.g., a wrong aggregation due to the
 		 * gap. At this juncture, there is no possibility in Odysseus to
 		 * determine Repeatable operators.
 		 */
-		object.getMetadata().setTrust(0.5);
+		((ITrust) object.getMetadata()).setTrust(0.5);
 		transfer(object);
 
 	}
