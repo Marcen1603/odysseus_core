@@ -800,14 +800,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	@Override
 	public final int hashCode() {
-		int ret = 0;
-		for (int i = 0; i < this.attributes.length; i++) {
-			Object o = this.attributes[i];
-			if (o != null) {
-				ret = 31 * ret + o.hashCode();
-			}
-		}
-		return ret;
+		return Arrays.deepHashCode(this.attributes);
 	}
 
 	/**
