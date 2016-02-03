@@ -118,7 +118,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * There are sweep areas that return the valid tuples
 	 * {@link IAggregationSweepArea#getValidTuples()} in start TS order and
-	 * others don't.
+	 * others don't. If we have at least one non-incremental function that needs
+	 * start TS order
+	 * {@link INonIncrementalAggregationFunction#needsOrderedElements()}, this
+	 * flag ist {@code true}.
 	 */
 	protected final boolean hasFunctionsThatNeedStartTsOrder;
 
@@ -157,7 +160,27 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	private long watermarkOut = 0l;
 
 	/**
+	 * Constructor.
 	 * 
+	 * @param nonIncrementalFunctions
+	 *            A list of all non-incremental functions.
+	 * @param incrementalFunctions
+	 *            A list of all incremental functions.
+	 * @param evaluateAtOutdatingElements
+	 *            True if this operator should output new elements when elements
+	 *            get outdated.
+	 * @param evaluateAtNewElement
+	 * 
+	 *            True, if this operator should output new elements when
+	 *            elements get valid.
+	 * @param evaluateAtDone
+	 *            True, if this operator should output the last output element
+	 *            at done. This can be used when you want only the final aggr.
+	 *            value in an evaluation. E. g., the final AVG of the latency.
+	 * @param outputSchema
+	 *            The output schema of this operator.
+	 * @param groupingAttributesIdx
+	 *            The indices that form the grouping attributes.
 	 */
 	public AggregationPO(final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions,
@@ -208,6 +231,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		clear();
 	}
 
+	/**
+	 * Clears the state of this operator.
+	 */
 	private void clear() {
 		groups.clear();
 		incrementalFunctionsForGroup.clear();
@@ -261,8 +287,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// (b) We want to produce an output when elements get outdated OR we
 		// have incremental functions.
 		// When we do not want to produce an output when elements get outdated
-		// but we have incremental functions, than we need to update the
-		// incremental functions, though.
+		// but we have incremental functions, than we need to update the state
+		// of the incremental functions, though.
 		if (hasOutdatingElements && (evaluateAtOutdatingElements || hasIncrementalFunctions)) {
 			processOutdatedElements(object, groupKey);
 		}
@@ -284,12 +310,14 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// Iterate over all points in time that are before trigger start TS.
 		for (final Iterator<Entry<PointInTime, Set<Object>>> iter = outdatingGroups
 				.headMap(trigger.getMetadata().getStart(), true).entrySet().iterator(); iter.hasNext();) {
-			final Entry<PointInTime, Set<Object>> entry = iter.next();
 
+			final Entry<PointInTime, Set<Object>> entry = iter.next();
 			final PointInTime pointInTime = entry.getKey();
 
 			// for all groups that has outdated elements at pointInTime
 			for (final Object gkey : entry.getValue()) {
+
+				// if this group the group of the trigger element?
 				boolean triggerGroup;
 				if (triggerGroupKey == null) {
 					triggerGroup = gkey == null;
@@ -323,7 +351,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	private void processOutdatedForGroup(final IAggregationSweepArea<M, T> sweepArea, final T trigger,
 			final Object groupKey, final boolean isTriggerGroup, final PointInTime pointInTime) {
 
-		// We output an result only if the flag evaluateAtOutdatingElements is
+		// We output a result only if the flag evaluateAtOutdatingElements is
 		// set true AND the outdating elements are not elements of the trigger
 		// group that ends when the trigger element gets valid. In the latter
 		// case, the result will be output by the processing of the trigger
@@ -331,10 +359,17 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		final boolean evaluate = evaluateAtOutdatingElements
 				&& !(isTriggerGroup && pointInTime.equals(trigger.getMetadata().getStart()));
 
+		// If we have incremental functions we need to update the state of these
+		// functions even when we not want to calculate the result.
 		if (evaluate || hasIncrementalFunctions) {
+			// TODO: Do we need deep copy here? Depends on the values of the
+			// functions, doesn't it?
+			// If we do not want to produce an output (!evaluate) we set result
+			// to null. The following methods have to respect this.
 			@SuppressWarnings("unchecked")
 			final T result = evaluate ? (T) new Tuple<>(outputSchema.size(), true) : null;
 
+			// Get and remove outdated elements.
 			final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
 			if (hasIncrementalFunctions) {
@@ -344,19 +379,26 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			}
 
 			if (evaluate) {
-
+				// To get the grouping attributes, we need a sample of the group
+				// to extract the grouping attributes.
 				T sampleOfGroup = null;
 				if (isTriggerGroup) {
+					// If this group is the same as the trigger element group,
+					// the sample of the group is the trigger. Thats easy.
 					sampleOfGroup = trigger;
-				}
-
-				if (sampleOfGroup == null && outdatedTuples != null && !outdatedTuples.isEmpty()) {
+				} else if (outdatedTuples != null && !outdatedTuples.isEmpty()) {
+					// Otherwise use the first outdating element as sample of
+					// the group (if we have one).
 					sampleOfGroup = outdatedTuples.iterator().next();
 				}
 
 				if (hasNonIncrementalFunctions) {
+					// get all valid valid tuples
 					final Collection<T> objects = sweepArea.getValidTuples();
+
 					if (sampleOfGroup == null && objects != null && !objects.isEmpty()) {
+						// Last chance for a sample of this group: the first
+						// valid element.
 						sampleOfGroup = objects.iterator().next();
 					}
 					processNonIncrementalFunctions(result, objects, trigger, pointInTime);
@@ -368,6 +410,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 			}
 
+			// We do not remove this empty group if this group is the trigger
+			// group because we have a new element (the trigger) that has to be
+			// stored in this group.
 			if (!isTriggerGroup) {
 				removeGroupIfEmpty(sweepArea, groupKey);
 			}
@@ -386,6 +431,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		// We use this object to store the results of the functions. This object
 		// is null iff no output should be created.
+		// TODO: Do we need deep copy here? Depends on the values of the
+		// functions, doesn't it?
 		@SuppressWarnings("unchecked")
 		final T result = evaluateAtNewElement ? (T) new Tuple<>(outputSchema.size(), true) : null;
 
@@ -404,10 +451,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			// because we invoke these functions with all valid tuples.
 			// If we do not have non-incremental functions (only incremental
 			// functions) we need to save only elements that gets invalid we
-			// invoke
-			// these functions only with the new element or with a list of
-			// outdated
-			// elements and never with all valid elements.
+			// invoke these functions only with the new element or with a list
+			// of outdated elements and never with all valid elements.
 			sa.addElement(object, hasNonIncrementalFunctions);
 
 			addToOutdatingGroups(object.getMetadata().getEnd(), groupKey);
@@ -543,7 +588,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	}
 
 	/**
-	 * Returns an existing or creates an stores a new sweep area for a specific
+	 * Returns an existing or creates and stores a new sweep area for a specific
 	 * group.
 	 * 
 	 * @param groupKey
@@ -651,18 +696,26 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	}
 
 	/**
+	 * Returns the grouping key for an object.
+	 * 
+	 * <p>
+	 * If {@code groupingAttributeIndices} is {@code null} or empty,
+	 * {@link AggregationPO#defaultGroupingKey} will be returned.
+	 * 
 	 * @param object
-	 * @param groupingAttributesIdx2
-	 * @return
+	 *            The object.
+	 * @param groupingAttributeIndices
+	 *            The indices of the attributes that form the grouping key.
+	 * @return The grouping key.
 	 */
-	private static <T extends Tuple<?>> Object getGroupKey(final T object, final int[] groupingAttributesIdx2) {
-		if (groupingAttributesIdx2.length == 0) {
+	private static <T extends Tuple<?>> Object getGroupKey(final T object, final int[] groupingAttributeIndices) {
+		if (groupingAttributeIndices == null || groupingAttributeIndices.length == 0) {
 			return defaultGroupingKey;
 		}
-		if (groupingAttributesIdx2.length == 1) {
-			return object.getAttribute(groupingAttributesIdx2[0]);
+		if (groupingAttributeIndices.length == 1) {
+			return object.getAttribute(groupingAttributeIndices[0]);
 		}
-		return Arrays.asList(object.restrict(groupingAttributesIdx2, true).getAttributes());
+		return Arrays.asList(object.restrict(groupingAttributeIndices, true).getAttributes());
 	}
 
 	/*
