@@ -628,8 +628,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		@SuppressWarnings("unchecked")
 		final M meta = (M) trigger.getMetadata().clone();
-		meta.setStart(startTs);
 		meta.setEnd(PointInTime.INFINITY);
+		meta.setStart(startTs);
 		result.setMetadata(meta);
 		transfer(result);
 	}
@@ -740,7 +740,69 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected void process_done() {
 		super.process_done();
 		if (evaluateAtDone) {
-			// TODO evaluate at done
+
+			for (final Entry<Object, IAggregationSweepArea<M, T>> group : groups.entrySet()) {
+				final Object key = group.getKey();
+				final IAggregationSweepArea<M, T> sa = group.getValue();
+
+				// TODO: Do we need deep copy here? Depends on the values of the
+				// functions, doesn't it?
+				@SuppressWarnings("unchecked")
+				final T result = (T) new Tuple<>(outputSchema.size(), true);
+
+				T sampleOfGroup = null;
+				final Collection<T> elements = sa.getValidTuples();
+						if (!elements.isEmpty()) {
+					sampleOfGroup = elements.iterator().next();
+						}
+				
+				if (hasNonIncrementalFunctions) {
+
+					if (!elements.isEmpty()) {
+						sampleOfGroup = elements.iterator().next();
+
+						for (final INonIncrementalAggregationFunction<M, T> function : nonIncrementalFunctions) {
+							Object[] result2 = null;
+							try {
+								result2 = function.evaluate(elements, null, null);
+							} catch (final NullPointerException ex) {
+								// this method does not evaluate with no trigger
+								// and no point in time
+							}
+
+							if (result2 == null) {
+								result2 = new Object[function.getOutputAttributeIndices().length];
+								Arrays.fill(result2, null);
+							}
+
+							for (int i = 0; i < result2.length; ++i) {
+								result.setAttribute(function.getOutputAttributeIndices()[i], result2[i]);
+							}
+						}
+					}
+				}
+
+				if (hasIncrementalFunctions) {
+					for (final IIncrementalAggregationFunction<M, T> function : getStatefulFunctions(key)) {
+						Object[] result2 = null;
+						try {
+							result2 = function.evalute(null, null);
+						} catch (final NullPointerException ex) {
+							// this method does not evaluate with no trigger
+							// and no point in time
+						}
+						if (result2 == null) {
+							result2 = new Object[function.getOutputAttributeIndices().length];
+							Arrays.fill(result2, null);
+						}
+						for (int i = 0; i < result2.length; ++i) {
+							result.setAttribute(function.getOutputAttributeIndices()[i], result2[i]);
+						}
+					}
+				}
+				
+				transferResult(result, sampleOfGroup, new PointInTime(System.currentTimeMillis()));
+			}
 		}
 	}
 
