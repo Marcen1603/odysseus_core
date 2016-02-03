@@ -102,6 +102,7 @@ public interface ITimeIntervalSweepArea<T> extends ISweepArea<T>{
 	Iterator<T> extractOverlaps(ITimeInterval t);
 
 	List<T> queryOverlapsAsList(ITimeInterval interval);
+	List<T> queryOverlapsAsListExtractOutdated(ITimeInterval interval, List<T> outdated);
 	List<T> extractOverlapsAsList(ITimeInterval t);
 
 	List<T> queryContains(PointInTime point);

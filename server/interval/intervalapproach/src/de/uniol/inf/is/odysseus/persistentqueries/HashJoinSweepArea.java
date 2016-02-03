@@ -479,4 +479,11 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<Tuple<? extends ITimeInterval>> queryOverlapsAsListExtractOutdated(ITimeInterval interval,
+			List<Tuple<? extends ITimeInterval>> outdated) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

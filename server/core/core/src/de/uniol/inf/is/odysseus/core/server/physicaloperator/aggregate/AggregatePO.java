@@ -44,7 +44,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 
 	// PartialAggregate functions for different combinations of attributes and
 	// aggregations functions
-	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> aggregateFunctions = new HashMap<>();
+	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R, W>> aggregateFunctions = new HashMap<>();
 
 	//
 	private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = null;
@@ -101,15 +101,15 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 		return internalOutputSchema;
 	}
 
-	public void setAggregateFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IAggregateFunction<R,W> i) {
+	public void setAggregateFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p, IAggregateFunction<R, W> i) {
 		aggregateFunctions.put(p, i);
 	}
-	
-	public IAggregateFunction<R, W> getAggregateFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p){
+
+	public IAggregateFunction<R, W> getAggregateFunction(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
 		return aggregateFunctions.get(p);
 	}
 
-	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> getAllAggregateFunctions() {
+	protected Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R, W>> getAllAggregateFunctions() {
 		return aggregateFunctions;
 	}
 
@@ -143,13 +143,20 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 	protected synchronized PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> calcMerge(
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> toMerge, R element, boolean createNew) {
 
-		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> ret = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>();
+		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> ret;
+		if (createNew) {
+			ret = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>();
+		} else {
+			ret = toMerge;
+		}
 
 		// Jedes Element in toMerge mit element mergen
 		for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<R>> e : toMerge.entrySet()) {
 			IMerger<R> mf = getAggregateFunction(e.getKey());
 			IPartialAggregate<R> pa = mf.doMerge(e.getValue(), element, createNew);
-			ret.put(e.getKey(), pa);
+			if (createNew) {
+				ret.put(e.getKey(), pa);
+			}
 		}
 
 		return ret;

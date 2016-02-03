@@ -348,6 +348,31 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval;
 	}
+	
+	@Override
+	public List<T> queryOverlapsAsListExtractOutdated(ITimeInterval interval, List<T> outdated) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> iter = getElements().iterator();
+			while (iter.hasNext()) {
+				T s = iter.next();
+				if (TimeInterval.overlaps(s.getMetadata(), interval)) {
+					retval.add(s);
+				}else if (s.getMetadata().getEnd().before(interval.getStart())){
+					outdated.add(s);
+					iter.remove();
+				}
+				//TODO: Find a better solution to state that area is timestamp ordered!
+				if (comparator != null){
+					if (s.getMetadata().getStart().after(interval.getEnd())){
+						break;
+					}
+				}
+				
+			}
+		}
+		return retval;
+	}
 
 	@Override
 	public List<T> extractOverlapsAsList(ITimeInterval t) {

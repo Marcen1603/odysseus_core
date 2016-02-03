@@ -523,5 +523,11 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return "";
 	}
 
+	@Override
+	public List<T> queryOverlapsAsListExtractOutdated(ITimeInterval interval, List<T> outdated) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
