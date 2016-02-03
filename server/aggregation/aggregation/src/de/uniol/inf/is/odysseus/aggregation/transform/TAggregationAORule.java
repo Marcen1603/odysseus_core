@@ -88,8 +88,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	 */
 	@Override
 	public boolean isExecutable(final AggregationAO operator, final TransformationConfiguration config) {
-		// TODO Auto-generated method stub
-		return true;
+		return operator.isAllPhysicalInputSet();
 	}
 
 	/*
