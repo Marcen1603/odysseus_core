@@ -44,4 +44,22 @@ public interface INonIncrementalAggregationFunction<M extends ITimeInterval, T e
 	 * @return The result or an empty array.
 	 */
 	Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime);
+
+	/**
+	 * Returns {@code true}, iff this functions needs the parameter
+	 * {@code elements} in
+	 * {@link INonIncrementalAggregationFunction#evaluate(Collection, Tuple, PointInTime)}
+	 * with start TS order.
+	 * 
+	 * <p>
+	 * Examples: To calculate the sum, the order of the elements are not
+	 * relevant (commutative operation). Therefore, the sum functions returns
+	 * {@code false}. A nest function, that nests all tuples in a list could
+	 * have the requirement to preserve the order in the list. In that case the
+	 * function should return {@code true}. Otherwise it has to order these
+	 * elements on every invoke of {@code evaluate()}.
+	 * 
+	 * @return
+	 */
+	boolean needsOrderedElements();
 }

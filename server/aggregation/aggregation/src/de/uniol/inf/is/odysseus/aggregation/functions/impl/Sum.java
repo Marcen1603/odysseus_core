@@ -155,17 +155,6 @@ public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIn
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction#
-	 * needsOrderedElements()
-	 */
-	@Override
-	public boolean needsOrderedElements() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction#
 	 * checkParameters(java.util.Map,
 	 * de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver)
 	 */

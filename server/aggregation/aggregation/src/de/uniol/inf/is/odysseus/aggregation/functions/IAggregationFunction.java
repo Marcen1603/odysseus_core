@@ -30,8 +30,6 @@ public interface IAggregationFunction {
 
 	boolean isIncremental();
 
-	boolean needsOrderedElements();
-
 	/**
 	 * @return
 	 */
