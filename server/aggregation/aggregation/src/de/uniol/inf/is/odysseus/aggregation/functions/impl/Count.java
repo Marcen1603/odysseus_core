@@ -120,17 +120,6 @@ public class Count<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction#
-	 * needsOrderedElements()
-	 */
-	@Override
-	public boolean needsOrderedElements() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction#
 	 * checkParameters(java.util.Map)
 	 */
 	@Override

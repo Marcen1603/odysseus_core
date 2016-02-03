@@ -75,7 +75,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/**
 	 * This flag will be set to true when an element with end TS arrives this
-	 * operator.
+	 * operator. Otherwise this is false and we do not need to check for
+	 * outdating tuples because all tuples are valid forever.
 	 */
 	protected boolean hasOutdatingElements = false;
 
@@ -87,7 +88,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/**
 	 * A list of functions that get all valid elements of a point in time to
-	 * calculate the aggregation.
+	 * calculate the aggregation. These functions do not have a state.
 	 */
 	protected final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions;
 
@@ -114,6 +115,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 */
 	protected final boolean hasNonIncrementalFunctions;
 
+	/**
+	 * There are sweep areas that return the valid tuples
+	 * {@link IAggregationSweepArea#getValidTuples()} in start TS order and
+	 * others don't.
+	 */
 	protected final boolean hasFunctionsThatNeedStartTsOrder;
 
 	/**
@@ -169,8 +175,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndices = groupingAttributesIdx;
 
 		this.hasFunctionsThatNeedStartTsOrder = this.nonIncrementalFunctions.stream()
-				.anyMatch(e -> e.needsOrderedElements())
-				|| this.incrementalFunctions.stream().anyMatch(e -> e.needsOrderedElements());
+				.anyMatch(e -> e.needsOrderedElements());
 
 	}
 
@@ -190,8 +195,6 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndices = other.groupingAttributesIndices;
 		this.hasFunctionsThatNeedStartTsOrder = other.hasFunctionsThatNeedStartTsOrder;
 	}
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -591,8 +594,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @return
 	 */
 	private boolean onlyNullAttributes(final T result) {
-		for(final Object attr : result.getAttributes()) {
-			if(attr != null) {
+		for (final Object attr : result.getAttributes()) {
+			if (attr != null) {
 				return false;
 			}
 		}

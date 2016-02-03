@@ -103,17 +103,6 @@ public class Trigger<M extends ITimeInterval, T extends Tuple<M>> extends Abstra
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction#
-	 * needsOrderedElements()
-	 */
-	@Override
-	public boolean needsOrderedElements() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction#
 	 * getOutputAttributes()
 	 */
 	@Override
