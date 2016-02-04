@@ -83,6 +83,8 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 				} else {
 					dataValues.add(attribute.toString());
 				}
+			} else {
+				dataValues.add(null);
 			}
 		}
 		Tuple<M> output = (Tuple<M>) tHandler.readData(dataValues);
