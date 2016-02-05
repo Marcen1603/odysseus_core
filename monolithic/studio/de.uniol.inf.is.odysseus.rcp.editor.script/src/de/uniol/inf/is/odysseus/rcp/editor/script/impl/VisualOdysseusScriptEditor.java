@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.script;
+package de.uniol.inf.is.odysseus.rcp.editor.script.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
