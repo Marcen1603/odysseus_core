@@ -295,6 +295,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 					break;
 				}
 			}
+			PointInTime a = areas[port].getMinTs();
+			PointInTime b = areas[otherport].getMinTs();
+			if(a != null && b != null) {
+				PointInTime heartbeat = PointInTime.max(a, b);
+				transferFunction.newHeartbeat(heartbeat, port);
+				transferFunction.newHeartbeat(heartbeat, otherport);
+			}
 		}
 	}
 
