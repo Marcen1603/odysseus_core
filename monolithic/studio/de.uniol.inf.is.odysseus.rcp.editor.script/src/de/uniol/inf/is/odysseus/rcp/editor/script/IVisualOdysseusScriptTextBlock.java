@@ -10,7 +10,7 @@ public interface IVisualOdysseusScriptTextBlock {
 	
 	public void init( String startKeyword, String odysseusScriptText ) throws VisualOdysseusScriptException;
 	
-	public void createPartControl( Composite parent );
+	public void createPartControl( Composite parent, IVisualOdysseusScriptContainer container );
 	public void dispose();
 	
 	public String generateOdysseusScript() throws VisualOdysseusScriptException;
