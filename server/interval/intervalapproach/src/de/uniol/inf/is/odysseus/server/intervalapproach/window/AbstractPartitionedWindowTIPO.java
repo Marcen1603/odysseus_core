@@ -237,6 +237,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		result.put("Buffers Size:", "" + buffers.size());
 		result.put("Transferarea Size:", "" + transferArea.size());
 		result.put("Last TS:", "" + lastTs);
+		result.put("Implementation:", this.getClass().getSimpleName());
 		return result;
 	}
 }
