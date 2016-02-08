@@ -117,7 +117,7 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 	@Override
 	public void setActivePage(IEditorPart editor) {
 		if (editor != null) {
-			activePageRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
+			activePageRegistry = editor.getAdapter(ActionRegistry.class);
 			connectActions();
 		}
 	}
@@ -129,7 +129,7 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 	public void setActiveEditor(IEditorPart editor) {
 		super.setActiveEditor(editor);
 		rootEditor = editor;
-		rootEditorRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
+		rootEditorRegistry = editor.getAdapter(ActionRegistry.class);
 		connectActions();
 	}
 

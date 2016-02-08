@@ -36,7 +36,7 @@ public class FormatTextCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart part = HandlerUtil.getActiveEditor(event);
 		if (part instanceof OdysseusScriptEditor) {
-			ITextOperationTarget target = (ITextOperationTarget) part.getAdapter(ITextOperationTarget.class);
+			ITextOperationTarget target = part.getAdapter(ITextOperationTarget.class);
 			if (target instanceof ISourceViewer) {
 				ISourceViewer textViewer = (ISourceViewer) target;
 				((ITextOperationTarget) textViewer).doOperation(ISourceViewer.FORMAT);

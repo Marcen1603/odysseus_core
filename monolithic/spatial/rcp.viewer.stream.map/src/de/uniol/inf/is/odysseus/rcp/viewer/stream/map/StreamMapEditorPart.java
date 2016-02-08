@@ -155,7 +155,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		addItemAction = new Action("Add new Layer") {
 			@Override
 			public void run() {				
-				MapEditorModel model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
+				MapEditorModel model = getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
 				LOG.debug("Delete.." +  model.getLayers().getLast().toString());				
 			}
 		};
@@ -176,7 +176,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		deleteItemAction = new Action("Selection") {
 			@Override
 			public void run() {
-				MapEditorModel model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
+				MapEditorModel model = getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
 				LOG.debug("Delete.." +  model.getLayers().getLast().toString());
 			}
 		};
@@ -185,7 +185,7 @@ public class StreamMapEditorPart extends EditorPart implements IStreamMapEditor 
 		selectAllAction = new Action("Add new Layer") {
 			@Override
 			public void run() {
-				MapEditorModel model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
+				MapEditorModel model = getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
 				LOG.debug("Delete.." +  model.getLayers().getLast().toString());
 			}
 		};

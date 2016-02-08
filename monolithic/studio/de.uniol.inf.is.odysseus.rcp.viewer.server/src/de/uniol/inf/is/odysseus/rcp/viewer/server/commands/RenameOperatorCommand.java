@@ -64,7 +64,7 @@ public class RenameOperatorCommand extends AbstractHandler implements IHandler {
 	}
 
 	private static void executeCommand(String commandID) {
-		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand(commandID, null);
 		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {

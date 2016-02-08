@@ -103,8 +103,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider,
 	}
 
 	private void executeCommand(String cmdID) {
-		IHandlerService handlerService = (IHandlerService) view.getSite()
-				.getService(IHandlerService.class);
+		IHandlerService handlerService = view.getSite().getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand(cmdID, null);
 		} catch (Exception ex) {

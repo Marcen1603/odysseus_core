@@ -36,7 +36,7 @@ public abstract class AbstractStreamMapEditorViewPart extends ViewPart{
 		model = null;
 		if(getSite().getPage() != null){
 			if(getSite().getPage().getActiveEditor() != null)
-				model = (MapEditorModel)getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
+				model = getSite().getPage().getActiveEditor().getAdapter(MapEditorModel.class);	
 		}
 		return model;
     }
@@ -45,7 +45,7 @@ public abstract class AbstractStreamMapEditorViewPart extends ViewPart{
 		editor = null;
 		if(getSite().getPage() != null){
 			if(getSite().getPage().getActiveEditor() != null)
-				editor = (StreamMapEditorPart)getSite().getPage().getActiveEditor().getAdapter(StreamMapEditorPart.class);	
+				editor = getSite().getPage().getActiveEditor().getAdapter(StreamMapEditorPart.class);	
 		}
 		return editor;
     }
