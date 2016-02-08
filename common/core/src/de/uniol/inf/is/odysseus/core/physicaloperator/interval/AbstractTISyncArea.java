@@ -131,21 +131,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 			} else {
 				start = ((R) object).getMetadata().getStart();
 			}
-
-			// watermark is needed if new sources are connected at runtime
-			// if watermark == null no object has ever been transferred --> init
-			// phase
-			// else treat only objects that are at least from time watermark
-			if (watermark == null || start.afterOrEquals(watermark)) {
-				newHeartbeat(start, inPort);
-			} else {
-				if (!isAllDone()) {
-					if (!object.isPunctuation()) {
-						logger.warn("Removed out of order element!" + object + " (" + object.hashCode() + ")" + " - ("
-								+ this.operator + "(" + this.operator.getName() + ")) watermark is " + watermark + " d=" + isDone);
-					}
-				}
-			}
+			newHeartbeat(start, inPort);
 		}
 	}
 	
