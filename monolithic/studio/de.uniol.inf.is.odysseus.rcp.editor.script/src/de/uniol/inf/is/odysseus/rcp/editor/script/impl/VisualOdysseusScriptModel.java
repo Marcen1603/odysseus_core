@@ -35,7 +35,7 @@ public class VisualOdysseusScriptModel {
 				// finish current text block
 				if( currentKeyword != null ) {
 					DefaultOdysseusScriptTextBlock block = new DefaultOdysseusScriptTextBlock();
-					block.init(currentKeyword, currentText.toString());
+					block.init(currentKeyword, currentText.toString(), Lists.newArrayList(textBlocks));
 					
 					textBlocks.add(block);
 					currentKeyword = null;
@@ -59,7 +59,7 @@ public class VisualOdysseusScriptModel {
 		// finish last text block
 		if( currentKeyword != null ) {
 			DefaultOdysseusScriptTextBlock block = new DefaultOdysseusScriptTextBlock();
-			block.init(currentKeyword, currentText.toString());
+			block.init(currentKeyword, currentText.toString(), Lists.newArrayList(textBlocks));
 			
 			textBlocks.add(block);
 			currentKeyword = null;

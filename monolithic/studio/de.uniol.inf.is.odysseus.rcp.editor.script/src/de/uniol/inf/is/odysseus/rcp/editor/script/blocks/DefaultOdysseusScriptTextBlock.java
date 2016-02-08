@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,7 +31,7 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptText
 	}
 
 	@Override
-	public void init(String startKeyword, String odysseusScriptText) throws VisualOdysseusScriptException {
+	public void init(String startKeyword, String odysseusScriptText, List<IVisualOdysseusScriptTextBlock> previousBlocks) throws VisualOdysseusScriptException {
 		this.odysseusScriptText = odysseusScriptText;
 		this.odysseusScriptKeyword = startKeyword;
 	}
