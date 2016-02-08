@@ -16,12 +16,14 @@
 package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,18 +119,33 @@ public class HTTPPostFormUrlencodedProtocolHandler<T extends Tuple<?>> extends A
 		getTransfer().transfer(getDataHandler().readData(parseAttributes(message[0])));
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler#process(java.io.InputStream)
+	 */
+	@Override
+	public void process(InputStream message) {
+		try {
+			getTransfer().transfer(getDataHandler().readData(parseAttributes(IOUtils.toString(message))));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
 	public String[] parseAttributes(String message) {
 		String[] attr = message.split("&");
 		for (int i = 0; i < attr.length; ++i) {
 			try {
 				String[] keyValue = attr[i].trim().split("=");
 				if (keyValue.length != 2) {
-					LOG.warn("Could not split parameter '" + attr[i].trim() + "' into key and value.");
+					LOG.warn("Could not split " + i + "th paramter '" + attr[i].trim() + "' into key and value.");
+					attr[i] = null;
 				} else {
 					attr[i] = URLDecoder.decode(keyValue[1], "UTF-8");
 				}
 			} catch (UnsupportedEncodingException e) {
 				LOG.warn("Unsupported encoding: " + e.getMessage());
+				attr[i] = null;
 			}
 		}
 		return attr;
