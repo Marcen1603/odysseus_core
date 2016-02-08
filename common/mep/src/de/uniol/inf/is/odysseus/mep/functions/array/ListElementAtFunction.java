@@ -21,7 +21,9 @@ public class ListElementAtFunction extends AbstractFunction<Object> implements I
 	public Object getValue() {
 		List<Object> l = getInputValue(0);
 		int pos = getNumericalInputValue(1).intValue();
-				
+		if(l == null || pos >= l.size()) {
+			return null;
+		}
 		return l.get(pos);
 	}
 
