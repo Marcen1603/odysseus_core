@@ -14,9 +14,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
 import com.google.common.collect.Lists;
@@ -31,6 +33,8 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 	private ScrolledComposite scrollComposite;
 	private Composite parent;
 	private Composite contentComposite;
+	
+	private boolean isDirty;
 
 	public VisualOdysseusScriptEditor() {
 		super();
@@ -86,7 +90,7 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 	@Override
 	public boolean isDirty() {
-		return false;
+		return isDirty;
 	}
 
 	@Override
@@ -134,5 +138,18 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 		contentComposite.layout();
 
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+	
+	@Override
+	public void setDirty(boolean dirty) {
+		if (dirty != this.isDirty) {
+			this.isDirty = dirty;
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					firePropertyChange(IEditorPart.PROP_DIRTY);
+				}
+			});
+		}
 	}
 }
