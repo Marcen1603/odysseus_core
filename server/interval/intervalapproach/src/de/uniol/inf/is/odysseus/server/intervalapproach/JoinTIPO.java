@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -297,8 +298,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 			PointInTime a = areas[port].getMinTs();
 			PointInTime b = areas[otherport].getMinTs();
-			if(a != null && b != null) {
-				PointInTime heartbeat = PointInTime.max(a, b);
+			PointInTime heartbeat = PointInTime.max(a, b);
+			if(heartbeat != null) {
 				transferFunction.newHeartbeat(heartbeat, port);
 				transferFunction.newHeartbeat(heartbeat, otherport);
 			}
@@ -522,6 +523,19 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		if (areas[0] instanceof AbstractTISweepArea && areas[1] instanceof AbstractTISweepArea) {
 			map.put("Left Area Has End TS Order", ((AbstractTISweepArea<?>) areas[0]).hasEndTsOrder() + "");
 			map.put("Right Area Has End TS Order", ((AbstractTISweepArea<?>) areas[1]).hasEndTsOrder() + "");
+		}
+		
+		if(areas[0] instanceof IPhysicalOperatorKeyValueProvider) {
+			for(Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[0]).getKeyValues().entrySet().iterator(); iter.hasNext();){
+				Entry<String, String> e = iter.next();
+				map.put("Left Area - " + e.getKey(), e.getValue());
+			}
+		}
+		if(areas[1] instanceof IPhysicalOperatorKeyValueProvider) {
+			for(Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[1]).getKeyValues().entrySet().iterator(); iter.hasNext();){
+				Entry<String, String> e = iter.next();
+				map.put("Right Area - " + e.getKey(), e.getValue());
+			}
 		}
 		
 		map.put("OutputQueue", transferFunction.size() + "");
