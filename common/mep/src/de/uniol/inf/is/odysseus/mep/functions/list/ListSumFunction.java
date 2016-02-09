@@ -18,6 +18,9 @@ public class ListSumFunction extends AbstractFunction<Double> {
 	@Override
 	public Double getValue() { 
 		List<Object> l = getInputValue(0);
+		if(l == null) {
+			return null;
+		}
 		double result = 0;
 		for (Object v:l){
 			result += ((Number)v).doubleValue();
