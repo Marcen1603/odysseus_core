@@ -28,7 +28,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 
 	@SuppressWarnings("rawtypes")
 	final private List<IPredicate> predicates = new LinkedList<IPredicate>();
-	final private Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M>> currentPAs = new HashMap<>();
+	final private Map<Object, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M>> currentPAs = new HashMap<>();
 
 	public StartStopPredicateCoalescePO(SDFSchema inputSchema,
 			SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
@@ -57,7 +57,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void process_next(IStreamObject<M> object, int port) {
-		Long groupID = getGroupProcessor().getGroupID(object);
+		Object groupID = getGroupProcessor().getGroupID(object);
 		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> pas = currentPAs
 				.get(groupID);
 		// when calcuation is running
@@ -114,7 +114,7 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 
 	private void dumpGroups() {
 		synchronized (currentPAs) {
-			for (Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M>> e : currentPAs
+			for (Entry<Object, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M>> e : currentPAs
 					.entrySet()) {
 				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<IStreamObject<M>>, M> currentPartialAggregates = e
 						.getValue();

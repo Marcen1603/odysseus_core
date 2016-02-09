@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,8 +38,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGroupProcessor<Tuple<T>, Tuple<T>>, IClone {
 
-	Map<Long, Tuple<T>> tupleMap = null;
-	List<FESortedPair<Tuple<?>, Long>> groupList = new LinkedList<>();
+	Map<Object, Tuple<T>> tupleMap = null;
+	List<FESortedPair<Tuple<?>, Object>> groupList = new LinkedList<>();
 	Long maxId = 0L;
 	int[] gRestrict = null;
 	private final List<SDFAttribute> grAttribs;
@@ -82,53 +83,102 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 	}
 
 	@Override
-	public Long getGroupID(Tuple<T> elem) {
-		// if there are no group attributes, value is 0
+	public Long getAscendingGroupID(Tuple<T> elem) {
 		if (gRestrict == null || gRestrict.length == 0)
 			return Long.valueOf(0);
 
-		long hash = 0;
-		// Fast version uses hash code of tuple. Warning: This may not always be
-		// correct!
-		if (fast) {
-			hash = elem.restrictedHashCode(gRestrict);
-			if (!tupleMap.containsKey(hash)) {
-				Tuple<T> gTuple = getGroupingPart(elem);
-				tupleMap.put(hash, gTuple);
-				// System.err.println("Created a new group "+hash+" for
-				// "+gTuple+" "+tupleMap.size());
-				// if (tupleMap.size() >= 1955){
-				// System.err.println("List "+tupleMap);
-				// }
-			}
-		} else {
-			Tuple<T> gTuple = getGroupingPart(elem);
-			FESortedPair<Tuple<?>, Long> p = new FESortedPair<Tuple<?>, Long>(gTuple, maxId);
-			// Add new value sorted
-			int pos = Collections.binarySearch(groupList, p);
-			// System.err.println(pos + " for " + p + " in List " +
-			// groupList);
-			if (pos < 0) { // Element not found in list
-				int insert = (-1) * pos - 1;
-				groupList.add(insert, p);
-				hash = maxId;
-				// System.err.println("Created a new group "+hash+" for
-				// "+gTuple);
-				// if (hash >= 1955){
-				// System.err.println("List "+groupList);
-				// }
-				maxId++;
-			} else if (pos >= 0) {
-				hash = groupList.get(pos).getE2();
-			}
-			tupleMap.put(hash, gTuple);
+		Long hash;
 
+		Tuple<T> gTuple = getGroupingPart(elem);
+		FESortedPair<Tuple<?>, Object> p = new FESortedPair<Tuple<?>, Object>(gTuple, maxId);
+		// Add new value sorted
+		int pos = Collections.binarySearch(groupList, p);
+		// System.err.println(pos + " for " + p + " in List " +
+		// groupList);
+		if (pos < 0) { // Element not found in list
+			int insert = (-1) * pos - 1;
+			groupList.add(insert, p);
+			hash = maxId;
+			// System.err.println("Created a new group "+hash+" for
+			// "+gTuple);
+			// if (hash >= 1955){
+			// System.err.println("List "+groupList);
+			// }
+			maxId++;
+		} else {
+			hash = (Long) groupList.get(pos).getE2();
 		}
+		tupleMap.put(hash, gTuple);
 		return hash;
 	}
 
 	@Override
-	public void setGroup(long id, Tuple<T> elem) {
+	public Object getGroupID(Tuple<T> elem) {
+		// if there are no group attributes, value is 0
+		if (gRestrict == null || gRestrict.length == 0)
+			return Long.valueOf(0);
+
+		Object groupKey;
+		Tuple<T> restrict = null;
+		
+		if (gRestrict.length == 1) {
+			groupKey = elem.getAttribute(gRestrict[0]);
+		}else{
+			 restrict = elem.restrict(gRestrict, true);
+			groupKey = Arrays.asList(restrict.getAttributes());
+		}
+		if (!tupleMap.containsKey(groupKey)){
+			// In case of single attribute, this var could not be initialized
+			if (restrict == null){
+				restrict = elem.restrict(gRestrict, true);
+			}
+			tupleMap.put(groupKey, restrict);
+		}
+		return groupKey;
+
+		// // Fast version uses hash code of tuple. Warning: This may not always
+		// be
+		// // correct!
+		// if (fast) {
+		// hash = elem.restrictedHashCode(gRestrict);
+		// if (!tupleMap.containsKey(hash)) {
+		// Tuple<T> gTuple = getGroupingPart(elem);
+		// tupleMap.put(hash, gTuple);
+		// // System.err.println("Created a new group "+hash+" for
+		// // "+gTuple+" "+tupleMap.size());
+		// // if (tupleMap.size() >= 1955){
+		// // System.err.println("List "+tupleMap);
+		// // }
+		// }
+		// } else {
+		// Tuple<T> gTuple = getGroupingPart(elem);
+		// FESortedPair<Tuple<?>, Long> p = new FESortedPair<Tuple<?>,
+		// Long>(gTuple, maxId);
+		// // Add new value sorted
+		// int pos = Collections.binarySearch(groupList, p);
+		// // System.err.println(pos + " for " + p + " in List " +
+		// // groupList);
+		// if (pos < 0) { // Element not found in list
+		// int insert = (-1) * pos - 1;
+		// groupList.add(insert, p);
+		// hash = maxId;
+		// // System.err.println("Created a new group "+hash+" for
+		// // "+gTuple);
+		// // if (hash >= 1955){
+		// // System.err.println("List "+groupList);
+		// // }
+		// maxId++;
+		// } else if (pos >= 0) {
+		// hash = groupList.get(pos).getE2();
+		// }
+		// tupleMap.put(hash, gTuple);
+		//
+		// }
+		// return hash;
+	}
+
+	@Override
+	public void setGroup(Object id, Tuple<T> elem) {
 		if (!tupleMap.containsKey(id)) {
 			Tuple<T> gTuple = getGroupingPart(elem);
 			tupleMap.put(id, gTuple);
@@ -173,7 +223,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 	}
 
 	@Override
-	public Tuple<T> createOutputElement(Long groupID, PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
+	public Tuple<T> createOutputElement(Object groupID, PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
 		Tuple<T> returnTuple = new Tuple<T>(getOutputSchema().size(), false);
 
 		// in r stecken alle Aggregate drin
@@ -191,7 +241,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 	}
 
 	@Override
-	public Tuple<T> createOutputElement2(Long groupID,
+	public Tuple<T> createOutputElement2(Object groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<Tuple<T>>, ?> r) {
 		Tuple<T> returnTuple = new Tuple<T>(getOutputSchema().size(), false);
 
@@ -207,13 +257,14 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements IGrou
 		return returnTuple;
 	}
 
-	protected void addGroupingAttributes(Long groupID, Tuple<T> returnTuple) {
-		Tuple<T> gruppAttr = tupleMap.get(groupID);
-		int groupTupPos = 0;
-		for (SDFAttribute ga : grAttribs) {
-			int pos = getOutputPos(ga);
-			returnTuple.setAttribute(pos, gruppAttr.getAttribute(groupTupPos++));
-
+	protected void addGroupingAttributes(Object groupID, Tuple<T> returnTuple) {
+		if (grAttribs.size() > 0) {
+			Tuple<T> gruppAttr = tupleMap.get(groupID);
+			int groupTupPos = 0;
+			for (SDFAttribute ga : grAttribs) {
+				int pos = getOutputPos(ga);
+				returnTuple.setAttribute(pos, gruppAttr.getAttribute(groupTupPos++));
+			}
 		}
 	}
 

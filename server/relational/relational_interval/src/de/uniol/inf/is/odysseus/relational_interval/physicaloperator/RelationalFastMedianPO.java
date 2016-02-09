@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 public class RelationalFastMedianPO<T extends Comparable<T>> extends
 		AbstractFastMedianPO<T> {
 
-	Map<Long, List<FESortedPair<T, Tuple<? extends ITimeInterval>>>> elements = new HashMap<>();
+	Map<Object, List<FESortedPair<T, Tuple<? extends ITimeInterval>>>> elements = new HashMap<>();
 
 	public RelationalFastMedianPO(int medianAttrPos, boolean numericalMedian) {
 		super(medianAttrPos, numericalMedian);
@@ -31,7 +31,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> object,
-			int port, Long groupID) {
+			int port, Object groupID) {
 
 		List<FESortedPair<T, Tuple<? extends ITimeInterval>>> groupList = getOrCreateGroupList(groupID);
 
@@ -79,7 +79,7 @@ public class RelationalFastMedianPO<T extends Comparable<T>> extends
 	}
 
 	private List<FESortedPair<T, Tuple<? extends ITimeInterval>>> getOrCreateGroupList(
-			Long groupID) {
+			Object groupID) {
 		List<FESortedPair<T, Tuple<? extends ITimeInterval>>> groupList = elements
 				.get(groupID);
 		if (groupList == null) {

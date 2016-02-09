@@ -20,7 +20,7 @@ public class SlidingElementWindowTIPOState<T extends IStreamObject<ITimeInterval
 
 	private ITransferArea<T, T> transferArea;
 
-	private Map<Long, List<T>> buffers;
+	private Map<Object, List<T>> buffers;
 
 	private PointInTime lastTs;
 	
@@ -41,11 +41,11 @@ public class SlidingElementWindowTIPOState<T extends IStreamObject<ITimeInterval
 		this.transferArea = transferArea;
 	}
 
-	public Map<Long, List<T>> getBuffers() {
+	public Map<Object, List<T>> getBuffers() {
 		return buffers;
 	}
 
-	public void setBuffers(Map<Long, List<T>> buffers) {
+	public void setBuffers(Map<Object, List<T>> buffers) {
 		this.buffers = buffers;
 	}
 

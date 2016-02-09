@@ -107,7 +107,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * For every group exists a sweep area that keeps the state for the
 	 * aggregation
 	 */
-	protected Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
+	protected Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 
 	static final Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
@@ -224,10 +224,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
 	public void drainGroups(IGroupProcessor<R, W> g,
-			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups,
+			Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups,
 			int inPort) {
 		synchronized (groups) {
-			for (Entry<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+			for (Entry<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
 				List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue()
 						.extractAllElementsAsList();
@@ -275,7 +275,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 
 		IGroupProcessor<R, W> g = getGroupProcessor();
-		Long groupID;
+		Object groupID;
 		synchronized (groups) {
 			// Determine group ID from input object
 			groupID = g.getGroupID(object);
@@ -305,9 +305,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 	}
 
-	public void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Long groupID,
+	public void createOutput(List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults, Object groupID,
 			PointInTime timestamp, int inPort,
-			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
+			Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
 			IGroupProcessor<R, W> g) {
 
 		// Check if additional output should be created
@@ -338,7 +338,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				produceResults(existingResults, groupID, g);
 			}
 
-			for (Entry<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
+			for (Entry<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
 					.entrySet()) {
 
 				ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
@@ -401,7 +401,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 *            for which group should the output
 	 * @param g
 	 */
-	protected void produceResults(List<PairMap<SDFSchema, AggregateFunction, W, Q>> results, Long groupID,
+	protected void produceResults(List<PairMap<SDFSchema, AggregateFunction, W, Q>> results, Object groupID,
 			IGroupProcessor<R, W> g) {
 		for (PairMap<SDFSchema, AggregateFunction, W, Q> e : results) {
 			W out = g.createOutputElement(groupID, e);
@@ -424,8 +424,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 *            : The group for which the result should be created
 	 */
 	protected void produceResults(List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
-			Long groupID, IGroupProcessor<R, W> g, PointInTime trigger,
-			Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
+			Object groupID, IGroupProcessor<R, W> g, PointInTime trigger,
+			Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess,
 			int inPort) {
 		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> iter = results.iterator();
 		while (iter.hasNext()) {
@@ -451,7 +451,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * 
 	 * @return State of {@link StreamGroupingWithAggregationPO}.
 	 */
-	public Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
+	public Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
 		return this.groups;
 	}
 

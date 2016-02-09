@@ -27,7 +27,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 
 	private String valueAttributeName;
 
-	private Map<Long, List<T>> sortedValueMap;
+	private Map<Object, List<T>> sortedValueMap;
 	private int k;
 	private double minLOFValue;
 	private IGroupProcessor<T, T> groupProcessor;
@@ -35,7 +35,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	private boolean deliverFirstElements;
 
 	public LOFAnomalyDetectionPO(LOFAnomalyDetectionAO ao, IGroupProcessor<T, T> groupProcessor) {
-		sortedValueMap = new HashMap<Long, List<T>>();
+		sortedValueMap = new HashMap<>();
 		this.k = ao.getNumberOfNeighbors();
 		this.minLOFValue = ao.getLOFAnomalyValue();
 		this.valueAttributeName = ao.getNameOfValue();
@@ -48,7 +48,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	protected void process_next(T tuple, int port) {
 
 		// If set from the AO, use the group processor
-		Long gId = groupProcessor.getGroupID(tuple);
+		Object gId = groupProcessor.getGroupID(tuple);
 		List<T> sortedValues = sortedValueMap.get(gId);
 
 		// Use the right list for this group

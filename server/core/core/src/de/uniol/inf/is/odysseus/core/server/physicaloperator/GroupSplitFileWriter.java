@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 		AbstractSink<R> {
 
-	Map<Long, OutputStream> filemap = new HashMap<>();
+	Map<Object, OutputStream> filemap = new HashMap<>();
 	final String path;
 	final IGroupProcessor<R, R> groupProcessor;
 	final IStreamObjectDataHandler<R> dataHandler;
@@ -54,7 +54,7 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_next(R object, int port) {
-		long id = groupProcessor.getGroupID(object);
+		Object id = groupProcessor.getGroupID(object);
 		OutputStream outputStream = filemap.get(id);
 		if (outputStream == null) {
 			try {

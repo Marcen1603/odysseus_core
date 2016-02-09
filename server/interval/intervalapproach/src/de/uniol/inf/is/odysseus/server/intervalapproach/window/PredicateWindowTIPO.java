@@ -52,7 +52,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	final private IPredicate<? super T> end;
 	final private long maxWindowTime;
 	final private boolean sameStarttime;
-	private Map<Long, Boolean> openedWindow = new HashMap<>();
+	private Map<Object, Boolean> openedWindow = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	public PredicateWindowTIPO(AbstractWindowAO windowao) {
@@ -87,7 +87,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	}
 
 	@Override
-	protected void process(T object, List<T> buffer, Long bufferId, PointInTime ts) {
+	protected void process(T object, List<T> buffer, Object bufferId, PointInTime ts) {
 		// Test if elements need to be written
 		boolean startEval = start.evaluate(object);
 		Boolean opened = openedWindow.get(bufferId);
@@ -119,12 +119,12 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	}
 	
 	
-	private void appendData(T object, Long bufferId, List<T> buffer) {
+	private void appendData(T object, Object bufferId, List<T> buffer) {
 		openedWindow.put(bufferId, true);
 		buffer.add(object);
 	}
 
-	private void produceData(PointInTime endTimestamp, Long bufferId, List<T> buffer) {
+	private void produceData(PointInTime endTimestamp, Object bufferId, List<T> buffer) {
 		PointInTime start = null;
 		if (sameStarttime && buffer.size() > 0) {
 			start = buffer.get(0).getMetadata().getStart();

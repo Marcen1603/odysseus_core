@@ -12,12 +12,17 @@ public class NoGroupProcessor<R,W extends IClone> implements IGroupProcessor<R, 
 	private static final long serialVersionUID = -6186678898444676392L;
 
 	@Override
-	public Long getGroupID(R elem) {
+	public Object getGroupID(R elem) {
 		return 0L;
 	}
 	
 	@Override
-	public void setGroup(long id, R elem) {
+	public Long getAscendingGroupID(R elem) {
+		return 0L;
+	}
+	
+	@Override
+	public void setGroup(Object id, R elem) {
 		// ignore
 	}
 	
@@ -32,13 +37,13 @@ public class NoGroupProcessor<R,W extends IClone> implements IGroupProcessor<R, 
 	}
 
 	@Override
-	public W createOutputElement(Long groupID,
+	public W createOutputElement(Object groupID,
 			PairMap<SDFSchema, AggregateFunction, W, ?> r) {
 		throw new IllegalArgumentException("Cannot create Element");
 	}
 
 	@Override
-	public W createOutputElement2(Long groupID,
+	public W createOutputElement2(Object groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, ?> e) {
 		throw new IllegalArgumentException("Cannot create Element");
 	}

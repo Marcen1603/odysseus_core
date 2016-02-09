@@ -24,7 +24,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 
 	// For analysis
 	// groupId, PointInTime from when it's active and information
-	private Map<Long, Map<PointInTime, DeviationInformation>> deviationInfo;
+	private Map<Object, Map<PointInTime, DeviationInformation>> deviationInfo;
 	private double interval;
 	private long lastCounter;
 	private double totalSum;
@@ -43,7 +43,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 	protected IGroupProcessor<T, T> groupProcessor;
 
 	public DeviationSequenceAnalysisPO(DeviationSequenceAnalysisAO ao, IGroupProcessor<T, T> groupProcessor) {
-		this.deviationInfo = new HashMap<Long, Map<PointInTime, DeviationInformation>>();
+		this.deviationInfo = new HashMap<>();
 		this.futureTupleList = new ArrayList<>();
 
 		this.interval = ao.getInterval();
@@ -65,7 +65,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 
 	@Override
 	protected void process_next(T tuple, int port) {
-		long sequenceCounter = this.groupProcessor.getGroupID(tuple);
+		Long sequenceCounter = this.groupProcessor.getAscendingGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(sequenceCounter);
 
 		if (infoMap == null) {
@@ -167,7 +167,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 	 * @return
 	 */
 	private DeviationInformation getInfoForTuple(T tuple) {
-		Long gId = groupProcessor.getGroupID(tuple);
+		Object gId = groupProcessor.getGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
 		PointInTime tupleStartTime = tuple.getMetadata().getStart();
 
@@ -213,7 +213,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 	 * @return true, if there is a newer info and false, if not
 	 */
 	private boolean existsNewerInfo(T tuple) {
-		Long gId = groupProcessor.getGroupID(tuple);
+		Object gId = groupProcessor.getGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
 		PointInTime tupleStartTime = tuple.getMetadata().getStart();
 

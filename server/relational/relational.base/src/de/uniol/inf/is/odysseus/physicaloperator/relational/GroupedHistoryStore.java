@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.relational.IProvidesMaxHistoryElements;
 
 public class GroupedHistoryStore<T extends IStreamObject<? extends IMetaAttribute>> {
 
-	private Map<Long, List<T>> groupsLastObjects = new HashMap<>();
+	private Map<Object, List<T>> groupsLastObjects = new HashMap<>();
 	final private IGroupProcessor<T, T> groupProcessor;
 	private int maxHistoryElements = 0;
 
@@ -44,7 +44,7 @@ public class GroupedHistoryStore<T extends IStreamObject<? extends IMetaAttribut
 	}
 	
 	public List<T> process(T object){
-		Long groupId = groupProcessor.getGroupID(object);
+		Object groupId = groupProcessor.getGroupID(object);
 		List<T> lastObjects = groupsLastObjects.get(groupId);
 
 		if (lastObjects == null) {
@@ -59,11 +59,11 @@ public class GroupedHistoryStore<T extends IStreamObject<? extends IMetaAttribut
 		return lastObjects;
 	}
 	
-	public Map<Long, List<T>> getGroupsLastObjects() {
+	public Map<Object, List<T>> getGroupsLastObjects() {
 		return groupsLastObjects;
 	}
 	
-	public void setGroupsLastObjects(Map<Long, List<T>> groupsLastObjects) {
+	public void setGroupsLastObjects(Map<Object, List<T>> groupsLastObjects) {
 		this.groupsLastObjects = groupsLastObjects;
 	}
 	

@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 public class GroupCoalescePO<M extends ITimeInterval> extends
 		AbstractCoalescePO<M> {
 
-	long lastGroupID = -1;
+	Object lastGroupID = null;
 	int maxElementsPerGroup = -1;
 	int currentCount = 0;
 	boolean createOnHeartbeat = false;
@@ -47,7 +47,7 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		
 		super.process_next(object, port);
 		// 1st check if the same group as last one
-		Long currentGroupID = getGroupProcessor().getGroupID(object);
+		Object currentGroupID = getGroupProcessor().getGroupID(object);
 
 
 		// The created object is a combiniation of all objects before

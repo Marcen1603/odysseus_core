@@ -13,13 +13,13 @@ public class RelationalStateMapPOState<T extends IMetaAttribute> extends Abstrac
 	
 	private static final long serialVersionUID = 3107458255925732610L;
 	
-	private Map<Long, List<Tuple<T>>> groupsLastObjects = new HashMap<>();
+	private Map<Object, List<Tuple<T>>> groupsLastObjects = new HashMap<>();
 
-	public Map<Long, List<Tuple<T>>> getGroupsLastObjects() {
+	public Map<Object, List<Tuple<T>>> getGroupsLastObjects() {
 		return groupsLastObjects;
 	}
 
-	public void setGroupsLastObjects(Map<Long, List<Tuple<T>>> groupsLastObjects) {
+	public void setGroupsLastObjects(Map<Object, List<Tuple<T>>> groupsLastObjects) {
 		this.groupsLastObjects = groupsLastObjects;
 	}
 	

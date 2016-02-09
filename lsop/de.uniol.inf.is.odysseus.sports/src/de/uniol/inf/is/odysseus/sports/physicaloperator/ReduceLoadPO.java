@@ -54,8 +54,8 @@ public class ReduceLoadPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	/**
 	 * HashMaps for Grouped Sampling.
 	 */
-	private Map<Long, Integer> currentGroups = new HashMap<>();
-	private Map<Long, Long> timeIntervalGroups = new HashMap<>();
+	private Map<Object, Integer> currentGroups = new HashMap<>();
+	private Map<Object, Long> timeIntervalGroups = new HashMap<>();
 	
 	/**
 	 * Grouping Processor
@@ -167,7 +167,7 @@ public class ReduceLoadPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	 * @return Element 
 	 */
 	private int getGroupElementValue(T object) {
-		long groupID = groupProcessor.getGroupID(object);
+		Object groupID = groupProcessor.getGroupID(object);
 		
 		if(!currentGroups.containsKey(groupID)) {
 			currentGroups.put(groupID, 0);
@@ -181,7 +181,7 @@ public class ReduceLoadPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	 * @return TimeValue as Long
 	 */
 	private long getGroupTimeValue(T object) {
-		long groupID = groupProcessor.getGroupID(object);
+		Object groupID = groupProcessor.getGroupID(object);
 		if(!timeIntervalGroups.containsKey(groupID)) {
 			timeIntervalGroups.put(groupID, 0L);
 		}
@@ -194,7 +194,7 @@ public class ReduceLoadPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	 * @param value
 	 */
 	private void putGroupTimeValue(T object, long value) {
-		long groupID = groupProcessor.getGroupID(object);
+		Object groupID = groupProcessor.getGroupID(object);
 		timeIntervalGroups.put(groupID,value);
 	}
 	
@@ -204,7 +204,7 @@ public class ReduceLoadPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	 * @param value
 	 */
 	private void putGroupElementValue(T object, int value) {
-		long groupID = groupProcessor.getGroupID(object);
+		Object groupID = groupProcessor.getGroupID(object);
 		currentGroups.put(groupID,value);
 	}
 	

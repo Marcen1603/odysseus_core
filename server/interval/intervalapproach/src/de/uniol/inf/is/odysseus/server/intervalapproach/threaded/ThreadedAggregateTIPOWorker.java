@@ -46,9 +46,9 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 	private AggregateTIPO<Q, R, W> tipo;
 	// queue for elements, needed for decoupling
-	private ArrayBlockingQueue<Pair<Long, R>> queue;
+	private ArrayBlockingQueue<Pair<Object, R>> queue;
 	// queue for last elements after done or close is called
-	private LinkedList<Pair<Long, R>> lastElementsQueue;
+	private LinkedList<Pair<Object, R>> lastElementsQueue;
 
 	// flags if the tipo is done or closed
 	private boolean tipoIsDone = false;
@@ -56,12 +56,12 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 	// every worker need own groups and an own groupProcessor (no
 	// synchronization needed)
-	private Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
+	private Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess = new ConcurrentHashMap<>();
 	private IGroupProcessor<R, W> g = null;
 
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
 			AggregateTIPO<Q, R, W> threadedAggregateTIPO,
-			int threadNumber, ArrayBlockingQueue<Pair<Long, R>> queue) {
+			int threadNumber, ArrayBlockingQueue<Pair<Object, R>> queue) {
 		super(threadGroup, "Threaded aggregate worker thread " + threadNumber);
 		super.setDaemon(true);
 		this.threadNumber = threadNumber;
@@ -77,7 +77,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 		// process every element
 		while (!Thread.currentThread().isInterrupted()) {
-			Pair<Long, R> pair = null;
+			Pair<Object, R> pair = null;
 
 			// get values from queue
 			try {
@@ -92,9 +92,9 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 		// draining the buffer is only needed if elements exists
 		if (!queue.isEmpty()) {
-			lastElementsQueue = new LinkedList<Pair<Long, R>>(queue);
+			lastElementsQueue = new LinkedList<Pair<Object, R>>(queue);
 			queue.clear();
-			for (Pair<Long, R> pair : lastElementsQueue) {
+			for (Pair<Object, R> pair : lastElementsQueue) {
 				processElement(pair);
 			}
 		}
@@ -110,9 +110,9 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 		}
 	}
 
-	private void processElement(Pair<Long, R> pair) {
+	private void processElement(Pair<Object, R> pair) {
 		R object = pair.getE2();
-		Long groupId = pair.getE1();
+		Object groupId = pair.getE1();
 
 		if (groupId != null && object != null) {
 			// the grouping processor needs to know this object and group
@@ -162,7 +162,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	 * 
 	 * @return
 	 */
-	public Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroupsToProcess() {
+	public Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroupsToProcess() {
 		return groupsToProcess;
 	}
 }

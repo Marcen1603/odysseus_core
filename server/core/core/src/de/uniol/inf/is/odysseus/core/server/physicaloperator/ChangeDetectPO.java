@@ -44,7 +44,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 
 	static final Logger logger = LoggerFactory.getLogger(ChangeDetectPO.class);
 
-	private Map<Long, R> lastElements = new HashMap<>();
+	private Map<Object, R> lastElements = new HashMap<>();
 
 	protected IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	protected boolean deliverFirstElement = false;
@@ -84,7 +84,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		// logger.debug("Process next: "+object);
 		R newLastElement = null;
 		R lastElem = null;
-		Long groupID = null;
+		Object groupID = null;
 		// Optimization: Use HashMap only if grouping is used
 		if (groupProcessor != null) {
 			groupID = groupProcessor.getGroupID(object);
@@ -122,7 +122,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	@Override
 	protected void process_done() {
 		if (sendLastOfSameObjects){
-			for (Entry<Long, R> e: lastElements.entrySet()){
+			for (Entry<Object, R> e: lastElements.entrySet()){
 				transferInternal(e.getValue());
 			}
 		}

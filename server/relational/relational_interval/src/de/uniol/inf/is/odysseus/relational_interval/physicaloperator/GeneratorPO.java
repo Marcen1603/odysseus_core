@@ -33,8 +33,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
  */
 public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorPO.class);
-    private final Map<Long, LinkedList<Tuple<M>>> leftGroupsLastObjects = new HashMap<>();
-    private final Map<Long, LinkedList<Tuple<M>>> rightGroupsLastObjects = new HashMap<>();
+    private final Map<Object, LinkedList<Tuple<M>>> leftGroupsLastObjects = new HashMap<>();
+    private final Map<Object, LinkedList<Tuple<M>>> rightGroupsLastObjects = new HashMap<>();
     private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor;
     private final ITransferArea<Tuple<M>, Tuple<M>> transfer = new TITransferArea<>();
     private final boolean multi;
@@ -139,7 +139,7 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
     @Override
     protected void process_next(final Tuple<M> object, final int port) {
         Objects.requireNonNull(this.groupProcessor);
-        final Long groupId = this.groupProcessor.getGroupID(object);
+        final Object groupId = this.groupProcessor.getGroupID(object);
 
         // Left stream is the stream with missing elements
         if (this.predicate.evaluate(object)) {

@@ -17,7 +17,7 @@ public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterva
 	public static final int DATA_OUT = 0;
 	public static final int LEARN_OUT = 1;
 
-	private Map<Long, DeviationInformation> deviationInfos;
+	private Map<Object, DeviationInformation> deviationInfos;
 
 	private int learnedSequence;
 	private long lastSequenceCounter;
@@ -26,14 +26,14 @@ public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterva
 	public DeviationSequenceLearnPO(DeviationSequenceLearnAO ao,
 			IGroupProcessor<Tuple<ITimeInterval>, Tuple<ITimeInterval>> groupProcessor) {
 		super(TrainingMode.ONLINE, "", groupProcessor);
-		this.deviationInfos = new HashMap<Long, DeviationInformation>();
+		this.deviationInfos = new HashMap<>();
 		this.sequencesToLearn = ao.getCurvesToLearn();
 	}
 
 	@Override
 	protected void process_next(Tuple<ITimeInterval> tuple, int port) {
 		// Get the counter from the curveCounter before this operator
-		long sequenceTupleCounter = this.groupProcessor.getGroupID(tuple);
+		Long sequenceTupleCounter = this.groupProcessor.getAscendingGroupID(tuple);
 
 		if (sequenceTupleCounter < lastSequenceCounter
 				&& (learnedSequence <= sequencesToLearn || sequencesToLearn == 0)) {

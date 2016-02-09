@@ -19,22 +19,22 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
  */
 public class AbstractRelationalNumericWindowChangeDetectPO extends AbstractRelationalNumericChangeDetectPO {
 
-	protected Map<Long, List<Tuple<?>>> windows;
+	protected Map<Object, List<Tuple<?>>> windows;
 	// The Integer is for the attributes to compare
-	protected Map<Long, Map<Integer, Tuple<?>>> minValuesMap;
-	protected Map<Long, Map<Integer, Tuple<?>>> maxValuesMap;
+	protected Map<Object, Map<Integer, Tuple<?>>> minValuesMap;
+	protected Map<Object, Map<Integer, Tuple<?>>> maxValuesMap;
 
 	public AbstractRelationalNumericWindowChangeDetectPO(int[] comparePositions, double tolerance) {
 		super(comparePositions, tolerance);
-		this.windows = new HashMap<Long, List<Tuple<?>>>();
-		this.minValuesMap = new HashMap<Long, Map<Integer, Tuple<?>>>();
-		this.maxValuesMap = new HashMap<Long, Map<Integer, Tuple<?>>>();
+		this.windows = new HashMap<>();
+		this.minValuesMap = new HashMap<>();
+		this.maxValuesMap = new HashMap<>();
 	}
 
 	@Override
 	protected void process_next(Tuple<?> tuple, int port) {
 		List<Tuple<?>> window = null;
-		Long groupID = null;
+		Object groupID = null;
 		if (groupProcessor != null) {
 			groupID = groupProcessor.getGroupID(tuple);
 		} else {
@@ -176,7 +176,7 @@ public class AbstractRelationalNumericWindowChangeDetectPO extends AbstractRelat
 	 * @param start
 	 *            Start timestamp from the newest tuple
 	 */
-	private void removeOldValues(List<Tuple<?>> tuples, PointInTime start, Long gId) {
+	private void removeOldValues(List<Tuple<?>> tuples, PointInTime start, Object gId) {
 
 		Map<Integer, Tuple<?>> minValues = this.minValuesMap.get(gId);
 		Map<Integer, Tuple<?>> maxValues = this.maxValuesMap.get(gId);

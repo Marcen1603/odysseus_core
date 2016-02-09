@@ -90,12 +90,12 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	final private int[] uniqueAttributePos;
 
 	protected final int k;
-	final private Map<Long, TopKDataStructure<T,M>> topKMap = new HashMap<Long, TopKDataStructure<T,M>>();
+	final private Map<Object, TopKDataStructure<T,M>> topKMap = new HashMap<>();
 	final Comparator<SerializablePair<Double, T>> comparator;
 	final private IGroupProcessor<T, T> groupProcessor;
 	final boolean addScore;
 	
-	private Map<Long, LinkedList<T>> lastResultMap = new HashMap<>();
+	private Map<Object, LinkedList<T>> lastResultMap = new HashMap<>();
 	private long elementsRead;
 
 	private boolean suppressDuplicates;
@@ -181,7 +181,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		}
 		
 		elementsRead++;
-		Long gId = groupProcessor.getGroupID(object);
+		Object gId = groupProcessor.getGroupID(object);
 
 		
 		TopKDataStructure<T,M> topK = topKMap.get(gId);
@@ -225,7 +225,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		if (triggerOnlyByPunctuation && punctuation instanceof TuplePunctuation) {
 			@SuppressWarnings("unchecked")
 			T object = ((TuplePunctuation<T, M>) punctuation).getTuple();
-			Long gId = groupProcessor.getGroupID(object);
+			Object gId = groupProcessor.getGroupID(object);
 			TopKDataStructure<T,M> topK = topKMap.get(gId);
 			if (topK != null) {
 				produceResult(object, topK, gId);
@@ -265,7 +265,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void produceResult(T object,
-			TopKDataStructure<T,M> topK, Long groupID) {
+			TopKDataStructure<T,M> topK, Object groupID) {
 		// Produce result
 		T groupingPart = groupProcessor.getGroupingPart(object);
 		final T result;
@@ -307,7 +307,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 
 	}
 
-	private boolean compareWithLastResult(List<T> resultList, Long groupID) {
+	private boolean compareWithLastResult(List<T> resultList, Object groupID) {
 		LinkedList<T> lastResult = lastResultMap.get(groupID);
 		if (lastResult == null) {
 			return false;
@@ -370,7 +370,7 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		kv.put("No Of Groups", topKMap.size() + "");
 		// Show at least 10 groups
 		int i = 10;
-		for (Entry<Long, TopKDataStructure<T,M>> e : topKMap
+		for (Entry<Object, TopKDataStructure<T,M>> e : topKMap
 				.entrySet()) {
 			kv.put("Top-k-Map size group " + e.getKey(), e.getValue().size()
 					+ "");

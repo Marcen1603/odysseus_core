@@ -500,22 +500,33 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 			this.getElements().add(element);
 		} else {
 			// find the position where the element should be inserted
-			int pos = Collections.binarySearch(this.getElements(), element, this.comparator);
-			if (pos >= 0) {
-				// there is one ore more elements with the same ordering key
-
-				// find the position of the last element with the same ordering
-				// key
-				while (this.comparator.compare(this.getElements().get(pos), element) == 0) {
-					++pos;
-				}
-			} else {
-				pos = (-(pos) - 1);
-			}
+			int pos = findInsertionPoint(element);
 			hasEndTsOrder = isStillInEndTsOrderAfterInsert(element, pos);
 			setLatestTimeStamp(element);
 			this.getElements().add(pos, element);
 		}
+	}
+
+	private int findInsertionPoint(T element) {
+		int pos = Collections.binarySearch(this.getElements(), element, this.comparator);
+		pos = subfind(element, pos);
+
+		return pos;
+	}
+
+	private int subfind(T element, int pos) {
+		if (pos >= 0) {
+			// there is one ore more elements with the same ordering key
+
+			// find the position of the last element with the same ordering
+			// key
+			while (this.comparator.compare(this.getElements().get(pos), element) == 0) {
+				++pos;
+			}
+		} else {
+			pos = (-(pos) - 1);
+		}
+		return pos;
 	}
 	
 	/**

@@ -39,8 +39,8 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private double manualMean;
 	private long tuplesToLearn;
 	protected IGroupProcessor<T, T> groupProcessor;
-	private Map<Long, DeviationInformation> deviationInfo;
-	private Map<Long, List<T>> tupleMap;
+	private Map<Object, DeviationInformation> deviationInfo;
+	private Map<Object, List<T>> tupleMap;
 	private boolean exactCalculation;
 	private TrainingMode trainingMode;
 
@@ -74,8 +74,8 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	}
 
 	private void init() {
-		this.deviationInfo = new HashMap<Long, DeviationInformation>();
-		this.tupleMap = new HashMap<Long, List<T>>();
+		this.deviationInfo = new HashMap<>();
+		this.tupleMap = new HashMap<>();
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 
 		// Get the group for this tuple (e.g., the incoming values have
 		// different contexts)
-		Long gId = groupProcessor.getGroupID(tuple);
+		Object gId = groupProcessor.getGroupID(tuple);
 		DeviationInformation info = this.deviationInfo.get(gId);
 
 		if (info == null) {
@@ -138,7 +138,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 * @param gId
 	 * @return
 	 */
-	private DeviationInformation updateInfo(T infoTuple, DeviationInformation info, Long gId) {
+	private DeviationInformation updateInfo(T infoTuple, DeviationInformation info, Object gId) {
 		// Only use the data if it's from this operator
 		String tupleBackupId = getValue(infoTuple, BACKUP_PORT, "backupId", String.class);
 		if (tupleBackupId.equals(this.uniqueId)) {
@@ -158,7 +158,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		return info;
 	}
 
-	private void processStandardTuple(T tuple, DeviationInformation info, Long gId) {
+	private void processStandardTuple(T tuple, DeviationInformation info, Object gId) {
 
 		double sensorValue = getValue(tuple);
 
@@ -210,7 +210,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 * @param exactCalculation
 	 *            Your choice if you want to use exact calculation
 	 */
-	private DeviationInformation processTupleWithWindow(Long gId, T tuple, DeviationInformation info,
+	private DeviationInformation processTupleWithWindow(Object gId, T tuple, DeviationInformation info,
 			boolean exactCalculation) {
 		List<T> tuples = tupleMap.get(gId);
 		if (tuples == null) {

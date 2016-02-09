@@ -27,7 +27,7 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 
 	final protected ITransferArea<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> transfer = new TITransferArea<>();
 
-	private Map<Long, Tuple<? extends ITimeInterval>> lastCreatedElement = new HashMap<>();
+	private Map<Object, Tuple<? extends ITimeInterval>> lastCreatedElement = new HashMap<>();
 
 	protected List<Double> percentiles;
 
@@ -70,10 +70,10 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 		// transfer.newElement(object, port);
 
 		if (appendGlobalMedian) {
-			process_next(object, port, -1L);
+			process_next(object, port, null);
 		}
 
-		Long groupID = groupProcessor.getGroupID(object);
+		Object groupID = groupProcessor.getGroupID(object);
 		process_next(object, port, groupID);
 	}
 	
@@ -83,12 +83,12 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	}
 
 	abstract protected void process_next(Tuple<? extends ITimeInterval> object,
-			int port, Long groupID);
+			int port, Object groupID);
 
-	public void createOutput(Long groupID, Tuple<? extends ITimeInterval> gr) {
+	public void createOutput(Object groupID, Tuple<? extends ITimeInterval> gr) {
 
 		// just remember global median
-		if (groupID == -1) {
+		if (groupID == null) {
 			globalMedian = gr;
 		} else {
 			Tuple<? extends ITimeInterval> last_gr = lastCreatedElement

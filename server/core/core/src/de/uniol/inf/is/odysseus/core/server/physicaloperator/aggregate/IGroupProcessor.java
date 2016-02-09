@@ -39,11 +39,19 @@ public interface IGroupProcessor<R, W extends IClone> extends IClone{
 	void init();
 	
 	/**
-	 * Determine a group id for the given input
+	 * Determine a group object for the given input
 	 * @param elem
 	 * @return
 	 */
-	Long getGroupID(R elem);
+	Object getGroupID(R elem);
+
+	/**
+	 * Determine an numeric group id for the given input
+	 * @param elem
+	 * @return
+	 */
+	Long getAscendingGroupID(R elem);
+
 	
 	/**
 	 * Allow to set for a spefic elemtent the group id
@@ -51,7 +59,7 @@ public interface IGroupProcessor<R, W extends IClone> extends IClone{
 	 * @param id
 	 * @param elem
 	 */
-	void setGroup(long id, R elem);
+	void setGroup(Object id, R elem);
 	
 	/**
 	 * Especially for aggregation, this method creates an output element (with real values)
@@ -59,7 +67,7 @@ public interface IGroupProcessor<R, W extends IClone> extends IClone{
 	 * @param r the aggregations for this group
 	 * @return
 	 */
-	W createOutputElement(Long groupID,
+	W createOutputElement(Object groupID,
 			PairMap<SDFSchema, AggregateFunction, W, ?> r);
 
 	/**
@@ -69,7 +77,7 @@ public interface IGroupProcessor<R, W extends IClone> extends IClone{
 	 * @return
 	 */
 
-	W createOutputElement2(Long groupID,
+	W createOutputElement2(Object groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, ?> e);
 	
 

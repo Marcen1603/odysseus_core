@@ -33,7 +33,7 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 
 	private ITransferArea<W,W> transferArea;
 	
-	private Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
+	private Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups;
 	private Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> init = new HashMap<>();
 			
 	public Map<FESortedClonablePair<SDFSchema, AggregateFunction>, IAggregateFunction<R,W>> getAggregateFunctions() {
@@ -52,11 +52,11 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 		this.transferArea = transferArea;
 	}
 
-	public Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroups() {
+	public Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Map<Long, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
+	public void setGroups(Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
 		this.groups = groups;
 	}
 

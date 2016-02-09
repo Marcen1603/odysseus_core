@@ -29,9 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
-import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO2;
 import de.uniol.inf.is.odysseus.server.intervalapproach.threaded.ThreadedAggregateTIPO;
-import de.uniol.inf.is.odysseus.server.intervalapproach.threaded.ThreadedAggregateTIPO2;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class TAggregationTIPORule extends AbstractIntervalTransformationRule<AggregateAO> {
@@ -89,31 +87,18 @@ public class TAggregationTIPORule extends AbstractIntervalTransformationRule<Agg
 		// if we could use an threaded operator, create it, but only if degree
 		// and buffersize are valid
 		if (useThreadedOperator && degree > 1 && maxBuffersize > 1) {
-			if (aggregateAO.isLatencyOptimized()) {
-				po = new ThreadedAggregateTIPO2<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
-						aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0),
-						aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations(),
-						aggregateAO.isFastGrouping(), mf, degree, maxBuffersize, useRoundRobinAllocation);
-			} else {
 				po = new ThreadedAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 						aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0),
 						aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations(),
 						aggregateAO.isFastGrouping(), mf, degree, maxBuffersize, useRoundRobinAllocation);
 
-			}
 		} else {
 			// otherwise create normal aggregate (non threaded)
-			if (aggregateAO.isLatencyOptimized()) {
-				po = new AggregateTIPO2<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
-						aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0),
-						aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations(),
-						aggregateAO.isFastGrouping(), mf);
-			} else {
 				po = new AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 						aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0),
 						aggregateAO.getGroupingAttributes(), aggregateAO.getAggregations(),
 						aggregateAO.isFastGrouping(), mf);
-			}
+			
 		}
 		if (po != null) {
 			po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());

@@ -57,7 +57,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 	private final List<SDFAttribute> groupingAttributes;
 	private final boolean fastGrouping;
 
-	private final Map<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> groups = new HashMap<>();
+	private final Map<Object, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> groups = new HashMap<>();
 
 	/**
 	 * When combining different elements the meta data must be merged. Because
@@ -312,7 +312,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 	@Override
 	protected void process_next(R object, int port) {
 		IGroupProcessor<R, W> g = getGroupProcessor();
-		Long groupID;
+		Object groupID;
 		// Determine group ID from input object
 		groupID = g.getGroupID(object);
 		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M> paList = groups.get(groupID);
@@ -338,7 +338,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 
 	private void createOutput() {
 		IGroupProcessor<R, W> g = getGroupProcessor();
-		for (Entry<Long, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> entry : groups.entrySet()) {
+		for (Entry<Object, PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, M>> entry : groups.entrySet()) {
 			PairMap<SDFSchema, AggregateFunction, W, M> result = calcEval(entry.getValue(), false);
 			W out = g.createOutputElement(entry.getKey(), result);
 			M metadata = entry.getValue().getMetadata();

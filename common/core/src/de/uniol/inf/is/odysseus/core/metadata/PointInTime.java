@@ -181,12 +181,8 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	}
 
 	public static boolean equals(PointInTime left, PointInTime right) {
-		// Entweder gleich in den Werten oder unendlich
 		if (left.isInfinite()) {
-			if (right.isInfinite()) {
-				return true;
-			}
-			return false;
+			return right.isInfinite();
 		}
 		if (right.isInfinite()) {
 			return false;
@@ -228,9 +224,9 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 
 	@Override
 	public int compareTo(PointInTime toCompare) {
-		int ret = 1;
-		if (equals(toCompare)) {
-			ret = 0;
+		int ret = 0;
+		if (before(toCompare, this)) {
+			ret = 1;
 		} else if (before(this, toCompare)) {
 			ret = -1;
 		}

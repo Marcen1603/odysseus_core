@@ -12,7 +12,7 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 		extends
 		AbstractFastMedianPO<T> {
 
-	Map<Long, Histogram<T, Tuple<? extends ITimeInterval>>> elements = new HashMap<>();
+	Map<Object, Histogram<T, Tuple<? extends ITimeInterval>>> elements = new HashMap<>();
 	double roundfactor = 100;
 
 	public RelationalFastMedianHistogramPO(int medianAttrPos, boolean numericalMedian, long roundfactor) {
@@ -28,7 +28,7 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(Tuple<? extends ITimeInterval> object, int port, Long groupID) {
+	protected void process_next(Tuple<? extends ITimeInterval> object, int port, Object groupID) {
 		
 		T medianAttribute = (T) object.getAttribute(medianAttrPos);
 
@@ -48,7 +48,7 @@ public class RelationalFastMedianHistogramPO<T extends Comparable<T>>
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Histogram<T, Tuple<? extends ITimeInterval>> getOrCreategroupHistogram(
-			Long groupID, T median) {
+			Object groupID, T median) {
 		Histogram<T, Tuple<? extends ITimeInterval>> groupHistogram = elements
 				.get(groupID);
 		if (groupHistogram == null) {

@@ -34,17 +34,17 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private double interval;
 	private IGroupProcessor<T, T> groupProcessor;
 	// groupId, PointInTime from when it's active and information
-	private Map<Long, Map<PointInTime, DeviationInformation>> deviationInfo;
+	private Map<Object, Map<PointInTime, DeviationInformation>> deviationInfo;
 	// For window checking
-	private Map<Long, List<T>> tupleMap;
+	private Map<Object, List<T>> tupleMap;
 	// For tuples where the info is too old
 	private List<T> futureTupleList;
 	private boolean exactCalculation;
 
 	private boolean windowChecking;
-	private Map<Long, Boolean> lastWindowWithAnomaly;
+	private Map<Object, Boolean> lastWindowWithAnomaly;
 	private boolean onlyOnStart;
-	private Map<Long, Boolean> sendEnd;
+	private Map<Object, Boolean> sendEnd;
 
 	// For groups that did not occur before
 	private boolean deliverUnlearnedTuples;
@@ -52,19 +52,19 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	// Parameters to avoid early false-positives
 	private int tuplesToWait;
 	private double maxRelativeChange;
-	private Map<Long, Boolean> startToDeliver;
-	private Map<Long, Boolean> hadLittleChange;
+	private Map<Object, Boolean> startToDeliver;
+	private Map<Object, Boolean> hadLittleChange;
 
 	// If true, sends a tuple with anomaly score = 0, if the last window had an
 	// anomaly, but this one didn't
 	private boolean reportEndOfAnomalyWindows;
-	private Map<Long, T> lastAnomalies;
+	private Map<Object, T> lastAnomalies;
 
 	private String standardDeviationAttributeName = "standardDeviation";
 	private String meanAttributeName = "mean";
 
 	// timeSensitive for punctuations (for interval analysis)
-	private Map<Long, T> lastDataTuples;
+	private Map<Object, T> lastDataTuples;
 	private boolean isTimeSensitive;
 
 	// The last time we send a tuples based on a punctuation
@@ -76,27 +76,27 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		this.interval = ao.getInterval();
 		this.groupProcessor = groupProcessor;
 		this.valueAttributeName = ao.getNameOfValue();
-		this.deviationInfo = new HashMap<Long, Map<PointInTime, DeviationInformation>>();
+		this.deviationInfo = new HashMap<>();
 
 		this.windowChecking = ao.isWindowChecking();
-		this.tupleMap = new HashMap<Long, List<T>>();
+		this.tupleMap = new HashMap<>();
 
-		this.lastWindowWithAnomaly = new HashMap<Long, Boolean>();
+		this.lastWindowWithAnomaly = new HashMap<>();
 
 		this.reportEndOfAnomalyWindows = ao.isReportEndOfAnomalyWindows();
-		this.lastAnomalies = new HashMap<Long, T>();
+		this.lastAnomalies = new HashMap<Object, T>();
 		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
 
 		this.tuplesToWait = ao.getTuplesToWait();
 		this.maxRelativeChange = ao.getMaxRelativeChange();
-		this.startToDeliver = new HashMap<Long, Boolean>();
-		this.hadLittleChange = new HashMap<Long, Boolean>();
+		this.startToDeliver = new HashMap<>();
+		this.hadLittleChange = new HashMap<>();
 
 		this.isTimeSensitive = ao.isTimeSensitive();
-		this.lastDataTuples = new HashMap<Long, T>();
+		this.lastDataTuples = new HashMap<>();
 
 		this.onlyOnStart = ao.isOnlyOnChange();
-		this.sendEnd = new HashMap<Long, Boolean>();
+		this.sendEnd = new HashMap<>();
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		// Get the group for this tuple (e.g., the incoming values have
 		// different contexts)
-		Long gId = groupProcessor.getGroupID(tuple);
+		Object gId = groupProcessor.getGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
 
 		if (infoMap == null) {
@@ -214,7 +214,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * @return
 	 */
 	private DeviationInformation getInfoForTuple(T tuple) {
-		Long gId = groupProcessor.getGroupID(tuple);
+		Object gId = groupProcessor.getGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
 		if (tuple == null) {
 			return null;
@@ -263,7 +263,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * @return
 	 */
 	private DeviationInformation getNewestInfoForTuple(T tuple) {
-		Long gId = groupProcessor.getGroupID(tuple);
+		Object gId = groupProcessor.getGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
 		PointInTime tupleStartTime = tuple.getMetadata().getStart();
 
@@ -291,7 +291,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 *            Start timestamp from the newest tuple
 	 */
 	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info, boolean exactCalculation,
-			Long gId) {
+			Object gId) {
 		boolean skippedSomething = false;
 		boolean needToSendEndOfAnomalies = this.lastWindowWithAnomaly.get(gId);
 
@@ -357,7 +357,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 *            The deviationInformation for the group
 	 * 
 	 */
-	private void processTuple(long gId, double sensorValue, T tuple, DeviationInformation info) {
+	private void processTuple(Object gId, double sensorValue, T tuple, DeviationInformation info) {
 
 		double mean = info.mean;
 		double standardDeviation = info.standardDeviation;
@@ -402,7 +402,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	private void sendAnomaly(T tuple, double punctuationDuration, double anomalyScore, double mean,
 			double standardDeviation) {
-		Long gId = this.groupProcessor.getGroupID(tuple);
+		Object gId = this.groupProcessor.getGroupID(tuple);
 		if (!this.onlyOnStart || (this.onlyOnStart && this.sendEnd.get(gId))) {
 			this.sendEnd.put(gId, false);
 			transferTuple(tuple, punctuationDuration, anomalyScore, mean, standardDeviation);
@@ -421,7 +421,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		Iterator<T> iter = tuples.iterator();
 		while (iter.hasNext()) {
 			T next = iter.next();
-			Long gId = this.groupProcessor.getGroupID(next);
+			Object gId = this.groupProcessor.getGroupID(next);
 			T lastAnomaly = this.lastAnomalies.get(gId);
 			if (lastAnomaly != null && next.getMetadata().getStart().before(lastAnomaly.getMetadata().getStart())) {
 				iter.remove();
@@ -544,7 +544,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
 		if (this.isTimeSensitive) {
-			for (Long groupId : deviationInfo.keySet()) {
+			for (Object groupId : deviationInfo.keySet()) {
 				T lastDataTuple = this.lastDataTuples.get(groupId);
 				DeviationInformation info = getInfoForTuple(lastDataTuple);
 				if (this.isTimeSensitive && info != null && lastDataTuple != null

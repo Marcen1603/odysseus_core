@@ -40,7 +40,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	protected ITransferArea<T, T> transferArea = new TITransferArea<>();
 
-	private Map<Long, List<T>> buffers = new HashMap<>();
+	private Map<Object, List<T>> buffers = new HashMap<>();
 
 	private PointInTime lastTs = null;
 
@@ -75,7 +75,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	protected void process_next(T object, int port) {
 		synchronized (buffers) {
 			lastTs = object.getMetadata().getStart();
-			long bufferId = groupProcessor.getGroupID(object);
+			Object bufferId = groupProcessor.getGroupID(object);
 			List<T> buffer = buffers.get(bufferId);
 			if (buffer == null) {
 				buffer = new LinkedList<T>();
@@ -94,7 +94,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		// Determine min element in transferBuffer and send hearbeat
 	}
 
-	abstract protected void process(T object, List<T> buffer, Long bufferId,
+	abstract protected void process(T object, List<T> buffer, Object bufferId,
 			PointInTime ts);
 
 	protected PointInTime getMinTs() {

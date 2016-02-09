@@ -277,17 +277,6 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		return dumpAtValueCount;
 	}
 
-	
-	
-	public boolean isLatencyOptimized() {
-		return latencyOptimized;
-	}
-
-	@Parameter(type = BooleanParameter.class, optional = true, doc = "if set to true (default is false) the output elements are not annotated with intervals but only with timestamps")
-	public void setLatencyOptimized(boolean latencyOptimized) {
-		this.latencyOptimized = latencyOptimized;
-	}
-
 	@Parameter(type = BooleanParameter.class, optional = true)
 	public void setOutputPA(boolean outputPA) {
 		this.outputPA = outputPA;
