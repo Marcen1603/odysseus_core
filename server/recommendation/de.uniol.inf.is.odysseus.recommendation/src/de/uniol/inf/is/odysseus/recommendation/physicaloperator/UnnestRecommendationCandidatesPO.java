@@ -1,16 +1,13 @@
 package de.uniol.inf.is.odysseus.recommendation.physicaloperator;
 
-import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.TuplePunctuation;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.recommendation.physicaloperator.RecommendationCandidatesPO.RecommCandTupleSchema;
 
 public class UnnestRecommendationCandidatesPO<M extends ITimeInterval, U, I> extends AbstractPipe<Tuple<M>, Tuple<M>>{
 	private int attributePos;
