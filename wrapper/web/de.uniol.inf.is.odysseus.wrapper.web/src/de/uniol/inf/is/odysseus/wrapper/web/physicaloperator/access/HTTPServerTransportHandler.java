@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -32,9 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
@@ -68,7 +71,9 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 	private String immediateResponse = "ok";
 	private String contentType = "text/plain;charset=utf-8";
 
-	protected static Map<String, Queue<AsyncContext>> responseQueues = Collections.synchronizedMap(new HashMap<>());
+	private final Queue<AsyncContext> myResponseQueue;
+
+	private static Map<String, Queue<AsyncContext>> responseQueues = new HashMap<>();
 
 	protected static synchronized Queue<AsyncContext> getResponseQueue(String key) {
 		Queue<AsyncContext> q = responseQueues.get(key);
@@ -84,6 +89,7 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 	*/
 	public HTTPServerTransportHandler() {
 		super();
+		myResponseQueue = null;
 	}
 
 	/**
@@ -92,6 +98,11 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 	public HTTPServerTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
+		if (immediateResponse == null || protocolHandler.getDirection() == ITransportDirection.OUT) {
+			myResponseQueue = getResponseQueue(queuekey);
+		} else {
+			myResponseQueue = null;
+		}
 	}
 
 	/**
@@ -145,8 +156,9 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 	 */
 	@Override
 	public void processOutOpen() throws IOException {
-		getResponseQueue(queuekey).clear();
-
+		if (myResponseQueue != null) {
+			myResponseQueue.clear();
+		}
 	}
 
 	/**
@@ -168,18 +180,18 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 	 */
 	@Override
 	public void processOutClose() throws IOException {
-			Queue<AsyncContext> queue = getResponseQueue(queuekey);
-			int i = queue.size();
+		synchronized (myResponseQueue) {
+			int i = myResponseQueue.size();
 			LOG.warn(getClass().getSimpleName() + ": " + i + "requests closed at process out close.");
-			while (!queue.isEmpty()) {
-				AsyncContext asyncContext = queue.poll();
+			while (!myResponseQueue.isEmpty()) {
+				AsyncContext asyncContext = myResponseQueue.poll();
 				try {
 					asyncContext.complete();
 				} catch (Exception e) {
 					LOG.warn("Exception at processOutClose: asyncContext.complete", e);
 				}
 			}
-		
+		}
 	}
 
 	public void setPath(String path) {
@@ -202,8 +214,11 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void send(byte[] message) throws IOException {
-		AsyncContext asyncContext = getResponseQueue(queuekey).poll();
+	public void send(byte[] message) throws IOException {
+		if (myResponseQueue == null) {
+			throw new UnsupportedOperationException("no response queue");
+		}
+		AsyncContext asyncContext = myResponseQueue.poll();
 		if (asyncContext != null) {
 			try {
 				ServletResponse response = asyncContext.getResponse();
@@ -247,8 +262,8 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 		}
 
 		@Override
-		public synchronized void handle(String target, Request baseRequest, HttpServletRequest request,
-				HttpServletResponse response) throws IOException, ServletException {
+		public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+				throws IOException, ServletException {
 			if ((target != null) && (target.equals(getPath()))) {
 				if (immediateResponse != null) {
 					response.setContentType(contentType);
@@ -258,15 +273,17 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 					fireProcess(inputStream);
 				} else {
 					AsyncContext asyncContext = request.startAsync();
-					
+
 					ServletInputStream inputStream = asyncContext.getRequest().getInputStream();
-					String msg = IOUtils.toString(inputStream);
-					if(msg != null && !msg.trim().isEmpty()) {
-						HTTPServerTransportHandler.getResponseQueue(queuekey).add(asyncContext);
-						// fireProcess(inputStream);
-						fireProcess(new String[] { msg });
-					} else {
-						LOG.warn("Input data of HTTP request is empty. (" + hostname + ":" + port + path + ")");
+					synchronized (myResponseQueue) {
+						String msg = IOUtils.toString(inputStream);
+						if (msg != null && !msg.trim().isEmpty()) {
+							HTTPServerTransportHandler.getResponseQueue(queuekey).add(asyncContext);
+							// fireProcess(inputStream);
+							fireProcess(new String[] { msg });
+						} else {
+							LOG.warn("Input data of HTTP request is empty. (" + hostname + ":" + port + path + ")");
+						}
 					}
 				}
 
