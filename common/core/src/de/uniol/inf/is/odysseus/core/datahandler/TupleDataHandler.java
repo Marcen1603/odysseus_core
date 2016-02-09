@@ -168,8 +168,10 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 					tuple.setAttribute(i,
 							this.dataHandlers[i].readData(input.get(i)));
 				} else {
+//					tuple.setAttribute(i, ((ListDataHandler) dataHandlers[i])
+//							.readData(input, i, input.size()));
 					tuple.setAttribute(i, ((ListDataHandler) dataHandlers[i])
-							.readData(input, i, input.size()));
+							.readData(input.get(i)));
 				}
 			} catch (Exception e) {
 				if (dataHandlers.length > i) {

@@ -71,6 +71,9 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	
 	@Override
 	public List<?> readData(String string) {
+		if(string == null) {
+			return null;
+		}
 		ArrayList<Object> values = new ArrayList<Object>();
 		String[] lines = string.split("\n");
 		int size = lines.length;

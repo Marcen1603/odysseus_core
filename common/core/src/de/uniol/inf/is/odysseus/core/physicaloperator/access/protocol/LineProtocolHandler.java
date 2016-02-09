@@ -396,6 +396,29 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			INFOSERVICE.warning("Cannot read line " + token, e);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler#process(java.lang.String[])
+	 */
+	@Override
+	public void process(String[] message) {
+		boolean firstLineSkippedLocal = false;
+		int i = 0;
+		String line;
+		try {
+			while (i < message.length) {
+				line = message[i++];
+				if (!firstLineSkippedLocal && !readFirstLine) {
+					firstLineSkippedLocal = true;
+					continue;
+				} else {
+					process(line);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		};
+	}
 
 	@Override
 	public void process(InputStream message) {

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
@@ -73,12 +74,24 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 			if (input.getAttributes().containsKey(attributeName)) {
 				Object attribute = input.getAttribute(attributeName);
 				if (attribute instanceof List) {
-					for (Object object : (List<Object>) attribute) {
-						// Add data values as single values. The data handler
-						// handles this as a list. It will create a list over a
-						// couple of entries in the list. Only works if the list
-						// is the last element!
-						dataValues.add(object.toString());
+					if(((List<?>) attribute).size() == 0) {
+						dataValues.add(null);
+					} else {
+						StringBuilder sb = new StringBuilder();
+						for(Iterator<Object> iter = ((List<Object>) attribute).iterator(); iter.hasNext(); ) {
+							sb.append(iter.next());
+							if(iter.hasNext()) {
+								sb.append("\n");
+							}
+						}
+						dataValues.add(sb.toString());
+//						for (Object object : (List<Object>) attribute) {
+							// Add data values as single values. The data handler
+							// handles this as a list. It will create a list over a
+							// couple of entries in the list. Only works if the list
+							// is the last element!
+//							dataValues.add(object.toString());
+//						}
 					}
 				} else {
 					dataValues.add(attribute.toString());

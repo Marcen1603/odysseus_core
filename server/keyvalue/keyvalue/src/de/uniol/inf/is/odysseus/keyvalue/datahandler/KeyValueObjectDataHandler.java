@@ -48,12 +48,14 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 				throw new Exception("empty JSON-String");
 			}
 			JsonNode rootNode = jsonMapper.reader().readTree(json);		
-			if(!rootNode.isObject()) {
-				//könnte das wirklich vorkommen?
-				rootNode = rootNode.get(0);
-			} 
 			Map<String, Object> map = new LinkedHashMap<String, Object>();
-			parse(rootNode, map, "");
+			if(rootNode.isArray()) {
+				for(int i = 0; i < rootNode.size(); ++i) {
+					parse(rootNode.get(i), map, "" + i);
+				}
+			} else {
+				parse(rootNode, map, "");
+			}
 			return new KeyValueObject<>(map);
 		} catch (Exception e) {
 			e.printStackTrace();
