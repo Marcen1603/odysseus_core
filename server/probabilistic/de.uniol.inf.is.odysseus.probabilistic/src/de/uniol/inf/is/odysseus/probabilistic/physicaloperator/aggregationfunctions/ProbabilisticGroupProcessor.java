@@ -46,7 +46,7 @@ public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends Relat
      * {@inheritDoc}
      */
     @Override
-    public Tuple<T> createOutputElement(final Long groupID, final PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
+    public Tuple<T> createOutputElement(final Object groupID, final PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
         final ProbabilisticTuple<T> returnTuple = new ProbabilisticTuple<T>(this.getOutputSchema().size(), 1, true);
         final MultivariateMixtureDistribution[] tmpDistributions = new MultivariateMixtureDistribution[this.getOutputSchema().size()];
         int distributionIndex = 0;
@@ -72,7 +72,7 @@ public class ProbabilisticGroupProcessor<T extends IMetaAttribute> extends Relat
     }
 
     @Override
-    public Tuple<T> createOutputElement2(final Long groupID, final PairMap<SDFSchema, AggregateFunction, IPartialAggregate<Tuple<T>>, ?> r) {
+    public Tuple<T> createOutputElement2(final Object groupID, final PairMap<SDFSchema, AggregateFunction, IPartialAggregate<Tuple<T>>, ?> r) {
         final ProbabilisticTuple<T> returnTuple = new ProbabilisticTuple<T>(this.getOutputSchema().size(), this.getOutputSchema().size(), true);
 
         for (final Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, IPartialAggregate<Tuple<T>>> e : r.entrySet()) {
