@@ -186,7 +186,7 @@ public final class ReplacementContainer {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "Key for replacement not be null or empty");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(value), "Value for replacement must not be null or empty");
 
-		putImpl(key, value);
+		putImpl(key.toUpperCase(), value);
 	}
 
 	private void removeImpl(String key) {
@@ -195,12 +195,12 @@ public final class ReplacementContainer {
 	}
 
 	private void putImpl(String key, String value) {
-		if( replacementProviders.containsKey(key)) {
+		if( replacementProviders.containsKey(key.toUpperCase())) {
 			INFO_SERVICE.warning("Replacement '" + key + "' was previously provided by replacementProvider-service and its now overwritten!");
 		}
 		
-		replacements.put(key, value);
-		context.putOrReplace(key, value);
+		replacements.put(key.toUpperCase(), value);
+		context.putOrReplace(key.toUpperCase(), value);
 	}
 
 	public static void addDefault(String key, String value) {
