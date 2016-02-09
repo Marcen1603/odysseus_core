@@ -52,15 +52,13 @@ abstract public class AbstractAggregateFunction<R, W> implements
 	@Override
 	final public IPartialAggregate<R> doInit(R in) {
 		IPartialAggregate<R> pa = init(in);
-		pa.setDirty(true);
 		return pa;
 	}
 	
 	@Override
 	final public  IPartialAggregate<R> doInit(IPartialAggregate<R> in) {
 		IPartialAggregate<R> pa = init(in);
-		pa.setDirty(true);
-		return init(in);
+		return pa;
 	}
 
 	abstract protected IPartialAggregate<R> init(R in);
@@ -78,14 +76,12 @@ abstract public class AbstractAggregateFunction<R, W> implements
 	@Override
 	final public IPartialAggregate<R> doMerge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
 		IPartialAggregate<R> pa = merge(p, toMerge, createNew);
-		pa.setDirty(true);
 		return pa;
 	}
 	
 	@Override
 	final public IPartialAggregate<R> doMerge(IPartialAggregate<R> p, IPartialAggregate<R> toMerge, boolean createNew) {
 		IPartialAggregate<R> pa = merge(p, toMerge, createNew);
-		pa.setDirty(true);
 		return pa;
 	}
 	

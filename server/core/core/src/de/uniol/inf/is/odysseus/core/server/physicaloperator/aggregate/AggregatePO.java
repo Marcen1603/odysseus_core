@@ -174,9 +174,6 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 			if (clearPartialAggregate) {
 				e.getValue().clear();
 			}
-			if (dirtyFlag != null) {
-				e.getValue().setDirty(dirtyFlag);
-			}
 		}
 		return ret;
 	}

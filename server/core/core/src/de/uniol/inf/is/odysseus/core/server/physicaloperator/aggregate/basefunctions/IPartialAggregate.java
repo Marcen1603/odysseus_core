@@ -27,9 +27,6 @@ public interface IPartialAggregate<T> extends IClone, Serializable{
 	 */
 	void clear();
 	
-	void setDirty(boolean dirty);
-	boolean isDirty();
-	
 	@Override
 	IPartialAggregate<T> clone();
 	
