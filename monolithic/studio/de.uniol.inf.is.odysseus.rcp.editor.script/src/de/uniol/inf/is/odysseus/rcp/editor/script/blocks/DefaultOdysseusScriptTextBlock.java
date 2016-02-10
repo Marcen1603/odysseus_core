@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -12,6 +11,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
@@ -25,15 +26,16 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptText
 	
 	private Text editingText;
 	
+	public DefaultOdysseusScriptTextBlock(String keyword, String text) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(keyword), "keyword must not be null or empty!");
+		
+		odysseusScriptKeyword = keyword;
+		odysseusScriptText = text;
+	}
+	
 	@Override
 	public Collection<String> getStartKeywords() {
 		return Lists.newArrayList();
-	}
-
-	@Override
-	public void init(String startKeyword, String odysseusScriptText, List<IVisualOdysseusScriptTextBlock> previousBlocks) throws VisualOdysseusScriptException {
-		this.odysseusScriptText = odysseusScriptText;
-		this.odysseusScriptKeyword = startKeyword;
 	}
 
 	@Override

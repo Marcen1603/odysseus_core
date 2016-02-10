@@ -1,18 +1,26 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRule;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptTextBlock;
+import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.DefaultOdysseusScriptTextBlock;
+import de.uniol.inf.is.odysseus.rcp.editor.script.rules.TransformRuleRegistry;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 public class VisualOdysseusScriptModel {
 
-	private List<IVisualOdysseusScriptTextBlock> textBlocks;
+	private final List<IVisualOdysseusScriptTextBlock> visualTextBlocks = Lists.newArrayList();
 	
 	public VisualOdysseusScriptModel() {
 		// nothing to do
@@ -21,11 +29,123 @@ public class VisualOdysseusScriptModel {
 	public void parse( List<String> odysseusScriptTextLines ) throws VisualOdysseusScriptException {
 		Preconditions.checkNotNull(odysseusScriptTextLines, "odysseusScriptTextLines must not be null!");
 		
+		List<OdysseusScriptBlock> scriptBlocks = determineOdysseusScriptBlocks(odysseusScriptTextLines);
+		List<OdysseusScriptBlock> scriptBlocksCopy = Lists.newArrayList(scriptBlocks);
+		Collection<IOdysseusScriptTransformRule> rules = TransformRuleRegistry.getInstance().getRules();
+
+		Map<OdysseusScriptBlock, IVisualOdysseusScriptTextBlock> transformResultMap = Maps.newHashMap();
+		while( !scriptBlocks.isEmpty() ) {
+			
+			// 1. determine rules which can be executed
+			// respecting to use rules which transforms script blocks beginning at the script
+			ImmutableList<OdysseusScriptBlock> immutableBlocks = ImmutableList.copyOf(scriptBlocks);
+			
+			int minIndex = -1;
+			int priority = -1;
+			IOdysseusScriptTransformRule selectedRule = null;
+			List<OdysseusScriptBlock> selectedBlocks = null;
+			for( IOdysseusScriptTransformRule rule : rules ) {
+				List<OdysseusScriptBlock> blocksPossibleToTransform = rule.determineExecutableBlocks(immutableBlocks);
+				if( blocksPossibleToTransform == null || blocksPossibleToTransform.isEmpty() ) {
+					// rule not executable
+					continue;
+				}
+				
+				int blockIndex = determineLowestIndex(blocksPossibleToTransform, scriptBlocksCopy);
+				if( blockIndex == -1 ) {
+					throw new VisualOdysseusScriptException("Failure to transform odysseus script with rule " + rule.getName());
+				}
+				
+				if( minIndex == -1 || blockIndex < minIndex || (blockIndex == minIndex && rule.getPriority() > priority)  ) {
+					minIndex = blockIndex;
+					priority = rule.getPriority();
+					selectedRule = rule;
+					selectedBlocks = blocksPossibleToTransform;
+				}
+			}
+			
+			// 2. execute rule and save result in temporary map
+			if( selectedRule != null && selectedBlocks != null ) {
+				IVisualOdysseusScriptTextBlock visualTextBlock = selectedRule.transform(selectedBlocks);
+				if( visualTextBlock == null ) {
+					throw new VisualOdysseusScriptException("Selected rule " + selectedRule.getName() + " returned null");
+				}
+				
+				for( OdysseusScriptBlock selectedBlock : selectedBlocks ) {
+					transformResultMap.put(selectedBlock, visualTextBlock);
+					scriptBlocks.remove(selectedBlock);
+				}
+				
+			} else {
+				// no rule executable anymore
+				// using fallback to show the remaining script blocks however
+				for( OdysseusScriptBlock scriptBlock : scriptBlocks) {
+					DefaultOdysseusScriptTextBlock defBlock = new DefaultOdysseusScriptTextBlock(scriptBlock.getKeyword(), scriptBlock.getText());
+					transformResultMap.put(scriptBlock, defBlock);
+				}
+				scriptBlocks.clear();
+			}
+		}
+		
+		// At this point, we have a map (transformResultMap), which describes, which
+		// script block is transformed to which visual odysseus script text block.
+		// No we can build the resulting list of visual odysseus script text blocks
+		// according to the order in scriptBlocksCopy
+		visualTextBlocks.clear();
+		
+		while( !scriptBlocksCopy.isEmpty() ) {
+			OdysseusScriptBlock topBlock = scriptBlocksCopy.get(0);
+			IVisualOdysseusScriptTextBlock visualBlock = transformResultMap.get(topBlock);
+			
+			visualTextBlocks.add(visualBlock);
+			
+			List<OdysseusScriptBlock> blocksToRemoveFromMap = Lists.newArrayList();
+			for( Entry<OdysseusScriptBlock, IVisualOdysseusScriptTextBlock> transformMapEntry : transformResultMap.entrySet()) {
+				if( transformMapEntry.getValue() == visualBlock ) {
+					blocksToRemoveFromMap.add(transformMapEntry.getKey());
+				}
+			}
+			
+			for( OdysseusScriptBlock blockToRemove : blocksToRemoveFromMap ) {
+				scriptBlocksCopy.remove(blockToRemove);
+				transformResultMap.remove(blockToRemove);
+			}
+		}
+	}
+	
+	public List<IVisualOdysseusScriptTextBlock> getVisualTextBlocks() {
+		return visualTextBlocks;
+	}
+
+	private static <T> int determineLowestIndex(List<T> toFind, List<T> listToTraverse) {
+		int minIndex = -1;
+		
+		for( T block : toFind ) {
+			int index = listToTraverse.indexOf(block);
+			if( minIndex == -1 || index < minIndex ) {
+				minIndex = index;
+			}
+		}
+		
+		return minIndex;
+	}
+
+	public String generateOdysseusScript() throws VisualOdysseusScriptException {
+		StringBuilder resultingScript = new StringBuilder();
+		for( IVisualOdysseusScriptTextBlock textBlock : visualTextBlocks ) {
+			String script = textBlock.generateOdysseusScript();
+			
+			resultingScript.append(script).append("\n");
+		}
+		
+		return resultingScript.toString();
+	}
+	
+	private static List<OdysseusScriptBlock> determineOdysseusScriptBlocks(List<String> odysseusScriptTextLines) {
 		String currentKeyword = null;
 		StringBuilder currentText = new StringBuilder();
 		
-		textBlocks = Lists.newArrayList();
-		
+		List<OdysseusScriptBlock> scriptBlocks = Lists.newArrayList();
 		for( String odysseusScriptTextLine : odysseusScriptTextLines ) {
 			String line = odysseusScriptTextLine;
 			
@@ -34,10 +154,8 @@ public class VisualOdysseusScriptModel {
 				
 				// finish current text block
 				if( currentKeyword != null ) {
-					DefaultOdysseusScriptTextBlock block = new DefaultOdysseusScriptTextBlock();
-					block.init(currentKeyword, currentText.toString(), Lists.newArrayList(textBlocks));
-					
-					textBlocks.add(block);
+					scriptBlocks.add(new OdysseusScriptBlock(currentKeyword, currentText.toString()));
+
 					currentKeyword = null;
 					currentText = new StringBuilder();
 				}
@@ -60,27 +178,9 @@ public class VisualOdysseusScriptModel {
 		
 		// finish last text block
 		if( currentKeyword != null ) {
-			DefaultOdysseusScriptTextBlock block = new DefaultOdysseusScriptTextBlock();
-			block.init(currentKeyword, currentText.toString(), Lists.newArrayList(textBlocks));
-			
-			textBlocks.add(block);
-			currentKeyword = null;
-			currentText = null;
-		}
-	}
-	
-	public List<IVisualOdysseusScriptTextBlock> getTextBlocks() {
-		return textBlocks;
-	}
-
-	public String generateOdysseusScript() throws VisualOdysseusScriptException {
-		StringBuilder resultingScript = new StringBuilder();
-		for( IVisualOdysseusScriptTextBlock textBlock : textBlocks ) {
-			String script = textBlock.generateOdysseusScript();
-			
-			resultingScript.append(script).append("\n");
+			scriptBlocks.add(new OdysseusScriptBlock(currentKeyword, currentText.toString()));
 		}
 		
-		return resultingScript.toString();
+		return scriptBlocks;
 	}
 }

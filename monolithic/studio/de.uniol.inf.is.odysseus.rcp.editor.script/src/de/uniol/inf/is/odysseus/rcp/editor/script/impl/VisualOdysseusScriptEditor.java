@@ -135,7 +135,7 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		scrollComposite.setContent(contentComposite);
 
-		for (IVisualOdysseusScriptTextBlock textBlock : scriptModel.getTextBlocks()) {
+		for (IVisualOdysseusScriptTextBlock textBlock : scriptModel.getVisualTextBlocks()) {
 
 			Composite textBlockComposite = new Composite(contentComposite, SWT.BORDER);
 			textBlockComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
