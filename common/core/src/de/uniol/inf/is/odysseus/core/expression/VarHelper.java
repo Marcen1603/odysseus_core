@@ -4,6 +4,7 @@ public class VarHelper {
 	private final int pos;
 	private final int schema;
 	private final int objectPosToUse;
+	private boolean isThis = false;
 
 	public VarHelper(int pos, int objectPosToUse) {
 		super();
@@ -19,6 +20,13 @@ public class VarHelper {
 		this.objectPosToUse = objectPosToUse;
 	}
 	
+	public void setThis(boolean isThis) {
+		this.isThis = isThis;
+	}
+	
+	public boolean isThis() {
+		return isThis;
+	}
 
 	@Override
 	public String toString() {

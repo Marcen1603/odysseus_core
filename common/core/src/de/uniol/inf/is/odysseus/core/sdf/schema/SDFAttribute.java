@@ -40,6 +40,8 @@ public class SDFAttribute extends SDFElement implements
 
 	private static final long serialVersionUID = -5128455072793206061L;
 
+	public static final String THIS = "THIS";
+	
 	/**
 	 * additional info that can be added to this attribute
 	 */

@@ -34,6 +34,11 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 				return new VarHelper(pos.getE2(), pos.getE1(), 0);
 			}
 		}
+		if (curAttribute.getAttributeName().equalsIgnoreCase(SDFAttribute.THIS)){
+			VarHelper vh = new VarHelper(-1,-1);
+			vh.setThis(true);
+			return vh;
+		}
 		throw new RuntimeException("Cannot find attribute "+curAttribute+" in input stream!");
 	}
 	
@@ -52,12 +57,16 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history ){
 
 		Object[] values = new Object[this.variables.length];
+		
+		
 //		IMetaAttribute[] meta = new IMetaAttribute[this.variables.length];
 		for (int j = 0; j < this.variables.length; ++j) {
 			Tuple<T> obj = determineObjectForExpression(object,
 					history, j);
 			if (obj != null) {
-				if (this.variables[j].getSchema() == -1){
+				if (this.variables[j].isThis()){
+					values[j] = object;
+				}else if (this.variables[j].getSchema() == -1){
 					values[j] = obj.getAttribute(this.variables[j].getPos());
 				}else{
 					values[j] = obj.getMetadata().getValue(variables[j].getSchema(), variables[j].getPos());

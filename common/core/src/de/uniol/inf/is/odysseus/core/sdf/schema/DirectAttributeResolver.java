@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 
 /**
  * @author Jonas Jacobi
@@ -44,8 +46,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 	public DirectAttributeResolver(Set<Variable> vars) {
 		List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
 		for (Variable var : vars) {
-			SDFAttribute a = new SDFAttribute(null, var.getIdentifier(),
-					var.getReturnType(), null, null, null);
+			SDFAttribute a = new SDFAttribute(null, var.getIdentifier(), var.getReturnType(), null, null, null);
 			attribs.add(a);
 		}
 		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", attribs);
@@ -53,19 +54,28 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		this.schemas.add(schema);
 	}
 
-	public DirectAttributeResolver(
-			DirectAttributeResolver directAttributeResolver) {
+	public DirectAttributeResolver(DirectAttributeResolver directAttributeResolver) {
 		schemas.addAll(directAttributeResolver.schemas);
 	}
 
 	@Override
-	public SDFAttribute getAttribute(String name)
-			throws AmbiguousAttributeException, NoSuchAttributeException {
+	public SDFAttribute getAttribute(String name) throws AmbiguousAttributeException, NoSuchAttributeException {
 		for (SDFSchema schema : schemas) {
 			SDFAttribute attribute = schema.findAttribute(name);
 			if (attribute != null) {
 				return attribute;
 			}
+		}
+		// TODO: more generic
+		if (name.equalsIgnoreCase(SDFAttribute.THIS) && schemas.size() == 1) {
+			SDFDatatype dt;
+			if (schemas.get(0).getType() == Tuple.class) {
+				dt = new SDFDatatype(schemas.get(0).getURIWithoutQualName(), KindOfDatatype.TUPLE,
+						schemas.get(0));
+				return new SDFAttribute(schemas.get(0).getURIWithoutQualName(), SDFAttribute.THIS, dt);
+			}
+			
+			return new SDFAttribute(schemas.get(0).getURIWithoutQualName(), SDFAttribute.THIS, SDFDatatype.OBJECT);
 		}
 		throw new NoSuchAttributeException("no such attribute: " + name);
 	}
