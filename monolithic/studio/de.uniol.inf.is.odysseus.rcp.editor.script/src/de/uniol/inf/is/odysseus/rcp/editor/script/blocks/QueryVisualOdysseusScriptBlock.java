@@ -40,7 +40,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 
 		this.queryText = queryText;
 		this.parser = parser;
-		this.queryName = Strings.isNullOrEmpty(queryName) ? "QueryName" : queryName;
+		this.queryName = queryName;
 		this.startQuery = running;
 	}
 
@@ -96,7 +96,9 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 
 		Text queryNameText = new Text(queryNameComposite, SWT.BORDER);
 		queryNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		queryNameText.setText(queryName);
+		if( queryName != null ) {
+			queryNameText.setText(queryName);
+		}
 		queryNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {

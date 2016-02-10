@@ -33,15 +33,17 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptBloc
 	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
+		comp.setLayout(new GridLayout(2, false));
 		
 		Label keywordLabel = new Label(comp, SWT.NONE);
-		keywordLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		keywordLabel.setText(odysseusScriptKeyword);
+		GridData gd = new GridData();
+		gd.verticalAlignment = SWT.TOP;
+		keywordLabel.setLayoutData(gd);
 		
 		editingText = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		editingText.setText(odysseusScriptText);
-		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		editingText.setLayoutData(gd);
 		editingText.addModifyListener(new ModifyListener() {
 			@Override
