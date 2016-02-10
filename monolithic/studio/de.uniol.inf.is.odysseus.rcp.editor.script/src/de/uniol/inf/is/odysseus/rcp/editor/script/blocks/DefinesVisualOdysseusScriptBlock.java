@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -52,10 +53,13 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		Composite topComposite = new Composite(parent, SWT.NONE);
 		topComposite.setLayout(new GridLayout());
 		
-		Label titleLabel = new Label(topComposite, SWT.NONE);
+		// Title
+		Label titleLabel = new Label(topComposite, SWT.BORDER);
 		titleLabel.setText("Definitions");
-		titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		titleLabel.setAlignment(SWT.CENTER);
+		titleLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+		titleLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Composite tableComposite = new Composite(topComposite, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

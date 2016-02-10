@@ -12,7 +12,7 @@ public final class OdysseusScriptBlock {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(keyword), "keyword must not be null or empty!");
 		Preconditions.checkNotNull(text, "text must not be null!");
 
-		this.keyword = keyword;
+		this.keyword = keyword.toUpperCase();
 		this.text = text;
 	}
 	

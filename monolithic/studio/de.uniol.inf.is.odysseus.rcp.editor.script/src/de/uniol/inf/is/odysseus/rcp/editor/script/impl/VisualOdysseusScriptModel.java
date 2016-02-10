@@ -44,8 +44,9 @@ public class VisualOdysseusScriptModel {
 			int priority = -1;
 			IOdysseusScriptTransformRule selectedRule = null;
 			List<OdysseusScriptBlock> selectedBlocks = null;
+			
 			for( IOdysseusScriptTransformRule rule : rules ) {
-				List<OdysseusScriptBlock> blocksPossibleToTransform = rule.determineExecutableBlocks(immutableBlocks);
+				List<OdysseusScriptBlock> blocksPossibleToTransform = rule.determineTransformableBlocks(immutableBlocks);
 				if( blocksPossibleToTransform == null || blocksPossibleToTransform.isEmpty() ) {
 					// rule not executable
 					continue;
@@ -66,25 +67,25 @@ public class VisualOdysseusScriptModel {
 			
 			// 2. execute rule and save result in temporary map
 			if( selectedRule != null && selectedBlocks != null ) {
-				IVisualOdysseusScriptBlock visualTextBlock = selectedRule.transform(selectedBlocks);
-				if( visualTextBlock == null ) {
-					throw new VisualOdysseusScriptException("Selected rule " + selectedRule.getName() + " returned null");
+				IVisualOdysseusScriptBlock visualTextBlock = selectedRule.transform(scriptBlocks, selectedBlocks);
+				if( visualTextBlock != null ) {
+					for( OdysseusScriptBlock selectedBlock : selectedBlocks ) {
+						transformResultMap.put(selectedBlock, visualTextBlock);
+					}
 				}
-				
-				for( OdysseusScriptBlock selectedBlock : selectedBlocks ) {
-					transformResultMap.put(selectedBlock, visualTextBlock);
-					scriptBlocks.remove(selectedBlock);
-				}
-				
 			} else {
 				// no rule executable anymore
-				// using fallback to show the remaining script blocks however
-				for( OdysseusScriptBlock scriptBlock : scriptBlocks) {
-					DefaultOdysseusScriptTextBlock defBlock = new DefaultOdysseusScriptTextBlock(scriptBlock.getKeyword(), scriptBlock.getText());
-					transformResultMap.put(scriptBlock, defBlock);
-				}
-				scriptBlocks.clear();
+				break;
 			}
+		}
+		
+		if( !scriptBlocks.isEmpty() ) {
+			// using fallback to show the remaining script blocks however
+			for( OdysseusScriptBlock scriptBlock : scriptBlocks) {
+				DefaultOdysseusScriptTextBlock defBlock = new DefaultOdysseusScriptTextBlock(scriptBlock.getKeyword(), scriptBlock.getText());
+				transformResultMap.put(scriptBlock, defBlock);
+			}
+			scriptBlocks.clear();			
 		}
 		
 		// At this point, we have a map (transformResultMap), which describes, which
@@ -94,21 +95,23 @@ public class VisualOdysseusScriptModel {
 		visualTextBlocks.clear();
 		
 		while( !scriptBlocksCopy.isEmpty() ) {
-			OdysseusScriptBlock topBlock = scriptBlocksCopy.get(0);
+			OdysseusScriptBlock topBlock = scriptBlocksCopy.remove(0);
 			IVisualOdysseusScriptBlock visualBlock = transformResultMap.get(topBlock);
 			
-			visualTextBlocks.add(visualBlock);
-			
-			List<OdysseusScriptBlock> blocksToRemoveFromMap = Lists.newArrayList();
-			for( Entry<OdysseusScriptBlock, IVisualOdysseusScriptBlock> transformMapEntry : transformResultMap.entrySet()) {
-				if( transformMapEntry.getValue() == visualBlock ) {
-					blocksToRemoveFromMap.add(transformMapEntry.getKey());
+			if( visualBlock != null ) {
+				visualTextBlocks.add(visualBlock);
+				
+				List<OdysseusScriptBlock> blocksToRemoveFromMap = Lists.newArrayList();
+				for( Entry<OdysseusScriptBlock, IVisualOdysseusScriptBlock> transformMapEntry : transformResultMap.entrySet()) {
+					if( transformMapEntry.getValue() == visualBlock ) {
+						blocksToRemoveFromMap.add(transformMapEntry.getKey());
+					}
 				}
-			}
-			
-			for( OdysseusScriptBlock blockToRemove : blocksToRemoveFromMap ) {
-				scriptBlocksCopy.remove(blockToRemove);
-				transformResultMap.remove(blockToRemove);
+				
+				for( OdysseusScriptBlock blockToRemove : blocksToRemoveFromMap ) {
+					scriptBlocksCopy.remove(blockToRemove);
+					transformResultMap.remove(blockToRemove);
+				}
 			}
 		}
 	}

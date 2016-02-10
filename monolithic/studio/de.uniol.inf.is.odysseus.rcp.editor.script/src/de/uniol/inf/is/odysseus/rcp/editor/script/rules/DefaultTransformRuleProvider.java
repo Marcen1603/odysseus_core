@@ -15,6 +15,7 @@ public class DefaultTransformRuleProvider implements IOdysseusScriptTransformRul
 		List<IOdysseusScriptTransformRule> rules = Lists.newArrayList();
 
 		rules.add(new DefineKeywordTransformRule());
+		rules.add(new QueryTransformRule());
 
 		return rules;
 	}

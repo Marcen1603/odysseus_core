@@ -26,7 +26,7 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 	}
 
 	@Override
-	public List<OdysseusScriptBlock> determineExecutableBlocks(ImmutableList<OdysseusScriptBlock> blocks) {
+	public List<OdysseusScriptBlock> determineTransformableBlocks(ImmutableList<OdysseusScriptBlock> blocks) {
 		List<OdysseusScriptBlock> selectedBlocks = Lists.newArrayList();
 		
 		boolean beginFound = false;
@@ -48,10 +48,10 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 	}
 
 	@Override
-	public IVisualOdysseusScriptBlock transform(List<OdysseusScriptBlock> blocksToTransform) throws VisualOdysseusScriptException {
+	public IVisualOdysseusScriptBlock transform(List<OdysseusScriptBlock> allBlocks, List<OdysseusScriptBlock> selectedBlocks) throws VisualOdysseusScriptException {
 		
 		Map<String, String> keyValuePairs = Maps.newHashMap();
-		for( OdysseusScriptBlock block : blocksToTransform ) {
+		for( OdysseusScriptBlock block : selectedBlocks ) {
 			String line = block.getText();
 			String[] parts = line.split(" |\t", 2);
 			
@@ -63,6 +63,10 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 			String value = parts[1];
 			
 			keyValuePairs.put(key, value);
+		}
+		
+		for( OdysseusScriptBlock selectedBlock : selectedBlocks ) {
+			allBlocks.remove(selectedBlock);
 		}
 			
 		return new DefinesVisualOdysseusScriptBlock( keyValuePairs );

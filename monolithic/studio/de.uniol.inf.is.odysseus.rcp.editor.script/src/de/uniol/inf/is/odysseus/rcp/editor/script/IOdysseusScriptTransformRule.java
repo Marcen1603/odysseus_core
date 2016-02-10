@@ -9,7 +9,7 @@ public interface IOdysseusScriptTransformRule {
 	public String getName();
 	public int getPriority();
 	
-	public List<OdysseusScriptBlock> determineExecutableBlocks( ImmutableList<OdysseusScriptBlock> blocks);
-	public IVisualOdysseusScriptBlock transform( List<OdysseusScriptBlock> blocksToTransform) throws VisualOdysseusScriptException;
+	public  List<OdysseusScriptBlock> determineTransformableBlocks( ImmutableList<OdysseusScriptBlock> blocks);
+	public IVisualOdysseusScriptBlock transform( List<OdysseusScriptBlock> allBlocks, List<OdysseusScriptBlock> selectedBlocks) throws VisualOdysseusScriptException;
 	
 }
