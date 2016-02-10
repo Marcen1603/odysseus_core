@@ -9,11 +9,11 @@ public class WrapperRegistry {
 	static List<String> wrapperNames = new ArrayList<String>();
 	
 	static public void registerWrapper(String name){
-		wrapperNames.add(name);
+		wrapperNames.add(name.toUpperCase());
 	}
 	
 	static public void removeWrapper(String name){
-		wrapperNames.remove(name);
+		wrapperNames.remove(name.toUpperCase());
 	}
 	
 	static public List<String> getWrapperNames(){
@@ -21,7 +21,7 @@ public class WrapperRegistry {
 	}
 	
 	static public boolean containsWrapper(String name){
-		return wrapperNames.contains(name);
+		return wrapperNames.contains(name.toUpperCase());
 	}
 
 }
