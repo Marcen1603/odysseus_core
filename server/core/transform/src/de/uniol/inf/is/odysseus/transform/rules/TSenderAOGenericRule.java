@@ -229,14 +229,20 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 */
 	private static IStreamObjectDataHandler<?> getDataHandler(AbstractSenderAO operator) {
 		IDataHandler<?> dataHandler = null;
-		if (operator.getDataHandler() != null) {
+		String dataHandlerText = operator.getDataHandler();
+		if (dataHandlerText == null){
+			if (operator.getInputSchema(0) != null){
+				dataHandlerText = operator.getInputSchema(0).getType().getSimpleName();
+			}
+		}
+		if (dataHandlerText != null) {
 			if (operator.getOutputSchema() != null) {
-				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+				dataHandler = DataHandlerRegistry.getDataHandler(dataHandlerText, operator.getOutputSchema());
 			}
 		}
 		if (dataHandler != null) {
 			if (!(dataHandler instanceof IStreamObjectDataHandler)) {
-				throw new IllegalArgumentException("DataHandler " + operator.getDataHandler() + " cannot be used!");
+				throw new IllegalArgumentException("DataHandler " + dataHandlerText + " cannot be used!");
 			}
 			return (IStreamObjectDataHandler<?>) dataHandler;
 		}

@@ -45,8 +45,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
      */
 	private static final long serialVersionUID = -6830784739913623456L;
 	private Resource sink = null;
-	private String dataHandler = new TupleDataHandler().getSupportedDataTypes()
-			.get(0);
+	private String dataHandler;
 	private boolean writeMetaData;
 	private String protocolHandler;
 	private String transportHandler;

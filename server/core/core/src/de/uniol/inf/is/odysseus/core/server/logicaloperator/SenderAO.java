@@ -55,7 +55,7 @@ public class SenderAO extends AbstractSenderAO {
 	}
 	
 	@Override
-	@Parameter(name = "dataHandler", type = StringParameter.class, optional = false)
+	@Parameter(name = "dataHandler", type = StringParameter.class, optional = true)
 	public void setDataHandler(String dataHandler) {
 		super.setDataHandler(dataHandler);
 	}
