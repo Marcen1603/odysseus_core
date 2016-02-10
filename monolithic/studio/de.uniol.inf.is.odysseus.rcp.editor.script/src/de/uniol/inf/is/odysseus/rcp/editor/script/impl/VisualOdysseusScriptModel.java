@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRule;
-import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptTextBlock;
+import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.DefaultOdysseusScriptTextBlock;
@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 public class VisualOdysseusScriptModel {
 
-	private final List<IVisualOdysseusScriptTextBlock> visualTextBlocks = Lists.newArrayList();
+	private final List<IVisualOdysseusScriptBlock> visualTextBlocks = Lists.newArrayList();
 	
 	public VisualOdysseusScriptModel() {
 		// nothing to do
@@ -33,7 +33,7 @@ public class VisualOdysseusScriptModel {
 		List<OdysseusScriptBlock> scriptBlocksCopy = Lists.newArrayList(scriptBlocks);
 		Collection<IOdysseusScriptTransformRule> rules = TransformRuleRegistry.getInstance().getRules();
 
-		Map<OdysseusScriptBlock, IVisualOdysseusScriptTextBlock> transformResultMap = Maps.newHashMap();
+		Map<OdysseusScriptBlock, IVisualOdysseusScriptBlock> transformResultMap = Maps.newHashMap();
 		while( !scriptBlocks.isEmpty() ) {
 			
 			// 1. determine rules which can be executed
@@ -66,7 +66,7 @@ public class VisualOdysseusScriptModel {
 			
 			// 2. execute rule and save result in temporary map
 			if( selectedRule != null && selectedBlocks != null ) {
-				IVisualOdysseusScriptTextBlock visualTextBlock = selectedRule.transform(selectedBlocks);
+				IVisualOdysseusScriptBlock visualTextBlock = selectedRule.transform(selectedBlocks);
 				if( visualTextBlock == null ) {
 					throw new VisualOdysseusScriptException("Selected rule " + selectedRule.getName() + " returned null");
 				}
@@ -95,12 +95,12 @@ public class VisualOdysseusScriptModel {
 		
 		while( !scriptBlocksCopy.isEmpty() ) {
 			OdysseusScriptBlock topBlock = scriptBlocksCopy.get(0);
-			IVisualOdysseusScriptTextBlock visualBlock = transformResultMap.get(topBlock);
+			IVisualOdysseusScriptBlock visualBlock = transformResultMap.get(topBlock);
 			
 			visualTextBlocks.add(visualBlock);
 			
 			List<OdysseusScriptBlock> blocksToRemoveFromMap = Lists.newArrayList();
-			for( Entry<OdysseusScriptBlock, IVisualOdysseusScriptTextBlock> transformMapEntry : transformResultMap.entrySet()) {
+			for( Entry<OdysseusScriptBlock, IVisualOdysseusScriptBlock> transformMapEntry : transformResultMap.entrySet()) {
 				if( transformMapEntry.getValue() == visualBlock ) {
 					blocksToRemoveFromMap.add(transformMapEntry.getKey());
 				}
@@ -113,7 +113,7 @@ public class VisualOdysseusScriptModel {
 		}
 	}
 	
-	public List<IVisualOdysseusScriptTextBlock> getVisualTextBlocks() {
+	public List<IVisualOdysseusScriptBlock> getVisualTextBlocks() {
 		return visualTextBlocks;
 	}
 
@@ -132,8 +132,12 @@ public class VisualOdysseusScriptModel {
 
 	public String generateOdysseusScript() throws VisualOdysseusScriptException {
 		StringBuilder resultingScript = new StringBuilder();
-		for( IVisualOdysseusScriptTextBlock textBlock : visualTextBlocks ) {
+		for( IVisualOdysseusScriptBlock textBlock : visualTextBlocks ) {
 			String script = textBlock.generateOdysseusScript();
+			
+			if( script == null ) {
+				throw new VisualOdysseusScriptException("Visual text block " + textBlock + " returned null string!");
+			}
 			
 			resultingScript.append(script).append("\n");
 		}

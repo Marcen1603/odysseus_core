@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
-import java.util.Collection;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -13,13 +11,12 @@ import org.eclipse.swt.widgets.Text;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
-import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptTextBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 
-public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptTextBlock {
+public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptBlock {
 
 	private String odysseusScriptText;
 	private String odysseusScriptKeyword;
@@ -34,21 +31,15 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptText
 	}
 	
 	@Override
-	public Collection<String> getStartKeywords() {
-		return Lists.newArrayList();
-	}
-
-	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		comp.setLayout(new GridLayout());
 		
 		Label keywordLabel = new Label(comp, SWT.NONE);
 		keywordLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		keywordLabel.setText(odysseusScriptKeyword);
 		
-		editingText = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+		editingText = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		editingText.setText(odysseusScriptText);
 		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		editingText.setLayoutData(gd);
@@ -72,7 +63,7 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptText
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append(odysseusScriptKeyword).append("\n");
-		sb.append(odysseusScriptText).append("\n");
+		sb.append(odysseusScriptText);
 		
 		return sb.toString();
 	}

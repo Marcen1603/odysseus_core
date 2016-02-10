@@ -10,6 +10,6 @@ public interface IOdysseusScriptTransformRule {
 	public int getPriority();
 	
 	public List<OdysseusScriptBlock> determineExecutableBlocks( ImmutableList<OdysseusScriptBlock> blocks);
-	public IVisualOdysseusScriptTextBlock transform( List<OdysseusScriptBlock> blocksToTransform);
+	public IVisualOdysseusScriptBlock transform( List<OdysseusScriptBlock> blocksToTransform) throws VisualOdysseusScriptException;
 	
 }

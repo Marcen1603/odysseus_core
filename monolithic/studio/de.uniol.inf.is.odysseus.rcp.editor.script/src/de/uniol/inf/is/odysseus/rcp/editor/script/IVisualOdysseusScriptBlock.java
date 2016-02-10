@@ -1,13 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script;
 
-import java.util.Collection;
-
 import org.eclipse.swt.widgets.Composite;
 
-public interface IVisualOdysseusScriptTextBlock {
+public interface IVisualOdysseusScriptBlock {
 
-	public Collection<String> getStartKeywords();
-	
 	public void createPartControl( Composite parent, IVisualOdysseusScriptContainer container );
 	public void dispose();
 	

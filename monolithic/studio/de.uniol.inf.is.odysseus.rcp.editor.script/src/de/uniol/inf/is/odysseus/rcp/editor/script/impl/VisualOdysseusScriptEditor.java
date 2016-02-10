@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -28,8 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
-import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptTextBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
@@ -135,11 +136,13 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		scrollComposite.setContent(contentComposite);
 
-		for (IVisualOdysseusScriptTextBlock textBlock : scriptModel.getVisualTextBlocks()) {
+		for (IVisualOdysseusScriptBlock textBlock : scriptModel.getVisualTextBlocks()) {
 
 			Composite textBlockComposite = new Composite(contentComposite, SWT.BORDER);
-			textBlockComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			textBlockComposite.setLayout(new GridLayout());
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint = parent.getBounds().width;
+			textBlockComposite.setLayoutData(gd);
+			textBlockComposite.setLayout(new FillLayout());
 
 			textBlock.createPartControl(textBlockComposite, this);
 		}
