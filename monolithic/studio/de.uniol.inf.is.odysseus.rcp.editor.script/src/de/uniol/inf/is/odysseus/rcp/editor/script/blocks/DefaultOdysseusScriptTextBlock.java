@@ -54,6 +54,8 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptText
 			@Override
 			public void modifyText(ModifyEvent e) {
 				container.layoutAll();
+				
+				container.setDirty(true);
 			}
 		});
 	}

@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.impl;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -20,20 +23,25 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptTextBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdysseusScriptContainer {
+
+	private static final Logger LOG = LoggerFactory.getLogger(VisualOdysseusScriptEditor.class);
 
 	private VisualOdysseusScriptModel scriptModel;
 	private ScrolledComposite scrollComposite;
 	private Composite parent;
 	private Composite contentComposite;
-	
+
 	private boolean isDirty;
 
 	public VisualOdysseusScriptEditor() {
@@ -42,12 +50,23 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO
+		setDirty(false);
+
+		IFile file = ((IFileEditorInput) getEditorInput()).getFile();
+		try {
+			String script = scriptModel.generateOdysseusScript();
+			file.setContents(new ByteArrayInputStream(script.getBytes()), IResource.KEEP_HISTORY | IResource.FORCE, null);
+
+		} catch (VisualOdysseusScriptException | CoreException e) {
+			LOG.error("Could not save odysseus script to file {}.", file.getName(), e);
+			new ExceptionWindow("Could not save odysseus script to file " + file.getName(), e);
+		}
 	}
 
 	@Override
 	public void doSaveAs() {
-		// TODO
+		// do nothing
+		// saveAs is not allowed (see method isSaveAsAllowed())
 	}
 
 	@Override
@@ -61,7 +80,12 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		try {
 			IFileEditorInput fileInput = (IFileEditorInput) input;
-			InputStream inputStream = fileInput.getFile().getContents();
+			IFile file = fileInput.getFile();
+			if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
+				file.refreshLocal(IResource.DEPTH_ZERO, null);
+			}
+
+			InputStream inputStream = file.getContents();
 			List<String> lines = readLines(inputStream);
 
 			scriptModel = new VisualOdysseusScriptModel();
@@ -101,32 +125,32 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 	@Override
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
-		
+
 		scrollComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		scrollComposite.setExpandHorizontal(true);
 		scrollComposite.setExpandVertical(true);
-		
+
 		contentComposite = new Composite(scrollComposite, SWT.BORDER);
 		contentComposite.setLayout(new GridLayout());
-		
+
 		scrollComposite.setContent(contentComposite);
-		
-		for( IVisualOdysseusScriptTextBlock textBlock : scriptModel.getTextBlocks()) {
-			
+
+		for (IVisualOdysseusScriptTextBlock textBlock : scriptModel.getTextBlocks()) {
+
 			Composite textBlockComposite = new Composite(contentComposite, SWT.BORDER);
 			textBlockComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			textBlockComposite.setLayout(new GridLayout());
-			
+
 			textBlock.createPartControl(textBlockComposite, this);
 		}
-		
+
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		
+
 	}
 
 	@Override
 	public void setFocus() {
-		if( scrollComposite != null ) {
+		if (scrollComposite != null) {
 			scrollComposite.setFocus();
 		}
 	}
@@ -139,7 +163,7 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-	
+
 	@Override
 	public void setDirty(boolean dirty) {
 		if (dirty != this.isDirty) {

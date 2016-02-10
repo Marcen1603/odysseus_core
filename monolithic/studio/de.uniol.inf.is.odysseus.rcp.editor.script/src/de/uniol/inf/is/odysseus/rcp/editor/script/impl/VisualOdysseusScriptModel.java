@@ -51,7 +51,9 @@ public class VisualOdysseusScriptModel {
 					currentText.append(restOfLine);
 				}
 			} else {
-				currentText.append("\n");
+				if( currentText.length() > 0 ) {
+					currentText.append("\n");
+				}
 				currentText.append(line);
 			}
 		}
@@ -69,5 +71,16 @@ public class VisualOdysseusScriptModel {
 	
 	public List<IVisualOdysseusScriptTextBlock> getTextBlocks() {
 		return textBlocks;
+	}
+
+	public String generateOdysseusScript() throws VisualOdysseusScriptException {
+		StringBuilder resultingScript = new StringBuilder();
+		for( IVisualOdysseusScriptTextBlock textBlock : textBlocks ) {
+			String script = textBlock.generateOdysseusScript();
+			
+			resultingScript.append(script).append("\n");
+		}
+		
+		return resultingScript.toString();
 	}
 }
