@@ -823,8 +823,10 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	private SDFAttribute createAttributeFromInformation(SdfAttributeInformation info) {
 		// TODO Extend SdfAttributeInformation
+		SDFDatatype dt = createDatatypeFromInformation(info.getDatatype());
+		
 		return new SDFAttribute(info.getSourcename(), info.getAttributename(), SDFDatatype.createTypeWithSubSchema(
-				createDatatypeFromInformation(info.getDatatype()), createSchemaFromInformation(info.getSubschema())));
+				dt, dt.getSubType(), createSchemaFromInformation(info.getSubschema())));
 	}
 
 	private SDFDatatype createDatatypeFromInformation(SdfDatatypeInformation info) {

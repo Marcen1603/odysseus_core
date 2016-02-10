@@ -637,6 +637,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public static SDFDatatype createTypeWithSubSchema(SDFDatatype type, SDFSchema subSchema) {
+		
 		if (type.isListValue()){
 			if (type.subType.isTuple()){
 				return new SDFDatatype(type.getURI(), KindOfDatatype.LIST, type.subType, subSchema);
@@ -652,6 +653,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		if (type.isListValue()){
 			if (subType.isTuple()){
 				return new SDFDatatype(type.getURI(), KindOfDatatype.LIST, subType, subSchema);
+			}else{
+				return new SDFDatatype(type.getURI(), KindOfDatatype.LIST, subType);
 			}
 		}
 		if (type.isTuple()){
