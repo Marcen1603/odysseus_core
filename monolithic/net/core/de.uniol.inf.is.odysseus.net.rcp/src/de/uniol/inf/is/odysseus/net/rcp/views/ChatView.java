@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListe
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
 import de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn;
 import de.uniol.inf.is.odysseus.net.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.rcp.util.ColumnViewerSorter;
 
 public class ChatView extends ViewPart implements IOdysseusNodeCommunicatorListener {
 

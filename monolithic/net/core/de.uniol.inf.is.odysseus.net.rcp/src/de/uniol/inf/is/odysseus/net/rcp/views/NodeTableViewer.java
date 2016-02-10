@@ -26,6 +26,8 @@ import com.google.common.base.Optional;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn;
 import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
+import de.uniol.inf.is.odysseus.rcp.util.CellLabelProviderAndSorter;
+import de.uniol.inf.is.odysseus.rcp.util.ColumnViewerSorter;
 
 public final class NodeTableViewer {
 

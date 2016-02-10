@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.OdysseusNodeID;
 import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.util.CellLabelProviderAndSorter;
 
 public class DistributedDataTableViewer extends AbstractTableViewer<IDistributedData> {
 

@@ -18,6 +18,8 @@ import org.eclipse.ui.PlatformUI;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.rcp.util.CellLabelProviderAndSorter;
+
 public abstract class AbstractTableViewer<T> {
 
 	private final TableViewer tableViewer;
