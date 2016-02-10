@@ -132,11 +132,14 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		int min = Math.min(dataHandlers.length, input.length);
 		for (int i = 0; i < min; i++) {
 			try {
-				if (dataHandlers[i].getClass() != ListDataHandler.class) {
-					attributes[i] = dataHandlers[i].readData(input[i]);
-				} else {
-					attributes[i] = ((ListDataHandler) dataHandlers[i])
+				if (dataHandlers[i].getClass() == ListDataHandler.class 
+						&& getSchema() != null 
+						&& getSchema().size() < input.length
+						&& i == getSchema().size() - 1) {
+					attributes[i] =  ((ListDataHandler) dataHandlers[i])
 							.readData(input, i, input.length);
+				} else {
+					attributes[i] = this.dataHandlers[i].readData(input[i]);
 				}
 			} catch (Exception e) {
 				if (dataHandlers.length > i) {
@@ -164,14 +167,15 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				false);
 		for (int i = 0; i < min; i++) {
 			try {
-				if (dataHandlers[i].getClass() != ListDataHandler.class) {
+				if (dataHandlers[i].getClass() == ListDataHandler.class 
+						&& getSchema() != null 
+						&& getSchema().size() < input.size() 
+						&& i == getSchema().size() - 1) {
+					tuple.setAttribute(i, ((ListDataHandler) dataHandlers[i])
+							.readData(input, i, input.size()));
+				} else {
 					tuple.setAttribute(i,
 							this.dataHandlers[i].readData(input.get(i)));
-				} else {
-//					tuple.setAttribute(i, ((ListDataHandler) dataHandlers[i])
-//							.readData(input, i, input.size()));
-					tuple.setAttribute(i, ((ListDataHandler) dataHandlers[i])
-							.readData(input.get(i)));
 				}
 			} catch (Exception e) {
 				if (dataHandlers.length > i) {
