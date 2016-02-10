@@ -191,8 +191,8 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		} else {
 			infoService.error("Could not connect any server " + hosts
 					+ " on ports " + ports, cause);
+			NonBlockingTcpClientHandler.LOG.error(cause.getMessage()+" for server " + hosts + " on ports " + ports, cause);
 		}
-		NonBlockingTcpClientHandler.LOG.error(cause.getMessage()+" for server " + hosts + " on ports " + ports, cause);
 	}
 
 	@Override
