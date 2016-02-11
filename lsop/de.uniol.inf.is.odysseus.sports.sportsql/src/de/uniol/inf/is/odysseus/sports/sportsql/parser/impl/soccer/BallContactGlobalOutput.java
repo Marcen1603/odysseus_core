@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
@@ -95,12 +95,12 @@ public class BallContactGlobalOutput {
 	 * @param source
 	 * @return
 	 */
-	private List<SDFExpressionParameter> getMapExpressionForBallPosition(
+	private List<NamedExpressionParameter> getMapExpressionForBallPosition(
 			ILogicalOperator source) {
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex1 = OperatorBuildHelper
+		List<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("x", ball_pos_x, source);
-		SDFExpressionParameter ex2 = OperatorBuildHelper
+		NamedExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter("y", ball_pos_y, source);
 		expressions.add(ex1);
 		expressions.add(ex2);
@@ -113,19 +113,19 @@ public class BallContactGlobalOutput {
 	 * @param source
 	 * @return
 	 */
-	private List<SDFExpressionParameter> getMapExpressionForPlayerPosition(
+	private List<NamedExpressionParameter> getMapExpressionForPlayerPosition(
 			ILogicalOperator source) {
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex1 = OperatorBuildHelper
+		List<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("x", player_pos_x,
 						source);
-		SDFExpressionParameter ex2 = OperatorBuildHelper
+		NamedExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter("y", player_pos_y,
 						source);
-		SDFExpressionParameter ex3 = OperatorBuildHelper
+		NamedExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter("entity_id", "entity_id", source);
 
-		SDFExpressionParameter ex4 = OperatorBuildHelper
+		NamedExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter("team_id", "team_id", source);
 
 		expressions.add(ex1);

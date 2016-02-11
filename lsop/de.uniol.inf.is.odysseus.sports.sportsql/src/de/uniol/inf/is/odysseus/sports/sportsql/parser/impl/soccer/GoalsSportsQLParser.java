@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
@@ -218,24 +218,24 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 				input, 1);
 	}
 
-	private List<SDFExpressionParameter> getExpressionForInGoal(
+	private List<NamedExpressionParameter> getExpressionForInGoal(
 			ILogicalOperator source) throws NumberFormatException,
 			MissingDDCEntryException {
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex1 = OperatorBuildHelper
+		List<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("toDouble("
 						+ IntermediateSchemaAttributes.TS + ")", ATT_GOALTS,
 						source);
-		SDFExpressionParameter ex2 = OperatorBuildHelper
+		NamedExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.X,
 						"goal_x", source);
-		SDFExpressionParameter ex3 = OperatorBuildHelper
+		NamedExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Y,
 						"goal_y", source);
-		SDFExpressionParameter ex4 = OperatorBuildHelper
+		NamedExpressionParameter ex4 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Z,
 						"goal_z", source);
-		SDFExpressionParameter ex5 = OperatorBuildHelper
+		NamedExpressionParameter ex5 = OperatorBuildHelper
 				.createExpressionParameter("toInteger(eif( x < "
 						+ SoccerDDCAccess.getGoalareaLeftX() + " AND "
 						+ IntermediateSchemaAttributes.X + " > "
@@ -246,7 +246,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 						+ SoccerDDCAccess.getGoalareaLeftYMax() + "AND "
 						+ IntermediateSchemaAttributes.Z + " < " + GOAL_HEIGHT
 						+ " , 1, 0))", ATT_TEAM2, source);
-		SDFExpressionParameter ex6 = OperatorBuildHelper
+		NamedExpressionParameter ex6 = OperatorBuildHelper
 				.createExpressionParameter("toInteger(eif( "
 						+ IntermediateSchemaAttributes.X + " > "
 						+ SoccerDDCAccess.getGoalareaRightX() + " AND x < "
@@ -267,7 +267,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		return expressions;
 	}
 
-	private List<SDFExpressionParameter> getExpressionForOnCentreSpot(
+	private List<NamedExpressionParameter> getExpressionForOnCentreSpot(
 			ILogicalOperator source) throws NumberFormatException,
 			MissingDDCEntryException {
 
@@ -279,10 +279,10 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 		double spotBottomX = centerX + KICKOFF_AREA_RADIUS;
 		double spotBottomY = centerY + KICKOFF_AREA_RADIUS;
 
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter ex1 = OperatorBuildHelper
+		List<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter ex1 = OperatorBuildHelper
 				.createExpressionParameter("ts", "spot_ball_ts", source);
-		SDFExpressionParameter ex2 = OperatorBuildHelper
+		NamedExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter("eif( "
 						+ IntermediateSchemaAttributes.X + " >= " + spotTopX
 						+ " AND " + IntermediateSchemaAttributes.X + " <= "
@@ -290,7 +290,7 @@ public class GoalsSportsQLParser implements ISportsQLParser {
 						+ IntermediateSchemaAttributes.Y + " >= " + spotTopY
 						+ " AND " + IntermediateSchemaAttributes.Y + " <= "
 						+ spotBottomY + " , 1, 0)", ATT_ONCENTRESPOT, source);
-		SDFExpressionParameter ex3 = OperatorBuildHelper
+		NamedExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter(
 						"toDouble("
 								+ IntermediateSchemaAttributes.TS

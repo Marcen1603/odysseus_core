@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
@@ -78,7 +78,7 @@ public class BallContactTeamSportsQLParser implements ISportsQLParser{
 		ILogicalOperator sumAndCount = OperatorBuildHelper.createJoinAO(predicates, countOutput, allOutput);
 		
 		//countOutput / allOutput = percentOutput
-		List<SDFExpressionParameter> passesStateMapExpressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> passesStateMapExpressions = new ArrayList<NamedExpressionParameter>();
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("team_id", "team_id", sumAndCount));
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("DoubleToFloat(ROUND((ballContactCount"+"/"+"ballContactCountAll),4)*100)", "ballContactCount", sumAndCount));
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("ballContactCount", "ballContactCountAbs", sumAndCount));//For debug

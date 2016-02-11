@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.util.PatternType;
@@ -92,7 +92,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
         this.inputPort = patternAO.inputPort;
     }
 	
-    @Parameter(type=SDFExpressionParameter.class, optional=true, isList=true)
+    @Parameter(type=NamedExpressionParameter.class, optional=true, isList=true)
     public void setAssertions(List<NamedExpression> exprs) {
         this.assertions = new ArrayList<SDFExpression>();
         for (NamedExpression expr : exprs) {
@@ -185,7 +185,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
     	return inputPort;
     }
     
-    @Parameter(name = "return", type = SDFExpressionParameter.class, isList = true, optional = true)
+    @Parameter(name = "return", type = NamedExpressionParameter.class, isList = true, optional = true)
     public void setReturnExpressions(List<NamedExpression> namedReturnExpressions) {
 		returnExpressions = namedReturnExpressions;
 		setOutputSchema(null);

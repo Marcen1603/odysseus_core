@@ -6,7 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -129,8 +129,8 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// / MAP({EXPRESSIONS = [
 		// /['ToPoint(x,y,z)','ball_pos']
 		// /]}, sampled_ball)
-		ArrayList<SDFExpressionParameter> parameterList = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter toPointParameter = OperatorBuildHelper
+		ArrayList<NamedExpressionParameter> parameterList = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter toPointParameter = OperatorBuildHelper
 				.createExpressionParameter("ToPoint(x,y,z)", "ball_pos",
 						ballsFiltered);
 		parameterList.add(toPointParameter);
@@ -156,26 +156,26 @@ public class PathWithBallSportsQLParser implements ISportsQLParser {
 		// /player_pos = MAP({EXPRESSIONS =
 		// ['entity_id','sid','team_id','entity','x','y',['ToPoint(x,y,z)','player_pos']]},player_stream_changes)
 
-		SDFExpressionParameter entIdParameter = OperatorBuildHelper
+		NamedExpressionParameter entIdParameter = OperatorBuildHelper
 				.createExpressionParameter("entity_id", "entity_id",
 						playerStreamChanges);
 		// Only needed to show entity on Map.
-		SDFExpressionParameter sidParameter = OperatorBuildHelper
+		NamedExpressionParameter sidParameter = OperatorBuildHelper
 				.createExpressionParameter("sid", "sid", playerStreamChanges);
-		SDFExpressionParameter teamIdParameter = OperatorBuildHelper
+		NamedExpressionParameter teamIdParameter = OperatorBuildHelper
 				.createExpressionParameter("team_id", "team_id",
 						playerStreamChanges);
-		SDFExpressionParameter entityParamter = OperatorBuildHelper
+		NamedExpressionParameter entityParamter = OperatorBuildHelper
 				.createExpressionParameter("entity", "entity",
 						playerStreamChanges);
-		SDFExpressionParameter xParameter = OperatorBuildHelper
+		NamedExpressionParameter xParameter = OperatorBuildHelper
 				.createExpressionParameter("x", "x", playerStreamChanges);
-		SDFExpressionParameter yParameter = OperatorBuildHelper
+		NamedExpressionParameter yParameter = OperatorBuildHelper
 				.createExpressionParameter("y", "y", playerStreamChanges);
-		SDFExpressionParameter playerPosParameter = OperatorBuildHelper
+		NamedExpressionParameter playerPosParameter = OperatorBuildHelper
 				.createExpressionParameter("ToPoint(x,y,z)", "player_pos",
 						playerStreamChanges);
-		ArrayList<SDFExpressionParameter> positionParameterList = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> positionParameterList = new ArrayList<NamedExpressionParameter>();
 
 		positionParameterList.add(entIdParameter);
 		positionParameterList.add(sidParameter);

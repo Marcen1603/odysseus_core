@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -105,7 +105,7 @@ public class PassesSportsQLParser {
 		allOperators.add(splitSoccerDataRoute);
 
 		// 3. Create ball position map
-		ArrayList<SDFExpressionParameter> ballPosExpressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> ballPosExpressions = new ArrayList<NamedExpressionParameter>();
 		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS, ATTRIBUTE_BALL_TS, splitSoccerDataRoute));
 		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.X, ATTRIBUTE_BALL_X, splitSoccerDataRoute));
 		ballPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Y, ATTRIBUTE_BALL_Y, splitSoccerDataRoute));
@@ -119,7 +119,7 @@ public class PassesSportsQLParser {
 		allOperators.add(ballWindow);
 
 		// 5.  Create player position map
-		ArrayList<SDFExpressionParameter> playerPosExpressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> playerPosExpressions = new ArrayList<NamedExpressionParameter>();
 		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID,ATTRIBUTE_PLAYER_ENTITY_ID, splitSoccerDataRoute));
 		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID,ATTRIBUTE_PLAYER_TEAM_ID, splitSoccerDataRoute));
 		playerPosExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.X, ATTRIBUTE_PLAYER_X, splitSoccerDataRoute));
@@ -138,7 +138,7 @@ public class PassesSportsQLParser {
 		allOperators.add(ballContactJoin);
 		
 		//8. Calculate distance between player and ball
-		List<SDFExpressionParameter> ballContactStateMapExpressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> ballContactStateMapExpressions = new ArrayList<NamedExpressionParameter>();
 		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_TS, ballContactJoin));
 		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_X, ballContactJoin));
 		ballContactStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_Y, ballContactJoin));
@@ -186,7 +186,7 @@ public class PassesSportsQLParser {
 		allOperators.add(ballContactProject);
 		
 		// 11. Two tuples in a row as one tuple (=> pass)
-		List<SDFExpressionParameter> passesStateMapExpressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> passesStateMapExpressions = new ArrayList<NamedExpressionParameter>();
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_TS, ATTRIBUTE_BALL_TS+"_1", ballContactProject));
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_X, ATTRIBUTE_BALL_X+"_1", ballContactProject));
 		passesStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter("__last_1."+ATTRIBUTE_BALL_Y, ATTRIBUTE_BALL_Y+"_1", ballContactProject));
@@ -208,7 +208,7 @@ public class PassesSportsQLParser {
 		allOperators.add(passesSelect);
 		
 		// 12. Calculate pass distance, pass angle and time between two passes
-		List<SDFExpressionParameter> passesDetailsStateMapExpressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> passesDetailsStateMapExpressions = new ArrayList<NamedExpressionParameter>();
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_TS+"_1", ATTRIBUTE_BALL_TS+"_1", passesSelect));
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_X+"_1", ATTRIBUTE_BALL_X+"_1", passesSelect));
 		passesDetailsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_Y+"_1", ATTRIBUTE_BALL_Y+"_1", passesSelect));
@@ -231,7 +231,7 @@ public class PassesSportsQLParser {
 		allOperators.add(passesDetailsStateMap);
 		
 		// 13. 
-		List<SDFExpressionParameter> passesResultsStateMapExpressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> passesResultsStateMapExpressions = new ArrayList<NamedExpressionParameter>();
 		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_TS+"_1", ATTRIBUTE_BALL_TS+"_1", passesDetailsStateMap));
 		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_X+"_1", ATTRIBUTE_BALL_X+"_1", passesDetailsStateMap));
 		passesResultsStateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_BALL_Y+"_1", ATTRIBUTE_BALL_Y+"_1", passesDetailsStateMap));

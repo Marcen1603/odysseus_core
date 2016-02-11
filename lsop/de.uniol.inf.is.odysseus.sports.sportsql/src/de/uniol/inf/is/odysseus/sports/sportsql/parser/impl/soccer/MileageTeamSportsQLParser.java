@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
@@ -94,12 +94,12 @@ public class MileageTeamSportsQLParser implements ISportsQLParser {
 		// -----------------------------------------
 
 		// 3. StateMapAO for mileage calculation
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter param2 = OperatorBuildHelper
+		List<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter param2 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, teamSelect);
-		SDFExpressionParameter param3 = OperatorBuildHelper
+		NamedExpressionParameter param3 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, teamSelect);
-		SDFExpressionParameter param4 = OperatorBuildHelper
+		NamedExpressionParameter param4 = OperatorBuildHelper
 				.createExpressionParameter(
 						"((sqrt(("+OperatorBuildHelper.ATTRIBUTE_X_METER+"-__last_1."+OperatorBuildHelper.ATTRIBUTE_X_METER+")^2 + ("+OperatorBuildHelper.ATTRIBUTE_Y_METER+"-__last_1."+OperatorBuildHelper.ATTRIBUTE_Y_METER+")^2))/1000)",
 						ATTRIBUTE_MILEAGE, teamSelect);

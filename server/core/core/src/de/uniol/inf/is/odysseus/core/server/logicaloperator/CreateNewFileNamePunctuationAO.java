@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 @LogicalOperator(name="CreateNewFilenamePunctuation", maxInputPorts=1, minInputPorts=1,doc="Depending on a predicate and a name: Create NewFilenamePunctuations", category = { LogicalOperatorCategory.PROCESSING})
@@ -45,7 +45,7 @@ public class CreateNewFileNamePunctuationAO extends UnaryLogicalOp implements
 		return filenameExpression;
 	}
 
-	@Parameter(name="filename", type = SDFExpressionParameter.class, doc = "The expression to create the output filename.")
+	@Parameter(name="filename", type = NamedExpressionParameter.class, doc = "The expression to create the output filename.")
 	public void setFilenameAttribute(NamedExpression filenameExpression) {
 		this.filenameExpression = filenameExpression.expression;
 	}

@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -121,7 +121,7 @@ public class SprintsSportsQLParser  {
 		allOperators.add(aggregate);
 
 		// 5. Calculate speed in km/h
-		ArrayList<SDFExpressionParameter> toKmhMapExpressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> toKmhMapExpressions = new ArrayList<NamedExpressionParameter>();
 		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
 				IntermediateSchemaAttributes.ENTITY_ID, aggregate));
 		toKmhMapExpressions.add(OperatorBuildHelper.createExpressionParameter(
@@ -177,7 +177,7 @@ public class SprintsSportsQLParser  {
 		allOperators.add(coalesceAO);
 		
 		// 7. Calculate sprint distance		
-		ArrayList<SDFExpressionParameter> resultMapExpressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> resultMapExpressions = new ArrayList<NamedExpressionParameter>();
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, coalesceAO));
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, coalesceAO));
 		resultMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_AVG_SPEED, coalesceAO));
@@ -190,7 +190,7 @@ public class SprintsSportsQLParser  {
 		
 		
 		// 8. Set sprint category
-		ArrayList<SDFExpressionParameter> stateMapExpressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> stateMapExpressions = new ArrayList<NamedExpressionParameter>();
 		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, resultMap));
 		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, resultMap));
 		stateMapExpressions.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_AVG_SPEED, resultMap));

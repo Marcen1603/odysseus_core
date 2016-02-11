@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
@@ -79,7 +79,7 @@ public class PassesPlayerSportsQLParser implements ISportsQLParser {
 		ILogicalOperator globalPassesLast = globalPasses.getPasses(session, sportsQL, allOperators);
 
 		// 23. Statemap1
-		List<SDFExpressionParameter> statemapExpressions2 = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> statemapExpressions2 = new ArrayList<NamedExpressionParameter>();
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P1_ENTITY_ID, ATTRIBUTE_PLAYER_ENTITY_ID, globalPassesLast));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter("eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID + ", 1, 0)", ATTRIBUTE_PASS_SUCCESS, globalPassesLast));
 		statemapExpressions2.add(OperatorBuildHelper.createExpressionParameter("eif(" + ATTRIBUTE_P1_TEAM_ID + " = " + ATTRIBUTE_P2_TEAM_ID + ", 0, 1)", ATTRIBUTE_PASS_FAIL, globalPassesLast));
@@ -104,7 +104,7 @@ public class PassesPlayerSportsQLParser implements ISportsQLParser {
 		allOperators.add(lastStateMapAO);
 
 		// 24. Statemap2
-		List<SDFExpressionParameter> statemapExpressions3 = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> statemapExpressions3 = new ArrayList<NamedExpressionParameter>();
 
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter(ATTRIBUTE_P2_ENTITY_ID, ATTRIBUTE_PLAYER_ENTITY_ID, globalPassesLast));
 		statemapExpressions3.add(OperatorBuildHelper.createExpressionParameter("0", ATTRIBUTE_PASS_SUCCESS, globalPassesLast));

@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -71,7 +71,7 @@ public class GameTimeSportsQLParser implements ISportsQLParser {
 		}
 
 		// 3. Convert decimal minutes to minute, second and millisecond
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
 		expressions.add(OperatorBuildHelper.createExpressionParameter("DoubleToInteger(ts/" + TimeUnitHelper.getBTUtoMinutesFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ")", OperatorBuildHelper.ATTRIBUTE_MINUTE, gameTimeSelect));
 		expressions.add(OperatorBuildHelper.createExpressionParameter("DoubleToInteger((ts/" + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase())) + ") % " + COUNT_SECONDS_UP_TO + ")", OperatorBuildHelper.ATTRIBUTE_SECOND, gameTimeSelect));
 		if (addMilliseconds(sportsQL)) {

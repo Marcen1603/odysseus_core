@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
@@ -117,7 +117,7 @@ public class GeneratorAO extends UnaryLogicalOp implements IHasPredicate{
         return this.groupingAttributes;
     }
 
-    @Parameter(type = SDFExpressionParameter.class, isList = true)
+    @Parameter(type = NamedExpressionParameter.class, isList = true)
     public void setExpressions(final List<NamedExpression> namedExpressions) {
         this.namedExpressions = namedExpressions;
         this.expressions = new ArrayList<>();

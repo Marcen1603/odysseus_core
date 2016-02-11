@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
@@ -138,12 +138,12 @@ public class OperatorBuildHelper {
 	 *            Port of source from which the data will be received
 	 * @return A MapAO with the given expressions
 	 */
-	public static MapAO createMapAO(List<SDFExpressionParameter> expressions, ILogicalOperator source, int sinkInPort,
+	public static MapAO createMapAO(List<NamedExpressionParameter> expressions, ILogicalOperator source, int sinkInPort,
 			int sourceOutPort, boolean evaluateOnPunctuation) {
 		MapAO mapAO = new MapAO();
 
 		List<NamedExpression> expressionItems = new ArrayList<NamedExpression>();
-		for (SDFExpressionParameter param : expressions) {
+		for (NamedExpressionParameter param : expressions) {
 			expressionItems.add(param.getValue());
 		}
 
@@ -166,7 +166,7 @@ public class OperatorBuildHelper {
 	 *            Source for this operator
 	 * @return A StateMapAO with given expressions and grouping
 	 */
-	public static StateMapAO createStateMapAO(List<SDFExpressionParameter> expressions, String groupBy,
+	public static StateMapAO createStateMapAO(List<NamedExpressionParameter> expressions, String groupBy,
 			ILogicalOperator source) {
 		List<String> groupingAttributes = new ArrayList<String>();
 		if (groupBy.length() > 0) {
@@ -186,7 +186,7 @@ public class OperatorBuildHelper {
 	 * @param source
 	 * @return
 	 */
-	public static StateMapAO createStateMapAO(List<SDFExpressionParameter> expressions, ILogicalOperator source) {
+	public static StateMapAO createStateMapAO(List<NamedExpressionParameter> expressions, ILogicalOperator source) {
 		return createStateMapAO(expressions, "", source);
 
 	}
@@ -203,13 +203,13 @@ public class OperatorBuildHelper {
 	 *            Source for this operator
 	 * @return A StateMapAO with given expressions and grouping
 	 */
-	public static StateMapAO createStateMapAO(List<SDFExpressionParameter> expressions, List<String> groupBy,
+	public static StateMapAO createStateMapAO(List<NamedExpressionParameter> expressions, List<String> groupBy,
 			ILogicalOperator source) {
 		StateMapAO stateMapAO = new StateMapAO();
 
 		// Expressions
 		List<NamedExpression> expressionItems = new ArrayList<NamedExpression>();
-		for (SDFExpressionParameter param : expressions) {
+		for (NamedExpressionParameter param : expressions) {
 			expressionItems.add(param.getValue());
 		}
 		stateMapAO.setExpressions(expressionItems);
@@ -304,28 +304,28 @@ public class OperatorBuildHelper {
 
 		if (inMeters) {
 			// Calculate meters from input stream
-			List<SDFExpressionParameter> meterExpressions = new ArrayList<SDFExpressionParameter>();
-			SDFExpressionParameter param1 = OperatorBuildHelper.createExpressionParameter(
+			List<NamedExpressionParameter> meterExpressions = new ArrayList<NamedExpressionParameter>();
+			NamedExpressionParameter param1 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.ENTITY_ID, source);
-			SDFExpressionParameter param2 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param2 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.X + " / 1000 - " + AbstractSportsDDCAccess.getFieldXMin() + "/"
 							+ CONVERSION_DIVIDEND_POSITION_TO_METERS, ATTRIBUTE_X_METER, source);
-			SDFExpressionParameter param3 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param3 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.Y + " / 1000 - " + AbstractSportsDDCAccess.getFieldYMin() + "/"
 							+ CONVERSION_DIVIDEND_POSITION_TO_METERS, ATTRIBUTE_Y_METER, source);
-			SDFExpressionParameter param4 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param4 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.X, source);
-			SDFExpressionParameter param5 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param5 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.Y, source);
-			SDFExpressionParameter param6 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param6 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.Z, source);
-			SDFExpressionParameter param7 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param7 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.V, source);
-			SDFExpressionParameter param8 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param8 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.A, source);
-			SDFExpressionParameter param14 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param14 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.TS, source);
-			SDFExpressionParameter param15 = OperatorBuildHelper.createExpressionParameter(
+			NamedExpressionParameter param15 = OperatorBuildHelper.createExpressionParameter(
 					IntermediateSchemaAttributes.TEAM_ID, source);
 
 			meterExpressions.add(param1);
@@ -518,19 +518,19 @@ public class OperatorBuildHelper {
 	}
 
 	public static MapAO createTimeMap(ILogicalOperator source) throws MissingDDCEntryException {
-		List<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
 
-		SDFExpressionParameter ex1 = OperatorBuildHelper.createExpressionParameter(
+		NamedExpressionParameter ex1 = OperatorBuildHelper.createExpressionParameter(
 				IntermediateSchemaAttributes.ENTITY_ID, source);
 
-		SDFExpressionParameter ex2 = OperatorBuildHelper
+		NamedExpressionParameter ex2 = OperatorBuildHelper
 				.createExpressionParameter(
 						"DoubleToInteger(ts/"
 								+ TimeUnitHelper
 										.getBTUtoMinutesFactor(de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter.TimeUnit
 												.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase()))
 								+ ")", ATTRIBUTE_MINUTE, source);
-		SDFExpressionParameter ex3 = OperatorBuildHelper
+		NamedExpressionParameter ex3 = OperatorBuildHelper
 				.createExpressionParameter(
 						"DoubleToInteger((ts/"
 								+ TimeUnitHelper
@@ -538,19 +538,19 @@ public class OperatorBuildHelper {
 												.valueOf(AbstractSportsDDCAccess.getBasetimeunit().toLowerCase()))
 								+ ") % 60)", ATTRIBUTE_SECOND, source);
 
-		SDFExpressionParameter ex5 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.X,
+		NamedExpressionParameter ex5 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.X,
 				source);
-		SDFExpressionParameter ex6 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Y,
+		NamedExpressionParameter ex6 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Y,
 				source);
-		SDFExpressionParameter ex7 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Z,
+		NamedExpressionParameter ex7 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.Z,
 				source);
-		SDFExpressionParameter ex8 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.V,
+		NamedExpressionParameter ex8 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.V,
 				source);
-		SDFExpressionParameter ex9 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.A,
+		NamedExpressionParameter ex9 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.A,
 				source);
-		SDFExpressionParameter ex10 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS,
+		NamedExpressionParameter ex10 = OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS,
 				source);
-		SDFExpressionParameter ex11 = OperatorBuildHelper.createExpressionParameter(
+		NamedExpressionParameter ex11 = OperatorBuildHelper.createExpressionParameter(
 				IntermediateSchemaAttributes.TEAM_ID, source);
 
 		expressions.add(ex1);
@@ -1629,12 +1629,12 @@ public class OperatorBuildHelper {
 	 *            appear in the OutputSchema of the operator you put the expression in
 	 * @return An expression which can be used in various AOs, especially MapAOs
 	 */
-	public static SDFExpressionParameter createExpressionParameter(String expression, String name,
+	public static NamedExpressionParameter createExpressionParameter(String expression, String name,
 			ILogicalOperator source) {
 
 		IAttributeResolver attributeResolver = OperatorBuildHelper.createAttributeResolver(source);
 
-		SDFExpressionParameter param = new SDFExpressionParameter();
+		NamedExpressionParameter param = new NamedExpressionParameter();
 		List<String> paramValue = new ArrayList<String>();
 		paramValue.add(expression);
 		paramValue.add(name);
@@ -1653,9 +1653,9 @@ public class OperatorBuildHelper {
 	 *            "toDate(ts/100000)")
 	 * @return An expression which can be used in various AOs, especially MapAOs
 	 */
-	public static SDFExpressionParameter createExpressionParameter(String expression, ILogicalOperator source) {
+	public static NamedExpressionParameter createExpressionParameter(String expression, ILogicalOperator source) {
 		IAttributeResolver attributeResolver = OperatorBuildHelper.createAttributeResolver(source);
-		SDFExpressionParameter param = new SDFExpressionParameter();
+		NamedExpressionParameter param = new NamedExpressionParameter();
 		param.setInputValue(expression);
 		param.setAttributeResolver(attributeResolver);
 		return param;

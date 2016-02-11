@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 
 @LogicalOperator(name = "TOPK", maxInputPorts = 1, minInputPorts = 1, category = {
 		LogicalOperatorCategory.ADVANCED }, doc = "Calculate the top k elements of the input")
@@ -72,7 +72,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		return setupFunction;
 	}
 
-	@Parameter(name = "setupFunction", optional = true, type = SDFExpressionParameter.class, doc = "This function is called for every input element before calculating the score.")
+	@Parameter(name = "setupFunction", optional = true, type = NamedExpressionParameter.class, doc = "This function is called for every input element before calculating the score.")
 	public void setSetupFunction(NamedExpression setupFunction) {
 		this.setupFunction = setupFunction;
 	}
@@ -81,7 +81,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		return tearDownFunction;
 	}
 
-	@Parameter(name = "tearDownFunction", optional = true, type = SDFExpressionParameter.class, doc = "This function is called for every input element after calculating the score.")
+	@Parameter(name = "tearDownFunction", optional = true, type = NamedExpressionParameter.class, doc = "This function is called for every input element after calculating the score.")
 	public void setTearDownFunction(NamedExpression tearDownFunction) {
 		this.tearDownFunction = tearDownFunction;
 	}
@@ -90,7 +90,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		return cleanupPredicate;
 	}
 
-	@Parameter(name = "cleanUpPredicate", optional = true, type = SDFExpressionParameter.class, doc = "This (optional) predicate is used to clean up the state after processing the input.")
+	@Parameter(name = "cleanUpPredicate", optional = true, type = NamedExpressionParameter.class, doc = "This (optional) predicate is used to clean up the state after processing the input.")
 	public void setCleanupPredicate(NamedExpression cleanupPredicate) {
 		this.cleanupPredicate = cleanupPredicate;
 	}
@@ -99,7 +99,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		return scoringFunction;
 	}
 
-	@Parameter(name = "scoringFunction", optional = false, type = SDFExpressionParameter.class, doc = "The scoring function for ordering")
+	@Parameter(name = "scoringFunction", optional = false, type = NamedExpressionParameter.class, doc = "The scoring function for ordering")
 	public void setScoringFunction(NamedExpression scoringFunction) {
 		this.scoringFunction = scoringFunction;
 	}
@@ -108,7 +108,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		return preScoreFunction;
 	}
 	
-	@Parameter(name = "preScoreFunction", optional = true, type = SDFExpressionParameter.class, doc = "This function be will called on the input before each element is scored. Typically used in case where recalcScore is set to true.")
+	@Parameter(name = "preScoreFunction", optional = true, type = NamedExpressionParameter.class, doc = "This function be will called on the input before each element is scored. Typically used in case where recalcScore is set to true.")
 	public void setPreScoreFunction(NamedExpression preScoreFunction) {
 		this.preScoreFunction = preScoreFunction;
 	}

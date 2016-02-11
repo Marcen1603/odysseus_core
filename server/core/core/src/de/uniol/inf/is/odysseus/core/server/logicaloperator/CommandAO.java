@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 
 /**
  * 
@@ -35,7 +35,7 @@ public class CommandAO extends AbstractLogicalOperator
 		return new CommandAO(this);
 	}
 
-	@Parameter(name="CommandExpression", type = SDFExpressionParameter.class, doc="Expression for the commands, e.g. an attribute or a string")
+	@Parameter(name="CommandExpression", type = NamedExpressionParameter.class, doc="Expression for the commands, e.g. an attribute or a string")
 	public void setCommandExpression2(NamedExpression commandExpression) {
 		this.commandExpression = commandExpression.expression;
 	}

@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.UncheckedExpressionParamter;
 
@@ -210,7 +210,7 @@ public class MapAO extends UnaryLogicalOp {
 		}
 	}
 
-	@Parameter(type = SDFExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = true, doc = "A list of expressions.")
+	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = true, doc = "A list of expressions.")
 	public void setExpressions(List<NamedExpression> namedExpressions) {
 		this.namedExpressions = namedExpressions;
 		expressions = new ArrayList<>();

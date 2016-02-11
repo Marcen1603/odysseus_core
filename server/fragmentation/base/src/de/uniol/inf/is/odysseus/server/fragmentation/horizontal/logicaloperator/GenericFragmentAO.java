@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -87,7 +87,7 @@ public class GenericFragmentAO extends AbstractStaticFragmentAO {
     /**
      * Sets the partition expression.
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "PARTITION", optional = false)
+    @Parameter(type = NamedExpressionParameter.class, name = "PARTITION", optional = false)
     public void setPartition(NamedExpression expression) {
         this.expression = Optional.fromNullable(expression);
         this.addParameterInfo("PARTITION", this.expression);

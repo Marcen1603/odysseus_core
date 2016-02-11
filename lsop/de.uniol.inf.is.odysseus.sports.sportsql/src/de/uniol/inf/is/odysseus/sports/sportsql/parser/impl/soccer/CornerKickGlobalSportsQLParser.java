@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
@@ -116,7 +116,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		 * detect ball behind goal line
 		 */
 		
-		ArrayList<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
 		expressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID,
 				activeBall_2));
 		expressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS, 
@@ -145,7 +145,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		 * detect ball on corner spot
 		 */
 	
-		ArrayList<SDFExpressionParameter> ballExpressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> ballExpressions = new ArrayList<NamedExpressionParameter>();
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS,
 				ATTR_SPOT_BALL_TS, activeBall));
 		ballExpressions.add(OperatorBuildHelper.createExpressionParameter(
@@ -221,7 +221,7 @@ public class CornerKickGlobalSportsQLParser implements ISportsQLParser {
 		 * match teams to field side
 		 */
 		
-		ArrayList<SDFExpressionParameter> sideExpression = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> sideExpression = new ArrayList<NamedExpressionParameter>();
 		sideExpression.add(OperatorBuildHelper.createExpressionParameter(
 				"eif( " + SoccerDDCAccess.getLeftGoalTeamId() + " = " + TEAM_ID_1 + ", " + ATTR_SUM_BALL_ON_CORNERSPOT_RIGHT + ", " + ATTR_SUM_BALL_ON_CORNERSPOT_LEFT + ")",
 				ATTR_CORNERS_TEAM_1, goals_aggregate));

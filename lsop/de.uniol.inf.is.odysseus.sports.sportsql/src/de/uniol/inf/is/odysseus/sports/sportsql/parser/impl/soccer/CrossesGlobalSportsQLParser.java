@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.ISportsQLParser;
@@ -89,7 +89,7 @@ public class CrossesGlobalSportsQLParser implements ISportsQLParser{
 //				['eif( (y > ${crossing_bounds_center_line}) AND ((x < ${crossing_bounds_upper_x}) OR (x > ${crossing_bounds_lower_x})) , 1, 0)', 'in_crossing_zone_right']
 //			]}, ball_in_game_field)
 		
-		ArrayList<SDFExpressionParameter> expressions = new ArrayList<SDFExpressionParameter>();
+		ArrayList<NamedExpressionParameter> expressions = new ArrayList<NamedExpressionParameter>();
 		expressions.add(OperatorBuildHelper.createExpressionParameter(IntermediateSchemaAttributes.TS, "cts", selectBallInField));
 		expressions.add(OperatorBuildHelper
 				.createExpressionParameter("eif((x < " + CENTER_LINE

@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 
 @LogicalOperator(name="PlanModificationAction", maxInputPorts=1, minInputPorts=1, doc="Executes plan modifications based on receiving tuple data", category = { LogicalOperatorCategory.PLAN})
 public class PlanModificationActionAO extends AbstractLogicalOperator {
@@ -31,7 +31,7 @@ public class PlanModificationActionAO extends AbstractLogicalOperator {
 		return new PlanModificationActionAO(this);
 	}
 
-	@Parameter(name="CommandExpression", type = SDFExpressionParameter.class, doc="Expression for the plan modification commands, e.g. an attribute or a string")
+	@Parameter(name="CommandExpression", type = NamedExpressionParameter.class, doc="Expression for the plan modification commands, e.g. an attribute or a string")
 	public void setCommandExpression2(NamedExpression commandExpression) {
 		this.commandExpression = commandExpression.expression;
 	}
@@ -40,7 +40,7 @@ public class PlanModificationActionAO extends AbstractLogicalOperator {
 		return commandExpression;
 	}
 
-	@Parameter(name="QueryIDExpression", type = SDFExpressionParameter.class, doc="Expression to calculate the query id to execute the commands on")
+	@Parameter(name="QueryIDExpression", type = NamedExpressionParameter.class, doc="Expression to calculate the query id to execute the commands on")
 	public void setQueryIDExpression2( NamedExpression attribute ) {
 		queryIDExpression = attribute.expression;
 	}

@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
@@ -142,7 +142,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param stateTransitionExpression
      *            The state transition
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "TRANSITION", isList = false, optional = false)
+    @Parameter(type = NamedExpressionParameter.class, name = "TRANSITION", isList = false, optional = false)
     public final void setStateTransitionExpression(final NamedExpression stateTransitionExpression) {
         this.stateTransitionExpression = stateTransitionExpression;
     }
@@ -175,7 +175,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param control
      *            The control
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "CONTROL", isList = false, optional = true)
+    @Parameter(type = NamedExpressionParameter.class, name = "CONTROL", isList = false, optional = true)
     public final void setControlExpression(final NamedExpression controlExpression) {
         this.controlExpression = controlExpression;
     }
@@ -211,7 +211,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param noise
      *            The process noise
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "PROCESSNOISE", isList = false, optional = false)
+    @Parameter(type = NamedExpressionParameter.class, name = "PROCESSNOISE", isList = false, optional = false)
     public final void setProcessNoiseExpression(final NamedExpression processNoiseExpression) {
         this.processNoiseExpression = processNoiseExpression;
     }
@@ -244,7 +244,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param measurementExpression
      *            The measurement
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "MEASUREMENT", isList = false, optional = false)
+    @Parameter(type = NamedExpressionParameter.class, name = "MEASUREMENT", isList = false, optional = false)
     public final void setMeasurementExpression(final NamedExpression measurementExpression) {
         this.measurementExpression = measurementExpression;
     }
@@ -277,7 +277,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param measurementNoiseExpression
      *            The measurement noise
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "MEASUREMENTNOISE", isList = false, optional = false)
+    @Parameter(type = NamedExpressionParameter.class, name = "MEASUREMENTNOISE", isList = false, optional = false)
     public final void setMeasurementNoiseExpression(final NamedExpression measurementNoiseExpression) {
         this.measurementNoiseExpression = measurementNoiseExpression;
     }
@@ -310,7 +310,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param initialStateExpression
      *            The initial state
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "INITIALSTATE", isList = false, optional = true)
+    @Parameter(type = NamedExpressionParameter.class, name = "INITIALSTATE", isList = false, optional = true)
     public final void setInitialStateExpression(final NamedExpression initialStateExpression) {
         this.initialStateExpression = initialStateExpression;
     }
@@ -335,7 +335,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
      * @param initialErrorExpression
      *            The initial error
      */
-    @Parameter(type = SDFExpressionParameter.class, name = "INITIALERROR", isList = false, optional = true)
+    @Parameter(type = NamedExpressionParameter.class, name = "INITIALERROR", isList = false, optional = true)
     public final void setInitialErrorExpression(final NamedExpression initialErrorExpression) {
         this.initialErrorExpression = initialErrorExpression;
     }

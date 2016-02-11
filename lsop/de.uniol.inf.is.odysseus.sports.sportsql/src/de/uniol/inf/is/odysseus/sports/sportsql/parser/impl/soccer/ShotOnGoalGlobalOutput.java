@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -174,16 +174,16 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 4. Map for acceleration
-		List<SDFExpressionParameter> mapExpressions = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter mapParam1 = OperatorBuildHelper
+		List<NamedExpressionParameter> mapExpressions = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter mapParam1 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TS, ATTRIBUTE_SHOT_TS, activeBall);
-		SDFExpressionParameter mapParam2 = OperatorBuildHelper
+		NamedExpressionParameter mapParam2 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.X, ATTRIBUTE_SHOT_X, activeBall);
-		SDFExpressionParameter mapParam3 = OperatorBuildHelper
+		NamedExpressionParameter mapParam3 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Y, ATTRIBUTE_SHOT_Y, activeBall);
-		SDFExpressionParameter mapParam4 = OperatorBuildHelper
+		NamedExpressionParameter mapParam4 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Z, ATTRIBUTE_SHOT_Z, activeBall);
-		SDFExpressionParameter mapParam5 = OperatorBuildHelper
+		NamedExpressionParameter mapParam5 = OperatorBuildHelper
 				.createExpressionParameter("eif(" + IntermediateSchemaAttributes.A + " >= " + MIN_ACCELERATION
 						+ ", 1, 0)", ATTRIBUTE_ACCELERATED, activeBall);
 		
@@ -283,24 +283,24 @@ public class ShotOnGoalGlobalOutput {
 		allOperators.add(playerBallJoinAO);
 
 		// 10. Map
-		SDFExpressionParameter playerBallJoinExp1 = OperatorBuildHelper
+		NamedExpressionParameter playerBallJoinExp1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, playerBallJoinAO);
-		SDFExpressionParameter playerBallJoinExp2 = OperatorBuildHelper
+		NamedExpressionParameter playerBallJoinExp2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X, playerBallJoinAO);
-		SDFExpressionParameter playerBallJoinExp3 = OperatorBuildHelper
+		NamedExpressionParameter playerBallJoinExp3 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Y, playerBallJoinAO);
-		SDFExpressionParameter playerBallJoinExp4 = OperatorBuildHelper
+		NamedExpressionParameter playerBallJoinExp4 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Z, playerBallJoinAO);
-		SDFExpressionParameter playerBallJoinExp5 = OperatorBuildHelper
+		NamedExpressionParameter playerBallJoinExp5 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, playerBallJoinAO);
-		SDFExpressionParameter playerBallJoinExp6 = OperatorBuildHelper
+		NamedExpressionParameter playerBallJoinExp6 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, playerBallJoinAO);
-		SDFExpressionParameter playerBallJoinExp7 = OperatorBuildHelper
+		NamedExpressionParameter playerBallJoinExp7 = OperatorBuildHelper
 				.createExpressionParameter(
 						"sqrt((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")^2 + (" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")^2)", ATTRIBUTE_DISTANCE,
 						playerBallJoinAO);
 
-		List<SDFExpressionParameter> playerBallJoinExpressions = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> playerBallJoinExpressions = new ArrayList<NamedExpressionParameter>();
 		playerBallJoinExpressions.add(playerBallJoinExp1);
 		playerBallJoinExpressions.add(playerBallJoinExp2);
 		playerBallJoinExpressions.add(playerBallJoinExp3);
@@ -395,34 +395,34 @@ public class ShotOnGoalGlobalOutput {
 		allOperators.add(closestBallActivePlayerJoin);
 
 		// 16. StateMap
-		List<SDFExpressionParameter> durationLengthStatemapParams = new ArrayList<SDFExpressionParameter>();
-		SDFExpressionParameter sdfParam1 = OperatorBuildHelper
+		List<NamedExpressionParameter> durationLengthStatemapParams = new ArrayList<NamedExpressionParameter>();
+		NamedExpressionParameter sdfParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS,
 						closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam2 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X,
 						closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam3 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam3 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Y,
 						closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam4 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam4 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Z,
 						closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam5 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam5 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TS, closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam6 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam6 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.X, closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam7 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam7 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Y, closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam8 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam8 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Z, closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam9 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam9 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID,
 						closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam10 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam10 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID,
 						closestBallActivePlayerJoin);
-		SDFExpressionParameter sdfParam11 = OperatorBuildHelper
+		NamedExpressionParameter sdfParam11 = OperatorBuildHelper
 				.createExpressionParameter(
 						"eif(" + ATTRIBUTE_SHOT_TS + " <= __last_1." + ATTRIBUTE_SHOT_TS + " OR " + ATTRIBUTE_SHOT_TS + " <= __last_2." + ATTRIBUTE_SHOT_TS + " OR " + ATTRIBUTE_SHOT_TS + " <= __last_3." + ATTRIBUTE_SHOT_TS + " OR " + ATTRIBUTE_SHOT_TS + " <= __last_4." + ATTRIBUTE_SHOT_TS + ", 1, 0)", ATTRIBUTE_SAME_SHOT_TS,
 						closestBallActivePlayerJoin);
@@ -459,49 +459,49 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 18. Map
-		List<SDFExpressionParameter> goalAreaMapParams = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> goalAreaMapParams = new ArrayList<NamedExpressionParameter>();
 
-		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, firstTupleSelect);
 		
-		SDFExpressionParameter goalAreaMapParam14 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam14 = OperatorBuildHelper
 				.createExpressionParameter("DoubleToInteger(" + ATTRIBUTE_SHOT_TS + "/"
 						+ TimeUnitHelper.getBTUtoMinutesFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ")", OperatorBuildHelper.ATTRIBUTE_MINUTE, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam15 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam15 = OperatorBuildHelper
 				.createExpressionParameter("DoubleToInteger((" + ATTRIBUTE_SHOT_TS + "/"
 						+ TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ") % 60)",
 				OperatorBuildHelper.ATTRIBUTE_SECOND, firstTupleSelect);
 
-		SDFExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Y, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Z, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TS, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.X, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Y, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Z, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID,
 						firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
 				.createExpressionParameter("((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")/1000) / ((" + IntermediateSchemaAttributes.TS + " - " + ATTRIBUTE_SHOT_TS + ") / " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 						.getBasetimeunit().toLowerCase())) + ")",
 						ATTRIBUTE_VX, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
 				.createExpressionParameter("((" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")/1000) / ((" + IntermediateSchemaAttributes.TS + " - " + ATTRIBUTE_SHOT_TS + ") / " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 						.getBasetimeunit().toLowerCase())) + ")",
 						ATTRIBUTE_VY, firstTupleSelect);
-		SDFExpressionParameter goalAreaMapParam13 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam13 = OperatorBuildHelper
 				.createExpressionParameter("((" + IntermediateSchemaAttributes.Z + " - " + ATTRIBUTE_SHOT_Z + ")/1000) / ((" + IntermediateSchemaAttributes.TS + " - " + ATTRIBUTE_SHOT_TS + ") / " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 						.getBasetimeunit().toLowerCase())) + ")",
 						ATTRIBUTE_VZ, firstTupleSelect);
@@ -631,33 +631,33 @@ public class ShotOnGoalGlobalOutput {
 	 * @return
 	 */
 	private static MapAO createForecastMapAO(ILogicalOperator source) {
-		List<SDFExpressionParameter> mapParams = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> mapParams = new ArrayList<NamedExpressionParameter>();
 
-		SDFExpressionParameter mapParam1 = OperatorBuildHelper
+		NamedExpressionParameter mapParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, source);
-		SDFExpressionParameter mapParam11 = OperatorBuildHelper
+		NamedExpressionParameter mapParam11 = OperatorBuildHelper
 				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_MINUTE, source);
-		SDFExpressionParameter mapParam12 = OperatorBuildHelper
+		NamedExpressionParameter mapParam12 = OperatorBuildHelper
 				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_SECOND, source);
-		SDFExpressionParameter mapParam2 = OperatorBuildHelper
+		NamedExpressionParameter mapParam2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X, source);
-		SDFExpressionParameter mapParam3 = OperatorBuildHelper
+		NamedExpressionParameter mapParam3 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Y, source);
-		SDFExpressionParameter mapParam4 = OperatorBuildHelper
+		NamedExpressionParameter mapParam4 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Z, source);
-		SDFExpressionParameter mapParam5 = OperatorBuildHelper
+		NamedExpressionParameter mapParam5 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TS, source);
-		SDFExpressionParameter mapParam6 = OperatorBuildHelper
+		NamedExpressionParameter mapParam6 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, source);
-		SDFExpressionParameter mapParam7 = OperatorBuildHelper
+		NamedExpressionParameter mapParam7 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, source);
-		SDFExpressionParameter mapParam8 = OperatorBuildHelper
+		NamedExpressionParameter mapParam8 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Y + " + (" + ATTRIBUTE_VY + " * " + ATTRIBUTE_TIME_TO_GOALLINE + " * 1000)",
 						ATTRIBUTE_FORECAST_Y, source);
-		SDFExpressionParameter mapParam9 = OperatorBuildHelper
+		NamedExpressionParameter mapParam9 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Z + " + (" + ATTRIBUTE_VZ + " * " + ATTRIBUTE_TIME_TO_GOALLINE + " * 1000)",
 						ATTRIBUTE_FORECAST_Z, source);
-		SDFExpressionParameter mapParam10 = OperatorBuildHelper
+		NamedExpressionParameter mapParam10 = OperatorBuildHelper
 				.createExpressionParameter("1", ATTRIBUTE_SHOT, source);
 
 		mapParams.add(mapParam1);
@@ -741,37 +741,37 @@ public class ShotOnGoalGlobalOutput {
 	private static MapAO createGoalAreaMapAO(int sourceOutputPort,
 			ILogicalOperator source, String timeToGoalLineExpression) {
 
-		List<SDFExpressionParameter> mapParams = new ArrayList<SDFExpressionParameter>();
+		List<NamedExpressionParameter> mapParams = new ArrayList<NamedExpressionParameter>();
 
-		SDFExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam1 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_TS, source);
-		SDFExpressionParameter goalAreaMapParam14 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam14 = OperatorBuildHelper
 				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_MINUTE, source);
-		SDFExpressionParameter goalAreaMapParam15 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam15 = OperatorBuildHelper
 				.createExpressionParameter(OperatorBuildHelper.ATTRIBUTE_SECOND, source);
-		SDFExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam2 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_X, source);
-		SDFExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam3 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Y, source);
-		SDFExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam4 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_SHOT_Z, source);
-		SDFExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam5 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TS, source);
-		SDFExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam6 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.X, source);
-		SDFExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam7 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Y, source);
-		SDFExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam8 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.Z, source);
-		SDFExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam9 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_VY, source);
-		SDFExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam10 = OperatorBuildHelper
 				.createExpressionParameter(ATTRIBUTE_VZ, source);
-		SDFExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam11 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.ENTITY_ID, source);
-		SDFExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam12 = OperatorBuildHelper
 				.createExpressionParameter(IntermediateSchemaAttributes.TEAM_ID, source);
-		SDFExpressionParameter goalAreaMapParam13 = OperatorBuildHelper
+		NamedExpressionParameter goalAreaMapParam13 = OperatorBuildHelper
 				.createExpressionParameter(timeToGoalLineExpression,
 						ATTRIBUTE_TIME_TO_GOALLINE, source);
 
