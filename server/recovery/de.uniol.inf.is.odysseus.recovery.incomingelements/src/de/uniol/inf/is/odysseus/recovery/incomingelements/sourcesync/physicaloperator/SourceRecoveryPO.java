@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
@@ -105,7 +104,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		 * called for the next element.
 		 */
 		boolean mTimeToEvaluateDelta = true;
-		
+
 		/**
 		 * Value for the decreased trust for potential duplicates.
 		 */
@@ -133,15 +132,18 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 					e.printStackTrace();
 				}
 				updateMetadata(strObj);
-				
+
 				StreamObject firstElementFromSourceAfterRestart = null;
 				synchronized (SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart) {
-					if(SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart.isPresent()) {
-						firstElementFromSourceAfterRestart = SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart.get();
+					if (SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart.isPresent()) {
+						firstElementFromSourceAfterRestart = SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart
+								.get();
 					}
 				}
-				if(firstElementFromSourceAfterRestart != null && new Comparator().compare(firstElementFromSourceAfterRestart, strObj) > 0) {
-					// Element from BaDaSt is older than the first element after recovery from the original source. Decrease trust
+				if (firstElementFromSourceAfterRestart != null
+						&& new Comparator().compare(firstElementFromSourceAfterRestart, strObj) > 0) {
+					// Element from BaDaSt is older than the first element after
+					// recovery from the original source. Decrease trust
 					decreaseTrust(strObj);
 					SourceRecoveryPO.this.transfer(strObj, port);
 				} else if (this.mTimeToEvaluateDelta) {
@@ -158,11 +160,13 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 
 		/**
 		 * Decrease the {@link Trust} value for the given object.
-		 * @param object The given object
+		 * 
+		 * @param object
+		 *            The given object
 		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private void decreaseTrust(StreamObject object) {
-			if(Arrays.asList(object.getMetadata().getClasses()).contains(ITrust.class)) {
+			if (Arrays.asList(object.getMetadata().getClasses()).contains(ITrust.class)) {
 				((IStreamObject<ITrust>) (IStreamObject) object).getMetadata().setTrust(DECREASEDTRUST);
 			}
 		}
@@ -334,7 +338,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	 * The first element from BaDaSt, which is not transferred any more.
 	 */
 	Optional<StreamObject> mFirstNotTransferredElementFromBaDaSt = Optional.absent();
-	
+
 	/**
 	 * The first element from BaDaSt, which has been received by this operator.
 	 */
@@ -363,9 +367,11 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		this.mRecoveryProtocolHandler.setTransfer(this.mRecoveryTransferHandler);
 	}
 
+	/**
+	 * Starts consuming from BaDaSt.
+	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	protected void process_open() throws OpenFailedException {
+	public void openBaDaSt() {
 		// Handle metadata
 		IMetaAttribute metaDate = this.mSourceAccess.getLocalMetaAttribute();
 		if (metaDate != null) {
@@ -393,12 +399,11 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		this.mRecoverySubscriberController = SubscriberControllerFactory.createController(
 				this.mSourceAccess.getAccessAOName(), this.mRecoverySubscriber, this.mOffset.longValue());
 		this.mRecoverySubscriberController.start();
-		super.process_open();
 	}
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
-		if(!this.mFirstElementFromSourceAfterRestart.isPresent()) {
+		if (!this.mFirstElementFromSourceAfterRestart.isPresent()) {
 			// First element, which is for sure not a duplicate
 			synchronized (this.mFirstElementFromSourceAfterRestart) {
 				this.mFirstElementFromSourceAfterRestart = Optional.of(object);

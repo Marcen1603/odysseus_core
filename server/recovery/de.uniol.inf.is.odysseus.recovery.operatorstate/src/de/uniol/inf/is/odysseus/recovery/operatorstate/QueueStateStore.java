@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.queuestate;
+package de.uniol.inf.is.odysseus.recovery.operatorstate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,8 +77,8 @@ public class QueueStateStore {
 			for (ControllablePhysicalSubscription<K> queue : queues) {
 				queue.suspend();
 				oos.writeObject(queue.getBufferedElements());
-				cLog.debug("Wrote state of '{}' to file '{}'", queue, file.getName());
 				queue.resume();
+				cLog.debug("Wrote state of '{}' to file '{}'", queue, file.getName());
 			}
 		}
 	}
@@ -115,8 +115,8 @@ public class QueueStateStore {
 				}
 				queue.suspend();
 				queue.setBufferedElements(state);
-				cLog.debug("Loaded state of '{}' from file '{}'", queue, file.getName());
 				queue.resume();
+				cLog.debug("Loaded state of '{}' from file '{}'", queue, file.getName());
 			}
 		}
 	}

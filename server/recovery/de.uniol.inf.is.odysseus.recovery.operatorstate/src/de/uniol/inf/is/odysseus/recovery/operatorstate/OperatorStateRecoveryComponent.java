@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.recovery.operatorstate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -15,6 +16,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
@@ -27,7 +29,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.SourceRecoveryPO;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandler;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManagerRegistry;
 
@@ -135,6 +140,49 @@ public class OperatorStateRecoveryComponent
 					.newArrayList(cExecutor.get().getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2()));
 			ILogicalQuery logQuery = cExecutor.get().getLogicalQueryById(queryId.getE1().intValue(), queryId.getE2());
 			OperatorStateStore.store(collectStateFulOperators(physRoots), logQuery);
+			QueueStateStore.store(collectControllableSubscriptions(physRoots), logQuery);
+		}
+	}
+
+	/**
+	 * Collects all controllable physical subscriptions of a query plan.
+	 * 
+	 * @param physicalRoots
+	 *            The roots of the plan.
+	 * @return A list of physical subscriptions each implementing
+	 *         {@link ControllablePhysicalSubscription}.
+	 */
+	private static <K> List<ControllablePhysicalSubscription<K>> collectControllableSubscriptions(
+			List<IPhysicalOperator> physicalRoots) {
+		List<ControllablePhysicalSubscription<K>> subscriptions = new ArrayList<>();
+		for (IPhysicalOperator root : physicalRoots) {
+			collectControllableSubscriptionsRecursive(root, subscriptions);
+		}
+		return subscriptions;
+	}
+
+	/**
+	 * Collects all controllable physical subscriptions of a query plan
+	 * recursively.
+	 * 
+	 * @param operator
+	 *            The current operator to check.
+	 * @param subscriptions
+	 *            All already controllable physical subscriptions.
+	 */
+	@SuppressWarnings("unchecked")
+	private static <K> void collectControllableSubscriptionsRecursive(IPhysicalOperator operator,
+			List<ControllablePhysicalSubscription<K>> subscriptions) {
+		if (ISink.class.isInstance(operator)) {
+			for (Object obj : ((ISink<?>) operator).getSubscribedToSource()) {
+				if (obj instanceof AbstractPhysicalSubscription) {
+					AbstractPhysicalSubscription<?> sub = (AbstractPhysicalSubscription<?>) obj;
+					if (sub instanceof ControllablePhysicalSubscription) {
+						subscriptions.add((ControllablePhysicalSubscription<K>) sub);
+					}
+					collectControllableSubscriptionsRecursive((IPhysicalOperator) sub.getTarget(), subscriptions);
+				}
+			}
 		}
 	}
 
@@ -183,10 +231,51 @@ public class OperatorStateRecoveryComponent
 		PlanModificationEventType eventType = (PlanModificationEventType) eventArgs.getEventType();
 		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 		Integer queryId = new Integer(query.getID());
-		if (cQueryIdsForRecovery.contains(queryId) && PlanModificationEventType.QUERY_ADDED.equals(eventType)) {
+		if (cQueryIdsForRecovery.contains(queryId) && PlanModificationEventType.QUERY_START.equals(eventType)) {
 			try {
 				OperatorStateStore.load(collectStateFulOperators(query.getRoots()), query.getLogicalQuery());
+				QueueStateStore.load(collectControllableSubscriptions(query.getRoots()), query.getLogicalQuery());
 				cQueryIdsForRecovery.remove(queryId);
+
+				// First query needs to be started, because process_open
+				// clears operator states. Afterwards, the states from backup
+				// file can be loaded and set. Last, start consuming from BaDaSt
+				GenericGraphWalker<?> walker = new GenericGraphWalker<>();
+				walker.prefixWalkPhysical(query.getRoots().get(0),
+						new IGraphNodeVisitor<IPhysicalOperator, IPhysicalOperator>() {
+
+							@Override
+							public void nodeAction(IPhysicalOperator node) {
+								if (node instanceof SourceRecoveryPO<?>) {
+									((SourceRecoveryPO<?>) node).openBaDaSt();
+								}
+							}
+
+							@Override
+							public void beforeFromSinkToSourceAction(IPhysicalOperator sink, IPhysicalOperator source) {
+								// Nothing to do
+							}
+
+							@Override
+							public void afterFromSinkToSourceAction(IPhysicalOperator sink, IPhysicalOperator source) {
+								// Nothing to do
+							}
+
+							@Override
+							public void beforeFromSourceToSinkAction(IPhysicalOperator source, IPhysicalOperator sink) {
+								// Nothing to do
+							}
+
+							@Override
+							public void afterFromSourceToSinkAction(IPhysicalOperator source, IPhysicalOperator sink) {
+								// Nothing to do
+							}
+
+							@Override
+							public IPhysicalOperator getResult() {
+								return null;
+							}
+						});
 			} catch (ClassNotFoundException | IOException e) {
 				cLog.error("Could not load operator state!", e);
 			}
@@ -194,6 +283,8 @@ public class OperatorStateRecoveryComponent
 			try {
 				OperatorStateStore.backupFile(query.getLogicalQuery());
 				OperatorStateStore.deleteFile(query.getLogicalQuery());
+				QueueStateStore.backupFile(query.getLogicalQuery());
+				QueueStateStore.deleteFile(query.getLogicalQuery());
 			} catch (ClassNotFoundException | IOException e) {
 				cLog.error("Could not load operator state!", e);
 			}

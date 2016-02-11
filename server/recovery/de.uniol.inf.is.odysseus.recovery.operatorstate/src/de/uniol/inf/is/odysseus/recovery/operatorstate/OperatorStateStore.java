@@ -74,8 +74,8 @@ public class OperatorStateStore {
 			for (IStatefulPO operator : operators) {
 				startBuffering((ISink<?>) operator);
 				oos.writeObject(operator.getState());
-				cLog.debug("Wrote state of '{}' to file '{}'", operator, file.getName());
 				stopBuffering((ISink<?>) operator);
+				cLog.debug("Wrote state of '{}' to file '{}'", operator, file.getName());
 			}
 		}
 	}
@@ -146,8 +146,8 @@ public class OperatorStateStore {
 				}
 				startBuffering((ISink<?>) operator);
 				operator.setState(state);
-				cLog.debug("Loaded state of '{}' from file '{}'", operator, file.getName());
 				stopBuffering((ISink<?>) operator);
+				cLog.debug("Loaded state of '{}' from file '{}'", operator, file.getName());
 			}
 		}
 	}

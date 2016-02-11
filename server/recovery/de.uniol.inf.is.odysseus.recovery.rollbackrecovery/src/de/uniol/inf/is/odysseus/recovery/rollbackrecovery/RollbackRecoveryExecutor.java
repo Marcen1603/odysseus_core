@@ -52,16 +52,10 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	private static IRecoveryComponent cIncomingElementsComponent;
 
 	/**
-	 * The not initialized recovery component for the operator states (to be
-	 * bound by OSGi).
+	 * The not initialized recovery component for the operator and queue states
+	 * (to be bound by OSGi).
 	 */
 	private static IRecoveryComponent cOperatorStateComponent;
-
-	/**
-	 * The not initialized recovery component for the queue states (to be bound
-	 * by OSGi).
-	 */
-	private static IRecoveryComponent cQueueStateComponent;
 
 	/**
 	 * Binds either a recovery component for the protection point handling, for
@@ -69,7 +63,7 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	 *
 	 * @param component
 	 *            The component to bind, if its name matches "Protection Points"
-	 *            , "Incoming Elements" or "Operator Recovery".
+	 *            , "Incoming Elements" or "Operator State".
 	 */
 	public static void bindComponent(IRecoveryComponent component) {
 		if (component.getName().equals("Protection Points")) {
@@ -78,8 +72,6 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cIncomingElementsComponent = component;
 		} else if (component.getName().equals("Operator State")) {
 			cOperatorStateComponent = component;
-		} else if (component.getName().equals("Queue State")) {
-			cQueueStateComponent = component;
 		}
 	}
 
@@ -96,8 +88,6 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cIncomingElementsComponent = null;
 		} else if (component.getName().equals("Operator State")) {
 			cOperatorStateComponent = null;
-		} else if (component.getName().equals("Queue State")) {
-			cQueueStateComponent = null;
 		}
 	}
 
@@ -117,14 +107,10 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	private IRecoveryComponent mOperatorStateComponent;
 
 	/**
-	 * The initialized recovery component for the queue states.
-	 */
-	private IRecoveryComponent mQueueStateComponent;
-	
-	/**
 	 * Empty default constructor for OSGi-DS.
 	 */
-	public RollbackRecoveryExecutor() {}
+	public RollbackRecoveryExecutor() {
+	}
 
 	/**
 	 * Constructor, which initializes all bound recovery components.
@@ -137,7 +123,6 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 		this.mProtectionPointsComponent = cProtectionPointsComponent.newInstance(config);
 		this.mSourceRecoveryComponent = cIncomingElementsComponent.newInstance(config);
 		this.mOperatorStateComponent = cOperatorStateComponent.newInstance(config);
-		this.mQueueStateComponent = cQueueStateComponent.newInstance(config);
 	}
 
 	@Override
@@ -166,12 +151,6 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 		}
 		modifiedQueries = this.mOperatorStateComponent.recover(qbConfig, caller, modifiedQueries);
 
-		if (this.mQueueStateComponent == null) {
-			cLog.error("RollBackRecovery executor misses Queue State recovery component!");
-			return modifiedQueries;
-		}
-		modifiedQueries = this.mQueueStateComponent.recover(qbConfig, caller, modifiedQueries);
-
 		return modifiedQueries;
 	}
 
@@ -196,12 +175,6 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			return modifiedQueries;
 		}
 		modifiedQueries = this.mOperatorStateComponent.activateBackup(qbConfig, caller, modifiedQueries);
-
-		if (this.mQueueStateComponent == null) {
-			cLog.error("RollBackRecovery executor misses Queue State recovery component!");
-			return modifiedQueries;
-		}
-		modifiedQueries = this.mQueueStateComponent.activateBackup(qbConfig, caller, modifiedQueries);
 
 		return modifiedQueries;
 	}
