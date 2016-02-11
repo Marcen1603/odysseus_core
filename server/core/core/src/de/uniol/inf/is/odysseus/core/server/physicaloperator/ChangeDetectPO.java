@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 
 /**
  * This operator can reduce traffic. It lets an event pass if its different than
- * the last event. A heartbeat generation strategie can be used.
+ * the last event. A heartbeat generation strategy can be used.
  * 
  * @author Marco Grawunder
  * 
