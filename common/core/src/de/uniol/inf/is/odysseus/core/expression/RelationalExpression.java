@@ -109,6 +109,23 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		return getValue();
 
 	}
+	
+	public Object evaluate(List<Tuple<T>> input, List<ISession> sessions, List<Tuple<T>> history) {
+
+		Object[] values = new Object[this.variables.length];
+		
+		for (int j = 0; j < this.variables.length; ++j) {
+			// Is input from one of the input schemata
+			Tuple<T> object = input.get((-1)*variables[j].getSchema());
+			processObject(object, history, values, j);
+		}
+
+		bindVariables(values);
+		setSessions(sessions);
+
+		return getValue();
+
+	}
 
 	protected Tuple<T> determineObjectForExpression(Tuple<T> object, List<Tuple<T>> history, int j) {
 		return object;
