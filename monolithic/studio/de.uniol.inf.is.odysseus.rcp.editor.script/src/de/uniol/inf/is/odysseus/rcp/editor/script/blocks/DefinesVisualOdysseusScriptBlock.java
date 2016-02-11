@@ -84,23 +84,6 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		buttonCompositeGridData.verticalAlignment = SWT.TOP;
 		buttonComposite.setLayoutData(buttonCompositeGridData);
 
-		/*** Buttons ***/
-		Button addButton = new Button(buttonComposite, SWT.PUSH);
-		addButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("add"));
-		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Button removeButton = new Button(buttonComposite, SWT.PUSH);
-		removeButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("remove"));
-		removeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Button moveUpButton = new Button(buttonComposite, SWT.PUSH);
-		moveUpButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveUp"));
-		moveUpButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Button moveDownButton = new Button(buttonComposite, SWT.PUSH);
-		moveDownButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveDown"));
-		moveDownButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
 		/*** Table ***/
 		Composite tableComposite = new Composite(contentComposite, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -182,7 +165,10 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 
 		tableViewer.setInput(pairs);
 		
-		/** Button behaviour */
+		/*** Buttons ***/
+		Button addButton = new Button(buttonComposite, SWT.PUSH);
+		addButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("add"));
+		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -196,6 +182,9 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 			}
 		});
 		
+		Button removeButton = new Button(buttonComposite, SWT.PUSH);
+		removeButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("remove"));
+		removeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -211,24 +200,9 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 			}
 		});
 		
-		moveDownButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Optional<StringPair> optPair = getSelection(tableViewer);
-				if( optPair.isPresent() ) {
-					int index = pairs.indexOf(optPair.get());
-					if( index < pairs.size() - 1 ) {
-						StringPair temp = pairs.get(index + 1);
-						pairs.set(index + 1, optPair.get());
-						pairs.set(index, temp);
-						
-						tableViewer.refresh();
-						container.setDirty(true);
-					}
-				}
-			}
-		});
-		
+		Button moveUpButton = new Button(buttonComposite, SWT.PUSH);
+		moveUpButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveUp"));
+		moveUpButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		moveUpButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -246,6 +220,28 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 				}
 			}
 		});
+		
+		Button moveDownButton = new Button(buttonComposite, SWT.PUSH);
+		moveDownButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveDown"));
+		moveDownButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		moveDownButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Optional<StringPair> optPair = getSelection(tableViewer);
+				if( optPair.isPresent() ) {
+					int index = pairs.indexOf(optPair.get());
+					if( index < pairs.size() - 1 ) {
+						StringPair temp = pairs.get(index + 1);
+						pairs.set(index + 1, optPair.get());
+						pairs.set(index, temp);
+						
+						tableViewer.refresh();
+						container.setDirty(true);
+					}
+				}
+			}
+		});
+
 	}
 
 	@Override
@@ -253,14 +249,15 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 
 	}
 	
-	private static Optional<StringPair> getSelection( TableViewer tableViewer ) {
+	@SuppressWarnings("unchecked")
+	private static <T> Optional<T> getSelection( TableViewer tableViewer ) {
 		ISelection selection = tableViewer.getSelection();
 		if( selection.isEmpty() ) {
 			return Optional.absent();
 		}
 		
 		IStructuredSelection structSelection = (IStructuredSelection) selection;
-		return Optional.of((StringPair)structSelection.getFirstElement());
+		return Optional.of((T)structSelection.getFirstElement());
 	}
 
 	@Override
