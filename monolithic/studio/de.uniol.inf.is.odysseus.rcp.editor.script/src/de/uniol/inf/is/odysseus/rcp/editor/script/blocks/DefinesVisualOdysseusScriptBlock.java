@@ -88,7 +88,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		TableViewer tableViewer = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
+		TableViewer tableViewer = new TableViewer(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
