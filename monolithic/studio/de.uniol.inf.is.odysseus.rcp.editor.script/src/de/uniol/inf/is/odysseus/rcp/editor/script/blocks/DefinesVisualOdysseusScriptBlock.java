@@ -20,8 +20,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.google.common.base.Optional;
@@ -54,21 +52,18 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 			pairs.add(new StringPair(key, keyValuePairs.get(key)));
 		}
 	}
+	
+	@Override
+	public String getTitle() {
+		return "Definitions";
+	}
 
 	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
 		Composite topComposite = new Composite(parent, SWT.NONE);
 		topComposite.setLayout(new GridLayout());
-		
-		// Title
-		Label titleLabel = new Label(topComposite, SWT.BORDER);
-		titleLabel.setText("Definitions");
-		titleLabel.setAlignment(SWT.CENTER);
-		titleLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
-		titleLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Composite contentComposite = new Composite(topComposite, SWT.BORDER);
+			
+		Composite contentComposite = new Composite(topComposite, SWT.NONE);
 		contentComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout contentLayout = new GridLayout(2, false);
 		contentLayout.horizontalSpacing = 0;

@@ -17,6 +17,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -27,6 +29,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
@@ -132,14 +135,33 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 		scrollComposite.setExpandVertical(true);
 
 		contentComposite = new Composite(scrollComposite, SWT.BORDER);
-		contentComposite.setLayout(new GridLayout());
+		GridLayout contentLayout = new GridLayout();
+		contentLayout.verticalSpacing = 0;
+		contentLayout.marginHeight = 0;
+		contentLayout.marginWidth = 0;
+		contentComposite.setLayout(contentLayout);
 
 		scrollComposite.setContent(contentComposite);
 
 		for (IVisualOdysseusScriptBlock textBlock : scriptModel.getVisualTextBlocks()) {
 
-			Composite textBlockComposite = new Composite(contentComposite, SWT.BORDER);
+			Composite topBlockComposite = new Composite(contentComposite, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint = parent.getBounds().width;
+			topBlockComposite.setLayoutData(gd);
+			topBlockComposite.setLayout(new GridLayout());
+			
+			String title = textBlock.getTitle();
+			
+			Label titleLabel = new Label(topBlockComposite, SWT.BORDER);
+			titleLabel.setText(Strings.isNullOrEmpty(title) ? "<No title>" : title);
+			titleLabel.setAlignment(SWT.CENTER);
+			titleLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+			titleLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+			titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			
+			Composite textBlockComposite = new Composite(contentComposite, SWT.NONE);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = parent.getBounds().width;
 			textBlockComposite.setLayoutData(gd);
 			textBlockComposite.setLayout(new FillLayout());

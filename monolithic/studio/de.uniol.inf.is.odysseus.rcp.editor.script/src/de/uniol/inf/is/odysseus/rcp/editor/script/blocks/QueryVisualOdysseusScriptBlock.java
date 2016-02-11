@@ -12,7 +12,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -43,6 +42,11 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		this.queryName = queryName;
 		this.startQuery = running;
 	}
+	
+	@Override
+	public String getTitle() {
+		return "Query";
+	}
 
 	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
@@ -51,14 +55,6 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		gridLayout.verticalSpacing = 0;
 		topCompsite.setLayout(gridLayout);
 		
-		// Title
-		Label titleLabel = new Label(topCompsite, SWT.BORDER);
-		titleLabel.setText("Query");
-		titleLabel.setAlignment(SWT.CENTER);
-		titleLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
-		titleLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		Composite settingsComposite = new Composite(topCompsite, SWT.NONE);
 		settingsComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		settingsComposite.setLayout(new GridLayout(3, false));

@@ -31,6 +31,11 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptBloc
 	}
 	
 	@Override
+	public String getTitle() {
+		return "Generic OdysseusScript";
+	}
+	
+	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(2, false));
