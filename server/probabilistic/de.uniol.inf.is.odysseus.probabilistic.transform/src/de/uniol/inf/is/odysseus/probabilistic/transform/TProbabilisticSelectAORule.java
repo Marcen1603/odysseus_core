@@ -70,11 +70,11 @@ public class TProbabilisticSelectAORule extends TSelectAORule {
         Objects.requireNonNull(config);
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-                if (SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
+                //if (SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
                     return true;
-                }
+                //}
             }
         }
-        return super.isExecutable(operator, config);
+        return false;
     }
 }
