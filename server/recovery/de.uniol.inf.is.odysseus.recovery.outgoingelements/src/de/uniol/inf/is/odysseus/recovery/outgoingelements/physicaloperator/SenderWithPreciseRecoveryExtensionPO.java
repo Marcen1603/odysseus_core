@@ -87,7 +87,8 @@ public class SenderWithPreciseRecoveryExtensionPO<T extends IStreamObject<?>> ex
 			boolean recovery) {
 		super(protocolHandler);
 		this.recoveryMode = recovery;
-		this.file = new File(cRecoveryDir + File.separator + cFileNamePrefix + senderAO.hashCode() + cFileNameEnding);
+		this.file = new File(cRecoveryDir + File.separator + cFileNamePrefix + senderAO.getSink().getResourceName()
+				+ cFileNameEnding);
 	}
 
 	/**
@@ -172,9 +173,6 @@ public class SenderWithPreciseRecoveryExtensionPO<T extends IStreamObject<?>> ex
 		try (FileOutputStream fout = new FileOutputStream(this.file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			oos.writeObject(obj);
-			if (cLog.isDebugEnabled()) {
-				cLog.debug("Wrote outgoing element '{}' to file '{}'", obj, this.file.getName());
-			}
 		} catch (IOException e) {
 			cLog.error("Could not write outgoing element!", e);
 		}
