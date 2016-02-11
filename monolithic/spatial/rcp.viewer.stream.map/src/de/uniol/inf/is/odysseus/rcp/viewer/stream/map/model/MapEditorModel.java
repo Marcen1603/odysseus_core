@@ -433,8 +433,9 @@ public class MapEditorModel extends ModelObject {
 
 		// Add to the selected connection (LayerUpdater)
 		for (LayerUpdater connection : connections.values()) {
-			if (connection.getQuery().getQueryText()
-					.equals(layerConfiguration.getQuery())) {
+			String query1 = connection.getQuery().getQueryText().trim().replaceAll("[\n\r]", "");
+			String query2 = layerConfiguration.getQuery().trim().replaceAll("[\n\r]", "");
+			if (query1.equals(query2)) {
 				connection.add(layer);
 			}
 		}
@@ -459,8 +460,9 @@ public class MapEditorModel extends ModelObject {
 
 		// Add to the selected connection (LayerUpdater)
 		for (LayerUpdater connection : connections.values()) {
-			if (connection.getQuery().getQueryText()
-					.equals(layerConfiguration.getQuery())) {
+			String query1 = connection.getQuery().getQueryText().trim().replaceAll("[\n\r]", "");
+			String query2 = layerConfiguration.getQuery().trim().replaceAll("[\n\r]", "");
+			if (query1.equals(query2)) {
 				connection.add(layer);
 			}
 		}

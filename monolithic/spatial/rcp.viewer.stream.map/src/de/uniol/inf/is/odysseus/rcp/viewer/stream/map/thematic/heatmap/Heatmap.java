@@ -197,10 +197,15 @@ public class Heatmap extends RasterLayer {
 
 				// Get the data from the Tuple (Where it is and value)
 				Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-				GeometryCollection geoColl = (GeometryCollection) tuple
-						.getAttribute(0);
-				Point point = geoColl.getCentroid();
 
+				Point point = null;
+				if (tuple.getAttribute(0) instanceof GeometryCollection) {
+					GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
+					point = geoColl.getCentroid();
+				} else if (tuple.getAttribute(0) instanceof Point) {
+					point = (Point) tuple.getAttribute(0);
+				}
+				
 				// Calculate, where this belongs in the heatmap
 
 				int[] transformedPoint = transformation.transformCoord(
@@ -239,9 +244,13 @@ public class Heatmap extends RasterLayer {
 
 			// Get the data from the Tuple (Where it is and value)
 			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-			GeometryCollection geoColl = (GeometryCollection) tuple
-					.getAttribute(config.getGeometricAttributePosition());
-			Point point = geoColl.getCentroid();
+			Point point = null;
+			if (tuple.getAttribute(0) instanceof GeometryCollection) {
+				GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
+				point = geoColl.getCentroid();
+			} else if (tuple.getAttribute(0) instanceof Point) {
+				point = (Point) tuple.getAttribute(0);
+			}
 
 			double value = 0;
 			if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {

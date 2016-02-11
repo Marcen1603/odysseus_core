@@ -102,10 +102,16 @@ public class TraceLayer extends RasterLayer {
 
 		for (Object dataSet : data) {
 			// Get the data from the Tuple (point, id and starttime)
-			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-			GeometryCollection geoColl = (GeometryCollection) tuple
-					.getAttribute(config.getGeometricAttributePosition());
-			Point point = geoColl.getCentroid();
+			Tuple<?> tuple = ((DataSet) dataSet).getTuple();	
+			
+			Point point = null;
+			if (tuple.getAttribute(0) instanceof GeometryCollection) {
+				GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
+				point = geoColl.getCentroid();
+			} else if (tuple.getAttribute(0) instanceof Point) {
+				point = (Point) tuple.getAttribute(0);
+			}
+			
 			TimeInterval timeInterval = (TimeInterval) tuple.getMetadata();
 			PointInTime startTime = timeInterval.getStart();
 
@@ -117,8 +123,8 @@ public class TraceLayer extends RasterLayer {
 					startTime);
 
 			try {
-				int id = (int) tuple.getAttribute(config
-						.getValueAttributePosition());
+				int id = java.lang.Math.toIntExact(tuple.getAttribute(config
+						.getValueAttributePosition()));
 
 				// If this is the first coordinate for this key,
 				// create a new ArrayList
