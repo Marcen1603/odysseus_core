@@ -119,6 +119,7 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	 *            The configuration for the executor.
 	 */
 	public RollbackRecoveryExecutor(Properties config) {
+		config.put("decreasedTrust", new Double(0.5));
 		this.mConfig = config;
 		this.mProtectionPointsComponent = cProtectionPointsComponent.newInstance(config);
 		this.mSourceRecoveryComponent = cIncomingElementsComponent.newInstance(config);

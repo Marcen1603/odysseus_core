@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriber;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriberController;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.SubscriberControllerFactory;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.trustpunctuation.TrustPunctuation;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
@@ -138,6 +139,13 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 					if (SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart.isPresent()) {
 						firstElementFromSourceAfterRestart = SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart
 								.get();
+						// Send trust punctuation to signal that all earlier
+						// elements (those, which are in restored operator
+						// states) have wrong trust values.
+						SourceRecoveryPO.this.sendPunctuation(new TrustPunctuation(
+								((IStreamObject<ITimeInterval>) (IStreamObject<?>) strObj).getMetadata().getStart()),
+								port);
+
 					}
 				}
 				if (firstElementFromSourceAfterRestart != null

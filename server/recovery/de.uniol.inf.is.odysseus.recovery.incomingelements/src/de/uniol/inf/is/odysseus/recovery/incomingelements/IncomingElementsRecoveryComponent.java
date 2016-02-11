@@ -17,9 +17,11 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -29,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.trustpunctuation.logicaloperator.TrustPunctuationReaderAO;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManagerRegistry;
 
 /**
@@ -111,6 +114,9 @@ public class IncomingElementsRecoveryComponent
 		}
 		for (ILogicalQuery query : queries) {
 			insertSourceSyncOperators(query, true);
+			if (this.decreasedTrust != null) {
+				this.insertTrustPunctuationReaderOperators(query, true);
+			}
 		}
 		this.mCurrentlyRecoveredQueries.addAll(queries);
 		return queries;
@@ -128,6 +134,9 @@ public class IncomingElementsRecoveryComponent
 				this.mCurrentlyRecoveredQueries.remove(query);
 			} else {
 				insertSourceSyncOperators(query, false);
+				if (this.decreasedTrust != null) {
+					this.insertTrustPunctuationReaderOperators(query, false);
+				}
 			}
 		}
 		return queries;
@@ -156,8 +165,8 @@ public class IncomingElementsRecoveryComponent
 			public void walk(ILogicalOperator operator) {
 				// XXX Works only with AbstractAccessAO, not with StreamAO,
 				// because I need the protocol and data handler
-				if (AbstractAccessAO.class.isInstance(operator) && this.mRecordedSources
-						.contains(((AbstractAccessAO) operator).getAccessAOName().toString())) {
+				if (AbstractAccessAO.class.isInstance(operator)
+						&& this.mRecordedSources.contains(((AbstractAccessAO) operator).getAccessAOName().toString())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
 					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(sourceAccess, recoveryMode,
 							ProtectionPointManagerRegistry.getInstance(query.getID()));
@@ -168,6 +177,38 @@ public class IncomingElementsRecoveryComponent
 						sourceRecovery.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
 								sub.getSchema());
 					}
+				}
+			}
+
+		});
+	}
+
+	/**
+	 * Inserts a {@link TrustPunctuationReaderAO} for each real sink.
+	 * 
+	 * @param query
+	 *            The logical query to modify.
+	 * @param recoveryMode
+	 *            True, if trust shall be changed.
+	 */
+	private void insertTrustPunctuationReaderOperators(final ILogicalQuery query, boolean recoveryMode) {
+		List<ILogicalOperator> operators = Lists.newArrayList(collectOperators(query.getLogicalPlan()));
+		LogicalGraphWalker graphWalker = new LogicalGraphWalker(operators);
+		graphWalker.walk(new IOperatorWalker<ILogicalOperator>() {
+
+			@Override
+			public void walk(ILogicalOperator operator) {
+				if (operator.isSinkOperator() && !operator.isSourceOperator() && !(operator instanceof TopAO)) {
+					TrustPunctuationReaderAO reader = new TrustPunctuationReaderAO(
+							IncomingElementsRecoveryComponent.this.decreasedTrust.doubleValue(), recoveryMode);
+					Collection<LogicalSubscription> subs = Lists.newArrayList(operator.getSubscribedToSource());
+					operator.unsubscribeFromAllSources();
+					SDFSchema schema = subs.iterator().next().getSchema();
+					for (LogicalSubscription sub : subs) {
+						reader.subscribeToSource(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
+								sub.getSchema());
+					}
+					reader.subscribeSink(operator, 0, 0, schema);
 				}
 			}
 
@@ -204,9 +245,17 @@ public class IncomingElementsRecoveryComponent
 		}
 	}
 
+	/**
+	 * The decreased trust value for {@link TrustPunctuationReaderAO}s, if set.
+	 */
+	Double decreasedTrust = null;
+
 	@Override
 	public IRecoveryComponent newInstance(Properties config) {
 		IncomingElementsRecoveryComponent instance = new IncomingElementsRecoveryComponent();
+		if (config.containsKey("decreasedTrust")) {
+			instance.decreasedTrust = (Double) config.get("decreasedTrust");
+		}
 		return instance;
 	}
 
@@ -222,7 +271,8 @@ public class IncomingElementsRecoveryComponent
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+			ISession session) {
 		// Stop the BaDaSt recorder
 		String recorder = BaDaStRecorderRegistry.getRecorder(name);
 		if (recorder != null) {
@@ -232,7 +282,8 @@ public class IncomingElementsRecoveryComponent
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+			ISession session) {
 		// Nothing to do
 	}
 
