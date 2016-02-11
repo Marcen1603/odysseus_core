@@ -26,8 +26,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TInitPredicateRule extends
-		AbstractTransformationRule<ILogicalOperator> {
+public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOperator> {
 
 	@Override
 	public int getPriority() {
@@ -35,13 +34,11 @@ public class TInitPredicateRule extends
 	}
 
 	@Override
-	public void execute(ILogicalOperator operator,
-			TransformationConfiguration config) throws RuleException {
+	public void execute(ILogicalOperator operator, TransformationConfiguration config) throws RuleException {
 		if (operator instanceof IHasPredicate) {
 			initPredicate(operator, ((IHasPredicate) operator).getPredicate());
 		} else if (operator instanceof IHasPredicates) {
-			for (IPredicate<?> pred : ((IHasPredicates) operator)
-					.getPredicates()) {
+			for (IPredicate<?> pred : ((IHasPredicates) operator).getPredicates()) {
 				initPredicate(operator, pred);
 			}
 		} else {
@@ -51,17 +48,18 @@ public class TInitPredicateRule extends
 
 	public void initPredicate(ILogicalOperator operator, IPredicate<?> pred) {
 		if (pred != null) {
-			pred.init();
-			ComplexPredicateHelper.visitPredicates(pred,
-					new InitPredicateFunctor(operator));
+			try {
+				pred.init();
+				ComplexPredicateHelper.visitPredicates(pred, new InitPredicateFunctor(operator));
+			} catch (Exception e) {
+				// ignore
+			}
 		}
 	}
 
 	@Override
-	public boolean isExecutable(ILogicalOperator operator,
-			TransformationConfiguration config) {
-		return operator instanceof IHasPredicates
-				|| operator instanceof IHasPredicate;
+	public boolean isExecutable(ILogicalOperator operator, TransformationConfiguration config) {
+		return operator instanceof IHasPredicates || operator instanceof IHasPredicate;
 	}
 
 	@Override

@@ -107,7 +107,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		this.debug = debug;
 	}
 
-	final InfoService infoService;
+	protected final InfoService infoService;
 
 	// ------------------------------------------------------------------
 	// Eventhandling
