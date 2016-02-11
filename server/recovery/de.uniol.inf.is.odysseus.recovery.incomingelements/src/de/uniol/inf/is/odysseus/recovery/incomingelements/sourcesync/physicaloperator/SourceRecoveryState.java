@@ -22,7 +22,7 @@ public class SourceRecoveryState extends AbstractOperatorState {
 	 * The offset of the data stream element stored on the publish subscribe
 	 * system, which is the first to recover.
 	 */
-	private final long mOffset;
+	private final Long mOffset;
 
 	/**
 	 * Gets the offset.
@@ -30,7 +30,7 @@ public class SourceRecoveryState extends AbstractOperatorState {
 	 * @return The offset of the data stream element stored on the publish
 	 *         subscribe system, which is the first to recover.
 	 */
-	public long getOffset() {
+	public Long getOffset() {
 		return this.mOffset;
 	}
 
@@ -41,7 +41,7 @@ public class SourceRecoveryState extends AbstractOperatorState {
 	 *            The offset of the data stream element stored on the publish
 	 *            subscribe system, which is the first to recover.
 	 */
-	public SourceRecoveryState(long offset) {
+	public SourceRecoveryState(Long offset) {
 		this.mOffset = offset;
 	}
 

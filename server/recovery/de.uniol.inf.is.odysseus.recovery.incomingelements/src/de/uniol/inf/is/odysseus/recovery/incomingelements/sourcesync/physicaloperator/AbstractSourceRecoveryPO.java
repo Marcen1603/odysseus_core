@@ -339,13 +339,13 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 			}
 		}
 		this.mProtectionPointReached = false;
-		return new SourceRecoveryState(this.mOffset.longValue());
+		return new SourceRecoveryState(this.mOffset);
 	}
 
 	@Override
 	public void setState(Serializable state) {
 		synchronized (this.mOffset) {
-			this.mOffset = new Long(((SourceRecoveryState) state).getOffset());
+			this.mOffset = ((SourceRecoveryState) state).getOffset();
 		}
 	}
 
