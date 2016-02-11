@@ -43,8 +43,7 @@ public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptBloc
 		
 		editingText = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		editingText.setText(odysseusScriptText);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		editingText.setLayoutData(gd);
+		editingText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		editingText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {

@@ -20,4 +20,6 @@ Import-Package: org.eclipse.core.resources,
  org.slf4j
 Service-Component: OSGI-INF/OdysseusScriptParser.xml,OSGI-INF/TransformRuleRegistry.xml,
  OSGI-INF/DefaultTransformRuleProvider.xml
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptPlugIn
+Bundle-ActivationPolicy: lazy
 
