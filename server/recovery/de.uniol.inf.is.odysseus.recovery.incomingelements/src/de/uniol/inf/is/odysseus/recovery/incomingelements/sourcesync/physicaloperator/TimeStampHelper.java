@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SystemTimeIntervalFactory;
 
 /**
  * Helper class for the {@link SourceRecoveryPO} to handle meta data and time
@@ -84,8 +85,7 @@ public class TimeStampHelper {
 	 *            The factory to clone.
 	 * @return A copy of {@code fac}.
 	 */
-	private static RelationalTimestampAttributeTimeIntervalMFactory cloneIntervalFactory(
-			RelationalTimestampAttributeTimeIntervalMFactory fac) {
+	private static IMetadataUpdater<?, ?> cloneIntervalFactory(RelationalTimestampAttributeTimeIntervalMFactory fac) {
 		if (fac.getStartAttrPos() != -1) {
 			return new RelationalTimestampAttributeTimeIntervalMFactory(fac.getStartAttrPos(), fac.getEndAttrPos(),
 					fac.isClearEnd(), fac.getDateFormat(), fac.getTimezone().getId(), fac.getLocale(), fac.getFactor(),
@@ -98,6 +98,19 @@ public class TimeStampHelper {
 	}
 
 	/**
+	 * Clones a {@link SystemTimeIntervalFactory}.
+	 * 
+	 * @param fac
+	 *            The factory to clone.
+	 * @return A copy of {@code fac}.
+	 */
+	private static IMetadataUpdater<?, ?> cloneIntervalFactory(SystemTimeIntervalFactory<?, ?> fac) {
+		SystemTimeIntervalFactory<?, ?> copy = new SystemTimeIntervalFactory<>();
+		copy.clearEnd(fac.isClearEnd());
+		return copy;
+	}
+
+	/**
 	 * Creates a copy of an {@link IMetadataUpdater}.
 	 * 
 	 * @param operator
@@ -106,9 +119,11 @@ public class TimeStampHelper {
 	 * @return A clone of the original metadata factory.
 	 */
 	public static IMetadataUpdater<?, ?> copyInitializer(MetadataUpdatePO<?, ?> operator) {
-		RelationalTimestampAttributeTimeIntervalMFactory fac = (RelationalTimestampAttributeTimeIntervalMFactory) operator
-				.getMetadataFactory();
-		return cloneIntervalFactory(fac);
+		IMetadataUpdater<?, ?> fac = operator.getMetadataFactory();
+		if (fac instanceof RelationalTimestampAttributeTimeIntervalMFactory) {
+			return cloneIntervalFactory((RelationalTimestampAttributeTimeIntervalMFactory) fac);
+		}
+		return cloneIntervalFactory((SystemTimeIntervalFactory<?, ?>) fac);
 	}
 
 	/**
@@ -120,9 +135,11 @@ public class TimeStampHelper {
 	 * @return A clone of the original metadata factory.
 	 */
 	public static IMetadataUpdater<?, ?> copyInitializer(ReceiverPO<?, ?> operator) {
-		RelationalTimestampAttributeTimeIntervalMFactory fac = (RelationalTimestampAttributeTimeIntervalMFactory) operator
-				.getMetadataFactory();
-		return cloneIntervalFactory(fac);
+		IMetadataUpdater<?, ?> fac = operator.getMetadataFactory();
+		if (fac instanceof RelationalTimestampAttributeTimeIntervalMFactory) {
+			return cloneIntervalFactory((RelationalTimestampAttributeTimeIntervalMFactory) fac);
+		}
+		return cloneIntervalFactory((SystemTimeIntervalFactory<?, ?>) fac);
 	}
 
 }
