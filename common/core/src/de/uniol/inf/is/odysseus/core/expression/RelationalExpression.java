@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.expression;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -19,30 +20,35 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		super(expression);
 	}
 
-	protected VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
-		int index = schema.indexOf(curAttribute);
-		// Maybe the attribute is not given totally, use another way to find attribute
-		if (index == -1){
-			index = schema.findAttributeIndex(curAttribute.getAttributeName());
-		}
-		// Attribute is part of payload
-		if (index >= 0) {
-			return new VarHelper(index, 0);
-		} else { // Attribute is (potentially) part of meta data;
-			Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
-			if (pos != null){
-				return new VarHelper(pos.getE2(), pos.getE1(), 0);
+	protected VarHelper initAttribute(List<SDFSchema> schemata, SDFAttribute curAttribute) {
+		// Maybe the attribute is not given totally, use another way to find
+		// attribute
+		for (int i = 0; i < schemata.size(); i++) {
+			SDFSchema schema = schemata.get(i);
+			int index = schema.indexOf(curAttribute);
+
+			if (index == -1) {
+				index = schema.findAttributeIndex(curAttribute.getAttributeName());
+			}
+			// Attribute is part of payload
+			if (index >= 0) {
+				return new VarHelper(index, (-1)*(i+1), 0);
+			} else { // Attribute is (potentially) part of meta data;
+				Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
+				if (pos != null) {
+					return new VarHelper(pos.getE2(), pos.getE1(), 0);
+				}
+			}
+			if (curAttribute.getAttributeName().equalsIgnoreCase(SDFAttribute.THIS)) {
+				VarHelper vh = new VarHelper(-1, -1);
+				vh.setThis(true);
+				return vh;
 			}
 		}
-		if (curAttribute.getAttributeName().equalsIgnoreCase(SDFAttribute.THIS)){
-			VarHelper vh = new VarHelper(-1,-1);
-			vh.setThis(true);
-			return vh;
-		}
-		throw new RuntimeException("Cannot find attribute "+curAttribute+" in input stream!");
+		throw new RuntimeException("Cannot find attribute " + curAttribute + " in input stream!");
 	}
-	
-	public void initVars(SDFSchema schema) {
+
+	public void initVars(List<SDFSchema> schema) {
 		List<SDFAttribute> neededAttributes = getAllAttributes();
 		VarHelper[] newArray = new VarHelper[neededAttributes.size()];
 		this.variables = newArray;
@@ -54,40 +60,58 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		this.getType();
 	}
 	
-	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history ){
+	public void initVars(SDFSchema schema){
+		List<SDFSchema> schemata = new ArrayList<>();
+		schemata.add(schema);
+		initVars(schemata);
+	}
+
+	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history) {
 
 		Object[] values = new Object[this.variables.length];
-		
-		
-//		IMetaAttribute[] meta = new IMetaAttribute[this.variables.length];
+
 		for (int j = 0; j < this.variables.length; ++j) {
-			Tuple<T> obj = determineObjectForExpression(object,
-					history, j);
-			if (obj != null) {
-				if (this.variables[j].isThis()){
-					values[j] = object;
-				}else if (this.variables[j].getSchema() == -1){
-					values[j] = obj.getAttribute(this.variables[j].getPos());
-				}else{
-					values[j] = obj.getMetadata().getValue(variables[j].getSchema(), variables[j].getPos());
-				}
-				///meta[j] = obj.getMetadata();
-			}
+			processObject(object, history, values, j);
 		}
-		
-//		bindMetaAttribute(object.getMetadata());
-//		bindAdditionalContent(object
-//				.getAdditionalContent());
+
 		bindVariables(values);
 		setSessions(sessions);
 		
 		return getValue();
+	}
+
+	private void processObject(Tuple<T> object, List<Tuple<T>> history, Object[] values, int j) {
+		Tuple<T> obj = determineObjectForExpression(object, history, j);
+		if (obj != null) {
+			if (this.variables[j].isThis()) {
+				values[j] = obj;
+			} else if (this.variables[j].getSchema() < 0) {
+				values[j] = obj.getAttribute(this.variables[j].getPos());
+			} else {
+				values[j] = obj.getMetadata().getValue(variables[j].getSchema(), variables[j].getPos());
+			}
+		}
+	}
+	
+	public Object evaluate(Tuple<T> left, Tuple<T> right, List<ISession> sessions, List<Tuple<T>> history) {
+
+		Object[] values = new Object[this.variables.length];
+		
+		for (int j = 0; j < this.variables.length; ++j) {
+			// Is input from left or from right schema
+			Tuple<T> object = variables[j].getSchema()==-1?left:right;
+			processObject(object, history, values, j);
+		}
+
+		bindVariables(values);
+		setSessions(sessions);
+
+		return getValue();
 
 	}
-	
-	protected Tuple<T> determineObjectForExpression(Tuple<T> object,
-			List<Tuple<T>> history, int j) {
+
+	protected Tuple<T> determineObjectForExpression(Tuple<T> object, List<Tuple<T>> history, int j) {
 		return object;
 	}
-	
+
 }

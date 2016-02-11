@@ -30,7 +30,7 @@ public class VarHelper {
 
 	@Override
 	public String toString() {
-		return pos + " " + getObjectPosToUse();
+		return schema+" "+pos + " " + getObjectPosToUse();
 	}
 
 	public int getPos() {

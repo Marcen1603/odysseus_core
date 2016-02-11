@@ -22,7 +22,11 @@ public class RelationalStateExpression<T extends IMetaAttribute> extends Relatio
 	}
 
 	@Override
-	public VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
+	public VarHelper initAttribute(List<SDFSchema> schemata, SDFAttribute curAttribute) {
+		if (schemata.size() != 1){
+			throw new IllegalArgumentException("State is currently not supported for multiple inputs");
+		}
+		SDFSchema schema = schemata.get(0);
 		if (curAttribute.getNumber() > 0) {
 			int pos = curAttribute.getNumber();
 			if (pos > maxHistoryElements) {
@@ -39,7 +43,7 @@ public class RelationalStateExpression<T extends IMetaAttribute> extends Relatio
 			}
 			return new VarHelper(index, pos);
 		} else {
-			return super.initAttribute(schema, curAttribute);
+			return super.initAttribute(schemata, curAttribute);
 		}
 	}
 	
