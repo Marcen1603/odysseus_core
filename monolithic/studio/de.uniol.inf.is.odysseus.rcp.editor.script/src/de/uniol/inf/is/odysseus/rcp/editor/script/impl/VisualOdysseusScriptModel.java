@@ -199,6 +199,17 @@ public class VisualOdysseusScriptModel {
 					currentText.append(restOfLine);
 				}
 			} else {
+				if( commentPos != -1 ) {
+					if( currentKeyword != null ) {
+						scriptBlocks.add(new OdysseusScriptBlock(currentKeyword, currentText.toString()));
+
+						currentKeyword = null;
+						currentText = new StringBuilder();
+					}
+
+					currentKeyword = "";
+					currentText = new StringBuilder();
+				}
 				if( currentText.length() > 0 ) {
 					currentText.append("\n");
 				}

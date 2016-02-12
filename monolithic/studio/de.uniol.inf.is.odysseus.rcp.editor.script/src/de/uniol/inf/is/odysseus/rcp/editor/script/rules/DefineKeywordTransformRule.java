@@ -55,14 +55,18 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 			String line = block.getText();
 			String[] parts = line.split(" |\t", 2);
 			
-			if( parts.length != 2 ) {
+			String key = null;
+			String value = null;
+			if( parts.length == 2 ) {
+				key = parts[0];
+				value = parts[1];
+				
+				keyValuePairs.put(key, value);
+			} else if( parts.length == 1 ) {
+				keyValuePairs.put(parts[0], "");
+			} else {
 				throw new VisualOdysseusScriptException("DEFINE with line '" + line + "' is invalid");
 			}
-			
-			String key = parts[0];
-			String value = parts[1];
-			
-			keyValuePairs.put(key, value);
 		}
 		
 		for( OdysseusScriptBlock selectedBlock : selectedBlocks ) {
