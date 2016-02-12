@@ -33,7 +33,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
+import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 
 /**
  *
@@ -143,9 +143,9 @@ public class MEPCalculatorView extends ViewPart {
                     try {
                         IExpression<?> parsedExpression = MEPCalculatorView.this.mep.parse(text);
                         MEPCalculatorView.this.txtReturnType.setText(parsedExpression.getReturnType().getQualName());
-                        MEPCalculatorView.this.txtOptimizedForm.setText(ExpressionOptimizer.optimize(parsedExpression).toString());
-                        MEPCalculatorView.this.txtConjunctiveNormalForm.setText(ExpressionOptimizer.toConjunctiveNormalForm(parsedExpression).toString());
-                        MEPCalculatorView.this.txtDisjunctiveNormalForm.setText(ExpressionOptimizer.toDisjunctiveNormalForm(parsedExpression).toString());
+                        MEPCalculatorView.this.txtOptimizedForm.setText(BooleanExpressionOptimizer.optimize(parsedExpression).toString());
+                        MEPCalculatorView.this.txtConjunctiveNormalForm.setText(BooleanExpressionOptimizer.toConjunctiveNormalForm(parsedExpression).toString());
+                        MEPCalculatorView.this.txtDisjunctiveNormalForm.setText(BooleanExpressionOptimizer.toDisjunctiveNormalForm(parsedExpression).toString());
                     }
                     catch (@SuppressWarnings("unused") Throwable e) {
                         MEPCalculatorView.this.txtExpression.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));

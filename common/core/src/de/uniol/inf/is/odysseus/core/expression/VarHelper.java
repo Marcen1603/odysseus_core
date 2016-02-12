@@ -20,6 +20,13 @@ public class VarHelper {
 		this.objectPosToUse = objectPosToUse;
 	}
 	
+	public VarHelper(VarHelper v) {
+		this.pos = v.pos;
+		this.schema = v.schema;
+		this.objectPosToUse = v.objectPosToUse;
+		this.isThis = v.isThis;
+	}
+
 	public void setThis(boolean isThis) {
 		this.isThis = isThis;
 	}

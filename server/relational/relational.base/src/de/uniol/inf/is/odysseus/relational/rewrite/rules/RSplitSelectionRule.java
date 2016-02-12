@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
+import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -76,8 +76,8 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
             ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
             if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
                 IExpression<?> expression = ((RelationalPredicate) sel).getExpression().getMEPExpression();
-                expression = ExpressionOptimizer.optimize(expression);
-                IExpression<?> cnf = ExpressionOptimizer.toConjunctiveNormalForm(expression);
+                expression = BooleanExpressionOptimizer.optimize(expression);
+                IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
                 SDFExpression sdfExpression = new SDFExpression(cnf, relationalPredicate.getExpression().getAttributeResolver(), relationalPredicate.getExpression().getExpressionParser());
 
                 preds = (new RelationalPredicate(sdfExpression)).splitPredicate(false);

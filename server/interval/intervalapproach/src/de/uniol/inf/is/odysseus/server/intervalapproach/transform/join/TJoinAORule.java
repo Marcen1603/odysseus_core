@@ -56,7 +56,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 			joinPO.setJoinPredicate(TruePredicate.getInstance());
 			isCross = true;
 		} else {
-			joinPO.setJoinPredicate(pred.clone());
+			setJoinPredicate(joinPO, joinAO);
 		}
 		joinPO.setCardinalities(joinAO.getCard());
 		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
@@ -95,6 +95,10 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 			joinPO.setName("Crossproduct");
 		}
 
+	}
+
+	protected void setJoinPredicate(JoinTIPO joinPO, JoinAO joinAO) {
+		joinPO.setJoinPredicate(joinAO.getPredicate().clone());
 	}
 
 	@Override

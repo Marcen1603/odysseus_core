@@ -121,4 +121,19 @@ public interface IFunction<T> extends IExpression<T> {
 
 	void propagateSessionReference(List<ISession> sessions);
 
+	boolean cnfEquals(IExpression<?> otherExpression);
+
+	boolean isContainedIn(IExpression<?> otherExpression);
+
+	boolean isAndPredicate();
+
+	boolean isOrPredicate();
+
+	boolean isNotPredicate();
+
+	IExpression<?> and(IExpression<?> expression);
+	IExpression<?> or(IExpression<?> expression);
+	IExpression<?> not();
+
+	
 }

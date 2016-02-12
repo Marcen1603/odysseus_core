@@ -15,10 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,41 +65,6 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		// this.neededAttributes = expression.getAllAttributes();
 		super(expression);
 	}
-
-	@Override
-	@SuppressWarnings("rawtypes")
-	public List<IPredicate> splitPredicate() {
-		List<IPredicate> result = new LinkedList<IPredicate>();
-		if (isAndPredicate()) {
-			Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
-			expressionStack.push(expression.getMEPExpression());
-
-			while (!expressionStack.isEmpty()) {
-				IExpression<?> curExpression = expressionStack.pop();
-				if (isAndExpression(curExpression)) {
-					expressionStack.push(curExpression.toFunction()
-							.getArgument(0));
-					expressionStack.push(curExpression.toFunction()
-							.getArgument(1));
-				} else {
-					SDFExpression expr = new SDFExpression(curExpression,
-							expression.getAttributeResolver(),
-							MEP.getInstance());
-					RelationalPredicate relationalPredicate = new RelationalPredicate(
-							expr);
-					relationalPredicate.init(expression.getSchema(), false);
-					result.add(relationalPredicate);
-				}
-			}
-			return result;
-
-		}
-		result.add(this);
-		return result;
-	}
-
-
-
 	public RelationalPredicate(RelationalPredicate predicate) {
 		super(predicate);
 	}

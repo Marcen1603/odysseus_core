@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.predicate;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.IClone;
@@ -74,18 +75,6 @@ public interface IPredicate<T> extends IClone, Serializable {
     public List<SDFAttribute> getAttributes();
 
     /**
-     * Return all conjunctive parts of this query.
-     * 
-     * @param init
-     *            Flag indicating whether the prediciate should be initialized
-     *            after split
-     * 
-     * @return List of all conjunctive connected parts
-     */
-    @SuppressWarnings("rawtypes")
-    public List<IPredicate> conjunctiveSplit(boolean init);
-
-    /**
      * Checks whether the predicate always evaluate to <code>true</code>
      * 
      * @return Flag whether the predicate always evaluate to <code>true</code>
@@ -133,5 +122,7 @@ public interface IPredicate<T> extends IClone, Serializable {
      */
     @Override
     public IPredicate<T> clone();
+
+	public Collection<? extends IPredicate<? super T>> conjunctiveSplit();
 
 }

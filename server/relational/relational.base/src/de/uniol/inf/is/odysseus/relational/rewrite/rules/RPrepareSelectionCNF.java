@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
+import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -23,8 +23,8 @@ public class RPrepareSelectionCNF extends AbstractRewriteRule<SelectAO> {
 			throws RuleException {
 		SDFExpression originalSDFExpression = ((RelationalPredicate) sel
 				.getPredicate()).getExpression();
-		IExpression<?> expressionInCNF = ExpressionOptimizer
-				.toConjunctiveNormalForm(ExpressionOptimizer.optimize(originalSDFExpression
+		IExpression<?> expressionInCNF = BooleanExpressionOptimizer
+				.toConjunctiveNormalForm(BooleanExpressionOptimizer.optimize(originalSDFExpression
 						.getMEPExpression()));
 		if(!originalSDFExpression.getMEPExpression().equals(expressionInCNF)) {
 			RelationalPredicate predicate = new RelationalPredicate(new SDFExpression(

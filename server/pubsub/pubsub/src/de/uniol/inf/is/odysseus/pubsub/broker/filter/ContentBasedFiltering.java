@@ -23,6 +23,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
 
@@ -62,9 +63,10 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 			// Step 1a: conjunctive split
 			for (IPredicate<? super T> predicate : brokerSubscription
 					.getPredicates()) {
+								
 					splittedPredicates
 					.addAll((Collection<? extends IPredicate<? super T>>) predicate
-							.conjunctiveSplit(true));
+							.conjunctiveSplit());
 			}
 
 			// Step 1b: Save predicates with weight

@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
  *          ExpressionOptimizer.java $
  *
  */
-public final class ExpressionOptimizer {
+public final class BooleanExpressionOptimizer {
     private static final int MAX_ITERATION = 100;
     private static List<IExpressionOptimizerRule<?>> RULES = new ArrayList<>();
     static {
@@ -118,4 +118,5 @@ public final class ExpressionOptimizer {
         IExpression<?> res = rules.executeRule(expression);
         return res;
     }
+
 }

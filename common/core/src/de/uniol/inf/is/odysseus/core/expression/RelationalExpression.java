@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.core.expression;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -18,6 +20,15 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 
 	public RelationalExpression(SDFExpression expression) {
 		super(expression);
+	}
+	
+	public RelationalExpression(RelationalExpression<T> other){
+		super(other);
+		this.variables = new VarHelper[other.variables.length];
+		int i=0;
+		for (VarHelper v:other.variables){
+			this.variables[i++] = new VarHelper(v);
+		}
 	}
 
 	protected VarHelper initAttribute(List<SDFSchema> schemata, SDFAttribute curAttribute) {
@@ -66,8 +77,21 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		initVars(schemata);
 	}
 
+	public void initVars(SDFSchema left, SDFSchema right){
+		List<SDFSchema> schemata = new ArrayList<>();
+		schemata.add(left);
+		schemata.add(right);
+		initVars(schemata);
+	}
+
+	
+
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history) {
 
+		if (isContant()){
+			return getValue();
+		}
+		
 		Object[] values = new Object[this.variables.length];
 
 		for (int j = 0; j < this.variables.length; ++j) {
@@ -78,6 +102,12 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		setSessions(sessions);
 		
 		return getValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean evaluate(Object input) {
+		return (Boolean) evaluate((Tuple<T>) input,null,null);	
 	}
 
 	private void processObject(Tuple<T> object, List<Tuple<T>> history, Object[] values, int j) {
@@ -93,8 +123,18 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean evaluate(Object left, Object right) {
+		return (Boolean) evaluate((Tuple<T>) left,(Tuple<T>) right ,null,null);	
+	}
+	
 	public Object evaluate(Tuple<T> left, Tuple<T> right, List<ISession> sessions, List<Tuple<T>> history) {
 
+		if (isContant()){
+			return getValue();
+		}
+		
 		Object[] values = new Object[this.variables.length];
 		
 		for (int j = 0; j < this.variables.length; ++j) {
@@ -112,6 +152,10 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 	
 	public Object evaluate(List<Tuple<T>> input, List<ISession> sessions, List<Tuple<T>> history) {
 
+		if (isContant()){
+			return getValue();
+		}
+		
 		Object[] values = new Object[this.variables.length];
 		
 		for (int j = 0; j < this.variables.length; ++j) {
@@ -130,5 +174,44 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 	protected Tuple<T> determineObjectForExpression(Tuple<T> object, List<Tuple<T>> history, int j) {
 		return object;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IPredicate<?> and(IPredicate predicate) {
+		SDFExpression newExpr = (SDFExpression) super.and(predicate);
+		return new RelationalExpression<>(newExpr);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public IPredicate<?> or(IPredicate predicate) {
+		SDFExpression newExpr = (SDFExpression) super.or(predicate);
+		return new RelationalExpression<>(newExpr);
+	}
+	
+	@Override
+	public IPredicate<?> not() {
+		SDFExpression newExpr = (SDFExpression) super.not();
+		return new RelationalExpression<>(newExpr);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<RelationalExpression<T>> conjunctiveSplit() {
+		Collection<SDFExpression> sdfepxr = super.conjunctiveSplit();
+		List<RelationalExpression<T>> result = new ArrayList<>(sdfepxr.size());
+		for (SDFExpression s: sdfepxr){
+			result.add(new RelationalExpression<>(s));
+		}
+		return result;
+	}
+	
+	
+	@Override
+	public RelationalExpression<T> clone() {
+		return new RelationalExpression<>(this);
+	}
+	
+
 
 }

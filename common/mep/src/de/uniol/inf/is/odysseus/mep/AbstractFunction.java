@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -35,6 +36,10 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
+import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
+import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 
 public abstract class AbstractFunction<T> implements IFunction<T> {
 
@@ -52,7 +57,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private final int spaceComplexity;
 
 	private List<ISession> sessions;
-	
+
 	protected static final Map<String, Object> keyValueStore = new HashMap<String, Object>();
 
 	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
@@ -183,9 +188,10 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			if (arguments != null) {
 				return determineType(arguments);
 			}
-		}else{
-			// Must be called for cases where the subtype need argument determination
-			if (arguments != null){
+		} else {
+			// Must be called for cases where the subtype need argument
+			// determination
+			if (arguments != null) {
 				initSubTypes(arguments);
 			}
 		}
@@ -240,7 +246,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	final protected Double getNumericalInputValue(int argumentPos) {
 		try {
-			if(arguments[argumentPos].getValue() == null)
+			if (arguments[argumentPos].getValue() == null)
 				return null;
 			double val = ((Number) arguments[argumentPos].getValue()).doubleValue();
 			return val;
@@ -382,10 +388,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public SDFDatatype determineType(IExpression<?>[] args) {
 		throw new RuntimeException("Function " + this + " must implement determineType function");
 	}
-	
-	private void initSubTypes(IExpression<?>[] args){
-		// Must be called to init subtypes that are potentially created when calling determine subtype
-		for (IExpression<?> arg:args){
+
+	private void initSubTypes(IExpression<?>[] args) {
+		// Must be called to init subtypes that are potentially created when
+		// calling determine subtype
+		for (IExpression<?> arg : args) {
 			arg.getReturnType();
 		}
 	}
@@ -401,20 +408,20 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				newFunction = (AbstractFunction<T>) cons.newInstance(this);
 			} catch (NoSuchMethodException | SecurityException | IllegalArgumentException
 					| InvocationTargetException e) {
-				if (LOG.isDebugEnabled()){	
-					LOG.debug("No CC for "+this.getClass());
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("No CC for " + this.getClass());
 				}
 			}
 			// Fallback when calling copy constructor fails
 			if (newFunction == null) {
 				newFunction = getClass().newInstance();
 				newFunction.baseTimeUnit = this.baseTimeUnit;
-				if (this.sessions != null){
+				if (this.sessions != null) {
 					newFunction.sessions = new ArrayList<>(this.sessions);
 				}
 			}
 			// Important: Arguments cannot be set in constructor else there is
-			// no chance, that each occurrence of the same variable is the 
+			// no chance, that each occurrence of the same variable is the
 			// same Java instance in this expression
 			newFunction.arguments = new IExpression<?>[this.arguments.length];
 			for (int i = 0; i < arguments.length; i++) {
@@ -426,6 +433,334 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public boolean cnfEquals(IExpression<?> otherExpression) {
+		IExpression<?> cnf1 = BooleanExpressionOptimizer
+				.sortByStringExpressions(BooleanExpressionOptimizer.toConjunctiveNormalForm(this));
+		IExpression<?> cnf2 = BooleanExpressionOptimizer
+				.sortByStringExpressions(BooleanExpressionOptimizer.toConjunctiveNormalForm(otherExpression));
+		return cnf1.toString().equals(cnf2.toString());
+	}
+
+	@Override
+	public boolean isAndPredicate() {
+		return isFunction() && this instanceof AndOperator;
+	}
+
+	@Override
+	public boolean isOrPredicate() {
+		return isFunction() && this instanceof OrOperator;
+	}
+
+	@Override
+	public boolean isNotPredicate() {
+		return isFunction() && this instanceof NotOperator;
+	}
+
+	@Override
+	public boolean isContainedIn(IExpression<?> otherExpression) {
+		if (!(otherExpression instanceof IFunction)) {
+			return false;
+		}
+		IFunction<?> otherFunction = (IFunction<?>) otherExpression;
+
+		if (this.isAndPredicate()) {
+			// TODO: FIX IS CONTAINED IN
+
+			// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist
+			if (!otherFunction.isAndPredicate()) {
+				// @SuppressWarnings("rawtypes")
+				//
+				// List<IFunction> spred =
+				// BooleanExpressionOptimizer.toConjunctiveNormalForm(otherExpression);
+				//
+				// for (IFunction<?> p : spred) {
+				// if (p.isContainedIn(otherFunction)) {
+				// return true;
+				// }
+				// }
+				// return false;
+			}
+			return false;
+		}
+		// OR
+		// TODO: Aus dem alten OR-Predicate extrahieren
+		if (this.isOrPredicate()) {
+			return false;
+		}
+		// NOT
+		// TODO: Geht das besser?
+		if (this.isNotPredicate()) {
+			if (otherFunction.isNotPredicate()) {
+				return false;
+			}
+			return false;
+		}
+		// BASIS-Pr���dikat
+		// Unterschiedliche Anzahl Attribute
+		if (this.getArguments().length != otherFunction.getArguments().length) {
+			return false;
+		}
+		IExpression<?> ex1 = this;
+		IExpression<?> ex2 = otherFunction;
+		if (ex1.getReturnType().equals(ex2.getReturnType()) && ex1.isFunction()) {
+			IFunction<?> if1 = (IFunction<?>) ex1;
+			IFunction<?> if2 = (IFunction<?>) ex2;
+			if (if1.getArity() != 2) {
+				return false;
+			}
+
+			IExpression<?> firstArgument1 = if1.getArgument(0);
+			IExpression<?> secondArgument1 = if1.getArgument(1);
+			IExpression<?> firstArgument2 = if2.getArgument(0);
+			IExpression<?> secondArgument2 = if2.getArgument(1);
+
+			String symbol1 = if1.getSymbol();
+			String symbol2 = if2.getSymbol();
+
+			// TODO: Optimize the following ...
+			// Funktionen enthalten nur ein Attribut und ansonsten
+			// Konstanten
+			if (getArguments().length == 1) {
+
+				// gleiches Attribut auf der linken Seite, Konstante auf der
+				// rechten
+				if (firstArgument1.isVariable() && secondArgument1.isConstant() && firstArgument2.isVariable()
+						&& secondArgument2.isConstant()
+						&& firstArgument1.toVariable().equals(firstArgument2.toVariable())) {
+					Double c1;
+					Double c2;
+					try {
+						c1 = Double.parseDouble(secondArgument1.toString());
+						c2 = Double.parseDouble(secondArgument2.toString());
+					} catch (Exception e) {
+						return false;
+					}
+
+					// Funktion kleiner-als
+					if (symbol1.equals("<") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 <= c2) {
+						return true;
+					}
+					// Funktion kleiner-gleich-als
+					if (symbol1.equals("<=")
+							&& ((symbol2.equals("<=") && c1 <= c2) || (symbol2.equals("<") && c1 < c2))) {
+						return true;
+					}
+					// Funktion ist-gleich oder ist-nicht-gleich
+					if (((symbol1.equals("==") && symbol2.equals("=="))
+							|| (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						return true;
+					}
+					// Funktion gr������er-als
+					if (symbol1.equals(">") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 >= c2) {
+						return true;
+					}
+					// Funktion gr������er-gleich-als
+					if (symbol1.equals(">=")
+							&& ((symbol2.equals(">=") && c1 >= c2) || (symbol2.equals(">") && c1 > c2))) {
+						return true;
+					}
+					// gleiches Attribut auf der rechten Seite, Konstante
+					// auf der linken Seite
+				} else if (secondArgument1.isVariable() && firstArgument1.isConstant() && secondArgument2.isVariable()
+						&& firstArgument2.isConstant()
+						&& secondArgument1.toVariable().equals(secondArgument2.toVariable())) {
+
+					Double c1;
+					Double c2;
+					try {
+						c1 = Double.parseDouble(firstArgument1.toString());
+						c2 = Double.parseDouble(firstArgument2.toString());
+					} catch (Exception e) {
+						return false;
+					}
+
+					// Funktion kleiner-als
+					if (symbol1.equals("<") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 >= c2) {
+						return true;
+					}
+					// Funktion kleiner-gleich-als
+					if (symbol1.equals("<=")
+							&& ((symbol2.equals("<=") && c1 >= c2) || (symbol2.equals("<") && c1 > c2))) {
+						return true;
+					}
+					// Funktion ist-gleich oder ist-nicht-gleich
+					if (((symbol1.equals("==") && symbol2.equals("=="))
+							|| (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						return true;
+					}
+					// Funktion gr������er-als
+					if (symbol1.equals(">") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 <= c2) {
+						return true;
+					}
+					// Funktion gr������er-gleich-als
+					if (symbol1.equals(">=")
+							&& ((symbol2.equals(">=") && c1 <= c2) || (symbol2.equals(">") && c1 < c2))) {
+						return true;
+					}
+					// Attribut bei F1 links, bei F2 rechts
+				} else if (firstArgument1.isVariable() && secondArgument1.isConstant() && secondArgument2.isVariable()
+						&& firstArgument2.isConstant()
+						&& firstArgument1.toVariable().equals(secondArgument2.toVariable())) {
+					Double c1;
+					Double c2;
+					try {
+						c1 = Double.parseDouble(secondArgument1.toString());
+						c2 = Double.parseDouble(firstArgument2.toString());
+					} catch (Exception e) {
+						return false;
+					}
+
+					// F1 kleiner-als, F2 gr������er-als oder
+					// gr������er-gleich-als
+					if (symbol1.equals("<") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 <= c2) {
+						return true;
+					}
+					// F1 kleiner-gleich-als, F2 gr������er-als oder
+					// gr������er-gleich-als
+					if (symbol1.equals("<=") && (symbol2.equals(">") && c1 < c2)
+							|| (symbol2.equals(">=")) && c1 <= c2) {
+						return true;
+					}
+					// Funktion ist-gleich oder ist-nicht-gleich
+					if (((symbol1.equals("==") && symbol2.equals("=="))
+							|| (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						return true;
+					}
+					// F1 gr������er-als, F2 kleiner-als oder
+					// kleiner-gleich-als
+					if (symbol1.equals(">") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 >= c2) {
+						return true;
+					}
+					// F1 gr������er-gleich-als, F2 kleiner-als oder
+					// kleiner-gleich-als
+					if (symbol1.equals(">=") && (symbol2.equals("<") && c1 > c2)
+							|| (symbol2.equals("<=")) && c1 >= c2) {
+						return true;
+					}
+
+					// Attribut bei F1 rechts, bei F2 links
+				} else if (secondArgument1.isVariable() && firstArgument1.isConstant() && firstArgument2.isVariable()
+						&& secondArgument2.isConstant()
+						&& secondArgument1.toVariable().equals(firstArgument2.toVariable())) {
+
+					Double c1;
+					Double c2;
+					try {
+						c1 = Double.parseDouble(firstArgument1.toString());
+						c2 = Double.parseDouble(secondArgument2.toString());
+					} catch (Exception e) {
+						return false;
+					}
+
+					// F1 kleiner-als, F2 gr������er-als oder
+					// gr������er-gleich-als
+					if (symbol1.equals("<") && (symbol2.equals(">") || symbol2.equals(">=")) && c1 >= c2) {
+						return true;
+					}
+
+					// F1 kleiner-gleich-als, F2 gr������er-als oder
+					// gr������er-gleich-als
+					if (symbol1.equals("<=") && (symbol2.equals(">") && c1 > c2)
+							|| (symbol2.equals(">=")) && c1 >= c2) {
+						return true;
+					}
+
+					// Funktion ist-gleich oder ist-nicht-gleich
+					if (((symbol1.equals("==") && symbol2.equals("=="))
+							|| (symbol1.equals("!=") && symbol2.equals("!="))) && c1.compareTo(c2) == 0) {
+						return true;
+					}
+
+					// F1 gr������er-als, F2 kleiner-als oder
+					// kleiner-gleich-als
+					if (symbol1.equals(">") && (symbol2.equals("<") || symbol2.equals("<=")) && c1 <= c2) {
+						return true;
+					}
+
+					// F1 gr������er-gleich-als, F2 kleiner-als oder
+					// kleiner-gleich-als
+					if (symbol1.equals(">=") && (symbol2.equals("<") && c1 < c2)
+							|| (symbol2.equals("<=")) && c1 <= c2) {
+						return true;
+					}
+				}
+				// Funktionen sind Vergleiche zwischen zwei Attributen
+			} else if (getArguments().length == 2 && firstArgument1.isVariable() && secondArgument1.isVariable()
+					&& firstArgument2.isVariable() && secondArgument2.isVariable()) {
+				Variable v11 = firstArgument1.toVariable();
+				Variable v12 = secondArgument1.toVariable();
+				Variable v21 = firstArgument2.toVariable();
+				Variable v22 = secondArgument2.toVariable();
+
+				// Attribute sind links und rechts gleich
+				if (v11.equals(v21) && v12.equals(v22)) {
+					if ((symbol1.equals("<") && symbol2.equals("<")) || (symbol1.equals("<=") && symbol2.equals("<="))
+							|| (symbol1.equals("==") && symbol2.equals("=="))
+							|| (symbol1.equals("!=") && symbol2.equals("!="))
+							|| (symbol1.equals(">=") && symbol2.equals(">="))
+							|| (symbol1.equals(">") && symbol2.equals(">"))) {
+						return true;
+					}
+				}
+				// linkes Attribut von F1 ist gleich rechtem Attribut von F2
+				// und umgekehrt
+				if (v11.equals(v22) && v12.equals(v21)) {
+					if ((symbol1.equals("<") && symbol2.equals(">")) || (symbol1.equals("<=") && symbol2.equals(">="))
+							|| (symbol1.equals("==") && symbol2.equals("=="))
+							|| (symbol1.equals("!=") && symbol2.equals("!="))
+							|| (symbol1.equals(">=") && symbol2.equals("<="))
+							|| (symbol1.equals(">") && symbol2.equals("<"))) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+		}
+		return false;
+
+	}
+
+	@Override
+	public IExpression<?> and(IExpression<?> expression) {
+		AndOperator and = new AndOperator();
+		and.setArguments(new IExpression<?>[] { this, expression });
+		return and;
+	}
+
+	@Override
+	public IExpression<?> or(IExpression<?> expression) {
+		OrOperator or = new OrOperator();
+		or.setArguments(new IExpression<?>[] { this, expression });
+		return or;
+	}
+
+	@Override
+	public IExpression<?> not() {
+		NotOperator not = new NotOperator();
+		not.setArguments(new IExpression<?>[] { this});
+		return not;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IExpression<T>> conjunctiveSplit() {
+		List<IExpression<T>> result = new ArrayList<>();
+		// Split with and
+		final Stack<IExpression<T>> expressionStack = new Stack<>();
+		while (!expressionStack.isEmpty()) {
+			final IExpression<T> curExpression = expressionStack.pop();
+			if (curExpression.isFunction() && ((IFunction<?>)curExpression).isAndPredicate()) {
+				expressionStack.push((IExpression<T>) curExpression.toFunction().getArgument(0));
+				expressionStack.push((IExpression<T>) curExpression.toFunction().getArgument(1));
+			} else {
+				result.add(curExpression);
+			}
+		}
+		return result;
 	}
 
 }

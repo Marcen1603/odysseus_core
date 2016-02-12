@@ -15,7 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.core.mep;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -279,6 +281,13 @@ public class Variable implements IExpression<Object> {
 		return false;
 	}
 
+	@Override
+	public List<IExpression<Object>> conjunctiveSplit() {
+		List<IExpression<Object>> ret = new ArrayList<>();
+		ret.add(this);
+		return ret;
+	}
+	
 	@Override
 	public IExpression<Object> clone(Map<Variable, Variable> vars) {
 		// Variables are unique, so if the variable is cloned onces, it must

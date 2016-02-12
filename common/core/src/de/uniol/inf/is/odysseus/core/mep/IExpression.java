@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.mep;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -119,5 +120,7 @@ public interface IExpression<T> extends Serializable{
 	public SDFDatatype determineType(IExpression<?>[] args);
 
 	public IExpression<T> clone(Map<Variable,Variable> vars);
+
+	public List<IExpression<T>> conjunctiveSplit();
 	
 }

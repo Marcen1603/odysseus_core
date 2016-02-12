@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
+import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
@@ -64,8 +64,8 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 						IExpression<?> expression = ((RelationalPredicate) join
 								.getPredicate()).getExpression()
 								.getMEPExpression();
-						expression = ExpressionOptimizer.optimize(expression);
-						IExpression<?> cnf = ExpressionOptimizer
+						expression = BooleanExpressionOptimizer.optimize(expression);
+						IExpression<?> cnf = BooleanExpressionOptimizer
 								.toConjunctiveNormalForm(expression);
 						SDFExpression sdfExpression = new SDFExpression(cnf,
 								relationalPredicate.getExpression()

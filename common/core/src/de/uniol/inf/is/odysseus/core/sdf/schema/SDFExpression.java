@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,15 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
+ * @author Marco Grawunder
  */
-public class SDFExpression implements Serializable, IClone {
+@SuppressWarnings("rawtypes")
+public class SDFExpression implements Serializable, IClone, IPredicate {
 
 	private static final long serialVersionUID = 8658794141096208317L;
 	// Für P2P als transient gekennzeichnet
@@ -57,9 +61,9 @@ public class SDFExpression implements Serializable, IClone {
 	private IAttributeResolver attributeResolver;
 	/** The schema */
 	private List<SDFSchema> schema;
-	
+
 	private List<ISession> sessions;
-	
+
 	private transient IExpressionParser expressionParser;
 
 	Pattern pattern = null;
@@ -70,10 +74,8 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
-	public SDFExpression(String URI, String value,
-			IAttributeResolver attributeResolver,
-			IExpressionParser expressionParser, Pattern aggregatePattern)
-			throws SDFExpressionParseException {
+	public SDFExpression(String URI, String value, IAttributeResolver attributeResolver,
+			IExpressionParser expressionParser, Pattern aggregatePattern) throws SDFExpressionParseException {
 		this.pattern = aggregatePattern;
 		init(null, value, attributeResolver, expressionParser);
 	}
@@ -84,36 +86,31 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
-	public SDFExpression(String value, IExpressionParser expressionParser)
-			throws SDFExpressionParseException {
+	public SDFExpression(String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, null, expressionParser);
 	}
 
-	public SDFExpression(SDFExpression expression)
-			throws SDFExpressionParseException {
-		init(expression.expression, expression.expressionString,
-				expression.attributeResolver, expression.expressionParser);
+	public SDFExpression(SDFExpression expression) throws SDFExpressionParseException {
+		init(expression.expression, expression.expressionString, expression.attributeResolver,
+				expression.expressionParser);
 	}
 
-	public SDFExpression(IExpression<?> expression,
-			IAttributeResolver attributeResolver,
+	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver,
 			IExpressionParser expressionParser) {
 		init(expression, null, attributeResolver, expressionParser);
 	}
 
-	public SDFExpression(IExpression<?> expression,
-			IAttributeResolver attributeResolver,
+	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver,
 			IExpressionParser expressionParser, String expressionString) {
 		init(expression, null, attributeResolver, expressionParser);
 		this.expressionString = expressionString;
 	}
 
-	private void init(IExpression<?> expre, String value,
-			IAttributeResolver attributeResolver,
+	private void init(IExpression<?> expre, String value, IAttributeResolver attributeResolver,
 			IExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
 		if (expre != null) {
-			this.expression = expre.clone(new HashMap<Variable,Variable>());
+			this.expression = expre.clone(new HashMap<Variable, Variable>());
 			this.expressionString = expression.toString();
 		} else {
 			expressionString = value.trim();
@@ -127,10 +124,8 @@ public class SDFExpression implements Serializable, IClone {
 		} else {
 			// Try to determine own attribute resolver from expression
 			try {
-				IExpression<?> tmpExpression = expressionParser
-						.parse(expressionString);
-				this.attributeResolver = new DirectAttributeResolver(
-						tmpExpression.getVariables());
+				IExpression<?> tmpExpression = expressionParser.parse(expressionString);
+				this.attributeResolver = new DirectAttributeResolver(tmpExpression.getVariables());
 				this.schema = this.attributeResolver.getSchema();
 
 			} catch (ParseException e) {
@@ -141,20 +136,18 @@ public class SDFExpression implements Serializable, IClone {
 		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
 
 		if (expression == null) {
-			String result = substituteAggregations(this.expressionString,
-					aliasToAggregationAttributeMapping);
+			String result = substituteAggregations(this.expressionString, aliasToAggregationAttributeMapping);
 			try {
 				this.expression = expressionParser.parse(result, this.schema);
 				expressionString = expression.toString();
 			} catch (Throwable e) {
-				//System.err.println("Expr: " + this.expressionString);
+				// System.err.println("Expr: " + this.expressionString);
 				e.printStackTrace();
 				throw new SDFExpressionParseException(e);
 			}
 		}
 
-		initVariables(this.expression.getVariables(),
-				aliasToAggregationAttributeMapping);
+		initVariables(this.expression.getVariables(), aliasToAggregationAttributeMapping);
 
 		if (this.expression instanceof Constant) {
 			setValue(expression.getValue());
@@ -170,8 +163,7 @@ public class SDFExpression implements Serializable, IClone {
 		return this.schema;
 	}
 
-	private String substituteAggregations(String value,
-			Map<String, String> inverseAliasMappings) {
+	private String substituteAggregations(String value, Map<String, String> inverseAliasMappings) {
 		String result = "";
 		{
 			if (pattern == null)
@@ -185,13 +177,11 @@ public class SDFExpression implements Serializable, IClone {
 					continue;
 				}
 
-				SDFAttribute attribute = this.attributeResolver
-						.getAttribute(group);
+				SDFAttribute attribute = this.attributeResolver.getAttribute(group);
 				// SDFAttribute attribute = this.schema.findAttribute(group);
 				if (attribute == null) {
 					System.err.println("no such attribute: " + group);
-					throw new SDFExpressionParseException("No such attribute: "
-							+ group);
+					throw new SDFExpressionParseException("No such attribute: " + group);
 				}
 				String attributeName = attribute.getURI();
 				String aliasName = aliasMappings.get(attributeName);
@@ -210,19 +200,16 @@ public class SDFExpression implements Serializable, IClone {
 		return result;
 	}
 
-	private void initVariables(Set<Variable> variables2,
-			Map<String, String> inverseAliasMappings) {
+	private void initVariables(Set<Variable> variables2, Map<String, String> inverseAliasMappings) {
 		for (Variable var : variables2) {
 			String name = var.getIdentifier();
 			if (inverseAliasMappings.containsKey(name)) {
 				name = inverseAliasMappings.get(name);
 			}
-			SDFAttribute curAttribute = this.attributeResolver
-					.getAttribute(name);
+			SDFAttribute curAttribute = this.attributeResolver.getAttribute(name);
 			// SDFAttribute curAttribute = this.schema.findAttribute(name);
 			if (curAttribute == null && name == "t") {
-				this.attributes.add(new SDFAttribute(null, "t",
-						SDFDatatype.OBJECT, null, null, null));
+				this.attributes.add(new SDFAttribute(null, "t", SDFDatatype.OBJECT, null, null, null));
 			} else {
 				this.attributes.add(curAttribute);
 			}
@@ -258,13 +245,12 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	public void bindVariables(Object... values) {
-		if (expression instanceof Constant) {
+		if (expression.isConstant()) {
 			return;
 		}
 
 		if (values.length != variableArrayList.size()) {
-			throw new IllegalArgumentException(
-					"illegal variable bindings in expression");
+			throw new IllegalArgumentException("illegal variable bindings in expression");
 		}
 
 		for (int i = 0; i < values.length; ++i) {
@@ -274,15 +260,14 @@ public class SDFExpression implements Serializable, IClone {
 
 		setValue(expression.getValue());
 	}
-	
-	public void bindVariables(int[] positions, 	Object... values) {
-		if (expression instanceof Constant) {
+
+	public void bindVariables(int[] positions, Object... values) {
+		if (expression.isConstant()) {
 			return;
 		}
 
 		if (values.length != variableArrayList.size()) {
-			throw new IllegalArgumentException(
-					"illegal variable bindings in expression");
+			throw new IllegalArgumentException("illegal variable bindings in expression");
 		}
 
 		for (int i = 0; i < values.length; ++i) {
@@ -297,13 +282,28 @@ public class SDFExpression implements Serializable, IClone {
 		return this.variableArrayList;
 	}
 
+	public boolean isContant() {
+		return expression.isConstant();
+	}
+	
+	@Override
+	public Collection conjunctiveSplit() {
+		List<?> splits = expression.conjunctiveSplit();
+		if (splits.size() > 0){
+			List<SDFExpression> ret = new ArrayList<>(splits.size());
+			for (Object e:splits){
+				ret.add(new SDFExpression(e.toString(), getExpressionParser()));
+			}
+			return ret;
+		}
+		return null;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 19;
 		int result = 1;
-		result = prime
-				* result
-				+ ((expressionString == null) ? 0 : expressionString.hashCode());
+		result = prime * result + ((expressionString == null) ? 0 : expressionString.hashCode());
 		return result;
 	}
 
@@ -370,8 +370,99 @@ public class SDFExpression implements Serializable, IClone {
 
 	public void setSessions(List<ISession> sessions) {
 		this.sessions = sessions;
-		if (expression.isFunction()){
-			((IFunction<?>)expression).setSessions(sessions);
+		if (expression.isFunction()) {
+			((IFunction<?>) expression).setSessions(sessions);
 		}
+	}
+
+	@Override
+	public void init() {
+		// do nothing
+	}
+
+	@Override
+	public Boolean evaluate(Object input) {
+		throw new UnsupportedOperationException("Cannot evaluate SDFExpression.");
+	}
+
+	@Override
+	public Boolean evaluate(Object left, Object right) {
+		throw new UnsupportedOperationException("Cannot evaluate SDFExpression.");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean isContainedIn(IPredicate predicate) {
+		if (predicate instanceof SDFExpression) {
+			if (this.expression instanceof IFunction) {
+				return ((IFunction) this.expression).isContainedIn(((SDFExpression) predicate).expression);
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public List<SDFAttribute> getAttributes() {
+		return attributes;
+	}
+
+	@Override
+	public IPredicate and(IPredicate predicate) {
+		if (predicate instanceof SDFExpression) {
+			if (this.expression instanceof IFunction) {
+				IFunction<?> expr = (IFunction) this.expression;
+				// We need to reparse the expression because of multiple
+				// instances of the same variable may exist
+				SDFExpression newExpression = new SDFExpression(
+						expr.and(((SDFExpression) predicate).getMEPExpression()).toString(), getExpressionParser());
+				return newExpression;
+			}
+		}
+		throw new IllegalArgumentException("Cannot process with " + predicate);
+
+	}
+
+	@Override
+	public IPredicate or(IPredicate predicate) {
+		if (predicate instanceof SDFExpression) {
+			if (this.expression instanceof IFunction) {
+				IFunction<?> expr = (IFunction) this.expression;
+				// We need to reparse the expression because of multiple
+				// instances of the same variable may exist
+				SDFExpression newExpression = new SDFExpression(
+						expr.or(((SDFExpression) predicate).getMEPExpression()).toString(), getExpressionParser());
+				return newExpression;
+			}
+		}
+		throw new IllegalArgumentException("Cannot process with " + predicate);
+	}
+
+	@Override
+	public IPredicate not() {
+		if (this.expression instanceof IFunction) {
+			IFunction<?> expr = (IFunction) this.expression;
+			// We need to reparse the expression because of multiple instances
+			// of the same variable may exist
+			SDFExpression newExpression = new SDFExpression(expr.not().toString(), getExpressionParser());
+			return newExpression;
+		}
+		throw new IllegalArgumentException("Cannot process");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(IPredicate predicate) {
+		if (predicate instanceof SDFExpression) {
+
+			if (this.expression.equals(((SDFExpression) predicate).expression)) {
+				return true;
+			}
+			if (expression instanceof IFunction) {
+				if (((IFunction) expression).cnfEquals((IFunction) ((SDFExpression) predicate).getMEPExpression())) {
+					return true;
+				}
+			}
+		}
+		return this.isContainedIn(predicate) && predicate.isContainedIn(this);
 	}
 }

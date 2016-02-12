@@ -72,11 +72,11 @@ public class TestExpressionOptimizer {
                 }
                 IExpression<?> expression = MEP.getInstance().parse(line);
                 System.out.println("<- " + expression);
-                System.out.println("Optimized: " + ExpressionOptimizer.optimize(expression));
+                System.out.println("Optimized: " + BooleanExpressionOptimizer.optimize(expression));
 
-                System.out.println("DNF: " + ExpressionOptimizer.toDisjunctiveNormalForm(expression));
+                System.out.println("DNF: " + BooleanExpressionOptimizer.toDisjunctiveNormalForm(expression));
 
-                System.out.println("CNF: " + ExpressionOptimizer.toConjunctiveNormalForm(expression));
+                System.out.println("CNF: " + BooleanExpressionOptimizer.toConjunctiveNormalForm(expression));
             }
             catch (Throwable t) {
                 t.printStackTrace();

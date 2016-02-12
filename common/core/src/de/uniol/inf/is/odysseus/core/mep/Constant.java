@@ -16,7 +16,9 @@
 package de.uniol.inf.is.odysseus.core.mep;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -151,6 +153,13 @@ public class Constant<T> implements IExpression<T> {
 	@Override
 	public boolean determineTypeFromInput() {
 		return false;
+	}
+	
+	@Override
+	public List<IExpression<T>> conjunctiveSplit() {
+		List<IExpression<T>> ret = new ArrayList<>();
+		ret.add(this);
+		return ret;
 	}
 	
 	@Override

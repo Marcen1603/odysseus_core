@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.predicate;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -97,19 +98,6 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     /**
      * 
      * {@inheritDoc}
-     * 
-     * @throws UnsupportedOperationException
-     *             if not implemented in inherited class.
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public List<IPredicate> conjunctiveSplit(boolean init) {
-        throw new UnsupportedOperationException("Conjunctive split not supported for " + this.getClass());
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
      */
     @Override
     public boolean isAlwaysTrue() {
@@ -147,5 +135,10 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     @Override
     public IPredicate<T> not() {
         throw new UnsupportedOperationException("Negation not supported for " + this.getClass());
+    }
+    
+    @Override
+    public Collection<? extends IPredicate<? super T>> conjunctiveSplit() {
+        throw new UnsupportedOperationException("Spit not supported for " + this.getClass());
     }
 }
