@@ -1,17 +1,17 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.rules;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRule;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.DefinesVisualOdysseusScriptBlock;
+import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.Definition;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule {
 
@@ -50,9 +50,10 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 	@Override
 	public IVisualOdysseusScriptBlock transform(List<OdysseusScriptBlock> allBlocks, List<OdysseusScriptBlock> selectedBlocks) throws VisualOdysseusScriptException {
 		
-		Map<String, String> keyValuePairs = Maps.newHashMap();
+		List<Definition> definitions = Lists.newArrayList();
 		for( OdysseusScriptBlock block : selectedBlocks ) {
 			String line = block.getText();
+			line = removeComments(line);
 			String[] parts = line.split(" |\t", 2);
 			
 			String key = null;
@@ -61,9 +62,9 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 				key = parts[0];
 				value = parts[1];
 				
-				keyValuePairs.put(key, value);
+				definitions.add(new Definition(key, value));
 			} else if( parts.length == 1 ) {
-				keyValuePairs.put(parts[0], "");
+				definitions.add(new Definition(parts[0], ""));
 			} else {
 				throw new VisualOdysseusScriptException("DEFINE with line '" + line + "' is invalid");
 			}
@@ -73,7 +74,20 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 			allBlocks.remove(selectedBlock);
 		}
 			
-		return new DefinesVisualOdysseusScriptBlock( keyValuePairs );
+		return new DefinesVisualOdysseusScriptBlock( definitions );
 	}
 
+	private static String removeComments(String line) {
+		if (line == null || line.length() == 0)
+			return "";
+
+		final int commentPos = line.indexOf(OdysseusScriptParser.SINGLE_LINE_COMMENT_KEY);
+		if (commentPos != -1) {
+			if (commentPos == 0)
+				return "";
+			return line.substring(0, commentPos);
+		}
+
+		return line;
+	}
 }

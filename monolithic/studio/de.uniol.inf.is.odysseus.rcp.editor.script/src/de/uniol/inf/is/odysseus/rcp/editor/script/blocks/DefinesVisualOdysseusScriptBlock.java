@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
-import java.util.Map;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,12 +27,10 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 	private IVisualOdysseusScriptContainer container;
 	private DefinitionsTableViewer tableViewer;
 
-	public DefinesVisualOdysseusScriptBlock(Map<String, String> keyValuePairs) {
+	public DefinesVisualOdysseusScriptBlock(List<Definition> keyValuePairs) {
 		Preconditions.checkNotNull(keyValuePairs, "keyValuePairs must not be null!");
 
-		for (String key : keyValuePairs.keySet()) {
-			definitionsList.add(new Definition(key, keyValuePairs.get(key)));
-		}
+		definitionsList.addAll(keyValuePairs);
 	}
 
 	@Override
