@@ -20,7 +20,9 @@ import de.uniol.inf.is.odysseus.rcp.util.ImageButton;
 
 public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBlock, IDefinitionsListListener {
 
-	private DefinitionsList definitionsList = new DefinitionsList();
+	private static final String TITLE = "Definitions";
+
+	private final DefinitionsList definitionsList = new DefinitionsList();
 
 	private IVisualOdysseusScriptContainer container;
 	private DefinitionsTableViewer tableViewer;
@@ -35,7 +37,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 
 	@Override
 	public String getTitle() {
-		return "Definitions";
+		return TITLE;
 	}
 
 	@Override
