@@ -137,7 +137,7 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	@Override
 	public String csvToString(WriteOptions options) {
 		return this.timeInterval.csvToString(options) + options.getDelimiter() + this.latency.csvToString(options)
-				+ this.datarate.csvToString(options) + this.trust.csvToString(options);
+				+ this.datarate.csvToString(options) + options.getDelimiter() + this.trust.csvToString(options);
 	}
 
 	@Override
