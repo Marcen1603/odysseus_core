@@ -23,4 +23,12 @@ public final class OdysseusScriptBlock {
 		return text;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("{").append(keyword).append(":").append(text).append("}");
+		
+		return sb.toString();
+	}
 }

@@ -34,6 +34,7 @@ public class VisualOdysseusScriptModel {
 		Collection<IOdysseusScriptTransformRule> rules = TransformRuleRegistry.getInstance().getRules();
 
 		Map<OdysseusScriptBlock, IVisualOdysseusScriptBlock> transformResultMap = Maps.newHashMap();
+		Map<OdysseusScriptBlock, IVisualOdysseusScriptBlock> otherTransformMap = Maps.newHashMap();
 		while( !scriptBlocks.isEmpty() ) {
 			
 			// 1. determine rules which can be executed
@@ -67,10 +68,17 @@ public class VisualOdysseusScriptModel {
 			
 			// 2. execute rule and save result in temporary map
 			if( selectedRule != null && selectedBlocks != null ) {
+				List<OdysseusScriptBlock> scriptBlocksBefore = Lists.newArrayList(scriptBlocks);
 				IVisualOdysseusScriptBlock visualTextBlock = selectedRule.transform(scriptBlocks, selectedBlocks);
 				if( visualTextBlock != null ) {
 					for( OdysseusScriptBlock selectedBlock : selectedBlocks ) {
 						transformResultMap.put(selectedBlock, visualTextBlock);
+					}
+					for( OdysseusScriptBlock scriptBlockBefore : scriptBlocksBefore ) {
+						if( !scriptBlocks.contains(scriptBlockBefore)) {
+							// rule removed other blocks! mark them!
+							otherTransformMap.put(scriptBlockBefore, visualTextBlock);
+						}
 					}
 				}
 			} else {
@@ -128,7 +136,11 @@ public class VisualOdysseusScriptModel {
 					scriptBlocksCopy.remove(blockToRemove);
 					transformResultMap.remove(blockToRemove);
 				}
-			} 
+			} else {
+				if( !otherTransformMap.containsKey(topBlock)) {
+					throw new VisualOdysseusScriptException("OdysseusScript block '" + topBlock + "' is left over during transformation");
+				}
+			}
 		}
 		
 		if( currentDefBlock != null ) {
@@ -199,17 +211,6 @@ public class VisualOdysseusScriptModel {
 					currentText.append(restOfLine);
 				}
 			} else {
-				if( commentPos != -1 ) {
-					if( currentKeyword != null ) {
-						scriptBlocks.add(new OdysseusScriptBlock(currentKeyword, currentText.toString()));
-
-						currentKeyword = null;
-						currentText = new StringBuilder();
-					}
-
-					currentKeyword = "";
-					currentText = new StringBuilder();
-				}
 				if( currentText.length() > 0 ) {
 					currentText.append("\n");
 				}
