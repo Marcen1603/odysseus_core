@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
 import java.util.Set;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -119,6 +120,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 
 		editingText = new Text(topCompsite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		editingText.setText(queryText);
+		editingText.setFont(JFaceResources.getTextFont());
 		editingText.setLayoutData( new GridData(GridData.FILL_HORIZONTAL));
 		editingText.addModifyListener(new ModifyListener() {
 			@Override

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -57,13 +58,13 @@ public class DefaultOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 	
 	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
-		
 		Composite contentComposite = new Composite(parent, SWT.NONE);
 		contentComposite.setLayout(new GridLayout());
 		
 		editingText = new Text(contentComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		editingText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		editingText.setText(script);
+		editingText.setFont(JFaceResources.getTextFont());
 		editingText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
