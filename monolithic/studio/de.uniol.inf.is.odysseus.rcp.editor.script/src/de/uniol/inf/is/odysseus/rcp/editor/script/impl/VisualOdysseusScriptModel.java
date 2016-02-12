@@ -179,7 +179,8 @@ public class VisualOdysseusScriptModel {
 			String line = odysseusScriptTextLine;
 			
 			int parameterKeyPos = line.indexOf(OdysseusScriptParser.PARAMETER_KEY);
-			if( parameterKeyPos != -1) {
+			int commentPos = line.indexOf(OdysseusScriptParser.SINGLE_LINE_COMMENT_KEY);
+			if( parameterKeyPos != -1 && commentPos == -1 || (commentPos > parameterKeyPos )) {
 				
 				// finish current text block
 				if( currentKeyword != null ) {
