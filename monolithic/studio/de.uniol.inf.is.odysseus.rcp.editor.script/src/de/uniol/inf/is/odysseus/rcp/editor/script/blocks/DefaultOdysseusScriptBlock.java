@@ -16,14 +16,14 @@ import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 
-public class DefaultOdysseusScriptTextBlock implements IVisualOdysseusScriptBlock {
+public class DefaultOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 
 	private String odysseusScriptText;
 	private String odysseusScriptKeyword;
 	
 	private Text editingText;
 	
-	public DefaultOdysseusScriptTextBlock(String keyword, String text) {
+	public DefaultOdysseusScriptBlock(String keyword, String text) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(keyword), "keyword must not be null or empty!");
 		
 		odysseusScriptKeyword = keyword;

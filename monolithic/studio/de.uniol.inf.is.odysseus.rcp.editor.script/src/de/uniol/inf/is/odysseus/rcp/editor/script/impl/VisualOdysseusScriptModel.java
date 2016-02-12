@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRule;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
-import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.DefaultOdysseusScriptTextBlock;
+import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.DefaultOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.rules.TransformRuleRegistry;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
@@ -82,7 +82,7 @@ public class VisualOdysseusScriptModel {
 		if( !scriptBlocks.isEmpty() ) {
 			// using fallback to show the remaining script blocks however
 			for( OdysseusScriptBlock scriptBlock : scriptBlocks) {
-				DefaultOdysseusScriptTextBlock defBlock = new DefaultOdysseusScriptTextBlock(scriptBlock.getKeyword(), scriptBlock.getText());
+				DefaultOdysseusScriptBlock defBlock = new DefaultOdysseusScriptBlock(scriptBlock.getKeyword(), scriptBlock.getText());
 				transformResultMap.put(scriptBlock, defBlock);
 			}
 			scriptBlocks.clear();			
