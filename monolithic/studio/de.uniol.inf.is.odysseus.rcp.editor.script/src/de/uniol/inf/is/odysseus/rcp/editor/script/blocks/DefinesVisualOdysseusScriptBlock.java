@@ -163,6 +163,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		/*** Buttons ***/
 		Button addButton = new Button(buttonComposite, SWT.PUSH);
 		addButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("add"));
+		addButton.setToolTipText("Add new definition");
 		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -179,6 +180,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		
 		Button removeButton = new Button(buttonComposite, SWT.PUSH);
 		removeButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("remove"));
+		removeButton.setToolTipText("Remove definition");
 		removeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -197,6 +199,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		
 		Button moveUpButton = new Button(buttonComposite, SWT.PUSH);
 		moveUpButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveUp"));
+		moveUpButton.setToolTipText("Move definition up");
 		moveUpButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		moveUpButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -218,6 +221,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		
 		Button moveDownButton = new Button(buttonComposite, SWT.PUSH);
 		moveDownButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveDown"));
+		moveDownButton.setToolTipText("Move definition down");
 		moveDownButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		moveDownButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -236,7 +240,6 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 				}
 			}
 		});
-
 	}
 
 	@Override
