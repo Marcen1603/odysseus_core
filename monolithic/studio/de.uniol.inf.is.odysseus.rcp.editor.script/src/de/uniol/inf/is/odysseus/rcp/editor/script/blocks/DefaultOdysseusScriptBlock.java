@@ -6,7 +6,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.common.base.Preconditions;
@@ -18,42 +17,59 @@ import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 
 public class DefaultOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 
-	private String odysseusScriptText;
-	private String odysseusScriptKeyword;
+	private static final String TITLE = "Generic OdysseusScript";
+	
+	private String script = "";
 	
 	private Text editingText;
 	
 	public DefaultOdysseusScriptBlock(String keyword, String text) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(keyword), "keyword must not be null or empty!");
 		
-		odysseusScriptKeyword = keyword;
-		odysseusScriptText = text;
+		integrate(keyword, text);
 	}
 	
 	@Override
 	public String getTitle() {
-		return "Generic OdysseusScript";
+		return TITLE;
+	}
+	
+	public void integrate( String newKeyword, String newText ) {
+		StringBuilder scriptBuilder = new StringBuilder();
+		
+		if( !Strings.isNullOrEmpty(script)) {
+			scriptBuilder.append(script);
+			scriptBuilder.append("\n");
+		}
+		scriptBuilder.append(newKeyword);
+		if( !Strings.isNullOrEmpty(newText)) {
+			int pos = newText.indexOf("\n");
+			if( pos != -1 && pos != newText.length() - 1) {
+				scriptBuilder.append(" \n");
+			} else {
+				scriptBuilder.append(" ");
+			}
+			scriptBuilder.append(newText);
+		}
+		
+		script = scriptBuilder.toString();
 	}
 	
 	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(2, false));
 		
-		Label keywordLabel = new Label(comp, SWT.NONE);
-		keywordLabel.setText(odysseusScriptKeyword);
-		GridData gd = new GridData();
-		gd.verticalAlignment = SWT.TOP;
-		keywordLabel.setLayoutData(gd);
+		Composite contentComposite = new Composite(parent, SWT.NONE);
+		contentComposite.setLayout(new GridLayout());
 		
-		editingText = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		editingText.setText(odysseusScriptText);
+		editingText = new Text(contentComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		editingText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		editingText.setText(script);
 		editingText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
+				script = editingText.getText();
+
 				container.layoutAll();
-				
 				container.setDirty(true);
 			}
 		});
@@ -68,8 +84,7 @@ public class DefaultOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 	public String generateOdysseusScript() throws VisualOdysseusScriptException {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(odysseusScriptKeyword).append("\n");
-		sb.append(odysseusScriptText);
+		sb.append(script).append("\n");
 		
 		return sb.toString();
 	}

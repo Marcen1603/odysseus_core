@@ -94,26 +94,48 @@ public class VisualOdysseusScriptModel {
 		// according to the order in scriptBlocksCopy
 		visualTextBlocks.clear();
 		
+		DefaultOdysseusScriptBlock currentDefBlock = null;
 		while( !scriptBlocksCopy.isEmpty() ) {
 			OdysseusScriptBlock topBlock = scriptBlocksCopy.remove(0);
 			IVisualOdysseusScriptBlock visualBlock = transformResultMap.get(topBlock);
 			
+			// merge default blocks together if possible
+			if( visualBlock instanceof DefaultOdysseusScriptBlock ) {
+				if( currentDefBlock == null ) {
+					currentDefBlock = (DefaultOdysseusScriptBlock)visualBlock;
+				} else {
+					currentDefBlock.integrate(topBlock.getKeyword(), topBlock.getText());
+				}
+				continue;
+			} 
+
+			if( currentDefBlock != null ) {
+				visualTextBlocks.add(currentDefBlock);
+				currentDefBlock = null;
+			}
+			
 			if( visualBlock != null ) {
 				visualTextBlocks.add(visualBlock);
-				
+	
 				List<OdysseusScriptBlock> blocksToRemoveFromMap = Lists.newArrayList();
-				for( Entry<OdysseusScriptBlock, IVisualOdysseusScriptBlock> transformMapEntry : transformResultMap.entrySet()) {
-					if( transformMapEntry.getValue() == visualBlock ) {
+				for (Entry<OdysseusScriptBlock, IVisualOdysseusScriptBlock> transformMapEntry : transformResultMap.entrySet()) {
+					if (transformMapEntry.getValue() == visualBlock) {
 						blocksToRemoveFromMap.add(transformMapEntry.getKey());
 					}
 				}
-				
-				for( OdysseusScriptBlock blockToRemove : blocksToRemoveFromMap ) {
+	
+				for (OdysseusScriptBlock blockToRemove : blocksToRemoveFromMap) {
 					scriptBlocksCopy.remove(blockToRemove);
 					transformResultMap.remove(blockToRemove);
 				}
-			}
+			} 
 		}
+		
+		if( currentDefBlock != null ) {
+			visualTextBlocks.add(currentDefBlock);
+			currentDefBlock = null;
+		}
+
 	}
 	
 	public List<IVisualOdysseusScriptBlock> getVisualTextBlocks() {
