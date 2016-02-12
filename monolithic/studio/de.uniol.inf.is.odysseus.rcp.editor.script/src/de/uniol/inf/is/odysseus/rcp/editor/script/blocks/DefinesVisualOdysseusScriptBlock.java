@@ -161,50 +161,34 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		tableViewer.setInput(pairs);
 		
 		/*** Buttons ***/
-		Button addButton = new Button(buttonComposite, SWT.PUSH);
-		addButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("add"));
-		addButton.setToolTipText("Add new definition");
-		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button addButton = createImageButton(buttonComposite, "add", "Add new definition");
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				pairs.add(new StringPair("key", "value"));
-				tableViewer.refresh();
 				
-				container.layoutAll();
-				topComposite.layout();
-				
-				container.setDirty(true);
+				markChanged(container, tableViewer);
 			}
 		});
 		
-		Button removeButton = new Button(buttonComposite, SWT.PUSH);
-		removeButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("remove"));
-		removeButton.setToolTipText("Remove definition");
-		removeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button removeButton = createImageButton(buttonComposite, "remove", "Remove definition");
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Optional<StringPair> optPair = getSelection(tableViewer);
+				Optional<StringPair> optPair = getTableViewerSelection(tableViewer);
 				if( optPair.isPresent() ) {
 					pairs.remove(optPair.get());
-					tableViewer.refresh();
 					
-					container.layoutAll();
-					topComposite.layout();
-					container.setDirty(true);
+					markChanged(container, tableViewer);
 				}
 			}
 		});
 		
-		Button moveUpButton = new Button(buttonComposite, SWT.PUSH);
-		moveUpButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveUp"));
-		moveUpButton.setToolTipText("Move definition up");
-		moveUpButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button moveUpButton = createImageButton(buttonComposite, "moveUp", "Move definition up");
 		moveUpButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Optional<StringPair> optPair = getSelection(tableViewer);
+				Optional<StringPair> optPair = getTableViewerSelection(tableViewer);
 				if( optPair.isPresent() ) {
 					int index = pairs.indexOf(optPair.get());
 					if( index > 0 ) {
@@ -212,21 +196,17 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 						pairs.set(index - 1, optPair.get());
 						pairs.set(index, temp);
 
-						tableViewer.refresh();
-						container.setDirty(true);
+						markChanged(container, tableViewer);
 					}
 				}
 			}
 		});
 		
-		Button moveDownButton = new Button(buttonComposite, SWT.PUSH);
-		moveDownButton.setImage(VisualOdysseusScriptPlugIn.getImageManager().get("moveDown"));
-		moveDownButton.setToolTipText("Move definition down");
-		moveDownButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button moveDownButton = createImageButton(buttonComposite, "moveDown", "Move definition down");
 		moveDownButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Optional<StringPair> optPair = getSelection(tableViewer);
+				Optional<StringPair> optPair = getTableViewerSelection(tableViewer);
 				if( optPair.isPresent() ) {
 					int index = pairs.indexOf(optPair.get());
 					if( index < pairs.size() - 1 ) {
@@ -234,8 +214,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 						pairs.set(index + 1, optPair.get());
 						pairs.set(index, temp);
 						
-						tableViewer.refresh();
-						container.setDirty(true);
+						markChanged(container, tableViewer);
 					}
 				}
 			}
@@ -248,7 +227,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static <T> Optional<T> getSelection( TableViewer tableViewer ) {
+	private static <T> Optional<T> getTableViewerSelection( TableViewer tableViewer ) {
 		ISelection selection = tableViewer.getSelection();
 		if( selection.isEmpty() ) {
 			return Optional.absent();
@@ -256,6 +235,23 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		
 		IStructuredSelection structSelection = (IStructuredSelection) selection;
 		return Optional.of((T)structSelection.getFirstElement());
+	}
+	
+	private static Button createImageButton( Composite parent, String imageKey, String tooltipText) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setImage(VisualOdysseusScriptPlugIn.getImageManager().get(imageKey));
+		button.setToolTipText(tooltipText);
+		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		return button;
+	}
+	
+	private static void markChanged(IVisualOdysseusScriptContainer container, TableViewer tableViewer ) {
+		tableViewer.refresh();
+		tableViewer.getTable().getParent().layout();
+		
+		container.layoutAll();
+		container.setDirty(true);
 	}
 
 	@Override
