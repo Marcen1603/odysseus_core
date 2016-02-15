@@ -159,9 +159,8 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		scrollComposite.layout();
 		contentComposite.layout();
-
-		contentComposite.setSize(contentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		
+		scrollComposite.setMinSize(contentComposite.getSize());
 	}
 	
 	@Override
