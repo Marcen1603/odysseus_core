@@ -107,7 +107,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 					queryName = queryNameText.getText();
 					
 					container.setDirty(true);
-					container.setTitle(getTitle());
+					container.setTitleText(getTitle());
 				}
 			}
 		});

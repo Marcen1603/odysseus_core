@@ -4,5 +4,5 @@ public interface IVisualOdysseusScriptContainer {
 
 	public void layoutAll();
 	public void setDirty(boolean dirty);
-	public void setTitle(String title);
+	public void setTitleText(String title);
 }
