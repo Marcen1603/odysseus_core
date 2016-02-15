@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
@@ -982,7 +983,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 					topOfGroupGraphPattern.getOutputSchema());
 			SDFExpression expr = new SDFExpression(null,
 					filterConstraint.toString(), attrRes, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-			IPredicate selectPred = new TypeSafeRelationalPredicate(expr);
+			IPredicate selectPred = new RelationalExpression(expr);
 			select.setPredicate(selectPred);
 			select.subscribeTo(topOfGroupGraphPattern,
 					topOfGroupGraphPattern.getOutputSchema());
@@ -1514,7 +1515,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		SDFExpression expr = new SDFExpression(null, exprStr, attrRes,
 				MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 
-		IPredicate retval = new TypeSafeRelationalPredicate(expr);
+		IPredicate retval = new RelationalExpression(expr);
 
 		// // more than one common variable
 		// // so build a tree of and predicates
