@@ -15,13 +15,13 @@
  */
 package de.uniol.inf.is.odysseus.parser.pql.relational;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class RelationalPredicateBuilder implements IPredicateBuilder {
 
@@ -29,7 +29,8 @@ public class RelationalPredicateBuilder implements IPredicateBuilder {
 	public IPredicate<?> createPredicate(IAttributeResolver resolver,
 			String predicate) {
 		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		RelationalPredicate pred = new RelationalPredicate(expression);
+		RelationalExpression<?> pred = new RelationalExpression<>(expression);
+		pred.initVars(resolver.getSchema());
 		return pred;
 	}
 

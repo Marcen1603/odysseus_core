@@ -127,7 +127,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
     public IPredicate<KeyValueObject<?>> not() {
         NotOperator not = new NotOperator();
         not.setArguments(new IExpression<?>[] { this.expression.getMEPExpression() });
-        return new KeyValueObjectPredicate(new SDFExpression(not, this.expression.getAttributeResolver(), this.expression.getExpressionParser()));
+        return new KeyValueObjectPredicate(new SDFExpression(not.toString(), this.expression.getExpressionParser()));
     }
 
     @SuppressWarnings("boxing")

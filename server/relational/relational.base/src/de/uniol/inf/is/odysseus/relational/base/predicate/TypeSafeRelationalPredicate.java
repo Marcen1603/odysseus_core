@@ -95,7 +95,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
             SDFExpression expr = ((TypeSafeRelationalPredicate) predicate).expression;
             AndOperator and = new AndOperator();
             and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
-            return new TypeSafeRelationalPredicate(new SDFExpression(and, expression.getAttributeResolver(), expression.getExpressionParser()));
+            return new TypeSafeRelationalPredicate(new SDFExpression(and.toString(), expression.getExpressionParser()));
         }
         return super.and(predicate);
     }
@@ -109,7 +109,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
             SDFExpression expr = ((TypeSafeRelationalPredicate) predicate).expression;
             OrOperator or = new OrOperator();
             or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
-            return new TypeSafeRelationalPredicate(new SDFExpression(or, expression.getAttributeResolver(), expression.getExpressionParser()));
+            return new TypeSafeRelationalPredicate(new SDFExpression(or.toString(),expression.getExpressionParser()));
         }
         return super.or(predicate);
     }
@@ -121,6 +121,6 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
     public IPredicate<Tuple<?>> not() {
         NotOperator not = new NotOperator();
         not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
-        return new TypeSafeRelationalPredicate(new SDFExpression(not, expression.getAttributeResolver(), expression.getExpressionParser()));
+        return new TypeSafeRelationalPredicate(new SDFExpression(not.toString(),expression.getExpressionParser()));
     }
 }

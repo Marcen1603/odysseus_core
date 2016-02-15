@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.relational.rewrite;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -40,6 +41,10 @@ public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 		if(parameter instanceof IRelationalPredicate) {
 			((IRelationalPredicate<?>)parameter).init(leftSchema, rightSchema);				
 		}
+		if(parameter instanceof RelationalExpression) {
+			((RelationalExpression<?>)parameter).initVars(leftSchema, rightSchema);				
+		}
+		
 	}
 
 }

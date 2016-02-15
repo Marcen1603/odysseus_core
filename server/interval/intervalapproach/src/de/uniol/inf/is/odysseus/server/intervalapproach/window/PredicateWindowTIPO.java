@@ -80,10 +80,6 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	@Override
 	public void process_open() throws OpenFailedException {
 		super.process_open();
-		start.init();
-		if (end != null) {
-			end.init();
-		}
 	}
 
 	@Override

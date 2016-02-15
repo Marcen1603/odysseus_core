@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -27,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -66,24 +66,25 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
         return newSel;
     }
 
-    private static List<IPredicate> splitPredicate(IPredicate sel, RewriteConfiguration config) {
+    @SuppressWarnings("unchecked")
+	private static List<IPredicate> splitPredicate(IPredicate sel, RewriteConfiguration config) {
         List<IPredicate> preds;
         if (ComplexPredicateHelper.isAndPredicate(sel)) {
             preds = ComplexPredicateHelper.conjunctiveSplit(sel);
         }
         else {
-            RelationalPredicate relationalPredicate = ((RelationalPredicate) sel);
+            RelationalExpression relationalPredicate = ((RelationalExpression) sel);
             ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
             if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
-                IExpression<?> expression = ((RelationalPredicate) sel).getExpression().getMEPExpression();
+                IExpression<?> expression = ((RelationalExpression) sel).getMEPExpression();
                 expression = BooleanExpressionOptimizer.optimize(expression);
                 IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
-                SDFExpression sdfExpression = new SDFExpression(cnf, relationalPredicate.getExpression().getAttributeResolver(), relationalPredicate.getExpression().getExpressionParser());
+                SDFExpression sdfExpression = new SDFExpression(cnf.toString(), relationalPredicate.getExpressionParser());
 
-                preds = (new RelationalPredicate(sdfExpression)).splitPredicate(false);
+                preds = (new RelationalExpression(sdfExpression)).conjunctiveSplit();
             }
             else {
-                preds = ((RelationalPredicate) sel).splitPredicate(false);
+                preds = ((RelationalExpression) sel).conjunctiveSplit();
             }
         }
         return preds;
@@ -93,7 +94,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
     public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
         IPredicate pred = operator.getPredicate();
         if (pred != null) {
-            if (ComplexPredicateHelper.isAndPredicate(pred) || (pred instanceof RelationalPredicate)) {
+            if (ComplexPredicateHelper.isAndPredicate(pred) || (pred instanceof RelationalExpression && ((RelationalExpression)pred).isAndPredicate())) {
                 return true;
             }
         }

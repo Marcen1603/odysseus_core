@@ -751,6 +751,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		List<IExpression<T>> result = new ArrayList<>();
 		// Split with and
 		final Stack<IExpression<T>> expressionStack = new Stack<>();
+		expressionStack.push(this);
 		while (!expressionStack.isEmpty()) {
 			final IExpression<T> curExpression = expressionStack.pop();
 			if (curExpression.isFunction() && ((IFunction<?>)curExpression).isAndPredicate()) {

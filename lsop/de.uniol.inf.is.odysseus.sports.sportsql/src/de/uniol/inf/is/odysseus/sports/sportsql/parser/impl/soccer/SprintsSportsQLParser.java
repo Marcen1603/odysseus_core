@@ -166,9 +166,9 @@ public class SprintsSportsQLParser  {
 		coalesceAOOutputAttributes.add(ATTRIBUTE_MAX_SPEED);
 
 		IPredicate<?> startPredicate = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_SPEED + "> "+SPRINT_SPEED);
+				.createRelationalExpression(ATTRIBUTE_SPEED + "> "+SPRINT_SPEED);
 		IPredicate<?> endPredicate = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_SPEED + "< "+(SPRINT_SPEED-5));
+				.createRelationalExpression(ATTRIBUTE_SPEED + "< "+(SPRINT_SPEED-5));
 
 		CoalesceAO coalesceAO = OperatorBuildHelper.createCoalesceAO(
 				coalesceAOAttributes, coalesceAOFunctions,

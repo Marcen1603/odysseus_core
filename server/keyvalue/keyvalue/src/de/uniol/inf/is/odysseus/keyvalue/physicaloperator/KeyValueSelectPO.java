@@ -71,7 +71,6 @@ public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<
 	
 	@Override
 	public void process_open() throws OpenFailedException{
-		this.predicate.init();
 	}
 	
 	@Override

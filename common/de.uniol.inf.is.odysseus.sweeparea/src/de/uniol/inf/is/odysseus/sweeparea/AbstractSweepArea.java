@@ -353,8 +353,6 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 
 	@Override
 	public void init() {
-		this.queryPredicate.init();
-		this.removePredicate.init();
 	}
 
 	@Override

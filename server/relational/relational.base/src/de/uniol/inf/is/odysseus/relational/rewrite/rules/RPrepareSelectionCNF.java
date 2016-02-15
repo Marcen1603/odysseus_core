@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -21,17 +21,16 @@ public class RPrepareSelectionCNF extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration config)
 			throws RuleException {
-		SDFExpression originalSDFExpression = ((RelationalPredicate) sel
-				.getPredicate()).getExpression();
+		SDFExpression originalSDFExpression = ((RelationalExpression<?>) sel
+				.getPredicate());
 		IExpression<?> expressionInCNF = BooleanExpressionOptimizer
 				.toConjunctiveNormalForm(BooleanExpressionOptimizer.optimize(originalSDFExpression
 						.getMEPExpression()));
 		if(!originalSDFExpression.getMEPExpression().equals(expressionInCNF)) {
-			RelationalPredicate predicate = new RelationalPredicate(new SDFExpression(
-					expressionInCNF, originalSDFExpression.getAttributeResolver(),
-					originalSDFExpression.getExpressionParser()));
+			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
+					expressionInCNF.toString(), originalSDFExpression.getExpressionParser()));
 			sel.setPredicate(predicate);
-			predicate.init(sel.getInputSchema(), null, false);	
+			predicate.initVars(sel.getInputSchema());	
 			
 			RestructParameterInfoUtil.updatePredicateParameterInfo(
 					sel.getParameterInfos(), sel.getPredicate());
@@ -42,7 +41,7 @@ public class RPrepareSelectionCNF extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public boolean isExecutable(SelectAO sel, RewriteConfiguration config) {
 		return sel != null && sel.getPredicate() != null
-				&& RelationalPredicate.class.isInstance(sel.getPredicate());
+				&& RelationalExpression.class.isInstance(sel.getPredicate());
 	}
 
 	@Override

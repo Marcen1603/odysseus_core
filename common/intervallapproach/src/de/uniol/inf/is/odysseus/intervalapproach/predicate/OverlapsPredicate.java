@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * 
  * @author Jonas Jacobi, Christian Kuka
  */
+
 public class OverlapsPredicate extends AbstractTimeIntervalPredicate {
 
     /**

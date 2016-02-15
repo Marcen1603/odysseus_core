@@ -8,7 +8,9 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
@@ -50,10 +52,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
@@ -67,7 +68,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.AssureHeartbeatAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.logicaloperator.SportsHeatMapAO;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
@@ -79,7 +79,6 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLEvaluat
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLSpaceParameter.SpaceUnit;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.parameter.SportsQLTimeParameter;
-import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParameterHelper;
 
 /**
  * Class with static methods which help you to build the AOs easily.
@@ -88,6 +87,7 @@ import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.SportsQLParam
  * @since 10.07.2014
  *
  */
+@SuppressWarnings("rawtypes")
 public class OperatorBuildHelper {
 
 	/**
@@ -353,16 +353,16 @@ public class OperatorBuildHelper {
 		// Create Predicates from Strings
 
 		SDFExpression firstPredicateExpression = new SDFExpression(firstPredicateString, MEP.getInstance());
-		RelationalPredicate firstPredicate = new RelationalPredicate(firstPredicateExpression);
+		RelationalExpression firstPredicate = new RelationalExpression(firstPredicateExpression);
 
 		SDFExpression secondPredicateExpression = new SDFExpression(secondPredicateString, MEP.getInstance());
-		RelationalPredicate secondPredicate = new RelationalPredicate(secondPredicateExpression);
+		RelationalExpression secondPredicate = new RelationalExpression(secondPredicateExpression);
 
 		SDFExpression thirdPredicateExpression = new SDFExpression(thirdPredicateString, MEP.getInstance());
-		RelationalPredicate thirdPredicate = new RelationalPredicate(thirdPredicateExpression);
+		RelationalExpression thirdPredicate = new RelationalExpression(thirdPredicateExpression);
 
 		SDFExpression fourthPredicateExpression = new SDFExpression(fourthPredicateString, MEP.getInstance());
-		RelationalPredicate fourthPredicate = new RelationalPredicate(fourthPredicateExpression);
+		RelationalExpression fourthPredicate = new RelationalExpression(fourthPredicateExpression);
 
 		IPredicate firstAndPredicate = ComplexPredicateHelper.createAndPredicate(firstPredicate, secondPredicate);
 		IPredicate secondAndPredicate = ComplexPredicateHelper.createAndPredicate(thirdPredicate, fourthPredicate);
@@ -393,7 +393,7 @@ public class OperatorBuildHelper {
 		String predicateString = IntermediateSchemaAttributes.TEAM_ID + " = " + teamId;
 		SDFExpression predicateExpression = new SDFExpression(predicateString, MEP.getInstance());
 
-		RelationalPredicate predicate = new RelationalPredicate(predicateExpression);
+		RelationalExpression predicate = new RelationalExpression(predicateExpression);
 		teamSelectAO.setPredicate(predicate);
 
 		teamSelectAO.subscribeTo(source, source.getOutputSchema());
@@ -415,7 +415,7 @@ public class OperatorBuildHelper {
 				+ IntermediateSchemaAttributes.TEAM_ID + " = 2)";
 		SDFExpression predicateExpression = new SDFExpression(predicateString, MEP.getInstance());
 
-		RelationalPredicate predicate = new RelationalPredicate(predicateExpression);
+		RelationalExpression predicate = new RelationalExpression(predicateExpression);
 		teamSelectAO.setPredicate(predicate);
 
 		teamSelectAO.subscribeTo(source, source.getOutputSchema());
@@ -466,17 +466,17 @@ public class OperatorBuildHelper {
 		// 1. minute >= ${parameterTimeStart_minute}
 		String firstPredicateString = ATTRIBUTE_MINUTE + " >= " + startMinute;
 		SDFExpression firstPredicateExpression = new SDFExpression(firstPredicateString, MEP.getInstance());
-		RelationalPredicate firstPredicate = new RelationalPredicate(firstPredicateExpression);
+		RelationalExpression firstPredicate = new RelationalExpression(firstPredicateExpression);
 
 		// 2. minute <= ${parameterTimeEnd_minute}
 		String secondPredicateString = ATTRIBUTE_MINUTE + " <= " + endMinute;
 		SDFExpression secondPredicateExpression = new SDFExpression(secondPredicateString, MEP.getInstance());
-		RelationalPredicate secondPredicate = new RelationalPredicate(secondPredicateExpression);
+		RelationalExpression secondPredicate = new RelationalExpression(secondPredicateExpression);
 
 		// 3. second >= 0
 		String thirdPredicateString = ATTRIBUTE_SECOND + " >= 0";
 		SDFExpression thirdPredicateExpression = new SDFExpression(thirdPredicateString, MEP.getInstance());
-		RelationalPredicate thirdPredicate = new RelationalPredicate(thirdPredicateExpression);
+		RelationalExpression thirdPredicate = new RelationalExpression(thirdPredicateExpression);
 
 		IPredicate firstAndPrdicate = ComplexPredicateHelper.createAndPredicate(firstPredicate, secondPredicate);
 		IPredicate fullAndPredicate = ComplexPredicateHelper.createAndPredicate(firstAndPrdicate, thirdPredicate);
@@ -485,7 +485,7 @@ public class OperatorBuildHelper {
 		// secondPredicateString + " AND " + thirdPredicateString;
 		// SDFExpression fullExpression = new SDFExpression(fullPredicateString,
 		// MEP.getInstance());
-		// IPredicate fullPredicate = new RelationalPredicate(fullExpression);
+		// IPredicate fullPredicate = new RelationalExpression(fullExpression);
 
 		selectAO.setPredicate(fullAndPredicate);
 		selectAO.subscribeTo(source, source.getOutputSchema());
@@ -892,7 +892,7 @@ public class OperatorBuildHelper {
 		// Add predicates to the routeAO operator
 		for (String predicate : listOfPredicates) {
 			SDFExpression predicateExpression = new SDFExpression(predicate, MEP.getInstance());
-			RelationalPredicate p = new RelationalPredicate(predicateExpression);
+			RelationalExpression p = new RelationalExpression(predicateExpression);
 			predicates.add(p);
 		}
 		return createRoutePredicatesAO(predicates, source);
@@ -1455,7 +1455,7 @@ public class OperatorBuildHelper {
 	 * You can use this, if you want to create a JoinAO with a predicate made by yourself
 	 * 
 	 * @param predicate
-	 *            If you build a predicate by yourself, e.g. with createRelationalPredicate
+	 *            If you build a predicate by yourself, e.g. with createRelationalExpression
 	 * @param card
 	 *            e.g. ONE_MANY, ONE_ONE, ...
 	 * @param source1
@@ -1891,9 +1891,9 @@ public class OperatorBuildHelper {
 	 *            What you type in PQL
 	 * @return
 	 */
-	public static RelationalPredicate createRelationalPredicate(String predicate) {
+	public static RelationalExpression createRelationalExpression(String predicate) {
 		SDFExpression predicateExpression = new SDFExpression(predicate, MEP.getInstance());
-		RelationalPredicate finishedPredicate = new RelationalPredicate(predicateExpression);
+		RelationalExpression finishedPredicate = new RelationalExpression(predicateExpression);
 		return finishedPredicate;
 	}
 

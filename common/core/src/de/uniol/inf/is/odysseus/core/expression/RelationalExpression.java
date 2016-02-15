@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.core.expression;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -21,19 +20,22 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 	public RelationalExpression(SDFExpression expression) {
 		super(expression);
 	}
-	
-	public RelationalExpression(RelationalExpression<T> other){
+
+	public RelationalExpression(RelationalExpression<T> other) {
 		super(other);
-		this.variables = new VarHelper[other.variables.length];
-		int i=0;
-		for (VarHelper v:other.variables){
-			this.variables[i++] = new VarHelper(v);
+		if (other.variables != null) {
+			this.variables = new VarHelper[other.variables.length];
+			int i = 0;
+			for (VarHelper v : other.variables) {
+				this.variables[i++] = new VarHelper(v);
+			}
 		}
 	}
 
-	protected VarHelper initAttribute(List<SDFSchema> schemata, SDFAttribute curAttribute) {
+	protected VarHelper initAttribute(List<SDFSchema> schemata, SDFAttribute attribute) {
 		// Maybe the attribute is not given totally, use another way to find
 		// attribute
+		SDFAttribute curAttribute = getReplacement(attribute);
 		for (int i = 0; i < schemata.size(); i++) {
 			SDFSchema schema = schemata.get(i);
 			int index = schema.indexOf(curAttribute);
@@ -43,7 +45,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 			}
 			// Attribute is part of payload
 			if (index >= 0) {
-				return new VarHelper(index, (-1)*(i+1), 0);
+				return new VarHelper(index, (-1) * (i + 1), 0);
 			} else { // Attribute is (potentially) part of meta data;
 				Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
 				if (pos != null) {
@@ -61,37 +63,46 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 
 	public void initVars(List<SDFSchema> schema) {
 		List<SDFAttribute> neededAttributes = getAllAttributes();
-		VarHelper[] newArray = new VarHelper[neededAttributes.size()];
-		this.variables = newArray;
+		VarHelper[] tmp = new VarHelper[neededAttributes.size()];
 		int j = 0;
 		for (SDFAttribute curAttribute : neededAttributes) {
-			newArray[j++] = initAttribute(schema, curAttribute);
+			tmp[j++] = initAttribute(schema, curAttribute);
 		}
 		// Call once to init all type calculations
 		this.getType();
+		
+		// if everything goes right (no wrong schema should destroy the right values)
+		// could happen e.g. in rewrite phase
+		this.variables = tmp; 
 	}
-	
-	public void initVars(SDFSchema schema){
+
+	public void initVars(SDFSchema schema) {
+		if (schema == null){
+			throw new IllegalArgumentException("Schema is not allowed to be null");
+		}
 		List<SDFSchema> schemata = new ArrayList<>();
 		schemata.add(schema);
 		initVars(schemata);
 	}
 
-	public void initVars(SDFSchema left, SDFSchema right){
+	public void initVars(SDFSchema left, SDFSchema right) {
 		List<SDFSchema> schemata = new ArrayList<>();
+		if (left == null){
+			throw new IllegalArgumentException("Schema is not allowed to be null");
+		}
 		schemata.add(left);
-		schemata.add(right);
+		if (right != null) {
+			schemata.add(right);
+		}
 		initVars(schemata);
 	}
 
-	
-
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history) {
 
-		if (isContant()){
+		if (isContant()) {
 			return getValue();
 		}
-		
+
 		Object[] values = new Object[this.variables.length];
 
 		for (int j = 0; j < this.variables.length; ++j) {
@@ -100,14 +111,14 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 
 		bindVariables(values);
 		setSessions(sessions);
-		
+
 		return getValue();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean evaluate(Object input) {
-		return (Boolean) evaluate((Tuple<T>) input,null,null);	
+		return (Boolean) evaluate((Tuple<T>) input, null, null);
 	}
 
 	private void processObject(Tuple<T> object, List<Tuple<T>> history, Object[] values, int j) {
@@ -122,24 +133,24 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean evaluate(Object left, Object right) {
-		return (Boolean) evaluate((Tuple<T>) left,(Tuple<T>) right ,null,null);	
+		return (Boolean) evaluate((Tuple<T>) left, (Tuple<T>) right, null, null);
 	}
-	
+
 	public Object evaluate(Tuple<T> left, Tuple<T> right, List<ISession> sessions, List<Tuple<T>> history) {
 
-		if (isContant()){
+		if (isContant()) {
 			return getValue();
 		}
-		
+
 		Object[] values = new Object[this.variables.length];
-		
+
 		for (int j = 0; j < this.variables.length; ++j) {
 			// Is input from left or from right schema
-			Tuple<T> object = variables[j].getSchema()==-1?left:right;
+			Tuple<T> object = variables[j].getSchema() == -1 ? left : right;
 			processObject(object, history, values, j);
 		}
 
@@ -149,18 +160,18 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		return getValue();
 
 	}
-	
+
 	public Object evaluate(List<Tuple<T>> input, List<ISession> sessions, List<Tuple<T>> history) {
 
-		if (isContant()){
+		if (isContant()) {
 			return getValue();
 		}
-		
+
 		Object[] values = new Object[this.variables.length];
-		
+
 		for (int j = 0; j < this.variables.length; ++j) {
 			// Is input from one of the input schemata
-			Tuple<T> object = input.get((-1)*variables[j].getSchema());
+			Tuple<T> object = input.get((-1) * variables[j].getSchema());
 			processObject(object, history, values, j);
 		}
 
@@ -174,7 +185,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 	protected Tuple<T> determineObjectForExpression(Tuple<T> object, List<Tuple<T>> history, int j) {
 		return object;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public IPredicate<?> and(IPredicate predicate) {
@@ -188,30 +199,32 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		SDFExpression newExpr = (SDFExpression) super.or(predicate);
 		return new RelationalExpression<>(newExpr);
 	}
-	
+
 	@Override
 	public IPredicate<?> not() {
 		SDFExpression newExpr = (SDFExpression) super.not();
 		return new RelationalExpression<>(newExpr);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<RelationalExpression<T>> conjunctiveSplit() {
-		Collection<SDFExpression> sdfepxr = super.conjunctiveSplit();
+	public List<RelationalExpression<T>> conjunctiveSplit() {
+		List<SDFExpression> sdfepxr = super.conjunctiveSplit();
 		List<RelationalExpression<T>> result = new ArrayList<>(sdfepxr.size());
-		for (SDFExpression s: sdfepxr){
+		for (SDFExpression s : sdfepxr) {
 			result.add(new RelationalExpression<>(s));
 		}
 		return result;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return super.toString()+ " initialized = "+(variables != null);
+	}
+
 	@Override
 	public RelationalExpression<T> clone() {
 		return new RelationalExpression<>(this);
 	}
-	
-
 
 }

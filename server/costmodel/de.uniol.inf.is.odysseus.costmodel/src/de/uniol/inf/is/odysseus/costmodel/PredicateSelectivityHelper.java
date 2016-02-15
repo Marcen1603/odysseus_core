@@ -22,15 +22,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.core.predicate.FalsePredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
@@ -38,7 +36,6 @@ import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerThanOperator;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class PredicateSelectivityHelper {
 
@@ -83,8 +80,8 @@ public class PredicateSelectivityHelper {
 	}
 
 	private Optional<Double> evaluatePredicate(IPredicate<?> predicate) {
-		if (predicate instanceof RelationalPredicate) {
-			return evaluateRelationalPredicate((RelationalPredicate) predicate);
+		if (predicate instanceof RelationalExpression) {
+			return evaluateRelationalPredicate((RelationalExpression<?>) predicate);
 		} else if (predicate instanceof ComplexPredicate) {
 			return evaluateComplexPredicate((ComplexPredicate<?>) predicate);
 		} else if (predicate != null) {
@@ -130,19 +127,18 @@ public class PredicateSelectivityHelper {
 		return Optional.absent();
 	}
 
-	private Optional<Double> evaluateRelationalPredicate(RelationalPredicate relationalPredicate) {
+	private Optional<Double> evaluateRelationalPredicate(RelationalExpression<?> relationalPredicate) {
 		LOG.debug("Evaluate RelationalPredicate " + predicate);
 
-		SDFExpression expression = relationalPredicate.getExpression();
-		IExpression<?> mepExpression = expression.getMEPExpression();
+		IExpression<?> mepExpression = relationalPredicate.getMEPExpression();
 
 		if (mepExpression instanceof IBinaryOperator) {
 			return evaluateBinaryOperator((IBinaryOperator<?>) mepExpression);
 		}
-		if( mepExpression instanceof TruePredicate ) {
+		if( relationalPredicate.isAlwaysTrue()) {
 			return Optional.of(1.0);
 		}
-		if( mepExpression instanceof FalsePredicate ) {
+		if( relationalPredicate.isAlwaysFalse() ) {
 			return Optional.of(0.0);
 		}
 		

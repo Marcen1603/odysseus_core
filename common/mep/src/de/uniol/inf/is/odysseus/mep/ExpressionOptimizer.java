@@ -77,7 +77,7 @@ public class ExpressionOptimizer {
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    SDFExpression sdfExpression = new SDFExpression(curExpression.toString(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }
@@ -115,7 +115,7 @@ public class ExpressionOptimizer {
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    SDFExpression sdfExpression = new SDFExpression(curExpression.toString(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }

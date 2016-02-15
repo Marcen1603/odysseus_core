@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -30,15 +31,21 @@ public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 
 	private final SDFSchema leftSchema;
 	private final SDFSchema rightSchema;
+	private ILogicalOperator op;
 	
 	public InitPredicateFunctor(ILogicalOperator op) {
 		this.leftSchema = op.getInputSchema(0);
 		this.rightSchema = op.getNumberOfInputs() > 1 ? op.getInputSchema(1) : null;
+		// Keep for debug
+		this.op = op;
 	}
 	@Override
 	public void call(IPredicate<?> parameter) {
 		if(parameter instanceof IRelationalPredicate) {
 			((IRelationalPredicate<?>)parameter).init(leftSchema, rightSchema);				
+		}else if (parameter instanceof RelationalExpression){
+			((RelationalExpression<?>)parameter).initVars(leftSchema, rightSchema);	
+			System.err.println("INIT ON "+parameter+" "+op);
 		}
 	}
 

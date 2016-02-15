@@ -19,15 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.rdf.datamodel.INode;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 
@@ -109,14 +109,14 @@ public class SparqlParserHelper {
 		// more than one common variable
 		// so build a tree of and predicates
 		if(exprs.size() > 1){
-			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
-			firstRelational.init(leftSchema, rightSchema);
+			RelationalExpression firstRelational = new RelationalExpression(exprs.get(0));
+			firstRelational.initVars(leftSchema, rightSchema);
 			
 			IPredicate left = firstRelational;
 			
 			for(int i = 1; i<exprs.size(); i++){
-				RelationalPredicate right = new RelationalPredicate(exprs.get(i));
-				right.init(leftSchema, rightSchema);
+				RelationalExpression right = new RelationalExpression(exprs.get(i));
+				right.initVars(leftSchema, rightSchema);
 				IPredicate tempAnd = ComplexPredicateHelper.createAndPredicate(left, right);
 				left = tempAnd;
 			}
@@ -126,8 +126,8 @@ public class SparqlParserHelper {
 		// only one common variable, so
 		// return corresponding relational predicate
 		else if(exprs.size() == 1){
-			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
-			firstRelational.init(leftSchema, rightSchema);
+			RelationalExpression firstRelational = new RelationalExpression(exprs.get(0));
+			firstRelational.initVars(leftSchema, rightSchema);
 			retval = firstRelational;
 		}
 		

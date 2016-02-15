@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -37,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mining.classification.TreeNode;
 import de.uniol.inf.is.odysseus.mining.util.CounterList;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
@@ -185,10 +185,11 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void getNextSplit(List<Tuple<M>> pool, List<SDFAttribute> attributesToCheck, TreeNode parent) {
 		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);	
 		// first, calculate splitting points for pool and attributes!
-		Map<SDFAttribute, List<RelationalPredicate>> splittingPoints = calculateSplittingPoints(pool, attributes);
+		Map<SDFAttribute, List<RelationalExpression<M>>> splittingPoints = calculateSplittingPoints(pool, attributes);
 		// the, find the best split
 		SDFAttribute bestSplitAt = getBestSplit(pool, attributes, splittingPoints);
 		logger.trace("best: " + bestSplitAt);
@@ -198,7 +199,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		attributes.remove(bestSplitAt);
 		parent.setAttribute(bestSplitAt);
 		// for each possible value of the split attribute...
-		for (RelationalPredicate splitPredicate : splittingPoints.get(bestSplitAt)) {
+		for (RelationalExpression<M> splitPredicate : splittingPoints.get(bestSplitAt)) {
 			// ... get only the subset for this value
 			List<Tuple<M>> subset = getSubset(pool, bestSplitAt, splitPredicate);
 			// if subset size is zero, we do not need this node...
@@ -244,8 +245,8 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	 * @param attributes
 	 * @return
 	 */
-	private Map<SDFAttribute, List<RelationalPredicate>> calculateSplittingPoints(List<Tuple<M>> pool, ArrayList<SDFAttribute> attributes) {
-		Map<SDFAttribute, List<RelationalPredicate>> splittingPoints = new HashMap<>();
+	private Map<SDFAttribute, List<RelationalExpression<M>>> calculateSplittingPoints(List<Tuple<M>> pool, ArrayList<SDFAttribute> attributes) {
+		Map<SDFAttribute, List<RelationalExpression<M>>> splittingPoints = new HashMap<>();
 		for (SDFAttribute attribute : attributes) {
 			List<Object> values = new ArrayList<>();
 			int index = this.inputSchema.indexOf(attribute);
@@ -255,27 +256,27 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 					values.add(o);
 				}
 			}
-			splittingPoints.put(attribute, new ArrayList<RelationalPredicate>());
+			splittingPoints.put(attribute, new ArrayList<RelationalExpression<M>>());
 			if (attribute.getDatatype().isNumeric()) {
 				double bestmidpoint = getBestSplitPointForContinuous(attribute, pool);
 				String smallerExprString = attribute.getAttributeName() + " <= " + bestmidpoint;
 				SDFExpression smallerExpression = new SDFExpression(smallerExprString, MEP.getInstance());
-				RelationalPredicate smallerRelationalPredicate = new RelationalPredicate(smallerExpression);
-				smallerRelationalPredicate.init(inputSchema, null);
-				splittingPoints.get(attribute).add(smallerRelationalPredicate);
+				RelationalExpression<M> smallerRelationalExpression = new RelationalExpression<M>(smallerExpression);
+				smallerRelationalExpression.initVars(inputSchema);
+				splittingPoints.get(attribute).add(smallerRelationalExpression);
 
 				String greaterExprString = attribute.getAttributeName() + " > " + bestmidpoint;
 				SDFExpression greaterExpression = new SDFExpression(greaterExprString, MEP.getInstance());
-				RelationalPredicate greaterRelationalPredicate = new RelationalPredicate(greaterExpression);
-				greaterRelationalPredicate.init(inputSchema, null);
-				splittingPoints.get(attribute).add(greaterRelationalPredicate);
+				RelationalExpression<M> greaterRelationalExpression = new RelationalExpression<>(greaterExpression);
+				greaterRelationalExpression.initVars(inputSchema);
+				splittingPoints.get(attribute).add(greaterRelationalExpression);
 			} else {
 				for (Object value : values) {
 					String exprString = attribute.getAttributeName() + " == '" + value + "'";
 					SDFExpression expression = new SDFExpression(exprString, MEP.getInstance());
-					RelationalPredicate relationalPredicate = new RelationalPredicate(expression);
-					relationalPredicate.init(inputSchema, null);
-					splittingPoints.get(attribute).add(relationalPredicate);
+					RelationalExpression<M> relationalExpression = new RelationalExpression<>(expression);
+					relationalExpression.initVars(inputSchema);
+					splittingPoints.get(attribute).add(relationalExpression);
 				}
 			}
 
@@ -301,7 +302,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		return true;
 	}
 
-	private List<Tuple<M>> getSubset(List<Tuple<M>> set, SDFAttribute attribute, RelationalPredicate splitPredicate) {
+	private List<Tuple<M>> getSubset(List<Tuple<M>> set, SDFAttribute attribute, RelationalExpression<M> splitPredicate) {
 		List<Tuple<M>> subset = new ArrayList<>();
 		for (Tuple<M> t : set) {
 			if (splitPredicate.evaluate(t)) {
@@ -311,7 +312,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		return subset;
 	}
 
-	private SDFAttribute getBestSplit(List<Tuple<M>> pool, List<SDFAttribute> attributes, Map<SDFAttribute, List<RelationalPredicate>> splittingPredicates) {
+	private SDFAttribute getBestSplit(List<Tuple<M>> pool, List<SDFAttribute> attributes, Map<SDFAttribute, List<RelationalExpression<M>>> splittingPredicates) {
 		double entropyT = entropy(pool);
 		logger.trace("entropy(T)=" + entropyT);
 		double maxWGain = 0;
@@ -321,7 +322,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			logger.trace("checking attribute " + attribute + "...");
 			// for each possible value of attribute, calculate the entropy
 			double sum = 0;
-			for (RelationalPredicate splitPredicate : splittingPredicates.get(attribute)) {
+			for (RelationalExpression<M> splitPredicate : splittingPredicates.get(attribute)) {
 				List<Tuple<M>> subpool = new ArrayList<>();
 				for (Tuple<M> t : pool) {
 					if (splitPredicate.evaluate(t)) {

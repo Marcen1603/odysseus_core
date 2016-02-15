@@ -30,12 +30,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 public interface IPredicate<T> extends IClone, Serializable {
 
     /**
-     * Can be called to initialize a predicate bevor it can be
-     * evaluated
-     */
-    public void init();
-
-    /**
      * Evaluate the predicate with the input
      * 
      * @param input
@@ -123,6 +117,6 @@ public interface IPredicate<T> extends IClone, Serializable {
     @Override
     public IPredicate<T> clone();
 
-	public Collection<? extends IPredicate<? super T>> conjunctiveSplit();
+	public List<? extends IPredicate<? super T>> conjunctiveSplit();
 
 }

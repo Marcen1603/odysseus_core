@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -106,7 +107,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateViewVisit
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.PickUpAttributeNames;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.SubstituteAliasesVisitor;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
@@ -442,8 +442,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					right);
 			return;
 		}
-		if (predicate instanceof IRelationalPredicate) {
-			((RelationalPredicate) predicate).init(left, right);
+		if (predicate instanceof RelationalExpression) {
+			((RelationalExpression<?>) predicate).initVars(left, right);
 		}
 		// NOTE: Das ProbabilityPredicate muss nicht mit linkem
 		// und rechtem Schema initialisiert werden.

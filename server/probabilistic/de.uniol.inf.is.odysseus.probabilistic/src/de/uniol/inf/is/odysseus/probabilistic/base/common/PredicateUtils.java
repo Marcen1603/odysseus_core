@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
@@ -39,7 +40,6 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * 
@@ -60,8 +60,8 @@ public final class PredicateUtils {
         if (predicate instanceof AndPredicate) {
             return ComplexPredicateHelper.isAndPredicate(predicate);
         }
-        else if (predicate instanceof RelationalPredicate) {
-            return ((RelationalPredicate) predicate).isAndPredicate();
+        else if (predicate instanceof RelationalExpression) {
+            return ((RelationalExpression<?>) predicate).isAndPredicate();
         }
         else if (predicate instanceof ProbabilisticRelationalPredicate) {
             return ((ProbabilisticRelationalPredicate) predicate).isAndPredicate();
@@ -82,11 +82,11 @@ public final class PredicateUtils {
         if (predicate instanceof OrPredicate) {
             return ComplexPredicateHelper.isOrPredicate(predicate);
         }
-        else if (predicate instanceof RelationalPredicate) {
-            return ((RelationalPredicate) predicate).isOrPredicate();
+        else if (predicate instanceof RelationalExpression) {
+            return ((RelationalExpression<?>) predicate).isOrPredicate();
         }
         else if (predicate instanceof ProbabilisticRelationalPredicate) {
-            return ((RelationalPredicate) predicate).isOrPredicate();
+            return ((RelationalExpression<?>) predicate).isOrPredicate();
         }
         return false;
     }
@@ -104,11 +104,11 @@ public final class PredicateUtils {
         if (predicate instanceof NotPredicate) {
             return ComplexPredicateHelper.isNotPredicate(predicate);
         }
-        else if (predicate instanceof RelationalPredicate) {
-            return ((RelationalPredicate) predicate).isNotPredicate();
+        else if (predicate instanceof RelationalExpression) {
+            return ((RelationalExpression<?>) predicate).isNotPredicate();
         }
         else if (predicate instanceof ProbabilisticRelationalPredicate) {
-            return ((RelationalPredicate) predicate).isNotPredicate();
+            return ((RelationalExpression<?>) predicate).isNotPredicate();
         }
         return false;
     }
@@ -202,8 +202,8 @@ public final class PredicateUtils {
         final Set<SDFAttribute> attributes = new HashSet<SDFAttribute>();
         final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
         for (final IPredicate pre : predicates) {
-            if (pre instanceof RelationalPredicate) {
-                attributes.addAll(((RelationalPredicate) pre).getAttributes());
+            if (pre instanceof RelationalExpression) {
+                attributes.addAll(((RelationalExpression) pre).getAttributes());
             }
             else if (pre instanceof ProbabilisticRelationalPredicate) {
                 attributes.addAll(((ProbabilisticRelationalPredicate) pre).getAttributes());
@@ -236,8 +236,8 @@ public final class PredicateUtils {
         final List<SDFExpression> expressions = new ArrayList<SDFExpression>();
         final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
         for (final IPredicate<?> pre : predicates) {
-            if (pre instanceof RelationalPredicate) {
-                expressions.add(((RelationalPredicate) pre).getExpression());
+            if (pre instanceof RelationalExpression) {
+                expressions.add(((RelationalExpression<?>) pre));
             }
             else if (pre instanceof ProbabilisticRelationalPredicate) {
                 expressions.add(((ProbabilisticRelationalPredicate) pre).getExpression());
@@ -326,11 +326,11 @@ public final class PredicateUtils {
      * @return <code>true</code> iff the relational predicate is of the given
      *         form
      */
-    public static boolean isEquiPredicate(final RelationalPredicate predicate) {
+    public static boolean isEquiPredicate(final RelationalExpression<?> predicate) {
         Objects.requireNonNull(predicate);
-        Objects.requireNonNull(predicate.getExpression());
-        Objects.requireNonNull(predicate.getExpression().getMEPExpression());
-        final IExpression<?> expression = predicate.getExpression().getMEPExpression();
+        Objects.requireNonNull(predicate);
+        Objects.requireNonNull(predicate.getMEPExpression());
+        final IExpression<?> expression = predicate.getMEPExpression();
         return PredicateUtils.isEquiExpression(expression);
     }
 

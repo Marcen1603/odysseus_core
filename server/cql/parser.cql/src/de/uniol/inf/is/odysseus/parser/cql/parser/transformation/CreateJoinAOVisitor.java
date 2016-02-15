@@ -20,11 +20,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -38,8 +42,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -58,7 +60,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //creates join operators
 //visit returns the topmost operator of an operator tree:
@@ -315,7 +316,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			tmpResolver.addAttribute(attr);
 		}
 		SDFExpression expr = new SDFExpression("", expression, tmpResolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		RelationalPredicate predicate = new RelationalPredicate(expr);
+		RelationalExpression<IMetaAttribute> predicate = new RelationalExpression<>(expr);
 		existsAO.setPredicate(predicate);
 		return existsAO;
 	}

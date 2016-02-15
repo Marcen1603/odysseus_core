@@ -242,8 +242,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 					expressionStack.push(curExpression.toFunction().getArgument(0));
 					expressionStack.push(curExpression.toFunction().getArgument(1));
 				} else {
-					final SDFExpression expr = new SDFExpression(curExpression, this.expression.getAttributeResolver(),
-							MEP.getInstance());
+					final SDFExpression expr = new SDFExpression(curExpression.toString(), MEP.getInstance());
 					final RelationalPredicate relationalPredicate = new RelationalPredicate(expr);
 					relationalPredicate.init(this.expression.getSchema(), false);
 					result.add(relationalPredicate);

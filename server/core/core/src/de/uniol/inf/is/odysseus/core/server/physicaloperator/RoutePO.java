@@ -72,14 +72,6 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 		return OutputMode.INPUT;
 	}
 
-	@Override
-	public void process_open() throws OpenFailedException {
-		super.process_open();
-		for (IPredicate<? super T> p : predicates) {
-			p.init();
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {

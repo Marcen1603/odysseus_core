@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,15 +52,16 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 
 	private Object value;
 
-	/**
-	 * The session information for this expression
-	 */
 	private List<SDFAttribute> attributes;
-
+	private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<>();
+	
 	private IAttributeResolver attributeResolver;
 	/** The schema */
 	private List<SDFSchema> schema;
 
+	/**
+	 * The session information for this expression
+	 */
 	private List<ISession> sessions;
 
 	private transient IExpressionParser expressionParser;
@@ -285,13 +285,13 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 	public boolean isContant() {
 		return expression.isConstant();
 	}
-	
+
 	@Override
-	public Collection conjunctiveSplit() {
+	public List conjunctiveSplit() {
 		List<?> splits = expression.conjunctiveSplit();
-		if (splits.size() > 0){
+		if (splits.size() >= 0) {
 			List<SDFExpression> ret = new ArrayList<>(splits.size());
-			for (Object e:splits){
+			for (Object e : splits) {
 				ret.add(new SDFExpression(e.toString(), getExpressionParser()));
 			}
 			return ret;
@@ -368,16 +368,21 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 		return false;
 	}
 
+	public boolean isAlwaysFalse() {
+		if (getMEPExpression() instanceof Constant) {
+			Object o = getMEPExpression().getValue();
+			if (o instanceof Boolean) {
+				return !(boolean) o;
+			}
+		}
+		return false;
+	}
+
 	public void setSessions(List<ISession> sessions) {
 		this.sessions = sessions;
 		if (expression.isFunction()) {
 			((IFunction<?>) expression).setSessions(sessions);
 		}
-	}
-
-	@Override
-	public void init() {
-		// do nothing
 	}
 
 	@Override
@@ -407,7 +412,7 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 	}
 
 	@Override
-	public IPredicate and(IPredicate predicate) {
+	public IPredicate<?> and(IPredicate predicate) {
 		if (predicate instanceof SDFExpression) {
 			if (this.expression instanceof IFunction) {
 				IFunction<?> expr = (IFunction) this.expression;
@@ -420,6 +425,10 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 		}
 		throw new IllegalArgumentException("Cannot process with " + predicate);
 
+	}
+
+	public boolean isAndPredicate() {
+		return expression.isFunction() && expression.toFunction().isAndPredicate();
 	}
 
 	@Override
@@ -437,6 +446,10 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 		throw new IllegalArgumentException("Cannot process with " + predicate);
 	}
 
+	public boolean isOrPredicate() {
+		return expression.isFunction() && expression.toFunction().isOrPredicate();
+	}
+
 	@Override
 	public IPredicate not() {
 		if (this.expression instanceof IFunction) {
@@ -448,6 +461,11 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 		}
 		throw new IllegalArgumentException("Cannot process");
 	}
+	
+	public boolean isNotPredicate(){
+		return expression.isFunction() && expression.toFunction().isNotPredicate();
+	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -464,5 +482,21 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 			}
 		}
 		return this.isContainedIn(predicate) && predicate.isContainedIn(this);
+	}
+	
+	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
+		if (!curAttr.equals(newAttr)) {
+			replacementMap.put(curAttr, newAttr);
+		}
+	}
+
+	
+	protected SDFAttribute getReplacement(SDFAttribute a) {
+		SDFAttribute ret = a;
+		SDFAttribute tmp = null;
+		while ((tmp = replacementMap.get(ret)) != null) {
+			ret = getReplacement(tmp);
+		}
+		return ret;
 	}
 }

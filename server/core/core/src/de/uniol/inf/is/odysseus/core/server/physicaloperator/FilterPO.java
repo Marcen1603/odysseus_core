@@ -27,10 +27,7 @@ public class FilterPO<T extends IStreamObject<?>> extends SelectPO<T> implements
 	public FilterPO(IPredicate<? super T> predicate){
 		super(predicate);
 	}
-	
-	public FilterPO(FilterPO<T> po){
-		super(po);
-	}
+
 	
 	@Override
 	protected void process_next(T object, int port) {

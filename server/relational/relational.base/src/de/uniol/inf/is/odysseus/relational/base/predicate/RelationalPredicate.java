@@ -35,7 +35,9 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
+ * @deprecated Use RelationalExpression instead
  */
+@Deprecated
 public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 
 	Logger logger = LoggerFactory.getLogger(RelationalPredicate.class);
@@ -203,8 +205,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		NotOperator not = new NotOperator();
 		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
 		RelationalPredicate notPredicate = new RelationalPredicate(
-				new SDFExpression(not, expression.getAttributeResolver(),
-						MEP.getInstance()));
+				new SDFExpression(not.toString(),MEP.getInstance()));
 		return notPredicate;
 	}
 

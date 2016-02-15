@@ -106,15 +106,6 @@ public abstract class ComplexPredicate<T> extends AbstractPredicate<T> {
     // newPred.right = this.right.clone();
     // return newPred;
     // }
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void init() {
-        this.left.init();
-        this.right.init();
-    }
 
     /**
      * {@inheritDoc}

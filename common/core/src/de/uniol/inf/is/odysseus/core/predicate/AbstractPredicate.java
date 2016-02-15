@@ -61,15 +61,6 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
      * 
      * {@inheritDoc}
      */
-    @Override
-    public void init() {
-        // Empty block
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @SuppressWarnings("unchecked")
     @Override
     public List<SDFAttribute> getAttributes() {
@@ -138,7 +129,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     }
     
     @Override
-    public Collection<? extends IPredicate<? super T>> conjunctiveSplit() {
+    public List<? extends IPredicate<? super T>> conjunctiveSplit() {
         throw new UnsupportedOperationException("Spit not supported for " + this.getClass());
     }
 }

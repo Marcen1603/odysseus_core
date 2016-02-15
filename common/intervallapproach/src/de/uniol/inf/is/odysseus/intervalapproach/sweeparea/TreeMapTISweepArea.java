@@ -92,8 +92,6 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 */
 	@Override
 	public void init() {
-		this.queryPredicate.init();
-		this.removePredicate.init();
 	}
 
 	/* (non-Javadoc)

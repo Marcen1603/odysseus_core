@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -32,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IStatefulFunction;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
@@ -75,11 +75,11 @@ public class SDFAttributeHelper {
 	 */
 	public boolean validateStructureOfPredicate(JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
-		if (predicate instanceof RelationalPredicate) {
-			RelationalPredicate relPredicate = (RelationalPredicate) predicate;
-			IExpression<?> expression = relPredicate.getExpression()
+		if (predicate instanceof RelationalExpression) {
+			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
+			IExpression<?> expression = relPredicate
 					.getMEPExpression();
-			IAttributeResolver resolver = relPredicate.getExpression()
+			IAttributeResolver resolver = relPredicate
 					.getAttributeResolver();
 			Map<Integer, List<SDFAttribute>> attributes = new HashMap<Integer, List<SDFAttribute>>();
 			attributes = getSDFAttributesFromEqualPredicates(attributes,
@@ -124,11 +124,11 @@ public class SDFAttributeHelper {
 	public Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
 			Map<Integer, List<SDFAttribute>> attributes, JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
-		if (predicate instanceof RelationalPredicate) {
-			RelationalPredicate relPredicate = (RelationalPredicate) predicate;
-			IExpression<?> expression = relPredicate.getExpression()
+		if (predicate instanceof RelationalExpression) {
+			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
+			IExpression<?> expression = relPredicate
 					.getMEPExpression();
-			IAttributeResolver resolver = relPredicate.getExpression()
+			IAttributeResolver resolver = relPredicate
 					.getAttributeResolver();
 			attributes = getSDFAttributesFromEqualPredicates(attributes,
 					expression, resolver, joinOperator);

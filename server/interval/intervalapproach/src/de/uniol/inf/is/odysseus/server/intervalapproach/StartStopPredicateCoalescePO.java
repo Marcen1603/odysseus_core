@@ -48,9 +48,6 @@ public class StartStopPredicateCoalescePO<M extends ITimeInterval> extends
 	@Override
 	protected void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
-		for (IPredicate<?> p : predicates) {
-			p.init();
-		}
 		currentPAs.clear();
 	}
 

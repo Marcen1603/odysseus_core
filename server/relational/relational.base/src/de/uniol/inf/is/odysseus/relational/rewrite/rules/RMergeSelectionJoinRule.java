@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.optimizer.PredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -27,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -40,6 +41,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 		return 0;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config) {
 		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
@@ -47,9 +49,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 		if (sel != null) {
 			if (sel.getPredicate() != null) {
 				if (join.getPredicate() != null) {
-					join.setPredicate(ComplexPredicateHelper
-							.createAndPredicate(join.getPredicate(),
-									sel.getPredicate()));
+					join.setPredicate(join.getPredicate().and((IPredicate)sel.getPredicate()));
 				} else {
 					join.setPredicate(sel.getPredicate());
 				}
@@ -58,21 +58,17 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 								ParameterPredicateOptimizer.class);
 				if (optimizeConfig != null
 						&& optimizeConfig.getValue().booleanValue()) {
-					if (join.getPredicate() instanceof RelationalPredicate) {
-						RelationalPredicate relationalPredicate = (RelationalPredicate) join
+					if (join.getPredicate() instanceof RelationalExpression) {
+						RelationalExpression<?> relationalPredicate = (RelationalExpression<?>) join
 								.getPredicate();
-						IExpression<?> expression = ((RelationalPredicate) join
-								.getPredicate()).getExpression()
-								.getMEPExpression();
+						IExpression<?> expression = ((RelationalExpression<?>) join
+								.getPredicate()).getMEPExpression();
 						expression = BooleanExpressionOptimizer.optimize(expression);
 						IExpression<?> cnf = BooleanExpressionOptimizer
 								.toConjunctiveNormalForm(expression);
-						SDFExpression sdfExpression = new SDFExpression(cnf,
-								relationalPredicate.getExpression()
-										.getAttributeResolver(),
-								relationalPredicate.getExpression()
-										.getExpressionParser());
-						join.setPredicate(new RelationalPredicate(sdfExpression));
+						SDFExpression sdfExpression = new SDFExpression(cnf.toString(),
+								relationalPredicate.getExpressionParser());
+						join.setPredicate(new RelationalExpression(sdfExpression));
 					}
                     join.setPredicate(PredicateOptimizer.optimize(join.getPredicate()));
 				}

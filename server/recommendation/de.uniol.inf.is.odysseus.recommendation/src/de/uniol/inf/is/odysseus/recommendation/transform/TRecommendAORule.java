@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -29,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.recommendation.logicaloperator.RecommendAO;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -97,7 +97,8 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 					predictRatingAttributeName + " > "
 							+ operator.getMinRating(), MEP.getInstance());
 
-			final IPredicate<Tuple<?>> predicate = new RelationalPredicate(
+			@SuppressWarnings("unchecked")
+			final IPredicate<Tuple<?>> predicate = new RelationalExpression<>(
 					sdfExpression);
 			final SelectAO selectAo = new SelectAO(predicate);
 			// selectAo.setName(selectAo.getClass().getSimpleName());

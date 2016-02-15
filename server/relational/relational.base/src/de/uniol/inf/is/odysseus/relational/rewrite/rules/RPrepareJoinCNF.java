@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -21,17 +21,16 @@ public class RPrepareJoinCNF extends AbstractRewriteRule<JoinAO> {
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config)
 			throws RuleException {
-		SDFExpression originalSDFExpression = ((RelationalPredicate) join
-				.getPredicate()).getExpression();
+		SDFExpression originalSDFExpression = ((RelationalExpression<?>) join
+				.getPredicate());
 		IExpression<?> expressionInCNF = BooleanExpressionOptimizer
 				.toConjunctiveNormalForm(BooleanExpressionOptimizer.optimize(originalSDFExpression
 						.getMEPExpression()));
 		if(!originalSDFExpression.getMEPExpression().equals(expressionInCNF)) {
-			RelationalPredicate predicate = new RelationalPredicate(new SDFExpression(
-					expressionInCNF, originalSDFExpression.getAttributeResolver(),
-					originalSDFExpression.getExpressionParser()));
+			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
+					expressionInCNF.toString(), originalSDFExpression.getExpressionParser()));
 			join.setPredicate(predicate);
-			predicate.init(join.getInputSchema(0), join.getInputSchema(1), true);
+			predicate.initVars(join.getInputSchema(0), join.getInputSchema(1));
 			
 			RestructParameterInfoUtil.updatePredicateParameterInfo(
 					join.getParameterInfos(), join.getPredicate());
@@ -42,7 +41,7 @@ public class RPrepareJoinCNF extends AbstractRewriteRule<JoinAO> {
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
 		return join != null && join.getPredicate() != null
-				&& RelationalPredicate.class.isInstance(join.getPredicate());
+				&& RelationalExpression.class.isInstance(join.getPredicate());
 	}
 
 	@Override

@@ -230,7 +230,6 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
      */
     @Override
     public final void process_open() {
-        this.predicate.init();
     }
     
 	@Override

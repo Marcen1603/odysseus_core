@@ -15,12 +15,15 @@
  */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -33,8 +36,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 @SuppressWarnings("unchecked")
 public class CreatePredicateVisitor extends AbstractDefaultVisitor {
@@ -52,7 +53,7 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTBasicPredicate node, Object data) throws QueryParseException {
 		SDFExpression expression = new SDFExpression("", node.getPredicate(), (IAttributeResolver) data, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		RelationalPredicate rp = new RelationalPredicate(expression);
+		RelationalExpression<IMetaAttribute> rp = new RelationalExpression<>(expression);
 		return rp;
 	}
 

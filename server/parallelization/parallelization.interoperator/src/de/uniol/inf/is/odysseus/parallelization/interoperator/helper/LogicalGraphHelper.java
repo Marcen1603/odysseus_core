@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -37,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.exception.SemanticChangeException;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.AbstractParallelTransformationStrategy;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class LogicalGraphHelper {
 
@@ -160,10 +160,9 @@ public class LogicalGraphHelper {
 			ILogicalOperator currentOperator) throws SemanticChangeException {
 		SelectAO selectOperator = (SelectAO) currentOperator;
 		IPredicate<?> predicate = selectOperator.getPredicate();
-		if (predicate instanceof RelationalPredicate) {
-			RelationalPredicate relPredicate = (RelationalPredicate) predicate;
-			IExpression<?> expression = relPredicate.getExpression()
-					.getMEPExpression();
+		if (predicate instanceof RelationalExpression) {
+			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
+			IExpression<?> expression = relPredicate.getMEPExpression();
 			if (SDFAttributeHelper
 					.expressionContainsStatefulFunction(expression)) {
 				if (assureSemanticCorrectness) {

@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.mining.predicate;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -14,7 +17,6 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
 import de.uniol.inf.is.odysseus.relational.base.predicate.ForPredicate.Type;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate<Tuple<?>> {
 
@@ -24,7 +26,7 @@ public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelat
 	private SDFExpression expression;
 	private SDFAttribute listAttribute;
 	private int index;
-	private RelationalPredicate relationalPredicate;
+	private RelationalExpression<?> relationalPredicate;
 	private SDFSchema innerSchema;
 	private Type type = Type.ALL;
 	private String predicate;
@@ -123,8 +125,8 @@ public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelat
 		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		
 		
-		this.relationalPredicate = new RelationalPredicate(expression);
-		this.relationalPredicate.init(innerSchema, null);
+		this.relationalPredicate = new RelationalExpression<>(expression);
+		this.relationalPredicate.initVars(innerSchema);
 	}
 
 	/*
@@ -150,6 +152,11 @@ public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelat
 	@Override
 	public RulePredicate clone() {
 		return new RulePredicate(this);
+	}
+	
+	@Override
+	public List<? extends IPredicate<? super Tuple<?>>> conjunctiveSplit() {
+		return (List<? extends IPredicate<? super Tuple<?>>>) super.conjunctiveSplit();
 	}
 
 }

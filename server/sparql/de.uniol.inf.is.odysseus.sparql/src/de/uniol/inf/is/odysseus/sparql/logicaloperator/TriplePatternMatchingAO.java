@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -35,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 
 /**
@@ -235,13 +235,13 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 		IPredicate pred = null;
 
 		if (exprs.size() > 1) {
-			RelationalPredicate firstPredicate = new RelationalPredicate(exprs.get(0));
-			firstPredicate.init(inputSchema, null);
+			RelationalExpression firstPredicate = new RelationalExpression(exprs.get(0));
+			firstPredicate.initVars(inputSchema);
 
 			IPredicate left = firstPredicate;
 			for (int i = 1; i < exprs.size(); i++) {
-				RelationalPredicate right = new RelationalPredicate(exprs.get(i));
-				right.init(inputSchema, null);
+				RelationalExpression right = new RelationalExpression(exprs.get(i));
+				right.initVars(inputSchema);
 				IPredicate tempAnd = ComplexPredicateHelper.createAndPredicate(left, right);
 				left = tempAnd;
 			}
@@ -251,8 +251,8 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 
 		// there is only one predicate
 		else if (exprs.size() == 1) {
-			RelationalPredicate firstRelational = new RelationalPredicate(exprs.get(0));
-			firstRelational.init(inputSchema, null);
+			RelationalExpression<?> firstRelational = new RelationalExpression<>(exprs.get(0));
+			firstRelational.initVars(inputSchema);
 			pred = firstRelational;
 		}
 

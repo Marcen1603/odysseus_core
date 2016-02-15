@@ -36,7 +36,6 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 
 	@Override
 	public void process_open() throws OpenFailedException {
-		this.predicate.init();
 		getGroupProcessor().init();
 	}
 

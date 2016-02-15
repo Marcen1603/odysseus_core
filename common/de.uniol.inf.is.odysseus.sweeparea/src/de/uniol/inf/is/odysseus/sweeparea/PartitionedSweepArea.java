@@ -329,8 +329,6 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 
 	@Override
 	public void init() {
-		this.queryPredicate.init();
-		this.removePredicate.init();
 	}
 
 	@Override

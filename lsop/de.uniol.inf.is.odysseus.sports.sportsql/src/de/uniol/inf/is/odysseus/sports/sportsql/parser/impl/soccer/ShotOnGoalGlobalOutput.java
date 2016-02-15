@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.sports.sportsql.parser.impl.soccer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -19,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.ddc.MissingDDCEntryException;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.SportsQLQuery;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.IntermediateSchemaAttributes;
 import de.uniol.inf.is.odysseus.sports.sportsql.parser.buildhelper.OperatorBuildHelper;
@@ -145,7 +145,7 @@ public class ShotOnGoalGlobalOutput {
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for (int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
 			IPredicate ballPredicate = OperatorBuildHelper
-					.createRelationalPredicate(IntermediateSchemaAttributes.ENTITY_ID + " = " + sensorId);
+					.createRelationalExpression(IntermediateSchemaAttributes.ENTITY_ID + " = " + sensorId);
 			ballPredicates.add(ballPredicate);
 		}
 		IPredicate ballIPredicate = OperatorBuildHelper.createOrPredicate(ballPredicates);
@@ -253,18 +253,18 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 9. Join
-		RelationalPredicate firstPlayerBallJoinPredicate = OperatorBuildHelper
-				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " >= " + ATTRIBUTE_SHOT_TS + " - ("
+		RelationalExpression firstPlayerBallJoinPredicate = OperatorBuildHelper
+				.createRelationalExpression(IntermediateSchemaAttributes.TS + " >= " + ATTRIBUTE_SHOT_TS + " - ("
 						+ MAX_TIMESHIFT_SHOOTER + "*"
 						+ TimeUnitHelper.getBTUtoMillisecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ")");
-		RelationalPredicate secondPlayerBallJoinPredicate = OperatorBuildHelper
-				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " <= " + ATTRIBUTE_SHOT_TS + " + ("
+		RelationalExpression secondPlayerBallJoinPredicate = OperatorBuildHelper
+				.createRelationalExpression(IntermediateSchemaAttributes.TS + " <= " + ATTRIBUTE_SHOT_TS + " + ("
 						+ MAX_TIMESHIFT_SHOOTER + "*"
 						+ TimeUnitHelper.getBTUtoMillisecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ")");
-		RelationalPredicate thirdPlayerBallJoinPredicate = OperatorBuildHelper
-				.createRelationalPredicate("sqrt((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")^2 + (" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")^2) < "
+		RelationalExpression thirdPlayerBallJoinPredicate = OperatorBuildHelper
+				.createRelationalExpression("sqrt((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")^2 + (" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")^2) < "
 						+ MAX_DISTANCE_SHOOTER);
 
 		List<IPredicate> playerBallJoinPredicates = new ArrayList<IPredicate>();
@@ -371,14 +371,14 @@ public class ShotOnGoalGlobalOutput {
 		// -------------------------------------------------------------------
 
 		// 15. Join
-		RelationalPredicate joinPredicate1 = OperatorBuildHelper
-				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " > " + ATTRIBUTE_SHOT_TS);
-		RelationalPredicate joinPredicate2 = OperatorBuildHelper
-				.createRelationalPredicate(IntermediateSchemaAttributes.TS + " < " + ATTRIBUTE_SHOT_TS + " + ("
+		RelationalExpression joinPredicate1 = OperatorBuildHelper
+				.createRelationalExpression(IntermediateSchemaAttributes.TS + " > " + ATTRIBUTE_SHOT_TS);
+		RelationalExpression joinPredicate2 = OperatorBuildHelper
+				.createRelationalExpression(IntermediateSchemaAttributes.TS + " < " + ATTRIBUTE_SHOT_TS + " + ("
 						+ MAX_TIMESHIFT_SHOT_BALL_JOIN + " * " + TimeUnitHelper.getBTUtoSecondsFactor(TimeUnit.valueOf(AbstractSportsDDCAccess
 								.getBasetimeunit().toLowerCase())) + ")");
-		RelationalPredicate joinPredicate3 = OperatorBuildHelper
-				.createRelationalPredicate("sqrt((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")^2 + (" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")^2) >= "
+		RelationalExpression joinPredicate3 = OperatorBuildHelper
+				.createRelationalExpression("sqrt((" + IntermediateSchemaAttributes.X + " - " + ATTRIBUTE_SHOT_X + ")^2 + (" + IntermediateSchemaAttributes.Y + " - " + ATTRIBUTE_SHOT_Y + ")^2) >= "
 						+ MIN_SHOT_LENGTH);
 
 		List<IPredicate> joinPredicates = new ArrayList<IPredicate>();
@@ -688,11 +688,11 @@ public class ShotOnGoalGlobalOutput {
 	private static SelectAO createTimeToGoalSelectAO(int teamId,
 			ILogicalOperator source) {
 		IPredicate predicate1 = OperatorBuildHelper
-				.createRelationalPredicate(IntermediateSchemaAttributes.TEAM_ID + " = " + teamId);
+				.createRelationalExpression(IntermediateSchemaAttributes.TEAM_ID + " = " + teamId);
 		IPredicate predicate2 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_TIME_TO_GOALLINE + " >= 0");
+				.createRelationalExpression(ATTRIBUTE_TIME_TO_GOALLINE + " >= 0");
 		IPredicate predicate3 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_TIME_TO_GOALLINE + " <= "
+				.createRelationalExpression(ATTRIBUTE_TIME_TO_GOALLINE + " <= "
 						+ MAX_SHOT_DURATION);
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
 		predicates.add(predicate1);
@@ -716,11 +716,11 @@ public class ShotOnGoalGlobalOutput {
 	private static SelectAO createForecastSelectAO(double goalAreaYMin, double goalAreaYMax,
 			double goalAreaZMax, ILogicalOperator source) {
 		IPredicate predicate1 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_FORECAST_Y + " >= " + goalAreaYMin);
+				.createRelationalExpression(ATTRIBUTE_FORECAST_Y + " >= " + goalAreaYMin);
 		IPredicate predicate2 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_FORECAST_Y + " <= " + goalAreaYMax);
+				.createRelationalExpression(ATTRIBUTE_FORECAST_Y + " <= " + goalAreaYMax);
 		IPredicate predicate3 = OperatorBuildHelper
-				.createRelationalPredicate(ATTRIBUTE_FORECAST_Z + " <= " + goalAreaZMax + " + " + GRAVITY_HEIGHT_PUFFER);
+				.createRelationalExpression(ATTRIBUTE_FORECAST_Z + " <= " + goalAreaZMax + " + " + GRAVITY_HEIGHT_PUFFER);
 		List<IPredicate> predicates = new ArrayList<IPredicate>();
 		predicates.add(predicate1);
 		predicates.add(predicate2);

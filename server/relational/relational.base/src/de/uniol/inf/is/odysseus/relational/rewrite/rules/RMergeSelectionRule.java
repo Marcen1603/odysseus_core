@@ -17,16 +17,16 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.optimizer.PredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -39,37 +39,38 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 		return 0;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(SelectAO operator, RewriteConfiguration config) {
-		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(operator,
-				SelectAO.class);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(operator, SelectAO.class);
 		if (sel != null) {
 			if (sel.getPredicate() != null) {
 				if (operator.getPredicate() != null) {
-					operator.setPredicate(ComplexPredicateHelper
-							.createAndPredicate(operator.getPredicate(),
-									sel.getPredicate()));
-                    ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
-                    if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
-                        if (operator.getPredicate() instanceof RelationalPredicate) {
-                            RelationalPredicate relationalPredicate = (RelationalPredicate) operator.getPredicate();
-                            IExpression<?> expression = ((RelationalPredicate) operator.getPredicate()).getExpression().getMEPExpression();
-                            expression = BooleanExpressionOptimizer.optimize(expression);
-                            IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
-                            SDFExpression sdfExpression = new SDFExpression(cnf, relationalPredicate.getExpression().getAttributeResolver(), relationalPredicate.getExpression().getExpressionParser());
-                            operator.setPredicate(new RelationalPredicate(sdfExpression));
-                        }
-                        operator.setPredicate(PredicateOptimizer.optimize(operator.getPredicate()));
+					operator.setPredicate(operator.getPredicate().and((IPredicate) sel.getPredicate()));
+					ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration()
+							.get(ParameterPredicateOptimizer.class);
+					if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
+						if (operator.getPredicate() instanceof RelationalExpression) {
+							RelationalExpression<?> relationalPredicate = (RelationalExpression<?>) operator
+									.getPredicate();
+							IExpression<?> expression = ((RelationalExpression<?>) operator.getPredicate())
+									.getMEPExpression();
+							expression = BooleanExpressionOptimizer.optimize(expression);
+							IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
+							SDFExpression sdfExpression = new SDFExpression(cnf.toString(),
+									relationalPredicate.getExpressionParser());
+							operator.setPredicate(new RelationalExpression(sdfExpression));
+						}
+						operator.setPredicate(PredicateOptimizer.optimize(operator.getPredicate()));
 
-                    }
+					}
 				} else {
 					operator.setPredicate(sel.getPredicate());
 				}
-				RestructParameterInfoUtil.updatePredicateParameterInfo(
-						operator.getParameterInfos(), operator.getPredicate());
+				RestructParameterInfoUtil.updatePredicateParameterInfo(operator.getParameterInfos(),
+						operator.getPredicate());
 
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-						.removeOperator(sel);
+				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.removeOperator(sel);
 				for (ILogicalOperator o : toUpdate) {
 					update(o);
 				}

@@ -78,7 +78,6 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         this.incremental = incremental;
         if (predicate != null) {
             this.predicate = predicate.clone();
-            this.predicate.init();
         }
         else {
             this.predicate = null;
@@ -104,7 +103,6 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
         this.incremental = batchEMTISweepArea.incremental;
         if (batchEMTISweepArea.predicate != null) {
             this.predicate = batchEMTISweepArea.predicate.clone();
-            this.predicate.init();
         }
     }
 

@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.TJoinAORule;
 
@@ -22,9 +21,9 @@ public class TRelationalJoinAORule extends TJoinAORule {
 	@Override
 	protected void setJoinPredicate(@SuppressWarnings("rawtypes") JoinTIPO joinPO, JoinAO logOp) {
 		IPredicate<?> pred = logOp.getPredicate();
-		if (pred instanceof RelationalPredicate) {
-			RelationalExpression<IMetaAttribute> joinPred = new RelationalExpression<>(
-					((RelationalPredicate) pred).getExpression());
+		if (pred instanceof RelationalExpression) {
+			RelationalExpression<?> joinPred = new RelationalExpression<>(
+					((RelationalExpression<?>) pred));
 			joinPred.initVars(logOp.getInputSchema(0), logOp.getInputSchema(1));
 			joinPO.setJoinPredicate(joinPred);
 		} else {

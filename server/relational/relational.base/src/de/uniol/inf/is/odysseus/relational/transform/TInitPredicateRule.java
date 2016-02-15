@@ -49,7 +49,7 @@ public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOpera
 	public void initPredicate(ILogicalOperator operator, IPredicate<?> pred) {
 		if (pred != null) {
 			try {
-				pred.init();
+				//pred.init();
 				ComplexPredicateHelper.visitPredicates(pred, new InitPredicateFunctor(operator));
 			} catch (Exception e) {
 				// ignore

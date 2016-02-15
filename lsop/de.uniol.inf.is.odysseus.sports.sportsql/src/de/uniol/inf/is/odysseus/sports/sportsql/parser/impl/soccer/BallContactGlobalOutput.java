@@ -179,7 +179,7 @@ public class BallContactGlobalOutput {
 		List<IPredicate> ballPredicates = new ArrayList<IPredicate>();
 		for (int sensorId : AbstractSportsDDCAccess.getBallEntityIds()) {
 			IPredicate ballPredicate = OperatorBuildHelper
-					.createRelationalPredicate("entity_id = " + sensorId);
+					.createRelationalExpression("entity_id = " + sensorId);
 			ballPredicates.add(ballPredicate);
 		}
 		List<IPredicate<?>> predicatesBall = new ArrayList<IPredicate<?>>();

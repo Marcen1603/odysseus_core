@@ -109,6 +109,6 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPred
     public IPredicate<T> not() {
         NotOperator not = new NotOperator();
         not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
-        return new KeyValuePredicate<>(new SDFExpression(not, expression.getAttributeResolver(), expression.getExpressionParser()));
+        return new KeyValuePredicate<>(new SDFExpression(not.toString(), expression.getExpressionParser()));
     }
 }

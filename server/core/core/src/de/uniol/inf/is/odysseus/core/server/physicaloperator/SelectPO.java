@@ -20,56 +20,51 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
-		implements IHasPredicate {
+public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>implements IHasPredicate {
 
 	private IPredicate<? super T> predicate;
-    private int heartbeatRate;
-    private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<>();
+	private int heartbeatRate;
+	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<>();
 
-    public SelectPO(IPredicate<? super T> predicate) {
-        this.predicate = predicate.clone();
-    }
-
-    public SelectPO(SelectPO<T> po) {
-        super(po);
-        this.predicate = po.predicate.clone();
-        this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
+	public SelectPO(IPredicate<? super T> predicate) {
+		this.predicate = predicate.clone();
 	}
 
-    @Override
-    public IPredicate<? super T> getPredicate() {
-        return predicate;
-    }
+	@Override
+	public IPredicate<? super T> getPredicate() {
+		return predicate;
+	}
 
-    /**
-     * @return the heartbeat rate
-     */
-    public int getHeartbeatRate() {
-        return this.heartbeatRate;
-    }
+	/**
+	 * @return the heartbeat rate
+	 */
+	public int getHeartbeatRate() {
+		return this.heartbeatRate;
+	}
 
-    /**
-     * Set the heartbeat rate
-     * 
-     * @param heartbeatRate
-     */
-    public void setHeartbeatRate(int heartbeatRate) {
-        this.heartbeatRate = heartbeatRate;
-    }
+	/**
+	 * Set the heartbeat rate
+	 * 
+	 * @param heartbeatRate
+	 */
+	public void setHeartbeatRate(int heartbeatRate) {
+		this.heartbeatRate = heartbeatRate;
+	}
 
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
-	@Override public boolean deliversStoredElement(int outputPort) { 
-		return false; 
+
+	@Override
+	public boolean deliversStoredElement(int outputPort) {
+		return false;
 	}
 
 	@Override
@@ -86,10 +81,10 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 				heartbeatGenerationStrategy.generateHeartbeat(object, this);
 			}
 		} catch (Exception e) {
-			infoService.warning("Cannot evaluate "+predicate+" predicate with input "+object,e);
+			infoService.warning("Cannot evaluate " + predicate + " predicate with input " + object, e);
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
@@ -97,7 +92,6 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 
 	@Override
 	public void process_open() throws OpenFailedException {
-		this.predicate.init();
 	}
 
 	// /* (non-Javadoc)
@@ -134,16 +128,14 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 
 	@Override
 	public String toString() {
-		return super.toString() + " predicate: "
-				+ this.getPredicate().toString();
+		return super.toString() + " predicate: " + this.getPredicate().toString();
 	}
 
 	public IHeartbeatGenerationStrategy<T> getHeartbeatGenerationStrategy() {
 		return heartbeatGenerationStrategy;
 	}
 
-	public void setHeartbeatGenerationStrategy(
-			IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy) {
+	public void setHeartbeatGenerationStrategy(IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
 	}
 
@@ -155,9 +147,8 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		@SuppressWarnings("unchecked")
 		SelectPO<T> spo = (SelectPO<T>) ipo;
 		// Predicates match
-		if (this.predicate.equals(spo.getPredicate())
-				|| (this.predicate.isContainedIn(spo.getPredicate()) && spo
-						.getPredicate().isContainedIn(this.predicate))) {
+		if (this.predicate.equals(spo.getPredicate()) || (this.predicate.isContainedIn(spo.getPredicate())
+				&& spo.getPredicate().isContainedIn(this.predicate))) {
 			return true;
 		}
 
@@ -172,11 +163,10 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		}
 		// Sonderfall, dass das Pr�dikat des anderen SelectPOs ein OrPredicate
 		// ist und das Pr�dikat von diesem SelectPO nicht.
-		if ((ComplexPredicateHelper.isOrPredicate(((SelectPO) ip)
-				.getPredicate()) && !ComplexPredicateHelper
-				.isOrPredicate(this.predicate))) {
-			return ComplexPredicateHelper.contains(
-					((SelectPO) ip).getPredicate(), this.predicate);
+		if ((ComplexPredicateHelper.isOrPredicate(((SelectPO) ip).getPredicate())
+				&& !ComplexPredicateHelper.isOrPredicate(this.predicate))) {
+
+			return ((OrPredicate) ((SelectPO) ip).getPredicate()).contains(this.predicate);
 		}
 		if (this.predicate.isContainedIn(((SelectPO<T>) ip).predicate)) {
 			return true;

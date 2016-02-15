@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -48,7 +49,6 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilisticTimeInterval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.AbstractRelationalPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -92,10 +92,10 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 					expressionStack.push(curExpression.toFunction().getArgument(0));
 					expressionStack.push(curExpression.toFunction().getArgument(1));
 				} else {
-					final SDFExpression expr = new SDFExpression(curExpression, this.expression.getAttributeResolver(),
+					final SDFExpression expr = new SDFExpression(curExpression.toString(), 
 							MEP.getInstance());
-					final RelationalPredicate relationalPredicate = new RelationalPredicate(expr);
-					relationalPredicate.init(this.expression.getSchema(), false);
+					final RelationalExpression<?> relationalPredicate = new RelationalExpression<>(expr);
+					relationalPredicate.initVars(this.expression.getSchema());
 					result.add(relationalPredicate);
 				}
 			}
@@ -367,7 +367,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		NotOperator not = new NotOperator();
 		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
 		return new ProbabilisticRelationalPredicate(
-				new SDFExpression(not, expression.getAttributeResolver(), expression.getExpressionParser()));
+				new SDFExpression(not.toString(), expression.getExpressionParser()));
 
 	}
 
@@ -458,11 +458,11 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 	public static void main(final String[] args) {
 		final SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
 		final SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", a);
-		final RelationalPredicate pred = new RelationalPredicate(
+		final RelationalExpression<?> pred = new RelationalExpression<>(
 				new SDFExpression("p_out <=0 || isNaN(p_out)", MEP.getInstance()));
 
 		System.out.println(pred.toString());
-		pred.init(schema, null, false);
+		pred.initVars(schema);
 		final Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
 		tuple.setAttribute(0, 8);
 		final KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
