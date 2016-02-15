@@ -77,7 +77,7 @@ public class MetadataKeywordTransformRule implements IOdysseusScriptTransformRul
 
 	private static Optional<IMetaAttribute> tryCreateMetaAttribute(OdysseusScriptBlock selectedBlock) {
 		try {
-			return Optional.of(MetadataRegistry.tryCreateMetadataInstance(selectedBlock.getText()));
+			return Optional.of(MetadataRegistry.tryCreateMetadataInstance(selectedBlock.getText().trim()));
 		} catch (Throwable t) {
 			return Optional.absent();
 		}
