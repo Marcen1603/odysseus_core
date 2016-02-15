@@ -36,13 +36,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.keyvalue"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.wrapper.json"
          download-size="0"
          install-size="0"
@@ -54,5 +47,12 @@ limitations under the License.
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.server.keyvalue"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
