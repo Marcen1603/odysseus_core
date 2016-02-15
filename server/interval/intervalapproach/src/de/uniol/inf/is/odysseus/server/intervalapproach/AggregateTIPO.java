@@ -924,11 +924,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	
 	@Override
 	public IOperatorState getState() {
-		AggregateTIPOState<Q, R, W> state = new AggregateTIPOState<Q, R, W>();
-		state.setTransferArea(this.transferArea);
-		state.setGroups(this.groups);
-		state.setAggregateFunctions(super.getAllAggregateFunctions());
-		return state;
+		synchronized (this.groups) {
+			AggregateTIPOState<Q, R, W> state = new AggregateTIPOState<Q, R, W>();
+			state.setTransferArea(this.transferArea);
+			state.setGroups(this.groups);
+			state.setAggregateFunctions(super.getAllAggregateFunctions());
+			return state;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
