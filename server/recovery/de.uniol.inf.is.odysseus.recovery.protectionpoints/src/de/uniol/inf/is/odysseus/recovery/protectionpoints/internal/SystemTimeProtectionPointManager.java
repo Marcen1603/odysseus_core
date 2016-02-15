@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.protectionpoints.internal;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,8 +8,11 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandler;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointManager;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointUnit;
@@ -28,8 +32,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointUnit;
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class SystemTimeProtectionPointManager implements
-		IProtectionPointManager {
+public class SystemTimeProtectionPointManager implements IProtectionPointManager {
 
 	/**
 	 * The version of this class for serialization.
@@ -39,8 +42,7 @@ public class SystemTimeProtectionPointManager implements
 	/**
 	 * The logger for this class.
 	 */
-	static final Logger cLog = LoggerFactory
-			.getLogger(SystemTimeProtectionPointManager.class);
+	static final Logger cLog = LoggerFactory.getLogger(SystemTimeProtectionPointManager.class);
 
 	/**
 	 * The unit to use to determine, when to set protection points. <br />
@@ -54,9 +56,15 @@ public class SystemTimeProtectionPointManager implements
 	private long mPeriod;
 
 	/**
+	 * The ids of the logical queries to suspend/resume, if a protection point
+	 * is reached.
+	 */
+	final Set<Integer> logicalQueries = new HashSet<>();
+
+	/**
 	 * All listeners to call, if a protection point is reached.
 	 */
-	private Set<IProtectionPointHandler> mHandlers = Sets.newHashSet();
+	private Set<IProtectionPointHandler> mHandlers = new HashSet<>();
 
 	@Override
 	public void addHandler(IProtectionPointHandler handler) {
@@ -68,6 +76,35 @@ public class SystemTimeProtectionPointManager implements
 		this.mHandlers.remove(handler);
 	}
 
+	/**
+	 * The server executor, if bound.
+	 */
+	private static Optional<IServerExecutor> cExecutor = Optional.absent();
+
+	/**
+	 * Binds an implementation of the server executor.
+	 * 
+	 * @param executor
+	 *            The implementation to bind.
+	 */
+	public static void bindServerExecutor(IExecutor executor) {
+		if (IServerExecutor.class.isInstance(executor)) {
+			cExecutor = Optional.of((IServerExecutor) executor);
+		}
+	}
+
+	/**
+	 * Unbinds an implementation of the server executor.
+	 * 
+	 * @param executor
+	 *            The implementation to unbind.
+	 */
+	public static void unbindServerExecutor(IExecutor executor) {
+		if (cExecutor.isPresent() && cExecutor.get() == executor) {
+			cExecutor = Optional.absent();
+		}
+	}
+
 	@Override
 	public String getName() {
 		return SystemTimeProtectionPointManager.class.getSimpleName();
@@ -77,8 +114,8 @@ public class SystemTimeProtectionPointManager implements
 	 * {@code period} musst assure {@link ProtectionPointUnit#isTimeUnit()}.
 	 */
 	@Override
-	public IProtectionPointManager newInstance(ProtectionPointUnit unit,
-			long period) throws NullPointerException, IllegalArgumentException {
+	public IProtectionPointManager newInstance(ProtectionPointUnit unit, long period)
+			throws NullPointerException, IllegalArgumentException {
 		SystemTimeProtectionPointManager instance = new SystemTimeProtectionPointManager();
 
 		if (!unit.isTimeUnit()) {
@@ -87,8 +124,7 @@ public class SystemTimeProtectionPointManager implements
 		instance.mUnit = unit;
 
 		if (period <= 0) {
-			throw new IllegalArgumentException(period
-					+ " is not a valid time interval!");
+			throw new IllegalArgumentException(period + " is not a valid time interval!");
 		}
 		instance.mPeriod = period;
 
@@ -116,7 +152,7 @@ public class SystemTimeProtectionPointManager implements
 	public long getPeriod() {
 		return this.mPeriod;
 	}
-	
+
 	/**
 	 * The internal timer.
 	 */
@@ -124,22 +160,54 @@ public class SystemTimeProtectionPointManager implements
 
 	@Override
 	public void start() {
+		if (!cExecutor.isPresent()) {
+			return;
+		}
+		Set<IPhysicalQuery> physicalQueries = new HashSet<>();
+		for (Integer queryId : this.logicalQueries) {
+			cExecutor.get().getExecutionPlan().getQueryById(queryId.intValue());
+			physicalQueries.add(cExecutor.get().getExecutionPlan().getQueryById(queryId.intValue()));
+		}
 		long period = this.mPeriod * this.mUnit.getConversionFactor();
 		this.mTimer = new Timer(this.getClass().getSimpleName(), true);
 		this.mTimer.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {
+				SystemTimeProtectionPointManager.cLog.debug("Protection point reached.");
+				final long start = System.currentTimeMillis();
+				suspendOrResume(physicalQueries, true);
 				fireProtectionPointReachedEvent();
+				suspendOrResume(physicalQueries, false);
+				SystemTimeProtectionPointManager.cLog.debug("Needed {} ms for protection point handlers.",
+						new Long(System.currentTimeMillis() - start));
 			}
 		}, period, period);
 	}
-	
+
 	@Override
 	public void stop() {
-		if(this.mTimer != null) {
+		if (this.mTimer != null) {
 			this.mTimer.cancel();
 			this.mTimer = null;
+		}
+	}
+
+	/**
+	 * Suspends or resumes physical queries.
+	 * 
+	 * @param queries
+	 *            The queries to suspend or resume.
+	 * @param suspend
+	 *            True = suspend, false = resume.
+	 */
+	static void suspendOrResume(Set<IPhysicalQuery> queries, boolean suspend) {
+		for (IPhysicalQuery query : queries) {
+			if (suspend) {
+				query.suspend();
+			} else {
+				query.resume();
+			}
 		}
 	}
 
@@ -147,22 +215,37 @@ public class SystemTimeProtectionPointManager implements
 	 * Calls all listeners that a protection point is reached.
 	 */
 	void fireProtectionPointReachedEvent() {
-		for (final IProtectionPointHandler handler : this.mHandlers) {
-			new Thread("ProtectionPoint-" + handler.getClass().getSimpleName()) {
-				
+		Set<Thread> threads = new HashSet<>();
+		for (final IProtectionPointHandler handler : SystemTimeProtectionPointManager.this.mHandlers) {
+			Thread t = new Thread("ProtectionPointHandler " + handler.toString()) {
+
 				@Override
 				public void run() {
 					try {
 						handler.onProtectionPointReached();
-					}
-					catch (Exception e) {
-						SystemTimeProtectionPointManager.cLog.error("Error in ProtectionPointHandler "
-								+ handler.getClass().getSimpleName(), e);
+					} catch (Exception e) {
+						SystemTimeProtectionPointManager.cLog
+								.error("Error in ProtectionPointHandler " + handler.getClass().getSimpleName(), e);
 					}
 				}
-				
-			}.start();
+
+			};
+			t.start();
+			threads.add(t);
 		}
+		// Wait for all threads
+		for (Thread t : threads) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void addLogicalQuery(int id) {
+		this.logicalQueries.add(new Integer(id));
 	}
 
 }

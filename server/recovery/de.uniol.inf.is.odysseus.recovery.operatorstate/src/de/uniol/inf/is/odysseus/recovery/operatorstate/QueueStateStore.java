@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
 
@@ -62,22 +63,21 @@ public class QueueStateStore {
 	 * physical query.
 	 * 
 	 * @param queues
-	 *            The queues, which states have to be stored.
+	 *            The queues, which states have to be stored (order is
+	 *            important).
 	 * @param query
 	 *            The logical query, which was transformed to the physical one.
 	 * @throws IOException
 	 *             if any error occurs.
 	 */
-	public static <K> void store(List<ControllablePhysicalSubscription<K>> queues, ILogicalQuery query)
-			throws IOException {
+	public static void store(List<ControllablePhysicalSubscription<? extends IPhysicalOperator>> queues,
+			ILogicalQuery query) throws IOException {
 		File file = new File(
 				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
 		try (FileOutputStream fout = new FileOutputStream(file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
-			for (ControllablePhysicalSubscription<K> queue : queues) {
-				queue.suspend();
+			for (ControllablePhysicalSubscription<? extends IPhysicalOperator> queue : queues) {
 				oos.writeObject(queue.getBufferedElements());
-				queue.resume();
 				cLog.debug("Wrote state of '{}' to file '{}'", queue, file.getName());
 			}
 		}
@@ -88,7 +88,8 @@ public class QueueStateStore {
 	 * physical query.
 	 * 
 	 * @param queues
-	 *            The queues, which states have to be loaded.
+	 *            The queues, which states have to be loaded (order is
+	 *            important).
 	 * @param query
 	 *            The logical query, which was transformed to the physical one.
 	 * @throws IOException
@@ -97,8 +98,8 @@ public class QueueStateStore {
 	 *             if the class of an object, which is read from file, can not
 	 *             be found.
 	 */
-	public static <K> void load(List<ControllablePhysicalSubscription<K>> queues, ILogicalQuery query)
-			throws IOException, ClassNotFoundException {
+	public static void load(List<ControllablePhysicalSubscription<? extends IPhysicalOperator>> queues,
+			ILogicalQuery query) throws IOException, ClassNotFoundException {
 		File file = new File(
 				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
 		if (!file.exists()) {
@@ -107,15 +108,13 @@ public class QueueStateStore {
 		}
 		try (FileInputStream fin = new FileInputStream(file);
 				OsgiObjectInputStream ois = new OsgiObjectInputStream(fin)) {
-			for (ControllablePhysicalSubscription<K> queue : queues) {
+			for (ControllablePhysicalSubscription<? extends IPhysicalOperator> queue : queues) {
 				@SuppressWarnings({ "rawtypes", "unchecked" })
 				ImmutableList<IStreamObject> state = (ImmutableList<IStreamObject>) ois.readObject();
 				if (state == null) {
 					throw new IOException("No state to load for queue " + queue);
 				}
-				queue.suspend();
 				queue.setBufferedElements(state);
-				queue.resume();
 				cLog.debug("Loaded state of '{}' from file '{}'", queue, file.getName());
 			}
 		}

@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 
 /**
@@ -35,19 +37,36 @@ public class SourceRecoveryState extends AbstractOperatorState {
 	}
 
 	/**
+	 * The last element received.
+	 */
+	private final IStreamObject<IMetaAttribute> lastElem;
+
+	/**
+	 * Gets the last seen element.
+	 * 
+	 * @return The element, which was last processed by the operator.
+	 */
+	public IStreamObject<IMetaAttribute> getLastSeenElement() {
+		return this.lastElem;
+	}
+
+	/**
 	 * Creates a new state.
 	 * 
 	 * @param offset
 	 *            The offset of the data stream element stored on the publish
 	 *            subscribe system, which is the first to recover.
+	 * @param lastSeenElement
+	 *            The element, which was last processed by the operator.
 	 */
-	public SourceRecoveryState(Long offset) {
+	public SourceRecoveryState(Long offset, IStreamObject<IMetaAttribute> lastSeenElement) {
 		this.mOffset = offset;
+		this.lastElem = lastSeenElement;
 	}
 
 	@Override
 	public long estimateSizeInBytes() {
-		return 8l;
+		return 8l + getSizeInBytesOfSerializable(this.lastElem);
 	}
 
 }

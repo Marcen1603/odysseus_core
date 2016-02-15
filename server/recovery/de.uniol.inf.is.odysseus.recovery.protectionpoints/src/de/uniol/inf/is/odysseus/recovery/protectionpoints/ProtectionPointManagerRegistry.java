@@ -118,10 +118,12 @@ public class ProtectionPointManagerRegistry {
 	 * 
 	 * @param queryId
 	 *            The id of the given query.
-	 * @return The protection point manager, which is used for a given query.
+	 * @param The
+	 *            protection point manager.
 	 */
 	public static void setProtectionPointManager(int queryId, IProtectionPointManager manager) {
 		cUsedManagers.put(new Integer(queryId), manager);
+		manager.addLogicalQuery(queryId);
 	}
 
 	/**

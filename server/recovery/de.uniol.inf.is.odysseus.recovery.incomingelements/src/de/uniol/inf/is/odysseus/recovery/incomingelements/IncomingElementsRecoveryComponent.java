@@ -170,6 +170,9 @@ public class IncomingElementsRecoveryComponent
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
 					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(sourceAccess, recoveryMode,
 							ProtectionPointManagerRegistry.getInstance(query.getID()));
+					sourceRecovery.setUniqueIdentifier(
+							((AbstractAccessAO) operator).getAccessAOName().getResourceName() + query.getID());
+					sourceRecovery.addOwner(query);
 					Collection<LogicalSubscription> subs = Lists.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();
 					sourceRecovery.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
@@ -201,6 +204,7 @@ public class IncomingElementsRecoveryComponent
 				if (operator.isSinkOperator() && !operator.isSourceOperator() && !(operator instanceof TopAO)) {
 					TrustPunctuationReaderAO reader = new TrustPunctuationReaderAO(
 							IncomingElementsRecoveryComponent.this.decreasedTrust.doubleValue(), recoveryMode);
+					reader.addOwner(query);
 					Collection<LogicalSubscription> subs = Lists.newArrayList(operator.getSubscribedToSource());
 					operator.unsubscribeFromAllSources();
 					SDFSchema schema = subs.iterator().next().getSchema();

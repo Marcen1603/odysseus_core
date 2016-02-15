@@ -3,13 +3,20 @@ package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicalop
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
@@ -28,6 +35,7 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriberController;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.SubscriberControllerFactory;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandler;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Logical operator to be placed directly after source access operators. <br />
@@ -61,6 +69,11 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	 * The version of this class for serialization.
 	 */
 	private static final long serialVersionUID = 2075517070263761810L;
+
+	/**
+	 * The logger for this class.
+	 */
+	static final Logger cLog = LoggerFactory.getLogger(AbstractSourceRecoveryPO.class);
 
 	/**
 	 * Abstract transfer handler just to avoid the need to implement all
@@ -109,12 +122,106 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	protected Long mOffset = new Long(0l);
 
 	/**
-	 * True, if the next element shall be used as {@link #mReference} to adjust
-	 * the offset.
-	 * 
-	 * @see #adjustOffsetIfNeeded(IStreamable)
+	 * Dummy stream object, because you can not synchronize a null object (sync
+	 * of {@link #lastSeenElement}).
 	 */
-	protected boolean mNeedToAdjustOffset = false;
+	protected final IStreamObject<IMetaAttribute> dummyStreamObj = new IStreamObject<IMetaAttribute>() {
+
+		private static final long serialVersionUID = -1298483066133422772L;
+
+		@Override
+		public IClone clone() {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public boolean isPunctuation() {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public IMetaAttribute getMetadata() {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public void setMetadata(IMetaAttribute metadata) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public void setKeyValue(String name, Object content) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public Object getKeyValue(String name) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public boolean hasKeyValue(String name) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public void setKeyValueMap(Map<String, Object> metaMap) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public Map<String, Object> getGetValueMap() {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public boolean isTimeProgressMarker() {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public void setTimeProgressMarker(boolean timeProgressMarker) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public IStreamObject<IMetaAttribute> merge(IStreamObject<IMetaAttribute> left,
+				IStreamObject<IMetaAttribute> right, IMetadataMergeFunction<IMetaAttribute> metamerge, Order order) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public IStreamable newInstance() {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public int restrictedHashCode(int[] attributeNumbers) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public boolean equalsTolerance(Object o, double tolerance) {
+			throw new NotImplementedException();
+		}
+
+		@Override
+		public boolean equals(IStreamObject<IMetaAttribute> o, boolean compareMeta) {
+			return super.equals(o);
+		}
+
+		@Override
+		public String toString(boolean printMetadata) {
+			return super.toString();
+		}
+
+	};
+
+	/**
+	 * The last element received in {@link #process_next(IStreamObject, int)}.
+	 */
+	@SuppressWarnings("unchecked")
+	protected StreamObject lastSeenElement = (StreamObject) this.dummyStreamObj;
 
 	/**
 	 * True, if {@link #onProtectionPointReached()} is called, but
@@ -127,14 +234,6 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	 * is not called yet.
 	 */
 	boolean mOffsetSet = false;
-
-	/**
-	 * Sleeps, if state should be read out, but either
-	 * {@link #mProtectionPointReached} is false or {@link #mOffsetSet} is
-	 * false. <br />
-	 * Notified after {@link #mOffsetSet} is set.
-	 */
-	Object mSynchronizer = new Object();
 
 	/**
 	 * Reference is the first element to be backed up. So the offset of
@@ -188,8 +287,9 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 			if (AbstractSourceRecoveryPO.this.mReference.equals(object)) {
 				AbstractSourceRecoveryPO.this.mOffset = AbstractSourceRecoveryPO.this.mCurrentOffsets.getFirst();
 				AbstractSourceRecoveryPO.this.mOffsetSet = true;
-				synchronized (AbstractSourceRecoveryPO.this.mSynchronizer) {
-					AbstractSourceRecoveryPO.this.mSynchronizer.notifyAll();
+				cLog.debug("Calcluated BaDaSt offset as {}", AbstractSourceRecoveryPO.this.mOffset);
+				synchronized (AbstractSourceRecoveryPO.this.lastSeenElement) {
+					AbstractSourceRecoveryPO.this.lastSeenElement.notifyAll();
 				}
 				if (AbstractSourceRecoveryPO.this.mBackupSubscriberController != null) {
 					AbstractSourceRecoveryPO.this.mBackupSubscriberController.interrupt();
@@ -268,20 +368,20 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		super.process_close();
 	}
 
+	@Override
+	protected void process_next(StreamObject object, int port) {
+		this.lastSeenElement = object;
+	}
+
 	/**
 	 * Adjusts the offset as an {@code ISubscriber}, if {@code object} is the
 	 * first element to be processed by this operator.
-	 * 
-	 * @param object
-	 *            The first element to process.
-	 * 
 	 */
-	protected void adjustOffsetIfNeeded(StreamObject object) {
+	protected void adjustOffset() {
 		synchronized (this.mOffset) {
-			if (this.mNeedToAdjustOffset) {
-				this.mNeedToAdjustOffset = false;
+			if (this.lastSeenElement != this.dummyStreamObj) {
 				@SuppressWarnings("unchecked")
-				StreamObject clone = (StreamObject) object.clone();
+				StreamObject clone = (StreamObject) this.lastSeenElement.clone();
 				clone.setMetadata(null);
 				this.mReference = clone;
 				// ISubscriberController has to be deleted and new created for
@@ -299,61 +399,36 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	}
 
-	/**
-	 * Adjusts the offset as an {@code ISubscriber}, if {@code object} is the
-	 * first punctuation to be processed by this operator.
-	 * 
-	 * @param object
-	 *            The first punctuation to process.
-	 * 
-	 */
-	protected void adjustOffsetIfNeeded(IPunctuation object) {
-		synchronized (this.mOffset) {
-			if (this.mNeedToAdjustOffset) {
-				this.mNeedToAdjustOffset = false;
-				this.mReference = object;
-				// ISubscriberController has to be deleted and new created for
-				// every protection point reaching, because otherwise an
-				// IllegalThreadStateException occurs.
-				if (this.mBackupSubscriberController != null) {
-					this.mBackupSubscriberController.interrupt();
-					this.mBackupSubscriberController = null;
-				}
-				this.mBackupSubscriberController = SubscriberControllerFactory.createController(
-						this.mSourceAccess.getAccessAOName(), this.mBackupSubscriber, this.mOffset.longValue());
-				this.mBackupSubscriberController.start();
-			}
-		}
-
-	}
-
 	@Override
 	public IOperatorState getState() {
-		while (!this.mProtectionPointReached || !this.mOffsetSet) {
-			synchronized (this.mSynchronizer) {
+		synchronized (this.lastSeenElement) {
+			while (!this.mProtectionPointReached || !this.mOffsetSet) {
 				try {
-					this.mSynchronizer.wait(1000);
+					this.lastSeenElement.wait(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
+			this.mProtectionPointReached = false;
+			return new SourceRecoveryState(this.mOffset, this.lastSeenElement);
 		}
-		this.mProtectionPointReached = false;
-		return new SourceRecoveryState(this.mOffset);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setState(Serializable state) {
 		synchronized (this.mOffset) {
-			this.mOffset = ((SourceRecoveryState) state).getOffset();
+			SourceRecoveryState srState = (SourceRecoveryState) state;
+			this.mOffset = srState.getOffset();
+			this.lastSeenElement = (StreamObject) srState.getLastSeenElement();
 		}
 	}
 
 	@Override
 	public void onProtectionPointReached() throws Exception {
 		this.mOffsetSet = false;
-		this.mNeedToAdjustOffset = true;
 		this.mProtectionPointReached = true;
+		this.adjustOffset();
 	}
 
 }

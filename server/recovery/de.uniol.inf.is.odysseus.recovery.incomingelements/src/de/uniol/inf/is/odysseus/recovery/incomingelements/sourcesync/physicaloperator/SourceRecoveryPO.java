@@ -403,7 +403,6 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		}
 
 		// offset should be loaded as operator state
-		this.mNeedToAdjustOffset = false;
 		this.mRecoverySubscriberController = SubscriberControllerFactory.createController(
 				this.mSourceAccess.getAccessAOName(), this.mRecoverySubscriber, this.mOffset.longValue());
 		this.mRecoverySubscriberController.start();
@@ -420,7 +419,14 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		if (this.mTransferFromSource) {
 			// (4) transfer from the original source (the element from (1)
 			// should be the first to transfer)
-			this.transfer(object, port);
+			synchronized (this.lastSeenElement) {
+				transfer(object, port);
+				boolean firstElem = (this.lastSeenElement == this.dummyStreamObj);
+				this.lastSeenElement = object;
+				if(firstElem) {
+					adjustOffset();
+				}
+			}
 		} else if (this.mTransferFromBaDaSt) {
 			// Do not transfer, because elements from publish subscribe system
 			// will be transfered with another transfer handler.
@@ -435,7 +441,6 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 			// the element from (1)
 			this.mTransferFromSource = true;
 		}
-		adjustOffsetIfNeeded(object);
 	}
 
 	@Override
@@ -448,7 +453,6 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 
 		// Otherwise do not transfer, because elements from publish subscribe
 		// system will be transfered with another transfer handler.
-		adjustOffsetIfNeeded(punctuation);
 	}
 
 }

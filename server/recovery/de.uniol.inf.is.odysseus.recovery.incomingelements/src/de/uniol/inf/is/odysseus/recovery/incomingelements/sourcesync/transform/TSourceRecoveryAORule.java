@@ -18,8 +18,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class TSourceRecoveryAORule extends
-		AbstractTransformationRule<SourceRecoveryAO> {
+public class TSourceRecoveryAORule extends AbstractTransformationRule<SourceRecoveryAO> {
 
 	@Override
 	public int getPriority() {
@@ -27,8 +26,7 @@ public class TSourceRecoveryAORule extends
 	}
 
 	@Override
-	public void execute(SourceRecoveryAO logical,
-			TransformationConfiguration config) throws RuleException {
+	public void execute(SourceRecoveryAO logical, TransformationConfiguration config) throws RuleException {
 		AbstractSourceRecoveryPO<?> po;
 		if (logical.isInRecoveryMode()) {
 			po = new SourceRecoveryPO<>(logical);
@@ -39,8 +37,7 @@ public class TSourceRecoveryAORule extends
 	}
 
 	@Override
-	public boolean isExecutable(SourceRecoveryAO logical,
-			TransformationConfiguration transformConfig) {
+	public boolean isExecutable(SourceRecoveryAO logical, TransformationConfiguration transformConfig) {
 		return logical.isAllPhysicalInputSet();
 	}
 

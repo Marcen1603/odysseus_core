@@ -87,4 +87,14 @@ public interface IProtectionPointManager extends Serializable {
 	 */
 	public void stop();
 
+	/**
+	 * Adds a logical query to handle. <br />
+	 * All added queries will be suspended, if a protection point is reached and
+	 * resumed, if all handler finished.
+	 * 
+	 * @param id
+	 *            The id of the logical query.
+	 */
+	public void addLogicalQuery(int id);
+
 }

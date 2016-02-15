@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicalop
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
 
 /**
@@ -42,21 +41,20 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
-		this.mNeedToAdjustOffset = true;
-		super.process_open();
-	}
-
-	@Override
 	protected void process_next(StreamObject object, int port) {
-		transfer(object, port);
-		adjustOffsetIfNeeded(object);
+		synchronized (this.lastSeenElement) {
+			transfer(object, port);
+			boolean firstElem = (this.lastSeenElement == this.dummyStreamObj);
+			this.lastSeenElement = object;
+			if(firstElem) {
+				adjustOffset();
+			}
+		}
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		this.sendPunctuation(punctuation, port);
-		adjustOffsetIfNeeded(punctuation);
 	}
 
 }

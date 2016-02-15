@@ -10,15 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.ISubscriber;
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -135,93 +134,60 @@ public class OperatorStateRecoveryComponent
 			return;
 		}
 		for (IPair<Integer, ISession> queryId : cQueryIdsForBackup) {
-			// Avoid ConcurrentModificationExceptions
-			List<IPhysicalOperator> physRoots = Lists
-					.newArrayList(cExecutor.get().getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2()));
 			ILogicalQuery logQuery = cExecutor.get().getLogicalQueryById(queryId.getE1().intValue(), queryId.getE2());
-			OperatorStateStore.store(collectStateFulOperators(physRoots), logQuery);
-			QueueStateStore.store(collectControllableSubscriptions(physRoots), logQuery);
+			IPhysicalQuery physQuery = cExecutor.get().getExecutionPlan().getQueryById(queryId.getE1().intValue());
+			IPair<List<IStatefulPO>, List<ControllablePhysicalSubscription<? extends IPhysicalOperator>>> opsAndSubs = collectStateFullOperatorsAndSubscriptions(
+					physQuery.getRoots());
+			OperatorStateStore.store(opsAndSubs.getE1(), logQuery);
+			QueueStateStore.store(opsAndSubs.getE2(), logQuery);
 		}
 	}
 
 	/**
-	 * Collects all controllable physical subscriptions of a query plan.
+	 * Collects all statefull operators and controllable subscriptions of a
+	 * query plan.
 	 * 
-	 * @param physicalRoots
-	 *            The roots of the plan.
-	 * @return A list of physical subscriptions each implementing
-	 *         {@link ControllablePhysicalSubscription}.
+	 * @param roots
+	 *            The physical roots of the plan.
+	 * @return All operators, which implement {@link IStatefulPO}, and all
+	 *         {@link ControllablePhysicalSubscription}s.
 	 */
-	private static <K> List<ControllablePhysicalSubscription<K>> collectControllableSubscriptions(
-			List<IPhysicalOperator> physicalRoots) {
-		List<ControllablePhysicalSubscription<K>> subscriptions = new ArrayList<>();
-		for (IPhysicalOperator root : physicalRoots) {
-			collectControllableSubscriptionsRecursive(root, subscriptions);
+	private static IPair<List<IStatefulPO>, List<ControllablePhysicalSubscription<? extends IPhysicalOperator>>> collectStateFullOperatorsAndSubscriptions(
+			List<IPhysicalOperator> roots) {
+		List<IStatefulPO> statefulOperators = new ArrayList<>();
+		List<ControllablePhysicalSubscription<? extends IPhysicalOperator>> controllableSubscriptions = new ArrayList<>();
+		IPair<List<IStatefulPO>, List<ControllablePhysicalSubscription<? extends IPhysicalOperator>>> retVal = new Pair<>(
+				statefulOperators, controllableSubscriptions);
+		for (IPhysicalOperator root : roots) {
+			collectStateFullOperatorsAndSubscriptions(root, retVal);
 		}
-		return subscriptions;
+		return retVal;
 	}
 
 	/**
-	 * Collects all controllable physical subscriptions of a query plan
-	 * recursively.
-	 * 
-	 * @param operator
-	 *            The current operator to check.
-	 * @param subscriptions
-	 *            All already controllable physical subscriptions.
-	 */
-	@SuppressWarnings("unchecked")
-	private static <K> void collectControllableSubscriptionsRecursive(IPhysicalOperator operator,
-			List<ControllablePhysicalSubscription<K>> subscriptions) {
-		if (ISink.class.isInstance(operator)) {
-			for (Object obj : ((ISink<?>) operator).getSubscribedToSource()) {
-				if (obj instanceof AbstractPhysicalSubscription) {
-					AbstractPhysicalSubscription<?> sub = (AbstractPhysicalSubscription<?>) obj;
-					if (sub instanceof ControllablePhysicalSubscription) {
-						subscriptions.add((ControllablePhysicalSubscription<K>) sub);
-					}
-					collectControllableSubscriptionsRecursive((IPhysicalOperator) sub.getTarget(), subscriptions);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Collects all stateful operators of a query plan.
-	 * 
-	 * @param physicalRoots
-	 *            The roots of the plan.
-	 * @return A list of operators each implementing {@link IStatefulPO}.
-	 */
-	private List<IStatefulPO> collectStateFulOperators(List<IPhysicalOperator> physicalRoots) {
-		List<IStatefulPO> statefulOperators = Lists.newArrayList();
-		for (IPhysicalOperator root : physicalRoots) {
-			collectStateFulOperatorsRecursive(root, statefulOperators);
-		}
-		return statefulOperators;
-	}
-
-	/**
-	 * Collects all stateful operators of a query plan recursively.
+	 * Collects recursively all statefull operators and controllable
+	 * subscriptions of a query plan.
 	 * 
 	 * @param operator
-	 *            The current operator to add and check.
-	 * @param operators
-	 *            All already collected stateful operators.
+	 *            The current operator to process.
+	 * @param retVal
+	 *            All already collected operators, which implement
+	 *            {@link IStatefulPO}, and all already collected
+	 *            {@link ControllablePhysicalSubscription}s.
 	 */
-	private void collectStateFulOperatorsRecursive(IPhysicalOperator operator, List<IStatefulPO> operators) {
-		if (IStatefulPO.class.isInstance(operator)) {
-			IStatefulPO statefulOperator = (IStatefulPO) operator;
-			if (!operators.contains(statefulOperator)) {
-				operators.add(statefulOperator);
-			}
+	private static void collectStateFullOperatorsAndSubscriptions(IPhysicalOperator operator,
+			IPair<List<IStatefulPO>, List<ControllablePhysicalSubscription<? extends IPhysicalOperator>>> retVal) {
+		if (operator instanceof IStatefulPO) {
+			retVal.getE1().add((IStatefulPO) operator);
 		}
-		if (ISink.class.isInstance(operator)) {
-			for (Object sub : ((ISink<?>) operator).getSubscribedToSource()) {
-				if (AbstractPhysicalSubscription.class.isInstance(sub)) {
-					collectStateFulOperatorsRecursive(
-							(IPhysicalOperator) ((AbstractPhysicalSubscription<?>) sub).getTarget(), operators);
+		if (operator instanceof ISubscriber) {
+			@SuppressWarnings("unchecked")
+			ISubscriber<? extends IPhysicalOperator, ISubscription<? extends IPhysicalOperator>> sink = (ISubscriber<? extends IPhysicalOperator, ISubscription<? extends IPhysicalOperator>>) operator;
+			for (ISubscription<? extends IPhysicalOperator> sub : sink.getSubscribedToSource()) {
+				if (sub instanceof ControllablePhysicalSubscription) {
+					retVal.getE2().add((ControllablePhysicalSubscription<? extends IPhysicalOperator>) sub);
 				}
+				collectStateFullOperatorsAndSubscriptions(sub.getTarget(), retVal);
 			}
 		}
 	}
@@ -233,8 +199,10 @@ public class OperatorStateRecoveryComponent
 		Integer queryId = new Integer(query.getID());
 		if (cQueryIdsForRecovery.contains(queryId) && PlanModificationEventType.QUERY_START.equals(eventType)) {
 			try {
-				OperatorStateStore.load(collectStateFulOperators(query.getRoots()), query.getLogicalQuery());
-				QueueStateStore.load(collectControllableSubscriptions(query.getRoots()), query.getLogicalQuery());
+				IPair<List<IStatefulPO>, List<ControllablePhysicalSubscription<? extends IPhysicalOperator>>> opsAndSubs = collectStateFullOperatorsAndSubscriptions(
+						query.getRoots());
+				OperatorStateStore.load(opsAndSubs.getE1(), query.getLogicalQuery());
+				QueueStateStore.load(opsAndSubs.getE2(), query.getLogicalQuery());
 				cQueryIdsForRecovery.remove(queryId);
 
 				// First query needs to be started, because process_open
