@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -20,7 +21,7 @@ public class TRelationalJoinAORule extends TJoinAORule {
 	@Override
 	protected void setJoinPredicate(@SuppressWarnings("rawtypes") JoinTIPO joinPO, JoinAO logOp) {
 		IPredicate<?> pred = logOp.getPredicate();
-		if (pred instanceof RelationalExpression) {
+		if (pred instanceof IRelationalExpression) {
 			RelationalExpression<?> joinPred = new RelationalExpression<>(
 					((RelationalExpression<?>) pred));
 			joinPred.initVars(logOp.getInputSchema(0), logOp.getInputSchema(1));

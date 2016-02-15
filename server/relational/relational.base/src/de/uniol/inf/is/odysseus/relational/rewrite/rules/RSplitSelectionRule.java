@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -94,7 +95,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
     public boolean isExecutable(SelectAO operator, RewriteConfiguration config) {
         IPredicate pred = operator.getPredicate();
         if (pred != null) {
-            if (ComplexPredicateHelper.isAndPredicate(pred) || (pred instanceof RelationalExpression && ((RelationalExpression)pred).isAndPredicate())) {
+            if (ComplexPredicateHelper.isAndPredicate(pred) || (pred instanceof IRelationalExpression && ((RelationalExpression)pred).isAndPredicate())) {
                 return true;
             }
         }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
@@ -160,7 +161,7 @@ public class LogicalGraphHelper {
 			ILogicalOperator currentOperator) throws SemanticChangeException {
 		SelectAO selectOperator = (SelectAO) currentOperator;
 		IPredicate<?> predicate = selectOperator.getPredicate();
-		if (predicate instanceof RelationalExpression) {
+		if (predicate instanceof IRelationalExpression) {
 			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
 			IExpression<?> expression = relPredicate.getMEPExpression();
 			if (SDFAttributeHelper

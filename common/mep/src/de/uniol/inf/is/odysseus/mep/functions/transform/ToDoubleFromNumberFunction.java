@@ -27,8 +27,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractUnaryNumberInputFunction;
  */
 public class ToDoubleFromNumberFunction extends AbstractUnaryNumberInputFunction<Double> {
 
+	private static final long serialVersionUID = -1054994207108000145L;
 
-    public ToDoubleFromNumberFunction() {
+	public ToDoubleFromNumberFunction() {
 		super("toDouble", SDFDatatype.DOUBLE);
     }
 

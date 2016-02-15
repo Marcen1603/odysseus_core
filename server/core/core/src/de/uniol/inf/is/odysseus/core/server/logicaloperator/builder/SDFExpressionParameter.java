@@ -9,4 +9,6 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 @Deprecated
 public class SDFExpressionParameter extends NamedExpressionParameter {
 
+	private static final long serialVersionUID = -7813117416170698554L;
+
 }

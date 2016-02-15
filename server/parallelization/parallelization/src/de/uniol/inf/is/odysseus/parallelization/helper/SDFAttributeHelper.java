@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
@@ -75,7 +76,7 @@ public class SDFAttributeHelper {
 	 */
 	public boolean validateStructureOfPredicate(JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
-		if (predicate instanceof RelationalExpression) {
+		if (predicate instanceof IRelationalExpression) {
 			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
 			IExpression<?> expression = relPredicate
 					.getMEPExpression();
@@ -124,7 +125,7 @@ public class SDFAttributeHelper {
 	public Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
 			Map<Integer, List<SDFAttribute>> attributes, JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
-		if (predicate instanceof RelationalExpression) {
+		if (predicate instanceof IRelationalExpression) {
 			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
 			IExpression<?> expression = relPredicate
 					.getMEPExpression();

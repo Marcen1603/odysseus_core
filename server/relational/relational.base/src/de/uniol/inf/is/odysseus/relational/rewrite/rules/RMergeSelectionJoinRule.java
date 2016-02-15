@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -57,7 +58,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 								ParameterPredicateOptimizer.class);
 				if (optimizeConfig != null
 						&& optimizeConfig.getValue().booleanValue()) {
-					if (join.getPredicate() instanceof RelationalExpression) {
+					if (join.getPredicate() instanceof IRelationalExpression) {
 						RelationalExpression<?> relationalPredicate = (RelationalExpression<?>) join
 								.getPredicate();
 						IExpression<?> expression = ((RelationalExpression<?>) join

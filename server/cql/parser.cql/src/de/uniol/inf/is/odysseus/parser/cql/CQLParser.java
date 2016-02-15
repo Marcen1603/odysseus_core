@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -441,7 +442,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					right);
 			return;
 		}
-		if (predicate instanceof RelationalExpression) {
+		if (predicate instanceof IRelationalExpression) {
 			((RelationalExpression<?>) predicate).initVars(left, right);
 		}
 		// NOTE: Das ProbabilityPredicate muss nicht mit linkem

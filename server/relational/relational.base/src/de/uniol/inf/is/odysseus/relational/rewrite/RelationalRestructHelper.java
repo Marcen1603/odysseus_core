@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -72,7 +73,7 @@ public class RelationalRestructHelper {
 			public void call(IPredicate<?> pred) {
 				if (pred instanceof IRelationalPredicate){
 					sources.addAll(sourcesOfAttributes(((IRelationalPredicate<?>) pred).getAttributes()));
-				}else if (pred instanceof RelationalExpression){
+				}else if (pred instanceof IRelationalExpression){
 					sources.addAll(sourcesOfAttributes(((RelationalExpression<?>) pred).getAttributes()));
 				}
 			}
@@ -81,7 +82,7 @@ public class RelationalRestructHelper {
 	}
 
 	public static Set<String> sourcesOfAttributes(Collection<?> attributes) {
-		HashSet<String> sources = new HashSet<>();
+		HashSet<String> sources = new 	HashSet<>();
 		for (Object attribute : attributes) {
 			sources.add(((SDFAttribute) attribute).getSourceName());
 		}
@@ -136,7 +137,7 @@ public class RelationalRestructHelper {
 					if (!uris.containsAll(tmpUris)) {
 						retValue[0] = false;
 					}
-				} else if (predicate instanceof RelationalExpression) {
+				} else if (predicate instanceof IRelationalExpression) {
 					RelationalExpression<?> relPred = (RelationalExpression<?>) predicate;
 					Collection<SDFAttribute> tmpAttrs = relPred.getAttributes();
 					Collection<String> tmpUris = attributesToUris(tmpAttrs);

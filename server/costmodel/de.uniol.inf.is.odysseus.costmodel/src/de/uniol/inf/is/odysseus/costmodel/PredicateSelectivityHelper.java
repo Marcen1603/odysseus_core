@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -80,7 +81,7 @@ public class PredicateSelectivityHelper {
 	}
 
 	private Optional<Double> evaluatePredicate(IPredicate<?> predicate) {
-		if (predicate instanceof RelationalExpression) {
+		if (predicate instanceof IRelationalExpression) {
 			return evaluateRelationalPredicate((RelationalExpression<?>) predicate);
 		} else if (predicate instanceof ComplexPredicate) {
 			return evaluateComplexPredicate((ComplexPredicate<?>) predicate);
