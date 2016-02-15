@@ -19,7 +19,6 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.relational.base.predicate.ForPredicate.Type;
 
 
 public class Activator implements BundleActivator {
@@ -32,8 +31,6 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		OperatorBuilderFactory.putPredicateBuilder(RELATIONAL_PREDICATE, new RelationalPredicateBuilder());
 		OperatorBuilderFactory.putPredicateBuilder(Tuple.class.getName(), new RelationalPredicateBuilder());
-		OperatorBuilderFactory.putPredicateBuilder(FOR_ALL_PREDICATE, new ForPredicateBuilder(Type.ALL));
-		OperatorBuilderFactory.putPredicateBuilder(FOR_ANY_PREDICATE, new ForPredicateBuilder(Type.ANY));
 	}
 
 	@Override

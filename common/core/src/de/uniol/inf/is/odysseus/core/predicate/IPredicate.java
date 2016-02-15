@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.predicate;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.IClone;

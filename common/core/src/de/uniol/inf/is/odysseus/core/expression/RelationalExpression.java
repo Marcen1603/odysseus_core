@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class RelationalExpression<T extends IMetaAttribute> extends SDFExpression {
+public class RelationalExpression<T extends IMetaAttribute> extends SDFExpression implements IRelationalExpression<T>{
 
 	private static final long serialVersionUID = -5237770549231080761L;
 	protected VarHelper[] variables;
@@ -61,6 +61,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		throw new RuntimeException("Cannot find attribute " + curAttribute + " in input stream!");
 	}
 
+	@Override
 	public void initVars(List<SDFSchema> schema) {
 		List<SDFAttribute> neededAttributes = getAllAttributes();
 		VarHelper[] tmp = new VarHelper[neededAttributes.size()];
@@ -76,6 +77,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		this.variables = tmp; 
 	}
 
+	@Override
 	public void initVars(SDFSchema schema) {
 		if (schema == null){
 			throw new IllegalArgumentException("Schema is not allowed to be null");
@@ -85,6 +87,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		initVars(schemata);
 	}
 
+	@Override
 	public void initVars(SDFSchema left, SDFSchema right) {
 		List<SDFSchema> schemata = new ArrayList<>();
 		if (left == null){
@@ -97,6 +100,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		initVars(schemata);
 	}
 
+	@Override
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history) {
 
 		if (isContant()) {

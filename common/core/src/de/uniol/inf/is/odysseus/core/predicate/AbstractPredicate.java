@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.predicate;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
