@@ -71,6 +71,11 @@ public class VisualOdysseusScriptModel {
 				List<OdysseusScriptBlock> scriptBlocksBefore = Lists.newArrayList(scriptBlocks);
 				IVisualOdysseusScriptBlock visualTextBlock = selectedRule.transform(scriptBlocks, selectedBlocks);
 				if( visualTextBlock != null ) {
+					if( scriptBlocksBefore.size() == scriptBlocks.size() ) {
+						// rule did not change anything! error
+						throw new VisualOdysseusScriptException("Odysseus script transformation rule '" + selectedRule.getName() + "' didn't change script blocks!");
+					}
+					
 					for( OdysseusScriptBlock selectedBlock : selectedBlocks ) {
 						transformResultMap.put(selectedBlock, visualTextBlock);
 					}
@@ -80,6 +85,9 @@ public class VisualOdysseusScriptModel {
 							otherTransformMap.put(scriptBlockBefore, visualTextBlock);
 						}
 					}
+					
+				} else {
+					throw new VisualOdysseusScriptException("Odysseus script transformation rule '" + selectedRule.getName() + "' returned null!");
 				}
 			} else {
 				// no rule executable anymore

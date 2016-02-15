@@ -16,6 +16,7 @@ public class DefaultTransformRuleProvider implements IOdysseusScriptTransformRul
 
 		rules.add(new DefineKeywordTransformRule());
 		rules.add(new QueryTransformRule());
+		rules.add(new MetadataKeywordTransformRule());
 
 		return rules;
 	}
