@@ -32,13 +32,10 @@ public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 
 	private final SDFSchema leftSchema;
 	private final SDFSchema rightSchema;
-	private ILogicalOperator op;
 	
 	public InitPredicateFunctor(ILogicalOperator op) {
 		this.leftSchema = op.getInputSchema(0);
 		this.rightSchema = op.getNumberOfInputs() > 1 ? op.getInputSchema(1) : null;
-		// Keep for debug
-		this.op = op;
 	}
 	@Override
 	public void call(IPredicate<?> parameter) {
@@ -46,7 +43,6 @@ public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 			((IRelationalPredicate<?>)parameter).init(leftSchema, rightSchema);				
 		}else if (parameter instanceof IRelationalExpression){
 			((RelationalExpression<?>)parameter).initVars(leftSchema, rightSchema);	
-			System.err.println("INIT ON "+parameter+" "+op);
 		}
 	}
 
