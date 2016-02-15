@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;

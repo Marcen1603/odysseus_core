@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
-import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

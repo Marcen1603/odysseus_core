@@ -22,7 +22,6 @@ import java.util.Map;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;

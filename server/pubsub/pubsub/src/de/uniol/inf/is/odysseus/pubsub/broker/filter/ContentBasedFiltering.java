@@ -23,7 +23,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
 

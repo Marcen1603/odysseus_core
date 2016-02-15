@@ -106,7 +106,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateTypeVisit
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateViewVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.PickUpAttributeNames;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.SubstituteAliasesVisitor;
-import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
