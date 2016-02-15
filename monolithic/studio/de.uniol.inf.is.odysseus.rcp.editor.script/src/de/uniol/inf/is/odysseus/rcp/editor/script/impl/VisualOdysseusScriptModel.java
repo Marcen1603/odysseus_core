@@ -239,4 +239,13 @@ public class VisualOdysseusScriptModel {
 			block.dispose();
 		}
 	}
+
+	public void dispose(IVisualOdysseusScriptBlock visualBlock) {
+		Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+
+		if( visualTextBlocks.contains(visualBlock)) {
+			visualBlock.dispose();
+			visualTextBlocks.remove(visualBlock);
+		}
+	}
 }

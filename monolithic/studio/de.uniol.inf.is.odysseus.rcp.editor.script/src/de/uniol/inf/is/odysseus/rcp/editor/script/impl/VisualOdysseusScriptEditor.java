@@ -153,7 +153,7 @@ public class VisualOdysseusScriptEditor extends EditorPart {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = parent.getBounds().width;
 			topBlockComposite.setLayoutData(gd);
-			topBlockComposite.setLayout(new GridLayout(2, false));
+			topBlockComposite.setLayout(new GridLayout(3, false));
 			topBlockComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
 
 			ClickableImage resizeImage = new ClickableImage(topBlockComposite, imageManager.get("collapse"));
@@ -167,6 +167,10 @@ public class VisualOdysseusScriptEditor extends EditorPart {
 			titleLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
 			titleLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			
+			ClickableImage deleteImage = new ClickableImage(topBlockComposite, imageManager.get("remove"));
+			deleteImage.getLabel().setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+			deleteImage.getLabel().setToolTipText("Delete");
 
 			Composite visualBlockComposite = new Composite(contentComposite, SWT.NONE);
 			GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
@@ -191,7 +195,6 @@ public class VisualOdysseusScriptEditor extends EditorPart {
 				}
 			});
 			
-			
 			resizeImage.setClickHandler(new IImageClickHandler() {
 				
 				private int oldHeight;
@@ -211,6 +214,19 @@ public class VisualOdysseusScriptEditor extends EditorPart {
 					layoutAll();
 				}
 			});
+			
+			deleteImage.setClickHandler(new IImageClickHandler() {
+				@Override
+				public void onClick() {
+					scriptModel.dispose(visualBlock);
+					
+					visualBlockComposite.dispose();
+					topBlockComposite.dispose();
+					
+					setDirty(true);
+					layoutAll();
+				}
+			});
 		}
 
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -226,9 +242,11 @@ public class VisualOdysseusScriptEditor extends EditorPart {
 
 	public void layoutAll() {
 		parent.layout();
+
 		scrollComposite.layout();
 		contentComposite.layout();
 
+		contentComposite.setSize(contentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 	
