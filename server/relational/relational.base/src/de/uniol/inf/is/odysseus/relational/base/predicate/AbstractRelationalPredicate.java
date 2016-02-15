@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
+ * @deprecated 
  */
 public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends AbstractPredicate<T>
 		implements IRelationalPredicate<T> {

@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
+ * @deprecated use IRelationalExpression instead
  */
+@Deprecated
 public interface IRelationalPredicate<T extends Tuple<?>> extends IPredicate<T> {
     void init(SDFSchema leftSchema, SDFSchema rightSchema);
 

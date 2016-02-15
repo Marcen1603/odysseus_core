@@ -49,7 +49,6 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rdf.datamodel.INode;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
-import de.uniol.inf.is.odysseus.relational.base.predicate.TypeSafeRelationalPredicate;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatchingAO;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAdditiveExpression;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAggregation;
