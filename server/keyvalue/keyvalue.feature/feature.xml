@@ -31,6 +31,10 @@ limitations under the License.
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.keyvalue"
          download-size="0"

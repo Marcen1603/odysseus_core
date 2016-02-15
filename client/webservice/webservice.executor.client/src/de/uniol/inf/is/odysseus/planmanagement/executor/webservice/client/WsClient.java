@@ -708,8 +708,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}
 
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
-		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.getStreamObjectDataHandler("Tuple", outputSchema);
+		String type = outputSchema.getType().getSimpleName();
+		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.getStreamObjectDataHandler(type, outputSchema);
 
+		if (dataHandler == null){
+			throw new RuntimeException("Cannot find data handler for type "+type);
+		}
+		
 		// TODO: Handle generic metadata ...
 		dataHandler.setMetaAttribute(new TimeInterval());
 		List<SocketAddress> adr = ((IClientExecutor) exec).getSocketConnectionInformation(queryId, caller);
@@ -817,7 +822,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		for (SdfAttributeInformation attrInfo : attributeInfos) {
 			attributes.add(createAttributeFromInformation(attrInfo));
 		}
-		// FIXME: Is this always Tuple?
+		
+		try{
+			Class<?> typeClass = Class.forName(info.getTypeClass());
+			return SDFSchemaFactory.createNewSchema(uri, typeClass, attributes);
+		}catch(Exception e){
+			e.printStackTrace();
+		}		
 		return SDFSchemaFactory.createNewTupleSchema(uri, attributes);
 	}
 
