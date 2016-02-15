@@ -233,4 +233,10 @@ public class VisualOdysseusScriptModel {
 		
 		return scriptBlocks;
 	}
+
+	public void dispose() {
+		for( IVisualOdysseusScriptBlock block : visualTextBlocks ) {
+			block.dispose();
+		}
+	}
 }

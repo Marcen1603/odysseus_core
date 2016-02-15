@@ -46,7 +46,11 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 	
 	@Override
 	public String getTitle() {
-		return "Query";
+		if( Strings.isNullOrEmpty(queryName)) {
+			return "Query";
+		}
+		
+		return "Query '" + queryName + "'";
 	}
 
 	@Override
@@ -101,7 +105,9 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 			public void modifyText(ModifyEvent e) {
 				if (!queryNameText.getText().equals(queryName)) {
 					queryName = queryNameText.getText();
+					
 					container.setDirty(true);
+					container.setTitle(getTitle());
 				}
 			}
 		});

@@ -32,12 +32,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.util.ClickableImage;
+import de.uniol.inf.is.odysseus.rcp.util.IImageClickHandler;
 
-public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdysseusScriptContainer {
+public class VisualOdysseusScriptEditor extends EditorPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(VisualOdysseusScriptEditor.class);
 
@@ -143,30 +146,71 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		scrollComposite.setContent(contentComposite);
 
-		for (IVisualOdysseusScriptBlock textBlock : scriptModel.getVisualTextBlocks()) {
+		ImageManager imageManager = VisualOdysseusScriptPlugIn.getImageManager();
+		for (IVisualOdysseusScriptBlock visualBlock : scriptModel.getVisualTextBlocks()) {
 
-			Composite topBlockComposite = new Composite(contentComposite, SWT.NONE);
+			Composite topBlockComposite = new Composite(contentComposite, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = parent.getBounds().width;
 			topBlockComposite.setLayoutData(gd);
-			topBlockComposite.setLayout(new GridLayout());
-			
-			String title = textBlock.getTitle();
-			
-			Label titleLabel = new Label(topBlockComposite, SWT.BORDER);
+			topBlockComposite.setLayout(new GridLayout(2, false));
+			topBlockComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+
+			ClickableImage resizeImage = new ClickableImage(topBlockComposite, imageManager.get("collapse"));
+			resizeImage.getLabel().setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+			resizeImage.getLabel().setToolTipText("Collapse");
+
+			String title = visualBlock.getTitle();
+			Label titleLabel = new Label(topBlockComposite, SWT.NONE);
 			titleLabel.setText(Strings.isNullOrEmpty(title) ? "<No title>" : title);
 			titleLabel.setAlignment(SWT.CENTER);
 			titleLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
 			titleLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			
-			Composite textBlockComposite = new Composite(contentComposite, SWT.NONE);
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.widthHint = parent.getBounds().width;
-			textBlockComposite.setLayoutData(gd);
-			textBlockComposite.setLayout(new FillLayout());
 
-			textBlock.createPartControl(textBlockComposite, this);
+			Composite visualBlockComposite = new Composite(contentComposite, SWT.NONE);
+			GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
+			gd2.widthHint = parent.getBounds().width;
+			visualBlockComposite.setLayoutData(gd2);
+			visualBlockComposite.setLayout(new FillLayout());
+
+			visualBlock.createPartControl(visualBlockComposite, new IVisualOdysseusScriptContainer() {
+				@Override
+				public void setTitle(String title) {
+					titleLabel.setText(title);
+				}
+				
+				@Override
+				public void setDirty(boolean dirty) {
+					VisualOdysseusScriptEditor.this.setDirty(dirty);
+				}
+				
+				@Override
+				public void layoutAll() {
+					VisualOdysseusScriptEditor.this.layoutAll();
+				}
+			});
+			
+			
+			resizeImage.setClickHandler(new IImageClickHandler() {
+				
+				private int oldHeight;
+			
+				@Override
+				public void onClick() {
+					if( gd2.heightHint == 0 ) {
+						gd2.heightHint = oldHeight;
+						resizeImage.getLabel().setImage(imageManager.get("collapse"));
+						resizeImage.getLabel().setToolTipText("Collapse");
+					} else {
+						oldHeight = gd2.heightHint;
+						gd2.heightHint = 0;
+						resizeImage.getLabel().setImage(imageManager.get("expand"));
+						resizeImage.getLabel().setToolTipText("Expand");
+					}
+					layoutAll();
+				}
+			});
 		}
 
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -180,7 +224,6 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 		}
 	}
 
-	@Override
 	public void layoutAll() {
 		parent.layout();
 		scrollComposite.layout();
@@ -188,8 +231,14 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-
+	
 	@Override
+	public void dispose() {
+		scriptModel.dispose();
+		
+		super.dispose();
+	}
+
 	public void setDirty(boolean dirty) {
 		if (dirty != this.isDirty) {
 			this.isDirty = dirty;
