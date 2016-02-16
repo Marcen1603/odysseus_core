@@ -714,11 +714,20 @@ public class WebserviceServer {
 
 		IStreamObjectDataHandler<?> handler = null;
 
-		if (nullValues) {
-			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
-		} else {
-			handler = (IStreamObjectDataHandler<?>) new TupleDataHandler().createInstance(root.getOutputSchema());
+		// TODO: Find a way to handle null values again
+		if (nullValues){
+			logger.warn("Do not use param nullValues. Use correct datahandler (e.g. NullAwareTuple) instead.");
 		}
+		Class<? extends IStreamObject> typeClass = root.getOutputSchema().getType();
+		
+		handler = DataHandlerRegistry.getStreamObjectDataHandler(typeClass.getSimpleName(), root.getOutputSchema());
+
+		
+//		if (nullValues) {
+//			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
+//		} else {
+//			handler = (IStreamObjectDataHandler<?>) new TupleDataHandler().createInstance(root.getOutputSchema());
+//		}
 
 		IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(root.getOutputSchema().getMetaAttributeNames());
 		handler.setMetaAttribute(metaAttribute);
