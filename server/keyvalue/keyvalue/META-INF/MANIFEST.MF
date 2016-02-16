@@ -10,7 +10,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.server.keyvalue.Activator
-Service-Component: OSGI-INF/*
 Import-Package: com.fasterxml.jackson.core,
  com.fasterxml.jackson.databind,
  com.google.common.base,
