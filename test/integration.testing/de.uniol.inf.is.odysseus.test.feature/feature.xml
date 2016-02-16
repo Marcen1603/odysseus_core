@@ -31,10 +31,6 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.latency.feature"
          version="0.0.0"/>
 
@@ -108,12 +104,6 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.test.component.compile"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.test.component.keyvalue"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
