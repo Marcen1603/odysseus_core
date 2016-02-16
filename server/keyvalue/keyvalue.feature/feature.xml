@@ -35,6 +35,19 @@ limitations under the License.
          id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature"
          version="0.0.0"/>
 
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="restlet-osgi-2.3.1"/>
+      <import plugin="com.google.guava"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.server.intervalapproach"/>
+      <import plugin="org.eclipse.osgi"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.wrapper.json"
          download-size="0"
@@ -50,13 +63,6 @@ limitations under the License.
 
    <plugin
          id="de.uniol.inf.is.odysseus.server.keyvalue"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.keyvalue.datahandler"
          download-size="0"
          install-size="0"
          version="0.0.0"
