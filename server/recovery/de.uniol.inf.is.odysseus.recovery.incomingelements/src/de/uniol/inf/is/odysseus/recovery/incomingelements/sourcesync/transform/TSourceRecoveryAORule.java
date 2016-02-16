@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.AbstractSourceRecoveryPO;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.SourceBackupPO;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.SourceRecoveryPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -27,13 +26,11 @@ public class TSourceRecoveryAORule extends AbstractTransformationRule<SourceReco
 
 	@Override
 	public void execute(SourceRecoveryAO logical, TransformationConfiguration config) throws RuleException {
-		AbstractSourceRecoveryPO<?> po;
 		if (logical.isInRecoveryMode()) {
-			po = new SourceRecoveryPO<>(logical);
+			defaultExecute(logical, new SourceRecoveryPO<>(logical), config, true, true);
 		} else {
-			po = new SourceBackupPO<>(logical);
+			defaultExecute(logical, new SourceBackupPO<>(logical), config, true, true);
 		}
-		defaultExecute(logical, po, config, true, true);
 	}
 
 	@Override

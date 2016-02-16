@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.trustpunctuation.logicaloperator.TrustPunctuationReaderAO;
-import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManagerRegistry;
 
 /**
  * The incoming elements recovery component handles the backup and recovery of
@@ -168,8 +167,7 @@ public class IncomingElementsRecoveryComponent
 				if (AbstractAccessAO.class.isInstance(operator)
 						&& this.mRecordedSources.contains(((AbstractAccessAO) operator).getAccessAOName().toString())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
-					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(sourceAccess, recoveryMode,
-							ProtectionPointManagerRegistry.getInstance(query.getID()));
+					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(sourceAccess, recoveryMode);
 					sourceRecovery.setUniqueIdentifier(
 							((AbstractAccessAO) operator).getAccessAOName().getResourceName() + query.getID());
 					sourceRecovery.addOwner(query);

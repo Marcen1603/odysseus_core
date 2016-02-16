@@ -9,12 +9,19 @@ import java.util.TimerTask;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
@@ -50,13 +57,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * @param <StreamObject>
  *            The type of stream elements to process.
  */
-public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>>
-		extends AbstractSourceRecoveryPO<StreamObject> {
-
-	/**
-	 * The version of this class for serialization.
-	 */
-	private static final long serialVersionUID = -2660605545656846436L;
+public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>> extends SourceBackupPO<StreamObject> {
 
 	/**
 	 * Compares the start time stamps
@@ -83,8 +84,8 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	 * Transfer handler for the objects from public subscribe system in recovery
 	 * mode. Not for the objects from the source operator.
 	 */
-	private class RecoveryTransferHandler extends AbstractSourceRecoveryTransferHandler
-			implements IMetadataInitializer<IMetaAttribute, StreamObject> {
+	private class RecoveryTransferHandler
+			implements ITransferHandler<StreamObject>, IMetadataInitializer<IMetaAttribute, StreamObject> {
 
 		/**
 		 * Initializer for the meta data. Needed to set the meta data correct
@@ -119,9 +120,11 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		}
 
 		@SuppressWarnings("unchecked")
-		@Override
-		public void transfer_intern(IStreamable object, int port) {
+		private void transfer_intern(IStreamable object, int port) {
 			if (!SourceRecoveryPO.this.mTransferFromBaDaSt) {
+				if (object.equals(SourceRecoveryPO.this.loadedLastSeenElement)) {
+					SourceRecoveryPO.this.mTransferFromBaDaSt = true;
+				}
 				return;
 			} else if (object.isPunctuation()) {
 				SourceRecoveryPO.this.sendPunctuation((IPunctuation) object, port);
@@ -153,7 +156,10 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 					// Element from BaDaSt is older than the first element after
 					// recovery from the original source. Decrease trust
 					decreaseTrust(strObj);
-					SourceRecoveryPO.this.transfer(strObj, port);
+					synchronized (SourceRecoveryPO.this.lastSeenElement) {
+						SourceRecoveryPO.this.lastSeenElement = strObj;
+						SourceRecoveryPO.this.transfer(strObj, port);
+					}
 				} else if (this.mTimeToEvaluateDelta) {
 					synchronized (SourceRecoveryPO.this.mLastSeenElementsFromSource) {
 						if (!SourceRecoveryPO.this.mLastSeenElementsFromSource.isEmpty()) {
@@ -161,7 +167,10 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 						}
 					}
 				} else {
-					SourceRecoveryPO.this.transfer(strObj, port);
+					synchronized (SourceRecoveryPO.this.lastSeenElement) {
+						SourceRecoveryPO.this.lastSeenElement = strObj;
+						SourceRecoveryPO.this.transfer(strObj, port);
+					}
 				}
 			}
 		}
@@ -222,7 +231,10 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				// BaDaSt did not catch up with the original source yet. Let's
 				// wait some time and check again.
 				this.mTimeToEvaluateDelta = false;
-				SourceRecoveryPO.this.transfer(objectFromBaDaSt, port);
+				synchronized (SourceRecoveryPO.this.lastSeenElement) {
+					SourceRecoveryPO.this.lastSeenElement = objectFromBaDaSt;
+					SourceRecoveryPO.this.transfer(objectFromBaDaSt, port);
+				}
 				new Timer("SourceRecoveryDeltaEvaluator", true).schedule(new TimerTask() {
 
 					@Override
@@ -249,10 +261,13 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				SourceRecoveryPO.this.mTransferFromBaDaSt = false;
 				int indexOfFirstToTransfer = Collections.binarySearch(objectsFromSource, objectFromBaDaSt, comp);
 				for (int i = indexOfFirstToTransfer; i < objectsFromSource.size(); i++) {
-					SourceRecoveryPO.this.transfer(objectsFromSource.get(i), port);
+					synchronized (SourceRecoveryPO.this.lastSeenElement) {
+						SourceRecoveryPO.this.lastSeenElement = objectsFromSource.get(i);
+						SourceRecoveryPO.this.transfer(objectsFromSource.get(i), port);
+					}
 				}
 				SourceRecoveryPO.this.mTransferFromSource = true;
-				SourceRecoveryPO.this.mBackupSubscriberController.interrupt();
+				SourceRecoveryPO.this.mRecoverySubscriberController.interrupt();
 				objectsFromSource.clear();
 
 			} else /* delta < 0 */ {
@@ -271,7 +286,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				SourceRecoveryPO.this.mFirstNotTransferredElementFromBaDaSt = Optional.fromNullable(objectFromBaDaSt);
 				SourceRecoveryPO.this.mTransferFromBaDaSt = false;
 				// (3) and (4) is done in SourceRecoveryPO.process_next
-				SourceRecoveryPO.this.mBackupSubscriberController.interrupt();
+				SourceRecoveryPO.this.mRecoverySubscriberController.interrupt();
 			}
 		}
 
@@ -300,6 +315,26 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 			this.mMetaDataInitializer.updateMetadata(object);
 		}
 
+		@Override
+		public void transfer(StreamObject object, int sourceOutPort) {
+			this.transfer_intern(object, sourceOutPort);
+		}
+
+		@Override
+		public void transfer(StreamObject object) {
+			this.transfer_intern(object, 0);
+		}
+
+		@Override
+		public void sendPunctuation(IPunctuation punctuation) {
+			this.transfer_intern(punctuation, 0);
+		}
+
+		@Override
+		public void sendPunctuation(IPunctuation punctuation, int outPort) {
+			this.transfer_intern(punctuation, outPort);
+		}
+
 	}
 
 	/**
@@ -310,7 +345,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	/**
 	 * The access to the public subscribe system to use in recovery mode.
 	 */
-	private ISubscriberController mRecoverySubscriberController;
+	ISubscriberController mRecoverySubscriberController;
 
 	/**
 	 * The handler of messages consumed from public subscribe system in recovery
@@ -355,12 +390,29 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	/**
 	 * True, if elements from BaDaSt shall be transferred.
 	 */
-	boolean mTransferFromBaDaSt = true;
+	boolean mTransferFromBaDaSt = false;
 
 	/**
 	 * True, if elements from the original source shall be transferred.
 	 */
 	boolean mTransferFromSource = false;
+
+	/**
+	 * Creates the protocol handler to use.
+	 */
+	@SuppressWarnings("unchecked")
+	private IProtocolHandler<StreamObject> createProtocolHandler() {
+		IStreamObjectDataHandler<StreamObject> dataHandler = (IStreamObjectDataHandler<StreamObject>) DataHandlerRegistry
+				.getStreamObjectDataHandler(this.mSourceAccess.getDataHandler(), this.mSourceAccess.getOutputSchema());
+		OptionMap options = new OptionMap(this.mSourceAccess.getOptions());
+		IAccessPattern access = IAccessPattern.PUSH;
+		if (this.mSourceAccess.getWrapper().toLowerCase().contains("pull")) {
+			// XXX AccessPattern: Better way to determine the AccessPattern?
+			access = IAccessPattern.PULL;
+		}
+		return (IProtocolHandler<StreamObject>) ProtocolHandlerRegistry.getInstance(
+				this.mSourceAccess.getProtocolHandler(), ITransportDirection.IN, access, options, dataHandler);
+	}
 
 	/**
 	 * Creates a new {@link SourceRecoveryPO}.
@@ -402,9 +454,8 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 			}
 		}
 
-		// offset should be loaded as operator state
-		this.mRecoverySubscriberController = SubscriberControllerFactory.createController(
-				this.mSourceAccess.getAccessAOName(), this.mRecoverySubscriber, this.mOffset.longValue());
+		this.mRecoverySubscriberController = SubscriberControllerFactory
+				.createController(this.mSourceAccess.getAccessAOName(), this.mRecoverySubscriber);
 		this.mRecoverySubscriberController.start();
 	}
 
@@ -421,11 +472,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 			// should be the first to transfer)
 			synchronized (this.lastSeenElement) {
 				transfer(object, port);
-				boolean firstElem = (this.lastSeenElement == this.dummyStreamObj);
 				this.lastSeenElement = object;
-				if(firstElem) {
-					adjustOffset();
-				}
 			}
 		} else if (this.mTransferFromBaDaSt) {
 			// Do not transfer, because elements from publish subscribe system
