@@ -174,10 +174,7 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
-		synchronized (this.lastSeenElement) {
-			transfer(object, port);
-			this.lastSeenElement = object;
-		}
+		this.transfer(object, port);
 	}
 
 	@Override
@@ -191,6 +188,8 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 			@SuppressWarnings("unchecked")
 			IStreamObject<IMetaAttribute> reference = (IStreamObject<IMetaAttribute>) this.lastSeenElement.clone();
 			reference.setMetadata(null);
+			// TODO syserr
+			System.err.println(reference);
 			return new SourceRecoveryState(reference);
 		}
 	}
@@ -198,6 +197,14 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 	@Override
 	public void setState(Serializable state) {
 		this.loadedLastSeenElement = ((SourceRecoveryState) state).getLastSeenElement();
+	}
+	
+	@Override
+	public void transfer(StreamObject object, int sourceOutPort) {
+		synchronized (this.lastSeenElement) {
+			super.transfer(object, sourceOutPort);
+			this.lastSeenElement = object;
+		}
 	}
 
 }

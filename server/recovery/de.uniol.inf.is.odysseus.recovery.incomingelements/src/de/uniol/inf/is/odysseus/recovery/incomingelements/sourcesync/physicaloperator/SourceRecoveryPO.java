@@ -121,24 +121,24 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 
 		@SuppressWarnings("unchecked")
 		private void transfer_intern(IStreamable object, int port) {
-			if (!SourceRecoveryPO.this.mTransferFromBaDaSt) {
-				if (object.equals(SourceRecoveryPO.this.loadedLastSeenElement)) {
-					SourceRecoveryPO.this.mTransferFromBaDaSt = true;
-				}
-				return;
-			} else if (object.isPunctuation()) {
-				SourceRecoveryPO.this.sendPunctuation((IPunctuation) object, port);
-			} else {
-				StreamObject strObj = (StreamObject) object;
-				try {
-					strObj.setMetadata(getMetadataInstance());
-				} catch (InstantiationException | IllegalAccessException e) {
-					e.printStackTrace();
-				}
-				updateMetadata(strObj);
+			synchronized (SourceRecoveryPO.this.lastSeenElement) {
+				if (!SourceRecoveryPO.this.mTransferFromBaDaSt) {
+					if (object.equals(SourceRecoveryPO.this.loadedLastSeenElement)) {
+						SourceRecoveryPO.this.mTransferFromBaDaSt = true;
+					}
+					return;
+				} else if (object.isPunctuation()) {
+					SourceRecoveryPO.this.sendPunctuation((IPunctuation) object, port);
+				} else {
+					StreamObject strObj = (StreamObject) object;
+					try {
+						strObj.setMetadata(getMetadataInstance());
+					} catch (InstantiationException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
+					updateMetadata(strObj);
 
-				StreamObject firstElementFromSourceAfterRestart = null;
-				synchronized (SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart) {
+					StreamObject firstElementFromSourceAfterRestart = null;
 					if (SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart.isPresent()) {
 						firstElementFromSourceAfterRestart = SourceRecoveryPO.this.mFirstElementFromSourceAfterRestart
 								.get();
@@ -150,25 +150,17 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 								port);
 
 					}
-				}
-				if (firstElementFromSourceAfterRestart != null
-						&& new Comparator().compare(firstElementFromSourceAfterRestart, strObj) > 0) {
-					// Element from BaDaSt is older than the first element after
-					// recovery from the original source. Decrease trust
-					decreaseTrust(strObj);
-					synchronized (SourceRecoveryPO.this.lastSeenElement) {
-						SourceRecoveryPO.this.lastSeenElement = strObj;
+					if (firstElementFromSourceAfterRestart != null
+							&& new Comparator().compare(firstElementFromSourceAfterRestart, strObj) > 0) {
+						// Element from BaDaSt is older than the first element
+						// after
+						// recovery from the original source. Decrease trust
+						decreaseTrust(strObj);
 						SourceRecoveryPO.this.transfer(strObj, port);
-					}
-				} else if (this.mTimeToEvaluateDelta) {
-					synchronized (SourceRecoveryPO.this.mLastSeenElementsFromSource) {
-						if (!SourceRecoveryPO.this.mLastSeenElementsFromSource.isEmpty()) {
-							evaluate(SourceRecoveryPO.this.mLastSeenElementsFromSource, strObj, port);
-						}
-					}
-				} else {
-					synchronized (SourceRecoveryPO.this.lastSeenElement) {
-						SourceRecoveryPO.this.lastSeenElement = strObj;
+					} else if (this.mTimeToEvaluateDelta
+							&& SourceRecoveryPO.this.mLastSeenElementsFromSource.isEmpty()) {
+						evaluate(SourceRecoveryPO.this.mLastSeenElementsFromSource, strObj, port);
+					} else {
 						SourceRecoveryPO.this.transfer(strObj, port);
 					}
 				}
@@ -231,10 +223,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				// BaDaSt did not catch up with the original source yet. Let's
 				// wait some time and check again.
 				this.mTimeToEvaluateDelta = false;
-				synchronized (SourceRecoveryPO.this.lastSeenElement) {
-					SourceRecoveryPO.this.lastSeenElement = objectFromBaDaSt;
-					SourceRecoveryPO.this.transfer(objectFromBaDaSt, port);
-				}
+				SourceRecoveryPO.this.transfer(objectFromBaDaSt, port);
 				new Timer("SourceRecoveryDeltaEvaluator", true).schedule(new TimerTask() {
 
 					@Override
@@ -261,10 +250,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				SourceRecoveryPO.this.mTransferFromBaDaSt = false;
 				int indexOfFirstToTransfer = Collections.binarySearch(objectsFromSource, objectFromBaDaSt, comp);
 				for (int i = indexOfFirstToTransfer; i < objectsFromSource.size(); i++) {
-					synchronized (SourceRecoveryPO.this.lastSeenElement) {
-						SourceRecoveryPO.this.lastSeenElement = objectsFromSource.get(i);
-						SourceRecoveryPO.this.transfer(objectsFromSource.get(i), port);
-					}
+					SourceRecoveryPO.this.transfer(objectsFromSource.get(i), port);
 				}
 				SourceRecoveryPO.this.mTransferFromSource = true;
 				SourceRecoveryPO.this.mRecoverySubscriberController.interrupt();
@@ -461,32 +447,30 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
-		if (!this.mFirstElementFromSourceAfterRestart.isPresent()) {
-			// First element, which is for sure not a duplicate
-			synchronized (this.mFirstElementFromSourceAfterRestart) {
+		synchronized (this.lastSeenElement) {
+			if (!this.mFirstElementFromSourceAfterRestart.isPresent()) {
+				// First element, which is for sure not a duplicate
 				this.mFirstElementFromSourceAfterRestart = Optional.of(object);
 			}
-		}
-		if (this.mTransferFromSource) {
-			// (4) transfer from the original source (the element from (1)
-			// should be the first to transfer)
-			synchronized (this.lastSeenElement) {
-				transfer(object, port);
-				this.lastSeenElement = object;
-			}
-		} else if (this.mTransferFromBaDaSt) {
-			// Do not transfer, because elements from publish subscribe system
-			// will be transfered with another transfer handler.
-			synchronized (this.mLastSeenElementsFromSource) {
+			if (this.mTransferFromSource) {
+				// (4) transfer from the original source (the element from (1)
+				// should be the first to transfer)
+				this.transfer(object, port);
+			} else if (object.equals(this.mFirstNotTransferredElementFromBaDaSt)) {
+				// (3) watch incoming elements from the original source until we
+				// see
+				// the element from (1)
+				this.transfer(object, port);
+				this.mTransferFromSource = true;
+			} else {
+				// Do not transfer, because elements from publish subscribe
+				// system
+				// will be transfered with another transfer handler.
 				if (this.mLastSeenElementsFromSource.size() == BUFFRSIZE) {
 					this.mLastSeenElementsFromSource.clear();
 				}
 				this.mLastSeenElementsFromSource.add(object);
 			}
-		} else if (object.equals(this.mFirstNotTransferredElementFromBaDaSt)) {
-			// (3) watch incoming elements from the original source until we see
-			// the element from (1)
-			this.mTransferFromSource = true;
 		}
 	}
 
