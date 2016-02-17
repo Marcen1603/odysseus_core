@@ -94,7 +94,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	@Override
 	public void createPartControl(Composite parent) {
-		TabFolder tabFolder = new TabFolder(parent, SWT.BORDER | SWT.BOTTOM);
+		TabFolder tabFolder = new TabFolder(parent, SWT.BOTTOM);
 		tabFolder.setLayout(new GridLayout());
 		
 		TabItem textTab = new TabItem(tabFolder, SWT.NONE);
@@ -184,7 +184,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		scrollComposite.setExpandHorizontal(true);
 		scrollComposite.setExpandVertical(true);
 
-		Composite contentComposite = new Composite(scrollComposite, SWT.BORDER);
+		Composite contentComposite = new Composite(scrollComposite, SWT.NONE);
 		GridLayout contentLayout = new GridLayout();
 		contentLayout.verticalSpacing = 0;
 		contentLayout.marginHeight = 0;
