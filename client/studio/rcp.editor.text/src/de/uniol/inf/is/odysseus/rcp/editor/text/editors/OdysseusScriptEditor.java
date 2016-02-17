@@ -24,16 +24,29 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISaveablePart2;
@@ -42,15 +55,29 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
+import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
+import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
+import de.uniol.inf.is.odysseus.rcp.editor.script.model.VisualOdysseusScript;
+import de.uniol.inf.is.odysseus.rcp.editor.script.model.VisualOdysseusScriptModel;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring.OdysseusOccurrencesUpdater;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
-public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements ISaveablePart2, IResourceChangeListener, IResourceDeltaVisitor {
+public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements ISaveablePart2, IResourceChangeListener, IResourceDeltaVisitor  {
 
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusScriptEditor.class);
+	
 	public final static String EDITOR_MATCHING_BRACKETS = "matchingBrackets";
 	public final static String EDITOR_MATCHING_BRACKETS_COLOR = "matchingBracketsColor";
 
 	private OdysseusOccurrencesUpdater occurrencesUpdater;
+	
+	private VisualOdysseusScript visualScript;
+	private boolean visualChanged = false;
 
 	public OdysseusScriptEditor() {
 		super();
@@ -67,7 +94,62 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	@Override
 	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
+		TabFolder tabFolder = new TabFolder(parent, SWT.BORDER | SWT.BOTTOM);
+		tabFolder.setLayout(new GridLayout());
+		
+		TabItem textTab = new TabItem(tabFolder, SWT.NONE);
+		textTab.setText("Text");
+		
+		Composite textComposite = new Composite(tabFolder, SWT.NONE);
+		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		textComposite.setLayout(new FillLayout());
+		super.createPartControl(textComposite);
+		textTab.setControl(textComposite);
+		
+		TabItem visualTab = new TabItem(tabFolder, SWT.NONE);
+		visualTab.setText("Visual");
+		
+		Composite visualComposite = new Composite(tabFolder, SWT.NONE);
+		visualComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		visualComposite.setLayout(new FillLayout());
+		
+		visualTab.setControl(visualComposite);
+
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( tabFolder.getSelectionIndex() == 0 ) {
+					// text selected
+					writeVisualScriptToDocumentIfNeeded();
+
+					if( visualScript != null ) {
+						visualScript.dispose();
+						visualScript = null;
+					}
+					
+				} else {
+					// visual selected
+					if( visualScript != null ) {
+						return;
+					}
+					
+					Optional<VisualOdysseusScriptModel> optModel = createVisualOdysseusScriptModel();
+					if( optModel.isPresent() ) {
+						for( Control ctrl : visualComposite.getChildren() ) {
+							ctrl.dispose();
+						}
+						
+						visualScript = createVisualScript(visualComposite, optModel.get());
+						visualComposite.layout();
+					} else {
+						Label errorLabel = new Label(visualComposite, SWT.NONE);
+						errorLabel.setText("Could not generate visual odysseus script from current text");
+					}
+				}
+			}
+
+		});
+		
 		this.occurrencesUpdater = new OdysseusOccurrencesUpdater(this);
 		((IPostSelectionProvider) getSelectionProvider()).addPostSelectionChangedListener(this.occurrencesUpdater);
 	}
@@ -79,6 +161,69 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 				this.occurrencesUpdater.update(viewer);
 			}
 		}
+	}
+	
+	private Optional<VisualOdysseusScriptModel> createVisualOdysseusScriptModel() {
+		try {
+			IDocument document = getDocumentProvider().getDocument(getEditorInput());
+			String editorContents = document.get();
+			
+			VisualOdysseusScriptModel scriptModel = new VisualOdysseusScriptModel();
+			scriptModel.parse(editorContents);
+			
+			return Optional.of(scriptModel);
+			
+		} catch (VisualOdysseusScriptException e) {
+			LOG.error("Could not read contents of file", e);
+			return Optional.absent();
+		} 
+	}
+	
+	private VisualOdysseusScript createVisualScript(Composite visualComposite, VisualOdysseusScriptModel scriptModel) {
+		ScrolledComposite scrollComposite = new ScrolledComposite(visualComposite, SWT.V_SCROLL | SWT.H_SCROLL);
+		scrollComposite.setExpandHorizontal(true);
+		scrollComposite.setExpandVertical(true);
+
+		Composite contentComposite = new Composite(scrollComposite, SWT.BORDER);
+		GridLayout contentLayout = new GridLayout();
+		contentLayout.verticalSpacing = 0;
+		contentLayout.marginHeight = 0;
+		contentLayout.marginWidth = 0;
+		contentComposite.setLayout(contentLayout);
+
+		scrollComposite.setContent(contentComposite);
+
+		VisualOdysseusScript visualScript = new VisualOdysseusScript(contentComposite, scriptModel, new IVisualOdysseusScriptContainer() {
+			
+			@Override
+			public void setTitleText(String title) {
+				// do nothing atm
+			}
+			
+			@Override
+			public void setDirty(boolean dirty) {
+				visualChanged = dirty;
+				OdysseusScriptEditor.this.firePropertyChange(IEditorPart.PROP_DIRTY);
+			}
+			
+			@Override
+			public void layoutAll() {
+				visualComposite.layout();
+				
+				scrollComposite.layout();
+				contentComposite.layout();
+				
+				scrollComposite.setMinSize(contentComposite.getSize());
+			}
+		});
+		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		
+		return visualScript;
+	}
+	
+	@Override
+	public boolean isDirty() {
+		return super.isDirty() || visualChanged;
 	}
 
 	@Override
@@ -192,6 +337,27 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 			}
 		}
 	}
+	
+	@Override
+	public void doSave(IProgressMonitor progressMonitor) {
+		writeVisualScriptToDocumentIfNeeded();			
+		
+		super.doSave(progressMonitor);
+	}
+
+	private void writeVisualScriptToDocumentIfNeeded() {
+		if( visualScript != null && visualChanged ) {
+			try {
+				String newScript = visualScript.generateOdysseusScript();
+				IDocument document = getDocumentProvider().getDocument(getEditorInput());
+				document.set(newScript);
+				visualChanged = false;
+				
+			} catch (VisualOdysseusScriptException e1) {
+				new ExceptionWindow("Could not generate odysseus script", e1);
+			}
+		}
+	}
 
 	private void closeEditor(final IResource resource) {
 		Display.getDefault().asyncExec(new Runnable() {
@@ -207,5 +373,4 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 			}
 		});
 	}
-
 }
