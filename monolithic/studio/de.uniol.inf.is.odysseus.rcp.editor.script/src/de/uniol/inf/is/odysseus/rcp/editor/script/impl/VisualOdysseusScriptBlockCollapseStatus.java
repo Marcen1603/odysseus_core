@@ -18,7 +18,8 @@ public final class VisualOdysseusScriptBlockCollapseStatus {
 	public void prepareSize(int size) {
 
 		if (size > collapseList.size()) {
-			// increase list
+			
+			// increase list preserving old values
 			while (collapseList.size() < size) {
 				collapseList.add(Boolean.FALSE);
 			}
@@ -56,10 +57,14 @@ public final class VisualOdysseusScriptBlockCollapseStatus {
 		Optional<IVisualOdysseusScriptBlock> optBlock = getBlockAtIndex(index - 1);
 		if (optBlock.isPresent()) {
 			IVisualOdysseusScriptBlock block = optBlock.get();
+			
+			// swap indices in map
 			indexMap.put(visualBlock, index - 1);
 			indexMap.put(block, index);
 
+			// swap indices in list
 			swapCollapseList(index, index - 1);
+			
 		} else {
 			// should not happen here
 			throw new RuntimeException();
@@ -77,9 +82,12 @@ public final class VisualOdysseusScriptBlockCollapseStatus {
 		Optional<IVisualOdysseusScriptBlock> optBlock = getBlockAtIndex(index + 1);
 		if (optBlock.isPresent()) {
 			IVisualOdysseusScriptBlock block = optBlock.get();
+			
+			// swap indices in map
 			indexMap.put(visualBlock, index + 1);
 			indexMap.put(block, index);
 
+			// swap indices in list
 			swapCollapseList(index, index + 1);
 		} else {
 			// should not happen here
@@ -118,6 +126,7 @@ public final class VisualOdysseusScriptBlockCollapseStatus {
 	}
 
 	public void clearBlocks() {
+		// used when visual blocks are recreated
 		indexMap.clear();
 	}
 
