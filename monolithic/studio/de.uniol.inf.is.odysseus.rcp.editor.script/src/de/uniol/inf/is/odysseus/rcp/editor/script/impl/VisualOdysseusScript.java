@@ -30,7 +30,9 @@ public class VisualOdysseusScript {
 
 	private final Composite parent;
 	private final VisualOdysseusScriptModel scriptModel;
-	
+
+	private final VisualOdysseusScriptBlockCollapseStatus collapseStatus = new VisualOdysseusScriptBlockCollapseStatus();
+
 	public VisualOdysseusScript(Composite parent, VisualOdysseusScriptModel scriptModel, IVisualOdysseusScriptContainer container) {
 		Preconditions.checkNotNull(scriptModel, "scriptModel must not be null!");
 		Preconditions.checkNotNull(parent, "parent must not be null!");
@@ -47,20 +49,24 @@ public class VisualOdysseusScript {
 
 		ImageManager imageManager = VisualOdysseusScriptPlugIn.getImageManager();
 		List<IVisualOdysseusScriptBlock> visualTextBlocks = scriptModel.getVisualTextBlocks();
+
+		collapseStatus.prepareSize(visualTextBlocks.size());
+		collapseStatus.clearBlocks();
 		
 		for (int index = 0; index < visualTextBlocks.size(); index++) {
 			IVisualOdysseusScriptBlock visualBlock = visualTextBlocks.get(index);
-			
+
 			Composite topBlockComposite = new Composite(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = parent.getBounds().width;
 			topBlockComposite.setLayoutData(gd);
-			topBlockComposite.setLayout(new GridLayout(4, false));
+			topBlockComposite.setLayout(new GridLayout(5, false));
 			topBlockComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
 
 			ClickableImage resizeImage = createClickableImageWithToolTip(topBlockComposite, "collapse", "collapse");
 			Label titleLabel = createTitleHeader(visualBlock, topBlockComposite);
 			ClickableImage moveUpImage = createClickableImageWithToolTip(topBlockComposite, "moveUp", "Move up");
+			ClickableImage moveDownImage = createClickableImageWithToolTip(topBlockComposite, "moveDown", "Move down");
 			ClickableImage deleteImage = createClickableImageWithToolTip(topBlockComposite, "remove", "Delete");
 
 			Composite visualBlockComposite = new Composite(parent, SWT.NONE);
@@ -98,22 +104,51 @@ public class VisualOdysseusScript {
 						gd2.heightHint = oldHeight;
 						resizeImage.getLabel().setImage(imageManager.get("collapse"));
 						resizeImage.getLabel().setToolTipText("Collapse");
+						collapseStatus.setStatus(visualBlock, false);
 					} else {
 						oldHeight = gd2.heightHint;
 						gd2.heightHint = 0;
 						resizeImage.getLabel().setImage(imageManager.get("expand"));
 						resizeImage.getLabel().setToolTipText("Expand");
+						collapseStatus.setStatus(visualBlock, true);
 					}
 					container.layoutAll();
 				}
 			});
+			collapseStatus.setIndex(visualBlock, index);
+			if( collapseStatus.getStatus(visualBlock)) {
+				// click one time to collapse programmatically
+				resizeImage.getClickHandler().onClick();
+			}
 			
 			moveUpImage.setClickHandler(new IImageClickHandler() {
 				@Override
 				public void onClick() {
 					try {
 						if (scriptModel.moveUp(visualBlock)) {
-							// model changed, we have to create to gui again
+							// model changed now, so we have to create the gui
+							// again and update the collapsing status accordingly
+							collapseStatus.moveUp(visualBlock);
+							
+							createContents(container);
+							container.layoutAll();
+							container.setDirty(true);
+						}
+					} catch (VisualOdysseusScriptException e) {
+						LOG.error("Could not move visual odysseus script block up", e);
+					}
+				}
+			});
+
+			moveDownImage.setClickHandler(new IImageClickHandler() {
+				@Override
+				public void onClick() {
+					try {
+						if (scriptModel.moveDown(visualBlock)) {
+							// model changed now, so we have to create the gui
+							// again and update the collapsing status accordingly
+							collapseStatus.moveDown(visualBlock);
+							
 							createContents(container);
 							container.layoutAll();
 							container.setDirty(true);
@@ -128,6 +163,7 @@ public class VisualOdysseusScript {
 				@Override
 				public void onClick() {
 					scriptModel.dispose(visualBlock);
+					collapseStatus.dispose(visualBlock);
 
 					visualBlockComposite.dispose();
 					topBlockComposite.dispose();

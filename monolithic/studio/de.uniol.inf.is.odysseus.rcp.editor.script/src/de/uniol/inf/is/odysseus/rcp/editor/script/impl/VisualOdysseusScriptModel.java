@@ -266,13 +266,33 @@ public class VisualOdysseusScriptModel {
 		visualTextBlocks.set(index - 1, visualBlock);
 		visualTextBlocks.set(index, temp);
 
-		String tempScript = generateOdysseusScript();
-
-		dispose();
-
-		parse(toLines(tempScript));
+		tryRecreateVisualBlocks();
 		
 		return true;
+	}
+
+	
+	public boolean moveDown(IVisualOdysseusScriptBlock visualBlock) throws VisualOdysseusScriptException {
+		Preconditions.checkNotNull(visualBlock, "visualBlock must not be null!");
+
+		int index = visualTextBlocks.indexOf(visualBlock);
+		if( index == -1 || index == visualTextBlocks.size() - 1 ) {
+			return false;
+		}
+		
+		IVisualOdysseusScriptBlock temp = visualTextBlocks.get(index + 1);
+		visualTextBlocks.set(index + 1, visualBlock);
+		visualTextBlocks.set(index, temp);
+		
+		tryRecreateVisualBlocks();
+		
+		return true;
+	}
+
+	private void tryRecreateVisualBlocks() throws VisualOdysseusScriptException {
+		String tempScript = generateOdysseusScript();
+		dispose();
+		parse(toLines(tempScript));
 	}
 
 	private static List<String> toLines(String tempScript) {
@@ -286,4 +306,6 @@ public class VisualOdysseusScriptModel {
 
 		return lines;
 	}
+
+
 }
