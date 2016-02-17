@@ -336,5 +336,11 @@ public class VisualOdysseusScriptModel {
 		return lines;
 	}
 
+	public void addBlock(IVisualOdysseusScriptBlock newBlock) {
+		Preconditions.checkNotNull(newBlock, "newBlock must not be null!");
+
+		visualTextBlocks.add(newBlock);
+	}
+
 
 }

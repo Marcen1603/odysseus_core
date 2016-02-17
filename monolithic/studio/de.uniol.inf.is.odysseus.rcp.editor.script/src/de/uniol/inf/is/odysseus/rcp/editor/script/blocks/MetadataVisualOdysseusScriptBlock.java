@@ -34,6 +34,13 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 		selectedMetadataNames = metadataNames.toArray(new String[0]);
 		metadataCombinations = determineMetadataCombinationNames();
 		selectionIndex = determineIndex(selectedMetadataNames, metadataCombinations);
+		if( selectionIndex == 0 ) {
+			selectedMetadataNames = metadataCombinations[0].split(",");
+		}
+	}
+
+	public MetadataVisualOdysseusScriptBlock() {
+		this(Lists.newArrayList());
 	}
 
 	@Override

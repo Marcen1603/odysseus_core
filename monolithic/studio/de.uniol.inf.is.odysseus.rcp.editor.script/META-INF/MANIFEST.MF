@@ -18,8 +18,8 @@ Import-Package: org.eclipse.core.resources,
  org.eclipse.ui.dialogs,
  org.eclipse.ui.views.contentoutline,
  org.slf4j
-Service-Component: OSGI-INF/OdysseusScriptParser.xml,OSGI-INF/TransformRuleRegistry.xml,
- OSGI-INF/DefaultTransformRuleProvider.xml
+Service-Component: OSGI-INF/OdysseusScriptParser.xml,OSGI-INF/TransformRuleRegistry.xml,OSGI-INF/DefaultTransformRuleProvider.xml,OSGI-INF/VisualOdysseusScriptBlockProviderRegistry.xml,
+ OSGI-INF/DefaultVisualOdysseusScriptBlockProviders.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptPlugIn
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp.editor.script,

@@ -18,17 +18,22 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
+import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlockProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptBlockCollapseStatus;
 import de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.script.provider.VisualOdysseusScriptBlockProviderRegistry;
 import de.uniol.inf.is.odysseus.rcp.util.ClickableImage;
+import de.uniol.inf.is.odysseus.rcp.util.DropDownSelectionListener;
+import de.uniol.inf.is.odysseus.rcp.util.DropDownSelectionListener.ICallback;
 import de.uniol.inf.is.odysseus.rcp.util.IImageClickHandler;
 
 public class VisualOdysseusScript {
@@ -37,6 +42,7 @@ public class VisualOdysseusScript {
 	private static final String NO_TITLE_TEXT = "<No title>";
 
 	private final Composite parent;
+	private final IVisualOdysseusScriptContainer container;
 	private final VisualOdysseusScriptModel scriptModel;
 
 	private final VisualOdysseusScriptBlockCollapseStatus collapseStatus = new VisualOdysseusScriptBlockCollapseStatus();
@@ -51,18 +57,18 @@ public class VisualOdysseusScript {
 
 		this.parent = parent;
 		this.scriptModel = scriptModel;
+		this.container = container;
 
-		createContents(container);
+		createContents();
 	}
 
-	private void createContents(IVisualOdysseusScriptContainer container) {
+	private void createContents() {
 		disposeContents();
 		
 		if( toolBar == null ) {
 			toolBar = createToolBar();
 		}
 
-		ImageManager imageManager = VisualOdysseusScriptPlugIn.getImageManager();
 		List<IVisualOdysseusScriptBlock> visualTextBlocks = scriptModel.getVisualTextBlocks();
 
 		collapseStatus.prepareSize(visualTextBlocks.size());
@@ -72,126 +78,132 @@ public class VisualOdysseusScript {
 		for (int index = 0; index < visualTextBlocks.size(); index++) {
 			IVisualOdysseusScriptBlock visualBlock = visualTextBlocks.get(index);
 
-			Composite topBlockComposite = new Composite(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.widthHint = parent.getBounds().width;
-			topBlockComposite.setLayoutData(gd);
-			topBlockComposite.setLayout(new GridLayout(5, false));
-			topBlockComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
-
-			ClickableImage resizeImage = createClickableImageWithToolTip(topBlockComposite, "collapse", "collapse");
-			Label titleLabel = createTitleHeader(visualBlock, topBlockComposite);
-			ClickableImage moveUpImage = createClickableImageWithToolTip(topBlockComposite, "moveUp", "Move up");
-			ClickableImage moveDownImage = createClickableImageWithToolTip(topBlockComposite, "moveDown", "Move down");
-			ClickableImage deleteImage = createClickableImageWithToolTip(topBlockComposite, "remove", "Delete");
-
-			Composite visualBlockComposite = new Composite(parent, SWT.NONE);
-			GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
-			gd2.widthHint = parent.getBounds().width;
-			visualBlockComposite.setLayoutData(gd2);
-			visualBlockComposite.setLayout(new FillLayout());
-
-			visualBlock.createPartControl(visualBlockComposite, new IVisualOdysseusScriptContainer() {
-				@Override
-				public void setTitleText(String title) {
-					titleLabel.setText(title);
-				}
-
-				@Override
-				public void setDirty(boolean dirty) {
-					// delegate
-					container.setDirty(dirty);
-				}
-
-				@Override
-				public void layoutAll() {
-					// delegate
-					container.layoutAll();
-				}
-			});
-
-			IImageClickHandler handler = new IImageClickHandler() {
-				private int oldHeight;
-
-				@Override
-				public void onClick() {
-					if (gd2.heightHint == 0) {
-						gd2.heightHint = oldHeight;
-						resizeImage.getLabel().setImage(imageManager.get("collapse"));
-						resizeImage.getLabel().setToolTipText("Collapse");
-						collapseStatus.setStatus(visualBlock, false);
-					} else {
-						oldHeight = gd2.heightHint;
-						gd2.heightHint = 0;
-						resizeImage.getLabel().setImage(imageManager.get("expand"));
-						resizeImage.getLabel().setToolTipText("Expand");
-						collapseStatus.setStatus(visualBlock, true);
-					}
-					container.layoutAll();
-				}
-			};
-			
-			resizeImage.setClickHandler(handler);
-			handlerMap.put(visualBlock, handler);
-			
-			collapseStatus.setIndex(visualBlock, index);
-			if( collapseStatus.getStatus(visualBlock)) {
-				// click one time to collapse programmatically
-				resizeImage.getClickHandler().onClick();
-			}
-			
-			moveUpImage.setClickHandler(new IImageClickHandler() {
-				@Override
-				public void onClick() {
-					try {
-						if (scriptModel.moveUp(visualBlock)) {
-							// model changed now, so we have to create the gui
-							// again and update the collapsing status accordingly
-							collapseStatus.moveUp(visualBlock);
-							
-							createContents(container);
-							container.layoutAll();
-							container.setDirty(true);
-						}
-					} catch (VisualOdysseusScriptException e) {
-						LOG.error("Could not move visual odysseus script block up", e);
-					}
-				}
-			});
-
-			moveDownImage.setClickHandler(new IImageClickHandler() {
-				@Override
-				public void onClick() {
-					try {
-						if (scriptModel.moveDown(visualBlock)) {
-							// model changed now, so we have to create the gui
-							// again and update the collapsing status accordingly
-							collapseStatus.moveDown(visualBlock);
-							
-							createContents(container);
-							container.layoutAll();
-							container.setDirty(true);
-						}
-					} catch (VisualOdysseusScriptException e) {
-						LOG.error("Could not move visual odysseus script block up", e);
-					}
-				}
-			});
-
-			deleteImage.setClickHandler(new IImageClickHandler() {
-				@Override
-				public void onClick() {
-					scriptModel.dispose(visualBlock);
-					collapseStatus.dispose(visualBlock);
-
-					visualBlockComposite.dispose();
-					topBlockComposite.dispose();
-
-					container.setDirty(true);
-					container.layoutAll();
-				}
-			});
+			createBlockContents(index, visualBlock);
 		}		
+	}
+
+	private void createBlockContents(int blockIndex, IVisualOdysseusScriptBlock visualBlock) {
+		ImageManager imageManager = VisualOdysseusScriptPlugIn.getImageManager();
+
+		Composite topBlockComposite = new Composite(parent, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = parent.getBounds().width;
+		topBlockComposite.setLayoutData(gd);
+		topBlockComposite.setLayout(new GridLayout(5, false));
+		topBlockComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+
+		ClickableImage resizeImage = createClickableImageWithToolTip(topBlockComposite, "collapse", "collapse");
+		Label titleLabel = createTitleHeader(visualBlock, topBlockComposite);
+		ClickableImage moveUpImage = createClickableImageWithToolTip(topBlockComposite, "moveUp", "Move up");
+		ClickableImage moveDownImage = createClickableImageWithToolTip(topBlockComposite, "moveDown", "Move down");
+		ClickableImage deleteImage = createClickableImageWithToolTip(topBlockComposite, "remove", "Delete");
+
+		Composite visualBlockComposite = new Composite(parent, SWT.NONE);
+		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
+		gd2.widthHint = parent.getBounds().width;
+		visualBlockComposite.setLayoutData(gd2);
+		visualBlockComposite.setLayout(new FillLayout());
+
+		visualBlock.createPartControl(visualBlockComposite, new IVisualOdysseusScriptContainer() {
+			@Override
+			public void setTitleText(String title) {
+				titleLabel.setText(title);
+			}
+
+			@Override
+			public void setDirty(boolean dirty) {
+				// delegate
+				container.setDirty(dirty);
+			}
+
+			@Override
+			public void layoutAll() {
+				// delegate
+				container.layoutAll();
+			}
+		});
+
+		IImageClickHandler handler = new IImageClickHandler() {
+			private int oldHeight;
+
+			@Override
+			public void onClick() {
+				if (gd2.heightHint == 0) {
+					gd2.heightHint = oldHeight;
+					resizeImage.getLabel().setImage(imageManager.get("collapse"));
+					resizeImage.getLabel().setToolTipText("Collapse");
+					collapseStatus.setStatus(visualBlock, false);
+				} else {
+					oldHeight = gd2.heightHint;
+					gd2.heightHint = 0;
+					resizeImage.getLabel().setImage(imageManager.get("expand"));
+					resizeImage.getLabel().setToolTipText("Expand");
+					collapseStatus.setStatus(visualBlock, true);
+				}
+				container.layoutAll();
+			}
+		};
+		
+		resizeImage.setClickHandler(handler);
+		handlerMap.put(visualBlock, handler);
+		
+		collapseStatus.setIndex(visualBlock, blockIndex);
+		if( collapseStatus.getStatus(visualBlock)) {
+			// click one time to collapse programmatically
+			resizeImage.getClickHandler().onClick();
+		}
+		
+		moveUpImage.setClickHandler(new IImageClickHandler() {
+			@Override
+			public void onClick() {
+				try {
+					if (scriptModel.moveUp(visualBlock)) {
+						// model changed now, so we have to create the gui
+						// again and update the collapsing status accordingly
+						collapseStatus.moveUp(visualBlock);
+						
+						createContents();
+						container.layoutAll();
+						container.setDirty(true);
+					}
+				} catch (VisualOdysseusScriptException e) {
+					LOG.error("Could not move visual odysseus script block up", e);
+				}
+			}
+		});
+
+		moveDownImage.setClickHandler(new IImageClickHandler() {
+			@Override
+			public void onClick() {
+				try {
+					if (scriptModel.moveDown(visualBlock)) {
+						// model changed now, so we have to create the gui
+						// again and update the collapsing status accordingly
+						collapseStatus.moveDown(visualBlock);
+						
+						createContents();
+						container.layoutAll();
+						container.setDirty(true);
+					}
+				} catch (VisualOdysseusScriptException e) {
+					LOG.error("Could not move visual odysseus script block up", e);
+				}
+			}
+		});
+
+		deleteImage.setClickHandler(new IImageClickHandler() {
+			@Override
+			public void onClick() {
+				scriptModel.dispose(visualBlock);
+				collapseStatus.dispose(visualBlock);
+
+				visualBlockComposite.dispose();
+				topBlockComposite.dispose();
+
+				container.setDirty(true);
+				container.layoutAll();
+			}
+		});
 	}
 
 	private ToolBar createToolBar() {
@@ -227,19 +239,37 @@ public class VisualOdysseusScript {
 			}
 		});
 		
-//		ToolItem addItem = new ToolItem(toolBar, SWT.DROP_DOWN);
-//		addItem.setImage(imageManager.get("add"));
-//		DropDownSelectionListener addListener = new DropDownSelectionListener(addItem);
-//		addListener.add("Test1", new ICallback() {
-//			@Override
-//			public void itemSelected() {
-//				System.err.println("WHOOO");
-//			}
-//		});
-		
+		ToolItem addItem = new ToolItem(toolBar, SWT.DROP_DOWN);
+		addItem.setImage(imageManager.get("add"));
+		addItem.setToolTipText("Add");
+		DropDownSelectionListener addListener = new DropDownSelectionListener(addItem);
+		VisualOdysseusScriptBlockProviderRegistry registry = VisualOdysseusScriptBlockProviderRegistry.getInstance();
+		for( String provName : registry.getProviderNames()) {
+			IVisualOdysseusScriptBlockProvider prov = registry.getProvider(provName).get();
+			addListener.add(provName, prov.getImage(), new ICallback() {
+				@Override
+				public void itemSelected() {
+					Optional<IVisualOdysseusScriptBlock> optBlock = registry.create(provName);
+					if( optBlock.isPresent() ) {
+						addBlock(optBlock.get());
+						
+						container.setDirty(true);
+						container.layoutAll();
+					}
+				}
+			});
+		}
 		return toolBar;
 	}
 
+	private void addBlock(IVisualOdysseusScriptBlock newBlock) {
+		scriptModel.addBlock(newBlock);
+		List<IVisualOdysseusScriptBlock> visualTextBlocks = scriptModel.getVisualTextBlocks();
+
+		collapseStatus.prepareSize(visualTextBlocks.size());
+		createBlockContents(visualTextBlocks.size() - 1, newBlock);
+	}
+	
 	private static Label createTitleHeader(IVisualOdysseusScriptBlock visualBlock, Composite topBlockComposite) {
 		String title = visualBlock.getTitle();
 		Label titleLabel = new Label(topBlockComposite, SWT.NONE);
