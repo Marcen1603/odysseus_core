@@ -36,7 +36,7 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 	private ScrolledComposite scrollComposite;
 	private Composite parent;
 	private Composite contentComposite;
-
+	
 	private boolean isDirty;
 
 
@@ -110,7 +110,7 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 		scrollComposite.setExpandHorizontal(true);
 		scrollComposite.setExpandVertical(true);
 
-		contentComposite = new Composite(scrollComposite, SWT.BORDER);
+		contentComposite = new Composite(scrollComposite, SWT.NONE);
 		GridLayout contentLayout = new GridLayout();
 		contentLayout.verticalSpacing = 0;
 		contentLayout.marginHeight = 0;

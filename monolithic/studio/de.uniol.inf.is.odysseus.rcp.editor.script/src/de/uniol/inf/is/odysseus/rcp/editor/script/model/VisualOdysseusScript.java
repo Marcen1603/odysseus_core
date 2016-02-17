@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.model;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -10,11 +13,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
@@ -34,6 +40,9 @@ public class VisualOdysseusScript {
 	private final VisualOdysseusScriptModel scriptModel;
 
 	private final VisualOdysseusScriptBlockCollapseStatus collapseStatus = new VisualOdysseusScriptBlockCollapseStatus();
+	private final Map<IVisualOdysseusScriptBlock, IImageClickHandler> handlerMap = Maps.newHashMap();
+	
+	private ToolBar toolBar;
 
 	public VisualOdysseusScript(Composite parent, VisualOdysseusScriptModel scriptModel, IVisualOdysseusScriptContainer container) {
 		Preconditions.checkNotNull(scriptModel, "scriptModel must not be null!");
@@ -48,12 +57,17 @@ public class VisualOdysseusScript {
 
 	private void createContents(IVisualOdysseusScriptContainer container) {
 		disposeContents();
+		
+		if( toolBar == null ) {
+			toolBar = createToolBar();
+		}
 
 		ImageManager imageManager = VisualOdysseusScriptPlugIn.getImageManager();
 		List<IVisualOdysseusScriptBlock> visualTextBlocks = scriptModel.getVisualTextBlocks();
 
 		collapseStatus.prepareSize(visualTextBlocks.size());
 		collapseStatus.clearBlocks();
+		handlerMap.clear();
 		
 		for (int index = 0; index < visualTextBlocks.size(); index++) {
 			IVisualOdysseusScriptBlock visualBlock = visualTextBlocks.get(index);
@@ -96,8 +110,7 @@ public class VisualOdysseusScript {
 				}
 			});
 
-			resizeImage.setClickHandler(new IImageClickHandler() {
-
+			IImageClickHandler handler = new IImageClickHandler() {
 				private int oldHeight;
 
 				@Override
@@ -116,7 +129,11 @@ public class VisualOdysseusScript {
 					}
 					container.layoutAll();
 				}
-			});
+			};
+			
+			resizeImage.setClickHandler(handler);
+			handlerMap.put(visualBlock, handler);
+			
 			collapseStatus.setIndex(visualBlock, index);
 			if( collapseStatus.getStatus(visualBlock)) {
 				// click one time to collapse programmatically
@@ -174,7 +191,53 @@ public class VisualOdysseusScript {
 					container.layoutAll();
 				}
 			});
-		}
+		}		
+	}
+
+	private ToolBar createToolBar() {
+		ImageManager imageManager = VisualOdysseusScriptPlugIn.getImageManager();
+
+		ToolBar toolBar = new ToolBar(parent, SWT.NONE);
+		
+		ToolItem collapseAllItem = new ToolItem( toolBar, SWT.PUSH);
+		collapseAllItem.setImage(imageManager.get("collapseAll"));
+		collapseAllItem.setToolTipText("Collapse all");
+		collapseAllItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for( IVisualOdysseusScriptBlock visualBlock : scriptModel.getVisualTextBlocks() ) {
+					if( !collapseStatus.getStatus(visualBlock)) {
+						handlerMap.get(visualBlock).onClick();
+					}
+				}
+			}
+		});
+
+		ToolItem expandAllItem = new ToolItem( toolBar, SWT.PUSH);
+		expandAllItem.setImage(imageManager.get("expandAll"));
+		expandAllItem.setToolTipText("Expand all");
+		expandAllItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for( IVisualOdysseusScriptBlock visualBlock : scriptModel.getVisualTextBlocks() ) {
+					if( collapseStatus.getStatus(visualBlock)) {
+						handlerMap.get(visualBlock).onClick();
+					}
+				}				
+			}
+		});
+		
+//		ToolItem addItem = new ToolItem(toolBar, SWT.DROP_DOWN);
+//		addItem.setImage(imageManager.get("add"));
+//		DropDownSelectionListener addListener = new DropDownSelectionListener(addItem);
+//		addListener.add("Test1", new ICallback() {
+//			@Override
+//			public void itemSelected() {
+//				System.err.println("WHOOO");
+//			}
+//		});
+		
+		return toolBar;
 	}
 
 	private static Label createTitleHeader(IVisualOdysseusScriptBlock visualBlock, Composite topBlockComposite) {
@@ -198,7 +261,7 @@ public class VisualOdysseusScript {
 	private void disposeContents() {
 		if (!parent.isDisposed()) {
 			for (Control child : parent.getChildren()) {
-				if (!child.isDisposed()) {
+				if (!child.isDisposed() && !(child instanceof ToolBar)) {
 					child.dispose();
 				}
 			}
