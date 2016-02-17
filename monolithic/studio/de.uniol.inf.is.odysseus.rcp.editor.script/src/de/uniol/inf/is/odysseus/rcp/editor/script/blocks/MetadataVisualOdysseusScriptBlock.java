@@ -51,7 +51,12 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 	@Override
 	public void createPartControl(Composite parent, IVisualOdysseusScriptContainer container) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
+		comp.setLayout(new GridLayout(3, true));
+		
+		Composite leftComp = new Composite( comp, SWT.NONE);
+		GridData leftGridData = new GridData(GridData.FILL_HORIZONTAL);
+		leftGridData.heightHint = 1;
+		leftComp.setLayoutData(leftGridData);
 
 		Combo availMetadataCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		availMetadataCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -68,6 +73,11 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 				}
 			}
 		});
+		
+		Composite rightComp = new Composite( comp, SWT.NONE);
+		GridData rightGridData = new GridData(GridData.FILL_HORIZONTAL);
+		rightGridData.heightHint = 1;
+		rightComp.setLayoutData(rightGridData);
 	}
 
 	private static String[] determineMetadataCombinationNames() {
