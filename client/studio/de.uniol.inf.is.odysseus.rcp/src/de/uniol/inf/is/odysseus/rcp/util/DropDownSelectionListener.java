@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-class DropdownSelectionListener extends SelectionAdapter {
+public class DropDownSelectionListener extends SelectionAdapter {
 	
 	public static interface ICallback {
 		public void itemSelected();
@@ -21,7 +21,7 @@ class DropdownSelectionListener extends SelectionAdapter {
 	private ToolItem dropdown;
 	private Menu menu;
 
-	public DropdownSelectionListener(ToolItem dropdown) {
+	public DropDownSelectionListener(ToolItem dropdown) {
 		this.dropdown = dropdown;
 		menu = new Menu(dropdown.getParent().getShell());
 	}
