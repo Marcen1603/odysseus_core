@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
@@ -24,20 +25,41 @@ public class DropDownSelectionListener extends SelectionAdapter {
 	public DropDownSelectionListener(ToolItem dropdown) {
 		this.dropdown = dropdown;
 		menu = new Menu(dropdown.getParent().getShell());
+		
+		this.dropdown.addSelectionListener(this);
 	}
 
-	public void add(String item, ICallback callback) {
-		Preconditions.checkNotNull(callback, "callback must not be null!");
+	public MenuItem add(String item, ICallback callback) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(item), "item must not be null or empty!");
 
+		return add(item, null, callback);
+	}
+	
+	public MenuItem add(Image image, ICallback callback) {
+		Preconditions.checkNotNull(image, "image must not be null!");
+
+		return add(null, image, callback);
+	}
+	
+	public MenuItem add(String item, Image image, ICallback callback) {
+		Preconditions.checkNotNull(callback, "callback must not be null!");
+
 		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-		menuItem.setText(item);
 		menuItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				callback.itemSelected();
 			}
 		});
+		
+		if( !Strings.isNullOrEmpty(item)) {
+			menuItem.setText(item);
+		}
+		if( image != null ) {
+			menuItem.setImage(image);
+		}
+		
+		return menuItem;
 	}
 
 	@Override
