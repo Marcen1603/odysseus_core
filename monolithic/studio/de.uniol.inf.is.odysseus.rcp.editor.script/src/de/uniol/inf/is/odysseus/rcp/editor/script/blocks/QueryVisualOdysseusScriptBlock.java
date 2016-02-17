@@ -127,10 +127,14 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		editingText = new Text(topCompsite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		editingText.setText(queryText);
 		editingText.setFont(JFaceResources.getTextFont());
-		editingText.setLayoutData( new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.minimumHeight = 100;
+		editingText.setLayoutData( gd );
 		editingText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
+				queryText = editingText.getText();
+				
 				container.layoutAll();
 
 				container.setDirty(true);
@@ -156,7 +160,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		} else {
 			scriptBuilder.append("#ADDQUERY\n");
 		}
-		scriptBuilder.append(queryText);
+		scriptBuilder.append(queryText).append("\n");
 		
 		return scriptBuilder.toString();
 	}

@@ -14,6 +14,8 @@ public class DefaultVisualOdysseusScriptBlockProviders implements IVisualOdysseu
 		Collection<IVisualOdysseusScriptBlockProvider> provs = Lists.newArrayList();
 		
 		provs.add(new MetadataBlockProvider());
+		provs.add(new CQLQueryBlockProvider());
+		provs.add(new PQLQueryBlockProvider());
 		
 		return provs;
 	}
