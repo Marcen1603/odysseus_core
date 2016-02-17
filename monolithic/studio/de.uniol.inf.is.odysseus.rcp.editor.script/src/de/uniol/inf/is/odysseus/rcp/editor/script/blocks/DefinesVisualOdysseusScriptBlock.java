@@ -110,7 +110,7 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 			}
 		});
 		
-		definitionsList.addListener(this);
+		definitionsList.addListener(this);			
 	}
 
 	@Override

@@ -148,5 +148,18 @@ public class DefinitionsTableViewer implements IDefinitionsListListener {
 		IStructuredSelection structSelection = (IStructuredSelection) selection;
 		return Optional.of((Definition) structSelection.getFirstElement());
 	}
+	
+	public Optional<Integer> getSelectionIndex() {
+		Optional<Definition> optSel = getSelection();
+		if( optSel.isPresent() ) {
+			int index = definitionsList.indexOf(optSel.get());
+			return index != -1 ? Optional.of(index) : Optional.absent();
+		}
+		return Optional.absent();
+	}
+	
+	public TableViewer getTableViewer() {
+		return tableViewer;
+	}
 
 }

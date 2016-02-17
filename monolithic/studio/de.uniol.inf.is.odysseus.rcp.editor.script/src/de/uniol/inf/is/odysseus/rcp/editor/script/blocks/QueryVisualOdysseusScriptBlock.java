@@ -128,7 +128,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		editingText.setText(queryText);
 		editingText.setFont(JFaceResources.getTextFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.minimumHeight = 100;
+		gd.heightHint = 150;
 		editingText.setLayoutData( gd );
 		editingText.addModifyListener(new ModifyListener() {
 			@Override
