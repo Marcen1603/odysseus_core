@@ -1,11 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.impl;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -25,10 +20,10 @@ import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
+import de.uniol.inf.is.odysseus.rcp.editor.script.model.VisualOdysseusScript;
+import de.uniol.inf.is.odysseus.rcp.editor.script.model.VisualOdysseusScriptModel;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdysseusScriptContainer {
@@ -55,7 +50,7 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 
 		IFile file = ((IFileEditorInput) getEditorInput()).getFile();
 		try {
-			String script = scriptModel.generateOdysseusScript();
+			String script = visualOdysseusScript.generateOdysseusScript();
 			file.setContents(new ByteArrayInputStream(script.getBytes()), IResource.KEEP_HISTORY | IResource.FORCE, null);
 
 		} catch (VisualOdysseusScriptException | CoreException e) {
@@ -86,31 +81,15 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 				file.refreshLocal(IResource.DEPTH_ZERO, null);
 			}
 
-			InputStream inputStream = file.getContents();
-			List<String> lines = readLines(inputStream);
-
 			scriptModel = new VisualOdysseusScriptModel();
-			scriptModel.parse(lines);
+			scriptModel.parse(file.getContents());
 
 			setPartName(fileInput.getName());
-		} catch (CoreException | IOException e) {
+		} catch (CoreException e) {
 			throw new PartInitException("Could not read contents of file", e);
 		} catch (VisualOdysseusScriptException e) {
 			throw new PartInitException("Could not parse odysseus script file", e);
 		}
-	}
-
-	private static List<String> readLines(InputStream inputStream) throws IOException {
-		List<String> lines = Lists.newArrayList();
-
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-			String line = reader.readLine();
-			while (line != null) {
-				lines.add(line);
-				line = reader.readLine();
-			}
-		}
-		return lines;
 	}
 
 	@Override

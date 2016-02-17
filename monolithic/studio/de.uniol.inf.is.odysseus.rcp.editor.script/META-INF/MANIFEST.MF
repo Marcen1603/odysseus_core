@@ -22,4 +22,9 @@ Service-Component: OSGI-INF/OdysseusScriptParser.xml,OSGI-INF/TransformRuleRegis
  OSGI-INF/DefaultTransformRuleProvider.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptPlugIn
 Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.rcp.editor.script,
+ de.uniol.inf.is.odysseus.rcp.editor.script.blocks,
+ de.uniol.inf.is.odysseus.rcp.editor.script.model,
+ de.uniol.inf.is.odysseus.rcp.editor.script.rules,
+ de.uniol.inf.is.odysseus.rcp.editor.script.service
 

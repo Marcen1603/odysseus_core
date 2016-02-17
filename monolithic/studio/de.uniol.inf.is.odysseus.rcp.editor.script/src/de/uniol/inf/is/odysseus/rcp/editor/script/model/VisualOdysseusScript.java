@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.editor.script.impl;
+package de.uniol.inf.is.odysseus.rcp.editor.script.model;
 
 import java.util.List;
 
@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
+import de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptBlockCollapseStatus;
+import de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.ClickableImage;
 import de.uniol.inf.is.odysseus.rcp.util.IImageClickHandler;
 
@@ -207,5 +209,9 @@ public class VisualOdysseusScript {
 		scriptModel.dispose();
 
 		disposeContents();
+	}
+	
+	public String generateOdysseusScript() throws VisualOdysseusScriptException {
+		return scriptModel.generateOdysseusScript();
 	}
 }

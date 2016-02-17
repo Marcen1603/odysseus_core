@@ -1,5 +1,9 @@
-package de.uniol.inf.is.odysseus.rcp.editor.script.impl;
+package de.uniol.inf.is.odysseus.rcp.editor.script.model;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +30,32 @@ public class VisualOdysseusScriptModel {
 	public VisualOdysseusScriptModel() {
 		// nothing to do
 	}
+	
+	public void parse( InputStream inputStream ) throws VisualOdysseusScriptException {
+		try {
+			parse(readLines(inputStream));
+		} catch (IOException e) {
+			throw new VisualOdysseusScriptException("Could not read odysseus script from input stream", e);
+		}
+	}
+	
+	public void parse( String completeScript ) throws VisualOdysseusScriptException {
+		parse(toLines(completeScript));
+	}
 
+	private static List<String> readLines(InputStream inputStream) throws IOException {
+		List<String> lines = Lists.newArrayList();
+
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+			String line = reader.readLine();
+			while (line != null) {
+				lines.add(line);
+				line = reader.readLine();
+			}
+		}
+		return lines;
+	}
+	
 	public void parse(List<String> odysseusScriptTextLines) throws VisualOdysseusScriptException {
 		Preconditions.checkNotNull(odysseusScriptTextLines, "odysseusScriptTextLines must not be null!");
 
@@ -292,7 +321,7 @@ public class VisualOdysseusScriptModel {
 	private void tryRecreateVisualBlocks() throws VisualOdysseusScriptException {
 		String tempScript = generateOdysseusScript();
 		dispose();
-		parse(toLines(tempScript));
+		parse(tempScript);
 	}
 
 	private static List<String> toLines(String tempScript) {
