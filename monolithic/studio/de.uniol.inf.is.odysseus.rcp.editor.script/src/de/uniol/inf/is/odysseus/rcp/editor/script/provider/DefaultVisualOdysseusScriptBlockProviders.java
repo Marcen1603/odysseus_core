@@ -12,11 +12,12 @@ public class DefaultVisualOdysseusScriptBlockProviders implements IVisualOdysseu
 	@Override
 	public Collection<IVisualOdysseusScriptBlockProvider> getProviders() {
 		Collection<IVisualOdysseusScriptBlockProvider> provs = Lists.newArrayList();
-		
+
 		provs.add(new MetadataBlockProvider());
 		provs.add(new CQLQueryBlockProvider());
 		provs.add(new PQLQueryBlockProvider());
-		
+		provs.add(new DefinitionsBlockProvider());
+
 		return provs;
 	}
 

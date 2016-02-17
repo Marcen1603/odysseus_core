@@ -76,6 +76,11 @@ public class DefinesVisualOdysseusScriptBlock implements IVisualOdysseusScriptBl
 		removeButton.getButton().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if(definitionsList.size() == 1 ) {
+					// do not remove the last one
+					return;
+				}
+				
 				Optional<Definition> optPair = tableViewer.getSelection();
 				if (optPair.isPresent()) {
 					definitionsList.remove(optPair.get());

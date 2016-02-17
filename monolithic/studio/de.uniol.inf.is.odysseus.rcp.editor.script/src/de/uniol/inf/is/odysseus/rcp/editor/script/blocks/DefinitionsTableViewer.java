@@ -37,6 +37,7 @@ public class DefinitionsTableViewer implements IDefinitionsListListener {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.verticalAlignment = SWT.TOP;
 		gd.grabExcessVerticalSpace = true;
+		gd.minimumHeight = 120;
 		tableComposite.setLayoutData(gd);
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
