@@ -35,6 +35,8 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,8 +47,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISaveablePart2;
@@ -94,22 +94,24 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	@Override
 	public void createPartControl(Composite parent) {
-		TabFolder tabFolder = new TabFolder(parent, SWT.BOTTOM);
+		CTabFolder tabFolder = new CTabFolder(parent, SWT.BOTTOM);
 		tabFolder.setLayout(new GridLayout());
+		tabFolder.setBorderVisible(true);
 		
-		TabItem textTab = new TabItem(tabFolder, SWT.NONE);
+		CTabItem textTab = new CTabItem(tabFolder, SWT.DOUBLE_BUFFERED);
 		textTab.setText("Text");
 		
 		Composite textComposite = new Composite(tabFolder, SWT.NONE);
 		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		textComposite.setLayout(new FillLayout());
+//		super.createPartControl(parent);
 		super.createPartControl(textComposite);
 		textTab.setControl(textComposite);
 		
-		TabItem visualTab = new TabItem(tabFolder, SWT.NONE);
+		CTabItem visualTab = new CTabItem(tabFolder, SWT.NONE);
 		visualTab.setText("Visual");
 		
-		Composite visualComposite = new Composite(tabFolder, SWT.NONE);
+		Composite visualComposite = new Composite(tabFolder, SWT.DOUBLE_BUFFERED);
 		visualComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		visualComposite.setLayout(new FillLayout());
 		
@@ -150,10 +152,12 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 		});
 		
+		tabFolder.setSelection(0);
+		
 		this.occurrencesUpdater = new OdysseusOccurrencesUpdater(this);
 		((IPostSelectionProvider) getSelectionProvider()).addPostSelectionChangedListener(this.occurrencesUpdater);
-	}
-
+	}  
+	
 	public void setModel() {
 		if (this.occurrencesUpdater != null) {
 			ISourceViewer viewer = getSourceViewer();
