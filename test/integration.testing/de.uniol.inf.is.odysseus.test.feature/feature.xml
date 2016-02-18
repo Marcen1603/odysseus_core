@@ -54,38 +54,6 @@ Unless required by applicable law or agreed to in writing, software
          id="de.uniol.inf.is.odysseus.keyvalue.feature"
          version="0.0.0"/>
 
-   <requires>
-      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.app"/>
-      <import plugin="org.apache.commons.lang3"/>
-      <import plugin="de.uniol.inf.is.odysseus.intervalapproach" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.sweeparea" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.ruleengine" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.transform" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.rewrite" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="com.google.guava"/>
-      <import plugin="de.uniol.inf.is.odysseus.mep"/>
-      <import plugin="de.uniol.inf.is.odysseus.relational_interval"/>
-      <import plugin="de.uniol.inf.is.odysseus.script.parser"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.slf4j.api"/>
-      <import plugin="de.uniol.inf.is.odysseus.test" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
-      <import plugin="io.netty" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.server.keyvalue" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.keyvalue.datahandler" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.cep.epa"/>
-      <import plugin="de.uniol.inf.is.odysseus.server.intervalapproach"/>
-      <import plugin="de.uniol.inf.is.odysseus.probabilistic" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.probabilistic.common" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.probabilistic.transform" version="1.0.0" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="de.uniol.inf.is.odysseus.test"
          download-size="0"
