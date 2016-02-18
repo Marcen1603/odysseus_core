@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.DefinesVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.Definition;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule {
 
@@ -81,7 +80,7 @@ public class DefineKeywordTransformRule implements IOdysseusScriptTransformRule 
 		if (line == null || line.length() == 0)
 			return "";
 
-		final int commentPos = line.indexOf(OdysseusScriptParser.SINGLE_LINE_COMMENT_KEY);
+		final int commentPos = line.indexOf("///");
 		if (commentPos != -1) {
 			if (commentPos == 0)
 				return "";

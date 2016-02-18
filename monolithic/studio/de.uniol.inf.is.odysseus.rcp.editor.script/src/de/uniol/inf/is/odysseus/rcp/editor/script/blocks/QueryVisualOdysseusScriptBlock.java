@@ -73,7 +73,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 
 		Combo parserCombo = new Combo(parserComposite, SWT.DROP_DOWN);
 		parserCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Set<String> parserNames = ServicesBinder.getServerExecutor().getSupportedQueryParsers(OdysseusRCPPlugIn.getActiveSession());
+		Set<String> parserNames = ServicesBinder.getExecutor().getSupportedQueryParsers(OdysseusRCPPlugIn.getActiveSession());
 		parserCombo.setItems(parserNames.toArray(new String[0]));
 		parserCombo.setText(parser);
 		parserCombo.addSelectionListener(new SelectionAdapter() {

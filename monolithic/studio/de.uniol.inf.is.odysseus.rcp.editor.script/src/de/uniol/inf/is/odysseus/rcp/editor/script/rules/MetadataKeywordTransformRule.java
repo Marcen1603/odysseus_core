@@ -7,12 +7,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRule;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.MetadataVisualOdysseusScriptBlock;
+import de.uniol.inf.is.odysseus.rcp.editor.script.impl.TempMetadataRegistry;
 
 public class MetadataKeywordTransformRule implements IOdysseusScriptTransformRule {
 
@@ -62,7 +62,7 @@ public class MetadataKeywordTransformRule implements IOdysseusScriptTransformRul
 				List<Class<? extends IMetaAttribute>> metaAttributeClasses = Lists.newArrayList(optMetaAttribute.get().getClasses());
 
 				for (Class<? extends IMetaAttribute> metaAttributeClass : metaAttributeClasses) {
-					IMetaAttribute attribite = MetadataRegistry.getMetadataType(metaAttributeClass.getName());
+					IMetaAttribute attribite = TempMetadataRegistry.getMetadataType(metaAttributeClass.getName());
 					String metaName = attribite.getName();
 					if (!metadataNames.contains(metaName)) {
 						metadataNames.add(metaName);
@@ -77,7 +77,7 @@ public class MetadataKeywordTransformRule implements IOdysseusScriptTransformRul
 
 	private static Optional<IMetaAttribute> tryCreateMetaAttribute(OdysseusScriptBlock selectedBlock) {
 		try {
-			return Optional.of(MetadataRegistry.tryCreateMetadataInstance(selectedBlock.getText().trim()));
+			return Optional.of(TempMetadataRegistry.tryCreateMetadataInstance(selectedBlock.getText().trim()));
 		} catch (Throwable t) {
 			return Optional.absent();
 		}

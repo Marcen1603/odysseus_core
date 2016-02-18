@@ -1,33 +1,14 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.service;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 public class ServicesBinder {
 
-	private static IOdysseusScriptParser scriptParser;
-	private static IServerExecutor serverExecutor;
-
-	// called by OSGi-DS
-	public static void bindOdysseusScriptParser(IOdysseusScriptParser serv) {
-		scriptParser = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindOdysseusScriptParser(IOdysseusScriptParser serv) {
-		if (scriptParser == serv) {
-			scriptParser = null;
-		}
-	}
-	
-	public static IOdysseusScriptParser getOdysseusScriptParser() {
-		return scriptParser;
-	}
+	private static IExecutor serverExecutor;
 
 	// called by OSGi-DS
 	public static void bindExecutor(IExecutor serv) {
-		serverExecutor = (IServerExecutor)serv;
+		serverExecutor = serv;
 	}
 
 	// called by OSGi-DS
@@ -37,7 +18,7 @@ public class ServicesBinder {
 		}
 	}
 	
-	public static IServerExecutor getServerExecutor() {
+	public static IExecutor getExecutor() {
 		return serverExecutor;
 	}
 }

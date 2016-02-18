@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.DefaultOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.rules.TransformRuleRegistry;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 public class VisualOdysseusScriptModel {
 
@@ -232,8 +231,8 @@ public class VisualOdysseusScriptModel {
 		for (String odysseusScriptTextLine : odysseusScriptTextLines) {
 			String line = odysseusScriptTextLine;
 
-			int parameterKeyPos = line.indexOf(OdysseusScriptParser.PARAMETER_KEY);
-			int commentPos = line.indexOf(OdysseusScriptParser.SINGLE_LINE_COMMENT_KEY);
+			int parameterKeyPos = line.indexOf("#");
+			int commentPos = line.indexOf("///");
 			if (parameterKeyPos != -1 && (commentPos == -1 || (commentPos > parameterKeyPos))) {
 
 				// finish current text block

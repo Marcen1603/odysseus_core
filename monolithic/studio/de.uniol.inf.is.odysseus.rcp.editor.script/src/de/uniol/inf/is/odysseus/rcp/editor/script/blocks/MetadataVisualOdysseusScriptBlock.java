@@ -16,10 +16,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
+import de.uniol.inf.is.odysseus.rcp.editor.script.impl.TempMetadataRegistry;
 
 public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 
@@ -81,7 +81,7 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 	}
 
 	private static String[] determineMetadataCombinationNames() {
-		Set<SortedSet<String>> availableMetadataCombinations = MetadataRegistry.getAvailableMetadataCombinations();
+		Set<SortedSet<String>> availableMetadataCombinations = TempMetadataRegistry.getAvailableMetadataCombinations();
 		List<String> metadataTitles = Lists.newArrayList();
 
 		for (SortedSet<String> combination : availableMetadataCombinations) {
@@ -89,7 +89,7 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 			List<String> metadataNames = Lists.newArrayList();
 			String[] combinationStringArray = combination.toArray(new String[0]);
 			for (int i = 0; i < combinationStringArray.length; i++) {
-				IMetaAttribute type = MetadataRegistry.getMetadataType(combinationStringArray[i]);
+				IMetaAttribute type = TempMetadataRegistry.getMetadataType(combinationStringArray[i]);
 				String attributeName = type.getName();
 				String[] attributeNameParts = attributeName.split(",");
 				for( String attributeNamePart : attributeNameParts ) {
