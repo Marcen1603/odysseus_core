@@ -42,8 +42,6 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 
 			if (index == -1) {
 				index = schema.findAttributeIndex(curAttribute.getURI());
-			}else{
-				System.out.println(schema.getAttribute(index).equals(attribute));
 			}
 			// Attribute is part of payload
 			if (index >= 0) {
