@@ -64,6 +64,11 @@ public interface IExecutor extends IClientPlanManager {
 			throws PlanManagementException;
 
 	/**
+	 * Lists the names of all available metadata
+	 */
+	public Set<String> getMetadataNames(ISession session);
+	
+	/**
 	 * A list of tokens like static key words for a certain query parser that
 	 * can be, e.g. used for visualization.
 	 * 
