@@ -193,7 +193,7 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 		}
 
 		@SuppressWarnings("unchecked")
-		SDFSchema schema = SDFSchemaFactory.createNewSchema(getInputSchema(0).getURI(),
+		SDFSchema schema = SDFSchemaFactory.createNewSchema(this.sourceName,
 				(Class<? extends IStreamObject<?>>) Tuple.class, attrs, getInputSchema(0));
 		setOutputSchema(schema);
 		return getOutputSchema();
