@@ -188,8 +188,6 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 			@SuppressWarnings("unchecked")
 			IStreamObject<IMetaAttribute> reference = (IStreamObject<IMetaAttribute>) this.lastSeenElement.clone();
 			reference.setMetadata(null);
-			// TODO syserr
-			System.err.println(reference);
 			return new SourceRecoveryState(reference);
 		}
 	}
