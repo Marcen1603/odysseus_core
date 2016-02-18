@@ -56,7 +56,7 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 	public void setActiveEditor(IEditorPart editor) {
 		super.setActiveEditor(editor);
 		rootEditor = editor;
-		rootEditorRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
+		rootEditorRegistry = editor.getAdapter(ActionRegistry.class);
 		connectActions();
 	}
 
