@@ -62,7 +62,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	final List<IIterableSource<?>> leafSources;
 
-	private Set<IPhysicalOperator> roots = null;
+	///private Set<IPhysicalOperator> roots = null;
 
 	/**
 	 * Map of all registered queries.
@@ -91,9 +91,6 @@ public class ExecutionPlan implements IExecutionPlan {
 	private ExecutionPlan(ExecutionPlan otherPlan) {
 		this.open = otherPlan.open;
 		this.leafSources = new ArrayList<IIterableSource<?>>(otherPlan.leafSources);
-		if (otherPlan.roots != null) {
-			this.roots = new HashSet<IPhysicalOperator>(otherPlan.roots);
-		}
 		this.queries = Collections.synchronizedMap(new HashMap<Integer, IPhysicalQuery>(otherPlan.queries));
 		this.namedQueries = Collections.synchronizedMap(new HashMap<String, IPhysicalQuery>(otherPlan.namedQueries));
 		this.reoptimizeListener.addAll(otherPlan.reoptimizeListener);
@@ -131,22 +128,15 @@ public class ExecutionPlan implements IExecutionPlan {
 		for (IPhysicalQuery query : this.queries.values()) {
 			this.leafSources.addAll(query.getIteratableLeafSources());
 		}
-
 	}
 
 	@Override
 	public Set<IPhysicalOperator> getRoots() {
-		if (roots == null) {
-			updateRoots();
-		}
-		return Collections.unmodifiableSet(roots);
-	}
-
-	private void updateRoots() {
-		roots = new HashSet<IPhysicalOperator>();
+		HashSet<IPhysicalOperator> roots = new HashSet<IPhysicalOperator>();
 		for (IPhysicalQuery q : getQueries()) {
 			roots.addAll(q.getRoots());
 		}
+		return Collections.unmodifiableSet(roots);
 	}
 
 	@Override
