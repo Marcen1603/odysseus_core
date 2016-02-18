@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISaveablePart2;
@@ -94,65 +95,71 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	@Override
 	public void createPartControl(Composite parent) {
-		CTabFolder tabFolder = new CTabFolder(parent, SWT.BOTTOM);
-		tabFolder.setLayout(new GridLayout());
-		tabFolder.setBorderVisible(true);
-		
-		CTabItem textTab = new CTabItem(tabFolder, SWT.DOUBLE_BUFFERED);
-		textTab.setText("Text");
-		
-		Composite textComposite = new Composite(tabFolder, SWT.NONE);
-		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		textComposite.setLayout(new FillLayout());
-//		super.createPartControl(parent);
-		super.createPartControl(textComposite);
-		textTab.setControl(textComposite);
-		
-		CTabItem visualTab = new CTabItem(tabFolder, SWT.NONE);
-		visualTab.setText("Visual");
-		
-		Composite visualComposite = new Composite(tabFolder, SWT.DOUBLE_BUFFERED);
-		visualComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		visualComposite.setLayout(new FillLayout());
-		
-		visualTab.setControl(visualComposite);
-
-		tabFolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if( tabFolder.getSelectionIndex() == 0 ) {
-					// text selected
-					writeVisualScriptToDocumentIfNeeded();
-
-					if( visualScript != null ) {
-						visualScript.dispose();
-						visualScript = null;
-					}
-					
-				} else {
-					// visual selected
-					if( visualScript != null ) {
-						return;
-					}
-					
-					Optional<VisualOdysseusScriptModel> optModel = createVisualOdysseusScriptModel();
-					if( optModel.isPresent() ) {
-						for( Control ctrl : visualComposite.getChildren() ) {
-							ctrl.dispose();
+		IEditorInput input = getEditorInput();
+		if( input instanceof IFileEditorInput && ((IFileEditorInput)input).getFile().getFileExtension().equals("qry")) {
+			CTabFolder tabFolder = new CTabFolder(parent, SWT.BOTTOM);
+			tabFolder.setLayout(new GridLayout());
+			tabFolder.setBorderVisible(true);
+			
+			CTabItem textTab = new CTabItem(tabFolder, SWT.DOUBLE_BUFFERED);
+			textTab.setText("Text");
+			
+			Composite textComposite = new Composite(tabFolder, SWT.NONE);
+			textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+			textComposite.setLayout(new FillLayout());
+	//		super.createPartControl(parent);
+			super.createPartControl(textComposite);
+			textTab.setControl(textComposite);
+			
+			CTabItem visualTab = new CTabItem(tabFolder, SWT.NONE);
+			visualTab.setText("Visual");
+			
+			Composite visualComposite = new Composite(tabFolder, SWT.DOUBLE_BUFFERED);
+			visualComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+			visualComposite.setLayout(new FillLayout());
+			
+			visualTab.setControl(visualComposite);
+	
+			tabFolder.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if( tabFolder.getSelectionIndex() == 0 ) {
+						// text selected
+						writeVisualScriptToDocumentIfNeeded();
+	
+						if( visualScript != null ) {
+							visualScript.dispose();
+							visualScript = null;
 						}
 						
-						visualScript = createVisualScript(visualComposite, optModel.get());
-						visualComposite.layout();
 					} else {
-						Label errorLabel = new Label(visualComposite, SWT.NONE);
-						errorLabel.setText("Could not generate visual odysseus script from current text");
+						// visual selected
+						if( visualScript != null ) {
+							return;
+						}
+						
+						Optional<VisualOdysseusScriptModel> optModel = createVisualOdysseusScriptModel();
+						if( optModel.isPresent() ) {
+							for( Control ctrl : visualComposite.getChildren() ) {
+								ctrl.dispose();
+							}
+							
+							visualScript = createVisualScript(visualComposite, optModel.get());
+							visualComposite.layout();
+						} else {
+							Label errorLabel = new Label(visualComposite, SWT.NONE);
+							errorLabel.setText("Could not generate visual odysseus script from current text");
+						}
 					}
 				}
-			}
-
-		});
-		
-		tabFolder.setSelection(0);
+	
+			});
+			
+			tabFolder.setSelection(0);
+		} else {
+			// for pql and cql editors
+			super.createPartControl(parent);
+		}
 		
 		this.occurrencesUpdater = new OdysseusOccurrencesUpdater(this);
 		((IPostSelectionProvider) getSelectionProvider()).addPostSelectionChangedListener(this.occurrencesUpdater);
