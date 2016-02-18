@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r logicalOperatorInformationResponse complex type.
+ * <p>Java class for logicalOperatorInformationResponse complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="logicalOperatorInformationResponse">
@@ -44,7 +44,7 @@ public class LogicalOperatorInformationResponse
     protected LogicalOperatorInformation responseValue;
 
     /**
-     * Ruft den Wert der responseValue-Eigenschaft ab.
+     * Gets the value of the responseValue property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class LogicalOperatorInformationResponse
     }
 
     /**
-     * Legt den Wert der responseValue-Eigenschaft fest.
+     * Sets the value of the responseValue property.
      * 
      * @param value
      *     allowed object is

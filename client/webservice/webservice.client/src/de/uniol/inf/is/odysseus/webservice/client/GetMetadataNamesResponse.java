@@ -15,16 +15,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for stopQueryResponse complex type.
+ * <p>Java class for getMetadataNamesResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="stopQueryResponse">
+ * &lt;complexType name="getMetadataNamesResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}response" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}stringListResponse" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,24 +34,24 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "stopQueryResponse", propOrder = {
+@XmlType(name = "getMetadataNamesResponse", propOrder = {
     "_return"
 })
 @SuppressWarnings(value = { "all" })
-public class StopQueryResponse {
+public class GetMetadataNamesResponse {
 
     @XmlElement(name = "return")
-    protected Response _return;
+    protected StringListResponse _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link Response }
+     *     {@link StringListResponse }
      *     
      */
-    public Response getReturn() {
+    public StringListResponse getReturn() {
         return _return;
     }
 
@@ -60,10 +60,10 @@ public class StopQueryResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link Response }
+     *     {@link StringListResponse }
      *     
      */
-    public void setReturn(Response value) {
+    public void setReturn(StringListResponse value) {
         this._return = value;
     }
 

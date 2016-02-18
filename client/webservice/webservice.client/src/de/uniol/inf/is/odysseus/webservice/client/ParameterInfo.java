@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r parameterInfo complex type.
+ * <p>Java class for parameterInfo complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="parameterInfo">
@@ -74,7 +74,7 @@ public class ParameterInfo {
     protected String value;
 
     /**
-     * Ruft den Wert der dataType-Eigenschaft ab.
+     * Gets the value of the dataType property.
      * 
      * @return
      *     possible object is
@@ -86,7 +86,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der dataType-Eigenschaft fest.
+     * Sets the value of the dataType property.
      * 
      * @param value
      *     allowed object is
@@ -98,7 +98,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der deprecated-Eigenschaft ab.
+     * Gets the value of the deprecated property.
      * 
      */
     public boolean isDeprecated() {
@@ -106,7 +106,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der deprecated-Eigenschaft fest.
+     * Sets the value of the deprecated property.
      * 
      */
     public void setDeprecated(boolean value) {
@@ -114,7 +114,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der doc-Eigenschaft ab.
+     * Gets the value of the doc property.
      * 
      * @return
      *     possible object is
@@ -126,7 +126,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der doc-Eigenschaft fest.
+     * Sets the value of the doc property.
      * 
      * @param value
      *     allowed object is
@@ -138,7 +138,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der listDataType-Eigenschaft ab.
+     * Gets the value of the listDataType property.
      * 
      * @return
      *     possible object is
@@ -150,7 +150,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der listDataType-Eigenschaft fest.
+     * Sets the value of the listDataType property.
      * 
      * @param value
      *     allowed object is
@@ -162,7 +162,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der mandatory-Eigenschaft ab.
+     * Gets the value of the mandatory property.
      * 
      */
     public boolean isMandatory() {
@@ -170,7 +170,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der mandatory-Eigenschaft fest.
+     * Sets the value of the mandatory property.
      * 
      */
     public void setMandatory(boolean value) {
@@ -178,7 +178,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der mapKeyDataType-Eigenschaft ab.
+     * Gets the value of the mapKeyDataType property.
      * 
      * @return
      *     possible object is
@@ -190,7 +190,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der mapKeyDataType-Eigenschaft fest.
+     * Sets the value of the mapKeyDataType property.
      * 
      * @param value
      *     allowed object is
@@ -202,7 +202,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der mapValueDataType-Eigenschaft ab.
+     * Gets the value of the mapValueDataType property.
      * 
      * @return
      *     possible object is
@@ -214,7 +214,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der mapValueDataType-Eigenschaft fest.
+     * Sets the value of the mapValueDataType property.
      * 
      * @param value
      *     allowed object is
@@ -226,7 +226,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -238,7 +238,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -250,7 +250,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der possibleValueMethod-Eigenschaft ab.
+     * Gets the value of the possibleValueMethod property.
      * 
      * @return
      *     possible object is
@@ -262,7 +262,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der possibleValueMethod-Eigenschaft fest.
+     * Sets the value of the possibleValueMethod property.
      * 
      * @param value
      *     allowed object is
@@ -274,7 +274,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der requirement-Eigenschaft ab.
+     * Gets the value of the requirement property.
      * 
      * @return
      *     possible object is
@@ -286,7 +286,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der requirement-Eigenschaft fest.
+     * Sets the value of the requirement property.
      * 
      * @param value
      *     allowed object is
@@ -298,7 +298,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Ruft den Wert der value-Eigenschaft ab.
+     * Gets the value of the value property.
      * 
      * @return
      *     possible object is
@@ -310,7 +310,7 @@ public class ParameterInfo {
     }
 
     /**
-     * Legt den Wert der value-Eigenschaft fest.
+     * Sets the value of the value property.
      * 
      * @param value
      *     allowed object is

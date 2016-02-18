@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r setScheduler complex type.
+ * <p>Java class for setScheduler complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="setScheduler">
@@ -50,7 +50,7 @@ public class SetScheduler {
     protected String schedulerStrategy;
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -62,7 +62,7 @@ public class SetScheduler {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is
@@ -74,7 +74,7 @@ public class SetScheduler {
     }
 
     /**
-     * Ruft den Wert der scheduler-Eigenschaft ab.
+     * Gets the value of the scheduler property.
      * 
      * @return
      *     possible object is
@@ -86,7 +86,7 @@ public class SetScheduler {
     }
 
     /**
-     * Legt den Wert der scheduler-Eigenschaft fest.
+     * Sets the value of the scheduler property.
      * 
      * @param value
      *     allowed object is
@@ -98,7 +98,7 @@ public class SetScheduler {
     }
 
     /**
-     * Ruft den Wert der schedulerStrategy-Eigenschaft ab.
+     * Gets the value of the schedulerStrategy property.
      * 
      * @return
      *     possible object is
@@ -110,7 +110,7 @@ public class SetScheduler {
     }
 
     /**
-     * Legt den Wert der schedulerStrategy-Eigenschaft fest.
+     * Sets the value of the schedulerStrategy property.
      * 
      * @param value
      *     allowed object is

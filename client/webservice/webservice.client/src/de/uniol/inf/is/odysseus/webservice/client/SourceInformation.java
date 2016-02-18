@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r sourceInformation complex type.
+ * <p>Java class for sourceInformation complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="sourceInformation">
@@ -48,7 +48,7 @@ public class SourceInformation {
     protected SdfSchemaInformation schema;
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ public class SourceInformation {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ public class SourceInformation {
     }
 
     /**
-     * Ruft den Wert der ownerId-Eigenschaft ab.
+     * Gets the value of the ownerId property.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ public class SourceInformation {
     }
 
     /**
-     * Legt den Wert der ownerId-Eigenschaft fest.
+     * Sets the value of the ownerId property.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ public class SourceInformation {
     }
 
     /**
-     * Ruft den Wert der schema-Eigenschaft ab.
+     * Gets the value of the schema property.
      * 
      * @return
      *     possible object is
@@ -108,7 +108,7 @@ public class SourceInformation {
     }
 
     /**
-     * Legt den Wert der schema-Eigenschaft fest.
+     * Sets the value of the schema property.
      * 
      * @param value
      *     allowed object is

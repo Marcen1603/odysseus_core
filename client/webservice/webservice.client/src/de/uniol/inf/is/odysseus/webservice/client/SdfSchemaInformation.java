@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r sdfSchemaInformation complex type.
+ * <p>Java class for sdfSchemaInformation complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="sdfSchemaInformation">
@@ -52,7 +52,7 @@ public class SdfSchemaInformation {
     protected String typeClass;
 
     /**
-     * Ruft den Wert der uri-Eigenschaft ab.
+     * Gets the value of the uri property.
      * 
      * @return
      *     possible object is
@@ -64,7 +64,7 @@ public class SdfSchemaInformation {
     }
 
     /**
-     * Legt den Wert der uri-Eigenschaft fest.
+     * Sets the value of the uri property.
      * 
      * @param value
      *     allowed object is
@@ -105,7 +105,7 @@ public class SdfSchemaInformation {
     }
 
     /**
-     * Ruft den Wert der typeClass-Eigenschaft ab.
+     * Gets the value of the typeClass property.
      * 
      * @return
      *     possible object is
@@ -117,7 +117,7 @@ public class SdfSchemaInformation {
     }
 
     /**
-     * Legt den Wert der typeClass-Eigenschaft fest.
+     * Sets the value of the typeClass property.
      * 
      * @param value
      *     allowed object is

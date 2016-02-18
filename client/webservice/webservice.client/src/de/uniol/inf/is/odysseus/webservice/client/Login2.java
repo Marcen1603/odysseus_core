@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r login2 complex type.
+ * <p>Java class for login2 complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="login2">
@@ -45,7 +45,7 @@ public class Login2 {
     protected String password;
 
     /**
-     * Ruft den Wert der username-Eigenschaft ab.
+     * Gets the value of the username property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class Login2 {
     }
 
     /**
-     * Legt den Wert der username-Eigenschaft fest.
+     * Sets the value of the username property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class Login2 {
     }
 
     /**
-     * Ruft den Wert der password-Eigenschaft ab.
+     * Gets the value of the password property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class Login2 {
     }
 
     /**
-     * Legt den Wert der password-Eigenschaft fest.
+     * Sets the value of the password property.
      * 
      * @param value
      *     allowed object is

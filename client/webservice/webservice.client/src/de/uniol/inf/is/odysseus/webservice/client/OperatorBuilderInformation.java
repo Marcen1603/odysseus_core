@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r operatorBuilderInformation complex type.
+ * <p>Java class for operatorBuilderInformation complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="operatorBuilderInformation">
@@ -91,7 +91,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Ruft den Wert der doc-Eigenschaft ab.
+     * Gets the value of the doc property.
      * 
      * @return
      *     possible object is
@@ -103,7 +103,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Legt den Wert der doc-Eigenschaft fest.
+     * Sets the value of the doc property.
      * 
      * @param value
      *     allowed object is
@@ -115,7 +115,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Ruft den Wert der maxInputOperatorCount-Eigenschaft ab.
+     * Gets the value of the maxInputOperatorCount property.
      * 
      */
     public int getMaxInputOperatorCount() {
@@ -123,7 +123,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Legt den Wert der maxInputOperatorCount-Eigenschaft fest.
+     * Sets the value of the maxInputOperatorCount property.
      * 
      */
     public void setMaxInputOperatorCount(int value) {
@@ -131,7 +131,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Ruft den Wert der minInputOperatorCount-Eigenschaft ab.
+     * Gets the value of the minInputOperatorCount property.
      * 
      */
     public int getMinInputOperatorCount() {
@@ -139,7 +139,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Legt den Wert der minInputOperatorCount-Eigenschaft fest.
+     * Sets the value of the minInputOperatorCount property.
      * 
      */
     public void setMinInputOperatorCount(int value) {
@@ -147,7 +147,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -159,7 +159,7 @@ public class OperatorBuilderInformation {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is

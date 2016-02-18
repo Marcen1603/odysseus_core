@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r removeSinkByName complex type.
+ * <p>Java class for removeSinkByName complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="removeSinkByName">
@@ -45,7 +45,7 @@ public class RemoveSinkByName {
     protected String securitytoken;
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class RemoveSinkByName {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class RemoveSinkByName {
     }
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class RemoveSinkByName {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is

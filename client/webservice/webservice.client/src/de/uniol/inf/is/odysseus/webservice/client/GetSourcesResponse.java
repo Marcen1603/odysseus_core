@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r getSourcesResponse complex type.
+ * <p>Java class for getSourcesResponse complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="getSourcesResponse">
@@ -44,7 +44,7 @@ public class GetSourcesResponse {
     protected SourceListResponse _return;
 
     /**
-     * Ruft den Wert der return-Eigenschaft ab.
+     * Gets the value of the return property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class GetSourcesResponse {
     }
 
     /**
-     * Legt den Wert der return-Eigenschaft fest.
+     * Sets the value of the return property.
      * 
      * @param value
      *     allowed object is

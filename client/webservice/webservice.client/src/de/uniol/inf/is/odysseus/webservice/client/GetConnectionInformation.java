@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r getConnectionInformation complex type.
+ * <p>Java class for getConnectionInformation complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="getConnectionInformation">
@@ -48,7 +48,7 @@ public class GetConnectionInformation {
     protected boolean nullValues;
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ public class GetConnectionInformation {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ public class GetConnectionInformation {
     }
 
     /**
-     * Ruft den Wert der queryId-Eigenschaft ab.
+     * Gets the value of the queryId property.
      * 
      */
     public int getQueryId() {
@@ -80,7 +80,7 @@ public class GetConnectionInformation {
     }
 
     /**
-     * Legt den Wert der queryId-Eigenschaft fest.
+     * Sets the value of the queryId property.
      * 
      */
     public void setQueryId(int value) {
@@ -88,7 +88,7 @@ public class GetConnectionInformation {
     }
 
     /**
-     * Ruft den Wert der nullValues-Eigenschaft ab.
+     * Gets the value of the nullValues property.
      * 
      */
     public boolean isNullValues() {
@@ -96,7 +96,7 @@ public class GetConnectionInformation {
     }
 
     /**
-     * Legt den Wert der nullValues-Eigenschaft fest.
+     * Sets the value of the nullValues property.
      * 
      */
     public void setNullValues(boolean value) {

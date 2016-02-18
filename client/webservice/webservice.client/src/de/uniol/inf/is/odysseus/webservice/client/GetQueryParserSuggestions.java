@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r getQueryParserSuggestions complex type.
+ * <p>Java class for getQueryParserSuggestions complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="getQueryParserSuggestions">
@@ -48,7 +48,7 @@ public class GetQueryParserSuggestions {
     protected String securitytoken;
 
     /**
-     * Ruft den Wert der queryParser-Eigenschaft ab.
+     * Gets the value of the queryParser property.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ public class GetQueryParserSuggestions {
     }
 
     /**
-     * Legt den Wert der queryParser-Eigenschaft fest.
+     * Sets the value of the queryParser property.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ public class GetQueryParserSuggestions {
     }
 
     /**
-     * Ruft den Wert der hint-Eigenschaft ab.
+     * Gets the value of the hint property.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ public class GetQueryParserSuggestions {
     }
 
     /**
-     * Legt den Wert der hint-Eigenschaft fest.
+     * Sets the value of the hint property.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ public class GetQueryParserSuggestions {
     }
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -108,7 +108,7 @@ public class GetQueryParserSuggestions {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is

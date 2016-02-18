@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r addQuery2 complex type.
+ * <p>Java class for addQuery2 complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="addQuery2">
@@ -51,7 +51,7 @@ public class AddQuery2 {
     protected Object context;
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -63,7 +63,7 @@ public class AddQuery2 {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is
@@ -75,7 +75,7 @@ public class AddQuery2 {
     }
 
     /**
-     * Ruft den Wert der parser-Eigenschaft ab.
+     * Gets the value of the parser property.
      * 
      * @return
      *     possible object is
@@ -87,7 +87,7 @@ public class AddQuery2 {
     }
 
     /**
-     * Legt den Wert der parser-Eigenschaft fest.
+     * Sets the value of the parser property.
      * 
      * @param value
      *     allowed object is
@@ -99,7 +99,7 @@ public class AddQuery2 {
     }
 
     /**
-     * Ruft den Wert der query-Eigenschaft ab.
+     * Gets the value of the query property.
      * 
      * @return
      *     possible object is
@@ -111,7 +111,7 @@ public class AddQuery2 {
     }
 
     /**
-     * Legt den Wert der query-Eigenschaft fest.
+     * Sets the value of the query property.
      * 
      * @param value
      *     allowed object is
@@ -123,7 +123,7 @@ public class AddQuery2 {
     }
 
     /**
-     * Ruft den Wert der context-Eigenschaft ab.
+     * Gets the value of the context property.
      * 
      * @return
      *     possible object is
@@ -135,7 +135,7 @@ public class AddQuery2 {
     }
 
     /**
-     * Legt den Wert der context-Eigenschaft fest.
+     * Sets the value of the context property.
      * 
      * @param value
      *     allowed object is

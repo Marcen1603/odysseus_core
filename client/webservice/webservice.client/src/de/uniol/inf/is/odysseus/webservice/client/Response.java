@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r response complex type.
+ * <p>Java class for response complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="response">
@@ -61,7 +61,7 @@ public class Response {
     protected boolean successful;
 
     /**
-     * Ruft den Wert der successful-Eigenschaft ab.
+     * Gets the value of the successful property.
      * 
      */
     public boolean isSuccessful() {
@@ -69,7 +69,7 @@ public class Response {
     }
 
     /**
-     * Legt den Wert der successful-Eigenschaft fest.
+     * Sets the value of the successful property.
      * 
      */
     public void setSuccessful(boolean value) {

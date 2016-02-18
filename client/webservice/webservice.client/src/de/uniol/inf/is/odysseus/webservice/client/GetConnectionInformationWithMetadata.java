@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r getConnectionInformationWithMetadata complex type.
+ * <p>Java class for getConnectionInformationWithMetadata complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="getConnectionInformationWithMetadata">
@@ -51,7 +51,7 @@ public class GetConnectionInformationWithMetadata {
     protected boolean withMetadata;
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -63,7 +63,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is
@@ -75,7 +75,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Ruft den Wert der queryId-Eigenschaft ab.
+     * Gets the value of the queryId property.
      * 
      */
     public int getQueryId() {
@@ -83,7 +83,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Legt den Wert der queryId-Eigenschaft fest.
+     * Sets the value of the queryId property.
      * 
      */
     public void setQueryId(int value) {
@@ -91,7 +91,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Ruft den Wert der nullValues-Eigenschaft ab.
+     * Gets the value of the nullValues property.
      * 
      */
     public boolean isNullValues() {
@@ -99,7 +99,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Legt den Wert der nullValues-Eigenschaft fest.
+     * Sets the value of the nullValues property.
      * 
      */
     public void setNullValues(boolean value) {
@@ -107,7 +107,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Ruft den Wert der withMetadata-Eigenschaft ab.
+     * Gets the value of the withMetadata property.
      * 
      */
     public boolean isWithMetadata() {
@@ -115,7 +115,7 @@ public class GetConnectionInformationWithMetadata {
     }
 
     /**
-     * Legt den Wert der withMetadata-Eigenschaft fest.
+     * Sets the value of the withMetadata property.
      * 
      */
     public void setWithMetadata(boolean value) {

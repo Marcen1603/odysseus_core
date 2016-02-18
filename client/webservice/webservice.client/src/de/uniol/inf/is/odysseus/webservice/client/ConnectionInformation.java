@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r connectionInformation complex type.
+ * <p>Java class for connectionInformation complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="connectionInformation">
@@ -49,7 +49,7 @@ public class ConnectionInformation {
     protected List<String> address;
 
     /**
-     * Ruft den Wert der port-Eigenschaft ab.
+     * Gets the value of the port property.
      * 
      */
     public int getPort() {
@@ -57,7 +57,7 @@ public class ConnectionInformation {
     }
 
     /**
-     * Legt den Wert der port-Eigenschaft fest.
+     * Sets the value of the port property.
      * 
      */
     public void setPort(int value) {

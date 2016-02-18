@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r startExecutionResponse complex type.
+ * <p>Java class for startExecutionResponse complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="startExecutionResponse">
@@ -44,7 +44,7 @@ public class StartExecutionResponse {
     protected Response _return;
 
     /**
-     * Ruft den Wert der return-Eigenschaft ab.
+     * Gets the value of the return property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class StartExecutionResponse {
     }
 
     /**
-     * Legt den Wert der return-Eigenschaft fest.
+     * Sets the value of the return property.
      * 
      * @param value
      *     allowed object is

@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r resourceInformation complex type.
+ * <p>Java class for resourceInformation complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="resourceInformation">
@@ -45,7 +45,7 @@ public class ResourceInformation {
     protected String user;
 
     /**
-     * Ruft den Wert der resourceName-Eigenschaft ab.
+     * Gets the value of the resourceName property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class ResourceInformation {
     }
 
     /**
-     * Legt den Wert der resourceName-Eigenschaft fest.
+     * Sets the value of the resourceName property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class ResourceInformation {
     }
 
     /**
-     * Ruft den Wert der user-Eigenschaft ab.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class ResourceInformation {
     }
 
     /**
-     * Legt den Wert der user-Eigenschaft fest.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is

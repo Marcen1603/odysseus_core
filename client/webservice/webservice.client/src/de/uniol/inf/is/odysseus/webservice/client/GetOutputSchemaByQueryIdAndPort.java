@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r getOutputSchemaByQueryIdAndPort complex type.
+ * <p>Java class for getOutputSchemaByQueryIdAndPort complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="getOutputSchemaByQueryIdAndPort">
@@ -48,7 +48,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     protected int port;
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Ruft den Wert der queryId-Eigenschaft ab.
+     * Gets the value of the queryId property.
      * 
      */
     public int getQueryId() {
@@ -80,7 +80,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Legt den Wert der queryId-Eigenschaft fest.
+     * Sets the value of the queryId property.
      * 
      */
     public void setQueryId(int value) {
@@ -88,7 +88,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Ruft den Wert der port-Eigenschaft ab.
+     * Gets the value of the port property.
      * 
      */
     public int getPort() {
@@ -96,7 +96,7 @@ public class GetOutputSchemaByQueryIdAndPort {
     }
 
     /**
-     * Legt den Wert der port-Eigenschaft fest.
+     * Sets the value of the port property.
      * 
      */
     public void setPort(int value) {

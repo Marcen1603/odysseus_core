@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r sdfAttributeInformation complex type.
+ * <p>Java class for sdfAttributeInformation complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="sdfAttributeInformation">
@@ -51,7 +51,7 @@ public class SdfAttributeInformation {
     protected SdfSchemaInformation subschema;
 
     /**
-     * Ruft den Wert der sourcename-Eigenschaft ab.
+     * Gets the value of the sourcename property.
      * 
      * @return
      *     possible object is
@@ -63,7 +63,7 @@ public class SdfAttributeInformation {
     }
 
     /**
-     * Legt den Wert der sourcename-Eigenschaft fest.
+     * Sets the value of the sourcename property.
      * 
      * @param value
      *     allowed object is
@@ -75,7 +75,7 @@ public class SdfAttributeInformation {
     }
 
     /**
-     * Ruft den Wert der attributename-Eigenschaft ab.
+     * Gets the value of the attributename property.
      * 
      * @return
      *     possible object is
@@ -87,7 +87,7 @@ public class SdfAttributeInformation {
     }
 
     /**
-     * Legt den Wert der attributename-Eigenschaft fest.
+     * Sets the value of the attributename property.
      * 
      * @param value
      *     allowed object is
@@ -99,7 +99,7 @@ public class SdfAttributeInformation {
     }
 
     /**
-     * Ruft den Wert der datatype-Eigenschaft ab.
+     * Gets the value of the datatype property.
      * 
      * @return
      *     possible object is
@@ -111,7 +111,7 @@ public class SdfAttributeInformation {
     }
 
     /**
-     * Legt den Wert der datatype-Eigenschaft fest.
+     * Sets the value of the datatype property.
      * 
      * @param value
      *     allowed object is
@@ -123,7 +123,7 @@ public class SdfAttributeInformation {
     }
 
     /**
-     * Ruft den Wert der subschema-Eigenschaft ab.
+     * Gets the value of the subschema property.
      * 
      * @return
      *     possible object is
@@ -135,7 +135,7 @@ public class SdfAttributeInformation {
     }
 
     /**
-     * Legt den Wert der subschema-Eigenschaft fest.
+     * Sets the value of the subschema property.
      * 
      * @param value
      *     allowed object is

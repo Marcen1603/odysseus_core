@@ -61,6 +61,7 @@ public class ObjectFactory {
     private final static QName _GetInstalledQueriesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getInstalledQueriesResponse");
     private final static QName _AddStoredProcedure_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "addStoredProcedure");
     private final static QName _ContainsViewOrStreamByResource_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "containsViewOrStreamByResource");
+    private final static QName _GetMetadataNames_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getMetadataNames");
     private final static QName _GetOutputSchemaBySource_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaBySource");
     private final static QName _InvalidUserDataException_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "InvalidUserDataException");
     private final static QName _GetSinksResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSinksResponse");
@@ -119,6 +120,7 @@ public class ObjectFactory {
     private final static QName _StartExecutionResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startExecutionResponse");
     private final static QName _GetOutputSchemaBySourceResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaBySourceResponse");
     private final static QName _RemoveQuery_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "removeQuery");
+    private final static QName _GetMetadataNamesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getMetadataNamesResponse");
     private final static QName _ResumeQuery_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "resumeQuery");
     private final static QName _AddStoredProcedureResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "addStoredProcedureResponse");
     private final static QName _GetPlan_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getPlan");
@@ -348,6 +350,14 @@ public class ObjectFactory {
      */
     public GetPlan createGetPlan() {
         return new GetPlan();
+    }
+
+    /**
+     * Create an instance of {@link GetMetadataNamesResponse }
+     * 
+     */
+    public GetMetadataNamesResponse createGetMetadataNamesResponse() {
+        return new GetMetadataNamesResponse();
     }
 
     /**
@@ -1068,6 +1078,14 @@ public class ObjectFactory {
      */
     public ContainsViewOrStreamByResource createContainsViewOrStreamByResource() {
         return new ContainsViewOrStreamByResource();
+    }
+
+    /**
+     * Create an instance of {@link GetMetadataNames }
+     * 
+     */
+    public GetMetadataNames createGetMetadataNames() {
+        return new GetMetadataNames();
     }
 
     /**
@@ -1956,6 +1974,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetMetadataNames }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getMetadataNames")
+    public JAXBElement<GetMetadataNames> createGetMetadataNames(GetMetadataNames value) {
+        return new JAXBElement<GetMetadataNames>(_GetMetadataNames_QNAME, GetMetadataNames.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetOutputSchemaBySource }{@code >}}
      * 
      */
@@ -2475,6 +2502,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "removeQuery")
     public JAXBElement<RemoveQuery> createRemoveQuery(RemoveQuery value) {
         return new JAXBElement<RemoveQuery>(_RemoveQuery_QNAME, RemoveQuery.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetMetadataNamesResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getMetadataNamesResponse")
+    public JAXBElement<GetMetadataNamesResponse> createGetMetadataNamesResponse(GetMetadataNamesResponse value) {
+        return new JAXBElement<GetMetadataNamesResponse>(_GetMetadataNamesResponse_QNAME, GetMetadataNamesResponse.class, null, value);
     }
 
     /**

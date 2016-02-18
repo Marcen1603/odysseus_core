@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r getRegisteredAggregateFunctions complex type.
+ * <p>Java class for getRegisteredAggregateFunctions complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="getRegisteredAggregateFunctions">
@@ -45,7 +45,7 @@ public class GetRegisteredAggregateFunctions {
     protected String securitytoken;
 
     /**
-     * Ruft den Wert der datamodel-Eigenschaft ab.
+     * Gets the value of the datamodel property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class GetRegisteredAggregateFunctions {
     }
 
     /**
-     * Legt den Wert der datamodel-Eigenschaft fest.
+     * Sets the value of the datamodel property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class GetRegisteredAggregateFunctions {
     }
 
     /**
-     * Ruft den Wert der securitytoken-Eigenschaft ab.
+     * Gets the value of the securitytoken property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class GetRegisteredAggregateFunctions {
     }
 
     /**
-     * Legt den Wert der securitytoken-Eigenschaft fest.
+     * Sets the value of the securitytoken property.
      * 
      * @param value
      *     allowed object is

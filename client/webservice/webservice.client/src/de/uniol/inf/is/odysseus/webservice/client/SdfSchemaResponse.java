@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r sdfSchemaResponse complex type.
+ * <p>Java class for sdfSchemaResponse complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="sdfSchemaResponse">
@@ -44,7 +44,7 @@ public class SdfSchemaResponse
     protected SdfSchemaInformation responseValue;
 
     /**
-     * Ruft den Wert der responseValue-Eigenschaft ab.
+     * Gets the value of the responseValue property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class SdfSchemaResponse
     }
 
     /**
-     * Legt den Wert der responseValue-Eigenschaft fest.
+     * Sets the value of the responseValue property.
      * 
      * @param value
      *     allowed object is

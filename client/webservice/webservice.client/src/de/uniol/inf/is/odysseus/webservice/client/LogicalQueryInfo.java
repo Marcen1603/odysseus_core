@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r logicalQueryInfo complex type.
+ * <p>Java class for logicalQueryInfo complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="logicalQueryInfo">
@@ -67,7 +67,7 @@ public class LogicalQueryInfo {
     protected List<Pair> parameters;
 
     /**
-     * Ruft den Wert der id-Eigenschaft ab.
+     * Gets the value of the id property.
      * 
      */
     public int getId() {
@@ -75,7 +75,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Legt den Wert der id-Eigenschaft fest.
+     * Sets the value of the id property.
      * 
      */
     public void setId(int value) {
@@ -83,7 +83,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Ruft den Wert der queryText-Eigenschaft ab.
+     * Gets the value of the queryText property.
      * 
      * @return
      *     possible object is
@@ -95,7 +95,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Legt den Wert der queryText-Eigenschaft fest.
+     * Sets the value of the queryText property.
      * 
      * @param value
      *     allowed object is
@@ -107,7 +107,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Ruft den Wert der parserID-Eigenschaft ab.
+     * Gets the value of the parserID property.
      * 
      * @return
      *     possible object is
@@ -119,7 +119,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Legt den Wert der parserID-Eigenschaft fest.
+     * Sets the value of the parserID property.
      * 
      * @param value
      *     allowed object is
@@ -131,7 +131,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Ruft den Wert der containsCycles-Eigenschaft ab.
+     * Gets the value of the containsCycles property.
      * 
      */
     public boolean isContainsCycles() {
@@ -139,7 +139,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Legt den Wert der containsCycles-Eigenschaft fest.
+     * Sets the value of the containsCycles property.
      * 
      */
     public void setContainsCycles(boolean value) {
@@ -147,7 +147,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Ruft den Wert der priority-Eigenschaft ab.
+     * Gets the value of the priority property.
      * 
      */
     public int getPriority() {
@@ -155,7 +155,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Legt den Wert der priority-Eigenschaft fest.
+     * Sets the value of the priority property.
      * 
      */
     public void setPriority(int value) {
@@ -163,7 +163,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -175,7 +175,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -187,7 +187,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Ruft den Wert der notice-Eigenschaft ab.
+     * Gets the value of the notice property.
      * 
      * @return
      *     possible object is
@@ -199,7 +199,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Legt den Wert der notice-Eigenschaft fest.
+     * Sets the value of the notice property.
      * 
      * @param value
      *     allowed object is

@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r viewInformationWS complex type.
+ * <p>Java class for viewInformationWS complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="viewInformationWS">
@@ -45,7 +45,7 @@ public class ViewInformationWS {
     protected SdfSchemaInformation schema;
 
     /**
-     * Ruft den Wert der name-Eigenschaft ab.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class ViewInformationWS {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class ViewInformationWS {
     }
 
     /**
-     * Ruft den Wert der schema-Eigenschaft ab.
+     * Gets the value of the schema property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class ViewInformationWS {
     }
 
     /**
-     * Legt den Wert der schema-Eigenschaft fest.
+     * Sets the value of the schema property.
      * 
      * @param value
      *     allowed object is

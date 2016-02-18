@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r booleanResponse complex type.
+ * <p>Java class for booleanResponse complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="booleanResponse">
@@ -44,7 +44,7 @@ public class BooleanResponse
     protected boolean responseValue;
 
     /**
-     * Ruft den Wert der responseValue-Eigenschaft ab.
+     * Gets the value of the responseValue property.
      * 
      */
     public boolean isResponseValue() {
@@ -52,7 +52,7 @@ public class BooleanResponse
     }
 
     /**
-     * Legt den Wert der responseValue-Eigenschaft fest.
+     * Sets the value of the responseValue property.
      * 
      */
     public void setResponseValue(boolean value) {
