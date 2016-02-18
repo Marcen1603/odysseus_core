@@ -256,7 +256,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
     private static List<?> cloneList(List<?> list) {
         List<Object> clone = new ArrayList<>(list.size());
         for (Object element : list) {
-            if (immutables.contains(element.getClass())) {
+            if (element == null || immutables.contains(element.getClass())) {
                 clone.add(element);
             }
             else if (element.getClass().isArray()) {
