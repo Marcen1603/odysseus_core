@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,11 +14,11 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
-import de.uniol.inf.is.odysseus.rcp.editor.script.impl.TempMetadataRegistry;
+import de.uniol.inf.is.odysseus.rcp.editor.script.service.ServicesBinder;
 
 public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 
@@ -81,36 +80,37 @@ public class MetadataVisualOdysseusScriptBlock implements IVisualOdysseusScriptB
 	}
 
 	private static String[] determineMetadataCombinationNames() {
-		Set<SortedSet<String>> availableMetadataCombinations = TempMetadataRegistry.getAvailableMetadataCombinations();
-		List<String> metadataTitles = Lists.newArrayList();
-
-		for (SortedSet<String> combination : availableMetadataCombinations) {
-			
-			List<String> metadataNames = Lists.newArrayList();
-			String[] combinationStringArray = combination.toArray(new String[0]);
-			for (int i = 0; i < combinationStringArray.length; i++) {
-				IMetaAttribute type = TempMetadataRegistry.getMetadataType(combinationStringArray[i]);
-				String attributeName = type.getName();
-				String[] attributeNameParts = attributeName.split(",");
-				for( String attributeNamePart : attributeNameParts ) {
-					if( !metadataNames.contains(attributeNamePart) ) {
-						metadataNames.add(attributeNamePart);
-					}
-				}
-			}
-
-			StringBuilder nameBuilder = new StringBuilder();
-			for( int i = 0; i < metadataNames.size(); i++ ) {
-				if( i > 0 ) {
-					nameBuilder.append(",");
-				}
-				
-				nameBuilder.append(metadataNames.get(i));
-			}
-			metadataTitles.add(nameBuilder.toString());
-		}
-
-		return metadataTitles.toArray(new String[0]);
+		Set<String> availableMetadataCombinations = ServicesBinder.getExecutor().getMetadataNames(OdysseusRCPPlugIn.getActiveSession());
+		return availableMetadataCombinations.toArray(new String[0]);
+//		List<String> metadataTitles = Lists.newArrayList();
+//
+//		for (SortedSet<String> combination : availableMetadataCombinations) {
+//			
+//			List<String> metadataNames = Lists.newArrayList();
+//			String[] combinationStringArray = combination.toArray(new String[0]);
+//			for (int i = 0; i < combinationStringArray.length; i++) {
+//				IMetaAttribute type = TempMetadataRegistry.getMetadataType(combinationStringArray[i]);
+//				String attributeName = type.getName();
+//				String[] attributeNameParts = attributeName.split(",");
+//				for( String attributeNamePart : attributeNameParts ) {
+//					if( !metadataNames.contains(attributeNamePart) ) {
+//						metadataNames.add(attributeNamePart);
+//					}
+//				}
+//			}
+//
+//			StringBuilder nameBuilder = new StringBuilder();
+//			for( int i = 0; i < metadataNames.size(); i++ ) {
+//				if( i > 0 ) {
+//					nameBuilder.append(",");
+//				}
+//				
+//				nameBuilder.append(metadataNames.get(i));
+//			}
+//			metadataTitles.add(nameBuilder.toString());
+//		}
+//
+//		return metadataTitles.toArray(new String[0]);
 	}
 
 	private static int determineIndex(String[] arrayToFind, String[] combinations) {

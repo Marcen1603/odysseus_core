@@ -2,17 +2,14 @@ package de.uniol.inf.is.odysseus.rcp.editor.script.rules;
 
 import java.util.List;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IOdysseusScriptTransformRule;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.OdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
 import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.MetadataVisualOdysseusScriptBlock;
-import de.uniol.inf.is.odysseus.rcp.editor.script.impl.TempMetadataRegistry;
 
 public class MetadataKeywordTransformRule implements IOdysseusScriptTransformRule {
 
@@ -54,33 +51,10 @@ public class MetadataKeywordTransformRule implements IOdysseusScriptTransformRul
 
 		for (OdysseusScriptBlock selectedBlock : selectedBlocks) {
 			allBlocks.remove(selectedBlock);
-		}
-
-		for (OdysseusScriptBlock selectedBlock : selectedBlocks) {
-			Optional<IMetaAttribute> optMetaAttribute = tryCreateMetaAttribute(selectedBlock);
-			if (optMetaAttribute.isPresent()) {
-				List<Class<? extends IMetaAttribute>> metaAttributeClasses = Lists.newArrayList(optMetaAttribute.get().getClasses());
-
-				for (Class<? extends IMetaAttribute> metaAttributeClass : metaAttributeClasses) {
-					IMetaAttribute attribite = TempMetadataRegistry.getMetadataType(metaAttributeClass.getName());
-					String metaName = attribite.getName();
-					if (!metadataNames.contains(metaName)) {
-						metadataNames.add(metaName);
-					}
-				}
-
-			}
+			metadataNames.add(selectedBlock.getText().trim());
 		}
 
 		return new MetadataVisualOdysseusScriptBlock(metadataNames);
-	}
-
-	private static Optional<IMetaAttribute> tryCreateMetaAttribute(OdysseusScriptBlock selectedBlock) {
-		try {
-			return Optional.of(TempMetadataRegistry.tryCreateMetadataInstance(selectedBlock.getText().trim()));
-		} catch (Throwable t) {
-			return Optional.absent();
-		}
 	}
 
 }
