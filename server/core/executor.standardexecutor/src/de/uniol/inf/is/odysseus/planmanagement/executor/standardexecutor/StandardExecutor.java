@@ -1645,5 +1645,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			return null;
 		}
 	}
+	
+	@Override
+	public Set<String> getMetadataNames(ISession session) {
+		return new HashSet<String>(MetadataRegistry.getNames());
+	}
 
 }

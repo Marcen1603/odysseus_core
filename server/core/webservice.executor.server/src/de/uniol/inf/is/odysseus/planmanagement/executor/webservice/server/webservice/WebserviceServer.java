@@ -1139,6 +1139,13 @@ public class WebserviceServer {
 		List<String> names = WindowType.getValues();
 		return new StringListResponse(names, true);
 	}
+	
+	public StringListResponse getMetadataNames(@WebParam(name = "securitytoken") String securityToken)
+			throws InvalidUserDataException {
+		loginWithSecurityToken(securityToken);
+		Set<String> names = MetadataRegistry.getNames();
+		return new StringListResponse(names, true);
+	}
 
 	// --------------------------------------------------------------------------------------------------
 	// Helper methods
@@ -1183,4 +1190,5 @@ public class WebserviceServer {
 		return new SDFDatatypeInformation(datatype.getURI(), datatype.getType(), subtype, subSchema);
 	}
 
+	
 }

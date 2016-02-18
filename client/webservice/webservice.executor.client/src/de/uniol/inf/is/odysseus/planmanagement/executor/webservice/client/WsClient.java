@@ -93,6 +93,7 @@ import de.uniol.inf.is.odysseus.webservice.client.SdfAttributeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfDatatypeInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SdfSchemaInformation;
 import de.uniol.inf.is.odysseus.webservice.client.SinkInformationWS;
+import de.uniol.inf.is.odysseus.webservice.client.StringListResponse;
 import de.uniol.inf.is.odysseus.webservice.client.StringMapListEntry;
 import de.uniol.inf.is.odysseus.webservice.client.StringResponse;
 import de.uniol.inf.is.odysseus.webservice.client.ViewInformationWS;
@@ -1342,6 +1343,27 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public ISession getSession() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Set<String> getMetadataNames(ISession session) {
+		if( session == null ) {
+			return null;
+		}
+		
+		assureLogin(session);
+		WebserviceServer webserviceServer = getWebserviceServer(session.getConnectionName());
+		if( webserviceServer != null ) {
+			try {
+				StringListResponse names = webserviceServer.getMetadataNames(session.getToken());
+				return new HashSet<String>(names.getResponseValue());
+				
+			} catch (InvalidUserDataException_Exception e) {
+				throw new PlanManagementException(e);
+			}
+		}
+		
 		return null;
 	}
 
