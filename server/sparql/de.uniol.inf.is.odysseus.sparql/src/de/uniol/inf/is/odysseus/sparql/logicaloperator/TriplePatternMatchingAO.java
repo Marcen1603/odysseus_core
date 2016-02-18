@@ -133,6 +133,11 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 		this.replacements = replacements;
 	}
 
+	@Parameter(name = "type", type = StringParameter.class, optional = false, doc = "Type for output")
+	public void setType(String type) {
+		this.sourceName = type;
+	}
+
 	@Override
 	public String toString() {
 		String retval = super.toString();
@@ -289,7 +294,9 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// the source name must be a unique artificial name, since
 		// every triple pattern needs its own source name.
-		this.sourceName = "s" + TriplePatternMatchingAO.sourceNameCounter++;
+		if (this.sourceName == null) {
+			this.sourceName = "s" + TriplePatternMatchingAO.sourceNameCounter++;
+		}
 		this.calcOutputSchema();
 		return getOutputSchema();
 	}
