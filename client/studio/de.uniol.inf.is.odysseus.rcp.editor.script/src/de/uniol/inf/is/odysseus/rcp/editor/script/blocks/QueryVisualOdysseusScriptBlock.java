@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -44,6 +45,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 	private boolean startQuery;
 
 	private Text editingText;
+	private IEditorPart editor;
 
 	public QueryVisualOdysseusScriptBlock(String queryText, String parser, String queryName, boolean running) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(queryText), "queryText must not be null or empty!");
@@ -78,11 +80,17 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		ImageButton editButton = new ImageButton(settingsComposite, VisualOdysseusScriptPlugIn.getImageManager().get("edit"), "Open in editor");
 		editButton.getButton().setLayoutData(new GridData());
 		editButton.getButton().addSelectionListener(new SelectionAdapter() {
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				if( editor != null ) {
+					activePage.closeEditor(editor, false);
+					editor = null;
+				}
+				
 				// from:
 				// http://blog.eclipse-tips.com/2008/06/opening-editor-without-ifile.html
-				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
 					StringEditorInput stringInput = new StringEditorInput(queryText, queryName, getParserExtension(parser), container.getFile());
 					stringInput.addListener(new IStringEditorInputChangeListener() {
@@ -95,7 +103,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 						}
 					});
 
-					activePage.openEditor(stringInput, "de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor");
+					editor = activePage.openEditor(stringInput, "de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor");
 
 				} catch (PartInitException e1) {
 					LOG.error("Could not open editor", e1);
@@ -187,7 +195,11 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 
 	@Override
 	public void dispose() {
-		// nothing to do
+		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		if( editor != null ) {
+			activePage.closeEditor(editor, false);
+			editor = null;
+		}
 	}
 
 	@Override
