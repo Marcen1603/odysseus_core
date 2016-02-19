@@ -136,18 +136,10 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 	}
 
 	private boolean isParserOnlyEditor() {
-		if (editor.getFile() != null) {
-			if (!editor.getFile().getFileExtension().equalsIgnoreCase("qry")) {
-				return true;
-			}
-		}
-		return false;
+		return !editor.getUsedParser().equals("qry");
 	}
 
 	private String getFileTypeParser() {
-		if (editor.getFile() != null) {
-			return editor.getFile().getFileExtension().toUpperCase();
-		}
-		return null;
+		return editor.getUsedParser();
 	}
 }

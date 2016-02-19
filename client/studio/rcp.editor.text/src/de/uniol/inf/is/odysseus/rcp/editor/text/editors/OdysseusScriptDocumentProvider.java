@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 
@@ -37,8 +38,10 @@ import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
+import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.StringEditorInput;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptPartitionScanner;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptPartitioner;
 
@@ -84,8 +87,12 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 		try {
 			if (input instanceof IPathEditorInput)
 				reader = new FileReader(((IPathEditorInput) input).getPath().toFile());
-			else
+			else if( input instanceof IStorageEditorInput ) {
+				IStorageEditorInput sInput = (IStorageEditorInput)input;
+				reader = new InputStreamReader(sInput.getStorage().getContents());
+			} else {
 				return false;
+			}
 		} catch (FileNotFoundException e) {
 			// return empty document and save later
 			return true;
@@ -176,7 +183,9 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.ui.examples.rcp.texteditor", IStatus.OK, "error when saving file", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
+		} else if( element instanceof StringEditorInput ) {
+			StringEditorInput sInput = (StringEditorInput)element;
+			sInput.set(document.get());
 		}
 	}
 
@@ -222,6 +231,8 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 			IPathEditorInput pei = (IPathEditorInput) element;
 			File file = pei.getPath().toFile();
 			return file.canWrite() || !file.exists(); // Allow to edit new files
+		} else if( element instanceof IStorageEditorInput ) {
+			return true;
 		}
 		return false;
 	}

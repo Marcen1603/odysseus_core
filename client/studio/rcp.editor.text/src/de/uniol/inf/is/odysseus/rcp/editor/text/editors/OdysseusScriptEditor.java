@@ -51,6 +51,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
@@ -63,6 +64,7 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
+import de.uniol.inf.is.odysseus.rcp.editor.script.blocks.StringEditorInput;
 import de.uniol.inf.is.odysseus.rcp.editor.script.model.VisualOdysseusScript;
 import de.uniol.inf.is.odysseus.rcp.editor.script.model.VisualOdysseusScriptModel;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring.OdysseusOccurrencesUpdater;
@@ -107,7 +109,6 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 			Composite textComposite = new Composite(tabFolder, SWT.NONE);
 			textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 			textComposite.setLayout(new FillLayout());
-	//		super.createPartControl(parent);
 			super.createPartControl(textComposite);
 			textTab.setControl(textComposite);
 			
@@ -226,6 +227,11 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 				
 				scrollComposite.setMinSize(contentComposite.getSize());
 			}
+			
+			@Override
+			public IFile getFile() {
+				return ((IFileEditorInput)OdysseusScriptEditor.this.getEditorInput()).getFile();
+			}
 		});
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
@@ -252,6 +258,10 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 	@Override
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		
+		if( getEditorInput() instanceof StringEditorInput ) {
+			((StringEditorInput)getEditorInput()).dispose();
+		}
 		super.dispose();
 	}
 
@@ -304,7 +314,25 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 	}
 	
 	public final IFile getFile() {
-		return ((IFileEditorInput) getEditorInput()).getFile();
+		IEditorInput input = getEditorInput();
+		if( input instanceof IFileEditorInput ) {
+			return ((IFileEditorInput) getEditorInput()).getFile();
+		} else if( input instanceof IStorageEditorInput) {
+			return ((IStorageEditorInput)input).getAdapter(IFile.class);
+		}
+		
+		return null;
+	}
+	
+	public final String getUsedParser() {
+		IEditorInput input = getEditorInput();
+		if( input instanceof IFileEditorInput ) {
+			return ((IFileEditorInput) getEditorInput()).getFile().getFileExtension();
+		} else if( input instanceof StringEditorInput) {
+			return ((StringEditorInput)input).getExtension();
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -328,24 +356,29 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 				e.printStackTrace();
 			}
 		}
-		SaveAsDialog saveAsDialog = new SaveAsDialog(getSite().getShell());
-		saveAsDialog.setOriginalName(getTitle());
-		saveAsDialog.open();
-		IPath path = saveAsDialog.getResult();
-		if (path != null) {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-			if (file != null) {
-				IFile oldFile = ((FileEditorInput) getEditorInput()).getFile();
-				try {					
-					file.create(oldFile.getContents(), true, new NullProgressMonitor());
-					setInputWithNotify(new FileEditorInput(file));
-					setPartName(file.getName());
-					doSave(getProgressMonitor());
-					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-				} catch (CoreException e) {
-					e.printStackTrace();
+		
+		if( getEditorInput() instanceof IFileEditorInput ) {
+			SaveAsDialog saveAsDialog = new SaveAsDialog(getSite().getShell());
+			saveAsDialog.setOriginalName(getTitle());
+			saveAsDialog.open();
+			IPath path = saveAsDialog.getResult();
+			if (path != null) {
+				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+				if (file != null) {
+					IFile oldFile = ((FileEditorInput) getEditorInput()).getFile();
+					try {					
+						file.create(oldFile.getContents(), true, new NullProgressMonitor());
+						setInputWithNotify(new FileEditorInput(file));
+						setPartName(file.getName());
+						doSave(getProgressMonitor());
+						ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
 				}
 			}
+		} else if( getEditorInput() instanceof IStorageEditorInput ){
+			// TODO
 		}
 	}
 	
