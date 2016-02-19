@@ -1,5 +1,6 @@
 #PARSER CQL
 #OPTIMIZE_PREDICATES true
+#DOREWRITE false
 
 #ADDQUERY
 DROP STREAM bid if exists;
@@ -8,9 +9,8 @@ ATTACH STREAM bid (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, da
 
 
 #ADDQUERY
-
-SELECT auction, price FROM (
+///SELECT auction, price FROM (
 SELECT * FROM bid [SIZE 10 TUPLE] WHERE auction=21 OR auction=87
-INTERSECT 
-SELECT * FROM bid [SIZE 10 TUPLE] WHERE auction=7 OR auction=20
-) AS A WHERE auction=20;
+///INTERSECT 
+///SELECT * FROM bid [SIZE 10 TUPLE] WHERE auction=7 OR auction=20
+///) AS A WHERE auction=20;
