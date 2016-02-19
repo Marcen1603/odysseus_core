@@ -88,8 +88,10 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 					stringInput.addListener(new IStringEditorInputChangeListener() {
 						@Override
 						public void stringChanged(StringEditorInput sender, String from, String to) {
-							editingText.setText(to);
-							queryText = to;
+							if( !editingText.isDisposed() ) {
+								editingText.setText(to);
+								queryText = to;
+							}
 						}
 					});
 
