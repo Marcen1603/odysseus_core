@@ -56,29 +56,32 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
      */
     @Override
     public void execute(IntersectionAO operator, RewriteConfiguration config) throws RuleException {
-        ILogicalOperator childLeft = operator.getSubscribedToSource(0).getTarget();
-        ILogicalOperator childRight = operator.getSubscribedToSource(1).getTarget();
-
-        DifferenceAO left = insertDifferenceAO(operator, childLeft);
-        DifferenceAO right = insertDifferenceAO(operator, childRight);
-
-        left.subscribeToSource(childRight, 1, 0, childRight.getOutputSchema());
-        right.subscribeToSource(childLeft, 1, 0, childLeft.getOutputSchema());
-
-        UnionAO unionAO = insertUnionAO(operator);
-
-        left.initialize();
-        this.insert(left);
-        right.initialize();
-        this.insert(right);
-
-        final Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
-        for (final ILogicalOperator o : toUpdate) {
-            this.update(o);
-        }
-        this.update(unionAO);
-        unionAO.initialize();
-        this.retract(operator);
+    	
+    	throw new UnsupportedOperationException("Sorry. Intersection is currenlty not supported!");
+    	
+//        ILogicalOperator childLeft = operator.getSubscribedToSource(0).getTarget();
+//        ILogicalOperator childRight = operator.getSubscribedToSource(1).getTarget();
+//
+//        DifferenceAO left = insertDifferenceAO(operator, childLeft);
+//        DifferenceAO right = insertDifferenceAO(operator, childRight);
+//
+//        left.subscribeToSource(childRight, 1, 0, childRight.getOutputSchema());
+//        right.subscribeToSource(childLeft, 1, 0, childLeft.getOutputSchema());
+//
+//        UnionAO unionAO = insertUnionAO(operator);
+//
+//        left.initialize();
+//        this.insert(left);
+//        right.initialize();
+//        this.insert(right);
+//
+//        final Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
+//        for (final ILogicalOperator o : toUpdate) {
+//            this.update(o);
+//        }
+//        this.update(unionAO);
+//        unionAO.initialize();
+//        this.retract(operator);
     }
 
     /**
