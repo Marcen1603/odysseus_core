@@ -87,7 +87,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 			}
 
         }
-        catch (PlanManagementException e) {
+        catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return StatusCode.ERROR_EXCEPTION_DURING_TEST;
         } 
