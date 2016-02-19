@@ -36,6 +36,8 @@ public class VisualOdysseusScriptPlugIn extends AbstractUIPlugin {
 		imageManager.register("moveUp", "icons/moveUp.gif");
 		imageManager.register("moveDown", "icons/moveDown.gif");
 		
+		imageManager.register("edit", "icons/edit.png");
+		
 		imageManager.register("expand", "icons/expand.png");
 		imageManager.register("expandAll", "icons/expandAll.png");
 		imageManager.register("collapse", "icons/collapse.png");

@@ -122,7 +122,6 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 		visualOdysseusScript = new VisualOdysseusScript(contentComposite, scriptModel, this);
 
 		scrollComposite.setMinSize(scrollComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
 	}
 
 	@Override
@@ -160,6 +159,11 @@ public class VisualOdysseusScriptEditor extends EditorPart implements IVisualOdy
 				}
 			});
 		}
+	}
+	
+	@Override
+	public IFile getFile() {
+		return ((IFileEditorInput)getEditorInput()).getFile();
 	}
 
 	@Override

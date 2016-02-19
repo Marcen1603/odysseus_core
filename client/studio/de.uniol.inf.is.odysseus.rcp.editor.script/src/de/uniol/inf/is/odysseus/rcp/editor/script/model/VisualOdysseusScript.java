@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.script.model;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -120,6 +121,12 @@ public class VisualOdysseusScript {
 			public void layoutAll() {
 				// delegate
 				container.layoutAll();
+			}
+
+			@Override
+			public IFile getFile() {
+				// delegate
+				return container.getFile();
 			}
 		});
 

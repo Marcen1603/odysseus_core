@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.script.blocks;
 
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -15,17 +15,28 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptBlock;
 import de.uniol.inf.is.odysseus.rcp.editor.script.IVisualOdysseusScriptContainer;
 import de.uniol.inf.is.odysseus.rcp.editor.script.VisualOdysseusScriptException;
+import de.uniol.inf.is.odysseus.rcp.editor.script.impl.VisualOdysseusScriptPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.script.service.ServicesBinder;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.util.ImageButton;
 
 public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
+
+	private static final Logger LOG = LoggerFactory.getLogger(QueryVisualOdysseusScriptBlock.class);
 
 	private String queryText;
 	private String parser;
@@ -43,13 +54,13 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		this.queryName = queryName;
 		this.startQuery = running;
 	}
-	
+
 	@Override
 	public String getTitle() {
-		if( Strings.isNullOrEmpty(queryName)) {
+		if (Strings.isNullOrEmpty(queryName)) {
 			return "Query";
 		}
-		
+
 		return "Query '" + queryName + "'";
 	}
 
@@ -59,10 +70,39 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.verticalSpacing = 0;
 		topCompsite.setLayout(gridLayout);
-		
+
 		Composite settingsComposite = new Composite(topCompsite, SWT.NONE);
 		settingsComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		settingsComposite.setLayout(new GridLayout(3, false));
+		settingsComposite.setLayout(new GridLayout(4, false));
+
+		ImageButton editButton = new ImageButton(settingsComposite, VisualOdysseusScriptPlugIn.getImageManager().get("edit"), "Open in editor");
+		editButton.getButton().setLayoutData(new GridData());
+		editButton.getButton().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// from:
+				// http://blog.eclipse-tips.com/2008/06/opening-editor-without-ifile.html
+				IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				try {
+					StringEditorInput stringInput = new StringEditorInput(queryText, queryName, getParserExtension(parser), container.getFile());
+					stringInput.addListener(new IStringEditorInputChangeListener() {
+						@Override
+						public void stringChanged(StringEditorInput sender, String from, String to) {
+							editingText.setText(to);
+							queryText = to;
+						}
+					});
+
+					activePage.openEditor(stringInput, "de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor");
+
+				} catch (PartInitException e1) {
+					LOG.error("Could not open editor", e1);
+
+					new ExceptionWindow("Could not open editor", e1);
+				}
+			}
+
+		});
 
 		// Parser DropDown
 		Composite parserComposite = new Composite(settingsComposite, SWT.NONE);
@@ -73,7 +113,8 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 
 		Combo parserCombo = new Combo(parserComposite, SWT.DROP_DOWN);
 		parserCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Set<String> parserNames = ServicesBinder.getExecutor().getSupportedQueryParsers(OdysseusRCPPlugIn.getActiveSession());
+		List<String> parserNames = Lists.newArrayList(ServicesBinder.getExecutor().getSupportedQueryParsers(OdysseusRCPPlugIn.getActiveSession()));
+		parserNames.remove("OdysseusScript");
 		parserCombo.setItems(parserNames.toArray(new String[0]));
 		parserCombo.setText(parser);
 		parserCombo.addSelectionListener(new SelectionAdapter() {
@@ -97,7 +138,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 
 		Text queryNameText = new Text(queryNameComposite, SWT.BORDER);
 		queryNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		if( queryName != null ) {
+		if (queryName != null) {
 			queryNameText.setText(queryName);
 		}
 		queryNameText.addModifyListener(new ModifyListener() {
@@ -105,7 +146,7 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 			public void modifyText(ModifyEvent e) {
 				if (!queryNameText.getText().equals(queryName)) {
 					queryName = queryNameText.getText();
-					
+
 					container.setDirty(true);
 					container.setTitleText(getTitle());
 				}
@@ -128,13 +169,13 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 		editingText.setText(queryText);
 		editingText.setFont(JFaceResources.getTextFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 150;
-		editingText.setLayoutData( gd );
+		gd.minimumHeight = 150;
+		editingText.setLayoutData(gd);
 		editingText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				queryText = editingText.getText();
-				
+
 				container.layoutAll();
 
 				container.setDirty(true);
@@ -150,19 +191,30 @@ public class QueryVisualOdysseusScriptBlock implements IVisualOdysseusScriptBloc
 	@Override
 	public String generateOdysseusScript() throws VisualOdysseusScriptException {
 		StringBuilder scriptBuilder = new StringBuilder();
-		
+
 		scriptBuilder.append("#PARSER ").append(parser).append("\n");
-		if( !Strings.isNullOrEmpty(queryName)) {
+		if (!Strings.isNullOrEmpty(queryName)) {
 			scriptBuilder.append("#QNAME ").append(queryName).append("\n");
 		}
-		if( startQuery ) {
+		if (startQuery) {
 			scriptBuilder.append("#RUNQUERY\n");
 		} else {
 			scriptBuilder.append("#ADDQUERY\n");
 		}
 		scriptBuilder.append(queryText).append("\n");
-		
+
 		return scriptBuilder.toString();
+	}
+
+	private static String getParserExtension(String parser) {
+		switch (parser.trim()) {
+		case "PQL":
+			return "pql";
+		case "CQL":
+			return "cql";
+		default:
+			throw new RuntimeException("Could not determine file extension for parser " + parser);
+		}
 	}
 
 }
