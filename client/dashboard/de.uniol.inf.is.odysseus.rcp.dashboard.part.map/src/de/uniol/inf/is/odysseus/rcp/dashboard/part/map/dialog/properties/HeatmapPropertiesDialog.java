@@ -89,7 +89,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 
 		return area;
 	}
-
+	
 	/**
 	 * Creates the menu for heatmaps with all the settings that can be made
 	 * 
@@ -114,6 +114,9 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 		heatmapContainer.setLayout(new GridLayout(2, false));
 		heatmapContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
+		// A control to choose the query
+		new DataStreamChooser(heatmapContainer, SWT.NONE);
+		
 		// Show the settings for the heatmap
 		Group settingsContainer = new Group(heatmapContainer, SWT.NONE);
 		settingsContainer.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, true, 1, 1));
@@ -133,7 +136,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				layerConfiguration.setName(nameText.getText());
 
 			}
-		});
+		});		
 		
 		//Checkbox used to decide if one or two attributes are used
 		Label geoTypeButtonLabel = new Label (settingsContainer, SWT.NONE);
