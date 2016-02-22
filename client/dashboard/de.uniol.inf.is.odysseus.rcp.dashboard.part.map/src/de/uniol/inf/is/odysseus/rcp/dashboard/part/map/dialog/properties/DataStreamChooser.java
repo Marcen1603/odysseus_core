@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
@@ -52,6 +53,17 @@ public class DataStreamChooser extends Composite {
 		createChooseQueryFileControls(settingsContainer);
 		createChooseSourceControls(settingsContainer);
 		createChooseQueryControls(settingsContainer);
+	}
+	
+	public SDFSchema getOutputSchema() {
+		
+		// 1. get the physical root
+		
+		// 2. get the operator
+		
+		// 3. get the output schema from there
+		
+		return null;
 	}
 	
 	private void createGroup(Composite parent) {

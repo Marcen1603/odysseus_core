@@ -48,6 +48,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapConfigurer.class);
 
+	Collection<IPhysicalOperator> roots;
 	private IPhysicalOperator operator;
 
 	private MapDashboardPart mapDashboardPart;
@@ -62,6 +63,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		this.mapDashboardPart = dashboardPartToConfigure;
 		this.mapDashboardPart.init();
 		operator = determinePyhsicalRoot(roots);
+		this.roots = roots;
 		mapDashboardPart.setOperator(operator);
 	}
 
