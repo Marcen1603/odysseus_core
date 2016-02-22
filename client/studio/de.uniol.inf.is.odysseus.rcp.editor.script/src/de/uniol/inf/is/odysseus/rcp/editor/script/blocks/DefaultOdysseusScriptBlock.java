@@ -30,6 +30,10 @@ public class DefaultOdysseusScriptBlock implements IVisualOdysseusScriptBlock {
 		integrate(keyword, text);
 	}
 	
+	public DefaultOdysseusScriptBlock() {
+		// do nothing --> empty script
+	}
+	
 	@Override
 	public String getTitle() {
 		return TITLE;

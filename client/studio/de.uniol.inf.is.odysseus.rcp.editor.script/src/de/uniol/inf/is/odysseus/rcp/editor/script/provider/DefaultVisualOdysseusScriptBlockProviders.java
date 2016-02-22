@@ -17,6 +17,7 @@ public class DefaultVisualOdysseusScriptBlockProviders implements IVisualOdysseu
 		provs.add(new CQLQueryBlockProvider());
 		provs.add(new PQLQueryBlockProvider());
 		provs.add(new DefinitionsBlockProvider());
+		provs.add(new GenericBlockProvider());
 
 		return provs;
 	}
