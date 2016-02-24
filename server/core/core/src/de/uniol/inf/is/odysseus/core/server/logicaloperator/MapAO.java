@@ -52,7 +52,7 @@ public class MapAO extends UnaryLogicalOp {
 	/** The number of threads used for processing the expressions. */
 	private int threads = 0;
 	private boolean evaluateOnPunctuation = false;
-	private boolean allowNullValue = false;
+	private boolean allowNullValue = true;
 	private boolean suppressErrors = false;
 	///private boolean printNull = false;
 	private boolean keepAllAttributes = false;
@@ -287,7 +287,7 @@ public class MapAO extends UnaryLogicalOp {
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "allowNull", optional = true, doc = "If set to true and an error occurs in calculation a null value is added to the element. Else the element is skipped and no output is produced.")
+	@Parameter(type = BooleanParameter.class, name = "allowNull", optional = true, doc = "If set to true (default) and an error occurs in calculation a null value is added to the element. Else the element is skipped and no output is produced. Default is true.")
 	public void setAllowNullValue(boolean allowNullValue) {
 		this.allowNullValue = allowNullValue;
 	}
