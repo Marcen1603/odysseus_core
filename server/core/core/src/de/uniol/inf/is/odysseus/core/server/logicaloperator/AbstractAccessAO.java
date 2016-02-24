@@ -98,6 +98,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.newAccessFramework = po.newAccessFramework;
 		this.localMetaAttribute = po.localMetaAttribute;
 		this.readMetaData = po.readMetaData;
+		this.overWriteSchemaSourceName = po.overWriteSchemaSourceName;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
