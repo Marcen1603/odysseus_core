@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.net.querydistribute.transmit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
@@ -40,9 +38,6 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartTransmissionExcepti
 import de.uniol.inf.is.odysseus.net.querydistribute.activator.QueryDistributionPlugIn;
 import de.uniol.inf.is.odysseus.net.querydistribute.impl.QueryDistributionComponent;
 import de.uniol.inf.is.odysseus.net.querydistribute.logicaloperator.DistributedQueryRepresentationAO;
-import de.uniol.inf.is.odysseus.net.querydistribute.logicaloperator.SharedQueryReceiverAO;
-import de.uniol.inf.is.odysseus.net.querydistribute.logicaloperator.SharedQuerySenderAO;
-import de.uniol.inf.is.odysseus.net.querydistribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.net.querydistribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
@@ -183,58 +178,58 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 		}
 	}
 
-	private static void insertSenderAndReceiverOperators(final Map<ILogicalQueryPart, IOdysseusNode> allocationMap) {
-		Set<ILogicalQueryPart> queryParts = allocationMap.keySet();
-
-		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
-
-			private UUID connectionID;
-			private ILogicalOperator sourceOp;
-
-			private ILogicalQueryPart sourceQueryPart;
-			private ILogicalQueryPart sinkQueryPart;
-
-			@Override
-			public void beginDisconnect(ILogicalQueryPart sourceQueryPart, ILogicalOperator sourceOperator, ILogicalQueryPart sinkQueryPart, ILogicalOperator sinkOperator) {
-				LOG.debug("Create JXTA-Connection between {} and {}", new Object[] { sourceOperator, sinkOperator });
-
-				connectionID = UUID.randomUUID();
-				sourceOp = sourceOperator;
-
-				this.sourceQueryPart = sourceQueryPart;
-				this.sinkQueryPart = sinkQueryPart;
-			}
-
-			@Override
-			public ILogicalOperator createSourceofSink(ILogicalQueryPart sinkQueryPart, ILogicalOperator sink) {
-				SharedQueryReceiverAO receiverAO = new SharedQueryReceiverAO();
-				Optional<String> optString = LogicalQueryHelper.getBaseTimeunitString(sink.getOutputSchema());
-				if (optString.isPresent()) {
-					receiverAO.setBaseTimeunit(optString.get());
-				}
-				receiverAO.setConnectionID(connectionID.toString());
-				receiverAO.setAttributes(sourceOp.getOutputSchema().getAttributes());
-				receiverAO.setLocalMetaAttribute(MetadataRegistry.getMetadataType(sourceOp.getOutputSchema().getMetaAttributeNames()));
-				receiverAO.setSchemaName(sourceOp.getOutputSchema().getURI());
-				receiverAO.setOdysseusNodeID(allocationMap.get(sourceQueryPart).getID().toString());
-
-				return receiverAO;
-			}
-
-			@Override
-			public ILogicalOperator createSinkOfSource(ILogicalQueryPart sourceQueryPart, ILogicalOperator source) {
-				SharedQuerySenderAO senderAO = new SharedQuerySenderAO();
-				senderAO.setConnectionID(connectionID.toString());
-				senderAO.setOdysseusNodeID(allocationMap.get(sinkQueryPart).getID().toString());
-				return senderAO;
-			}
-
-			@Override
-			public void endDisconnect() {
-				connectionID = null;
-				sourceOp = null;
-			}
-		});
+	private static void insertSenderAndReceiverOperators(final Map<ILogicalQueryPart, IOdysseusNode> allocationMap) throws QueryPartTransmissionException {
+		LogicalQueryHelper.disconnectQueryParts(allocationMap, new NetworkConnectionOperatorGenerator(nodeCommunicator));
+		
+		//		LogicalQueryHelper.disconnectQueryParts(allocationMap, new IOperatorGenerator() {
+//
+//			private UUID connectionID;
+//			private ILogicalOperator sourceOp;
+//
+//			private ILogicalQueryPart sourceQueryPart;
+//			private ILogicalQueryPart sinkQueryPart;
+//
+//			@Override
+//			public void beginDisconnect(ILogicalQueryPart sourceQueryPart, ILogicalOperator sourceOperator, IOdysseusNode sourceNode, ILogicalQueryPart sinkQueryPart, ILogicalOperator sinkOperator, IOdysseusNode sinkNode) {
+//				LOG.debug("Create JXTA-Connection between {} and {}", new Object[] { sourceOperator, sinkOperator });
+//
+//				connectionID = UUID.randomUUID();
+//				sourceOp = sourceOperator;
+//
+//				this.sourceQueryPart = sourceQueryPart;
+//				this.sinkQueryPart = sinkQueryPart;
+//			}
+//
+//			@Override
+//			public ILogicalOperator createSourceofSink(ILogicalQueryPart sinkQueryPart, ILogicalOperator sink) {
+//				SharedQueryReceiverAO receiverAO = new SharedQueryReceiverAO();
+//				Optional<String> optString = LogicalQueryHelper.getBaseTimeunitString(sink.getOutputSchema());
+//				if (optString.isPresent()) {
+//					receiverAO.setBaseTimeunit(optString.get());
+//				}
+//				receiverAO.setConnectionID(connectionID.toString());
+//				receiverAO.setAttributes(sourceOp.getOutputSchema().getAttributes());
+//				receiverAO.setLocalMetaAttribute(MetadataRegistry.getMetadataType(sourceOp.getOutputSchema().getMetaAttributeNames()));
+//				receiverAO.setSchemaName(sourceOp.getOutputSchema().getURI());
+//				receiverAO.setOdysseusNodeID(allocationMap.get(sourceQueryPart).getID().toString());
+//
+//				return receiverAO;
+//			}
+//
+//			@Override
+//			public ILogicalOperator createSinkOfSource(ILogicalQueryPart sourceQueryPart, ILogicalOperator source) {
+//				SharedQuerySenderAO senderAO = new SharedQuerySenderAO();
+//				senderAO.setConnectionID(connectionID.toString());
+//				senderAO.setOdysseusNodeID(allocationMap.get(sinkQueryPart).getID().toString());
+//				return senderAO;
+//			}
+//
+//			@Override
+//			public void endDisconnect() {
+//				connectionID = null;
+//				sourceOp = null;
+//			}
+//		});
 	}
 
 	private void distributeToRemotePeers(UUID sharedQueryID, IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, IOdysseusNode> allocationMap, IOdysseusNode localNode, QueryBuildConfiguration parameters) throws QueryPartTransmissionException {

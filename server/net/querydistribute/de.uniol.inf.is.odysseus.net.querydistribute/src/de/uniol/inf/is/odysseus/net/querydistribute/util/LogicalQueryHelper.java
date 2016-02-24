@@ -24,8 +24,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.querydistribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.net.querydistribute.LogicalQueryPart;
+import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartTransmissionException;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public final class LogicalQueryHelper {
@@ -361,10 +363,10 @@ public final class LogicalQueryHelper {
 
 	}
 
-	public static void disconnectQueryParts(Collection<ILogicalQueryPart> queryParts, IOperatorGenerator generator) {
+	public static void disconnectQueryParts(Map<ILogicalQueryPart, IOdysseusNode> allocationMap, IOperatorGenerator generator) throws QueryPartTransmissionException {
 		Preconditions.checkNotNull(generator, "Operator generator must not be null!");
 
-		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(queryParts);
+		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(allocationMap.keySet());
 		Map<LogicalSubscription, ILogicalOperator> subsToReplace = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
 
 		for (LogicalSubscription subToReplace : subsToReplace.keySet()) {
@@ -373,13 +375,15 @@ public final class LogicalQueryHelper {
 
 			ILogicalQueryPart sinkQueryPart = queryPartAssignment.get(sinkOperator);
 			ILogicalQueryPart sourceQueryPart = queryPartAssignment.get(sourceOperator);
-			generator.beginDisconnect(sourceQueryPart, sourceOperator, sinkQueryPart, sinkOperator);
+			IOdysseusNode sinkNode = allocationMap.get(sinkQueryPart);
+			IOdysseusNode sourceNode = allocationMap.get(sourceQueryPart);
+			generator.beginDisconnect(sourceQueryPart, sourceOperator, sourceNode, sinkQueryPart, sinkOperator, sinkNode);
 
-			ILogicalOperator source = generator.createSourceofSink(sinkQueryPart, sinkOperator);
+			ILogicalOperator source = generator.createSourceofSink(sinkQueryPart, sinkOperator, sinkNode);
 			source.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			source.setName("RCV_" + connectionCounter);
 
-			ILogicalOperator sink = generator.createSinkOfSource(sourceQueryPart, sourceOperator);
+			ILogicalOperator sink = generator.createSinkOfSource(sourceQueryPart, sourceOperator, sourceNode);
 			sink.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			sink.setName("SND_" + connectionCounter);
 

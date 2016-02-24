@@ -8,12 +8,15 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.querydistribute.physicaloperator.data.PortMessage;
+import de.uniol.inf.is.odysseus.net.querydistribute.transmit.ServerPortReserver;
 
 public class QueryDistributionPlugIn implements BundleActivator {
 
 	private static ISession activeSession;
 	private static IOdysseusNodeCommunicator nodeCommunicator;
 	private static IOdysseusNodeManager nodeManager;
+	
+	private static ServerPortReserver portReserver;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -38,13 +41,18 @@ public class QueryDistributionPlugIn implements BundleActivator {
 		nodeCommunicator = serv;
 		
 		nodeCommunicator.registerMessageType(PortMessage.class);
+		
+		portReserver = new ServerPortReserver();
+		portReserver.start(nodeCommunicator);
 	}
 
 	// called by OSGi-DS
 	public static void unbindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
 		if (nodeCommunicator == serv) {
-			nodeCommunicator.unregisterMessageType(PortMessage.class);
+			portReserver.stop();
+			portReserver = null;
 			
+			nodeCommunicator.unregisterMessageType(PortMessage.class);
 			nodeCommunicator = null;
 		}
 	}
