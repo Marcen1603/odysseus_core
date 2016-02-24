@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
-import de.uniol.inf.is.odysseus.net.querydistribute.physicaloperator.data.PortMessage;
 import de.uniol.inf.is.odysseus.net.querydistribute.transmit.ServerPortReserver;
 
 public class QueryDistributionPlugIn implements BundleActivator {
@@ -40,8 +39,6 @@ public class QueryDistributionPlugIn implements BundleActivator {
 	public static void bindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
 		nodeCommunicator = serv;
 		
-		nodeCommunicator.registerMessageType(PortMessage.class);
-		
 		portReserver = new ServerPortReserver();
 		portReserver.start(nodeCommunicator);
 	}
@@ -52,7 +49,6 @@ public class QueryDistributionPlugIn implements BundleActivator {
 			portReserver.stop();
 			portReserver = null;
 			
-			nodeCommunicator.unregisterMessageType(PortMessage.class);
 			nodeCommunicator = null;
 		}
 	}
