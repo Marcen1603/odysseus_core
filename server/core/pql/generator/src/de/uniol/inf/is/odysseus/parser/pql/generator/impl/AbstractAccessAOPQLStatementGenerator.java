@@ -50,6 +50,7 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> e
 		if( !Strings.isNullOrEmpty(metaAttributeName)) {
 			sb.append(", metaAttribute='").append(metaAttributeName).append("'");
 		}
+		sb.append(", overwriteSchemaSourceName=").append(operator.isOverWriteSchemaSourceName());
 
 		return sb.toString();
 	}
@@ -115,6 +116,8 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> e
 		for (int i = 0; i < attributes.length; i++) {
 			final SDFAttribute attribute = attributes[i];
 			sb.append("['");
+			sb.append(attribute.getSourceName());
+			sb.append("', '");
 			sb.append(attribute.getAttributeName());
 			sb.append("', '");
 			sb.append(attribute.getDatatype().getURI());
