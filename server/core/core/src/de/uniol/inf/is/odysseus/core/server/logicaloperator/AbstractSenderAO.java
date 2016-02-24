@@ -19,13 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Strings;
-
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
@@ -135,21 +133,21 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		return sink;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-	 * #getName()
-	 */
-	@Override
-	public String getName() {
-		String name = getSinkname().getResourceName();
-		if (Strings.isNullOrEmpty(name)) {
-			return super.getName();
-		}
-		return name;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+//	 * #getName()
+//	 */
+//	@Override
+//	public String getName() {
+//		String name = getSinkname().getResourceName();
+//		if (Strings.isNullOrEmpty(name)) {
+//			return super.getName();
+//		}
+//		return name;
+//	}
 
 	/**
 	 * Set the options of the sender operator for transport and prrotocol
