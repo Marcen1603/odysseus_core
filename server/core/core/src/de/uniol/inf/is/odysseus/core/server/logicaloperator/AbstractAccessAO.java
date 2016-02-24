@@ -73,6 +73,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private IMetaAttribute localMetaAttribute;
 
 	private boolean readMetaData;
+	private boolean overWriteSchemaSourceName = true;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -173,6 +174,16 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	public boolean getNewAccessFramework() {
 		return this.newAccessFramework;
+	}
+	
+	
+	public boolean isOverWriteSchemaSourceName() {
+		return overWriteSchemaSourceName;
+	}
+
+	@Parameter(type = BooleanParameter.class, optional = true, isList = false, doc = "Output schema typically contains source name in attributes. Sometime this is not wanted. Set to false to avoid overwriting.")
+	public void setOverWriteSchemaSourceName(boolean overWriteSchemaSourceName) {
+		this.overWriteSchemaSourceName = overWriteSchemaSourceName;
 	}
 
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
@@ -335,14 +346,16 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			// Add source name to attributes
 			for (SDFAttribute a : attributes) {
 				SDFAttribute newAttr;
+				String sName = overWriteSchemaSourceName?getName():a.getSourceName();
 				if (a.getDatatype() == SDFDatatype.START_TIMESTAMP
 						|| a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING) {
 					List<SDFConstraint> c = new ArrayList<>();
 					c.add(new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
 					SDFUnit unit = new SDFTimeUnit(timeUnit.toString());
-					newAttr = new SDFAttribute(getName(), a.getAttributeName(), a, unit, c);
+					
+					newAttr = new SDFAttribute(sName, a.getAttributeName(), a, unit, c);
 				} else {
-					newAttr = new SDFAttribute(getName(), a.getAttributeName(), a);
+					newAttr = new SDFAttribute(sName, a.getAttributeName(), a);
 				}
 				s2.add(newAttr);
 			}
