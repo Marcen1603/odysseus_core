@@ -263,6 +263,9 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 		startFinishedComponents();
 
 		fireStartEvent(localNode);
+		
+		// important to print directly into console
+		System.out.println("OdysseusNet started");
 	}
 
 	private IOdysseusNode tryStart() throws OdysseusNetException {
@@ -363,6 +366,9 @@ public class OdysseusNetStartupManager implements IOdysseusNetStartupManager {
 		LOG.info("OdysseusNet stopped now");
 
 		fireStopEvent();
+		
+		// important to print directly into console
+		System.out.println("OdysseusNet stopped");
 	}
 
 	private void tryStop() {
