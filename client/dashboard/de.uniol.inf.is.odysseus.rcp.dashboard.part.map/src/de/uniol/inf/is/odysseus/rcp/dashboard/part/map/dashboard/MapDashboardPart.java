@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractMultiSourceDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.IMapDashboardAdapter;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 
-public class MapDashboardPart extends AbstractDashboardPart implements IMapDashboardAdapter {
+public class MapDashboardPart extends AbstractMultiSourceDashboardPart implements IMapDashboardAdapter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapDashboardPart.class);
 

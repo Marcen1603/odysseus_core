@@ -45,7 +45,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractDashboardPart.class);
 	
-	private IDashboardPartQueryTextProvider queryTextProvider;
+	protected IDashboardPartQueryTextProvider queryTextProvider;
 	private List<IDashboardPartListener> listeners = new ArrayList<>();
 	private String sinkNames;
 	private boolean sinkSynced = false;

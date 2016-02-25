@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "SPATIALPATTERN", doc = "Detects different spatio(temporal) patterns.", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SPATIALPATTERN", doc = "Detects different spatio(temporal) patterns.", category = {
 		LogicalOperatorCategory.PROCESSING })
 public class SpatialPatternAO extends BinaryLogicalOp {
 
@@ -77,7 +77,7 @@ public class SpatialPatternAO extends BinaryLogicalOp {
 		return movingTarget;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "movingTarget", optional = false, doc = "If true, the target is set via a data stream on port 2 with the targetLatitudeAttribute and targetLongitudeAttribute attribute names. If false, a static target is defined with targetLatitude and targetLongitude.")
+	@Parameter(type = BooleanParameter.class, name = "movingTarget", optional = false, doc = "If true, the target is set via a data stream on port 0 with the targetLatitudeAttribute and targetLongitudeAttribute attribute names. If false, a static target is defined with targetLatitude and targetLongitude. (The data streams need to be joined beforehand)")
 	public void setMovingTarget(boolean movingTarget) {
 		this.movingTarget = movingTarget;
 	}
@@ -91,9 +91,9 @@ public class SpatialPatternAO extends BinaryLogicalOp {
 		return targetLongitude;
 	}
 	
-	@Parameter(type = DoubleParameter.class, name = "targetLogitude", optional = true, doc = "The logitude value of the target in case that the target is static.")
-	public void setTargetLongitude(double logitude) {
-		this.targetLongitude = logitude;
+	@Parameter(type = DoubleParameter.class, name = "targetLongitude", optional = true, doc = "The longitude value of the target in case that the target is static.")
+	public void setTargetLongitude(double longitude) {
+		this.targetLongitude = longitude;
 	}
 
 	public double getRadius() {
@@ -118,7 +118,7 @@ public class SpatialPatternAO extends BinaryLogicalOp {
 		return lngMovingName;
 	}
 
-	@Parameter(type = StringParameter.class, name = "movingLogitudeAttribute", optional = false, doc = "The name of the attribute on the first port which has the longitude for the moving object.")
+	@Parameter(type = StringParameter.class, name = "movingLongitudeAttribute", optional = false, doc = "The name of the attribute on the first port which has the longitude for the moving object.")
 	public void setLngMovingName(String lngMovingName) {
 		this.lngMovingName = lngMovingName;
 	}
@@ -127,7 +127,7 @@ public class SpatialPatternAO extends BinaryLogicalOp {
 		return latTargetName;
 	}
 
-	@Parameter(type = StringParameter.class, name = "targetLatitudeAttribute", optional = true, doc = "The name of the attribute on the second port which has the latitude for the target object.")
+	@Parameter(type = StringParameter.class, name = "targetLatitudeAttribute", optional = true, doc = "The name of the attribute on the first port which has the latitude for the target object.")
 	public void setLatTargetName(String latTargetName) {
 		this.latTargetName = latTargetName;
 	}
@@ -136,7 +136,7 @@ public class SpatialPatternAO extends BinaryLogicalOp {
 		return lngTargetName;
 	}
 
-	@Parameter(type = StringParameter.class, name = "targetLongitudeAttribute", optional = true, doc = "The name of the attribute on the second port which has the longitude for the moving object.")
+	@Parameter(type = StringParameter.class, name = "targetLongitudeAttribute", optional = true, doc = "The name of the attribute on the first port which has the longitude for the moving object.")
 	public void setLngTargetName(String lngTargetName) {
 		this.lngTargetName = lngTargetName;
 	}

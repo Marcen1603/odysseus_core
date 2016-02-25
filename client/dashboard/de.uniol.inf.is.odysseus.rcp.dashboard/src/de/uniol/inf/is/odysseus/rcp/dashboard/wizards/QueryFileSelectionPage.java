@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -46,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractMultiSourceDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -56,11 +58,15 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvi
 
 public class QueryFileSelectionPage extends WizardPage {
 
-	private final ContainerSelectionPage page1;
+	private final DashboardPartTypeSelectionPage typeSelectionPage;
+	private final ContainerSelectionPage containerSelectionPage;
+	private DashboardPartConfigurationPage configurationPage;
 
 	private Button chooseSourceRadio;
 	private Button chooseQueryFileRadio;
 	private Button chooseQueryRadio;
+
+	private Button addAnotherSourceCheckbox;
 
 	private Combo sourceCombo;
 	private Combo queryCombo;
@@ -68,19 +74,29 @@ public class QueryFileSelectionPage extends WizardPage {
 	private Button chooseFileButton;
 	private IFile selectedFile;
 
-	protected QueryFileSelectionPage(String pageName, ContainerSelectionPage page1) {
-		super(pageName);
-		this.page1 = page1;
+	private Composite rootComposite;
 
-		setTitle("Choose query");
-		setDescription("Choose the query to execute to get the data.");
+	// To show the source number in the explanation text
+	private int sourceNumber;
+
+	protected QueryFileSelectionPage(String pageName, ContainerSelectionPage containerSelectionPage,
+			DashboardPartTypeSelectionPage typeSelectionPage, NewDashboardPartWizard wizard,
+			DashboardPartConfigurationPage configurationPage, int sourceNumber) {
+		super(pageName);
+		this.containerSelectionPage = containerSelectionPage;
+		this.typeSelectionPage = typeSelectionPage;
+		this.configurationPage = configurationPage;
+		this.sourceNumber = sourceNumber;
+
+		setTitle("Choose " + sourceNumber + ". query");
+		setDescription("Choose the " + sourceNumber + ". query to execute to get the data.");
 	}
 
 	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
-		Composite rootComposite = new Composite(parent, SWT.NONE);
+		rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayoutData(new GridData((GridData.FILL_BOTH)));
 		rootComposite.setLayout(new GridLayout(1, true));
 
@@ -88,12 +104,23 @@ public class QueryFileSelectionPage extends WizardPage {
 		createChooseSourceControls(rootComposite);
 		createChooseQueryControls(rootComposite);
 
+		// Create a checkBox that is shown if the DashboadPart can handle
+		// multiple sources
+		addAnotherSourceCheckbox = new Button(rootComposite, SWT.CHECK);
+		addAnotherSourceCheckbox.setText("Add another source.");
+		addAnotherSourceCheckbox.setSelection(false);
+		addAnotherSourceCheckbox.setVisible(false);
+
 		finishCreation(rootComposite);
 	}
 
 	private void createChooseQueryFileControls(Composite rootComposite) {
 		createChooseQueryRadioButton(rootComposite);
 		createQueryFilesTable(rootComposite);
+	}
+
+	public void setConfigurationPage(DashboardPartConfigurationPage page) {
+		this.configurationPage = page;
 	}
 
 	private void createQueryFilesTable(Composite rootComposite) {
@@ -113,9 +140,11 @@ public class QueryFileSelectionPage extends WizardPage {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IProject project = page1.getProject();
+				IProject project = containerSelectionPage.getProject();
 
-				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), new WorkbenchLabelProvider(),
+						new WorkbenchContentProvider());
 				dialog.setInput(project);
 				dialog.setAllowMultiple(false);
 				if (dialog.open() == Window.OK) {
@@ -170,7 +199,8 @@ public class QueryFileSelectionPage extends WizardPage {
 	}
 
 	private static String[] determineAvailableSources() {
-		List<ViewInformation> streamsAndViews = DashboardPlugIn.getExecutor().getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
+		List<ViewInformation> streamsAndViews = DashboardPlugIn.getExecutor()
+				.getStreamsAndViewsInformation(OdysseusRCPPlugIn.getActiveSession());
 		List<String> names = Lists.newArrayList();
 		for (ViewInformation streamOrView : streamsAndViews) {
 			// FIXME: Use Resource
@@ -229,21 +259,21 @@ public class QueryFileSelectionPage extends WizardPage {
 			}
 			return new ResourceFileQueryTextProvider(getSelectedQueryFile());
 		}
-		
-		if( isSourceSelected() ) {
+
+		if (isSourceSelected()) {
 			List<String> sourceSelectAllText = Lists.newArrayList();
 			sourceSelectAllText.add("#PARSER CQL");
 			sourceSelectAllText.add("#TRANSCFG Standard");
 			sourceSelectAllText.add("#RUNQUERY");
 			sourceSelectAllText.add("SELECT * FROM " + getSelectedSourceName());
-	
+
 			return new SimpleQueryTextProvider(sourceSelectAllText);
 		}
-		
-		if( isQuerySelected() ) {
+
+		if (isQuerySelected()) {
 			return new RunningQueryProvider(getSelectedQueryName());
 		}
-		
+
 		throw new RuntimeException("Could not determine query text provider!");
 	}
 
@@ -258,7 +288,7 @@ public class QueryFileSelectionPage extends WizardPage {
 	private boolean isQuerySelected() {
 		return chooseQueryRadio.getSelection();
 	}
-	
+
 	private IFile getSelectedQueryFile() {
 		if (chooseQueryFileRadio.getSelection()) {
 			return selectedFile;
@@ -274,12 +304,12 @@ public class QueryFileSelectionPage extends WizardPage {
 
 		throw new RuntimeException("There was no source selected here");
 	}
-	
+
 	private String getSelectedQueryName() {
-		if( chooseQueryRadio.getSelection() ) {
+		if (chooseQueryRadio.getSelection()) {
 			return queryCombo.getText();
 		}
-		
+
 		throw new RuntimeException("There was no query name selected here");
 	}
 
@@ -289,4 +319,55 @@ public class QueryFileSelectionPage extends WizardPage {
 		setControl(rootComposite);
 		setPageComplete(false);
 	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+
+		if (visible) {
+			showMultipleSourceCheckbox();
+		}
+	}
+
+	/**
+	 * If necessary (if multiple sources are possible), an option for the user
+	 * is made visible where it is possible to choose to add another source.
+	 */
+	private void showMultipleSourceCheckbox() {
+		if (typeSelectionPage.getSelectedDashboardPart() instanceof AbstractMultiSourceDashboardPart) {
+			addAnotherSourceCheckbox.setVisible(true);
+		} else {
+			addAnotherSourceCheckbox.setVisible(false);
+		}
+	}
+
+	/**
+	 * Returns the next page of the wizard: If user wants to choose another
+	 * source, another source selection page will be shown. If not, the wizard
+	 * continues as normal.
+	 * 
+	 * Override is necessary to give the user the possibility to choose more
+	 * than one source.
+	 */
+	@Override
+	public IWizardPage getNextPage() {
+
+		if (addAnotherSourceCheckbox.getSelection()) {
+			// The user input is such that we need an additional page to
+			// append to the wizard.
+			IWizardPage nextPage = new QueryFileSelectionPage("Select query", containerSelectionPage, typeSelectionPage,
+					(NewDashboardPartWizard) this.getWizard(), configurationPage, sourceNumber + 1);
+			nextPage.setWizard(this.getWizard());
+			configurationPage.addQuerySelectionPage((QueryFileSelectionPage) nextPage);
+
+			return nextPage;
+
+		} else {
+			IWizardPage nextPage = this.getWizard()
+					.getNextPage(((NewDashboardPartWizard) this.getWizard()).getFirstQuerySelectionPage());
+			return nextPage;
+		}
+
+	}
+
 }

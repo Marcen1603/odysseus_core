@@ -134,7 +134,7 @@ public class Heatmap extends RasterLayer {
 
 	/**
 	 * Creates the color-array, for each tile one color. With this colors the
-	 * image can be creates. Also creates an array, which says which tile has
+	 * image can be created. Also creates an array, which says which tile has
 	 * information (and which tiles do not have a single data-tuple)
 	 * 
 	 * @param x

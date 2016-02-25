@@ -20,6 +20,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
@@ -39,10 +40,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizard.class);
-	private static final String DEFAULT_DASHBOARD_FILENAME = "DashboardPart." + DashboardPlugIn.DASHBOARD_PART_EXTENSION;
+	private static final String DEFAULT_DASHBOARD_FILENAME = "DashboardPart."
+			+ DashboardPlugIn.DASHBOARD_PART_EXTENSION;
 
+	private DashboardPartTypeSelectionPage partSelectionPage;
 	private ContainerSelectionPage containerPage;
-	private DashboardPartTypeSelectionPage partTypePage;
+	private DashboardPartConfigurationPage configurePage;
 	private QueryFileSelectionPage queryFilePage;
 	private ContextMapPage contextMapPage;
 
@@ -54,17 +57,22 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	@Override
 	public void addPages() {
 		addPage(containerPage);
+		addPage(partSelectionPage);
 		addPage(queryFilePage);
 		addPage(contextMapPage);
-		addPage(partTypePage);
+		addPage(configurePage);
 	}
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		containerPage = new ContainerSelectionPage("Select file name", selection, DEFAULT_DASHBOARD_FILENAME);
-		queryFilePage = new QueryFileSelectionPage("Select query", containerPage);
+		partSelectionPage = new DashboardPartTypeSelectionPage("Select type of dashboad part");
+		queryFilePage = new QueryFileSelectionPage("Select query", containerPage, partSelectionPage, this,
+				configurePage, 1);
 		contextMapPage = new ContextMapPage("Configure context", queryFilePage);
-		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part", queryFilePage, contextMapPage, containerPage);
+		configurePage = new DashboardPartConfigurationPage("Configure Dashboard Part", partSelectionPage, queryFilePage,
+				contextMapPage, containerPage);
+		queryFilePage.setConfigurationPage(configurePage);
 	}
 
 	@Override
@@ -76,13 +84,14 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			dashboardPartFile.create(null, true, null);
 
-			final IDashboardPart part = partTypePage.getDashboardPart();
+			final IDashboardPart part = configurePage.getDashboardPart();
 			part.setQueryTextProvider(queryFilePage.getQueryTextProvider());
 
 			final IDashboardPartHandler handler = new XMLDashboardPartHandler();
 			handler.save(part, dashboardPartFile);
-	
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(dashboardPartFile), DashboardPlugIn.DASHBOARD_PART_EDITOR_ID, true);
+
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.openEditor(new FileEditorInput(dashboardPartFile), DashboardPlugIn.DASHBOARD_PART_EDITOR_ID, true);
 
 			return true;
 		} catch (final CancelException ex) {
@@ -91,6 +100,10 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			LOG.error("Could not finish wizard", ex);
 			return false;
 		}
+	}
+
+	public IWizardPage getFirstQuerySelectionPage() {
+		return this.queryFilePage;
 	}
 
 	private static String getDashboardPartFileName(ContainerSelectionPage containerPage) throws CancelException {
@@ -119,9 +132,12 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		return Optional.absent();
 	}
 
-	private static boolean isOtherExtensionOk(String desiredExtension, String standardExtension) throws CancelException {
-		final MessageDialog dlg = new MessageDialog(Display.getCurrent().getActiveShell(), "Custom file extension", null, "Should the file extension '" + desiredExtension + "' be replaced by '"
-				+ standardExtension + "'?", MessageDialog.QUESTION, new String[] { "Replace", "Keep", "Cancel" }, 0);
+	private static boolean isOtherExtensionOk(String desiredExtension, String standardExtension)
+			throws CancelException {
+		final MessageDialog dlg = new MessageDialog(Display.getCurrent().getActiveShell(), "Custom file extension",
+				null,
+				"Should the file extension '" + desiredExtension + "' be replaced by '" + standardExtension + "'?",
+				MessageDialog.QUESTION, new String[] { "Replace", "Keep", "Cancel" }, 0);
 		final int ret = dlg.open();
 		if (ret == 1) {
 			return true;

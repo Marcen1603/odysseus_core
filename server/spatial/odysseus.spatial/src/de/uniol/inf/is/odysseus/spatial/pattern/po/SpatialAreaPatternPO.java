@@ -28,7 +28,8 @@ public class SpatialAreaPatternPO<T extends Tuple<M>, M extends ITimeInterval> e
 	private double lastMovingLng;
 
 	// true, if the target is moving. If that's the case, the input data stream
-	// for the target object is on port 1
+	// of the two objects need to be joined beforehand, so they get in joined on
+	// port 0.
 	private boolean movingTarget;
 	// The radius around the target in which it's detected that the moving
 	// object is at the target
@@ -80,7 +81,7 @@ public class SpatialAreaPatternPO<T extends Tuple<M>, M extends ITimeInterval> e
 		updatePosition(tuple, port);
 
 		// Calculate distance between object and target
-		double distance = calculateDistance(tuple) * 1000;
+		double distance = calculateDistance() * 1000;
 
 		if (firstValue) {
 			// We don't know how far away the moving object was before the
@@ -149,21 +150,47 @@ public class SpatialAreaPatternPO<T extends Tuple<M>, M extends ITimeInterval> e
 		return false;
 	}
 
+	/**
+	 * Writes the coordinates from the tuple into the variables
+	 * 
+	 * @param tuple
+	 *            The newest tuple
+	 * @param port
+	 *            The port on which the tuple got in
+	 */
 	private void updatePosition(T tuple, int port) {
-		if (port == 0) {
-			// Moving object
-			this.lastMovingLat = getValue(latMovingName, tuple, port);
-			this.lastMovingLng = getValue(lngMovingName, tuple, port);
-		} else if (movingTarget && port == 1) {
+		// In any case get the position of the moving object (not the target)
+		this.lastMovingLat = getValue(latMovingName, tuple, port);
+		this.lastMovingLng = getValue(lngMovingName, tuple, port);
+
+		if (movingTarget) {
+			// Only if we get the coordinates of the target as a data stream get
+			// the coordinates from the tuple
 			this.latTarget = getValue(latTargetName, tuple, port);
 			this.lngTarget = getValue(lngTargetName, tuple, port);
 		}
 	}
 
-	private double calculateDistance(T tuple) {
+	/**
+	 * Calculates the distance between two points in the earth
+	 * 
+	 * @return The distance in km between the two points
+	 */
+	private double calculateDistance() {
 		return SpatialUtils.getDistance(lastMovingLat, lastMovingLng, latTarget, lngTarget);
 	}
 
+	/**
+	 * Returns the value from the given attribute in the given tuple
+	 * 
+	 * @param valueAttributeName
+	 *            The name of the attribute in the tuple
+	 * @param tuple
+	 *            The tuple with the data
+	 * @param port
+	 *            The port on which the tuple got in
+	 * @return The value as double
+	 */
 	private double getValue(String valueAttributeName, T tuple, int port) {
 		int valueIndex = getInputSchema(port).findAttributeIndex(valueAttributeName);
 		if (valueIndex >= 0) {
