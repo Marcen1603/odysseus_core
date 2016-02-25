@@ -280,6 +280,7 @@ public class HTTPServerTransportHandler extends AbstractPushTransportHandler
 							fireProcess(new String[] { msg });
 						} else {
 							LOG.warn("Input data of HTTP request is empty. (" + hostname + ":" + port + path + ")");
+							asyncContext.complete();
 						}
 					}
 				}
