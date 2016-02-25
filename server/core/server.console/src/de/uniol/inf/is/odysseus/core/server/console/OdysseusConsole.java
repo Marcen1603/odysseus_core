@@ -582,7 +582,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		addCommand(args);
 		int depth = 0;
 		if (args != null && args.length > 0) {
-			depth = Integer.valueOf(args[1]);
+			depth = Integer.valueOf(args[0]);
 
 			if (depth < 1) {
 				depth = 1;
