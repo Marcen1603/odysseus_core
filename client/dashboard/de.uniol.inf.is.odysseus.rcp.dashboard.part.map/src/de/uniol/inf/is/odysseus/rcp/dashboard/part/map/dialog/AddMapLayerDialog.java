@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfigur
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 
-public class AddDialog extends TitleAreaDialog {
+public class AddMapLayerDialog extends TitleAreaDialog {
 
 	private LinkedList<ILayer> layerOrder;
 
@@ -45,7 +45,7 @@ public class AddDialog extends TitleAreaDialog {
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public AddDialog(Shell parentShell, IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
+	public AddMapLayerDialog(Shell parentShell, IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
 		super(parentShell);
 		this.operator = operator;
 		this.layerOrder = layerOrder;
@@ -238,6 +238,13 @@ public class AddDialog extends TitleAreaDialog {
 		mapTypeSelect.add("Heatmap");
 		// mapTypeSelect.add("Tracemap");
 		mapTypeSelect.select(0);
+		
+		Label dataSourceLabel = new Label(thematicLayer, SWT.NONE);
+		dataSourceLabel.setText("Data source:");
+		dataSourceLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo dataSourceSelect = new CCombo(thematicLayer, SWT.BORDER);
+		dataSourceSelect.setLayoutData(DialogUtils.getTextDataLayout());
 
 		Label geometrieLabel = new Label(thematicLayer, SWT.NONE);
 		geometrieLabel.setText("Geometry Attribute:");

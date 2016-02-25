@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
-//import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 
 public class StreamSelectionListener extends SelectionAdapter {
 	
@@ -21,10 +20,10 @@ public class StreamSelectionListener extends SelectionAdapter {
 	CCombo latSelect;
 	CCombo lngSelect;
 	CCombo visualizationSelect;
-	AddDialog propertyDialog;
+	AddMapLayerDialog propertyDialog;
 
 	public StreamSelectionListener(IPhysicalOperator operator, LayerConfiguration config, CCombo combobox, CCombo geometrieSelect,
-			CCombo latSelect, CCombo lngSelect, CCombo visualizationSelect, AddDialog propertyDialog) {
+			CCombo latSelect, CCombo lngSelect, CCombo visualizationSelect, AddMapLayerDialog propertyDialog) {
 		this.operator = operator;
 		this.combobox = combobox;
 		this.propertyDialog = propertyDialog;

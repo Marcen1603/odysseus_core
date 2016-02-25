@@ -175,7 +175,6 @@ public class DashboardPartConfigurationPage extends WizardPage {
 				newDashboardPart.setProject(containerPage.getProject());
 			}
 
-			newDashboardPart.setQueryTextProvider(queryFilePage.getQueryTextProvider());
 			insertInto(newDashboardPart, contextMapPage.getContextMap());
 			selectedDashboardPart = newDashboardPart;
 

@@ -16,10 +16,10 @@ public class ThematicSelectionListener extends SelectionAdapter {
 	CCombo latSelect;
 	CCombo lngSelect;
 	CCombo visualizationSelect;
-	AddDialog propertyDialog;
+	AddMapLayerDialog propertyDialog;
 
 	public ThematicSelectionListener(LayerConfiguration config, CCombo comboBox, CCombo geometrieSelect,
-			CCombo latSelect, CCombo lngSelect, CCombo visualizationSelect, AddDialog propertyDialog) {
+			CCombo latSelect, CCombo lngSelect, CCombo visualizationSelect, AddMapLayerDialog propertyDialog) {
 		this.config = config;
 		this.combobox = comboBox;
 		this.propertyDialog = propertyDialog;

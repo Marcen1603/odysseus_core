@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractMultiSourceDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -35,11 +36,9 @@ public class QueryExecutionHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryExecutionHandler.class);
 
-	private final IDashboardPart dashboardPart;
-
-	private IFile scriptFile;
-	private String[] lines;
-	private String queryName;
+	private List<IFile> scriptFiles;
+	private List<String[]> linesList;
+	private List<String> queryNames;
 
 	private Collection<Integer> queryIDs;
 	private Collection<IPhysicalOperator> queryRoots;
@@ -47,37 +46,39 @@ public class QueryExecutionHandler {
 	public QueryExecutionHandler(IDashboardPart dashboardPart) {
 		Preconditions.checkNotNull(dashboardPart, "Dashboard part for execution must not be null!");
 
-		this.dashboardPart = dashboardPart;
-		IDashboardPartQueryTextProvider provider = dashboardPart.getQueryTextProvider();
-		if (provider instanceof ResourceFileQueryTextProvider) {
-			ResourceFileQueryTextProvider resProvider = (ResourceFileQueryTextProvider) provider;
+		// Create lists for queries
+		scriptFiles = new ArrayList<>();
+		linesList = new ArrayList<>();
+		queryNames = new ArrayList<>();
 
-			this.scriptFile = resProvider.getFile();
-			this.lines = null;
-			this.queryName = null;
-		} else if (provider instanceof SimpleQueryTextProvider) {
-			SimpleQueryTextProvider simpleProvider = (SimpleQueryTextProvider) provider;
+		List<IDashboardPartQueryTextProvider> providers = new ArrayList<>();
 
-			this.scriptFile = null;
-			this.queryName = null;
-
-			ImmutableList<String> queryText = simpleProvider.getQueryText();
-			this.lines = queryText.toArray(new String[queryText.size()]);
-		} else if (provider instanceof GraphQueryFileProvider) {
-			GraphQueryFileProvider graphProvider = (GraphQueryFileProvider) provider;
-
-			this.scriptFile = null;
-			this.queryName = null;
-
-			this.lines = graphProvider.getQueryText().toArray(new String[0]);
-		} else if (provider instanceof RunningQueryProvider) {
-			RunningQueryProvider runningQueryProvider = (RunningQueryProvider) provider;
-
-			this.scriptFile = null;
-			this.lines = null;
-			this.queryName = runningQueryProvider.getQueryName();
+		if (dashboardPart instanceof AbstractMultiSourceDashboardPart) {
+			// We have more than one source
+			providers = ((AbstractMultiSourceDashboardPart) dashboardPart).getQueryTextProviders();
 		} else {
-			throw new RuntimeException("Unknown queryText provider: " + provider.getClass());
+			IDashboardPartQueryTextProvider provider = dashboardPart.getQueryTextProvider();
+			providers.add(provider);
+		}
+
+		for (IDashboardPartQueryTextProvider provider : providers) {
+
+			if (provider instanceof ResourceFileQueryTextProvider) {
+				ResourceFileQueryTextProvider resProvider = (ResourceFileQueryTextProvider) provider;
+				this.scriptFiles.add(resProvider.getFile());
+			} else if (provider instanceof SimpleQueryTextProvider) {
+				SimpleQueryTextProvider simpleProvider = (SimpleQueryTextProvider) provider;
+				ImmutableList<String> queryText = simpleProvider.getQueryText();
+				this.linesList.add(queryText.toArray(new String[queryText.size()]));
+			} else if (provider instanceof GraphQueryFileProvider) {
+				GraphQueryFileProvider graphProvider = (GraphQueryFileProvider) provider;
+				this.linesList.add(graphProvider.getQueryText().toArray(new String[0]));
+			} else if (provider instanceof RunningQueryProvider) {
+				RunningQueryProvider runningQueryProvider = (RunningQueryProvider) provider;
+				this.queryNames.add(runningQueryProvider.getQueryName());
+			} else {
+				throw new RuntimeException("Unknown queryText provider: " + provider.getClass());
+			}
 		}
 
 	}
@@ -85,21 +86,45 @@ public class QueryExecutionHandler {
 	public void start() throws ControllerException {
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 
+		// Reset query-ids
+		queryIDs = new ArrayList<>();
+
 		try {
-			if (lines == null && scriptFile != null) {
+			
+			// All queries by file
+			int numScriptLines = -1;
+			for (IFile scriptFile : this.scriptFiles) {
 				List<String> lineList = FileUtil.read(scriptFile);
-				lines = lineList.toArray(new String[lineList.size()]);
+				linesList.add(lineList.toArray(new String[lineList.size()]));
+				numScriptLines++;
 			}
 
-			if (lines != null) {
+			// All queries by source
+			int doneLinesCounter = 0;
+			for (String[] lines : linesList) {
 				String query = "";
 				for (String line : lines) {
 					query = query + System.lineSeparator() + line;
 				}
-				Context context = createContext(scriptFile, dashboardPart);
-				Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller, context);
-				queryIDs = ids;
-			} else {
+
+				// Context depending on the source: scriptFile or no scriptFile
+				Context context = null;
+				if (doneLinesCounter <= numScriptLines) {
+					// Context for a scriptFile
+					ParserClientUtil.createRCPContext(this.scriptFiles.get(doneLinesCounter));
+				} else {
+					// Context for lines not from a scriptFile
+					context = Context.empty();					
+				}
+				// TODO Add contextKeys to context
+				Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller,
+						context);
+				queryIDs.addAll(ids);
+				doneLinesCounter++;
+			}
+
+			// All queries by name
+			for (String queryName : queryNames) {
 				Optional<ILogicalQuery> optQuery = determineQueryByName(queryName, caller);
 				if (!optQuery.isPresent()) {
 					throw new ControllerException("Could not find query with name " + queryName + "!");
@@ -108,8 +133,9 @@ public class QueryExecutionHandler {
 				ILogicalQuery query = optQuery.get();
 				int queryID = query.getID();
 
-				queryIDs = Lists.newArrayList(queryID);
+				queryIDs.add(queryID);
 			}
+
 			queryRoots = determineRoots(queryIDs);
 		} catch (CoreException ex) {
 			throw new ControllerException("Could not start query", ex);
@@ -128,8 +154,10 @@ public class QueryExecutionHandler {
 		return Optional.absent();
 	}
 
+	@SuppressWarnings("unused")
 	private static Context createContext(IFile scriptFile, IDashboardPart part) {
 		Context context = scriptFile != null ? ParserClientUtil.createRCPContext(scriptFile) : Context.empty();
+		// TODO Show contextKey config page multiple times to have a context for every source
 		for (String key : part.getContextKeys()) {
 			context.putOrReplace(key, part.getContextValue(key).get());
 		}
@@ -139,7 +167,8 @@ public class QueryExecutionHandler {
 	private static Collection<IPhysicalOperator> determineRoots(Collection<Integer> queryIDs) {
 		final Collection<IPhysicalOperator> roots = Lists.newArrayList();
 		for (final Integer id : queryIDs) {
-			for (final IPhysicalOperator rootOfQuery : DashboardPlugIn.getExecutor().getPhysicalRoots(id, OdysseusRCPPlugIn.getActiveSession())) {
+			for (final IPhysicalOperator rootOfQuery : DashboardPlugIn.getExecutor().getPhysicalRoots(id,
+					OdysseusRCPPlugIn.getActiveSession())) {
 				if (!(rootOfQuery instanceof DefaultStreamConnection)) {
 					roots.add(rootOfQuery);
 				}
@@ -156,12 +185,8 @@ public class QueryExecutionHandler {
 	}
 
 	public void stop() {
-		
-		if (!Strings.isNullOrEmpty(queryName)) {
-			return;
-		}
 
-		if( queryIDs != null && !queryIDs.isEmpty() ) {
+		if (queryIDs != null && !queryIDs.isEmpty()) {
 			for (final Integer id : queryIDs) {
 				try {
 					DashboardPlugIn.getExecutor().removeQuery(id, OdysseusRCPPlugIn.getActiveSession());
@@ -169,7 +194,7 @@ public class QueryExecutionHandler {
 					LOG.error("Exception during stopping/removing query {}.", id, t);
 				}
 			}
-			
+
 			queryIDs = null;
 			queryRoots = null;
 		}

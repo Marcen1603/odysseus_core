@@ -19,5 +19,9 @@ public abstract class AbstractMultiSourceDashboardPart extends AbstractDashboard
 		Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
 		this.queryTextProviders.add(provider);
 	}
+	
+	public List<IDashboardPartQueryTextProvider> getQueryTextProviders() {
+		return new ArrayList<IDashboardPartQueryTextProvider>(this.queryTextProviders);
+	}
 
 }
