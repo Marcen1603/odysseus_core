@@ -20,6 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.ComparablePair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -45,6 +48,8 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.AbstractWindowTIP
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class JoinTransformationHelper {
+	
+	private static Logger LOG = LoggerFactory.getLogger(JoinTransformationHelper.class);
 
 	/**
 	 * Checks if there is a window in any path to a source of this operator.
@@ -288,6 +293,13 @@ public class JoinTransformationHelper {
 			queryRestrictArray[i] = queryRestrictList.get(i);
 		}
 
+		if(insertRestrictList.contains(-1)) {
+			LOG.warn("Insert restriction list '{}' contains -1. needed attributes: {}", insertRestrictList, neededAttrs);
+		}
+		if(queryRestrictList.contains(-1)) {
+			LOG.warn("Query restriction list '{}' contains -1. needed attributes: {}", queryRestrictList, neededAttrs);
+		}
+		
 		return new Pair<int[], int[]>(insertRestrictArray, queryRestrictArray);
 	}
 
