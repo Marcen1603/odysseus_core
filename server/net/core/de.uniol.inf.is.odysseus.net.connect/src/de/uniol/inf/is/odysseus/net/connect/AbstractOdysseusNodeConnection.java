@@ -11,15 +11,18 @@ import com.google.common.collect.Lists;
 public abstract class AbstractOdysseusNodeConnection implements IOdysseusNodeConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractOdysseusNodeConnection.class);
-	
-	private final Collection<IOdysseusNodeConnectionListener> listeners = Lists.newArrayList();
-	
+
+	private Collection<IOdysseusNodeConnectionListener> listeners = Lists.newArrayList();
+	private Collection<IOdysseusNodeConnectionListener> listenersBuffer = Lists.newArrayList();
+	private boolean modifiedBuffer = false;
+
 	@Override
 	public final void addListener(IOdysseusNodeConnectionListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		synchronized( listeners ) {
-			listeners.add(listener);
+		synchronized (listenersBuffer) {
+			listenersBuffer.add(listener);
+			modifiedBuffer = true;
 		}
 	}
 
@@ -27,17 +30,19 @@ public abstract class AbstractOdysseusNodeConnection implements IOdysseusNodeCon
 	public final void removeListener(IOdysseusNodeConnectionListener listener) {
 		Preconditions.checkNotNull(listener, "listener must not be null!");
 
-		synchronized( listeners ) {
-			listeners.remove(listener);
+		synchronized (listenersBuffer) {
+			listenersBuffer.remove(listener);
+			modifiedBuffer = false;
 		}
 	}
-	
+
 	protected final void fireMessageReceivedEvent(byte[] data) {
-		synchronized( listeners ) {
-			for( IOdysseusNodeConnectionListener listener : listeners ) {
+		synchronized (listeners) {
+			updateListenersList();
+			for (IOdysseusNodeConnectionListener listener : listeners) {
 				try {
 					listener.messageReceived(this, data);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exception in odysseus node connection listener", t);
 				}
 			}
@@ -45,13 +50,26 @@ public abstract class AbstractOdysseusNodeConnection implements IOdysseusNodeCon
 	}
 
 	protected final void fireDisconnectedEvent() {
-		synchronized( listeners ) {
-			for( IOdysseusNodeConnectionListener listener : listeners ) {
+		synchronized (listeners) {
+			updateListenersList();
+
+			for (IOdysseusNodeConnectionListener listener : listeners) {
 				try {
 					listener.disconnected(this);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exception in odysseus node connection listener", t);
 				}
+			}
+		}
+	}
+
+	private void updateListenersList() {
+		synchronized (listenersBuffer) {
+			if (modifiedBuffer) {
+				Collection<IOdysseusNodeConnectionListener> temp = listeners;
+				listeners = listenersBuffer;
+				listenersBuffer = temp;
+				modifiedBuffer = false;
 			}
 		}
 	}
