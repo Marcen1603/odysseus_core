@@ -23,7 +23,9 @@ public class ListSumFunction extends AbstractFunction<Double> {
 		}
 		double result = 0;
 		for (Object v:l){
-			result += ((Number)v).doubleValue();
+			if(v != null) {
+				result += ((Number)v).doubleValue();
+			}
 		}
 		return result;
 	}

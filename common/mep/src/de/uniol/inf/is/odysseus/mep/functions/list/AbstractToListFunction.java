@@ -18,6 +18,10 @@ package de.uniol.inf.is.odysseus.mep.functions.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -27,6 +31,8 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  *
  */
 abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
+	
+	private static Logger LOG = LoggerFactory.getLogger(AbstractToListFunction.class);
     /**
      * 
      */
@@ -44,5 +50,29 @@ abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
             list.add(getInputValue(i));
         }
         return list;
+    }
+    
+    /* (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#determineTypeFromInput()
+     */
+    @Override
+    public boolean determineTypeFromInput() {
+    	return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#determineType(de.uniol.inf.is.odysseus.core.mep.IExpression[])
+     */
+    @Override
+    public SDFDatatype determineType(IExpression<?>[] args) {
+    	SDFDatatype subtype = args[0].getReturnType();
+    	
+    	for(SDFDatatype datatype : SDFDatatype.LISTS) {
+			if(datatype.getSubType().equals(subtype)) {
+				return datatype;
+			}
+    	}
+    	LOG.warn("Could not find list datatype with subtype '{}'.", subtype);
+    	return SDFDatatype.LIST;
     }
 }

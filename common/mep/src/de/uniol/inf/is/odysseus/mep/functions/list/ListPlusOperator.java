@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -47,7 +48,13 @@ public class ListPlusOperator extends AbstractBinaryOperator<List<?>> {
     @Override
     public List<?> getValue() {
         List<?> a = (List<?>) getInputValue(0);
+        if(a == null) {
+        	a = Collections.emptyList();
+        }
         List<?> b = (List<?>) getInputValue(1);
+        if(b == null) {
+        	b = Collections.emptyList();
+        }
         List<Object> list = new ArrayList<>(a.size() + b.size());
         list.addAll(a);
         list.addAll(b);

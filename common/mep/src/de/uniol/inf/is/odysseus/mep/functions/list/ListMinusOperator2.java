@@ -40,7 +40,7 @@ public class ListMinusOperator2 extends AbstractBinaryOperator<List<?>> {
     public List<?> getValue() {
         List<?> a = (List<?>) getInputValue(0);
         Object b = getInputValue(1);
-        List<Object> list = new ArrayList<>(a.size() + 1);
+        List<Object> list = new ArrayList<>(a.size());
         list.addAll(a);
         list.remove(b);
         return list;

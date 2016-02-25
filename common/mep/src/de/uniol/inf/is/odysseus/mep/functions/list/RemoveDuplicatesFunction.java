@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.list;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +20,8 @@ public class RemoveDuplicatesFunction extends AbstractFunction<List<Object>> {
 	@Override
 	public List<Object> getValue() {
 		// TODO: Find a faster solution?
-		Set<Object> ob = new HashSet<>(getInputValue(0));
+		// LinkedHashSet to preserve order
+		Set<Object> ob = new LinkedHashSet<>(getInputValue(0));
 		return new ArrayList<>(ob);
 	}
 	
