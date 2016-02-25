@@ -83,7 +83,7 @@ public class NetworkConnectionOperatorGenerator implements IOperatorGenerator {
 		
 		access.setOptionMap(options);
 		access.setAttributes(sourceOp.getOutputSchema().getAttributes());
-		access.setLocalMetaAttribute(MetadataRegistry.getMetadataTypeByName("TimeInterval")); 
+		access.setLocalMetaAttribute(MetadataRegistry.getMetadataType(sourceOp.getOutputSchema().getMetaAttributeNames())); 
 		access.setReadMetaData(true);
 		access.setOverWriteSchemaSourceName(false);
 		
