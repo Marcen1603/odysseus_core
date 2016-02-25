@@ -19,6 +19,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -27,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  *
  */
 public class ListDataHandler extends AbstractDataHandler<List<?>>{
+	
+	protected static Logger LOG = LoggerFactory.getLogger(ListDataHandler.class);
 
 	static protected List<String> types = new ArrayList<String>();
 	static{
@@ -37,9 +42,11 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	}
 	
 	IDataHandler<?> handler = null;
+	final private boolean nullMode;
 	
 	public ListDataHandler(){
 		// Needed for declarative service!
+		nullMode = false;
 	}
 	
 	public ListDataHandler(SDFSchema subType){
@@ -61,7 +68,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 			}
 		}
 		
-		
+		nullMode = false;
 	}
 	
 	@Override
@@ -121,8 +128,16 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		ArrayList<Object> values = new ArrayList<Object>();
 		int size = buffer.getInt();
 		for(int i = 0; i<size; i++){
-			Object value = this.handler.readData(buffer);
-			values.add(value);
+			byte type = -1;
+			if (nullMode) {
+				type = buffer.get();
+			}
+			if (!nullMode || type != 0) {
+				Object value = this.handler.readData(buffer);
+				values.add(value);
+			} else {
+				values.add(null);
+			}
 		}
 		return values;
 	}
@@ -136,7 +151,16 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		List values = (List)data;
 		buffer.putInt(values.size());
 		for(Object v: values){
-			this.handler.writeData(buffer, v);
+			if (nullMode) {
+				if (v == null) {
+					buffer.put((byte) 0);
+				} else {
+					buffer.put((byte) 1);
+				}
+			}
+			if (!nullMode || (nullMode && v != null)) {
+				this.handler.writeData(buffer, v);
+			}
 		}
 		
 	}
@@ -155,6 +179,10 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		List<?> values = (List<?>)data;
 		for(Object v: values){
 			size+=this.handler.memSize(v);
+		}
+		// Marker for null or not null values
+		if (nullMode) {
+			size += values.size();
 		}
 		return size;
 	}
