@@ -216,6 +216,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		sb.append("---Odysseus net commands---\n");
 		sb.append("    helpNet                              - Shows this help text.\n");
 		sb.append("    startOdysseusNet/stop...             - Starts/Stops OdysseusNet\n");
+		sb.append("    isOdysseusNetStarted                 - Shows if OdysseusNet is currently started\n");
 		sb.append("    showLocalNode                        - Shows data of own node\n");
 		sb.append("\n");
 		sb.append("    listNetConfiguration/ls...           - Prints the current odysseus net configuration\n");
@@ -785,6 +786,14 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		startupManager.stop();
 
 		ci.println("OdysseusNet stopped by console");
+	}
+	
+	public void _isOdysseusNetStarted( CommandInterpreter ci ) {
+		if( startupManager.isStarted() ) {
+			ci.println("OdysseusNet is started");
+		} else {
+			ci.println("OdysseusNet is NOT started");
+		}
 	}
 
 	public void _showLocalNode(CommandInterpreter ci) {
