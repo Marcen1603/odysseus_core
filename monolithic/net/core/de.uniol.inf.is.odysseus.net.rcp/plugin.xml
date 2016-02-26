@@ -64,6 +64,11 @@
             id="de.uniol.inf.is.odysseus.net.rcp.CleanNodeView"
             name="Clean NodeView">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.net.rcp.commands.RefreshNodeViewCommand"
+            id="de.uniol.inf.is.odysseus.net.rcp.RefreshNodeView"
+            name="Refresh NodeView">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -80,6 +85,13 @@
          <separator
                name="de.uniol.inf.is.odysseus.net.rcp.separator1">
          </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.net.rcp.RefreshNodeView"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
          <command
                commandId="de.uniol.inf.is.odysseus.net.rcp.CleanNodeView"
                icon="icons/clean.gif"

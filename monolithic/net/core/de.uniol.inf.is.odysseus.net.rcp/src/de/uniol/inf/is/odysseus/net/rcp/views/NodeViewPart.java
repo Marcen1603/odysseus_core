@@ -46,4 +46,8 @@ public class NodeViewPart extends ViewPart {
 		container.cleanNodesList();
 	}
 
+	public void refresh() {
+		nodeTableViewer.refreshTableAsync();
+	}
+
 }
