@@ -94,7 +94,10 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 
 			if( determineIfRemoteUpdateIsAllowed() ) {
 				doUpdate();
+			} else {
+				LOG.info("But remote update is not allowed");
 			}
+			
 			// Following is not working:
 //			try {
 //				if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
