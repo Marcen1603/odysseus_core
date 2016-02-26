@@ -79,6 +79,7 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 				LOG.error("Send signal to " + remoteNode.getName() + " OK");
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Send signal to " + remoteNode.getName() + " FAILED");
+				LOG.error("Exception:", e);
 			}
 		}
 	}
