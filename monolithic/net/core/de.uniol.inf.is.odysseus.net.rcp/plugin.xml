@@ -59,6 +59,11 @@
             id="de.uniol.inf.is.odysseus.net.rcp.StartOdysseusNetCommand"
             name="Start OdysseusNet">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.net.rcp.commands.CleanNodeViewCommand"
+            id="de.uniol.inf.is.odysseus.net.rcp.CleanNodeView"
+            name="Clean NodeView">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -71,6 +76,16 @@
                label="Start OdysseusNet"
                style="toggle"
                tooltip="Start/Stop OdysseusNet">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.net.rcp.separator1">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.net.rcp.CleanNodeView"
+               icon="icons/clean.gif"
+               label="Clean"
+               style="push"
+               tooltip="Clean">
          </command>
       </menuContribution>
    </extension>

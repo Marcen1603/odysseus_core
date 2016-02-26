@@ -77,6 +77,20 @@ public class NodeViewUsageContainer implements IOdysseusNodeConnectionManagerLis
 			return Optional.fromNullable(usageMap.get(node));
 		}
 	}
+	
+	public void cleanNodesList() {
+		synchronized( usageMap ) {
+			synchronized( foundNodes ) {
+				synchronized( nameMap ) {
+					usageMap.clear();
+					nameMap.clear();
+					foundNodes.clear();
+				}
+			}
+		}
+		
+		refreshAllNodes();
+	}
 
 	public void refreshAllNodes() {
 		Collection<IOdysseusNodeConnection> remoteNodes = OdysseusNetRCPPlugIn.getOdysseusNodeConnectionManager().getConnections();
