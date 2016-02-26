@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
+import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
 import de.uniol.inf.is.odysseus.net.update.message.DoRestartMessage;
 import de.uniol.inf.is.odysseus.net.update.message.DoUpdateMessage;
 import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
@@ -21,6 +22,9 @@ import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
 public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeUpdater.class);
+
+	private static final String REMOTE_UPDATE_CONFIG_KEY = "net.remoteUpdate";
+	private static final boolean REMOTE_UPDATE_DEFAULT = false;
 	
 	private static IOdysseusNodeCommunicator nodeCommunicator;
 	private static ISession activeSession;
@@ -72,26 +76,35 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 		for( IOdysseusNode remoteNode : remoteNodes ) {
 			try {
 				nodeCommunicator.send(remoteNode, msg);
+				LOG.error("Send signal to " + remoteNode.getName() + " OK");
 			} catch (OdysseusNodeCommunicationException e) {
-				LOG.error("Could not send message", e);
+				LOG.error("Send signal to " + remoteNode.getName() + " FAILED");
 			}
 		}
+	}
+	
+	public static void doUpdate() {
+		System.exit(1010); // signal OS to update here
 	}
 	
 	@Override
 	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
 		if( message instanceof DoUpdateMessage ) {
 			LOG.info("Got message to update");
-			
-			try {
-				if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
-					FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
-				} else {
-					LOG.error("No updates available");
-				}
-			} catch( Throwable t ) {
-				LOG.error("Cannot update", t);
+
+			if( determineIfRemoteUpdateIsAllowed() ) {
+				doUpdate();
 			}
+			// Following is not working:
+//			try {
+//				if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
+//					FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
+//				} else {
+//					LOG.error("No updates available");
+//				}
+//			} catch( Throwable t ) {
+//				LOG.error("Cannot update", t);
+//			}
 		} else if( message instanceof DoRestartMessage ) {
 			LOG.info("Got message to restart");
 			
@@ -108,5 +121,14 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
 		}
 		return activeSession;
+	}
+	
+	private static boolean determineIfRemoteUpdateIsAllowed() {
+		String updateStr = OdysseusNetConfiguration.get(REMOTE_UPDATE_CONFIG_KEY,REMOTE_UPDATE_DEFAULT + "");
+		try {
+			return Boolean.valueOf(updateStr);
+		} catch( Throwable t ) {
+			return REMOTE_UPDATE_DEFAULT;
+		}
 	}
 }
