@@ -149,6 +149,15 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.requiresDeepClone = requiresDeepClone;
 	}
 
+	public Tuple(List<Object> objects, boolean requiresDeepClone) {
+		this.attributes = new Object[objects.size()];
+		for (int i=0;i<objects.size();i++){
+			this.attributes[i] = objects.get(i);
+		}
+		this.requiresDeepClone = requiresDeepClone;
+	}
+
+	
 	/**
 	 * Erzeugt ein neues Tuple mit einem Attribut
 	 * 
@@ -163,6 +172,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		attributes[0] = attribute;
 		this.requiresDeepClone = requiresDeepClone;
 	}
+
 
 	// -----------------------------------------------------------------
 	// static Hilfsmethoden

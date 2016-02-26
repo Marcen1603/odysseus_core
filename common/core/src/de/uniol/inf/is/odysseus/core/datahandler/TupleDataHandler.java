@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,9 +203,24 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	@Override
 	public Tuple<? extends IMetaAttribute> readData(String string) {
-		List<String> str = new ArrayList<String>();
-		str.add(string);
-		return readData(str.iterator());
+		if (string.startsWith("[")){
+			StringTokenizer tokens = new StringTokenizer(string, "[|]");
+			List<Object> objects = new ArrayList<Object>();
+			int dhPos = 0;
+			while(tokens.hasMoreTokens() && dhPos < dataHandlers.length ){
+				objects.add(dataHandlers[dhPos++].readData(tokens.nextToken()));
+			}
+			if(tokens.hasMoreTokens()){
+				logger.warn("Ignoring additional part of "+string);
+			}
+			Tuple<?> tuple = new Tuple<IMetaAttribute>(objects, false);
+			return tuple;
+			
+		}else{
+			List<String> str = new ArrayList<String>();
+			str.add(string);
+			return readData(str.iterator());
+		}
 	}
 
 	/*
