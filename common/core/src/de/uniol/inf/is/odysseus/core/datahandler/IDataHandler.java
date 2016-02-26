@@ -18,8 +18,10 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -98,27 +100,19 @@ public interface IDataHandler<T> {
 	 */
 	public void writeData(StringBuilder string, Object data);
 
-	
-	/**
-	 * Read data from an array of input strings
-	 * @param input
-	 * @return
-	 */
-	public T readData(String[] input);
-
 	/**
 	 * Read data from a list of input strings
 	 * @param input
 	 * @return
 	 */
-	public T readData(List<String> input);
+	public T readData(Iterator<String> input);
 	
 	/**
 	 * Convert data to a list of strings (that must be readable be readData(List<String>)
 	 * @param output
 	 * @param data
 	 */
-	public void writeData(List<String> output, Object data);
+	public void writeData(List<String> output, Object data, WriteOptions writeOptions);
 
 	/**
 	 * Directly read the element that should be created (and returns it directly without transforming)

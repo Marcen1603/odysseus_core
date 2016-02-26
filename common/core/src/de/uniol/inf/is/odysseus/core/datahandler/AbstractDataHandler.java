@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -53,24 +55,16 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		return null;
 	}
 
-		
-	@Override
-	public T readData(String[] input) {
-		if (input.length != 1) throw new IllegalArgumentException("Input-size must be one!");
-		return readData(input[0]);
-	}
-	
 	@Override
 	public T readData(InputStream inputStream) throws IOException {
 		throw new UnsupportedOperationException("Sorry. Reading from input stream is currently not supported by this data handler");
 	}
 	
 	@Override
-	public T readData(List<String> input) {
-		if (input.size() != 1) throw new IllegalArgumentException("Input-size must be one!");
-		return readData(input.get(0));
+	public T readData(Iterator<String> input) {
+		throw new UnsupportedOperationException("Sorry. Reading from string input is currently not supported by this data handler");
 	}
-		
+	
 	@Override
 	final public T readData(T input) {
 		return input;
@@ -82,10 +76,10 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	}
 		
     @Override
-    public void writeData(List<String> output, Object data) {
+    public void writeData(List<String> output, Object data, WriteOptions options) {
         output.add(data.toString());
     }
-		
+	
 	@Override
 	public SDFSchema getSchema() {
 		return schema;

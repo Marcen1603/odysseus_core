@@ -46,7 +46,6 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 	 * Initialize content based filtering all predicates are compressed, so each
 	 * predicate needs to be evaluated one time
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void reinitializeFilter(
 			Collection<BrokerSubscription<T>> subscriptions,

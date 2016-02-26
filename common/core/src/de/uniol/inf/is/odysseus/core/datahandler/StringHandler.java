@@ -29,18 +29,21 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class StringHandler extends AbstractDataHandler<String> {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(StringHandler.class);
-	
+
 	static protected List<String> types = new ArrayList<String>();
+
 	static {
 		types.add(SDFDatatype.STRING.getURI());
 		types.add(SDFDatatype.START_TIMESTAMP_STRING.getURI());
 	}
+
 	private Charset charset = Charset.forName("UTF-8");
 	private CharsetDecoder decoder = charset.newDecoder();
 	private CharsetEncoder encoder = charset.newEncoder();
@@ -50,28 +53,27 @@ public class StringHandler extends AbstractDataHandler<String> {
 		return new StringHandler();
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String readData(InputStream inputStream) throws IOException {
-        int size = inputStream.read();
-        if (size >= 0) {
-            byte[] buffer = new byte[size];
-            for (int i = 0; i < size && inputStream.available() > 0; i++) {
-                buffer[i] = (byte) inputStream.read();
-            }
-            try {
-                CharBuffer decoded = decoder.decode(ByteBuffer.wrap(buffer));
-                return decoded.toString();
-            }
-            catch (CharacterCodingException e) {
-                LOG.error("Could not decode data with string handler", e);
-            }
-            return "";
-        }
-        return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String readData(InputStream inputStream) throws IOException {
+		int size = inputStream.read();
+		if (size >= 0) {
+			byte[] buffer = new byte[size];
+			for (int i = 0; i < size && inputStream.available() > 0; i++) {
+				buffer[i] = (byte) inputStream.read();
+			}
+			try {
+				CharBuffer decoded = decoder.decode(ByteBuffer.wrap(buffer));
+				return decoded.toString();
+			} catch (CharacterCodingException e) {
+				LOG.error("Could not decode data with string handler", e);
+			}
+			return "";
+		}
+		return null;
+	}
 
 	@Override
 	public String readData(ByteBuffer b) {
@@ -93,10 +95,18 @@ public class StringHandler extends AbstractDataHandler<String> {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public void writeData(List<String> output, Object data) {
-		output.add((String) data);
+	public void writeData(List<String> output, Object data, WriteOptions options) {
+		if (options.hasTextSeperator()) {
+			StringBuilder text = new StringBuilder();
+			text.append(options.getTextSeperator());
+			text.append(data);
+			text.append(options.getTextSeperator());
+			output.add(text.toString());
+		} else {
+			output.add((String) data);
+		}
 	}
 
 	@Override
@@ -125,15 +135,14 @@ public class StringHandler extends AbstractDataHandler<String> {
 	@Override
 	public int memSize(Object attribute) {
 		try {
-			int val = encoder.encode(CharBuffer.wrap((String) attribute))
-					.limit() + Integer.SIZE / 8;
+			int val = encoder.encode(CharBuffer.wrap((String) attribute)).limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {
 			LOG.error("Could not encode '{}' for calculation mem-size", attribute, e);
 		}
 		return Integer.SIZE / 8;
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return String.class;

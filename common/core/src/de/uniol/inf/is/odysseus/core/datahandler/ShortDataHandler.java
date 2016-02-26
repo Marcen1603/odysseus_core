@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -49,9 +50,13 @@ public class ShortDataHandler extends AbstractDataHandler<Short> {
 	}
 
     @Override
-    public void writeData(List<String> output, Object data) {
-        output.add(((Short) data).toString());
-    }
+    public void writeData(List<String> output, Object data, WriteOptions options) {
+		if (options.hasNumberFormatter()){
+			output.add(options.getNumberFormatter().format(data) );
+		}else{
+			output.add(((Number) data).toString());
+		}
+   }
     
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {

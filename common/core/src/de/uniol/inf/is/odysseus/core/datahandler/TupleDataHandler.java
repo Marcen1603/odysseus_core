@@ -20,11 +20,13 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -126,65 +128,20 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		throw new UnsupportedOperationException("Currently not avaialable");
 	}
 
-	@Override
-	public Tuple<? extends IMetaAttribute> readData(String[] input, boolean handleMetaData) {
-		Object[] attributes = new Object[dataHandlers.length];
-		int min = Math.min(dataHandlers.length, input.length);
-		for (int i = 0; i < min; i++) {
-			try {
-				if (dataHandlers[i].getClass() == ListDataHandler.class 
-						&& getSchema() != null 
-						&& getSchema().size() < input.length
-						&& i == getSchema().size() - 1) {
-					attributes[i] =  ((ListDataHandler) dataHandlers[i])
-							.readData(input, i, input.length);
-				} else {
-					attributes[i] = this.dataHandlers[i].readData(input[i]);
-				}
-			} catch (Exception e) {
-				if (dataHandlers.length > i) {
-					logger.warn("Error parsing " + input[i] + " with "
-							+ dataHandlers[i].getClass() + " " + e.getMessage());
-				} else {
-					logger.warn("Error parsing " + input[i]
-							+ " with no data handler defined " + e.getMessage());
-				}
-				attributes[i] = null;
-			}
-		}
-		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(attributes, false);
-		if (handleMetaData) {
-			IMetaAttribute meta = readMetaData(input);
-			ret.setMetadata(meta);
-		}
-		return ret;
-	}
 
 	@Override
-	public Tuple<? extends IMetaAttribute> readData(List<String> input, boolean handleMetaData) {
-		int min = Math.min(dataHandlers.length, input.size());
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(min,
+	public Tuple<? extends IMetaAttribute> readData(Iterator<String> input, boolean handleMetaData) {
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(dataHandlers.length,
 				false);
-		for (int i = 0; i < min; i++) {
+		int i = 0;
+		for (i = 0; i < dataHandlers.length; i++) {
+			String nextElem = input.hasNext()?input.next():null;
 			try {
-				if (dataHandlers[i].getClass() == ListDataHandler.class 
-						&& getSchema() != null 
-						&& getSchema().size() < input.size() 
-						&& i == getSchema().size() - 1) {
-					tuple.setAttribute(i, ((ListDataHandler) dataHandlers[i])
-							.readData(input, i, input.size()));
-				} else {
 					tuple.setAttribute(i,
-							this.dataHandlers[i].readData(input.get(i)));
-				}
+							this.dataHandlers[i].readData(nextElem));
 			} catch (Exception e) {
-				if (dataHandlers.length > i) {
-					logger.warn("Error parsing " + input.get(i) + " with "
-							+ dataHandlers[i].getClass() + " " + e.getMessage());
-				} else {
-					logger.warn("Error parsing " + input.get(i)
+				logger.warn("Error parsing " + nextElem
 							+ " with no data handler defined " + e.getMessage());
-				}
 				tuple.setAttribute(i, (Object) null);
 			}
 		}
@@ -245,9 +202,9 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	@Override
 	public Tuple<? extends IMetaAttribute> readData(String string) {
-		String[] str = new String[1];
-		str[0] = string;
-		return readData(str);
+		List<String> str = new ArrayList<String>();
+		str.add(string);
+		return readData(str.iterator());
 	}
 
 	/*
@@ -258,16 +215,22 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 	 * (java.util.List, java.lang.Object)
 	 */
 	@Override
-	public void writeData(List<String> output, Object data, boolean handleMetaData) {
+	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
 		@SuppressWarnings("unchecked")
 		Tuple<IMetaAttribute> r = (Tuple<IMetaAttribute>) data;
 
 		synchronized (output) {
 			for (int i = 0; i < dataHandlers.length; i++) {
-				dataHandlers[i].writeData(output, r.getAttribute(i));
+				
+				Object attribute = r.getAttribute(i);
+				if (attribute != null){
+					dataHandlers[i].writeData(output, attribute, options);
+				}else{
+					output.add(options.getNullValueString());
+				}
 			}
 			if (handleMetaData) {
-				writeMetaData(output, r.getMetadata());
+				writeMetaData(output, r.getMetadata(), options);
 			}
 		}
 	}

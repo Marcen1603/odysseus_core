@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -70,24 +71,15 @@ public class MatrixDataHandler extends AbstractDataHandler<double[][]> {
      * {@inheritDoc}
      */
     @Override
-    public double[][] readData(List<String> input) {
-        int size = input.size();
-        double[][] value = new double[size][];
-        for (int i = 0; i < size; i++) {
-            value[i] = this.handler.readData(input.get(i));
+    public double[][] readData(Iterator<String> input) {
+    	List<Object> tmp = new ArrayList<Object>();    	
+        while(input.hasNext()) {
+            tmp.add(this.handler.readData(input.next()));
         }
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double[][] readData(String[] input) {
-        int size = input.length;
+        int size = tmp.size();
         double[][] value = new double[size][];
         for (int i = 0; i < size; i++) {
-            value[i] = this.handler.readData(input[i]);
+            value[i] = (double[]) tmp.get(i);
         }
         return value;
     }

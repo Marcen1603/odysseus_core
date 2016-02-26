@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -634,10 +636,11 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         }
         this.delay();
         final SDFSchema schema = this.getDataHandler().getSchema();
-        final String[] tuple = new String[schema.size() + (this.addLineNumber ? 1 : 0)];
+        final List<String> tuple = new ArrayList<String>(schema.size() + (this.addLineNumber ? 1 : 0));
         int i = 0;
         if (this.isAddLineNumber()) {
-            tuple[i++] = this.lineCounter + "";
+            tuple.add(this.lineCounter + "");
+            i++;
         }
         for (; i < schema.size(); i++) {
             try {
@@ -646,10 +649,10 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
                 if (this.isTrim()) {
                     valueString = valueString.trim();
                 }
-                tuple[i] = valueString;
+                tuple.add(valueString);
             }
             catch (final CellNotFoundException e) {
-                tuple[i] = null;
+                tuple.add(null);
                 XLSProtocolHandler.LOG.debug(e.getMessage(), e);
             }
         }
@@ -657,7 +660,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             if (this.getDumpEachLine() > 0) {
                 if ((this.lineCounter % this.getDumpEachLine()) == 0) {
                     final long time = System.currentTimeMillis();
-                    XLSProtocolHandler.LOG.debug(this.lineCounter + " " + time + " " + (time - this.lastDumpTime) + " (" + Integer.toHexString(this.hashCode()) + ") line: " + Arrays.toString(tuple));
+                    XLSProtocolHandler.LOG.debug(this.lineCounter + " " + time + " " + (time - this.lastDumpTime) + " (" + Integer.toHexString(this.hashCode()) + ") line: " + tuple);
                     this.lastDumpTime = time;
                 }
             }
@@ -693,7 +696,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         }
         this.lineCounter++;
 
-        return this.getDataHandler().readData(tuple);
+        return this.getDataHandler().readData(tuple.iterator());
     }
 
     private void delay() {

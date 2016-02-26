@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.test.StatusCode;

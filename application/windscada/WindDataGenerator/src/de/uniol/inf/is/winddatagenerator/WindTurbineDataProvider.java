@@ -88,28 +88,28 @@ public class WindTurbineDataProvider extends AbstractDataGenerator implements
 			e.printStackTrace();
 			return null;
 		}
-		String[] parts = CSVParser.parseCSV(line, ',', true);
+		List<String> parts = CSVParser.parseCSV(line, ',', true);
 		DataTuple tuple = new DataTuple();
 		// wka_id
 		tuple.addInteger(id);
 		// timestamp
 		try {
-			tuple.addLong(this.dateFormat.parse(parts[0]).getTime());
+			tuple.addLong(this.dateFormat.parse(parts.get(0)).getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		switch (this.state) {
 		case ON:
 			// wind_speed
-			tuple.addDouble(parts[1]);
+			tuple.addDouble(parts.get(1));
 			// corrected_score
-			tuple.addDouble(parts[4]);
+			tuple.addDouble(parts.get(4));
 			// wind_direction
 			tuple.addDouble(windDirection.nextValue());
 			// yaw_angle
 			tuple.addDouble(yawAngle.nextValue());
 			// rotational_speed
-			tuple.addDouble(Double.valueOf(parts[4]) / 100);
+			tuple.addDouble(Double.valueOf(parts.get(4)) / 100);
 			// phase_shift
 			tuple.addDouble(phaseShift.nextValue());
 			// pitch_angle

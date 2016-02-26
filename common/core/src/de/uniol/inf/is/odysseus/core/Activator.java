@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.NoProtocol
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SVMProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.StringArrayProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.DirectoryWatcherTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
@@ -80,7 +79,6 @@ public class Activator implements BundleActivator {
 		ProtocolHandlerRegistry.register(new TextProtocolHandler());
 		//ProtocolHandlerRegistry.register(new SizeByteBufferHandler());
 		ProtocolHandlerRegistry.register(new MarkerByteBufferHandler());
-		ProtocolHandlerRegistry.register(new StringArrayProtocolHandler());
 		ProtocolHandlerRegistry.register(new SVMProtocolHandler());
 		//ProtocolHandlerRegistry.register(new SimpleByteBufferHandler<>());
 		

@@ -21,12 +21,14 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -155,29 +157,6 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 		}
 	}
 
-	/*
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
-	 * lang.String)
-	 */
-	@Override
-	public final ProbabilisticTuple<IMetaAttribute> readData(final String string, boolean handleMetaData) {
-		Objects.requireNonNull(string);
-		return this.readData(new String[] { string });
-	}
-
-	/*
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#readData
-	 * (java.lang.String[])
-	 */
-	@Override
-	public final ProbabilisticTuple<IMetaAttribute> readData(final String[] input, boolean handleMetaData) {
-		Objects.requireNonNull(input);
-		return this.readData(Arrays.asList(input));
-	}
 
 	@Override
 	public ProbabilisticTuple<IMetaAttribute> readData(InputStream inputStream, boolean handleMetaData)
@@ -192,17 +171,18 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 	 * (java.util.List)
 	 */
 	@Override
-	public final ProbabilisticTuple<IMetaAttribute> readData(final List<String> input, boolean handleMetaData) {
-		Objects.requireNonNull(input);
+	public final ProbabilisticTuple<IMetaAttribute> readData(final Iterator<String> iterator, boolean handleMetaData) {
+				
 		ProbabilisticTuple<IMetaAttribute> r = null;
 		final Object[] attributes = new Object[this.dataHandlers.length];
 		for (int i = 0; i < attributes.length; i++) {
+			String value = iterator.hasNext()?iterator.next():null;
 			try {
-				attributes[i] = this.dataHandlers[i].readData(input.get(i));
+				attributes[i] = this.dataHandlers[i].readData(value);
 			} catch (final Exception e) {
-				ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + input.get(i) + " with "
+				ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + value + " with "
 						+ this.dataHandlers[i].getClass() + " " + e.getMessage());
-				System.err.println("Error Parsing " + input.get(i) + " with " + this.dataHandlers[i].getClass() + " "
+				System.err.println("Error Parsing " + value + " with " + this.dataHandlers[i].getClass() + " "
 						+ e.getMessage());
 				throw e;
 			}
@@ -210,13 +190,14 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 		final MultivariateMixtureDistribution[] distribution = new MultivariateMixtureDistribution[this.maxDistributions];
 		int distributions = 0;
 		if (this.maxDistributions > 0) {
-			for (int i = attributes.length; i < input.size(); i++) {
+			for (int i = 0; iterator.hasNext(); i++) {
+				String value = iterator.hasNext()?iterator.next():null;
 				try {
-					distribution[i - attributes.length] = this.probabilisticDistributionHandler.readData(input.get(i));
+					distribution[i] = this.probabilisticDistributionHandler.readData(value);
 				} catch (final Exception e) {
-					ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + input.get(i) + " with "
+					ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + value + " with "
 							+ this.probabilisticDistributionHandler.getClass() + " " + e.getMessage());
-					System.err.println("Error Parsing " + input.get(i) + " with "
+					System.err.println("Error Parsing " + value + " with "
 							+ this.probabilisticDistributionHandler.getClass() + " " + e.getMessage());
 					throw e;
 				}
@@ -304,17 +285,17 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 	}
 
 	@Override
-	public void writeData(final List<String> output, final Object data, boolean handleMetaData) {
+	public void writeData(final List<String> output, final Object data, boolean handleMetaData, WriteOptions options) {
 		Objects.requireNonNull(output);
 		Objects.requireNonNull(data);
 		final ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
 
 		synchronized (output) {
 			for (int i = 0; i < this.dataHandlers.length; i++) {
-				this.dataHandlers[i].writeData(output, r.getAttribute(i));
+				this.dataHandlers[i].writeData(output, r.getAttribute(i),options);
 			}
 			for (int i = 0; i < r.getDistributions().length; i++) {
-				this.probabilisticDistributionHandler.writeData(output, r.getDistribution(i));
+				this.probabilisticDistributionHandler.writeData(output, r.getDistribution(i),options);
 			}
 		}
 	}

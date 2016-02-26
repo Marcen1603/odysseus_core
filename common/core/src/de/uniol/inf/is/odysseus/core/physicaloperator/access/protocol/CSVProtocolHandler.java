@@ -56,7 +56,7 @@ public class CSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends
                 ret.add(null);
             }
         }
-		T retValue = getDataHandler().readData(ret, readMeta);
+		T retValue = getDataHandler().readData(ret.iterator(), readMeta);
 		return retValue;
 	}
 	

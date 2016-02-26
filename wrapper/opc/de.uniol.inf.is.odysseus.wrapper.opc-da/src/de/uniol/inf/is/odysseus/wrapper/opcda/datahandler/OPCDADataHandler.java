@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.wrapper.opcda.datahandler;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
@@ -115,28 +116,13 @@ public class OPCDADataHandler<T> extends AbstractDataHandler<OPCValue<T>> {
      * {@inheritDoc}
      */
     @Override
-    public OPCValue<T> readData(List<String> input) {
-        long timestamp = this.longHandler.readData(input.get(0)).longValue();
-        short quality = this.shortHandler.readData(input.get(1)).shortValue();
-        int error = this.intHandler.readData(input.get(2)).intValue();
+    public OPCValue<T> readData(Iterator<String> input) {
+        long timestamp = this.longHandler.readData(input.next()).longValue();
+        short quality = this.shortHandler.readData(input.next()).shortValue();
+        int error = this.intHandler.readData(input.next()).intValue();
 
         @SuppressWarnings("unchecked")
-		T value = (T) this.valueHandler.readData(input.get(3));
-
-        return new OPCValue<T>(timestamp, value, quality, error);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OPCValue<T> readData(String[] input) {
-        long timestamp = this.longHandler.readData(input[0]).longValue();
-        short quality = this.shortHandler.readData(input[1]).shortValue();
-        int error = this.intHandler.readData(input[2]).intValue();
-  
-        @SuppressWarnings("unchecked")
-		T value = (T) this.valueHandler.readData(input[3]);
+		T value = (T) this.valueHandler.readData(input.next());
 
         return new OPCValue<T>(timestamp, value, quality, error);
     }

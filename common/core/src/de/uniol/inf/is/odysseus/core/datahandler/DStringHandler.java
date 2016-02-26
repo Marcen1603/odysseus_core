@@ -29,9 +29,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.datatype.DString;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.datatype.DString;
 
 public class DStringHandler extends AbstractDataHandler<DString> {
 	
@@ -100,8 +101,17 @@ public class DStringHandler extends AbstractDataHandler<DString> {
 	}
 	
 	@Override
-	public void writeData(List<java.lang.String> output, Object data) {
-		output.add(((DString) data).toString());
+	public void writeData(List<java.lang.String> output, Object data, WriteOptions options) {
+		
+		if (options.hasTextSeperator()) {
+			StringBuilder text = new StringBuilder();
+			text.append(options.getTextSeperator());
+			text.append(((DString) data).toString());
+			text.append(options.getTextSeperator());
+			output.add(text.toString());
+		} else {
+			output.add(((DString) data).toString());
+		}
 	}
 
 	@Override

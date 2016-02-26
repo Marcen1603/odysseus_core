@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,11 +187,6 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 			throw new IllegalStateException("End of stream.");
 		}
 		return (char) data;
-	}
-
-	@Override
-	public void process(String[] message) {
-		getTransfer().transfer(getDataHandler().readData(message));
 	}
 
 	public void process(ArrayList<T> objects) {

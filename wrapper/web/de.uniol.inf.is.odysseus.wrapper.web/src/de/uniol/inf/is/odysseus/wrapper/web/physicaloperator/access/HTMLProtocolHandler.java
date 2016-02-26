@@ -199,7 +199,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
         this.delay();
         if (this.input.available() > 0) {
             final SDFSchema schema = this.getDataHandler().getSchema();
-            final String[] tuple = new String[schema.size()];
+            final List<String> tuple = new ArrayList<String>(schema.size());
             try (Reader in = new InputStreamReader(this.input)) {
                 final HTMLDocument document = new HTMLDocumentImpl();
                 final DocumentFragment fragment = document.createDocumentFragment();
@@ -214,14 +214,14 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                         if (nodes.getLength() > 0) {
                             final Node node = nodes.item(0);
                             final String content = node.getTextContent();
-                            tuple[i] = content;
+                            tuple.add(content);
                         }
                         else {
-                            tuple[i] = null;
+                            tuple.add(null);
                         }
                     }
                     catch (final XPathExpressionException e) {
-                        tuple[i] = null;
+                        tuple.add(null);
                         HTMLProtocolHandler.LOG.error(e.getMessage(), e);
                         if (LOG.isTraceEnabled()) {
                             HTMLProtocolHandler.print(fragment);
@@ -234,7 +234,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                 HTMLProtocolHandler.LOG.error(e.getMessage(), e);
                 throw new IOException(e.getMessage(), e);
             }
-            return this.getDataHandler().readData(tuple);
+            return this.getDataHandler().readData(tuple.iterator());
         }
         return null;
     }
@@ -250,7 +250,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
             final XPathFactory factory = XPathFactory.newInstance();
             final XPath xpath = factory.newXPath();
             final SDFSchema schema = this.getDataHandler().getSchema();
-            final String[] tuple = new String[schema.size()];
+            final List<String> tuple = new ArrayList<String>(schema.size());
             for (int i = 0; i < this.getXPaths().size(); i++) {
                 final String path = this.getXPaths().get(i);
                 try {
@@ -259,21 +259,21 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
                     if (nodes.getLength() > 0) {
                         final Node node = nodes.item(0);
                         final String content = node.getTextContent();
-                        tuple[i] = content;
+                        tuple.add(content);
                     }
                     else {
-                        tuple[i] = null;
+                    	tuple.add(null);
                     }
                 }
                 catch (final XPathExpressionException e) {
-                    tuple[i] = null;
+                	tuple.add(null);
                     HTMLProtocolHandler.LOG.error(e.getMessage(), e);
                     if (HTMLProtocolHandler.LOG.isTraceEnabled()) {
                         HTMLProtocolHandler.print(fragment);
                     }
                 }
             }
-            getTransfer().transfer(this.getDataHandler().readData(tuple));
+            getTransfer().transfer(this.getDataHandler().readData(tuple.iterator()));
         }
         catch (final SAXException | IOException e) {
             HTMLProtocolHandler.LOG.error(e.getMessage(), e);

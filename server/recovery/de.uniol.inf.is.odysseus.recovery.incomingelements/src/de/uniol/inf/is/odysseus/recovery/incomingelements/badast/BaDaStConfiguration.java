@@ -85,12 +85,11 @@ public class BaDaStConfiguration {
 		}
 
 		// File already existed
-		@SuppressWarnings("resource")
 		FileInputStream stream = null;
 		try {
 			stream = new FileInputStream(file);
 			cConfig.loadFromXML(stream);
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 			try {
 				cConfig.load(stream);
 			} catch (IOException e1) {

@@ -4,12 +4,14 @@ import java.text.NumberFormat;
 
 public class WriteOptions {
 	
+	public static final WriteOptions defaultOptions = new WriteOptions(',', (Character)null, (NumberFormat)null,(NumberFormat)null, false);
+	
 	// Standardfields
-	char delimiter;
+	final char delimiter;
 	Character textSeperator;
-	NumberFormat floatingFormatter;
-	NumberFormat numberFormatter;
-	boolean withMetadata;
+	final NumberFormat floatingFormatter;
+	final NumberFormat numberFormatter;
+	final boolean withMetadata;
 	
 	// Add field, not via constructor
 	String nullValueString = "";
@@ -36,9 +38,9 @@ public class WriteOptions {
 	public char getDelimiter() {
 		return delimiter;
 	}
-	public void setDelimiter(char delimiter) {
-		this.delimiter = delimiter;
-	}
+//	public void setDelimiter(char delimiter) {
+//		this.delimiter = delimiter;
+//	}
 	public Character getTextSeperator() {
 		return textSeperator;
 	}
@@ -54,24 +56,24 @@ public class WriteOptions {
 	public boolean hasFloatingFormatter(){
 		return floatingFormatter != null;
 	}
-	public void setFloatingFormatter(NumberFormat floatingFormatter) {
-		this.floatingFormatter = floatingFormatter;
-	}
+//	public void setFloatingFormatter(NumberFormat floatingFormatter) {
+//		this.floatingFormatter = floatingFormatter;
+//	}
 	public NumberFormat getNumberFormatter() {
 		return numberFormatter;
 	}
 	public boolean hasNumberFormatter(){
 		return numberFormatter != null;
 	}
-	public void setNumberFormatter(NumberFormat numberFormatter) {
-		this.numberFormatter = numberFormatter;
-	}
+//	public void setNumberFormatter(NumberFormat numberFormatter) {
+//		this.numberFormatter = numberFormatter;
+//	}
 	public boolean isWithMetadata() {
 		return withMetadata;
 	}
-	public void setWithMetadata(boolean withMetadata) {
-		this.withMetadata = withMetadata;
-	}
+//	public void setWithMetadata(boolean withMetadata) {
+//		this.withMetadata = withMetadata;
+//	}
 	
 	
 

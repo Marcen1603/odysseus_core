@@ -92,32 +92,6 @@ public class PolynomialDataHandler extends AbstractDataHandler<Polynomial> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Polynomial readData(final List<String> input) {
-        final int size = input.size();
-        final double[] coefficients = new double[size];
-        for (int i = 0; i < size; i++) {
-            coefficients[i] = this.doubleHandler.readData(input.get(i)).doubleValue();
-        }
-        return new Polynomial(coefficients);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Polynomial readData(final String[] input) {
-        final int size = input.length;
-        final double[] coefficients = new double[size];
-        for (int i = 0; i < size; i++) {
-            coefficients[i] = this.doubleHandler.readData(input[i]).doubleValue();
-        }
-        return new Polynomial(coefficients);
-    }
-
-    /**
      *
      * {@inheritDoc}
      */

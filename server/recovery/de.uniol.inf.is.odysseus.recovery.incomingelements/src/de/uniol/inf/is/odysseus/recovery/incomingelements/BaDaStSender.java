@@ -51,7 +51,7 @@ public class BaDaStSender {
 				DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream())) {
 			outToServer.writeUTF("command=lsRecorders");
 			return true;
-		} catch (@SuppressWarnings("unused") IOException e) {
+		} catch (IOException e) {
 			return false;
 		}
 	}

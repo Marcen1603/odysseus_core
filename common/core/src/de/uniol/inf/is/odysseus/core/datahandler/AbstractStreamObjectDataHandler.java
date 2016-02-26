@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -62,18 +62,9 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 		newMeta.writeValues(res);
 		return newMeta;
 	}
+	
 
-	protected final IMetaAttribute readMetaData(String[] input) {
-		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
-		for (NullAwareTupleDataHandler dh : metaDataHandler) {
-			res.add(dh.readData(input));
-		}
-		IMetaAttribute newMeta = metaAttribute.clone();
-		newMeta.writeValues(res);
-		return newMeta;
-	}
-
-	protected final IMetaAttribute readMetaData(List<String> input) {
+	protected final IMetaAttribute readMetaData(Iterator<String> input) {
 		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
 		for (NullAwareTupleDataHandler dh : metaDataHandler) {
 			res.add(dh.readData(input));
@@ -93,12 +84,19 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 		return newMeta;
 	}
 
-	protected final void writeMetaData(List<String> output, IMetaAttribute metaAttribute) {
+	@Override
+	public T readData(String input, boolean handleMetaData) {
+		List<String> list = new ArrayList<String>();
+		list.add(input);
+		return readData(list.iterator(), handleMetaData);
+	}
+	
+	protected final void writeMetaData(List<String> output, IMetaAttribute metaAttribute, WriteOptions options) {
 		List<Tuple<?>> v = new ArrayList<Tuple<?>>();
 		metaAttribute.retrieveValues(v);
 		int i = 0;
 		for (NullAwareTupleDataHandler dh : metaDataHandler) {
-			dh.writeData(output, v.get(i++));
+			dh.writeData(output, v.get(i++), options);
 		}
 	}
 
@@ -143,8 +141,8 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	}
 
 	@Override
-	public void writeData(List<String> output, Object data) {
-		writeData(output, data, handleMetadata);
+	public void writeData(List<String> output, Object data, WriteOptions options) {
+		writeData(output, data, handleMetadata, options);
 	}
 
 	@Override
@@ -163,18 +161,13 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	}
 
 	@Override
-	public T readData(List<String> input) {
+	public T readData(Iterator<String> input) {
 		return readData(input, handleMetadata);
 	}
 
 	@Override
 	public T readData(InputStream inputStream) throws IOException {
 		return readData(inputStream, handleMetadata);
-	}
-
-	@Override
-	public T readData(String[] input) {
-		return readData(input, handleMetadata);
 	}
 
 	@Override
@@ -198,11 +191,26 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 
 	@Override
 	public void writeCSVData(StringBuilder string, Object data, WriteOptions options) {
-		if (data instanceof ICSVToString) {
-			string.append(((ICSVToString) data).csvToString(options));
-		} else {
-			throw new UnsupportedOperationException();
+		List<String> values = new ArrayList<>();
+		
+		writeData(values, data, options);
+				
+		for (int i=0;i<values.size();i++){
+			string.append(values.get(i));
+			if (i<values.size()-1){
+				string.append(options.getDelimiter());
+			}
 		}
+
+//		StringBuilder test2 = new StringBuilder();
+//		if (data instanceof ICSVToString) {
+//			test2.append(((ICSVToString) data).csvToString(options));
+//		} else {
+//			throw new UnsupportedOperationException();
+//		}
+//		
+//		System.err.println("JUST FOR DEBUG");
+		
 	}
 
 }

@@ -95,11 +95,6 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 		super.close();
 	}
 
-	@Override
-	public void process(String[] message) {
-		getTransfer().transfer(getDataHandler().readData(message));
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public void process(long callerId, ByteBuffer message) {

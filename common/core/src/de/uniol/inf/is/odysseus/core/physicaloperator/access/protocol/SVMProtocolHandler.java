@@ -281,7 +281,8 @@ public class SVMProtocolHandler<T extends Tuple<IMetaAttribute>> extends
 			}
 
 		}
-		T retValue = getDataHandler().readData(ret);
+		List<String> toRead = Arrays.asList(ret);
+		T retValue = getDataHandler().readData(toRead.iterator());
 		return retValue;
 	}
 

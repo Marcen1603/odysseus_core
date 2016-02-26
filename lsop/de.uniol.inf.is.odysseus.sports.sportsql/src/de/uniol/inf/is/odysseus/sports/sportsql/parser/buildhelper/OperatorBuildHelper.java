@@ -270,7 +270,6 @@ public class OperatorBuildHelper {
 	 * @throws MissingDDCEntryException
 	 * @throws NumberFormatException
 	 */
-	@SuppressWarnings("rawtypes")
 	public static SelectAO createSpaceSelect(SportsQLSpaceParameter parameter, boolean inMeters, ILogicalOperator source)
 			throws NumberFormatException, MissingDDCEntryException {
 
@@ -433,7 +432,7 @@ public class OperatorBuildHelper {
 	 *            Source which should at least contain "minute" and "second"
 	 * @return SelectAO which selects just the time-range you configured in the timeParameter.
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ })
 	public static SelectAO createTimeSelect(SportsQLTimeParameter timeParameter, ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 
@@ -1133,7 +1132,6 @@ public class OperatorBuildHelper {
 	 * @param source
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static SelectAO createSelectAO(IPredicate predicate, ILogicalOperator source) {
 		SelectAO selectAO = new SelectAO();
 		selectAO.setPredicate(predicate);
@@ -1462,7 +1460,6 @@ public class OperatorBuildHelper {
 	 * @param source2
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static JoinAO createJoinAO(IPredicate predicate, String card, ILogicalOperator source1,
 			ILogicalOperator source2) {
 		JoinAO joinAO = new JoinAO();
@@ -1848,7 +1845,6 @@ public class OperatorBuildHelper {
 	 * @param predicatesToConnect
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static IPredicate createAndPredicate(List<IPredicate> predicatesToConnect) {
 		if (predicatesToConnect.size() >= 2) {
 			IPredicate lastAndPredicate = predicatesToConnect.get(0);
@@ -1869,7 +1865,6 @@ public class OperatorBuildHelper {
 	 * @param predicatesToConnect
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static IPredicate createOrPredicate(List<IPredicate> predicatesToConnect) {
 		if (predicatesToConnect.size() >= 2) {
 			IPredicate lastOrPredicate = predicatesToConnect.get(0);

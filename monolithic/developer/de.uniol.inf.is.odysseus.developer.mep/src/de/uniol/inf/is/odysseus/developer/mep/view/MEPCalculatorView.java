@@ -42,7 +42,8 @@ import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
  *
  */
 public class MEPCalculatorView extends ViewPart {
-    private static final Logger LOG = LoggerFactory.getLogger(MEPCalculatorView.class);
+    @SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(MEPCalculatorView.class);
     Text txtExpression;
     Text txtReturnType;
     Text txtOptimizedForm;
@@ -147,7 +148,7 @@ public class MEPCalculatorView extends ViewPart {
                         MEPCalculatorView.this.txtConjunctiveNormalForm.setText(BooleanExpressionOptimizer.toConjunctiveNormalForm(parsedExpression).toString());
                         MEPCalculatorView.this.txtDisjunctiveNormalForm.setText(BooleanExpressionOptimizer.toDisjunctiveNormalForm(parsedExpression).toString());
                     }
-                    catch (@SuppressWarnings("unused") Throwable e) {
+                    catch (Throwable e) {
                         MEPCalculatorView.this.txtExpression.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
                         MEPCalculatorView.this.txtReturnType.setText("");
                         MEPCalculatorView.this.txtOptimizedForm.setText("");

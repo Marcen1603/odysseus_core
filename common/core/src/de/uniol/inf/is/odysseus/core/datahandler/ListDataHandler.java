@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -92,10 +93,10 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	}
 
 	@Override
-	public List<?> readData(List<String> input) {
+	public List<?> readData(Iterator<String> input) {
 		ArrayList<Object> values = new ArrayList<Object>();
-		for (String line:input){
-			Object value = this.handler.readData(line);
+		while (input.hasNext()){
+			Object value = this.handler.readData(input.next());
 			values.add(value);
 		}
 		return values;

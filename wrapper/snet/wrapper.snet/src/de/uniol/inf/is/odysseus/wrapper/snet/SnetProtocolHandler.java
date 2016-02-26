@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.snet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.fraunhofer.iis.kom.wsn.messages.WSNMessageDefault;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -68,24 +69,24 @@ public class SnetProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	public T getNext() {
 		WSNMessageDefault msg = messages.get(0);
 		
-		String[] values = new String[10];
+		List<String> values = new ArrayList<String>(10);
 		
-		values[0] = ""+msg.getSource();
-		values[1] = ""+msg.getSourceService();
-		values[2] = ""+msg.getDestinationService();
+		values.add(""+msg.getSource());
+		values.add(""+msg.getSourceService());
+		values.add(""+msg.getDestinationService());
 		byte[] payload = msg.getData();
 
 		int timestamp = (payload[payload.length - 26] & 0xFF)
 				| ((payload[payload.length - 25] & 0xFF) << 8);
 		// System.out.println("timestamp: " + timestamp);
-		values[3] = "" + timestamp;
+		values.add("" + timestamp);
 
 		int seq = (payload[payload.length - 24] & 0xFF)
 				| ((payload[payload.length - 23] & 0xFF) << 8)
 				| ((payload[payload.length - 22] & 0xFF) << 16)
 				| ((payload[payload.length - 21] & 0xFF) << 24);
 		// System.out.println("sequence: " + seq);
-		values[4] = "" + seq;
+		values.add("" + seq);
 
 		int ap = (payload[payload.length - 20] & 0xFF)
 				| ((payload[payload.length - 19] & 0xFF) << 8)
@@ -93,7 +94,7 @@ public class SnetProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 				| ((payload[payload.length - 17] & 0xFF) << 24);
 		float apf = Float.intBitsToFloat(ap);
 		// System.out.println("air pressure: " + apf);
-		values[5] = "" + apf;
+		values.add("" + apf);
 
 		int humidity = (payload[payload.length - 16] & 0xFF)
 				| ((payload[payload.length - 15] & 0xFF) << 8)
@@ -101,7 +102,7 @@ public class SnetProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 				| ((payload[payload.length - 3] & 0xFF) << 24);
 		float humidityf = Float.intBitsToFloat(humidity);
 		// System.out.println("humidity: " + humidityf);
-		values[6] = "" + humidityf;
+		values.add("" + humidityf);
 
 		int temperature = (payload[payload.length - 12] & 0xFF)
 				| ((payload[payload.length - 11] & 0xFF) << 8)
@@ -109,7 +110,7 @@ public class SnetProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 				| ((payload[payload.length - 9] & 0xFF) << 24);
 		float temperaturef = Float.intBitsToFloat(temperature);
 		// System.out.println("temperature: " + temperaturef);
-		values[7] = "" + temperaturef;
+		values.add("" + temperaturef);
 
 		int co2 = (payload[payload.length - 8] & 0xFF)
 				| ((payload[payload.length - 7] & 0xFF) << 8)
@@ -117,7 +118,7 @@ public class SnetProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 				| ((payload[payload.length - 5] & 0xFF) << 24);
 		float co2f = Float.intBitsToFloat(co2);
 		// System.out.println("co2: " + co2f);
-		values[8] = "" + co2f;
+		values.add("" + co2f);
 
 		int ec = (payload[payload.length - 4] & 0xFF)
 				| ((payload[payload.length - 3] & 0xFF) << 8)
@@ -125,12 +126,12 @@ public class SnetProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 				| ((payload[payload.length - 1] & 0xFF) << 24);
 		float ecf = Float.intBitsToFloat(ec);
 		// System.out.println("energy consumption: " + ecf);
-		values[9] = "" + ecf;
+		values.add("" + ecf);
 
 		messages.remove(0);
 
 		// System.out.println(values);
-		return getDataHandler().readData(values);
+		return getDataHandler().readData(values.iterator());
 	}
 
 }

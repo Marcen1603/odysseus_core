@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -138,7 +140,8 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 
 	@Override
 	public void process(String[] message) {
-		getTransfer().transfer(getDataHandler().readData(message));
+		List<String> msg = Arrays.asList(message); 
+		getTransfer().transfer(getDataHandler().readData(msg.iterator()));
 	}
 
 	@Override

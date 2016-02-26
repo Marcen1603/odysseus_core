@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
@@ -17,9 +18,7 @@ public interface IStreamObjectDataHandler<T extends IStreamObject<? extends IMet
 
 	T readData(String input, boolean handleMetaData);
 	
-	T readData(String[] input, boolean handleMetaData);
-
-	T readData(List<String> input, boolean handleMetaData);
+	T readData(Iterator<String> input, boolean handleMetaData);
 
 	void writeData(ByteBuffer buffer, Object data, boolean handleMetaData);
 
@@ -27,7 +26,7 @@ public interface IStreamObjectDataHandler<T extends IStreamObject<? extends IMet
 
 	void writeData(StringBuilder string, Object data, boolean handleMetaData);
 
-	void writeData(List<String> output, Object data, boolean handleMetaData);
+	void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options);
 	
 	int memSize(Object attribute, boolean handleMetaData);
 

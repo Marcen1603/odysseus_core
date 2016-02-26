@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.core.conversion;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,7 +19,7 @@ public class CSVParser {
 	}
 
 	static public List<String> parseCSV(final String line, final char textDelimiter, final char delimiter, final boolean trim) {
-		List<String> ret = new LinkedList<String>();
+		List<String> ret = new ArrayList<String>();
 		StringBuffer elem = new StringBuffer();
 		boolean readInsideOfText = false;
 		boolean readAfterText = false;
@@ -61,7 +63,7 @@ public class CSVParser {
 		return ret;
 	}
 
-	static public String[] parseCSV(final String line, final char delimiter, final boolean trim) {
+	static public List<String> parseCSV(final String line, final char delimiter, final boolean trim) {
 		String[] ret = line.split(Pattern.quote("" + delimiter));
 		if (trim) {
 			String[] trimmed = new String[ret.length];
@@ -70,7 +72,7 @@ public class CSVParser {
 			}
 			ret = trimmed;
 		}
-		return ret;
+		return Arrays.asList(ret);
 	}
 
 	public static void main(String[] args) {

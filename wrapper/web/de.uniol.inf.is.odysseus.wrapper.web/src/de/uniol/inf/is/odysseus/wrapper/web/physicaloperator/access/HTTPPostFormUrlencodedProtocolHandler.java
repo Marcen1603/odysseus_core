@@ -22,6 +22,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -108,7 +110,7 @@ public class HTTPPostFormUrlencodedProtocolHandler<T extends Tuple<?>> extends A
 	@Override
 	public void process(long callerId, ByteBuffer message) {
 		String str = Charset.forName("UTF-8").decode(message).toString();
-		getTransfer().transfer(getDataHandler().readData(parseAttributes(str)));
+		getTransfer().transfer(getDataHandler().readData(parseAttributes(str).iterator()));
 	}
 	
 	/* (non-Javadoc)
@@ -116,7 +118,7 @@ public class HTTPPostFormUrlencodedProtocolHandler<T extends Tuple<?>> extends A
 	 */
 	@Override
 	public void process(String[] message) {
-		getTransfer().transfer(getDataHandler().readData(parseAttributes(message[0])));
+		getTransfer().transfer(getDataHandler().readData(parseAttributes(message[0]).iterator()));
 	}
 	
 	/* (non-Javadoc)
@@ -125,14 +127,14 @@ public class HTTPPostFormUrlencodedProtocolHandler<T extends Tuple<?>> extends A
 	@Override
 	public void process(InputStream message) {
 		try {
-			getTransfer().transfer(getDataHandler().readData(parseAttributes(IOUtils.toString(message))));
+			getTransfer().transfer(getDataHandler().readData(parseAttributes(IOUtils.toString(message)).iterator()));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
 	
-	public String[] parseAttributes(String message) {
+	public List<String> parseAttributes(String message) {
 		String[] attr = message.split("&");
 		for (int i = 0; i < attr.length; ++i) {
 			try {
@@ -148,7 +150,7 @@ public class HTTPPostFormUrlencodedProtocolHandler<T extends Tuple<?>> extends A
 				attr[i] = null;
 			}
 		}
-		return attr;
+		return Arrays.asList(attr);
 	}
 
 	/*

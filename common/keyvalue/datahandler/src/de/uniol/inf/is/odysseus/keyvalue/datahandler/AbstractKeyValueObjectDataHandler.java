@@ -7,6 +7,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.undercouch.bson4jackson.BsonFactory;
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
@@ -63,17 +65,12 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	}
 
 	@Override
-	public T readData(List<String> input, boolean handleMetaData) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public void writeData(ByteBuffer buffer, T object, boolean handleMetaData) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void writeData(List<String> output, Object data, boolean handleMetaData) {
+	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -114,15 +111,9 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	}
 
 	@Override
-	public T readData(String message, boolean handleMetaData) {
+	public T readData(Iterator<String> message, boolean handleMetaData) {
 		// TODO: Find a way to handle metadata in key value
-		return jsonStringToKVO(message);
-	}
-
-	@Override
-	public T readData(String[] message, boolean handleMetaData) {
-		// TODO: Find a way to handle metadata in key value
-		return jsonStringToKVO(message[0]);
+		return jsonStringToKVO(message.next());
 	}
 
 	@Override

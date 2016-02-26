@@ -17,7 +17,10 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import com.google.common.primitives.Doubles;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -50,27 +53,14 @@ public class VectorDataHandler extends AbstractDataHandler<double[]> {
      * {@inheritDoc}
      */
     @Override
-    public double[] readData(List<String> input) {
-        int size = input.size();
-        double[] value = new double[size];
-        for (int i = 0; i < size; i++) {
-            value[i] = this.handler.readData(input.get(i));
+    public double[] readData(Iterator<String> input) {
+    	List<Double> list = new ArrayList<Double>();
+        while (input.hasNext()) {
+            list.add(this.handler.readData(input.next()));
         }
-        return value;
+        return Doubles.toArray(list);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double[] readData(String[] input) {
-        int size = input.length;
-        double[] value = new double[size];
-        for (int i = 0; i < size; i++) {
-            value[i] = this.handler.readData(input[i]);
-        }
-        return value;
-    }
 
     /**
      * {@inheritDoc}

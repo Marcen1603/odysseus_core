@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.ByteBufferWrapper;
@@ -27,9 +28,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Henrik Surm
  *
  */
-public class ByteBufferDataHandler extends AbstractDataHandler<ByteBufferWrapper>
-{
+public class ByteBufferDataHandler extends AbstractDataHandler<ByteBufferWrapper> {
 	static protected List<String> types = new ArrayList<String>();
+
 	static {
 		types.add(SDFDatatype.BYTEBUFFER.getURI());
 	}
@@ -38,8 +39,7 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBufferWrapper
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ByteBufferWrapper readData(List<String> input) 
-	{
+	public ByteBufferWrapper readData(String string) {
 		throw new UnsupportedOperationException("Not implemented yet!");
 	}
 
@@ -47,49 +47,28 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBufferWrapper
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ByteBufferWrapper readData(String[] input) 
-	{
-		throw new UnsupportedOperationException("Not implemented yet!");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ByteBufferWrapper readData(String string) 
-	{
-		throw new UnsupportedOperationException("Not implemented yet!");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void writeData(ByteBuffer buffer, Object data) 
-	{
+	public void writeData(ByteBuffer buffer, Object data) {
 		if (data instanceof ByteBuffer)
 			buffer.put((ByteBuffer) data);
-		else
-		if (data instanceof Byte)
+		else if (data instanceof Byte)
 			buffer.put((Byte) data);
 		else
-			throw new UnsupportedOperationException("Cannot write \"" + data.getClass().getName() + "\" to ByteBuffer!");
+			throw new UnsupportedOperationException(
+					"Cannot write \"" + data.getClass().getName() + "\" to ByteBuffer!");
 	}
 
 	@Override
-	public ByteBufferWrapper readData(ByteBuffer buffer) 
-	{
+	public ByteBufferWrapper readData(ByteBuffer buffer) {
 		// "Read" all data from buffer
 		buffer.position(buffer.limit());
 		return new ByteBufferWrapper(buffer);
-	}	
-	
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int memSize(Object data) 
-	{
+	public int memSize(Object data) {
 		ByteBuffer buf = (ByteBuffer) data;
 		return buf.capacity();
 	}
@@ -118,4 +97,3 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBufferWrapper
 		return types;
 	}
 }
-

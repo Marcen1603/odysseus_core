@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +44,11 @@ public class SimpleCSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> e
 
 	@Override
 	protected T readLine(String line, boolean readMeta) {
-		String[] ret = CSVParser.parseCSV(line, delimiter, trim);
-        if (ret.length < this.getDataHandler().getSchema().size()) {
-            String[] tmpRet = new String[this.getDataHandler().getSchema().size()];
-            System.arraycopy(ret, 0, tmpRet, 0, ret.length);
-            ret = tmpRet;
+		List<String> ret = CSVParser.parseCSV(line, delimiter, trim);
+        if (ret.size() < this.getDataHandler().getSchema().size()) {
+        	ret = ret.subList(0, ret.size());
         }
-		return getDataHandler().readData(ret, readMeta);
+		return getDataHandler().readData(ret.iterator(), readMeta);
 	}
 		
 	@Override

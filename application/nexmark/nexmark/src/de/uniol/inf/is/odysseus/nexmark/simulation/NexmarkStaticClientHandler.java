@@ -90,9 +90,9 @@ public class NexmarkStaticClientHandler extends Thread {
 				TupleDataHandler dh = (TupleDataHandler) new TupleDataHandler().createInstance(categorySchema);
 				String[] lines = document.split("\\n");
 				for (int i=0;i<lines.length;i++){
-					String[] input = CSVParser.parseCSV(lines[i], '\t', true);
+					List<String> input = CSVParser.parseCSV(lines[i], '\t', true);
 					@SuppressWarnings("unchecked")
-					Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>)dh.readData(input);
+					Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>)dh.readData(input.iterator());
 					client.writeObject(tuple, true);
 				}
 				client.writeObject(null, true);

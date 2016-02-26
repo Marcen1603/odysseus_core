@@ -29,8 +29,7 @@ public class SplitFunctionOld extends AbstractFunction<List<String>> {
 
 	@Override
 	public List<String> getValue() {
-		String[] v = CSVParser.parseCSV((String)getInputValue(0), CSVParser.determineDelimiter((String)getInputValue(1)), true);
-		List<String> ret = Arrays.asList(v);
+		List<String> ret = CSVParser.parseCSV((String)getInputValue(0), CSVParser.determineDelimiter((String)getInputValue(1)), true);
 		return ret;
 	}
 

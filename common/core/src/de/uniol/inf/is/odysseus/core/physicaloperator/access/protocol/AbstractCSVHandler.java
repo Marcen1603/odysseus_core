@@ -111,7 +111,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	}
 
 	final T readLine(String line){
-			return readLine(line, false);
+			return readLine(line, getDataHandler().isHandleMetadata());
 	}
 	
 	protected abstract T readLine(String line, boolean readMeta);

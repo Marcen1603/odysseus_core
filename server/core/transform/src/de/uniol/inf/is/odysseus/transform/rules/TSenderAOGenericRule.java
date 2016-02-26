@@ -262,7 +262,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 */
 	@SuppressWarnings("static-method")
 	protected SenderPO<?> getSenderPO(IProtocolHandler<?> protocolHandler,
-			@SuppressWarnings("unused") AbstractSenderAO senderAO) {
+			AbstractSenderAO senderAO) {
 		return new SenderPO<>(protocolHandler);
 	}
 

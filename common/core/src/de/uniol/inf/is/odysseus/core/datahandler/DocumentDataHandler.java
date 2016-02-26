@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Document;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -32,17 +34,11 @@ public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Documen
 	}
 
 	@Override
-	public Document<?> readData(String[] input, boolean handleMetaData) {
+	public Document<?> readData(Iterator<String> input, boolean handleMetaData) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	@Override
-	public Document<?> readData(List<String> input, boolean handleMetaData) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-		
 	@Override
 	public Document<?> readData(String string, boolean handleMetaData) {
 		return new Document<>(stringHandler.readData(string));
@@ -62,8 +58,8 @@ public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Documen
 	@SuppressWarnings("unchecked")
 
 	@Override
-	public void writeData(List<String> output, Object data, boolean handleMetaData) {
-		stringHandler.writeData(output, ((Document<IMetaAttribute>)data).getContent());
+	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
+		stringHandler.writeData(output, ((Document<IMetaAttribute>)data).getContent(), options);
 	}
 
 	@SuppressWarnings("unchecked")

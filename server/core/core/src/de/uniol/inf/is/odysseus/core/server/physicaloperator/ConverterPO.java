@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -45,7 +46,7 @@ public class ConverterPO<R extends IStreamObject<IMetaAttribute>, W extends IStr
 	protected void process_next(R object, int port) {
 		// Take input and generate InputStream/Handler for it
 		List<String> output = new LinkedList<>();
-		inputDataHandler.writeData(output, object);
+		inputDataHandler.writeData(output, object, WriteOptions.defaultOptions);
 		StringTransportHandler handler = StringTransportHandler.getInstance(output, options);
 		protocolHandler.setTransportHandler(handler);
 		try {

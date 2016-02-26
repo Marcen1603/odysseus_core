@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IntersectionAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;

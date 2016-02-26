@@ -122,7 +122,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 				}	
 			}
 		}
-		Tuple<M> output = (Tuple<M>) tHandler.readData(dataValues);
+		Tuple<M> output = (Tuple<M>) tHandler.readData(dataValues.iterator());
 
 		if (input.getMetadata() != null)
 			output.setMetadata((M) input.getMetadata().clone());

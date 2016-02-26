@@ -242,16 +242,16 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
                 if (reverse) {
                     pos = (xPathCount - jj) - 1;
                 }
-                final String[] tuple = new String[schema.size()];
+                final List<String> tuple = new ArrayList<String>(schema.size());
                 for (int i = 0; i < this.getXPaths().size(); i++) {
                     NodeList nodes = nodesMap.get(getXPaths().get(i));
                     if (nodes.getLength() > pos) {
                         final Node node = nodes.item(pos);
                         final String content = node.getTextContent();
-                        tuple[i] = content;
+                        tuple.add(content);
                     }
                 }
-                result.add(this.getDataHandler().readData(tuple));
+                result.add(this.getDataHandler().readData(tuple.iterator()));
             }
             if (result.size() > 0) {
                 return result.remove(0);

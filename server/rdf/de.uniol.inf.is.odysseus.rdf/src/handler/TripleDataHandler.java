@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.StringHandler;
@@ -71,27 +73,10 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 	}
 
 	@Override
-	public Triple<? extends IMetaAttribute> readData(String[] input, boolean handleMetaData) {
+	public Triple<? extends IMetaAttribute> readData(Iterator<String> input, boolean handleMetaData) {
 		String[] res = new String[3];
 		for (int i = 0; i < 3; i++) {
-			res[i] = dataHandler.get(i).readData(input);
-		}
-
-		Triple<IMetaAttribute> t = new Triple<IMetaAttribute>(res[0], res[1], res[2]);
-
-		if (handleMetaData) {
-			IMetaAttribute meta = readMetaData(input);
-			t.setMetadata(meta);
-		}
-
-		return t;
-	}
-
-	@Override
-	public Triple<? extends IMetaAttribute> readData(List<String> input, boolean handleMetaData) {
-		String[] res = new String[3];
-		for (int i = 0; i < 3; i++) {
-			res[i] = dataHandler.get(i).readData(input);
+			res[i] = dataHandler.get(i).readData(input.next());
 		}
 
 		Triple<IMetaAttribute> t = new Triple<IMetaAttribute>(res[0], res[1], res[2]);
@@ -135,14 +120,14 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 	}
 
 	@Override
-	public void writeData(List<String> output, Object data, boolean handleMetaData) {
+	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
 		@SuppressWarnings("unchecked")
 		Triple<? extends IMetaAttribute> triple = (Triple<? extends IMetaAttribute>) data;
 		for (int i = 0; i < 3; i++) {
-			dataHandler.get(i).writeData(output, triple.get(i));
+			dataHandler.get(i).writeData(output, triple.get(i), options);
 		}
 		if (handleMetaData) {
-			writeMetaData(output, triple.getMetadata());
+			writeMetaData(output, triple.getMetadata(), options);
 		}
 	}
 
