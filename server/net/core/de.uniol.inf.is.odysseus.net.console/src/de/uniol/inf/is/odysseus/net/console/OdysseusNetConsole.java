@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnection;
 import de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager;
 import de.uniol.inf.is.odysseus.net.console.message.CommandMessage;
 import de.uniol.inf.is.odysseus.net.console.message.CommandOutputMessage;
+import de.uniol.inf.is.odysseus.net.console.message.DoUpdateMessage;
 import de.uniol.inf.is.odysseus.net.console.message.LoginMessage;
 import de.uniol.inf.is.odysseus.net.console.message.LoginOKMessage;
 import de.uniol.inf.is.odysseus.net.console.message.LogoutMessage;
@@ -58,12 +59,14 @@ import de.uniol.inf.is.odysseus.net.ping.IPingMap;
 import de.uniol.inf.is.odysseus.net.ping.IPingMapNode;
 import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
 import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
-import de.uniol.inf.is.odysseus.net.update.OdysseusNodeUpdater;
 
 public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConsole.class);
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+	
+	private static final String REMOTE_UPDATE_CONFIG_KEY = "net.remoteUpdate";
+	private static final boolean REMOTE_UPDATE_DEFAULT = false;
 
 	private static IServerExecutor executor;
 	private static IOdysseusNodeManager nodeManager;
@@ -159,12 +162,14 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		nodeCommunicator.registerMessageType(LogoutOKMessage.class);
 		nodeCommunicator.registerMessageType(CommandMessage.class);
 		nodeCommunicator.registerMessageType(CommandOutputMessage.class);
+		nodeCommunicator.registerMessageType(DoUpdateMessage.class);
 		nodeCommunicator.addListener(this, LoginMessage.class);
 		nodeCommunicator.addListener(this, LoginOKMessage.class);
 		nodeCommunicator.addListener(this, LogoutMessage.class);
 		nodeCommunicator.addListener(this, LogoutOKMessage.class);
 		nodeCommunicator.addListener(this, CommandMessage.class);
 		nodeCommunicator.addListener(this, CommandOutputMessage.class);
+		nodeCommunicator.addListener(this, DoUpdateMessage.class);
 	}
 
 	// called by OSGi-DS
@@ -176,12 +181,14 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			nodeCommunicator.removeListener(this, LoginOKMessage.class);
 			nodeCommunicator.removeListener(this, LogoutMessage.class);
 			nodeCommunicator.removeListener(this, LogoutOKMessage.class);
+			nodeCommunicator.removeListener(this, DoUpdateMessage.class);
 			nodeCommunicator.unregisterMessageType(LoginMessage.class);
 			nodeCommunicator.unregisterMessageType(LoginOKMessage.class);
 			nodeCommunicator.unregisterMessageType(LogoutMessage.class);
 			nodeCommunicator.unregisterMessageType(LogoutOKMessage.class);
 			nodeCommunicator.unregisterMessageType(CommandMessage.class);
 			nodeCommunicator.unregisterMessageType(CommandOutputMessage.class);
+			nodeCommunicator.unregisterMessageType(DoUpdateMessage.class);
 
 			nodeCommunicator = null;
 		}
@@ -952,6 +959,10 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 	}
 
 	public void _updateNet(CommandInterpreter ci) {
+		doUpdate();
+	}
+
+	private static void doUpdate() {
 		System.exit(1010);
 	}
 
@@ -1040,6 +1051,19 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		} else if (message instanceof LogoutOKMessage) {
 			loggedToNodes.remove(senderNode);
 			LOG.info("Logout from node '" + senderNode + "' ok");
+		} else if( message instanceof DoUpdateMessage) {
+			if( determineIfRemoteUpdateIsAllowed() ) {
+				doUpdate();
+			}
+		}
+	}
+
+	private static boolean determineIfRemoteUpdateIsAllowed() {
+		String updateStr = OdysseusNetConfiguration.get(REMOTE_UPDATE_CONFIG_KEY,REMOTE_UPDATE_DEFAULT + "");
+		try {
+			return Boolean.valueOf(updateStr);
+		} catch( Throwable t ) {
+			return REMOTE_UPDATE_DEFAULT;
 		}
 	}
 
@@ -1196,16 +1220,30 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		}
 	}
 	
+	public void _remoteUpdate( CommandInterpreter ci ) {
+		String nodeStr = ci.nextArgument();
+		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeStr);
+		if( optNode.isPresent() ) {
+			remoteUpdateNode(ci, optNode.get());
+		}
+	}
+	
 	public void _remoteUpdateAll(CommandInterpreter ci) {
-		OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes();
-
-		ci.println("Send update message to remote peers");
+		ImmutableCollection<IOdysseusNode> nodes = nodeManager.getNodes();
+		for( IOdysseusNode node : nodes ) {
+			if( !node.isLocal() ) {
+				remoteUpdateNode(ci, node);
+			}
+		}
 	}
 
-	public void _remoteRestartAll(CommandInterpreter ci) {
-		OdysseusNodeUpdater.sendRestartMessageToRemoteNodes();
-
-		ci.println("Send restart message to remote peers");
+	private void remoteUpdateNode(CommandInterpreter ci, IOdysseusNode node) {
+		DoUpdateMessage msg = new DoUpdateMessage();
+		try {
+			nodeCommunicator.send(node, msg);
+			ci.println("Send update signal to " + node.getName() + " OK");
+		} catch (OdysseusNodeCommunicationException e) {
+			ci.println("Send update signal to " + node.getName() + " FAILED");
+		}
 	}
-
 }
