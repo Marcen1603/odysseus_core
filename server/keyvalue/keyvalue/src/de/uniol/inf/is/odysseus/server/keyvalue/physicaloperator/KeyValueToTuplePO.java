@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -71,33 +72,54 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 		List<String> dataValues = new ArrayList<String>();
 		for (int i = 0; i < getOutputSchema().size(); i++) {
 			String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
-			if (input.getAttributes().containsKey(attributeName)) {
-				Object attribute = input.getAttribute(attributeName);
-				if (attribute instanceof List) {
-					if(((List<?>) attribute).size() == 0) {
-						dataValues.add(null);
-					} else {
-						StringBuilder sb = new StringBuilder();
-						for(Iterator<Object> iter = ((List<Object>) attribute).iterator(); iter.hasNext(); ) {
-							sb.append(iter.next());
-							if(iter.hasNext()) {
-								sb.append("\n");
-							}
-						}
-						dataValues.add(sb.toString());
-//						for (Object object : (List<Object>) attribute) {
-							// Add data values as single values. The data handler
-							// handles this as a list. It will create a list over a
-							// couple of entries in the list. Only works if the list
-							// is the last element!
-//							dataValues.add(object.toString());
-//						}
-					}
+			if(attributeName.endsWith("*")) {
+				final String attr = attributeName.substring(0, attributeName.length()-1);
+				
+				Iterator<Entry<String, Object>> iter = input.getAttributes().entrySet().stream().filter(e -> e.getKey().startsWith(attr)).iterator();
+				if(!iter.hasNext()) {
+					dataValues.add(null);
 				} else {
-					dataValues.add(attribute.toString());
+					StringBuilder sb = new StringBuilder();
+					while(iter.hasNext()) {
+						Entry<String, Object> entry = iter.next();
+						sb.append(entry.getKey().substring(attr.length()));
+						sb.append("|");
+						sb.append(entry.getValue());
+						if(iter.hasNext()) {
+							sb.append("\n");
+						}
+					}
+					dataValues.add(sb.toString());
 				}
 			} else {
-				dataValues.add(null);
+				if (input.getAttributes().containsKey(attributeName)) {
+					Object attribute = input.getAttribute(attributeName);
+					if (attribute instanceof List) {
+						if(((List<?>) attribute).size() == 0) {
+							dataValues.add(null);
+						} else {
+							StringBuilder sb = new StringBuilder();
+							for(Iterator<Object> iter = ((List<Object>) attribute).iterator(); iter.hasNext(); ) {
+								sb.append(iter.next());
+								if(iter.hasNext()) {
+									sb.append("\n");
+								}
+							}
+							dataValues.add(sb.toString());
+	//						for (Object object : (List<Object>) attribute) {
+								// Add data values as single values. The data handler
+								// handles this as a list. It will create a list over a
+								// couple of entries in the list. Only works if the list
+								// is the last element!
+	//							dataValues.add(object.toString());
+	//						}
+						}
+					} else {
+						dataValues.add(attribute.toString());
+					}
+				} else {
+					dataValues.add(null);
+				}	
 			}
 		}
 		Tuple<M> output = (Tuple<M>) tHandler.readData(dataValues);

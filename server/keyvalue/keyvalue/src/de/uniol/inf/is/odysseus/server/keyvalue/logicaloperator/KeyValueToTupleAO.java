@@ -93,6 +93,9 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 			} else {
 				name = att.getAttribute().getQualName();
 			}
+			if(name.endsWith("*")) {
+				name = name.substring(0, name.length()-1);
+			}
 			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(), sdfAtt.getDtConstraints()));
 		} 
 		@SuppressWarnings("unchecked")
