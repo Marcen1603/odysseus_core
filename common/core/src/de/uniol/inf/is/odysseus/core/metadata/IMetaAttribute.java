@@ -18,12 +18,11 @@ package de.uniol.inf.is.odysseus.core.metadata;
 import java.io.Serializable;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
-public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
+public interface IMetaAttribute extends IClone, Serializable {
 	/**
 	 * In this concrete implementation: What meta data types are contained
 	 * @return

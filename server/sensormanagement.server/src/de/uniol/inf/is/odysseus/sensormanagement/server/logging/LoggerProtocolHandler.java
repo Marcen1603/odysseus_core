@@ -189,7 +189,9 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 				if (remainingAttributes.length > 0)
 				{
 					Tuple<?> remainingTuple = object.restrict(remainingAttributes, true);
-					additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
+					// FIXME: cvsToString is no longer supported!
+					additionalFileWriter.write(remainingTuple + "\n");
+					//additionalFileWriter.write(remainingTuple.csvToString(csvWriteOptions) + "\n");
 				}
 				
 				if (getLogFileSize() >= loggingStyle.sizeLimit || result.splitChunk)

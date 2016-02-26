@@ -21,7 +21,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -197,24 +196,6 @@ public class Quality extends AbstractBaseMetaAttribute implements IQuality {
     @Override
     public String toString() {
         return "[completeness=" + this.completeness + ", consistency=" + this.consistency + ", frequency=" + this.frequency + "]";
-    }
-
-    @Override
-    public String csvToString(final WriteOptions options) {
-        final StringBuffer retBuffer = new StringBuffer();
-        if (options.getNumberFormatter() != null) {
-            retBuffer.append(options.getNumberFormatter().format(this.completeness)).append(options.getDelimiter()).append(options.getNumberFormatter().format(this.consistency))
-                    .append(options.getDelimiter()).append(options.getNumberFormatter().format(this.frequency));
-        }
-        else {
-            retBuffer.append(this.completeness).append(options.getDelimiter()).append(this.consistency).append(options.getDelimiter()).append(this.frequency);
-        }
-        return retBuffer.toString();
-    }
-
-    @Override
-    public String getCSVHeader(final char delimiter) {
-        return "completeness" + delimiter + "consistency" + delimiter + "frequency";
     }
 
     @Override

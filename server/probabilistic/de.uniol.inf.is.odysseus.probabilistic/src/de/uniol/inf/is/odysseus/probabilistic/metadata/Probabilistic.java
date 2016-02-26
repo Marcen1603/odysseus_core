@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -133,29 +132,6 @@ final public class Probabilistic extends AbstractBaseMetaAttribute implements IP
     @Override
     public final void setExistence(final double existence) {
         this.existence = existence;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final String csvToString(WriteOptions options) {
-        if (options.hasFloatingFormatter()) {
-            return options.getFloatingFormatter().format(this.existence);
-        }
-        else {
-            return "" + this.existence;
-        }
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final String getCSVHeader(final char delimiter) {
-        return "probability";
     }
 
     /**

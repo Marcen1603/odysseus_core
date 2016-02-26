@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -115,9 +113,11 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 		this.getDataHandler().writeJSONData(string, kvObject);
 
 		if (writemetadata) {
-			string.append(" | META | "
-					+ kvObject.getMetadata().csvToString(new WriteOptions(';', ' ',
-							new DecimalFormat(), new DecimalFormat(), false)));
+			// FIXME: Handle meta data for json objects
+			throw new RuntimeException("Metadata are not supported when writing json");
+			//			string.append(" | META | "
+//					+ kvObject.getMetadata().csvToString(new WriteOptions(';', ' ',
+//							new DecimalFormat(), new DecimalFormat(), false)));
 		}
 		string.append(System.getProperty("line.separator"));
 		CharBuffer charBuffer = CharBuffer.wrap(string);

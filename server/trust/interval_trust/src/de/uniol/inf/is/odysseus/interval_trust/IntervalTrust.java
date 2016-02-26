@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.interval_trust;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -106,16 +105,6 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 	@Override
 	public String toString(PointInTime baseTime) {
 		return "( i= " + this.timeInterval.toString(baseTime) + " | " + " l=" + this.trust + ")";
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		return this.timeInterval.csvToString(options) + options.getDelimiter() + this.trust.csvToString(options);
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return this.timeInterval.getCSVHeader(delimiter) + delimiter + this.trust.getCSVHeader(delimiter);
 	}
 
 	// ------------------------------------------------------------------------------

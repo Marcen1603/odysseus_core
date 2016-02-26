@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -78,22 +77,6 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 	
 	@Override
 	public String getName() {
-		return "Datarate";
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		if (options.hasFloatingFormatter()) {
-			return options.getFloatingFormatter().format(datarate);
-		} else if (options.hasNumberFormatter()) {
-			return options.getNumberFormatter().format(datarate);
-		}
-
-		return String.valueOf(datarate);
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
 		return "Datarate";
 	}
 

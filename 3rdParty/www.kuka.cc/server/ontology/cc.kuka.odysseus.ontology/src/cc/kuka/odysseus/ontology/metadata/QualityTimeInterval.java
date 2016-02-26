@@ -19,7 +19,6 @@ package cc.kuka.odysseus.ontology.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -114,25 +113,6 @@ public class QualityTimeInterval extends AbstractCombinedMetaAttribute implement
     @Override
     public List<SDFMetaSchema> getSchema() {
         return QualityTimeInterval.SCHEMA;
-    }
-
-    @Override
-    public String getCSVHeader(final char delimiter) {
-        return this.timeInterval.getCSVHeader(delimiter) + delimiter + this.quality.getCSVHeader(delimiter) + delimiter + "timeliness";
-    }
-
-    @Override
-    public String csvToString(final WriteOptions options) {
-        final StringBuffer retBuffer = new StringBuffer();
-        if (options.getNumberFormatter() != null) {
-            retBuffer.append(this.timeInterval.csvToString(options)).append(options.getDelimiter()).append(this.quality.csvToString(options)).append(options.getDelimiter())
-                    .append(options.getNumberFormatter().format(this.getTimeliness()));
-        }
-        else {
-            retBuffer.append(this.timeInterval.csvToString(options)).append(options.getDelimiter()).append(this.quality.csvToString(options)).append(options.getDelimiter())
-                    .append(this.getTimeliness());
-        }
-        return retBuffer.toString();
     }
 
     @Override

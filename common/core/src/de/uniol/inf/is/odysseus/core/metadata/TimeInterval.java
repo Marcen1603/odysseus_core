@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -431,17 +430,6 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	public String toString(PointInTime baseTime) {
 		return "[" + getStart().minus(baseTime).toString() + ","
 				+ getEnd().minus(baseTime).toString() + ")";
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		return getStart().toString() + options.getDelimiter()
-				+ getEnd().toString();
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return "start" + delimiter + "end";
 	}
 
 	public static TimeInterval forever() {

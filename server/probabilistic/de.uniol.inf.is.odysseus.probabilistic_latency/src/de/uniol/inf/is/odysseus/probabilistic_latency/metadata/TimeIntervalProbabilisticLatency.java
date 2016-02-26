@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic_latency.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -152,20 +151,6 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 	public String toString(PointInTime baseTime) {
 		return "( i= " + timeInterval.toString(baseTime) + " | l="
 				+ this.latency + " | prob =" + probabilistic.toString() + ")";
-	}
-
-	@Override
-	public final String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter()
-				+ this.latency.csvToString(options) + options.getDelimiter()
-				+ probabilistic.csvToString(options);
-	}
-
-	@Override
-	public final String getCSVHeader(final char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter
-				+ this.latency.getCSVHeader(delimiter) + delimiter
-				+ probabilistic.getCSVHeader(delimiter);
 	}
 	
 	// ------------------------------------------------------------------------------

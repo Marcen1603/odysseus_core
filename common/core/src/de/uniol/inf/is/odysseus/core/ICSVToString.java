@@ -15,7 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.core;
 
-// TODO: remove me!
 public interface ICSVToString {
 	public String csvToString(WriteOptions options);
 	public String getCSVHeader(char delimiter);

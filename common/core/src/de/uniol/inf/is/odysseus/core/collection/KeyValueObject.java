@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -149,7 +148,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		StringBuffer retBuff = new StringBuffer();
 		retBuff.append(attributes);
 		if (withMetadata && getMetadata() != null) {
-			retBuff.append(";").append(getMetadata().csvToString(new WriteOptions(';','\'',null, null, true)));
+			retBuff.append(";").append(getMetadata().toString());
 		}
 		return retBuff.toString();
 	}

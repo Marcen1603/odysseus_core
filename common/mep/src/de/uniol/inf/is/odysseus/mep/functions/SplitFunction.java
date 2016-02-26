@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
-import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;

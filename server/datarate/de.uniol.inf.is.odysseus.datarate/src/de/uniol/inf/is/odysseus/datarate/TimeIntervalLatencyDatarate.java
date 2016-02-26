@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.datarate;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -118,20 +117,6 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 	public String toString(PointInTime baseTime) {
 		return "i = " + timeInterval.toString(baseTime) + " | l = "
 				+ latency.toString() + " | d = " + datarate.toString() + "";
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter
-				+ latency.getCSVHeader(delimiter) + delimiter
-				+ datarate.getCSVHeader(delimiter);
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter()
-				+ latency.csvToString(options) + options.getDelimiter()
-				+ datarate.csvToString(options);
 	}
 	
 	// ------------------------------------------------------------------------------

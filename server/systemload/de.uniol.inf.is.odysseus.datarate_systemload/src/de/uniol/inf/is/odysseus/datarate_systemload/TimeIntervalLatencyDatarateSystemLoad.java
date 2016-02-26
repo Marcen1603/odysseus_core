@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -123,22 +122,6 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 			return systemload.getValue(0, index);
 		}
 		return null;
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter
-				+ latency.getCSVHeader(delimiter) + delimiter
-				+ datarate.getCSVHeader(delimiter) + delimiter
-				+ systemload.getCSVHeader(delimiter);
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter()
-				+ latency.csvToString(options) + options.getDelimiter()
-				+ datarate.csvToString(options) + options.getDelimiter()
-				+ systemload.csvToString(options);
 	}
 
 	@Override

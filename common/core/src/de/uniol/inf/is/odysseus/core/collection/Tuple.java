@@ -26,10 +26,8 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.Order;
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -41,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
  * @author Marco Grawunder, Jonas Jacobi
  */
 public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
-		implements Serializable, Comparable<Tuple<?>>, ICSVToString {
+		implements Serializable, Comparable<Tuple<?>> {
 
 	private static final long serialVersionUID = 7119095568322125441L;
 
@@ -705,107 +703,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			value.append(String.valueOf(getAttribute(pos))).append(" ");
 		}
 		return value.toString();
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		// TODO Auto-generated method stub
-		
-		StringBuffer retBuff = new StringBuffer();
-		if (attributes.length > 0) {
-			for (int i = 0; i < this.attributes.length; ++i) {
-				Object curAttribute = this.attributes[i];
-				if (i > 0) {
-					retBuff.append(options.getDelimiter());
-				}
-				if (curAttribute == null) {
-					retBuff.append(options.getNullValueString());
-				} else {
-					if (curAttribute instanceof Number) {
-						if ((curAttribute instanceof Double || curAttribute instanceof Float)
-								&& options.hasFloatingFormatter()) {
-							retBuff.append(options.getFloatingFormatter()
-									.format(curAttribute));
-						} else if (!((curAttribute instanceof Double || curAttribute instanceof Float))
-								&& options.hasFloatingFormatter()) {
-							retBuff.append(options.getNumberFormatter().format(curAttribute));
-						} else {
-							retBuff.append(curAttribute);
-						}
-					} else if (curAttribute instanceof double[]) {
-						double[] values = (double[]) curAttribute;
-						for (int iValue = 0; iValue < values.length; iValue++) {
-							if (iValue > 0) {
-								retBuff.append(options.getDelimiter());
-							}
-							if (options.hasFloatingFormatter()) {
-								retBuff.append(options.getFloatingFormatter()
-										.format(values[iValue]));
-							} else {
-								retBuff.append(values[iValue]);
-							}
-						}
-					} else if (curAttribute instanceof BitVector){
-						//BitVector v = (BitVector) curAttribute;
-						if (options.hasNumberFormatter())
-						{
-							long valAsNum = Long.parseLong(curAttribute.toString());
-							retBuff.append(options.getNumberFormatter().format(valAsNum));
-						}
-						else
-							retBuff.append(curAttribute);
-					} else {
-						if (options.hasTextSeperator()
-								&& curAttribute instanceof String) {
-							retBuff.append(options.getTextSeperator())
-									.append(curAttribute.toString())
-									.append(options.getTextSeperator());
-						} else {
-							retBuff.append(curAttribute.toString());
-						}
-					}
-				}
-			}
-		} else {
-			retBuff.append("null");
-		}
-
-		if (options.isWithMetadata()) {
-			retBuff.append(options.getDelimiter()).append(
-					getMetadata().csvToString(options));
-			if (getGetValueMap() != null && getGetValueMap().size() > 0) {
-				for (Entry<String, Object> e : getGetValueMap().entrySet()) {
-					if (e.getValue() == null) {
-						// add empty value
-						retBuff.append(options.getDelimiter());
-					} else if (e.getValue() instanceof IMetaAttribute) {
-						IMetaAttribute m = (IMetaAttribute) e.getValue();
-						retBuff.append(options.getDelimiter()).append(
-								m.csvToString(options));
-					} else {
-						String value = e.getValue().toString();
-						if (value.indexOf(options.getDelimiter()) != -1) {
-							retBuff.append(options.getDelimiter()).append(options.getTextSeperator())
-									.append(e.getValue()).append(options.getTextSeperator());
-						} else {
-							retBuff.append(options.getDelimiter()).append(e.getValue());
-						}
-					}
-				}
-			}
-		}
-		return retBuff.toString();
-
-	}
-	
-	@Override
-	public String getCSVHeader(char delimiter) {
-		StringBuffer ret = new StringBuffer();
-		for (int i = 0; i < attributes.length; i++) {
-			ret.append(delimiter);
-		}
-		ret.append(getMetadata().getCSVHeader(delimiter));
-		return ret.toString();
 	}
 
 	@Override

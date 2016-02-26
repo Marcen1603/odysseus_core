@@ -10,7 +10,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -180,63 +179,6 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements ISyst
 	@Override
 	public String getName() {
 		return "SystemLoad";
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		char delimiter = options.getDelimiter();
-		StringBuilder sb = new StringBuilder();
-
-		if (!systemLoads.isEmpty()) {
-			for (String name : systemLoads.keySet()) {
-				if (sb.length() > 0) {
-					sb.append(delimiter);
-				}
-				sb.append(name).append(delimiter);
-
-				SystemLoadEntry systemLoadEntry = systemLoads.get(name);
-				int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);
-				int memValue = (int) (systemLoadEntry.getMemLoad() * 100);
-				int netValue = (int) (systemLoadEntry.getNetLoad() * 100);
-
-				sb.append(cpuValue).append(delimiter);
-				sb.append(memValue).append(delimiter);
-				sb.append(netValue);
-			}
-		} else {
-			sb.append(LOCAL_NAME).append(delimiter);
-
-			SystemLoadEntry systemLoadEntry = new SystemLoadEntry(LOCAL_NAME);
-
-			int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);
-			int memValue = (int) (systemLoadEntry.getMemLoad() * 100);
-			int netValue = (int) (systemLoadEntry.getNetLoad() * 100);
-
-			sb.append(cpuValue).append(delimiter);
-			sb.append(memValue).append(delimiter);
-			sb.append(netValue);
-
-		}
-
-		return sb.toString();
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		StringBuilder sb = new StringBuilder();
-
-		for (String name : systemLoads.keySet()) {
-			if (sb.length() > 0) {
-				sb.append(delimiter);
-			}
-			sb.append("name").append(delimiter);
-
-			sb.append("cpu_").append(name).append(delimiter);
-			sb.append("mem_").append(name).append(delimiter);
-			sb.append("net_").append(name);
-		}
-
-		return sb.toString();
 	}
 
 	@Override

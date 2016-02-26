@@ -1,10 +1,8 @@
 package de.uniol.inf.is.odysseus.trust;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -78,23 +76,6 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 		default:
 			return null;
 		}
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		NumberFormat numberFormatter = options.getNumberFormatter();
-		StringBuffer retBuffer = new StringBuffer();
-		if (numberFormatter != null) {
-			retBuffer.append(numberFormatter.format(this.trustValue));
-		} else {
-			retBuffer.append(this.trustValue);
-		}
-		return retBuffer.toString();
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return TRUSTVALUE;
 	}
 
 	@Override

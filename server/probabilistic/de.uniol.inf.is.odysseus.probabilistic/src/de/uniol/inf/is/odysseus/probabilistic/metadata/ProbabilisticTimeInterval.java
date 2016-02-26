@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -149,26 +148,6 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	public String toString(PointInTime baseTime) {
 		return "i=" + timeInterval.toString(baseTime) + " | prob="
 				+ this.probabilistic;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter()
-				+ this.probabilistic.csvToString(options);
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getCSVHeader(final char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter
-				+ this.probabilistic.getCSVHeader(delimiter);
 	}
 	
 	// ------------------------------------------------------------------------------

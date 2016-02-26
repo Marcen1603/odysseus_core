@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -84,19 +83,6 @@ final public class LatencySystemLoad extends AbstractCombinedMetaAttribute imple
 			default:
 				return null;
 		}
-	}
-
-	
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return  latency.getCSVHeader(delimiter)
-				+ systemload.getCSVHeader(delimiter);
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		return  latency.csvToString(options) + options.getDelimiter()
-				+ systemload.csvToString(options);
 	}
 
 	@Override

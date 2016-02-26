@@ -9,7 +9,6 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -84,8 +83,9 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 	{
 		try
 		{
-			String rawString = object.csvToString(new WriteOptions(',', '\'', null, null, false));
-			logFileStream.write(rawString + "\n");			
+			//String rawString = object.csvToString(new WriteOptions(',', '\'', null, null, false));
+			// FIXME: csvToString is no longer supported
+			logFileStream.write(object + "\n");			
 		}		
 		catch (Exception e)
 		{

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.interval_latency_datarate_trust;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -132,18 +131,6 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	public String toString(PointInTime baseTime) {
 		return "( i= " + this.timeInterval.toString(baseTime) + " | " + " l= " + this.latency + " | " + " | d= "
 				+ this.datarate + " | " + " t= " + this.trust + ")";
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		return this.timeInterval.csvToString(options) + options.getDelimiter() + this.latency.csvToString(options) + options.getDelimiter()
-				+ this.datarate.csvToString(options) + options.getDelimiter() + this.trust.csvToString(options);
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return this.timeInterval.getCSVHeader(delimiter) + delimiter + this.latency.getCSVHeader(delimiter)
-				+ this.datarate.getCSVHeader(delimiter) + this.trust.getCSVHeader(delimiter);
 	}
 
 	// ------------------------------------------------------------------------------

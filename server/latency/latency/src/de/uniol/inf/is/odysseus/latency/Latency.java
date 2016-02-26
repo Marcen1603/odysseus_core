@@ -15,11 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.latency;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -166,31 +164,6 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 				+ "["
 				+ (this.lend > this.minlstart ? (this.lend - this.minlstart)
 						: "oo");
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		NumberFormat numberFormatter = options.getNumberFormatter();
-		char delimiter = options.getDelimiter();
-		StringBuffer retBuffer = new StringBuffer();
-		if (numberFormatter != null) {
-			retBuffer.append(numberFormatter.format(this.minlstart))
-					.append(delimiter)
-					.append(numberFormatter.format(this.lend))
-					.append(delimiter)
-					.append(numberFormatter.format(this.lend - this.minlstart));
-		} else {
-			retBuffer.append(this.maxlstart).append(delimiter)
-					.append(this.minlstart).append(delimiter).append(this.lend)
-					.append(delimiter).append(this.lend - this.minlstart);
-		}
-		return retBuffer.toString();
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return "maxlstart" + delimiter + "minlstart" + delimiter + "lend"
-				+ delimiter + "latency";
 	}
 
 	@Override
