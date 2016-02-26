@@ -69,6 +69,16 @@
             id="de.uniol.inf.is.odysseus.net.rcp.RefreshNodeView"
             name="Refresh NodeView">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.net.rcp.commands.UpdateNodesCommand"
+            id="de.uniol.inf.is.odysseus.net.rcp.UpdateNodes"
+            name="Update Nodes">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.net.rcp.commands.RestartNodesCommand"
+            id="de.uniol.inf.is.odysseus.net.rcp.RestartNodes"
+            name="Restart Nodes">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -98,6 +108,23 @@
                label="Clean"
                style="push"
                tooltip="Clean">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.net.rcp.NodeView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.net.rcp.UpdateNodes"
+               label="Update"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.net.rcp.RestartNodes"
+               label="Restart"
+               style="push">
          </command>
       </menuContribution>
    </extension>

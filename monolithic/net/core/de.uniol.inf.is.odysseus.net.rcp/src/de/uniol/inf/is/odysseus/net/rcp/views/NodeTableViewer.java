@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.net.rcp.views;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -22,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.rcp.OdysseusNetRCPPlugIn;
@@ -66,7 +69,7 @@ public final class NodeTableViewer {
 
 			@Override
 			protected Image getImage(Boolean value) {
-				return warnImages.getWarnImage(value == true ? 0 : 100); 
+				return warnImages.getWarnImage(value == true ? 0 : 100);
 			}
 
 			@Override
@@ -246,10 +249,10 @@ public final class NodeTableViewer {
 		pingColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<Double>(tableViewer, pingColumn) {
 			@Override
 			protected Double getValue(IOdysseusNode node) {
-				if( !container.isNodeActive(node)) {
+				if (!container.isNodeActive(node)) {
 					return -1.0;
 				}
-				
+
 				Optional<Double> optPing = OdysseusNetRCPPlugIn.getPingMap().getPing(node);
 				if (optPing.isPresent()) {
 					return optPing.get();
@@ -259,10 +262,10 @@ public final class NodeTableViewer {
 
 			@Override
 			protected Image getImage(Double value) {
-				if( value < 0 ) {
+				if (value < 0) {
 					return null;
 				}
-				
+
 				return warnImages.getWarnImage(value / 10.0);
 			}
 
@@ -273,10 +276,10 @@ public final class NodeTableViewer {
 
 			@Override
 			protected String toString(Double value) {
-				if( value < 0 ) {
+				if (value < 0) {
 					return "";
 				}
-				
+
 				return String.format("%-4.0f", value);
 			}
 		});
@@ -412,6 +415,17 @@ public final class NodeTableViewer {
 				}
 			});
 		}
+	}
+
+	public Collection<IOdysseusNode> getSelectedNodes() {
+		IStructuredSelection structSelection = (IStructuredSelection) tableViewer.getSelection();
+		Object[] selectedObjects = structSelection.toArray();
+
+		Collection<IOdysseusNode> selectedNodes = Lists.newArrayList();
+		for (Object selectedObject : selectedObjects) {
+			selectedNodes.add((IOdysseusNode) selectedObject);
+		}
+		return selectedNodes;
 	}
 
 	private static double calcMemPercentage(IResourceUsage resourceUsage) {
