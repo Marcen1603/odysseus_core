@@ -27,6 +27,7 @@ public class SenderAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 
 		sb.append(", options=").append(convertOptionsMap(operator.getOptionsMap()));
 		sb.append(", name='").append(operator.getName()).append("'");
+		sb.append(", writemetadata=").append(operator.isWriteMetaData());
 
 		return sb.toString();
 	}
