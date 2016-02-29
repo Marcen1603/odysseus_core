@@ -79,6 +79,11 @@
             id="de.uniol.inf.is.odysseus.net.rcp.RestartNodes"
             name="Restart Nodes">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.net.rcp.commands.ReinstallNodesCommand"
+            id="de.uniol.inf.is.odysseus.net.rcp.ReinstallNodes"
+            name="Reinstall Nodes">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -124,6 +129,14 @@
          <command
                commandId="de.uniol.inf.is.odysseus.net.rcp.RestartNodes"
                label="Restart"
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.net.rcp.separator1">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.net.rcp.ReinstallNodes"
+               label="Reinstall"
                style="push">
          </command>
       </menuContribution>

@@ -52,74 +52,102 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 	}
 	
 	public static void sendUpdateMessageToRemoteNodes() {
-		sendUpdateMessageToRemotePeers(nodeCommunicator.getDestinationNodes());
+		sendUpdateMessageToRemoteNodes(nodeCommunicator.getDestinationNodes());
 	}
 	
-	public static void sendUpdateMessageToRemotePeers(Collection<IOdysseusNode> remoteNodes) {
+	public static void sendUpdateMessageToRemoteNodes(Collection<IOdysseusNode> remoteNodes) {
 		Preconditions.checkNotNull(remoteNodes, "List of remote nodes must not be null!");
 		LOG.info("Sending update message to {} remote nodes", remoteNodes.size());
-		sendMessageToPeers(remoteNodes, new DoUpdateMessage());
+		sendMessageToNodes(remoteNodes, new DoUpdateMessage());
 	}
 	
 	public static void sendRestartMessageToRemoteNodes() {
-		sendRestartMessageToRemotePeers(nodeCommunicator.getDestinationNodes());
+		sendRestartMessageToRemoteNodes(nodeCommunicator.getDestinationNodes());
 	}
 
-	public static void sendRestartMessageToRemotePeers(Collection<IOdysseusNode> remoteNodes) {
+	public static void sendRestartMessageToRemoteNodes(Collection<IOdysseusNode> remoteNodes) {
 		Preconditions.checkNotNull(remoteNodes, "List of remote nodes must not be null!");
 		LOG.info("Sending restart message to {} remote nodes", remoteNodes.size());
 		
-		sendMessageToPeers(remoteNodes, new DoRestartMessage());
-	}
-
-	private static void sendMessageToPeers(Collection<IOdysseusNode> remoteNodes, IMessage msg) {
-		for( IOdysseusNode remoteNode : remoteNodes ) {
-			try {
-				nodeCommunicator.send(remoteNode, msg);
-				LOG.error("Send signal to " + remoteNode.getName() + " OK");
-			} catch (OdysseusNodeCommunicationException e) {
-				LOG.error("Send signal to " + remoteNode.getName() + " FAILED");
-				LOG.error("Exception:", e);
-			}
-		}
+		sendMessageToNodes(remoteNodes, new DoRestartMessage());
 	}
 	
-	public static void doUpdate() {
-		System.exit(1010); // signal OS to update here
+	public static void sendReinstallMessageToRemoteNodes() {
+		sendReinstallMessageToRemoteNodes(nodeCommunicator.getDestinationNodes());
+	}
+	
+	public static void sendReinstallMessageToRemoteNodes(Collection<IOdysseusNode> remoteNodes ) {
+		Preconditions.checkNotNull(remoteNodes, "List of remote nodes must not be null!");
+		LOG.info("Sending reinstall message to {} remote nodes", remoteNodes.size());
+		
+		sendMessageToNodes(remoteNodes, new DoReinstallMessage());
+	}
+	
+
+	private static void sendMessageToNodes(Collection<IOdysseusNode> remoteNodes, IMessage msg) {
+		for( IOdysseusNode remoteNode : remoteNodes ) {
+			if( !remoteNode.isLocal() ) {
+				try {
+					nodeCommunicator.send(remoteNode, msg);
+					LOG.error("Send signal to " + remoteNode.getName() + " OK");
+				} catch (OdysseusNodeCommunicationException e) {
+					LOG.error("Send signal to " + remoteNode.getName() + " FAILED");
+					LOG.error("Exception:", e);
+				}
+			}
+		}
 	}
 	
 	@Override
 	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
-		if( message instanceof DoUpdateMessage ) {
-			LOG.info("Got message to update");
+		if( message instanceof DoReinstallMessage ) {
+			LOG.info("Got message to reinstall");
 
-			if( determineIfRemoteUpdateIsAllowed() ) {
+			if( determineIfRemoteUpdateOrReInstallIsAllowed() ) {
+				doReinstall();
+			} else {
+				LOG.info("But remote reinstall is not allowed");
+			}
+			
+		} else if( message instanceof DoUpdateMessage ) {
+			LOG.info("Got message to update");
+			
+			if( determineIfRemoteUpdateOrReInstallIsAllowed()) {
 				doUpdate();
 			} else {
 				LOG.info("But remote update is not allowed");
 			}
-			
-			// Following is not working:
-//			try {
-//				if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
-//					FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
-//				} else {
-//					LOG.error("No updates available");
-//				}
-//			} catch( Throwable t ) {
-//				LOG.error("Cannot update", t);
-//			}
 		} else if( message instanceof DoRestartMessage ) {
 			LOG.info("Got message to restart");
 			
-			try {
-				FeatureUpdateUtility.restart(getActiveSession());
-			} catch( Throwable t ) {
-				LOG.error("Could not restart", t);
-			}
+			doRestart();
 		}
 	}
 
+	public static void doRestart() {
+		try {
+			FeatureUpdateUtility.restart(getActiveSession());
+		} catch( Throwable t ) {
+			LOG.error("Could not restart", t);
+		}
+	}
+
+	public static void doUpdate() {
+		try {
+			if( FeatureUpdateUtility.checkForUpdates(getActiveSession()) ) {
+				FeatureUpdateUtility.checkForAndInstallUpdates(getActiveSession());
+			} else {
+				LOG.error("No updates available");
+			}
+		} catch( Throwable t ) {
+			LOG.error("Cannot update", t);
+		}
+	}
+	
+	public static void doReinstall() {
+		System.exit(1010); // signal OS to update here
+	}
+	
 	private static ISession getActiveSession() {
 		if( activeSession == null || !activeSession.isValid() ) {
 			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
@@ -127,7 +155,7 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 		return activeSession;
 	}
 	
-	private static boolean determineIfRemoteUpdateIsAllowed() {
+	private static boolean determineIfRemoteUpdateOrReInstallIsAllowed() {
 		String updateStr = OdysseusNetConfiguration.get(REMOTE_UPDATE_CONFIG_KEY,REMOTE_UPDATE_DEFAULT + "");
 		try {
 			return Boolean.valueOf(updateStr);

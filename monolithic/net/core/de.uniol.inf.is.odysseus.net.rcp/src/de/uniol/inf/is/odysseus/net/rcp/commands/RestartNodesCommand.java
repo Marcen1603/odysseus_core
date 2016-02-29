@@ -26,7 +26,7 @@ public class RestartNodesCommand extends AbstractHandler {
 			
 			if( !selectedNodes.isEmpty() ) {
 				if( MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Restart remote nodes", "Are you sure to restart selected remote nodes?") ) {
-					OdysseusNodeUpdater.sendRestartMessageToRemotePeers(selectedNodes);
+					OdysseusNodeUpdater.sendRestartMessageToRemoteNodes(selectedNodes);
 					StatusBarManager.getInstance().setMessage("Send restart signal to " + selectedNodes.size() + " nodes");
 				}
 			}
@@ -35,4 +35,15 @@ public class RestartNodesCommand extends AbstractHandler {
 		return null;
 	}
 
+	@Override
+	public boolean isEnabled() {
+		Optional<NodeViewPart> optView = NodeViewPart.getInstance();
+		if( optView.isPresent() ) {
+			NodeViewPart view = optView.get();
+			Collection<IOdysseusNode> selectedNodes = view.getSelectedNodes();
+			return !selectedNodes.isEmpty();
+		}
+		
+		return false;
+	}
 }

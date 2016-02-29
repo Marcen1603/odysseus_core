@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.net.rcp.views.NodeViewPart;
 import de.uniol.inf.is.odysseus.net.update.OdysseusNodeUpdater;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 
-public class UpdateNodesCommand extends AbstractHandler {
+public class ReinstallNodesCommand extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -25,9 +25,9 @@ public class UpdateNodesCommand extends AbstractHandler {
 			Collection<IOdysseusNode> selectedNodes = view.getSelectedNodes();
 			
 			if( !selectedNodes.isEmpty() ) {
-				if( MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Update remote nodes", "Are you sure to update selected remote nodes?") ) {
-					OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes(selectedNodes);
-					StatusBarManager.getInstance().setMessage("Send update signal to " + selectedNodes.size() + " nodes");
+				if( MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Reinstall remote nodes", "Are you sure to reinstall selected remote nodes?") ) {
+					OdysseusNodeUpdater.sendReinstallMessageToRemoteNodes(selectedNodes);
+					StatusBarManager.getInstance().setMessage("Send reinstall signal to " + selectedNodes.size() + " nodes");
 				}
 			}
 		}

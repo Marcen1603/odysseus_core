@@ -951,8 +951,16 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		_listOdysseusNetComponents(ci);
 	}
 
-	public void _updateNet(CommandInterpreter ci) {
+	public void _reinstallNode(CommandInterpreter ci) {
+		OdysseusNodeUpdater.doReinstall();
+	}
+	
+	public void _updateNode(CommandInterpreter ci ) {
 		OdysseusNodeUpdater.doUpdate();
+	}
+	
+	public void _restartNode(CommandInterpreter ci ) {
+		OdysseusNodeUpdater.doRestart();
 	}
 
 	public void _loginNode(CommandInterpreter ci) {
@@ -1200,11 +1208,35 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		String nodeStr = ci.nextArgument();
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeStr);
 		if( optNode.isPresent() ) {
-			OdysseusNodeUpdater.sendUpdateMessageToRemotePeers(Lists.newArrayList(optNode.get()));
+			OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes(Lists.newArrayList(optNode.get()));
 		}
 	}
 	
 	public void _remoteUpdateAll(CommandInterpreter ci) {
 		OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes();
+	}
+	
+	public void _remoteReinstall( CommandInterpreter ci ) {
+		String nodeStr = ci.nextArgument();
+		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeStr);
+		if( optNode.isPresent() ) {
+			OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes(Lists.newArrayList(optNode.get()));
+		}
+	}
+	
+	public void _remoteReinstallAll(CommandInterpreter ci) {
+		OdysseusNodeUpdater.sendReinstallMessageToRemoteNodes();
+	}
+	
+	public void _remoteRestart( CommandInterpreter ci ) {
+		String nodeStr = ci.nextArgument();
+		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeStr);
+		if( optNode.isPresent() ) {
+			OdysseusNodeUpdater.sendRestartMessageToRemoteNodes(Lists.newArrayList(optNode.get()));
+		}
+	}
+	
+	public void _remoteRestartAll(CommandInterpreter ci) {
+		OdysseusNodeUpdater.sendRestartMessageToRemoteNodes();
 	}
 }
