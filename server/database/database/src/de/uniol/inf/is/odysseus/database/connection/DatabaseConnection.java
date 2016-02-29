@@ -86,6 +86,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 	public DatabaseConnection(String jdbcString, String username) {
 		this.connString = jdbcString;
 		connectionProps = new Properties();
+		connectionProps.put("user", username);
 	}
 
 	@Override
