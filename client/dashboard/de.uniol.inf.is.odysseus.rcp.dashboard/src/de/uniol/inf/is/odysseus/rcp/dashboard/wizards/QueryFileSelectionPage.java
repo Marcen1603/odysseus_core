@@ -47,7 +47,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractMultiSourceDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -58,15 +57,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvi
 
 public class QueryFileSelectionPage extends WizardPage {
 
-	private final DashboardPartTypeSelectionPage typeSelectionPage;
 	private final ContainerSelectionPage containerSelectionPage;
-	private DashboardPartConfigurationPage configurationPage;
+	private final DashboardPartTypeSelectionPage dashboardPartTypeSelectionPage;
 
 	private Button chooseSourceRadio;
 	private Button chooseQueryFileRadio;
 	private Button chooseQueryRadio;
-
-	private Button addAnotherSourceCheckbox;
 
 	private Combo sourceCombo;
 	private Combo queryCombo;
@@ -76,16 +72,13 @@ public class QueryFileSelectionPage extends WizardPage {
 
 	private Composite rootComposite;
 
-	// To show the source number in the explanation text
 	private int sourceNumber;
 
 	protected QueryFileSelectionPage(String pageName, ContainerSelectionPage containerSelectionPage,
-			DashboardPartTypeSelectionPage typeSelectionPage, NewDashboardPartWizard wizard,
-			DashboardPartConfigurationPage configurationPage, int sourceNumber) {
+			DashboardPartTypeSelectionPage typeSelectionPage, int sourceNumber) {
 		super(pageName);
 		this.containerSelectionPage = containerSelectionPage;
-		this.typeSelectionPage = typeSelectionPage;
-		this.configurationPage = configurationPage;
+		this.dashboardPartTypeSelectionPage = typeSelectionPage;
 		this.sourceNumber = sourceNumber;
 
 		setTitle("Choose " + sourceNumber + ". query");
@@ -104,23 +97,12 @@ public class QueryFileSelectionPage extends WizardPage {
 		createChooseSourceControls(rootComposite);
 		createChooseQueryControls(rootComposite);
 
-		// Create a checkBox that is shown if the DashboadPart can handle
-		// multiple sources
-		addAnotherSourceCheckbox = new Button(rootComposite, SWT.CHECK);
-		addAnotherSourceCheckbox.setText("Add another source.");
-		addAnotherSourceCheckbox.setSelection(false);
-		addAnotherSourceCheckbox.setVisible(false);
-
 		finishCreation(rootComposite);
 	}
 
 	private void createChooseQueryFileControls(Composite rootComposite) {
 		createChooseQueryRadioButton(rootComposite);
 		createQueryFilesTable(rootComposite);
-	}
-
-	public void setConfigurationPage(DashboardPartConfigurationPage page) {
-		this.configurationPage = page;
 	}
 
 	private void createQueryFilesTable(Composite rootComposite) {
@@ -321,53 +303,12 @@ public class QueryFileSelectionPage extends WizardPage {
 	}
 
 	@Override
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-
-		if (visible) {
-			showMultipleSourceCheckbox();
-		}
-	}
-
-	/**
-	 * If necessary (if multiple sources are possible), an option for the user
-	 * is made visible where it is possible to choose to add another source.
-	 */
-	private void showMultipleSourceCheckbox() {
-		if (typeSelectionPage.getSelectedDashboardPart() instanceof AbstractMultiSourceDashboardPart) {
-			addAnotherSourceCheckbox.setVisible(true);
-		} else {
-			addAnotherSourceCheckbox.setVisible(false);
-		}
-	}
-
-	/**
-	 * Returns the next page of the wizard: If user wants to choose another
-	 * source, another source selection page will be shown. If not, the wizard
-	 * continues as normal.
-	 * 
-	 * Override is necessary to give the user the possibility to choose more
-	 * than one source.
-	 */
-	@Override
 	public IWizardPage getNextPage() {
 
-		if (addAnotherSourceCheckbox.getSelection()) {
-			// The user input is such that we need an additional page to
-			// append to the wizard.
-			IWizardPage nextPage = new QueryFileSelectionPage("Select query", containerSelectionPage, typeSelectionPage,
-					(NewDashboardPartWizard) this.getWizard(), configurationPage, sourceNumber + 1);
-			nextPage.setWizard(this.getWizard());
-			configurationPage.addQuerySelectionPage((QueryFileSelectionPage) nextPage);
-
-			return nextPage;
-
-		} else {
-			IWizardPage nextPage = this.getWizard()
-					.getNextPage(((NewDashboardPartWizard) this.getWizard()).getFirstQuerySelectionPage());
-			return nextPage;
-		}
-
+		// Always return a new contextMapPage as next page
+		IWizardPage nextPage = new ContextMapPage("Configure context", this, this.containerSelectionPage,
+				this.dashboardPartTypeSelectionPage, this.sourceNumber);
+		nextPage.setWizard(this.getWizard());
+		return nextPage;
 	}
-
 }

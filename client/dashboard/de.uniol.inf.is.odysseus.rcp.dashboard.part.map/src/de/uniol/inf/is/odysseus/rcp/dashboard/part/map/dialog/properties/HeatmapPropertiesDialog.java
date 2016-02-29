@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -50,7 +51,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 	HashMap<Integer, Style> hashStyles;
 	
 	private Heatmap heatmap;
-	private IPhysicalOperator operator;
+	private Collection<IPhysicalOperator> operators;
 	private HeatmapLayerConfiguration layerConfiguration = null;
 
 	/**
@@ -60,11 +61,11 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 	 * @param mapDashboardPart
 	 */
 	public HeatmapPropertiesDialog(Shell parentShell, MapDashboardPart mapDashboardPart, Heatmap heatmap,
-			IPhysicalOperator operator) {
+			Collection<IPhysicalOperator> operators) {
 		super(parentShell);
 		this.setShellStyle(SWT.MAX | SWT.RESIZE);
 		this.heatmap = heatmap;
-		this.operator = operator;
+		this.operators = operators;
 	}
 
 	/**
@@ -202,7 +203,8 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 		geoAttrInput.removeAll();
 		latSelect.removeAll();
 		lngSelect.removeAll();
-		SDFSchema schema = operator.getOutputSchema();
+		// TODO Choose the operator before using it
+		SDFSchema schema = operators.iterator().next().getOutputSchema();
 
 		for (int i = 0; i < schema.size(); i++) {
 			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);

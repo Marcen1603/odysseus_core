@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.swt.layout.GridLayout;
@@ -40,7 +41,7 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 	protected ScreenManager screenManager;
 	private MapEditorModel mapModel;
 	private Puffer puffer;
-	private IPhysicalOperator operator;
+	private Collection<IPhysicalOperator> operators;
 
 	/**
 	 * If the MapEditorModel is initiated and the LayerUpdater is connected
@@ -277,12 +278,12 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 		return this.puffer;
 	}
 
-	public IPhysicalOperator getOperator() {
-		return this.operator;
+	public Collection<IPhysicalOperator> getOperators() {
+		return this.operators;
 	}
 
-	public void setOperator(IPhysicalOperator operator) {
-		this.operator = operator;
+	public void setOperators(Collection<IPhysicalOperator> operators) {
+		this.operators = operators;
 	}
 
 	public boolean getWizardBoolean() {

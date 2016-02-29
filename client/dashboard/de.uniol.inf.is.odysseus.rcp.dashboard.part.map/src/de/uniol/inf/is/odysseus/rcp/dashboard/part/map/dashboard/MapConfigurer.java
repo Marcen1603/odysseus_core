@@ -46,14 +46,14 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
  */
 public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardPart> {
 
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(MapConfigurer.class);
 
 	Collection<IPhysicalOperator> roots;
-	private IPhysicalOperator operator;
 
 	private MapDashboardPart mapDashboardPart;
 
-	//private TimeSliderComposite timeSliderComposite;
+	// private TimeSliderComposite timeSliderComposite;
 	private Table layerTable;
 
 	private Button editButton, upButton, downButton, topButton, bottomButton;
@@ -62,9 +62,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	public void init(MapDashboardPart dashboardPartToConfigure, Collection<IPhysicalOperator> roots) {
 		this.mapDashboardPart = dashboardPartToConfigure;
 		this.mapDashboardPart.init();
-		operator = determinePyhsicalRoot(roots);
 		this.roots = roots;
-		mapDashboardPart.setOperator(operator);
+		mapDashboardPart.setOperators(roots);
 	}
 
 	@Override
@@ -106,7 +105,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void modifyText(ModifyEvent e) {
 				if (Integer.valueOf(maxTuples.getText()) < 0) {
-					MessageDialog.openInformation(topComposite.getShell(), "Warning", "Negative numbers are forbidden!");
+					MessageDialog.openInformation(topComposite.getShell(), "Warning",
+							"Negative numbers are forbidden!");
 				} else {
 					mapDashboardPart.setMaxData(Integer.valueOf(maxTuples.getText()));
 					fireListener();
@@ -125,7 +125,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void modifyText(ModifyEvent e) {
 				if (Integer.valueOf(updateIntervalText.getText()) < 0) {
-					MessageDialog.openInformation(topComposite.getShell(), "Warning", "Negative numbers are forbidden!");
+					MessageDialog.openInformation(topComposite.getShell(), "Warning",
+							"Negative numbers are forbidden!");
 				} else {
 					mapDashboardPart.setUpdateInterval(Integer.valueOf(updateIntervalText.getText()));
 					fireListener();
@@ -248,7 +249,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				AddMapLayerDialog addDialog = new AddMapLayerDialog(parent.getShell(), operator,
+				AddMapLayerDialog addDialog = new AddMapLayerDialog(parent.getShell(), roots,
 						mapDashboardPart.getMapEditorModel().getLayers());
 				addDialog.create();
 				addDialog.open();
@@ -356,7 +357,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 					if (group.get(index) instanceof Heatmap) {
 						HeatmapPropertiesDialog propertiesDialog = new HeatmapPropertiesDialog(parent.getShell(),
-								mapDashboardPart, (Heatmap) group.get(index), operator);
+								mapDashboardPart, (Heatmap) group.get(index), roots);
 						propertiesDialog.create();
 						propertiesDialog.open();
 						if (propertiesDialog.getReturnCode() == Window.OK) {
@@ -375,8 +376,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 							mapDashboardPart.editLayer(group.get(index), editDialog.getLayerConfiguration());
 
 							// TODO
-							if (index > editDialog.getLayerPositionAfter() && index != editDialog.getLayerPositionAfter()+1) {
-								for (int i = index; i > editDialog.getLayerPositionAfter()+1; i--) {
+							if (index > editDialog.getLayerPositionAfter()
+									&& index != editDialog.getLayerPositionAfter() + 1) {
+								for (int i = index; i > editDialog.getLayerPositionAfter() + 1; i--) {
 									mapDashboardPart.layerDown(group.get(i));
 								}
 							} else if (index < editDialog.getLayerPositionAfter()) {
@@ -395,7 +397,6 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		});
 
 	}
-
 
 	private void createOrderButtons(final Composite parent) {
 		Label horizontalSpacer = new Label(parent, SWT.NONE);
@@ -529,32 +530,6 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			tc.pack();
 		;
 	}
-
-	private IPhysicalOperator determinePyhsicalRoot(Collection<IPhysicalOperator> physicalRoots) {
-		for (IPhysicalOperator p : physicalRoots) {
-			return p;
-		}
-		LOG.info("Select first physical root.");
-		return physicalRoots.iterator().next();
-	}
-
-//	public TimeSliderComposite createTimeSliderComposite(Composite parent) {
-//		timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
-//		timeSliderComposite.setScreenmanager(mapDashboardPart.getScreenManager());
-//		return timeSliderComposite;
-//	}
-//
-//	public final TimeSliderComposite getTimeSliderComposite() {
-//		return timeSliderComposite;
-//	}
-//
-//	public void setTimeSlider(TimeSliderComposite timeSlider) {
-//		if (timeSlider != null) {
-//			this.timeSliderComposite = timeSlider;
-//		} else {
-//			LOG.error("TimeSlider is null.");
-//		}
-//	}
 
 	@Override
 	public void dispose() {

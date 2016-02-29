@@ -67,12 +67,10 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		containerPage = new ContainerSelectionPage("Select file name", selection, DEFAULT_DASHBOARD_FILENAME);
 		partSelectionPage = new DashboardPartTypeSelectionPage("Select type of dashboad part");
-		queryFilePage = new QueryFileSelectionPage("Select query", containerPage, partSelectionPage, this,
-				configurePage, 1);
-		contextMapPage = new ContextMapPage("Configure context", queryFilePage);
+		queryFilePage = new QueryFileSelectionPage("Select query", containerPage, partSelectionPage, 1);
+		contextMapPage = new ContextMapPage("Configure context", queryFilePage, containerPage, partSelectionPage, 1);
 		configurePage = new DashboardPartConfigurationPage("Configure Dashboard Part", partSelectionPage, queryFilePage,
 				contextMapPage, containerPage);
-		queryFilePage.setConfigurationPage(configurePage);
 	}
 
 	@Override

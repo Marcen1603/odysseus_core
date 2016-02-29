@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -33,7 +34,7 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 
 	private OwnProperties ownProperties;
 
-	private IPhysicalOperator operator;
+	private Collection<IPhysicalOperator> operators;
 
 	private Composite configContainer;
 	private Composite main;
@@ -45,9 +46,9 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public AddMapLayerDialog(Shell parentShell, IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
+	public AddMapLayerDialog(Shell parentShell, Collection<IPhysicalOperator> operators, LinkedList<ILayer> layerOrder) {
 		super(parentShell);
-		this.operator = operator;
+		this.operators = operators;
 		this.layerOrder = layerOrder;
 		this.layerType = "RasterLayer";
 		this.ownProperties = new OwnProperties();
@@ -245,6 +246,14 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 
 		final CCombo dataSourceSelect = new CCombo(thematicLayer, SWT.BORDER);
 		dataSourceSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		// Add the possible sources to choose from
+		for (IPhysicalOperator operator : operators) {
+			dataSourceSelect.add(operator.getName());
+		}
+		if (operators.size() > 0) {
+			dataSourceSelect.select(0);
+		}
 
 		Label geometrieLabel = new Label(thematicLayer, SWT.NONE);
 		geometrieLabel.setText("Geometry Attribute:");
@@ -305,7 +314,8 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(layerConfiguration,
 				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 
-		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operator, layerConfiguration,
+		// TODO Choose the right operator first
+		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operators.iterator().next(), layerConfiguration,
 				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
 

@@ -43,6 +43,8 @@ public class QueryExecutionHandler {
 	private Collection<Integer> queryIDs;
 	private Collection<IPhysicalOperator> queryRoots;
 
+	private IDashboardPart dashboardPart;
+
 	public QueryExecutionHandler(IDashboardPart dashboardPart) {
 		Preconditions.checkNotNull(dashboardPart, "Dashboard part for execution must not be null!");
 
@@ -51,12 +53,15 @@ public class QueryExecutionHandler {
 		linesList = new ArrayList<>();
 		queryNames = new ArrayList<>();
 
+		this.dashboardPart = dashboardPart;
+
 		List<IDashboardPartQueryTextProvider> providers = new ArrayList<>();
 
 		if (dashboardPart instanceof AbstractMultiSourceDashboardPart) {
 			// We have more than one source
 			providers = ((AbstractMultiSourceDashboardPart) dashboardPart).getQueryTextProviders();
 		} else {
+			// We have only one source
 			IDashboardPartQueryTextProvider provider = dashboardPart.getQueryTextProvider();
 			providers.add(provider);
 		}
@@ -90,7 +95,7 @@ public class QueryExecutionHandler {
 		queryIDs = new ArrayList<>();
 
 		try {
-			
+
 			// All queries by file
 			int numScriptLines = -1;
 			for (IFile scriptFile : this.scriptFiles) {
@@ -109,14 +114,31 @@ public class QueryExecutionHandler {
 
 				// Context depending on the source: scriptFile or no scriptFile
 				Context context = null;
-				if (doneLinesCounter <= numScriptLines) {
-					// Context for a scriptFile
-					ParserClientUtil.createRCPContext(this.scriptFiles.get(doneLinesCounter));
+				if (this.dashboardPart instanceof AbstractMultiSourceDashboardPart) {
+					if (doneLinesCounter <= numScriptLines) {
+						// Context for a scriptFile
+						context = ParserClientUtil.createRCPContext(this.scriptFiles.get(doneLinesCounter));
+						addContextForMultiSource(this.scriptFiles.get(doneLinesCounter), context);
+					} else {
+						// Context for lines not from a scriptFile
+						context = Context.empty();
+						addContextForMultiSource(lines, context);
+					}
 				} else {
-					// Context for lines not from a scriptFile
-					context = Context.empty();					
+					// Context for a part with only one source
+					if (doneLinesCounter <= numScriptLines) {
+						// Context for a scriptFile
+						context = ParserClientUtil.createRCPContext(this.scriptFiles.get(doneLinesCounter));
+					} else {
+						// Context for lines not from a scriptFile
+						context = Context.empty();
+					}
+
+					for (String key : this.dashboardPart.getContextKeys()) {
+						context.putOrReplace(key, this.dashboardPart.getContextValue(key).get());
+					}
 				}
-				// TODO Add contextKeys to context
+
 				Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller,
 						context);
 				queryIDs.addAll(ids);
@@ -142,6 +164,14 @@ public class QueryExecutionHandler {
 		}
 	}
 
+	private void addContextForMultiSource(Object sourceKey, Context context) {
+		// Add contextKeys to context
+		AbstractMultiSourceDashboardPart part = (AbstractMultiSourceDashboardPart) this.dashboardPart;
+		for (String key : part.getContextKeys(sourceKey)) {
+			context.putOrReplace(key, part.getContextValue(sourceKey, key).get());
+		}
+	}
+
 	private static Optional<ILogicalQuery> determineQueryByName(String queryName, ISession session) {
 		Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().getLogicalQueryIds(session);
 		for (Integer id : ids) {
@@ -152,16 +182,6 @@ public class QueryExecutionHandler {
 		}
 
 		return Optional.absent();
-	}
-
-	@SuppressWarnings("unused")
-	private static Context createContext(IFile scriptFile, IDashboardPart part) {
-		Context context = scriptFile != null ? ParserClientUtil.createRCPContext(scriptFile) : Context.empty();
-		// TODO Show contextKey config page multiple times to have a context for every source
-		for (String key : part.getContextKeys()) {
-			context.putOrReplace(key, part.getContextValue(key).get());
-		}
-		return context;
 	}
 
 	private static Collection<IPhysicalOperator> determineRoots(Collection<Integer> queryIDs) {

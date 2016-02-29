@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -47,6 +48,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractMultiSourceDashboardPart;
+
 public class ContextMapPage extends WizardPage {
 
 	private static class TableEntry {
@@ -62,16 +65,30 @@ public class ContextMapPage extends WizardPage {
 	}
 
 	private final QueryFileSelectionPage queryPage;
-	
+
 	private TableViewer tableViewer;
 	private final List<TableEntry> tableEntries = Lists.newLinkedList();
 
-	public ContextMapPage(String pageName, QueryFileSelectionPage queryFilePage) {
+	private Button addAnotherSourceCheckbox;
+
+	private final DashboardPartTypeSelectionPage typeSelectionPage;
+	private final ContainerSelectionPage containerSelectionPage;
+	private DashboardPartConfigurationPage configurationPage;
+
+	private int sourceNumber;
+
+	public ContextMapPage(String pageName, QueryFileSelectionPage queryFilePage,
+			ContainerSelectionPage containerSelectionPage, DashboardPartTypeSelectionPage typeSelectionPage,
+			int sourceNumber) {
 		super(pageName);
 
 		setTitle("Context of the query");
 		setDescription("Configure the context of the query with key-value-pairs.");
-		
+
+		this.typeSelectionPage = typeSelectionPage;
+		this.containerSelectionPage = containerSelectionPage;
+		this.sourceNumber = sourceNumber;
+
 		this.queryPage = queryFilePage;
 	}
 
@@ -82,7 +99,7 @@ public class ContextMapPage extends WizardPage {
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		rootComposite.setLayout(new GridLayout(1, false));
-		
+
 		Composite tableComposite = new Composite(rootComposite, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -102,7 +119,7 @@ public class ContextMapPage extends WizardPage {
 			public void update(ViewerCell cell) {
 				TableEntry entry = (TableEntry) cell.getElement();
 				String keyName = entry.key;
-				if( entry.fixed ) {
+				if (entry.fixed) {
 					keyName += "*";
 				}
 				cell.setText(keyName);
@@ -119,9 +136,10 @@ public class ContextMapPage extends WizardPage {
 				cell.setText(entry.value);
 			}
 		});
-		
-		tableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(tableViewer.getTable()), new TextCellEditor(tableViewer.getTable()) });
-		tableViewer.setColumnProperties(new String[] {"key", "value"});
+
+		tableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(tableViewer.getTable()),
+				new TextCellEditor(tableViewer.getTable()) });
+		tableViewer.setColumnProperties(new String[] { "key", "value" });
 		tableViewer.setCellModifier(new ICellModifier() {
 
 			@Override
@@ -131,8 +149,8 @@ public class ContextMapPage extends WizardPage {
 
 			@Override
 			public Object getValue(Object element, String property) {
-				TableEntry entry = (TableEntry)element;
-				if( "key".equals(property)) {
+				TableEntry entry = (TableEntry) element;
+				if ("key".equals(property)) {
 					return entry.key;
 				}
 				return entry.value;
@@ -140,27 +158,27 @@ public class ContextMapPage extends WizardPage {
 
 			@Override
 			public void modify(Object element, String property, Object value) {
-				TableItem tableItem = (TableItem)element;
-				TableEntry entry = (TableEntry)tableItem.getData();
-				
-				if( "key".equals(property)) {
-					entry.key = (String)value;
+				TableItem tableItem = (TableItem) element;
+				TableEntry entry = (TableEntry) tableItem.getData();
+
+				if ("key".equals(property)) {
+					entry.key = (String) value;
 					tableItem.setText(0, entry.key);
 				} else {
-					entry.value = (String)value;
+					entry.value = (String) value;
 					tableItem.setText(1, entry.value);
 				}
-				
+
 				checkKeys();
 			}
 		});
 
 		tableViewer.setInput(tableEntries);
-		
+
 		Composite buttonComposite = new Composite(rootComposite, SWT.NONE);
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		buttonComposite.setLayout(new GridLayout(2, true));
-		
+
 		Button addButton = new Button(buttonComposite, SWT.PUSH);
 		addButton.setText("Add");
 		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -169,98 +187,109 @@ public class ContextMapPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				tableEntries.add(generateNewTableEntry());
 				tableViewer.refresh();
-				
+
 				checkKeys();
 			}
 		});
-		
+
 		Button removeButton = new Button(buttonComposite, SWT.PUSH);
 		removeButton.setText("Remove");
 		removeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
-				for( Object selectedObject : selection.toArray() ) {
-					TableEntry entry = (TableEntry)selectedObject;
-					if( !entry.fixed || MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Remove mandatory key", "Are you sure you want to remove\nthe mandatory key '" + entry.key + "'?")) {
+				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+				for (Object selectedObject : selection.toArray()) {
+					TableEntry entry = (TableEntry) selectedObject;
+					if (!entry.fixed || MessageDialog.openConfirm(
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Remove mandatory key",
+							"Are you sure you want to remove\nthe mandatory key '" + entry.key + "'?")) {
 						tableEntries.remove(entry);
 					}
 				}
-				
+
 				tableViewer.refresh();
 				checkKeys();
 			}
 		});
-		
+
+		// Create a checkBox that is shown if the DashboadPart can handle
+		// multiple sources
+		addAnotherSourceCheckbox = new Button(rootComposite, SWT.CHECK);
+		addAnotherSourceCheckbox.setText("Add another source.");
+		addAnotherSourceCheckbox.setSelection(false);
+		addAnotherSourceCheckbox.setVisible(false);
+
 		finishCreation(rootComposite);
 	}
-	
+
 	public Map<String, String> getContextMap() {
 		Map<String, String> map = Maps.newHashMap();
-		for( TableEntry e : tableEntries ) {
+		for (TableEntry e : tableEntries) {
 			map.put(e.key, e.value);
 		}
 		return map;
 	}
-	
+
 	private void checkKeys() {
-		for( int i = 0; i < tableEntries.size(); i++ ) {
+		for (int i = 0; i < tableEntries.size(); i++) {
 			String key = tableEntries.get(i).key;
-			
-			for( int j = i + 1; j < tableEntries.size(); j++ ) {
-				if( tableEntries.get(j).key.equals(key)) {
+
+			for (int j = i + 1; j < tableEntries.size(); j++) {
+				if (tableEntries.get(j).key.equals(key)) {
 					setPageComplete(false);
 					setErrorMessage("Duplicate key '" + key + "'");
 					return;
 				}
 			}
 		}
-		
-		for( TableEntry e : tableEntries ) {
-			if( e.fixed && Strings.isNullOrEmpty(e.value)) {
+
+		for (TableEntry e : tableEntries) {
+			if (e.fixed && Strings.isNullOrEmpty(e.value)) {
 				setPageComplete(false);
 				setErrorMessage("Value for key '" + e.key + "' is needed to execute query!");
 				return;
 			}
 		}
-		
+
 		setErrorMessage(null);
 		setPageComplete(true);
 	}
-	
+
 	private TableEntry generateNewTableEntry() {
 		int i = 0;
-		wh: while(true) {
+		wh: while (true) {
 			String name = "key" + i;
-			for( TableEntry e : tableEntries ) {
-				if(e.key.equals(name)) {
+			for (TableEntry e : tableEntries) {
+				if (e.key.equals(name)) {
 					i++;
 					continue wh;
 				}
 			}
-			
+
 			return new TableEntry(name, "value", false);
 		}
 	}
-	
+
 	private void finishCreation(Composite rootComposite) {
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(rootComposite);
 		setPageComplete(true);
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		
-		if( visible == true ) {
+
+		if (visible) {
 			ImmutableList<String> queryText = queryPage.getQueryTextProvider().getQueryText();
 			scanForUndefinedReplacements(queryText);
 			tableViewer.refresh();
-			
+
 			checkKeys();
+
+			showMultipleSourceCheckbox();
 		}
 	}
 
@@ -281,25 +310,26 @@ public class ContextMapPage extends WizardPage {
 		preDefinedKeys.add("\\");
 		preDefinedKeys.add("/");
 
-		
-		for( String line : queryText ) {
+		for (String line : queryText) {
 			line = line.trim();
-			if( line.startsWith("#DEFINE")) {
+			if (line.startsWith("#DEFINE")) {
 				String[] defineParts = line.split("\\ ", 3);
-				if( defineParts.length > 2 ) {
+				if (defineParts.length > 2) {
 					foundDefines.add(defineParts[1]);
 				}
 			} else {
-				
-				int startPos = 0; 
+
+				int startPos = 0;
 				startPos = line.indexOf("${");
-				
-				while( startPos >= 0 ) {
+
+				while (startPos >= 0) {
 					int posEnd = line.indexOf("}", startPos);
-					if( posEnd != -1 ) {
+					if (posEnd != -1) {
 						String undefinedReplacement = line.substring(startPos + 2, posEnd);
-						
-						if( !undefinedReplacements.contains(undefinedReplacement) && !foundDefines.contains(undefinedReplacement) && !preDefinedKeys.contains(undefinedReplacement)) {
+
+						if (!undefinedReplacements.contains(undefinedReplacement)
+								&& !foundDefines.contains(undefinedReplacement)
+								&& !preDefinedKeys.contains(undefinedReplacement)) {
 							undefinedReplacements.add(undefinedReplacement);
 						}
 						startPos = line.indexOf("${", posEnd);
@@ -309,18 +339,58 @@ public class ContextMapPage extends WizardPage {
 				}
 			}
 		}
-		
-		for( String undefinedReplacement : undefinedReplacements ) {
-            ListIterator<TableEntry> iter = tableEntries.listIterator();
-            boolean exist = false;
-            while (iter.hasNext()) {
-                if (iter.next().key.equalsIgnoreCase(undefinedReplacement)) {
-                    exist = true;
-                }
-            }
-            if (!exist) {
-                tableEntries.add(new TableEntry(undefinedReplacement, "", true));
-            }
+
+		for (String undefinedReplacement : undefinedReplacements) {
+			ListIterator<TableEntry> iter = tableEntries.listIterator();
+			boolean exist = false;
+			while (iter.hasNext()) {
+				if (iter.next().key.equalsIgnoreCase(undefinedReplacement)) {
+					exist = true;
+				}
+			}
+			if (!exist) {
+				tableEntries.add(new TableEntry(undefinedReplacement, "", true));
+			}
+		}
+	}
+
+	/**
+	 * If necessary (if multiple sources are possible), an option for the user
+	 * is made visible where it is possible to choose to add another source.
+	 */
+	private void showMultipleSourceCheckbox() {
+		if (typeSelectionPage.getSelectedDashboardPart() instanceof AbstractMultiSourceDashboardPart) {
+			addAnotherSourceCheckbox.setVisible(true);
+		} else {
+			addAnotherSourceCheckbox.setVisible(false);
+		}
+	}
+
+	/**
+	 * Returns the next page of the wizard: If user wants to choose another
+	 * source, another source selection page will be shown. If not, the wizard
+	 * continues as normal.
+	 * 
+	 * Override is necessary to give the user the possibility to choose more
+	 * than one source.
+	 */
+	@Override
+	public IWizardPage getNextPage() {
+
+		if (addAnotherSourceCheckbox.getSelection()) {
+			// The user input is such that we need an additional page to
+			// append to the wizard.
+			IWizardPage nextPage = new QueryFileSelectionPage("Select query", containerSelectionPage, typeSelectionPage,
+					sourceNumber + 1);
+			nextPage.setWizard(this.getWizard());
+			configurationPage.addQuerySelectionPage((QueryFileSelectionPage) nextPage);
+
+			return nextPage;
+
+		} else {
+			IWizardPage nextPage = this.getWizard()
+					.getNextPage(((NewDashboardPartWizard) this.getWizard()).getFirstQuerySelectionPage());
+			return nextPage;
 		}
 	}
 }
