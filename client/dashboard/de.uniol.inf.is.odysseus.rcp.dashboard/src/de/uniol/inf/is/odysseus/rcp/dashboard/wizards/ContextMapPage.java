@@ -64,7 +64,6 @@ public class ContextMapPage extends WizardPage {
 		}
 	}
 
-	private final QueryFileSelectionPage queryPage;
 
 	private TableViewer tableViewer;
 	private final List<TableEntry> tableEntries = Lists.newLinkedList();
@@ -74,11 +73,11 @@ public class ContextMapPage extends WizardPage {
 	private final DashboardPartTypeSelectionPage typeSelectionPage;
 	private final ContainerSelectionPage containerSelectionPage;
 	private DashboardPartConfigurationPage configurationPage;
+	private QueryFileSelectionPage queryPage;
 
 	private int sourceNumber;
 
-	public ContextMapPage(String pageName, QueryFileSelectionPage queryFilePage,
-			ContainerSelectionPage containerSelectionPage, DashboardPartTypeSelectionPage typeSelectionPage,
+	public ContextMapPage(String pageName, ContainerSelectionPage containerSelectionPage, DashboardPartTypeSelectionPage typeSelectionPage,
 			int sourceNumber) {
 		super(pageName);
 
@@ -88,8 +87,14 @@ public class ContextMapPage extends WizardPage {
 		this.typeSelectionPage = typeSelectionPage;
 		this.containerSelectionPage = containerSelectionPage;
 		this.sourceNumber = sourceNumber;
-
-		this.queryPage = queryFilePage;
+	}
+	
+	public void setQueryFilePage(QueryFileSelectionPage page) {
+		this.queryPage = page;
+	}
+	
+	public void setConfigurationPage(DashboardPartConfigurationPage page) {
+		this.configurationPage = page;
 	}
 
 	@Override
@@ -364,6 +369,7 @@ public class ContextMapPage extends WizardPage {
 		} else {
 			addAnotherSourceCheckbox.setVisible(false);
 		}
+		addAnotherSourceCheckbox.setSelection(false);
 	}
 
 	/**
@@ -381,16 +387,14 @@ public class ContextMapPage extends WizardPage {
 			// The user input is such that we need an additional page to
 			// append to the wizard.
 			IWizardPage nextPage = new QueryFileSelectionPage("Select query", containerSelectionPage, typeSelectionPage,
-					sourceNumber + 1);
+					this, sourceNumber + 1);
 			nextPage.setWizard(this.getWizard());
-			configurationPage.addQuerySelectionPage((QueryFileSelectionPage) nextPage);
+			((QueryFileSelectionPage) nextPage).setConfigurationPage(configurationPage);
 
 			return nextPage;
 
 		} else {
-			IWizardPage nextPage = this.getWizard()
-					.getNextPage(((NewDashboardPartWizard) this.getWizard()).getFirstQuerySelectionPage());
-			return nextPage;
+			return this.configurationPage;
 		}
 	}
 }

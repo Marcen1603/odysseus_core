@@ -58,7 +58,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvi
 public class QueryFileSelectionPage extends WizardPage {
 
 	private final ContainerSelectionPage containerSelectionPage;
-	private final DashboardPartTypeSelectionPage dashboardPartTypeSelectionPage;
+	private final ContextMapPage contextMapPage;
+	private DashboardPartConfigurationPage configurationPage;
 
 	private Button chooseSourceRadio;
 	private Button chooseQueryFileRadio;
@@ -72,17 +73,18 @@ public class QueryFileSelectionPage extends WizardPage {
 
 	private Composite rootComposite;
 
-	private int sourceNumber;
-
 	protected QueryFileSelectionPage(String pageName, ContainerSelectionPage containerSelectionPage,
-			DashboardPartTypeSelectionPage typeSelectionPage, int sourceNumber) {
+			DashboardPartTypeSelectionPage typeSelectionPage, ContextMapPage contextMapPage, int sourceNumber) {
 		super(pageName);
 		this.containerSelectionPage = containerSelectionPage;
-		this.dashboardPartTypeSelectionPage = typeSelectionPage;
-		this.sourceNumber = sourceNumber;
+		this.contextMapPage = contextMapPage;
 
 		setTitle("Choose " + sourceNumber + ". query");
 		setDescription("Choose the " + sourceNumber + ". query to execute to get the data.");
+	}
+	
+	public void setConfigurationPage(DashboardPartConfigurationPage configurationPage) {
+		this.configurationPage = configurationPage;
 	}
 
 	@Override
@@ -235,14 +237,14 @@ public class QueryFileSelectionPage extends WizardPage {
 	}
 
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
-		if (isQueryFileSelected()) {
+		if (this.isQueryFileSelected()) {
 			if (getSelectedQueryFile().getFileExtension().equalsIgnoreCase("grp")) {
 				return new GraphQueryFileProvider(getSelectedQueryFile());
 			}
 			return new ResourceFileQueryTextProvider(getSelectedQueryFile());
 		}
 
-		if (isSourceSelected()) {
+		if (this.isSourceSelected()) {
 			List<String> sourceSelectAllText = Lists.newArrayList();
 			sourceSelectAllText.add("#PARSER CQL");
 			sourceSelectAllText.add("#TRANSCFG Standard");
@@ -252,25 +254,25 @@ public class QueryFileSelectionPage extends WizardPage {
 			return new SimpleQueryTextProvider(sourceSelectAllText);
 		}
 
-		if (isQuerySelected()) {
+		if (this.isQuerySelected()) {
 			return new RunningQueryProvider(getSelectedQueryName());
 		}
 
 		throw new RuntimeException("Could not determine query text provider!");
 	}
-
+	
 	private boolean isQueryFileSelected() {
-		return chooseQueryFileRadio.getSelection();
+		return chooseQueryRadio.getSelection();
 	}
-
+	
 	private boolean isSourceSelected() {
 		return chooseSourceRadio.getSelection();
 	}
-
+	
 	private boolean isQuerySelected() {
 		return chooseQueryRadio.getSelection();
 	}
-
+	
 	private IFile getSelectedQueryFile() {
 		if (chooseQueryFileRadio.getSelection()) {
 			return selectedFile;
@@ -303,12 +305,19 @@ public class QueryFileSelectionPage extends WizardPage {
 	}
 
 	@Override
-	public IWizardPage getNextPage() {
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
 
-		// Always return a new contextMapPage as next page
-		IWizardPage nextPage = new ContextMapPage("Configure context", this, this.containerSelectionPage,
-				this.dashboardPartTypeSelectionPage, this.sourceNumber);
-		nextPage.setWizard(this.getWizard());
-		return nextPage;
+		if (visible) {
+			// Add this page as it was shown -> it was used, etc. not only generated
+			this.configurationPage.addQuerySelectionPage(this);
+		}
+	}
+	
+	@Override
+	public IWizardPage getNextPage() {
+		// Always return the old contextMapPage as next page: The user has the
+		// possibility to add more context
+		return this.contextMapPage;
 	}
 }

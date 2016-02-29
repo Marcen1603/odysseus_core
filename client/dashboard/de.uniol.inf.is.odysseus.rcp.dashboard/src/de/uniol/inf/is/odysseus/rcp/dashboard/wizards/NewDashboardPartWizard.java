@@ -67,10 +67,14 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		containerPage = new ContainerSelectionPage("Select file name", selection, DEFAULT_DASHBOARD_FILENAME);
 		partSelectionPage = new DashboardPartTypeSelectionPage("Select type of dashboad part");
-		queryFilePage = new QueryFileSelectionPage("Select query", containerPage, partSelectionPage, 1);
-		contextMapPage = new ContextMapPage("Configure context", queryFilePage, containerPage, partSelectionPage, 1);
-		configurePage = new DashboardPartConfigurationPage("Configure Dashboard Part", partSelectionPage, queryFilePage,
+		contextMapPage = new ContextMapPage("Configure context", containerPage, partSelectionPage, 1);
+		queryFilePage = new QueryFileSelectionPage("Select query", containerPage, partSelectionPage, contextMapPage, 1);
+		configurePage = new DashboardPartConfigurationPage("Configure Dashboard Part", partSelectionPage,
 				contextMapPage, containerPage);
+
+		contextMapPage.setQueryFilePage(queryFilePage);
+		contextMapPage.setConfigurationPage(configurePage);
+		queryFilePage.setConfigurationPage(configurePage);
 	}
 
 	@Override
@@ -100,8 +104,8 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	public IWizardPage getFirstQuerySelectionPage() {
-		return this.queryFilePage;
+	public IWizardPage getConfigurePage() {
+		return this.configurePage;
 	}
 
 	private static String getDashboardPartFileName(ContainerSelectionPage containerPage) throws CancelException {

@@ -114,29 +114,18 @@ public class QueryExecutionHandler {
 
 				// Context depending on the source: scriptFile or no scriptFile
 				Context context = null;
-				if (this.dashboardPart instanceof AbstractMultiSourceDashboardPart) {
-					if (doneLinesCounter <= numScriptLines) {
-						// Context for a scriptFile
-						context = ParserClientUtil.createRCPContext(this.scriptFiles.get(doneLinesCounter));
-						addContextForMultiSource(this.scriptFiles.get(doneLinesCounter), context);
-					} else {
-						// Context for lines not from a scriptFile
-						context = Context.empty();
-						addContextForMultiSource(lines, context);
-					}
-				} else {
-					// Context for a part with only one source
-					if (doneLinesCounter <= numScriptLines) {
-						// Context for a scriptFile
-						context = ParserClientUtil.createRCPContext(this.scriptFiles.get(doneLinesCounter));
-					} else {
-						// Context for lines not from a scriptFile
-						context = Context.empty();
-					}
 
-					for (String key : this.dashboardPart.getContextKeys()) {
-						context.putOrReplace(key, this.dashboardPart.getContextValue(key).get());
-					}
+				// Context for a part with only one source
+				if (doneLinesCounter <= numScriptLines) {
+					// Context for a scriptFile
+					context = ParserClientUtil.createRCPContext(this.scriptFiles.get(doneLinesCounter));
+				} else {
+					// Context for lines not from a scriptFile
+					context = Context.empty();
+				}
+
+				for (String key : this.dashboardPart.getContextKeys()) {
+					context.putOrReplace(key, this.dashboardPart.getContextValue(key).get());
 				}
 
 				Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller,
@@ -161,14 +150,6 @@ public class QueryExecutionHandler {
 			queryRoots = determineRoots(queryIDs);
 		} catch (CoreException ex) {
 			throw new ControllerException("Could not start query", ex);
-		}
-	}
-
-	private void addContextForMultiSource(Object sourceKey, Context context) {
-		// Add contextKeys to context
-		AbstractMultiSourceDashboardPart part = (AbstractMultiSourceDashboardPart) this.dashboardPart;
-		for (String key : part.getContextKeys(sourceKey)) {
-			context.putOrReplace(key, part.getContextValue(sourceKey, key).get());
 		}
 	}
 

@@ -44,7 +44,6 @@ public class DashboardPartConfigurationPage extends WizardPage {
 	private static final InfoService INFO = InfoServiceFactory.getInfoService(DashboardPartConfigurationPage.class);
 
 	private final DashboardPartTypeSelectionPage selectionPage;
-	private final QueryFileSelectionPage queryFilePage;
 	private final ContextMapPage contextMapPage;
 	private final ContainerSelectionPage containerPage;
 
@@ -59,14 +58,13 @@ public class DashboardPartConfigurationPage extends WizardPage {
 	private QueryExecutionHandler handler;
 
 	public DashboardPartConfigurationPage(String pageName, DashboardPartTypeSelectionPage selectionPage,
-			QueryFileSelectionPage queryFilePage, ContextMapPage contextMapPage, ContainerSelectionPage containerPage) {
+			ContextMapPage contextMapPage, ContainerSelectionPage containerPage) {
 		super(pageName);
 
 		setTitle("Configure DashboardPart");
 		setDescription("Configure the DashboardPart.");
 
 		this.selectionPage = selectionPage;
-		this.queryFilePage = queryFilePage;
 		this.contextMapPage = contextMapPage;
 		this.containerPage = containerPage;
 
@@ -140,7 +138,6 @@ public class DashboardPartConfigurationPage extends WizardPage {
 	private void selectDashboardPart(String partName) {
 
 		// Get queryTextProviders from all source selection pages
-		queryTextProviders.add(queryFilePage.getQueryTextProvider());
 		for (QueryFileSelectionPage page : querySelectionPages) {
 			queryTextProviders.add(page.getQueryTextProvider());
 		}
