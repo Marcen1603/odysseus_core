@@ -234,4 +234,10 @@ public class NodeViewUsageContainer implements IOdysseusNodeConnectionManagerLis
 		
 		refreshTableAsync();
 	}
+	
+	public int indexOf( IOdysseusNode node ) {
+		Preconditions.checkNotNull(node, "node must not be null!");
+
+		return foundNodes.indexOf(node);
+	}
 }

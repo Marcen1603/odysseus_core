@@ -52,10 +52,21 @@ public final class NodeTableViewer {
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
+		/************ Number ***************/
+		TableViewerColumn numberColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		numberColumn.getColumn().setText("#");
+		numberColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<Integer>(tableViewer, numberColumn) {
+			@Override
+			protected Integer getValue(IOdysseusNode node) {
+				return container.indexOf(node) + 1;
+			}
+		});
+		tableColumnLayout.setColumnData(numberColumn.getColumn(), new ColumnWeightData(2, 15, true));
+		
 		/************ Activity *************/
 		TableViewerColumn activityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		activityColumn.getColumn().setText("Act");
-		tableColumnLayout.setColumnData(activityColumn.getColumn(), new ColumnWeightData(3, 15, true));
+		tableColumnLayout.setColumnData(activityColumn.getColumn(), new ColumnWeightData(2, 15, true));
 		activityColumn.setLabelProvider(new CellLabelProviderAndSorter<IOdysseusNode, Boolean>(tableViewer, activityColumn) {
 			@Override
 			protected Boolean getValue(IOdysseusNode node) {
