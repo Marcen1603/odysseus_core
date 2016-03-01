@@ -984,14 +984,17 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeText);
 		if (optNode.isPresent()) {
-			IOdysseusNode node = optNode.get();
-			try {
-				LoginMessage loginMsg = new LoginMessage(username, password);
-				nodeCommunicator.send(node, loginMsg);
-				ci.println("Send login to node " + node);
-			} catch (OdysseusNodeCommunicationException e) {
-				ci.println("Could not send login to node " + node + ": " + e.getMessage());
-			}
+			doLogin(ci, username, password, optNode.get());
+		}
+	}
+
+	private void doLogin(CommandInterpreter ci, String username, String password, IOdysseusNode node) {
+		try {
+			LoginMessage loginMsg = new LoginMessage(username, password);
+			nodeCommunicator.send(node, loginMsg);
+			ci.println("Send login to node " + node);
+		} catch (OdysseusNodeCommunicationException e) {
+			ci.println("Could not send login to node " + node + ": " + e.getMessage());
 		}
 	}
 
@@ -1004,16 +1007,19 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeText);
 		if (optNode.isPresent()) {
-			IOdysseusNode node = optNode.get();
-			if (loggedToNodes.contains(node)) {
-				try {
-					nodeCommunicator.send(node, new LogoutMessage());
-				} catch (OdysseusNodeCommunicationException e) {
-					LOG.error("Could not send logout message to node {}", node, e);
-				}
-			} else {
-				ci.println("Not logged in node " + node);
+			doLogout(ci, optNode.get());
+		}
+	}
+
+	private void doLogout(CommandInterpreter ci, IOdysseusNode node) {
+		if (loggedToNodes.contains(node)) {
+			try {
+				nodeCommunicator.send(node, new LogoutMessage());
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.warn("Could not send logout message to node {}", node, e);
 			}
+		} else {
+			ci.println("Not logged in node " + node);
 		}
 	}
 
@@ -1175,14 +1181,17 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeText);
 		if (optNode.isPresent()) {
-			IOdysseusNode node = optNode.get();
-			if (loggedToNodes.contains(node)) {
-				sendCommandMessage(ci, node, command);
-			} else {
-				ci.println("Not logged in node '" + node + "'");
-			}
+			remoteExecuteCommand(ci, command, optNode.get());
 		} else {
 			ci.println("Node '" + nodeText + "' not known.");
+		}
+	}
+
+	private void remoteExecuteCommand(CommandInterpreter ci, String command, IOdysseusNode node) {
+		if (loggedToNodes.contains(node)) {
+			sendCommandMessage(ci, node, command);
+		} else {
+			ci.println("Not logged in node '" + node + "'");
 		}
 	}
 
@@ -1192,6 +1201,59 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 
 	public void _execCmd(CommandInterpreter ci) {
 		_executeCommand(ci);
+	}
+	
+	public void _execCmdAll(CommandInterpreter ci ) {
+		String username = ci.nextArgument();
+		if (Strings.isNullOrEmpty(username)) {
+			ci.println("usage: execCmdAll <username> <password> <cmd>");
+			return;
+		}
+
+		String password = ci.nextArgument();
+		if (Strings.isNullOrEmpty(password)) {
+			ci.println("usage: execCmdAll <username> <password> <cmd>");
+			return;
+		}
+
+		String command = ci.nextArgument();
+		if (Strings.isNullOrEmpty(command)) {
+			ci.println("usage: execCmdAll <username> <password> <cmd>");
+			return;
+		}
+
+		Collection<IOdysseusNode> nodes = nodeCommunicator.getDestinationNodes();
+		
+		ci.println("Sending logins...");
+		for( IOdysseusNode node : nodes ) {
+			ci.println("Login to " + node);
+			doLogin(ci, username, password, node);
+		}
+		
+		ci.println("Waiting 2 seconds...");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+		}
+		
+		ci.println("Executing command");
+		for( IOdysseusNode node : nodes ) {
+			remoteExecuteCommand(ci, command, node);
+		}
+		
+		ci.println("Waiting 2 seconds...");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+		}
+
+		ci.println("Sending logins...");
+		for( IOdysseusNode node : nodes ) {
+			ci.println("Logout from " + node);
+			doLogout(ci, node);
+		}
+		
+		ci.print("ExecCmdAll finished");
 	}
 
 	private static void sendCommandMessage(CommandInterpreter ci, IOdysseusNode destinationNode, String command) {
