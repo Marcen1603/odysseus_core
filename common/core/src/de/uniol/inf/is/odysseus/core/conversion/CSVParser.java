@@ -23,9 +23,10 @@ public class CSVParser {
 		StringBuffer elem = new StringBuffer();
 		boolean readInsideOfText = false;
 		boolean readAfterText = false;
-
+		boolean readInsideOfList = false; 
+		
 		for (char c : line.toCharArray()) {
-			if (c == textDelimiter) {
+			if (c == textDelimiter){
 				if (!readInsideOfText){
 					elem = new StringBuffer();
 				}else{
@@ -35,8 +36,17 @@ public class CSVParser {
 				readInsideOfText = !readInsideOfText;
 				
 				// elem.append(c);
-			} else {
-				if (readInsideOfText) {
+			} else if(!readInsideOfText && c == '['){
+				readInsideOfList = true;
+				elem = new StringBuffer();
+				elem.append(c);
+			} else if (readInsideOfList && c == ']'){
+				elem.append(c);
+				ret.add(elem.toString());
+				elem = new StringBuffer();
+				readInsideOfList = false;
+			}else {
+				if (readInsideOfText || readInsideOfList) {
 					elem.append(c);
 				} else {
 					if (delimiter == c) {
@@ -76,7 +86,7 @@ public class CSVParser {
 	}
 
 	public static void main(String[] args) {
-		String in = "4,  ' d' ,  ' e'";
+		String in = "4,  ' d' ,  ' e[2]',[1,2,3], 'a'";
 		List<String> ret = CSVParser.parseCSV(in, '\'', ',', false);
 		for (String string : ret) {
 			System.out.println("\'" + string + "\'");

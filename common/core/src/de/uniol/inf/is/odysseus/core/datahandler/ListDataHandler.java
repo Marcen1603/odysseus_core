@@ -23,6 +23,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -30,86 +31,105 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Andr� Bolles
  *
  */
-public class ListDataHandler extends AbstractDataHandler<List<?>>{
-	
+public class ListDataHandler extends AbstractDataHandler<List<?>> {
+
 	protected static Logger LOG = LoggerFactory.getLogger(ListDataHandler.class);
 
 	static protected List<String> types = new ArrayList<String>();
-	static{
-		types.add("MULTI_VALUE"); //??
-		for (SDFDatatype d: SDFDatatype.LISTS){
+
+	static {
+		types.add("MULTI_VALUE"); // ??
+		for (SDFDatatype d : SDFDatatype.LISTS) {
 			types.add(d.getURI());
 		}
 	}
-	
+
 	IDataHandler<?> handler = null;
 	final private boolean nullMode;
-	
-	public ListDataHandler(){
+
+	public ListDataHandler() {
 		// Needed for declarative service!
 		nullMode = false;
 	}
-	
-	public ListDataHandler(SDFSchema subType){
+
+	public ListDataHandler(SDFSchema subType) {
 
 		// hmmm ... this should be more generic !!
-		if (subType.getAttribute(0).getDatatype().isTuple() || subType.getAttribute(0).getDatatype().getSubType().isTuple()){
-			this.handler = DataHandlerRegistry.getDataHandler("TUPLE", subType.getAttribute(0).getDatatype().getSchema());
-		}else{
+		if (subType.getAttribute(0).getDatatype().isTuple()
+				|| subType.getAttribute(0).getDatatype().getSubType().isTuple()) {
+			this.handler = DataHandlerRegistry.getDataHandler("TUPLE",
+					subType.getAttribute(0).getDatatype().getSchema());
+		} else {
 			this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getAttributeName(), subType);
 		}
 
-		//Is needed for handling of KeyValueObject
-		if(this.handler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
+		// Is needed for handling of KeyValueObject
+		if (this.handler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
 			SDFDatatype localSubType = subType.getAttribute(0).getDatatype().getSubType();
-			if (localSubType.isTuple()){
-				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE.toString(), subType.getAttribute(0).getDatatype().getSchema());
-			}else{
-				this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getDatatype().getSubType().toString(), subType);
+			if (localSubType.isTuple()) {
+				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE.toString(),
+						subType.getAttribute(0).getDatatype().getSchema());
+			} else {
+				this.handler = DataHandlerRegistry
+						.getDataHandler(subType.getAttribute(0).getDatatype().getSubType().toString(), subType);
 			}
 		}
-		
+
 		nullMode = false;
 	}
-	
+
 	@Override
 	public IDataHandler<List<?>> getInstance(SDFSchema schema) {
 		return new ListDataHandler(schema);
 	}
-	
+
 	@Override
 	public List<?> readData(String string) {
-		if(string == null) {
+		if (string == null) {
 			return null;
 		}
-		ArrayList<Object> values = new ArrayList<Object>();
-		String[] lines = string.split("\n");
-		int size = lines.length;
-		for(int i = 0; i<size; i++){
-			Object value = this.handler.readData(lines[i]);
-			values.add(value);
+		ArrayList<Object> returnValues = new ArrayList<Object>();
+
+		String trimmedString = string.trim();
+		
+		if (trimmedString.startsWith("[") && trimmedString.endsWith("]")) {
+			List<String> vals = CSVParser.parseCSV(trimmedString.substring(1, trimmedString.length()-1), ',', true);
+			for (String value:vals){
+				returnValues.add(this.handler.readData(value));
+			}
+		} else {
+			String[] lines = string.split("\n");
+			int size = lines.length;
+			for (int i = 0; i < size; i++) {
+				Object value = this.handler.readData(lines[i]);
+				returnValues.add(value);
+			}
 		}
-		return values;
+		return returnValues;
 	}
 
 	@Override
 	public List<?> readData(Iterator<String> input) {
 		ArrayList<Object> values = new ArrayList<Object>();
-		while (input.hasNext()){
+		while (input.hasNext()) {
 			Object value = this.handler.readData(input.next());
 			values.add(value);
 		}
 		return values;
 	}
-		
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData(java.nio.ByteBuffer)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
+	 * #readData(java.nio.ByteBuffer)
 	 */
 	@Override
 	public List<?> readData(ByteBuffer buffer) {
 		ArrayList<Object> values = new ArrayList<Object>();
 		int size = buffer.getInt();
-		for(int i = 0; i<size; i++){
+		for (int i = 0; i < size; i++) {
 			byte type = -1;
 			if (nullMode) {
 				type = buffer.get();
@@ -124,15 +144,19 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		return values;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
+	 * #writeData(java.nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
-	@SuppressWarnings({"rawtypes"})
+	@SuppressWarnings({ "rawtypes" })
 	public void writeData(ByteBuffer buffer, Object data) {
-		List values = (List)data;
+		List values = (List) data;
 		buffer.putInt(values.size());
-		for(Object v: values){
+		for (Object v : values) {
 			if (nullMode) {
 				if (v == null) {
 					buffer.put((byte) 0);
@@ -144,23 +168,26 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 				this.handler.writeData(buffer, v);
 			}
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractDataHandler#getSupportedDataTypes()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.
+	 * AbstractDataHandler#getSupportedDataTypes()
 	 */
 	@Override
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
-	
+
 	@Override
 	public int memSize(Object data) {
 		int size = 0;
-		List<?> values = (List<?>)data;
-		for(Object v: values){
-			size+=this.handler.memSize(v);
+		List<?> values = (List<?>) data;
+		for (Object v : values) {
+			size += this.handler.memSize(v);
 		}
 		// Marker for null or not null values
 		if (nullMode) {
@@ -168,11 +195,10 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		}
 		return size;
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return List.class;
 	}
 
-	
 }
