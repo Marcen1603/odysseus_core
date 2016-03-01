@@ -412,7 +412,7 @@ public class FeatureUpdateUtility {
 									restart(caller);
 								}
 							} else {
-								LOG.error("No update where installed " + event.getResult().getMessage());
+								LOG.error("No update where installed " + event.getResult().getException());
 							}
 							super.done(event);
 						}
