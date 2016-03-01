@@ -165,7 +165,7 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 				}
 
 			} catch (OdysseusNodeCommunicationException e) {
-				LOG.error("Could not send message for asking for remote resource usage", e);
+				LOG.warn("Could not send message for asking for remote resource usage", e);
 				return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 			}
 		}
