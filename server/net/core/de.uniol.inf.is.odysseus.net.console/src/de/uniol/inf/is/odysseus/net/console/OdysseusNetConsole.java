@@ -1253,7 +1253,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			doLogout(ci, node);
 		}
 		
-		ci.print("ExecCmdAll finished");
+		ci.println("ExecCmdAll finished");
 	}
 
 	private static void sendCommandMessage(CommandInterpreter ci, IOdysseusNode destinationNode, String command) {
