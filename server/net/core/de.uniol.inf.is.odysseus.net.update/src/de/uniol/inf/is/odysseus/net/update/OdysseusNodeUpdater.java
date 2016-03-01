@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicatorListener;
 import de.uniol.inf.is.odysseus.net.communication.OdysseusNodeCommunicationException;
 import de.uniol.inf.is.odysseus.net.config.OdysseusNetConfiguration;
+import de.uniol.inf.is.odysseus.net.update.message.DoReinstallMessage;
 import de.uniol.inf.is.odysseus.net.update.message.DoRestartMessage;
 import de.uniol.inf.is.odysseus.net.update.message.DoUpdateMessage;
 import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
