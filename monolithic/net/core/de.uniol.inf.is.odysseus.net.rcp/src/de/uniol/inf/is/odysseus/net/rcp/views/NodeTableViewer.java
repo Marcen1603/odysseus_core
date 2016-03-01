@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.rcp.util.ColumnViewerSorter;
 public final class NodeTableViewer {
 
 	private static final String UNKNOWN_TEXT = "<unknown>";
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
 	private TableViewer tableViewer;
