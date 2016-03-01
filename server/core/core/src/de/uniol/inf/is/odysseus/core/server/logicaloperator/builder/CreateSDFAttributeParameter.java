@@ -131,6 +131,8 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 			if (pos == -1) {
 				pos = dataTypeName.indexOf('<');
 			}
+			// TODO: Currently, only List<Integer> is allowed
+			// what about List<List<Integer>> ??
 			if (pos > 0) {
 				String upperTypeStr = dataTypeName.substring(0, pos);
 				SDFDatatype upperType = getDataDictionary().getDatatype(upperTypeStr);
