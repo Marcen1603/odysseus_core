@@ -754,7 +754,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 					ci.println("\tMEM               : Free : " + usage.getMemFreeBytes() + " Max: " + usage.getMemMaxBytes());
 					ci.println("\tNET               : In : " + usage.getNetInputRate() + " Out: " + usage.getNetOutputRate() + " Max: " + usage.getNetBandwidthMax());
 					ci.println("\tKnown remote nodes: " + usage.getRemoteNodeCount());
-					ci.println("\tStartup ts        : " + usage.getStartupTimestamp() + " [" + new Date(usage.getTimestamp()) + "]");
+					ci.println("\tStartup ts        : " + usage.getStartupTimestamp() + " [" + new Date(usage.getStartupTimestamp()) + "]");
 					ci.println("\tRunning queries   : " + usage.getRunningQueriesCount());
 					ci.println("\tStopped queries   : " + usage.getStoppedQueriesCount());
 					ci.println("\tVersion           : " + toVersionString(usage.getVersion()));
