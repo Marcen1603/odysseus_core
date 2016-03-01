@@ -2,40 +2,16 @@ package de.uniol.inf.is.odysseus.mep.functions.list;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-
-public class ListLastElementFunction extends AbstractFunction<Object> {
+public class ListLastElementFunction extends AbstractListPosElementFunction {
 
 	private static final long serialVersionUID = -3282877303737235603L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS};
-
 	public ListLastElementFunction() {
-		super("last", 1, accTypes, SDFDatatype.OBJECT, false);
+		super("last");
 	}
 
-	@Override
-	public Object getValue() {
-		List<Object> l = getInputValue(0);
-		int pos = l.size()-1;
-				
-		return l.get(pos);
+	protected int getPos(List<Object> l) {
+		return l.size()-1;
 	}
-	
-	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
-		if (args != null){
-			return args[0].getReturnType().getSubType();
-		}
-		throw new IllegalArgumentException("Types cannot be determined with "+args);
-	}
-	
-	@Override
-	public boolean determineTypeFromInput() {
-		return true;
-	}
-	
-
+		
 }
