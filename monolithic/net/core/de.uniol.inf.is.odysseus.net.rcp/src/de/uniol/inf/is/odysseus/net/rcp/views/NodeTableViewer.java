@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
@@ -112,6 +111,18 @@ public final class NodeTableViewer {
 
 		});
 		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(10, 25, true));
+
+		/************* Hostname ****************/
+		TableViewerColumn hostnameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		hostnameColumn.getColumn().setText("Hostname");
+		hostnameColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, hostnameColumn) {
+			@Override
+			protected String getValue(IOdysseusNode node) {
+				return determineHostname(node);
+			}
+
+		});
+		tableColumnLayout.setColumnData(hostnameColumn.getColumn(), new ColumnWeightData(10, 25, true));
 
 		/************* Version ****************/
 		TableViewerColumn versionColumn = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -449,13 +460,12 @@ public final class NodeTableViewer {
 		return 100.0 - ((resourceUsage.getCpuFree() / resourceUsage.getCpuMax()) * 100.0);
 	}
 
+	private static String determineHostname(IOdysseusNode node) {
+		return determinePropertyValue(node, "serverHostname");
+	}
+
 	private static String determineAddressString(IOdysseusNode node) {
-		String address = determinePropertyValue(node, "serverAddress") + ":" + determinePropertyValue(node, "serverPort");
-		String hostName = determinePropertyValue(node, "serverHostname");
-		if( !Strings.isNullOrEmpty(hostName)) {
-			return address + " <" + hostName + ">";
-		} 
-		return address;
+		return determinePropertyValue(node, "serverAddress") + ":" + determinePropertyValue(node, "serverPort");
 	}
 
 }
