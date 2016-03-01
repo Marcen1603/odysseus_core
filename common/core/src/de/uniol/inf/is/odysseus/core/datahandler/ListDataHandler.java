@@ -93,7 +93,9 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 		String trimmedString = string.trim();
 		
 		if (trimmedString.startsWith("[") && trimmedString.endsWith("]")) {
-			List<String> vals = CSVParser.parseCSV(trimmedString.substring(1, trimmedString.length()-1), ',', true);
+			// there could be lists of lists so we need the special csv parser, inside this list there
+			// can be string with [] if they are enclosed in "
+			List<String> vals = CSVParser.parseCSV(trimmedString.substring(1, trimmedString.length()-1),'"', ',', true);
 			for (String value:vals){
 				returnValues.add(this.handler.readData(value));
 			}
