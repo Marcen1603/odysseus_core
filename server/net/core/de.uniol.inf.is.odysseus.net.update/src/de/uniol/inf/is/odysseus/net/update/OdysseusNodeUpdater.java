@@ -35,8 +35,10 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 		
 		nodeCommunicator.registerMessageType(DoUpdateMessage.class);
 		nodeCommunicator.registerMessageType(DoRestartMessage.class);
+		nodeCommunicator.registerMessageType(DoReinstallMessage.class);
 		nodeCommunicator.addListener(this, DoUpdateMessage.class);
 		nodeCommunicator.addListener(this, DoRestartMessage.class);
+		nodeCommunicator.addListener(this, DoReinstallMessage.class);
 	}
 
 	// called by OSGi-DS
@@ -44,8 +46,10 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 		if (nodeCommunicator == serv) {
 			nodeCommunicator.removeListener(this, DoUpdateMessage.class);
 			nodeCommunicator.removeListener(this, DoRestartMessage.class);
+			nodeCommunicator.removeListener(this, DoReinstallMessage.class);
 			nodeCommunicator.unregisterMessageType(DoUpdateMessage.class);
 			nodeCommunicator.unregisterMessageType(DoRestartMessage.class);
+			nodeCommunicator.unregisterMessageType(DoReinstallMessage.class);
 
 			nodeCommunicator = null;
 		}
