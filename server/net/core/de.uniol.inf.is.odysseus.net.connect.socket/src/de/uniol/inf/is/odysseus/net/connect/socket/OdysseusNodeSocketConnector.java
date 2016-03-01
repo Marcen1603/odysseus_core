@@ -34,6 +34,7 @@ public class OdysseusNodeSocketConnector extends OdysseusNetComponentAdapter imp
 
 	private static final String SERVER_ADDRESS_PROPERTY_KEY = "serverAddress";
 	private static final String SERVER_PORT_PROPERTY_KEY = "serverPort";
+	private static final String SERVER_HOST_NAME = "hostName";
 
 	private final Map<IOdysseusNode, IOdysseusNodeConnection> connections = Maps.newHashMap();
 	private final Map<OdysseusNodeID, Socket> acceptedSocketsMap = Maps.newHashMap();
@@ -56,6 +57,11 @@ public class OdysseusNodeSocketConnector extends OdysseusNetComponentAdapter imp
 			localNode.addProperty(SERVER_ADDRESS_PROPERTY_KEY, optAddress.get());
 		} else {
 			throw new OdysseusNetException("Could not determine own inet-address");
+		}
+		
+		Optional<String> optHostName = InetAddressUtil.getHostName();
+		if( optHostName.isPresent() ) {
+			localNode.addProperty(SERVER_HOST_NAME, optHostName.get());
 		}
 
 		this.localNode = localNode;
