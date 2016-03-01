@@ -33,6 +33,7 @@ public class InetAddressUtil {
 				return Optional.fromNullable(inetAddress.getHostName());
 			}
 		} catch (UnknownHostException e) {
+			LOG.error("Could not determine hostname", e);
 		}
 		
 		return Optional.absent();
