@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
@@ -106,8 +107,9 @@ public final class NodeTableViewer {
 		addressColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, addressColumn) {
 			@Override
 			protected String getValue(IOdysseusNode node) {
-				return determinePropertyValue(node, "serverAddress") + ":" + determinePropertyValue(node, "serverPort");
+				return determineAddressString(node);
 			}
+
 		});
 		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(10, 25, true));
 
@@ -328,18 +330,18 @@ public final class NodeTableViewer {
 		});
 		tableColumnLayout.setColumnData(remoteNodeCountColumn.getColumn(), new ColumnWeightData(3, 25, true));
 
-		/************* OdysseusNodeID ****************/
-		TableViewerColumn nodeIDColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		nodeIDColumn.getColumn().setText("ID");
-		nodeIDColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, nodeIDColumn) {
-
-			@Override
-			protected String getValue(IOdysseusNode node) {
-				return node.getID().toString();
-			}
-		});
-		tableColumnLayout.setColumnData(nodeIDColumn.getColumn(), new ColumnWeightData(10, 25, true));
-
+//		/************* OdysseusNodeID ****************/
+//		TableViewerColumn nodeIDColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+//		nodeIDColumn.getColumn().setText("ID");
+//		nodeIDColumn.setLabelProvider(new NodeViewCellLabelProviderAndSorter<String>(tableViewer, nodeIDColumn) {
+//
+//			@Override
+//			protected String getValue(IOdysseusNode node) {
+//				return node.getID().toString();
+//			}
+//		});
+//		tableColumnLayout.setColumnData(nodeIDColumn.getColumn(), new ColumnWeightData(10, 25, true));
+//
 		hideSelectionIfNeeded(tableViewer);
 
 		tableViewer.setInput(container.getFoundNodesList());
@@ -379,7 +381,7 @@ public final class NodeTableViewer {
 		return DATE_FORMAT.format(new Date(startupTimestamp));
 	}
 
-	private String determinePropertyValue(IOdysseusNode node, String propertyKey) {
+	private static String determinePropertyValue(IOdysseusNode node, String propertyKey) {
 		Optional<String> optPropertyValue = node.getProperty(propertyKey);
 		return optPropertyValue.isPresent() ? optPropertyValue.get() : "";
 	}
@@ -445,6 +447,15 @@ public final class NodeTableViewer {
 
 	private static double calcCpuPercentage(IResourceUsage resourceUsage) {
 		return 100.0 - ((resourceUsage.getCpuFree() / resourceUsage.getCpuMax()) * 100.0);
+	}
+
+	private static String determineAddressString(IOdysseusNode node) {
+		String address = determinePropertyValue(node, "serverAddress") + ":" + determinePropertyValue(node, "serverPort");
+		String hostName = determinePropertyValue(node, "serverHostname");
+		if( !Strings.isNullOrEmpty(hostName)) {
+			return address + " <" + hostName + ">";
+		} 
+		return address;
 	}
 
 }
