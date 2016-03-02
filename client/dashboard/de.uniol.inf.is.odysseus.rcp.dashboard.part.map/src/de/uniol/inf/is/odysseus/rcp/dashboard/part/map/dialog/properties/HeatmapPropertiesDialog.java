@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -37,22 +36,18 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPar
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.AttributeListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.DialogUtils;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 
 /**
  * Dialog to edit the properties of a thematic map
  */
-public class HeatmapPropertiesDialog extends TitleAreaDialog {
-
-
+public class HeatmapPropertiesDialog extends AbstractMapPropertiesDialog {
 
 	HashMap<Integer, Style> hashStyles;
 	
 	private Heatmap heatmap;
 	private Collection<IPhysicalOperator> operators;
-	private HeatmapLayerConfiguration layerConfiguration = null;
 
 	/**
 	 * Create the dialog.
@@ -97,7 +92,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 	 * @param heatmap
 	 * @param container
 	 */
-	public void createHeatmapMenu(Heatmap heatmap, Composite container) {
+	private void createHeatmapMenu(Heatmap heatmap, Composite container) {
 		// Create a new configuration, that is used, if the user clicks
 		// ok
 		HeatmapLayerConfiguration newConfig = new HeatmapLayerConfiguration(heatmap.getConfig());
@@ -189,12 +184,12 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				 		geoAttrInput.setEnabled(true);
 				 		latSelect.setEnabled(false);
 				 		lngSelect.setEnabled(false);
-				 		layerConfiguration.setUsePoint(true);
+				 		((HeatmapLayerConfiguration) getLayerConfiguration()).setUsePoint(true);
 				 	}else{
 				 		geoAttrInput.setEnabled(false);
 				 		latSelect.setEnabled(true);
 				 		lngSelect.setEnabled(true);
-				 		layerConfiguration.setUsePoint(false);
+				 		((HeatmapLayerConfiguration) getLayerConfiguration()).setUsePoint(false);
 				 	}
 			    }
 		});
@@ -328,7 +323,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setAlpha(spinner.getSelection());
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -343,7 +338,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setNumTilesWidth(spinner.getSelection());
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -357,7 +352,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setNumTilesHeight(spinner.getSelection());
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -373,7 +368,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
 				heatmapLayerConfiguration.setInterpolation(correspondingButton.getSelection());
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -389,7 +384,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
 				heatmapLayerConfiguration.setHideWithoutInformation((correspondingButton.getSelection()));
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -414,7 +409,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatSW(value);
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -431,7 +426,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngSW(value);
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -449,7 +444,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatNE(value);
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -466,7 +461,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngNE(value);
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -480,7 +475,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 				manPosNELngInput.setEnabled(!correspondingButton.getSelection());
 				manPosSWLatInput.setEnabled(!correspondingButton.getSelection());
 				manPosSWLngInput.setEnabled(!correspondingButton.getSelection());
-				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				propertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -655,13 +650,5 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 	protected Point getInitialSize() {
 		return new Point(748, 522);
 	}
-
-	public LayerConfiguration getLayerConfiguration() {
-		return layerConfiguration;
-	}
-
-	public void setLayerConfiguration(HeatmapLayerConfiguration layerConfiguration) {
-		this.layerConfiguration = layerConfiguration;
-	}
-
+	
 }

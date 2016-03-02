@@ -16,8 +16,7 @@ public class AttributeListener extends SelectionAdapter {
 	CCombo valueAttributeCombo;
 	MapPropertiesDialog mapPropertiesDialog;
 
-	public AttributeListener(LayerConfiguration config,
-			CCombo geoAttributeCombo, CCombo valueAttributeCombo,
+	public AttributeListener(LayerConfiguration config, CCombo geoAttributeCombo, CCombo valueAttributeCombo,
 			MapPropertiesDialog mapPropertiesDialog) {
 		this.config = config;
 		this.geoAttributeCombo = geoAttributeCombo;
@@ -28,19 +27,11 @@ public class AttributeListener extends SelectionAdapter {
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		if (config instanceof HeatmapLayerConfiguration) {
-			((HeatmapLayerConfiguration) config)
-					.setGeometricAttributePosition(geoAttributeCombo
-							.getSelectionIndex());
-			((HeatmapLayerConfiguration) config)
-					.setValueAttributePosition(valueAttributeCombo
-							.getSelectionIndex());
+			((HeatmapLayerConfiguration) config).setGeometricAttributePosition(geoAttributeCombo.getSelectionIndex());
+			((HeatmapLayerConfiguration) config).setValueAttributePosition(valueAttributeCombo.getSelectionIndex());
 		} else if (config instanceof TracemapLayerConfiguration) {
-			((TracemapLayerConfiguration) config)
-					.setGeometricAttributePosition(geoAttributeCombo
-							.getSelectionIndex());
-			((TracemapLayerConfiguration) config)
-					.setValueAttributePosition(valueAttributeCombo
-							.getSelectionIndex());
+			((TracemapLayerConfiguration) config).setGeometricAttributePosition(geoAttributeCombo.getSelectionIndex());
+			((TracemapLayerConfiguration) config).setValueAttributePosition(valueAttributeCombo.getSelectionIndex());
 		}
 		mapPropertiesDialog.setLayerConfiguration(config);
 	}

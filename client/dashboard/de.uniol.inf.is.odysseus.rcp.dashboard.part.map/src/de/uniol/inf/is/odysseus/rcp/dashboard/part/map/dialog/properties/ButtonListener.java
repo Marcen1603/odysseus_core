@@ -6,18 +6,19 @@ import org.eclipse.swt.widgets.Button;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 
-public abstract class ButtonListener extends SelectionAdapter{
+public abstract class ButtonListener extends SelectionAdapter {
 
 	LayerConfiguration layerConfiguration;
-	HeatmapPropertiesDialog heatmapPropertiesDialog;
+	AbstractMapPropertiesDialog propertiesDialog;
 	Button correspondingButton;
-	
-	public ButtonListener(LayerConfiguration layerConfiguration, HeatmapPropertiesDialog heatmapPropertiesDialog, Button correspondingButton) {
+
+	public ButtonListener(LayerConfiguration layerConfiguration, AbstractMapPropertiesDialog propertiesDialog,
+			Button correspondingButton) {
 		this.layerConfiguration = layerConfiguration;
-		this.heatmapPropertiesDialog = heatmapPropertiesDialog;
+		this.propertiesDialog = propertiesDialog;
 		this.correspondingButton = correspondingButton;
 	}
-	
+
 	@Override
 	public abstract void widgetSelected(SelectionEvent e);
 }

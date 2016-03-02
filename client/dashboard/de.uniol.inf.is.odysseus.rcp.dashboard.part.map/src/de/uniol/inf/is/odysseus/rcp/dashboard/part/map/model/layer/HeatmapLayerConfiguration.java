@@ -12,8 +12,10 @@ import org.eclipse.swt.widgets.Display;
  */
 public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 
+	public static final String HEATMAP_IDENTIFIER = "Heatmap";
+	
 	private static final long serialVersionUID = -7225910571344993841L;
-
+	
 	private int geometricAttributePosition;
 	private int latAttribute;
 	private int lngAttribute;

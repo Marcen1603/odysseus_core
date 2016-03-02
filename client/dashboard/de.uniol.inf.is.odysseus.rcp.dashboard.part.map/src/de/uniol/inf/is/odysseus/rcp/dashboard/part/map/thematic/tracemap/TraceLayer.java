@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.RasterLayer;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.TracemapLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 
 public class TraceLayer extends RasterLayer {
 

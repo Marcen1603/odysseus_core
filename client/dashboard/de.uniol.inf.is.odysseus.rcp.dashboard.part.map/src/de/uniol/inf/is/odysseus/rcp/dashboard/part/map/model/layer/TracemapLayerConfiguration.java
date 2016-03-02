@@ -1,12 +1,10 @@
-package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer;
+package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer;
 
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 
 /**
  * Configuration for the tracemap with a bit more than a

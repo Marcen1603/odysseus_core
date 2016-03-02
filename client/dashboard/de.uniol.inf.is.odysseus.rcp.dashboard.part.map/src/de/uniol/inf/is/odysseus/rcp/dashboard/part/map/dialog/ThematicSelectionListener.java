@@ -6,7 +6,7 @@ import org.eclipse.swt.events.SelectionEvent;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
-//import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 
 public class ThematicSelectionListener extends SelectionAdapter {
 
@@ -32,7 +32,7 @@ public class ThematicSelectionListener extends SelectionAdapter {
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 
-		if (this.combobox.getText().equals("Heatmap")) {
+		if (this.combobox.getText().equals(HeatmapLayerConfiguration.HEATMAP_IDENTIFIER)) {
 			// User has selected the Heatmap
 			if (!(this.config instanceof HeatmapLayerConfiguration))
 				this.config = new HeatmapLayerConfiguration("");
@@ -50,32 +50,23 @@ public class ThematicSelectionListener extends SelectionAdapter {
 			this.config = heatmapLayerConfiguration;
 
 			propertyDialog.setLayerConfiguration(config);
-			// } else if (this.combobox.getText().equals("Tracemap")) {
-			// // User has selected the Tracemap
-			// if (!(this.config instanceof TracemapLayerConfiguration))
-			// this.config = new TracemapLayerConfiguration("");
-			// final TracemapLayerConfiguration tracemapLayerConfiguration =
-			// (TracemapLayerConfiguration) this.config;
-			//
-			// tracemapLayerConfiguration.setSrid(4326);
-			//
-			// tracemapLayerConfiguration.setQuery(streamSelectionBox.getText());
-			// tracemapLayerConfiguration
-			// .setGeometricAttributePosition(geometrieSelect
-			// .getSelectionIndex());
-			// tracemapLayerConfiguration
-			// .setValueAttributePosition(visualizationSelect
-			// .getSelectionIndex());
-			//
-			// tracemapLayerConfiguration
-			// .setGeometricAttributePosition(geometrieSelect
-			// .getSelectionIndex());
-			// tracemapLayerConfiguration
-			// .setValueAttributePosition(visualizationSelect
-			// .getSelectionIndex());
-			// this.config = tracemapLayerConfiguration;
-			//
-			// propertyDialog.setLayerConfiguration(config);
+		} else if (this.combobox.getText().equals("Tracemap")) {
+			// User has selected the Tracemap
+			if (!(this.config instanceof TracemapLayerConfiguration))
+				this.config = new TracemapLayerConfiguration("");
+			final TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
+
+			tracemapLayerConfiguration.setSrid(4326);
+
+//			tracemapLayerConfiguration.setQuery(streamSelectionBox.getText());
+			tracemapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
+			tracemapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
+
+			tracemapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
+			tracemapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
+			this.config = tracemapLayerConfiguration;
+
+			propertyDialog.setLayerConfiguration(config);
 		}
 	}
 }

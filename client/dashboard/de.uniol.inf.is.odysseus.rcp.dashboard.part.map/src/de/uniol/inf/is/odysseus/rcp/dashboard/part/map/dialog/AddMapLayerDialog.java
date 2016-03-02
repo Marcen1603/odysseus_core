@@ -236,9 +236,10 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 
 		final CCombo mapTypeSelect = new CCombo(thematicLayer, SWT.BORDER);
 		mapTypeSelect.setLayoutData(DialogUtils.getTextDataLayout());
-		mapTypeSelect.add("Heatmap");
-		// mapTypeSelect.add("Tracemap");
+		mapTypeSelect.add(HeatmapLayerConfiguration.HEATMAP_IDENTIFIER);
+		mapTypeSelect.add("Tracemap");
 		mapTypeSelect.select(0);
+		
 		
 		Label dataSourceLabel = new Label(thematicLayer, SWT.NONE);
 		dataSourceLabel.setText("Data source:");
@@ -319,6 +320,7 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
 
+		mapTypeSelect.addSelectionListener(thematicSelectionListener);
 		geometrieSelect.addSelectionListener(thematicSelectionListener);
 		latSelect.addSelectionListener(thematicSelectionListener);
 		lngSelect.addSelectionListener(thematicSelectionListener);

@@ -19,13 +19,16 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerC
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.tracemap.TraceLayer;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 
 public class MapEditorModel {
 
-	//private static final Logger LOG = LoggerFactory.getLogger(MapEditorModel.class);
+	// private static final Logger LOG =
+	// LoggerFactory.getLogger(MapEditorModel.class);
 
 	public static final String MAP = "map";
 
@@ -36,7 +39,6 @@ public class MapEditorModel {
 	private int startIndex;
 	private int endIndex;
 
-
 	private LinkedList<ILayer> layers = new LinkedList<ILayer>();
 
 	private ScreenManager screenManager = null;
@@ -44,7 +46,7 @@ public class MapEditorModel {
 	private Puffer puffer;
 
 	public void init(MapDashboardPart mapDashboardPart) {
-		
+
 		for (ILayer layer : layers) {
 			if (layer != null) {
 				layer.init(screenManager, null, null);
@@ -127,11 +129,12 @@ public class MapEditorModel {
 		// Just get the RGB values. Usually getMinColor would return e.g. "Color
 		// {0 ,255, 0}"
 		String subString = configuration.getMinColor().toString().trim();
-		
+
 		int startIndex = subString.indexOf("{");
 		int endIndex = subString.indexOf("}");
-		//Minus 5 to remove the alpha. New Color can only use 0 or 255. We need values between those
-		subString = subString.substring(startIndex + 1, endIndex-5);
+		// Minus 5 to remove the alpha. New Color can only use 0 or 255. We need
+		// values between those
+		subString = subString.substring(startIndex + 1, endIndex - 5);
 		layerSetting += subString + ";";
 
 		// Just get the RGB values. Usually getMinColor would return e.g. "Color
@@ -139,8 +142,8 @@ public class MapEditorModel {
 		subString = configuration.getMaxColor().toString().trim();
 		startIndex = subString.indexOf("{");
 		endIndex = subString.indexOf("}");
-		//Minus 5 to remove the alpha. New Color can only use 0 or 255. 
-		subString = subString.substring(startIndex + 1, endIndex-5);
+		// Minus 5 to remove the alpha. New Color can only use 0 or 255.
+		subString = subString.substring(startIndex + 1, endIndex - 5);
 		layerSetting += subString + ";";
 
 		layerSetting += configuration.getAlpha() + ";";
@@ -187,7 +190,7 @@ public class MapEditorModel {
 				int endIndex = configuration.indexOf(";");
 				String layerConfigurationType = configuration.substring(0, endIndex);
 				String configurationSettings = configuration.substring(endIndex + 1);
-				
+
 				if (layerConfigurationType.equals("BasicLayer")) {
 					loadBasicConfiguration(configurationSettings);
 				} else if (layerConfigurationType.equals("HeatmapLayerConfiguration")) {
@@ -258,7 +261,7 @@ public class MapEditorModel {
 
 		RasterLayer rasterLayer = new RasterLayer(rlc);
 		ownProperties = new OwnProperties();
-		
+
 		ownProperties.getTileServer(rlc.getUrlNumber(), rlc);
 		rasterLayer.setActive(Boolean.valueOf(getSubString(configuration, ";")));
 		layers.add(rasterLayer);
@@ -271,7 +274,6 @@ public class MapEditorModel {
 		int r, g, b;
 		double latSW, lngSW, latNE, lngNE;
 
-		
 		String substring = configuration.substring(startIndex, endIndex);
 		HeatmapLayerConfiguration hlc = new HeatmapLayerConfiguration(substring);
 
@@ -302,7 +304,7 @@ public class MapEditorModel {
 		hlc.setHideWithoutInformation(Boolean.valueOf(getSubString(configuration, ";")));
 		hlc.setNumTilesWidth(Integer.valueOf(getSubString(configuration, ";")));
 		hlc.setNumTilesHeight(Integer.valueOf(getSubString(configuration, ";")));
-		
+
 		latNE = Double.valueOf(getSubString(configuration, ";"));
 		hlc.setLatNE(latNE);
 		lngNE = Double.valueOf(getSubString(configuration, ";"));
@@ -312,7 +314,7 @@ public class MapEditorModel {
 		lngSW = Double.valueOf(getSubString(configuration, ";"));
 		hlc.setLngSW(lngSW);
 		hlc.setCoverageGeographic(lngSW, lngNE, latSW, latNE);
-		
+
 		Heatmap heatmap = new Heatmap(hlc);
 		heatmap.setActive(Boolean.valueOf(getSubString(configuration, ";")));
 		heatmap.setPuffer(puffer);
@@ -332,7 +334,7 @@ public class MapEditorModel {
 		startIndex = endIndex + 1;
 		endIndex = string.indexOf(separator, startIndex);
 		String subString = string.substring(startIndex, endIndex);
-		
+
 		return subString;
 	}
 
@@ -348,21 +350,20 @@ public class MapEditorModel {
 
 		if (layerConfiguration instanceof HeatmapLayerConfiguration) {
 			layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
-			// }else if (layerConfiguration instanceof
-			// TracemapLayerConfiguration){
-			// layer = addLayer((TracemapLayerConfiguration)layerConfiguration);
+		} else if (layerConfiguration instanceof TracemapLayerConfiguration) {
+			layer = addLayer((TracemapLayerConfiguration) layerConfiguration);
 		} else if (layerConfiguration instanceof RasterLayerConfiguration) {
 			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
 		} else {
 			layer = addLayer();
 		}
-		//firePropertyChange(MAP, null, this);
+		// firePropertyChange(MAP, null, this);
 		layers.addLast(layer);
 	}
 
 	private ILayer addLayer() {
 		ILayer layer = new BasicLayer();
-		if (screenManager != null ) {
+		if (screenManager != null) {
 			layer.init(screenManager, null, null);
 		}
 		return layer;
@@ -395,31 +396,23 @@ public class MapEditorModel {
 		return layer;
 	}
 
-	// /**
-	// * Adds a TracemapLayer to the map
-	// *
-	// * @param layerConfiguration
-	// * @return The layer
-	// */
-	// private ILayer addLayer(TracemapLayerConfiguration layerConfiguration) {
-	// ILayer layer = new TraceLayer(layerConfiguration);
-	// if (screenManager != null) {
-	// layer.init(screenManager, null, null);
-	// }
-	//
-	// // Add to the selected connection (LayerUpdater)
-	// for (LayerUpdater connection : connections.values()) {
-	// if (connection.getQuery().getQueryText()
-	// .equals(layerConfiguration.getQuery())) {
-	// connection.add(layer);
-	// }
-	// }
-	//
-	// // We don't want to set it active manually, too much clicks ...
-	// layer.setActive(true);
-	//
-	// return layer;
-	// }
+	/**
+	 * Adds a TracemapLayer to the map
+	 *
+	 * @param layerConfiguration
+	 * @return The layer
+	 */
+	private ILayer addLayer(TracemapLayerConfiguration layerConfiguration) {
+		ILayer layer = new TraceLayer(layerConfiguration);
+		if (screenManager != null) {
+			layer.init(screenManager, null, null);
+		}
+
+		// We don't want to set it active manually, too much clicks ...
+		layer.setActive(true);
+		layer.setPuffer(puffer);
+		return layer;
+	}
 
 	/**
 	 * Edit a layer by removing the old one and place in the "edit" one.
@@ -517,7 +510,7 @@ public class MapEditorModel {
 		layer.setName(name);
 	}
 
-	//TODO 
+	// TODO
 	/**
 	 * Generates a puffer connection to the ScreenManager
 	 * 
