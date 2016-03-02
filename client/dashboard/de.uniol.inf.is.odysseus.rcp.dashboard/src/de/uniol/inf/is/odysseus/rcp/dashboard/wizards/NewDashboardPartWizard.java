@@ -37,6 +37,22 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 
+//@formatter:off
+/**
+ * A wizard to create a new DashboardPart. The wizard works as follows: 
+ * 0. select the file where you want to save the DashboardPart
+ * 1. select the type of the DashboardPart 
+ * ---> optional loop begin 
+ * 2. select a source / query
+ * 3. add context (always the same page)
+ * <--- end optional loop
+ * 4. configure the DashboardPart 
+ * 
+ * @author original author: Timo Michelsen; extended and commented by Tobias
+ *         Brandt
+ *
+ */
+//@formatter:on
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizard.class);
@@ -72,6 +88,8 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		configurePage = new DashboardPartConfigurationPage("Configure Dashboard Part", partSelectionPage,
 				contextMapPage, containerPage);
 
+		// Some pages need other pages that can only be created after them. To
+		// avoid NullPointers, we add them after they were created.
 		contextMapPage.setQueryFilePage(queryFilePage);
 		contextMapPage.setConfigurationPage(configurePage);
 		queryFilePage.setConfigurationPage(configurePage);
@@ -104,6 +122,14 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		}
 	}
 
+	/**
+	 * The wizard can add multiple sources for some Dashboard parts. When the
+	 * user does not want to add more sources, the next page after the loop is
+	 * the configuration page. To be able to show this page, it can be retrieved
+	 * here.
+	 * 
+	 * @return The configuration page for the DashboardPart
+	 */
 	public IWizardPage getConfigurePage() {
 		return this.configurePage;
 	}

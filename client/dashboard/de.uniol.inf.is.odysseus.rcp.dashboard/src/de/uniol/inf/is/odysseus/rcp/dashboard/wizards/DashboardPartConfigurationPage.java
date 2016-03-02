@@ -162,7 +162,7 @@ public class DashboardPartConfigurationPage extends WizardPage {
 			if (queryTextProviders.size() > 1) {
 				// We have a DashboadPart with more than one source (e.g. a map)
 				if (newDashboardPart instanceof AbstractMultiSourceDashboardPart) {
-					// Yes, that's the case
+					// Yes, and we can use them
 					for (IDashboardPartQueryTextProvider provider : queryTextProviders) {
 						((AbstractMultiSourceDashboardPart) newDashboardPart).addQueryTextProvider(provider);
 					}
@@ -170,6 +170,8 @@ public class DashboardPartConfigurationPage extends WizardPage {
 			} else {
 				// We have only one
 				newDashboardPart.setProject(containerPage.getProject());
+				if (queryTextProviders.size() > 0)
+					newDashboardPart.setQueryTextProvider(queryTextProviders.get(0));
 			}
 
 			insertInto(newDashboardPart, contextMapPage.getContextMap());
@@ -207,6 +209,15 @@ public class DashboardPartConfigurationPage extends WizardPage {
 		}
 	}
 
+	/**
+	 * The {@link DashboardPartConfigurationPage} needs to know all
+	 * querySelectionPages to get the queryTextProviders. Here you can add a
+	 * selectionPage to the list. Only add the page if a query was selected, not
+	 * when it was only created.
+	 * 
+	 * @param page
+	 *            The querySelectionPage to add
+	 */
 	public void addQuerySelectionPage(QueryFileSelectionPage page) {
 		this.querySelectionPages.add(page);
 	}
