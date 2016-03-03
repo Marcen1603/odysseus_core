@@ -40,8 +40,10 @@ public class RPrepareJoinCNF extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-		return join != null && join.getPredicate() != null
-				&& RelationalExpression.class.isInstance(join.getPredicate());
+		// FIXME: Currently not working
+		return false;
+//		return join != null && join.getPredicate() != null
+//				&& RelationalExpression.class.isInstance(join.getPredicate());
 	}
 
 	@Override
