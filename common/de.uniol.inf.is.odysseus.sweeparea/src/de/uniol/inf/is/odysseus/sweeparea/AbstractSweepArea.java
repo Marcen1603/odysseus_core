@@ -47,6 +47,8 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 	private transient IPredicate<? super T> queryPredicate;
 
 	private transient IPredicate<? super T> removePredicate;
+	
+	private String areaName;
 
 	/**
 	 * Creates query results on the fly by iterating over the elements and
@@ -137,6 +139,16 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 		this.comparator = comparator;
 		// this.saSupervisor = new SweepAreaSupervisor(this, 20000);
 		// this.saSupervisor.start();
+	}
+	
+	@Override
+	public void setAreaName(String name) {
+		this.areaName = name;
+	}
+	
+	@Override
+	public String getAreaName() {
+		return areaName;
 	}
 
 	@SuppressWarnings("unchecked")

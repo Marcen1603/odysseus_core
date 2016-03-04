@@ -526,6 +526,18 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String getAreaName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void setAreaName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

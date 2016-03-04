@@ -405,4 +405,16 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String getAreaName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void setAreaName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
 }

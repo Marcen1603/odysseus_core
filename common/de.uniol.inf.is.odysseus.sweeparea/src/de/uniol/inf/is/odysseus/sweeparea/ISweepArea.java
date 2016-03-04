@@ -178,4 +178,11 @@ public interface ISweepArea<T> extends Iterable<T>, Serializable {
 	String getName();
 	
 	ISweepArea<T> newInstance(OptionMap options);
+
+	/**
+	 * For debugging: 
+	 * @param name
+	 */
+	void setAreaName(String name);
+	String getAreaName();
 }

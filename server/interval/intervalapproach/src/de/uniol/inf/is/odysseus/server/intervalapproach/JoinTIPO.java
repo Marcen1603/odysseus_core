@@ -135,7 +135,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.areas = areas;
 		if (this.joinPredicate != null) {
 			areas[0].setQueryPredicate(this.joinPredicate);
+			areas[0].setAreaName(this.getName());
 			areas[1].setQueryPredicate(this.joinPredicate.clone());
+			areas[1].setAreaName(this.getName());
 		}
 	}
 
