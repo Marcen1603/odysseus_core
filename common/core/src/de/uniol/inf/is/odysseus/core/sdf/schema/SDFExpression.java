@@ -480,7 +480,12 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 			// We need to reparse the expression because of multiple instances
 			// of the same variable may exist
 			
-			SDFExpression newExpression = new SDFExpression(expr.not().toString(),((SDFExpression)expr).getAttributeResolver(), getExpressionParser());
+			IAttributeResolver resolver = null;
+			if (expr instanceof SDFExpression){
+				resolver = ((SDFExpression)expr).getAttributeResolver();
+			}
+			
+			SDFExpression newExpression = new SDFExpression(expr.not().toString(),resolver, getExpressionParser());
 			return newExpression;
 		}
 		throw new IllegalArgumentException("Cannot process");
