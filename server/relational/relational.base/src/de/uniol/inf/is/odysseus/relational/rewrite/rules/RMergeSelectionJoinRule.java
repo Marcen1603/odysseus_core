@@ -48,11 +48,15 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 				SelectAO.class);
 		if (sel != null) {
 			if (sel.getPredicate() != null) {
+				RelationalExpression<?> newPredicate;
 				if (join.getPredicate() != null) {
-					join.setPredicate(join.getPredicate().and((IPredicate)sel.getPredicate()));
+					newPredicate = (RelationalExpression<?>) join.getPredicate().and((IPredicate)sel.getPredicate());
 				} else {
-					join.setPredicate(sel.getPredicate());
+					newPredicate = (RelationalExpression<?>) sel.getPredicate().clone();
 				}
+				join.setPredicate(newPredicate);
+				newPredicate.initVars(join.getInputSchema(0), join.getInputSchema(1));
+				
 				ParameterPredicateOptimizer optimizeConfig = config
 						.getQueryBuildConfiguration().get(
 								ParameterPredicateOptimizer.class);

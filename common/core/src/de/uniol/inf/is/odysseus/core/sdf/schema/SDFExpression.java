@@ -83,11 +83,20 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 	/**
 	 * @param URI
 	 * @param value
-	 * @param attributeResolver
 	 * @throws ParseException
 	 */
 	public SDFExpression(String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, null, expressionParser);
+	}
+
+	/**
+	 * @param URI
+	 * @param value
+	 * @param attributeResolver
+	 * @throws ParseException
+	 */
+	public SDFExpression(String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) throws SDFExpressionParseException {
+		init(null, value, attributeResolver, expressionParser);
 	}
 
 	public SDFExpression(SDFExpression expression) throws SDFExpressionParseException {
@@ -416,10 +425,17 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 		if (predicate instanceof SDFExpression) {
 			if (this.expression instanceof IFunction) {
 				IFunction<?> expr = (IFunction) this.expression;
+				List<SDFSchema> schemalist = new ArrayList<>();
+				schemalist.addAll(((SDFExpression)predicate).getAttributeResolver().getSchema());
+				if (expression instanceof SDFExpression){
+					schemalist.addAll((((SDFExpression)expression).getAttributeResolver().getSchema()));
+				}
+				DirectAttributeResolver attributeResolver = new DirectAttributeResolver(schemalist);
 				// We need to reparse the expression because of multiple
 				// instances of the same variable may exist
 				SDFExpression newExpression = new SDFExpression(
-						expr.and(((SDFExpression) predicate).getMEPExpression()).toString(), getExpressionParser());
+						expr.and(((SDFExpression) predicate).getMEPExpression()).toString(), attributeResolver, getExpressionParser());
+				
 				return newExpression;
 			}
 		}
@@ -436,10 +452,17 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 		if (predicate instanceof SDFExpression) {
 			if (this.expression instanceof IFunction) {
 				IFunction<?> expr = (IFunction) this.expression;
+				List<SDFSchema> schemalist = new ArrayList<>();
+				schemalist.addAll(((SDFExpression)predicate).getAttributeResolver().getSchema());
+				if (expression instanceof SDFExpression){
+					schemalist.addAll((((SDFExpression)expression).getAttributeResolver().getSchema()));
+				}
+				DirectAttributeResolver attributeResolver = new DirectAttributeResolver(schemalist);
+
 				// We need to reparse the expression because of multiple
 				// instances of the same variable may exist
 				SDFExpression newExpression = new SDFExpression(
-						expr.or(((SDFExpression) predicate).getMEPExpression()).toString(), getExpressionParser());
+						expr.or(((SDFExpression) predicate).getMEPExpression()).toString(),attributeResolver, getExpressionParser());
 				return newExpression;
 			}
 		}
@@ -456,7 +479,8 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 			IFunction<?> expr = (IFunction) this.expression;
 			// We need to reparse the expression because of multiple instances
 			// of the same variable may exist
-			SDFExpression newExpression = new SDFExpression(expr.not().toString(), getExpressionParser());
+			
+			SDFExpression newExpression = new SDFExpression(expr.not().toString(),((SDFExpression)expr).getAttributeResolver(), getExpressionParser());
 			return newExpression;
 		}
 		throw new IllegalArgumentException("Cannot process");
