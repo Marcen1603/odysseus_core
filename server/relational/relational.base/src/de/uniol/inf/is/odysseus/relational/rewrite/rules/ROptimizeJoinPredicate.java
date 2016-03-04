@@ -39,10 +39,8 @@ public class ROptimizeJoinPredicate extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-		// FIXME: Currently not working
-		return false;
-//		return join != null && join.getPredicate() != null
-//				&& RelationalExpression.class.isInstance(join.getPredicate());
+		return join != null && join.getPredicate() != null
+				&& RelationalExpression.class.isInstance(join.getPredicate());
 	}
 
 	@Override
