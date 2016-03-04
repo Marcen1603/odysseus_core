@@ -35,7 +35,8 @@ public class ViewerStreamTablePlugIn extends AbstractUIPlugin {
 		imageManager.register("filter", "icons/filter.png");
 		imageManager.register("desync", "icons/desync.png");
 		imageManager.register("metadata", "icons/metadata.gif");
-        imageManager.register("export", "icons/export.png");
+		imageManager.register("export", "icons/export.png");
+        imageManager.register("clear", "icons/clear.gif");
 	}
 
 	@Override

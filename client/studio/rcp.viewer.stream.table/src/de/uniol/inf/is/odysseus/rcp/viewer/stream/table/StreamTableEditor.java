@@ -167,9 +167,11 @@ public class StreamTableEditor implements IStreamEditorType {
 			}
 		}
 
-		tuples.add(0, element.clone());
-		if (maxTuplesCount > 0 && tuples.size() > maxTuplesCount) {
-			tuples.remove(tuples.size() - 1);
+		synchronized( tuples ) {
+			tuples.add(0, element.clone());
+			if (maxTuplesCount > 0 && tuples.size() > maxTuplesCount) {
+				tuples.remove(tuples.size() - 1);
+			}
 		}
 	}
 
@@ -296,6 +298,20 @@ public class StreamTableEditor implements IStreamEditorType {
                     LOG.error(e.getMessage(), e);
                 }
             }
+        });
+        
+        ToolItem clearButton = new ToolItem(toolbar, SWT.PUSH);
+        clearButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("clear"));
+        clearButton.setToolTipText("Clear");
+        clearButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		synchronized( tuples ) {
+        			tuples.clear();
+        		}
+        		
+        		refresh();
+        	}
         });
 
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
