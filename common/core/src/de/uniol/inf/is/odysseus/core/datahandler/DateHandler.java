@@ -16,10 +16,14 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -38,9 +42,18 @@ public class DateHandler extends AbstractDataHandler<Date> {
 		types.add(SDFDatatype.DATE.getURI());
 	}
 
+	private DateTimeFormatter df;
+
 	@Override
 	public IDataHandler<Date> getInstance(SDFSchema schema) {
-		return new DateHandler();
+		SDFConstraint dateFormat = schema.getConstraint(SDFConstraint.BASE_TIME_UNIT);
+		DateTimeFormatter df = null;
+		if (dateFormat != null){
+			df = DateTimeFormatter.ofPattern ((String)dateFormat.getValue());
+		}
+		DateHandler dh = new DateHandler();
+		dh.df = df;
+		return dh;
 	}
 	
 	@Override
@@ -55,7 +68,12 @@ public class DateHandler extends AbstractDataHandler<Date> {
         if ((string == null) || ("null".equalsIgnoreCase(string))) {
             return null;
         }
-		return new Date(Long.parseLong(string));
+        if (df != null){
+        	LocalDateTime ldt = LocalDateTime.parse(string, df);
+        	return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        }else{
+        	return new Date(Long.parseLong(string));
+        }
 	}
 
 	@Override

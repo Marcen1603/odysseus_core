@@ -333,6 +333,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			}
 		}
 		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
+		
+		if (dateFormat != null){
+			constraints.put(SDFConstraint.DATE_FORMAT, new SDFConstraint(SDFConstraint.DATE_FORMAT, dateFormat));
+		}
 
 		boolean strictOrder = false;
 		if (optionsMap.containsKey(SDFConstraint.STRICT_ORDER)) {

@@ -21,6 +21,7 @@ public class SDFConstraint extends SDFElement {
 	
 	final static public String BASE_TIME_UNIT = "basetimeunit"; 
 	final static public String STRICT_ORDER = "strictorder"; 
+	final static public String DATE_FORMAT = "dateformat";
 	
 	
 	/**
