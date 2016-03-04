@@ -889,16 +889,20 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			for (String s : inactiveRules) {
 				if (getRewriteRules().contains(s)) {
 					rulesToApply.remove(s);
+				}else{
+					LOG.warn("Trying to remove rule "+s+" that is not activated!");
 				}
 			}
 		}
-
+		
 		RewriteConfiguration rewriteConfig;
 		// Only if one of the sets had values, the rule base should change
 		// else use default rule base
 		if (activeRules != null || inactiveRules != null) {
 			rewriteConfig = new RewriteConfiguration(rulesToApply);
-		} else {
+			LOG.trace("Runing Rewrite with rules "+rulesToApply);
+		}
+		else {
 			rewriteConfig = new RewriteConfiguration(null);
 		}
 
