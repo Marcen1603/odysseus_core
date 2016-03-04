@@ -23,12 +23,13 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISyncArea;
 
-abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>> implements ISyncArea<R,W> {
+abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
+		implements ISyncArea<R, W> {
 
 	private static final long serialVersionUID = 1314105668558226625L;
 
 	private transient IHasName operator;
-	
+
 	protected long elementsRead;
 	protected long puncRead;
 	protected long elementsWritten;
@@ -66,7 +67,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 	final protected Map<Integer, Boolean> isDone;
 	// states the time stamp of the last send object
 	protected PointInTime watermark = null;
-	
+
 	// Store to reorder elements
 	final protected PriorityQueue<SerializablePair<IStreamable, Integer>> outputQueue;
 
@@ -74,23 +75,22 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 	private int outputPort = 0;
 
 	protected boolean inOrder = true;
-	
-	protected AbstractTISyncArea(){
+
+	protected AbstractTISyncArea() {
 		this.minTs = new HashMap<>();
 		this.isDone = new HashMap<>();
 		this.outputQueue = new PriorityQueue<>(11, outputQueueComp);
 	}
-	
-	protected AbstractTISyncArea(AbstractTISyncArea<R,W> other){
+
+	protected AbstractTISyncArea(AbstractTISyncArea<R, W> other) {
 		minTs = new HashMap<>(other.minTs);
 		isDone = new HashMap<>(other.isDone);
 		outputQueue = new PriorityQueue<>(11, outputQueueComp);
 		outputQueue.addAll(other.outputQueue);
 
 	}
-	
-	
-	public abstract AbstractTISyncArea<R,W> clone();
+
+	public abstract AbstractTISyncArea<R, W> clone();
 
 	protected void init(IHasName po, int inputPortCount) {
 		this.minTs.clear();
@@ -105,9 +105,9 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 				this.isDone.put(port, false);
 			}
 			this.outputQueue.clear();
-		}		
+		}
 	}
-	
+
 	@Override
 	public void addNewInput(int port) {
 		this.minTs.put(port, null);
@@ -134,7 +134,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 			newHeartbeat(start, inPort);
 		}
 	}
-	
+
 	public void setOutputPort(int outputPort) {
 		this.outputPort = outputPort;
 	}
@@ -143,12 +143,12 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 	public void transfer(W object) {
 		transfer(object, outputPort);
 	}
-	
+
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
 		sendPunctuation(punctuation, outputPort);
 	}
-	
+
 	@Override
 	public void transfer(W object, int toPort) {
 		synchronized (this.outputQueue) {
@@ -173,7 +173,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 			}
 		}
 	}
-	
+
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int toPort) {
 		synchronized (this.outputQueue) {
@@ -191,7 +191,6 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 			}
 		}
 	}
-
 
 	private void purge() {
 		synchronized (outputQueue) {
@@ -250,16 +249,23 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 			if (watermark == null || heartbeat.afterOrEquals(watermark)) {
 
 				synchronized (minTs) {
-					minTs.put(inPort, heartbeat);
+					PointInTime curHB = minTs.get(inPort);
+					if (curHB == null || heartbeat.after(curHB)) {
+						minTs.put(inPort, heartbeat);
+					} else {
+						logger.debug("Heart beat "+heartbeat+" ignored. Was older than last heartbeat "+curHB);
+					}
 				}
 				sendData();
-			} 
-//			else {
-//				if (!isAllDone()) {
-//					logger.warn("Out of order element read " + heartbeat + " from port " + inPort
-//							+ " before last send element " + watermark + " ! Ignoring" + " - (" + this.operator +" "+this.operator.getName() + ")");
-//				}
-//			}
+			}
+			// else {
+			// if (!isAllDone()) {
+			// logger.warn("Out of order element read " + heartbeat + " from
+			// port " + inPort
+			// + " before last send element " + watermark + " ! Ignoring" + " -
+			// (" + this.operator +" "+this.operator.getName() + ")");
+			// }
+			// }
 		}
 	}
 
@@ -308,7 +314,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 							this.outputQueue.poll();
 							lastSendObject = ((W) elem.getE1()).getMetadata().getStart();
 							elementsWritten++;
-							((W)elem.getE1()).setTimeProgressMarker(true);
+							((W) elem.getE1()).setTimeProgressMarker(true);
 							transfer(elem);
 							elem = this.outputQueue.peek();
 						} else {
@@ -402,5 +408,4 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 		this.operator = po;
 	}
 
-	
 }
