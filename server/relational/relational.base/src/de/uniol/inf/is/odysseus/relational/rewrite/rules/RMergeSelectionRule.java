@@ -58,7 +58,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 									.getMEPExpression();
 							expression = BooleanExpressionOptimizer.optimize(expression);
 							IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
-							SDFExpression sdfExpression = new SDFExpression(cnf.toString(),
+							SDFExpression sdfExpression = new SDFExpression(cnf.toString(),relationalPredicate.getAttributeResolver(),
 									relationalPredicate.getExpressionParser());
 							operator.setPredicate(new RelationalExpression(sdfExpression));
 						}

@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -101,7 +103,8 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
             SDFExpression expr = ((KeyValueObjectPredicate) predicate).expression;
             AndOperator and = new AndOperator();
             and.setArguments(new IExpression<?>[] { this.expression.getMEPExpression(), expr.getMEPExpression() });
-            return new KeyValueObjectPredicate(new SDFExpression(and.toString(), this.expression.getExpressionParser()));
+            IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(), expr.getAttributeResolver().getSchema());
+            return new KeyValueObjectPredicate(new SDFExpression(and.toString(), resolver, this.expression.getExpressionParser()));
         }
         return super.and(predicate);
     }
@@ -115,7 +118,8 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
             SDFExpression expr = ((KeyValueObjectPredicate) predicate).expression;
             OrOperator or = new OrOperator();
             or.setArguments(new IExpression<?>[] { this.expression.getMEPExpression(), expr.getMEPExpression() });
-            return new KeyValueObjectPredicate(new SDFExpression(or.toString(), this.expression.getExpressionParser()));
+            IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(), expr.getAttributeResolver().getSchema());
+            return new KeyValueObjectPredicate(new SDFExpression(or.toString(), resolver, this.expression.getExpressionParser()));
         }
         return super.or(predicate);
     }
@@ -127,13 +131,13 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
     public IPredicate<KeyValueObject<?>> not() {
         NotOperator not = new NotOperator();
         not.setArguments(new IExpression<?>[] { this.expression.getMEPExpression() });
-        return new KeyValueObjectPredicate(new SDFExpression(not.toString(), this.expression.getExpressionParser()));
+        return new KeyValueObjectPredicate(new SDFExpression(not.toString(), expression.getAttributeResolver(), this.expression.getExpressionParser()));
     }
 
     @SuppressWarnings("boxing")
     public static void main(String[] args) {
         String predicate = "a*10-100 > b";
-        SDFExpression expression = new SDFExpression(predicate, MEP.getInstance());
+        SDFExpression expression = new SDFExpression(predicate, null, MEP.getInstance());
         KeyValueObjectPredicate pre = new KeyValueObjectPredicate(expression);
         KeyValueObject<IMetaAttribute> input = new KeyValueObject<>();
         input.setAttribute("a", 10);

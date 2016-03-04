@@ -57,7 +57,7 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 	abstract protected void fillReturnList(List<Object> out, Object o);
 
 	private void init(String expr) {
-		expression = new SDFExpression(expr, MEP.getInstance());
+		expression = new SDFExpression(expr, null, MEP.getInstance());
 	}
 
 	@Override

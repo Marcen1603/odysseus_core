@@ -28,7 +28,7 @@ public class RPrepareSelectionCNF extends AbstractRewriteRule<SelectAO> {
 						.getMEPExpression()));
 		if(!originalSDFExpression.getMEPExpression().equals(expressionInCNF)) {
 			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
-					expressionInCNF.toString(), originalSDFExpression.getExpressionParser()));
+					expressionInCNF.toString(), originalSDFExpression.getAttributeResolver(), originalSDFExpression.getExpressionParser()));
 			sel.setPredicate(predicate);
 			predicate.initVars(sel.getInputSchema());	
 			

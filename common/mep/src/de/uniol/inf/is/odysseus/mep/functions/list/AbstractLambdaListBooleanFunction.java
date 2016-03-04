@@ -52,7 +52,7 @@ abstract public class AbstractLambdaListBooleanFunction extends
 	abstract protected Boolean calcValue(List<Boolean> out);
 
 	private void init(String expr) {
-		expression = new SDFExpression(expr, MEP.getInstance());
+		expression = new SDFExpression(expr, null, MEP.getInstance());
 	}
 
 	@Override

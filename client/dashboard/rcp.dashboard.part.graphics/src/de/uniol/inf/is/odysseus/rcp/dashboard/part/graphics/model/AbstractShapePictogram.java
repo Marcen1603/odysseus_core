@@ -80,7 +80,7 @@ public abstract class AbstractShapePictogram extends AbstractPictogram {
 	}
 
 	public void addShapeColor(String predicate, Color color) {
-		TuplePredicate tuplepredicate = new TuplePredicate(new SDFExpression(predicate, MEP.getInstance()));
+		TuplePredicate tuplepredicate = new TuplePredicate(new SDFExpression(predicate, null, MEP.getInstance()));
 		this.shapeColors.add(new Pair<TuplePredicate, Color>(tuplepredicate, color));
 		this.currentColor = this.shapeColors.get(0).getE2();
 	}

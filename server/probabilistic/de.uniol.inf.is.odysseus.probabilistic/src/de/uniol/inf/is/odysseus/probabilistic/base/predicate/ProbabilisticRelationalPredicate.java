@@ -92,7 +92,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 					expressionStack.push(curExpression.toFunction().getArgument(0));
 					expressionStack.push(curExpression.toFunction().getArgument(1));
 				} else {
-					final SDFExpression expr = new SDFExpression(curExpression.toString(), 
+					final SDFExpression expr = new SDFExpression(curExpression.toString(), expression.getAttributeResolver(),
 							MEP.getInstance());
 					final RelationalExpression<?> relationalPredicate = new RelationalExpression<>(expr);
 					relationalPredicate.initVars(this.expression.getSchema());
@@ -339,7 +339,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 			AndOperator and = new AndOperator();
 			and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
 			return new ProbabilisticRelationalPredicate(
-					new SDFExpression(and.toString(), expression.getExpressionParser()));
+					new SDFExpression(and.toString(), expression.getAttributeResolver(), expression.getExpressionParser()));
 		}
 		return super.and(predicate);
 	}
@@ -354,7 +354,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 			OrOperator or = new OrOperator();
 			or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
 			return new ProbabilisticRelationalPredicate(
-					new SDFExpression(or.toString(), expression.getExpressionParser()));
+					new SDFExpression(or.toString(), expression.getAttributeResolver(), expression.getExpressionParser()));
 		}
 		return super.or(predicate);
 	}
@@ -367,7 +367,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		NotOperator not = new NotOperator();
 		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
 		return new ProbabilisticRelationalPredicate(
-				new SDFExpression(not.toString(), expression.getExpressionParser()));
+				new SDFExpression(not.toString(), expression.getAttributeResolver(), expression.getExpressionParser()));
 
 	}
 
@@ -459,7 +459,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		final SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
 		final SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", a);
 		final RelationalExpression<?> pred = new RelationalExpression<>(
-				new SDFExpression("p_out <=0 || isNaN(p_out)", MEP.getInstance()));
+				new SDFExpression("p_out <=0 || isNaN(p_out)", null, MEP.getInstance()));
 
 		System.out.println(pred.toString());
 		pred.initVars(schema);

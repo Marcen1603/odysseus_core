@@ -46,7 +46,7 @@ public class ListForeachPairFunction extends AbstractFunction<List<Object>> {
 	}
 
 	private void init(String expr) {
-		expression = new SDFExpression(expr, MEP.getInstance());
+		expression = new SDFExpression(expr, null, MEP.getInstance());
 	}
 
 	@Override

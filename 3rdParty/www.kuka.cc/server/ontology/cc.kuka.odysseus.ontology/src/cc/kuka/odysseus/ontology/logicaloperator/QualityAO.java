@@ -195,7 +195,7 @@ public class QualityAO extends UnaryLogicalOp {
 
         int i = 0;
         for (final SDFAttribute attribute : this.getInputSchema()) {
-            exprs[i] = new SDFExpression(attribute.getAttributeName(), MEP.getInstance());
+            exprs[i] = new SDFExpression(attribute.getAttributeName(), null, MEP.getInstance());
             i++;
         }
 
@@ -249,16 +249,16 @@ public class QualityAO extends UnaryLogicalOp {
                         }
                         expression.insert(0, "sMax([");
                         expression.append("])");
-                        exprs[i] = new SDFExpression(expression.toString(), MEP.getInstance());
+                        exprs[i] = new SDFExpression(expression.toString(), null, MEP.getInstance());
                     }
                     else {
-                        exprs[i] = new SDFExpression("-1.0", MEP.getInstance());
+                        exprs[i] = new SDFExpression("-1.0", null, MEP.getInstance());
                     }
                     i++;
                 }
             }
             else {
-                exprs[i] = new SDFExpression("-1.0", MEP.getInstance());
+                exprs[i] = new SDFExpression("-1.0", null, MEP.getInstance());
             }
         }
         return exprs;

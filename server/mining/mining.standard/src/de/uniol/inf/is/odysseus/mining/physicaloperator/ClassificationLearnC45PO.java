@@ -260,20 +260,20 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			if (attribute.getDatatype().isNumeric()) {
 				double bestmidpoint = getBestSplitPointForContinuous(attribute, pool);
 				String smallerExprString = attribute.getAttributeName() + " <= " + bestmidpoint;
-				SDFExpression smallerExpression = new SDFExpression(smallerExprString, MEP.getInstance());
+				SDFExpression smallerExpression = new SDFExpression(smallerExprString, null, MEP.getInstance());
 				RelationalExpression<M> smallerRelationalExpression = new RelationalExpression<M>(smallerExpression);
 				smallerRelationalExpression.initVars(inputSchema);
 				splittingPoints.get(attribute).add(smallerRelationalExpression);
 
 				String greaterExprString = attribute.getAttributeName() + " > " + bestmidpoint;
-				SDFExpression greaterExpression = new SDFExpression(greaterExprString, MEP.getInstance());
+				SDFExpression greaterExpression = new SDFExpression(greaterExprString, null, MEP.getInstance());
 				RelationalExpression<M> greaterRelationalExpression = new RelationalExpression<>(greaterExpression);
 				greaterRelationalExpression.initVars(inputSchema);
 				splittingPoints.get(attribute).add(greaterRelationalExpression);
 			} else {
 				for (Object value : values) {
 					String exprString = attribute.getAttributeName() + " == '" + value + "'";
-					SDFExpression expression = new SDFExpression(exprString, MEP.getInstance());
+					SDFExpression expression = new SDFExpression(exprString, null, MEP.getInstance());
 					RelationalExpression<M> relationalExpression = new RelationalExpression<>(expression);
 					relationalExpression.initVars(inputSchema);
 					splittingPoints.get(attribute).add(relationalExpression);

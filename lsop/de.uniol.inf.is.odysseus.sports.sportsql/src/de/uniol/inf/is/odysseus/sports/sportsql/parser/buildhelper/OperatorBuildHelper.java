@@ -351,16 +351,16 @@ public class OperatorBuildHelper {
 
 		// Create Predicates from Strings
 
-		SDFExpression firstPredicateExpression = new SDFExpression(firstPredicateString, MEP.getInstance());
+		SDFExpression firstPredicateExpression = new SDFExpression(firstPredicateString, null, MEP.getInstance());
 		RelationalExpression firstPredicate = new RelationalExpression(firstPredicateExpression);
 
-		SDFExpression secondPredicateExpression = new SDFExpression(secondPredicateString, MEP.getInstance());
+		SDFExpression secondPredicateExpression = new SDFExpression(secondPredicateString,null , MEP.getInstance());
 		RelationalExpression secondPredicate = new RelationalExpression(secondPredicateExpression);
 
-		SDFExpression thirdPredicateExpression = new SDFExpression(thirdPredicateString, MEP.getInstance());
+		SDFExpression thirdPredicateExpression = new SDFExpression(thirdPredicateString, null, MEP.getInstance());
 		RelationalExpression thirdPredicate = new RelationalExpression(thirdPredicateExpression);
 
-		SDFExpression fourthPredicateExpression = new SDFExpression(fourthPredicateString, MEP.getInstance());
+		SDFExpression fourthPredicateExpression = new SDFExpression(fourthPredicateString, null, MEP.getInstance());
 		RelationalExpression fourthPredicate = new RelationalExpression(fourthPredicateExpression);
 
 		IPredicate firstAndPredicate = ComplexPredicateHelper.createAndPredicate(firstPredicate, secondPredicate);
@@ -390,7 +390,7 @@ public class OperatorBuildHelper {
 		SelectAO teamSelectAO = new SelectAO();
 
 		String predicateString = IntermediateSchemaAttributes.TEAM_ID + " = " + teamId;
-		SDFExpression predicateExpression = new SDFExpression(predicateString, MEP.getInstance());
+		SDFExpression predicateExpression = new SDFExpression(predicateString, null, MEP.getInstance());
 
 		RelationalExpression predicate = new RelationalExpression(predicateExpression);
 		teamSelectAO.setPredicate(predicate);
@@ -412,7 +412,7 @@ public class OperatorBuildHelper {
 
 		String predicateString = "(" + IntermediateSchemaAttributes.TEAM_ID + " = 1) OR ("
 				+ IntermediateSchemaAttributes.TEAM_ID + " = 2)";
-		SDFExpression predicateExpression = new SDFExpression(predicateString, MEP.getInstance());
+		SDFExpression predicateExpression = new SDFExpression(predicateString, null, MEP.getInstance());
 
 		RelationalExpression predicate = new RelationalExpression(predicateExpression);
 		teamSelectAO.setPredicate(predicate);
@@ -464,17 +464,17 @@ public class OperatorBuildHelper {
 
 		// 1. minute >= ${parameterTimeStart_minute}
 		String firstPredicateString = ATTRIBUTE_MINUTE + " >= " + startMinute;
-		SDFExpression firstPredicateExpression = new SDFExpression(firstPredicateString, MEP.getInstance());
+		SDFExpression firstPredicateExpression = new SDFExpression(firstPredicateString, null, MEP.getInstance());
 		RelationalExpression firstPredicate = new RelationalExpression(firstPredicateExpression);
 
 		// 2. minute <= ${parameterTimeEnd_minute}
 		String secondPredicateString = ATTRIBUTE_MINUTE + " <= " + endMinute;
-		SDFExpression secondPredicateExpression = new SDFExpression(secondPredicateString, MEP.getInstance());
+		SDFExpression secondPredicateExpression = new SDFExpression(secondPredicateString, null,  MEP.getInstance());
 		RelationalExpression secondPredicate = new RelationalExpression(secondPredicateExpression);
 
 		// 3. second >= 0
 		String thirdPredicateString = ATTRIBUTE_SECOND + " >= 0";
-		SDFExpression thirdPredicateExpression = new SDFExpression(thirdPredicateString, MEP.getInstance());
+		SDFExpression thirdPredicateExpression = new SDFExpression(thirdPredicateString, null,  MEP.getInstance());
 		RelationalExpression thirdPredicate = new RelationalExpression(thirdPredicateExpression);
 
 		IPredicate firstAndPrdicate = ComplexPredicateHelper.createAndPredicate(firstPredicate, secondPredicate);
@@ -890,7 +890,7 @@ public class OperatorBuildHelper {
 		List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 		// Add predicates to the routeAO operator
 		for (String predicate : listOfPredicates) {
-			SDFExpression predicateExpression = new SDFExpression(predicate, MEP.getInstance());
+			SDFExpression predicateExpression = new SDFExpression(predicate, null, MEP.getInstance());
 			RelationalExpression p = new RelationalExpression(predicateExpression);
 			predicates.add(p);
 		}
@@ -1887,7 +1887,7 @@ public class OperatorBuildHelper {
 	 * @return
 	 */
 	public static RelationalExpression createRelationalExpression(String predicate) {
-		SDFExpression predicateExpression = new SDFExpression(predicate, MEP.getInstance());
+		SDFExpression predicateExpression = new SDFExpression(predicate, null,  MEP.getInstance());
 		RelationalExpression finishedPredicate = new RelationalExpression(predicateExpression);
 		return finishedPredicate;
 	}

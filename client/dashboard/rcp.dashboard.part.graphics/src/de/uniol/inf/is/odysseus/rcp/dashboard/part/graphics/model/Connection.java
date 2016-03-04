@@ -136,7 +136,7 @@ public class Connection extends AbstractPart {
 	public void setTargetText(String targetText) {
 		this.targetText = targetText;
 		if (targetText.startsWith("=")) {
-			targetExpression = new RelationalExpression<>(new SDFExpression(targetText.substring(1), MEP.getInstance()));
+			targetExpression = new RelationalExpression<>(new SDFExpression(targetText.substring(1), null, MEP.getInstance()));
 		} else {
 			targetExpression = null;
 			this.currentTextTarget = this.targetText;
@@ -151,7 +151,7 @@ public class Connection extends AbstractPart {
 	public void setSourceText(String sourceText) {
 		this.sourceText = sourceText;
 		if (sourceText.startsWith("=")) {
-			sourceExpression = new RelationalExpression<>(new SDFExpression(sourceText.substring(1), MEP.getInstance()));
+			sourceExpression = new RelationalExpression<>(new SDFExpression(sourceText.substring(1), null,  MEP.getInstance()));
 		} else {
 			sourceExpression = null;
 			this.currentTextSource = this.sourceText;
@@ -340,7 +340,7 @@ public class Connection extends AbstractPart {
 	 * @param predicate
 	 */
 	public void addColor(Color color, String predicate) {
-		TuplePredicate relPredicate = new TuplePredicate(new SDFExpression(predicate, MEP.getInstance()));
+		TuplePredicate relPredicate = new TuplePredicate(new SDFExpression(predicate, null, MEP.getInstance()));
 		Pair<Color, TuplePredicate> ce = new Pair<Color, TuplePredicate>(color, relPredicate);
 		this.entries.add(ce);
 	}
@@ -386,7 +386,7 @@ public class Connection extends AbstractPart {
 	public void setTopText(String topText) {
 		this.topText = topText;
 		if (topText.startsWith("=")) {
-			topExpression = new RelationalExpression<>(new SDFExpression(topText.substring(1), MEP.getInstance()));
+			topExpression = new RelationalExpression<>(new SDFExpression(topText.substring(1), null,  MEP.getInstance()));
 		} else {
 			topExpression = null;
 			this.currentTextTop = this.topText;
@@ -401,7 +401,7 @@ public class Connection extends AbstractPart {
 	public void setBottomText(String textBottom) {
 		this.bottomText = textBottom;
 		if (textBottom.startsWith("=")) {
-			bottomExpression = new RelationalExpression<>(new SDFExpression(textBottom.substring(1), MEP.getInstance()));
+			bottomExpression = new RelationalExpression<>(new SDFExpression(textBottom.substring(1), null, MEP.getInstance()));
 		} else {
 			bottomExpression = null;
 			this.currentTextBottom = this.bottomText;

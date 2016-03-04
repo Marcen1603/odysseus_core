@@ -32,7 +32,7 @@ public class TupleFilter {
 		this.expressionString = expressionString;
 
 		try {
-			filterExpression = new SDFExpression(expressionString, MEP.getInstance());
+			filterExpression = new SDFExpression(expressionString, null, MEP.getInstance());
 			filterAttributeIndices = determineAttributeIndices(filterExpression.getAllAttributes(), schema);
 			filterAttributeValues = Lists.newArrayListWithExpectedSize(filterAttributeIndices.size());
 			for (int i = 0; i < filterAttributeIndices.size(); i++) {

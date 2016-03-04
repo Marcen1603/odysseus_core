@@ -39,7 +39,7 @@ abstract public class AbstractQueryIDsFunction extends AbstractFunction<List<Int
 			if (predicate == null) {
 				
 				predicate = new SDFExpression(
-						predicateString, MEP.getInstance());
+						predicateString, null, MEP.getInstance());
 				toRead = new ArrayList<>(predicate.getAllAttributes().size());
 				for (SDFAttribute attribute : predicate.getAllAttributes()) {
 					toRead.add(getQInformation(attribute));

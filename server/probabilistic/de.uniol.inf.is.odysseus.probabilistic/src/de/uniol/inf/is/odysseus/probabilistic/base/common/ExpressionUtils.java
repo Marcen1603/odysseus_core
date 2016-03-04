@@ -151,7 +151,7 @@ public final class ExpressionUtils {
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    final SDFExpression sdfExpression = new SDFExpression(curExpression.toString(), MEP.getInstance());
+                    final SDFExpression sdfExpression = new SDFExpression(curExpression.toString(), expression.getAttributeResolver(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }
@@ -227,7 +227,7 @@ public final class ExpressionUtils {
                     expressionStack.push(curExpression.toFunction().getArgument(1));
                 }
                 else {
-                    final SDFExpression sdfExpression = new SDFExpression(curExpression.toString(),MEP.getInstance());
+                    final SDFExpression sdfExpression = new SDFExpression(curExpression.toString(), expression.getAttributeResolver(), MEP.getInstance());
                     result.add(sdfExpression);
                 }
             }

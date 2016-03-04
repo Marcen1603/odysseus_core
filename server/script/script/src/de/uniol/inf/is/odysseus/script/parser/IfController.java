@@ -201,7 +201,7 @@ public class IfController {
 				
 				if( canExecuteNow() ) {
 					String stringExpression = optionalIf.get();
-					SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
+					SDFExpression expression = new SDFExpression(stringExpression, null, MEP.getInstance());
 					
 					List<SDFAttribute> attributes = expression.getAllAttributes();
 					List<Object> values = Lists.newArrayList();
@@ -247,7 +247,7 @@ public class IfController {
 	}
 
 	private static void executePrint(ReplacementContainer replacements, String stringExpression) throws OdysseusScriptException {
-		SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
+		SDFExpression expression = new SDFExpression(stringExpression, null, MEP.getInstance());
 
 		List<SDFAttribute> attributes = expression.getAllAttributes();
 		List<Object> values = Lists.newArrayList();

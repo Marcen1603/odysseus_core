@@ -151,7 +151,7 @@ public final class ReplacementContainer {
 				expressionString = parts[2].trim();
 			}
 
-			SDFExpression expression = new SDFExpression(expressionString, MEP.getInstance());
+			SDFExpression expression = new SDFExpression(expressionString, null, MEP.getInstance());
 			
 			List<SDFAttribute> attributes = expression.getAllAttributes();
 			List<Object> values = Lists.newArrayList();

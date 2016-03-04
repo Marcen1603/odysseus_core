@@ -19,20 +19,18 @@ public class ROptimizeJoinPredicate extends AbstractRewriteRule<JoinAO> {
 	}
 
 	@Override
-	public void execute(JoinAO join, RewriteConfiguration config)
-			throws RuleException {
-		SDFExpression originalSDFExpression = ((RelationalExpression<?>) join
-				.getPredicate());
+	public void execute(JoinAO join, RewriteConfiguration config) throws RuleException {
+		SDFExpression originalSDFExpression = ((RelationalExpression<?>) join.getPredicate());
 		IExpression<?> optimizedExpression = BooleanExpressionOptimizer
 				.optimize(originalSDFExpression.getMEPExpression());
-		if(!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {
-			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
-					optimizedExpression.toString(), originalSDFExpression.getExpressionParser()));
+		if (!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {
+			RelationalExpression<?> predicate = new RelationalExpression<>(
+					new SDFExpression(optimizedExpression.toString(), originalSDFExpression.getAttributeResolver(),
+							originalSDFExpression.getExpressionParser()));
 			join.setPredicate(predicate);
 			predicate.initVars(join.getInputSchema(0), join.getInputSchema(1));
-			
-			RestructParameterInfoUtil.updatePredicateParameterInfo(
-					join.getParameterInfos(), join.getPredicate());
+
+			RestructParameterInfoUtil.updatePredicateParameterInfo(join.getParameterInfos(), join.getPredicate());
 			update(join);
 		}
 	}

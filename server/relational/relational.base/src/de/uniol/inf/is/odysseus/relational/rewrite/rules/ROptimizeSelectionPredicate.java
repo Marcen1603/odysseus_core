@@ -26,7 +26,7 @@ public class ROptimizeSelectionPredicate extends AbstractRewriteRule<SelectAO> {
 		IExpression<?> optimizedExpression = BooleanExpressionOptimizer.optimize(originalSDFExpression.getMEPExpression());
 		if(!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {
 			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
-					optimizedExpression.toString(), originalSDFExpression.getExpressionParser()));
+					optimizedExpression.toString(), originalSDFExpression.getAttributeResolver(), originalSDFExpression.getExpressionParser()));
 			sel.setPredicate(predicate);
 			predicate.initVars(sel.getInputSchema());
 			

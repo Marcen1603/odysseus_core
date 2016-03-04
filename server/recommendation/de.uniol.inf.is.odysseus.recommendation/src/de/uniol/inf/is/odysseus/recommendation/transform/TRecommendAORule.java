@@ -67,7 +67,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 			// top n
 			final NamedExpression scoringFunction = new NamedExpression(
 					"scoringFunction", new SDFExpression(
-							predictRatingAttributeName, MEP.getInstance()),null);
+							predictRatingAttributeName, null, MEP.getInstance()),null);
 
 			final TopKAO topKAo = new TopKAO();
 			// topKAo.setName(topKAo.getClass().getSimpleName());
@@ -95,7 +95,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 			// select
 			final SDFExpression sdfExpression = new SDFExpression(
 					predictRatingAttributeName + " > "
-							+ operator.getMinRating(), MEP.getInstance());
+							+ operator.getMinRating(), null, MEP.getInstance());
 
 			@SuppressWarnings("unchecked")
 			final IPredicate<Tuple<?>> predicate = new RelationalExpression<>(

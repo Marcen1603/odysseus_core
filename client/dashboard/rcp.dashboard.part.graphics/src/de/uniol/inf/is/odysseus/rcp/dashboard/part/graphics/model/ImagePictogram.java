@@ -123,7 +123,7 @@ public class ImagePictogram extends AbstractPictogram {
 
 	public void setPredicate(String predicate) {
 		try {
-			this.predicate = new TuplePredicate(new SDFExpression(predicate, MEP.getInstance()));
+			this.predicate = new TuplePredicate(new SDFExpression(predicate, null, MEP.getInstance()));
 			setDirty();
 		} catch (Exception e) {
 			e.printStackTrace();

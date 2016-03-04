@@ -28,7 +28,7 @@ public class RPrepareJoinCNF extends AbstractRewriteRule<JoinAO> {
 						.getMEPExpression()));
 		if(!originalSDFExpression.getMEPExpression().equals(expressionInCNF)) {
 			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
-					expressionInCNF.toString(), originalSDFExpression.getExpressionParser()));
+					expressionInCNF.toString(), originalSDFExpression.getAttributeResolver(), originalSDFExpression.getExpressionParser()));
 			join.setPredicate(predicate);
 			predicate.initVars(join.getInputSchema(0), join.getInputSchema(1));
 			

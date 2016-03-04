@@ -70,7 +70,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 						expression = BooleanExpressionOptimizer.optimize(expression);
 						IExpression<?> cnf = BooleanExpressionOptimizer
 								.toConjunctiveNormalForm(expression);
-						SDFExpression sdfExpression = new SDFExpression(cnf.toString(),
+						SDFExpression sdfExpression = new SDFExpression(cnf.toString(),relationalPredicate.getAttributeResolver(),
 								relationalPredicate.getExpressionParser());
 						join.setPredicate(new RelationalExpression(sdfExpression));
 					}

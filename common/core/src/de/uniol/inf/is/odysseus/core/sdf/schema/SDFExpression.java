@@ -85,7 +85,7 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 	 * @param value
 	 * @throws ParseException
 	 */
-	public SDFExpression(String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
+	protected SDFExpression(String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, null, expressionParser);
 	}
 
@@ -301,7 +301,7 @@ public class SDFExpression implements Serializable, IClone, IPredicate {
 		if (splits.size() >= 0) {
 			List<SDFExpression> ret = new ArrayList<>(splits.size());
 			for (Object e : splits) {
-				ret.add(new SDFExpression(e.toString(), getExpressionParser()));
+				ret.add(new SDFExpression(e.toString(), getAttributeResolver(), getExpressionParser()));
 			}
 			return ret;
 		}

@@ -224,7 +224,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextTop(String textTop) {
 		this.textTop = textTop;
 		if (textTop.startsWith("=")) {
-			topExpression = new RelationalExpression<>(new SDFExpression(textTop.substring(1), MEP.getInstance()));
+			topExpression = new RelationalExpression<>(new SDFExpression(textTop.substring(1), null, MEP.getInstance()));
 		} else {
 			topExpression = null;
 			this.currentTextTop = this.textTop;
@@ -246,7 +246,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextMiddle(String textMiddle) {
 		this.textMiddle = textMiddle;
 		if (textMiddle.startsWith("=")) {
-			middleExpression = new RelationalExpression<>(new SDFExpression(textMiddle.substring(1), MEP.getInstance()));
+			middleExpression = new RelationalExpression<>(new SDFExpression(textMiddle.substring(1), null, MEP.getInstance()));
 		} else {
 			middleExpression = null;
 			this.currentTextMiddle = this.textMiddle;
@@ -270,7 +270,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextBottom(String textBottom) {
 		this.textBottom = textBottom;
 		if (textBottom.startsWith("=")) {
-			bottomExpression = new RelationalExpression<IMetaAttribute>(new SDFExpression(textBottom.substring(1), MEP.getInstance()));
+			bottomExpression = new RelationalExpression<IMetaAttribute>(new SDFExpression(textBottom.substring(1),null, MEP.getInstance()));
 		} else {
 			bottomExpression = null;
 			this.currentTextBottom = this.textBottom;

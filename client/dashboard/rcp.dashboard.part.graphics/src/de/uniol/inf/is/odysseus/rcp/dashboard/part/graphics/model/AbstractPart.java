@@ -31,7 +31,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 
 	private boolean visibile = true;
 	private GraphicsLayer graphicsLayer;
-	private TuplePredicate relevancePredicate = new TuplePredicate(new SDFExpression("true", MEP.getInstance()));
+	private TuplePredicate relevancePredicate = new TuplePredicate(new SDFExpression("true", null, MEP.getInstance()));
 	private String selectedRootName;
 	private boolean dirty = true;
 	private Collection<IPhysicalOperator> roots;
@@ -211,7 +211,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 		if (relevancePredicate == null || relevancePredicate.isEmpty()) {
 			relevancePredicate = "true";
 		}
-		this.relevancePredicate = new TuplePredicate(new SDFExpression(relevancePredicate, MEP.getInstance()));
+		this.relevancePredicate = new TuplePredicate(new SDFExpression(relevancePredicate, null, MEP.getInstance()));
 		setDirty();
 	}
 

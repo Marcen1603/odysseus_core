@@ -118,26 +118,26 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 		// String function = "(1/(" + sigma +
 		// "*sqrt(2*PI())))*E()^((-(n^2))/(2*(" + sigma + ")^2))";
 		String function = "(1/(" + deviation + "*sqrt(2*PI())))*E()^((-1/2)*((x-" + mean + ")/" + deviation + ")^2)";
-		SDFExpression gauss = new SDFExpression(function, MEP.getInstance());
+		SDFExpression gauss = new SDFExpression(function, null, MEP.getInstance());
 		return gauss;
 	}
 
 	private SDFExpression getLogarithmicFunction(double mean, double deviation) {
 		// log must be the natural log (ln) with base e!
 		String function = "(1/(" + deviation + "*sqrt(2*PI())))*(1/x)*E()^((-1/2)*((log(x-" + mean + "))/" + deviation + ")^2)";
-		SDFExpression gauss = new SDFExpression(function, MEP.getInstance());
+		SDFExpression gauss = new SDFExpression(function, null, MEP.getInstance());
 		return gauss;
 	}
 
 	private SDFExpression getExponentialFunction(double alpha) {
 		String function = alpha + "*E()^(-" + alpha + "*x)";
-		SDFExpression gauss = new SDFExpression(function, MEP.getInstance());
+		SDFExpression gauss = new SDFExpression(function, null, MEP.getInstance());
 		return gauss;
 	}
 
 	private SDFExpression getMeanFunction(double size) {
 		String function = "1/" + size;
-		SDFExpression gauss = new SDFExpression(function, MEP.getInstance());
+		SDFExpression gauss = new SDFExpression(function, null, MEP.getInstance());
 		return gauss;
 	}
 
@@ -180,7 +180,7 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 			}		
 			this.expression = getExponentialFunction(options.get("alpha"));
 		} else {
-			this.expression = new SDFExpression(this.function, MEP.getInstance());
+			this.expression = new SDFExpression(this.function, null, MEP.getInstance());
 		}
 
 	}
@@ -198,7 +198,7 @@ public class ConvolutionFilterAO extends AbstractLogicalOperator {
 			return true;
 		} else {
 			try {
-				new SDFExpression(this.function, MEP.getInstance());
+				new SDFExpression(this.function, null, MEP.getInstance());
 			} catch (SDFExpressionParseException e) {
 				e.printStackTrace();
 				return false;

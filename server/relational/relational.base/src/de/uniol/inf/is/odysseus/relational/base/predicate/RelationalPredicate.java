@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -171,8 +173,10 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 			AndOperator and = new AndOperator();
 			and.setArguments(new IExpression<?>[] {
 					expression.getMEPExpression(), expr.getMEPExpression() });
+            IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(), expr.getAttributeResolver().getSchema());
+
 			RelationalPredicate andPredicate = new RelationalPredicate(
-					new SDFExpression(and.toString(), MEP.getInstance()));
+					new SDFExpression(and.toString(), resolver, MEP.getInstance()));
 			return andPredicate;
 		}
 		return super.and(predicate);
@@ -188,10 +192,11 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 			OrOperator or = new OrOperator();
 			or.setArguments(new IExpression<?>[] {
 					expression.getMEPExpression(), expr.getMEPExpression() });
+            IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(), expr.getAttributeResolver().getSchema());
 			// We need to reparse the expression because of multiple instances
 			// of the same variable may exist
 			RelationalPredicate orPredicate = new RelationalPredicate(
-					new SDFExpression(or.toString(), MEP.getInstance()));
+					new SDFExpression(or.toString(), resolver, MEP.getInstance()));
 			return orPredicate;
 		}
 		return super.or(predicate);
@@ -205,7 +210,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		NotOperator not = new NotOperator();
 		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
 		RelationalPredicate notPredicate = new RelationalPredicate(
-				new SDFExpression(not.toString(),MEP.getInstance()));
+				new SDFExpression(not.toString(), expression.getAttributeResolver(), MEP.getInstance()));
 		return notPredicate;
 	}
 
@@ -214,7 +219,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 				null, null, null);
 		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", a);
 		RelationalPredicate pred = new RelationalPredicate(new SDFExpression(
-				"p_out <=0 || isNaN(p_out)", MEP.getInstance()));
+				"p_out <=0 || isNaN(p_out)", null, MEP.getInstance()));
 
 		System.out.println(pred.toString());
 		pred.init(schema, null, false);

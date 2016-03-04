@@ -80,7 +80,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
                 IExpression<?> expression = ((RelationalExpression) sel).getMEPExpression();
                 expression = BooleanExpressionOptimizer.optimize(expression);
                 IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
-                SDFExpression sdfExpression = new SDFExpression(cnf.toString(), relationalPredicate.getExpressionParser());
+                SDFExpression sdfExpression = new SDFExpression(cnf.toString(), relationalPredicate.getAttributeResolver(), relationalPredicate.getExpressionParser());
 
                 preds = (new RelationalExpression(sdfExpression)).conjunctiveSplit();
             }

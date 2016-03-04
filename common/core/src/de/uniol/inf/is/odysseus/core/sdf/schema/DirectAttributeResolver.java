@@ -43,6 +43,13 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		this.schemas.addAll(schemaList);
 	}
 
+	public DirectAttributeResolver(List<SDFSchema> schemaList, List<SDFSchema> schemaList2) {
+		this.schemas.clear();
+		this.schemas.addAll(schemaList);
+		this.schemas.addAll(schemaList2);
+	}
+
+	
 	public DirectAttributeResolver(Set<Variable> vars) {
 		List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
 		for (Variable var : vars) {
