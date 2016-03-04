@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.buffer.MaxTupleListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 
@@ -507,6 +508,14 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				}
 				item.setText(1, layerConf.getName());
 				item.setText(2, "Heatmap Layer");
+			} else if (layerConf instanceof TracemapLayerConfiguration) {
+				if (layer.isActive()) {
+					item.setChecked(true);
+				} else {
+					item.setChecked(false);
+				}
+				item.setText(1, layerConf.getName());
+				item.setText(2, "Tracemap Layer");
 			} else if (layerConf instanceof RasterLayerConfiguration) {
 				if (layer.isActive()) {
 					item.setChecked(true);

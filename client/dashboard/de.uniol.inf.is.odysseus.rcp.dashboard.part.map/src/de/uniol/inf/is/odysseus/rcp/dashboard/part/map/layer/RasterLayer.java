@@ -57,10 +57,10 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	private TileServer tileServer;
 
 	private Stats stats = new Stats();
-	private ScreenManager manager = null;
-	protected ScreenTransformation transformation = null;
-	private Canvas canvas = null;
-	private ImageStyle style = null;
+	protected transient ScreenManager manager = null;
+	protected transient ScreenTransformation transformation = null;
+	private transient Canvas canvas = null;
+	private transient ImageStyle style = null;
 
 	private Point offset = new Point(0, 0);
 	private Point size;

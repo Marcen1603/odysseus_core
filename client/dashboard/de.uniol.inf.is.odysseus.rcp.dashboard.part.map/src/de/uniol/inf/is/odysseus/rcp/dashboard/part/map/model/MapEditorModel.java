@@ -1,8 +1,16 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
@@ -20,10 +28,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfigur
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
-//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.tracemap.TraceLayer;
-//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 
 public class MapEditorModel {
 
@@ -74,11 +80,54 @@ public class MapEditorModel {
 						+ "\\";
 			} else if (configuration instanceof HeatmapLayerConfiguration) {
 				this.layerSettings += addToSettingString((HeatmapLayerConfiguration) configuration, checked) + "\\";
+			} else if (configuration instanceof TracemapLayerConfiguration) {
+				// TODO
 			} else if (configuration instanceof RasterLayerConfiguration) {
 				this.layerSettings += addToSettingString((RasterLayerConfiguration) configuration, checked) + "\\";
 			}
 		}
+
+		// TODO Try with serialization
+
+		// Save only the configuration, not the whole layer
+		List<LayerConfiguration> layerConfigurations = new ArrayList<>();
+		for (ILayer layer : layers) {
+			LayerConfiguration configuration = layer.getConfiguration();
+			layerConfigurations.add(configuration);
+		}
+
+		String test = getSerializedString(layerConfigurations);
+		System.out.println(test);
+		@SuppressWarnings("unused")
+		List<LayerConfiguration> loadedLayerConfigs = getLayersFromSerializedString(test);
+
 		return layerSettings;
+	}
+
+	private String getSerializedString(Object object) {
+		byte[] data = SerializationUtils.serialize((Serializable) object);
+		String encoded = Base64.getEncoder().encodeToString(data);
+		return encoded;
+	}
+
+	private List<LayerConfiguration> getLayersFromSerializedString(String dataString) {
+		try {
+			byte[] data = Base64.getDecoder().decode(dataString);
+			Object listObject = convertFromBytes(data);
+			@SuppressWarnings("unchecked")
+			List<LayerConfiguration> layers = (List<LayerConfiguration>) listObject;
+			return layers;
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
+		try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
+			return in.readObject();
+		}
 	}
 
 	private String addToSettingString(NullConfiguration configuration, String name, boolean checked) {

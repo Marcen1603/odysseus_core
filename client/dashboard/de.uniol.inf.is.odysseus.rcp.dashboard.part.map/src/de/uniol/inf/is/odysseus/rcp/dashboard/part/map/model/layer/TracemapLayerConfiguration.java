@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 
-	private static final long serialVersionUID = -7982545440178333614L;
 
+	private static final long serialVersionUID = -4837762441300776080L;
 	private String query;
 	private HashMap<Integer, RGB> colors; // Save RGB and not color, cause Color
 											// is not serializable

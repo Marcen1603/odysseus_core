@@ -34,6 +34,10 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	private double latNE;
 	private double lngNE;
 	
+	public HeatmapLayerConfiguration() {
+		
+	}
+	
 	public HeatmapLayerConfiguration(HeatmapLayerConfiguration toCopy) {
 		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
 		super(toCopy.getName());

@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.style.Style;
 
-public abstract class AbstractLayer<C extends LayerConfiguration> implements ILayer {
+public abstract class AbstractLayer<C extends LayerConfiguration> implements ILayer, Serializable {
 
     private static final long serialVersionUID = -8420177483408915474L;
 	protected String name;

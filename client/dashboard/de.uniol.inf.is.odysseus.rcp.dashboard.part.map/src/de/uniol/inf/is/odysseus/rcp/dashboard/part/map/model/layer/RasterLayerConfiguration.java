@@ -4,9 +4,6 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class RasterLayerConfiguration extends LayerConfiguration {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1186631268002859663L;
 	
 	private String url = null;
@@ -20,6 +17,10 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 	private Envelope coverageGeographic = null;
 	private Envelope coverageProjected = null;
 
+	public RasterLayerConfiguration() {
+		
+	}
+	
 	public RasterLayerConfiguration(String layerName) {
 		super(layerName);
 	}

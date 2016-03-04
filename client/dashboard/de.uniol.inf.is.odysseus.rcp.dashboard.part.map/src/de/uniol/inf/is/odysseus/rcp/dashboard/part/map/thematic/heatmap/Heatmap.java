@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerC
 public class Heatmap extends RasterLayer {
 
 	private static final long serialVersionUID = -4394403246757791617L;
-	private ScreenManager screenManager;
 	private HeatmapLayerConfiguration config;
 	private Envelope heatMapArea;
 	private Envelope zoomEnv;
@@ -57,7 +56,7 @@ public class Heatmap extends RasterLayer {
 
 	@Override
 	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
-		this.screenManager = screenManager;
+		super.init(screenManager, schema, attribute);
 	}
 
 	@Override
@@ -182,7 +181,7 @@ public class Heatmap extends RasterLayer {
 			// Create heatMapArea with the given tuples
 			// (We could let this out and give an area by the user, but
 			// this seems to be more user-friendly)
-			ScreenTransformation transformation = screenManager.getTransformation();
+			ScreenTransformation transformation = manager.getTransformation();
 			int srid = config.getSrid();
 			if (config.isAutoPosition()) {
 				// If the user wants the layer to be auto-positioned
@@ -192,7 +191,7 @@ public class Heatmap extends RasterLayer {
 
 					// Get the data from the Tuple (Where it is and value)
 					Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-					
+
 					Point point = null;
 					if (tuple.getAttribute(0) instanceof GeometryCollection) {
 						GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
@@ -241,7 +240,7 @@ public class Heatmap extends RasterLayer {
 				Point point = null;
 				if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof GeometryCollection) {
 					GeometryCollection geoColl = (GeometryCollection) tuple
-						.getAttribute(config.getGeometricAttributePosition());
+							.getAttribute(config.getGeometricAttributePosition());
 					point = geoColl.getCentroid();
 				} else if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof Point) {
 					point = (Point) tuple.getAttribute(config.getGeometricAttributePosition());
@@ -316,7 +315,7 @@ public class Heatmap extends RasterLayer {
 				// Create heatMapArea with the given tuples
 				// (We could let this out and give an area by the user, but
 				// this seems to be more user-friendly)
-				ScreenTransformation transformation = screenManager.getTransformation();
+				ScreenTransformation transformation = manager.getTransformation();
 				int srid = config.getSrid();
 				if (config.isAutoPosition()) {
 					// If the user wants the layer to be auto-positioned
@@ -575,8 +574,8 @@ public class Heatmap extends RasterLayer {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		CoordinateTransform ct = screenManager.getTransformation().getCoordinateTransform(config.getSrid(),
-				screenManager.getSRID());
+		CoordinateTransform ct = manager.getTransformation().getCoordinateTransform(config.getSrid(),
+				manager.getSRID());
 		Envelope geoEnv = config.getCoverage();
 
 		if (zoomEnv != null && zoomEnv.getMaxX() != -1 && zoomEnv.getMaxY() != -1) {

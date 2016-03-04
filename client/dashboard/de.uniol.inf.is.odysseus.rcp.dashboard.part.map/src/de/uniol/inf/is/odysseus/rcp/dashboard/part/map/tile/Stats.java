@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.tile;
 
-public class Stats {
+import java.io.Serializable;
+
+public class Stats implements Serializable {
     
+	private static final long serialVersionUID = -5201181117048315573L;
 	public int tileCount;
     public long dt;
     
