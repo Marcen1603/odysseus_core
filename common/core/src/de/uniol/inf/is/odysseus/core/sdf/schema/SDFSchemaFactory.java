@@ -237,6 +237,23 @@ public class SDFSchemaFactory {
 	}
 
 	/**
+	 * This method creates a new SDFSchema where contraints are added
+	 * 
+	 * @param constraints
+	 *            A collection of constraints
+	 * @param inputSchema
+	 *            the input schema from which the new schema should be derived
+	 * @return
+	 */
+	static public SDFSchema createNewWithContraints(
+			Collection<SDFConstraint> constraints, SDFSchema inputSchema) {
+		SDFSchema output = inputSchema.clone();
+		output.setContraints(constraints);
+		return output;
+	}
+
+	
+	/**
 	 * Create a new schema by adding all attributes of schema2 into schema
 	 * 
 	 * @param schema1

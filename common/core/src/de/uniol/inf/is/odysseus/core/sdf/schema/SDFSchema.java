@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -206,6 +207,14 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	void setContraints(Map<String, SDFConstraint> constraints) {
 		this.constraints = constraints;
 	}
+	
+	void setContraints(Collection<SDFConstraint> constraints) {
+		this.constraints = new HashMap<String, SDFConstraint>();
+		for (SDFConstraint c:constraints){
+			this.constraints.put(c.getURI(), c);
+		}
+	}
+	
 
 	public Collection<SDFConstraint> getConstraints() {
 		if (constraints != null) {

@@ -16,12 +16,13 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -46,10 +47,10 @@ public class DateHandler extends AbstractDataHandler<Date> {
 
 	@Override
 	public IDataHandler<Date> getInstance(SDFSchema schema) {
-		SDFConstraint dateFormat = schema.getConstraint(SDFConstraint.BASE_TIME_UNIT);
+		SDFConstraint dateFormat = schema.getConstraint(SDFConstraint.DATE_FORMAT);
 		DateTimeFormatter df = null;
 		if (dateFormat != null){
-			df = DateTimeFormatter.ofPattern ((String)dateFormat.getValue());
+			df = DateTimeFormatter.ofPattern ((String)dateFormat.getValue(), Locale.getDefault());
 		}
 		DateHandler dh = new DateHandler();
 		dh.df = df;
@@ -69,8 +70,8 @@ public class DateHandler extends AbstractDataHandler<Date> {
             return null;
         }
         if (df != null){
-        	LocalDateTime ldt = LocalDateTime.parse(string, df);
-        	return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        	LocalDate ldt = LocalDate.parse(string, df);
+        	return Date.from(ldt.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
         }else{
         	return new Date(Long.parseLong(string));
         }

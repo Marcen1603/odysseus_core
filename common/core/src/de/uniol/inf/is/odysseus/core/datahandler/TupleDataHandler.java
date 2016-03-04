@@ -142,7 +142,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 							this.dataHandlers[i].readData(nextElem));
 			} catch (Exception e) {
 				logger.warn("Error parsing " + nextElem
-							+ " with no data handler defined " + e.getMessage());
+							+ " with data handler "+ dataHandlers[i] +". Cause: " + e.getMessage());
 				tuple.setAttribute(i, (Object) null);
 			}
 		}
@@ -355,6 +355,9 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			} else {
 				subSchema = SDFSchemaFactory
 						.createNewTupleSchema("", attribute);
+				if (schema.getConstraints() != null){
+					subSchema = SDFSchemaFactory.createNewWithContraints(schema.getConstraints(), subSchema);
+				}
 			}
 
 			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri,
