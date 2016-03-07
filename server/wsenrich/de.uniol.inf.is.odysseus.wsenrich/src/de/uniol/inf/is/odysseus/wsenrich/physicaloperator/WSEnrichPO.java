@@ -8,6 +8,7 @@ import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
@@ -16,9 +17,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
-import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IConnectionForWebservices;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IKeyFinder;
@@ -55,6 +56,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 			String parsingMethod, boolean outerJoin, boolean keyValueOutput,
 			boolean multiTupleOutput, int[] uniqueKey,
 			IDataMergeFunction<Tuple<M>, M> dataMergeFunction,
+			ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
 			IMetadataMergeFunction<M> metaMergeFunction,
 			IConnectionForWebservices connection,
 			IRequestBuilder requestBuilder,
@@ -62,7 +64,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 			ISoapMessageCreator soapMessageCreator,
 			IMessageManipulator soapMessageManipulator, ICache cacheManager) {
 
-		super(cacheManager, dataMergeFunction, metaMergeFunction, uniqueKey);
+		super(cacheManager, dataMergeFunction, dataLeftMergeFunction, metaMergeFunction, uniqueKey);
 		this.serviceMethod = serviceMethod;
 		this.method = method;
 		this.url = url;

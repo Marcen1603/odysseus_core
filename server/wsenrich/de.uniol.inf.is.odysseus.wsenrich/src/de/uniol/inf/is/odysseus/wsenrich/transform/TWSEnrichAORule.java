@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.metadata.UseLeftInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -45,6 +47,11 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = 
 				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
 		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
+		
+		ILeftMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataLeftMergeFunction = null;
+		if(logical.getOuterJoin()) {
+			dataLeftMergeFunction = new RelationalLeftMergeFunction<>(logical.getInputSchema().size(), logical.getOutputSchema().size() - logical.getInputSchema().size(), logical.getOutputSchema().size());
+		}
 		
 		ISoapMessageCreator soapMessageCreator;
 		IMessageManipulator soapMessageManipulator;
@@ -85,6 +92,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			logical.getMultiTupleOutput(),
 			logical.getUniqueKeysAsArray(),
 			dataMergeFunction,
+			dataLeftMergeFunction,
 			metaMerge,
 			connection,
 			requestBuilder,
