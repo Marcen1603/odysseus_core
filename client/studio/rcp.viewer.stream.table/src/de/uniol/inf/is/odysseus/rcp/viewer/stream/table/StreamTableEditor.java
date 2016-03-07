@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -306,11 +307,13 @@ public class StreamTableEditor implements IStreamEditorType {
         clearButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
-        		synchronized( tuples ) {
-        			tuples.clear();
+        		if( MessageDialog.openConfirm(parent.getShell(), "Clear table data", "Are you sure to clear the table?")) {
+        			synchronized( tuples ) {
+        				tuples.clear();
+        			}
+        			
+        			refresh();
         		}
-        		
-        		refresh();
         	}
         });
 
