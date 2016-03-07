@@ -26,25 +26,37 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements ILeftMergeFunction<Tuple<M>, M> {
 	
-	protected int schemaSize;
+	protected int resultSchemaSize;
+	protected int leftSchemaSize;
+	protected int rightSchemaSize;
 
-	protected SDFSchema leftSchema;
+	/*protected SDFSchema leftSchema;
 	protected SDFSchema rightSchema;
-	protected SDFSchema resultSchema;
+	protected SDFSchema resultSchema;*/
 
 	
+	public RelationalLeftMergeFunction(int leftSchemaSize, int rightSchemaSize, int resultSchemaSize) {
+		this.resultSchemaSize = resultSchemaSize;
+		this.leftSchemaSize = leftSchemaSize;
+		this.rightSchemaSize = rightSchemaSize;
+	}
+	
 	public RelationalLeftMergeFunction(SDFSchema leftSchema, SDFSchema rightSchema, SDFSchema resultSchema){
-		this.schemaSize = resultSchema.size();
-		this.leftSchema = leftSchema;
+		this.resultSchemaSize = resultSchema.size();
+		this.leftSchemaSize = leftSchema.size();
+		this.rightSchemaSize = rightSchema.size();
+		/*this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
-		this.resultSchema = resultSchema;
+		this.resultSchema = resultSchema;*/
 	}
 	
 	public RelationalLeftMergeFunction(RelationalLeftMergeFunction<M> mf){
-		this.schemaSize = resultSchema.size();
-		this.leftSchema = mf.leftSchema.clone();
+		this.resultSchemaSize = mf.resultSchemaSize;
+		this.leftSchemaSize = mf.leftSchemaSize;
+		this.rightSchemaSize = mf.rightSchemaSize;
+		/*this.leftSchema = mf.leftSchema.clone();
 		this.rightSchema = mf.rightSchema.clone();
-		this.resultSchema = mf.resultSchema.clone();
+		this.resultSchema = mf.resultSchema.clone();*/
 	}
 
 	
@@ -86,11 +98,11 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
     public Tuple<M> createLeftFilledUp(Tuple<M> original){
 		// copy the original element, because otherwise the hashmap
 		// in the left join will not work any more
-		Tuple<M> retVal = new Tuple<M>(this.schemaSize, false);
+		Tuple<M> retVal = new Tuple<M>(this.resultSchemaSize, false);
 		retVal.setMetadata(original.getMetadata());
 		
 		// add attribute values from left
-		for(int i = 0; i<this.leftSchema.size(); i++){
+		for(int i = 0; i<this.leftSchemaSize; i++){
 			retVal.setAttribute(i, original.getAttribute(i));
 		}
 		
