@@ -41,6 +41,17 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 		this.metaMergeFunction = metaMergeFunction;
 		this.uniqueKeys = uniqueKeys;
 	}
+	
+	public AbstractEnrichPO(ICache cache,
+			IDataMergeFunction<T, M> dataMergeFunction,
+			IMetadataMergeFunction<M> metaMergeFunction, int[] uniqueKeys) {
+		super();
+		this.cache = cache;
+		this.dataMergeFunction = dataMergeFunction;
+		this.dataLeftMergeFunction = null;
+		this.metaMergeFunction = metaMergeFunction;
+		this.uniqueKeys = uniqueKeys;
+	}
 
 	public AbstractEnrichPO(AbstractEnrichPO<T, M> abstractEnrichPO) {
 		super(abstractEnrichPO);
