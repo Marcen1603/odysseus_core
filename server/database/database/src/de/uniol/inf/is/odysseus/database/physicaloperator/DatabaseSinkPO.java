@@ -420,7 +420,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 				return true;
 			}
 		} catch (SQLException e) {
-			LOG.error(e.getMessage(), e);
+			LOG.error(e.getMessage(), e, jdbcConnection, connection);
 
 			// INFO.error("ERROR WRTING TO DATABASE " + preparedStatement,
 			// e.getNextException());
