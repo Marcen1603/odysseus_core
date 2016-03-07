@@ -15,12 +15,14 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.metadata.UseLeftInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.dbenrich.IRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
 import de.uniol.inf.is.odysseus.dbenrich.cache.DBRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.logicaloperator.DBEnrichAO;
 import de.uniol.inf.is.odysseus.dbenrich.physicaloperator.DBEnrichPO;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -41,12 +43,17 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = new RelationalMergeFunction<ITimeInterval>(
 				logical.getOutputSchema().size());
+		
+		ILeftMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataLeftMergeFunction = null;
+		if(logical.getOuterJoin()) {
+			dataLeftMergeFunction = new RelationalLeftMergeFunction<>(logical.getInputSchema().size(), logical.getOutputSchema().size() - logical.getInputSchema().size(), logical.getOutputSchema().size());
+		}
 
 		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
 		IRetrievalStrategy<ComplexParameterKey, List<IStreamObject<?>>> retrievalStrategy = new DBRetrievalStrategy(
 				logical.getConnectionName(), logical.getQuery());
 		ICache cache = null;
-		if (logical.getCacheSize() > 0) {
+		if (logical.getCache() && logical.getCacheSize() > 0) {
 			ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<Object, CacheEntry>(
 					logical.getCacheSize() + 1);
 			IRemovalStrategy removalStrategy = RemovalStrategyRegistry
@@ -59,7 +66,7 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 		// Maybe check, if operator is already existent (when is it 100% equal?)
 		DBEnrichPO<ITimeInterval> physical = new DBEnrichPO<ITimeInterval>(
 				logical.getConnectionName(), logical.getQuery(),
-				logical.getAttributes(), dataMergeFunction, metaMerge,
+				logical.getAttributes(), dataMergeFunction, dataLeftMergeFunction, metaMerge,
 				retrievalStrategy, cache, uniqueKeys);
 
 		physical.setOutputSchema(logical.getOutputSchema());

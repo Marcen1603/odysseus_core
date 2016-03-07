@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.dbenrich.IRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
 
@@ -35,10 +36,11 @@ public class DBEnrichPO<T extends IMetaAttribute> extends
 			String query,
 			List<String> variables,
 			IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+			ILeftMergeFunction<Tuple<T>, T> dataLeftMergeFunction,
 			IMetadataMergeFunction<T> metaMergeFunction,
 			IRetrievalStrategy<ComplexParameterKey, List<IStreamObject<?>>> retrievalStrategie,
 			ICache cache, int[] uniqueKeys) {
-		super(cache, dataMergeFunction, metaMergeFunction, uniqueKeys);
+		super(cache, dataMergeFunction, dataLeftMergeFunction, metaMergeFunction, uniqueKeys);
 		this.connectionName = connectionName;
 		this.query = query;
 		this.variables = variables;

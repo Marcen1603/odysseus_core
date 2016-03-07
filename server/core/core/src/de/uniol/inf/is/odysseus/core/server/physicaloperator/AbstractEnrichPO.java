@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,27 +13,31 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 
 abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
-		extends AbstractPipe<T, T> {
+		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider {
 
 	static final Logger logger = LoggerFactory
 			.getLogger(AbstractEnrichPO.class);
 
 	private final ICache cache;
 	private final IDataMergeFunction<T, M> dataMergeFunction;
+	private final ILeftMergeFunction<T, M> dataLeftMergeFunction;
 	private final IMetadataMergeFunction<M> metaMergeFunction;
 	private final int[] uniqueKeys;
 
 	public AbstractEnrichPO(ICache cache,
 			IDataMergeFunction<T, M> dataMergeFunction,
+			ILeftMergeFunction<T, M> dataLeftMergeFunction,
 			IMetadataMergeFunction<M> metaMergeFunction, int[] uniqueKeys) {
 		super();
 		this.cache = cache;
 		this.dataMergeFunction = dataMergeFunction;
+		this.dataLeftMergeFunction = dataLeftMergeFunction;
 		this.metaMergeFunction = metaMergeFunction;
 		this.uniqueKeys = uniqueKeys;
 	}
@@ -40,6 +46,7 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 		super(abstractEnrichPO);
 		this.cache = abstractEnrichPO.cache;
 		this.dataMergeFunction = abstractEnrichPO.dataMergeFunction;
+		this.dataLeftMergeFunction = abstractEnrichPO.dataLeftMergeFunction;
 		this.metaMergeFunction = abstractEnrichPO.metaMergeFunction;
 		this.uniqueKeys = abstractEnrichPO.uniqueKeys;
 	}
@@ -71,11 +78,11 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 		}
 
 		// No cache or nothing found in cache
-		if (result == null) {
+		if (result == null || result.isEmpty()) {
 			result = internal_process(object);
 		}
 
-		if (result != null) {
+		if (result != null && !result.isEmpty()) {
 			// Store into cache
 			if (cache != null) {
 				cache.put(key, result);
@@ -89,7 +96,12 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 				transfer(output);
 			}
 		}else{
-			logger.warn("Web Service returns empty result for input "+object);
+			if(dataLeftMergeFunction == null) {
+				logger.warn("Empty result for input "+object);
+			} else {
+				T output  = dataLeftMergeFunction.createLeftFilledUp(object);
+				transfer(output);
+			}
 		}
 		
 	}
@@ -138,4 +150,15 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 
 	abstract protected void internal_process_close();
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider#getKeyValues()
+	 */
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> result = new HashMap<>();
+		result.put("Cache", "" + cache);
+		result.put("Left Merge Function", "" + dataLeftMergeFunction);
+		result.put("Unique Keys", "" + uniqueKeys);
+		return result;
+	}
 }

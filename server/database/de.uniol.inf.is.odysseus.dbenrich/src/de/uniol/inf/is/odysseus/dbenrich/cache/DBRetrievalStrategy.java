@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -24,6 +27,8 @@ import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 public class DBRetrievalStrategy implements
 		IRetrievalStrategy<ComplexParameterKey, List<IStreamObject<?>>> {
 
+	private final Logger LOG = LoggerFactory.getLogger(DBRetrievalStrategy.class);
+	
 	private String connectionName;
 	private String query;
 
@@ -116,9 +121,8 @@ public class DBRetrievalStrategy implements
 					dbTuples.add(dbTuple);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(
-					"Could not retrieve entry from Database", e);
+			LOG.warn("Could not retrieve entry from Database", e);
+			// return empty result list on failure and do not throw exception
 		}
 
 		return dbTuples;
