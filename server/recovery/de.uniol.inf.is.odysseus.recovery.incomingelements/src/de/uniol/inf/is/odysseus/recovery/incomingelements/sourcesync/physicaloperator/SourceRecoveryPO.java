@@ -60,6 +60,18 @@ import de.uniol.inf.is.odysseus.trust.Trust;
 public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>> extends SourceBackupPO<StreamObject> {
 
 	/**
+	 * The {@link TransferMode} indicates which elements will be transferred:
+	 * from BaDaSt or from the original source. In {@link #SWITCH}, no elements
+	 * will be transferred (preparation for {@link #SOURCE}).
+	 * 
+	 * @author Michael
+	 *
+	 */
+	private enum TransferMode {
+		NA, BADAST, SWITCH, SOURCE;
+	}
+
+	/**
 	 * Compares the start time stamps
 	 */
 	private class Comparator implements java.util.Comparator<StreamObject> {
@@ -97,7 +109,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		 * Call {@link SourceRecoveryPO#delta(IStreamObject, IStreamObject)}
 		 * every DELAY milliseconds.
 		 */
-		private static final long DELAY = 30000;
+		private static final long DELAY = 10000;
 
 		/**
 		 * {@link SourceRecoveryPO#delta(IStreamObject, IStreamObject)} should
@@ -122,9 +134,12 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		@SuppressWarnings("unchecked")
 		private void transfer_intern(IStreamable object, int port) {
 			synchronized (SourceRecoveryPO.this.lastSeenElement) {
-				if (!SourceRecoveryPO.this.mTransferFromBaDaSt) {
+				if (SourceRecoveryPO.this.mTransferMode == TransferMode.SWITCH
+						|| SourceRecoveryPO.this.mTransferMode == TransferMode.SOURCE) {
+					return;
+				} else if (SourceRecoveryPO.this.mTransferMode == TransferMode.NA) {
 					if (object.equals(SourceRecoveryPO.this.loadedLastSeenElement)) {
-						SourceRecoveryPO.this.mTransferFromBaDaSt = true;
+						SourceRecoveryPO.this.mTransferMode = TransferMode.BADAST;
 					}
 					return;
 				} else if (object.isPunctuation()) {
@@ -157,9 +172,12 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 						// recovery from the original source. Decrease trust
 						decreaseTrust(strObj);
 						SourceRecoveryPO.this.transfer(strObj, port);
-					} else if (this.mTimeToEvaluateDelta
-							&& SourceRecoveryPO.this.mLastSeenElementsFromSource.isEmpty()) {
-						evaluate(SourceRecoveryPO.this.mLastSeenElementsFromSource, strObj, port);
+					} else if (this.mTimeToEvaluateDelta) {
+						synchronized (SourceRecoveryPO.this.mLastSeenElementsFromSource) {
+							if (!SourceRecoveryPO.this.mLastSeenElementsFromSource.isEmpty()) {
+								evaluate(SourceRecoveryPO.this.mLastSeenElementsFromSource, strObj, port);
+							}
+						}
 					} else {
 						SourceRecoveryPO.this.transfer(strObj, port);
 					}
@@ -204,7 +222,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		 * original source until we see the element from (1), (4) transfer from
 		 * the original source (the element from (1) should be the first to
 		 * transfer), (5) stop consuming from BaDaSt.
-		 * 
+		 *
 		 * @param objectsFromSource
 		 *            The last elements from the original source, which has been
 		 *            recognized.
@@ -213,7 +231,6 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		 * @param port
 		 *            Port number at which {@code objectFromBaDaSt} arrived.
 		 */
-
 		private void evaluate(ArrayList<StreamObject> objectsFromSource, StreamObject objectFromBaDaSt, int port) {
 			Comparator comp = new Comparator();
 			int delta = comp.compare(objectsFromSource.get(0), objectFromBaDaSt);
@@ -230,6 +247,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 					public void run() {
 						RecoveryTransferHandler.this.mTimeToEvaluateDelta = true;
 					}
+
 				}, RecoveryTransferHandler.DELAY);
 				return;
 			}
@@ -247,13 +265,12 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				 * from that element on, (3) transfer new elements from the
 				 * original source, (4) stop consuming from BaDaSt.
 				 */
-				SourceRecoveryPO.this.mTransferFromBaDaSt = false;
+				SourceRecoveryPO.this.mRecoverySubscriberController.interrupt();
 				int indexOfFirstToTransfer = Collections.binarySearch(objectsFromSource, objectFromBaDaSt, comp);
 				for (int i = indexOfFirstToTransfer; i < objectsFromSource.size(); i++) {
 					SourceRecoveryPO.this.transfer(objectsFromSource.get(i), port);
 				}
-				SourceRecoveryPO.this.mTransferFromSource = true;
-				SourceRecoveryPO.this.mRecoverySubscriberController.interrupt();
+				SourceRecoveryPO.this.mTransferMode = TransferMode.SOURCE;
 				objectsFromSource.clear();
 
 			} else /* delta < 0 */ {
@@ -270,7 +287,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 				 * consuming from BaDaSt.
 				 */
 				SourceRecoveryPO.this.mFirstNotTransferredElementFromBaDaSt = Optional.fromNullable(objectFromBaDaSt);
-				SourceRecoveryPO.this.mTransferFromBaDaSt = false;
+				SourceRecoveryPO.this.mTransferMode = TransferMode.SWITCH;
 				// (3) and (4) is done in SourceRecoveryPO.process_next
 				SourceRecoveryPO.this.mRecoverySubscriberController.interrupt();
 			}
@@ -356,7 +373,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	/**
 	 * Max. number of elements from the original source to buffer.
 	 */
-	private static final int BUFFRSIZE = 1000;
+	private static final int BUFFRSIZE = 1000000;
 
 	/**
 	 * The last elements from the original source, which has been recognized.
@@ -374,14 +391,11 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	Optional<StreamObject> mFirstElementFromSourceAfterRestart = Optional.absent();
 
 	/**
-	 * True, if elements from BaDaSt shall be transferred.
+	 * The {@link TransferMode} indicates which elements will be transferred:
+	 * from BaDaSt or from the original source. In {@link TransferMode#SWITCH}, no elements
+	 * will be transferred (preparation for {@link TransferMode#SOURCE}).
 	 */
-	boolean mTransferFromBaDaSt = false;
-
-	/**
-	 * True, if elements from the original source shall be transferred.
-	 */
-	boolean mTransferFromSource = false;
+	TransferMode mTransferMode = TransferMode.NA;
 
 	/**
 	 * Creates the protocol handler to use.
@@ -448,39 +462,44 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	@Override
 	protected void process_next(StreamObject object, int port) {
 		synchronized (this.lastSeenElement) {
+			// synchronized (this.mFirstElementFromSourceAfterRestart) {
 			if (!this.mFirstElementFromSourceAfterRestart.isPresent()) {
 				// First element, which is for sure not a duplicate
 				this.mFirstElementFromSourceAfterRestart = Optional.of(object);
 			}
-			if (this.mTransferFromSource) {
+
+			if (this.mTransferMode == TransferMode.SOURCE) {
 				// (4) transfer from the original source (the element from (1)
 				// should be the first to transfer)
 				this.transfer(object, port);
-			} else if (object.equals(this.mFirstNotTransferredElementFromBaDaSt)) {
+			} else if (this.mTransferMode == TransferMode.SWITCH
+					&& object.equals(this.mFirstNotTransferredElementFromBaDaSt)) {
 				// (3) watch incoming elements from the original source until we
 				// see
 				// the element from (1)
 				this.transfer(object, port);
-				this.mTransferFromSource = true;
+				this.mTransferMode = TransferMode.SOURCE;
 			} else {
 				// Do not transfer, because elements from publish subscribe
 				// system
 				// will be transfered with another transfer handler.
-				if (this.mLastSeenElementsFromSource.size() == BUFFRSIZE) {
-					this.mLastSeenElementsFromSource.clear();
+				synchronized (this.mLastSeenElementsFromSource) {
+					if (this.mLastSeenElementsFromSource.size() == BUFFRSIZE) {
+						this.mLastSeenElementsFromSource.clear();
+					}
+					this.mLastSeenElementsFromSource.add(object);
 				}
-				this.mLastSeenElementsFromSource.add(object);
 			}
 		}
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (this.mTransferFromSource) {
-			// (4) transfer from the original source (the element from (1)
-			// should be the first to transfer)
-			this.sendPunctuation(punctuation, port);
-		}
+		// if (this.mTransferFromSource) {
+		// // (4) transfer from the original source (the element from (1)
+		// // should be the first to transfer)
+		// this.sendPunctuation(punctuation, port);
+		// }
 
 		// Otherwise do not transfer, because elements from publish subscribe
 		// system will be transfered with another transfer handler.

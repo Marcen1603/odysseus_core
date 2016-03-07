@@ -199,8 +199,8 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 	
 	@Override
 	public void transfer(StreamObject object, int sourceOutPort) {
+		super.transfer(object, sourceOutPort);
 		synchronized (this.lastSeenElement) {
-			super.transfer(object, sourceOutPort);
 			this.lastSeenElement = object;
 		}
 	}
