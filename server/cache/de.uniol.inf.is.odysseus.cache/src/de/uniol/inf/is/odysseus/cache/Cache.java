@@ -154,4 +154,24 @@ public class Cache implements ICache {
 		return this.cacheremove;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append(" (");
+		sb.append("cache store: ").append(cacheStore).append(", ");
+		sb.append("actual size: ").append(actualSize).append(", ");
+		sb.append("max size: ").append(maxSize).append(", ");
+		sb.append("cache hit: ").append(cachehit).append(", ");
+		sb.append("cache insert: ").append(cacheinsert).append(", ");
+		sb.append("cache miss: ").append(cachemiss).append(", ");
+		sb.append("cache remove: ").append(cacheremove).append(", ");
+		sb.append("expiration time: ").append(expirationTime).append(", ");
+		sb.append("removal strategy: ").append(removalStrategy);
+		sb.append(")");
+		return sb.toString();
+	}
 }
