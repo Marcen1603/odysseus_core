@@ -51,20 +51,22 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	public void execute(final AggregationAO operator, final TransformationConfiguration config) throws RuleException {
 		final List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> nonIncrementalFunctions = new ArrayList<>();
 		final List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> incrementalFunctions = new ArrayList<>();
-		
+
 		final List<IAggregationFunction> functions = operator.getAggregations();
 		for (final IAggregationFunction f : functions) {
-			if (f instanceof INonIncrementalAggregationFunction) {
+			if (!f.isIncremental()) {
 				nonIncrementalFunctions
 						.add((INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f);
-			} else if (f instanceof IIncrementalAggregationFunction) {
+			} else {
 				incrementalFunctions.add((IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f);
 			}
 		}
 
 		final boolean evaluateAtOutdatingElements = operator.isEvaluateAtOutdatingElements();
+		final boolean evaluateBeforeRemovingOutdatingElements = operator.isEvaluateBeforeRemovingOutdatingElements();
 		final boolean evaluateAtNewElement = operator.isEvaluateAtNewElement();
 		final boolean evaluateAtDone = operator.isEvaluateAtDone();
+		final boolean outputOnlyChanges = operator.isOutputOnlyChanges();
 		final SDFSchema outputSchema = operator.getOutputSchema();
 		final SDFSchema inputSchema = operator.getInputSchema();
 		final List<SDFAttribute> groupingAttributes = operator.getGroupingAttributes();
@@ -74,8 +76,8 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 		}
 
 		final AggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new AggregationPO<>(nonIncrementalFunctions,
-				incrementalFunctions, evaluateAtOutdatingElements, evaluateAtNewElement, evaluateAtDone, outputSchema,
-				groupingAttributesIndices);
+				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone,
+				outputOnlyChanges, outputSchema, groupingAttributesIndices);
 		defaultExecute(operator, po, config, true, true);
 	}
 

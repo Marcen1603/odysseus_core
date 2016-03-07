@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 public class IndexedByEndTsAggregationSweepArea<M extends ITimeInterval, T extends Tuple<M>>
 		implements IAggregationSweepArea<M, T> {
 
+	private static final long serialVersionUID = -1584822247541286843L;
+
 	private final Multimap<PointInTime, T> elements = ArrayListMultimap.create();
 
 	/*

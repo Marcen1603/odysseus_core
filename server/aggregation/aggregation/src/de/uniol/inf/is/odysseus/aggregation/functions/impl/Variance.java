@@ -15,53 +15,86 @@
  */
 package de.uniol.inf.is.odysseus.aggregation.functions.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
+import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
+ * Incremental calculation of mean an variance.
+ * 
+ * <p>
+ * TODO: Use an algo that is more numerical stable? See wiki link.
+ * 
+ * @see <a href="https://en.wikipedia.org/w/index.php?title=
+ *      Algorithms_for_calculating_variance&oldid=707745388#Online_algorithm">
+ *      https://en.wikipedia.org/w/index.php?title=
+ *      Algorithms_for_calculating_variance&oldid=707745388#Online_algorithm</a>
+ * 
+ * 
+ * 
  * @author Cornelius Ludmann
  *
  */
-public class Avg<M extends ITimeInterval, T extends Tuple<M>> extends Sum<M, T> {
+public class Variance<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T>
+		implements IAggregationFunctionFactory {
 
-	private static final long serialVersionUID = 7055260833309113286L;
-	protected long count = 0l;
+	private static final long serialVersionUID = -5765741315313917471L;
 
-	public Avg(final Avg<M, T> other) {
+	private long n;
+	private final double[] mean;
+	private final double[] m2;
+
+	public Variance(final Variance<M, T> other) {
 		super(other);
+		this.n = 0;
+		this.mean = new double[other.mean.length];
+		Arrays.fill(mean, 0.0);
+		this.m2 = new double[other.m2.length];
+		Arrays.fill(m2, 0.0);
 	}
 
-	public Avg() {
+	public Variance() {
 		super();
+		n = 0;
+		mean = null;
+		m2 = null;
 	}
 
-	public Avg(final int[] attributes, final String[] outputNames) {
+	public Variance(final int[] attributes, final String[] outputNames) {
 		super(attributes, outputNames);
+		this.n = 0;
+		this.mean = new double[attributes.length];
+		Arrays.fill(mean, 0.0);
+		this.m2 = new double[attributes.length];
+		Arrays.fill(m2, 0.0);
+		if (outputNames.length != attributes.length) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
 	}
 
-	public Avg(final int inputAttributesLength, final String[] outputNames) {
-		super(inputAttributesLength, outputNames);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.aggregation.functions.
-	 * IIncrementalAggregationFunction#addNewAndEvaluate(de.uniol.inf.is.
-	 * odysseus.core.collection.Tuple)
-	 */
-	@Override
-	public Object[] addNewAndEvaluate(final T newElement) {
-		addNew(newElement);
-		return evalute(newElement, newElement.getMetadata().getStart());
+	public Variance(final int inputAttributesLength, final String[] outputNames) {
+		super(null, outputNames);
+		this.n = 0;
+		this.mean = new double[inputAttributesLength];
+		Arrays.fill(mean, 0.0);
+		this.m2 = new double[inputAttributesLength];
+		Arrays.fill(m2, 0.0);
+		if (outputNames.length != inputAttributesLength) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
 	}
 
 	/*
@@ -73,23 +106,19 @@ public class Avg<M extends ITimeInterval, T extends Tuple<M>> extends Sum<M, T> 
 	 */
 	@Override
 	public void addNew(final T newElement) {
-		super.addNew(newElement);
-		++this.count;
-	}
+		final Object[] attr = getAttributes(newElement);
+		++n;
+		for (int i = 0; i < attr.length; ++i) {
+			double x = 0;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.aggregation.functions.
-	 * IIncrementalAggregationFunction#removeOutdatedAndEvaluate(java.util.
-	 * Collection, de.uniol.inf.is.odysseus.core.collection.Tuple,
-	 * de.uniol.inf.is.odysseus.core.metadata.PointInTime)
-	 */
-	@Override
-	public Object[] removeOutdatedAndEvaluate(final Collection<T> outdatedElements, final T trigger,
-			final PointInTime pointInTime) {
-		removeOutdated(outdatedElements, trigger, pointInTime);
-		return evalute(trigger, pointInTime);
+			if (attr[i] != null) {
+				x = ((Number) attr[i]).doubleValue();
+			}
+
+			final double delta = x - mean[i];
+			mean[i] += delta / n;
+			m2[i] += delta * (x - mean[i]);
+		}
 	}
 
 	/*
@@ -102,8 +131,28 @@ public class Avg<M extends ITimeInterval, T extends Tuple<M>> extends Sum<M, T> 
 	 */
 	@Override
 	public void removeOutdated(final Collection<T> outdatedElements, final T trigger, final PointInTime pointInTime) {
-		super.removeOutdated(outdatedElements, trigger, pointInTime);
-		this.count -= outdatedElements.size();
+		for (final T e : outdatedElements) {
+			final Object[] attr = getAttributes(e);
+			--n;
+			for (int i = 0; i < attr.length; ++i) {
+				double x = 0;
+
+				if (attr[i] != null) {
+					x = ((Number) attr[i]).doubleValue();
+				}
+
+				final double delta = x - mean[i];
+
+				if (n < 1) {
+					mean[i] = 0;
+				} else {
+					mean[i] -= delta / n;
+				}
+
+				m2[i] -= delta * (x - mean[i]);
+			}
+		}
+
 	}
 
 	/*
@@ -115,17 +164,32 @@ public class Avg<M extends ITimeInterval, T extends Tuple<M>> extends Sum<M, T> 
 	 */
 	@Override
 	public Object[] evalute(final T trigger, final PointInTime pointInTime) {
-		final Double[] result = new Double[sum.length];
-		for (int i = 0; i < sum.length; ++i) {
-			if (count == 0) {
+		final Double[] result = new Double[m2.length];
+		for (int i = 0; i < m2.length; ++i) {
+			if (n < 2) {
 				result[i] = Double.NaN;
 			} else {
-				result[i] = sum[i] / count;
+				result[i] = m2[i] / (n - 1);
 			}
 		}
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction#
+	 * getOutputAttributes()
+	 */
+	@Override
+	public Collection<SDFAttribute> getOutputAttributes() {
+		final List<SDFAttribute> result = new ArrayList<>(m2.length);
+
+		for (final String attr : outputAttributeNames) {
+			result.add(new SDFAttribute(null, attr, SDFDatatype.DOUBLE, null, null, null));
+		}
+		return result;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -136,11 +200,7 @@ public class Avg<M extends ITimeInterval, T extends Tuple<M>> extends Sum<M, T> 
 	 */
 	@Override
 	public boolean checkParameters(final Map<String, Object> parameters, final IAttributeResolver attributeResolver) {
-		final boolean checkInputOutputLength = AggregationFunctionParseOptionsHelper
-				.checkInputAttributesLengthEqualsOutputAttributesLength(parameters, attributeResolver);
-		final boolean checkNumericInput = AggregationFunctionParseOptionsHelper.checkNumericInput(parameters,
-				attributeResolver);
-		return checkInputOutputLength && checkNumericInput;
+		return true;
 	}
 
 	/*
@@ -159,9 +219,9 @@ public class Avg<M extends ITimeInterval, T extends Tuple<M>> extends Sum<M, T> 
 				attributeResolver);
 
 		if (attributes == null) {
-			return new Avg<>(attributeResolver.getSchema().get(0).size(), outputNames);
+			return new Variance<>(attributeResolver.getSchema().get(0).size(), outputNames);
 		}
-		return new Avg<>(attributes, outputNames);
+		return new Variance<>(attributes, outputNames);
 	}
 
 	/*
@@ -172,7 +232,7 @@ public class Avg<M extends ITimeInterval, T extends Tuple<M>> extends Sum<M, T> 
 	 */
 	@Override
 	public AbstractIncrementalAggregationFunction<M, T> clone() {
-		return new Avg<>(this);
+		return new Variance<>(this);
 	}
 
 }

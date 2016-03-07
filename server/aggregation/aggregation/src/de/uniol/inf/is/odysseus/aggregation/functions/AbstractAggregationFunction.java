@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 public abstract class AbstractAggregationFunction<M extends ITimeInterval, T extends Tuple<M>>
 		implements IAggregationFunction {
 
+	private static final long serialVersionUID = -5488917321263100233L;
+
 	/**
 	 * The indices of the input attributes that are used by this function. If
 	 * all input attributes in original order should be used,

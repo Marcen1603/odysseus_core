@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 public abstract class AbstractIncrementalAggregationFunction<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractAggregationFunction<M, T> implements IIncrementalAggregationFunction<M, T> {
 
+	private static final long serialVersionUID = 5543450230865786656L;
 
 	public AbstractIncrementalAggregationFunction() {
 		super();

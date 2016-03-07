@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  */
 public class OrderedIndexedByEndTsAggregationSweepArea<M extends ITimeInterval, T extends Tuple<M>> implements IAggregationSweepArea<M, T> {
 
+	private static final long serialVersionUID = -7800228013013442982L;
+
 	/**
 	 * All elements indexed by end ts.
 	 */

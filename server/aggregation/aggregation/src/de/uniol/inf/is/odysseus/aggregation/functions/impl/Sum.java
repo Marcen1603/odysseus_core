@@ -39,6 +39,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T>
 		implements IAggregationFunctionFactory {
 
+	private static final long serialVersionUID = -2434803583219206999L;
+
 	protected final Double[] sum;
 
 	public Sum(final Sum<M, T> other) {
@@ -80,7 +82,7 @@ public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIn
 	@Override
 	public Object[] addNewAndEvaluate(final T newElement) {
 		addNew(newElement);
-		return sum;
+		return this.sum;
 	}
 
 	/*
@@ -94,10 +96,12 @@ public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIn
 	public void addNew(final T newElement) {
 		final Object[] attr = getAttributes(newElement);
 		for (int i = 0; i < attr.length; ++i) {
-			if (attr[i] instanceof Double) {
-				this.sum[i] += ((Double) attr[i]);
-			} else {
-				this.sum[i] += ((Number) attr[i]).doubleValue();
+			if (attr[i] != null) {
+				if (attr[i] instanceof Double) {
+					this.sum[i] += ((Double) attr[i]);
+				} else {
+					this.sum[i] += ((Number) attr[i]).doubleValue();
+				}
 			}
 		}
 	}
@@ -114,7 +118,7 @@ public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIn
 	public Object[] removeOutdatedAndEvaluate(final Collection<T> outdatedElements, final T trigger,
 			final PointInTime pointInTime) {
 		removeOutdated(outdatedElements, trigger, pointInTime);
-		return sum;
+		return this.sum;
 	}
 
 	/*
@@ -130,10 +134,12 @@ public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIn
 		for (final T e : outdatedElements) {
 			final Object[] attr = getAttributes(e);
 			for (int i = 0; i < attr.length; ++i) {
-				if (attr[i] instanceof Double) {
-					this.sum[i] -= ((Double) attr[i]);
-				} else {
-					this.sum[i] -= ((Number) attr[i]).doubleValue();
+				if (attr[i] != null) {
+					if (attr[i] instanceof Double) {
+						this.sum[i] -= ((Double) attr[i]);
+					} else {
+						this.sum[i] -= ((Number) attr[i]).doubleValue();
+					}
 				}
 			}
 		}
@@ -148,7 +154,7 @@ public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIn
 	 */
 	@Override
 	public Object[] evalute(final T trigger, final PointInTime pointInTime) {
-		return sum;
+		return this.sum;
 	}
 
 	/*
@@ -206,7 +212,7 @@ public class Sum<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIn
 	 */
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		final List<SDFAttribute> result = new ArrayList<>(inputAttributeIndices.length);
+		final List<SDFAttribute> result = new ArrayList<>(sum.length);
 
 		for (final String attr : outputAttributeNames) {
 				result.add(new SDFAttribute(null, attr, SDFDatatype.DOUBLE, null, null, null));

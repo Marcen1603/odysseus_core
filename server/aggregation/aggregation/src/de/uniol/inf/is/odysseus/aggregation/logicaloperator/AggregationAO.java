@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Cornelius Ludmann
  *
  */
-@LogicalOperator(name = "SIMPLE_AGGREGATION", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on inputAttributeIndices e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = {
+@LogicalOperator(name = "AGGREGATION", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on inputAttributeIndices e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = {
 		LogicalOperatorCategory.BASE })
 public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 
@@ -56,6 +56,8 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 	 */
 	private boolean evaluateAtOutdatingElements = true;
 
+	private boolean evaluateBeforeRemovingOutdatingElements = false;
+
 	/**
 	 * This flag is set if this operator should output new elements when
 	 * elements get valid.
@@ -68,6 +70,8 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 	 * evaluation. E. g., the final AVG of the latency.
 	 */
 	private boolean evaluateAtDone = false;
+
+	private boolean outputOnlyChanges = false;
 
 	public AggregationAO() {
 		super();
@@ -86,6 +90,8 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 		evaluateAtDone = op.evaluateAtDone;
 		evaluateAtNewElement = op.evaluateAtNewElement;
 		evaluateAtOutdatingElements = op.evaluateAtOutdatingElements;
+		evaluateBeforeRemovingOutdatingElements = op.evaluateBeforeRemovingOutdatingElements;
+		outputOnlyChanges = op.outputOnlyChanges;
 	}
 
 	/*
@@ -139,6 +145,16 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 		this.evaluateAtOutdatingElements = evaluateAtOutdatingElements;
 	}
 
+	@GetParameter(name = "EVAL_BEFORE_REMOVE_OUTDATING")
+	public boolean isEvaluateBeforeRemovingOutdatingElements() {
+		return evaluateBeforeRemovingOutdatingElements;
+	}
+
+	@Parameter(name = "EVAL_BEFORE_REMOVE_OUTDATING", type = BooleanParameter.class, optional = true)
+	public void setEvaluateBeforeRemovingOutdatingElements(final boolean evaluateBeforeRemovingOutdatingElements) {
+		this.evaluateBeforeRemovingOutdatingElements = evaluateBeforeRemovingOutdatingElements;
+	}
+
 	/**
 	 * @return the evaluateAtNewElement
 	 */
@@ -171,6 +187,17 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 	@Parameter(name = "EVAL_AT_DONE", type = BooleanParameter.class, optional = true)
 	public void setEvaluateAtDone(final boolean evaluateAtDone) {
 		this.evaluateAtDone = evaluateAtDone;
+	}
+
+	@GetParameter(name = "OUTPUT_ONLY_CHANGES")
+	public boolean isOutputOnlyChanges() {
+		return outputOnlyChanges;
+	}
+
+
+	@Parameter(name = "OUTPUT_ONLY_CHANGES", type = BooleanParameter.class, optional = true)
+	public void setOutputOnlyChanges(final boolean outputOnlyChanges) {
+		this.outputOnlyChanges = outputOnlyChanges;
 	}
 
 	/*
