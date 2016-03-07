@@ -98,6 +98,8 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	private PointInTime minMaxTs = null;
 	private PointInTime maxMaxTs = null;
 
+	private String areaName;
+
 	@Override
 	public ISweepArea<Tuple<? extends ITimeInterval>> newInstance(OptionMap options) {
 		throw new UnsupportedOperationException();
@@ -489,13 +491,11 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	
 	@Override
 	public String getAreaName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.areaName;
 	}
 	
 	@Override
 	public void setAreaName(String name) {
-		// TODO Auto-generated method stub
-		
+		this.areaName = name;
 	}
 }
