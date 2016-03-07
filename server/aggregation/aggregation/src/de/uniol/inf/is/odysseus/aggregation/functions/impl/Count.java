@@ -37,6 +37,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 public class Count<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T>
 		implements IAggregationFunctionFactory {
 
+	private static final long serialVersionUID = -3197729537419720810L;
+
 	private long count = 0l;
 
 	public Count() {

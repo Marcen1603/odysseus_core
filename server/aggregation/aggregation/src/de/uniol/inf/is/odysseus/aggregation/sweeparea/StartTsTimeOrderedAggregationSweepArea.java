@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 public class StartTsTimeOrderedAggregationSweepArea<M extends ITimeInterval, T extends Tuple<M>>
 		implements IAggregationSweepArea<M, T> {
 
+	private static final long serialVersionUID = -6642572267921244531L;
+
 	private final ArrayList<T> elements = new ArrayList<>();
 	private final Multimap<PointInTime, T> outdatingElements = ArrayListMultimap.create();
 

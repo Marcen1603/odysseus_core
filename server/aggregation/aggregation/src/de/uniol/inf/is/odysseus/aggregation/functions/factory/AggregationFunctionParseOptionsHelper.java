@@ -147,6 +147,42 @@ public class AggregationFunctionParseOptionsHelper {
 		throw new IllegalArgumentException("Could not parse attribute " + INPUT_ATTRIBUTES + ".");
 	}
 
+	public static int[] getAttributeIndices(final Map<String, Object> parameters,
+			final IAttributeResolver attributeResolver, final String key) {
+		final Object inputAttr = getFunctionParameter(parameters, key);
+		final SDFSchema inputSchema = attributeResolver.getSchema().get(0);
+
+		if (inputAttr instanceof String) {
+			final int[] attrIdx = new int[1];
+			attrIdx[0] = inputSchema.findAttributeIndex((String) inputAttr);
+			if (attrIdx[0] == -1) {
+				throw new IllegalArgumentException(
+						"Input attribute '" + inputAttr + "' not found in schema: " + inputSchema.toString());
+			}
+			return attrIdx;
+		}
+
+		if (inputAttr instanceof Collection) {
+			final int[] attrIdx = new int[((Collection<?>) inputAttr).size()];
+			int i = 0;
+			for (final Iterator<?> iter = ((Collection<?>) inputAttr).iterator(); iter.hasNext(); ++i) {
+				final Object n = iter.next();
+				if (!(n instanceof String)) {
+					throw new IllegalArgumentException("Could not parse parameter as attribute: " + n);
+				} else {
+					attrIdx[i] = inputSchema.findAttributeIndex((String) n);
+					if (attrIdx[i] == -1) {
+						throw new IllegalArgumentException(
+								"Input attribute '" + n + "' not found in schema: " + inputSchema.toString());
+					}
+				}
+			}
+			return attrIdx;
+		}
+
+		throw new IllegalArgumentException("Could not parse attribute " + key + ".");
+	}
+
 	/**
 	 * @param restr
 	 * @return

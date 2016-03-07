@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.aggregation.physicaloperator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,9 +40,11 @@ import de.uniol.inf.is.odysseus.aggregation.sweeparea.StartTsTimeOrderedAggregat
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -51,27 +54,27 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  *
  */
 public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends AbstractPipe<T, T>
-		implements IPhysicalOperatorKeyValueProvider {
+		implements IPhysicalOperatorKeyValueProvider, IStatefulPO {
 
 	protected static Logger LOG = LoggerFactory.getLogger(AggregationPO.class);
 
 	/**
 	 * This object will be used as fallback grouping key.
 	 */
-	protected static final Object defaultGroupingKey = new Object();
+	protected Serializable defaultGroupingKey = "";
 
 	/**
 	 * A map of points in time where elements get invalid to a set of grouping
 	 * keys of these groups that has elements that become invalid at this point
 	 * in time.
 	 */
-	protected final TreeMap<PointInTime, Set<Object>> outdatingGroups = new TreeMap<>();
+	protected TreeMap<PointInTime, Set<Object>> outdatingGroups = new TreeMap<>();
 
 	/**
 	 * A map of group keys to a sweep area that holds the elements of each
 	 * group.
 	 */
-	protected final Map<Object, IAggregationSweepArea<M, T>> groups = new HashMap<>();
+	protected Map<Object, IAggregationSweepArea<M, T>> groups = new HashMap<>();
 
 	/**
 	 * This flag will be set to true when an element with end TS arrives this
@@ -101,7 +104,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * This map holds instances of incremental functions for each group.
 	 */
-	protected final Map<Object, List<IIncrementalAggregationFunction<M, T>>> incrementalFunctionsForGroup = new HashMap<>();
+	protected Map<Object, List<IIncrementalAggregationFunction<M, T>>> incrementalFunctionsForGroup = new HashMap<>();
 
 	/**
 	 * This flag is set if this operator has incremental functions. Shortcut for
@@ -130,6 +133,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * elements get outdated.
 	 */
 	protected final boolean evaluateAtOutdatingElements;
+	protected final boolean evaluateBeforeRemovingOutdatingElements;
 
 	/**
 	 * This flag is set if this operator should output new elements when
@@ -144,6 +148,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 */
 	protected final boolean evaluateAtDone;
 
+	protected final boolean outputOnlyChanges;
+
+	protected final Map<Object, T> lastOutput;
+
 	/**
 	 * The output schema.
 	 */
@@ -152,12 +160,12 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * The timestamp of the last incoming element.
 	 */
-	private long watermark = 0l;
+	long watermark = 0l;
 
 	/**
 	 * The timestamp of the last outgoing element.
 	 */
-	private long watermarkOut = 0l;
+	long watermarkOut = 0l;
 
 	/**
 	 * Constructor.
@@ -184,7 +192,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 */
 	public AggregationPO(final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions,
-			final boolean evaluateAtOutdatingElements, final boolean evaluateAtNewElement, final boolean evaluateAtDone,
+			final boolean evaluateAtOutdatingElements, final boolean evaluateBeforeRemovingOutdatingElements,
+			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
@@ -194,6 +203,13 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.evaluateAtDone = evaluateAtDone;
 		this.evaluateAtNewElement = evaluateAtNewElement;
 		this.evaluateAtOutdatingElements = evaluateAtOutdatingElements;
+		this.evaluateBeforeRemovingOutdatingElements = evaluateBeforeRemovingOutdatingElements;
+		this.outputOnlyChanges = outputOnlyChanges;
+		if (outputOnlyChanges) {
+			lastOutput = new HashMap<>();
+		} else {
+			lastOutput = null;
+		}
 		this.outputSchema = outputSchema;
 		this.groupingAttributesIndices = groupingAttributesIdx;
 
@@ -214,6 +230,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.evaluateAtDone = other.evaluateAtDone;
 		this.evaluateAtNewElement = other.evaluateAtDone;
 		this.evaluateAtOutdatingElements = other.evaluateAtOutdatingElements;
+		this.evaluateBeforeRemovingOutdatingElements = other.evaluateBeforeRemovingOutdatingElements;
+		this.outputOnlyChanges = other.outputOnlyChanges;
+		this.lastOutput = other.lastOutput;
 		this.outputSchema = other.outputSchema;
 		this.groupingAttributesIndices = other.groupingAttributesIndices;
 		this.hasFunctionsThatNeedStartTsOrder = other.hasFunctionsThatNeedStartTsOrder;
@@ -241,6 +260,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		watermark = 0l;
 		watermarkOut = 0l;
 		hasOutdatingElements = false;
+		if (lastOutput != null) {
+			lastOutput.clear();
+		}
 	}
 
 	/*
@@ -356,8 +378,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// group that ends when the trigger element gets valid. In the latter
 		// case, the result will be output by the processing of the trigger
 		// element.
-		final boolean evaluate = evaluateAtOutdatingElements
-				&& !(isTriggerGroup && pointInTime.equals(trigger.getMetadata().getStart()));
+		final boolean evaluate = (evaluateAtOutdatingElements || evaluateBeforeRemovingOutdatingElements)
+				&& (!evaluateAtNewElement || !(isTriggerGroup && pointInTime.equals(trigger.getMetadata().getStart())));
 
 		// If we have incremental functions we need to update the state of these
 		// functions even when we not want to calculate the result.
@@ -369,6 +391,20 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			@SuppressWarnings("unchecked")
 			final T result = evaluate ? (T) new Tuple<>(outputSchema.size(), true) : null;
 
+			// To get the grouping attributes, we need a sample of the group
+			// to extract the grouping attributes.
+			T sampleOfGroup = null;
+
+			if (evaluate && hasNonIncrementalFunctions && evaluateBeforeRemovingOutdatingElements) {
+				// get all valid valid tuples
+				final Collection<T> objects = sweepArea.getValidTuples();
+
+				if (sampleOfGroup == null && objects != null && !objects.isEmpty()) {
+					sampleOfGroup = objects.iterator().next();
+				}
+				processNonIncrementalFunctions(result, objects, trigger, pointInTime);
+			}
+
 			// Get and remove outdated elements.
 			final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
@@ -379,9 +415,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			}
 
 			if (evaluate) {
-				// To get the grouping attributes, we need a sample of the group
-				// to extract the grouping attributes.
-				T sampleOfGroup = null;
+
 				if (isTriggerGroup) {
 					// If this group is the same as the trigger element group,
 					// the sample of the group is the trigger. Thats easy.
@@ -392,7 +426,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 					sampleOfGroup = outdatedTuples.iterator().next();
 				}
 
-				if (hasNonIncrementalFunctions) {
+				if (hasNonIncrementalFunctions && !evaluateBeforeRemovingOutdatingElements) {
 					// get all valid valid tuples
 					final Collection<T> objects = sweepArea.getValidTuples();
 
@@ -579,7 +613,14 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			}
 		} else {
 			for (final IIncrementalAggregationFunction<M, T> function : statefulFunctionsForKey) {
-				final Object[] result2 = function.removeOutdatedAndEvaluate(outdatedTuples, trigger, pointInTime);
+				Object[] result2;
+				if (evaluateBeforeRemovingOutdatingElements) {
+					result2 = function.evalute(trigger, pointInTime);
+					result2 = Arrays.copyOf(result2, result2.length);
+					function.removeOutdated(outdatedTuples, trigger, pointInTime);
+				} else {
+					result2 = function.removeOutdatedAndEvaluate(outdatedTuples, trigger, pointInTime);
+				}
 				for (int i = 0; i < result2.length; ++i) {
 					result.setAttribute(function.getOutputAttributeIndices()[i], result2[i]);
 				}
@@ -611,6 +652,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * @param result
 	 */
+	@SuppressWarnings("unchecked")
 	private void transferResult(final T result, final T trigger, final PointInTime startTs, final T sampleOfGroup) {
 
 		if (onlyNullAttributes(result)) {
@@ -626,12 +668,23 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		setGroupingAttributes(sampleOfGroup, result);
 
-		@SuppressWarnings("unchecked")
-		final M meta = (M) trigger.getMetadata().clone();
-		meta.setEnd(PointInTime.INFINITY);
-		meta.setStart(startTs);
-		result.setMetadata(meta);
-		transfer(result);
+		boolean output = true;
+		if (outputOnlyChanges) {
+			final Object groupKey = getGroupKey(result, groupingAttributesIndices, defaultGroupingKey);
+			final T last = lastOutput.get(groupKey);
+			output = !result.equals(last);
+			if (output) {
+				lastOutput.put(groupKey, (T) result.clone());
+			}
+		}
+
+		if (output) {
+			final M meta = (M) trigger.getMetadata().clone();
+			meta.setEnd(PointInTime.INFINITY);
+			meta.setStart(startTs);
+			result.setMetadata(meta);
+			transfer(result);
+		}
 	}
 
 	/**
@@ -695,6 +748,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 	}
 
+	protected Object getGroupKey(final T object, final int[] groupingAttributeIndices) {
+		return getGroupKey(object, groupingAttributeIndices, defaultGroupingKey);
+	}
+
 	/**
 	 * Returns the grouping key for an object.
 	 * 
@@ -708,7 +765,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            The indices of the attributes that form the grouping key.
 	 * @return The grouping key.
 	 */
-	private static <T extends Tuple<?>> Object getGroupKey(final T object, final int[] groupingAttributeIndices) {
+	public static <T extends Tuple<?>> Object getGroupKey(final T object, final int[] groupingAttributeIndices,
+			final Object defaultGroupingKey) {
 		if (groupingAttributeIndices == null || groupingAttributeIndices.length == 0) {
 			return defaultGroupingKey;
 		}
@@ -752,10 +810,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 				T sampleOfGroup = null;
 				final Collection<T> elements = sa.getValidTuples();
-						if (!elements.isEmpty()) {
+				if (!elements.isEmpty()) {
 					sampleOfGroup = elements.iterator().next();
-						}
-				
+				}
+
 				if (hasNonIncrementalFunctions) {
 
 					if (!elements.isEmpty()) {
@@ -800,7 +858,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 						}
 					}
 				}
-				
+
 				transferResult(result, sampleOfGroup, new PointInTime(System.currentTimeMillis()));
 			}
 		}
@@ -820,4 +878,54 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		return super.process_isSemanticallyEqual(ipo);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+	 * isSemanticallyEqual(de.uniol.inf.is.odysseus.core.physicaloperator.
+	 * IPhysicalOperator)
+	 */
+	@Override
+	public boolean isSemanticallyEqual(final IPhysicalOperator ipo) {
+		// TODO Auto-generated method stub
+		return super.isSemanticallyEqual(ipo);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO#getState()
+	 */
+	@Override
+	public IOperatorState getState() {
+		return new AggregationState<M, T>(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO#setState(java.
+	 * io.Serializable)
+	 */
+	@Override
+	public void setState(final Serializable state) {
+		if (state instanceof AggregationState) {
+			// TODO: synchronized?
+			@SuppressWarnings("unchecked")
+			final AggregationState<M, T> aggregationState = (AggregationState<M, T>) state;
+			this.outdatingGroups = aggregationState.getOutdatingGroups();
+			this.groups = aggregationState.getGroups();
+			this.hasOutdatingElements = aggregationState.isHasOutdatingElements();
+			this.incrementalFunctionsForGroup = aggregationState.getIncrementalFunctionsForGroup();
+			this.watermark = aggregationState.getWatermark();
+			this.watermarkOut = aggregationState.getWatermarkOut();
+			this.defaultGroupingKey = aggregationState.getDefaultGroupingKey();
+
+		} else {
+			throw new IllegalArgumentException("wrong type of state");
+		}
+
+	}
 }

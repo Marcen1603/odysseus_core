@@ -35,17 +35,20 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  */
 public class Nest<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNest<M, T> {
 
+	private static final long serialVersionUID = 2408592302467699238L;
+
 	public Nest() {
 		super();
 	}
 
 	public Nest(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema,
-			final boolean preserveOrderingOfElements) {
-		super(new ArrayList<>(), attributes, outputAttributeName, subSchema, preserveOrderingOfElements);
+			final boolean preserveOrderingOfElements, final boolean sortElements) {
+		super(new ArrayList<>(), attributes, outputAttributeName, subSchema, preserveOrderingOfElements, sortElements);
 	}
 
-	public Nest(final String outputAttributeName, final SDFSchema subSchema, final boolean preserveOrderingOfElements) {
-		super(outputAttributeName, subSchema, preserveOrderingOfElements);
+	public Nest(final String outputAttributeName, final SDFSchema subSchema, final boolean preserveOrderingOfElements,
+			final boolean sortElements) {
+		super(outputAttributeName, subSchema, preserveOrderingOfElements, sortElements);
 	}
 
 	public Nest(final Nest<M, T> other) {
@@ -81,18 +84,20 @@ public class Nest<M extends ITimeInterval, T extends Tuple<M>> extends AbstractN
 				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
 		final boolean preserveOrdering = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters,
 				"PRESERVE_ORDERING", false);
+		final boolean sort = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters, "SORT",
+				false);
 		if (outputName == null) {
 			outputName = "nest";
 		}
 		if (inputAttrs == null) {
-			return new Nest<>(outputName, attributeResolver.getSchema().get(0), preserveOrdering);
+			return new Nest<>(outputName, attributeResolver.getSchema().get(0), preserveOrdering, sort);
 		} else {
 			final List<SDFAttribute> attr = new ArrayList<>();
 			for (final int idx : inputAttrs) {
 				attr.add(attributeResolver.getSchema().get(0).getAttribute(idx).clone());
 			}
 			final SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("", attr);
-			return new Nest<>(inputAttrs, outputName, subSchema, preserveOrdering);
+			return new Nest<>(inputAttrs, outputName, subSchema, preserveOrdering, sort);
 		}
 	}
 

@@ -48,6 +48,10 @@ public class AggregationFunctionRegistry {
 		functionFactories.put(function.getFunctionName(), function);
 	}
 
+	public void addFunction(final String name, final IAggregationFunctionFactory function) {
+		functionFactories.put(name, function);
+	}
+
 	/**
 	 * @param value
 	 * @param iAttributeResolver
@@ -56,10 +60,12 @@ public class AggregationFunctionRegistry {
 	public IAggregationFunction createFunction(final Map<String, Object> value,
 			final IAttributeResolver attributeResolver) {
 
-		final String functionName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(value, AggregationFunctionParseOptionsHelper.FUNCTION_NAME);
+		final String functionName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(value,
+				AggregationFunctionParseOptionsHelper.FUNCTION_NAME);
 
 		if (functionName == null) {
-			throw new QueryParseException("Could not find parameter '" + AggregationFunctionParseOptionsHelper.FUNCTION_NAME + "'.");
+			throw new QueryParseException(
+					"Could not find parameter '" + AggregationFunctionParseOptionsHelper.FUNCTION_NAME + "'.");
 		}
 
 		final Collection<IAggregationFunctionFactory> matchingFunctions = functionFactories.get(functionName);

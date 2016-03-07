@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.aggregation.functions;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  * @author Cornelius Ludmann
  *
  */
-public interface IAggregationFunction {
+public interface IAggregationFunction extends Serializable {
 	int[] getOutputAttributeIndices();
 
 	void setOutputAttributeIndices(int[] attr);

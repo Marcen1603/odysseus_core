@@ -21,6 +21,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -37,6 +38,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class Trigger<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T>
 		implements IAggregationFunctionFactory {
 
+	private static final long serialVersionUID = 2346081889540948311L;
+
 	private final boolean nested;
 	private final SDFSchema subSchema;
 
@@ -52,9 +55,10 @@ public class Trigger<M extends ITimeInterval, T extends Tuple<M>> extends Abstra
 		this.subSchema = other.subSchema.clone();
 	}
 
-	public Trigger(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema) {
+	public Trigger(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema,
+			final boolean nested) {
 		super(attributes, new String[] { outputAttributeName });
-		this.nested = true;
+		this.nested = nested;
 		this.subSchema = subSchema.clone();
 	}
 
@@ -113,9 +117,8 @@ public class Trigger<M extends ITimeInterval, T extends Tuple<M>> extends Abstra
 					subSchema);
 			return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0], datatype, null, null, null));
 		} else {
-			// TODO
+			return subSchema.getAttributes();
 		}
-		return null;
 	}
 
 	/*
@@ -141,8 +144,10 @@ public class Trigger<M extends ITimeInterval, T extends Tuple<M>> extends Abstra
 	@Override
 	public IAggregationFunction createInstance(final Map<String, Object> parameters,
 			final IAttributeResolver attributeResolver) {
-		// TODO Auto-generated method stub
-		return new Trigger<>(null, "trigger", attributeResolver.getSchema().get(0));
+		// TODO: Input attributes, output name
+		final boolean nested = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters, "NESTED",
+				true);
+		return new Trigger<>(null, "trigger", attributeResolver.getSchema().get(0), nested);
 	}
 
 	/*

@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.aggregation.sweeparea;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  * @author Cornelius Ludmann
  *
  */
-public interface IAggregationSweepArea<M, T> {
+public interface IAggregationSweepArea<M, T> extends Serializable {
 
 	/**
 	 * @param pointInTime

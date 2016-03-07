@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
@@ -39,23 +40,37 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  *
  */
 public class DistinctNest<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNest<M, T> {
+	private static final long serialVersionUID = 5027016754161333341L;
+
+	private static <M extends ITimeInterval, T extends Tuple<M>> Collection<T> getNewCollection(
+			final boolean preserveOrderingOfElements,
+			final boolean sortElements) {
+		if (preserveOrderingOfElements) {
+			return new LinkedHashSet<>();
+		}
+		if (sortElements) {
+			return new TreeSet<>();
+		}
+		return new HashSet<>();
+	}
 
 	public DistinctNest() {
 		super();
 	}
 
 	public DistinctNest(final AbstractNest<M, T> other) {
-		super(other, new HashSet<>());
+		super(other, getNewCollection(other.preserveOrderingOfElements, other.sortElements));
 	}
 
 	public DistinctNest(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema,
-			final boolean preserveOrderingOfElements) {
-		super(new HashSet<>(), attributes, outputAttributeName, subSchema, preserveOrderingOfElements);
+			final boolean preserveOrderingOfElements, final boolean sortElements) {
+		super(getNewCollection(preserveOrderingOfElements, sortElements), attributes, outputAttributeName, subSchema,
+				preserveOrderingOfElements, sortElements);
 	}
 
 	public DistinctNest(final String outputAttributeName, final SDFSchema subSchema,
-			final boolean preserveOrderingOfElements) {
-		super(outputAttributeName, subSchema, preserveOrderingOfElements);
+			final boolean preserveOrderingOfElements, final boolean sortElements) {
+		super(outputAttributeName, subSchema, preserveOrderingOfElements, sortElements);
 	}
 
 	/*
@@ -71,6 +86,8 @@ public class DistinctNest<M extends ITimeInterval, T extends Tuple<M>> extends A
 		Set<T> results;
 		if (preserveOrderingOfElements) {
 			results = new LinkedHashSet<>(elements.size());
+		} else if (sortElements) {
+			results = new TreeSet<>();
 		} else {
 			results = new HashSet<>(elements.size());
 		}
@@ -82,7 +99,7 @@ public class DistinctNest<M extends ITimeInterval, T extends Tuple<M>> extends A
 			results.add(this.getAttributesAsTuple(e));
 		}
 		// }
-		return new Object[] { results };
+		return new Object[] { new ArrayList<>(results) };
 	}
 
 	/*
@@ -114,18 +131,20 @@ public class DistinctNest<M extends ITimeInterval, T extends Tuple<M>> extends A
 				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
 		final boolean preserveOrdering = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters,
 				"PRESERVE_ORDERING", false);
+		final boolean sort = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters,
+				"SORT", false);
 		if (outputName == null) {
 			outputName = "distinct_nest";
 		}
 		if (inputAttrs == null) {
-			return new DistinctNest<>(outputName, attributeResolver.getSchema().get(0), preserveOrdering);
+			return new DistinctNest<>(outputName, attributeResolver.getSchema().get(0), preserveOrdering, sort);
 		} else {
 			final List<SDFAttribute> attr = new ArrayList<>();
 			for (final int idx : inputAttrs) {
 				attr.add(attributeResolver.getSchema().get(0).getAttribute(idx).clone());
 			}
 			final SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("", attr);
-			return new DistinctNest<>(inputAttrs, outputName, subSchema, preserveOrdering);
+			return new DistinctNest<>(inputAttrs, outputName, subSchema, preserveOrdering, sort);
 		}
 	}
 
@@ -148,7 +167,7 @@ public class DistinctNest<M extends ITimeInterval, T extends Tuple<M>> extends A
 	 */
 	@Override
 	public boolean isIncremental() {
-		return true;
+		return false;
 	}
 
 }

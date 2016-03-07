@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 public abstract class AbstractNonIncrementalAggregationFunction<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractAggregationFunction<M, T> implements INonIncrementalAggregationFunction<M, T> {
 
+	private static final long serialVersionUID = 8131921817847786812L;
 
 	public AbstractNonIncrementalAggregationFunction() {
 		super();

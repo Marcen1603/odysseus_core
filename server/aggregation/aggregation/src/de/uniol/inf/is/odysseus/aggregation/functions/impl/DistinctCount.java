@@ -15,7 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.aggregation.functions.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
@@ -24,19 +27,38 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * @author Cornelius Ludmann
  *
  */
 public class DistinctCount<M extends ITimeInterval, T extends Tuple<M>> extends DistinctNest<M, T> {
+	private static final long serialVersionUID = -1728291233547271392L;
+
 
 	/**
 	 * 
 	 */
-	public DistinctCount(final String outputName) {
+	public DistinctCount() {
 		super();
-		// FIXME
+	}
+
+	/**
+	 * 
+	 */
+	public DistinctCount(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema) {
+		super(attributes, outputAttributeName, subSchema, false, false);
+	}
+
+	/**
+	 * 
+	 */
+	public DistinctCount(final String outputAttributeName, final SDFSchema subSchema) {
+		super(outputAttributeName, subSchema, false, false);
 	}
 
 	/*
@@ -90,12 +112,35 @@ public class DistinctCount<M extends ITimeInterval, T extends Tuple<M>> extends 
 	@Override
 	public IAggregationFunction createInstance(final Map<String, Object> parameters,
 			final IAttributeResolver attributeResolver) {
+		final int[] inputAttrs = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
+				attributeResolver);
 		String outputName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
 				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
 		if (outputName == null) {
 			outputName = "distinct_count";
 		}
-		return new DistinctCount<>(outputName);
 
+		if (inputAttrs == null) {
+			return new DistinctCount<>(outputName, attributeResolver.getSchema().get(0));
+		} else {
+			final List<SDFAttribute> attr = new ArrayList<>();
+			for (final int idx : inputAttrs) {
+				attr.add(attributeResolver.getSchema().get(0).getAttribute(idx).clone());
+			}
+			final SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("", attr);
+			return new DistinctCount<>(inputAttrs, outputName, subSchema);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.aggregation.functions.impl.AbstractNest#
+	 * getOutputAttributes()
+	 */
+	@Override
+	public Collection<SDFAttribute> getOutputAttributes() {
+		return Collections
+				.singleton(new SDFAttribute(null, outputAttributeNames[0], SDFDatatype.LONG, null, null, null));
 	}
 }

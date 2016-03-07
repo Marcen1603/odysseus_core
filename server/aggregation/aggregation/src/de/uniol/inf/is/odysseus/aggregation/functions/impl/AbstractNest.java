@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.aggregation.functions.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,14 +39,18 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractIncrementalAggregationFunction<M, T>
 		implements INonIncrementalAggregationFunction<M, T>, IAggregationFunctionFactory {
 
+	private static final long serialVersionUID = 7516234480388507632L;
+
 	protected final Collection<T> elements;
 	protected SDFSchema subSchema;
 	protected final boolean preserveOrderingOfElements;
+	protected final boolean sortElements;
 
 	public AbstractNest() {
 		super();
 		elements = null;
 		this.preserveOrderingOfElements = false;
+		this.sortElements = false;
 	}
 
 	/**
@@ -61,11 +64,12 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 */
 	public AbstractNest(final Collection<T> elements, final int[] attributes, final String outputAttributeName,
 			final SDFSchema subSchema,
-			final boolean preserveOrderingOfElements) {
+ final boolean preserveOrderingOfElements, final boolean sortElements) {
 		super(attributes, new String[] { outputAttributeName });
 		this.subSchema = subSchema.clone();
 		this.elements = elements;
 		this.preserveOrderingOfElements = preserveOrderingOfElements;
+		this.sortElements = sortElements;
 	}
 
 	/**
@@ -76,17 +80,19 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 * @param preserveOrderingOfElements
 	 */
 	public AbstractNest(final String outputAttributeName, final SDFSchema subSchema,
-			final boolean preserveOrderingOfElements) {
+			final boolean preserveOrderingOfElements, final boolean sortElements) {
 		super(null, new String[] { outputAttributeName });
 		this.subSchema = subSchema.clone();
 		this.elements = null;
 		this.preserveOrderingOfElements = preserveOrderingOfElements;
+		this.sortElements = sortElements;
 	}
 
 	protected AbstractNest(final AbstractNest<M, T> other, final Collection<T> elements) {
 		super(other);
 		this.subSchema = other.subSchema.clone();
 		this.preserveOrderingOfElements = other.preserveOrderingOfElements;
+		this.sortElements = other.sortElements;
 		this.elements = elements;
 	}
 
@@ -123,18 +129,26 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 * IIncrementalAggregationFunction#evalute(de.uniol.inf.is.odysseus.core.
 	 * collection.Tuple, de.uniol.inf.is.odysseus.core.metadata.PointInTime)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] evalute(final T trigger, final PointInTime pointInTime) {
+		List<T> result;
 		if (this.elements instanceof ArrayList) {
-			return new Object[] { ((ArrayList<T>) elements).clone() };
+			result = (List<T>) ((ArrayList<T>) elements).clone();
+		} else if (this.elements instanceof LinkedList) {
+			result = (List<T>) ((LinkedList<T>) elements).clone();
+		} else {
+			result = new ArrayList<>(elements);
 		}
-		if (this.elements instanceof LinkedList) {
-			return new Object[] { ((LinkedList<T>) elements).clone() };
+		// if (this.elements instanceof HashSet) {
+		// return new Object[] { ((HashSet<T>) elements).clone() };
+		// }
+
+		if (sortElements) {
+			Collections.sort(result);
 		}
-		if (this.elements instanceof HashSet) {
-			return new Object[] { ((HashSet<T>) elements).clone() };
-		}
-		return new Object[] { new ArrayList<>(elements) };
+
+		return new Object[] { result };
 	}
 
 	/*
@@ -170,20 +184,30 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 * de.uniol.inf.is.odysseus.core.collection.Tuple,
 	 * de.uniol.inf.is.odysseus.core.metadata.PointInTime)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] evaluate(final Collection<T> elements, final T trigger, final PointInTime pointInTime) {
 		if (inputAttributeIndices == null) {
-			if (elements instanceof LinkedList) {
-				return new Object[] { ((LinkedList<T>) elements).clone() };
-			} else if (elements instanceof ArrayList) {
-				return new Object[] { ((ArrayList<T>) elements).clone() };
+			List<T> result;
+			if (this.elements instanceof ArrayList) {
+				result = (List<T>) ((ArrayList<T>) elements).clone();
+			} else if (this.elements instanceof LinkedList) {
+				result = (List<T>) ((LinkedList<T>) elements).clone();
+			} else {
+				result = new ArrayList<>(elements);
 			}
-			return new Object[] { new ArrayList<>(elements) };
+			if (sortElements) {
+				Collections.sort(result);
+			}
+			return new Object[] { result };
 		} else {
-			// Use better an incremental implementation!
+			// Use better an incremental implementation!?
 			final List<T> results = new ArrayList<>(elements.size());
 			for (final T e : elements) {
 				results.add(this.getAttributesAsTuple(e));
+			}
+			if (sortElements) {
+				Collections.sort(results);
 			}
 			return new Object[] { results };
 		}
