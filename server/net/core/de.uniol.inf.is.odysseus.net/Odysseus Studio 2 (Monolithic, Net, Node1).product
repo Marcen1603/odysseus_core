@@ -72,14 +72,10 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.net.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.net.querydistribute.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.net.data.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.zeromq.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.mosaik.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.net.logging.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.net.source.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.net.monolithic.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
