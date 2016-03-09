@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.RemoteControl">
-   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.remotecontrol.LoadBalancingRemoteControlCommunicator"/>
-   <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator" name="IPeerCommunicator" policy="static" unbind="unbindPeerCommunicator"/>
-   <reference bind="bindLoadBalancingController" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.control.ILoadBalancingController" name="ILoadBalancingController" policy="static" unbind="unbindLoadBalancingController"/>
-   <reference bind="bindLogLoadService" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking.ILogLoadService" name="ILogLoadService" policy="static" unbind="unbindLogLoadService"/>
-</scr:component>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.OdyLoadConsole">
-   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.console.OdyLoadConsole"/>
-   <service>
-      <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
-   </service>
-   <reference bind="bindLogLoadService" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking.ILogLoadService" name="ILogLoadService" policy="static" unbind="unbindLogLoadService"/>
-</scr:component>

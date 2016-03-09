@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.CommunicatorChooserRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.impl.CommunicatorChooserRegistryImpl"/>
-   <reference bind="bindCommunicatorChooser" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ICommunicatorChooser" name="ICommunicatorChooser" policy="dynamic" unbind="unbindCommunicatorChooser"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ICommunicatorChooserRegistry"/>
-   </service>
-</scr:component>

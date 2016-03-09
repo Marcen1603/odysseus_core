@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.LoadBalancingTriggerRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.impl.LoadBalancingTriggerRegistryImpl"/>
-   <reference bind="bindTrigger" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingTrigger" name="ILoadBalancingTrigger" policy="dynamic" unbind="unbindTrigger"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingTriggerRegistry"/>
-   </service>
-</scr:component>

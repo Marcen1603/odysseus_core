@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.LoadBalancingRcpPlugin">
-   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.Activator"/>
-   <reference bind="bindLoadBalancingController" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.control.ILoadBalancingController" name="ILoadBalancingController" policy="static" unbind="unbindLoadBalancingController"/>
-   <reference bind="bindLoadBalancingLock" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock" name="ILoadBalancingLock" policy="static" unbind="unbindLoadBalancingLock"/>
-   <reference bind="bindExcludedQueryRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry" name="IExcludedQueriesRegistry" policy="static" unbind="unbindExcludedQueryRegistry"/>
-</scr:component>
