@@ -32,7 +32,7 @@ public class RPrepareSelectionCNF extends AbstractRewriteRule<SelectAO> {
 			sel.setPredicate(predicate);
 			predicate.initVars(sel.getInputSchema());	
 			
-			RestructParameterInfoUtil.updatePredicateParameterInfo(
+			RestructParameterInfoUtil.updatePredicateParameterInfo(sel,
 					sel.getParameterInfos(), sel.getPredicate());
 			update(sel);
 		}

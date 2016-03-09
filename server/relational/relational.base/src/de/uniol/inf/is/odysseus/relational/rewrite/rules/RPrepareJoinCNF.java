@@ -32,7 +32,7 @@ public class RPrepareJoinCNF extends AbstractRewriteRule<JoinAO> {
 			join.setPredicate(predicate);
 			predicate.initVars(join.getInputSchema(0), join.getInputSchema(1));
 			
-			RestructParameterInfoUtil.updatePredicateParameterInfo(
+			RestructParameterInfoUtil.updatePredicateParameterInfo(join,
 					join.getParameterInfos(), join.getPredicate());
 			update(join);
 		}

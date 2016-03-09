@@ -76,7 +76,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 					}
                     join.setPredicate(PredicateOptimizer.optimize(join.getPredicate()));
 				}
-				RestructParameterInfoUtil.updatePredicateParameterInfo(
+				RestructParameterInfoUtil.updatePredicateParameterInfo(join,
 						join.getParameterInfos(), join.getPredicate());
 
 				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper

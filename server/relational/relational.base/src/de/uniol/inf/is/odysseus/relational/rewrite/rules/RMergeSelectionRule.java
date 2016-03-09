@@ -68,7 +68,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 				} else {
 					operator.setPredicate(sel.getPredicate());
 				}
-				RestructParameterInfoUtil.updatePredicateParameterInfo(operator.getParameterInfos(),
+				RestructParameterInfoUtil.updatePredicateParameterInfo(operator, operator.getParameterInfos(),
 						operator.getPredicate());
 
 				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.removeOperator(sel);

@@ -30,7 +30,7 @@ public class ROptimizeJoinPredicate extends AbstractRewriteRule<JoinAO> {
 			join.setPredicate(predicate);
 			predicate.initVars(join.getInputSchema(0), join.getInputSchema(1));
 
-			RestructParameterInfoUtil.updatePredicateParameterInfo(join.getParameterInfos(), join.getPredicate());
+			RestructParameterInfoUtil.updatePredicateParameterInfo(join, join.getParameterInfos(), join.getPredicate());
 			update(join);
 		}
 	}

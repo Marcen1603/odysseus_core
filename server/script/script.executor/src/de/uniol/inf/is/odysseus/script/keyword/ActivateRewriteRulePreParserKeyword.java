@@ -43,6 +43,8 @@ public class ActivateRewriteRulePreParserKeyword extends
 
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
+
+		
 		// TODO
 
 //		try {

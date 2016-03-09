@@ -865,6 +865,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					rulesToApply.addAll(getRewriteRules());
 				}
 			}
+		}else{
+			// if not given
+			rulesToApply.addAll(getRewriteRules());
 		}
 
 		if (inactiveRules != null) {
@@ -900,7 +903,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// else use default rule base
 		if (activeRules != null || inactiveRules != null) {
 			rewriteConfig = new RewriteConfiguration(rulesToApply);
-			LOG.trace("Runing Rewrite with rules "+rulesToApply);
+			LOG.debug("Running Rewrite with rules "+rulesToApply);
 		}
 		else {
 			rewriteConfig = new RewriteConfiguration(null);

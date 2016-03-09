@@ -408,8 +408,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				newFunction = (AbstractFunction<T>) cons.newInstance(this);
 			} catch (NoSuchMethodException | SecurityException | IllegalArgumentException
 					| InvocationTargetException e) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("No CC for " + this.getClass());
+				if (LOG.isTraceEnabled()) {
+					LOG.trace("No CC for " + this.getClass());
 				}
 			}
 			// Fallback when calling copy constructor fails

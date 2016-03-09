@@ -105,6 +105,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.debug = op.debug;
 		this.suppressPunctuation = op.suppressPunctuation;
 		this.baseTimeUnit = op.baseTimeUnit;
+		
 	}
 
 	public AbstractLogicalOperator() {
@@ -814,7 +815,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public Map<String, String> getParameterInfos() {
-		return infos;
+		return Collections.unmodifiableMap(infos);
 	}
 
 	@Override

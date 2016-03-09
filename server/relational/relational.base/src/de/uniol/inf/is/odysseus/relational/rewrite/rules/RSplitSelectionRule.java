@@ -47,13 +47,13 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
         for (int i = 0; i < preds.size() - 1; i++) {
             SelectAO newSel = createNewSelect(sel, preds.get(i));
-            RestructParameterInfoUtil.updatePredicateParameterInfo(newSel.getParameterInfos(), newSel.getPredicate());
+            RestructParameterInfoUtil.updatePredicateParameterInfo(newSel, newSel.getParameterInfos(), newSel.getPredicate());
 
             RestructHelper.insertOperator(newSel, sel, 0, 0, 0);
             insert(newSel);
         }
         sel.setPredicate(preds.get(preds.size() - 1));
-        RestructParameterInfoUtil.updatePredicateParameterInfo(sel.getParameterInfos(), sel.getPredicate());
+        RestructParameterInfoUtil.updatePredicateParameterInfo(sel, sel.getParameterInfos(), sel.getPredicate());
 
         update(sel);
     }

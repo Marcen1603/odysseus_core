@@ -3,12 +3,13 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 public final class RestructParameterInfoUtil {
 
-	public static void updatePredicateParameterInfo(
+	public static void updatePredicateParameterInfo(ILogicalOperator op,
 			Map<String, String> parameterInfos, IPredicate<?> newPred) {
 		if (newPred == null)
 			return;
@@ -24,10 +25,10 @@ public final class RestructParameterInfoUtil {
 				}
 			}
 		}
-		parameterInfos.put("PREDICATE", newPredicateString);
+		op.addParameterInfo("PREDICATE", newPredicateString);
 	}
 	
-	public static void updateAttributesParameterInfo(
+	public static void updateAttributesParameterInfo(ILogicalOperator op,
 			Map<String, String> parameterInfos, List<SDFAttribute> newAttrs) {
 		if (newAttrs == null)
 			return;
@@ -53,7 +54,7 @@ public final class RestructParameterInfoUtil {
 				}
 			}
 		}
-		parameterInfos.put("ATTRIBUTES", newAttributesString);
+		op.addParameterInfo("ATTRIBUTES", newAttributesString);
 	}
 	
 	public static void updateAliasesParameterInfo(

@@ -65,6 +65,7 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
 	@Parameter(type = PredicateParameter.class)
 	public void setPredicate(IPredicate predicate) {
 		this.predicate = predicate;
+		
 	}
 
 	@Override

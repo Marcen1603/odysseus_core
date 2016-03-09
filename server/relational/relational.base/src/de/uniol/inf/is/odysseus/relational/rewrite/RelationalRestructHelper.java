@@ -168,7 +168,7 @@ public class RelationalRestructHelper {
 		SDFSchema newOutputSchema_proj = SDFSchemaFactory.createNewWithAttributes(newAttributes_proj,
 				father.getOutputSchema());
 		father.setOutputSchema(newOutputSchema_proj);
-		RestructParameterInfoUtil.updateAttributesParameterInfo(father.getParameterInfos(), newAttributes_proj);
+		RestructParameterInfoUtil.updateAttributesParameterInfo(father, father.getParameterInfos(), newAttributes_proj);
 
 		// Change the son
 		List<String> oldAliases = son.getAliases();
