@@ -42,7 +42,7 @@ public class NotEqualsOperator extends AbstractBinaryNumberInputOperator<Boolean
 		if ((left == null) || (right == null)) {
 			return null;
 		}
-		return Boolean.valueOf(!(left.equals(right)));
+		return Boolean.valueOf(Double.compare(left.doubleValue(), right.doubleValue()) != 0);
 	}
 
 

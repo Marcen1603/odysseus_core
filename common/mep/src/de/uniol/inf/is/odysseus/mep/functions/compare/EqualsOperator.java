@@ -45,7 +45,7 @@ public class EqualsOperator extends AbstractBinaryNumberInputOperator<Boolean> i
 		if ((left == null) || (right == null)) {
 			return null;
 		}
-		return Boolean.valueOf(left.doubleValue() == right.doubleValue());
+		return Boolean.valueOf(Double.compare(left.doubleValue(), right.doubleValue()) == 0);
 	}
 
 
