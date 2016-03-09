@@ -458,7 +458,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 	public static void main(final String[] args) {
 		final SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE, null, null, null);
 		final SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", a);
-		final RelationalExpression<?> pred = new RelationalExpression<>(
+		final RelationalExpression<IMetaAttribute> pred = new RelationalExpression<>(
 				new SDFExpression("p_out <=0 || isNaN(p_out)", null, MEP.getInstance()));
 
 		System.out.println(pred.toString());
@@ -467,7 +467,8 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		tuple.setAttribute(0, 8);
 		final KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
 		additional.setAttribute("b", 5);
-		System.out.println(pred.evaluate(tuple, additional));
+		// REMARK: COULD THIS EVER WORK CORRECTLY??
+		//System.out.println(pred.evaluate(tuple, additional));
 	}
 
 }

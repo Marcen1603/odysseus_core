@@ -21,7 +21,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
-import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.mep.Variable;
 
 public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 

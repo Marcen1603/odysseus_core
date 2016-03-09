@@ -8,11 +8,12 @@ import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
-import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.style.PersistentCondition;
 
 public abstract class Condition<T>{
@@ -20,7 +21,7 @@ public abstract class Condition<T>{
 	private String expressionStr = null;
 	private T defaultValue = null;
 	private IExpression<?> exp = null;
-	private Set<Entry<Integer, Variable>> variables = null;
+	private Set<Entry<Integer, IVariable>> variables = null;
 	public Condition(PersistentCondition condition) {
 		this.defaultValue = getValue(condition.defaultValue);
 		this.expressionStr = condition.expression;
@@ -45,9 +46,9 @@ public abstract class Condition<T>{
 		if (expressionStr != null && expressionStr.length() != 0){
 			try {
 				exp = MEP.getInstance().parse(expressionStr, schema);
-				Set<Variable> vars = exp.getVariables();
-				TreeMap<Integer, Variable> variables = new TreeMap<Integer, Variable>();
-				for (Variable variable : vars) {
+				Set<IVariable> vars = exp.getVariables();
+				TreeMap<Integer, IVariable> variables = new TreeMap<Integer, IVariable>();
+				for (IVariable variable : vars) {
 					SDFAttribute attr = schema.findAttribute(variable.getIdentifier());
 					int index = schema.indexOf(attr);
 					variables.put(index, variable);
@@ -66,7 +67,7 @@ public abstract class Condition<T>{
 	public T eval(Tuple<?> tuple) {
 		T eval = null;
 		if (tuple != null && exp != null){
-			for (Entry<Integer,Variable> element : this.variables) {
+			for (Entry<Integer,IVariable> element : this.variables) {
 				element.getValue().bind(tuple.getAttribute(element.getKey()), element.getKey());
 			}
 			eval = getValue(this.exp.getValue());

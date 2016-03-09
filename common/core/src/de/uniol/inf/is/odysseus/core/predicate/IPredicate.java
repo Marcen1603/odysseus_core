@@ -75,6 +75,14 @@ public interface IPredicate<T> extends IClone, Serializable {
     public boolean isAlwaysTrue();
 
     /**
+     * Checks whether the predicate always evaluate to <code>false</code>
+     * 
+     * @return Flag whether the predicate always evaluate to <code>false</code>
+     */
+    public boolean isAlwaysFalse();
+
+    
+    /**
      * Returns the conjunction of this predicate and the given predicate.
      * 
      * 

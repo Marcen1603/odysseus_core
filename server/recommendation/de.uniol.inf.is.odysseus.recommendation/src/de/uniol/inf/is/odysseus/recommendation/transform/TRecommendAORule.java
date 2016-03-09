@@ -97,8 +97,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 					predictRatingAttributeName + " > "
 							+ operator.getMinRating(), null, MEP.getInstance());
 
-			@SuppressWarnings("unchecked")
-			final IPredicate<Tuple<?>> predicate = new RelationalExpression<>(
+			final RelationalExpression<?> predicate = new RelationalExpression<>(
 					sdfExpression);
 			final SelectAO selectAo = new SelectAO(predicate);
 			// selectAo.setName(selectAo.getClass().getSimpleName());

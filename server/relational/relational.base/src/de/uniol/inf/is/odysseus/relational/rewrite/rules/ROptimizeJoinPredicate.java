@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
+import de.uniol.inf.is.odysseus.core.expression.AbstractRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -20,7 +21,7 @@ public class ROptimizeJoinPredicate extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config) throws RuleException {
-		SDFExpression originalSDFExpression = ((RelationalExpression<?>) join.getPredicate());
+		AbstractRelationalExpression originalSDFExpression = ((AbstractRelationalExpression<?>) join.getPredicate());
 		IExpression<?> optimizedExpression = BooleanExpressionOptimizer
 				.optimize(originalSDFExpression.getMEPExpression());
 		if (!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {

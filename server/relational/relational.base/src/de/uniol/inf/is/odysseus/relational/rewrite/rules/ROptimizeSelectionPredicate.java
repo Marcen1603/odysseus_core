@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
+import de.uniol.inf.is.odysseus.core.expression.AbstractRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -21,7 +22,7 @@ public class ROptimizeSelectionPredicate extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration config)
 			throws RuleException {
-		SDFExpression originalSDFExpression = ((RelationalExpression<?>) sel
+		AbstractRelationalExpression originalSDFExpression = ((AbstractRelationalExpression<?>) sel
 				.getPredicate());
 		IExpression<?> optimizedExpression = BooleanExpressionOptimizer.optimize(originalSDFExpression.getMEPExpression());
 		if(!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {

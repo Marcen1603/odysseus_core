@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -363,12 +363,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 	 */
 	@Override
 	public boolean isContainedIn(IPredicate<?> o) {
-		if (!(o instanceof AbstractRelationalPredicate)) {
-			return false;
-		}
-		AbstractRelationalPredicate<?> rp2 = (AbstractRelationalPredicate<?>) o;
-
-		return this.getExpression().isContainedIn(rp2.getExpression());
+		return false;
 	}
 
 	/**

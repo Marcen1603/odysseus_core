@@ -199,7 +199,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		attributes.remove(bestSplitAt);
 		parent.setAttribute(bestSplitAt);
 		// for each possible value of the split attribute...
-		for (RelationalExpression<M> splitPredicate : splittingPoints.get(bestSplitAt)) {
+		for (@SuppressWarnings("rawtypes") RelationalExpression splitPredicate : splittingPoints.get(bestSplitAt)) {
 			// ... get only the subset for this value
 			List<Tuple<M>> subset = getSubset(pool, bestSplitAt, splitPredicate);
 			// if subset size is zero, we do not need this node...

@@ -130,10 +130,5 @@ public interface IFunction<T> extends IExpression<T> {
 	boolean isOrPredicate();
 
 	boolean isNotPredicate();
-
-	IExpression<?> and(IExpression<?> expression);
-	IExpression<?> or(IExpression<?> expression);
-	IExpression<?> not();
-
 	
 }

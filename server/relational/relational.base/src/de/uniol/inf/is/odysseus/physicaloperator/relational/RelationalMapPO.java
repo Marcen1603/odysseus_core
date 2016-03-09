@@ -185,7 +185,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		return false;
 	}
 
-	public SDFExpression[] getExpressions() {
+	public RelationalExpression<T>[] getExpressions() {
 		return expressions;
 	}
 

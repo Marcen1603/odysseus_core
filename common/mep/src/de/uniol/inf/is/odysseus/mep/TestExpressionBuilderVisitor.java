@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 
 public class TestExpressionBuilderVisitor {
 
@@ -36,7 +36,7 @@ public class TestExpressionBuilderVisitor {
 		try {
 			IExpression<?> expression = MEP.getInstance().parse(inRead.readLine());
 
-			for (Variable curVar : expression.getVariables()) {
+			for (IVariable curVar : expression.getVariables()) {
 				System.out
 						.println("Value for " + curVar.getIdentifier() + ": ");
 				BufferedReader reader = new BufferedReader(

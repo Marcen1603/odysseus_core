@@ -29,7 +29,7 @@ public interface IExpressionVisitor {
 	 * @param data ??
 	 * @return ??
 	 */
-	public Object visit(Variable variable, Object data);
+	public Object visit(IVariable variable, Object data);
 	
 	/**
 	 * Walk through with a constant as starting point
@@ -37,7 +37,7 @@ public interface IExpressionVisitor {
 	 * @param data ??
 	 * @return ??
 	 */
-	public Object visit(Constant<?> constant, Object data);
+	public Object visit(IConstant<?> constant, Object data);
 
 	/**
 	 * Walk through with a function as starting point

@@ -28,7 +28,7 @@ import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
@@ -237,7 +237,7 @@ public final class PredicateUtils {
         final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
         for (final IPredicate<?> pre : predicates) {
             if (pre instanceof RelationalExpression) {
-                expressions.add(((RelationalExpression<?>) pre));
+                expressions.add(((RelationalExpression<?>) pre).getExpression());
             }
             else if (pre instanceof ProbabilisticRelationalPredicate) {
                 expressions.add(((ProbabilisticRelationalPredicate) pre).getExpression());

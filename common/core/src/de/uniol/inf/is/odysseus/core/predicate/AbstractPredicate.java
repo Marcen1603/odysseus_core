@@ -93,6 +93,11 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     public boolean isAlwaysTrue() {
         return false;
     }
+    
+    @Override
+    public boolean isAlwaysFalse() {
+    	return false;
+    }
 
     /**
      * {@inheritDoc}

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.mep;
+package de.uniol.inf.is.odysseus.mep;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
+import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -34,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author Marco Grawunder
  *
  */
-public class Variable implements IExpression<Object> {
+public class Variable extends AbstractExpression<Object> implements IVariable {
 
 	Logger LOG = LoggerFactory.getLogger(Variable.class);
 
@@ -105,6 +109,7 @@ public class Variable implements IExpression<Object> {
 	 * 
 	 * @return the name of the variable
 	 */
+	@Override
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -116,7 +121,7 @@ public class Variable implements IExpression<Object> {
 	 * @param value
 	 *            The value to bind
 	 */
-
+	@Override
 	public void bind(Object value, int position) {
 		this.value = value;
 		this.position = position;
@@ -128,6 +133,7 @@ public class Variable implements IExpression<Object> {
 		return this.value;
 	}
 
+	@Override
 	public int getPosition() {
 		return position;
 	}
@@ -156,7 +162,7 @@ public class Variable implements IExpression<Object> {
 	}
 
 	@Override
-	public Set<Variable> getVariables() {
+	public Set<IVariable> getVariables() {
 		return Collections.singleton(this);
 	}
 
@@ -183,17 +189,6 @@ public class Variable implements IExpression<Object> {
 	@Override
 	public boolean isVariable() {
 		return true;
-	}
-
-
-	@Override
-	public boolean isFunction() {
-		return false;
-	}
-
-	@Override
-	public boolean isConstant() {
-		return false;
 	}
 
 	@Override
@@ -289,15 +284,18 @@ public class Variable implements IExpression<Object> {
 	}
 	
 	@Override
-	public IExpression<Object> clone(Map<Variable, Variable> vars) {
+	public IExpression<Object> clone(Map<IVariable, IVariable> vars) {
 		// Variables are unique, so if the variable is cloned onces, it must
 		// not be cloned again in the same expression
-		Variable ret = vars.get(this);
+		IVariable ret = vars.get(this);
 		if (ret == null){
 			ret = new Variable(this);
 			vars.put(this,ret);
 		}
 		return ret;
 	}
+	
+	
+	
 	
 }

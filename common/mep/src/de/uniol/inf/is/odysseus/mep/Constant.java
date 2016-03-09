@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.mep;
+package de.uniol.inf.is.odysseus.mep;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -23,6 +23,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.mep.IConstant;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -35,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  *            used
  */
 
-public class Constant<T> implements IExpression<T> {
+public class Constant<T> extends AbstractExpression<T> implements IConstant<T> {
 
 	private static final long serialVersionUID = 504053838249636471L;
 	private static final NumberFormat DOUBLE_FORMATTER = NumberFormat.getNumberInstance(Locale.ENGLISH); // '.' instead of ',' 
@@ -91,7 +95,7 @@ public class Constant<T> implements IExpression<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Variable> getVariables() {
+	public Set<IVariable> getVariables() {
 		return Collections.EMPTY_SET;
 	}
 
@@ -116,43 +120,13 @@ public class Constant<T> implements IExpression<T> {
 	}
 
 	@Override
-	public boolean isVariable() {
-		return false;
-	}
-
-	@Override
-	public boolean isFunction() {
-		return false;
-	}
-
-	@Override
 	public boolean isConstant() {
 		return true;
 	}
 
 	@Override
-	public Variable toVariable() {
-		throw new RuntimeException("cannot convert Constant to Variable");
-	}
-
-	@Override
-	public IFunction<T> toFunction() {
-		throw new RuntimeException("cannot convert Constant to IFunction");
-	}
-
-	@Override
 	public Constant<T> toConstant() {
 		return this;
-	}
-
-	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
-		throw new RuntimeException("cannot determine type");
-	}
-	
-	@Override
-	public boolean determineTypeFromInput() {
-		return false;
 	}
 	
 	@Override
@@ -163,7 +137,7 @@ public class Constant<T> implements IExpression<T> {
 	}
 	
 	@Override
-	public IExpression<T> clone(Map<Variable, Variable> vars){
+	public IExpression<T> clone(Map<IVariable, IVariable> vars){
 		return this;
 	}
 

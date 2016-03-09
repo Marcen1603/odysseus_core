@@ -24,11 +24,11 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import de.uniol.inf.is.odysseus.core.mep.Constant;
+import de.uniol.inf.is.odysseus.core.mep.IConstant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
@@ -171,12 +171,12 @@ public class ExpressionOptimizer {
 	private static class CombineConstants implements IExpressionVisitor {
 
 		@Override
-		public Object visit(Variable variable, Object data) {
+		public Object visit(IVariable variable, Object data) {
 			return null;
 		}
 
 		@Override
-		public Object visit(Constant<?> constant, Object data) {
+		public Object visit(IConstant<?> constant, Object data) {
 			return null;
 		}
 
@@ -196,7 +196,7 @@ public class ExpressionOptimizer {
 						}
 					}
 					if (!constants.isEmpty()) {
-						Constant<?> c = calculateConstant(function.getClass(),
+						IConstant<?> c = calculateConstant(function.getClass(),
 								constants);
 						function.setArgument(0, c);
 
@@ -229,7 +229,7 @@ public class ExpressionOptimizer {
 			return null;
 		}
 
-		private static Constant<?> calculateConstant(
+		private static IConstant<?> calculateConstant(
 				@SuppressWarnings("rawtypes") Class<? extends IFunction> class1,
 				List<IExpression<?>> constants) {
 			if (constants.size() == 1) {
@@ -238,7 +238,7 @@ public class ExpressionOptimizer {
 			try {
 				final IFunction<?> function = createFunction(class1);
 				Iterator<IExpression<?>> i = constants.iterator();
-				Constant<?> c = i.next().toConstant();
+				IConstant<?> c = i.next().toConstant();
 				function.setArgument(0, c);
 				while (i.hasNext()) {
 					function.setArgument(1, i.next());
@@ -291,12 +291,12 @@ public class ExpressionOptimizer {
 	private static class PreCalculateConstants implements IExpressionVisitor {
 
 		@Override
-		public Variable visit(Variable variable, Object data) {
+		public IVariable visit(IVariable variable, Object data) {
 			return variable;
 		}
 
 		@Override
-		public Constant<?> visit(Constant<?> constant, Object data) {
+		public IConstant<?> visit(IConstant<?> constant, Object data) {
 			return constant;
 		}
 

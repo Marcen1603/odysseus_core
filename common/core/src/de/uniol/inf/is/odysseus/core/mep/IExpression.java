@@ -50,14 +50,14 @@ public interface IExpression<T> extends Serializable{
 	 * Returns the set of Variables of this expression
 	 * @return
 	 */
-	public Set<Variable> getVariables();
+	public Set<IVariable> getVariables();
 
 	/**
 	 * Return variable with name 
 	 * @param name The name of the variable
 	 * @return The Variable
 	 */
-	public Variable getVariable(String name);
+	public IVariable getVariable(String name);
 	
 	/**
 	 * Delivers the return type of this expression
@@ -101,7 +101,7 @@ public interface IExpression<T> extends Serializable{
 	 * Conversion function
 	 * @return the variable if this expression is a variable, runtime exception else
 	 */
-	public Variable toVariable();
+	public IVariable toVariable();
 	
 	/**
 	 * Conversion function
@@ -113,14 +113,19 @@ public interface IExpression<T> extends Serializable{
 	 * Conversion function
 	 * @return the constant if this expression is a constant, runtime exception else
 	 */
-	public Constant<T> toConstant();
+	public IConstant<T> toConstant();
 
 	public boolean determineTypeFromInput();
 	
 	public SDFDatatype determineType(IExpression<?>[] args);
 
-	public IExpression<T> clone(Map<Variable,Variable> vars);
+	public IExpression<T> clone(Map<IVariable,IVariable> vars);
 
 	public List<IExpression<T>> conjunctiveSplit();
+	
+	IFunction<?> and(IExpression<?> expression);
+	IFunction<?> or(IExpression<?> expression);
+	IFunction<?> not();
+
 	
 }

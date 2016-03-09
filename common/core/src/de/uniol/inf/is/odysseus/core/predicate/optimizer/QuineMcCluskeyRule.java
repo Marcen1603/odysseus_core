@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;

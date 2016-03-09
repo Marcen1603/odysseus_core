@@ -23,17 +23,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
@@ -41,7 +39,7 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 
-public abstract class AbstractFunction<T> implements IFunction<T> {
+public abstract class AbstractFunction<T> extends AbstractExpression<T> implements IFunction<T> {
 
 	static final Logger LOG = LoggerFactory.getLogger(AbstractFunction.class);
 
@@ -272,8 +270,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public Set<Variable> getVariables() {
-		Set<Variable> variables = new HashSet<Variable>();
+	public Set<IVariable> getVariables() {
+		Set<IVariable> variables = new HashSet<IVariable>();
 		for (int i = 0; i < getArity(); ++i) {
 			variables.addAll(getArguments()[i].getVariables());
 		}
@@ -281,9 +279,9 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public Variable getVariable(String name) {
-		Set<Variable> variables = getVariables();
-		for (Variable curVar : variables) {
+	public IVariable getVariable(String name) {
+		Set<IVariable> variables = getVariables();
+		for (IVariable curVar : variables) {
 			if (curVar.getIdentifier().equals(name)) {
 				return curVar;
 			}
@@ -330,10 +328,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		return this.arguments[argumentPosition];
 	}
 
-	@Override
-	public boolean isVariable() {
-		return false;
-	}
 
 	@Override
 	public boolean isFunction() {
@@ -341,23 +335,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public boolean isConstant() {
-		return false;
-	}
-
-	@Override
-	public Variable toVariable() {
-		throw new RuntimeException("cannot convert IFunction to Variable");
-	}
-
-	@Override
 	public IFunction<T> toFunction() {
 		return this;
-	}
-
-	@Override
-	public Constant<T> toConstant() {
-		throw new RuntimeException("cannot convert IFunction to Constant");
 	}
 
 	@Override
@@ -399,7 +378,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IExpression<T> clone(Map<Variable, Variable> vars) {
+	public IExpression<T> clone(Map<IVariable, IVariable> vars) {
 		// Remark: stateful functions must override this method!
 		try {
 			AbstractFunction<T> newFunction = null;
@@ -690,10 +669,10 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				// Funktionen sind Vergleiche zwischen zwei Attributen
 			} else if (getArguments().length == 2 && firstArgument1.isVariable() && secondArgument1.isVariable()
 					&& firstArgument2.isVariable() && secondArgument2.isVariable()) {
-				Variable v11 = firstArgument1.toVariable();
-				Variable v12 = secondArgument1.toVariable();
-				Variable v21 = firstArgument2.toVariable();
-				Variable v22 = secondArgument2.toVariable();
+				IVariable v11 = firstArgument1.toVariable();
+				IVariable v12 = secondArgument1.toVariable();
+				IVariable v21 = firstArgument2.toVariable();
+				IVariable v22 = secondArgument2.toVariable();
 
 				// Attribute sind links und rechts gleich
 				if (v11.equals(v21) && v12.equals(v22)) {
@@ -724,44 +703,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	}
 
-	@Override
-	public IExpression<?> and(IExpression<?> expression) {
-		AndOperator and = new AndOperator();
-		and.setArguments(new IExpression<?>[] { this, expression });
-		return and;
-	}
 
-	@Override
-	public IExpression<?> or(IExpression<?> expression) {
-		OrOperator or = new OrOperator();
-		or.setArguments(new IExpression<?>[] { this, expression });
-		return or;
-	}
-
-	@Override
-	public IExpression<?> not() {
-		NotOperator not = new NotOperator();
-		not.setArguments(new IExpression<?>[] { this});
-		return not;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<IExpression<T>> conjunctiveSplit() {
-		List<IExpression<T>> result = new ArrayList<>();
-		// Split with and
-		final Stack<IExpression<T>> expressionStack = new Stack<>();
-		expressionStack.push(this);
-		while (!expressionStack.isEmpty()) {
-			final IExpression<T> curExpression = expressionStack.pop();
-			if (curExpression.isFunction() && ((IFunction<?>)curExpression).isAndPredicate()) {
-				expressionStack.push((IExpression<T>) curExpression.toFunction().getArgument(0));
-				expressionStack.push((IExpression<T>) curExpression.toFunction().getArgument(1));
-			} else {
-				result.add(curExpression);
-			}
-		}
-		return result;
-	}
 
 }

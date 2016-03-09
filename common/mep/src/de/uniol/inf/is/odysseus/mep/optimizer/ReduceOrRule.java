@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.optimizer;
 
-import de.uniol.inf.is.odysseus.core.mep.Constant;
+import de.uniol.inf.is.odysseus.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
