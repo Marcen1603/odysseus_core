@@ -31,11 +31,11 @@ public class RPregroupJoinSelectionRule extends AbstractRewriteRule<JoinAO> {
 	public void execute(JoinAO join, RewriteConfiguration config) throws RuleException {
 		Collection<SelectAO> selections = findSelectionsToPlaceAfter(join);
 		for (SelectAO select : selections) {
-			moveSelectionBefore(select, join);
+			moveSelectionBehind(select, join);
 		}
 	}
 
-	private void moveSelectionBefore(SelectAO select, JoinAO join) {
+	private void moveSelectionBehind(SelectAO select, JoinAO join) {
 		SelectAO newSelect = new SelectAO();
 		newSelect.setPredicate(select.getPredicate());
 		RelationalRestructHelper.removeOperator(select);
@@ -56,23 +56,26 @@ public class RPregroupJoinSelectionRule extends AbstractRewriteRule<JoinAO> {
 
 	private static Collection<SelectAO> findSelectionsToPlaceAfter(JoinAO join) {
 		List<SelectAO> selections = Lists.newArrayList();
-		findSelectionsToPlaceAfterRecursive(join, join, selections);
+		findSelectionsToPlaceAfterRecursive(join, join, selections, true);
 		return selections;
 	}
 
+	// selectAOTrace = true <=> All operators between the join and the current operator are selections
 	private static void findSelectionsToPlaceAfterRecursive(JoinAO join, ILogicalOperator currentOperator,
-			Collection<SelectAO> foundSelections) {
+			Collection<SelectAO> foundSelections, boolean selectAOTrace) {
 		for (LogicalSubscription sub : currentOperator.getSubscriptions()) {
 			if (SelectAO.class.isInstance(sub.getTarget()) && !join.equals(currentOperator)) {
 				// Second clause is to avoid selecting the same selection over and over again.
 				SelectAO select = (SelectAO) sub.getTarget();
-				// 1. Selection is executable direct behind the join
-				// 2. Selection can not be switched with the join.
-				if (isExecutableAfter(select, join) && !RSwitchSelectionJoinRule.canSwitch(select, join)) {
+				// 1. If all operators between the join and selection are selections, don't change the order of the selections (endless loop of rule execution)
+				// 2. Selection is executable direct behind the join
+				// 3. Selection can not be switched with the join.
+				if (!selectAOTrace && isExecutableAfter(select, join) && !RSwitchSelectionJoinRule.canSwitch(select, join)) {
 					foundSelections.add(select);
 				}
 			}
-			findSelectionsToPlaceAfterRecursive(join, sub.getTarget(), foundSelections);
+			// selectAOTrace = true <=> All operators between the join and the current operator are selections
+			findSelectionsToPlaceAfterRecursive(join, sub.getTarget(), foundSelections, selectAOTrace && SelectAO.class.isInstance(sub.getTarget()));
 		}
 	}
 

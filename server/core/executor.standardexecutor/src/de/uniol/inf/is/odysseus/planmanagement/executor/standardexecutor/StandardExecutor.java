@@ -890,7 +890,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				if (getRewriteRules().contains(s)) {
 					rulesToApply.remove(s);
 				}else{
-					LOG.warn("Trying to remove rule "+s+" that is not activated!");
+					LOG.warn("Trying to deactivate rule "+s+" that is not activated! Must use full class name!");
 				}
 			}
 		}
