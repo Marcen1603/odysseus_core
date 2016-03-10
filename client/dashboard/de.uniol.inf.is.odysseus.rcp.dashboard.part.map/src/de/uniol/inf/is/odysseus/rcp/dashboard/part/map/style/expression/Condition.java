@@ -15,6 +15,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.style.PersistentCondition;
 
+/**
+ * 
+ * @author 
+ *
+ * @param <T>
+ */
+
 public abstract class Condition<T>{
 
 	private String expressionStr = null;
