@@ -45,7 +45,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	public void execute(SelectAO operator, RewriteConfiguration config) {
 		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(operator, SelectAO.class);
 		if (sel != null) {
-			if (sel.getPredicate() != null) {
+			if (sel.getPredicate() != null && sel.getPredicate() instanceof IPredicate) {
 				if (operator.getPredicate() != null) {
 					operator.setPredicate(operator.getPredicate().and((IPredicate) sel.getPredicate()));
 					ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration()

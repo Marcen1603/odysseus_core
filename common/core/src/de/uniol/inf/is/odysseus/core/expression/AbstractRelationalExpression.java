@@ -252,10 +252,10 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isContainedIn(IPredicate predicate) {
+	public boolean isContainedIn(IPredicate<?> predicate) {
 		if (predicate instanceof AbstractRelationalExpression) {
 			if (this.expression instanceof IFunction) {
-				return ((IFunction) this.expression).isContainedIn(((AbstractRelationalExpression) predicate).expression.getMEPExpression());
+				return ((IFunction<T>) this.expression).isContainedIn(((AbstractRelationalExpression<T>) predicate).expression.getMEPExpression());
 			}
 		}
 		return false;

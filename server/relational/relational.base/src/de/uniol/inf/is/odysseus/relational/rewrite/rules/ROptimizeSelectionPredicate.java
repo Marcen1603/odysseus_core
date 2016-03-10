@@ -22,7 +22,7 @@ public class ROptimizeSelectionPredicate extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration config)
 			throws RuleException {
-		AbstractRelationalExpression originalSDFExpression = ((AbstractRelationalExpression<?>) sel
+		AbstractRelationalExpression<?> originalSDFExpression = ((AbstractRelationalExpression<?>) sel
 				.getPredicate());
 		IExpression<?> optimizedExpression = BooleanExpressionOptimizer.optimize(originalSDFExpression.getMEPExpression());
 		if(!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {

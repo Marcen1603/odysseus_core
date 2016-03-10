@@ -22,7 +22,7 @@ public class RPrepareJoinCNF extends AbstractRewriteRule<JoinAO> {
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config)
 			throws RuleException {
-		AbstractRelationalExpression originalSDFExpression = ((AbstractRelationalExpression<?>) join
+		AbstractRelationalExpression<?> originalSDFExpression = ((AbstractRelationalExpression<?>) join
 				.getPredicate());
 		IExpression<?> expressionInCNF = BooleanExpressionOptimizer
 				.toConjunctiveNormalForm(BooleanExpressionOptimizer.optimize(originalSDFExpression

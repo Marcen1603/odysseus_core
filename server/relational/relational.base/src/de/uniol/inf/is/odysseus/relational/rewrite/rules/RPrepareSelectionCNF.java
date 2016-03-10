@@ -22,7 +22,7 @@ public class RPrepareSelectionCNF extends AbstractRewriteRule<SelectAO> {
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration config)
 			throws RuleException {
-		AbstractRelationalExpression originalSDFExpression = ((AbstractRelationalExpression<?>) sel
+		AbstractRelationalExpression<?> originalSDFExpression = ((AbstractRelationalExpression<?>) sel
 				.getPredicate());
 		IExpression<?> expressionInCNF = BooleanExpressionOptimizer
 				.toConjunctiveNormalForm(BooleanExpressionOptimizer.optimize(originalSDFExpression
