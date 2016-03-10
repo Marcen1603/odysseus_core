@@ -25,9 +25,9 @@ public class StringReplaceAllFunction2 extends AbstractFunction<String> {
 			List<String> toFindList = getInputValue(1);
 			List<String> replaceWithList = getInputValue(2);
 			Iterator<String> iter = replaceWithList.iterator();
-			String out=null;
+			String out=in;
 			for (String toFind:toFindList){
-				out = in.replaceAll(toFind, iter.next());
+				out = out.replaceAll(toFind, iter.next());
 			}
 			return out;
 		}
