@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mep;
+package de.uniol.inf.is.odysseus.mep.intern;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.mep.AbstractExpression;
 
 /**
  * This generic class represents a constant with a data type and a value

@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -164,9 +164,9 @@ public class JoinTransformationHelper {
 			IExpression arg1 = eq.getArgument(0);
 			IExpression arg2 = eq.getArgument(1);
 			
-			if(arg1 instanceof Variable && arg2 instanceof Variable){
-				String id1 = ((Variable)arg1).getIdentifier();
-				String id2 = ((Variable)arg2).getIdentifier();
+			if(arg1 instanceof IVariable && arg2 instanceof IVariable){
+				String id1 = ((IVariable)arg1).getIdentifier();
+				String id2 = ((IVariable)arg2).getIdentifier();
 				
 				SDFAttribute ownAttr = ownSchema.findAttribute(id1);
 				if (ownAttr == null){

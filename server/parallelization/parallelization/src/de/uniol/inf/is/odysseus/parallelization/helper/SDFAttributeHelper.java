@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -190,7 +190,7 @@ public class SDFAttributeHelper {
 			final IExpression<?> arg2 = eq.getArgument(1);
 			if ((arg1.isVariable()) && (arg2.isVariable())) {
 				// Resolve first attribute and get input port
-				SDFAttribute attr1 = resolver.getAttribute(((Variable) arg1)
+				SDFAttribute attr1 = resolver.getAttribute(((IVariable) arg1)
 						.getIdentifier());
 
 				int attribute1port = -1;
@@ -203,7 +203,7 @@ public class SDFAttributeHelper {
 				}
 
 				// Resolve second attribute and get input port
-				SDFAttribute attr2 = resolver.getAttribute(((Variable) arg2)
+				SDFAttribute attr2 = resolver.getAttribute(((IVariable) arg2)
 						.getIdentifier());
 
 				int attribute2port = -1;

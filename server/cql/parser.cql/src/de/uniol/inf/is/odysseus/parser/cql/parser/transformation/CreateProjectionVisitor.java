@@ -20,9 +20,10 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.mep.Constant;
+import de.uniol.inf.is.odysseus.core.mep.IConstant;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -32,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -172,12 +172,12 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		} else {
 			mathematicalExpressionNeeded = true;
 			SDFDatatype datatype = SDFDatatype.LONG;
-			Constant<? extends Number> constant = null;
+			IConstant<? extends Number> constant = null;
 			if (node.getValue().contains(".")) {
 				datatype = SDFDatatype.DOUBLE;
-				constant = new Constant<Double>(Double.parseDouble(node.getValue()), datatype);
+				constant = MEP.createConstant(Double.parseDouble(node.getValue()), datatype);
 			} else {
-				constant = new Constant<Long>(Long.parseLong(node.getValue()), datatype);
+				constant = MEP.createConstant(Long.parseLong(node.getValue()), datatype);
 			}
 			SDFExpression exp = new SDFExpression(constant, this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());
 			expressions.add(exp);
@@ -285,7 +285,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		} else {
 			mathematicalExpressionNeeded = true;
 			SDFDatatype datatype = SDFDatatype.STRING;
-			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());
+			SDFExpression exp = new SDFExpression(MEP.createConstant(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());
 			expressions.add(exp);
 			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype, null, null, null);
 			outputAttributes.add(attribute);

@@ -59,7 +59,6 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
@@ -234,7 +233,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 				@SuppressWarnings("rawtypes")
 				final IExpression[] arguments = new IExpression[function.getArity()];
 				for (int i = 0; i < function.getArity(); i++) {
-					arguments[i] = new Constant<>(value[i], function.getAcceptedTypes(i)[0]);
+					arguments[i] = MEP.createConstant(value[i], function.getAcceptedTypes(i)[0]);
 				}
 				function.setArguments(arguments);
 				futures.add(executor.submit(new Callable<Long>() {

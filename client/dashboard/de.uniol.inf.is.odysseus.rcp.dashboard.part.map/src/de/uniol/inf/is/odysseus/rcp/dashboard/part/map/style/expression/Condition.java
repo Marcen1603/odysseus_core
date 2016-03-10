@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.style.PersistentCondition;
 
 public abstract class Condition<T>{

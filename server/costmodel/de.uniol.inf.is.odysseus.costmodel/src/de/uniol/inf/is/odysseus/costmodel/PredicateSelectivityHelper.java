@@ -24,9 +24,9 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.mep.Constant;
+import de.uniol.inf.is.odysseus.core.mep.IConstant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -174,7 +174,7 @@ public class PredicateSelectivityHelper {
 		LOG.debug("Found EqualsOperator");
 
 		if (isOnlyOneAttribute(arg0, arg1)) {
-			if (arg0 instanceof Constant) {
+			if (arg0 instanceof IConstant) {
 				return evaluateEqualsOperator(arg1, arg0);
 			}
 
@@ -218,7 +218,7 @@ public class PredicateSelectivityHelper {
 		LOG.debug("Found SmallerThanOperator");
 
 		if (isOnlyOneAttribute(arg0, arg1)) {
-			if (arg0 instanceof Constant) {
+			if (arg0 instanceof IConstant) {
 				return evaluateGreaterThanOperator(arg1, arg0);
 			}
 
@@ -263,7 +263,7 @@ public class PredicateSelectivityHelper {
 		LOG.debug("Found GreaterThanOperator");
 
 		if (isOnlyOneAttribute(arg0, arg1)) {
-			if (arg0 instanceof Constant) {
+			if (arg0 instanceof IConstant) {
 				return evaluateSmallerThanOperator(arg1, arg0);
 			}
 
@@ -304,8 +304,8 @@ public class PredicateSelectivityHelper {
 
 	private Optional<HistogramPair> getRelativeHistograms(IExpression<?> arg0, IExpression<?> arg1) {
 		// Get Attributes
-		String firstAttribute = ((Variable) arg0).getIdentifier();
-		String secondAttribute = ((Variable) arg1).getIdentifier();
+		String firstAttribute = ((IVariable) arg0).getIdentifier();
+		String secondAttribute = ((IVariable) arg1).getIdentifier();
 
 		Optional<IHistogram> optFirstHist = getHistogram(firstAttribute);
 		Optional<IHistogram> optSecondHist = getHistogram(secondAttribute);
@@ -328,9 +328,9 @@ public class PredicateSelectivityHelper {
 		Double value = null;
 
 		try {
-			attribute = ((Variable) arg0).getIdentifier();
+			attribute = ((IVariable) arg0).getIdentifier();
 			//Changed from typecast to call of toNumeric to avoid ClassCast Exceptions
-			value = toNumeric(((Constant<?>) arg1).getValue());
+			value = toNumeric(((IConstant<?>) arg1).getValue());
 		} catch (Throwable ex) {
 			LOG.warn("Operator is more complex than expected here...", ex);
 			return Optional.absent();
@@ -365,7 +365,7 @@ public class PredicateSelectivityHelper {
 	}
 
 	private static boolean isOnlyOneAttribute(IExpression<?> arg0, IExpression<?> arg1) {
-		if (arg0 instanceof Variable && arg1 instanceof Variable)
+		if (arg0 instanceof IVariable && arg1 instanceof IVariable)
 			return false;
 		return true;
 	}

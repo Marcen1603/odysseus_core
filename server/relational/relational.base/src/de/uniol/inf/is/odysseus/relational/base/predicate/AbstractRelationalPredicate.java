@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -320,12 +320,12 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 			final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
 			final IExpression<?> arg1 = eq.getArgument(0);
 			final IExpression<?> arg2 = eq.getArgument(1);
-			if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
-				final SDFAttribute key = resolver.getAttribute(((Variable) arg1).getIdentifier());
+			if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
+				final SDFAttribute key = resolver.getAttribute(((IVariable) arg1).getIdentifier());
 				if (!attributes.containsKey(key)) {
 					attributes.put(key, new ArrayList<SDFAttribute>());
 				}
-				attributes.get(key).add(resolver.getAttribute(((Variable) arg2).getIdentifier()));
+				attributes.get(key).add(resolver.getAttribute(((IVariable) arg2).getIdentifier()));
 			}
 		}
 		return attributes;
@@ -351,7 +351,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 			final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
 			final IExpression<?> arg1 = eq.getArgument(0);
 			final IExpression<?> arg2 = eq.getArgument(1);
-			if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
+			if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
 				return true;
 			}
 		}

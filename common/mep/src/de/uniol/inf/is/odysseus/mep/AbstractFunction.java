@@ -239,7 +239,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	final protected int getInputPosition(int argumentPos) {
-		return ((Variable) arguments[argumentPos]).getPosition();
+		return ((IVariable) arguments[argumentPos]).getPosition();
 	}
 
 	final protected Double getNumericalInputValue(int argumentPos) {

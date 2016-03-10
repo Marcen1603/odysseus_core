@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
-import de.uniol.inf.is.odysseus.mep.Variable;
 
 public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 
@@ -30,7 +30,7 @@ public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 	 */
 	private static final long serialVersionUID = 6442137580076153969L;
 	IExpression<?> expression;
-	protected Map<CepVariable, Variable> symbolTable = new HashMap<CepVariable, Variable>();
+	protected Map<CepVariable, IVariable> symbolTable = new HashMap<CepVariable, IVariable>();
 	
 	public MEPOutputSchemeEntry(String label) {
 		super(label);

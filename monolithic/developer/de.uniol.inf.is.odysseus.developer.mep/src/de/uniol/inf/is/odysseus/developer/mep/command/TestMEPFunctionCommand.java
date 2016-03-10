@@ -70,7 +70,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
@@ -218,7 +217,7 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 			@SuppressWarnings("rawtypes")
 			final IExpression[] arguments = new IExpression[function.getArity()];
 			for (int i = 0; i < function.getArity(); i++) {
-				arguments[i] = new Constant<>(value[i], function.getAcceptedTypes(i)[0]);
+				arguments[i] = MEP.createConstant(value[i], function.getAcceptedTypes(i)[0]);
 			}
 			function.setArguments(arguments);
 			final Future<Throwable> future = executor.submit(new Callable<Throwable>() {

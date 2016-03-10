@@ -31,12 +31,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.mep.IConstant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.mep.intern.Constant;
 import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
@@ -56,6 +58,10 @@ public class MEP implements IExpressionParser {
 
 	public static MEP getInstance() {
 		return instance;
+	}
+	
+	public static <T> IConstant<T> createConstant(T value, SDFDatatype type){
+		return new Constant<>(value, type);
 	}
 
 	@Override

@@ -28,7 +28,7 @@ import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IVariable;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
@@ -265,7 +265,7 @@ public final class PredicateUtils {
             final EqualsOperator eq = (EqualsOperator) expression;
             final IExpression<?> arg1 = eq.getArgument(0);
             final IExpression<?> arg2 = eq.getArgument(1);
-            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
+            if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
                 return true;
             }
         }
@@ -305,12 +305,12 @@ public final class PredicateUtils {
             final EqualsOperator eq = (EqualsOperator) expression;
             final IExpression<?> arg1 = eq.getArgument(0);
             final IExpression<?> arg2 = eq.getArgument(1);
-            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
-                final SDFAttribute key = resolver.getAttribute(((Variable) arg1).getIdentifier());
+            if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
+                final SDFAttribute key = resolver.getAttribute(((IVariable) arg1).getIdentifier());
                 if (!attributes.containsKey(key)) {
                     attributes.put(key, new ArrayList<SDFAttribute>());
                 }
-                attributes.get(key).add(resolver.getAttribute(((Variable) arg2).getIdentifier()));
+                attributes.get(key).add(resolver.getAttribute(((IVariable) arg2).getIdentifier()));
             }
         }
         return attributes;
