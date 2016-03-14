@@ -43,7 +43,7 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 		this.active = true;
     }
 	
-	private BasicLayer(NullConfiguration configuration) {
+	public BasicLayer(NullConfiguration configuration) {
 		super(configuration);
 		this.active = true;
     }

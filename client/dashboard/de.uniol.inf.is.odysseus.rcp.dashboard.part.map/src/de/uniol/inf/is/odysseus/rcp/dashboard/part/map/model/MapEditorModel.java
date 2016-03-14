@@ -38,8 +38,6 @@ public class MapEditorModel {
 
 	public static final String MAP = "map";
 
-	private String layerSettings = "";
-
 	private int layercount;
 	private int srid;
 	private int startIndex;
@@ -71,21 +69,24 @@ public class MapEditorModel {
 	 * @return String which contains all layer setting
 	 */
 	public String save() {
-		this.layerSettings = "";
-		for (ILayer layer : layers) {
-			LayerConfiguration configuration = layer.getConfiguration();
-			boolean checked = layer.isActive();
-			if (configuration instanceof NullConfiguration) {
-				this.layerSettings += addToSettingString((NullConfiguration) configuration, layer.getName(), checked)
-						+ "\\";
-			} else if (configuration instanceof HeatmapLayerConfiguration) {
-				this.layerSettings += addToSettingString((HeatmapLayerConfiguration) configuration, checked) + "\\";
-			} else if (configuration instanceof TracemapLayerConfiguration) {
-				// TODO
-			} else if (configuration instanceof RasterLayerConfiguration) {
-				this.layerSettings += addToSettingString((RasterLayerConfiguration) configuration, checked) + "\\";
-			}
-		}
+		// this.layerSettings = "";
+		// for (ILayer layer : layers) {
+		// LayerConfiguration configuration = layer.getConfiguration();
+		// boolean checked = layer.isActive();
+		// if (configuration instanceof NullConfiguration) {
+		// this.layerSettings += addToSettingString((NullConfiguration)
+		// configuration, layer.getName(), checked)
+		// + "\\";
+		// } else if (configuration instanceof HeatmapLayerConfiguration) {
+		// this.layerSettings += addToSettingString((HeatmapLayerConfiguration)
+		// configuration, checked) + "\\";
+		// } else if (configuration instanceof TracemapLayerConfiguration) {
+		// // TODO
+		// } else if (configuration instanceof RasterLayerConfiguration) {
+		// this.layerSettings += addToSettingString((RasterLayerConfiguration)
+		// configuration, checked) + "\\";
+		// }
+		// }
 
 		// TODO Try with serialization
 
@@ -96,10 +97,11 @@ public class MapEditorModel {
 			layerConfigurations.add(configuration);
 		}
 
-		String test = getSerializedString(layerConfigurations);
-		System.out.println(test);
-		@SuppressWarnings("unused")
-		List<LayerConfiguration> loadedLayerConfigs = getLayersFromSerializedString(test);
+		String layerSettings = getSerializedString(layerConfigurations);
+		// System.out.println(test);
+		// @SuppressWarnings("unused")
+		// List<LayerConfiguration> loadedLayerConfigs =
+		// getLayersFromSerializedString(test);
 
 		return layerSettings;
 	}
@@ -110,7 +112,7 @@ public class MapEditorModel {
 		return encoded;
 	}
 
-	private List<LayerConfiguration> getLayersFromSerializedString(String dataString) {
+	private List<LayerConfiguration> getLayerConfigurationsFromSerializedString(String dataString) {
 		try {
 			byte[] data = Base64.getDecoder().decode(dataString);
 			Object listObject = convertFromBytes(data);
@@ -221,34 +223,55 @@ public class MapEditorModel {
 	public void load(String layerSettings) {
 		layers.clear();
 
-		if (!layerSettings.isEmpty()) {
-			this.layerSettings = layerSettings;
-			ArrayList<String> configurationList = new ArrayList<String>();
-			int startIndex = 0;
+//		if (!layerSettings.isEmpty()) {
+//			ArrayList<String> configurationList = new ArrayList<String>();
+//			int startIndex = 0;
+//
+//			// Split the big String into each layerConfiguration String
+//			// separated by "\\"
+//			while (startIndex < layerSettings.length()) {
+//				int endIndex = layerSettings.indexOf("\\", startIndex);
+//				String configurationString = layerSettings.substring(startIndex, endIndex);
+//				configurationList.add(configurationString);
+//				startIndex = endIndex + 1;
+//			}
+//
+//			for (String configuration : configurationList) {
+//				int endIndex = configuration.indexOf(";");
+//				String layerConfigurationType = configuration.substring(0, endIndex);
+//				String configurationSettings = configuration.substring(endIndex + 1);
+//
+//				if (layerConfigurationType.equals("BasicLayer")) {
+//					loadBasicConfiguration(configurationSettings);
+//				} else if (layerConfigurationType.equals("HeatmapLayerConfiguration")) {
+//					loadHeatMapLayerConfiguration(configurationSettings);
+//				} else if (layerConfigurationType.equals("RasterLayerConfiguration")) {
+//					loadRasterLayerConfiguration(configurationSettings);
+//				}
+//
+//			}
+//		}
 
-			// Split the big String into each layerConfiguration String
-			// separated by "\\"
-			while (startIndex < layerSettings.length()) {
-				int endIndex = layerSettings.indexOf("\\", startIndex);
-				String configurationString = layerSettings.substring(startIndex, endIndex);
-				configurationList.add(configurationString);
-				startIndex = endIndex + 1;
+		List<LayerConfiguration> loadedLayerConfigs = getLayerConfigurationsFromSerializedString(layerSettings);
+
+		for (LayerConfiguration layerConf : loadedLayerConfigs) {
+			if (layerConf instanceof HeatmapLayerConfiguration) {
+				Heatmap layer = new Heatmap((HeatmapLayerConfiguration) layerConf);
+				this.layers.add(layer);
+			} else if (layerConf instanceof TracemapLayerConfiguration) {
+				TraceLayer layer = new TraceLayer((TracemapLayerConfiguration) layerConf);
+				this.layers.add(layer);
+			} else if (layerConf instanceof RasterLayerConfiguration) {
+				RasterLayer layer = new RasterLayer((RasterLayerConfiguration) layerConf);
+				this.layers.add(layer);
+			} else if (layerConf instanceof NullConfiguration) {
+				BasicLayer layer = new BasicLayer((NullConfiguration) layerConf);
+				this.layers.add(layer);
+			} else {
+				BasicLayer layer = new BasicLayer();
+				this.layers.add(layer);
 			}
 
-			for (String configuration : configurationList) {
-				int endIndex = configuration.indexOf(";");
-				String layerConfigurationType = configuration.substring(0, endIndex);
-				String configurationSettings = configuration.substring(endIndex + 1);
-
-				if (layerConfigurationType.equals("BasicLayer")) {
-					loadBasicConfiguration(configurationSettings);
-				} else if (layerConfigurationType.equals("HeatmapLayerConfiguration")) {
-					loadHeatMapLayerConfiguration(configurationSettings);
-				} else if (layerConfigurationType.equals("RasterLayerConfiguration")) {
-					loadRasterLayerConfiguration(configurationSettings);
-				}
-
-			}
 		}
 	}
 
