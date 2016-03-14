@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
-public class Buffer extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
+public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyChangeListener {
 
 	private static final long serialVersionUID = 1092858542289960843L;
 
@@ -28,7 +28,7 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 	private int maxNumerOfElements;
 	private int userDefinedTimeRange;
 
-	private DefaultTISweepArea<Tuple<? extends ITimeInterval>> puffer;
+	private DefaultTISweepArea<Tuple<? extends ITimeInterval>> buffer;
 	private HashMap<Integer, Quadtree> index = new HashMap<Integer, Quadtree>();
 	private HashMap<Integer, Envelope> env = new HashMap<Integer, Envelope>();
 	private int srid;
@@ -41,12 +41,13 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 		this.mapDashboardPart = mapDashboardPart;
 
 		try {
-			this.puffer = (DefaultTISweepArea<Tuple<? extends ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+			this.buffer = (DefaultTISweepArea<Tuple<? extends ITimeInterval>>) SweepAreaRegistry
+					.getSweepArea(DefaultTISweepArea.NAME);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * Removes the oldest elements if puffer is bigger than the configured size
 	 */
@@ -60,33 +61,31 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 			// timerange in ms user wants to save
 			long timeRangeInMs = userDefinedTimeRange * 1000;
 			long userDefinedTimeStamp = 0;
-			if (!puffer.isEmpty()) {
-				userDefinedTimeStamp = puffer.getMaxTs().getMainPoint()
-						- timeRangeInMs;
+			if (!buffer.isEmpty()) {
+				userDefinedTimeStamp = buffer.getMaxTs().getMainPoint() - timeRangeInMs;
 			}
 
 			if (userDefinedTimeStamp > 0) {
 				PointInTime userEndTS = new PointInTime(userDefinedTimeStamp);
-				puffer.purgeElementsBefore(userEndTS);
+				buffer.purgeElementsBefore(userEndTS);
 
 				// Update "current-list", timeSlider and all the other things
 				// which rely on the startTimeStamp
-				mapDashboardPart.getScreenManager().setMaxIntervalStart(
-						puffer.getMinTs());
-				this.elementList = this.puffer
-						.queryOverlapsAsList(this.mapDashboardPart
-								.getScreenManager().getInterval());
-				this.index = new HashMap<Integer, Quadtree>(this.index.size());
+				mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinTs());
+				synchronized (elementList) {
+					this.elementList = this.buffer
+							.queryOverlapsAsList(this.mapDashboardPart.getScreenManager().getInterval());
+					this.index = new HashMap<Integer, Quadtree>(this.index.size());
+				}
 			}
 		}
-		
-		
+
 		// Maybe in the time the user-defined were too many tuples
 		// then delete the oldest tuples, so we prevent an overflow
-		while (puffer.size() > maxNumerOfElements) {
+		while (buffer.size() > maxNumerOfElements) {
 			// Remove old element(s)
-			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer
-					.peekElementsContaing(puffer.getMinTs(), false);
+			Iterator<Tuple<? extends ITimeInterval>> oldestElements = buffer.peekElementsContaing(buffer.getMinTs(),
+					false);
 
 			PointInTime deleteTime = null;
 			if (oldestElements.hasNext()) {
@@ -99,25 +98,25 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 			// This deletes the oldest element. If more than one element
 			// is in this time-window, more than one element will
 			// be deleted.
-			if( deleteTime != null ) {
-				if(deleteTime.isInfinite()){
-					puffer.remove(elementList.get(0));
-				}else{
-					puffer.purgeElementsBefore(deleteTime.plus(1));
+			if (deleteTime != null) {
+				if (deleteTime.isInfinite()) {
+					buffer.remove(elementList.get(0));
+				} else {
+					buffer.purgeElementsBefore(deleteTime.plus(1));
 				}
 			}
 
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp
-			if(puffer.getMinTs() != null) {
-				mapDashboardPart.getScreenManager().setMaxIntervalStart(
-						puffer.getMinTs());
+			if (buffer.getMinTs() != null) {
+				mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinTs());
 			}
-			
-			this.elementList = this.puffer
-					.queryOverlapsAsList(this.mapDashboardPart
-							.getScreenManager().getInterval());
-			this.index = new HashMap<Integer, Quadtree>(this.index.size());
+
+			synchronized (elementList) {
+				this.elementList = this.buffer
+						.queryOverlapsAsList(this.mapDashboardPart.getScreenManager().getInterval());
+				this.index = new HashMap<Integer, Quadtree>(this.index.size());
+			}
 		}
 	}
 
@@ -137,26 +136,21 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 		boolean changedSomething = false;
 
 		// Start
-		if (puffer.getMinTs() != null
-				&& (mapDashboardPart.getScreenManager().getMaxIntervalStart()
-						.after(puffer.getMinTs()) || first)) {
-			mapDashboardPart.getScreenManager().setMaxIntervalStart(
-					puffer.getMinTs());
+		if (buffer.getMinTs() != null
+				&& (mapDashboardPart.getScreenManager().getMaxIntervalStart().after(buffer.getMinTs()) || first)) {
+			mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinTs());
 			changedSomething = true;
 		}
 
 		// End
-		if (puffer.getMaxTs() != null
-				&& (mapDashboardPart.getScreenManager().getMaxIntervalEnd()
-						.before(puffer.getMaxTs()) || first)) {
-			mapDashboardPart.getScreenManager().setMaxIntervalEnd(
-					puffer.getMaxTs());
+		if (buffer.getMaxTs() != null
+				&& (mapDashboardPart.getScreenManager().getMaxIntervalEnd().before(buffer.getMaxTs()) || first)) {
+			mapDashboardPart.getScreenManager().setMaxIntervalEnd(buffer.getMaxTs());
 			changedSomething = true;
 		}
 
 		return changedSomething;
 	}
-
 
 	/**
 	 * @param tuple
@@ -166,31 +160,31 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 		synchronized (elementList) {
 			this.elementList.add(tuple);
 		}
-		ScreenTransformation transformation = this.mapDashboardPart
-				.getScreenManager().getTransformation();
+		ScreenTransformation transformation = this.mapDashboardPart.getScreenManager().getTransformation();
 		int destSrid = this.mapDashboardPart.getScreenManager().getSRID();
 		for (Entry<Integer, Quadtree> tree : this.index.entrySet()) {
 			synchronized (tree) {
-				DataSet newDataSet = new DataSet(tuple, tree.getKey(),
-						destSrid, transformation);
+				DataSet newDataSet = new DataSet(tuple, tree.getKey(), destSrid, transformation);
 				tree.getValue().insert(newDataSet.getEnvelope(), newDataSet);
-				this.env.get(tree.getKey()).expandToInclude(
-						newDataSet.getEnvelope());
+				this.env.get(tree.getKey()).expandToInclude(newDataSet.getEnvelope());
 
 			}
 		}
 	}
 
 	public List<?> query(Envelope searchEnv, int idx) {
-		return getTree(idx).query(searchEnv);
+		synchronized (this.index) {
+			synchronized (elementList) {
+				return getTree(idx).query(searchEnv);
+			}
+		}
 	}
 
 	private Quadtree getTree(int idx) {
 		Quadtree tree = null;
 		synchronized (this.index) {
 			tree = this.index.get(idx);
-			ScreenTransformation transformation = this.mapDashboardPart
-					.getScreenManager().getTransformation();
+			ScreenTransformation transformation = this.mapDashboardPart.getScreenManager().getTransformation();
 			int destSrid = this.mapDashboardPart.getScreenManager().getSRID();
 			if (this.srid != destSrid) {
 				tree = null;
@@ -201,16 +195,13 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 				this.env.put(idx, new Envelope());
 				getElementList();
 				synchronized (elementList) {
-					for (Tuple<? extends ITimeInterval> tuple : this
-							.getElementList()) {
-						DataSet newDataSet = new DataSet(tuple, idx, destSrid,
-								transformation);
+					for (Tuple<? extends ITimeInterval> tuple : this.getElementList()) {
+						DataSet newDataSet = new DataSet(tuple, idx, destSrid, transformation);
 						tree.insert(newDataSet.getEnvelope(), newDataSet);
-						this.env.get(idx).expandToInclude(
-								newDataSet.getEnvelope());
+						this.env.get(idx).expandToInclude(newDataSet.getEnvelope());
 					}
+					this.index.put(idx, tree);
 				}
-				this.index.put(idx, tree);
 			}
 		}
 		return tree;
@@ -225,9 +216,7 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 	public List<Tuple<? extends ITimeInterval>> getElementList() {
 
 		if (this.elementList == null) {
-			this.elementList = this.puffer
-					.queryOverlapsAsList(this.mapDashboardPart
-							.getScreenManager().getInterval());
+			this.elementList = this.buffer.queryOverlapsAsList(this.mapDashboardPart.getScreenManager().getInterval());
 		}
 		return this.elementList;
 	}
@@ -248,13 +237,14 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 			return this.elementList.size();
 		return 0;
 	}
-	
+
 	/**
 	 * Returns the puffer
-	 * @return 
+	 * 
+	 * @return
 	 */
-	public DefaultTISweepArea<Tuple<? extends ITimeInterval>> getPuffer(){
-		return puffer;
+	public DefaultTISweepArea<Tuple<? extends ITimeInterval>> getPuffer() {
+		return buffer;
 	}
 
 	/**
@@ -263,7 +253,7 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 	 * @return
 	 */
 	public int getPufferSize() {
-		return puffer.size();
+		return buffer.size();
 	}
 
 	/**
@@ -316,15 +306,11 @@ public class Buffer extends ArrayList<ILayer> implements  Serializable, Property
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if ("intervalStart".equals(evt.getPropertyName())) {
-			this.elementList = this.puffer
-					.queryOverlapsAsList(this.mapDashboardPart
-							.getScreenManager().getInterval());
+			this.elementList = this.buffer.queryOverlapsAsList(this.mapDashboardPart.getScreenManager().getInterval());
 			this.index = new HashMap<Integer, Quadtree>(this.index.size());
 		}
 		if ("intervalEnd".equals(evt.getPropertyName())) {
-			this.elementList = this.puffer
-					.queryOverlapsAsList(this.mapDashboardPart
-							.getScreenManager().getInterval());
+			this.elementList = this.buffer.queryOverlapsAsList(this.mapDashboardPart.getScreenManager().getInterval());
 			this.index = new HashMap<Integer, Quadtree>(this.index.size());
 		}
 	}
