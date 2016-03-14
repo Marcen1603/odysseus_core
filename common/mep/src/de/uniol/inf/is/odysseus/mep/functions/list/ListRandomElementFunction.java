@@ -13,6 +13,7 @@ public class ListRandomElementFunction extends AbstractListPosElementFunction {
 		super("rnd");
 	}
 
+	@Override
 	protected int getPos(List<Object> l) {
 		if (l.size() > 0){
 			return rnd.nextInt(l.size());		

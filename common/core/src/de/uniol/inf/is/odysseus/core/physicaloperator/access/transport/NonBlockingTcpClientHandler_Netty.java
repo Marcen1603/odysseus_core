@@ -127,6 +127,7 @@ public class NonBlockingTcpClientHandler_Netty extends AbstractPushTransportHand
 		Bootstrap b = new Bootstrap();
 		b.group(group).channel(NioSocketChannel.class).remoteAddress(new InetSocketAddress(host, port))
 				.handler(new ChannelInitializer<SocketChannel>() {
+					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						ch.pipeline().addLast(new ClientHandler(NonBlockingTcpClientHandler_Netty.this));
 					};

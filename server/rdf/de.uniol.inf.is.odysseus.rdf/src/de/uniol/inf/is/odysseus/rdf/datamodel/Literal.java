@@ -89,6 +89,7 @@ public class Literal extends AbstractNode implements INode {
 		return datatype;
 	}
 
+	@Override
 	public Object getValue() {
 		return value;
 	}

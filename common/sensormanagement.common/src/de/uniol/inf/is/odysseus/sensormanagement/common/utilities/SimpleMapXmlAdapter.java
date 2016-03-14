@@ -29,7 +29,8 @@ public class SimpleMapXmlAdapter extends XmlAdapter<MapElements[], Map<String, S
     public SimpleMapXmlAdapter() {
     }
 
-    public MapElements[] marshal(Map<String, String> map) 
+    @Override
+	public MapElements[] marshal(Map<String, String> map) 
     {
         MapElements[] mapElements = new MapElements[map.size()];
         int i = 0;
@@ -39,7 +40,8 @@ public class SimpleMapXmlAdapter extends XmlAdapter<MapElements[], Map<String, S
         return mapElements;
     }
 
-    public Map<String, String> unmarshal(MapElements[] mapElements) 
+    @Override
+	public Map<String, String> unmarshal(MapElements[] mapElements) 
     {
         Map<String, String> r = new HashMap<String, String>();
         for (MapElements element : mapElements)

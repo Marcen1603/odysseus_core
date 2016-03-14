@@ -499,6 +499,7 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 		}
 	}
 
+	@Override
 	public boolean isDone() {
 		return done.get();
 	}

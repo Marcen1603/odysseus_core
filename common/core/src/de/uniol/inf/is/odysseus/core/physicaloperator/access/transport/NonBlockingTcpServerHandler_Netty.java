@@ -357,6 +357,7 @@ class ServerHandler extends ByteToMessageDecoder {
 		}
 	}
 
+	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		// System.err.println("Channel active " + ctx.channel().localAddress());
 		// Send cache elements to new connected receiver
@@ -371,6 +372,7 @@ class ServerHandler extends ByteToMessageDecoder {
 		handler.channels.add(ctx);
 	}
 
+	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		// System.err.println("Channel inactive " +
 		// ctx.channel().localAddress());

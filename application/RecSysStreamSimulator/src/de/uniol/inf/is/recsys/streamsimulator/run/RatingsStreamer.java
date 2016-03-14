@@ -128,6 +128,7 @@ public class RatingsStreamer implements Streamer {
 		// socket.close();
 	}
 
+	@Override
 	public void stop() {
 		stop = true;
 	}

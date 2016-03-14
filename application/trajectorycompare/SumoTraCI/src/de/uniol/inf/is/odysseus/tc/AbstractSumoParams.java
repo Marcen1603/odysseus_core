@@ -22,7 +22,8 @@ import java.io.File;
  */
 public abstract class AbstractSumoParams implements ISumoParams {
 
-    public String getSumoFilePath(String filename) {
+    @Override
+	public String getSumoFilePath(String filename) {
         return new File(this.getProjectPath(), filename).toString();
     }
 }

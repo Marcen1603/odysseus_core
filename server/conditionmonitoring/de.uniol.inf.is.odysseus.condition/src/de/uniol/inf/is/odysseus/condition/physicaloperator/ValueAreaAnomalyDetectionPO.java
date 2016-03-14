@@ -132,6 +132,7 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		return anomalyScore;
 	}
 
+	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
 	}

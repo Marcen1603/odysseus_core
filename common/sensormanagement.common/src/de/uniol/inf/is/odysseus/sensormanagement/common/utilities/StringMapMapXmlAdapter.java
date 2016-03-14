@@ -31,6 +31,7 @@ public class StringMapMapXmlAdapter extends XmlAdapter<MapMapElements[], Map<Str
 	public StringMapMapXmlAdapter() {
 	}
 
+	@Override
 	public MapMapElements[] marshal(Map<String, Map<String, String>> map) 
 	{
 		MapMapElements[] mapElements = new MapMapElements[map.size()];
@@ -41,6 +42,7 @@ public class StringMapMapXmlAdapter extends XmlAdapter<MapMapElements[], Map<Str
 		return mapElements;
 	}
 
+	@Override
 	public Map<String, Map<String, String>> unmarshal(MapMapElements[] mapElements) 
 	{
 		Map<String, Map<String, String>> r = new HashMap<>();

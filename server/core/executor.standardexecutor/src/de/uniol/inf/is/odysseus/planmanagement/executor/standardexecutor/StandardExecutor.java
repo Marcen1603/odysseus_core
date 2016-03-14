@@ -1185,6 +1185,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		stopQuery(queryToStop);
 	}
 
+	@Override
 	public void stopQuery(String queryID, ISession caller) {
 
 		LOG.info("Stopping query (ID: " + queryID + ")....");

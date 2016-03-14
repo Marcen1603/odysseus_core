@@ -89,6 +89,7 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp implements IHasP
 		return nameOfValue;
 	}
 	
+	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
 	}

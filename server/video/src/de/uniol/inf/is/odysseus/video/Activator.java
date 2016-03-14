@@ -20,6 +20,7 @@ public class Activator implements BundleActivator {
 
 	private ServiceRegistration<?> videoLoggerService;
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception 
 	{
 		Activator.context = bundleContext;
@@ -31,6 +32,7 @@ public class Activator implements BundleActivator {
 		}
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception 
 	{
 		if (videoLoggerService != null) context.ungetService(videoLoggerService.getReference());

@@ -140,23 +140,27 @@ class BoundedByteString extends LiteralByteString {
       limit = position + size();
     }
 
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
       return (position < limit);
     }
 
-    public Byte next() {
+    @Override
+	public Byte next() {
       // Boxing calls Byte.valueOf(byte), which does not instantiate.
       return nextByte();
     }
 
-    public byte nextByte() {
+    @Override
+	public byte nextByte() {
       if (position >= limit) {
         throw new NoSuchElementException();
       }
       return bytes[position++];
     }
 
-    public void remove() {
+    @Override
+	public void remove() {
       throw new UnsupportedOperationException();
     }
   }

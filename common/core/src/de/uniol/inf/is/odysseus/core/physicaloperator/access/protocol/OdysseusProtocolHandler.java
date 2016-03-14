@@ -73,6 +73,7 @@ public class OdysseusProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		getTransportHandler().send(rawBytes);
 	}
 	
+	@Override
 	protected void processObject() throws IOException, ClassNotFoundException {
 		T so = objectHandler.create();
 		if (so != null){

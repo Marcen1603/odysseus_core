@@ -90,6 +90,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 
 	}
 
+	@Override
 	public abstract AbstractTISyncArea<R, W> clone();
 
 	protected void init(IHasName po, int inputPortCount) {

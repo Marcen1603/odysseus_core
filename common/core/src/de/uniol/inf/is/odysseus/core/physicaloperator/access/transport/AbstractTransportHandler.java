@@ -49,6 +49,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		delegate.setSchema(schema);
 	}
 	
+	@Override
 	final public SDFSchema getSchema() {
 		return delegate.getSchema();
 	}

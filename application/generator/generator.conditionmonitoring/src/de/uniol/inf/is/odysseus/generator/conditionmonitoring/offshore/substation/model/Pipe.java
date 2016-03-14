@@ -72,6 +72,7 @@ public class Pipe extends Observable implements IPushable, ISuckable {
 		return true;
 	}
 
+	@Override
 	public boolean isInPipeFlowOpen() {
 		for (ISuckable inPipe : inPipes) {
 			if (!inPipe.isInPipeFlowOpen()) {
@@ -81,6 +82,7 @@ public class Pipe extends Observable implements IPushable, ISuckable {
 		return this.isValveOpen();
 	}
 
+	@Override
 	public boolean isOutPipeFlowOpen() {
 		for (IPushable outPipe : outPipes) {
 			if (!outPipe.isOutPipeFlowOpen()) {
@@ -90,6 +92,7 @@ public class Pipe extends Observable implements IPushable, ISuckable {
 		return this.isValveOpen();
 	}
 
+	@Override
 	public double suck(double liters) {
 		double suckedLiters = 0;
 		if (this.isInPipeFlowOpen()) {
@@ -111,6 +114,7 @@ public class Pipe extends Observable implements IPushable, ISuckable {
 		return suckedLiters;
 	}
 
+	@Override
 	public double push(double liters) {
 		double pushedLiters = 0;
 		if (this.isOutPipeFlowOpen()) {

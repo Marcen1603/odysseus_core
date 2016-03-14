@@ -245,6 +245,7 @@ public class BlockingQueueThreadedBufferPO<R extends IStreamObject<? extends IMe
 		return done.get();
 	}
 
+	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof BlockingQueueThreadedBufferPO)) {
 			return false;

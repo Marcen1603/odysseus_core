@@ -635,6 +635,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		return result;
 	}
 	
+	@Override
 	abstract public ITimeIntervalSweepArea<T> clone();
 
 }

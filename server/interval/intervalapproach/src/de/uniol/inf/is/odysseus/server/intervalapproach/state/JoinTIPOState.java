@@ -96,6 +96,7 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 		}
 	}
 	
+	@Override
 	public long estimateSizeInBytes() {
 		
 		LOG.debug("Estimating JoinTIPOState Size.");

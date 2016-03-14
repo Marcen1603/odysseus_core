@@ -102,7 +102,8 @@ public abstract class ByteString implements Iterable<Byte> {
    *
    * @return the iterator
    */
-  public abstract ByteIterator iterator();
+  @Override
+public abstract ByteIterator iterator();
 
   /**
    * This interface extends {@code Iterator<Byte>}, so that we can return an

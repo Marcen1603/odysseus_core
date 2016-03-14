@@ -170,34 +170,42 @@ final public class LatencyDatarateSystemLoad extends AbstractCombinedMetaAttribu
 	// Delegates for Systemload
 	// ------------------------------------------------------------------------------
 
+	@Override
 	public void addSystemLoad(String name) {
 		systemload.addSystemLoad(name);
 	}
 
+	@Override
 	public void removeSystemLoad(String name) {
 		systemload.removeSystemLoad(name);
 	}
 
+	@Override
 	public Collection<String> getSystemLoadNames() {
 		return systemload.getSystemLoadNames();
 	}
 
+	@Override
 	public int getCpuLoad(String name) {
 		return systemload.getCpuLoad(name);
 	}
 
+	@Override
 	public int getMemLoad(String name) {
 		return systemload.getMemLoad(name);
 	}
 
+	@Override
 	public int getNetLoad(String name) {
 		return systemload.getNetLoad(name);
 	}
 
+	@Override
 	public void insert(ISystemLoad other) {
 		systemload.insert(other);
 	}
 
+	@Override
 	public SystemLoadEntry getSystemLoad(String name) {
 		return systemload.getSystemLoad(name);
 	}	

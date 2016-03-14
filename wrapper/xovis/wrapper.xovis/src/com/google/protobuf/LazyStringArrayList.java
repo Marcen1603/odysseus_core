@@ -143,14 +143,16 @@ public class LazyStringArrayList extends AbstractList<String>
   }
 
   // @Override
-  public boolean addAllByteString(Collection<? extends ByteString> values) {
+  @Override
+public boolean addAllByteString(Collection<? extends ByteString> values) {
     boolean ret = list.addAll(values);
     modCount++;
     return ret;
   }
 
   // @Override
-  public boolean addAllByteArray(Collection<byte[]> c) {
+  @Override
+public boolean addAllByteArray(Collection<byte[]> c) {
     boolean ret = list.addAll(c);
     modCount++;
     return ret;
@@ -170,19 +172,22 @@ public class LazyStringArrayList extends AbstractList<String>
   }
 
   // @Override
-  public void add(ByteString element) {
+  @Override
+public void add(ByteString element) {
     list.add(element);
     modCount++;
   }
   
   // @Override
-  public void add(byte[] element) {
+  @Override
+public void add(byte[] element) {
     list.add(element);
     modCount++;
   }
 
   // @Override
-  public ByteString getByteString(int index) {
+  @Override
+public ByteString getByteString(int index) {
     Object o = list.get(index);
     ByteString b = asByteString(o);
     if (b != o) {
@@ -192,7 +197,8 @@ public class LazyStringArrayList extends AbstractList<String>
   }
   
   // @Override
-  public byte[] getByteArray(int index) {
+  @Override
+public byte[] getByteArray(int index) {
     Object o = list.get(index);
     byte[] b = asByteArray(o);
     if (b != o) {
@@ -202,12 +208,14 @@ public class LazyStringArrayList extends AbstractList<String>
   }
 
   // @Override
-  public void set(int index, ByteString s) {
+  @Override
+public void set(int index, ByteString s) {
     list.set(index, s);
   }
 
   // @Override
-  public void set(int index, byte[] s) {
+  @Override
+public void set(int index, byte[] s) {
     list.set(index, s);
   }
 
@@ -243,12 +251,14 @@ public class LazyStringArrayList extends AbstractList<String>
   }
 
   // @Override
-  public List<?> getUnderlyingElements() {
+  @Override
+public List<?> getUnderlyingElements() {
     return Collections.unmodifiableList(list);
   }
 
   // @Override
-  public void mergeFrom(LazyStringList other) {
+  @Override
+public void mergeFrom(LazyStringList other) {
     for (Object o : other.getUnderlyingElements()) {
       if (o instanceof byte[]) {
         byte[] b = (byte[]) o;
@@ -306,7 +316,8 @@ public class LazyStringArrayList extends AbstractList<String>
   }
   
   // @Override
-  public List<byte[]> asByteArrayList() {
+  @Override
+public List<byte[]> asByteArrayList() {
     return new ByteArrayListView(list);
   }
 
@@ -355,12 +366,14 @@ public class LazyStringArrayList extends AbstractList<String>
   }
 
   // @Override
-  public List<ByteString> asByteStringList() {
+  @Override
+public List<ByteString> asByteStringList() {
     return new ByteStringListView(list);
   }
 
   // @Override
-  public LazyStringList getUnmodifiableView() {
+  @Override
+public LazyStringList getUnmodifiableView() {
     return new UnmodifiableLazyStringList(this);
   }
 

@@ -588,6 +588,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		return "WebServiceExecutor";
 	}
 
+	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
 			throws PlanManagementException {
 		assureLogin(user);

@@ -34,6 +34,7 @@ public abstract class AbstractBenchmarkerExecution implements IBenchmarkerExecut
 	 * the to string method need to be overwritten because this method is used
 	 * to show the configuration of this execution inside of the ui
 	 */
+	@Override
 	public abstract String toString();
 
 	/**

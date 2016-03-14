@@ -31,6 +31,7 @@ public interface ISecurityPunctuation extends IPunctuation{
 	public ISecurityPunctuation intersect(ISecurityPunctuation sp2);
 	public ISecurityPunctuation intersect(ISecurityPunctuation sp2, Long newTS);
 
+	@Override
 	public SDFSchema getSchema();
 	
 	public Object getAttribute(String key);	

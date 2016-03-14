@@ -76,6 +76,7 @@ public class DatabaseVisitor extends CQLParser {
 		super.setDataDictionary(dataDictionary);
 	}
 	
+	@Override
 	public void setMetaAttribute(IMetaAttribute metaAttribute){
 		super.setMetaAttribute(metaAttribute);
 	}

@@ -46,6 +46,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 	/**
 	 * returns the selected operator type
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Class<T> getOperatorType() {
 		ParameterizedType parameterizedType = (ParameterizedType) getClass()

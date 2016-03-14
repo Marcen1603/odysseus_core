@@ -59,6 +59,7 @@ public class SampleAO extends UnaryLogicalOp {
 		return new SampleAO(this);
 	}
 	
+	@Override
 	public TimeUnit getBaseTimeUnit() {
 		if (baseTimeUnit == null) {
 			baseTimeUnit = TimeUnit.MILLISECONDS;

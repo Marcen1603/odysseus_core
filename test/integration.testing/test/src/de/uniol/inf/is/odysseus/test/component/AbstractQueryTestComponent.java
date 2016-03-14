@@ -69,6 +69,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 		} finally {			
 			LOG.debug("Try to remove all queries ");
 			Thread t = new Thread(){
+				@Override
 				public void run() {
 					executor.removeAllQueries(session);					
 				};

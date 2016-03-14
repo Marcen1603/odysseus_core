@@ -748,7 +748,8 @@ class RopeByteString extends ByteString {
       }
     }
 
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
       return next != null;
     }
 
@@ -757,7 +758,8 @@ class RopeByteString extends ByteString {
      *
      * @return next non-empty LiteralByteString or {@code null}
      */
-    public LiteralByteString next() {
+    @Override
+	public LiteralByteString next() {
       if (next == null) {
         throw new NoSuchElementException();
       }
@@ -766,7 +768,8 @@ class RopeByteString extends ByteString {
       return result;
     }
 
-    public void remove() {
+    @Override
+	public void remove() {
       throw new UnsupportedOperationException();
     }
   }
@@ -791,15 +794,18 @@ class RopeByteString extends ByteString {
       bytesRemaining = size();
     }
 
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
       return (bytesRemaining > 0);
     }
 
-    public Byte next() {
+    @Override
+	public Byte next() {
       return nextByte(); // Does not instantiate a Byte
     }
 
-    public byte nextByte() {
+    @Override
+	public byte nextByte() {
       if (!bytes.hasNext()) {
         bytes = pieces.next().iterator();
       }
@@ -807,7 +813,8 @@ class RopeByteString extends ByteString {
       return bytes.nextByte();
     }
 
-    public void remove() {
+    @Override
+	public void remove() {
       throw new UnsupportedOperationException();
     }
   }

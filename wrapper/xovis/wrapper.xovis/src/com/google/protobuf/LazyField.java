@@ -96,12 +96,14 @@ public class LazyField extends LazyFieldLite {
     }
 
     // @Override
-    public K getKey() {
+    @Override
+	public K getKey() {
       return entry.getKey();
     }
 
     // @Override
-    public Object getValue() {
+    @Override
+	public Object getValue() {
       LazyField field = entry.getValue();
       if (field == null) {
         return null;
@@ -114,7 +116,8 @@ public class LazyField extends LazyFieldLite {
     }
 
     // @Override
-    public Object setValue(Object value) {
+    @Override
+	public Object setValue(Object value) {
       if (!(value instanceof MessageLite)) {
         throw new IllegalArgumentException(
             "LazyField now only used for MessageSet, "
@@ -132,11 +135,13 @@ public class LazyField extends LazyFieldLite {
     }
 
     // @Override
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
       return iterator.hasNext();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     // @Override
     public Entry<K, Object> next() {
       Entry<K, ?> entry = iterator.next();
@@ -147,7 +152,8 @@ public class LazyField extends LazyFieldLite {
     }
 
     // @Override
-    public void remove() {
+    @Override
+	public void remove() {
       iterator.remove();
     }
   }

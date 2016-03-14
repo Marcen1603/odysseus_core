@@ -34,11 +34,13 @@ public class FFmpegVideoStreamProtocolHandler extends AbstractVideoStreamProtoco
 		return new FFmpegVideoStreamProtocolHandler(direction, access, dataHandler, options);
 	}	
 	
+	@Override
 	public FrameRecorder createRecorder(ImageJCV image)
 	{
 		return new FFmpegFrameRecorder(getStreamUrl(), image.getWidth(), image.getHeight());
 	}
 		
+	@Override
 	public FrameGrabber createGrabber()
 	{
 		return new FFmpegFrameGrabber(getStreamUrl());

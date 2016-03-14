@@ -35,6 +35,7 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		init(inputSchema, expressions);
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void init(SDFSchema schema, SDFExpression[] expr) {
 		this.expressions = new RelationalStateExpression[expr.length];

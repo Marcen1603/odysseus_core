@@ -64,6 +64,7 @@ public class TcpOutputStream  extends OutputStream implements Runnable{
 		}
 	}
 	
+	@Override
 	public void close(){
 		this.buffer.clear();
 		if(t != null){

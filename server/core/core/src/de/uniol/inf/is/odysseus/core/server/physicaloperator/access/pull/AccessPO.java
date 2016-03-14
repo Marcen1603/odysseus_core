@@ -61,34 +61,42 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> exte
 		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
 	}
 
+	@Override
 	public void setDelay(long delay) {
 		iteratableSourceDelegate.setDelay(delay);
 	}
 
+	@Override
 	public long getDelay() {
 		return iteratableSourceDelegate.getDelay();
 	}
 
+	@Override
 	public void setYieldRate(int yieldRate) {
 		iteratableSourceDelegate.setYieldRate(yieldRate);
 	}
 
+	@Override
 	public int getYieldRate() {
 		return iteratableSourceDelegate.getYieldRate();
 	}
 
+	@Override
 	public int getYieldDurationNanos() {
 		return iteratableSourceDelegate.getYieldDurationNanos();
 	}
 
+	@Override
 	public void setYieldDurationNanos(int yieldDuration) {
 		iteratableSourceDelegate.setYieldDurationNanos(yieldDuration);
 	}
 
+	@Override
 	public boolean tryLock() {
 		return iteratableSourceDelegate.tryLock();
 	}
 
+	@Override
 	public void unlock() {
 		iteratableSourceDelegate.unlock();
 	}

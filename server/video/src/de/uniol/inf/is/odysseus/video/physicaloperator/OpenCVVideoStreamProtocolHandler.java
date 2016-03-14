@@ -35,10 +35,12 @@ public class OpenCVVideoStreamProtocolHandler extends AbstractVideoStreamProtoco
 		return new OpenCVVideoStreamProtocolHandler(direction, access, dataHandler, options);
 	}	
 	
+	@Override
 	public FrameRecorder createRecorder(ImageJCV image) {
 		return new OpenCVFrameRecorder(getStreamUrl(), image.getWidth(), image.getHeight());
 	}
 		
+	@Override
 	public FrameGrabber createGrabber() {
 		if (getStreamUrl().startsWith(CAMERA_URL_PREFIX)) {
 			int deviceId = Integer.parseInt(getStreamUrl().substring(CAMERA_URL_PREFIX.length()));

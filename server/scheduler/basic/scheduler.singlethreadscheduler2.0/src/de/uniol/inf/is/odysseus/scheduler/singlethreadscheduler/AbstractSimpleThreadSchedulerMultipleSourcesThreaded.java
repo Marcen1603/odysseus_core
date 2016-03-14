@@ -61,6 +61,7 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded
 		}
 	}
 
+	@Override
 	public void sourcesChanged(MultipleSourceExecutor sourceExecutor) {
 		if (sourceExecutor.getRunningSources() == 0) {
 			sourceExecutor.interrupt();

@@ -45,6 +45,7 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	/**
 	 * Name for Operator (Visual Identification) 
 	 */
+	@Override
 	public String getName();
 	public void setName(String name);
 	

@@ -316,16 +316,19 @@ class LiteralByteString extends ByteString {
       limit = size();
     }
 
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
       return (position < limit);
     }
 
-    public Byte next() {
+    @Override
+	public Byte next() {
       // Boxing calls Byte.valueOf(byte), which does not instantiate.
       return nextByte();
     }
 
-    public byte nextByte() {
+    @Override
+	public byte nextByte() {
       try {
         return bytes[position++];
       } catch (ArrayIndexOutOfBoundsException e) {
@@ -333,7 +336,8 @@ class LiteralByteString extends ByteString {
       }
     }
 
-    public void remove() {
+    @Override
+	public void remove() {
       throw new UnsupportedOperationException();
     }
   }

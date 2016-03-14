@@ -21,7 +21,8 @@ public class BaslerCamera {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
-  protected void finalize() {
+  @Override
+protected void finalize() {
     delete();
   }
 
@@ -111,7 +112,8 @@ public class BaslerCamera {
       return swigValue;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
       return swigName;
     }
 

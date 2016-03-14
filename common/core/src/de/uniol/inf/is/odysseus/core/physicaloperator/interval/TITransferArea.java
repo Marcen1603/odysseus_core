@@ -68,6 +68,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		super.setOperator(po);
 	}
 	
+	@Override
 	public TITransferArea<R, W> clone() {
 		return new TITransferArea<R, W>(this);
 	}

@@ -78,24 +78,28 @@ public abstract class AbstractParser<MessageType extends MessageLite>
   private static final ExtensionRegistryLite EMPTY_REGISTRY
       = ExtensionRegistryLite.getEmptyRegistry();
 
-  public MessageType parsePartialFrom(CodedInputStream input)
+  @Override
+public MessageType parsePartialFrom(CodedInputStream input)
       throws InvalidProtocolBufferException {
     return parsePartialFrom(input, EMPTY_REGISTRY);
   }
 
-  public MessageType parseFrom(CodedInputStream input,
+  @Override
+public MessageType parseFrom(CodedInputStream input,
                                ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     return checkMessageInitialized(
         parsePartialFrom(input, extensionRegistry));
   }
 
-  public MessageType parseFrom(CodedInputStream input)
+  @Override
+public MessageType parseFrom(CodedInputStream input)
       throws InvalidProtocolBufferException {
     return parseFrom(input, EMPTY_REGISTRY);
   }
 
-  public MessageType parsePartialFrom(ByteString data,
+  @Override
+public MessageType parsePartialFrom(ByteString data,
                                       ExtensionRegistryLite extensionRegistry)
     throws InvalidProtocolBufferException {
     MessageType message;
@@ -113,23 +117,27 @@ public abstract class AbstractParser<MessageType extends MessageLite>
     }
   }
 
-  public MessageType parsePartialFrom(ByteString data)
+  @Override
+public MessageType parsePartialFrom(ByteString data)
       throws InvalidProtocolBufferException {
     return parsePartialFrom(data, EMPTY_REGISTRY);
   }
 
-  public MessageType parseFrom(ByteString data,
+  @Override
+public MessageType parseFrom(ByteString data,
                                ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     return checkMessageInitialized(parsePartialFrom(data, extensionRegistry));
   }
 
-  public MessageType parseFrom(ByteString data)
+  @Override
+public MessageType parseFrom(ByteString data)
       throws InvalidProtocolBufferException {
     return parseFrom(data, EMPTY_REGISTRY);
   }
 
-  public MessageType parsePartialFrom(byte[] data, int off, int len,
+  @Override
+public MessageType parsePartialFrom(byte[] data, int off, int len,
                                       ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     try {
@@ -146,46 +154,54 @@ public abstract class AbstractParser<MessageType extends MessageLite>
     }
   }
 
-  public MessageType parsePartialFrom(byte[] data, int off, int len)
+  @Override
+public MessageType parsePartialFrom(byte[] data, int off, int len)
       throws InvalidProtocolBufferException {
     return parsePartialFrom(data, off, len, EMPTY_REGISTRY);
   }
 
-  public MessageType parsePartialFrom(byte[] data,
+  @Override
+public MessageType parsePartialFrom(byte[] data,
                                       ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     return parsePartialFrom(data, 0, data.length, extensionRegistry);
   }
 
-  public MessageType parsePartialFrom(byte[] data)
+  @Override
+public MessageType parsePartialFrom(byte[] data)
       throws InvalidProtocolBufferException {
     return parsePartialFrom(data, 0, data.length, EMPTY_REGISTRY);
   }
 
-  public MessageType parseFrom(byte[] data, int off, int len,
+  @Override
+public MessageType parseFrom(byte[] data, int off, int len,
                                ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     return checkMessageInitialized(
         parsePartialFrom(data, off, len, extensionRegistry));
   }
 
-  public MessageType parseFrom(byte[] data, int off, int len)
+  @Override
+public MessageType parseFrom(byte[] data, int off, int len)
       throws InvalidProtocolBufferException {
     return parseFrom(data, off, len, EMPTY_REGISTRY);
   }
 
-  public MessageType parseFrom(byte[] data,
+  @Override
+public MessageType parseFrom(byte[] data,
                                ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     return parseFrom(data, 0, data.length, extensionRegistry);
   }
 
-  public MessageType parseFrom(byte[] data)
+  @Override
+public MessageType parseFrom(byte[] data)
       throws InvalidProtocolBufferException {
     return parseFrom(data, EMPTY_REGISTRY);
   }
 
-  public MessageType parsePartialFrom(InputStream input,
+  @Override
+public MessageType parsePartialFrom(InputStream input,
                                       ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     CodedInputStream codedInput = CodedInputStream.newInstance(input);
@@ -198,24 +214,28 @@ public abstract class AbstractParser<MessageType extends MessageLite>
     return message;
   }
 
-  public MessageType parsePartialFrom(InputStream input)
+  @Override
+public MessageType parsePartialFrom(InputStream input)
       throws InvalidProtocolBufferException {
     return parsePartialFrom(input, EMPTY_REGISTRY);
   }
 
-  public MessageType parseFrom(InputStream input,
+  @Override
+public MessageType parseFrom(InputStream input,
                                ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
     return checkMessageInitialized(
         parsePartialFrom(input, extensionRegistry));
   }
 
-  public MessageType parseFrom(InputStream input)
+  @Override
+public MessageType parseFrom(InputStream input)
       throws InvalidProtocolBufferException {
     return parseFrom(input, EMPTY_REGISTRY);
   }
 
-  public MessageType parsePartialDelimitedFrom(
+  @Override
+public MessageType parsePartialDelimitedFrom(
       InputStream input,
       ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
@@ -233,12 +253,14 @@ public abstract class AbstractParser<MessageType extends MessageLite>
     return parsePartialFrom(limitedInput, extensionRegistry);
   }
 
-  public MessageType parsePartialDelimitedFrom(InputStream input)
+  @Override
+public MessageType parsePartialDelimitedFrom(InputStream input)
       throws InvalidProtocolBufferException {
     return parsePartialDelimitedFrom(input, EMPTY_REGISTRY);
   }
 
-  public MessageType parseDelimitedFrom(
+  @Override
+public MessageType parseDelimitedFrom(
       InputStream input,
       ExtensionRegistryLite extensionRegistry)
       throws InvalidProtocolBufferException {
@@ -246,7 +268,8 @@ public abstract class AbstractParser<MessageType extends MessageLite>
         parsePartialDelimitedFrom(input, extensionRegistry));
   }
 
-  public MessageType parseDelimitedFrom(InputStream input)
+  @Override
+public MessageType parseDelimitedFrom(InputStream input)
       throws InvalidProtocolBufferException {
     return parseDelimitedFrom(input, EMPTY_REGISTRY);
   }

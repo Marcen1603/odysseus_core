@@ -51,7 +51,8 @@ import java.util.Map;
 public interface Message extends MessageLite, MessageOrBuilder {
 
   // (From MessageLite, re-declared here only for return type covariance.)
-  Parser<? extends Message> getParserForType();
+  @Override
+Parser<? extends Message> getParserForType();
 
 
   // -----------------------------------------------------------------
@@ -97,8 +98,10 @@ public interface Message extends MessageLite, MessageOrBuilder {
   // Builders
 
   // (From MessageLite, re-declared here only for return type covariance.)
-  Builder newBuilderForType();
-  Builder toBuilder();
+  @Override
+Builder newBuilderForType();
+  @Override
+Builder toBuilder();
 
   /**
    * Abstract interface implemented by Protocol Message builders.
@@ -106,7 +109,8 @@ public interface Message extends MessageLite, MessageOrBuilder {
   interface Builder extends MessageLite.Builder, MessageOrBuilder {
     // (From MessageLite.Builder, re-declared here only for return type
     // covariance.)
-    Builder clear();
+    @Override
+	Builder clear();
 
     /**
      * Merge {@code other} into the message being built.  {@code other} must
@@ -128,11 +132,16 @@ public interface Message extends MessageLite, MessageOrBuilder {
 
     // (From MessageLite.Builder, re-declared here only for return type
     // covariance.)
-    Message build();
-    Message buildPartial();
-    Builder clone();
-    Builder mergeFrom(CodedInputStream input) throws IOException;
-    Builder mergeFrom(CodedInputStream input,
+    @Override
+	Message build();
+    @Override
+	Message buildPartial();
+    @Override
+	Builder clone();
+    @Override
+	Builder mergeFrom(CodedInputStream input) throws IOException;
+    @Override
+	Builder mergeFrom(CodedInputStream input,
                       ExtensionRegistryLite extensionRegistry)
                       throws IOException;
 
@@ -140,7 +149,8 @@ public interface Message extends MessageLite, MessageOrBuilder {
      * Get the message's type's descriptor.
      * See {@link Message#getDescriptorForType()}.
      */
-    Descriptors.Descriptor getDescriptorForType();
+    @Override
+	Descriptors.Descriptor getDescriptorForType();
 
     /**
      * Create a Builder for messages of the appropriate type for the given
@@ -218,26 +228,36 @@ public interface Message extends MessageLite, MessageOrBuilder {
 
     // (From MessageLite.Builder, re-declared here only for return type
     // covariance.)
-    Builder mergeFrom(ByteString data) throws InvalidProtocolBufferException;
-    Builder mergeFrom(ByteString data,
+    @Override
+	Builder mergeFrom(ByteString data) throws InvalidProtocolBufferException;
+    @Override
+	Builder mergeFrom(ByteString data,
                       ExtensionRegistryLite extensionRegistry)
                       throws InvalidProtocolBufferException;
-    Builder mergeFrom(byte[] data) throws InvalidProtocolBufferException;
-    Builder mergeFrom(byte[] data, int off, int len)
+    @Override
+	Builder mergeFrom(byte[] data) throws InvalidProtocolBufferException;
+    @Override
+	Builder mergeFrom(byte[] data, int off, int len)
                       throws InvalidProtocolBufferException;
-    Builder mergeFrom(byte[] data,
+    @Override
+	Builder mergeFrom(byte[] data,
                       ExtensionRegistryLite extensionRegistry)
                       throws InvalidProtocolBufferException;
-    Builder mergeFrom(byte[] data, int off, int len,
+    @Override
+	Builder mergeFrom(byte[] data, int off, int len,
                       ExtensionRegistryLite extensionRegistry)
                       throws InvalidProtocolBufferException;
-    Builder mergeFrom(InputStream input) throws IOException;
-    Builder mergeFrom(InputStream input,
+    @Override
+	Builder mergeFrom(InputStream input) throws IOException;
+    @Override
+	Builder mergeFrom(InputStream input,
                       ExtensionRegistryLite extensionRegistry)
                       throws IOException;
-    boolean mergeDelimitedFrom(InputStream input)
+    @Override
+	boolean mergeDelimitedFrom(InputStream input)
                                throws IOException;
-    boolean mergeDelimitedFrom(InputStream input,
+    @Override
+	boolean mergeDelimitedFrom(InputStream input,
                                ExtensionRegistryLite extensionRegistry)
                                throws IOException;
   }

@@ -109,6 +109,7 @@ public class RfrStreamerServer implements Streamer {
 		// socket.close();
 	}
 
+	@Override
 	public void stop() {
 		stop = true;
 	}

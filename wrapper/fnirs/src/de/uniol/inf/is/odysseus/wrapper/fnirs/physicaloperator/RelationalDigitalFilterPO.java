@@ -33,6 +33,7 @@ class DoubleAttributeFilter extends TupleAttributeFilter
 		loop = new FilterLoop(filter);
 	}
 	
+	@Override
 	public Object filter(Object obj)
 	{
 		return (Double) loop.filterStep((Double) obj);
@@ -54,6 +55,7 @@ class ByteBufferAttributeFilter extends TupleAttributeFilter
 		this.bytesPerSample = bytesPerSample;
 	}
 	
+	@Override
 	public Object filter(Object obj)
 	{
 		ByteBuffer buf = (ByteBuffer) obj;
@@ -102,6 +104,7 @@ class VectorAttributeFilter extends TupleAttributeFilter
 		this.filter = filter;
 	}
 	
+	@Override
 	public Object filter(Object obj)
 	{
 		double[] vector = (double[]) obj;

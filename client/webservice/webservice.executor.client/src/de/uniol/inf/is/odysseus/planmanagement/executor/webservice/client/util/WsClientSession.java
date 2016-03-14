@@ -47,6 +47,7 @@ public class WsClientSession  extends AbstractSession implements ISession {
 		return tenantName;
 	}
 
+	@Override
 	public void setToken(String securitytoken) {
 		super.setToken(securitytoken);
 	}

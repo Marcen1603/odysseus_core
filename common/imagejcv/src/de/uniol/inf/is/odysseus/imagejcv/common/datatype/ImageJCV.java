@@ -209,6 +209,7 @@ public class ImageJCV extends GCMonitored implements IClone, Cloneable
 		return "{Width: " + getWidth() + " Height: " + getHeight() + " Depth: " + getDepth() + " Channels: " + getNumChannels() + "}";
 	}	
 	
+	@Override
 	public void releaseImage() 
 	{
 		if (image != null)

@@ -39,6 +39,7 @@ public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
 	 * @param host
 	 *            Name of the associated host
 	 */
+	@Override
 	@Parameter(name = "Database", type = StringParameter.class, optional = false, doc = "The name of the target database")
 	public void setDatabase(String database) {
 		super.setDatabase(database);

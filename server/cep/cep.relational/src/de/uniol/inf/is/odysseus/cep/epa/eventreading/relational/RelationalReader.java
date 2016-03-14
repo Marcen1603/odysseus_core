@@ -50,6 +50,7 @@ public class RelationalReader extends AbstractEventReader<Tuple<? extends ITimeI
 		}
 	}
 	
+	@Override
 	public SDFSchema getSchema() {
 		return schema;
 	}

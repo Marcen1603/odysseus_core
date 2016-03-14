@@ -170,6 +170,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 		}
 	}
 	
+	@Override
 	public void close() throws IOException 
 	{
 		synchronized (processLock) 

@@ -50,6 +50,7 @@ public class StrategyTableViewer extends CheckboxTableViewer {
 	/**
 	 * returns the checked elements
 	 */
+	@Override
 	public Object[] getCheckedElements() {
 		// first apply values is needed if courser is not moved after input is
 		// done

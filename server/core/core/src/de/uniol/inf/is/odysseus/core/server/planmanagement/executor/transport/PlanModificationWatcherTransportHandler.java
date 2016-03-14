@@ -80,6 +80,7 @@ public class PlanModificationWatcherTransportHandler extends
 		}
 		// Different threads can call planModificationEvent --> Assure correct ordering by sender threat
 		runner = new Thread("PlanModificationWatcherTransportHandlerThread"){
+			@Override
 			public void run() {
 				while (!interrupted()){
 					synchronized (outputBuffer) {

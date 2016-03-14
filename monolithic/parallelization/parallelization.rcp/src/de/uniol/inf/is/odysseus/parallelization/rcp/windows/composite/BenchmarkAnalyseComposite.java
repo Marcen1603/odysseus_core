@@ -89,6 +89,7 @@ public class BenchmarkAnalyseComposite extends AbstractBenchmarkComposite {
 		analysisProgressLog.setText("Analysis started... "
 				+ System.lineSeparator());
 		analysisProgressLog.addListener(SWT.Modify, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				analysisProgressLog.setTopIndex(analysisProgressLog
 						.getLineCount() - 1);

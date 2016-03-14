@@ -23,5 +23,6 @@ public interface IProcessInternal<R> extends IHasName {
 	void process_internal(R event, int port);
 	void process_punctuation_intern(IPunctuation punctuation, int port);
 	void process_newHeartbeat(Heartbeat pointInTime);
+	@Override
 	String getName();
 }

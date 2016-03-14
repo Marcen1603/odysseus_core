@@ -43,6 +43,7 @@ public class RDFProtocolHandler extends AbstractProtocolHandler<Triple<IMetaAttr
 	
 	RDFParser parser;
 	final RDFHandlerBase statementHandler = new RDFHandlerBase(){
+		@Override
 		public void handleStatement(org.openrdf.model.Statement st) throws org.openrdf.rio.RDFHandlerException {
 			INode subject = new Literal(st.getSubject().stringValue());
 			INode predicate = new Literal(st.getPredicate().stringValue());

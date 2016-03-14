@@ -25,6 +25,7 @@ public class StopwordProcessing implements ITextProcessing {
 		return new StopwordProcessing(this.kpiType);
 	}
 
+	@Override
 	public String getType() {
 		return this.kpiType;
 	}

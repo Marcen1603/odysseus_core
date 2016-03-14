@@ -254,6 +254,7 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 		}
 	}
 
+	@Override
 	public IPredicate<? super T> getRemovePredicate() {
 		return removePredicate;
 	}
@@ -341,6 +342,7 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 		}
 	}
 	
+	@Override
 	public ISweepArea<T> newInstance(OptionMap options) {
 		return new PartitionedSweepArea<>();
 	};

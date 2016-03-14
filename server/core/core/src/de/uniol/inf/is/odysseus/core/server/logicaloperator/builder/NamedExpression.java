@@ -40,6 +40,7 @@ public class NamedExpression implements IClone {
 		return str.toString();
 	}
 
+	@Override
 	public NamedExpression clone() {
 		return new NamedExpression(this);
 	}

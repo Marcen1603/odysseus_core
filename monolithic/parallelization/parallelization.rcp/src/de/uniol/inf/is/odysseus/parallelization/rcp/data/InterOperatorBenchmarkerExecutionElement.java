@@ -117,6 +117,7 @@ public class InterOperatorBenchmarkerExecutionElement {
 		}
 	}
 
+	@Override
 	public InterOperatorBenchmarkerExecutionElement clone() {
 		return new InterOperatorBenchmarkerExecutionElement(this);
 	}

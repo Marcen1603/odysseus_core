@@ -6,6 +6,7 @@ abstract public class AbstractTransferArea<R extends IStreamObject<?>, W extends
 
 	private static final long serialVersionUID = 1019179379693815902L;
 
+	@Override
 	public abstract ITransferArea<R,W> clone();
 
 	@Override

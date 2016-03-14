@@ -18,6 +18,7 @@ public interface ITransfer<T> extends IHasName{
 
 	void sendPunctuation(IPunctuation punctuation, int outPort);
 	
+	@Override
 	String getName();
 
 }

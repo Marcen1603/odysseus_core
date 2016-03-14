@@ -11,6 +11,7 @@ public class ListFilterFunction extends AbstractLambdaListFunction{
 		super("filter");
 	}
 
+	@Override
 	protected void fillReturnList(List<Object> out, Object o) {
 		if ((boolean)expression.getValue()) {
 			out.add(o);

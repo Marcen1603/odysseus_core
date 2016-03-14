@@ -258,6 +258,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 		}
 	}
 
+	@Override
 	public IPredicate<? super T> getRemovePredicate() {
 		return removePredicate;
 	}

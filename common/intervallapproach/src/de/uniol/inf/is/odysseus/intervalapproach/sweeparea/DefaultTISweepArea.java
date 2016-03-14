@@ -23,6 +23,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		super(list);
 	}
 
+	@Override
 	public ISweepArea<T> newInstance(OptionMap options) {
 		return new DefaultTISweepArea<T>();
 	};

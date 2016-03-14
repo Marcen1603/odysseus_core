@@ -90,6 +90,7 @@ public class OPCDASource extends AbstractAccessAO {
 		this.paths = paths;
 	}
 	
+	@Override
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = false, doc = "The output schema.")
 	public void setAttributes(List<SDFAttribute> attributes) {
 		super.setAttributes(attributes);

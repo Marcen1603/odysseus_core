@@ -10,6 +10,7 @@ public class ListLastElementFunction extends AbstractListPosElementFunction {
 		super("last");
 	}
 
+	@Override
 	protected int getPos(List<Object> l) {
 		return l.size()-1;
 	}

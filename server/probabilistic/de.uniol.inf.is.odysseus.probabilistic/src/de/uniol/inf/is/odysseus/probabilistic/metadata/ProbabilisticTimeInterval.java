@@ -188,10 +188,12 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	// Delegates for Probabilistic
 	// ------------------------------------------------------------------------------
 
+	@Override
 	public double getExistence() {
 		return probabilistic.getExistence();
 	}
 
+	@Override
 	public void setExistence(double existence) {
 		probabilistic.setExistence(existence);
 	}

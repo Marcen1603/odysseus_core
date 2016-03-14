@@ -33,6 +33,7 @@ public class SimpleImageCache implements ImageCache
 			System.out.println("Warning: " + num + " non-zeroed image(s) in cache!");
 	}
 	
+	@Override
 	public IplImage getImage(int width, int height, int depth, int channels)
 	{
 		synchronized (syncObj)
@@ -74,6 +75,7 @@ public class SimpleImageCache implements ImageCache
 		}
 	}
 	
+	@Override
 	public void putImage(IplImage image)
 	{
 		synchronized (syncObj)

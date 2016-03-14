@@ -24,10 +24,12 @@ public class ControllablePhysicalSubscription<K> extends
 		super(target, sinkInPort, sourceOutPort, schema);
 	}
 
+	@Override
 	public void setTarget(K target) {
 		super.setTarget(target);
 	}
 	
+	@Override
 	public void setSinkInPort(int port) {
 		super.setSinkInPort(port);
 	}
@@ -59,6 +61,7 @@ public class ControllablePhysicalSubscription<K> extends
 		return sheddingFactor > 0;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes" })
 	protected void do_process(IStreamObject o) {
 		// is load shedding active?

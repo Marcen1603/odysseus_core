@@ -453,6 +453,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		}
 	}
 
+	@Override
 	final synchronized public boolean isDone() {
 		boolean done = true;
 		for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {

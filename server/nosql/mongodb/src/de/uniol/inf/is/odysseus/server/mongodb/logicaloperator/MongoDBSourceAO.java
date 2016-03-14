@@ -27,7 +27,8 @@ public class MongoDBSourceAO extends AbstractNoSQLSourceAO {
     /**
      * @param host Name of the associated host
      */
-    @Parameter(name = "Database", type = StringParameter.class, optional = false, doc = "The name of the target database")
+    @Override
+	@Parameter(name = "Database", type = StringParameter.class, optional = false, doc = "The name of the target database")
     public void setDatabase(String database) {
         super.setDatabase(database);
     }

@@ -41,6 +41,7 @@ public interface IIterableSource<T> extends ISource<T>, IIterableSchedulerSource
 	/**
 	 * Returns true, if ISource has all Input processed
 	 */
+	@Override
 	public boolean isDone();
 		
 	/**

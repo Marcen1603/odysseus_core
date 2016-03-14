@@ -19,7 +19,8 @@ public final class TFlagState {
     return swigValue;
   }
 
-  public String toString() {
+  @Override
+public String toString() {
     return swigName;
   }
 

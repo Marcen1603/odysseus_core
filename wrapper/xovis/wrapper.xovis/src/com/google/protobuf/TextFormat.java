@@ -1683,10 +1683,12 @@ public final class TextFormat {
    */
   static String escapeBytes(final ByteString input) {
     return escapeBytes(new ByteSequence() {
-      public int size() {
+      @Override
+	public int size() {
         return input.size();
       }
-      public byte byteAt(int offset) {
+      @Override
+	public byte byteAt(int offset) {
         return input.byteAt(offset);
       }
     });
@@ -1697,10 +1699,12 @@ public final class TextFormat {
    */
   static String escapeBytes(final byte[] input) {
     return escapeBytes(new ByteSequence() {
-      public int size() {
+      @Override
+	public int size() {
         return input.length;
       }
-      public byte byteAt(int offset) {
+      @Override
+	public byte byteAt(int offset) {
         return input[offset];
       }
     });

@@ -40,23 +40,28 @@ public class SparseVector extends Vector {
         else this.map = map;
     }
     
-    public int size() {
+    @Override
+	public int size() {
         return map.size();
     }
     
-    public void set(int index, double val) {
+    @Override
+	public void set(int index, double val) {
         map.put(index, val);
     }
 
-    public void remove(int index) {
+    @Override
+	public void remove(int index) {
         map.remove(index);
     }
     
-    public Set<Integer> getIdxs() {
+    @Override
+	public Set<Integer> getIdxs() {
         return map.keySet();
     }
     
-    public SparseVector copy() {
+    @Override
+	public SparseVector copy() {
         return new SparseVector(new HashMap<Integer, Double>(this.map));
     }
 

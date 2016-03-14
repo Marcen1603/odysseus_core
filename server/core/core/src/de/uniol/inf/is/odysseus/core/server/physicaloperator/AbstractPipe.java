@@ -347,6 +347,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	 * 
 	 * @return true if done can be propagated (Default is true)
 	 */
+	@Override
 	public boolean isDone() {
 		return this.delegateSink.isDone();
 	}
@@ -551,6 +552,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		return delegateSink.hasInput();
 	}
 	
+	@Override
 	protected final AbstractPipe<R,W> clone(){
 		throw new IllegalArgumentException("Do not clone physical operators!");
 	}

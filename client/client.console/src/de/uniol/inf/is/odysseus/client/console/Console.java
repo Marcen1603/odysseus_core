@@ -66,6 +66,7 @@ public class Console implements IApplication {
 		return query.toString();
 	}
 
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		context.applicationRunning();
 

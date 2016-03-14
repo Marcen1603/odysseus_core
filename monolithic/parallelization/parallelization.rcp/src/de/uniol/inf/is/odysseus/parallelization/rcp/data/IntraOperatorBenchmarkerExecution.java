@@ -49,6 +49,7 @@ public class IntraOperatorBenchmarkerExecution extends
 		this.buffersize = other.buffersize;
 	}
 
+	@Override
 	public IntraOperatorBenchmarkerExecution clone() {
 		return new IntraOperatorBenchmarkerExecution(this);
 	}

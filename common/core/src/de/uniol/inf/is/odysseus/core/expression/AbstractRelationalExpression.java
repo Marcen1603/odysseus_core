@@ -282,6 +282,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 		return super.toString()+ " initialized = "+(variables != null);
 	}
 	
+	@Override
 	abstract public AbstractRelationalExpression<T> clone();
 
 

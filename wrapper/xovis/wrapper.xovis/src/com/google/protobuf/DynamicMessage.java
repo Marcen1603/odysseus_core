@@ -155,19 +155,23 @@ public final class DynamicMessage extends AbstractMessage {
   // -----------------------------------------------------------------
   // Implementation of Message interface.
 
-  public Descriptor getDescriptorForType() {
+  @Override
+public Descriptor getDescriptorForType() {
     return type;
   }
 
-  public DynamicMessage getDefaultInstanceForType() {
+  @Override
+public DynamicMessage getDefaultInstanceForType() {
     return getDefaultInstance(type);
   }
 
-  public Map<FieldDescriptor, Object> getAllFields() {
+  @Override
+public Map<FieldDescriptor, Object> getAllFields() {
     return fields.getAllFields();
   }
 
-  public boolean hasOneof(OneofDescriptor oneof) {
+  @Override
+public boolean hasOneof(OneofDescriptor oneof) {
     verifyOneofContainingType(oneof);
     FieldDescriptor field = oneofCases[oneof.getIndex()];
     if (field == null) {
@@ -176,17 +180,20 @@ public final class DynamicMessage extends AbstractMessage {
     return true;
   }
 
-  public FieldDescriptor getOneofFieldDescriptor(OneofDescriptor oneof) {
+  @Override
+public FieldDescriptor getOneofFieldDescriptor(OneofDescriptor oneof) {
     verifyOneofContainingType(oneof);
     return oneofCases[oneof.getIndex()];
   }
 
-  public boolean hasField(FieldDescriptor field) {
+  @Override
+public boolean hasField(FieldDescriptor field) {
     verifyContainingType(field);
     return fields.hasField(field);
   }
 
-  public Object getField(FieldDescriptor field) {
+  @Override
+public Object getField(FieldDescriptor field) {
     verifyContainingType(field);
     Object result = fields.getField(field);
     if (result == null) {
@@ -201,17 +208,20 @@ public final class DynamicMessage extends AbstractMessage {
     return result;
   }
 
-  public int getRepeatedFieldCount(FieldDescriptor field) {
+  @Override
+public int getRepeatedFieldCount(FieldDescriptor field) {
     verifyContainingType(field);
     return fields.getRepeatedFieldCount(field);
   }
 
-  public Object getRepeatedField(FieldDescriptor field, int index) {
+  @Override
+public Object getRepeatedField(FieldDescriptor field, int index) {
     verifyContainingType(field);
     return fields.getRepeatedField(field, index);
   }
 
-  public UnknownFieldSet getUnknownFields() {
+  @Override
+public UnknownFieldSet getUnknownFields() {
     return unknownFields;
   }
 
@@ -263,17 +273,21 @@ public final class DynamicMessage extends AbstractMessage {
     return size;
   }
 
-  public Builder newBuilderForType() {
+  @Override
+public Builder newBuilderForType() {
     return new Builder(type);
   }
 
-  public Builder toBuilder() {
+  @Override
+public Builder toBuilder() {
     return newBuilderForType().mergeFrom(this);
   }
 
-  public Parser<DynamicMessage> getParserForType() {
+  @Override
+public Parser<DynamicMessage> getParserForType() {
     return new AbstractParser<DynamicMessage>() {
-      public DynamicMessage parsePartialFrom(
+      @Override
+	public DynamicMessage parsePartialFrom(
           CodedInputStream input,
           ExtensionRegistryLite extensionRegistry)
           throws InvalidProtocolBufferException {
@@ -369,7 +383,8 @@ public final class DynamicMessage extends AbstractMessage {
       }
     }
 
-    public DynamicMessage build() {
+    @Override
+	public DynamicMessage build() {
       if (!isInitialized()) {
         throw newUninitializedMessageException(
           new DynamicMessage(type, fields,
@@ -393,7 +408,8 @@ public final class DynamicMessage extends AbstractMessage {
       return buildPartial();
     }
 
-    public DynamicMessage buildPartial() {
+    @Override
+	public DynamicMessage buildPartial() {
       fields.makeImmutable();
       DynamicMessage result =
         new DynamicMessage(type, fields,
@@ -410,23 +426,28 @@ public final class DynamicMessage extends AbstractMessage {
       return result;
     }
 
-    public boolean isInitialized() {
+    @Override
+	public boolean isInitialized() {
       return DynamicMessage.isInitialized(type, fields);
     }
 
-    public Descriptor getDescriptorForType() {
+    @Override
+	public Descriptor getDescriptorForType() {
       return type;
     }
 
-    public DynamicMessage getDefaultInstanceForType() {
+    @Override
+	public DynamicMessage getDefaultInstanceForType() {
       return getDefaultInstance(type);
     }
 
-    public Map<FieldDescriptor, Object> getAllFields() {
+    @Override
+	public Map<FieldDescriptor, Object> getAllFields() {
       return fields.getAllFields();
     }
 
-    public Builder newBuilderForField(FieldDescriptor field) {
+    @Override
+	public Builder newBuilderForField(FieldDescriptor field) {
       verifyContainingType(field);
 
       if (field.getJavaType() != FieldDescriptor.JavaType.MESSAGE) {
@@ -437,7 +458,8 @@ public final class DynamicMessage extends AbstractMessage {
       return new Builder(field.getMessageType());
     }
 
-    public boolean hasOneof(OneofDescriptor oneof) {
+    @Override
+	public boolean hasOneof(OneofDescriptor oneof) {
       verifyOneofContainingType(oneof);
       FieldDescriptor field = oneofCases[oneof.getIndex()];
       if (field == null) {
@@ -446,12 +468,14 @@ public final class DynamicMessage extends AbstractMessage {
       return true;
     }
 
-    public FieldDescriptor getOneofFieldDescriptor(OneofDescriptor oneof) {
+    @Override
+	public FieldDescriptor getOneofFieldDescriptor(OneofDescriptor oneof) {
       verifyOneofContainingType(oneof);
       return oneofCases[oneof.getIndex()];
     }
 
-    public Builder clearOneof(OneofDescriptor oneof) {
+    @Override
+	public Builder clearOneof(OneofDescriptor oneof) {
       verifyOneofContainingType(oneof);
       FieldDescriptor field = oneofCases[oneof.getIndex()];
       if (field != null) {
@@ -460,12 +484,14 @@ public final class DynamicMessage extends AbstractMessage {
       return this;
     }
 
-    public boolean hasField(FieldDescriptor field) {
+    @Override
+	public boolean hasField(FieldDescriptor field) {
       verifyContainingType(field);
       return fields.hasField(field);
     }
 
-    public Object getField(FieldDescriptor field) {
+    @Override
+	public Object getField(FieldDescriptor field) {
       verifyContainingType(field);
       Object result = fields.getField(field);
       if (result == null) {
@@ -480,7 +506,8 @@ public final class DynamicMessage extends AbstractMessage {
       return result;
     }
 
-    public Builder setField(FieldDescriptor field, Object value) {
+    @Override
+	public Builder setField(FieldDescriptor field, Object value) {
       verifyContainingType(field);
       ensureIsMutable();
       if (field.getType() == FieldDescriptor.Type.ENUM) {
@@ -499,7 +526,8 @@ public final class DynamicMessage extends AbstractMessage {
       return this;
     }
 
-    public Builder clearField(FieldDescriptor field) {
+    @Override
+	public Builder clearField(FieldDescriptor field) {
       verifyContainingType(field);
       ensureIsMutable();
       OneofDescriptor oneofDescriptor = field.getContainingOneof();
@@ -513,17 +541,20 @@ public final class DynamicMessage extends AbstractMessage {
       return this;
     }
 
-    public int getRepeatedFieldCount(FieldDescriptor field) {
+    @Override
+	public int getRepeatedFieldCount(FieldDescriptor field) {
       verifyContainingType(field);
       return fields.getRepeatedFieldCount(field);
     }
 
-    public Object getRepeatedField(FieldDescriptor field, int index) {
+    @Override
+	public Object getRepeatedField(FieldDescriptor field, int index) {
       verifyContainingType(field);
       return fields.getRepeatedField(field, index);
     }
 
-    public Builder setRepeatedField(FieldDescriptor field,
+    @Override
+	public Builder setRepeatedField(FieldDescriptor field,
                                     int index, Object value) {
       verifyContainingType(field);
       ensureIsMutable();
@@ -531,18 +562,21 @@ public final class DynamicMessage extends AbstractMessage {
       return this;
     }
 
-    public Builder addRepeatedField(FieldDescriptor field, Object value) {
+    @Override
+	public Builder addRepeatedField(FieldDescriptor field, Object value) {
       verifyContainingType(field);
       ensureIsMutable();
       fields.addRepeatedField(field, value);
       return this;
     }
 
-    public UnknownFieldSet getUnknownFields() {
+    @Override
+	public UnknownFieldSet getUnknownFields() {
       return unknownFields;
     }
 
-    public Builder setUnknownFields(UnknownFieldSet unknownFields) {
+    @Override
+	public Builder setUnknownFields(UnknownFieldSet unknownFields) {
       this.unknownFields = unknownFields;
       return this;
     }

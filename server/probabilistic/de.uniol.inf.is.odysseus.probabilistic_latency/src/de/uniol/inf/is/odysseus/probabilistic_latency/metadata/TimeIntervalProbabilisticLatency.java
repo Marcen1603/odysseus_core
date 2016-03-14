@@ -236,10 +236,12 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 	// Delegates for Probabilistic
 	// ------------------------------------------------------------------------------
 
+	@Override
 	public double getExistence() {
 		return probabilistic.getExistence();
 	}
 
+	@Override
 	public void setExistence(double existence) {
 		probabilistic.setExistence(existence);
 	}
