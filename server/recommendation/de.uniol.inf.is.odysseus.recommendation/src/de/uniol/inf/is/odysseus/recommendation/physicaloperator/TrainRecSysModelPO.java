@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -504,13 +505,15 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		PointInTime systemPointInTime = new PointInTime(currentSystemTime);
 		if(this.modelTuple!=null){
 			this.modelTuple.getMetadata().setStartAndEnd(previousSystemPointInTimeOnPunctuation, systemPointInTime);
-			transfer(this.modelTuple);
+			transfer(this.modelTuple,0 );
 		}
 		if(this.recommCandTuple!=null){
 			this.recommCandTuple.getMetadata().setStartAndEnd(previousSystemPointInTimeOnPunctuation, systemPointInTime);
 			transfer(this.recommCandTuple, 1);
 		}
 		previousSystemPointInTimeOnPunctuation = systemPointInTime;
+		sendPunctuation(Heartbeat.createNewHeartbeat(systemPointInTime), 2);
+		
 	}
 
 	/*
