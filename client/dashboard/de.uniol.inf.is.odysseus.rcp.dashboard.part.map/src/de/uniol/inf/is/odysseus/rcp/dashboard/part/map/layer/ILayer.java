@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Buffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.style.Style;
@@ -46,7 +46,7 @@ public interface ILayer extends Serializable {
 	
 	public String[] getSupportedDatatypes();
 		
-	public void setPuffer(Puffer puffer);
+	public void setPuffer(Buffer puffer);
 	
 	public Style getStyle();
 	

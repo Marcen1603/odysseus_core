@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractMultiSourceDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.IMapDashboardAdapter;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Buffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
@@ -40,7 +40,7 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 	protected ScreenTransformation transformation;
 	protected ScreenManager screenManager;
 	private MapEditorModel mapModel;
-	private Puffer puffer;
+	private Buffer puffer;
 	private Collection<IPhysicalOperator> operators;
 
 	/**
@@ -274,7 +274,7 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 		puffer.setTimeRange(updateInterval);
 	}
 
-	public Puffer getPuffer() {
+	public Buffer getPuffer() {
 		return this.puffer;
 	}
 

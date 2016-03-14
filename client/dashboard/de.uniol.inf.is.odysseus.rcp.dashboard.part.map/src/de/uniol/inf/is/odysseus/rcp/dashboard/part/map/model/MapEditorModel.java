@@ -11,13 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Buffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
@@ -31,6 +27,13 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayer
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.tracemap.TraceLayer;
 
+/**
+ * Model for all the map layers. Holds the map layers, can return a string to
+ * save and load them.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class MapEditorModel {
 
 	// private static final Logger LOG =
@@ -38,58 +41,36 @@ public class MapEditorModel {
 
 	public static final String MAP = "map";
 
-	private int layercount;
+	// Spatial reference identifier to identify the coordinate system
 	private int srid;
-	private int startIndex;
-	private int endIndex;
 
 	private LinkedList<ILayer> layers = new LinkedList<ILayer>();
 
 	private ScreenManager screenManager = null;
 	private OwnProperties ownProperties;
-	private Puffer puffer;
+	private Buffer buffer;
 
+	/**
+	 * Initiates all available layers and draws the layers.
+	 * 
+	 * @param mapDashboardPart
+	 */
 	public void init(MapDashboardPart mapDashboardPart) {
-
 		for (ILayer layer : layers) {
 			if (layer != null) {
 				layer.init(screenManager, null, null);
 			}
 		}
 		screenManager.redraw();
-
 	}
 
 	/**
-	 * Makes a String which contains the settings of all layers. The individual
-	 * layer settings are separated by
-	 * "\\". Each single attribute for the layer configuration is separated by a "
-	 * ;"
+	 * Creates a base64 serialization string from the list of all layers. This
+	 * string can be saved and loaded, to persist the map.
 	 * 
-	 * @return String which contains all layer setting
+	 * @return String that contains all layer setting
 	 */
 	public String save() {
-		// this.layerSettings = "";
-		// for (ILayer layer : layers) {
-		// LayerConfiguration configuration = layer.getConfiguration();
-		// boolean checked = layer.isActive();
-		// if (configuration instanceof NullConfiguration) {
-		// this.layerSettings += addToSettingString((NullConfiguration)
-		// configuration, layer.getName(), checked)
-		// + "\\";
-		// } else if (configuration instanceof HeatmapLayerConfiguration) {
-		// this.layerSettings += addToSettingString((HeatmapLayerConfiguration)
-		// configuration, checked) + "\\";
-		// } else if (configuration instanceof TracemapLayerConfiguration) {
-		// // TODO
-		// } else if (configuration instanceof RasterLayerConfiguration) {
-		// this.layerSettings += addToSettingString((RasterLayerConfiguration)
-		// configuration, checked) + "\\";
-		// }
-		// }
-
-		// TODO Try with serialization
-
 		// Save only the configuration, not the whole layer
 		List<LayerConfiguration> layerConfigurations = new ArrayList<>();
 		for (ILayer layer : layers) {
@@ -98,20 +79,30 @@ public class MapEditorModel {
 		}
 
 		String layerSettings = getSerializedString(layerConfigurations);
-		// System.out.println(test);
-		// @SuppressWarnings("unused")
-		// List<LayerConfiguration> loadedLayerConfigs =
-		// getLayersFromSerializedString(test);
-
 		return layerSettings;
 	}
 
+	/**
+	 * Serializes an object with a base64 encoder.
+	 * 
+	 * @param object
+	 *            The object you want to serialize
+	 * @return A base64 serialization string from the object
+	 */
 	private String getSerializedString(Object object) {
 		byte[] data = SerializationUtils.serialize((Serializable) object);
 		String encoded = Base64.getEncoder().encodeToString(data);
 		return encoded;
 	}
 
+	/**
+	 * Reads a base64 string that encodes a list of layerConfigurations.
+	 * Converts the string to a list.
+	 * 
+	 * @param dataString
+	 *            The string with the base64 encoded string.
+	 * @return A list of layerConfiguration
+	 */
 	private List<LayerConfiguration> getLayerConfigurationsFromSerializedString(String dataString) {
 		try {
 			byte[] data = Base64.getDecoder().decode(dataString);
@@ -120,294 +111,42 @@ public class MapEditorModel {
 			List<LayerConfiguration> layers = (List<LayerConfiguration>) listObject;
 			return layers;
 		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 
+	/**
+	 * Reads a byte array and converts it into an object
+	 * 
+	 * @param bytes
+	 *            The bytes that should be converted into an object
+	 * @return An object
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
 		try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
 			return in.readObject();
 		}
 	}
 
-	private String addToSettingString(NullConfiguration configuration, String name, boolean checked) {
-		return "BasicLayer;" + name + ";" + checked;
-	}
-
-	private String addToSettingString(RasterLayerConfiguration configuration, boolean checked) {
-		String layerSetting = "RasterLayerConfiguration;";
-		layerSetting += configuration.getName() + ";";
-		layerSetting += configuration.getUrl() + ";";
-		layerSetting += configuration.getUrlNumber() + ";";
-		layerSetting += configuration.getFormat() + ";";
-		layerSetting += configuration.getMinZoom() + ";";
-		layerSetting += configuration.getMaxZoom() + ";";
-		layerSetting += configuration.getTileSizeX() + ";";
-		layerSetting += configuration.getTileSizeY() + ";";
-		layerSetting += configuration.getSrid() + ";";
-
-		if (configuration.isCoverageProjected()) {
-			// add "null" for coverageGeographic
-			layerSetting += "null;";
-
-			Envelope coverage = configuration.getCoverage();
-			layerSetting += coverage.getMinX() + ";" + coverage.getMaxX() + ";" + coverage.getMinY() + ";"
-					+ coverage.getMaxY() + ";";
-		} else {
-			Envelope coverage = configuration.getCoverage();
-			layerSetting += coverage.getMinX() + ";" + coverage.getMaxX() + ";" + coverage.getMinY() + ";"
-					+ coverage.getMaxY() + ";";
-			// add "null" for coverageProjected
-			layerSetting += "null;";
-		}
-		layerSetting += checked;
-
-		return layerSetting;
-	}
-
-	private String addToSettingString(HeatmapLayerConfiguration configuration, boolean checked) {
-		String layerSetting = "HeatmapLayerConfiguration;";
-		layerSetting += configuration.getName() + ";";
-		layerSetting += configuration.getSrid() + ";";
-		layerSetting += configuration.getGeometricAttributePosition() + ";";
-		layerSetting += configuration.getLatAttribute() + ";";
-		layerSetting += configuration.getLngAttribute() + ";";
-		layerSetting += configuration.usePoint() + ";";
-		layerSetting += configuration.getValueAttributePosition() + ";";
-
-		// Just get the RGB values. Usually getMinColor would return e.g. "Color
-		// {0 ,255, 0}"
-		String subString = configuration.getMinColor().toString().trim();
-
-		int startIndex = subString.indexOf("{");
-		int endIndex = subString.indexOf("}");
-		// Minus 5 to remove the alpha. New Color can only use 0 or 255. We need
-		// values between those
-		subString = subString.substring(startIndex + 1, endIndex - 5);
-		layerSetting += subString + ";";
-
-		// Just get the RGB values. Usually getMinColor would return e.g. "Color
-		// {0 ,255, 0}"
-		subString = configuration.getMaxColor().toString().trim();
-		startIndex = subString.indexOf("{");
-		endIndex = subString.indexOf("}");
-		// Minus 5 to remove the alpha. New Color can only use 0 or 255.
-		subString = subString.substring(startIndex + 1, endIndex - 5);
-		layerSetting += subString + ";";
-
-		layerSetting += configuration.getAlpha() + ";";
-		layerSetting += configuration.isInterpolation() + ";";
-		layerSetting += configuration.isAutoPosition() + ";";
-		layerSetting += configuration.isHideWithoutInformation() + ";";
-		layerSetting += configuration.getNumTilesWidth() + ";";
-		layerSetting += configuration.getNumTilesHeight() + ";";
-		layerSetting += configuration.getLatSW() + ";";
-		layerSetting += configuration.getLngSW() + ";";
-		layerSetting += configuration.getLatNE() + ";";
-		layerSetting += configuration.getLngNE() + ";";
-		layerSetting += checked + ";";
-
-		return layerSetting;
-	}
-
-	// This could be done with an array
 	/**
-	 * Separates the given String into each layer configuration represented by a
-	 * String
+	 * Decodes the base64 encoded string version of the list of
+	 * layerConfiguration and creates the layers based on the saved
+	 * configurations.
 	 * 
 	 * @param layerSettings
-	 *            String which contains all layerConfigurations
+	 *            String which contains all layerConfigurations (base64 encoded)
 	 */
 	public void load(String layerSettings) {
 		layers.clear();
 
-//		if (!layerSettings.isEmpty()) {
-//			ArrayList<String> configurationList = new ArrayList<String>();
-//			int startIndex = 0;
-//
-//			// Split the big String into each layerConfiguration String
-//			// separated by "\\"
-//			while (startIndex < layerSettings.length()) {
-//				int endIndex = layerSettings.indexOf("\\", startIndex);
-//				String configurationString = layerSettings.substring(startIndex, endIndex);
-//				configurationList.add(configurationString);
-//				startIndex = endIndex + 1;
-//			}
-//
-//			for (String configuration : configurationList) {
-//				int endIndex = configuration.indexOf(";");
-//				String layerConfigurationType = configuration.substring(0, endIndex);
-//				String configurationSettings = configuration.substring(endIndex + 1);
-//
-//				if (layerConfigurationType.equals("BasicLayer")) {
-//					loadBasicConfiguration(configurationSettings);
-//				} else if (layerConfigurationType.equals("HeatmapLayerConfiguration")) {
-//					loadHeatMapLayerConfiguration(configurationSettings);
-//				} else if (layerConfigurationType.equals("RasterLayerConfiguration")) {
-//					loadRasterLayerConfiguration(configurationSettings);
-//				}
-//
-//			}
-//		}
-
 		List<LayerConfiguration> loadedLayerConfigs = getLayerConfigurationsFromSerializedString(layerSettings);
 
 		for (LayerConfiguration layerConf : loadedLayerConfigs) {
-			if (layerConf instanceof HeatmapLayerConfiguration) {
-				Heatmap layer = new Heatmap((HeatmapLayerConfiguration) layerConf);
-				this.layers.add(layer);
-			} else if (layerConf instanceof TracemapLayerConfiguration) {
-				TraceLayer layer = new TraceLayer((TracemapLayerConfiguration) layerConf);
-				this.layers.add(layer);
-			} else if (layerConf instanceof RasterLayerConfiguration) {
-				RasterLayer layer = new RasterLayer((RasterLayerConfiguration) layerConf);
-				this.layers.add(layer);
-			} else if (layerConf instanceof NullConfiguration) {
-				BasicLayer layer = new BasicLayer((NullConfiguration) layerConf);
-				this.layers.add(layer);
-			} else {
-				BasicLayer layer = new BasicLayer();
-				this.layers.add(layer);
-			}
-
+			addLayer(layerConf);
 		}
-	}
-
-	private void loadBasicConfiguration(String configuration) {
-		startIndex = 0;
-		endIndex = configuration.indexOf(";");
-		BasicLayer basic = new BasicLayer();
-
-		String subString = configuration.substring(startIndex, endIndex);
-		basic.setName(subString);
-
-		startIndex = endIndex + 1;
-		subString = configuration.substring(startIndex);
-		basic.setActive(Boolean.valueOf(subString));
-
-		layers.add(basic);
-	}
-
-	// This could also be handled by a string array
-	private void loadRasterLayerConfiguration(String configuration) {
-		startIndex = 0;
-		endIndex = 0;
-		endIndex = configuration.indexOf(";");
-		double minX, maxX, minY, maxY;
-
-		// Gets the name
-		String substring = configuration.substring(startIndex, endIndex);
-		RasterLayerConfiguration rlc = new RasterLayerConfiguration(substring);
-
-		// Sets the setting one by one
-		rlc.setUrl(getSubString(configuration, ";"));
-		rlc.setUrlNumber(Integer.valueOf(getSubString(configuration, ";")));
-		rlc.setFormat(getSubString(configuration, ";"));
-		rlc.setMinZoom(Integer.valueOf(getSubString(configuration, ";")));
-		rlc.setMaxZoom(Integer.valueOf(getSubString(configuration, ";")));
-		rlc.setTileSize(Integer.valueOf(getSubString(configuration, ";")),
-				Integer.valueOf(getSubString(configuration, ";")));
-		rlc.setSrid(Integer.valueOf(getSubString(configuration, ";")));
-
-		substring = getSubString(configuration, ";");
-
-		if (!substring.equals("null")) {
-			minX = Double.valueOf(substring);
-			maxX = Double.valueOf(getSubString(configuration, ";"));
-			minY = Double.valueOf(getSubString(configuration, ";"));
-			maxY = Double.valueOf(getSubString(configuration, ";"));
-
-			rlc.setCoverageProjected(minX, maxX, minY, maxY);
-		} else {
-			minX = Double.valueOf(getSubString(configuration, ";"));
-			maxX = Double.valueOf(getSubString(configuration, ";"));
-			minY = Double.valueOf(getSubString(configuration, ";"));
-			maxY = Double.valueOf(getSubString(configuration, ";"));
-
-			rlc.setCoverageGeographic(minX, maxX, minY, maxY);
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-		}
-
-		RasterLayer rasterLayer = new RasterLayer(rlc);
-		ownProperties = new OwnProperties();
-
-		ownProperties.getTileServer(rlc.getUrlNumber(), rlc);
-		rasterLayer.setActive(Boolean.valueOf(getSubString(configuration, ";")));
-		layers.add(rasterLayer);
-	}
-
-	private void loadHeatMapLayerConfiguration(String configuration) {
-		startIndex = 0;
-		endIndex = 0;
-		endIndex = configuration.indexOf(";");
-		int r, g, b;
-		double latSW, lngSW, latNE, lngNE;
-
-		String substring = configuration.substring(startIndex, endIndex);
-		HeatmapLayerConfiguration hlc = new HeatmapLayerConfiguration(substring);
-
-		hlc.setSrid(Integer.valueOf(getSubString(configuration, ";")));
-		hlc.setGeometricAttributePosition(Integer.valueOf(getSubString(configuration, ";")));
-		hlc.setLatAttribute(Integer.valueOf(getSubString(configuration, ";")));
-		hlc.setLngAttribute(Integer.valueOf(getSubString(configuration, ";")));
-		hlc.setUsePoint(Boolean.valueOf(getSubString(configuration, ";")));
-		hlc.setValueAttributePosition(Integer.valueOf(getSubString(configuration, ";")));
-
-		r = Integer.valueOf(getSubString(configuration, ","));
-		endIndex++;
-		g = Integer.valueOf(getSubString(configuration, ","));
-		endIndex++;
-		b = Integer.valueOf(getSubString(configuration, ";"));
-		hlc.setMinColor(new Color(Display.getDefault(), r, g, b));
-
-		r = Integer.valueOf(getSubString(configuration, ","));
-		endIndex++;
-		g = Integer.valueOf(getSubString(configuration, ","));
-		endIndex++;
-		b = Integer.valueOf(getSubString(configuration, ";"));
-		hlc.setMaxColor(new Color(Display.getDefault(), r, g, b));
-
-		hlc.setAlpha(Integer.valueOf(getSubString(configuration, ";")));
-		hlc.setInterpolation(Boolean.valueOf(getSubString(configuration, ";")));
-		hlc.setAutoPosition(Boolean.valueOf(getSubString(configuration, ";")));
-		hlc.setHideWithoutInformation(Boolean.valueOf(getSubString(configuration, ";")));
-		hlc.setNumTilesWidth(Integer.valueOf(getSubString(configuration, ";")));
-		hlc.setNumTilesHeight(Integer.valueOf(getSubString(configuration, ";")));
-
-		latNE = Double.valueOf(getSubString(configuration, ";"));
-		hlc.setLatNE(latNE);
-		lngNE = Double.valueOf(getSubString(configuration, ";"));
-		hlc.setLngNE(lngNE);
-		latSW = Double.valueOf(getSubString(configuration, ";"));
-		hlc.setLatSW(latSW);
-		lngSW = Double.valueOf(getSubString(configuration, ";"));
-		hlc.setLngSW(lngSW);
-		hlc.setCoverageGeographic(lngSW, lngNE, latSW, latNE);
-
-		Heatmap heatmap = new Heatmap(hlc);
-		heatmap.setActive(Boolean.valueOf(getSubString(configuration, ";")));
-		heatmap.setPuffer(puffer);
-		layers.add(heatmap);
-	}
-
-	/**
-	 * Return the next setting value
-	 * 
-	 * @param string
-	 *            the given string
-	 * @param separator
-	 *            used separator
-	 * @return
-	 */
-	private String getSubString(String string, String separator) {
-		startIndex = endIndex + 1;
-		endIndex = string.indexOf(separator, startIndex);
-		String subString = string.substring(startIndex, endIndex);
-
-		return subString;
 	}
 
 	/**
@@ -417,7 +156,6 @@ public class MapEditorModel {
 	 * @param layerConfiguration
 	 */
 	public void addLayer(LayerConfiguration layerConfiguration) {
-		layercount++;
 		ILayer layer = null;
 
 		if (layerConfiguration instanceof HeatmapLayerConfiguration) {
@@ -426,6 +164,8 @@ public class MapEditorModel {
 			layer = addLayer((TracemapLayerConfiguration) layerConfiguration);
 		} else if (layerConfiguration instanceof RasterLayerConfiguration) {
 			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
+		} else if (layerConfiguration instanceof NullConfiguration) {
+			layer = new BasicLayer((NullConfiguration) layerConfiguration);
 		} else {
 			layer = addLayer();
 		}
@@ -464,7 +204,7 @@ public class MapEditorModel {
 
 		// We don't want to set it active manually, too much clicks ...
 		layer.setActive(true);
-		layer.setPuffer(puffer);
+		layer.setPuffer(buffer);
 		return layer;
 	}
 
@@ -482,7 +222,7 @@ public class MapEditorModel {
 
 		// We don't want to set it active manually, too much clicks ...
 		layer.setActive(true);
-		layer.setPuffer(puffer);
+		layer.setPuffer(buffer);
 		return layer;
 	}
 
@@ -518,6 +258,12 @@ public class MapEditorModel {
 		layers.remove(layer);
 	}
 
+	/**
+	 * Rearranges the layers and puts the given layer one up (it's more visible)
+	 * 
+	 * @param layer
+	 *            The layer that should be played one up
+	 */
 	public void layerUp(ILayer layer) {
 		LinkedList<ILayer> group = layers;
 		if (group.contains(layer)) {
@@ -533,6 +279,12 @@ public class MapEditorModel {
 		}
 	}
 
+	/**
+	 * Puts the given layer on the top (above all others, it's most visible)
+	 * 
+	 * @param layer
+	 *            The layer to be placed on top
+	 */
 	public void layerTop(ILayer layer) {
 		LinkedList<ILayer> group = layers;
 		if (group.contains(layer)) {
@@ -548,6 +300,12 @@ public class MapEditorModel {
 		}
 	}
 
+	/**
+	 * Puts the given layer one down. It's less visible.
+	 * 
+	 * @param layer
+	 *            The layer to be put one down
+	 */
 	public void layerDown(ILayer layer) {
 		LinkedList<ILayer> group = layers;
 		if (group.contains(layer)) {
@@ -563,6 +321,12 @@ public class MapEditorModel {
 		}
 	}
 
+	/**
+	 * Puts the given layer at the bottom. It's least visible.
+	 * 
+	 * @param layer
+	 *            The layer to be put on the bottom
+	 */
 	public void layerBottom(ILayer layer) {
 		LinkedList<ILayer> group = layers;
 		if (group.contains(layer)) {
@@ -578,27 +342,38 @@ public class MapEditorModel {
 		}
 	}
 
+	/**
+	 * Renames the given layer.
+	 * 
+	 * @param layer
+	 *            The layer to be renamed
+	 * @param name
+	 *            The new name of the layer
+	 */
 	public void rename(ILayer layer, String name) {
 		layer.setName(name);
 	}
 
-	// TODO
 	/**
 	 * Generates a puffer connection to the ScreenManager
 	 * 
 	 * @param mapDashboardPart
 	 */
-	public Puffer addConnection(MapDashboardPart mapDashboardPart) {
+	public Buffer addConnection(MapDashboardPart mapDashboardPart) {
 		this.screenManager = mapDashboardPart.getScreenManager();
-		puffer = new Puffer(mapDashboardPart);
+		buffer = new Buffer(mapDashboardPart);
 		if (screenManager != null) {
 			// If this Model is not opened by a file
-			screenManager.addPropertyChangeListener(puffer);
-			screenManager.addConnection(puffer);
+			screenManager.addPropertyChangeListener(buffer);
+			screenManager.addConnection(buffer);
 		}
-		return puffer;
+		return buffer;
 	}
 
+	/**
+	 * 
+	 * @return An array with the names of all layers
+	 */
 	public String[] getLayerNameList() {
 		ArrayList<String> names = new ArrayList<String>();
 		for (ILayer layer : layers) {
@@ -607,18 +382,36 @@ public class MapEditorModel {
 		return names.toArray(new String[names.size()]);
 	}
 
+	/**
+	 * Generates a name for the next layer in the form "Layer" and the next free
+	 * number based on the length of the list.
+	 * 
+	 * @return
+	 */
 	public String getNextLayerName() {
-		return "Layer" + layercount++;
+		return "Layer" + this.layers.size();
 	}
 
+	/**
+	 * 
+	 * @return The SRID (Spatial Reference Identifier) of the map
+	 */
 	public int getSRID() {
 		return this.srid;
 	}
 
+	/**
+	 * 
+	 * @param srid The SRID (Spatial Reference Identifier) of the map
+	 */
 	public void setSrid(int srid) {
 		this.srid = srid;
 	}
 
+	/**
+	 * 
+	 * @return A list of all layers
+	 */
 	public LinkedList<ILayer> getLayers() {
 		return layers;
 	}

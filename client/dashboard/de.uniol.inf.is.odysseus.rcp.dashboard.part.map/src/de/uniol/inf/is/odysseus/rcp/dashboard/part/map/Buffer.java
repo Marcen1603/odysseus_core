@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
-public class Puffer extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
+public class Buffer extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
 
 	private static final long serialVersionUID = 1092858542289960843L;
 
@@ -36,7 +36,7 @@ public class Puffer extends ArrayList<ILayer> implements  Serializable, Property
 	private List<Tuple<? extends ITimeInterval>> elementList;
 
 	@SuppressWarnings("unchecked")
-	public Puffer(IMapDashboardAdapter mapDashboardPart) {
+	public Buffer(IMapDashboardAdapter mapDashboardPart) {
 		super();
 		this.mapDashboardPart = mapDashboardPart;
 

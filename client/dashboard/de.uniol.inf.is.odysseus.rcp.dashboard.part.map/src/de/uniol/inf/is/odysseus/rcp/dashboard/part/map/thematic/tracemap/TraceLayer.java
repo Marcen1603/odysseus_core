@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Buffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapConfigurer;
@@ -39,7 +39,7 @@ public class TraceLayer extends RasterLayer {
 	private static final Logger LOG = LoggerFactory.getLogger(MapConfigurer.class);
 
 	private static final long serialVersionUID = -6639695562970893314L;
-	private Puffer layerUpdater;
+	private Buffer layerUpdater;
 	private ScreenManager screenManager;
 	private TracemapLayerConfiguration config;
 	private HashMap<Integer, PointInTime[]> timeHashMap;
@@ -425,11 +425,11 @@ public class TraceLayer extends RasterLayer {
 	}
 
 	@Override
-	public void setPuffer(Puffer layerUpdater) {
+	public void setPuffer(Buffer layerUpdater) {
 		this.layerUpdater = layerUpdater;
 	}
 
-	public Puffer getPuffer() {
+	public Buffer getPuffer() {
 		return this.layerUpdater;
 	}
 

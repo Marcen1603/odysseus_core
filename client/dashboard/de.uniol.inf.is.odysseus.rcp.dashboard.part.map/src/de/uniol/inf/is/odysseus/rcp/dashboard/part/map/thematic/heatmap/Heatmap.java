@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Buffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
@@ -38,7 +38,7 @@ public class Heatmap extends RasterLayer {
 	private double maxValue;
 	private int totalNumberOfElement;
 	private double totalValue;
-	private Puffer puffer;
+	private Buffer puffer;
 	Color[][] colors;
 	boolean[][] hasInformation;
 	double[][] valueSum; // in which tile is which value
@@ -492,11 +492,11 @@ public class Heatmap extends RasterLayer {
 	}
 
 	@Override
-	public void setPuffer(Puffer layerUpdater) {
+	public void setPuffer(Buffer layerUpdater) {
 		this.puffer = layerUpdater;
 	}
 
-	public Puffer getLayerUpdater() {
+	public Buffer getLayerUpdater() {
 		return this.puffer;
 	}
 

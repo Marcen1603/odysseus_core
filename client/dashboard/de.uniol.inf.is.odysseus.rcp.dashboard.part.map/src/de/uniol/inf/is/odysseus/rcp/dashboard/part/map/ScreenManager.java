@@ -58,7 +58,7 @@ public class ScreenManager {
 	private ITimeInterval interval;
 	private ITimeInterval maxInterval;
 
-	private Puffer connection;
+	private Buffer connection;
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
@@ -433,11 +433,11 @@ public class ScreenManager {
 	 * 
 	 * @param connection
 	 */
-	public void addConnection(Puffer connection) {
+	public void addConnection(Buffer connection) {
 		this.connection = connection;
 	}
 	
-	public Puffer getConnection()	{
+	public Buffer getConnection()	{
 		return this.connection;
 	}
 
