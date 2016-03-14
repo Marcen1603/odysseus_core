@@ -58,7 +58,7 @@ public abstract class AbstractBaDaStRecorder implements IBaDaStRecorder {
 			validate();
 			out.append("_");
 			out.append(this.mCfg.get(SOURCENAME_CONFIG));
-		} catch (@SuppressWarnings("unused") BaDaStException e) {
+		} catch (BaDaStException e) {
 			// Nothing to do
 		}
 		return out.toString();
