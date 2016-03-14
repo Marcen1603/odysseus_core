@@ -64,6 +64,7 @@ public class TopKAO extends AbstractLogicalOperator {
 		this.tieWithTimestamp = other.tieWithTimestamp;
 		this.recalcScore = other.recalcScore;
 		this.addScore = other.addScore;
+		this.triggerOnlyByPunctuation = other.triggerOnlyByPunctuation;
 	}
 	
 
