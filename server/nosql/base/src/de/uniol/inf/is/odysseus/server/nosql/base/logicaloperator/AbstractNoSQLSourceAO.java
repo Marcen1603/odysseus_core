@@ -138,9 +138,8 @@ public abstract class AbstractNoSQLSourceAO extends AbstractNoSQLAO {
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
-		@SuppressWarnings("unchecked")
 		SDFSchema schema = SDFSchemaFactory.createNewSchema(getName(),
-				(Class<? extends IStreamObject<?>>) KeyValueObject.class,
+				KeyValueObject.class,
 				new ArrayList<SDFAttribute>());
 		
 		// Add meta attributes. If is set in operator, this overwrites other options
