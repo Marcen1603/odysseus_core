@@ -159,7 +159,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof RelationalMapPO)) {
 			return false;

@@ -197,7 +197,7 @@ public final class PredicateUtils {
      *            The predicate
      * @return A set of referenced attributes
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Set<SDFAttribute> getAttributes(final IPredicate<?> predicate) {
         final Set<SDFAttribute> attributes = new HashSet<SDFAttribute>();
         final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
