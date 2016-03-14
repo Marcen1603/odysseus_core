@@ -63,7 +63,7 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 					.getPredicates()) {
 								
 					splittedPredicates
-					.addAll((Collection<? extends IPredicate<? super T>>) predicate
+					.addAll(predicate
 							.conjunctiveSplit());
 			}
 

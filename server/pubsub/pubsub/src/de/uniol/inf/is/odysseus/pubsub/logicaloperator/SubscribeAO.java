@@ -162,14 +162,14 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (source != null) {
 			return SDFSchemaFactory.createNewSchema(source,
-					(Class<? extends IStreamObject<?>>) Tuple.class,
+					Tuple.class,
 					sdfAttributes);
 		} else if (getInputSchema() != null) {
 			return SDFSchemaFactory.createNewWithAttributes(sdfAttributes,
 					getInputSchema());
 		} else {
 			return SDFSchemaFactory.createNewSchema("",
-					(Class<? extends IStreamObject<?>>) Tuple.class,
+					Tuple.class,
 					sdfAttributes);
 		}
 	}

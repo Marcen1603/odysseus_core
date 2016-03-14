@@ -1188,7 +1188,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}
 		@SuppressWarnings({ "rawtypes" })
 		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());
-		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), (Class<? extends IStreamObject<?>>) type,
+		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), type,
 				attributes);
 		return schema;
 	}

@@ -70,7 +70,7 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 		}		
 		
 		String leafKey = path[path.length - 1];
-		Object oldAttribute = (Object) map.get(leafKey);
+		Object oldAttribute = map.get(leafKey);
 		if (oldAttribute != null && !(oldAttribute instanceof Collection)) {
 			throw new RuntimeException("Cannot add value to non collection type");
 		}

@@ -559,7 +559,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 							// occur, cause the source stopped sending
 							this.lastTimePunctuationBasedTuple = punctuation.getTime();
 
-							Tuple lastTuple = (Tuple) lastDataTuple;
+							Tuple lastTuple = lastDataTuple;
 							Tuple tuple = new Tuple(lastTuple);
 							tuple.setKeyValue("start", punctuation.getTime());
 							double anomalyScore = calcAnomalyScore(time.getMainPoint(), info.mean,

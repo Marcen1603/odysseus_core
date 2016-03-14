@@ -153,7 +153,7 @@ public class DigitalFilter
 		    		/* modify for Chebyshev (p. 136 DeFatta et al.) */
 			    	double rip = Math.pow(10.0, -ripple / 10.0);
 			    	double eps = Math.sqrt(rip - 1.0);
-			    	double y = asinh(1.0 / eps) / (double) order;
+			    	double y = asinh(1.0 / eps) / order;
 			    	if (y <= 0.0)
 			    		throw new IllegalArgumentException("Chebyshev y = " + y + ", must be greter than 0");
 			    	

@@ -109,7 +109,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 			AggregateFunction function, SDFAttribute outAttribute) {
 		@SuppressWarnings("unchecked")
 		SDFSchema schema = SDFSchemaFactory.createNewSchema("",
-				(Class<? extends IStreamObject<?>>) Tuple.class, attributes);
+				Tuple.class, attributes);
 		addAggregation(schema, function, outAttribute);
 	}
 
@@ -262,7 +262,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		} else {
 			outputSchema = SDFSchemaFactory
 					.createNewSchema("<tmp>",
-							(Class<? extends IStreamObject<?>>) Tuple.class,
+							Tuple.class,
 							outAttribs);
 		}
 		return outputSchema;

@@ -1494,7 +1494,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			type = Tuple.class;
 		}
 		@SuppressWarnings("unchecked")
-		SDFSchema outputSchema = SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, attributes);
+		SDFSchema outputSchema = SDFSchemaFactory.createNewSchema(name, type, attributes);
 
 		Map<String, String> options = new HashMap<>();
 		if (node.jjtGetChild(node.jjtGetNumChildren() - 1) instanceof ASTOptions) {

@@ -173,7 +173,7 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 		ITimeIntervalSweepArea<T> area = originalArea.clone();
 		
 		if(area.size()<sampleSize) {
-			return getSizeInBytesOfSerializable((Serializable)area);
+			return getSizeInBytesOfSerializable(area);
 		}
 		
 		ITimeIntervalSweepArea<T> oneElementArea = originalArea.clone();
@@ -245,7 +245,7 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 			return 0;
 		}
 		else {
-			return (int)(sum/i);
+			return sum/i;
 		}
 	}
 }

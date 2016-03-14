@@ -53,7 +53,7 @@ public class Field {
 
 	private void putValue(Map<String, Object> map, long value) {
 		if (scale != 1.0)
-			map.put(name, (double) value * scale);
+			map.put(name, value * scale);
 		else
 			map.put(name, value);
 	}

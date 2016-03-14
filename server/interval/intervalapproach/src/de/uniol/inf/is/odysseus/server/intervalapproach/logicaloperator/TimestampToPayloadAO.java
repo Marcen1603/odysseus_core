@@ -91,7 +91,7 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		if (getInputSchema(0) != null) {
 			setOutputSchema(SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(0)));
 		} else {
-			setOutputSchema(SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, outputAttributes));
+			setOutputSchema(SDFSchemaFactory.createNewSchema(name, type, outputAttributes));
 		}
 		return getOutputSchema();
 	}

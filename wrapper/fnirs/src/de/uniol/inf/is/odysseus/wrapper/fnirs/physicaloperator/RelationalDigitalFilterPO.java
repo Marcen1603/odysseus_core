@@ -36,7 +36,7 @@ class DoubleAttributeFilter extends TupleAttributeFilter
 	@Override
 	public Object filter(Object obj)
 	{
-		return (Double) loop.filterStep((Double) obj);
+		return loop.filterStep((Double) obj);
 	}
 }
 

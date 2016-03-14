@@ -57,7 +57,7 @@ public class TQueryStoreAORule extends AbstractTransformationRule<QueryStoreAO>{
 		IContextStore<Tuple<ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalMergeFunction<ITimeInterval>(operator.getOutputSchema().size());		
 		IMetadataMergeFunction metadataMerge = MetadataRegistry.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames());		
-		QueryStorePO<ITimeInterval> queryStoreOP = new QueryStorePO<>(store, operator.isOuter(), dataMerge,(IMetadataMergeFunction<ITimeInterval>) metadataMerge, operator.getKeyIndices(), operator.getAttributes());		
+		QueryStorePO<ITimeInterval> queryStoreOP = new QueryStorePO<>(store, operator.isOuter(), dataMerge,metadataMerge, operator.getKeyIndices(), operator.getAttributes());		
 		defaultExecute(operator, queryStoreOP, config, true, true);
 	}
 

@@ -66,7 +66,7 @@ public class TestImageFunction extends AbstractFunction<ImageJCV> {
 		{
 			int newIndex = y * newImage.getWidthStep() + x * newImage.getNumChannels() * 2;
 			
-			short val = (short)(cur++);
+			short val = (cur++);
 			if (flip)
 				val ^= 0xFFFF;
 			

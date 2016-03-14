@@ -107,7 +107,7 @@ public class RecordingView extends ViewPart implements IRecordingListener, ISele
 					
 					viewer.refresh(); 
 					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					IEvaluationService evaluationService = (IEvaluationService) window.getService(IEvaluationService.class);
+					IEvaluationService evaluationService = window.getService(IEvaluationService.class);
 					if (evaluationService != null) {
 						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_DELETABLE);
 						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_RECORDING_PAUSABLE);	

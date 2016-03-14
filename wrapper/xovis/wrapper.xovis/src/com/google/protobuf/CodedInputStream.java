@@ -815,14 +815,14 @@ public final class CodedInputStream {
 
     final byte[] buffer = this.buffer;
     bufferPos = pos + 8;
-    return ((((long) buffer[pos]     & 0xffL))       |
-            (((long) buffer[pos + 1] & 0xffL) <<  8) |
-            (((long) buffer[pos + 2] & 0xffL) << 16) |
-            (((long) buffer[pos + 3] & 0xffL) << 24) |
-            (((long) buffer[pos + 4] & 0xffL) << 32) |
-            (((long) buffer[pos + 5] & 0xffL) << 40) |
-            (((long) buffer[pos + 6] & 0xffL) << 48) |
-            (((long) buffer[pos + 7] & 0xffL) << 56));
+    return (((buffer[pos]     & 0xffL))       |
+            ((buffer[pos + 1] & 0xffL) <<  8) |
+            ((buffer[pos + 2] & 0xffL) << 16) |
+            ((buffer[pos + 3] & 0xffL) << 24) |
+            ((buffer[pos + 4] & 0xffL) << 32) |
+            ((buffer[pos + 5] & 0xffL) << 40) |
+            ((buffer[pos + 6] & 0xffL) << 48) |
+            ((buffer[pos + 7] & 0xffL) << 56));
   }
 
   /**

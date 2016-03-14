@@ -84,14 +84,14 @@ public class SDFSchemaFactory {
 			Collection<SDFAttribute> attributes) {
 		@SuppressWarnings("unchecked")
 		SDFSchema out = new SDFSchema(uri,
-				(Class<? extends IStreamObject<?>>) Tuple.class, attributes);
+				Tuple.class, attributes);
 		return out;
 	}
 	
 	static public SDFSchema createNewSchema(String uri, Class<? extends IStreamObject<?>> type,
 			Collection<SDFAttribute> attributes, SDFSchema oldSchema) {
 		SDFSchema out = new SDFSchema(uri,
-				(Class<? extends IStreamObject<?>>) type, attributes, oldSchema);
+				type, attributes, oldSchema);
 		return out;
 	}
 
@@ -113,7 +113,7 @@ public class SDFSchemaFactory {
 			SDFAttribute... attributes) {
 		@SuppressWarnings("unchecked")
 		SDFSchema out = new SDFSchema(uri,
-				(Class<? extends IStreamObject<?>>) Tuple.class,
+				Tuple.class,
 				Arrays.asList(attributes));
 		return out;
 	}

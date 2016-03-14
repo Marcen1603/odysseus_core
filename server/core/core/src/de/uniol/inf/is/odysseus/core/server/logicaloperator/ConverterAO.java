@@ -133,7 +133,7 @@ public class ConverterAO extends UnaryLogicalOp {
 		if (inputSchema != null){
 			return SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, outputAttributes, inputSchema);
 		}
-		return SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, outputAttributes);
+		return SDFSchemaFactory.createNewSchema(name, type, outputAttributes);
 	}
 
 	@Parameter(name = "dateFormat", type = StringParameter.class, optional = true, doc = "Format used if schema contains (Start|End)TimestampString")

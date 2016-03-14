@@ -230,7 +230,7 @@ public class LMS1xxProtocolHandler extends
 		this.buffer.flip();
 		KeyValueObject<IMetaAttribute> object = null;
 		try {
-			object = (KeyValueObject<IMetaAttribute>) this.parse();
+			object = this.parse();
 			if (object == null) {
 				object = this.getNext();
 			}

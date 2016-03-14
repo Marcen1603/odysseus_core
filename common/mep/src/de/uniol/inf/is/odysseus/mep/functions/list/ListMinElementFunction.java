@@ -15,7 +15,7 @@ public class ListMinElementFunction extends AbstractListMinMaxElementFunction{
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected boolean compare(int pos, Comparable val1, Tuple<?> t) {
-		return val1.compareTo((Comparable)t.getAttribute(pos)) > 0;
+		return val1.compareTo(t.getAttribute(pos)) > 0;
 	}
 	
 }

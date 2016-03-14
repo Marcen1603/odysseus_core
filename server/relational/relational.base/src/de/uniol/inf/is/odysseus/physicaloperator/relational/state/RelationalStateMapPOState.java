@@ -32,7 +32,7 @@ public class RelationalStateMapPOState<T extends IMetaAttribute> extends Abstrac
 	@Override
 	public long estimateSizeInBytes() {
 		//As this state does not tend to be really big we return the real size
-		return getSizeInBytesOfSerializable((Serializable)this);
+		return getSizeInBytesOfSerializable(this);
 	}
 
 }

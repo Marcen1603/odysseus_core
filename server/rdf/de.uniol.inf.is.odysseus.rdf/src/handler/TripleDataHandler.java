@@ -98,7 +98,7 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 
 	@Override
 	public void writeData(ByteBuffer buffer, Triple<? extends IMetaAttribute> object, boolean handleMetaData) {
-		Triple<? extends IMetaAttribute> triple = (Triple<? extends IMetaAttribute>) object;
+		Triple<? extends IMetaAttribute> triple = object;
 		for (int i = 0; i < 3; i++) {
 			dataHandler.get(i).writeData(buffer, triple.get(i));
 		}

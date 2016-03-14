@@ -222,7 +222,7 @@ public class MetadataRegistry {
 	}
 
 	public static boolean isSame(Class<? extends IMetaAttribute>[] first, List<String> second){
-		List<String> firstStr = new ArrayList<String>((Collection<String>) toClassNames(first));
+		List<String> firstStr = new ArrayList<String>(toClassNames(first));
 		return isSame(firstStr, second);
 	}
 	

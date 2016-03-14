@@ -56,7 +56,7 @@ public class SimpleImageCache implements ImageCache
 			{
 //				System.out.print("R");
 	//			System.out.println("Image recycled! " + (list.size()-1) + " images left");			
-				IplImage image = (IplImage) list.removeFirst();
+				IplImage image = list.removeFirst();
 				
 				// DEBUG: Make sure image was added to cache properly
 				if (doChecks) 

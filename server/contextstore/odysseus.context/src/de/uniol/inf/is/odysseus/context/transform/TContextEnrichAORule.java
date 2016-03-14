@@ -64,7 +64,7 @@ public class TContextEnrichAORule extends AbstractTransformationRule<ContextEnri
 		IContextStore<Tuple<ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalMergeFunction<ITimeInterval>(operator.getOutputSchema().size());		
 		IMetadataMergeFunction metadataMerge = MetadataRegistry.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames());
-		ContextEnrichPO<ITimeInterval> enrich = new ContextEnrichPO<ITimeInterval>(store, operator.isOuter(), dataMerge, (IMetadataMergeFunction<ITimeInterval>) metadataMerge, operator.getAttributes());		
+		ContextEnrichPO<ITimeInterval> enrich = new ContextEnrichPO<ITimeInterval>(store, operator.isOuter(), dataMerge, metadataMerge, operator.getAttributes());		
 		defaultExecute(operator, enrich, config, true, true);
 	}
 

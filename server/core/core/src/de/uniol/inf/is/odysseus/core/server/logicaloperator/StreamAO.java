@@ -79,7 +79,7 @@ public class StreamAO extends AbstractLogicalOperator {
 		if (schema != null) {
 			return schema;
 		}
-		return SDFSchemaFactory.createNewSchema(getStreamname().toString(), (Class<? extends IStreamObject<?>>) type, attributes);
+		return SDFSchemaFactory.createNewSchema(getStreamname().toString(), type, attributes);
 	}
 
 	@Parameter(name = "Source", type = SourceParameter.class, optional = true, possibleValues = "__DD_SOURCES", possibleValuesAreDynamic = true)

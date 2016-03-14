@@ -91,7 +91,7 @@ public class SaseAO extends AbstractLogicalOperator {
 		// TODO: FIXME: Why is inputSchema == null?
 		SDFSchema schema = null;
 		if (getInputSchema(0) == null) {
-			schema = SDFSchemaFactory.createNewSchema(typeName, (Class<? extends IStreamObject<?>>) Tuple.class, attributes);
+			schema = SDFSchemaFactory.createNewSchema(typeName, Tuple.class, attributes);
 		} else {
 			schema = SDFSchema.changeSourceName(getInputSchema(0), typeName,true);
 			schema = SDFSchema.changeType(schema, Tuple.class);

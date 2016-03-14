@@ -45,7 +45,7 @@ public class ImageFunctions {
 
 				double value = oldBuffer.getShort(oldIndex);
 
-				int newVal = (int)( (double)(value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin);
+				int newVal = (int)( (value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin);
 				if (newVal < 0) newVal = 0;
 				if (newVal > 255) newVal = 255;
 
