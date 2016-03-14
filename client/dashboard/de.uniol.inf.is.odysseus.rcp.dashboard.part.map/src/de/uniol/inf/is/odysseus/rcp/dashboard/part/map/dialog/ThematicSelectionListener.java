@@ -8,15 +8,21 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerC
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 
+/**
+ * Allows the user to chose the type of the thematic map
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ThematicSelectionListener extends SelectionAdapter {
 
-	LayerConfiguration config;
-	CCombo combobox;
-	CCombo geometrieSelect;
-	CCombo latSelect;
-	CCombo lngSelect;
-	CCombo visualizationSelect;
-	AddMapLayerDialog propertyDialog;
+	private LayerConfiguration config;
+	private CCombo combobox;
+	private CCombo geometrieSelect;
+	private CCombo latSelect;
+	private CCombo lngSelect;
+	private CCombo visualizationSelect;
+	private AddMapLayerDialog propertyDialog;
 
 	public ThematicSelectionListener(LayerConfiguration config, CCombo comboBox, CCombo geometrieSelect,
 			CCombo latSelect, CCombo lngSelect, CCombo visualizationSelect, AddMapLayerDialog propertyDialog) {
@@ -58,7 +64,6 @@ public class ThematicSelectionListener extends SelectionAdapter {
 
 			tracemapLayerConfiguration.setSrid(4326);
 
-//			tracemapLayerConfiguration.setQuery(streamSelectionBox.getText());
 			tracemapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
 			tracemapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
 

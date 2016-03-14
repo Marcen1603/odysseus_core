@@ -46,13 +46,14 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public AddMapLayerDialog(Shell parentShell, Collection<IPhysicalOperator> operators, LinkedList<ILayer> layerOrder) {
+	public AddMapLayerDialog(Shell parentShell, Collection<IPhysicalOperator> operators,
+			LinkedList<ILayer> layerOrder) {
 		super(parentShell);
 		this.operators = operators;
 		this.layerOrder = layerOrder;
 		this.layerType = "RasterLayer";
 		this.ownProperties = new OwnProperties();
-		this.layerPositionAfter = layerOrder.size()-1;
+		this.layerPositionAfter = layerOrder.size() - 1;
 	}
 
 	@Override
@@ -163,7 +164,7 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 		layerPlace.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				 layerPositionAfter = layerPlace.getSelectionIndex();
+				layerPositionAfter = layerPlace.getSelectionIndex();
 			};
 		});
 
@@ -239,15 +240,13 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 		mapTypeSelect.add(HeatmapLayerConfiguration.HEATMAP_IDENTIFIER);
 		mapTypeSelect.add("Tracemap");
 		mapTypeSelect.select(0);
-		
-		
+
 		Label dataSourceLabel = new Label(thematicLayer, SWT.NONE);
 		dataSourceLabel.setText("Data source:");
 		dataSourceLabel.setLayoutData(DialogUtils.getLabelDataLayout());
 
 		final CCombo dataSourceSelect = new CCombo(thematicLayer, SWT.BORDER);
 		dataSourceSelect.setLayoutData(DialogUtils.getTextDataLayout());
-		
 		// Add the possible sources to choose from
 		for (IPhysicalOperator operator : operators) {
 			dataSourceSelect.add(operator.getName());
@@ -316,8 +315,8 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 
 		// TODO Choose the right operator first
-		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operators.iterator().next(), layerConfiguration,
-				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
+		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operators, layerConfiguration,
+				dataSourceSelect, mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
 
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
@@ -325,6 +324,8 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 		latSelect.addSelectionListener(thematicSelectionListener);
 		lngSelect.addSelectionListener(thematicSelectionListener);
 		visualizationSelect.addSelectionListener(thematicSelectionListener);
+		
+		dataSourceSelect.addSelectionListener(streamSelectionListener);
 
 		// Initialize selection
 		thematicSelectionListener.widgetSelected(null);
@@ -393,8 +394,8 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 	public void setLayerConfiguration(LayerConfiguration layerConfiguration) {
 		this.layerConfiguration = layerConfiguration;
 	}
-	
-	public  int getLayerPositionAfter(){
+
+	public int getLayerPositionAfter() {
 		return this.layerPositionAfter;
 	}
 

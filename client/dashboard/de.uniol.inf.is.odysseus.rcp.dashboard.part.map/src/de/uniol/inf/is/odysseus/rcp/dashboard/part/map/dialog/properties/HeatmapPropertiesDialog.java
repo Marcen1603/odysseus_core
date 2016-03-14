@@ -111,7 +111,7 @@ public class HeatmapPropertiesDialog extends AbstractMapPropertiesDialog {
 		heatmapContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// A control to choose the query
-		new DataStreamChooser(heatmapContainer, SWT.NONE);
+		//new DataStreamChooser(heatmapContainer, SWT.NONE);
 		
 		// Show the settings for the heatmap
 		Group settingsContainer = new Group(heatmapContainer, SWT.NONE);

@@ -67,7 +67,6 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	private double buffersize = 0.1;
 	private Envelope buffer = null;
 
-	
 	public RasterLayer(RasterLayerConfiguration configuration) {
 		super(configuration);
 		this.style = new ImageStyle();
@@ -104,9 +103,12 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		synchronized (tileBuffer) {
 			this.tileBuffer.clear();
 		}
-		List<AsyncImage> images = getTileServer().getTiles(buffer, manager.getSRID(), new Point(width, height));
-		for (AsyncImage image : images) {
-			updateTile(image);
+		if (getTileServer().getURL() != null) {
+			// Maybe no tile server is defined
+			List<AsyncImage> images = getTileServer().getTiles(buffer, manager.getSRID(), new Point(width, height));
+			for (AsyncImage image : images) {
+				updateTile(image);
+			}
 		}
 		long t1 = System.currentTimeMillis();
 		stats.dt = t1 - t0;
@@ -132,7 +134,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		// paintTile(image);
 		synchronized (tileBuffer) {
 			if (!tileBuffer.contains(image))
-			tileBuffer.add(new BufferTile(image));
+				tileBuffer.add(new BufferTile(image));
 			++getStats().tileCount;
 		}
 		manager.redraw();
@@ -140,11 +142,11 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 
 	private void paintTile(BufferTile tile, GC gc) {
 		Image image = tile.image.getImage(Display.getDefault());
-		if ( image != null && !image.isDisposed()) {
+		if (image != null && !image.isDisposed()) {
 			tile.update();
 			Rectangle bounds = image.getBounds();
-			gc.drawImage(image, 0, 0, bounds.width, bounds.height, tile.minxy[0],
-					tile.maxxy[1], tile.width, tile.height);
+			gc.drawImage(image, 0, 0, bounds.width, bounds.height, tile.minxy[0], tile.maxxy[1], tile.width,
+					tile.height);
 		}
 	}
 
@@ -174,7 +176,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	@Override
 	public void setPuffer(Buffer puffer) {
 	}
-	
+
 	@Override
 	public int getTupleCount() {
 		return 0;
@@ -214,10 +216,10 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 				offset = new Point(0, 0);
 				newBuffer();
 			}
-		} 
-		if (evt.getPropertyName().equals("scale")){
+		}
+		if (evt.getPropertyName().equals("scale")) {
 			offset = new Point(0, 0);
-			newBuffer();		
+			newBuffer();
 		}
 		manager.redraw();
 
@@ -251,7 +253,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 			this.width = Math.max(minxy[0], maxxy[0]) - Math.min(minxy[0], maxxy[0]);
 			this.height = Math.max(minxy[1], maxxy[1]) - Math.min(minxy[1], maxxy[1]);
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof AsyncImage)
@@ -269,16 +271,16 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	public Envelope getEnvelope() {
 		Envelope env = this.tileServer.getEnvelope();
 		int destSrid = this.manager.getSRID();
-		if (this.getSRID() != destSrid){
+		if (this.getSRID() != destSrid) {
 			CoordinateTransform ct = transformation.getCoordinateTransform(this.getSRID(), destSrid);
 			ProjCoordinate destMin = new ProjCoordinate();
 			ProjCoordinate destMax = new ProjCoordinate();
 			ct.transform(new ProjCoordinate(env.getMinX(), env.getMinY()), destMin);
 			ct.transform(new ProjCoordinate(env.getMaxX(), env.getMaxY()), destMax);
 			return new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
-		}	
+		}
 		return this.tileServer.getEnvelope();
-		
+
 	}
 
 	@Override
