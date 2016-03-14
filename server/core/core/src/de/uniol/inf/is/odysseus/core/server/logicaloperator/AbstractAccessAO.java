@@ -365,7 +365,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 				s2.add(newAttr);
 			}
 		}
-		schema = SDFSchemaFactory.createNewSchema(getName(), (Class<? extends IStreamObject<?>>) type, s2);
+		schema = SDFSchemaFactory.createNewSchema(getName(), type, s2);
 		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
 		schema = SDFSchemaFactory.createNewWithStrictOrder(strictOrder, schema);
 
