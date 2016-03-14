@@ -204,6 +204,8 @@ public class Heatmap extends RasterLayer {
 					point = geoColl.getCentroid();
 				} else if (tuple.getAttribute(0) instanceof Point) {
 					point = (Point) tuple.getAttribute(0);
+				} else {
+					throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in Heatmap");
 				}
 				
 				// Calculate, where this belongs in the heatmap
@@ -250,6 +252,8 @@ public class Heatmap extends RasterLayer {
 				point = geoColl.getCentroid();
 			} else if (tuple.getAttribute(0) instanceof Point) {
 				point = (Point) tuple.getAttribute(0);
+			} else {
+				throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in Heatmap");
 			}
 
 			double value = 0;
