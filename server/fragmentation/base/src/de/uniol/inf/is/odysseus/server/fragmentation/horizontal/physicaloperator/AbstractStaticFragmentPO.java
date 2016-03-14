@@ -65,7 +65,7 @@ public abstract class AbstractStaticFragmentPO<T extends IStreamObject<IMetaAttr
     
     public AbstractStaticFragmentPO(int numFragments,int heartbeatRate) {
     	super();
-        this.numFragments = (int) numFragments;
+        this.numFragments = numFragments;
         this.heartbeatCounter = new int[this.numFragments];
         this.heartbeatRate = heartbeatRate;
         this.elementsSend = new long[this.numFragments];
