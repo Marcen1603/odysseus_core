@@ -179,7 +179,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 
 	@Override
 	public Boolean evaluate(Tuple<T> input) {
-		return (Boolean) evaluate((Tuple<T>) input, null, null);
+		return (Boolean) evaluate(input, null, null);
 	}
 
 	public SDFDatatype getType() {
