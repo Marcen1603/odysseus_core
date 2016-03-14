@@ -26,9 +26,9 @@ public class NullPredicate<T> extends AbstractPredicate<T> {
 	 * 
 	 */
 	private static final long serialVersionUID = 77266992186012639L;
-	private static final NullPredicate instance = new NullPredicate();
+	private static final NullPredicate<Object> instance = new NullPredicate<Object>();
 
-	static public NullPredicate getInstance() {
+	static public NullPredicate<Object> getInstance() {
 		return instance;
 	}
 
