@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.AddMapLayerDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.HeatmapPropertiesDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.TracemapPropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
@@ -40,6 +41,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerCo
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.buffer.MaxTupleListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.tracemap.TraceLayer;
 
 /**
  * The configurer of the {@link MapDashboardPart}.
@@ -363,7 +365,16 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 						propertiesDialog.open();
 						if (propertiesDialog.getReturnCode() == Window.OK) {
 							mapDashboardPart.editLayer(group.get(index), propertiesDialog.getLayerConfiguration());
-							;
+							reprintLayerTable();
+							fireListener();
+						}
+					} else if (group.get(index) instanceof TraceLayer) {
+						TracemapPropertiesDialog propertiesDialog = new TracemapPropertiesDialog(parent.getShell(),
+								(TraceLayer) group.get(index), roots);
+						propertiesDialog.create();
+						propertiesDialog.open();
+						if (propertiesDialog.getReturnCode() == Window.OK) {
+							mapDashboardPart.editLayer(group.get(index), propertiesDialog.getLayerConfiguration());
 							reprintLayerTable();
 							fireListener();
 						}
@@ -525,7 +536,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				item.setText(1, layerConf.getName());
 				item.setText(2, "Map Layer");
 			} else {
-				item.setText(1, layer.getName());
+				item.setText(1, layer.getName() == null ? "" : layer.getName());
 				item.setText(2, "Basic Layer");
 			}
 

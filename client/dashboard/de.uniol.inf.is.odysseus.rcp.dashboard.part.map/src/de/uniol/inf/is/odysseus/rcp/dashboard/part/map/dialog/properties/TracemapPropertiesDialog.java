@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -17,16 +18,28 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.AttributeListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.DialogUtils;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.tracemap.TraceLayer;
 
+/**
+ * Dialog to change properties of a tracemap
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TracemapPropertiesDialog extends AbstractMapPropertiesDialog {
 
-	public TracemapPropertiesDialog(Shell parentShell) {
+	private TraceLayer traceLayer;
+	private Collection<IPhysicalOperator> operators;
+
+	public TracemapPropertiesDialog(Shell parentShell, TraceLayer traceLayer, Collection<IPhysicalOperator> operators) {
 		super(parentShell);
-		// TODO Auto-generated constructor stub
+		this.traceLayer = traceLayer;
+		this.operators = operators;
 	}
 
 	/**
@@ -37,7 +50,7 @@ public class TracemapPropertiesDialog extends AbstractMapPropertiesDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		setTitle("HeatMap Properties");
+		setTitle("Tracemap Properties");
 		setMessage("Edit map parameters.", IMessageProvider.INFORMATION);
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
@@ -46,8 +59,8 @@ public class TracemapPropertiesDialog extends AbstractMapPropertiesDialog {
 		gd_container.heightHint = 317;
 		container.setLayoutData(gd_container);
 
-		// Fill the area with heatmap-content
-		// createHeatmapMenu(heatmap, container);
+		// Fill the area with tracemap-content
+		createTraceLayerMenu(this.traceLayer, container);
 
 		return area;
 	}
@@ -85,15 +98,13 @@ public class TracemapPropertiesDialog extends AbstractMapPropertiesDialog {
 		CCombo geoAttrInput = new CCombo(settingsContainer, SWT.BORDER);
 		geoAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
 
-		// Fill this combobox
+		// TODO Choose the attribute before using it
 		geoAttrInput.removeAll();
-		// TODO What to use instead of the LayerUpdater?
-		// SDFSchema schema =
-		// tracemap.getLayerUpdater().getConnection().getOutputSchema();
+		SDFSchema schema = operators.iterator().next().getOutputSchema();
+		for (int i = 0; i < schema.size(); i++) {
+			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
+		}
 
-		// for (int i = 0; i < schema.size(); i++) {
-		// geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
-		// }
 		geoAttrInput.select(newConfig.getGeometricAttributePosition());
 
 		// Position of value-Attribute
@@ -103,9 +114,9 @@ public class TracemapPropertiesDialog extends AbstractMapPropertiesDialog {
 		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
 		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
 
-		// for (int i = 0; i < schema.size(); i++) {
-		// valueAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
-		// }
+		for (int i = 0; i < schema.size(); i++) {
+			valueAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
+		}
 
 		valueAttrInput.select(newConfig.getValueAttributePosition());
 
