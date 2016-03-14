@@ -150,7 +150,7 @@ public class EditDialog extends TitleAreaDialog {
 		for (String string : defaults) {
 			server.add(string);
 		}
-		RasterLayerConfiguration conf = (RasterLayerConfiguration)layerConfiguration;
+		RasterLayerConfiguration conf = layerConfiguration;
 		for(int i = 0; i < server.getItemCount(); i++){
 			if(server.getItem(i).equals(conf.getUrl())){
 				server.select(i);

@@ -392,9 +392,8 @@ public class ContextMapPage extends WizardPage {
 			((QueryFileSelectionPage) nextPage).setConfigurationPage(configurationPage);
 
 			return nextPage;
-
-		} else {
-			return this.configurationPage;
 		}
+		
+		return this.configurationPage;
 	}
 }

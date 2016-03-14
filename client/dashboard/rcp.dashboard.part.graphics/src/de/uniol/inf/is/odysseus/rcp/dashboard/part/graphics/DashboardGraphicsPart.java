@@ -419,8 +419,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 	private void registerAndBindingService(String actionDefinitionId,
 			IAction action) {
 		getActionRegistry().registerAction(action);
-		IHandlerService service = (IHandlerService) getWorkbenchPart()
-				.getSite().getService(IHandlerService.class);
+		IHandlerService service = getWorkbenchPart().getSite().getService(IHandlerService.class);
 		service.activateHandler(actionDefinitionId, new ActionHandler(action));
 	}
 

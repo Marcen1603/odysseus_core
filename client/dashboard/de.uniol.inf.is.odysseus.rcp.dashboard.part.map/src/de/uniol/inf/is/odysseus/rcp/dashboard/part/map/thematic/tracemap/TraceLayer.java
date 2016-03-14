@@ -112,6 +112,8 @@ public class TraceLayer extends RasterLayer {
 				point = geoColl.getCentroid();
 			} else if (tuple.getAttribute(0) instanceof Point) {
 				point = (Point) tuple.getAttribute(0);
+			} else {
+				throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in TraceLayer-DashboardPart");
 			}
 
 			TimeInterval timeInterval = (TimeInterval) tuple.getMetadata();
