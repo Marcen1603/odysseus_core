@@ -476,7 +476,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
 
-				sink.process((IStreamObject) object);
+				sink.process(object);
 
 			} catch (Throwable e) {
 				// Send object that could not be processed to the error port
