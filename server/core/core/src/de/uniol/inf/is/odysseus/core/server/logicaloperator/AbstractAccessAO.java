@@ -297,7 +297,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return readMetaData();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
