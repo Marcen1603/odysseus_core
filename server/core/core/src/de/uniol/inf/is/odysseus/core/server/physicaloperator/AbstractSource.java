@@ -471,7 +471,6 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		fire(this.pushDoneEvent);
 	}
 
-	@SuppressWarnings("rawtypes")
 	protected void transfer(T object, int sourceOutPort, AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
