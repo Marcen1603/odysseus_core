@@ -20,18 +20,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.TreeMap;
 
-import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
@@ -51,7 +55,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	/**
 	 * Store elements and access them by key
 	 */
-	private LinkedHashMultimap<Object, Tuple<? extends ITimeInterval>> elements;
+	private Map<Object, Set<Tuple<? extends ITimeInterval>>> elements;
 
 	protected class QueueComparator implements Comparator<Tuple<? extends ITimeInterval>>, Serializable {
 
@@ -106,7 +110,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	}
 
 	public HashJoinSweepArea(int[] insertRestrictList, int[] queryRestrictList, boolean inputOrderedByTime) {
-		this.elements = LinkedHashMultimap.create();
+		this.elements = new HashMap<>();
 		this.insertRestrictList = insertRestrictList;
 		check(insertRestrictList);
 		this.queryRestrictList = queryRestrictList;
@@ -153,10 +157,19 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	public void insert(Tuple<? extends ITimeInterval> element) {
 		Object key = getKey(element, insertRestrictList);
 		synchronized (this.elements) {
-			this.elements.put(key, element);
+			putToElements(key, element);
 			addToTimeIndex(element);
 		}
 
+	}
+	
+	private void putToElements(Object key, Tuple<? extends ITimeInterval> element) {
+		Set<Tuple<? extends ITimeInterval>> set = this.elements.get(key);
+		if(set == null) {
+			set = Sets.newIdentityHashSet();
+			this.elements.put(key, set);
+		}
+		set.add(element);
 	}
 
 	@Override
@@ -166,35 +179,38 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 			return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
 		}
 
-		LinkedList<Tuple<? extends ITimeInterval>> result;
+		Map<PointInTime, Tuple<? extends ITimeInterval>> result;
 		synchronized (this.elements) {
 			Object key = getKey(element, queryRestrictList);
 			if (!this.elements.containsKey(key))
 				return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
 
-			result = new LinkedList<Tuple<? extends ITimeInterval>>();
+			result = new TreeMap<>();
 			Collection<Tuple<? extends ITimeInterval>> matchingTuples = this.elements.get(key);
 
-			for (Tuple<? extends ITimeInterval> matchingTuple : matchingTuples) {
-				if (extract) {
-					result.add(matchingTuple);
-					removeFromTimeIndex(matchingTuple);
-				} else {
-					result.add(matchingTuple.clone());
+			for (Iterator<Tuple<? extends ITimeInterval>> iter = matchingTuples.iterator(); iter.hasNext();) {
+				Tuple<? extends ITimeInterval> matchingTuple = iter.next();
+				if(TimeInterval.overlaps(matchingTuple.getMetadata(), element.getMetadata())) {
+					if (extract) {
+						result.put(matchingTuple.getMetadata().getStart(), matchingTuple);
+						removeFromTimeIndex(matchingTuple);
+						iter.remove();
+					} else {
+						result.put(matchingTuple.getMetadata().getStart(), matchingTuple.clone());
+					}
 				}
-			}
-			if (extract) {
-				this.elements.removeAll(key);
+				
 			}
 		}
 
-		return result.iterator();
+		return result.values().iterator();
 	}
 
 	private void removeFromTimeIndex(Tuple<? extends ITimeInterval> tuple) {
 		// TODO: Find a better solution?
 		// TODO: Update MIN/MAX
 		if (tuple.getMetadata().getEnd() != PointInTime.INFINITY) {
+			// FIXME: this removes _one_ tuple that is equal (same attributes)
 			timeIndex.remove(tuple);
 		}
 	}
@@ -223,7 +239,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> iterator() {
-		return this.elements.values().iterator();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -259,6 +275,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 				return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
 
 			Collection<Tuple<? extends ITimeInterval>> matchingTuples = this.elements.get(key);
+			// TODO: check time overlap
 			return matchingTuples.iterator();
 		}
 	}
@@ -271,15 +288,16 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public Tuple<? extends ITimeInterval> poll() {
-		Tuple<? extends ITimeInterval> retVal = null;
-		Iterator<Tuple<? extends ITimeInterval>> iter = this.elements.values().iterator();
-		if (iter.hasNext()) {
-			retVal = iter.next();
-			iter.remove();
-
-		}
-
-		return retVal;
+		throw new UnsupportedOperationException();
+//		Tuple<? extends ITimeInterval> retVal = null;
+//		Iterator<Tuple<? extends ITimeInterval>> iter = this.elements.values().iterator();
+//		if (iter.hasNext()) {
+//			retVal = iter.next();
+//			iter.remove();
+//
+//		}
+//
+//		return retVal;
 	}
 
 	@Override
@@ -287,8 +305,25 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		Object key = getKey(element, insertRestrictList);
 		synchronized (this.elements) {
 			removeFromTimeIndex(element);
-			return this.elements.remove(key, element);
+			return removeFromElements(key, element);
 		}
+	}
+
+	/**
+	 * @param key
+	 * @param element
+	 * @return
+	 */
+	private boolean removeFromElements(Object key, Tuple<? extends ITimeInterval> element) {
+		Set<Tuple<? extends ITimeInterval>> set = this.elements.get(key);
+		if(set == null) {
+			return false;
+		}
+		boolean result = set.remove(element);
+		if(set.isEmpty()) {
+			this.elements.remove(key);
+		}
+		return result;
 	}
 
 	@Override
@@ -339,7 +374,10 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		Tuple<? extends ITimeInterval> top = timeIndex.peek();
 		while (top != null && top.getMetadata().getEnd().beforeOrEquals(time)) {
 			timeIndex.poll();
-			remove(top);
+			Object key = getKey(top, insertRestrictList);
+			synchronized (this.elements) {
+				removeFromElements(key, top);
+			}
 			top = timeIndex.peek();
 		}
 	}
