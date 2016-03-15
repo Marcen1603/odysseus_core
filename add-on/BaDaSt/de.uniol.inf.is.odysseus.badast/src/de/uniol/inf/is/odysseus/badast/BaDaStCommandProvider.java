@@ -25,6 +25,7 @@ import kafka.javaapi.FetchResponse;
 import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.message.MessageAndOffset;
 
+// TODO new command to stop BaDaSt
 /**
  * Provider of OSGi console commands for the BaDaSt application. <br />
  * <br />
