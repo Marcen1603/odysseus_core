@@ -279,7 +279,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	
 	@Override
 	public String toString() {
-		return super.toString()+ " initialized = "+(variables != null);
+		return expression.toString() + " initialized = "+(variables != null);
 	}
 	
 	@Override
