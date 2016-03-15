@@ -269,7 +269,7 @@ public class JoinTransformationHelper {
 				int otherIndex = otherSchema.indexOf(otherAttr);
 				
 				// TMP-HACK
-				if (ownIndex == -1 && otherSchema.indexOf(ownAttr) > 0){
+				if (ownIndex == -1 && otherSchema.indexOf(ownAttr) > -1){
 					otherIndex = otherSchema.indexOf(ownAttr);
 					ownIndex = ownSchema.indexOf(otherAttr);
 				}
