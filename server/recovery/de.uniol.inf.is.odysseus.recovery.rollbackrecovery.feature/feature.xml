@@ -92,12 +92,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <plugin
-         id="org.apache.kafka.clients"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.apache.zookeeper"
          download-size="0"
          install-size="0"
@@ -210,5 +204,41 @@ limitations under the License.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="Argparse4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.fasterxml.jackson"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="joptsimple"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="lz4"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.apache.jena.2.13"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.xerial.snappy-java"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

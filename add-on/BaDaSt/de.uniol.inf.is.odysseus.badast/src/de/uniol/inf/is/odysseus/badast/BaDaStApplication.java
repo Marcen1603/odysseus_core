@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStConfigura
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.kafka.KafkaSystem;
 
-// XXX Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
 /**
  * BaDaSt - Backup of Data Streams application. <br />
  * <br />
