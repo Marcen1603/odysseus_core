@@ -96,12 +96,6 @@ public class KafkaConfiguration {
 		// This value is recommended to be increased for installations with data
 		// dirs located in RAID array.
 		BaDaStConfiguration.add("kafka.num.recovery.threads.per.data.dir", "1");
-		// The number of messages to accept before forcing a flush of data to
-		// disk
-		BaDaStConfiguration.add("kafka.log.flush.interval.messages", "10000");
-		// The maximum amount of time a message can sit in a log before we force
-		// a flush
-		BaDaStConfiguration.add("kafka.log.flush.interval.ms", "1000");
 		// The minimum age of a log file to be eligible for deletion
 		BaDaStConfiguration.add("kafka.log.retention.hours", "168");
 		// The maximum size of a log segment file. When this size is reached a
@@ -111,11 +105,6 @@ public class KafkaConfiguration {
 		// deleted according
 		// to the retention policies
 		BaDaStConfiguration.add("kafka.log.retention.check.interval.ms", "300000");
-		// By default the log cleaner is disabled and the log retention policy
-		// will default to just delete segments after their retention expires.
-		// If log.cleaner.enable=true is set the cleaner will be enabled and
-		// individual logs can then be marked for log compaction.
-		BaDaStConfiguration.add("kafka.log.cleaner.enable", "false");
 		// Zookeeper connection string (see zookeeper docs for details).
 		BaDaStConfiguration.add("kafka.zookeeper.connect", BaDaStConfiguration.get().get("zookeeper.host.name") + ":"
 				+ BaDaStConfiguration.get().get("zookeeper.clientPort"));
@@ -137,9 +126,16 @@ public class KafkaConfiguration {
 	 * "producer.".
 	 */
 	private static void setProducerDefaults() {
-		BaDaStConfiguration.add("producer.bootstrap.servers",
-				BaDaStConfiguration.get().get("kafka.host.name") + ":" + BaDaStConfiguration.get().get("kafka.port"));
-		BaDaStConfiguration.add("producer.key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		// list of brokers used for bootstrapping knowledge about the rest of the cluster
+		// format: host1:port1,host2:port2 ...
+		BaDaStConfiguration.add("producer.metadata.broker.list", BaDaStConfiguration.get().get("kafka.host.name") + ":" + BaDaStConfiguration.get().get("kafka.port"));
+		// specifies whether the messages are sent asynchronously (async) or synchronously (sync)
+		BaDaStConfiguration.add("producer.producer.type", "sync");
+		// specify the compression codec for all data generated: none, gzip, snappy, lz4.
+		// the old config values work as well: 0, 1, 2, 3 for none, gzip, snappy, lz4, respectively
+		BaDaStConfiguration.add("producer.compression.codec", "none");
+		// message encoder
+		BaDaStConfiguration.add("producer.serializer.class", "kafka.serializer.DefaultEncoder");
 	}
 
 	/**
