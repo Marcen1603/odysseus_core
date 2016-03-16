@@ -36,6 +36,20 @@ public class BaDaStApplication implements IApplication {
 	static final Logger cLog = LoggerFactory.getLogger(BaDaStApplication.class);
 
 	/**
+	 * The only instance of this class.
+	 */
+	private static BaDaStApplication cInstance;
+
+	/**
+	 * Gets the only instance of this class.
+	 * 
+	 * @return A {@link BaDaStApplication} or null, if none is started.
+	 */
+	public static BaDaStApplication getInstance() {
+		return cInstance;
+	}
+
+	/**
 	 * The publish subscribe system to use.
 	 */
 	private Thread mPubSubSystem;
@@ -110,13 +124,21 @@ public class BaDaStApplication implements IApplication {
 		this.mBaDaStServer.interrupt();
 	}
 
+	public void start() throws Exception {
+		if (this.mPubSubSystem != null) {
+			this.stop();
+		}
+		this.mPubSubSystem = new KafkaSystem();
+		this.mPubSubSystem.start();
+		this.mBaDaStServer.start();
+	}
+
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		context.applicationRunning();
 		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader().getResource("log4j.properties"));
-		this.mPubSubSystem = new KafkaSystem();
-		this.mPubSubSystem.start();
-		this.mBaDaStServer.start();
+		this.start();
+		cInstance = this;
 		return IApplicationContext.EXIT_ASYNC_RESULT;
 	}
 

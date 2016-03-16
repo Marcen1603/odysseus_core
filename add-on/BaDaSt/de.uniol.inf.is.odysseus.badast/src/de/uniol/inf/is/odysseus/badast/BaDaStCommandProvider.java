@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.badast;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -12,6 +14,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.server.console.Help;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.ABaDaStRecorder;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.AbstractBaDaStRecorder;
@@ -24,7 +27,6 @@ import kafka.javaapi.FetchResponse;
 import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.message.MessageAndOffset;
 
-// TODO new command to stop BaDaSt
 /**
  * Provider of OSGi console commands for the BaDaSt application. <br />
  * <br />
@@ -138,7 +140,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @param ci
 	 *            No arguments needed.
 	 */
-	public static void _lsRecorderTypes(CommandInterpreter ci) {
+	@Help(description = "Lists all registered BaDaSt recorders types.")
+	public void _lsRecorderTypes(CommandInterpreter ci) {
 		ci.println("Available types of BaDaSt recorders:\n");
 		ci.println(lsRecorderTypes());
 	}
@@ -166,7 +169,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @param ci
 	 *            No arguments needed.
 	 */
-	public static void _lsRecorders(CommandInterpreter ci) {
+	@Help(description = "Lists all created BaDaSt recorders.")
+	public void _lsRecorders(CommandInterpreter ci) {
 		ci.println("Available BaDaSt recorders:\n");
 		if (cRecorders.isEmpty()) {
 			ci.println("None");
@@ -268,7 +272,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            should be {@link #TYPE_CONFIG} and all other needed keys
 	 *            depend on the recorder type.
 	 */
-	public static void _createRecorder(CommandInterpreter ci) {
+	@Help(description = "Creates a new BaDaSt recorder with the type of the recorder and the needed parameters for that type all as key value pairs. Needed parameters can be viewed with lsRecorderTypes.", parameter = "type=xyz key1=value1 ... keyn=valuen")
+	public void _createRecorder(CommandInterpreter ci) {
 		try {
 			ci.println(createRecorder(parse(ci)));
 		} catch (BaDaStException e) {
@@ -360,7 +365,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
 	 */
-	public static void _startRecorder(final CommandInterpreter ci) {
+	@Help(description = "Starts an existing BaDaSt recorder with the name of the recorder as a key value pair.", parameter = "name=xyz")
+	public void _startRecorder(final CommandInterpreter ci) {
 		try {
 			ci.println(startRecorder(parse(ci)));
 		} catch (BaDaStException e) {
@@ -404,10 +410,31 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
 	 */
-	public static void _closeRecorder(CommandInterpreter ci) {
+	@Help(description = "Closes and removes an existing BaDaSt recorder with the name of the recorder as a key value pair.", parameter = "name=xyz")
+	public void _closeRecorder(CommandInterpreter ci) {
 		try {
 			ci.println(closeRecorder(parse(ci)));
 		} catch (BaDaStException e) {
+			ci.println(e.getMessage());
+		}
+	}
+
+	@Help(description = "Starts the BaDaSt application.")
+	public void _startBaDaSt(CommandInterpreter ci) {
+		try {
+			BaDaStApplication.getInstance().start();
+		} catch (Exception e) {
+			ci.println("Could not start BaDaSt application!");
+			ci.println(e.getMessage());
+		}
+	}
+
+	@Help(description = "Stops the BaDaSt application.")
+	public void _stopBaDaSt(CommandInterpreter ci) {
+		try {
+			BaDaStApplication.getInstance().stop();
+		} catch (Exception e) {
+			ci.println("Could not stop BaDaSt application!");
 			ci.println(e.getMessage());
 		}
 	}
@@ -419,7 +446,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            Should contain two arguments "key=value", where key 1 is
 	 *            {@link #SOURCENAME_CONFIG} and key 2 is {@code offset}.
 	 */
-	public static void _consume(final CommandInterpreter ci) {
+	@Help(description = "Reads the backup of a given source from the Kafka server with the name of the source as a key value pair.", parameter = "sourcename=xyz offset=i")
+	public void _consume(final CommandInterpreter ci) {
 		try {
 			final String clientid = "OSGiConsoleClient";
 			Properties cfg = parse(ci);
@@ -475,18 +503,31 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	@Override
 	public String getHelp() {
-		final String TAB = "	";
+		final String TAB = "        ";
 		StringBuffer out = new StringBuffer("---Backup of Data Streams (BaDaSt) Commands---\n");
-		out.append(TAB + "lsRecorderTypes - Lists all registered BaDaSt recorders types.\n");
-		out.append(TAB + "lsRecorders - Lists all created BaDaSt recorders.\n");
-		out.append(TAB
-				+ "createRecorder type=xyz key1=value1 ... keyn=valuen - Creates a new BaDaSt recorder with the type of the recorder and the needed parameters for that type all as key value pairs. Needed parameters can be viewed with lsRecorderTypes\n");
-		out.append(TAB
-				+ "startRecorder name=xyz - Starts an existing BaDaSt recorder with the name of the recorder as a key value pair.\n");
-		out.append(TAB
-				+ "closeRecorder name=xyz - Closes and removes an existing BaDaSt recorder with the name of the recorder as a key value pair.\n");
-		out.append(TAB
-				+ "consume sourcename=xyz offset=i - Reads the backup of a given source from the Kafka server with the name of the source as a key value pair.\n");
+		// Code from OdysseusConsole
+		TreeMap<String, Help> methodHelps = new TreeMap<String, Help>();
+		for (Method method : this.getClass().getMethods()) {
+			String methodName = method.getName();
+
+			if (methodName.startsWith("_")) {
+				if (method.isAnnotationPresent(Help.class)) {
+					methodHelps.put(methodName.substring(1), method.getAnnotation(Help.class));
+				}
+			}
+		}
+		for (Map.Entry<String, Help> curHelp : methodHelps.entrySet()) {
+			out.append(TAB);
+			out.append(curHelp.getKey());
+			Help help = curHelp.getValue();
+			if (!help.parameter().isEmpty()) {
+				out.append(" ");
+				out.append(help.parameter());
+			}
+			out.append(" - ");
+			out.append(help.description());
+			out.append("\n");
+		}
 		return out.toString();
 	}
 

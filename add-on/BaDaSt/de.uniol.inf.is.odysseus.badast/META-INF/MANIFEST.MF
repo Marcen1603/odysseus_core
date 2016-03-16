@@ -15,3 +15,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  org.eclipse.equinox.app,
  de.uniol.inf.is.odysseus.recovery.incomingelements;bundle-version="1.0.0"
 Service-Component: OSGI-INF/BaDaStCommandProvider.xml
+Import-Package: de.uniol.inf.is.odysseus.core.server.console
