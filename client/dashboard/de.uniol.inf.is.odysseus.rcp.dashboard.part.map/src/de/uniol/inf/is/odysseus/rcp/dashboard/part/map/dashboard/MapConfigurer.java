@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.AddMapLayerDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.HeatmapPropertiesDialog;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.buffer.MaxTupleListener;
@@ -88,13 +90,40 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 		createLayerOrderingControls(layerSettingComp);
 
+		createStandardLayers();
+		reprintLayerTable();
+
 		// if (!mapDashboardPart.getWizardBoolean()) {
 		// DashboardPartUtil.createLabel(topComposite, "CARE! The time slider is
 		// not working properly!");
 		// createTimeSliderComposite(topComposite);
 		// }
+	}
 
-		reprintLayerTable();
+	/**
+	 * Creates a standard set of layers. Makes it easier for the user to get a
+	 * basic map. 
+	 */
+	private void createStandardLayers() {
+		if (this.mapDashboardPart.getNumberOfLayers() > 0) {
+			return;
+		}
+
+		// Here we get properties for the layer
+		OwnProperties properties = new OwnProperties();
+
+		// TODO A basic layer
+		NullConfiguration basicConfiguration = new NullConfiguration();
+		basicConfiguration.setName("Basic");
+		this.mapDashboardPart.addLayer(basicConfiguration);
+		
+		// A layer that shows a simple OpenStreetMap
+		RasterLayerConfiguration layerConfiguration = new RasterLayerConfiguration("Background");
+		layerConfiguration.setSrid(3857);
+		layerConfiguration.setUrl("http://otile2.mqcdn.com/tiles/1.0.0/osm/");
+		properties.getTileServer(1, layerConfiguration);
+
+		this.mapDashboardPart.addLayer(layerConfiguration);
 	}
 
 	private void createMaxDataControls(final Composite topComposite) {

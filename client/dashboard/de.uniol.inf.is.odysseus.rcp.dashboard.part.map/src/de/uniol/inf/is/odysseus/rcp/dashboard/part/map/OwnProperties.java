@@ -68,6 +68,7 @@ public class OwnProperties extends Properties {
 		return defaults;
 	};
 
+	// TODO A get method should return something and not set it directly to the config
 	public void getTileServer(int i, RasterLayerConfiguration config) {
 		this.getTileServerDefaults();
 		config.setFormat(this.getProperty("tileserver." + i + ".tile.format", defaults[0]));

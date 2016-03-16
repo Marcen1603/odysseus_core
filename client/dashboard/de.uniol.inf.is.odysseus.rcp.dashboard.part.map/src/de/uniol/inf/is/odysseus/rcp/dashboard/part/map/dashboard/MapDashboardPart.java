@@ -63,7 +63,7 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 
 		if (mapModel.getLayers().isEmpty() && wizard == true) {
-			BasicLayer basic = new BasicLayer ();
+			BasicLayer basic = new BasicLayer();
 			basic.setActive(true);
 			mapModel.getLayers().addFirst(basic);
 		}
@@ -80,12 +80,12 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 
 	@Override
 	public Map<String, String> onSave() {
-		if (mapModel.getLayers().isEmpty() && wizard ) {
+		if (mapModel.getLayers().isEmpty() && wizard) {
 			BasicLayer basic = new BasicLayer();
 			basic.setActive(true);
 			mapModel.getLayers().addFirst(basic);
 		}
-		
+
 		Map<String, String> toSaveMap = Maps.newHashMap();
 		layerSettings = mapModel.save();
 		toSaveMap.put("Attributes", attributeList);
@@ -158,7 +158,7 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 			if (mapModel.getSRID() == 0 && srid == 0) {
 				// If a new file was created or the map has
 				// no srid because of other reasons
-				// set a standard srid, here 3785
+				// set a standard srid, here 3857
 				mapModel.setSrid(3857);
 			} else {
 				mapModel.setSrid(srid);
@@ -183,6 +183,14 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 		} else {
 			LOG.error("Map Model is not initialized.");
 		}
+	}
+
+	/**
+	 * 
+	 * @return The number of layers currently in the list
+	 */
+	public int getNumberOfLayers() {
+		return mapModel.getLayers().size();
 	}
 
 	public void editLayer(ILayer layer, LayerConfiguration layerConf) {

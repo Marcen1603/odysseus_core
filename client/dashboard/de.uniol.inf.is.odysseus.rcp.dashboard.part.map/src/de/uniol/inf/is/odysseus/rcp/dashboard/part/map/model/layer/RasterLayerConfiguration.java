@@ -5,7 +5,7 @@ import com.vividsolutions.jts.geom.Envelope;
 public class RasterLayerConfiguration extends LayerConfiguration {
 
 	private static final long serialVersionUID = -1186631268002859663L;
-	
+
 	private String url = null;
 	private int urlNumber = 0;
 	private String format = "RESTFUL Tile Server";
@@ -18,9 +18,9 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 	private Envelope coverageProjected = null;
 
 	public RasterLayerConfiguration() {
-		
+
 	}
-	
+
 	public RasterLayerConfiguration(String layerName) {
 		super(layerName);
 	}
@@ -28,7 +28,7 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 	public RasterLayerConfiguration(RasterLayerConfiguration toCopy) {
 		super(toCopy);
 		this.url = toCopy.url;
-		//this.format = toCopy.format;
+		// this.format = toCopy.format;
 		this.minZoom = toCopy.minZoom;
 		this.maxZoom = toCopy.maxZoom;
 		this.tileSizeX = toCopy.tileSizeX;
@@ -78,7 +78,6 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 		return tileSizeY;
 	}
 
-	
 	public void setTileSize(int tileSizeX, int tileSizeY) {
 		this.tileSizeX = tileSizeX;
 		this.tileSizeY = tileSizeY;
@@ -92,7 +91,7 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 		this.srid = srid;
 	}
 
-	public boolean isCoverageProjected(){
+	public boolean isCoverageProjected() {
 		return (this.coverageProjected != null);
 	}
 
@@ -101,22 +100,27 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 			return this.coverageProjected;
 		return this.coverageGeographic;
 	}
-	
+
 	public void setCoverageProjected(double minX, double maxX, double minY, double maxY) {
+		// As far as I know this is on the map, therefore geographic coordinated
+		// need to be projected (EPSG:3857, which should be a Mercator
+		// projection)
 		this.coverageProjected = new Envelope(minX, maxX, minY, maxY);
 		this.coverageGeographic = null;
 	}
 
 	public void setCoverageGeographic(double minX, double maxX, double minY, double maxY) {
+		// As far as I know this is on the geoid and therefore uses WGS84
+		// (EPSG:4326)
 		this.coverageGeographic = new Envelope(minX, maxX, minY, maxY);
 		this.coverageProjected = null;
 	}
-	
-	public void setUrlNumber(int number){
+
+	public void setUrlNumber(int number) {
 		urlNumber = number;
 	}
-	
-	public int getUrlNumber(){
+
+	public int getUrlNumber() {
 		return urlNumber;
 	}
 
