@@ -262,7 +262,7 @@ public class QueryFileSelectionPage extends WizardPage {
 	}
 	
 	private boolean isQueryFileSelected() {
-		return chooseQueryRadio.getSelection();
+		return chooseQueryFileRadio.getSelection();
 	}
 	
 	private boolean isSourceSelected() {

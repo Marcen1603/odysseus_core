@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -57,65 +58,69 @@ public class StreamSelectionListener extends SelectionAdapter {
 		visualizationSelect.removeAll();
 
 		// Use the selected data source (operator)
-		SDFSchema schema = operators.get(dataSourceCombo.getSelectionIndex()).getOutputSchema();
+		if (operators.size() > 0) {
+			SDFSchema schema = operators.get(dataSourceCombo.getSelectionIndex()).getOutputSchema();
 
-		for (int i = 0; i < schema.size(); i++) {
-			geometrieSelect.add(schema.getAttribute(i).getAttributeName(), i);
-		}
+			for (int i = 0; i < schema.size(); i++) {
+				geometrieSelect.add(schema.getAttribute(i).getAttributeName(), i);
+			}
 
-		for (int i = 0; i < schema.size(); i++) {
-			latSelect.add(schema.getAttribute(i).getAttributeName(), i);
-		}
+			for (int i = 0; i < schema.size(); i++) {
+				latSelect.add(schema.getAttribute(i).getAttributeName(), i);
+			}
 
-		for (int i = 0; i < schema.size(); i++) {
-			lngSelect.add(schema.getAttribute(i).getAttributeName(), i);
-		}
+			for (int i = 0; i < schema.size(); i++) {
+				lngSelect.add(schema.getAttribute(i).getAttributeName(), i);
+			}
 
-		for (int i = 0; i < schema.size(); i++) {
-			visualizationSelect.add(schema.getAttribute(i).getAttributeName(), i);
-		}
+			for (int i = 0; i < schema.size(); i++) {
+				visualizationSelect.add(schema.getAttribute(i).getAttributeName(), i);
+			}
 
-		// Pre-select standard attribute-positions
-		if (geometrieSelect.getSelectionIndex() < 0) {
-			geometrieSelect.select(0);
+			// Pre-select standard attribute-positions
+			if (geometrieSelect.getSelectionIndex() < 0) {
+				geometrieSelect.select(0);
 
-		}
-		if (latSelect.getSelectionIndex() < 0) {
-			latSelect.select(0);
+			}
+			if (latSelect.getSelectionIndex() < 0) {
+				latSelect.select(0);
 
-		}
-		if (lngSelect.getSelectionIndex() < 0) {
-			lngSelect.select(0);
+			}
+			if (lngSelect.getSelectionIndex() < 0) {
+				lngSelect.select(0);
 
-		}
-		if (visualizationSelect.getSelectionIndex() < 0) {
-			visualizationSelect.select(0);
-		}
+			}
+			if (visualizationSelect.getSelectionIndex() < 0) {
+				visualizationSelect.select(0);
+			}
 
-		if (this.combobox.getText().equals("Heatmap")) {
-			// User has selected the Heatmap
-			if (!(this.config instanceof HeatmapLayerConfiguration))
-				this.config = new HeatmapLayerConfiguration("");
-			final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.config;
+			if (this.combobox.getText().equals("Heatmap")) {
+				// User has selected the Heatmap
+				if (!(this.config instanceof HeatmapLayerConfiguration))
+					this.config = new HeatmapLayerConfiguration("");
+				final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.config;
 
-			heatmapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
-			heatmapLayerConfiguration.setLatAttribute(latSelect.getSelectionIndex());
-			heatmapLayerConfiguration.setLngAttribute(lngSelect.getSelectionIndex());
-			heatmapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
-			this.config = heatmapLayerConfiguration;
+				heatmapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
+				heatmapLayerConfiguration.setLatAttribute(latSelect.getSelectionIndex());
+				heatmapLayerConfiguration.setLngAttribute(lngSelect.getSelectionIndex());
+				heatmapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
+				this.config = heatmapLayerConfiguration;
 
-			propertyDialog.setLayerConfiguration(config);
-		} else if (this.combobox.getText().equals("Tracemap")) {
-			// User has selected the Tracemap
-			if (!(this.config instanceof TracemapLayerConfiguration))
-				this.config = new TracemapLayerConfiguration("");
-			final TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
+				propertyDialog.setLayerConfiguration(config);
+			} else if (this.combobox.getText().equals("Tracemap")) {
+				// User has selected the Tracemap
+				if (!(this.config instanceof TracemapLayerConfiguration))
+					this.config = new TracemapLayerConfiguration("");
+				final TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
 
-			tracemapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
-			tracemapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
-			this.config = tracemapLayerConfiguration;
+				tracemapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
+				tracemapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
+				this.config = tracemapLayerConfiguration;
 
-			propertyDialog.setLayerConfiguration(config);
+				propertyDialog.setLayerConfiguration(config);
+			}
+		} else {
+			propertyDialog.setMessage("No query available. Thematic maps won't be possible.", IMessageProvider.INFORMATION);
 		}
 	}
 }

@@ -60,7 +60,11 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		setTitle("Map Layer");
-		setMessage("Create or edit a Map Layer.", IMessageProvider.INFORMATION);
+		if (getMessage().length() == 0) {
+			// If the length is greater than 0, there was already an error when
+			// initializing a listener (e.g. StreamSelectionListener)
+			setMessage("Create or edit a Map Layer.", IMessageProvider.INFORMATION);
+		}
 	}
 
 	@Override
@@ -324,7 +328,7 @@ public class AddMapLayerDialog extends TitleAreaDialog {
 		latSelect.addSelectionListener(thematicSelectionListener);
 		lngSelect.addSelectionListener(thematicSelectionListener);
 		visualizationSelect.addSelectionListener(thematicSelectionListener);
-		
+
 		dataSourceSelect.addSelectionListener(streamSelectionListener);
 
 		// Initialize selection
