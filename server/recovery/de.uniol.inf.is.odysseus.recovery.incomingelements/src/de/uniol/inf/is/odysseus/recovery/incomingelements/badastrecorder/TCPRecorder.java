@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
 
-import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.Properties;
 
@@ -22,8 +22,7 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.badast.Record;
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = "TCPRecorder", parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG,
-		TCPRecorder.BUFFERSIZE_CONFIG })
+@ABaDaStRecorder(type = "TCPRecorder", parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG })
 public class TCPRecorder extends AbstractBaDaStRecorder {
 
 	/**
@@ -36,24 +35,18 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 	 */
 	public static final String PORT_CONFIG = "port";
 
-	/**
-	 * The key for optional configuration, where the buffer size is set.
-	 */
-	public static final String BUFFERSIZE_CONFIG = "buffersize";
-
 	@Override
 	public void start() throws BaDaStException {
 		this.mContinueReading = true;
-		final int buffersize = Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG));
 		final String topic = this.getConfig().getProperty(SOURCENAME_CONFIG);
 		try (Socket clientSocket = new Socket(this.getConfig().getProperty(HOST_CONFIG),
 				Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG)));
-				BufferedInputStream inStream = new BufferedInputStream(clientSocket.getInputStream(), buffersize);
+				InputStream inStream = clientSocket.getInputStream();
 				IPublisher<byte[]> publisher = PublisherFactory.createStringByteArrayPublisher(getName())) {
 			while (this.mContinueReading) {
-				byte[] readBytes = new byte[buffersize];
-				inStream.read(readBytes);
-				publisher.publish(new Record<>(topic, readBytes));
+				byte[] buffer = new byte[inStream.available()];
+				inStream.read(buffer);
+				publisher.publish(new Record<>(topic, buffer));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from server!", e);
@@ -67,18 +60,8 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 		return writer;
 	}
 
-	/**
-	 * Checks, if the recorder is ready ignoring the key value pair for the
-	 * buffer size (key = {@link #BUFFERSIZE_CONFIG}). Called by
-	 * {@link #validate()} after checking, that a configuration is set. <br />
-	 * <br />
-	 * May use {@link #validate(String)}.
-	 * 
-	 * @throws BaDaStException
-	 *             if any error occurs, e.g., any configuration entry is
-	 *             missing.
-	 */
-	protected void validate_withoutBufferSize() throws BaDaStException {
+	@Override
+	protected void validate_internal() throws BaDaStException {
 		validate(HOST_CONFIG);
 		validate(PORT_CONFIG);
 
@@ -87,20 +70,6 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 			Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG));
 		} catch (NumberFormatException e) {
 			throw new BaDaStException(this.getConfig().getProperty(PORT_CONFIG) + " is not a valid port!", e);
-		}
-	}
-
-	@Override
-	protected void validate_internal() throws BaDaStException {
-		validate_withoutBufferSize();
-		validate(BUFFERSIZE_CONFIG);
-
-		// Check, if the buffer size is an integer
-		try {
-			Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG));
-		} catch (NumberFormatException e) {
-			throw new BaDaStException(this.getConfig().getProperty(BUFFERSIZE_CONFIG) + " is not a valid buffer size!",
-					e);
 		}
 	}
 

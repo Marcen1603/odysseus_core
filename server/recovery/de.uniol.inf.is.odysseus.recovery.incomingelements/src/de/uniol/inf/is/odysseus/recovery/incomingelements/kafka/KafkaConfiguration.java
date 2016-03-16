@@ -129,6 +129,7 @@ public class KafkaConfiguration {
 		// list of brokers used for bootstrapping knowledge about the rest of the cluster
 		// format: host1:port1,host2:port2 ...
 		BaDaStConfiguration.add("producer.metadata.broker.list", BaDaStConfiguration.get().get("kafka.host.name") + ":" + BaDaStConfiguration.get().get("kafka.port"));
+		BaDaStConfiguration.add("producer.bootstrap.servers", (String) BaDaStConfiguration.get().get("producer.metadata.broker.list"));
 		// specifies whether the messages are sent asynchronously (async) or synchronously (sync)
 		BaDaStConfiguration.add("producer.producer.type", "sync");
 		// specify the compression codec for all data generated: none, gzip, snappy, lz4.
@@ -136,6 +137,7 @@ public class KafkaConfiguration {
 		BaDaStConfiguration.add("producer.compression.codec", "none");
 		// message encoder
 		BaDaStConfiguration.add("producer.serializer.class", "kafka.serializer.DefaultEncoder");
+		BaDaStConfiguration.add("producer.key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 	}
 
 	/**

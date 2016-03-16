@@ -18,8 +18,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  org.apache.zookeeper,
  de.uniol.inf.is.odysseus.trust;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.server.intervalapproach
-Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,OSGI-INF/KeywordProvider.xml,OSGI-INF/BaDaStRecorderKeyword.xml,OSGI-INF/FileRecorder.xml,OSGI-INF/TCPRecorder.xml,
- OSGI-INF/TCPStringRecorder.xml
+Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,OSGI-INF/KeywordProvider.xml,OSGI-INF/BaDaStRecorderKeyword.xml,OSGI-INF/FileRecorder.xml,OSGI-INF/TCPRecorder.xml
 Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.badast,
  de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder,
  de.uniol.inf.is.odysseus.recovery.incomingelements.kafka,

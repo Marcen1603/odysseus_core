@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.Abstrac
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.FileRecorder;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.IBaDaStRecorder;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.TCPRecorder;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.TCPStringRecorder;
 import kafka.api.FetchRequest;
 import kafka.api.FetchRequestBuilder;
 import kafka.javaapi.FetchResponse;
@@ -71,12 +70,9 @@ public class BaDaStCommandProvider implements CommandProvider {
 	// Fill the mapping with all recorder types, which are not bound by
 	// OSGi
 	static {
-		try (IBaDaStRecorder fileRecorder = new FileRecorder();
-				IBaDaStRecorder tcpRecorder = new TCPRecorder();
-				IBaDaStRecorder tcpStringRecorder = new TCPStringRecorder()) {
+		try (IBaDaStRecorder fileRecorder = new FileRecorder(); IBaDaStRecorder tcpRecorder = new TCPRecorder()) {
 			cRecorderTypes.put(FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), fileRecorder);
 			cRecorderTypes.put(TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpRecorder);
-			cRecorderTypes.put(TCPStringRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpStringRecorder);
 		} catch (Exception e) {
 			// Unreachable block
 			e.printStackTrace();

@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 
-// XXX Don't know, why it is necessary to give the buffersize to TCPRecorders. Not nice.
 /**
  * Keyword to create a BaDaSt recorder for a given source. <br />
  * Parameters are key value pairs with exactly two given keys:
