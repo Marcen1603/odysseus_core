@@ -17,13 +17,12 @@ package de.uniol.inf.is.odysseus.mep.functions.dstring;
 
 import de.uniol.inf.is.odysseus.core.datatype.DString;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.functions.string.AbstractUnaryStringFunction;
 /**
  * Returns the string converted to uppercase.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class UpperFunction  extends AbstractUnaryStringFunction<DString> {
+public class UpperFunction  extends AbstractUnaryDStringFunction<DString> {
 
 	private static final long serialVersionUID = -6102731678146622066L;
 
