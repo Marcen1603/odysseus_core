@@ -16,36 +16,33 @@
 package de.uniol.inf.is.odysseus.relational.rewrite;
 
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
-import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
-import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 
 /**
  * Initializes IRelationalal predicates with the input schemas of a given
  * ILogicalOperator.
+ * 
  * @author Jonas Jacobi
  */
 public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 
 	private final SDFSchema leftSchema;
 	private final SDFSchema rightSchema;
-	
+
 	public InitPredicateFunctor(ILogicalOperator op) {
 		this.leftSchema = op.getInputSchema(0);
 		this.rightSchema = op.getNumberOfInputs() > 1 ? op.getInputSchema(1) : null;
 	}
+
 	@Override
 	public void call(IPredicate<?> parameter) {
-		if(parameter instanceof IRelationalPredicate) {
-			((IRelationalPredicate<?>)parameter).init(leftSchema, rightSchema);				
+		if (parameter instanceof IRelationalExpression) {
+			((IRelationalExpression<?>) parameter).initVars(leftSchema, rightSchema);
 		}
-		if(parameter instanceof IRelationalExpression) {
-			((RelationalExpression<?>)parameter).initVars(leftSchema, rightSchema);				
-		}
-		
+
 	}
 
 }

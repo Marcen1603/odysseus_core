@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.AbstractRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -47,7 +48,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
-import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RestructParameterInfoUtil;
 
 /**
@@ -71,18 +71,14 @@ public class RelationalRestructHelper {
 		ComplexPredicateHelper.visitPredicates(predicate, new IUnaryFunctor<IPredicate<?>>() {
 			@Override
 			public void call(IPredicate<?> pred) {
-				if (pred instanceof IRelationalPredicate){
-					sources.addAll(sourcesOfAttributes(((IRelationalPredicate<?>) pred).getAttributes()));
-				}else if (pred instanceof IRelationalExpression){
-					sources.addAll(sourcesOfAttributes(((RelationalExpression<?>) pred).getAttributes()));
-				}
+				sources.addAll(sourcesOfAttributes(pred.getAttributes()));
 			}
 		});
 		return sources;
 	}
 
 	public static Set<String> sourcesOfAttributes(Collection<?> attributes) {
-		HashSet<String> sources = new 	HashSet<>();
+		HashSet<String> sources = new HashSet<>();
 		for (Object attribute : attributes) {
 			sources.add(((SDFAttribute) attribute).getSourceName());
 		}
@@ -130,9 +126,9 @@ public class RelationalRestructHelper {
 		ComplexPredicateHelper.visitPredicates(predicate, new IUnaryFunctor<IPredicate<?>>() {
 			@Override
 			public void call(IPredicate<?> predicate) {
-				if (predicate instanceof IRelationalPredicate) {
-					IRelationalPredicate<?> relPred = (IRelationalPredicate<?>) predicate;
-					Collection<SDFAttribute> tmpAttrs = relPred.getAttributes();
+				if (predicate instanceof AbstractRelationalExpression) {
+					AbstractRelationalExpression<?> relEx = (AbstractRelationalExpression<?>) predicate;
+					Collection<SDFAttribute> tmpAttrs = relEx.getAttributes();
 					Collection<String> tmpUris = attributesToUris(tmpAttrs);
 					if (!uris.containsAll(tmpUris)) {
 						retValue[0] = false;
