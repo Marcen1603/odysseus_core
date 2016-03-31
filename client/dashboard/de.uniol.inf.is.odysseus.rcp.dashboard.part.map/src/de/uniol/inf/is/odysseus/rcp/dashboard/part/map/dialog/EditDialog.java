@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfigur
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 
 /**
- * Edit dialog for Basic and RasterLayers 
+ * Edit dialog for Basic and RasterLayers
  */
 @SuppressWarnings("unused")
 public class EditDialog extends TitleAreaDialog {
@@ -43,12 +43,11 @@ public class EditDialog extends TitleAreaDialog {
 	private CCombo server = null;
 	private int layerPosition;
 	private int layerPositionAfter;
-	
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public EditDialog(Shell parentShell, LinkedList<ILayer> layerOrder,
-			LayerConfiguration layerConfiguration, int layerPosition) {
+	public EditDialog(Shell parentShell, LinkedList<ILayer> layerOrder, LayerConfiguration layerConfiguration,
+			int layerPosition) {
 		super(parentShell);
 		this.layerOrder = layerOrder;
 		this.ownProperties = new OwnProperties();
@@ -75,10 +74,11 @@ public class EditDialog extends TitleAreaDialog {
 		configContainer.setLayout(DialogUtils.getGroupLayout());
 		configContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
-		if(layerConfiguration instanceof RasterLayerConfiguration){
+		if (layerConfiguration instanceof RasterLayerConfiguration) {
 			getRasterLayerConfigurationComposite(configContainer);
-//		}else if(layerConfiguration instanceof HeatmapLayerConfiguration){
-//			get
+			// }else if(layerConfiguration instanceof
+			// HeatmapLayerConfiguration){
+			// get
 		}
 		DialogUtils.separator(parent);
 
@@ -101,7 +101,6 @@ public class EditDialog extends TitleAreaDialog {
 		layerName.setLayoutData(DialogUtils.getTextDataLayout());
 		layerName.setText(layerConfiguration.getName());
 
-
 		Label layerPlaceLabel = new Label(layerConfigurationComp, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");
 
@@ -112,12 +111,12 @@ public class EditDialog extends TitleAreaDialog {
 			layerPlace.add(layer.getName());
 		}
 		if (!layerOrder.isEmpty())
-				layerPlace.setText(layerOrder.get(layerPosition).getName());
+			layerPlace.setText(layerOrder.get(layerPosition).getName());
 
 		layerPlace.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				 layerPositionAfter = layerPlace.getSelectionIndex();				
+				layerPositionAfter = layerPlace.getSelectionIndex();
 			};
 		});
 
@@ -151,17 +150,25 @@ public class EditDialog extends TitleAreaDialog {
 			server.add(string);
 		}
 		RasterLayerConfiguration conf = layerConfiguration;
-		for(int i = 0; i < server.getItemCount(); i++){
-			if(server.getItem(i).equals(conf.getUrl())){
+
+		boolean selectedPredefinedUrl = false;
+		for (int i = 0; i < server.getItemCount(); i++) {
+			if (server.getItem(i).equals(conf.getUrl())) {
 				server.select(i);
+				selectedPredefinedUrl = true;
 			}
+		}
+
+		// If the user entered a tile server that is not in the predefined list,
+		// show this url and select it
+		if (!selectedPredefinedUrl) {
+			server.add(layerConfiguration.getUrl());
+			server.select(server.getItemCount() - 1);
 		}
 		ownProperties.getTileServer(server.getSelectionIndex(), layerConfiguration);
 
 		return rasterLayerComp;
 	}
-
-
 
 	// /**
 	// * Creates the content to select the thematic map and the stream for it
@@ -299,8 +306,8 @@ public class EditDialog extends TitleAreaDialog {
 		setButtonLayoutData(button);
 		return button;
 	}
-	
-	public int getLayerPositionAfter(){
+
+	public int getLayerPositionAfter() {
 		return layerPositionAfter;
 	}
 
@@ -329,6 +336,10 @@ public class EditDialog extends TitleAreaDialog {
 
 	private void saveInput() {
 		layerConfiguration.setName(layerName.getText());
+
+		if (layerConfiguration instanceof RasterLayerConfiguration) {
+			((RasterLayerConfiguration) layerConfiguration).setUrl(server.getText());
+		}
 	}
 
 	@Override
