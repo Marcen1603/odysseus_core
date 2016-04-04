@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -447,8 +448,13 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		}
 
 		if (isDone()) {
-			for (IOperatorOwner owner : getOwner()) {
-				owner.done(this);
+			try {
+				for (IOperatorOwner owner : getOwner()) {
+					owner.done(this);
+				}
+			} catch (NoSuchElementException e) {
+				// TODO Timing Problem? MBr
+				logger.error("Error while calling done of owner!", e);
 			}
 		}
 	}
