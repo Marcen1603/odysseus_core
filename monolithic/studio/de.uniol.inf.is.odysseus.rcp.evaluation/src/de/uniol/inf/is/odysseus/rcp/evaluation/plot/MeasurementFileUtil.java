@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class MeasurementFileUtil {
 
-	private static final String DELIMITER = ";";
+	public static final String DELIMITER = ";";
 
 	public static MeasurementResult mergeFiles(MeasurementResult result, String destinationPath, IProgressMonitor monitor) {
 
@@ -42,14 +42,17 @@ public class MeasurementFileUtil {
 			bw.write(System.lineSeparator());
 
 			boolean end = false;
+			int lineNumber = 1;
 			outer:while(!end){				
 				List<String> lines = new ArrayList<>();
 				for(BufferedReader br : readers){
-					String line = br.readLine();
+					String line = br.readLine();					
 					if(line==null){
 						end = true;
 						break outer;
 					}
+					// add line number (was done by former FileHandlerAO) MBr
+					line = String.valueOf(lineNumber++) + DELIMITER + line;
 					lines.add(line);
 				}
 				String mergedLine = mergeLines(lines);

@@ -123,12 +123,12 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 	}
 
 	private String prepareQueryFileForEvaluation(String lines) {
-        if ((model.isWithLatency()) && (!lines.contains(METADATA_LATENCY))) {
-            lines = METADATA_LATENCY + System.lineSeparator() + lines;
-        }
-        if ((model.isWithResource()) && (!lines.contains(METADATA_RESOURCE))) {
-            lines = METADATA_RESOURCE + System.lineSeparator() + lines;
-        }
+//        if ((model.isWithLatency()) && (!lines.contains(METADATA_LATENCY))) {
+//            lines = METADATA_LATENCY + System.lineSeparator() + lines;
+//        }
+//        if ((model.isWithResource()) && (!lines.contains(METADATA_RESOURCE))) {
+//            lines = METADATA_RESOURCE + System.lineSeparator() + lines;
+//        }
 		if(!lines.contains(PRE_TRANSFORM_TOKEN)){
 			lines = PRE_TRANSFORM_TOKEN+System.lineSeparator()+lines;
 		}

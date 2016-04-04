@@ -31,6 +31,8 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 final public class Latency extends AbstractBaseMetaAttribute implements ILatency {
 
 	private static final String LATENCY = "Latency";
+	
+	public static final int LATENCY_ATTRIBUTE_INDEX = 3;
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ILatency.class };
