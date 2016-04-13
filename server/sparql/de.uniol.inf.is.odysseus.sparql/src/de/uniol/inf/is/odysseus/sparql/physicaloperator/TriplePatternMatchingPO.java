@@ -16,10 +16,12 @@
 package de.uniol.inf.is.odysseus.sparql.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datatype.DString;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
@@ -61,11 +63,14 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 
 	private IPredicate predicate;
 
+	final private boolean useDString;
+
 	public TriplePatternMatchingPO(TriplePatternMatchingAO tpm) {
 		this.queryTriple = tpm.getTriple();
 		this.graphVar = tpm.getGraphVar();
 		this.stream_name = tpm.getStream_name();
 		this.predicate = tpm.getPredicate();
+		this.useDString = tpm.getOutputSchema().get(0).getDatatype().equals(SDFDatatype.DSTRING);
 		this.setName(super.getName() + ": " + this.predicate.toString());
 	}
 
@@ -75,6 +80,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		this.graphVar = original.graphVar;
 		this.stream_name = original.stream_name;
 		this.predicate = original.predicate;
+		this.useDString = original.useDString;
 	}
 
 	@Override
@@ -115,7 +121,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 
 	@SuppressWarnings("static-method")
-	private Tuple<M> preprocess(Tuple<M> element, int attrPos) {		
+	private Tuple<M> preprocess(Tuple<M> element, int attrPos) {
 		// remove datatype information
 		int hatPos = (element.getAttribute(attrPos)).toString().indexOf("^^");
 		if (hatPos != -1) {
@@ -125,8 +131,11 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 
 		// remove quotes
 		String withoutQuotes = (element.getAttribute(attrPos)).toString().replace("\"", "");
-		element.setAttribute(attrPos, withoutQuotes);
-
+		if (useDString) {
+			element.setAttribute(attrPos, new DString(withoutQuotes));
+		} else {
+			element.setAttribute(attrPos, withoutQuotes);
+		}
 		return element;
 	}
 
@@ -174,68 +183,70 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		
+
 		return false;
 
-		// Currently, there is a problem with the output schema of the triple pattern operator and
-		// e.g. joins --> every TriplePatternMatchingAO has a new source name ...
-		
-//		if (!(ipo instanceof TriplePatternMatchingPO)){
-//			return false;
-//		}
-//		
-//		TriplePatternMatchingPO tpm = (TriplePatternMatchingPO) ipo;
-//		
-//		if (!this.queryTriple.equals(tpm.queryTriple)){
-//			return false;
-//		}
-//		
-//		if (this.graphVar != null && tpm.graphVar != null){
-//			if (!this.graphVar.getName().equalsIgnoreCase(tpm.graphVar.getName())){
-//				return false;
-//			}
-//		}
-//		
-//		if (!checkIfOnlyOneIsNull(graphVar, tpm.graphVar)){
-//			return false;
-//		}
-//		
-//		if (!checkIfOnlyOneIsNull(this.stream_name, tpm.stream_name)){
-//			return false;
-//		}
-//		
-//		if (this.stream_name != null && tpm.stream_name != null){
-//			if (!this.stream_name.equalsIgnoreCase(tpm.stream_name)){
-//				return false;
-//			}
-//		}
-//		if (!checkEquals(predicate, tpm.predicate)){
-//			return false;
-//		}
-//		
-//		return true;
+		// Currently, there is a problem with the output schema of the triple
+		// pattern operator and
+		// e.g. joins --> every TriplePatternMatchingAO has a new source name
+		// ...
+
+		// if (!(ipo instanceof TriplePatternMatchingPO)){
+		// return false;
+		// }
+		//
+		// TriplePatternMatchingPO tpm = (TriplePatternMatchingPO) ipo;
+		//
+		// if (!this.queryTriple.equals(tpm.queryTriple)){
+		// return false;
+		// }
+		//
+		// if (this.graphVar != null && tpm.graphVar != null){
+		// if
+		// (!this.graphVar.getName().equalsIgnoreCase(tpm.graphVar.getName())){
+		// return false;
+		// }
+		// }
+		//
+		// if (!checkIfOnlyOneIsNull(graphVar, tpm.graphVar)){
+		// return false;
+		// }
+		//
+		// if (!checkIfOnlyOneIsNull(this.stream_name, tpm.stream_name)){
+		// return false;
+		// }
+		//
+		// if (this.stream_name != null && tpm.stream_name != null){
+		// if (!this.stream_name.equalsIgnoreCase(tpm.stream_name)){
+		// return false;
+		// }
+		// }
+		// if (!checkEquals(predicate, tpm.predicate)){
+		// return false;
+		// }
+		//
+		// return true;
 	}
 
 	private boolean checkIfOnlyOneIsNull(Object left, Object right) {
-		if (left == null && right != null || left != null && right== null){
+		if (left == null && right != null || left != null && right == null) {
 			return false;
 		}
-		return true;		
+		return true;
 	}
-	
+
 	@SuppressWarnings("unused")
 	private boolean checkEquals(Object left, Object right) {
-		if (left == null && right == null){
+		if (left == null && right == null) {
 			return true;
 		}
 
-		if (!checkIfOnlyOneIsNull(left, right)){
+		if (!checkIfOnlyOneIsNull(left, right)) {
 			return false;
 		}
-		
+
 		return left != null && left.equals(right);
-	}	
-	
+	}
 
 	@Override
 	public String toString() {
