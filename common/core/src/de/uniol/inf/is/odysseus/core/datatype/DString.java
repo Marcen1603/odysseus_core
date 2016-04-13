@@ -54,7 +54,7 @@ public class DString {
 			return false;
 		// Compare this String with java strings
 		if (obj.getClass() == java.lang.String.class) {
-			if (value == encode((String)obj)) {
+			if (decode(value).equals((String)obj)) {
 				return true;
 			}
 		}
