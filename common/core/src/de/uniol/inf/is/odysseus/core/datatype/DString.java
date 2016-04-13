@@ -54,7 +54,7 @@ public class DString {
 			return false;
 		// Compare this String with java strings
 		if (obj.getClass() == java.lang.String.class) {
-			if (decode(value).equals(obj)) {
+			if (value == encode((String)obj)) {
 				return true;
 			}
 		}
@@ -103,7 +103,7 @@ public class DString {
 		return dictionary.get(value);
 	}
 
-	private void encode(java.lang.String input) {
+	private long encode(java.lang.String input) {
 		// Must be sure, that two string have not different values!
 		synchronized (dictionary) {
 			Long k = inverseDictionary.get(input);
@@ -114,6 +114,7 @@ public class DString {
 				inverseDictionary.put(input, k);
 			}
 			this.value = k;
+			return k;
 		}
 	}
 	
