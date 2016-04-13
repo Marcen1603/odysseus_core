@@ -155,20 +155,28 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 		 * available. e. g. a triple pattern ?x :pred ?y results in a schema
 		 * |x|y|
 		 */
+		
+		final SDFDatatype stringType;			
+		if (getInputSchema(0).get(0).getDatatype() == SDFDatatype.DSTRING){
+			stringType = SDFDatatype.DSTRING;
+		}else{
+			 stringType = SDFDatatype.STRING;
+		}
 
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+		
 		if (triple.getSubject().isVariable()) {
-			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName(), SDFDatatype.STRING,
+			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName(), stringType,
 					null, null, null);
 			attrs.add(subject);
 		}
 		if (triple.getPredicate().isVariable()) {
 			SDFAttribute predicate = new SDFAttribute(this.sourceName, triple.getPredicate().getName(),
-					SDFDatatype.STRING, null, null, null);
+					stringType, null, null, null);
 			attrs.add(predicate);
 		}
 		if (triple.getObject().isVariable()) {
-			SDFAttribute object = new SDFAttribute(this.sourceName, triple.getObject().getName(), SDFDatatype.STRING,
+			SDFAttribute object = new SDFAttribute(this.sourceName, triple.getObject().getName(), stringType,
 					null, null, null);
 			attrs.add(object);
 		}
@@ -180,7 +188,7 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 		// adding the graphVar
 		if (this.graphVar != null && this.stream_name != null) {
 			boolean alreadyAdded = false;
-			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName, this.graphVar.getName(), SDFDatatype.STRING,
+			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName, this.graphVar.getName(), stringType,
 					null, null, null);
 			for (SDFAttribute a : attrs) {
 				if (a.getQualName().equals(graphVarAtt.getQualName())) {
