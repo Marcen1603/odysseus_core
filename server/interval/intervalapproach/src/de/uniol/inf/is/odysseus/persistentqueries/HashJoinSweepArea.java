@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.TreeMap;
 
 import com.google.common.collect.Sets;
 
@@ -179,31 +178,46 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 			return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
 		}
 
-		Map<PointInTime, Tuple<? extends ITimeInterval>> result;
+		List<Tuple<? extends ITimeInterval>> result;
 		synchronized (this.elements) {
 			Object key = getKey(element, queryRestrictList);
 			if (!this.elements.containsKey(key))
 				return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
 
-			result = new TreeMap<>();
+			result = new ArrayList<>();
 			Collection<Tuple<? extends ITimeInterval>> matchingTuples = this.elements.get(key);
 
 			for (Iterator<Tuple<? extends ITimeInterval>> iter = matchingTuples.iterator(); iter.hasNext();) {
 				Tuple<? extends ITimeInterval> matchingTuple = iter.next();
 				if(TimeInterval.overlaps(matchingTuple.getMetadata(), element.getMetadata())) {
 					if (extract) {
-						result.put(matchingTuple.getMetadata().getStart(), matchingTuple);
+						result.add(matchingTuple);
 						removeFromTimeIndex(matchingTuple);
 						iter.remove();
 					} else {
-						result.put(matchingTuple.getMetadata().getStart(), matchingTuple.clone());
+						result.add(matchingTuple.clone());
 					}
 				}
 				
 			}
 		}
 
-		return result.values().iterator();
+		Collections.sort(result, new Comparator<Tuple<? extends ITimeInterval>>() {
+
+			@Override
+			public int compare(Tuple<? extends ITimeInterval> left, Tuple<? extends ITimeInterval> right) {
+				PointInTime l = left.getMetadata().getStart();
+				PointInTime r = right.getMetadata().getStart();
+
+				int c = l.compareTo(r);
+				if (c == 0) {
+					return Long.compare(l.tiBreaker, r.tiBreaker);
+				}
+				return c;
+			}
+		});
+		
+		return result.iterator();
 	}
 
 	private void removeFromTimeIndex(Tuple<? extends ITimeInterval> tuple) {
