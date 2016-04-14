@@ -63,6 +63,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 		// TMP-Hack
 		if (areaName.equalsIgnoreCase("HashJoinSA")) {
+			boolean check = false;
 			try {
 				// check the paths
 				for (int port = 0; port < 2; port++) {
@@ -71,7 +72,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 					// the restrictList
 					Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
 
-					if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs,
+					if (check = JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs,
 							joinPO.getSubscribedToSource(port).getSchema(),
 							joinPO.getSubscribedToSource(otherPort).getSchema())) {
 
@@ -91,8 +92,11 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				
 			}
-
+			if (check == false){
+				throw new TransformationException("Cannot use "+areaName+" with this predicate "+joinPO.getPredicate()+". Only equals predicates are possible!");				
+			}
 		}
 
 		if (areas[0] == null || areas[1] == null) {
