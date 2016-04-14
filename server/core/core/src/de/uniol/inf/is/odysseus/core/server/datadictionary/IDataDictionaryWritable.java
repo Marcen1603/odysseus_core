@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -103,6 +106,11 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	public void addDatatype(SDFDatatype dt);
 
 	void removeDatatype(SDFDatatype dt) throws DataDictionaryException;
+
+	// Stores
+	List<IStreamObject<?>> getOrCreateStore(Resource name);
+	List<IStreamObject<?>> createStore(Resource name);
+	void deleteStore(Resource name);
 
 
 

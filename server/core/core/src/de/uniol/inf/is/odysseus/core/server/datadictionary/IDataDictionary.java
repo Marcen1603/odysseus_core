@@ -22,6 +22,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -181,6 +182,9 @@ public interface IDataDictionary {
 	// -------------------------------------------------------------------------
 
 	IDataDictionary createInstance(ITenant t);
+
+	// Store management
+	List<IStreamObject<?>> getStore(Resource name);
 
 
 
