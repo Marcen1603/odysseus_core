@@ -41,7 +41,7 @@ public class OdysseusSimulator {
 	// Alternatively, put all the JSON into a .json file and read meta data from
     // that.
     private static final JSONObject meta = (JSONObject) JSONValue.parse(("{"
-            + "    'api_version': 2.0,"
+            + "    'api_version': '2.0',"
             + "    'models': {"
             + "        'Odysseus': {" + "            'public': true,"
             + "			   'any_inputs': true,"
