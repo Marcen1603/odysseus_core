@@ -15,6 +15,7 @@ public class WriteOptions {
 	
 	// Add field, not via constructor
 	String nullValueString = "";
+	private boolean writeHeading;
 	
 	public WriteOptions(char delimiter, Character textSeperator,
 			NumberFormat floatingFormatter, NumberFormat numberFormatter,
@@ -74,6 +75,14 @@ public class WriteOptions {
 //	public void setWithMetadata(boolean withMetadata) {
 //		this.withMetadata = withMetadata;
 //	}
+
+	public void setWriteHeading(boolean writeHeading) {
+		this.writeHeading = writeHeading;
+	}
+	
+	public boolean isWriteHeading() {
+		return writeHeading;
+	}
 	
 	
 
