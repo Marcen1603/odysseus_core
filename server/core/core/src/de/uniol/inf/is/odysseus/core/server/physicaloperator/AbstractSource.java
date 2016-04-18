@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -634,8 +635,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			}
 		}
 		if (isRoot()) {
-			for (IOperatorOwner owner : getOwner()) {
-				owner.done(this);
+			try {
+				for (IOperatorOwner owner : getOwner()) {
+					owner.done(this);
+				}
+			} catch (NoSuchElementException e) {
+				// TODO Timing Problem? MBr
+				getLogger().error("Error while calling done of owner!", e);
 			}
 		}
 	}
