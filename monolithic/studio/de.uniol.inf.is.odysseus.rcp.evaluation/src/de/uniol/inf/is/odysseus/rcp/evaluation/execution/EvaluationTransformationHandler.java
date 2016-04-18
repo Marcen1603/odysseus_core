@@ -12,13 +12,13 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
@@ -28,12 +28,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.evaluation.plot.MeasurementFileUtil;
 import de.uniol.inf.is.odysseus.rcp.evaluation.processing.logicaloperator.MeasureThroughputAO;
-import de.uniol.inf.is.odysseus.systemload.logicaloperator.SystemLoadToPayloadAO;
+import de.uniol.inf.is.odysseus.systemload.logicaloperator.SystemLoadAO;
 
 public class EvaluationTransformationHandler implements IPreTransformationHandler {
 
@@ -63,6 +62,19 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 		}
 
 	}
+	
+	private static MapAO createMapOperatorForSimpleMetaAttribute(String attribute_str, ILogicalOperator source) {
+		MapAO map = new MapAO();
+		ArrayList<NamedExpression> expressions = new ArrayList<>();
+		SDFAttribute attribute = source.getOutputSchema().findAttribute(attribute_str);
+		expressions.add(new NamedExpression(attribute.getAttributeName(),
+				new SDFExpression(attribute.getAttributeName(),
+						new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance()),
+				attribute.getDatatype()));
+		map.setExpressions(expressions);
+		map.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		return map;
+	}
 
 	private void addLatencyOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
 		if (logicalPlan instanceof TopAO) {
@@ -71,15 +83,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				ILogicalOperator root = subscription.getTarget();
 				CalcLatencyAO latency = new CalcLatencyAO();
 				latency.subscribeToSource(root, 0, 0, root.getOutputSchema());
-				MapAO map = new MapAO();
-				ArrayList<NamedExpression> expressions = new ArrayList<>();
-				SDFAttribute latencyAttribute = Latency.schema.get(0).get(Latency.LATENCY_ATTRIBUTE_INDEX);
-				expressions.add(new NamedExpression(latencyAttribute.getAttributeName(),
-						new SDFExpression(latencyAttribute.getAttributeName(),
-								new DirectAttributeResolver(latency.getOutputSchema()), MEP.getInstance()),
-						latencyAttribute.getDatatype()));
-				map.setExpressions(expressions);
-				map.subscribeToSource(latency, 0, 0, latency.getOutputSchema());
+				MapAO latencyOnly = createMapOperatorForSimpleMetaAttribute("Latency.latency", latency);
 				CSVFileSink fileAO = new CSVFileSink();
 				fileAO.setWriteMetaData(false);
 				fileAO.setNumberFormatter("##################################");
@@ -87,7 +91,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				fileAO.setDelimiter(MeasurementFileUtil.DELIMITER);
 				fileAO.setFilename(run.createLatencyResultPath(root));
 				fileAO.createDir(true);
-				fileAO.subscribeToSource(map, 0, 0, map.getOutputSchema());
+				fileAO.subscribeToSource(latencyOnly, 0, 0, latencyOnly.getOutputSchema());
 				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
 						.getDataDictionary(caller.getTenant());
 				dd.addSink(root.getName(), fileAO, caller);
@@ -95,8 +99,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 
 				newChilds.add(fileAO);
 			}
-			logicalPlan.unsubscribeFromAllSources();
-			int inputPort = 0;
+			int inputPort = logicalPlan.getSubscribedToSource().size();
 			for (ILogicalOperator newChild : newChilds) {
 				logicalPlan.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
 			}
@@ -126,6 +129,18 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 			}
 		}
 	}
+	
+	private static MapAO createMapOperatorForSystemLoadAttribute(String attribute_str, int attribute_pos, ILogicalOperator source) {
+		MapAO map = new MapAO();
+		ArrayList<NamedExpression> expressions = new ArrayList<>();
+		expressions.add(new NamedExpression(attribute_str,
+				new SDFExpression("elementAt(EntryList[0], " + attribute_pos + ")",
+						new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance()),
+				SDFDatatype.DOUBLE));
+		map.setExpressions(expressions);
+		map.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		return map;
+	}
 
 	private void addResourceOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
 		if (logicalPlan instanceof TopAO) {
@@ -138,17 +153,11 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				if (root instanceof CalcLatencyAO) {
 					root = root.getSubscribedToSource(0).getTarget();
 				}
-				SystemLoadToPayloadAO systemload = new SystemLoadToPayloadAO();
-				systemload.setLoadname("local");
-				systemload.setAppend2(false);
+				SystemLoadAO systemload = new SystemLoadAO();
 				systemload.subscribeToSource(root, 0, 0, root.getOutputSchema());
-
-				ProjectAO projectCPU = new ProjectAO();
-				List<SDFAttribute> schemaCPU = new ArrayList<>();
-				schemaCPU.add(systemload.getOutputSchema().get(0));
-				projectCPU.setOutputSchemaWithList(schemaCPU);
-				projectCPU.subscribeToSource(systemload, 0, 0, systemload.getOutputSchema());
-				
+				MapAO sysloadOnly = createMapOperatorForSimpleMetaAttribute("SystemLoad.EntryList", systemload);
+						
+				MapAO cpuOnly = createMapOperatorForSystemLoadAttribute("cpu", 1, sysloadOnly);				
 				CSVFileSink fileCPU = new CSVFileSink();
 				fileCPU.setWriteMetaData(false);
 				fileCPU.setNumberFormatter("##################################");
@@ -156,20 +165,15 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				fileCPU.setDelimiter(MeasurementFileUtil.DELIMITER);
 				fileCPU.setFilename(run.createCPUResultPath(fileCPU));
 				fileCPU.createDir(true);
-				fileCPU.subscribeToSource(root, 0, 0, root.getOutputSchema());
+				fileCPU.subscribeToSource(cpuOnly, 0, 0, cpuOnly.getOutputSchema());
 				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
 						.getDataDictionary(caller.getTenant());
 				dd.addSink(root.getName() + "_CPU", fileCPU, caller);
 				fileCPU.setSink(dd.getResource(root.getName() + "_CPU", caller));
 
 				newChilds.add(fileCPU);
-
-				ProjectAO projectMemory = new ProjectAO();
-				List<SDFAttribute> schemaMemory = new ArrayList<>();
-				schemaMemory.add(systemload.getOutputSchema().get(1));
-				projectMemory.setOutputSchemaWithList(schemaMemory);
-				projectMemory.subscribeToSource(systemload, 0, 0, systemload.getOutputSchema());
 				
+				MapAO memOnly = createMapOperatorForSystemLoadAttribute("memory", 2, sysloadOnly);
 				CSVFileSink fileMemory = new CSVFileSink();
 				fileMemory.setWriteMetaData(false);
 				fileMemory.setNumberFormatter("##################################");
@@ -177,14 +181,15 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				fileMemory.setDelimiter(MeasurementFileUtil.DELIMITER);
 				fileMemory.setFilename(run.createMemoryResultPath(root));
 				fileMemory.createDir(true);
-				fileMemory.subscribeToSource(projectMemory, 0, 0, projectMemory.getOutputSchema());
+				fileMemory.subscribeToSource(memOnly, 0, 0,
+				memOnly.getOutputSchema());
 				dd.addSink(root.getName() + "_Memory", fileMemory, caller);
-				fileMemory.setSink(dd.getResource(root.getName() + "_Memory", caller));
-
+				fileMemory.setSink(dd.getResource(root.getName() + "_Memory",
+				caller));
+				
 				newChilds.add(fileMemory);
 			}
-			logicalPlan.unsubscribeFromAllSources();
-			int inputPort = 0;
+			int inputPort = logicalPlan.getSubscribedToSource().size();
 			for (ILogicalOperator newChild : newChilds) {
 				logicalPlan.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
 			}
