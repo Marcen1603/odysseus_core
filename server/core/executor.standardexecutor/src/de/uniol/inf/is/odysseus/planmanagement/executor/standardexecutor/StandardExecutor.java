@@ -1338,10 +1338,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	private void partialQuery(int sheddingFactor, ISession caller, IPhysicalQuery queryToPartial) {
 		try {
+			final QueryState newState;
+			
 			if (sheddingFactor > 0) {
-				QueryState.next(queryToPartial.getState(), QueryFunction.PARTIAL);
+				newState = QueryState.next(queryToPartial.getState(), QueryFunction.PARTIAL);
 			} else {
-				QueryState.next(queryToPartial.getState(), QueryFunction.FULL);
+				newState = QueryState.next(queryToPartial.getState(), QueryFunction.FULL);
 			}
 			validateUserRight(queryToPartial, caller, ExecutorPermission.PARTIAL_QUERY);
 			executionPlanChanged(PlanModificationEventType.QUERY_PARTIAL, queryToPartial);
@@ -1349,8 +1351,13 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			if (isRunning()) {
 				queryToPartial.partial(sheddingFactor);
 			}
+			if (newState == QueryState.PARTIAL){
 			firePlanModificationEvent(
 					new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_PARTIAL, queryToPartial));
+			}else{
+				firePlanModificationEvent(
+						new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_RESUME, queryToPartial));				
+			}
 
 		} catch (Exception e) {
 			LOG.warn("Query not in partial mode. An Error while optimizing occurd (ID: " + queryToPartial.getID() + ")."

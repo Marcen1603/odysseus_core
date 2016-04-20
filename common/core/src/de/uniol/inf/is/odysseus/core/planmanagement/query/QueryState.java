@@ -50,7 +50,7 @@ public enum QueryState {
 				return INACTIVE;
 			}
 			if (function == QueryFunction.FULL) {
-				return PARTIAL;
+				return RUNNING;
 			}
 			if (function == QueryFunction.SUSPEND) {
 				return PARTIAL_SUSPENDED;
