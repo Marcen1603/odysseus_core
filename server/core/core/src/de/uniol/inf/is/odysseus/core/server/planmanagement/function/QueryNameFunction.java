@@ -16,6 +16,6 @@ public class QueryNameFunction extends
 	public String getValue() {
 		int queryId = getNumericalInputValue(0).intValue();
 		IPhysicalQuery query = getQuery(queryId);
-		return query.getName();
+		return query.getName().toString();
 	}
 }

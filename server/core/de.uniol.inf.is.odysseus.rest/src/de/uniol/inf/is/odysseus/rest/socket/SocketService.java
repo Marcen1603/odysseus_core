@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -112,7 +113,7 @@ public class SocketService extends Observable {
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, String queryName,
 			boolean withMetaData) {
-		List<IPhysicalOperator> rootOperators = getRootOperators(queryName);
+		List<IPhysicalOperator> rootOperators = getRootOperators(queryName, session);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		Map<String, Map<Integer, SocketInfo>> allInfos = new HashMap<>();
@@ -143,7 +144,7 @@ public class SocketService extends Observable {
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, String queryName,
 			String operatorName, boolean withMetaData) {
-		IPhysicalOperator rootOperator = getRootOperator(queryName, operatorName);
+		IPhysicalOperator rootOperator = getRootOperator(queryName, operatorName, session);
 		if (rootOperator == null) {
 			return new HashMap<String, Map<Integer, SocketInfo>>();
 		}
@@ -177,7 +178,7 @@ public class SocketService extends Observable {
 	 */
 	public SocketInfo getConnectionInformation(ISession session, String queryName, String operatorName,
 			int operatorOutputPort, boolean withMetaData) {
-		IPhysicalOperator rootOperator = getRootOperator(queryName, operatorName);
+		IPhysicalOperator rootOperator = getRootOperator(queryName, operatorName, session);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		SocketInfo info = getConnectionInformationWithPorts(session, queryName, minPort, maxPort, rootOperator,
@@ -328,7 +329,7 @@ public class SocketService extends Observable {
 	private SocketInfo getConnectionInformationWithPorts(ISession session, String queryName, int minPort, int maxPort,
 			IPhysicalOperator operator, int operatorOutputPort, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		int queryId = plan.getQueryByName(queryName).getID();
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser())).getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, operatorOutputPort,
 				withMetaData);
 	}
@@ -336,7 +337,7 @@ public class SocketService extends Observable {
 	private Map<Integer, SocketInfo> getConnectionInformationWithPorts(ISession session, String queryName, int minPort,
 			int maxPort, IPhysicalOperator operator, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		int queryId = plan.getQueryByName(queryName).getID();
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser())).getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, withMetaData);
 	}
 
@@ -498,14 +499,14 @@ public class SocketService extends Observable {
 		return null;
 	}
 
-	private List<IPhysicalOperator> getRootOperators(String queryName) {
+	private List<IPhysicalOperator> getRootOperators(String queryName, ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		IPhysicalQuery query = plan.getQueryByName(queryName);
+		IPhysicalQuery query = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()));
 		return query.getRoots();
 	}
 
-	private IPhysicalOperator getRootOperator(String queryName, String operatorName) {
-		List<IPhysicalOperator> allOps = getRootOperators(queryName);
+	private IPhysicalOperator getRootOperator(String queryName, String operatorName, ISession session) {
+		List<IPhysicalOperator> allOps = getRootOperators(queryName, session);
 		for (IPhysicalOperator op : allOps) {
 			if (op.getName().equals(operatorName)) {
 				return op;

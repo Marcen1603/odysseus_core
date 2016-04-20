@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -80,10 +81,16 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 			addSettings = new ArrayList<>();
 		}
 		
+		// CALLER
+		ISession queryCaller = (ISession) variables.get("USER");
+		if (queryCaller == null) {
+			queryCaller = caller;
+		}
+		
 		// QNAME
 		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
 		if (queryName != null && queryName.trim().length() > 0) {
-			addSettings.add(new ParameterQueryName(queryName));
+			addSettings.add(new ParameterQueryName(new Resource(queryCaller.getUser().getName(), queryName)));
 			// Only for this query
 			variables.remove(QueryNamePreParserKeyword.QNAME);
 		}
@@ -109,11 +116,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 
 		}
 		
-		// CALLER
-		ISession queryCaller = (ISession) variables.get("USER");
-		if (queryCaller == null) {
-			queryCaller = caller;
-		}
+
 		
 		// AC-QUERIES
 		if (isACQuery()){

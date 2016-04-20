@@ -572,13 +572,13 @@ public class WebserviceServer {
 	public QueryResponse getLogicalQueryByName(@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "name") String name) throws InvalidUserDataException {
 		ISession session = loginWithSecurityToken(securityToken);
-		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryByName(name);
+		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryByName(Resource.specialCreateResource(name, session.getUser()));
 		List<String> roots = new ArrayList<String>();
 		for (IPhysicalOperator operator : queryById.getRoots()) {
 			roots.add(operator.getName());
 		}
 		return new QueryResponse(
-				(LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryByName(name, session),
+				(LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryByName(Resource.specialCreateResource(name, session.getUser()), session),
 				queryById.getSession().getUser().getName(), queryById.getState(), roots, true);
 
 	}

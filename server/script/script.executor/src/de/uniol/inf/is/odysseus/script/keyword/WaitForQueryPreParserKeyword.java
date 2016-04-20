@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.WaitForQueryCommand;
@@ -26,7 +27,7 @@ public class WaitForQueryPreParserKeyword extends AbstractPreParserKeyword {
 			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		String[] para = getSimpleParameters(parameter);
-		String name = para[0];
+		Resource name = Resource.specialCreateResource(para[0], caller.getUser());
 		long testPeriod = 1000;
 		if (para.length > 1&&  para[1].length() > 0){
 			testPeriod = Long.parseLong(para[1]);

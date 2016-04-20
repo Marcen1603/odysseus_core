@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler;
@@ -87,7 +88,7 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 *            
 	 * @return The query with the name or null if no query is found.
 	 */
-	IPhysicalQuery getQueryByName(String name);
+	IPhysicalQuery getQueryByName(Resource name);
 
 	/**
 	 * Returns a query with the defined ID.

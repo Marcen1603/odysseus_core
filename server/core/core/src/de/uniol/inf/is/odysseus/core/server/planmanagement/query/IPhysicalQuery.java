@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -38,7 +39,7 @@ public interface IPhysicalQuery extends IMonitoringDataProvider,
 		IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner,
 		IHasRoots, IQuery {
 
-	String getName();
+	Resource getName();
 
 	/**
 	 * The method must be called for each of the physical roots of a query.

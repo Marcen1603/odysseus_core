@@ -360,7 +360,7 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 		 * Not all events have to be recovered, e.g., several state changes of
 		 * the same query. Sort commands for each query, source, sink.
 		 */
-		Map<String, Pair<IExecutorCommand, IExecutorCommand>> commandsPerQuery = Maps.newHashMap();
+		Map<Resource, Pair<IExecutorCommand, IExecutorCommand>> commandsPerQuery = Maps.newHashMap();
 		Map<String, IExecutorCommand> createCommandPerSource = Maps.newHashMap();
 		Map<String, IExecutorCommand> createCommandPerSink = Maps.newHashMap();
 		List<IExecutorCommand> executionOrder = Lists.newArrayList();
@@ -414,7 +414,7 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IS
 					executionOrder.add(modifiedCommand);
 					break;
 				case QUERYSTATE_CHANGED:
-					String queryName = ((AbstractQueryCommand) command).getQueryName();
+					Resource queryName = ((AbstractQueryCommand) command).getQueryName();
 					if (!commandsPerQuery.containsKey(queryName)) {
 						// FIXME There is a probblem, if the Odysseus Script
 						// keyword #RUNQUERY is used. Because than the following

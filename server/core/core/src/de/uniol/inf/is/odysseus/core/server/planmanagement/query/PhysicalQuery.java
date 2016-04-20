@@ -28,15 +28,16 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
+import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -69,7 +70,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/**
 	 * The name of the query
 	 */
-	private String name = "";
+	private Resource name = null;
 
 	/**
 	 * Priority for the query
@@ -282,7 +283,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public String getName() {
+	public Resource getName() {
 		if (query != null) {
 			return query.getName();
 		}

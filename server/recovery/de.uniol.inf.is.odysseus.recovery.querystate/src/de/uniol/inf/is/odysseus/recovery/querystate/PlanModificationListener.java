@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.querystate;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.PartialQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.RemoveQueryCommand;
@@ -27,7 +28,7 @@ public class PlanModificationListener implements IPlanModificationListener {
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 		ISession caller = query.getSession();
-		String queryName = query.getName();
+		Resource queryName = query.getName();
 		IExecutorCommand command = null;
 		switch ((PlanModificationEventType) eventArgs.getEventType()) {
 		case QUERY_PARTIAL:

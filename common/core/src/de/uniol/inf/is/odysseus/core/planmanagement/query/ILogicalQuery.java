@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.planmanagement.query;
 import java.io.Serializable;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -48,14 +49,14 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 	 * 
 	 * @return
 	 */
-	String getName();
+	Resource getName();
 
 	/**
 	 * A query can be named, set the value
 	 * 
 	 * @return
 	 */
-	void setName(String name);
+	void setName(Resource resource);
 
 	/**
 	 * Returns the priority with which this query should be scheduled.

@@ -27,6 +27,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.AbstractPlanReoptimizeRule;
@@ -68,7 +69,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * Map of all registered queries.
 	 */
 	final private Map<Integer, IPhysicalQuery> queries;
-	final private Map<String, IPhysicalQuery> namedQueries;
+	final private Map<Resource, IPhysicalQuery> namedQueries;
 
 	/**
 	 * List of objects which respond to reoptimize requests.
@@ -85,14 +86,14 @@ public class ExecutionPlan implements IExecutionPlan {
 	public ExecutionPlan() {
 		leafSources = new ArrayList<IIterableSource<?>>();
 		queries = Collections.synchronizedMap(new HashMap<Integer, IPhysicalQuery>());
-		namedQueries = Collections.synchronizedMap(new HashMap<String, IPhysicalQuery>());
+		namedQueries = Collections.synchronizedMap(new HashMap<Resource, IPhysicalQuery>());
 	}
 
 	private ExecutionPlan(ExecutionPlan otherPlan) {
 		this.open = otherPlan.open;
 		this.leafSources = new ArrayList<IIterableSource<?>>(otherPlan.leafSources);
 		this.queries = Collections.synchronizedMap(new HashMap<Integer, IPhysicalQuery>(otherPlan.queries));
-		this.namedQueries = Collections.synchronizedMap(new HashMap<String, IPhysicalQuery>(otherPlan.namedQueries));
+		this.namedQueries = Collections.synchronizedMap(new HashMap<Resource, IPhysicalQuery>(otherPlan.namedQueries));
 		this.reoptimizeListener.addAll(otherPlan.reoptimizeListener);
 		this.reoptimizeRule.addAll(otherPlan.reoptimizeRule);
 	}
@@ -192,7 +193,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	}
 
 	@Override
-	public IPhysicalQuery getQueryByName(String name) {
+	public IPhysicalQuery getQueryByName(Resource name) {
 		return this.namedQueries.get(name);
 	}
 

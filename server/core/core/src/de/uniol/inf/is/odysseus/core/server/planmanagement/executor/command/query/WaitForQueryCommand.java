@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -13,7 +14,7 @@ public class WaitForQueryCommand extends AbstractQueryCommand {
 	private long testPeriod;
 	private long maxWaitingTime;
 
-	public WaitForQueryCommand(ISession caller, String queryName, long testPeriod, long maxWaitingTime) {
+	public WaitForQueryCommand(ISession caller, Resource queryName, long testPeriod, long maxWaitingTime) {
 		super(caller, queryName);
 		this.testPeriod = testPeriod;
 		this.maxWaitingTime = maxWaitingTime;

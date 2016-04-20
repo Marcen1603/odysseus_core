@@ -181,7 +181,8 @@ public class IfController {
 			
 			Optional<String> optionalQDef = determineIfQDef(currentLine);
 			if (optionalQDef.isPresent()) {
-				Boolean value = existsQuery(optionalQDef.get(), caller);
+				Resource r = Resource.specialCreateResource(optionalQDef.get(), caller.getUser());
+				Boolean value = existsQuery(r, caller);
 				inIfClause.push(value);
 				LOG.trace("Stack: {}", inIfClause);
 
@@ -190,7 +191,8 @@ public class IfController {
 
 			Optional<String> optionalQNotDef = determineIfQNDef(currentLine);
 			if (optionalQNotDef.isPresent()) {
-				Boolean value = existsQuery(optionalQNotDef.get(), caller);
+				Resource r = Resource.specialCreateResource(optionalQNotDef.get(), caller.getUser());
+				Boolean value = existsQuery(r, caller);
 				inIfClause.push(!value);
 				return false;
 			}
@@ -268,8 +270,8 @@ public class IfController {
 		return Activator.getExecutor().containsViewOrStream(new Resource(caller.getUser(), sourceName), caller);
 	}
 
-	private static boolean existsQuery(String queryName, ISession caller) {
-		// TODO: Query Name within user context!!
+	private static boolean existsQuery(Resource queryName, ISession caller) {
+	
 		return Activator.getExecutor().getLogicalQueryByName(queryName , caller) != null;
 		///return Activator.getExecutor().getLogicalQueryByName(new Resource(caller.getUser(), queryName).toString(), caller) != null;
 	}

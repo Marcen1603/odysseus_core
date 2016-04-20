@@ -48,7 +48,7 @@ public class LogicalQueryViewData implements IQueryViewData {
 		parser = logicalQuery.getParserId();
 		username = logicalQuery.getUser().getUser().getName();
 		queryText = logicalQuery.getQueryText();
-		queryName = logicalQuery.getName();
+		queryName = logicalQuery.getName().toString();
 	}
 
 	@Override

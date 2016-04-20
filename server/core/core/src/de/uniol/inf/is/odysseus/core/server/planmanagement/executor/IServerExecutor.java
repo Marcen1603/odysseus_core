@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.security.auth.login.Configuration;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -266,7 +267,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @param queryID The query id for which the state should be retrieved
 	 * @return
 	 */
-	public QueryState getQueryState(String queryName);
+	public QueryState getQueryState(Resource queryName);
 
 	/**
 	 * Returns the current state of queries

@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -39,7 +40,7 @@ public interface IClientPlanManager{
 	 * @param queryName of the query to remove
 	 * @throws PlanManagementException
 	 */
-	public void removeQuery(String queryName, ISession caller) throws PlanManagementException;
+	public void removeQuery(Resource queryName, ISession caller) throws PlanManagementException;
 
 	/**
 	 * startQuery startet eine Anfrage.
@@ -49,7 +50,7 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	public void startQuery(int queryID, ISession caller) throws PlanManagementException;
-	public void startQuery(String queryName, ISession caller) throws PlanManagementException;
+	public void startQuery(Resource queryName, ISession caller) throws PlanManagementException;
 
 	/**
 	 * stopQuery stoppt eine Anfrage und entfernt sie
@@ -58,7 +59,7 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	public void stopQuery(int queryID, ISession caller) throws PlanManagementException;
-	public void stopQuery(String queryName, ISession caller) throws PlanManagementException;
+	public void stopQuery(Resource queryName, ISession caller) throws PlanManagementException;
 	
 	/**
 	 * suspend query (i.e. query execution is paused and can be resumed. element will be buffered!)
@@ -67,7 +68,7 @@ public interface IClientPlanManager{
 	 * @throws PlanManagementException
 	 */
 	public void suspendQuery(int queryID, ISession caller) throws PlanManagementException;
-	public void suspendQuery(String queryName, ISession caller) throws PlanManagementException;
+	public void suspendQuery(Resource queryName, ISession caller) throws PlanManagementException;
 	
 	/**
 	 * resume a suspended query (first all buffered elements are send)
@@ -77,7 +78,7 @@ public interface IClientPlanManager{
 	 */
 	
 	public void resumeQuery(int queryID, ISession caller) throws PlanManagementException;
-	public void resumeQuery(String queryName, ISession caller) throws PlanManagementException;
+	public void resumeQuery(Resource queryName, ISession caller) throws PlanManagementException;
 
 	/**
 	 * Set a query to query sharing mode
@@ -88,7 +89,7 @@ public interface IClientPlanManager{
 	 */
 	void partialQuery(int queryID, int sheddingFactor, ISession caller)
 			throws PlanManagementException;
-	void partialQuery(String queryName, int sheddingFactor, ISession caller)
+	void partialQuery(Resource queryName, int sheddingFactor, ISession caller)
 			throws PlanManagementException;
 
 }

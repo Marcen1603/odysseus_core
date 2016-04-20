@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
@@ -30,7 +31,7 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 	private Context context;
 	private List<IQueryBuildSetting<?>> addSettings;
 	private boolean startQueries;
-	private String identifier;
+	private Resource identifier;
 
 	public AddQueryCommand(String queryText, String parserID, ISession caller, String transCfgName, Context context,
 			List<IQueryBuildSetting<?>> addSettings, boolean startQueries) {
@@ -79,11 +80,11 @@ public class AddQueryCommand extends AbstractExecutorCommand {
 		return this.startQueries;
 	}
 
-	public String getIdentifier() {
+	public Resource getIdentifier() {
 		return this.identifier;
 	}
 
-	public void setIdentifier(String id) {
+	public void setIdentifier(Resource id) {
 		this.identifier = id;
 	}
 

@@ -804,7 +804,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public ILogicalQuery getLogicalQueryByName(String name, ISession session) {
+	public ILogicalQuery getLogicalQueryByName(Resource name, ISession session) {
 		// TODO: Check access rights
 		IPhysicalQuery pq = executionPlan.getQueryByName(name);
 		ILogicalQuery lq = null;
@@ -829,11 +829,11 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@Override
 	public QueryState getQueryState(String queryName, ISession session) {
 		// For local processing, currently no session is needed
-		return getQueryState(queryName);
+		return getQueryState(Resource.specialCreateResource(queryName, session.getUser()));
 	}
 
 	@Override
-	public QueryState getQueryState(String queryID) {
+	public QueryState getQueryState(Resource queryID) {
 		IPhysicalQuery pq = executionPlan.getQueryByName(queryID);
 		return getQueryState(pq);
 	}

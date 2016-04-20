@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
@@ -50,8 +51,8 @@ public class Sensor
 
 	public static void safeRemoveQuery(String queryName, ISession session)
 	{
-		if (executor.getLogicalQueryByName(queryName, session) != null)
-			executor.removeQuery(queryName, session);		
+		if (executor.getLogicalQueryByName(Resource.specialCreateResource(queryName,session.getUser()), session) != null)
+			executor.removeQuery(Resource.specialCreateResource(queryName,session.getUser()), session);		
 	}
 	
 	public static void safeAddQuery(String queryName, String queryText, ISession session)
@@ -64,7 +65,7 @@ public class Sensor
 			executor.addQuery(queryText, "OdysseusScript", session, Context.empty());
 		} catch (Exception e) {
 			try {
-				executor.removeQuery(queryName, session);
+				executor.removeQuery(Resource.specialCreateResource(queryName,session.getUser()), session);
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
@@ -103,7 +104,7 @@ public class Sensor
 		Collection<Integer> querys = executor.getLogicalQueryIds(session);		
 		for (int id : querys)
 		{
-			if (executor.getLogicalQueryById(id, session).getName().startsWith(queryNamePrefix)) {
+			if (executor.getLogicalQueryById(id, session).getName().toString().startsWith(queryNamePrefix)) {
 				try {
 					executor.removeQuery(id, session);
 				} catch (Exception e) {
@@ -147,7 +148,7 @@ public class Sensor
 	public void startLogging(ISession session, String directory, String loggingStyle)
 	{
 		String queryName = getLoggingQueryName(loggingStyle);		
-		if (executor.getLogicalQueryByName(queryName, session) != null) return;
+		if (executor.getLogicalQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session) != null) return;
 		
 		Map<String, String> loggingOptionsMap = new HashMap<>();
 		loggingOptionsMap.put("sensorXml", XmlMarshalHelper.toXml(config));

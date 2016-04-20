@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
@@ -58,7 +59,7 @@ public class LogicalQuery implements ILogicalQuery {
 	/**
 	 * Name of the query.
 	 */
-	private String name;
+	private Resource name;
 
 	/**
 	 * If available the text of the entered query
@@ -150,12 +151,12 @@ public class LogicalQuery implements ILogicalQuery {
 
 	
 	@Override
-	public String getName() {
+	public Resource getName() {
 		return name;
 	}
 	
 	@Override
-	public void setName(String name) {
+	public void setName(Resource name) {
 		this.name = name;
 	}
 	

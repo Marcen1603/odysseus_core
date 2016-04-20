@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StopQueryCommand;
@@ -25,7 +26,7 @@ public class StopQueryPreParserKeyword extends AbstractPreParserKeyword {
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
-		String name = parameter;
+		Resource name = Resource.specialCreateResource(parameter, caller.getUser());
 		List<IExecutorCommand> ret = new LinkedList<>();
 		ret.add(new StopQueryCommand(caller, name));
 		return ret;

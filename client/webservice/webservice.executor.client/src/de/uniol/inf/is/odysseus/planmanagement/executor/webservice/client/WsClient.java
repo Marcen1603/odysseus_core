@@ -325,7 +325,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void removeQuery(String queryName, ISession caller) throws PlanManagementException {
+	public void removeQuery(Resource queryName, ISession caller) throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
@@ -343,7 +343,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void startQuery(String queryName, ISession caller) throws PlanManagementException {
+	public void startQuery(Resource queryName, ISession caller) throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
@@ -361,7 +361,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void stopQuery(String queryName, ISession caller) throws PlanManagementException {
+	public void stopQuery(Resource queryName, ISession caller) throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
@@ -379,7 +379,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void suspendQuery(String queryName, ISession caller) throws PlanManagementException {
+	public void suspendQuery(Resource queryName, ISession caller) throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
@@ -397,7 +397,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void resumeQuery(String queryName, ISession caller) throws PlanManagementException {
+	public void resumeQuery(Resource queryName, ISession caller) throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
@@ -407,7 +407,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public void partialQuery(String queryName, int sheddingFactor, ISession caller) throws PlanManagementException {
+	public void partialQuery(Resource queryName, int sheddingFactor, ISession caller) throws PlanManagementException {
 		throw new PlanManagementException("Currently not implemented");
 	}
 
@@ -635,11 +635,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public ILogicalQuery getLogicalQueryByName(String name, ISession caller) {
+	public ILogicalQuery getLogicalQueryByName(Resource name, ISession caller) {
 		assureLogin(caller);
 		try {
+			// Avoid sending Resource over the web-Service
 			QueryResponse resp = getWebserviceServer(caller.getConnectionName())
-					.getLogicalQueryByName(caller.getToken(), name);
+					.getLogicalQueryByName(caller.getToken(), name.toString());
 			return createLogicalQueryFromInfo(resp.getResponseValue(), resp.getQueryState(), caller);
 		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);
@@ -662,7 +663,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
 		query.setUser(caller);
-		query.setName(info.getName());
+		query.setName(Resource.specialCreateResource(info.getName(),caller.getUser()));
 
 		return query;
 	}

@@ -188,8 +188,9 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The current user
 	 * @return the logical query
 	 */
-	public ILogicalQuery getLogicalQueryByName(String name, ISession session);
+	public ILogicalQuery getLogicalQueryByName(Resource name, ISession session);
 
+	
 	/**
 	 * Returns all IDs of all logical queries for the given user
 	 * 
@@ -595,5 +596,6 @@ public interface IExecutor extends IClientPlanManager {
 			ISession caller);
 
 	public Collection<String> getUdfs();
+
 
 }

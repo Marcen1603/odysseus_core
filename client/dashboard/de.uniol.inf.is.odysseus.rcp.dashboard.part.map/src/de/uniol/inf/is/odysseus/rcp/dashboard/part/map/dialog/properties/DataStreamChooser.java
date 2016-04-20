@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -198,7 +199,7 @@ public class DataStreamChooser extends Composite {
 		List<String> queryNames = Lists.newArrayList();
 		for (Integer queryId : queryIds) {
 			ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
-			queryNames.add(query.getName() != null ? query.getName() : query.getQueryText());
+			queryNames.add(query.getName() != null ? query.getName().toString() : query.getQueryText());
 		}
 
 		return queryNames.toArray(new String[queryNames.size()]);

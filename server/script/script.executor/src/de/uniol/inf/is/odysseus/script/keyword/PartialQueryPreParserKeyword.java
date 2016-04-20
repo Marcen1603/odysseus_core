@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.PartialQueryCommand;
@@ -26,7 +27,7 @@ public class PartialQueryPreParserKeyword extends AbstractPreParserKeyword {
 			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		String[] para = getSimpleParameters(parameter);
-		String name = para[0];
+		Resource name = Resource.specialCreateResource(para[0], caller.getUser());
 		int shedding = Integer.parseInt(para[1]);
 		List<IExecutorCommand> ret = new LinkedList<>();
 		ret.add(new PartialQueryCommand(caller, name, shedding));

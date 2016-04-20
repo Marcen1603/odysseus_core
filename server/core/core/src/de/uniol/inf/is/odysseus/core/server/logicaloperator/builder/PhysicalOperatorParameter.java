@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
-public class PhysicalOperatorParameter extends
-		AbstractParameter<IPhysicalOperator> {
+public class PhysicalOperatorParameter extends AbstractParameter<IPhysicalOperator> {
 
 	private static final long serialVersionUID = 5085997007957491203L;
 
@@ -29,8 +29,7 @@ public class PhysicalOperatorParameter extends
 		}
 		IPhysicalOperator op = findOperator(queryName, operatorName);
 		if (op == null) {
-			throw new ParameterException("Cannot find " + operatorName
-					+ " in query " + queryName);
+			throw new ParameterException("Cannot find " + operatorName + " in query " + queryName);
 		}
 		setValue(op);
 	}
@@ -38,11 +37,10 @@ public class PhysicalOperatorParameter extends
 	private IPhysicalOperator findOperator(String queryName, String opName) {
 		IServerExecutor executor = getServerExecutor();
 
-		IPhysicalQuery query = executor.getExecutionPlan().getQueryByName(
-				queryName);
+		IPhysicalQuery query = executor.getExecutionPlan()
+				.getQueryByName(Resource.specialCreateResource(queryName, getCaller().getUser()));
 		if (query == null) {
-			throw new ParameterException("Query with name " + queryName
-					+ " not found for operator ");
+			throw new ParameterException("Query with name " + queryName + " not found for operator ");
 		}
 
 		IPhysicalOperator op = null;
@@ -51,8 +49,7 @@ public class PhysicalOperatorParameter extends
 		} else {
 			List<IPhysicalOperator> roots = query.getRoots();
 			if (roots.size() > 1) {
-				throw new ParameterException("Query " + queryName
-						+ " contains multiple sinks! Must use name option");
+				throw new ParameterException("Query " + queryName + " contains multiple sinks! Must use name option");
 			}
 			op = roots.get(0);
 		}

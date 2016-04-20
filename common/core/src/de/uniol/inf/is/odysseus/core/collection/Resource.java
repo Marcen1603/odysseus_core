@@ -113,6 +113,26 @@ public class Resource implements Serializable, Comparable<Resource> {
 		return true;
 	}
 
+	/**
+	 * 
+	 * This method first tries to create a resource from the resource parameter
+	 * If no "." is contained, the given user will be added
+	 * 
+	 * @param resource
+	 * @param user
+	 * @return
+	 */
+	public static final Resource specialCreateResource(String resource, IUser user){
+		// Not nescessary!
+//		if (Resource.containsUser(user, resource)){
+//			return new Resource(resource);
+//		}
+		if (resource.contains(".")){
+			return new Resource(resource);
+		}
+		return new Resource(user, resource);
+	}
+	
 	public static void main(String[] args) {
 		Resource test = new Resource("test1.test2.test3");
 		System.out.println(test.getUser());

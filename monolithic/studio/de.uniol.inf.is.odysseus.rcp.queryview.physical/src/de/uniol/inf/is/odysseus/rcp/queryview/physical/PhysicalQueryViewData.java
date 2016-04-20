@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.queryview.physical;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 
 public class PhysicalQueryViewData implements IQueryViewData {
@@ -32,14 +33,14 @@ public class PhysicalQueryViewData implements IQueryViewData {
 
 	private String status;
 
-	public PhysicalQueryViewData(int id, String status, int priority, String parserId, String userName, String queryText, String queryName, long queryStartTS) {
+	public PhysicalQueryViewData(int id, String status, int priority, String parserId, String userName, String queryText, Resource queryName, long queryStartTS) {
 		this.id = id;
 		this.status = Strings.isNullOrEmpty(status) ? UNKNOWN_TEXT : status;
 		this.priority = priority;
 		this.parserId = Strings.isNullOrEmpty(parserId) ? UNKNOWN_TEXT : parserId;
 		this.userName = Strings.isNullOrEmpty(userName) ? UNKNOWN_TEXT : userName;
 		this.queryText = Strings.isNullOrEmpty(queryText) ? UNKNOWN_TEXT : queryText;
-		this.queryName = Strings.isNullOrEmpty(queryName) ? "" : queryName;
+		this.queryName = queryName == null ? "" : queryName.toString();
 		this.queryStartTS = queryStartTS;
 	}
 
