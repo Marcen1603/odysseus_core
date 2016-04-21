@@ -277,7 +277,8 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 		}
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		List<T> resultList = new LinkedList<T>();
-		for (int i = 0; i < k && iter.hasNext(); i++) {
+		int limit = k<=0?topK.size():k;
+		for (int i = 0; i < limit && iter.hasNext(); i++) {
 			SerializablePair<Double, T> next = iter.next();		
 			T out;
 			if (addScore){
