@@ -62,7 +62,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 				while (sources.size() > 0) {
 					updateSources();
 					// Need to delay some time to catch an open
-					delay(10);
+					//delay(10);
 					boolean processableSources = processSources();
 					updateSources();
 					if (!processableSources) {
