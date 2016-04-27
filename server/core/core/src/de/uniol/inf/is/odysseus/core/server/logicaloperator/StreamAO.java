@@ -73,7 +73,6 @@ public class StreamAO extends AbstractLogicalOperator {
 		return streamname;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (schema != null) {

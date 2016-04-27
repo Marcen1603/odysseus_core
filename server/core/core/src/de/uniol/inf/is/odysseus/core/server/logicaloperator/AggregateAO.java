@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -107,7 +106,6 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 
 	public void addAggregation(List<SDFAttribute> attributes,
 			AggregateFunction function, SDFAttribute outAttribute) {
-		@SuppressWarnings("unchecked")
 		SDFSchema schema = SDFSchemaFactory.createNewSchema("",
 				Tuple.class, attributes);
 		addAggregation(schema, function, outAttribute);
@@ -221,7 +219,6 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		return new AggregateAO(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema outputSchema;

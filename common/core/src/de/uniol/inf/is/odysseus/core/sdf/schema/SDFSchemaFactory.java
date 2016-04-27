@@ -82,7 +82,6 @@ public class SDFSchemaFactory {
 
 	static public SDFSchema createNewTupleSchema(String uri,
 			Collection<SDFAttribute> attributes) {
-		@SuppressWarnings("unchecked")
 		SDFSchema out = new SDFSchema(uri,
 				Tuple.class, attributes);
 		return out;
@@ -111,7 +110,6 @@ public class SDFSchemaFactory {
 
 	static public SDFSchema createNewTupleSchema(String uri,
 			SDFAttribute... attributes) {
-		@SuppressWarnings("unchecked")
 		SDFSchema out = new SDFSchema(uri,
 				Tuple.class,
 				Arrays.asList(attributes));

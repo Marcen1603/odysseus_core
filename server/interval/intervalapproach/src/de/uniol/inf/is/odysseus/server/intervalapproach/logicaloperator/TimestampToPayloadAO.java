@@ -55,7 +55,6 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		return this.attributes;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 

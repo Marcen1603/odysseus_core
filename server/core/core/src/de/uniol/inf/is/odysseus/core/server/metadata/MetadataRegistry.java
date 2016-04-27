@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

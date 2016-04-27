@@ -1493,7 +1493,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		if (type == null) {
 			type = Tuple.class;
 		}
-		@SuppressWarnings("unchecked")
 		SDFSchema outputSchema = SDFSchemaFactory.createNewSchema(name, type, attributes);
 
 		Map<String, String> options = new HashMap<>();
