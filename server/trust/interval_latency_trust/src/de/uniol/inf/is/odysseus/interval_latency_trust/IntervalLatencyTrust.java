@@ -59,7 +59,7 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	
 	public IntervalLatencyTrust(IntervalLatencyTrust clone) {
 		this.timeInterval = (ITimeInterval) clone.timeInterval.clone();
-		this.latency = clone.latency.clone();
+		this.latency = (ILatency) clone.latency.clone();
 		this.trust = clone.trust;
 	}
 	

@@ -15,7 +15,7 @@ public interface ISystemLoad extends IMetaAttribute {
 	SystemLoadEntry getSystemLoad(String name);
 	void insert(ISystemLoad other);
 
-	@Override
-	public ISystemLoad clone();
+//	@Override
+//	public ISystemLoad clone();
 	
 }

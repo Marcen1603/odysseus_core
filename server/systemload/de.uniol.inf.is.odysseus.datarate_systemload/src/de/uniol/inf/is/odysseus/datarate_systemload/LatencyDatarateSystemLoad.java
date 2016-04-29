@@ -48,9 +48,9 @@ final public class LatencyDatarateSystemLoad extends AbstractCombinedMetaAttribu
 	}
 
 	public LatencyDatarateSystemLoad(LatencyDatarateSystemLoad other) {
-		datarate = other.datarate.clone();
-		latency = other.latency.clone();
-		systemload = other.systemload.clone();
+		datarate = (IDatarate) other.datarate.clone();
+		latency = (ILatency) other.latency.clone();
+		systemload = (ISystemLoad) other.systemload.clone();
 	}
 
 	@Override

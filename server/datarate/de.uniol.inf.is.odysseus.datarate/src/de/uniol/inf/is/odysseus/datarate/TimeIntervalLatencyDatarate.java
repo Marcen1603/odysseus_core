@@ -53,8 +53,8 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 
 	public TimeIntervalLatencyDatarate(TimeIntervalLatencyDatarate other) {
 		timeInterval = (ITimeInterval) other.timeInterval.clone();
-		latency = other.latency.clone();
-		datarate = other.datarate.clone();
+		latency = (ILatency) other.latency.clone();
+		datarate = (IDatarate) other.datarate.clone();
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class SystemLoadToPayloadPO<M extends ISystemLoad, T extends Tuple<M>>
 		out.setAttribute(inputSize + 1, object.getMetadata().getMemLoad(loadname));
 		out.setAttribute(inputSize + 2, object.getMetadata().getNetLoad(loadname));
 
-		out.setMetadata(object.getMetadata().clone());
+		out.setMetadata((ISystemLoad) object.getMetadata().clone());
 		out.setRequiresDeepClone(object.requiresDeepClone());
 		transfer((T) out);
 	}

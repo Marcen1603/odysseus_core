@@ -46,8 +46,8 @@ final public class DatarateSystemLoad extends AbstractCombinedMetaAttribute impl
 	}
 
 	public DatarateSystemLoad(DatarateSystemLoad other) {
-		systemload = other.systemload.clone();
-		datarate = other.datarate.clone();
+		systemload = (ISystemLoad) other.systemload.clone();
+		datarate = (IDatarate) other.datarate.clone();
 	}
 
 	@Override

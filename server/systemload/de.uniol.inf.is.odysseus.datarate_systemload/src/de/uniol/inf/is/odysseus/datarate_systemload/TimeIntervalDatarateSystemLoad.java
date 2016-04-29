@@ -55,8 +55,8 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 
 	public TimeIntervalDatarateSystemLoad(TimeIntervalDatarateSystemLoad other) {
 		timeInterval = (ITimeInterval) other.timeInterval.clone();
-		datarate = other.datarate.clone();
-		systemload = other.systemload.clone();
+		datarate = (IDatarate) other.datarate.clone();
+		systemload = (ISystemLoad) other.systemload.clone();
 	}
 
 	@Override

@@ -40,8 +40,8 @@ final public class LatencySystemLoad extends AbstractCombinedMetaAttribute imple
 	}
 
 	public LatencySystemLoad(LatencySystemLoad other) {
-		latency = other.latency.clone();
-		systemload = other.systemload.clone();
+		latency = (ILatency) other.latency.clone();
+		systemload = (ISystemLoad) other.systemload.clone();
 	}
 
 	@Override

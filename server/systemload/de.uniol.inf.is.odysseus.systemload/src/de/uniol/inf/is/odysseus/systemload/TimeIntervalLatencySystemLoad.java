@@ -50,8 +50,8 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 
 	public TimeIntervalLatencySystemLoad(TimeIntervalLatencySystemLoad copy) {
 		timeInterval = (ITimeInterval) copy.timeInterval.clone();
-		latency = copy.latency.clone();
-		systemload = copy.systemload.clone();
+		latency = (ILatency) copy.latency.clone();
+		systemload = (ISystemLoad) copy.systemload.clone();
 	}
 
 	@Override

@@ -7,6 +7,6 @@ public interface IDatarate extends IMetaAttribute {
 	public void setDatarate( double datarate );
 	public double getDatarate();
 	
-	@Override
-	public IDatarate clone();
+//	@Override
+//	public IDatarate clone();
 }

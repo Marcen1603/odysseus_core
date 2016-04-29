@@ -46,7 +46,7 @@ public interface IProbabilistic extends IMetaAttribute, IClone {
      * 
      * {@inheritDoc}
      */
-    @Override
-    IProbabilistic clone();
+//    @Override
+//    IProbabilistic clone();
 
 }

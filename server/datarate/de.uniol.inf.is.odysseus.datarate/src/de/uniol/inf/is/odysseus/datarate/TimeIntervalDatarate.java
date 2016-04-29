@@ -44,7 +44,7 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 	
 	public TimeIntervalDatarate(TimeIntervalDatarate other) {
 		timeInterval = (ITimeInterval) other.timeInterval.clone();
-		datarate = other.datarate.clone();
+		datarate = (IDatarate) other.datarate.clone();
 	}
 
 	@Override

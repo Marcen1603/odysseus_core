@@ -60,7 +60,7 @@ public class LatencyToPayloadPO<M extends ILatency, T extends Tuple<M>> extends
 			out.setAttribute(inputSize + 4, object.getMetadata()
 					.getMaxLatency());
 		}
-		out.setMetadata(object.getMetadata().clone());
+		out.setMetadata((ILatency) object.getMetadata().clone());
 		out.setRequiresDeepClone(object.requiresDeepClone());
 		transfer((T) out);
 

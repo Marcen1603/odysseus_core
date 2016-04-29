@@ -45,7 +45,7 @@ final public class TimeIntervalSystemLoad extends AbstractCombinedMetaAttribute 
 
 	public TimeIntervalSystemLoad(TimeIntervalSystemLoad copy) {
 		timeInterval = (ITimeInterval) copy.timeInterval.clone();
-		systemload = copy.systemload.clone();
+		systemload = (ISystemLoad) copy.systemload.clone();
 	}
 
 	@Override

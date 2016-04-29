@@ -41,7 +41,7 @@ public interface IQuality extends IMetaAttribute {
      *
      * {@inheritDoc}
      */
-    @Override
-    IQuality clone();
+//    @Override
+//    IQuality clone();
 
 }

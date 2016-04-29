@@ -41,8 +41,8 @@ final public class LatencyDatarate extends AbstractCombinedMetaAttribute impleme
 	}
 	
 	public LatencyDatarate( LatencyDatarate other ) {
-		latency = other.latency.clone();
-		datarate = other.datarate.clone();
+		latency = (ILatency) other.latency.clone();
+		datarate = (IDatarate) other.datarate.clone();
 	}
 	
 	@Override

@@ -28,7 +28,7 @@ public interface ILatency extends IMetaAttribute{
 	long getMaxLatency();
 	long getLatencyEnd();
 	long getLatency();
-	@Override
-	ILatency clone();
+//	@Override
+//	ILatency clone();
 	long getMaxLatencyStart();
 }
