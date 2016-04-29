@@ -78,7 +78,7 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	 *            The object to copy from
 	 */
 	public ProbabilisticTimeInterval(final ProbabilisticTimeInterval copy) {
-		timeInterval = copy.timeInterval.clone();
+		timeInterval = (ITimeInterval) copy.timeInterval.clone();
 		probabilistic = copy.probabilistic.clone();
 	}
 

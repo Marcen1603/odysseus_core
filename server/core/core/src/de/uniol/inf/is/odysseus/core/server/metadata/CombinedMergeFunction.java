@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 
-class CombinedMergeFunction<T extends IClone> implements
+class CombinedMergeFunction<T extends IMetaAttribute> implements
 		IMetadataMergeFunction<T>, IClone {
 
 	protected static Logger _logger = null;
@@ -80,7 +80,7 @@ class CombinedMergeFunction<T extends IClone> implements
 	public T mergeMetadata(T left, T right) {
 		T mergedData;
 		try {
-			mergedData = (T) left.getClass().newInstance();
+			mergedData = (T) left.createInstance();
 
 			for (IInlineMetadataMergeFunction<? super T> func : mergeFunctions) {
 				func.mergeInto(mergedData, left, right);

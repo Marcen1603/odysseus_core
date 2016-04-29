@@ -23,6 +23,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 public interface IMetaAttribute extends IClone, Serializable {
+
+	IMetaAttribute createInstance();
+	
 	/**
 	 * In this concrete implementation: What meta data types are contained
 	 * @return

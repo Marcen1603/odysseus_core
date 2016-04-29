@@ -52,8 +52,8 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 	}
 
 	public IntervalTrust(IntervalTrust other) {
-		this.trust = other.trust.clone();
-		this.timeInterval = other.timeInterval.clone();
+		this.trust = (ITrust) other.trust.clone();
+		this.timeInterval = (ITimeInterval) other.timeInterval.clone();
 	}
 
 	@Override

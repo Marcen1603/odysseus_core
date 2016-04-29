@@ -51,7 +51,7 @@ public class RelationalTimestampToPayloadPO extends
 		} else {
 			out.setAttribute(inputSize+1,object.getMetadata().getEnd().getMainPoint());
 		}
-		out.setMetadata(object.getMetadata().clone());
+		out.setMetadata((ITimeInterval)object.getMetadata().clone());
 		out.setRequiresDeepClone(object.requiresDeepClone());
 		transfer(out);
 	}

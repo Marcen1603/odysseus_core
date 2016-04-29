@@ -172,7 +172,7 @@ public class FaceDetectorPO
 			Tuple<? extends ITimeInterval> object) {
 		Tuple<ITimeInterval> tuple = new Tuple<>(1, false);
 		tuple.setAttribute(0, img);
-		tuple.setMetadata(object.getMetadata().clone());
+		tuple.setMetadata((ITimeInterval)object.getMetadata().clone());
 		this.transfer(tuple);
 	}
 

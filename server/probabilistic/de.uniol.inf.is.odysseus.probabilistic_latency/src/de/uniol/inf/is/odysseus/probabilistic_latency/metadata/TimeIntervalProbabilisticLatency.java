@@ -86,7 +86,7 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 	 */
 	public TimeIntervalProbabilisticLatency(
 			final TimeIntervalProbabilisticLatency clone) {
-		this.timeInterval = clone.timeInterval.clone();
+		this.timeInterval = (ITimeInterval) clone.timeInterval.clone();
 		this.latency = clone.latency.clone();
 		this.probabilistic = clone.probabilistic.clone();
 	}

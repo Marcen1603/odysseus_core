@@ -71,7 +71,7 @@ final public class IntervalLatency extends AbstractCombinedMetaAttribute impleme
 	}
 	
 	public IntervalLatency(IntervalLatency clone) {
-		this.timeInterval = clone.timeInterval.clone();
+		this.timeInterval = (ITimeInterval) clone.timeInterval.clone();
 		this.latency = clone.latency.clone();
 	}
 	

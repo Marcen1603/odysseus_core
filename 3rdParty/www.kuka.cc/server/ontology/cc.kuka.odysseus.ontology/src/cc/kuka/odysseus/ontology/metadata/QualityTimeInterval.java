@@ -54,7 +54,7 @@ public class QualityTimeInterval extends AbstractCombinedMetaAttribute implement
 
     public QualityTimeInterval(final QualityTimeInterval copy) {
         super();
-        this.timeInterval = copy.timeInterval.clone();
+        this.timeInterval = (ITimeInterval) copy.timeInterval.clone();
         this.quality = copy.quality.clone();
     }
 

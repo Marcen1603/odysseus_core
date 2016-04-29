@@ -7,6 +7,6 @@ public interface ITrust extends IMetaAttribute {
 	void setTrust(double trustValue);
 	double getTrust();
 
-	@Override
-	ITrust clone();
+//	@Override
+//	ITrust clone();
 }

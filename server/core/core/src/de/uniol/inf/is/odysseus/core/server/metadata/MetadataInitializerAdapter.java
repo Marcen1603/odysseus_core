@@ -26,7 +26,7 @@ public class MetadataInitializerAdapter<M extends IMetaAttribute, T extends IStr
 			return null;
 		}
 		
-		return (M) type.getClass().newInstance();
+		return (M) type.createInstance();
 	}
 
 	@Override

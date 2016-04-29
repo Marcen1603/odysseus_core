@@ -63,7 +63,7 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 
 	public TimeIntervalLatencyDatarateSystemLoad(
 			TimeIntervalLatencyDatarateSystemLoad other) {
-		timeInterval = other.timeInterval.clone();
+		timeInterval = (ITimeInterval) other.timeInterval.clone();
 		latency = other.latency.clone();
 		datarate = other.datarate.clone();
 		systemload = other.systemload.clone();

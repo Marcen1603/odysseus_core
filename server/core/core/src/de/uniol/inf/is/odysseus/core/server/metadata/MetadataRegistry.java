@@ -27,6 +27,10 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.GenericCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
@@ -40,8 +44,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 public class MetadataRegistry {
 
-	private static Logger logger = LoggerFactory
+	final private static Logger logger = LoggerFactory
 			.getLogger(MetadataRegistry.class);
+	
+	final private static InfoService info = InfoServiceFactory.getInfoService(MetadataRegistry.class);
 	
 	private static Map<SortedSet<String>, IMetaAttribute> combinedMetadataTypes = new HashMap<>();
 
@@ -90,8 +96,30 @@ public class MetadataRegistry {
 		synchronized (combinedMetadataTypes) {
 			IMetaAttribute type = combinedMetadataTypes.get(types);
 			if (type == null) {
-				throw new IllegalArgumentException("No metadata type for: "
-						+ types.toString());
+				logger.warn("No predefined type for "+types+". Creating generic one. Could have lower performance.");
+				info.warning("No predefined type for "+types+". Creating generic one. Could have lower performance.");				
+				List<IMetaAttribute> metaDataTypes = new ArrayList<>();
+				List<Class<? extends IMetaAttribute>> classList = new ArrayList<>();
+				for (String t:types){
+					IMetaAttribute mt = getMetadataType(t);
+					if (mt instanceof AbstractCombinedMetaAttribute){
+						// TODO Handle
+						throw new IllegalArgumentException("Cannot use generic metadata with "+mt+". Add Basetypes instead");
+					}else{
+						metaDataTypes.add(mt);
+					}
+					for (Class<? extends IMetaAttribute> c:mt.getClasses()){
+						classList.add(c);
+					}
+				}
+				
+				
+				Object gen = GenericCombinedMetaAttribute.newInstance(classList, metaDataTypes);
+				type = (IMetaAttribute) gen;
+				combinedMetadataTypes.put(types,type);
+				
+//				throw new IllegalArgumentException("No metadata type for: "
+//						+ types.toString());
 			}
 			return type;
 		}

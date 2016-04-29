@@ -49,7 +49,7 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 	}
 
 	public TimeIntervalLatencySystemLoad(TimeIntervalLatencySystemLoad copy) {
-		timeInterval = copy.timeInterval.clone();
+		timeInterval = (ITimeInterval) copy.timeInterval.clone();
 		latency = copy.latency.clone();
 		systemload = copy.systemload.clone();
 	}

@@ -192,7 +192,7 @@ public class TreeFlattenerPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 			if (outList != null && outList.size() > 0) {
 				Tuple<ITimeInterval> out = new Tuple<>(root);
 				out = out.append(outList);
-				out.setMetadata(object.getMetadata().clone());
+				out.setMetadata((ITimeInterval)object.getMetadata().clone());
 				transfer(out);
 			}
 		}

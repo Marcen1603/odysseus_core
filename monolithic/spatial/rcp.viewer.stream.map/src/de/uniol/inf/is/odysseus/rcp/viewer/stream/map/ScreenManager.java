@@ -337,7 +337,7 @@ public class ScreenManager {
 
 	public void setMaxIntervalStart(PointInTime maxIntervalStart) {
 		PointInTime oldMaxIntervalStart = this.maxInterval.getStart();
-		ITimeInterval oldInterval = this.maxInterval.clone();
+		ITimeInterval oldInterval = (ITimeInterval) this.maxInterval.clone();
 		this.maxInterval.setStart(maxIntervalStart);
 		if (this.interval.getStart().before(maxIntervalStart)) {
 			// If the puffer deleted something, we have to update the interval
@@ -354,7 +354,7 @@ public class ScreenManager {
 	}
 
 	public void setMaxIntervalEnd(PointInTime maxIntervalEnd) {
-		ITimeInterval oldInterval = this.maxInterval.clone();
+		ITimeInterval oldInterval = (ITimeInterval) this.maxInterval.clone();
 		if (maxIntervalEnd.before(this.maxInterval.getStart()))
 			this.setMaxIntervalStart(maxIntervalEnd);
 		if (this.interval.getStart().getMainPoint() == 0) {
