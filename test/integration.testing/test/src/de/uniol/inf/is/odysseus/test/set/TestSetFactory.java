@@ -164,7 +164,7 @@ public class TestSetFactory {
 
 	private static Pair<String, String> parseTupleString(String line) {
 		String[] parts = line.split(Pattern.quote("| META |"));
-		Pair<String, String> pair = new Pair<String, String>(parts[0].trim(), parts.length > 1?parts[1].trim():"");
+		Pair<String, String> pair = new Pair<String, String>(parts[0].trim(), parts.length >= 1 ?parts[1].trim():"");
 		return pair;
 	}
 
