@@ -82,7 +82,7 @@ public class AggregationFunctionRegistry {
 			}
 		}
 
-		throw new QueryParseException("Could not find function " + functionName);
+		throw new QueryParseException("Could not find function " + functionName+ " with paramterset "+value);
 	}
 
 }
