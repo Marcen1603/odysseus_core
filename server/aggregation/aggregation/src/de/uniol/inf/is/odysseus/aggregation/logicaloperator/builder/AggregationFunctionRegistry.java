@@ -33,31 +33,37 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
  */
 public class AggregationFunctionRegistry {
 
-	private static AggregationFunctionRegistry INSTANCE = new AggregationFunctionRegistry();
+	// Removed to allow declarative services
+//	private static AggregationFunctionRegistry INSTANCE = new AggregationFunctionRegistry();
+//
+//	private static AggregationFunctionRegistry getInstance() {
+//		return INSTANCE;
+//	}
 
-	public static AggregationFunctionRegistry getInstance() {
-		return INSTANCE;
-	}
+	static private final Multimap<String, IAggregationFunctionFactory> functionFactories = ArrayListMultimap.create();
 
-	private final Multimap<String, IAggregationFunctionFactory> functionFactories = ArrayListMultimap.create();
-
-	private AggregationFunctionRegistry() {
+	// Must be public for service
+	public AggregationFunctionRegistry() {
 	}
 
 	public void addFunction(final IAggregationFunctionFactory function) {
-		functionFactories.put(function.getFunctionName(), function);
+		functionFactories.put(function.getFunctionName().toUpperCase(), function);
+	}
+	
+	public void removeFunction(final IAggregationFunctionFactory function){
+		functionFactories.remove(function.getFunctionName().toUpperCase(), function);
 	}
 
-	public void addFunction(final String name, final IAggregationFunctionFactory function) {
-		functionFactories.put(name, function);
-	}
+//	public void addFunction(final String name, final IAggregationFunctionFactory function) {
+//		functionFactories.put(name, function);
+//	}
 
 	/**
 	 * @param value
 	 * @param iAttributeResolver
 	 * @return
 	 */
-	public IAggregationFunction createFunction(final Map<String, Object> value,
+	static public IAggregationFunction createFunction(final Map<String, Object> value,
 			final IAttributeResolver attributeResolver) {
 
 		final String functionName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(value,
@@ -68,7 +74,7 @@ public class AggregationFunctionRegistry {
 					"Could not find parameter '" + AggregationFunctionParseOptionsHelper.FUNCTION_NAME + "'.");
 		}
 
-		final Collection<IAggregationFunctionFactory> matchingFunctions = functionFactories.get(functionName);
+		final Collection<IAggregationFunctionFactory> matchingFunctions = functionFactories.get(functionName.toUpperCase());
 
 		for (final IAggregationFunctionFactory candidate : matchingFunctions) {
 			if (candidate.checkParameters(value, attributeResolver)) {

@@ -30,17 +30,17 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		AggregationFunctionRegistry.getInstance().addFunction(new Avg<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new Count<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new DistinctNest<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new DistinctCount<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new Nest<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new Sum<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new TopK<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new Trigger<>());
-		AggregationFunctionRegistry.getInstance().addFunction(new MinMax<>(false));
-		AggregationFunctionRegistry.getInstance().addFunction(new MinMax<>(true));
-		AggregationFunctionRegistry.getInstance().addFunction(new Variance<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new Avg<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new Count<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new DistinctNest<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new DistinctCount<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new Nest<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new Sum<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new TopK<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new Trigger<>());
+//		AggregationFunctionRegistry.getInstance().addFunction(new MinMax<>(false));
+//		AggregationFunctionRegistry.getInstance().addFunction(new MinMax<>(true));
+//		AggregationFunctionRegistry.getInstance().addFunction(new Variance<>());
 	}
 
 	/*
