@@ -14,3 +14,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.transform,
  fastutil;bundle-version="7.0.2",
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0"
+Service-Component: OSGI-INF/*
+Export-Package: de.uniol.inf.is.odysseus.aggregation,
+ de.uniol.inf.is.odysseus.aggregation.functions

@@ -44,7 +44,7 @@ public class AggregationItemParameter extends AbstractParameter<IAggregationFunc
 		if (inputValue instanceof Map) {
 			@SuppressWarnings("unchecked")
 			final Map<String, Object> value = (Map<String, Object>) inputValue;
-			final IAggregationFunction function = AggregationFunctionRegistry.getInstance().createFunction(value,
+			final IAggregationFunction function = AggregationFunctionRegistry.createFunction(value,
 					getAttributeResolver());
 			setValue(function);
 			return;
