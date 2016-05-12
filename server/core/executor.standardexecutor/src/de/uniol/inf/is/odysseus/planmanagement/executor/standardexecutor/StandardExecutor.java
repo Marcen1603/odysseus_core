@@ -846,11 +846,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				newSettings.add(overwrite);
 			}
 		}
-
+		
 		if (context == null) {
 			context = Context.empty();
 		}
 
+		
 		@SuppressWarnings("unchecked")
 		List<String> activeRules = (ArrayList<String>) context.get("ACTIVATEREWRITERULE");
 		@SuppressWarnings("unchecked")
@@ -924,11 +925,17 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		config.setExecutor(this);
 		config.getTransformationConfiguration().setOption(IServerExecutor.class.getName(), this);
 
+		if (context.containsKey("NO_METADATA")){
+			config.getTransformationConfiguration().setOption("NO_METADATA", "true");
+			config.getTransformationConfiguration().removeTypes();
+		}
+		
 		for (IQueryBuildSetting<?> iQueryBuildSetting : newSettings) {
 			config.getTransformationConfiguration().setOption(iQueryBuildSetting.getClass().getName(),
 					iQueryBuildSetting);
 		}
 
+		
 		config = validateBuildParameters(config);
 
 		return config;

@@ -171,7 +171,7 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 			for (String metadataName : metadataNames) {
 				Optional<IMetaAttribute> metaAttribute = tryGetMetaAttribute(metadataName);
 				if (metaAttribute.isPresent() && metadataType.equals(metaAttribute.get().getClass())) {
-					sb.append("#METADATA " + metadataName).append("\n");
+					sb.append("#NOMETADATA " + metadataName).append("\n");
 					break;
 				}
 			}

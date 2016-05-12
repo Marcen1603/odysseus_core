@@ -21,6 +21,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ConfigPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MaxSheddingFactorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MetadataPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.NoMetadataPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.OptimizePredicatesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
@@ -52,6 +53,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(ConfigPreParserKeyword.KEYWORD, ConfigPreParserKeyword.class);
 		//keywords.put(IncludePreParserKeyword.KEYWORD, IncludePreParserKeyword.class);
 		keywords.put(MetadataPreParserKeyword.METADATA, MetadataPreParserKeyword.class);
+		keywords.put(NoMetadataPreParserKeyword.NO_METADATA, NoMetadataPreParserKeyword.class);
 		keywords.put(TrafoOptionPreParserKeyword.TRAFOOPTION, TrafoOptionPreParserKeyword.class);
 		keywords.put(QueryPriorityPreParserKeyword.NAME, QueryPriorityPreParserKeyword.class);
 		keywords.put(MaxSheddingFactorPreParserKeyword.SHEDDING_FACTOR_NAME, MaxSheddingFactorPreParserKeyword.class);

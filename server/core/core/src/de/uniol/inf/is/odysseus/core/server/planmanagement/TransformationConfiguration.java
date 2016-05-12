@@ -124,4 +124,8 @@ public class TransformationConfiguration {
 		
 		metaTypes.addAll(types);
 	}
+	
+	public void removeTypes(){
+		metaTypes.clear();
+	}
 }

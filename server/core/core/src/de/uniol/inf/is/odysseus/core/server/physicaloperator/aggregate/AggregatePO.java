@@ -316,12 +316,14 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 		if (paList == null) {
 			// Create init version of partial aggregates
 			paList = calcInit(object);
-			paList.setMetadata((M) object.getMetadata().clone());
+			if (object.getMetadata() != null) {
+				paList.setMetadata((M) object.getMetadata().clone());
+			}
 			groups.put(groupID, paList);
 		} else {
 			// Merge current object with partial aggregates
 			calcMerge(paList, object, false);
-			if (metadataMerge != null) {
+			if (metadataMerge != null && object.getMetadata() != null) {
 				M newMeta = metadataMerge.mergeMetadata(paList.getMetadata(), object.getMetadata());
 				paList.setMetadata(newMeta);
 			}

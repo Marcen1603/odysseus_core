@@ -81,12 +81,14 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		if (inputPO == null) {
 			inputPO = createInputPO(operator, config);
 		} else {
-			Class<? extends IMetaAttribute>[] opMT = operator.getLocalMetaAttribute().getClasses();
-			List<String> acMT = inputPO.getOutputSchema().getMetaAttributeNames();
+			if (!config.hasOption("NO_METADATA")) {
+				Class<? extends IMetaAttribute>[] opMT = operator.getLocalMetaAttribute().getClasses();
+				List<String> acMT = inputPO.getOutputSchema().getMetaAttributeNames();
 
-			if (!MetadataRegistry.isSame(opMT, acMT)) {
-				throw new TransformationException(
-						"The source " + operator.getName() + " is already defined with meta data " + acMT);
+				if (!MetadataRegistry.isSame(opMT, acMT)) {
+					throw new TransformationException(
+							"The source " + operator.getName() + " is already defined with meta data " + acMT);
+				}
 			}
 		}
 		processMetaData(operator, config, inputPO);
@@ -144,14 +146,21 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 					tsAO = insertTimestampAO(operator, operator.getDateFormat());
 				}
 
+			} else {
+				if (config.hasOption("NO_METADATA")) {
+					((IMetadataInitializer<?, ?>) inputPO).setMetadataType(null);
+				}
 			}
-		}else{
+
+		} else {
 			TimestampAO tsAO = getTimestampAOAsFather(operator);
 			if (tsAO == null) {
 				tsAO = insertTimestampAO(operator, operator.getDateFormat());
 			}
 		}
 	}
+
+
 
 	private void processTransportHandler(AbstractAccessAO operator, TransformationConfiguration config,
 			OptionMap options, IStreamObjectDataHandler<?> dataHandler, IProtocolHandler<?> protocolHandler) {
@@ -168,10 +177,10 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			// instead of the user defined schema
 			// In some cases the transport handler needs to know the
 			// schema
-			if (dataHandler != null && transportHandler.getSchema() == null){
+			if (dataHandler != null && transportHandler.getSchema() == null) {
 				transportHandler.setSchema(dataHandler.getSchema());
 			}
-		
+
 		}
 	}
 

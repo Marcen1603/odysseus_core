@@ -33,8 +33,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
- * This class represents a tuple, i.e. a collection of objects of different types that can be accessed
- * via positions
+ * This class represents a tuple, i.e. a collection of objects of different
+ * types that can be accessed via positions
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
@@ -43,9 +43,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	private static final long serialVersionUID = 7119095568322125441L;
 
-    private static final Logger LOG = LoggerFactory
-			.getLogger(Tuple.class);
-	
+	private static final Logger LOG = LoggerFactory.getLogger(Tuple.class);
+
 	protected Object[] attributes;
 
 	private boolean containsNull = false;
@@ -53,18 +52,19 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	private boolean requiresDeepClone;
 
-    private static List<Class<?>> immutables = new ArrayList<>();
-    static {
-        immutables.add(String.class);
-        immutables.add(Integer.class);
-        immutables.add(Long.class);
-        immutables.add(Boolean.class);
-        immutables.add(Float.class);
-        immutables.add(Double.class);
-        immutables.add(Character.class);
-        immutables.add(Byte.class);
-        immutables.add(Short.class);
-    }
+	private static List<Class<?>> immutables = new ArrayList<>();
+
+	static {
+		immutables.add(String.class);
+		immutables.add(Integer.class);
+		immutables.add(Long.class);
+		immutables.add(Boolean.class);
+		immutables.add(Float.class);
+		immutables.add(Double.class);
+		immutables.add(Character.class);
+		immutables.add(Byte.class);
+		immutables.add(Short.class);
+	}
 
 	/**
 	 * Allows subclasses to call the implicit super constructor. To not allow
@@ -100,8 +100,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 * @param newAttributes
 	 * @param requiresDeepClone
 	 */
-	protected Tuple(Tuple<T> copy, Object[] newAttributes,
-			boolean requiresDeepClone) {
+	protected Tuple(Tuple<T> copy, Object[] newAttributes, boolean requiresDeepClone) {
 		super(copy);
 		this.requiresDeepClone = requiresDeepClone;
 		if (newAttributes != null) {
@@ -110,8 +109,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			if (!requiresDeepClone) {
 				int attributeLength = copy.attributes.length;
 				this.attributes = new Object[attributeLength];
-				System.arraycopy(copy.attributes, 0, this.attributes, 0,
-						attributeLength);
+				System.arraycopy(copy.attributes, 0, this.attributes, 0, attributeLength);
 			} else {
 				this.attributes = cloneAttributes(copy.attributes);
 			}
@@ -149,13 +147,12 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	public Tuple(List<Object> objects, boolean requiresDeepClone) {
 		this.attributes = new Object[objects.size()];
-		for (int i=0;i<objects.size();i++){
+		for (int i = 0; i < objects.size(); i++) {
 			this.attributes[i] = objects.get(i);
 		}
 		this.requiresDeepClone = requiresDeepClone;
 	}
 
-	
 	/**
 	 * Erzeugt ein neues Tuple mit einem Attribut
 	 * 
@@ -171,7 +168,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.requiresDeepClone = requiresDeepClone;
 	}
 
-
 	// -----------------------------------------------------------------
 	// static Hilfsmethoden
 	// -----------------------------------------------------------------
@@ -181,109 +177,107 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return t;
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public AbstractStreamObject<T> newInstance() {
-        return new Tuple<>();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AbstractStreamObject<T> newInstance() {
+		return new Tuple<>();
+	}
 
-    public static <T extends IMetaAttribute> Tuple<T> createEmptyTupleWithMeta(int size, IStreamObject<T> from, boolean requiresDeepClone){
+	public static <T extends IMetaAttribute> Tuple<T> createEmptyTupleWithMeta(int size, IStreamObject<T> from,
+			boolean requiresDeepClone) {
 		Tuple<T> outputVal = new Tuple<T>(size, requiresDeepClone);
-		@SuppressWarnings("unchecked")
-		T meta = (T) from.getMetadata().clone();
-		outputVal.setMetadata(meta);
+		if (from.getMetadata() != null) {
+			@SuppressWarnings("unchecked")
+			T meta = (T) from.getMetadata().clone();
+			outputVal.setMetadata(meta);
+		}
 		if (from.getGetValueMap() != null) {
-			for (Entry<String, Object> entry : from.getGetValueMap()
-					.entrySet()) {
+			for (Entry<String, Object> entry : from.getGetValueMap().entrySet()) {
 				outputVal.setKeyValue(entry.getKey(), entry.getValue());
 			}
 		}
 		return outputVal;
-    }
-    
-    /**
-     * Creates a clone of all attribute values.
-     * Handles primitive types, matrix/vectors, list, and complex types.
-     * Currently also supports unknown object by using Cloner lib to perform a
-     * deep clone. This behavior will be removed in future versions and prints
-     * a warning about not supporting IClone interface.
-     * 
-     * @param attr
-     *            The attribute array
-     * @return clone attribute array
-     */
-    private static Object[] cloneAttributes(Object[] attr) {
-        Object[] clone = new Object[attr.length];
-        for (int i = 0; i < clone.length; i++) {
-            // null needs to clone
-        	if (attr[i] == null){
-            	continue;
-            }
-        	// TODO Optimize: Collect positions of primitive datatypes and
-            // perform System arraycopy on them (CKu)
-        	
-            if (immutables.contains(attr[i].getClass())) {
-                clone[i] = attr[i];
-            }
-            // Handle Matrix/Vector datatype.
-            // Assumption: Matrix/Vector contains only immutable types
-            else if (attr[i].getClass().isArray()) {
-                int length = Array.getLength(attr[i]);
-                clone[i] = Array.newInstance(attr[i].getClass().getComponentType(), length);
-                System.arraycopy(attr[i], 0, clone[i], 0, length);
-            }
-            // Handle List datatype
-            // TODO: LinkedList?
-            else if ((attr[i].getClass() == ArrayList.class)) {
-                clone[i] = cloneList((List<?>) attr[i]);
-            }
-            // Handle the rest
-            else {
-                try {
-                    clone[i] = ((IClone) attr[i]).clone();
-                }
-                catch (ClassCastException e) {
-                    LOG.error(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
-//                    Cloner cloner = new Cloner();
-//                    clone[i] = cloner.deepClone(attr[i]);
-                }
-            }
-        }
-        return clone;
-    }
+	}
 
-    /**
-     * Creates a clone of a List attribute.
-     * 
-     * @param list
-     *            The list
-     * @return cloned list
-     */
-    private static List<?> cloneList(List<?> list) {
-        List<Object> clone = new ArrayList<>(list.size());
-        for (Object element : list) {
-            if (element == null || immutables.contains(element.getClass())) {
-                clone.add(element);
-            }
-            else if (element.getClass().isArray()) {
-                int length = Array.getLength(element);
-                Object array = Array.newInstance(element.getClass().getComponentType(), length);
-                System.arraycopy(element, 0, array, 0, length);
-                clone.add(array);
-            }
-            else {
-                try {
-                    clone.add(((IClone) element).clone());
-                }
-                catch (Throwable t) {
-                   LOG.error(String.format("Instance of %s does not implement IClone interface", element.getClass()));
-                }
-            }
-        }
-        return clone;
-    }
+	/**
+	 * Creates a clone of all attribute values. Handles primitive types,
+	 * matrix/vectors, list, and complex types. Currently also supports unknown
+	 * object by using Cloner lib to perform a deep clone. This behavior will be
+	 * removed in future versions and prints a warning about not supporting
+	 * IClone interface.
+	 * 
+	 * @param attr
+	 *            The attribute array
+	 * @return clone attribute array
+	 */
+	private static Object[] cloneAttributes(Object[] attr) {
+		Object[] clone = new Object[attr.length];
+		for (int i = 0; i < clone.length; i++) {
+			// null needs to clone
+			if (attr[i] == null) {
+				continue;
+			}
+			// TODO Optimize: Collect positions of primitive datatypes and
+			// perform System arraycopy on them (CKu)
+
+			if (immutables.contains(attr[i].getClass())) {
+				clone[i] = attr[i];
+			}
+			// Handle Matrix/Vector datatype.
+			// Assumption: Matrix/Vector contains only immutable types
+			else if (attr[i].getClass().isArray()) {
+				int length = Array.getLength(attr[i]);
+				clone[i] = Array.newInstance(attr[i].getClass().getComponentType(), length);
+				System.arraycopy(attr[i], 0, clone[i], 0, length);
+			}
+			// Handle List datatype
+			// TODO: LinkedList?
+			else if ((attr[i].getClass() == ArrayList.class)) {
+				clone[i] = cloneList((List<?>) attr[i]);
+			}
+			// Handle the rest
+			else {
+				try {
+					clone[i] = ((IClone) attr[i]).clone();
+				} catch (ClassCastException e) {
+					LOG.error(String.format("Instance of %s does not implement IClone interface", attr[i].getClass()));
+					// Cloner cloner = new Cloner();
+					// clone[i] = cloner.deepClone(attr[i]);
+				}
+			}
+		}
+		return clone;
+	}
+
+	/**
+	 * Creates a clone of a List attribute.
+	 * 
+	 * @param list
+	 *            The list
+	 * @return cloned list
+	 */
+	private static List<?> cloneList(List<?> list) {
+		List<Object> clone = new ArrayList<>(list.size());
+		for (Object element : list) {
+			if (element == null || immutables.contains(element.getClass())) {
+				clone.add(element);
+			} else if (element.getClass().isArray()) {
+				int length = Array.getLength(element);
+				Object array = Array.newInstance(element.getClass().getComponentType(), length);
+				System.arraycopy(element, 0, array, 0, length);
+				clone.add(array);
+			} else {
+				try {
+					clone.add(((IClone) element).clone());
+				} catch (Throwable t) {
+					LOG.error(String.format("Instance of %s does not implement IClone interface", element.getClass()));
+				}
+			}
+		}
+		return clone;
+	}
 
 	// -----------------------------------------------------------------
 	// Attributzugriffsmethoden
@@ -298,10 +292,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	@SuppressWarnings("unchecked")
 	public final void addAttributeValue(int pos, Object value) {
-		if (this.attributes[pos] != null
-				&& !(this.attributes[pos] instanceof Collection)) {
-			throw new RuntimeException(
-					"Cannot add value to non collection type");
+		if (this.attributes[pos] != null && !(this.attributes[pos] instanceof Collection)) {
+			throw new RuntimeException("Cannot add value to non collection type");
 		}
 		if (this.attributes[pos] == null) {
 			this.attributes[pos] = new ArrayList<Object>();
@@ -314,7 +306,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.attributes[pos] = value;
 		this.valueChanged = true;
 	}
-
 
 	public final int size() {
 		return this.attributes.length;
@@ -346,7 +337,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			newAttrs = new Object[attrList.length];
 
 			for (int i = 0; i < attrList.length; i++) {
-				if (attrList[i]>=0){
+				if (attrList[i] >= 0) {
 					newAttrs[i] = this.attributes[attrList[i]];
 				}
 			}
@@ -385,8 +376,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public Tuple<T> append(Object object, boolean createNew) {
 		Object[] newAttrs = null;
 		if (this.attributes != null) {
-			newAttrs = Arrays.copyOf(this.attributes,
-					this.attributes.length + 1);
+			newAttrs = Arrays.copyOf(this.attributes, this.attributes.length + 1);
 			newAttrs[this.attributes.length] = object;
 		} else {
 			newAttrs = new Object[1];
@@ -403,8 +393,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public Tuple<T> appendList(List<?> objects, boolean createNew) {
 		Object[] newAttrs = null;
 		if (this.attributes != null) {
-			newAttrs = Arrays.copyOf(this.attributes, this.attributes.length
-					+ objects.size());
+			newAttrs = Arrays.copyOf(this.attributes, this.attributes.length + objects.size());
 			for (int i = 0; i < objects.size(); i++) {
 				newAttrs[this.attributes.length + i] = objects.get(i);
 			}
@@ -425,8 +414,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private Tuple<T> restrictCreation(boolean createNew, Object[] newAttrs) {
 		if (createNew) {
 			if (newAttrs != null) {
-				Tuple<T> newTuple = new Tuple<T>(this, newAttrs,
-						requiresDeepClone);
+				Tuple<T> newTuple = new Tuple<T>(this, newAttrs, requiresDeepClone);
 				return newTuple;
 			} else {
 				Tuple<T> newTuple = new Tuple<>(this, requiresDeepClone);
@@ -437,7 +425,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.valueChanged = true;
 		return this;
 	}
-
 
 	public Object[] getAttributes() {
 		return attributes;
@@ -464,8 +451,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	}
 
 	@Override
-	protected IStreamObject<T> process_merge(IStreamObject<T> left,
-			IStreamObject<T> right, Order order) {
+	protected IStreamObject<T> process_merge(IStreamObject<T> left, IStreamObject<T> right, Order order) {
 		if (order == Order.LeftRight) {
 			return processMergeInternal((Tuple<T>) left, (Tuple<T>) right);
 		} else {
@@ -474,23 +460,17 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	}
 
 	private IStreamObject<T> processMergeInternal(Tuple<T> left, Tuple<T> right) {
-		Object[] newAttributes = mergeAttributes(
-				left != null ? left.getAttributes() : null,
+		Object[] newAttributes = mergeAttributes(left != null ? left.getAttributes() : null,
 				right != null ? right.getAttributes() : null);
 		Tuple<T> r = new Tuple<T>(newAttributes,
-				((left != null) && (left.requiresDeepClone()))
-						|| ((right != null) && (right.requiresDeepClone())));
+				((left != null) && (left.requiresDeepClone())) || ((right != null) && (right.requiresDeepClone())));
 		return r;
 	}
 
-	private Object[] mergeAttributes(Object[] leftAttributes,
-			Object[] rightAttributes) {
-		Object[] newAttributes = new Object[leftAttributes.length
-				+ rightAttributes.length];
-		System.arraycopy(leftAttributes, 0, newAttributes, 0,
-				leftAttributes.length);
-		System.arraycopy(rightAttributes, 0, newAttributes,
-				leftAttributes.length, rightAttributes.length);
+	private Object[] mergeAttributes(Object[] leftAttributes, Object[] rightAttributes) {
+		Object[] newAttributes = new Object[leftAttributes.length + rightAttributes.length];
+		System.arraycopy(leftAttributes, 0, newAttributes, 0, leftAttributes.length);
+		System.arraycopy(rightAttributes, 0, newAttributes, leftAttributes.length, rightAttributes.length);
 		return newAttributes;
 	}
 
@@ -499,7 +479,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	// -----------------------------------------------------------------
 	@Override
 	public final boolean equals(Object o) {
-		if	(this == o){
+		if (this == o) {
 			// o is a reference of this and therefore equal
 			return true;
 		}
@@ -555,12 +535,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return true;
 	}
 
-	static public boolean equalsAt(Tuple<?> left, Tuple<?> right,
-			int[] comparePositions) {
+	static public boolean equalsAt(Tuple<?> left, Tuple<?> right, int[] comparePositions) {
 		for (int i : comparePositions) {
 			Object a = left.getAttribute(i);
 			Object b = right.getAttribute(i);
-			if (a == null && b == null){
+			if (a == null && b == null) {
 				continue;
 			}
 			if ((a == null) || (!a.equals(b))) {
@@ -569,28 +548,27 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		return true;
 	}
-	
-	static public boolean equalsAt(Tuple<?> left, Tuple<?> right,
-			List<Pair<Integer, Integer>> comparePositions) {
-		for (Pair<Integer,Integer> i : comparePositions) {
+
+	static public boolean equalsAt(Tuple<?> left, Tuple<?> right, List<Pair<Integer, Integer>> comparePositions) {
+		for (Pair<Integer, Integer> i : comparePositions) {
 			Object a;
 			Object b;
-			if (i.getE1() < 0){
+			if (i.getE1() < 0) {
 				a = left.getAttribute(i.getE2());
 				b = right.getAttribute(i.getE2());
-			}else{
+			} else {
 				a = left.getMetadata().getValue(i.getE1(), i.getE2());
 				b = right.getMetadata().getValue(i.getE1(), i.getE2());
 			}
-			if (a == null && b == null){
+			if (a == null && b == null) {
 				continue;
 			}
 			if ((a != null) && (!a.equals(b))) {
 				return false;
-			}				
+			}
 
 		}
-		
+
 		return true;
 	}
 
@@ -616,8 +594,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			if (this.attributes[i] == null || c.getAttribute(i) == null) {
 				compare = i;
 			} else if (this.attributes[i] instanceof Comparable<?>) {
-				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c
-						.getAttribute(i));
+				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c.getAttribute(i));
 			}
 			// } catch (NullPointerException e) {
 			// System.out.println("Exception: " + this + " " + c + " " + i);
@@ -655,8 +632,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			if (this.attributes[i] == null || c.getAttribute(i) == null) {
 				compare = i;
 			} else if (this.attributes[i] instanceof Comparable<?>) {
-				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c
-						.getAttribute(i));
+				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c.getAttribute(i));
 			}
 		}
 		if (compare < 0) {
@@ -676,7 +652,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public String toString() {
 		return toString(true);
 	}
-	
+
 	@Override
 	public String toString(boolean printMetadata) {
 		StringBuffer retBuff = new StringBuffer();
@@ -688,8 +664,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		for (int i = 1; i < this.attributes.length; ++i) {
 			Object curAttribute = this.attributes[i];
 			retBuff.append("|");
-			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute
-					.toString());
+			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute.toString());
 		}
 		if (printMetadata && getMetadata() != null) {
 			retBuff.append(" | META | " + getMetadata());

@@ -93,6 +93,9 @@ public class MetadataRegistry {
 	}
 
 	public static IMetaAttribute getMetadataType(SortedSet<String> types) {
+		if (types.size() ==  0){
+			return null;
+		}
 		synchronized (combinedMetadataTypes) {
 			IMetaAttribute type = combinedMetadataTypes.get(types);
 			if (type == null) {
@@ -123,6 +126,7 @@ public class MetadataRegistry {
 			}
 			return type;
 		}
+		
 	}
 	
 	public static IMetaAttribute getMetadataType(List<String> metaAttributeNames) {

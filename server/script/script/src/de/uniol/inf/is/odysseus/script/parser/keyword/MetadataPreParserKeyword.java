@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class MetadataPreParserKeyword extends AbstractPreParserKeyword {
 
-	public static final String METADATA = "METADATA";
+	public static final String METADATA = "NOMETADATA";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {

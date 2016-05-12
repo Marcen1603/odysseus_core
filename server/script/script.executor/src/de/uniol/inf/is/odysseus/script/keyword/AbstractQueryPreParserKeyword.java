@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MaxSheddingFactorPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.NoMetadataPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 
@@ -75,7 +76,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 		if (transCfgName == null) {
 			transCfgName = "Standard";
 		}
-		
+	
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(AbstractPreParserKeyword.ADD_TRANS_PARAMS);
 		if (addSettings == null) {
 			addSettings = new ArrayList<>();
@@ -86,7 +87,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 		if (queryCaller == null) {
 			queryCaller = caller;
 		}
-		
+				
 		// QNAME
 		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
 		if (queryName != null && queryName.trim().length() > 0) {
@@ -137,6 +138,12 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 			if (variables.containsKey(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)) {
 				context.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, new ArrayList<String>((ArrayList<String>) variables.get(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)));
 			}
+		
+			// Metadata
+			if (variables.containsKey(NoMetadataPreParserKeyword.NO_METADATA)){
+				context.put(NoMetadataPreParserKeyword.NO_METADATA,"true");
+			}
+
 
 			AddQueryCommand cmd = new AddQueryCommand(queryText, parserID, queryCaller, transCfgName, context, addSettings, startQuery());
 			commands.add(cmd);
