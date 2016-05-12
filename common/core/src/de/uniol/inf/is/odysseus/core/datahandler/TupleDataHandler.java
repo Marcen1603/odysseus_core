@@ -117,7 +117,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			}
 		}
 		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(attributes, false);
-		if (handleMetaData) {
+		if (handleMetaData && hasMetadata()) {
 			IMetaAttribute meta = readMetaData(inputStream);
 			ret.setMetadata(meta);
 		}
@@ -147,7 +147,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			}
 		}
 
-		if (handleMetaData) {
+		if (handleMetaData && hasMetadata()) {
 			IMetaAttribute meta = readMetaData(input);
 			tuple.setMetadata(meta);
 		}

@@ -52,6 +52,10 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	public boolean isHandleMetadata() {
 		return handleMetadata;
 	}
+	
+	public boolean hasMetadata(){
+		return metaDataHandler != null;
+	}
 
 	protected final IMetaAttribute readMetaData(InputStream inputStream) throws IOException {
 		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
