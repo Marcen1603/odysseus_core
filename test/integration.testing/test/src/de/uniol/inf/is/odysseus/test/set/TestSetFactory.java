@@ -20,13 +20,13 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 public class TestSetFactory {
 
 	private static Logger LOG = LoggerFactory.getLogger(TestSetFactory.class);
-	private static final String[] OUTPUT_FILE_NAMES = { "output", "expected", "expected_output" };	
-	
-	public static QueryTestSet createQueryTestSetFromFile(URL queryFile, URL rootPath){
+	private static final String[] OUTPUT_FILE_NAMES = { "output", "expected", "expected_output" };
+
+	public static QueryTestSet createQueryTestSetFromFile(URL queryFile, URL rootPath) {
 		QueryTestSet set = new QueryTestSet();
 		String queryFileStr = fileToString(queryFile);
 		queryFileStr = replaceRootPathInFile(queryFileStr, rootPath);
-		set.setQuery(queryFileStr);	
+		set.setQuery(queryFileStr);
 		File f = new File(queryFile.getFile());
 		set.setName(f.getName());
 		return set;
@@ -36,7 +36,8 @@ public class TestSetFactory {
 		return createExpectedOutputTestSetsFromBundleRoot(bundleroot, "TUPLE");
 	}
 
-	public static List<ExpectedOutputTestSet> createExpectedOutputTestSetsFromBundleRoot(URL bundleroot, String dataHandler) {
+	public static List<ExpectedOutputTestSet> createExpectedOutputTestSetsFromBundleRoot(URL bundleroot,
+			String dataHandler) {
 		List<ExpectedOutputTestSet> testsets = new ArrayList<>();
 		try {
 			File dir = new File(bundleroot.toURI());
@@ -53,7 +54,7 @@ public class TestSetFactory {
 		}
 		return testsets;
 	}
-	
+
 	public static List<QueryTestSet> createQueryTestSetsFromBundleRoot(URL bundleroot) {
 		List<QueryTestSet> testsets = new ArrayList<>();
 		try {
@@ -61,7 +62,7 @@ public class TestSetFactory {
 			List<File> queryFiles = new ArrayList<>();
 			searchQueryFilesRecursive(dir, queryFiles);
 			for (File qf : queryFiles) {
-				QueryTestSet set = createQueryTestSetFromFile(qf.toURI().toURL(), bundleroot);				
+				QueryTestSet set = createQueryTestSetFromFile(qf.toURI().toURL(), bundleroot);
 				if (set != null) {
 					testsets.add(set);
 				}
@@ -74,20 +75,23 @@ public class TestSetFactory {
 		return testsets;
 	}
 
-	private static ExpectedOutputTestSet createExpectedOutputTestSetFromQuery(File qf, URL bundleroot, String dataHandler) {
+	private static ExpectedOutputTestSet createExpectedOutputTestSetFromQuery(File qf, URL bundleroot,
+			String dataHandler) {
 		try {
 			URL queryFile = qf.toURI().toURL();
 			File outputFile;
-			if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT") || dataHandler.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
+			if (dataHandler.equalsIgnoreCase("KEYVALUEOBJECT")
+					|| dataHandler.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
 				outputFile = getOutputFile(qf, "json");
 			} else {
 				outputFile = getOutputFile(qf, "csv");
 			}
 			if (outputFile != null) {
 				URL outputdata = outputFile.toURI().toURL();
-				ExpectedOutputTestSet set = createExpectedOutputTestSetFromFile(queryFile, outputdata, bundleroot, dataHandler);
+				ExpectedOutputTestSet set = createExpectedOutputTestSetFromFile(queryFile, outputdata, bundleroot,
+						dataHandler);
 				return set;
-			} 
+			}
 			LOG.error("There is no corresponding outputfile for " + qf.getAbsoluteFile());
 			LOG.error("Use same name or one of: " + Arrays.toString(OUTPUT_FILE_NAMES));
 			return null;
@@ -105,7 +109,7 @@ public class TestSetFactory {
 			return f;
 		}
 		for (String filename : OUTPUT_FILE_NAMES) {
-			f = new File(dir + File.separator +filename + "." + ending);
+			f = new File(dir + File.separator + filename + "." + ending);
 			if (f.exists()) {
 				return f;
 			}
@@ -128,11 +132,12 @@ public class TestSetFactory {
 		}
 	}
 
-	public static ExpectedOutputTestSet createExpectedOutputTestSetFromFile(URL queryFile, URL outputdata, URL replaceRootPathInQuery, String dataHandler) {
+	public static ExpectedOutputTestSet createExpectedOutputTestSetFromFile(URL queryFile, URL outputdata,
+			URL replaceRootPathInQuery, String dataHandler) {
 		ExpectedOutputTestSet set = new ExpectedOutputTestSet();
 		String queryFileStr = fileToString(queryFile);
 		queryFileStr = replaceRootPathInFile(queryFileStr, replaceRootPathInQuery);
-		set.setQuery(queryFileStr);	
+		set.setQuery(queryFileStr);
 		File f = new File(queryFile.getFile());
 		set.setName(f.getName());
 		set.setExpectedOutput(fileToTupleList(outputdata));
@@ -143,7 +148,7 @@ public class TestSetFactory {
 	private static String replaceRootPathInFile(String queryFileStr, URL rootPath) {
 		return queryFileStr.replace("${BUNDLE-ROOT}", rootPath.getFile());
 	}
-	
+
 	private static List<Pair<String, String>> fileToTupleList(URL path) {
 		List<Pair<String, String>> tuples = new ArrayList<>();
 		try {
@@ -151,8 +156,10 @@ public class TestSetFactory {
 			BufferedReader br = new BufferedReader(is);
 			String line = br.readLine();
 			while (line != null) {
-				Pair<String, String> t = parseTupleString(line);
-				tuples.add(t);
+				if (line.length() > 0) {
+					Pair<String, String> t = parseTupleString(line);
+					tuples.add(t);
+				}
 				line = br.readLine();
 			}
 			br.close();
@@ -164,7 +171,7 @@ public class TestSetFactory {
 
 	private static Pair<String, String> parseTupleString(String line) {
 		String[] parts = line.split(Pattern.quote("| META |"));
-		Pair<String, String> pair = new Pair<String, String>(parts[0].trim(), parts.length > 1 ?parts[1].trim():"");
+		Pair<String, String> pair = new Pair<String, String>(parts[0].trim(), parts.length > 1 ? parts[1].trim() : "");
 		return pair;
 	}
 
