@@ -130,7 +130,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
             }
             catch (Throwable e) {
                 report.setError(i, e);
-                throw e;
+                //throw e;
             }
             report.setDuration(i, System.nanoTime()-start);
             report.setStatusCode(i, code);
