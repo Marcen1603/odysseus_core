@@ -8,28 +8,31 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-// TODO split for 2 and 3 dimensions
-public class MDAIndicesFromNumeric extends AbstractFunction<List<Integer>> {
+/**
+ * For 1-dimensional MDAStores.
+ * @author Michael Brand
+ *
+ */
+public class MDAIndexFromNumeric extends AbstractFunction<Integer> {
 
 	private static final long serialVersionUID = -8148362039305389820L;
 
 	private static final SDFDatatype[][] acceptedTypes = new SDFDatatype[][] {
-			{ SDFDatatype.STRING }, { SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE } };
+			{ SDFDatatype.STRING }, { SDFDatatype.DOUBLE } };
 
-	public MDAIndicesFromNumeric() {
-		super("MDAIndices", 3, acceptedTypes, SDFDatatype.LIST_INTEGER);
+	public MDAIndexFromNumeric() {
+		super("MDAIndex", 2, acceptedTypes, SDFDatatype.INTEGER);
 	}
 
 	@Override
-	public List<Integer> getValue() {
+	public Integer getValue() {
 		String name = getInputValue(0);
 		List<Double> value = Lists.newArrayList();
 		value.add(getNumericalInputValue(1));
-		value.add(getNumericalInputValue(2));
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(value);
 		MDAStore<Double> store = MDAStoreManager.get(name);
-		return MDAIndicesFromList.getValue(store, value);
+		return MDAIndicesFromList.getValue(store, value).get(0);
 	}
 
 }

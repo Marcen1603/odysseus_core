@@ -6,6 +6,7 @@ import java.util.Objects;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+// TODO Test it
 public class MDAIndicesFromList extends AbstractFunction<List<Integer>> {
 
 	private static final long serialVersionUID = -8148362039305389820L;
