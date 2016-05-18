@@ -24,18 +24,8 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 	final private String name;
 	final private Map<Method, Integer> methodAttributeMap;
 	final private List<SDFMetaSchema> schema;
-
+	
 	final private Set<Method> gcmMethods;
-
-	// final private Method schemaMethod;
-	// final private Method classesMethod;
-	// final private Method nameMethod;
-	// final private Method retrieveMethod;
-	// final private Method writeValuesMethod;
-	// final private Method cloneMethod;
-	// final private Method getValueMethod;
-	// final private Method createInstanceMethod;
-	// final private Method getInlineMergeFunctionsMethod;
 
 	public GenericCombinedMetaAttribute(Class<? extends IMetaAttribute>[] classes, IMetaAttribute[] metaAttributes,
 			String name, List<SDFMetaSchema> schema) {
@@ -72,40 +62,9 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		this.schema = schema;
 
 		gcmMethods = new HashSet<>();
-		try {
-			// this.classesMethod =
-			// IMetaAttribute.class.getDeclaredMethod("getClasses");
-			// this.nameMethod =
-			// IMetaAttribute.class.getDeclaredMethod("getName");
-			// this.schemaMethod =
-			// IMetaAttribute.class.getDeclaredMethod("getSchema");
-			// this.retrieveMethod =
-			// IMetaAttribute.class.getDeclaredMethod("retrieveValues",
-			// List.class);
-			// this.writeValuesMethod =
-			// IMetaAttribute.class.getDeclaredMethod("writeValues",
-			// List.class);
-			// this.getValueMethod =
-			// IMetaAttribute.class.getDeclaredMethod("getValue", int.class,
-			// int.class);
-			// this.cloneMethod =
-			// IMetaAttribute.class.getDeclaredMethod("clone");
-			// this.createInstanceMethod =
-			// IMetaAttribute.class.getDeclaredMethod("createInstance");
-			// this.getInlineMergeFunctionsMethod =
-			// IMetaAttribute.class.getDeclaredMethod("getInlineMergeFunctions");
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("getClasses"));
 
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("getName"));
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("getSchema"));
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("retrieveValues", List.class));
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("writeValues", List.class));
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("getValue", int.class, int.class));
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("clone"));
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("createInstance"));
-			this.gcmMethods.add(IMetaAttribute.class.getDeclaredMethod("getInlineMergeFunctions"));
-		} catch (NoSuchMethodException | SecurityException e) {
-			throw new RuntimeException("Error creating generic metadata type ", e);
+		for (Method m : IMetaAttribute.class.getMethods()) {
+			this.gcmMethods.add(m);
 		}
 
 	}
@@ -124,18 +83,9 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 
 		this.methodAttributeMap = other.methodAttributeMap;
 		this.schema = other.schema;
-		
+
 		this.gcmMethods = other.gcmMethods;
 
-//		this.schemaMethod = other.schemaMethod;
-//		this.classesMethod = other.classesMethod;
-//		this.nameMethod = other.nameMethod;
-//		this.retrieveMethod = other.retrieveMethod;
-//		this.writeValuesMethod = other.writeValuesMethod;
-//		this.cloneMethod = other.cloneMethod;
-//		this.getValueMethod = other.getValueMethod;
-//		this.createInstanceMethod = other.createInstanceMethod;
-//		this.getInlineMergeFunctionsMethod = other.getInlineMergeFunctionsMethod;
 	}
 
 	@Override
@@ -221,44 +171,14 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		return v;
 	}
 
-//	@SuppressWarnings("unchecked")
+	// @SuppressWarnings("unchecked")
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		// Must test overwritten methods first!!
 
-		if (gcmMethods.contains(method)){
+		if (gcmMethods.contains(method)) {
 			return method.invoke(this, args);
 		}
-		
-//		if (method.equals(schemaMethod)) {
-//			return getSchema();
-//		}
-//		if (method.equals(classesMethod)) {
-//			return getClasses();
-//		}
-//		if (method.equals(nameMethod)) {
-//			return getName();
-//		}
-//		if (method.equals(retrieveMethod)) {
-//			retrieveValues((List<Tuple<?>>) args[0]);
-//			return null;
-//		}
-//		if (method.equals(writeValuesMethod)) {
-//			writeValue((Tuple<?>) args[0]);
-//			return null;
-//		}
-//		if (method.equals(getValueMethod)) {
-//			return getValue((int) args[0], (int) args[1]);
-//		}
-//		if (method.equals(cloneMethod)) {
-//			return clone();
-//		}
-//		if (method.equals(createInstanceMethod)) {
-//			return createInstance();
-//		}
-//		if (method.equals(getInlineMergeFunctionsMethod)) {
-//			return getInlineMergeFunctions();
-//		}
 
 		// Now there should only be methods from the base metadata types remaing
 
