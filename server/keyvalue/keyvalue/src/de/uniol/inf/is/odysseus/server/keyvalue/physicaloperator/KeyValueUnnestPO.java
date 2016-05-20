@@ -33,33 +33,6 @@ public class KeyValueUnnestPO<T extends KeyValueObject<?>> extends AbstractPipe<
 		Map<String, Object> attributes = object.getAttributes();
 
 		// find each attribute starting with attribute
-		// ok=true,
-		// result[1].message.chat.last_name=Brand,
-		// result[0].message.chat.first_name=Marco,
-		// result[0].message.chat.username=MarcoGrawunder,
-		// result[0].message.text=Hallo Bot,
-		// result[0].message.from.username=MarcoGrawunder,
-		// result[0].message.date=1463736160,
-		// result[1].message.chat.type=private,
-		// result[0].message.from.last_name=Grawunder,
-		// result[0].message.chat.last_name=Grawunder,
-		// result[0].message.chat.type=private,
-		// result[0].update_id=102358350,
-		// result[0].message.from.id=103101429,
-		// result[1].message.chat.id=155288651,
-		// result[1].message.message_id=11,
-		// result[0].message.chat.id=103101429,
-		// result[1].message.from.last_name=Brand,
-		// result[0].message.from.first_name=Marco,
-		// result[1].message.chat.username=MichaelBrand,
-		// result[1].message.from.id=155288651,
-		// result[1].message.date=1463736668,
-		// result[1].update_id=102358351,
-		// result[1].message.text=Marco ist doch nicht so toll2,
-		// result[1].message.from.username=MichaelBrand,
-		// result[0].message.message_id=9,
-		// result[1].message.from.first_name=Michael,
-		// result[1].message.chat.first_name=Michael
 
 		Map<Integer, Map<String, Object>> sepObjects = new TreeMap<>();
 		Map<String, Object> remaing = new HashMap<>();
