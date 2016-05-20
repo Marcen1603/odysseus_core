@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class KeyValueUnnestPO<T extends KeyValueObject<?>> extends AbstractPipe<T, T> {
+public class KeyValueUnnestPO<T extends KeyValueObject<IMetaAttribute>> extends AbstractPipe<T, T> {
 
 	private String attribute;
 
@@ -58,7 +58,9 @@ public class KeyValueUnnestPO<T extends KeyValueObject<?>> extends AbstractPipe<
 
 		for (Entry<Integer, Map<String, Object>> e : sepObjects.entrySet()) {
 			e.getValue().putAll(remaing);
-			KeyValueObject<IMetaAttribute> kv = new KeyValueObject<>(e.getValue());
+			@SuppressWarnings("unchecked")
+			T kv = (T) object.newInstance();
+			kv.setKeyValueMap(e.getValue());
 			kv.setMetadata(object.getMetadata().clone());
 			transfer((T) kv);
 		}
