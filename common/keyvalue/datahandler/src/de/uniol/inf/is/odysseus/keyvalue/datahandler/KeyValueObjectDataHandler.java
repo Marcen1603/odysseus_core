@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.keyvalue.datahandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,7 +42,7 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 		return KeyValueObject.class;
 	}
 	
-	protected KeyValueObject<?> jsonStringToKVO(String json) {
+	static private KeyValueObject<?> jsonStringToKVOWrapper(String json){
 		try {
 //			LOG.debug("JSON-String: " + json);
 			if(json.equals("")) {
@@ -64,7 +65,11 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 		}
 	}
 	
-	private void parse(JsonNode rootNode, Map<String, Object> map, String path) {
+	protected KeyValueObject<?> jsonStringToKVO(String json) {
+		return jsonStringToKVOWrapper(json);
+	}
+	
+	static private void parse(JsonNode rootNode, Map<String, Object> map, String path) {
 		Iterator<Entry<String, JsonNode>> nodeIterator = rootNode.fields();
 		while(nodeIterator.hasNext()) {
 			Entry<String, JsonNode> nodeEntry = nodeIterator.next();
@@ -77,7 +82,7 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 				newPath = path + "." + key;				
 			}
 			if(node.isArray()) {
-				map.put(newPath, parseArray(node));
+				map.putAll(parseArray(node, map, newPath));				
 			} else {
 				if(node.size() > 0) {
 					parse(node, map, newPath);
@@ -98,23 +103,39 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 		}
 	}
 
-	private List<Object> parseArray(JsonNode rootNode) {
-		ArrayList<Object> resultList = new ArrayList<Object>();
+	static private Map<String, Object> parseArray(JsonNode rootNode, Map<String, Object> map, String path) {
+		Map<String,Object> resultList = new HashMap<String,Object>();
 		Iterator<JsonNode> elements = rootNode.elements();
+		int pos = 0;
 		while(elements.hasNext()) {
 			JsonNode node = elements.next();
+			String key = path+"["+pos+"]";
 			if(node.isInt()) {
-				resultList.add(node.asInt());
+				resultList.put(key,node.asInt());
 			} else if(node.isTextual()) {
-				resultList.add(node.asText());
+				resultList.put(key,node.asText());
 			} else if(node.isBoolean()) {
-				resultList.add(node.asBoolean());
+				resultList.put(key,node.asBoolean());
 			} else if(node.isDouble()) {
-				resultList.add(node.asDouble());
+				resultList.put(key,node.asDouble());
 			} else if(node.isLong()) {
-				resultList.add(node.asLong());
+				resultList.put(key,node.asLong());
+			} else if(node.isObject()){
+				Map<String,Object> subMap = new HashMap<String, Object>();
+				parse(node, subMap, key);
+				resultList.putAll(subMap);
 			}
+			pos++;
 		}
 		return resultList;
 	}
+	
+	
+
+	public static void main(String[] args) {
+		String jsonString = "{\"ok\":true,\"result\":[{\"update_id\":102358350,\"message\":{\"message_id\":9,\"from\":{\"id\":103101429,\"first_name\":\"Marco\",\"last_name\":\"Grawunder\",\"username\":\"MarcoGrawunder\"},\"chat\":{\"id\":103101429,\"first_name\":\"Marco\",\"last_name\":\"Grawunder\",\"username\":\"MarcoGrawunder\",\"type\":\"private\"},\"date\":1463736160,\"text\":\"Hallo Bot\"}},{\"update_id\":102358351, \"message\":{\"message_id\":11,\"from\":{\"id\":155288651,\"first_name\":\"Michael\",\"last_name\":\"Brand\",\"username\":\"MichaelBrand\"},\"chat\":{\"id\":155288651,\"first_name\":\"Michael\",\"last_name\":\"Brand\",\"username\":\"MichaelBrand\",\"type\":\"private\"},\"date\":1463736668,\"text\":\"Marco ist doch nicht so toll2\"}}]}";
+		KeyValueObject<?> out = jsonStringToKVOWrapper(jsonString);
+		System.out.println(out);
+	}
+	
 }
