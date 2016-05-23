@@ -229,7 +229,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	public void onStatus(final Status status) {
 		GeoLocation statusLocation = status.getGeoLocation();
 		
-		System.out.println("ON STATUS TWITTER");
+		System.out.println("ON STATUS TWITTER "+status);
 		
 		
 		String geoData;

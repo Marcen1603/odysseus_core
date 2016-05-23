@@ -7,7 +7,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
@@ -24,7 +23,6 @@ public class TwitterSource extends AbstractAccessAO {
 
 	public TwitterSource() {
 		setTransportHandler(TwitterTransportHandler.NAME);
-		setProtocolHandler(LineProtocolHandler.NAME);
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PUSH);
 		List<SDFAttribute> schema = new LinkedList<>();
