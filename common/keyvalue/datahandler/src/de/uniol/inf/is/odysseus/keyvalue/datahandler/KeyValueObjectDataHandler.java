@@ -42,22 +42,25 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 		return KeyValueObject.class;
 	}
 	
-	static private KeyValueObject<?> jsonStringToKVOWrapper(String json){
+	static public KeyValueObject<?> jsonToKVOWrapper(JsonNode node){
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		if(node.isArray()) {
+			for(int i = 0; i < node.size(); ++i) {
+				parse(node.get(i), map, "" + i);
+			}
+		} else {
+			parse(node, map, "");
+		}
+		return new KeyValueObject<>(map);		
+	}
+	
+	static public KeyValueObject<?> jsonStringToKVOWrapper(String json){
 		try {
-//			LOG.debug("JSON-String: " + json);
 			if(json.equals("")) {
 				throw new Exception("empty JSON-String");
 			}
-			JsonNode rootNode = jsonMapper.reader().readTree(json);		
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
-			if(rootNode.isArray()) {
-				for(int i = 0; i < rootNode.size(); ++i) {
-					parse(rootNode.get(i), map, "" + i);
-				}
-			} else {
-				parse(rootNode, map, "");
-			}
-			return new KeyValueObject<>(map);
+			JsonNode rootNode = jsonMapper.reader().readTree(json);	
+			return jsonToKVOWrapper(rootNode);
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.debug(e.getMessage());
@@ -130,12 +133,5 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 		return resultList;
 	}
 	
-	
-
-	public static void main(String[] args) {
-		String jsonString = "{\"ok\":true,\"result\":[{\"update_id\":102358350,\"message\":{\"message_id\":9,\"from\":{\"id\":103101429,\"first_name\":\"Marco\",\"last_name\":\"Grawunder\",\"username\":\"MarcoGrawunder\"},\"chat\":{\"id\":103101429,\"first_name\":\"Marco\",\"last_name\":\"Grawunder\",\"username\":\"MarcoGrawunder\",\"type\":\"private\"},\"date\":1463736160,\"text\":\"Hallo Bot\"}},{\"update_id\":102358351, \"message\":{\"message_id\":11,\"from\":{\"id\":155288651,\"first_name\":\"Michael\",\"last_name\":\"Brand\",\"username\":\"MichaelBrand\"},\"chat\":{\"id\":155288651,\"first_name\":\"Michael\",\"last_name\":\"Brand\",\"username\":\"MichaelBrand\",\"type\":\"private\"},\"date\":1463736668,\"text\":\"Marco ist doch nicht so toll2\"}}]}";
-		KeyValueObject<?> out = jsonStringToKVOWrapper(jsonString);
-		System.out.println(out);
-	}
 	
 }
