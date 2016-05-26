@@ -41,7 +41,7 @@ public class DStringNotEqualsOperator extends AbstractBinaryStringInputOperator<
 
 	@Override
 	public Boolean getValue() {
-		return getInputValue(0) != null && !((DString)getInputValue(0)).unequals(getInputValue(1));
+		return getInputValue(0) != null && !((DString)getInputValue(0)).equals(getInputValue(1));
 	}
 
 
