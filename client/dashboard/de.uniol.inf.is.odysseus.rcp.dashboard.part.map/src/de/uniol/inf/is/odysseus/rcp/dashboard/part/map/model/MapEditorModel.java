@@ -204,7 +204,7 @@ public class MapEditorModel {
 
 		// We don't want to set it active manually, too much clicks ...
 		layer.setActive(true);
-		layer.setPuffer(buffer);
+		layer.setBuffer(buffer);
 		return layer;
 	}
 
@@ -222,7 +222,7 @@ public class MapEditorModel {
 
 		// We don't want to set it active manually, too much clicks ...
 		layer.setActive(true);
-		layer.setPuffer(buffer);
+		layer.setBuffer(buffer);
 		return layer;
 	}
 

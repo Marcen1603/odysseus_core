@@ -209,7 +209,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 
 	@Override
 	public boolean add(ILayer e) {
-		e.setPuffer(this);
+		e.setBuffer(this);
 		return super.add(e);
 	}
 

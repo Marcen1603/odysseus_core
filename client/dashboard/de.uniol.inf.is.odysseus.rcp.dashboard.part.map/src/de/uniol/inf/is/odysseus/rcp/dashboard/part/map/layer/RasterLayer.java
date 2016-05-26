@@ -174,7 +174,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	}
 
 	@Override
-	public void setPuffer(Buffer puffer) {
+	public void setBuffer(Buffer puffer) {
 	}
 
 	@Override

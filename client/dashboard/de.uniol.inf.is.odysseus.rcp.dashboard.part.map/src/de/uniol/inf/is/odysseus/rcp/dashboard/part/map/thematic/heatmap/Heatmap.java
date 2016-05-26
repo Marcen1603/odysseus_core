@@ -492,7 +492,7 @@ public class Heatmap extends RasterLayer {
 	}
 
 	@Override
-	public void setPuffer(Buffer layerUpdater) {
+	public void setBuffer(Buffer layerUpdater) {
 		this.puffer = layerUpdater;
 	}
 
