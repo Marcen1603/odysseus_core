@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 public class TraceLayer extends RasterLayer {
 
@@ -106,14 +107,21 @@ public class TraceLayer extends RasterLayer {
 			// Get the data from the Tuple (point, id and starttime)
 			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 
+			// TODO This should not be handles here but in a layer before the
+			// actual mapLayers
 			Point point = null;
-			if (tuple.getAttribute(0) instanceof GeometryCollection) {
-				GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
+			if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof GeometryCollection) {
+				GeometryCollection geoColl = (GeometryCollection) tuple
+						.getAttribute(config.getGeometricAttributePosition());
 				point = geoColl.getCentroid();
-			} else if (tuple.getAttribute(0) instanceof Point) {
-				point = (Point) tuple.getAttribute(0);
+			} else if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof GeometryWrapper) {
+				point = ((GeometryWrapper) tuple.getAttribute(config.getGeometricAttributePosition())).getGeometry()
+						.getCentroid();
+			} else if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof Point) {
+				point = (Point) tuple.getAttribute(config.getGeometricAttributePosition());
 			} else {
-				throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in TraceLayer-DashboardPart");
+				throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass()
+						+ " not supported in TraceLayer-DashboardPart");
 			}
 
 			TimeInterval timeInterval = (TimeInterval) tuple.getMetadata();
@@ -133,7 +141,7 @@ public class TraceLayer extends RasterLayer {
 					id = java.lang.Math.toIntExact(tuple.getAttribute(config.getValueAttributePosition()));
 				} else {
 					// It is already an integer value
-					id =tuple.getAttribute(config.getValueAttributePosition()); 
+					id = tuple.getAttribute(config.getValueAttributePosition());
 				}
 
 				// If this is the first coordinate for this key,

@@ -21,12 +21,13 @@ import com.vividsolutions.jts.io.WKTReader;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Stephan Jansen <stephan.jansen@offis.de>
  */
-public class FromWKT extends AbstractFunction<Geometry> {
+public class FromWKT extends AbstractFunction<GeometryWrapper> {
 
 	private static final long serialVersionUID = -8850032331081355095L;
 
@@ -42,14 +43,14 @@ public class FromWKT extends AbstractFunction<Geometry> {
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
-	public Geometry getValue() {
+	public GeometryWrapper getValue() {
 		Geometry g;
 		try {
 			g = new WKTReader().read((String)this.getInputValue(0));
 		} catch (ParseException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
-		return g;
+		return new GeometryWrapper(g);
 	
 	}
 

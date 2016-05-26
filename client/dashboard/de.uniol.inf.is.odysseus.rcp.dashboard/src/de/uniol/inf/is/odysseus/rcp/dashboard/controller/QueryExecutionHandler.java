@@ -157,7 +157,7 @@ public class QueryExecutionHandler {
 		Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().getLogicalQueryIds(session);
 		for (Integer id : ids) {
 			ILogicalQuery query = OdysseusRCPPlugIn.getExecutor().getLogicalQueryById(id, session);
-			if (queryName.equals(query.getName())) {
+			if (queryName.equals(query.getName().toString()) || queryName.equals(query.getUser().getUser().getName() + "." + query.getName())) {
 				return Optional.of(query);
 			}
 		}

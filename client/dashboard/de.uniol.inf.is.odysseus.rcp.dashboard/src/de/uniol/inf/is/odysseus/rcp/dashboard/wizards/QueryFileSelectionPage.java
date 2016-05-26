@@ -230,7 +230,7 @@ public class QueryFileSelectionPage extends WizardPage {
 		List<String> queryNames = Lists.newArrayList();
 		for (Integer queryId : queryIds) {
 			ILogicalQuery query = executor.getLogicalQueryById(queryId, session);
-			queryNames.add(query.getName() == null ? "" : query.getName().toString());
+			queryNames.add(query.getName() == null ? "" + queryId : query.getName().toString());
 		}
 
 		return queryNames.toArray(new String[queryNames.size()]);
