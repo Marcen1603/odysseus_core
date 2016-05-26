@@ -38,15 +38,9 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		joinMap.clear
 		triplePatternMatchingMap.clear
 		unionMap.clear
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(typeof(Greeting))
-//				.map[name]
-//				.join(', '))
-			 qry = resource.allContents.filter(SelectQuery).next
-//			fsa.generateFile('test.txt', qry.compile)
+		qry = resource.allContents.filter(SelectQuery).next
 			
-			qry.parse
+		qry.parse
 }
 	
 	def parse(SelectQuery q){

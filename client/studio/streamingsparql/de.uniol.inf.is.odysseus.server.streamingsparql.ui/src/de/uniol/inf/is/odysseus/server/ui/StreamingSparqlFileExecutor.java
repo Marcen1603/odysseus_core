@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.IFileExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.server.generator.IStreamingSparqlParser;
 import de.uniol.inf.is.odysseus.server.ui.internal.StreamingsparqlActivator;
+import de.uniol.inf.is.odysseus.server.generator.IStreamingSparqlParser;
 
 public class StreamingSparqlFileExecutor implements IFileExecutor {
 
