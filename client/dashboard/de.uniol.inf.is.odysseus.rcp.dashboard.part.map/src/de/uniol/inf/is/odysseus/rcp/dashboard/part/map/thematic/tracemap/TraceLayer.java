@@ -40,7 +40,7 @@ public class TraceLayer extends RasterLayer {
 	private static final Logger LOG = LoggerFactory.getLogger(MapConfigurer.class);
 
 	private static final long serialVersionUID = -6639695562970893314L;
-	private Buffer layerUpdater;
+	private Buffer buffer;
 	private ScreenManager screenManager;
 	private TracemapLayerConfiguration config;
 	private HashMap<Integer, PointInTime[]> timeHashMap;
@@ -92,7 +92,7 @@ public class TraceLayer extends RasterLayer {
 
 		List<?> data = new ArrayList<Object>();
 		try {
-			data = layerUpdater.query(searchEnv, config.getGeometricAttributePosition());
+			data = buffer.query(searchEnv, config.getGeometricAttributePosition());
 		} catch (ClassCastException e) {
 			// Do nothing. The setting, which past of the query was the
 			// geometric attribute was wrong
@@ -433,12 +433,12 @@ public class TraceLayer extends RasterLayer {
 	}
 
 	@Override
-	public void setBuffer(Buffer layerUpdater) {
-		this.layerUpdater = layerUpdater;
+	public void setBuffer(Buffer buffer) {
+		this.buffer = buffer;
 	}
 
-	public Buffer getPuffer() {
-		return this.layerUpdater;
+	public Buffer getBuffer() {
+		return this.buffer;
 	}
 
 	/**

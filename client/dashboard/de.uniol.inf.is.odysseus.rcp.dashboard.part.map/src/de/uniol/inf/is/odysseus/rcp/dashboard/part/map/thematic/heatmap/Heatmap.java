@@ -38,7 +38,7 @@ public class Heatmap extends RasterLayer {
 	private double maxValue;
 	private int totalNumberOfElement;
 	private double totalValue;
-	private Buffer puffer;
+	private Buffer buffer;
 	Color[][] colors;
 	boolean[][] hasInformation;
 	double[][] valueSum; // in which tile is which value
@@ -158,7 +158,7 @@ public class Heatmap extends RasterLayer {
 			}
 		}
 
-		// The tuples are now stored in the LayerUpdater to reduce redundant
+		// The tuples are now stored in the buffer to reduce redundant
 		// data
 		Envelope searchEnv = new Envelope();
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in
@@ -172,7 +172,7 @@ public class Heatmap extends RasterLayer {
 		data = new ArrayList<Object>();
 		tempList = new ArrayList<Tuple<? extends ITimeInterval>>();
 		if (this.config.usePoint()) {
-			data = puffer.query(searchEnv, config.getGeometricAttributePosition());
+			data = buffer.query(searchEnv, config.getGeometricAttributePosition());
 
 			valueSum = new double[x][y];
 			double maxSum = 0;
@@ -310,7 +310,7 @@ public class Heatmap extends RasterLayer {
 				}
 			}
 		} else {
-			tempList = puffer.getElementList();
+			tempList = buffer.getElementList();
 			synchronized (tempList) {
 				valueSum = new double[x][y];
 				double maxSum = 0;
@@ -492,12 +492,12 @@ public class Heatmap extends RasterLayer {
 	}
 
 	@Override
-	public void setBuffer(Buffer layerUpdater) {
-		this.puffer = layerUpdater;
+	public void setBuffer(Buffer buffer) {
+		this.buffer = buffer;
 	}
 
-	public Buffer getLayerUpdater() {
-		return this.puffer;
+	public Buffer getBuffer() {
+		return this.buffer;
 	}
 
 	/**
