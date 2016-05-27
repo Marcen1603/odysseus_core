@@ -144,7 +144,7 @@ public class MapDashboardPart extends AbstractMultiSourceDashboardPart implement
 		}
 
 		// Prevent an overflow in the puffer
-		puffer.checkForPufferSize();
+		puffer.checkForBufferSize();
 
 		if (updateInterval == 0)
 			screenManager.redraw();

@@ -25,7 +25,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 	private static final long serialVersionUID = 1092858542289960843L;
 
 	private final IMapDashboardAdapter mapDashboardPart;
-	private int maxNumerOfElements;
+	private int maxNumberOfElements;
 	private int userDefinedTimeRange;
 
 	private DefaultTISweepArea<Tuple<? extends ITimeInterval>> buffer;
@@ -49,10 +49,10 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 	}
 
 	/**
-	 * Removes the oldest elements if puffer is bigger than the configured size
+	 * Removes the oldest elements if buffer is bigger than the configured size
 	 */
-	public void checkForPufferSize() {
-		// Prevent an overflow in the puffer
+	public void checkForBufferSize() {
+		// Prevent an overflow in the buffer
 
 		// Maybe the user don't want to cut the time: he defines '0' and we
 		// won't delete
@@ -82,7 +82,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 
 		// Maybe in the time the user-defined were too many tuples
 		// then delete the oldest tuples, so we prevent an overflow
-		while (buffer.size() > maxNumerOfElements) {
+		while (buffer.size() > maxNumberOfElements) {
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = buffer.peekElementsContaing(buffer.getMinTs(),
 					false);
@@ -261,7 +261,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 	 * @return The maximum size of the puffer
 	 */
 	public int getMaxPufferSize() {
-		return maxNumerOfElements;
+		return maxNumberOfElements;
 	}
 
 	/**
@@ -271,10 +271,10 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 	 */
 	public void setMaxPufferSize(int size) {
 		if (size > 0)
-			this.maxNumerOfElements = size;
+			this.maxNumberOfElements = size;
 
 		// Prevent an overflow in the puffer
-		checkForPufferSize();
+		checkForBufferSize();
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 	 */
 	public void setTimeRange(int seconds) {
 		userDefinedTimeRange = seconds;
-		checkForPufferSize();
+		checkForBufferSize();
 	}
 
 	/**

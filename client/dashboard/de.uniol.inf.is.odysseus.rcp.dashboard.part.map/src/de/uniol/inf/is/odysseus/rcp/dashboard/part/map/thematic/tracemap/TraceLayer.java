@@ -16,10 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -33,7 +32,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.TracemapLayerConfiguration;
-import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 public class TraceLayer extends RasterLayer {
 
@@ -85,10 +83,11 @@ public class TraceLayer extends RasterLayer {
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in
 													// Germany
 		// Get everything
-		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE, Integer.MAX_VALUE)); // Top
-																							// left
-		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE, Integer.MIN_VALUE)); // Bottom
-																							// right
+		
+		// top left
+		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE, Integer.MAX_VALUE));
+		// bottom right
+		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE, Integer.MIN_VALUE));
 
 		List<?> data = new ArrayList<Object>();
 		try {
@@ -100,38 +99,24 @@ public class TraceLayer extends RasterLayer {
 
 		GeometryFactory factory = new GeometryFactory();
 
-		// List with all lists (for every id one list) of the coordinates
+		// Map with all lists (for every id one list) of the coordinates
 		HashMap<Integer, ArrayList<TraceElement>> lineList = new HashMap<Integer, ArrayList<TraceElement>>();
 
 		for (Object dataSet : data) {
 			// Get the data from the Tuple (point, id and starttime)
 			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 
-			// TODO This should not be handles here but in a layer before the
-			// actual mapLayers
-			Point point = null;
-			if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof GeometryCollection) {
-				GeometryCollection geoColl = (GeometryCollection) tuple
-						.getAttribute(config.getGeometricAttributePosition());
-				point = geoColl.getCentroid();
-			} else if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof GeometryWrapper) {
-				point = ((GeometryWrapper) tuple.getAttribute(config.getGeometricAttributePosition())).getGeometry()
-						.getCentroid();
-			} else if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof Point) {
-				point = (Point) tuple.getAttribute(config.getGeometricAttributePosition());
-			} else {
-				throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass()
-						+ " not supported in TraceLayer-DashboardPart");
-			}
+			
+			Geometry geometry = getGeometry(tuple, config.getGeometricAttributePosition());
 
 			TimeInterval timeInterval = (TimeInterval) tuple.getMetadata();
 			PointInTime startTime = timeInterval.getStart();
 
 			// Build the zoomEnvironment for "zoom to layer"
-			zoomEnv.expandToInclude(point.getCoordinate());
+			zoomEnv.expandToInclude(geometry.getCoordinate());
 
 			// Create new LineElement
-			TraceElement lineElement = new TraceElement(point.getCoordinate(), startTime);
+			TraceElement lineElement = new TraceElement(geometry.getCoordinate(), startTime);
 
 			try {
 

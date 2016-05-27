@@ -32,7 +32,10 @@ import org.osgeo.proj4j.ProjCoordinate;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Buffer;
@@ -46,6 +49,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.tile.AsyncImage;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.tile.Stats;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.tile.TileServer;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> implements PropertyChangeListener {
 
@@ -280,7 +284,32 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 			return new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
 		}
 		return this.tileServer.getEnvelope();
+	}
 
+	/**
+	 * Tries to get the geometry from the tuple at the given index.
+	 * 
+	 * @param tuple
+	 * @param index
+	 * @return
+	 */
+	public Geometry getGeometry(Tuple<?> tuple, int index) {
+
+		Geometry geometry = null;
+		Object attribute = tuple.getAttribute(index);
+
+		if (attribute instanceof GeometryCollection) {
+			GeometryCollection geoColl = (GeometryCollection) attribute;
+			geometry = geoColl.getCentroid();
+		} else if (attribute instanceof GeometryWrapper) {
+			geometry = ((GeometryWrapper) attribute).getGeometry();
+		} else if (attribute instanceof com.vividsolutions.jts.geom.Point) {
+			geometry = (com.vividsolutions.jts.geom.Point) attribute;
+		} else {
+			throw new RuntimeException(
+					"Tuple attribute type " + attribute.getClass() + " not supported for the map dashboard part.");
+		}
+		return geometry;
 	}
 
 	@Override

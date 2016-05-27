@@ -14,8 +14,7 @@ import org.osgeo.proj4j.ProjCoordinate;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -192,26 +191,18 @@ public class Heatmap extends RasterLayer {
 					// Get the data from the Tuple (Where it is and value)
 					Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 
-					Point point = null;
-					if (tuple.getAttribute(0) instanceof GeometryCollection) {
-						GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
-						point = geoColl.getCentroid();
-					} else if (tuple.getAttribute(0) instanceof Point) {
-						point = (Point) tuple.getAttribute(0);
-					} else {
-						throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in Heatmap-Dashboard part");
-					}
+					Geometry geometry = getGeometry(tuple, config.getGeometricAttributePosition());
 
 					// Calculate, where this belongs in the heatmap
 
-					int[] transformedPoint = transformation.transformCoord(point.getCoordinate(), srid);
+					int[] transformedPoint = transformation.transformCoord(geometry.getCoordinate(), srid);
 
 					Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0], transformedPoint[1]));
 
 					// If this point is not in the heatMapArea -> expand
 					// heatMapArea
 					heatMapArea.expandToInclude(tempEnv);
-					zoomEnv.expandToInclude(point.getCoordinate());
+					zoomEnv.expandToInclude(geometry.getCoordinate());
 				}
 
 			} else {
@@ -239,16 +230,7 @@ public class Heatmap extends RasterLayer {
 
 				// Get the data from the Tuple (Where it is and value)
 				Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-				Point point = null;
-				if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof GeometryCollection) {
-					GeometryCollection geoColl = (GeometryCollection) tuple
-							.getAttribute(config.getGeometricAttributePosition());
-					point = geoColl.getCentroid();
-				} else if (tuple.getAttribute(config.getGeometricAttributePosition()) instanceof Point) {
-					point = (Point) tuple.getAttribute(config.getGeometricAttributePosition());
-				} else {
-					throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in Heatmap-Dashboard part");
-				}
+				Geometry geometry = getGeometry(tuple, config.getGeometricAttributePosition());
 
 				double value = 0;
 				if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {
@@ -258,7 +240,7 @@ public class Heatmap extends RasterLayer {
 				}
 
 				// Calculate, where this belongs in the heatmap
-				int[] transformedPoint = transformation.transformCoord(point.getCoordinate(), srid);
+				int[] transformedPoint = transformation.transformCoord(geometry.getCoordinate(), srid);
 
 				Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0], transformedPoint[1]));
 
