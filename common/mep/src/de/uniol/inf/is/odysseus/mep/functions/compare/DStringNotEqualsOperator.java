@@ -18,10 +18,10 @@ package de.uniol.inf.is.odysseus.mep.functions.compare;
 import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.datatype.DString;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractBinaryStringInputOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryDStringInputOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 
-public class DStringNotEqualsOperator extends AbstractBinaryStringInputOperator<Boolean> implements IHasAlias{
+public class DStringNotEqualsOperator extends AbstractBinaryDStringInputOperator<Boolean> implements IHasAlias{
 
 	private static final long serialVersionUID = -1508977830046773571L;
 
