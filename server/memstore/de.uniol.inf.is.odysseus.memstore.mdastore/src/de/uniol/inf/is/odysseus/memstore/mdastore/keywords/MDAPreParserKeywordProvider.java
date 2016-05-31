@@ -1,11 +1,9 @@
-package de.uniol.inf.is.odysseus.memstore.mdastore;
+package de.uniol.inf.is.odysseus.memstore.mdastore.keywords;
 
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.memstore.mdastore.keywords.MDAStoreDropPreParserKeyword;
-import de.uniol.inf.is.odysseus.memstore.mdastore.keywords.MDAStoreInitPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.memstore.mdastore;
+package de.uniol.inf.is.odysseus.memstore.mdastore.functions;
 
 import java.util.List;
 import java.util.Objects;
@@ -6,21 +6,22 @@ import java.util.Objects;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.memstore.mdastore.MDAStore;
+import de.uniol.inf.is.odysseus.memstore.mdastore.MDAStoreManager;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-/**
- * For 1-dimensional MDAStores.
- * @author Michael Brand
- *
- */
-public class MDAIndexFromNumeric extends AbstractFunction<Integer> {
+public class MDAIndexFunction extends AbstractFunction<Integer> {
 
 	private static final long serialVersionUID = -8148362039305389820L;
 
+	/*
+	 * 1: store name
+	 * 2: Value to retrieve index for
+	 */
 	private static final SDFDatatype[][] acceptedTypes = new SDFDatatype[][] {
 			{ SDFDatatype.STRING }, { SDFDatatype.DOUBLE } };
 
-	public MDAIndexFromNumeric() {
+	public MDAIndexFunction() {
 		super("MDAIndex", 2, acceptedTypes, SDFDatatype.INTEGER);
 	}
 
@@ -31,8 +32,8 @@ public class MDAIndexFromNumeric extends AbstractFunction<Integer> {
 		value.add(getNumericalInputValue(1));
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(value);
-		MDAStore<Double> store = MDAStoreManager.get(name);
-		return MDAIndicesFromList.getValue(store, value).get(0);
+		MDAStore store = MDAStoreManager.get(name);
+		return MDAIndicesFunction.getValue(store, value).get(0);
 	}
 
 }

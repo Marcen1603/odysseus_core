@@ -15,7 +15,7 @@ public class MDAStoreManager {
 	/**
 	 * All created stores mapped to their names.
 	 */
-	private static final Map<String, MDAStore<? extends Comparable<?>>> stores = Maps
+	private static final Map<String, MDAStore> stores = Maps
 			.newHashMap();
 
 	/**
@@ -24,9 +24,8 @@ public class MDAStoreManager {
 	 * @param name
 	 *            The name for the MDAStore.
 	 */
-	public static <T extends Comparable<? super T>> MDAStore<T> create(
-			String name) {
-		MDAStore<T> store = new MDAStore<T>();
+	public static MDAStore create(String name) {
+		MDAStore store = new MDAStore();
 		stores.put(name, store);
 		return store;
 	}
@@ -51,10 +50,9 @@ public class MDAStoreManager {
 	 * @return The MDASTore identified by <code>name</code> or null, if there is
 	 *         no MDAStore with that name.
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends Comparable<? super T>> MDAStore<T> get(String name) {
+	public static MDAStore get(String name) {
 		if (exists(name)) {
-			return (MDAStore<T>) stores.get(name);
+			return (MDAStore) stores.get(name);
 		}
 		return null;
 	}

@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.memstore.mdastore.commands.CreateMDAStoreCommand;
+import de.uniol.inf.is.odysseus.memstore.mdastore.functions.MDADimFunction;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -19,9 +20,9 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 	
 	public static final String KEYWORD = "MDASTORE_INIT";
 
-	private static final int MIN_ATTRIBUTE_COUNT = 3;
+	private static final int MIN_ATTRIBUTE_COUNT = 2;
 
-	private static final String PATTERN = "Name ClassName ValuesOfFirstDimension ... ValuesOfNthDimension";
+	private static final String PATTERN = "Name ValuesOfFirstDimension ... ValuesOfNthDimension";
 
 	private static final String COLON_PATTERN = "SmallestValue:GreatestValue:NumValues";
 
@@ -39,7 +40,6 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context, IServerExecutor executor)
@@ -47,22 +47,9 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 		String[] splitted = parameter.trim().split(" ");
 		String name = splitted[0];
 
-		String className = splitted[1];
-		Class<?> clz = null;
-		try {
-			clz = Class.forName(className);
-		} catch (Throwable e) {
-			throw new OdysseusScriptException(className
-					+ " is not full qualified name of a comparable class!");
-		}
-
-		List values = Lists.newArrayList();
-		for (int i = 2; i < splitted.length; i++) {
-			if (splitted[i].contains(":")) {
-				values.add(getValuesSplittedByColon(splitted[i], clz));
-			} else {
-				values.add(getValuesSplittedByComma(splitted[i], clz));
-			}
+		List<List<Double>> values = Lists.newArrayList();
+		for (int i = 1; i < splitted.length; i++) {
+			values.add(getValuesSplittedByColon(splitted[i]));
 		}
 		List<IExecutorCommand> cmds = new LinkedList<>();
 		CreateMDAStoreCommand cmd = new CreateMDAStoreCommand(caller,name,values);
@@ -70,29 +57,7 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 		return cmds;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static List getValuesSplittedByComma(String strValues, Class<?> clz)
-			throws OdysseusScriptException {
-		String[] splitted_intern = strValues.trim().split(",");
-		List values = Lists.newArrayList();
-		for (int i = 0; i < splitted_intern.length; i++) {
-			try {
-				if (Number.class.isAssignableFrom(clz)) {
-					values.add(clz.cast(Double.valueOf(splitted_intern[i])
-							.doubleValue()));
-				} else {
-					values.add(clz.cast(splitted_intern[i]));
-				}
-			} catch (Throwable e) {
-				throw new OdysseusScriptException("Could not cast "
-						+ splitted_intern[i] + " to " + clz.getCanonicalName());
-			}
-		}
-		return values;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static List getValuesSplittedByColon(String strValues, Class<?> clz)
+	private static List<Double> getValuesSplittedByColon(String strValues)
 			throws OdysseusScriptException {
 		String[] strValues_intern = strValues.trim().split(":");
 		if (strValues_intern.length != 3) {
@@ -105,7 +70,6 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 		String strLast = strValues_intern[1];
 		String strCount = strValues_intern[2];
 
-		List values = Lists.newArrayList();
 		double firstValue = Double.valueOf(strFirst);
 		double lastValue = Double.valueOf(strLast);
 		int count = Integer.valueOf(strCount);
@@ -113,34 +77,7 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 			throw new OdysseusScriptException("Illegal number of coordinates for given start and end!");
 		}
 		
-		double increasingValue = (lastValue-firstValue) / (count-1);	// first and last value included
-		if(firstValue == lastValue) {
-			try {
-				values.add(clz.cast(Double.valueOf(firstValue)));
-			} catch (Throwable e) {
-				throw new OdysseusScriptException("Could not cast "
-						+ firstValue + " to " + clz.getCanonicalName());
-			}
-		} else if(firstValue < lastValue) {
-			for(double value = firstValue; value <= lastValue; value += increasingValue) {
-				try {
-					values.add(clz.cast(Double.valueOf(value)));
-				} catch (Throwable e) {
-					throw new OdysseusScriptException("Could not cast "
-							+ value + " to " + clz.getCanonicalName());
-				}
-			}
-		} else {
-			for(double value = firstValue; value >= lastValue; value += increasingValue) {
-				try {
-					values.add(clz.cast(Double.valueOf(value)));
-				} catch (Throwable e) {
-					throw new OdysseusScriptException("Could not cast "
-							+ value + " to " + clz.getCanonicalName());
-				}
-			}
-		}
-		return values;
+		return MDADimFunction.createDimension(firstValue, lastValue, count);
 	}
 
 }

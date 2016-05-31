@@ -17,31 +17,27 @@ public class CreateMDAStoreCommand extends AbstractExecutorCommand {
 
 	private static final long serialVersionUID = 3301766838992507006L;
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(CreateMDAStoreCommand.class);
-	
-	private String name;
-	private List<Object> values;
+	private static final Logger LOG = LoggerFactory.getLogger(CreateMDAStoreCommand.class);
 
-	public CreateMDAStoreCommand(ISession caller, String name,
-			List<Object> values) {
+	private String name;
+	private List<List<Double>> values;
+
+	public CreateMDAStoreCommand(ISession caller, String name, List<List<Double>> values) {
 		super(caller);
 		this.name = name;
 		this.values = values;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
-			IServerExecutor executor) {
-		if (MDAStoreManager.exists(name)){
-			throw new IllegalArgumentException("Store with name "+name+" already defined. Remove first.");
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+		if (MDAStoreManager.exists(name)) {
+			throw new IllegalArgumentException("Store with name " + name + " already defined. Remove first.");
 		}
 		MDAStore store = MDAStoreManager.create(name);
-		LOG.info("MDAStore "+name+" created");
+		LOG.info("MDAStore " + name + " created");
 		if (values != null) {
 			store.initialize(values);
-			LOG.info("MDAStore "+name+" initialized" );
+			LOG.info("MDAStore " + name + " initialized");
 		}
 	}
 

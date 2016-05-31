@@ -7,18 +7,16 @@ import com.google.common.collect.Lists;
 
 /**
  * The multidimensional array (MDA) store works as follows: <br />
- * 1. Initialize the storage with n arrays, where n is the number of dimensions,
- * and the class of the values. <br />
+ * 1. Initialize the storage with n double arrays, where n is the number of
+ * dimensions. <br />
  * 2. An arrays consists of the cell borders, so there is one cell less than the
  * array contains elements. <br />
- * 2. Request the n-dimensional cell of a given n-dimensional value. A
+ * 3. Request the n-dimensional cell of a given n-dimensional value. A
  * n-dimensional value is within a cell, if it's between two subsequent borders.
  * 
  * @author Michael
- *
- * @param <T>
  */
-public class MDAStore<T extends Comparable<? super T>> {
+public class MDAStore {
 
 	/**
 	 * The number of dimensions.
@@ -28,7 +26,7 @@ public class MDAStore<T extends Comparable<? super T>> {
 	/**
 	 * A sorted, multidimensional array of the borders.
 	 */
-	private List<List<T>> borders;
+	private List<List<Double>> borders;
 
 	/**
 	 * Initializes the MDAStore.
@@ -40,12 +38,29 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 * @throws IllegalArgumentException
 	 *             if <code>borders</code> is empty.
 	 */
-	public void initialize(List<List<T>> borders) throws NullPointerException,
-			IllegalArgumentException {
-		validateBorders(borders);
+	public void initialize(List<List<Double>> borders) throws NullPointerException, IllegalArgumentException {
+		validateBordersAllDims(borders);
 		this.borders = borders;
 		this.numDims = this.borders.size();
 		sortBorders();
+	}
+
+	/**
+	 * Checks borders for a dimension of the MDAStore.
+	 * 
+	 * @param borders
+	 *            The given values.
+	 * @throws NullPointerException
+	 *             if <code>borders</code> is null.
+	 * @throws IllegalArgumentException
+	 *             if <code>borders</code> is empty.
+	 */
+	private void validateBorders1Dim(List<Double> borders) throws NullPointerException, IllegalArgumentException {
+		if (borders == null) {
+			throw new NullPointerException("Dimension to initialize MDAStore must be not null!");
+		} else if (borders.size() < 1) {
+			throw new IllegalArgumentException("There must be at least one value for the dimension of a MDAStore!");
+		}
 	}
 
 	/**
@@ -58,14 +73,15 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 * @throws IllegalArgumentException
 	 *             if <code>borders</code> is empty.
 	 */
-	private void validateBorders(List<List<T>> borders)
+	private void validateBordersAllDims(List<List<Double>> borders)
 			throws NullPointerException, IllegalArgumentException {
 		if (borders == null) {
-			throw new NullPointerException(
-					"Values to initialize MDAStore must be not null!");
+			throw new NullPointerException("Values to initialize MDAStore must be not null!");
 		} else if (borders.size() < 1) {
-			throw new IllegalArgumentException(
-					"There must be at least one dimension for the MDAStore!");
+			throw new IllegalArgumentException("There must be at least one dimension for the MDAStore!");
+		}
+		for (List<Double> dim : borders) {
+			validateBorders1Dim(dim);
 		}
 	}
 
@@ -88,8 +104,7 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 * @throws NullPointerException
 	 *             if {@link #initialize(List)} has not been called before.
 	 */
-	public List<Integer> getCellIndices(List<T> val)
-			throws NullPointerException {
+	public List<Integer> getCellIndices(List<Double> val) throws NullPointerException {
 		if (this.borders == null) {
 			throw new NullPointerException("The MDAStore is not initialized!");
 		}
@@ -100,8 +115,7 @@ public class MDAStore<T extends Comparable<? super T>> {
 			}
 		} else {
 			for (int dim = 0; dim < this.numDims; dim++) {
-				indices.add(binSearch(this.borders.get(dim), val.get(dim), 0,
-						this.borders.get(dim).size() - 1));
+				indices.add(binSearch(this.borders.get(dim), val.get(dim), 0, this.borders.get(dim).size() - 1));
 			}
 		}
 		return indices;
@@ -122,7 +136,7 @@ public class MDAStore<T extends Comparable<? super T>> {
 	 *         search area or -1, if the search area does not contain
 	 *         <coce>val</code>.
 	 */
-	private int binSearch(List<T> borders, T val, int start, int end) {
+	private int binSearch(List<Double> borders, Double val, int start, int end) {
 		final int mid = start + (end - start) / 2;
 		final int diff = val.compareTo(borders.get(mid));
 		final int minIndex = 0;
@@ -156,6 +170,20 @@ public class MDAStore<T extends Comparable<? super T>> {
 			}
 			return binSearch(borders, val, mid + 1, end);
 		}
+	}
+	
+	public void addDimension(int index, List<Double> borders) throws NullPointerException, IllegalArgumentException, IndexOutOfBoundsException {
+		validateBorders1Dim(borders);
+		Collections.sort(borders);
+		this.borders.add(index, borders);
+	}
+	
+	public void addDimension(List<Double> borders) throws NullPointerException, IllegalArgumentException {
+		addDimension(this.borders.size(), borders);
+	}
+	
+	public void removeDimension(int index) throws IndexOutOfBoundsException {
+		this.borders.remove(index);
 	}
 
 }
