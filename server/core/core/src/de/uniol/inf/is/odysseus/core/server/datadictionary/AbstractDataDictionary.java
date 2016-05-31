@@ -80,7 +80,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	private IStore<Resource, IUser> entityFromUser;
 	private IStore<Resource, HashMap<String, ArrayList<Resource>>> entityUsedBy;
 	private IStore<String, SDFDatatype> datatypes;
-	private IStore<Integer, ILogicalQuery> savedQueries;
+	private IStore<Integer, String> savedQueries; // store the query text because of serializability trouble
 	private IStore<Integer, IUser> savedQueriesForUser;
 
 	private IStore<Integer, String> savedQueriesBuildParameterName;
@@ -158,7 +158,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	protected abstract IStore<String, SDFDatatype> createDatatypesStore();
 
-	protected abstract IStore<Integer, ILogicalQuery> createSavedQueriesStore();
+	protected abstract IStore<Integer, String> createSavedQueriesStore();
 
 	protected abstract IStore<Integer, IUser> createSavedQueriesForUserStore();
 
@@ -874,7 +874,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	@Override
 	public void addQuery(ILogicalQuery q, ISession caller, String buildParameterName) {
-		this.savedQueries.put(q.getID(), q);
+		this.savedQueries.put(q.getID(), q.getQueryText());
 		this.savedQueriesForUser.put(q.getID(), caller.getUser());
 		this.savedQueriesBuildParameterName.put(q.getID(), buildParameterName);
 		addEntityForPlan(q.getLogicalPlan(), createResource(Integer.toString(q.getID()), caller), EntityType.QUERY,
@@ -882,7 +882,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	@Override
-	public ILogicalQuery getQuery(int id, ISession caller) {
+	public String getQuery(int id, ISession caller) {
 		if (hasPermission(caller, ExecutorPermission.ADD_QUERY, ExecutorPermission.objectURI)) {
 			return this.savedQueries.get(id);
 		}
@@ -891,11 +891,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	@Override
-	public List<ILogicalQuery> getQueries(IUser user, ISession caller) {
-		List<ILogicalQuery> queries = Lists.newArrayList();
+	public List<String> getQueries(IUser user, ISession caller) {
+		List<String> queries = Lists.newArrayList();
 		for (Entry<Integer, IUser> e : savedQueriesForUser.entrySet()) {
 			if (e.getValue().equals(user)) {
-				ILogicalQuery query = getQuery(e.getKey(), caller);
+				String query = getQuery(e.getKey(), caller);
 				if (query != null) {
 					queries.add(query);
 				}

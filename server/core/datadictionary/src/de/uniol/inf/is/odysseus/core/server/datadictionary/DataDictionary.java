@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
@@ -92,7 +91,7 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<Integer, ILogicalQuery> createSavedQueriesStore() {
+	protected IStore<Integer, String> createSavedQueriesStore() {
 		return createStore("queriesFilename", tenant, useFilestore()& saveQueries());
 	}
 
