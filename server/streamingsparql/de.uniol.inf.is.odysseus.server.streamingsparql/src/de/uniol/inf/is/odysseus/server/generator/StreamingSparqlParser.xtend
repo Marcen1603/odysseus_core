@@ -94,7 +94,7 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 			varToPattern.put(variable,triplePatternMatchingMap.values.filter[p | p.subject.equals(variable) || p.object.equals(variable)].toList)
 		}
 		
-		val listToJoin = new ArrayList<TripleToJoin>()
+		var listToJoin = new ArrayList<TripleToJoin>()
 
 		
 		if(listToJoin.empty){
@@ -121,6 +121,23 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		}
 		
 		val listOfMultiplePredicates = new ArrayList<TripleToJoin>
+		
+		//gleiche pattern2 müssen an das ende der tripleToJoin Liste für das Erstellen der Statements
+		val newlist = new ArrayList
+		val listwithmorethanonepattern2 = new ArrayList
+		
+		for (element : listToJoin) {
+			val j = listToJoin.filter[p | p.pattern2 == element.pattern2].toList
+			if(j.size == 1){
+				newlist.addAll(j)
+			}else if(j.size > 1 && !listwithmorethanonepattern2.containsAll(j)){
+				listwithmorethanonepattern2.addAll(j)
+			}
+		}
+		
+		newlist.addAll(listwithmorethanonepattern2)
+		listToJoin = newlist
+		
 		for (element : listToJoin) {
 			
 			val j = listToJoin.filter[p | p.pattern2 == element.pattern2].toList
@@ -151,12 +168,6 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 			filter=SELECT({predicate='«q.filterclause.left.unnamed.name» «q.filterclause.operator» «q.filterclause.right.unnamed.name»'},«last»)'''
 			last = "filter"
 		}
-		
-//		var group =""
-//		if(q.groupClause != null){
-//			group = '''group = AGGREGATE({group_by = [«FOR variable : q.groupClause.conditions SEPARATOR ','»'«variable.unnamed.name»'«ENDFOR»]}, «last»)'''
-//			last = "group"	
-//		}
 		
 		var aggregate = ""
 		if(q.aggregateClause != null){
@@ -237,16 +248,16 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		val listToJoinIterator = listToJoin.iterator
 		val listToAdd = new ArrayList<TripleToJoin>()
 		val variable = duplicatesIterator.next
-		val list = varToPattern.get(variable)
+		val patterns = varToPattern.get(variable)
 		while(listToJoinIterator.hasNext){
 			val joinElement = listToJoinIterator.next
-			var filteredList  = list.filter[p | p == joinElement.pattern1 || p == joinElement.pattern2].toList
+			var filteredList  = patterns.filter[p | p == joinElement.pattern1 || p == joinElement.pattern2].toList
 			if(filteredList.size > 0){
 				
-				list.remove(filteredList.get(0))
-				listToJoin.add(new TripleToJoin(filteredList.get(0), list.get(0), variable.replace('?','')))
-				for (k : 0 ..< list.size - 1) {
-					listToAdd.add(new TripleToJoin(list.get(k), list.get(k+1), variable.replace('?','')))
+				patterns.remove(filteredList.get(0))
+				listToAdd.add(new TripleToJoin(filteredList.get(0), patterns.get(0), variable.replace('?','')))
+				for (k : 0 ..< patterns.size - 1) {
+					listToAdd.add(new TripleToJoin(patterns.get(k), patterns.get(k+1), variable.replace('?','')))
 				}
 				duplicatesIterator.remove
 				return listToAdd
@@ -260,8 +271,6 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		if(q instanceof SelectQuery){
 			parse(q)
 		}
-			
-//		return new ArrayList();
 	}
 
 
