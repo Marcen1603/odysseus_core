@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.recovery.preciserecovery.feature"
-      label="Precise Recovery Feature"
+      label="Non-distributed Precise Recovery Feature"
       version="1.0.0.qualifier"
       provider-name="Michael Brand">
 
