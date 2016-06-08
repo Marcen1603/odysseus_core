@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.server.streamingsparql.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.server.streamingsparql,
- de.uniol.inf.is.odysseus.server.streamingsparql.ui,
  org.eclipse.core.runtime,
  org.eclipse.xtext.junit4,
  org.eclipse.xtext.xbase.lib,

@@ -11,7 +11,9 @@ public class StreamingsparqlUiInjectorProvider implements IInjectorProvider {
 	
 	@Override
 	public Injector getInjector() {
-		return de.uniol.inf.is.odysseus.server.ui.internal.StreamingsparqlActivator.getInstance().getInjector("de.uniol.inf.is.odysseus.server.Streamingsparql");
+		// TODO: FIXME Dependency to UI not allowed here!
+		//return de.uniol.inf.is.odysseus.server.ui.internal.StreamingsparqlActivator.getInstance().getInjector("de.uniol.inf.is.odysseus.server.Streamingsparql");
+		return null;
 	}
 	
 }
