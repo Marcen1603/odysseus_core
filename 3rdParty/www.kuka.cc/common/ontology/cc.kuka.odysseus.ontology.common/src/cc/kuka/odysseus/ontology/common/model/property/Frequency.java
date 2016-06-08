@@ -27,16 +27,18 @@ import cc.kuka.odysseus.ontology.common.SSN;
  */
 public class Frequency extends MeasurementProperty {
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param expression
-     *            The expression
-     */
-    public Frequency(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "Frequency", expression);
-    }
+	public static final String RESOURCE = SSN.NS + "Frequency";
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param expression
+	 *            The expression
+	 */
+	public Frequency(final URI uri, String name, final String expression) {
+		super(uri, name, RESOURCE, expression);
+	}
 
 }

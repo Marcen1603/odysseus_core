@@ -16,6 +16,7 @@
  *******************************************************************************/
 package cc.kuka.odysseus.ontology.common;
 
+import java.io.File;
 import java.util.List;
 
 import cc.kuka.odysseus.ontology.common.model.FeatureOfInterest;
@@ -31,51 +32,169 @@ import cc.kuka.odysseus.ontology.common.model.property.MeasurementProperty;
  *
  */
 public interface SensorOntologyService {
-    List<SensingDevice> getAllSensingDevices();
+	/**
+	 * 
+	 * @return
+	 */
+	List<SensingDevice> allSensingDevices();
 
-    List<SensingDevice> getAllSensingDevices(String featureOfInterest);
+	/**
+	 * 
+	 * @param featureOfInterest
+	 * @return
+	 */
+	List<SensingDevice> allSensingDevices(String featureOfInterest);
 
-    List<FeatureOfInterest> getAllFeaturesOfInterest();
+	/**
+	 * 
+	 * @return
+	 */
+	List<FeatureOfInterest> allFeaturesOfInterests();
 
-    List<Property> getAllProperties();
+	/**
+	 * 
+	 * @return
+	 */
+	List<Property> allProperties();
 
-    List<Property> getAllProperties(String featureOfInterest);
+	/**
+	 * 
+	 * @param featureOfInterest
+	 * @return
+	 */
+	List<Property> allProperties(String featureOfInterest);
 
-    /**
-     * @param sensingDevice
-     */
-    void createSensingDevice(SensingDevice sensingDevice);
+	/**
+	 * @param sensingDevice
+	 */
+	void create(SensingDevice sensingDevice);
 
-    void createFeatureOfInterest(FeatureOfInterest featureOfInterest);
+	/**
+	 * 
+	 * @param featureOfInterest
+	 */
+	void create(FeatureOfInterest featureOfInterest);
 
+	/**
+	 * 
+	 * @param featureOfInterest
+	 * @param sensingDevice
+	 * @param measurementCapability
+	 * @return
+	 */
+	List<SensingDevice> sensingDevices(final String featureOfInterest, final String sensingDevice,
+			final String measurementCapability);
 
-    List<SensingDevice> getSensingDevices(final String featureOfInterest, final String sensingDevice, final String measurementCapability);
+	/**
+	 * 
+	 * @param property
+	 * @return
+	 */
+	List<String> attributes(Property property);
 
-    List<String> getAttributes(Property property);
+	/**
+	 * @param measurementCapability
+	 * @param condition
+	 */
+	void create(MeasurementCapability measurementCapability, Condition condition);
 
-    /**
-     * @param measurementCapability
-     * @param condition
-     */
-    void createCondition(MeasurementCapability measurementCapability, Condition condition);
+	/**
+	 * @param measurementCapability
+	 * @param measurementProperty
+	 */
+	void create(MeasurementCapability measurementCapability, MeasurementProperty measurementProperty);
 
-    /**
-     * @param measurementCapability
-     * @param measurementProperty
-     */
-    void createMeasurementProperty(MeasurementCapability measurementCapability, MeasurementProperty measurementProperty);
+	/**
+	 * @param featureOfInterest
+	 * @param property
+	 */
+	void create(FeatureOfInterest featureOfInterest, Property property);
 
-    /**
-     * @param featureOfInterest
-     * @param property
-     */
-    void createProperty(FeatureOfInterest featureOfInterest, Property property);
+	/**
+	 * @param sensingDevice
+	 * @param measurementCapability
+	 */
+	void create(SensingDevice sensingDevice, MeasurementCapability measurementCapability);
 
-    /**
-     * @param sensingDevice
-     * @param measurementCapability
-     */
-    void createMeasurementCapability(SensingDevice sensingDevice, MeasurementCapability measurementCapability);
+	/**
+	 * 
+	 * @param property
+	 */
+	void update(Property property);
 
-    void clearCache();
+	/**
+	 * 
+	 * @param measurementCapability
+	 */
+	void update(MeasurementCapability measurementCapability);
+
+	/**
+	 * 
+	 * @param easurementProperty
+	 */
+	void update(MeasurementProperty easurementProperty);
+
+	/**
+	 * 
+	 * @param featureOfInterest
+	 */
+	void update(FeatureOfInterest featureOfInterest);
+
+	/**
+	 * 
+	 * @param sensingDevice
+	 */
+	void update(SensingDevice sensingDevice);
+
+	/**
+	 * 
+	 * @param property
+	 */
+	void delete(Property property);
+
+	/**
+	 * 
+	 * @param measurementCapability
+	 */
+	void delete(MeasurementCapability measurementCapability);
+
+	/**
+	 * 
+	 * @param easurementProperty
+	 */
+	void delete(MeasurementProperty easurementProperty);
+
+	/**
+	 * 
+	 * @param featureOfInterest
+	 */
+	void delete(FeatureOfInterest featureOfInterest);
+
+	/**
+	 * 
+	 * @param sensingDevice
+	 */
+	void delete(SensingDevice sensingDevice);
+
+	/**
+	 * 
+	 * @param condition
+	 */
+	void delete(Condition condition);
+
+	/**
+	 * 
+	 */
+	void clearCache();
+
+	/**
+	 * 
+	 */
+	void reload();
+
+	/**
+	 * 
+	 * @param file
+	 */
+	void load(File file);
 }

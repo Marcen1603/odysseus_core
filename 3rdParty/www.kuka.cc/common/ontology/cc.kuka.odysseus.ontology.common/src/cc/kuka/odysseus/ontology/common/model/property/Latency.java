@@ -26,6 +26,7 @@ import cc.kuka.odysseus.ontology.common.SSN;
  *
  */
 public class Latency extends MeasurementProperty {
+	public static final String RESOURCE = SSN.NS + "Latency";
 
     /**
      * Class constructor.
@@ -36,7 +37,7 @@ public class Latency extends MeasurementProperty {
      *            The expression
      */
     public Latency(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "Latency", expression);
+        super(uri, name, RESOURCE, expression);
     }
 
 }

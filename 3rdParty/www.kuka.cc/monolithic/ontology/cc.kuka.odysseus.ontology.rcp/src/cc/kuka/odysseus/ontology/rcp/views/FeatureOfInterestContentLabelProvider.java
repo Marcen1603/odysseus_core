@@ -59,13 +59,13 @@ public class FeatureOfInterestContentLabelProvider extends AbstractViewLabelProv
         if (element instanceof FeatureOfInterest) {
             final FeatureOfInterest featureOfInterest = (FeatureOfInterest) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(featureOfInterest.getName());
+            sb.append(featureOfInterest.name());
             return sb.toString();
         }
         else if (element instanceof Property) {
             final Property property = (Property) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(property.getName());
+            sb.append(property.name());
             return sb.toString();
         }
         else if (element instanceof URI) {

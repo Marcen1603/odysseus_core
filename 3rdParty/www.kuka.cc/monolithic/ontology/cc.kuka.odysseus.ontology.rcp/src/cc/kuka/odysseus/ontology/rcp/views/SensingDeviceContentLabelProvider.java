@@ -74,31 +74,31 @@ public class SensingDeviceContentLabelProvider extends AbstractViewLabelProvider
         if (element instanceof SensingDevice) {
             final SensingDevice sensingDevice = (SensingDevice) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(sensingDevice.getName());
+            sb.append(sensingDevice.name());
             return sb.toString();
         }
         else if (element instanceof MeasurementCapability) {
             final MeasurementCapability measurementCapability = (MeasurementCapability) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(measurementCapability.getName());
+            sb.append(measurementCapability.name());
             return sb.toString();
         }
         else if (element instanceof Condition) {
             final Condition condition = (Condition) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(String.format(condition.toString(), condition.getOnProperty().getName()));
+            sb.append(String.format(condition.toString(), condition.onProperty().name()));
             return sb.toString();
         }
         else if (element instanceof MeasurementProperty) {
             final MeasurementProperty measurementProperty = (MeasurementProperty) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(URI.create(measurementProperty.getResource()).getFragment()).append(" = ").append(measurementProperty.getExpression());
+            sb.append(URI.create(measurementProperty.resource()).getFragment()).append(" = ").append(measurementProperty.expression());
             return sb.toString();
         }
         else if (element instanceof Property) {
             final Property property = (Property) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(property.getName());
+            sb.append(property.name());
             return sb.toString();
         }
         else if (element instanceof URI) {

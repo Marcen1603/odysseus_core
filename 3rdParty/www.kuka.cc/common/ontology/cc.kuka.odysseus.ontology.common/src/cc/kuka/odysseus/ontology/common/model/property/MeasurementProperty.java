@@ -27,69 +27,68 @@ import cc.kuka.odysseus.ontology.common.model.Property;
  *
  */
 public class MeasurementProperty extends Property implements IMeasurementProperty {
-    /** The unit. */
-    private String unit;
-    /** The expression of the proeprty. */
-    private final String expression;
-    /** The SSN resource. */
-    private final String resource;
-    
+	/** The unit. */
+	private String unit;
+	/** The expression of the property. */
+	private final String expression;
+	/** The SSN resource. */
+	private final String resource;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param name
+	 *            The name
+	 * @param resource
+	 *            the SSN resource
+	 * @param expression
+	 *            The expression
+	 *
+	 */
+	public MeasurementProperty(final URI uri, final String name, final String resource, final String expression) {
+		super(uri, name);
+		Objects.requireNonNull(resource);
+		Objects.requireNonNull(expression);
+		this.resource = resource;
+		this.expression = expression;
+	}
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param name
-     *            The name
-     * @param resource
-     *            the SSN resource
-     * @param expression
-     *            The expression
-     *
-     */
-    public MeasurementProperty(final URI uri, final String name, final String resource, final String expression) {
-        super(uri, name);
-        Objects.requireNonNull(resource);
-        Objects.requireNonNull(expression);
-        this.resource = resource;
-        this.expression = expression;
-    }
+	/**
+	 * @param unit
+	 *            the unit to set
+	 */
+	@Override
+	public MeasurementProperty unit(final String unit) {
+		this.unit = unit;
+		return this;
+	}
 
-    /**
-     * @param unit
-     *            the unit to set
-     */
-    @Override
-    public void setUnit(final String unit) {
-        this.unit = unit;
-    }
+	/**
+	 * @return the unit
+	 */
+	@Override
+	public String unit() {
+		return this.unit;
+	}
 
-    /**
-     * @return the unit
-     */
-    @Override
-    public String getUnit() {
-        return this.unit;
-    }
+	/**
+	 * @return the resource
+	 */
+	public String resource() {
+		return this.resource;
+	}
 
-    /**
-     * @return the resource
-     */
-    public String getResource() {
-        return this.resource;
-    }
+	/**
+	 * @return the expression
+	 */
+	public String expression() {
+		return this.expression;
+	}
 
-    /**
-     * @return the expression
-     */
-    public String getExpression() {
-        return this.expression;
-    }
-
-    @Override
-    public String toString() {
-        return this.getExpression();
-    }
+	@Override
+	public String toString() {
+		return this.expression();
+	}
 }

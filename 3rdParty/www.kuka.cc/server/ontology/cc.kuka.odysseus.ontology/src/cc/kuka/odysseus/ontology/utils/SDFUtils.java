@@ -26,38 +26,47 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  *
  */
 public final class SDFUtils {
-    public static String getFeatureOfInterestLabel(final SDFAttribute attribute) {
-        Objects.requireNonNull(attribute);
-        final String featureOfInterestName = attribute.getSourceName();
-        if (featureOfInterestName != null) {
-            final String[] featureOfInterestArray = featureOfInterestName.split(":");
-            if (featureOfInterestArray.length >= 2) {
-                final int pos = featureOfInterestArray[0].indexOf(".");
-                if (pos > 0) {
-                    return featureOfInterestArray[0].substring(pos + 1, featureOfInterestArray[0].length());
-                }
-                return featureOfInterestArray[0];
-            }
-        }
-        return null;
-    }
+	/**
+	 * 
+	 * @param attribute
+	 * @return
+	 */
+	public static String getFeatureOfInterestLabel(final SDFAttribute attribute) {
+		Objects.requireNonNull(attribute);
+		final String featureOfInterestName = attribute.getSourceName();
+		if (featureOfInterestName != null) {
+			final String[] featureOfInterestArray = featureOfInterestName.split(":");
+			if (featureOfInterestArray.length >= 2) {
+				final int pos = featureOfInterestArray[0].indexOf(".");
+				if (pos > 0) {
+					return featureOfInterestArray[0].substring(pos + 1, featureOfInterestArray[0].length());
+				}
+				return featureOfInterestArray[0];
+			}
+		}
+		return null;
+	}
 
-    public static String getSensingDeviceLabel(final SDFAttribute attribute) {
-        Objects.requireNonNull(attribute);
-        final String sourceName = attribute.getSourceName();
-        if (sourceName != null) {
-            final String[] sourceArray = sourceName.split(":");
-            if (sourceArray.length >= 2) {
-                return sourceArray[1];
-            }
-            else if (sourceArray.length == 1) {
-                return sourceArray[0];
-            }
-        }
-        return null;
-    }
+	/**
+	 * 
+	 * @param attribute
+	 * @return
+	 */
+	public static String getSensingDeviceLabel(final SDFAttribute attribute) {
+		Objects.requireNonNull(attribute);
+		final String sourceName = attribute.getSourceName();
+		if (sourceName != null) {
+			final String[] sourceArray = sourceName.split(":");
+			if (sourceArray.length >= 2) {
+				return sourceArray[1];
+			} else if (sourceArray.length == 1) {
+				return sourceArray[0];
+			}
+		}
+		return null;
+	}
 
-    private SDFUtils() {
-        throw new UnsupportedOperationException();
-    }
+	private SDFUtils() {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -61,10 +61,10 @@ public class CreateMeasurementCapabilityAction extends Action {
             final SensorOntologyService ontology = SensorRegistryPlugIn.getSensorOntologyService();
             SDFAttribute attribute = attributeDialog.getAttribute();
             Property property = attributeDialog.getProperty();
-            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(this.sensingDevice.getUri().toString() + "/" + attribute.getAttributeName()),
+            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(this.sensingDevice.uri().toString() + "/" + attribute.getAttributeName()),
                     attribute.getAttributeName(), property);
-            this.sensingDevice.addMeasurementCapability(measurementCapability);
-            ontology.createMeasurementCapability(this.sensingDevice, measurementCapability);
+            this.sensingDevice.add(measurementCapability);
+            ontology.create(this.sensingDevice, measurementCapability);
         }
     }
 }

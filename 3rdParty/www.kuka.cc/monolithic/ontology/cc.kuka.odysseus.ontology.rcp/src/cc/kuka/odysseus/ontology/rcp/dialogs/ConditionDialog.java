@@ -186,11 +186,11 @@ public class ConditionDialog extends Dialog {
     private static void fillPropertyCombo(final Combo combo) {
         final SensorOntologyService ontology = SensorRegistryPlugIn.getSensorOntologyService();
         combo.removeAll();
-        final Set<Property> properties = new HashSet<>(ontology.getAllProperties());
+        final Set<Property> properties = new HashSet<>(ontology.allProperties());
 
         for (final Property property : properties) {
-            combo.add(property.getName());
-            combo.setData(property.getName(), property);
+            combo.add(property.name());
+            combo.setData(property.name(), property);
         }
         combo.select(0);
     }

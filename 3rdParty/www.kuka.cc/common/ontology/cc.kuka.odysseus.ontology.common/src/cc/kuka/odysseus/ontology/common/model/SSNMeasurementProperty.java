@@ -25,19 +25,39 @@ import cc.kuka.odysseus.ontology.common.SSN;
  */
 public enum SSNMeasurementProperty {
 
-    Accuracy(SSN.NS + "Accuracy"), DetectionLimit(SSN.NS + "DetectionLimit"), Drift(SSN.NS + "Drift"), Frequency(SSN.NS + "Frequency"), Latency(SSN.NS + "Latency"), MeasurementRange(SSN.NS
-            + "MeasurementRange"), Precision(SSN.NS + "Precision"), ResponseTime(SSN.NS + "ResponseTime"), Resolution(SSN.NS + "Resolution"), Sensitivity(SSN.NS + "Sensitivity"), Selectivity(SSN.NS
-                    + "Selectivity");
+	Accuracy(SSN.NS + "Accuracy"), //
 
-    private String uri;
+	DetectionLimit(SSN.NS + "DetectionLimit"), //
 
-    // Constructor
+	Drift(SSN.NS + "Drift"), //
 
-    SSNMeasurementProperty(final String uri) {
-        this.uri = uri;
-    }
+	Frequency(SSN.NS + "Frequency"), //
 
-    public String getResource() {
-        return this.uri;
-    }
+	Latency(SSN.NS + "Latency"), //
+
+	MeasurementRange(SSN.NS + "MeasurementRange"), //
+
+	Precision(SSN.NS + "Precision"), //
+
+	ResponseTime(SSN.NS + "ResponseTime"), //
+
+	Resolution(SSN.NS + "Resolution"), //
+
+	Sensitivity(SSN.NS + "Sensitivity"), //
+
+	Selectivity(SSN.NS + "Selectivity"),//
+
+	;
+
+	private String uri;
+
+	// Constructor
+
+	SSNMeasurementProperty(final String uri) {
+		this.uri = uri;
+	}
+
+	public String resource() {
+		return this.uri;
+	}
 }

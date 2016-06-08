@@ -296,8 +296,13 @@ public class SensorOntology {
             file = SensorOntology.class.getResource("owl/SSN.owl");
         }
         if (file != null) {
+        	try{
             final BufferedReader reader = new BufferedReader(new InputStreamReader(file.openConnection().getInputStream()));
             model.read(reader, null);
+        	}catch(Throwable e){
+        		e.printStackTrace();
+                model.read("http://purl.oclc.org/NET/ssnx/ssn");
+        	}
         }
         else {
             model.read("http://purl.oclc.org/NET/ssnx/ssn");

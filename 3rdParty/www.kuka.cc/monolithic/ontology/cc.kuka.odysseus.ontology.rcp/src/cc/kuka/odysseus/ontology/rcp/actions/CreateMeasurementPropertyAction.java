@@ -57,8 +57,8 @@ public class CreateMeasurementPropertyAction extends Action {
         if (measurementPropertyDialog.getReturnCode() == Window.OK) {
             final SensorOntologyService ontology = SensorRegistryPlugIn.getSensorOntologyService();
             MeasurementProperty measurementProperty = measurementPropertyDialog.getMeasurementProperty();
-            this.measurementCapability.addMeasurementProperty(measurementProperty);
-            ontology.createMeasurementProperty(this.measurementCapability, measurementProperty);
+            this.measurementCapability.add(measurementProperty);
+            ontology.create(this.measurementCapability, measurementProperty);
         }
     }
 }

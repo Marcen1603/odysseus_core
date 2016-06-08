@@ -17,6 +17,7 @@
 package cc.kuka.odysseus.ontology.common.model;
 
 import java.net.URI;
+import java.util.Objects;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -24,63 +25,66 @@ import java.net.URI;
  *
  */
 public class Property {
-    /** The URI. */
-    private final URI uri;
-    /** The name. */
-    private final String name;
-    /** The unit. */
-    private String unit;
+	/** The URI. */
+	private final URI uri;
+	/** The name. */
+	private final String name;
+	/** The unit. */
+	private String unit;
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     */
-    public Property(final URI uri) {
-        this(uri, uri.getFragment());
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 */
+	public Property(final URI uri) {
+		this(uri, uri.getFragment());
+	}
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param name
-     *            The name
-     */
-    public Property(final URI uri, final String name) {
-        this.uri = uri;
-        this.name = name;
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param name
+	 *            The name
+	 */
+	public Property(final URI uri, final String name) {
+		Objects.requireNonNull(uri, "URI can't be null");
+		Objects.requireNonNull(name, "Name can't be null");
+		this.uri = uri;
+		this.name = name;
+	}
 
-    /**
-     * @return the uri
-     */
-    public URI getUri() {
-        return this.uri;
-    }
+	/**
+	 * @return the uri
+	 */
+	public URI uri() {
+		return this.uri;
+	}
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return this.name;
-    }
+	/**
+	 * @return the name
+	 */
+	public String name() {
+		return this.name;
+	}
 
-    /**
-     * @return the unit
-     */
-    public String getUnit() {
-        return this.unit;
-    }
+	/**
+	 * @return the unit
+	 */
+	public String unit() {
+		return this.unit;
+	}
 
-    /**
-     * @param unit
-     *            the unit to set
-     */
-    public void setUnit(final String unit) {
-        this.unit = unit;
-    }
+	/**
+	 * @param unit
+	 *            the unit to set
+	 */
+	public Property unit(final String unit) {
+		this.unit = unit;
+		return this;
+	}
 
 }

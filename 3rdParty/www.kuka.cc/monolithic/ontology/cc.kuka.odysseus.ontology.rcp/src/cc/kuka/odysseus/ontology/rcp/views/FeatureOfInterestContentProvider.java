@@ -55,12 +55,12 @@ public class FeatureOfInterestContentProvider implements ITreeContentProvider {
         }
         else if (parentElement instanceof FeatureOfInterest) {
             final FeatureOfInterest featureOfInterest = (FeatureOfInterest) parentElement;
-            return featureOfInterest.getHasProperties().toArray();
+            return featureOfInterest.hasProperties().toArray();
         }
         else if (parentElement instanceof Property) {
             final Property property = (Property) parentElement;
             final List<Object> children = new ArrayList<>();
-            children.add(property.getUri());
+            children.add(property.uri());
             return children.toArray();
         }
         return null;

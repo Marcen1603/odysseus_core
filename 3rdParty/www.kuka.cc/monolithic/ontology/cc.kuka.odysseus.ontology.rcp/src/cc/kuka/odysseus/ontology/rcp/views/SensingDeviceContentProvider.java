@@ -60,48 +60,48 @@ public class SensingDeviceContentProvider implements ITreeContentProvider {
         else if (parentElement instanceof SensingDevice) {
             final SensingDevice sensingDevice = (SensingDevice) parentElement;
             final List<Object> children = new ArrayList<>();
-            children.add(sensingDevice.getUri());
-            children.addAll(sensingDevice.getHasMeasurementCapabilities());
+            children.add(sensingDevice.uri());
+            children.addAll(sensingDevice.hasMeasurementCapabilities());
             return children.toArray();
         }
         else if (parentElement instanceof FeatureOfInterest) {
             final FeatureOfInterest featureOfInterest = (FeatureOfInterest) parentElement;
             final List<Object> children = new ArrayList<>();
-            children.add(featureOfInterest.getUri());
-            children.addAll(featureOfInterest.getHasProperties());
+            children.add(featureOfInterest.uri());
+            children.addAll(featureOfInterest.hasProperties());
             return children.toArray();
         }
         else if (parentElement instanceof MeasurementCapability) {
             final MeasurementCapability measurementCapability = (MeasurementCapability) parentElement;
             final List<Object> children = new ArrayList<>();
-            children.add(measurementCapability.getUri());
-            children.add(measurementCapability.getForProperty());
-            if (measurementCapability.getInConditions() != null) {
-                children.addAll(measurementCapability.getInConditions());
+            children.add(measurementCapability.uri());
+            children.add(measurementCapability.forProperty());
+            if (measurementCapability.inConditions() != null) {
+                children.addAll(measurementCapability.inConditions());
             }
-            if (measurementCapability.getHasMeasurementProperties() != null) {
-                children.addAll(measurementCapability.getHasMeasurementProperties());
+            if (measurementCapability.hasMeasurementProperties() != null) {
+                children.addAll(measurementCapability.hasMeasurementProperties());
             }
             return children.toArray();
         }
         else if (parentElement instanceof Property) {
             final Property property = (Property) parentElement;
             final List<Object> children = new ArrayList<>();
-            children.add(property.getUri());
+            children.add(property.uri());
             return children.toArray();
         }
         else if (parentElement instanceof Condition) {
             final Condition condition = (Condition) parentElement;
             final List<Object> children = new ArrayList<>();
-            children.add("Name: " + condition.getName());
-            children.add(condition.getUri());
+            children.add("Name: " + condition.name());
+            children.add(condition.uri());
             return children.toArray();
         }
         else if (parentElement instanceof MeasurementProperty) {
             final MeasurementProperty measurementProperty = (MeasurementProperty) parentElement;
             final List<Object> children = new ArrayList<>();
-            children.add("Name: " + measurementProperty.getName());
-            children.add(measurementProperty.getUri());
+            children.add("Name: " + measurementProperty.name());
+            children.add(measurementProperty.uri());
             return children.toArray();
         }
         return null;

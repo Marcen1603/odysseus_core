@@ -26,17 +26,18 @@ import cc.kuka.odysseus.ontology.common.SSN;
  *
  */
 public class Selectivity extends MeasurementProperty {
+	public static final String RESOURCE = SSN.NS + "Selectivity";
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param expression
-     *            The expression
-     */
-    public Selectivity(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "Selectivity", expression);
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param expression
+	 *            The expression
+	 */
+	public Selectivity(final URI uri, String name, final String expression) {
+		super(uri, name, RESOURCE, expression);
+	}
 
 }

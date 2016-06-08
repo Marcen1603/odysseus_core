@@ -18,8 +18,12 @@ package cc.kuka.odysseus.ontology.common.model;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import com.sun.istack.internal.NotNull;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -27,102 +31,109 @@ import java.util.List;
  *
  */
 public class FeatureOfInterest {
-    /** The URI. */
-    private final URI uri;
-    /** The name. */
-    private final String name;
-    /** The list of properties. */
-    private final List<Property> hasProperties = new ArrayList<>();
+	/** The URI. */
+	private final URI uri;
+	/** The name. */
+	private final String name;
+	/** The list of properties. */
+	private final List<Property> properties = new ArrayList<>();
 
-    /**
-     * Class constructor..
-     *
-     * @param uri
-     *            The URI
-     */
-    public FeatureOfInterest(final URI uri) {
-        this(uri, new ArrayList<Property>());
-    }
+	/**
+	 * Class constructor..
+	 *
+	 * @param uri
+	 *            The URI
+	 */
+	public FeatureOfInterest(@NotNull final URI uri) {
+		this(uri, new ArrayList<Property>());
+	}
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param name
-     *            The name
-     */
-    public FeatureOfInterest(final URI uri, final String name) {
-        this(uri, name, new ArrayList<Property>());
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param name
+	 *            The name
+	 */
+	public FeatureOfInterest(@NotNull final URI uri, @NotNull final String name) {
+		this(uri, name, new ArrayList<Property>());
+	}
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param hasProperties
-     *            The list of properties
-     */
-    public FeatureOfInterest(final URI uri, final List<Property> hasProperties) {
-        this(uri, uri.getFragment(), hasProperties);
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param hasProperties
+	 *            The list of properties
+	 */
+	public FeatureOfInterest(@NotNull final URI uri, @NotNull final List<Property> hasProperties) {
+		this(uri, uri.getFragment(), hasProperties);
+	}
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param name
-     *            The name
-     * @param hasProperties
-     *            The list of properties
-     */
-    public FeatureOfInterest(final URI uri, final String name, final List<Property> hasProperties) {
-        this.uri = uri;
-        this.name = name;
-        this.hasProperties.addAll(hasProperties);
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param name
+	 *            The name
+	 * @param properties
+	 *            The list of properties
+	 */
+	public FeatureOfInterest(@NotNull final URI uri, @NotNull final String name,
+			@NotNull final Collection<Property> properties) {
+		Objects.requireNonNull(uri, "URI can't be null");
+		Objects.requireNonNull(name, "Name can't be null");
+		Objects.requireNonNull(properties, "Collection of properties can't be null");
+		this.uri = uri;
+		this.name = name;
+		this.properties.addAll(properties);
+	}
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return this.name;
-    }
+	/**
+	 * @return the name
+	 */
+	@NotNull
+	public String name() {
+		return this.name;
+	}
 
-    /**
-     * @return the uri
-     */
-    public URI getUri() {
-        return this.uri;
-    }
+	/**
+	 * @return the uri
+	 */
+	public URI uri() {
+		return this.uri;
+	}
 
-    /**
-     * @return the hasProperties
-     */
-    public List<Property> getHasProperties() {
-        return Collections.unmodifiableList(this.hasProperties);
-    }
+	/**
+	 * @return the hasProperties
+	 */
+	public List<Property> hasProperties() {
+		return Collections.unmodifiableList(this.properties);
+	}
 
-    /**
-     * Adds a new property.
-     *
-     * @param hasProperty
-     *            The property
-     */
-    public void addProperty(final Property hasProperty) {
-        this.hasProperties.add(hasProperty);
-    }
+	/**
+	 * Adds a new property.
+	 *
+	 * @param property
+	 *            The property
+	 */
+	public FeatureOfInterest add(final Property property) {
+		this.properties.add(property);
+		return this;
+	}
 
-    /**
-     * Removes a property.
-     *
-     * @param hasProperty
-     *            The property
-     */
-    public void removeProperty(final Property hasProperty) {
-        this.hasProperties.remove(hasProperty);
-    }
+	/**
+	 * Removes a property.
+	 *
+	 * @param property
+	 *            The property
+	 */
+	public FeatureOfInterest remove(final Property property) {
+		this.properties.remove(property);
+		return this;
+	}
 
 }

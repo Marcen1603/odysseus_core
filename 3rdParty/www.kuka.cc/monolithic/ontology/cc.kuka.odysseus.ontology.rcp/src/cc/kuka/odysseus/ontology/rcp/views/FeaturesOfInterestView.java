@@ -165,7 +165,7 @@ public class FeaturesOfInterestView extends ViewPart {// implements
                     try {
                         FeaturesOfInterestView.this.isRefreshing = false;
                         if (!FeaturesOfInterestView.this.getTreeViewer().getTree().isDisposed()) {
-                            final List<FeatureOfInterest> featuresOfInterest = SensorRegistryPlugIn.getSensorOntologyService().getAllFeaturesOfInterest();
+                            final List<FeatureOfInterest> featuresOfInterest = SensorRegistryPlugIn.getSensorOntologyService().allFeaturesOfInterests();
                             final Collection<Object> entities = new ArrayList<>();
                             entities.addAll(featuresOfInterest);
                             FeaturesOfInterestView.this.getTreeViewer().setInput(entities);

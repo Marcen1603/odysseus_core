@@ -26,17 +26,18 @@ import cc.kuka.odysseus.ontology.common.SSN;
  *
  */
 public class ResponseTime extends MeasurementProperty {
+	public static final String RESOURCE = SSN.NS + "ResponseTime";
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param expression
-     *            The expression
-     */
-    public ResponseTime(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "ResponseTime", expression);
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param expression
+	 *            The expression
+	 */
+	public ResponseTime(final URI uri, String name, final String expression) {
+		super(uri, name, RESOURCE, expression);
+	}
 
 }

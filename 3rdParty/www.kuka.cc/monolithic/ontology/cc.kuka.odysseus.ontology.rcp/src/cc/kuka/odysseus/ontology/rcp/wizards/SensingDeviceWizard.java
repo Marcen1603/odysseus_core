@@ -82,9 +82,9 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
                         final SensorOntologyService ontologyService = SensorRegistryPlugIn.getSensorOntologyService();
                         final SensingDevice sensingDevice = new SensingDevice(uri, name);
                         for (final MeasurementCapability measurementCapability : measurementCapabilities) {
-                            sensingDevice.addMeasurementCapability(measurementCapability);
+                            sensingDevice.add(measurementCapability);
                         }
-                        ontologyService.createSensingDevice(sensingDevice);
+                        ontologyService.create(sensingDevice);
                     }
                     catch (final Exception e) {
                         SensingDeviceWizard.LOG.error(e.getMessage(), e);

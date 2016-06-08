@@ -26,17 +26,18 @@ import cc.kuka.odysseus.ontology.common.SSN;
  *
  */
 public class Drift extends MeasurementProperty {
+	public static final String RESOURCE = SSN.NS + "Drift";
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     *            The URI
-     * @param expression
-     *            The expression
-     */
-    public Drift(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "Drift", expression);
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 *            The URI
+	 * @param expression
+	 *            The expression
+	 */
+	public Drift(final URI uri, String name, final String expression) {
+		super(uri, name, RESOURCE, expression);
+	}
 
 }

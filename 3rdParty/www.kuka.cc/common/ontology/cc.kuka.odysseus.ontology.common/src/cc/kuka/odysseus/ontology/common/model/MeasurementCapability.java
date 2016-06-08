@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import cc.kuka.odysseus.ontology.common.model.condition.Condition;
 import cc.kuka.odysseus.ontology.common.model.property.MeasurementProperty;
@@ -30,100 +31,107 @@ import cc.kuka.odysseus.ontology.common.model.property.MeasurementProperty;
  *
  */
 public class MeasurementCapability extends Property {
-    private final String name;
-    private final Property forProperty;
-    private final List<Condition> inConditions = new ArrayList<>();
-    private final List<MeasurementProperty> hasMeasurementProperties = new ArrayList<>();
+	private final String name;
+	private final Property property;
+	private final List<Condition> conditions = new ArrayList<>();
+	private final List<MeasurementProperty> measurementProperties = new ArrayList<>();
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     */
-    public MeasurementCapability(final URI uri, final Property forProperty) {
-        this(uri, uri.getFragment(), forProperty);
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 */
+	public MeasurementCapability(final URI uri, final Property forProperty) {
+		this(uri, uri.getFragment(), forProperty);
+	}
 
-    /**
-     * Class constructor.
-     *
-     * @param uri
-     */
-    public MeasurementCapability(final URI uri, final String name, final Property forProperty) {
-        super(uri);
-        this.name = name;
-        this.forProperty = forProperty;
-    }
+	/**
+	 * Class constructor.
+	 *
+	 * @param uri
+	 */
+	public MeasurementCapability(final URI uri, final String name, final Property property) {
+		super(uri);
+		Objects.requireNonNull(name, "Name can't be null");
+		Objects.requireNonNull(property, "Property can't be null");
+		this.name = name;
+		this.property = property;
+	}
 
-    /**
-     * @return the name
-     */
-    @Override
-    public String getName() {
-        return this.name;
-    }
+	/**
+	 * @return the name
+	 */
+	@Override
+	public String name() {
+		return this.name;
+	}
 
-    /**
-     * @return the forProperty
-     */
-    public Property getForProperty() {
-        return this.forProperty;
-    }
+	/**
+	 * @return the forProperty
+	 */
+	public Property forProperty() {
+		return this.property;
+	}
 
-    /**
-     * @return the inConditions
-     */
-    public List<Condition> getInConditions() {
-        return Collections.unmodifiableList(this.inConditions);
-    }
+	/**
+	 * @return the inConditions
+	 */
+	public List<Condition> inConditions() {
+		return Collections.unmodifiableList(this.conditions);
+	}
 
-    /**
-     *
-     * @param inCondition
-     */
-    public void addCondition(final Condition inCondition) {
-        this.inConditions.add(inCondition);
-    }
+	/**
+	 *
+	 * @param condition
+	 */
+	public MeasurementCapability add(final Condition condition) {
+		this.conditions.add(condition);
+		return this;
+	}
 
-    /**
-     *
-     * @param inCondition
-     */
-    public void removeCondition(final Condition inCondition) {
-        this.inConditions.remove(inCondition);
-    }
+	/**
+	 *
+	 * @param condition
+	 */
+	public MeasurementCapability remove(final Condition condition) {
+		this.conditions.remove(condition);
+		return this;
+	}
 
-    /**
-     * @return the hasMeasurementProperties
-     */
-    public List<MeasurementProperty> getHasMeasurementProperties() {
-        return Collections.unmodifiableList(this.hasMeasurementProperties);
-    }
+	/**
+	 * @return the hasMeasurementProperties
+	 */
+	public List<MeasurementProperty> hasMeasurementProperties() {
+		return Collections.unmodifiableList(this.measurementProperties);
+	}
 
-    public List<MeasurementProperty> getHasMeasurementProperty(final String property) {
-        final SSNMeasurementProperty ssnMeasurementProperty = SSNMeasurementProperty.valueOf(property);
-        final List<MeasurementProperty> measurementProperties = new ArrayList<>();
-        for (final MeasurementProperty measurementProperty : this.hasMeasurementProperties) {
-            if (measurementProperty.getResource().equals(ssnMeasurementProperty.getResource())) {
-                measurementProperties.add(measurementProperty);
-            }
-        }
-        return measurementProperties;
-    }
+	public List<MeasurementProperty> hasMeasurementProperty(final String property) {
+		// FIXME Check enum for possible values
+		final SSNMeasurementProperty ssnMeasurementProperty = SSNMeasurementProperty.valueOf(property);
+		final List<MeasurementProperty> measurementProperties = new ArrayList<>();
+		for (final MeasurementProperty measurementProperty : this.measurementProperties) {
+			if (measurementProperty.resource().equals(ssnMeasurementProperty.resource())) {
+				measurementProperties.add(measurementProperty);
+			}
+		}
+		return measurementProperties;
+	}
 
-    /**
-     *
-     * @param hasMeasurementProperty
-     */
-    public void addMeasurementProperty(final MeasurementProperty hasMeasurementProperty) {
-        this.hasMeasurementProperties.add(hasMeasurementProperty);
-    }
+	/**
+	 *
+	 * @param measurementProperty
+	 */
+	public MeasurementCapability add(final MeasurementProperty measurementProperty) {
+		this.measurementProperties.add(measurementProperty);
+		return this;
+	}
 
-    /**
-     *
-     * @param hasMeasurementProperty
-     */
-    public void removeMeasurementProperty(final MeasurementProperty hasMeasurementProperty) {
-        this.hasMeasurementProperties.remove(hasMeasurementProperty);
-    }
+	/**
+	 *
+	 * @param measurementProperty
+	 */
+	public MeasurementCapability remove(final MeasurementProperty measurementProperty) {
+		this.measurementProperties.remove(measurementProperty);
+		return this;
+	}
 }

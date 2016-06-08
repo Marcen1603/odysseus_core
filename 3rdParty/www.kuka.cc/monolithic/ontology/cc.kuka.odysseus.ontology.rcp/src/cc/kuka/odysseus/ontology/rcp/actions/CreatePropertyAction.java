@@ -32,32 +32,32 @@ import cc.kuka.odysseus.ontology.rcp.dialogs.PropertyDialog;
  *
  */
 public class CreatePropertyAction extends Action {
-    private Shell shell;
-    private FeatureOfInterest featureOfInterest;
+	private Shell shell;
+	private FeatureOfInterest featureOfInterest;
 
-    /**
-     * Class constructor.
-     *
-     */
-    public CreatePropertyAction(Shell shell, FeatureOfInterest featureOfInterest) {
-        super();
-        this.shell = shell;
-        this.featureOfInterest = featureOfInterest;
-    }
+	/**
+	 * Class constructor.
+	 *
+	 */
+	public CreatePropertyAction(Shell shell, FeatureOfInterest featureOfInterest) {
+		super();
+		this.shell = shell;
+		this.featureOfInterest = featureOfInterest;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void run() {
-        final PropertyDialog propertyDialog = new PropertyDialog(this.shell);
-        propertyDialog.open();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void run() {
+		final PropertyDialog propertyDialog = new PropertyDialog(this.shell);
+		propertyDialog.open();
 
-        if (propertyDialog.getReturnCode() == Window.OK) {
-            final SensorOntologyService ontology = SensorRegistryPlugIn.getSensorOntologyService();
-            Property property = propertyDialog.getProperty();
-            this.featureOfInterest.addProperty(property);
-            ontology.createProperty(this.featureOfInterest, property);
-        }
-    }
+		if (propertyDialog.getReturnCode() == Window.OK) {
+			final SensorOntologyService ontology = SensorRegistryPlugIn.getSensorOntologyService();
+			Property property = propertyDialog.getProperty();
+			this.featureOfInterest.add(property);
+			ontology.create(this.featureOfInterest, property);
+		}
+	}
 }

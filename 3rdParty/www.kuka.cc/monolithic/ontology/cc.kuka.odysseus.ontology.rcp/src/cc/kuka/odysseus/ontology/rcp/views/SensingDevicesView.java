@@ -180,7 +180,7 @@ public class SensingDevicesView extends ViewPart {// implements
                     try {
                         SensingDevicesView.this.isRefreshing = false;
                         if (!SensingDevicesView.this.getTreeViewer().getTree().isDisposed()) {
-                            final List<SensingDevice> sensingDevices = SensorRegistryPlugIn.getSensorOntologyService().getAllSensingDevices();
+                            final List<SensingDevice> sensingDevices = SensorRegistryPlugIn.getSensorOntologyService().allSensingDevices();
                             final Collection<Object> entities = new ArrayList<>();
                             entities.addAll(sensingDevices);
                             SensingDevicesView.this.getTreeViewer().setInput(entities);

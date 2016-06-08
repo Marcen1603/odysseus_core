@@ -26,6 +26,7 @@ import cc.kuka.odysseus.ontology.common.SSN;
  *
  */
 public class DetectionLimit extends MeasurementProperty {
+	public static final String RESOURCE = SSN.NS + "DetectionLimit";
 
     /**
      * Class constructor.
@@ -36,7 +37,7 @@ public class DetectionLimit extends MeasurementProperty {
      *            The expression
      */
     public DetectionLimit(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "DetectionLimit", expression);
+        super(uri, name, RESOURCE, expression);
     }
 
 }

@@ -164,7 +164,7 @@ public class MeasurementPropertyDialog extends Dialog {
         final String name = this.txtName.getText();
         final URI uri = URI.create(this.txtURI.getText());
         final String expression = this.txtExpression.getText();
-        this.measurementProperty = new MeasurementProperty(uri, name, ssnMeasurementProperty.getResource(), expression);
+        this.measurementProperty = new MeasurementProperty(uri, name, ssnMeasurementProperty.resource(), expression);
     }
 
     @Override

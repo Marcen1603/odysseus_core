@@ -175,7 +175,7 @@ public class QueryManagerImpl implements QueryManager {
             final OntResource measurementCapabilityResource = measurementCapabilityIter.next().as(OntResource.class);
             final MeasurementCapability measurementCapability = this.getMeasurementCapability(measurementCapabilityResource);
             if (measurementCapability != null) {
-                sensingDevice.addMeasurementCapability(measurementCapability);
+                sensingDevice.add(measurementCapability);
             }
         }
 
@@ -236,7 +236,7 @@ public class QueryManagerImpl implements QueryManager {
         final NodeIterator propertyIter = instance.listPropertyValues(SSN.hasProperty);
         while (propertyIter.hasNext()) {
             final OntResource propertyResource = propertyIter.next().as(OntResource.class);
-            featureOfInterest.addProperty(this.getProperty(propertyResource));
+            featureOfInterest.add(this.getProperty(propertyResource));
         }
 
         return featureOfInterest;
@@ -365,7 +365,7 @@ public class QueryManagerImpl implements QueryManager {
         final String queryString = "SELECT *  WHERE { " + "?foi rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " ; " + "ssn:" + SSN.hasProperty.getLocalName()
                 + " ?p . " + "?sd rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " ; " + "ssn:" + SSN.observes.getLocalName() + " ?p ; " + "ssn:"
                 + SSN.hasMeasurementCapability.getLocalName() + " ?mc . " + "?mc  rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.MeasurementCapability.getLocalName() + " ; " + "ssn:"
-                + SSN.forProperty.getLocalName() + " ?p . " + "<" + property.getUri().toString() + "> rdfs:" + RDFS.subClassOf.getLocalName() + " ?p . "
+                + SSN.forProperty.getLocalName() + " ?p . " + "<" + property.uri().toString() + "> rdfs:" + RDFS.subClassOf.getLocalName() + " ?p . "
 
                 + "?foi rdfs:" + RDFS.label.getLocalName() + " ?foiLabel . " + "?sd rdfs:" + RDFS.label.getLocalName() + " ?sdLabel . " + "?mc rdfs:" + RDFS.label.getLocalName() + " ?mcLabel" + "}";
 
@@ -521,7 +521,7 @@ public class QueryManagerImpl implements QueryManager {
             final OntResource conditionResource = conditionIter.next().getObject().as(OntResource.class);
             final Condition condition = this.getConditon(conditionResource);
             if (condition != null) {
-                measurementCapability.addCondition(condition);
+                measurementCapability.add(condition);
             }
         }
 
@@ -532,7 +532,7 @@ public class QueryManagerImpl implements QueryManager {
                 try {
                     final MeasurementProperty measurementProperty = this.getMeasurementProperty(measurementPropertyResource);
                     if (measurementProperty != null) {
-                        measurementCapability.addMeasurementProperty(measurementProperty);
+                        measurementCapability.add(measurementProperty);
                     }
                 }
                 catch (final NullPointerException e) {

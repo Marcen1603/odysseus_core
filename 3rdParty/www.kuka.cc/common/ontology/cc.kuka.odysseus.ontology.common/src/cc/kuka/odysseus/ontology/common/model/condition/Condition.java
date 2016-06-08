@@ -27,47 +27,46 @@ import cc.kuka.odysseus.ontology.common.model.Property;
  *
  */
 public class Condition extends Property implements ICondition {
-    /** The property. */
-    private final Property onProperty;
-    /** The expression. */
-    private final String expression;
+	/** The property. */
+	private final Property property;
+	/** The expression. */
+	private final String expression;
 
-    /**
-     * 
-     * Class constructor.
-     *
-     * @param uri
-     * @param onProperty
-     * @param expression
-     */
-    public Condition(final URI uri, String name, final Property onProperty, final String expression) {
-        super(uri);
-        Objects.requireNonNull(onProperty);
-        Objects.requireNonNull(expression);
+	/**
+	 * 
+	 * Class constructor.
+	 *
+	 * @param uri
+	 * @param property
+	 * @param expression
+	 */
+	public Condition(final URI uri, String name, final Property property, final String expression) {
+		super(uri, name);
+		Objects.requireNonNull(property, "Property can't be null");
+		Objects.requireNonNull(expression, "Expression can't be null");
+		this.property = property;
+		this.expression = expression;
+	}
 
-        this.onProperty = onProperty;
-        this.expression = expression;
-    }
+	/**
+	 * @return the onProperty
+	 */
+	public Property onProperty() {
+		return this.property;
+	}
 
-    /**
-     * @return the onProperty
-     */
-    public Property getOnProperty() {
-        return this.onProperty;
-    }
+	/**
+	 * @return the expression
+	 */
+	public String expression() {
+		return this.expression;
+	}
 
-    /**
-     * @return the expression
-     */
-    public String getExpression() {
-        return this.expression;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return this.getExpression();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return this.expression();
+	}
 }

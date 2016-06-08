@@ -56,8 +56,8 @@ public class CreateConditionAction extends Action {
         if (conditionDialog.getReturnCode() == Window.OK) {
             final SensorOntologyService ontology = SensorRegistryPlugIn.getSensorOntologyService();
             Condition condition = conditionDialog.getCondition();
-            this.measurementCapability.addCondition(condition);
-            ontology.createCondition(this.measurementCapability, condition);
+            this.measurementCapability.add(condition);
+            ontology.create(this.measurementCapability, condition);
         }
     }
 }

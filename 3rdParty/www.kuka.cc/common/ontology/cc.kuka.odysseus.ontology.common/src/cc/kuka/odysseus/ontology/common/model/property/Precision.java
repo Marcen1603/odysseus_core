@@ -26,6 +26,7 @@ import cc.kuka.odysseus.ontology.common.SSN;
  *
  */
 public class Precision extends MeasurementProperty {
+	public static final String RESOURCE = SSN.NS + "Precision";
 
     /**
      * Class constructor.
@@ -36,7 +37,7 @@ public class Precision extends MeasurementProperty {
      *            The expression
      */
     public Precision(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "Precision", expression);
+        super(uri, name, RESOURCE, expression);
     }
 
 }

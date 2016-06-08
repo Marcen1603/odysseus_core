@@ -84,7 +84,7 @@ public class FeatureOfInterestWizard extends Wizard implements INewWizard {
                         final SensorOntologyService ontologyService = SensorRegistryPlugIn.getSensorOntologyService();
                         final FeatureOfInterest featureOfInterest = new FeatureOfInterest(uri, name, properties);
 
-                        ontologyService.createFeatureOfInterest(featureOfInterest);
+                        ontologyService.create(featureOfInterest);
                     }
                     catch (final Exception e) {
                         MessageDialog.openError(workbenchWindow.getShell(), OdysseusNLS.Error, e.getMessage());

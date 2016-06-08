@@ -141,8 +141,8 @@ public class FeatureOfInterestPage extends WizardPage {
                 }
                 if (propertyDialog.getReturnCode() == Window.OK) {
                     final TableItem item = new TableItem(FeatureOfInterestPage.this.tblProperties, SWT.NONE);
-                    item.setText(0, propertyDialog.getProperty().getName());
-                    item.setText(1, propertyDialog.getProperty().getUri().toString());
+                    item.setText(0, propertyDialog.getProperty().name());
+                    item.setText(1, propertyDialog.getProperty().uri().toString());
                     item.setData(propertyDialog.getProperty());
                 }
             }

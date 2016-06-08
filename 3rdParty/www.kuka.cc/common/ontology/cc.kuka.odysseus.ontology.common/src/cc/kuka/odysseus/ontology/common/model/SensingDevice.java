@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -27,79 +28,83 @@ import java.util.List;
  *
  */
 public class SensingDevice {
-    private final URI uri;
-    private final String name;
-    private final List<MeasurementCapability> hasMeasurementCapabilities = new ArrayList<>();
+	private final URI uri;
+	private final String name;
+	private final List<MeasurementCapability> measurementCapabilities = new ArrayList<>();
 
-    /**
-     * Class constructor.
-     *
-     */
-    public SensingDevice(final URI uri) {
-        this(uri, uri.getFragment());
-    }
+	/**
+	 * Class constructor.
+	 *
+	 */
+	public SensingDevice(final URI uri) {
+		this(uri, uri.getFragment());
+	}
 
-    /**
-     * Class constructor.
-     *
-     */
-    public SensingDevice(final URI uri, final String name) {
-        this.uri = uri;
-        this.name = name;
-    }
+	/**
+	 * Class constructor.
+	 *
+	 */
+	public SensingDevice(final URI uri, final String name) {
+		Objects.requireNonNull(uri, "URI can't be null");
+		Objects.requireNonNull(name, "Name can't be null");
+		this.uri = uri;
+		this.name = name;
+	}
 
-    /**
-     * @return the uri
-     */
-    public URI getUri() {
-        return this.uri;
-    }
+	/**
+	 * @return the uri
+	 */
+	public URI uri() {
+		return this.uri;
+	}
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return this.name;
-    }
+	/**
+	 * @return the name
+	 */
+	public String name() {
+		return this.name;
+	}
 
-    /**
-     * @return the capabilities
-     */
-    public List<MeasurementCapability> getHasMeasurementCapabilities() {
-        return Collections.unmodifiableList(this.hasMeasurementCapabilities);
-    }
+	/**
+	 * @return the capabilities
+	 */
+	public List<MeasurementCapability> hasMeasurementCapabilities() {
+		return Collections.unmodifiableList(this.measurementCapabilities);
+	}
 
-    /**
-     * @param forProperty
-     *            the property
-     * @return the capabilities
-     */
-    public List<MeasurementCapability> getHasMeasurementCapabilities(final Property forProperty) {
-        final List<MeasurementCapability> propertyCapabilities = new ArrayList<>();
-        for (final MeasurementCapability capability : this.hasMeasurementCapabilities) {
-            if (forProperty.equals(capability.getForProperty())) {
-                propertyCapabilities.add(capability);
-            }
-        }
-        return propertyCapabilities;
-    }
+	/**
+	 * @param forProperty
+	 *            the property
+	 * @return the capabilities
+	 */
+	public List<MeasurementCapability> hasMeasurementCapabilities(final Property forProperty) {
+		final List<MeasurementCapability> propertyCapabilities = new ArrayList<>();
+		for (final MeasurementCapability capability : this.measurementCapabilities) {
+			if (forProperty.equals(capability.forProperty())) {
+				propertyCapabilities.add(capability);
+			}
+		}
+		return propertyCapabilities;
+	}
 
-    public List<MeasurementCapability> getHasMeasurementCapabilities(final String label) {
-        final List<MeasurementCapability> propertyCapabilities = new ArrayList<>();
-        for (final MeasurementCapability capability : this.hasMeasurementCapabilities) {
-            if (capability.getName().equalsIgnoreCase(label)) {
-                propertyCapabilities.add(capability);
-            }
-        }
-        return propertyCapabilities;
-    }
+	public List<MeasurementCapability> hasMeasurementCapabilities(final String label) {
+		final List<MeasurementCapability> propertyCapabilities = new ArrayList<>();
+		for (final MeasurementCapability capability : this.measurementCapabilities) {
+			if (capability.name().equalsIgnoreCase(label)) {
+				propertyCapabilities.add(capability);
+			}
+		}
+		return propertyCapabilities;
+	}
 
-    public void addMeasurementCapability(final MeasurementCapability hasMeasurementCapability) {
-        this.hasMeasurementCapabilities.add(hasMeasurementCapability);
-    }
+	public SensingDevice add(final MeasurementCapability measurementCapability) {
+		this.measurementCapabilities.add(measurementCapability);
+		return this;
+	}
 
-    public void removeCapability(final MeasurementCapability hasMeasurementCapability) {
-        this.hasMeasurementCapabilities.remove(hasMeasurementCapability);
-    }
+	public SensingDevice remove(final MeasurementCapability measurementCapability) {
+		this.measurementCapabilities.remove(measurementCapability);
+		return this;
+	}
 
 }

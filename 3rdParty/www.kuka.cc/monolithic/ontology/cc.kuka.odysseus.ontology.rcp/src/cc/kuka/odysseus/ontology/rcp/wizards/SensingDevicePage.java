@@ -145,7 +145,7 @@ public class SensingDevicePage extends WizardPage {
                 if (attributeDialog.getReturnCode() == Window.OK) {
                     final TableItem item = new TableItem(SensingDevicePage.this.tblAttributes, SWT.NONE);
                     item.setText(0, attributeDialog.getAttribute().getAttributeName());
-                    item.setText(1, attributeDialog.getProperty().getName());
+                    item.setText(1, attributeDialog.getProperty().name());
                     item.setText(2, attributeDialog.getAttribute().getDatatype().toString());
                     item.setData(new Pair<>(attributeDialog.getAttribute(), attributeDialog.getProperty()));
                 }

@@ -26,6 +26,7 @@ import cc.kuka.odysseus.ontology.common.SSN;
  *
  */
 public class Resolution extends MeasurementProperty {
+	public static final String RESOURCE = SSN.NS + "Resolution";
 
     /**
      * Class constructor.
@@ -36,7 +37,7 @@ public class Resolution extends MeasurementProperty {
      *            The expression
      */
     public Resolution(final URI uri, String name, final String expression) {
-        super(uri, name, SSN.NS + "Resolution", expression);
+        super(uri, name, RESOURCE, expression);
     }
 
 }
