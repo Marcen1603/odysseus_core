@@ -117,7 +117,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	
 	@Override
 	public String toString() {	
-		return csvToString(new WriteOptions(';','\'',null,null, true));
+		return csvToString(new WriteOptions(';','\'',null,null));
 	}
 	
 	@Override

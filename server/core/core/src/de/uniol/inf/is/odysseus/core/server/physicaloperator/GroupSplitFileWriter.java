@@ -31,7 +31,7 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 		this.groupProcessor = groupProcessor;
 		this.dataHandler = dataHandler;
 		writeOptions = new WriteOptions(';', '\'', (DecimalFormat) null,
-				(DecimalFormat) null, false);
+				(DecimalFormat) null);
 	}
 
 	@Override

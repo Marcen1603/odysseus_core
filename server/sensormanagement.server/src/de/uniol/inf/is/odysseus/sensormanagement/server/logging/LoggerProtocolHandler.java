@@ -41,7 +41,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	
 	private int[] remainingAttributes;
 	private BufferedWriter additionalFileWriter;
-	private WriteOptions csvWriteOptions = new WriteOptions(',', '\'', null, null, false);
+	private WriteOptions csvWriteOptions = new WriteOptions(',', '\'', null, null);
 	
 	public String getFileNameBase() { return fileNameBase; }
 	public AbstractLoggingStyle getLoggingStyle() { return loggingStyle; }

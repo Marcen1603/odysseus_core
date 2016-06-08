@@ -28,7 +28,6 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	protected Character textDelimiter = null;
 	protected DecimalFormat floatingFormatter;
 	protected DecimalFormat numberFormatter;
-	protected boolean writeMetadata;
 	protected boolean trim = false;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
@@ -87,10 +86,8 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		if (options.containsKey(CSV_NUMBER_FORMATTER)) {
 			numberFormatter = new DecimalFormat(options.get(CSV_NUMBER_FORMATTER));
 		}
-		if (options.containsKey(CSV_WRITE_METADATA)) {
-			writeMetadata = Boolean.parseBoolean(options.get(CSV_WRITE_METADATA));
-		} else if (getDataHandler().isHandleMetadata()) {
-			writeMetadata = true;
+		if (options.containsKey(CSV_WRITE_METADATA)) {			
+			INFOSERVICE.error(CSV_WRITE_METADATA+" no longer supported. Use 'writeMetadata' in SENDER instead. Meta data will not be written!", new IllegalArgumentException("Unsupported Parameter"));
 		}
 		if (options.containsKey(CSV_TRIM)) {
 			trim = Boolean.parseBoolean(options.get(CSV_TRIM));
@@ -99,7 +96,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 			addLineNumber = Boolean.parseBoolean(options.get(ADDLINENUMBERS));
 		}
 
-		writeOptions = new WriteOptions(delimiter, textDelimiter, floatingFormatter, numberFormatter, writeMetadata);
+		writeOptions = new WriteOptions(delimiter, textDelimiter, floatingFormatter, numberFormatter);
 
 		if (options.containsKey(NULL_VALUE_TEXT)) {
 			writeOptions.setNullValueString(options.get(NULL_VALUE_TEXT));
