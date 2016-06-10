@@ -296,6 +296,11 @@ member_list
 member
 : type_spec declarators SEMICOLON
 ;
+
+keymarker
+: SLASH SLASH ID
+;
+
 union_type
 : KW_UNION ID KW_SWITCH LEFT_BRACKET switch_type_spec RIGHT_BRACKET LEFT_BRACE switch_body RIGHT_BRACE
 ;

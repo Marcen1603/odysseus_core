@@ -21,13 +21,16 @@ import org.slf4j.LoggerFactory;
 import com.rti.dds.typecode.TypeCode;
 
 import de.uniol.inf.is.odysseus.wrapper.dds.dds.TypeCodeMapper;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Const_declContext;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.DeclaratorContext;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Enum_typeContext;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.ModuleContext;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Simple_type_specContext;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Struct_typeContext;
-import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Type_declaratorContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLBaseListener;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLLexer;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.Const_declContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.DeclaratorContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.Enum_typeContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.ModuleContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.Simple_type_specContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.Struct_typeContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.Type_declaratorContext;
 
 public class IDLTranslator extends IDLBaseListener {
 

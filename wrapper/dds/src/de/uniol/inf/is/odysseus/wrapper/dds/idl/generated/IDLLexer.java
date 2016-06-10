@@ -1,5 +1,5 @@
 // Generated from IDL.g4 by ANTLR 4.4
-package de.uniol.inf.is.odysseus.wrapper.dds.idl;
+package de.uniol.inf.is.odysseus.wrapper.dds.idl.generated;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

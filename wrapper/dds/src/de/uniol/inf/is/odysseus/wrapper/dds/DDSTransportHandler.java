@@ -6,9 +6,6 @@ import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import com.rti.dds.domain.DomainParticipant;
 import com.rti.dds.domain.DomainParticipantFactory;
@@ -33,7 +30,6 @@ import com.rti.dds.subscription.SampleStateKind;
 import com.rti.dds.subscription.SubscriberQos;
 import com.rti.dds.subscription.ViewStateKind;
 import com.rti.dds.topic.Topic;
-import com.rti.dds.typecode.TCKind;
 import com.rti.dds.typecode.TypeCode;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -44,12 +40,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.wrapper.dds.dds.DDSDynamicDataDataReader;
 import de.uniol.inf.is.odysseus.wrapper.dds.dds.TypeCodeMapper;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLTranslator;
@@ -187,14 +178,6 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 				DomainParticipant.TOPIC_QOS_DEFAULT, null, StatusKind.STATUS_MASK_NONE);
 		
 	}
-	
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return super.clone();
-	}
-	
-
 	
     public static void loadQosLibrary(DomainParticipantFactoryQos qos, URL url) throws IOException {
 
