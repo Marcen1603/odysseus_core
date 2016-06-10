@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.wrapper.dds.dds.TypeCodeMapper;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Const_declContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.DeclaratorContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Enum_typeContext;
+import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.ModuleContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Simple_type_specContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Struct_typeContext;
 import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Type_declaratorContext;
@@ -37,6 +38,7 @@ public class IDLTranslator extends IDLBaseListener {
 
 	final private Map<String, List<String>> keyMap = new HashMap<String, List<String>>();
 	final private String idlFileName;
+	private String currentModule;
 
 	public IDLTranslator(String idlFileName) {
 		this.idlFileName = idlFileName;
@@ -57,10 +59,16 @@ public class IDLTranslator extends IDLBaseListener {
 		ParseTree typeDef = ctx.getChild(0);
 		String type = typeDef.getText();
 
-		String name = ctx.getChild(1).getText();
+		String name = currentModule+"::"+ctx.getChild(1).getText();
 		System.out.println("Found new typedef " + type + " " + name);
-		TypeCode tc = TypeCodeMapper.getOrCreateTypeCode(type);
+		TypeCode tc = TypeCodeMapper.getOrCreateTypeCode(currentModule, type);
+		
+		System.out.println(TypeCodeMapper.getTypeCode(type));
+		
 		TypeCodeMapper.createTypeAlias(name, tc);
+
+		System.out.println(TypeCodeMapper.getTypeCode(name));
+
 	}
 
 	@Override
@@ -77,7 +85,7 @@ public class IDLTranslator extends IDLBaseListener {
 	@Override
 	public void enterStruct_type(Struct_typeContext ctx) {
 		ParseTree child = ctx.getChild(1);
-		structName = child.getText();
+		structName = currentModule + "::" + child.getText();
 		memberName.clear();
 		memberType.clear();
 		isKey.clear();
@@ -85,10 +93,8 @@ public class IDLTranslator extends IDLBaseListener {
 
 	@Override
 	public void exitStruct_type(Struct_typeContext ctx) {
-		System.out.println("Found new struct " + structName + " " + memberName
-				+ " " + memberType + " " + isKey);
-		TypeCodeMapper.createComplexType(structName, memberName, memberType,
-				isKey);
+		System.out.println("Found new struct " + structName + " " + memberName + " " + memberType + " " + isKey);
+		TypeCodeMapper.createComplexType(structName, memberName, memberType, isKey);
 	}
 
 	@Override
@@ -103,8 +109,7 @@ public class IDLTranslator extends IDLBaseListener {
 
 	@Override
 	public void enterSimple_type_spec(Simple_type_specContext ctx) {
-		memberType.add(TypeCodeMapper.getOrCreateTypeCode(ctx.getChild(0)
-				.getText()));
+		memberType.add(TypeCodeMapper.getOrCreateTypeCode(currentModule, ctx.getChild(0).getText()));
 	}
 
 	public static void dumpTree(ParseTree c) {
@@ -117,18 +122,33 @@ public class IDLTranslator extends IDLBaseListener {
 	public void enterDeclarator(DeclaratorContext ctx) {
 		String name = ctx.getText();
 		memberName.add(name);
-		List<String> keys = keyMap.get(structName);
-		if (keys != null) {
-			isKey.add(keys.contains(name));
-		} else {
+		if (structName != null) {
+			String toSearch;
+			String[] split = structName.split("::");
+			if (split.length > 1 ){
+				toSearch = split[1];
+			}else{
+				toSearch = split[0];
+			}
+			List<String> keys = keyMap.get(toSearch);
+			if (keys != null) {
+				isKey.add(keys.contains(name));
+			} else {
+				isKey.add(false);
+			}
+		}else{
 			isKey.add(false);
 		}
 
 	}
 
+	@Override
+	public void enterModule(ModuleContext ctx) {
+		currentModule = ctx.getChild(1).getText();
+	}
+
 	public void processIDLFile() throws FileNotFoundException {
-		BufferedReader input = new BufferedReader(new FileReader(new File(
-				idlFileName)));
+		BufferedReader input = new BufferedReader(new FileReader(new File(idlFileName)));
 
 		// read line wise and remove #pragma
 		StringBuffer idlFile = new StringBuffer();
@@ -139,8 +159,7 @@ public class IDLTranslator extends IDLBaseListener {
 				if (line.contains("#pragma")) {
 					String[] tokens = line.split(" ");
 					if (tokens.length > 2) {
-						if (tokens[0].equalsIgnoreCase("#pragma")
-								&& tokens[1].equalsIgnoreCase("keylist")) {
+						if (tokens[0].equalsIgnoreCase("#pragma") && tokens[1].equalsIgnoreCase("keylist")) {
 							List<String> keyAttributes = new LinkedList<>();
 							for (int i = 3; i < tokens.length; i++) {
 								keyAttributes.add(tokens[i]);

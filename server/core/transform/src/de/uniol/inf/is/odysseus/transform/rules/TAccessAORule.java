@@ -266,6 +266,9 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		if (operator.getTransportHandler() != null) {
 			transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler,
 					options);
+			if (transportHandler.getSchema() != null){
+				operator.setOverWrittenSchema(transportHandler.getSchema());
+			}
 		}
 		return transportHandler;
 	}
@@ -280,6 +283,9 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			} else {
 				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
 						ITransportDirection.IN, IAccessPattern.PUSH, options, dataHandler);
+			}
+			if (protocolHandler.getSchema() != null){
+				operator.setOverWrittenSchema(protocolHandler.getSchema());
 			}
 		}
 		return protocolHandler;

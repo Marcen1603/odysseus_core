@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -74,6 +75,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	private boolean readMetaData;
 	private boolean overWriteSchemaSourceName = true;
+	private SDFSchema overWrittenSchema = null;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -99,6 +101,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.localMetaAttribute = po.localMetaAttribute;
 		this.readMetaData = po.readMetaData;
 		this.overWriteSchemaSourceName = po.overWriteSchemaSourceName;
+		this.overWrittenSchema = po.overWrittenSchema;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
@@ -309,16 +312,20 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			type = Tuple.class;
 		}
 
-		SDFSchema overWrittenSchema = null;
-
-		@SuppressWarnings("rawtypes")
+		
+		// TODO: Move more things from TAccessAORule here ... if possible
+		
+		OptionMap options = new OptionMap(optionsMap);		
 		IProtocolHandler ph = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandler);
-		if (ph != null) {
-			overWrittenSchema = ph.getSchema();
+		
+		if (getOverWrittenSchema() == null && ph != null) {
+			setOverWrittenSchema(ph.getSchema());
 		}
-		if (overWrittenSchema == null) {
-			ITransportHandler th = TransportHandlerRegistry.getITransportHandlerClass(transportHandler);
-			overWrittenSchema = th != null ? th.getSchema() : null;
+		// For cases where the schema depends on the options, create a real instance of transport handler
+		if (getOverWrittenSchema() == null) {
+			ITransportHandler th = TransportHandlerRegistry.getInstance(transportHandler, ph,
+					options);
+			setOverWrittenSchema(th != null ? th.getSchema() : null);
 		}
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 
@@ -343,7 +350,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			strictOrder = Boolean.parseBoolean(sorder);
 		}
 
-		List<SDFAttribute> attributes = overWrittenSchema != null ? overWrittenSchema.getAttributes()
+		List<SDFAttribute> attributes = getOverWrittenSchema() != null ? getOverWrittenSchema().getAttributes()
 				: outputSchema.get(pos);
 		List<SDFAttribute> s2 = new ArrayList<>();
 		if (attributes != null && attributes.size() > 0) {
@@ -426,6 +433,20 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isSinkOperator() {
 		return false;
+	}
+
+	/**
+	 * @return the overWrittenSchema
+	 */
+	public SDFSchema getOverWrittenSchema() {
+		return overWrittenSchema;
+	}
+
+	/**
+	 * @param overWrittenSchema the overWrittenSchema to set
+	 */
+	public void setOverWrittenSchema(SDFSchema overWrittenSchema) {
+		this.overWrittenSchema = overWrittenSchema;
 	}
 
 }
