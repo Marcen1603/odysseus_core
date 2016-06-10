@@ -15,6 +15,8 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rti.dds.typecode.TypeCode;
 
@@ -29,6 +31,8 @@ import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLParser.Type_declaratorContext
 
 public class IDLTranslator extends IDLBaseListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(IDLTranslator.class);
+	
 	final Map<String, String> constantValues = new HashMap<>();
 	final Map<String, String> constantTypes = new HashMap<>();
 	private String structName;
@@ -60,17 +64,12 @@ public class IDLTranslator extends IDLBaseListener {
 		String type = typeDef.getText();
 
 		String name = currentModule+"::"+ctx.getChild(1).getText();
-		System.out.println("Found new typedef " + type + " " + name);
+		LOG.trace("Found new typedef " + type + " " + name);
 		TypeCode tc = TypeCodeMapper.getOrCreateTypeCode(currentModule, type);
-		
-		System.out.println(TypeCodeMapper.getTypeCode(type));
-		
 		TypeCodeMapper.createTypeAlias(name, tc);
 
-		System.out.println(TypeCodeMapper.getTypeCode(name));
-
 	}
-
+	
 	@Override
 	public void enterConst_decl(Const_declContext ctx) {
 		ParseTree child = ctx.getChild(1);
@@ -93,7 +92,7 @@ public class IDLTranslator extends IDLBaseListener {
 
 	@Override
 	public void exitStruct_type(Struct_typeContext ctx) {
-		System.out.println("Found new struct " + structName + " " + memberName + " " + memberType + " " + isKey);
+		LOG.trace("Found new struct " + structName + " " + memberName + " " + memberType + " " + isKey);
 		TypeCodeMapper.createComplexType(structName, memberName, memberType, isKey);
 	}
 
