@@ -50,8 +50,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	static final Runtime RUNTIME = Runtime.getRuntime();
 
 	Logger LOG = LoggerFactory.getLogger(LineProtocolHandler.class);
-	InfoService INFOSERVICE = InfoServiceFactory
-			.getInfoService(LineProtocolHandler.class);
+	InfoService INFOSERVICE = InfoServiceFactory.getInfoService(LineProtocolHandler.class);
 
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
@@ -100,9 +99,8 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 		super();
 	}
 
-	public LineProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,
-			OptionMap optionsMap) {
+	public LineProtocolHandler(ITransportDirection direction, IAccessPattern access,
+			IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
 	}
@@ -164,17 +162,13 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
 			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
-					|| (this.getAccessPattern()
-							.equals(IAccessPattern.ROBUST_PULL))) {
-				reader = new BufferedReader(new InputStreamReader(
-						getTransportHandler().getInputStream()));
+					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
+				reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
 			}
 		} else {
 			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
-					|| (this.getAccessPattern()
-							.equals(IAccessPattern.ROBUST_PULL))) {
-				writer = new BufferedWriter(new OutputStreamWriter(
-						getTransportHandler().getOutputStream()));
+					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
+				writer = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
 			}
 		}
 		delayCounter = 0;
@@ -237,7 +231,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 		} catch (Exception e) {
 			if (!e.getMessage().equalsIgnoreCase("Stream closed")) {
 				LOG.error("Could not determine hasNext()", e);
-				
+
 			}
 			// DO NOT SET DONE, this is no normal processing!
 			return false;
@@ -256,8 +250,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			line = toReadFrom.readLine();
 		} else {
 			long time = System.currentTimeMillis();
-			LOG.debug("Read last line. " + lineCounter + " " + time + " "
-					+ (time - lastDumpTime) + " ("
+			LOG.debug("Read last line. " + lineCounter + " " + time + " " + (time - lastDumpTime) + " ("
 					+ Integer.toHexString(hashCode()) + ") line.");
 			return null;
 		}
@@ -266,13 +259,8 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			if (dumpEachLine > 0) {
 				if (lineCounter % dumpEachLine == 0) {
 					long time = System.currentTimeMillis();
-					LOG.debug(lineCounter
-							+ " "
-							+ time
-							+ " "
-							+ (time - lastDumpTime)
-							+ (dumpMemory ? " M = " + RUNTIME.freeMemory()
-									+ " " : " ") + line + " ("
+					LOG.debug(lineCounter + " " + time + " " + (time - lastDumpTime)
+							+ (dumpMemory ? " M = " + RUNTIME.freeMemory() + " " : " ") + line + " ("
 							+ Integer.toHexString(hashCode()) + ") line: ");
 					lastDumpTime = time;
 				}
@@ -302,8 +290,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 				// basetime).append("\n");
 				if (lastLine == lineCounter) {
 					// System.out.println(measurements);
-					ProtocolMonitor.getInstance().informMonitor(this,
-							lineCounter);
+					ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
 					isDone = true;
 				}
 			}
@@ -313,8 +300,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	}
 
 	public void dumpOut(long time) {
-		dumpOut.print(lineCounter + ";" + (time - basetime) + ";"
-				+ (time - lastMeasureTime));
+		dumpOut.print(lineCounter + ";" + (time - basetime) + ";" + (time - lastMeasureTime));
 		if (dumpMemory) {
 			dumpOut.println(RUNTIME.freeMemory());
 		} else {
@@ -358,8 +344,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 
 		String strMsg = bb_to_str(message);
 		StringBuffer currentInputString = currentInputStringMap.get(callerId);
-		String data = currentInputString != null ? currentInputString + strMsg
-				: strMsg;
+		String data = currentInputString != null ? currentInputString + strMsg : strMsg;
 
 		currentInputString = new StringBuffer();
 		currentInputStringMap.put(callerId, currentInputString);
@@ -396,9 +381,12 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			INFOSERVICE.warning("Cannot read line " + token, e);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler#process(java.lang.String[])
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
+	 * AbstractProtocolHandler#process(java.lang.String[])
 	 */
 	@Override
 	public void process(String[] message) {
@@ -417,7 +405,8 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		};
+		}
+		;
 	}
 
 	@Override
@@ -467,11 +456,9 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, OptionMap options,
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<T> dataHandler) {
-		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction,
-				access, dataHandler, options);
+		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction, access, dataHandler, options);
 		return instance;
 	}
 
@@ -498,11 +485,14 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
-		if (this.getDirection().equals(ITransportDirection.IN)) {
-			return ITransportExchangePattern.InOnly;
-		} else {
-			return ITransportExchangePattern.OutOnly;
+		if (this.getDirection() != null) {
+			if (this.getDirection().equals(ITransportDirection.IN)) {
+				return ITransportExchangePattern.InOnly;
+			} else {
+				return ITransportExchangePattern.OutOnly;
+			}
 		}
+		return ITransportExchangePattern.Undefined;
 	}
 
 	@Override
@@ -540,14 +530,10 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			return false;
 		}
 		LineProtocolHandler<?> other = (LineProtocolHandler<?>) o;
-		if (this.nanodelay != other.getNanodelay()
-				|| this.delay != other.getDelay()
-				|| this.delayeach != other.getDelayeach()
-				|| this.dumpEachLine != other.getDumpEachLine()
-				|| this.measureEachLine != other.getMeasureEachLine()
-				|| this.lastLine != other.getLastLine()
-				|| this.debug != other.isDebug()
-				|| this.readFirstLine != other.isReadFirstLine()) {
+		if (this.nanodelay != other.getNanodelay() || this.delay != other.getDelay()
+				|| this.delayeach != other.getDelayeach() || this.dumpEachLine != other.getDumpEachLine()
+				|| this.measureEachLine != other.getMeasureEachLine() || this.lastLine != other.getLastLine()
+				|| this.debug != other.isDebug() || this.readFirstLine != other.isReadFirstLine()) {
 			return false;
 		}
 		return true;
