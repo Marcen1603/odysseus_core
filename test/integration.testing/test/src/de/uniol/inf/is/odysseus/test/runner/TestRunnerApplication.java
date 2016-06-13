@@ -59,8 +59,11 @@ public class TestRunnerApplication implements IApplication {
 
         LOG.debug("Odysseus is up and running!");
 
-        if (System.getProperty("cheatsheet") != null) {
+        if (System.getProperty("cheatsheet") != null || System.getenv("cheatsheet") != null) {
             String file = System.getProperty("cheatsheet");
+            if (file == null){
+            	file = System.getenv("cheatsheet");
+            }
             CheatSheetGenerator.execute(file);
         }
         else {
