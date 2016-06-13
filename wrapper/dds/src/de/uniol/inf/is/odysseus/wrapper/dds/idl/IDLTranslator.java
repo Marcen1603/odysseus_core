@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -35,15 +38,15 @@ import de.uniol.inf.is.odysseus.wrapper.dds.idl.generated.IDLParser.Type_declara
 public class IDLTranslator extends IDLBaseListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(IDLTranslator.class);
-	
+
 	final Map<String, String> constantValues = new HashMap<>();
 	final Map<String, String> constantTypes = new HashMap<>();
 	private String structName;
 	final private List<String> memberName = new ArrayList<>();
 	final private List<TypeCode> memberType = new ArrayList<>();
-	final private List<Boolean> isKey = new ArrayList<>();
+	final private List<String> isKey = new ArrayList<>();
 
-	final private Map<String, List<String>> keyMap = new HashMap<String, List<String>>();
+	final private Map<String, Set<String>> keyMap = new HashMap<String, Set<String>>();
 	final private String idlFileName;
 	private String currentModule;
 
@@ -56,8 +59,22 @@ public class IDLTranslator extends IDLBaseListener {
 		constantTypes.put(name, type);
 	}
 
-	public void putKey(String type, List<String> keyAttributes) {
-		keyMap.put(type, keyAttributes);
+	public void putKey(String type, Set<String> keyAttributes) {
+		Set<String> keys = keyMap.get(type);
+		if (keys != null) {
+			keys.addAll(keyAttributes);
+		} else {
+			keyMap.put(type, keyAttributes);
+		}
+	}
+
+	private void addKey(String type, String attribute) {
+		Set<String> keys = keyMap.get(type);
+		if (keys == null) {
+			keys = new TreeSet<>();
+			keyMap.put(type, keys);
+		}
+		keys.add(attribute);
 	}
 
 	@Override
@@ -66,13 +83,13 @@ public class IDLTranslator extends IDLBaseListener {
 		ParseTree typeDef = ctx.getChild(0);
 		String type = typeDef.getText();
 
-		String name = currentModule+"::"+ctx.getChild(1).getText();
+		String name = currentModule + "::" + ctx.getChild(1).getText();
 		LOG.trace("Found new typedef " + type + " " + name);
 		TypeCode tc = TypeCodeMapper.getOrCreateTypeCode(currentModule, type);
 		TypeCodeMapper.createTypeAlias(name, tc);
 
 	}
-	
+
 	@Override
 	public void enterConst_decl(Const_declContext ctx) {
 		ParseTree child = ctx.getChild(1);
@@ -127,19 +144,17 @@ public class IDLTranslator extends IDLBaseListener {
 		if (structName != null) {
 			String toSearch;
 			String[] split = structName.split("::");
-			if (split.length > 1 ){
+			if (split.length > 1) {
 				toSearch = split[1];
-			}else{
+			} else {
 				toSearch = split[0];
 			}
-			List<String> keys = keyMap.get(toSearch);
+			Set<String> keys = keyMap.get(toSearch);
 			if (keys != null) {
-				isKey.add(keys.contains(name));
-			} else {
-				isKey.add(false);
+				if (keys.contains(name)) {
+					isKey.add(name);
+				}
 			}
-		}else{
-			isKey.add(false);
 		}
 
 	}
@@ -156,21 +171,38 @@ public class IDLTranslator extends IDLBaseListener {
 		StringBuffer idlFile = new StringBuffer();
 		String line;
 		try {
+			String struct = "";
 			while ((line = input.readLine()) != null) {
 				line = line.trim();
 				if (line.contains("#pragma")) {
 					String[] tokens = line.split(" ");
 					if (tokens.length > 2) {
 						if (tokens[0].equalsIgnoreCase("#pragma") && tokens[1].equalsIgnoreCase("keylist")) {
-							List<String> keyAttributes = new LinkedList<>();
+							Set<String> keyAttributes = new TreeSet<>();
 							for (int i = 3; i < tokens.length; i++) {
 								keyAttributes.add(tokens[i]);
 							}
 							putKey(tokens[2], keyAttributes);
 						}
 					}
-
 				} else {
+					// try to detect attributes with //@key annotation
+					if (line.contains("struct")) {
+						String[] tokens = line.split(" ");
+						struct = tokens[1];
+					}
+					if (struct != "" && line.contains("//@key")) {
+						StringTokenizer tokenizer = new StringTokenizer(line, " ;");
+
+						String lastToken = "";
+						while (tokenizer.hasMoreTokens()) {
+							String token = tokenizer.nextToken();
+							if (token.equals("//@key")) {
+								addKey(struct, lastToken);
+							}
+							lastToken = token;
+						}
+					}
 					idlFile.append(line).append("\n");
 				}
 			}

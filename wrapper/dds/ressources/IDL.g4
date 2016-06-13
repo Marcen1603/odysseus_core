@@ -30,6 +30,9 @@ Migrated to ANTLR v4 by Steve Osselton.
 Current revision prepared by Nikita Visnevski.
 */
 grammar IDL;
+@header{
+package de.uniol.inf.is.odysseus.wrapper.dds.idl.generated;
+}
 specification
 : import_decl* definition+
 ;
@@ -295,10 +298,6 @@ member_list
 ;
 member
 : type_spec declarators SEMICOLON
-;
-
-keymarker
-: SLASH SLASH ID
 ;
 
 union_type

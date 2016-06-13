@@ -1,4 +1,7 @@
 // Generated from IDL.g4 by ANTLR 4.4
+
+package de.uniol.inf.is.odysseus.wrapper.dds.idl.generated;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -777,16 +780,6 @@ public interface IDLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConst_exp(@NotNull IDLParser.Const_expContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link IDLParser#keymarker}.
-	 * @param ctx the parse tree
-	 */
-	void enterKeymarker(@NotNull IDLParser.KeymarkerContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link IDLParser#keymarker}.
-	 * @param ctx the parse tree
-	 */
-	void exitKeymarker(@NotNull IDLParser.KeymarkerContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link IDLParser#publishes_decl}.
 	 * @param ctx the parse tree

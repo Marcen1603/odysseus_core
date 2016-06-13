@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -45,8 +47,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAtt
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
-import de.uniol.inf.is.odysseus.core.collection.Option;
-import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -315,7 +315,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		
 		// TODO: Move more things from TAccessAORule here ... if possible
 		
-		OptionMap options = new OptionMap(optionsMap);		
+		OptionMap options = new OptionMap(optionsMap);
+		
+		@SuppressWarnings("rawtypes")
 		IProtocolHandler ph = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandler);
 		
 		if (getOverWrittenSchema() == null && ph != null) {

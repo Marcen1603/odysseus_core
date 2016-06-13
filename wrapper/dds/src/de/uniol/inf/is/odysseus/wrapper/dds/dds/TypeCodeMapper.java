@@ -178,11 +178,11 @@ public class TypeCodeMapper {
 	}
 
 	public static TypeCode createComplexType(String name, List<String> attributes, List<TypeCode> types,
-			List<Boolean> isKey) {
+			List<String> isKey) {
 
 		StructMember sm[] = new StructMember[attributes.size()];
 		for (int pos = 0; pos < attributes.size(); pos++) {
-			sm[pos] = new StructMember(attributes.get(pos), false, (short) -1, isKey.get(pos), types.get(pos), pos,
+			sm[pos] = new StructMember(attributes.get(pos), false, (short) -1, isKey.contains(attributes.get(pos)), types.get(pos), pos,
 					false);
 		}
 
