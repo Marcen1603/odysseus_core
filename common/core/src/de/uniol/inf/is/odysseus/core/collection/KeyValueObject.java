@@ -80,6 +80,12 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		}
 		((Collection<Object>) this.attributes.get(key)).add(value);
 	}
+	
+	public void add(String qualName, KeyValueObject<T> subObj) {
+		for (Entry<String, Object> v: subObj.attributes.entrySet()){
+			setAttribute(qualName+"."+v.getKey(), v.getValue());
+		}
+	}
 
 	/**
 	 * Set the value to given key. If there had been a value already, it will be overridden.
@@ -279,4 +285,6 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		}
 		return true;
 	}
+
+
 }

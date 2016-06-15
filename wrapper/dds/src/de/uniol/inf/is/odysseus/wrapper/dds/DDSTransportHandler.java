@@ -47,15 +47,17 @@ import de.uniol.inf.is.odysseus.wrapper.dds.idl.IDLTranslator;
 
 public class DDSTransportHandler extends AbstractPushTransportHandler implements UncaughtExceptionHandler {
 
+	public static final String NAME = "DDS";
+
 	static final InfoService INFO = InfoServiceFactory.getInfoService(DDSTransportHandler.class);
 	
-	static final String QOS_FILE = "qosfile";
-	static final String IDL_FILE = "idlfile";
-	static final String TOPIC_TYPE = "topictype";
-	static final String TOPIC = "topic";
-	static final String DOMAIN = "domain";
-	static final String QOS_LIB = "qoslibrary";
-	static final String QOS_PROFILE = "qosprofile";
+	public static final String QOS_FILE = "qosfile";
+	public static final String IDL_FILE = "idlfile";
+	public static final String TOPIC_TYPE = "topictype";
+	public static final String TOPIC = "topic";
+	public static final String DOMAIN = "domain";
+	public static final String QOS_LIB = "qoslibrary";
+	public static final String QOS_PROFILE = "qosprofile";
 
 	Thread reader;
 
@@ -205,7 +207,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 	
 	@Override
 	public String getName() {
-		return "DDS";
+		return NAME;
 	}
 	
 

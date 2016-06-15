@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -52,29 +53,48 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<M> input, int port) {
-		KeyValueObject<M> output = null;
-		if (getOutputSchema().getType() == KeyValueObject.class)
-			output = new KeyValueObject<M>();
-		else if (getOutputSchema().getType() == NestedKeyValueObject.class)
-			output = new NestedKeyValueObject<M>();
 
+		KeyValueObject<M> output = convertToKeyValue(input, getOutputSchema());
 		if (output != null) {
-			int pos = 0;
-			for (SDFAttribute attr : getOutputSchema()) {
-				if (attr.getDatatype() == SDFDatatype.LIST_TUPLE) {
-					List<?> o = input.getAttribute(pos++);
-					for (Object oo : o) {
-						Tuple<?> t = (Tuple<?>) oo;
-						for (int i = 0; i < t.size(); ++i) {
-							output.addAttributeValue(attr.getQualName() + "_" + i, t.getAttribute(i));
-						}
-					}
-				} else
-					output.setAttribute(attr.getQualName(), input.getAttribute(pos++));
-			}
 			output.setMetadata((M) input.getMetadata().clone());
 			transfer(output);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private KeyValueObject<M> convertToKeyValue(Tuple<M> input, SDFSchema sdfSchema) {
+		KeyValueObject<M> output = null;
+		if (getOutputSchema().getType() == KeyValueObject.class) {
+			output = new KeyValueObject<M>();
+		} else if (getOutputSchema().getType() == NestedKeyValueObject.class) {
+			output = new NestedKeyValueObject<M>();
+		}
+		for (int pos =0;pos<sdfSchema.size(); pos++) {
+			SDFAttribute attr = sdfSchema.get(pos);
+
+			if (attr.getDatatype().isListValue()) {
+				List<?> o = input.getAttribute(pos);
+				for (int i=0;i<o.size();i++) {
+					String name = attr.getQualName();
+					// Could be a tuple or a base object
+					if (attr.getDatatype().getSubType().isTuple()){
+						KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)o.get(i), attr.getDatatype().getSchema());
+						output.addAttributeValue(name, subObj);
+					}else{
+						output.addAttributeValue(name, o.get(i));
+					}				
+					
+					// Lists from Lists?
+				}
+			}
+			if (attr.getDatatype().isTuple()) {
+				KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)input.getAttribute(pos), attr.getDatatype().getSchema());
+				output.add(attr.getQualName(),subObj);
+			} else {
+				output.setAttribute(attr.getQualName(), input.getAttribute(pos));
+			}
+		}
+		return output;
 	}
 
 	@Override

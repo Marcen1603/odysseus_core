@@ -11,16 +11,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "RECEIVE", doc="Generic operator to connect to an input that sends data (i.e. pushed from source).", category={LogicalOperatorCategory.SOURCE})
-public class ReceiveAO extends AbstractAccessAO {
+public class ReceiveAO extends AbstractReceiveAO {
 
 	private static final long serialVersionUID = 3913899451565703944L;
 	
 	public ReceiveAO() {
 		super();
-		setWrapper(Constants.GENERIC_PUSH);
 	}
 
 	public ReceiveAO(ReceiveAO other){
