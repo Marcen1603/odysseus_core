@@ -137,7 +137,6 @@ public class MqttTransportHandler extends AbstractPushTransportHandler implement
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		System.err.println(topic);
 		byte[] load = message.getPayload();
 		ByteBuffer buf = ByteBuffer.allocate(load.length);
 		buf.put(load);
