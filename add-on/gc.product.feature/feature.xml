@@ -293,4 +293,8 @@
          id="de.uniol.inf.is.odysseus.wrapper.telegram.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.wrapper.mqtt.feature"
+         version="0.0.0"/>
+
 </feature>

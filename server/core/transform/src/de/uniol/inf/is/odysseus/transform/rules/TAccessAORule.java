@@ -266,6 +266,9 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		if (operator.getTransportHandler() != null) {
 			transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler,
 					options);
+			if (transportHandler == null){
+				throw new TransformationException("Cannot create transport handler "+operator.getTransportHandler());
+			}
 			if (transportHandler.getSchema() != null){
 				operator.setOverWrittenSchema(transportHandler.getSchema());
 			}
