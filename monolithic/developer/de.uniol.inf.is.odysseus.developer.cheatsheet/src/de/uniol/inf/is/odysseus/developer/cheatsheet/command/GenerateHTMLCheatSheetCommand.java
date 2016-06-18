@@ -65,7 +65,7 @@ import de.uniol.inf.is.odysseus.script.parser.ReplacementProviderManager;
  * @version $Id$
  * @version $Id: GenerateCheatSheetCommand.java | Sat Nov 29 17:11:29 2014 +0800
  *          | Christian Kuka $
- * 
+ *
  */
 public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 	static final Logger LOG = LoggerFactory.getLogger(GenerateHTMLCheatSheetCommand.class);
@@ -93,8 +93,8 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 					if (file != null) {
 						final StringBuilder builder = new StringBuilder();
 						GenerateHTMLCheatSheetCommand.build(builder);
-						Path path = (new File(file)).toPath();
-						Path directory = path.getParent();
+						final Path path = new File(file).toPath();
+						final Path directory = path.getParent();
 						if (!Files.exists(directory)) {
 							Files.createDirectory(directory);
 						}
@@ -103,13 +103,14 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 								print.println(builder.toString());
 							}
 						}
-						IFileStore fileStore = EFS.getLocalFileSystem().getStore(path.toUri());
-						IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+						final IFileStore fileStore = EFS.getLocalFileSystem().getStore(path.toUri());
+						final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.getActivePage();
 
 						try {
 							IDE.openEditorOnFileStore(page, fileStore);
-						} catch (PartInitException e) {
-							LOG.error(e.getMessage(), e);
+						} catch (final PartInitException e) {
+							GenerateHTMLCheatSheetCommand.LOG.error(e.getMessage(), e);
 						}
 					}
 				} catch (final Exception e) {
@@ -182,7 +183,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("<h2>Datatypes</h2>\n");
 		builder.append("<ul class='list-inline'>\n");
 		if (Activator.getExecutor() != null) {
-			List<SDFDatatype> datatypes = new ArrayList<>(
+			final List<SDFDatatype> datatypes = new ArrayList<>(
 					Activator.getExecutor().getRegisteredDatatypes(Activator.getSession()));
 			Collections.sort(datatypes, new Comparator<SDFDatatype>() {
 
@@ -207,7 +208,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("<h2>Metadata</h2>\n");
 		builder.append("<ul class='list-inline'>\n");
 		if (Activator.getExecutor() != null) {
-			List<String> metadatas = new ArrayList<>(MetadataRegistry.getNames());
+			final List<String> metadatas = new ArrayList<>(MetadataRegistry.getNames());
 			Collections.sort(metadatas);
 			for (final String metadata : metadatas) {
 				builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(metadata.toUpperCase()))
@@ -232,7 +233,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("<h3>Schedulers</h3>\n");
 		builder.append("<ul class='list-inline'>\n");
 		if (Activator.getExecutor() != null) {
-			List<String> schedulers = new ArrayList<>(
+			final List<String> schedulers = new ArrayList<>(
 					Activator.getExecutor().getRegisteredSchedulers(Activator.getSession()));
 			Collections.sort(schedulers);
 			for (final String scheduler : schedulers) {
@@ -248,7 +249,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("<h3>Scheduling Strategies</h3>\n");
 		builder.append("<ul class='list-inline'>\n");
 		if (Activator.getExecutor() != null) {
-			List<String> schedulingStrategies = new ArrayList<>(
+			final List<String> schedulingStrategies = new ArrayList<>(
 					Activator.getExecutor().getRegisteredSchedulingStrategies(Activator.getSession()));
 			Collections.sort(schedulingStrategies);
 			for (final String schedulingStrategy : schedulingStrategies) {
@@ -265,7 +266,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("<h2>Buffer Placement Strategies</h2>\n");
 		builder.append("<ul class='list-inline'>\n");
 		if (Activator.getExecutor() != null) {
-			List<String> bufferPlacementStrategies = new ArrayList<>(
+			final List<String> bufferPlacementStrategies = new ArrayList<>(
 					Activator.getExecutor().getRegisteredBufferPlacementStrategiesIDs(Activator.getSession()));
 			Collections.sort(bufferPlacementStrategies);
 			for (final String bufferPlacementStrategy : bufferPlacementStrategies) {
@@ -284,10 +285,10 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 			final List<LogicalOperatorInformation> operators = Activator.getExecutor()
 					.getOperatorInformations(Activator.getSession());
 
-			Map<String, List<LogicalOperatorInformation>> categories = new HashMap<>();
+			final Map<String, List<LogicalOperatorInformation>> categories = new HashMap<>();
 			for (final LogicalOperatorInformation operator : operators) {
 				if (!operator.isHidden()) {
-					for (String category : operator.getCategories()) {
+					for (final String category : operator.getCategories()) {
 						if (!categories.containsKey(category)) {
 							categories.put(category, new ArrayList<LogicalOperatorInformation>());
 						}
@@ -295,9 +296,9 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 					}
 				}
 			}
-			List<String> sortedCategories = new ArrayList<>(categories.keySet());
+			final List<String> sortedCategories = new ArrayList<>(categories.keySet());
 			Collections.sort(sortedCategories);
-			for (String category : sortedCategories) {
+			for (final String category : sortedCategories) {
 				builder.append("<div class='row'>");
 				builder.append("<h2>").append(category.substring(0, 1).toUpperCase())
 						.append(category.substring(1).toLowerCase()).append(" Operators</h2>\n");
@@ -329,9 +330,8 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 					builder.append("<table class='table'>\n");
 					builder.append("<tbody>\n");
 					for (final LogicalParameterInformation parameter : operator.getParameters()) {
-						if ((!parameter.getName().equalsIgnoreCase("NAME"))
-								&& (!parameter.getName().equalsIgnoreCase("ID"))
-								&& (!parameter.getName().equalsIgnoreCase("DESTINATION"))) {
+						if (!parameter.getName().equalsIgnoreCase("NAME") && !parameter.getName().equalsIgnoreCase("ID")
+								&& !parameter.getName().equalsIgnoreCase("DESTINATION")) {
 							if (!parameter.getDoc().equalsIgnoreCase("No description")) {
 								builder.append("<tr><td>")
 										.append(GenerateHTMLCheatSheetCommand.sanitize(parameter.getName()))
@@ -400,8 +400,8 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 
 		for (final FunctionSignature functionSignature : functionSignatures) {
 			final IFunction<?> function = MEP.getFunction(functionSignature);
-			if (((function.getSymbol().charAt(0) >= 'A') && (function.getSymbol().charAt(0) <= 'Z'))
-					|| ((function.getSymbol().charAt(0) >= 'a') && (function.getSymbol().charAt(0) <= 'z'))) {
+			if (function.getSymbol().charAt(0) >= 'A' && function.getSymbol().charAt(0) <= 'Z'
+					|| function.getSymbol().charAt(0) >= 'a' && function.getSymbol().charAt(0) <= 'z') {
 				String packageName = function.getClass().getPackage().getName();
 				final int index = packageName.lastIndexOf(".");
 				packageName = packageName.substring(index + 1, index + 2).toUpperCase()
@@ -439,12 +439,11 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 					}
 					sb.append(GenerateHTMLCheatSheetCommand.concatDatatypes(function.getAcceptedTypes(i)));
 				}
-				Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
+				final Deprecated annotation = function.getClass().getAnnotation(Deprecated.class);
 				if (annotation != null) {
 					builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(name))
 							.append(" <span class='label label-danger'>Deprecated</span></td><td>")
-							.append(sb.toString())
-							.append("</td>");
+							.append(sb.toString()).append("</td>");
 				} else {
 					builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(name)).append("</td><td>")
 							.append(sb.toString()).append("</td>");
@@ -584,36 +583,43 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("<div class='row'>\n");
 		builder.append("<h2>Full Grammar of PQL</h2>\n");
 		builder.append("<table class='table  table-striped'>\n");
-		builder.append("<tr><td>QUERY           </td><td> <b>=</b> ").append(sanitize("(STREAM | VIEW | SOURCE)+"))
-				.append("</td></tr>\n");
-		builder.append("<tr><td>STREAM          </td><td> <b>=</b> ").append(sanitize("STREAM \"=\" OPERATOR"))
-				.append("</td></tr>\n");
-		builder.append("<tr><td>VIEW            </td><td> <b>=</b> ").append(sanitize("VIEWNAME \":=\" OPERATOR"))
-				.append("</td></tr>\n");
-		builder.append("<tr><td>SOURCE          </td><td> <b>=</b> ").append(sanitize("SOURCENAME \"::=\" OPERATOR"))
-				.append("</td></tr>\n");
+		builder.append("<tr><td>QUERY           </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("(STREAM | VIEW | SOURCE)+")).append("</td></tr>\n");
+		builder.append("<tr><td>STREAM          </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("STREAM \"=\" OPERATOR")).append("</td></tr>\n");
+		builder.append("<tr><td>VIEW            </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("VIEWNAME \":=\" OPERATOR")).append("</td></tr>\n");
+		builder.append("<tr><td>SOURCE          </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("SOURCENAME \"::=\" OPERATOR")).append("</td></tr>\n");
 		builder.append("<tr><td>OPERATOR        </td><td> <b>=</b> ")
-				.append(sanitize(
+				.append(GenerateHTMLCheatSheetCommand.sanitize(
 						"QUERY | [OUTPUTPORT \":\"] OPERATORTYPE \"(\" (PARAMETERLIST [ \",\" OPERATORLIST ] | OPERATORLIST) \")\""))
 				.append("</td></tr>\n");
-		builder.append("<tr><td>OPERATORLIST    </td><td> <b>=</b> ").append(sanitize("[ OPERATOR (\",\" OPERATOR)* ]"))
+		builder.append("<tr><td>OPERATORLIST    </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("[ OPERATOR (\",\" OPERATOR)* ]"))
 				.append("</td></tr>\n");
 		builder.append("<tr><td>PARAMETERLIST   </td><td> <b>=</b> ")
-				.append(sanitize("\"{\" PARAMETER (\",\" PARAMETER)* \"}\"")).append("</td></tr>\n");
-		builder.append("<tr><td>PARAMETER       </td><td> <b>=</b> ").append(sanitize("NAME \"=\" PARAMETERVALUE"))
+				.append(GenerateHTMLCheatSheetCommand.sanitize("\"{\" PARAMETER (\",\" PARAMETER)* \"}\""))
 				.append("</td></tr>\n");
+		builder.append("<tr><td>PARAMETER       </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("NAME \"=\" PARAMETERVALUE")).append("</td></tr>\n");
 		builder.append("<tr><td>PARAMETERVALUE  </td><td> <b>=</b> ")
-				.append(sanitize("LONG | DOUBLE | STRING | PREDICATE | LIST | MAP")).append("</td></tr>\n");
-		builder.append("<tr><td>LIST            </td><td> <b>=</b> ")
-				.append(sanitize("\"[\" [PARAMETERVALUE (\",\" PARAMETERVALUE)*] \"]\"")).append("</td></tr>\n");
-		builder.append("<tr><td>MAP             </td><td> <b>=</b> ")
-				.append(sanitize("\"[\" [MAPENTRY (\",\" MAPENTRY*] \"]\"")).append("</td></tr>\n");
-		builder.append("<tr><td>MAPENTRY        </td><td> <b>=</b> ")
-				.append(sanitize("PARAMETERVALUE \"=\" PARAMETERVALUE")).append("</td></tr>\n");
-		builder.append("<tr><td>STRING          </td><td> <b>=</b> ").append(sanitize("\"'\" [~']* \"'\""))
+				.append(GenerateHTMLCheatSheetCommand.sanitize("LONG | DOUBLE | STRING | PREDICATE | LIST | MAP"))
 				.append("</td></tr>\n");
+		builder.append("<tr><td>LIST            </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("\"[\" [PARAMETERVALUE (\",\" PARAMETERVALUE)*] \"]\""))
+				.append("</td></tr>\n");
+		builder.append("<tr><td>MAP             </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("\"[\" [MAPENTRY (\",\" MAPENTRY*] \"]\""))
+				.append("</td></tr>\n");
+		builder.append("<tr><td>MAPENTRY        </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("PARAMETERVALUE \"=\" PARAMETERVALUE"))
+				.append("</td></tr>\n");
+		builder.append("<tr><td>STRING          </td><td> <b>=</b> ")
+				.append(GenerateHTMLCheatSheetCommand.sanitize("\"'\" [~']* \"'\"")).append("</td></tr>\n");
 		builder.append("<tr><td>PREDICATE       </td><td> <b>=</b> ")
-				.append(sanitize("PREDICATETYPE \"(\" STRING \")\"")).append("</td></tr>\n");
+				.append(GenerateHTMLCheatSheetCommand.sanitize("PREDICATETYPE \"(\" STRING \")\""))
+				.append("</td></tr>\n");
 		builder.append("</table>\n");
 		builder.append("</div>\n");
 	}
@@ -639,7 +645,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 
 	@SuppressWarnings("nls")
 	private static String concatDatatypes(final SDFDatatype[] types) {
-		if ((types == null) || (types.length == 0)) {
+		if (types == null || types.length == 0) {
 			return "";
 		}
 
@@ -678,7 +684,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 			sb.append("<abbr title='" + GenerateHTMLCheatSheetCommand.sanitize(Arrays.toString(SDFDatatype.VECTORS))
 					+ "'>Vectors</abbr>");
 		} else {
-			if (types.length >= 1) {
+			if (types.length >= 1 && types[0] != null) {
 				sb.append(GenerateHTMLCheatSheetCommand.sanitize(types[0].getQualName()));
 			}
 		}
