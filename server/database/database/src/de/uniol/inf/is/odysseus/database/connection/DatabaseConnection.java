@@ -200,6 +200,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 	public boolean tableExists(String tablename) {
 		try {
 			assertConnection();
+			
+			// Hmm. Seems that this does not alway works
 			DatabaseMetaData meta = connection.getMetaData();
 			try (ResultSet res = meta.getTables(null, null, null,
 					new String[] { "TABLE" })) {
@@ -212,7 +214,17 @@ public class DatabaseConnection implements IDatabaseConnection {
 			}
 			return false;
 		} catch (SQLException e) {
-			return false;
+			logger.warn("Error looking for existing table ",e);
+			// Test again with select, you be some errors in metadata
+			try{
+				Statement stmt = connection.createStatement();
+				stmt.executeQuery("Select * from "+tablename);
+				return true;
+			}catch(SQLException ex){
+				return false;	
+			}
+			
+			
 		}
 	}
 
