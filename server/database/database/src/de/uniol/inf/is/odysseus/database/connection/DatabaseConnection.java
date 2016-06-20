@@ -216,12 +216,20 @@ public class DatabaseConnection implements IDatabaseConnection {
 		} catch (SQLException e) {
 			logger.warn("Error looking for existing table ",e);
 			// Test again with select, you be some errors in metadata
+			Statement stmt = null; 
 			try{
-				Statement stmt = connection.createStatement();
+				stmt = connection.createStatement();
 				stmt.executeQuery("Select * from "+tablename);
 				return true;
 			}catch(SQLException ex){
 				return false;	
+			}finally{
+				if (stmt != null){
+					try {
+						stmt.close();
+					} catch (SQLException e1) {
+					}
+				}
 			}
 			
 			
