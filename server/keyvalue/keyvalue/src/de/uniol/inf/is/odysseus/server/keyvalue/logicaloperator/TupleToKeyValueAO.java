@@ -57,7 +57,6 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 		}
 	}
 
-	// TODO: Shouldn't this method be renamed to getType?
 	@GetParameter(name = "TYPE")
 	public String getType() {
 		return this.type.getSimpleName();
