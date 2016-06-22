@@ -386,7 +386,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 
     @Override
     public ITransportExchangePattern getExchangePattern() {
-        if (this.getDirection().equals(ITransportDirection.IN)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             return ITransportExchangePattern.InOnly;
         }
         else {

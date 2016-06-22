@@ -138,7 +138,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
     @Override
     public void open() throws UnknownHostException, IOException {
         this.getTransportHandler().open();
-        if (this.getDirection().equals(ITransportDirection.IN)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             if ((this.getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
                 this.input = this.getTransportHandler().getInputStream();
             }
@@ -150,7 +150,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
 
     @Override
     public void close() throws IOException {
-        if (this.getDirection().equals(ITransportDirection.IN)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             if (this.input != null) {
                 this.input.close();
             }
@@ -383,7 +383,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
 
     @Override
     public ITransportExchangePattern getExchangePattern() {
-        if (this.getDirection().equals(ITransportDirection.IN)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             return ITransportExchangePattern.InOnly;
         }
         return ITransportExchangePattern.OutOnly;

@@ -83,7 +83,7 @@ public class NMEAProtocolHandler extends
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
-		if (this.getDirection().equals(ITransportDirection.IN)) {
+		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
 			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
 					|| (this.getAccessPattern()
 							.equals(IAccessPattern.ROBUST_PULL))) {
@@ -283,7 +283,7 @@ public class NMEAProtocolHandler extends
 	
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
-		if (this.getDirection().equals(ITransportDirection.IN)) {
+		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
 			return ITransportExchangePattern.InOnly;
 		} else {
 			return ITransportExchangePattern.OutOnly;

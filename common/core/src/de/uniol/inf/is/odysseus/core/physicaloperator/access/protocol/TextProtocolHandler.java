@@ -158,7 +158,7 @@ public class TextProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
-		if (this.getDirection().equals(ITransportDirection.IN)) {
+		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
 			return ITransportExchangePattern.InOnly;
 		} else {
 			return ITransportExchangePattern.OutOnly;

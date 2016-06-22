@@ -107,7 +107,7 @@ public class WAVProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     @Override
     public void open() throws IOException {
         this.getTransportHandler().open();
-        if (this.getDirection().equals(ITransportDirection.IN)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             this.wavChunk = new WAVChunk(this.getTransportHandler().getInputStream());
         }
         this.isDone = false;
@@ -120,7 +120,7 @@ public class WAVProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      */
     @Override
     public void close() throws IOException {
-        if (this.getDirection().equals(ITransportDirection.IN)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             this.wavChunk.getData().getData().close();
         }
         this.getTransportHandler().close();

@@ -125,7 +125,7 @@ public class JasperProtocolHandler<T extends Tuple<?>> extends AbstractProtocolH
     @Override
     public void open() throws IOException {
         this.getTransportHandler().open();
-        if (this.getDirection().equals(ITransportDirection.OUT)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.OUT)) {
             try (FileInputStream templateStream = new FileInputStream(this.getTemplate())) {
                 try {
                     final JasperDesign design = JRXmlLoader.load(templateStream);
@@ -149,7 +149,7 @@ public class JasperProtocolHandler<T extends Tuple<?>> extends AbstractProtocolH
      */
     @Override
     public void close() throws IOException {
-        if (this.getDirection().equals(ITransportDirection.OUT)) {
+        if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.OUT)) {
             if (this.isMulti()) {
                 try {
                     final JasperPrint print = JasperFillManager.fillReport(this.report, this.parameter, new JRMapCollectionDataSource(this.columns));

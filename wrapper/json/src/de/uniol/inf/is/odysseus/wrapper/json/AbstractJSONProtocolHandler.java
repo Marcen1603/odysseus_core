@@ -41,7 +41,7 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
-		if (this.getDirection() == ITransportDirection.IN) {
+		if (this.getDirection() != null && this.getDirection() == ITransportDirection.IN) {
 			if (this.getAccessPattern() == IAccessPattern.PULL) {
 				reader = new InputStreamReader(getTransportHandler().getInputStream());
 			}
@@ -213,7 +213,7 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
-		if (this.getDirection() == ITransportDirection.IN) {
+		if (this.getDirection() != null && this.getDirection() == ITransportDirection.IN) {
 			return ITransportExchangePattern.InOnly;
 		}
 		return ITransportExchangePattern.OutOnly;

@@ -43,7 +43,7 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 	
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
-		if (this.getDirection().equals(ITransportDirection.IN)) {
+		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
 			return ITransportExchangePattern.InOnly;
 		}
 		return ITransportExchangePattern.OutOnly;
