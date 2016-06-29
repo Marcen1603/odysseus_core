@@ -38,6 +38,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
+	private static final String HASH_JOIN_SA = "HashJoinSA";
+
 	@Override
 	public int getPriority() {
 		return 0;
@@ -61,46 +63,24 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			areaName = joinPO.getSweepAreaName();
 		}
 
+		boolean check = canBeUsedWithHashJoin(joinPO, areas);
+
+		// Automatically set HashJoinSA if predicate is pure equals predicate
+		if (areaName == "" && check){
+			areaName = HASH_JOIN_SA;
+		}
+
+		
 		// TMP-Hack
-		if (areaName.equalsIgnoreCase("HashJoinSA")) {
-			boolean check = false;
-			try {
-				// check the paths
-				for (int port = 0; port < 2; port++) {
-					int otherPort = port ^ 1;
-					// check the predicate and calculate
-					// the restrictList
-					Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
-
-					if (check = JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs,
-							joinPO.getSubscribedToSource(port).getSchema(),
-							joinPO.getSubscribedToSource(otherPort).getSchema())) {
-
-						// transform the set into a list to guarantee the
-						// same order of attributes for both restrict lists
-						List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
-						for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-							neededAttrsList.add(pair);
-						}
-
-						Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO,
-								neededAttrsList, port);
-						// TODO: Flag to set if input is sorted 
-						// currently, default is false --> to be sure
-						areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), false);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-			if (check == false){
-				throw new TransformationException("Cannot use "+areaName+" with this predicate "+joinPO.getPredicate()+". Only equals predicates are possible!");				
+		if (areaName.equalsIgnoreCase(HASH_JOIN_SA)) {
+			if (check == false) {
+				throw new TransformationException("Cannot use " + areaName + " with this predicate "
+						+ joinPO.getPredicate() + ". Only equals predicates are possible!");
 			}
 		}
 
 		if (areas[0] == null || areas[1] == null) {
-			if (areaName == null || areaName == ""){
+			if (areaName == null || areaName == "") {
 				areaName = "TIJoinSA";
 			}
 			try {
@@ -130,6 +110,41 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		 * because # other fields of the object should still be modified
 		 */
 
+	}
+
+	private boolean canBeUsedWithHashJoin(JoinTIPO joinPO, ITimeIntervalSweepArea[] areas) {
+		boolean check = false;
+		try {
+			// check the paths
+			for (int port = 0; port < 2; port++) {
+				int otherPort = port ^ 1;
+				// check the predicate and calculate
+				// the restrictList
+				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+
+				if (check = JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs,
+						joinPO.getSubscribedToSource(port).getSchema(),
+						joinPO.getSubscribedToSource(otherPort).getSchema())) {
+
+					// transform the set into a list to guarantee the
+					// same order of attributes for both restrict lists
+					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+						neededAttrsList.add(pair);
+					}
+
+					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO,
+							neededAttrsList, port);
+					// TODO: Flag to set if input is sorted
+					// currently, default is false --> to be sure
+					areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), false);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return check;
 	}
 
 	@Override
