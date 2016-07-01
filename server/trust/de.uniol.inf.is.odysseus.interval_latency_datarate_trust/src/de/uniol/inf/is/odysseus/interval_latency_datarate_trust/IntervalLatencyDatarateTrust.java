@@ -74,6 +74,17 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	public IntervalLatencyDatarateTrust clone() {
 		return new IntervalLatencyDatarateTrust(this);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof IntervalLatencyDatarateTrust)) {
+			return false;
+		}
+		IntervalLatencyDatarateTrust other = (IntervalLatencyDatarateTrust) obj;
+		return this.trust.equals(other.trust) && this.timeInterval.equals(other.timeInterval) && this.latency.equals(other.latency) && this.datarate.equals(other.datarate);
+	}
 
 	// ------------------------------------------------------------------------------
 	// Methods that need to merge different types

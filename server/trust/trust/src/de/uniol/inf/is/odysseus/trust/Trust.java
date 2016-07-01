@@ -55,6 +55,16 @@ public final class Trust extends AbstractBaseMetaAttribute implements ITrust {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof Trust)) {
+			return false;
+		}
+		return this.trustValue == ((Trust) obj).trustValue;
+	}
+
+	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(1, false);

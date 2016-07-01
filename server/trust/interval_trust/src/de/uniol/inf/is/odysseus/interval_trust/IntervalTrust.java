@@ -60,6 +60,17 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 	public IntervalTrust clone() {
 		return new IntervalTrust(this);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof IntervalTrust)) {
+			return false;
+		}
+		IntervalTrust other = (IntervalTrust) obj;
+		return this.trust.equals(other.trust) && this.timeInterval.equals(other.timeInterval);
+	}
 
 	// ------------------------------------------------------------------------------
 	// Methods that need to merge different types
