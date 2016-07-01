@@ -68,6 +68,17 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 		return new IntervalLatencyTrust(this);
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof IntervalLatencyTrust)) {
+			return false;
+		}
+		IntervalLatencyTrust other = (IntervalLatencyTrust) obj;
+		return this.trust.equals(other.trust) && this.timeInterval.equals(other.timeInterval) && this.latency.equals(other.latency);
+	}
+	
 	// ------------------------------------------------------------------------------
 	// Methods that need to merge different types
 	// ------------------------------------------------------------------------------
