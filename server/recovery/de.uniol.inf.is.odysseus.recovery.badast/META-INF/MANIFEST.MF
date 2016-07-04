@@ -20,6 +20,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.recovery;bundle-version="1.0.0",
 Service-Component: OSGI-INF/SubscriberControllerProvider.xml,
  OSGI-INF/FullReplayRecoveryExecutor.xml
 Bundle-ActivationPolicy: lazy
-Export-Package: de.uniol.inf.is.odysseus.recovery,
- de.uniol.inf.is.odysseus.recovery.badast,
+Export-Package: de.uniol.inf.is.odysseus.recovery.badast,
  de.uniol.inf.is.odysseus.recovery.duplicatesdetector
