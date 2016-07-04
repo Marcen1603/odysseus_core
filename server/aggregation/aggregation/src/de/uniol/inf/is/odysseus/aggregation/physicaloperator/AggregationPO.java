@@ -237,16 +237,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndices = other.groupingAttributesIndices;
 		this.hasFunctionsThatNeedStartTsOrder = other.hasFunctionsThatNeedStartTsOrder;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-	 * process_open()
-	 */
+	
 	@Override
-	protected void process_open() throws OpenFailedException {
-		super.process_open();
+	protected void process_open_internal() throws OpenFailedException {
 		clear();
 	}
 
@@ -902,15 +895,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		return new AggregationState<M, T>(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO#setState(java.
-	 * io.Serializable)
-	 */
 	@Override
-	public void setState(final Serializable state) {
+	public void setStateInternal(final Serializable state) {
 		if (state instanceof AggregationState) {
 			// TODO: synchronized?
 			@SuppressWarnings("unchecked")

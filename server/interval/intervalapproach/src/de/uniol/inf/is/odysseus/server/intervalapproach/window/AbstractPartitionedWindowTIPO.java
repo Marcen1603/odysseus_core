@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueP
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -63,9 +64,10 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	public void setGroupProcessor(IGroupProcessor<T, T> groupProcessor) {
 		this.groupProcessor = groupProcessor;
 	}
-
+	
 	@Override
-	public void process_open() {
+	protected void process_open_internal() throws OpenFailedException {
+		super.process_open_internal();
 		buffers.clear();
 		groupProcessor.init();
 		transferArea.init(this, 1);
@@ -172,6 +174,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 				b.clear();
 			}
 		}
+		super.process_close();
 	}
 
 	@Override
@@ -213,7 +216,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setState(Serializable serializable) {
+	protected void setStateInternal(Serializable serializable) {
 		try {
 			SlidingElementWindowTIPOState<T> state = (SlidingElementWindowTIPOState<T>) serializable;
 			synchronized (buffers) {

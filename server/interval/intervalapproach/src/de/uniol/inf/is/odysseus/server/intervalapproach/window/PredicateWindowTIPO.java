@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -74,12 +73,6 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			this.maxWindowTime = 0;
 		}
 		this.sameStarttime = windowao.isSameStarttime();
-	}
-
-
-	@Override
-	public void process_open() throws OpenFailedException {
-		super.process_open();
 	}
 
 	@Override

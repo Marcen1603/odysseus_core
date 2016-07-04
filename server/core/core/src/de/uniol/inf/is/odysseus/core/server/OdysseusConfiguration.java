@@ -215,9 +215,9 @@ public class OdysseusConfiguration {
 		// Recovery, Kafka and BaDaSt
 		props.setProperty("systemlogThresholdMilliseconds", String.valueOf((long) (Math.pow(10, 3)
 				* Math.pow(60, 2) * 24 * 30))); // 30 days in milliseconds
-		props.setProperty("protectionpointDefaultManager", "SystemTimeProtectionPointManager");
-		props.setProperty("protectionpointDefaultUnit", "MINUTES");
-		props.setProperty("protectionpointDefaultPeriod", "30");
+		props.setProperty("checkpointDefaultManager", "SystemTimeCheckpointManager");
+		props.setProperty("checkpointDefaultUnit", "MINUTES");
+		props.setProperty("checkpointDefaultPeriod", "30");
 		props.setProperty("kafka.host.name", "localhost");
 		props.setProperty("kafka.clientPort", "9092");
 		props.setProperty("badast.host.name", "localhost");

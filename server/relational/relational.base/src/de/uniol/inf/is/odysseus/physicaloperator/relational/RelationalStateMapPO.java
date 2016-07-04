@@ -60,9 +60,10 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		
 		return super.isSemanticallyEqual(ipo);
 	}
-
+	
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open_internal() throws OpenFailedException {
+		super.process_open_internal();
 		history.init();
 	}
 	
@@ -81,7 +82,7 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setState(Serializable serializable) {
+	public void setStateInternal(Serializable serializable) {
 		try {
 			RelationalStateMapPOState<T> state = (RelationalStateMapPOState<T>) serializable;
 			history.setGroupsLastObjects(state.getGroupsLastObjects());

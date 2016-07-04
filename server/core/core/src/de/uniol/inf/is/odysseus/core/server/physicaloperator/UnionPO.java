@@ -76,9 +76,9 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
 		transferArea.removeInput(sub.getSinkInPort());
 	}
-
+	
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open_internal() throws OpenFailedException {
 		transferArea.init(this, getSubscribedToSource().size());
 	}
 
@@ -99,6 +99,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 				transferArea.done(i);
 			}
 		}
+		super.process_close();
 	}
 
 	@Override
@@ -144,7 +145,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setState(Serializable s) {
+	public void setStateInternal(Serializable s) {
 		try {
 			UnionPOState<R> state = (UnionPOState<R>) s;
 			this.transferArea = state.getTransferArea();

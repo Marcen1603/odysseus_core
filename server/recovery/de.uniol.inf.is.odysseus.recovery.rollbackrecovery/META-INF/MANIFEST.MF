@@ -1,14 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rollback Recovery Plug-in
+Bundle-Name: Rollbackrecovery
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.rollbackrecovery
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Michael Brand
+Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: de.uniol.inf.is.odysseus.recovery.systemlog;bundle-version="1.0.0",
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j,
- de.uniol.inf.is.odysseus.core.server,
- com.google.guava
+ de.uniol.inf.is.odysseus.recovery.checkpointing;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.recovery.processingimage,
+ de.uniol.inf.is.odysseus.recovery.badast;bundle-version="1.0.0"
 Service-Component: OSGI-INF/RollbackRecoveryExecutor.xml
-Export-Package: de.uniol.inf.is.odysseus.recovery.rollbackrecovery
+Bundle-ActivationPolicy: lazy

@@ -101,7 +101,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	 * called on process open, starts all worker threads
 	 */
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open_internal() throws OpenFailedException {
 		// for each degree, create blocking queue and worker thread
 		initWorker(degree);
 

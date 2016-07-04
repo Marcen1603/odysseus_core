@@ -190,9 +190,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}
-
+	
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open_internal() throws OpenFailedException {
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		synchronized (groups) {
 			g.init();
@@ -249,6 +249,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					}
 				}
 			}
+			super.process_close();
 			logger.debug("closing " + this.getName() + " done");
 		}
 
@@ -935,7 +936,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setState(Serializable s) {
+	public void setStateInternal(Serializable s) {
 		try {
 			AggregateTIPOState<Q, R, W> state = (AggregateTIPOState<Q, R, W>) s;
 			this.transferArea = state.getTransferArea();

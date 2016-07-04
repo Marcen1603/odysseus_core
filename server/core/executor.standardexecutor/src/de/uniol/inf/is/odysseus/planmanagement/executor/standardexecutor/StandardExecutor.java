@@ -423,9 +423,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			LOG.debug("Using  {} for recovery", recoveryExecutor.getName());
 			recoveryExecutor = recoveryExecutor.newInstance(parameter.getConfiguration());
 			if (recoveryExecutor.isRecoveryNeeded()) {
-				tmpQueries = recoveryExecutor.recover(parameters, caller, tmpQueries);
+				tmpQueries = recoveryExecutor.activateRecovery(parameters, caller, tmpQueries, this);
 			}
-			return recoveryExecutor.activateBackup(parameters, caller, tmpQueries);
+			return recoveryExecutor.activateBackup(parameters, caller, tmpQueries, this);
 		}
 		return tmpQueries;
 	}

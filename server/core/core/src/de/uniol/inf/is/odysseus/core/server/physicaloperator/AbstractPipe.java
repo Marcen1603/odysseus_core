@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,12 +26,12 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
@@ -135,6 +136,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	 * In case of circular dependencies, done should propagate only once (to prevent endless loops).
 	 */
 	private boolean didNotPropagateDoneBefore = true;
+	
+	/**
+	 * For stateful operators, this flag signals, that an operator state has been loaded.
+	 */
+	private boolean operatorStateLoaded = false;
 	
 	// ------------------------------------------------------------------------
 
@@ -244,8 +250,17 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		return this.delegateSink.isOpenFor(owner);
 	}
 	
+	/**
+	 * If stateful operator: override {@link #process_open_internal()} instead of this method.
+	 */
 	@Override
 	protected void process_open() throws OpenFailedException {
+		if(!this.operatorStateLoaded) {
+			process_open_internal();
+		}
+	}
+	
+	protected void process_open_internal() throws OpenFailedException {
 	}
 
 	// ------------------------------------------------------------------------
@@ -310,6 +325,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	@Override
 	protected void process_close() {
+		this.operatorStateLoaded = false;
 	}
 
 	@Override
@@ -555,6 +571,23 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	protected final AbstractPipe<R,W> clone(){
 		throw new IllegalArgumentException("Do not clone physical operators!");
+	}
+	
+	// Methods for operator states
+	// see IStatefulPO
+	
+	/**
+	 * Default implementation of that does nothing. Override it for stateful operators.
+	 */
+	protected void setStateInternal(Serializable state) {
+	}
+	
+	/**
+	 * Sets an operator state.
+	 */
+	public void setState(Serializable state) {
+		setStateInternal(state);
+		this.operatorStateLoaded = true;
 	}
 
 }

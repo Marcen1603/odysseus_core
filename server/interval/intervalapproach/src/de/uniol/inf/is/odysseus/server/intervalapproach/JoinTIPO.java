@@ -307,9 +307,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 		}
 	}
-
+	
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open_internal() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
 			this.areas[i].clear();
 			this.areas[i].init();
@@ -323,6 +323,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	protected synchronized void process_close() {
 		areas[0].clear();
 		areas[1].clear();
+		super.process_close();
 	}
 
 	@Override
@@ -476,7 +477,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setState(Serializable s) {
+	public void setStateInternal(Serializable s) {
 		try {
 			JoinTIPOState<K, T> state = (JoinTIPOState<K, T>) s;
 

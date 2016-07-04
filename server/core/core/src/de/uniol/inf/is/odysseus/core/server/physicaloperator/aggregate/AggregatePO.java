@@ -295,7 +295,7 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// Nothing to do in this case
 	}
-
+	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		IGroupProcessor<R, W> g = getGroupProcessor();
@@ -350,5 +350,6 @@ public class AggregatePO<M extends IMetaAttribute, R extends IStreamObject<M>, W
 	@Override
 	protected void process_close() {
 		createOutput();
+		super.process_close();
 	}
 }
