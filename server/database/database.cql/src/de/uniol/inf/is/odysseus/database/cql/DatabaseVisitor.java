@@ -75,14 +75,14 @@ public class DatabaseVisitor extends CQLParser {
 	public void setDataDictionary(IDataDictionary dataDictionary) {
 		super.setDataDictionary(dataDictionary);
 	}
-	
+
 	@Override
-	public void setMetaAttribute(IMetaAttribute metaAttribute){
+	public void setMetaAttribute(IMetaAttribute metaAttribute) {
 		super.setMetaAttribute(metaAttribute);
 	}
-	
+
 	@Override
-	public Object visit(ASTDropDatabaseConnection node, Object data) throws QueryParseException {	
+	public Object visit(ASTDropDatabaseConnection node, Object data) throws QueryParseException {
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		DatabaseConnectionDictionary.removeConnection(connectionName);
 		return null;
@@ -92,9 +92,9 @@ public class DatabaseVisitor extends CQLParser {
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		String name = (String) data;
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();		
+		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		long waitMillis = 0L;
-		if (node.jjtGetNumChildren() > 2) {			
+		if (node.jjtGetNumChildren() > 2) {
 			if (node.jjtGetChild(2) instanceof ASTTime) {
 				ASTTime time = (ASTTime) node.jjtGetChild(2);
 				String value = time.jjtGetValue().toString();
@@ -106,28 +106,28 @@ public class DatabaseVisitor extends CQLParser {
 		DatabaseSourceAO source = new DatabaseSourceAO();
 		source.setName(name);
 		source.setConnectionName(connectionName);
-		source.setTableName(tableName);		
-		source.setWaitInMillis(waitMillis);		
-		if(!source.isValid()){			
-			if(source.getErrors().size()>0){
-				throw new QueryParseException("Source not correctly set"+source.getErrors().get(0));
-			}else{
+		source.setTableName(tableName);
+		source.setWaitInMillis(waitMillis);
+		if (!source.isValid()) {
+			if (source.getErrors().size() > 0) {
+				throw new QueryParseException("Source not correctly set" + source.getErrors().get(0));
+			} else {
 				throw new QueryParseException("Source not correctly set. Check connection and parameters!");
 			}
 		}
 		source.initialize();
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, getCaller());
-//		try {
-//			getDataDictionary().setStream(name, source, getCaller());
-//		} catch (DataDictionaryException e) {
-//			throw new QueryParseException(e.getMessage());
-//		}
+		// try {
+		// getDataDictionary().setStream(name, source, getCaller());
+		// } catch (DataDictionaryException e) {
+		// throw new QueryParseException(e.getMessage());
+		// }
 		return cmd;
 
 	}
 
 	@Override
-	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {		
+	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {
 		String name = (String) data;
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
@@ -148,15 +148,15 @@ public class DatabaseVisitor extends CQLParser {
 
 		// all checks passed (no exception) --> generate AO
 		DatabaseSinkAO sinkAO = new DatabaseSinkAO();
-		// sinkName, connectionName, tableName, drop, truncate		
+		// sinkName, connectionName, tableName, drop, truncate
 		sinkAO.setConnectionName(connectionName);
 		sinkAO.setTablename(tableName);
 		sinkAO.setDrop(drop);
-		sinkAO.setTruncate(truncate);	
-		if(!sinkAO.isValid()){			
-			if(sinkAO.getErrors().size()>0){
+		sinkAO.setTruncate(truncate);
+		if (!sinkAO.isValid()) {
+			if (sinkAO.getErrors().size() > 0) {
 				throw new QueryParseException("Source not correctly set" + sinkAO.getErrors().get(0));
-			}else{
+			} else {
 				throw new QueryParseException("Source not correctly set. Check connection and parameters!");
 			}
 		}
@@ -169,7 +169,7 @@ public class DatabaseVisitor extends CQLParser {
 	public Object visit(ASTStreamToStatement node, Object data) throws QueryParseException {
 		DatabaseSinkAO sink = (DatabaseSinkAO) data;
 		IDatabaseConnection con = sink.getConnection();
-		SDFSchema schema = sink.getOutputSchema();			
+		SDFSchema schema = sink.getOutputSchema();
 		if (!sink.isDrop()) {
 			try {
 				if (!con.equalSchemas(sink.getTablename(), schema)) {
@@ -188,10 +188,10 @@ public class DatabaseVisitor extends CQLParser {
 	}
 
 	@Override
-	public Object visit(ASTCreateDatabaseConnection node, Object data) throws QueryParseException {
+	public Object visit(ASTCreateDatabaseConnection node, Object data) throws QueryParseException {		
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		if(DatabaseConnectionDictionary.isConnectionExisting(connectionName)){
-			throw new QueryParseException("Connection with name \""+connectionName+"\" already exists!");
+		if (DatabaseConnectionDictionary.isConnectionExisting(connectionName)) {
+			throw new QueryParseException("Connection with name \"" + connectionName + "\" already exists!");
 		}
 		try {
 			if (node.jjtGetChild(1) instanceof ASTIdentifier) {
@@ -199,13 +199,16 @@ public class DatabaseVisitor extends CQLParser {
 				String dbname = ((ASTIdentifier) node.jjtGetChild(2)).getName();
 				String host = "";
 				int port = -1;
-				String user = "";
+				String user = "root";
 				String pass = "";
 				if (node.jjtGetNumChildren() > 3) {
 					if (node.jjtGetChild(3) instanceof ASTHost) {
 						host = ((ASTHost) node.jjtGetChild(3)).getValue();
 						port = ((ASTInteger) node.jjtGetChild(4)).getValue().intValue();
-						if (node.jjtGetNumChildren() > 5) {
+						// Check for the type cause if the user does not give
+						// username and password, but gives the option for no
+						// lazy connection check, this would throw an error
+						if (node.jjtGetNumChildren() > 5 && node.jjtGetChild(5) instanceof ASTIdentifier) {
 							user = ((ASTIdentifier) node.jjtGetChild(5)).getName();
 							pass = ((ASTIdentifier) node.jjtGetChild(6)).getName();
 						}
@@ -214,7 +217,7 @@ public class DatabaseVisitor extends CQLParser {
 						pass = ((ASTIdentifier) node.jjtGetChild(4)).getName();
 					}
 				}
-				
+
 				IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getFactory(dbms);
 				if (factory == null) {
 					String currentInstalled = "";
@@ -223,10 +226,11 @@ public class DatabaseVisitor extends CQLParser {
 						currentInstalled = currentInstalled + sep + n;
 						sep = ", ";
 					}
-					throw new QueryParseException("DBMS \"" + dbms + "\" not supported! Currently available: " + currentInstalled);
-				}				
+					throw new QueryParseException(
+							"DBMS \"" + dbms + "\" not supported! Currently available: " + currentInstalled);
+				}
 				IDatabaseConnection con = factory.createConnection(host, port, dbname, user, pass);
-				DatabaseConnectionDictionary.addConnection(connectionName, con);				
+				DatabaseConnectionDictionary.addConnection(connectionName, con);
 			}
 			// otherwise, we have a JDBC based connection
 			if (node.jjtGetChild(1) instanceof ASTJDBCConnection) {
@@ -235,31 +239,30 @@ public class DatabaseVisitor extends CQLParser {
 				String str = jdbc.jjtGetValue().toString();
 				// 2 and 3 are username and pass
 				Properties props = new Properties();
-				if(node.jjtGetNumChildren() > 3){
+				if (node.jjtGetNumChildren() > 3) {
 					String user = ((ASTIdentifier) node.jjtGetChild(2)).getName();
 					String pass = ((ASTIdentifier) node.jjtGetChild(3)).getName();
 					props.setProperty("user", user);
 					props.setProperty("password", pass);
-				}				
+				}
 				IDatabaseConnection connection = new DatabaseConnection(str, props);
 				DatabaseConnectionDictionary.addConnection(connectionName, connection);
 			}
 		} catch (Exception e) {
-			throw new QueryParseException("Error creating connection",e);
-		}
+			throw new QueryParseException("Error creating connection", e);
+		}		
 		
 		// is check option used?
-		if(node.jjtGetChild(node.jjtGetNumChildren()-1) instanceof ASTDatabaseConnectionCheck){
+		if (node.jjtGetChild(node.jjtGetNumChildren() - 1) instanceof ASTDatabaseConnectionCheck) {
 			// check options
 			IDatabaseConnection con = DatabaseConnectionDictionary.getDatabaseConnection(connectionName);
 			try {
 				con.checkProperties();
-			} catch (SQLException e) {				
-				throw new QueryParseException("Check for database connection failed: "+e.getMessage(), e);				
+			} catch (SQLException e) {
+				throw new QueryParseException("Check for database connection failed: " + e.getMessage(), e);
 			}
-			
+
 		}
-		
 
 		return null;
 	}
