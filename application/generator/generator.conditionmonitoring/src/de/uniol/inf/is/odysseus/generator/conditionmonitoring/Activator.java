@@ -114,7 +114,7 @@ public class Activator implements BundleActivator {
 		millingCutterServer.start();
 
 		// And another fridge
-		FridgeVibrationSensorDataProvider fridgeProvider2 = new FridgeVibrationSensorDataProvider();
+		FridgeVibrationSensorDataProvider fridgeProvider2 = new FridgeVibrationSensorDataProvider(10, 2);
 		StreamServer fridgeServer2 = new StreamServer(53217, fridgeProvider2);
 		fridgeServer2.start();
 
@@ -148,12 +148,19 @@ public class Activator implements BundleActivator {
 					// Fridge
 					fridgeProvider.resume();
 					System.out.println("Resumed fridge");
+				} else if (command.equalsIgnoreCase("fridgeAnomaly")) {
+					fridgeProvider.createAnomaly();
+				} else if (command.equalsIgnoreCase("coolFridge")) {
+					fridgeProvider.startCooling();
+					System.out.println("Started to cool fridge");
 				} else if (command.equalsIgnoreCase("pauseFridge2")) {
 					// Fridge 2
 					fridgeProvider2.pause();
 				} else if (command.equalsIgnoreCase("resumeFridge2")) {
 					// Fridge 2
 					fridgeProvider2.resume();
+				} else if (command.equalsIgnoreCase("fridge2Anomaly")) {
+					fridgeProvider2.createAnomaly();
 				} else {
 					double newValue = 0;
 					try {

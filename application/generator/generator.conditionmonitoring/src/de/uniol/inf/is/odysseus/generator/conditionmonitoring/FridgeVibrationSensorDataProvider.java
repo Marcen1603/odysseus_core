@@ -23,45 +23,80 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 
 	private ISingleValueGenerator vibrationsGenerator;
 	private ISingleValueGenerator offVibrationGenerator;
-	private int counter;
 	private boolean motorOn;
 	private boolean paused;
 
-	private int motorOnTuples = 60;
-	private int motorOffTuples = 200;
+	private float secondsSwitchedOn = 10;
+	private float secondsSwitchedOff = 60;
+	// To reset after an anomaly
+	private float originalSecondsSwitchedOff = secondsSwitchedOff;
+	
+	private float randomFactorSecondsSwitchedOn = 5;
+	private float randomFactorSecondsSwitchedOff = 10;
+
+	private int sleepTime = 100;
+	private int sleepTimeRandomFactor = 20;
+
+	private long timeSwitchedLastOn;
+	private long timeSwitchedLastOff;
+
+	public FridgeVibrationSensorDataProvider() {
+		// Use standard values
+	}
+
+	/**
+	 * If you want to use custom intervals and times, you can do this here
+	 * 
+	 * @param sleepTime
+	 * @param sleepTimeRandomFactor
+	 */
+	public FridgeVibrationSensorDataProvider(int sleepTime, int sleepTimeRandomFactor) {
+		this.sleepTime = sleepTime;
+		this.sleepTimeRandomFactor = sleepTimeRandomFactor;
+	}
 
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		int sleepTime = 100 + (int) (Math.random() * 20);
-		Thread.sleep(sleepTime);
-		
-		motorOnTuples = 60 + (int) (Math.random() * 20);
-		motorOffTuples = 250 + (int) (Math.random() * 10);
 
 		double value = 0;
 
-		if (motorOn && !paused) {
-			counter++;
-			if (counter >= motorOnTuples) {
-				motorOn = false;
-				counter = 0;
-				System.out.println("Switch to off");
-			}
+		int sleepTime = this.sleepTime + (int) (Math.random() * this.sleepTimeRandomFactor);
+		Thread.sleep(sleepTime);
 
-			// Let's vibrate
+		if (paused) {
 			value = vibrationsGenerator.nextValue();
-		} else {
-			counter++;
-			if (counter >= motorOffTuples) {
-				motorOn = true;
-				counter = 0;
-				System.out.println("Switch to on");
-			}
-
-			// Only the minimal vibration when switched off
-			value = offVibrationGenerator.nextValue();
+			motorOn = false;
+			timeSwitchedLastOff = System.currentTimeMillis();
+			timeSwitchedLastOn = System.currentTimeMillis();
+			return createTuple(value);
 		}
 
+		if (motorOn) {
+			if (keepSwitchedOn()) {
+				value = vibrationsGenerator.nextValue();
+			} else {
+				motorOn = false;
+				timeSwitchedLastOff = System.currentTimeMillis();
+				System.out.println("Switched to off");
+			}
+		}
+
+		if (!motorOn) {
+			if (keepSwitchedOff()) {
+				value = offVibrationGenerator.nextValue();
+			} else {
+				value = vibrationsGenerator.nextValue();
+				motorOn = true;
+				timeSwitchedLastOn = System.currentTimeMillis();
+				secondsSwitchedOff = originalSecondsSwitchedOff;
+				System.out.println("Switched to on");
+			}
+		}
+
+		return createTuple(value);
+	}
+
+	private List<DataTuple> createTuple(double value) {
 		// Create a tuple for that data
 		DataTuple tuple = new DataTuple();
 		tuple.addDouble(value);
@@ -69,6 +104,24 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 		List<DataTuple> dataTuplesList = new ArrayList<DataTuple>();
 		dataTuplesList.add(tuple);
 		return dataTuplesList;
+	}
+
+	private boolean keepSwitchedOff() {
+		if (this.timeSwitchedLastOff + ((int) (this.secondsSwitchedOff * 1000) + (int) (this.randomFactorSecondsSwitchedOff * 1000)) > System.currentTimeMillis()) {
+			return true;
+		}
+
+		// Switch the fridge off
+		return false;
+	}
+
+	private boolean keepSwitchedOn() {
+		if (this.timeSwitchedLastOn + ((int)(this.secondsSwitchedOn * 1000) + (int) (this.randomFactorSecondsSwitchedOn * 1000)) > System.currentTimeMillis()) {
+			return true;
+		}
+
+		// Switch the fridge off
+		return false;
 	}
 
 	@Override
@@ -79,7 +132,8 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 	protected void process_init() {
 		// This is simple vibration - not too realistic, but ok. m/s^2
 		vibrationsGenerator = new AlternatingGenerator(new RandomErrorModel(new JitterNoise(1.5)), 0, 2.0, -5, 5);
-		offVibrationGenerator = new AlternatingGenerator(new RandomErrorModel(new JitterNoise(0.1)), 0, 0.15, -0.2, 0.2);
+		offVibrationGenerator = new AlternatingGenerator(new RandomErrorModel(new JitterNoise(0.1)), 0, 0.15, -0.2,
+				0.2);
 		paused = false;
 	}
 
@@ -90,14 +144,21 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 
 	public void pause() {
 		paused = true;
-		counter = 0;
 	}
 
 	public void resume() {
 		paused = false;
-		counter = 0;
+	}
+
+	public void startCooling() {
+		paused = false;
+		motorOn = true;
 	}
 	
-	
+	public void createAnomaly() {
+		double additionalTimeOff = (Math.random() + 0.5) * (secondsSwitchedOff / 10);
+		secondsSwitchedOff += additionalTimeOff;
+		System.out.println("Ok, we will have " + additionalTimeOff + " additional off seconds.");
+	}
 
 }

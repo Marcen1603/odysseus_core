@@ -287,11 +287,13 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	}
 
 	/**
-	 * Tries to get the geometry from the tuple at the given index.
+	 * Tries to get the geometry from the tuple at the given index. If it is a GeometryCollection, the centroid is used
 	 * 
 	 * @param tuple
+	 *            The tuple that holds the geometry
 	 * @param index
-	 * @return
+	 *            The index at which the geometry is in the tuple
+	 * @return The geometry.
 	 */
 	public Geometry getGeometry(Tuple<?> tuple, int index) {
 
