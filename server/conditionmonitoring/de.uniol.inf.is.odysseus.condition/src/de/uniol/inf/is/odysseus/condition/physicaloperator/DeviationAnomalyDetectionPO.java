@@ -533,7 +533,13 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private double getValue(T tuple) {
 		int valueIndex = getOutputSchema().findAttributeIndex(valueAttributeName);
 		if (valueIndex >= 0) {
-			double sensorValue = tuple.getAttribute(valueIndex);
+			double sensorValue = 0;
+			if (getInputSchema(DATA_PORT).findAttribute(valueAttributeName).getDatatype().isInteger()) {
+				Integer intValue = tuple.getAttribute(valueIndex);
+				sensorValue = intValue.doubleValue();
+			} else {
+				sensorValue = tuple.getAttribute(valueIndex);				
+			}
 			return sensorValue;
 		}
 		return 0;

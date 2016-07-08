@@ -399,7 +399,13 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	protected double getValue(T tuple) {
 		int valueIndex = getInputSchema(DATA_PORT).findAttributeIndex(valueAttributeName);
 		if (valueIndex >= 0) {
-			double sensorValue = tuple.getAttribute(valueIndex);
+			double sensorValue = 0;
+			if (getInputSchema(DATA_PORT).findAttribute(valueAttributeName).getDatatype().isInteger()) {
+				Integer intValue = tuple.getAttribute(valueIndex);
+				sensorValue = intValue.doubleValue();
+			} else {
+				sensorValue = tuple.getAttribute(valueIndex);				
+			}
 			return sensorValue;
 		}
 		return 0;
