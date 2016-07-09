@@ -18,10 +18,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.badast.application.application"
-            name="BaDaSt Application">
+            name="Backup of Data Streams">
          <property
                name="appName"
-               value="BaDaSt Application">
+               value="Backup of Data Streams">
          </property>
       </product>
    </extension>
