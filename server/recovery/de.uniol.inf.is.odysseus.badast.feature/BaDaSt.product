@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="BaDaSt Application" uid="BaDaSt Application" id="de.uniol.inf.is.odysseus.badast.application.product" application="de.uniol.inf.is.odysseus.badast.application.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Backup of Data Streams" uid="BaDaSt Application" id="de.uniol.inf.is.odysseus.badast.application.product" application="de.uniol.inf.is.odysseus.badast.application.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -16,7 +16,6 @@
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher>
       <solaris/>
