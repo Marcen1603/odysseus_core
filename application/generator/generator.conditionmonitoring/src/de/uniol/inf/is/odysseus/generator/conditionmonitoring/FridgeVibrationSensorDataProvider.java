@@ -26,8 +26,8 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 	private boolean motorOn;
 	private boolean paused;
 
-	private float secondsSwitchedOn = 10;
-	private float secondsSwitchedOff = 60;
+	private float secondsSwitchedOn = 2;
+	private float secondsSwitchedOff = 12;
 	// To reset after an anomaly
 	private float originalSecondsSwitchedOff = secondsSwitchedOff;
 	

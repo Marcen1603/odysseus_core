@@ -538,7 +538,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 				Integer intValue = tuple.getAttribute(valueIndex);
 				sensorValue = intValue.doubleValue();
 			} else {
-				sensorValue = tuple.getAttribute(valueIndex);				
+				sensorValue = tuple.getAttribute(valueIndex);
 			}
 			return sensorValue;
 		}
@@ -552,6 +552,11 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		if (this.isTimeSensitive) {
 			for (Object groupId : deviationInfo.keySet()) {
 				T lastDataTuple = this.lastDataTuples.get(groupId);
+				if (lastDataTuple == null) {
+					// Error if we have a group processor
+					sendPunctuation(punctuation);
+					return;
+				}
 				DeviationInformation info = getInfoForTuple(lastDataTuple);
 				if (this.isTimeSensitive && info != null && lastDataTuple != null
 						&& (this.lastTimePunctuationBasedTuple == null || punctuation.getTime()

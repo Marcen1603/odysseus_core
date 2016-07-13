@@ -114,7 +114,7 @@ public class Activator implements BundleActivator {
 		millingCutterServer.start();
 
 		// And another fridge
-		FridgeVibrationSensorDataProvider fridgeProvider2 = new FridgeVibrationSensorDataProvider(10, 2);
+		FridgeVibrationSensorDataProvider fridgeProvider2 = new FridgeVibrationSensorDataProvider(15, 2);
 		StreamServer fridgeServer2 = new StreamServer(53217, fridgeProvider2);
 		fridgeServer2.start();
 
