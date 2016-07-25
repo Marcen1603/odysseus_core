@@ -95,8 +95,8 @@ public class BaDaStRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	 * Initializes the consumption from BaDaSt. Should be called after open!
 	 */
 	@Override
-	protected void process_open_internal() throws OpenFailedException {
-		super.process_open_internal();
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
 		// the following fields are not operator state
 		this.transferHandler.init();
 		this.subController.start();

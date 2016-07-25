@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -137,11 +136,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	 */
 	private boolean didNotPropagateDoneBefore = true;
 	
-	/**
-	 * For stateful operators, this flag signals, that an operator state has been loaded.
-	 */
-	private boolean operatorStateLoaded = false;
-	
 	// ------------------------------------------------------------------------
 
 	public AbstractPipe() {
@@ -255,12 +249,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	 */
 	@Override
 	protected void process_open() throws OpenFailedException {
-		if(!this.operatorStateLoaded) {
-			process_open_internal();
-		}
-	}
-	
-	protected void process_open_internal() throws OpenFailedException {
 	}
 
 	// ------------------------------------------------------------------------
@@ -325,7 +313,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	@Override
 	protected void process_close() {
-		this.operatorStateLoaded = false;
 	}
 
 	@Override
@@ -571,23 +558,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	protected final AbstractPipe<R,W> clone(){
 		throw new IllegalArgumentException("Do not clone physical operators!");
-	}
-	
-	// Methods for operator states
-	// see IStatefulPO
-	
-	/**
-	 * Default implementation of that does nothing. Override it for stateful operators.
-	 */
-	protected void setStateInternal(Serializable state) {
-	}
-	
-	/**
-	 * Sets an operator state.
-	 */
-	public void setState(Serializable state) {
-		setStateInternal(state);
-		this.operatorStateLoaded = true;
 	}
 
 }

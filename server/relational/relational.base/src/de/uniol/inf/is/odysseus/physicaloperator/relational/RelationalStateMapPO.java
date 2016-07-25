@@ -62,8 +62,8 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 	}
 	
 	@Override
-	protected void process_open_internal() throws OpenFailedException {
-		super.process_open_internal();
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
 		history.init();
 	}
 	

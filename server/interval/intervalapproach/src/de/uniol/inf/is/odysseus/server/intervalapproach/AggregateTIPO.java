@@ -192,7 +192,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 	
 	@Override
-	protected void process_open_internal() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		synchronized (groups) {
 			g.init();

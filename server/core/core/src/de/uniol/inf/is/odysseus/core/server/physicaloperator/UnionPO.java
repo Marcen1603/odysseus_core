@@ -78,7 +78,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	}
 	
 	@Override
-	protected void process_open_internal() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		transferArea.init(this, getSubscribedToSource().size());
 	}
 

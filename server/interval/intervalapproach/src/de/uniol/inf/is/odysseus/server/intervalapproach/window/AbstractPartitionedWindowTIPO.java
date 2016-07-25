@@ -66,8 +66,8 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	}
 	
 	@Override
-	protected void process_open_internal() throws OpenFailedException {
-		super.process_open_internal();
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
 		buffers.clear();
 		groupProcessor.init();
 		transferArea.init(this, 1);

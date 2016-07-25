@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -87,6 +88,11 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	private boolean inOrder = true;
 	
 	private ILogicalOperator definingOp;
+	
+	/**
+	 * For stateful operators, this flag signals, that an operator state has been loaded.
+	 */
+	private boolean operatorStateLoaded = false;
 
 	// --------------------------------------------------------------------
 	// Logging
@@ -359,7 +365,10 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			// in other cases open the operator
 			if (!isOpen()) {
 				fire(openInitEvent);
-				process_open();
+				// Avoid initalizing of operator state after loading it per setState (see IStatefulPO)
+				if(!this.operatorStateLoaded) {
+					process_open();
+				}
 				fire(openDoneEvent);
 				open.set(true);
 			}
@@ -581,6 +590,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 					closeAllSinkSubscriptions();
 				}
 			}
+			this.operatorStateLoaded = false;
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -1045,4 +1055,22 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	public ILogicalOperator getLogicalOperator(){
 		return this.definingOp;
 	}
+	
+	// Methods for operator states
+	// see IStatefulPO
+	
+	/**
+	 * Default implementation of {@link #setState(Serializable)} that does nothing. Override it for stateful operators.
+	 */
+	protected void setStateInternal(Serializable state) {
+	}
+	
+	/**
+	 * Sets an operator state.
+	 */
+	public void setState(Serializable state) {
+		setStateInternal(state);
+		this.operatorStateLoaded = true;
+	}
+	
 }

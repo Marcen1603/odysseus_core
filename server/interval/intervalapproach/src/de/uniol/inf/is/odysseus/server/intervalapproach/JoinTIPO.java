@@ -309,7 +309,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	}
 	
 	@Override
-	protected void process_open_internal() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
 			this.areas[i].clear();
 			this.areas[i].init();

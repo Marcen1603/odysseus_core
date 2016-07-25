@@ -239,7 +239,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	}
 	
 	@Override
-	protected void process_open_internal() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		clear();
 	}
 
