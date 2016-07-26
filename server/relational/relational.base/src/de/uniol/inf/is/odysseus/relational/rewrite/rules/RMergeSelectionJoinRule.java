@@ -16,18 +16,23 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.optimizer.PredicateOptimizer;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.core.server.predicate.PredicateHelper;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
@@ -44,43 +49,36 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config) {
-		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
-				SelectAO.class);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join, SelectAO.class);
 		if (sel != null) {
 			if (sel.getPredicate() != null) {
 				RelationalExpression<?> newPredicate;
 				if (join.getPredicate() != null) {
-					newPredicate = (RelationalExpression<?>) join.getPredicate().and((IPredicate)sel.getPredicate());
+					newPredicate = (RelationalExpression<?>) join.getPredicate().and((IPredicate) sel.getPredicate());
 				} else {
 					newPredicate = (RelationalExpression<?>) sel.getPredicate().clone();
 				}
 				join.setPredicate(newPredicate);
 				newPredicate.initVars(join.getInputSchema(0), join.getInputSchema(1));
-				
-				ParameterPredicateOptimizer optimizeConfig = config
-						.getQueryBuildConfiguration().get(
-								ParameterPredicateOptimizer.class);
-				if (optimizeConfig != null
-						&& optimizeConfig.getValue().booleanValue()) {
+
+				ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration()
+						.get(ParameterPredicateOptimizer.class);
+				if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
 					if (join.getPredicate() instanceof IRelationalExpression) {
-						RelationalExpression<?> relationalPredicate = (RelationalExpression<?>) join
-								.getPredicate();
-						IExpression<?> expression = ((RelationalExpression<?>) join
-								.getPredicate()).getMEPExpression();
+						RelationalExpression<?> relationalPredicate = (RelationalExpression<?>) join.getPredicate();
+						IExpression<?> expression = ((RelationalExpression<?>) join.getPredicate()).getMEPExpression();
 						expression = BooleanExpressionOptimizer.optimize(expression);
-						IExpression<?> cnf = BooleanExpressionOptimizer
-								.toConjunctiveNormalForm(expression);
-						SDFExpression sdfExpression = new SDFExpression(cnf.toString(),relationalPredicate.getAttributeResolver(),
-								relationalPredicate.getExpressionParser());
+						IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
+						SDFExpression sdfExpression = new SDFExpression(cnf.toString(),
+								relationalPredicate.getAttributeResolver(), relationalPredicate.getExpressionParser());
 						join.setPredicate(new RelationalExpression(sdfExpression));
 					}
-                    join.setPredicate(PredicateOptimizer.optimize(join.getPredicate()));
+					join.setPredicate(PredicateOptimizer.optimize(join.getPredicate()));
 				}
-				RestructParameterInfoUtil.updatePredicateParameterInfo(join,
-						join.getParameterInfos(), join.getPredicate());
+				RestructParameterInfoUtil.updatePredicateParameterInfo(join, join.getParameterInfos(),
+						join.getPredicate());
 
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-						.removeOperator(sel);
+				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.removeOperator(sel);
 				for (ILogicalOperator o : toUpdate) {
 					update(o);
 				}
@@ -92,9 +90,19 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
-				SelectAO.class);
+		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join, SelectAO.class);
 		// Join and select can always be merged
+		// To not merge if join predicate is equals predicate
+		if (sel != null) {
+			Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+			if (PredicateHelper.checkEqualsPredicate(join.getPredicate(), neededAttrs, join.getInputSchema(0),
+					join.getInputSchema(1))
+					|| PredicateHelper.checkEqualsPredicate(join.getPredicate(), neededAttrs, join.getInputSchema(1),
+							join.getInputSchema(0))) {
+				return false;
+			}
+		}
+
 		return sel != null;
 	}
 

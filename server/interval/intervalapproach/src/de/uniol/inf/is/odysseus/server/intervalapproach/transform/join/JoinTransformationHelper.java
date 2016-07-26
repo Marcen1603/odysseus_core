@@ -16,177 +16,28 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform.join;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.ComparablePair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
-import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
-import de.uniol.inf.is.odysseus.mep.functions.compare.IEqualsOperator;
-import de.uniol.inf.is.odysseus.server.intervalapproach.window.AbstractWindowTIPO;
+import de.uniol.inf.is.odysseus.core.server.predicate.PredicateHelper;
+import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class JoinTransformationHelper {
 	
 	private static Logger LOG = LoggerFactory.getLogger(JoinTransformationHelper.class);
 
-	/**
-	 * Checks if there is a window in any path to a source of this operator.
-	 * 
-	 * @param operator
-	 * @return false, if there is a window in the path. true, if there is no
-	 *         window in the path.
-	 */
-	public static boolean checkPhysicalPath(Object operator) {
-		if (operator instanceof AbstractWindowTIPO) {
-			return false;
-		}
-		if (((ISource) operator).isSink()) {
-			// in each child path there must
-			// be no window. If in one path
-			// there is a window, we need
-			// temporal sweep area in our
-			// join.
-			ISink opAsSink = (ISink) operator;
-			Collection<AbstractPhysicalSubscription> subs = opAsSink.getSubscribedToSource();
-			for (AbstractPhysicalSubscription s : subs) {
-				if (!checkPhysicalPath(s.getTarget())) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
 
-	/**
-	 * Checks if there is a window in any path to a source of this operator.
-	 * 
-	 * @param operator
-	 * @return false, if there is a window in the path. true, if there is no
-	 *         window in the path.
-	 */
-	public static boolean checkLogicalPath(ILogicalOperator operator) {
-		if (operator instanceof AbstractWindowAO) {
-			return false;
-		}
 
-		// in each child path there must
-		// be no window. If in one path
-		// there is a window, we need
-		// temporal sweep area in our
-		// join.
-		Collection<LogicalSubscription> subs = operator.getSubscribedToSource();
-		for (LogicalSubscription s : subs) {
-			if (!checkLogicalPath(s.getTarget())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Checks if predicate is of the form (a == b AND b == c AND d == f AND ...)
-	 * 
-	 * @param predicate
-	 * @param neededAttrs
-	 *            In this set the attributes used in predicate are stored
-	 * @return
-	 */
-	public static boolean checkPredicate(IPredicate predicate, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs,
-			SDFSchema ownSchema, SDFSchema otherSchema) {
-		// TODO nach Umstellung auf MEP auskommenieren
-		// ===========================================
-
-		String mepString = predicate.toString();
-		SDFSchema outputSchema = SDFSchema.union(ownSchema, otherSchema);
-		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
-		SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance(),
-				AggregateFunctionBuilderRegistry.getAggregatePattern());
-		// ===========================================
-
-		IExpression<?> mepExpr = expr.getMEPExpression();
-		return checkPredicate(mepExpr, neededAttrs, ownSchema, otherSchema);
-
-		// if(predicate instanceof AndPredicate){
-		// return checkPredicate(((AndPredicate)predicate).getLeft(),
-		// neededAttrs) &&
-		// checkPredicate(((AndPredicate)predicate).getRight(), neededAttrs);
-		// }
-		// else if(predicate instanceof RelationalPredicate){
-		// RelationalPredicate relPred = (RelationalPredicate)predicate;
-		// IExpression mepExpr = relPred.getExpression().getMEPExpression();
-		// if(checkMEPExpression(mepExpr)){
-		// List<SDFAttribute> attrRelPred = relPred.getAttributes();
-		// neededAttrs.addAll(attrRelPred);
-		// return true;
-		// }
-		// }
-		// // a TruePredicate does not restrict anything a == b AND true is the
-		// // same as a==b
-		// else if(predicate instanceof TruePredicate){
-		// return true;
-		// }
-		// return false;
-	}
-
-	public static boolean checkPredicate(IExpression mepExpr, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs, SDFSchema ownSchema, SDFSchema otherSchema){
-		if(mepExpr instanceof AndOperator){
-			return checkPredicate(((AndOperator)mepExpr).getArgument(0), neededAttrs, ownSchema, otherSchema) &&
-					checkPredicate(((AndOperator)mepExpr).getArgument(1), neededAttrs, ownSchema, otherSchema);
-		}
-		if(mepExpr instanceof IEqualsOperator){
-			
-			// get left and right argument
-			// if these are variables
-			// return true
-			IEqualsOperator eq = (IEqualsOperator)mepExpr;
-			IExpression arg1 = eq.getArgument(0);
-			IExpression arg2 = eq.getArgument(1);
-			
-			if(arg1 instanceof IVariable && arg2 instanceof IVariable){
-				String id1 = ((IVariable)arg1).getIdentifier();
-				String id2 = ((IVariable)arg2).getIdentifier();
-				
-				SDFAttribute ownAttr = ownSchema.findAttribute(id1);
-				if (ownAttr == null){
-					ownAttr = otherSchema.findAttribute(id1);
-				}
-				
-				SDFAttribute otherAttr = otherSchema.findAttribute(id2);
-				if (otherAttr == null){
-					otherAttr = ownSchema.findAttribute(id2);
-				}
-				
-				if (ownAttr != null && otherAttr != null){
-						neededAttrs.add(new ComparablePair<SDFAttribute, SDFAttribute>(ownAttr, otherAttr));
-				}
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
 
 	// /**
 	// * Checks if expr is of the form (a == b AND b == c AND d == f AND ...)
@@ -213,10 +64,9 @@ public class JoinTransformationHelper {
 	 * @return A Pair, containing the insertRestrictList in E1 and the
 	 *         queryRestrictList in E2
 	 */
-	public static Pair<int[], int[]> createRestrictLists(AbstractPipe joinPO,
-			List<Pair<SDFAttribute, SDFAttribute>> neededAttrs, int port) {
+	public static Pair<int[], int[]> createRestrictLists(SDFSchema ownSchema,SDFSchema otherSchema,
+			List<Pair<SDFAttribute, SDFAttribute>> neededAttrs) {
 
-		int otherPort = port ^ 1;
 		// run through the list of pairs
 		// each time, if neither the attribute
 		// from the left schema nor the attribute
@@ -235,9 +85,6 @@ public class JoinTransformationHelper {
 		// that they are both compared to a.x
 		ArrayList<SDFAttribute> usedOwnAttributes = new ArrayList<SDFAttribute>();
 		ArrayList<SDFAttribute> usedOtherAttributes = new ArrayList<SDFAttribute>();
-
-		SDFSchema ownSchema = joinPO.getSubscribedToSource(port).getSchema();
-		SDFSchema otherSchema = joinPO.getSubscribedToSource(otherPort).getSchema();
 
 		ArrayList<Integer> queryRestrictList = new ArrayList<Integer>(); // restrict
 																			// list
@@ -301,6 +148,42 @@ public class JoinTransformationHelper {
 		}
 		
 		return new Pair<int[], int[]>(insertRestrictArray, queryRestrictArray);
+	}
+	
+	public static boolean canBeUsedWithHashJoin(IPredicate predicate, SDFSchema leftSchema, SDFSchema rightSchema, ITimeIntervalSweepArea[] areas) {
+		boolean check = false;
+		try {
+			// check the paths
+			for (int port = 0; port < 2; port++) {
+				SDFSchema ownSchema = port==0?leftSchema:rightSchema;
+				SDFSchema otherSchema = port!=0?leftSchema:rightSchema;
+				// check the predicate and calculate
+				// the restrictList
+				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+
+				if (check = PredicateHelper.checkEqualsPredicate(predicate, neededAttrs,
+						ownSchema,
+						otherSchema)) {
+
+					// transform the set into a list to guarantee the
+					// same order of attributes for both restrict lists
+					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+						neededAttrsList.add(pair);
+					}
+
+					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(ownSchema, otherSchema,
+							neededAttrsList);
+					// TODO: Flag to set if input is sorted
+					// currently, default is false --> to be sure
+					areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), false);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return check;
 	}
 
 }

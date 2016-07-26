@@ -15,17 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
@@ -63,7 +57,11 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			areaName = joinPO.getSweepAreaName();
 		}
 
-		boolean check = canBeUsedWithHashJoin(joinPO, areas);
+		SDFSchema ownSchema = joinPO.getSubscribedToSource(0).getSchema();
+		SDFSchema otherSchema = joinPO.getSubscribedToSource(1).getSchema();
+		IPredicate predicate = joinPO.getPredicate();
+		
+		boolean check = JoinTransformationHelper.canBeUsedWithHashJoin(predicate, ownSchema, otherSchema, areas);
 
 		// Automatically set HashJoinSA if predicate is pure equals predicate
 		if (areaName == "" && check){
@@ -112,40 +110,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	}
 
-	private boolean canBeUsedWithHashJoin(JoinTIPO joinPO, ITimeIntervalSweepArea[] areas) {
-		boolean check = false;
-		try {
-			// check the paths
-			for (int port = 0; port < 2; port++) {
-				int otherPort = port ^ 1;
-				// check the predicate and calculate
-				// the restrictList
-				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
 
-				if (check = JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs,
-						joinPO.getSubscribedToSource(port).getSchema(),
-						joinPO.getSubscribedToSource(otherPort).getSchema())) {
-
-					// transform the set into a list to guarantee the
-					// same order of attributes for both restrict lists
-					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
-					for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-						neededAttrsList.add(pair);
-					}
-
-					Pair<int[], int[]> restrictLists = JoinTransformationHelper.createRestrictLists(joinPO,
-							neededAttrsList, port);
-					// TODO: Flag to set if input is sorted
-					// currently, default is false --> to be sure
-					areas[port] = new HashJoinSweepArea(restrictLists.getE1(), restrictLists.getE2(), false);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		return check;
-	}
 
 	@Override
 	public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
