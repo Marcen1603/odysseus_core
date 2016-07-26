@@ -31,38 +31,42 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-public class UserView extends ViewPart implements IUpdateEventListener{
-	
+public class UserView extends ViewPart implements IUpdateEventListener {
+
 	static final InfoService INFO = InfoServiceFactory.getInfoService(UserView.class);
-	
+
 	private TreeViewer viewer;
 
-    public void refresh() {
-        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
-            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+	public void refresh() {
+		if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-                @Override
-                public void run() {
-                    List<Object> l = new ArrayList<>();
-                    try {
-                        List<? extends IUser> users = OdysseusRCPPlugIn.getExecutor().getUsers(OdysseusRCPPlugIn.getActiveSession());
-                        if (users!=null){
-                        l.addAll(users);
-                        }else{
-                        	INFO.error("Problems with the user management!",new RuntimeException("Found no users!"));
-                        }
-                    }
-                    catch (PermissionException e) {
-                        // If user has no rights to view all users, only the
-                        // current user is shown
-                        l.add(OdysseusRCPPlugIn.getActiveSession());
-                    }
-                    viewer.setInput(l);
-                }
+				@Override
+				public void run() {
+					List<Object> l = new ArrayList<>();
+					try {
+						try {
+							List<? extends IUser> users = OdysseusRCPPlugIn.getExecutor()
+									.getUsers(OdysseusRCPPlugIn.getActiveSession());
+							if (users != null) {
+								l.addAll(users);
+							} else {
+								INFO.warning("Problems with the user management! Did not find any user");
+							}
+						} catch (UnsupportedOperationException e) {
+							INFO.warning("This view is not available on clients. Please close view!");
+						}
+					} catch (PermissionException e) {
+						// If user has no rights to view all users, only the
+						// current user is shown
+						l.add(OdysseusRCPPlugIn.getActiveSession());
+					}
+					viewer.setInput(l);
+				}
 
-            });
-        }
-    }
+			});
+		}
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -70,9 +74,9 @@ public class UserView extends ViewPart implements IUpdateEventListener{
 		viewer.setContentProvider(new UserViewContentProvider());
 		viewer.setLabelProvider(new UserViewLabelProvider());
 		refresh();
-		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,IUpdateEventListener.SESSION, null);
-		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this,IUpdateEventListener.USER, null);
-		
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.SESSION, null);
+		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.USER, null);
+
 	}
 
 	@Override
@@ -84,5 +88,5 @@ public class UserView extends ViewPart implements IUpdateEventListener{
 	public void eventOccured(String type) {
 		refresh();
 	}
-		
+
 }

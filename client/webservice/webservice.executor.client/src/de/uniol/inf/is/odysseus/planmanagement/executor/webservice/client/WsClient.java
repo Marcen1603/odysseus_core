@@ -1320,14 +1320,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public List<IUser> getUsers(ISession session) {
-		// TODO: Implement getUsers for Web-Service
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Collection<String> getUdfs() {
-		// TODO: Implement getUdfs for Web-Service
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
