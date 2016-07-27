@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.rest.dto.request;
 
 
-public abstract class AbstractSessionRequestDTO extends AbstractRequestDTO{
+public class SessionRequestDTO extends AbstractRequestDTO{
 	private String token;
 	
-	public AbstractSessionRequestDTO() {
+	public SessionRequestDTO() {
 		
 	}
 	
-	public AbstractSessionRequestDTO(String token) {
+	public SessionRequestDTO(String token) {
 		this.token = token;
 	}
 

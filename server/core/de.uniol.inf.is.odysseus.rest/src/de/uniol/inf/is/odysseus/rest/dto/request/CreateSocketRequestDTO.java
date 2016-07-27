@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rest.dto.request;
 
-public class CreateSocketRequestDTO extends AbstractSessionRequestDTO {
+public class CreateSocketRequestDTO extends SessionRequestDTO {
 
 	private int rootPort;
 	private int queryId;

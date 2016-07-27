@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rest.dto.request;
 
-public class GenericSessionRequestDTO<T> extends AbstractSessionRequestDTO {
+public class GenericSessionRequestDTO<T> extends SessionRequestDTO {
 	private T value;
 	
 	
