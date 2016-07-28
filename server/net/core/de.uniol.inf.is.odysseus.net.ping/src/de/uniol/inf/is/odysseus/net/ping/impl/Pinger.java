@@ -206,7 +206,9 @@ public class Pinger extends RepeatingJobThread implements IOdysseusNodeCommunica
 
 			long latency = System.currentTimeMillis() - pongMessage.getTimestamp();
 			LOG.debug("Latency to node {} is now {} ms", senderNode, latency);
-			PingMap.getInstance().update(senderNode, pongMessage.getPosition(), latency);
+			if(PingMap.isActivated()) {
+				PingMap.getInstance().update(senderNode, pongMessage.getPosition(), latency);
+			}
 		}
 	}
 
