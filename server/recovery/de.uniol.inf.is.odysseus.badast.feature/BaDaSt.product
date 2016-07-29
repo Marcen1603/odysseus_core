@@ -17,7 +17,8 @@
 
    <windowImages/>
 
-   <launcher>
+
+   <launcher name="badast">
       <solaris/>
       <win useIco="false">
          <bmp/>
