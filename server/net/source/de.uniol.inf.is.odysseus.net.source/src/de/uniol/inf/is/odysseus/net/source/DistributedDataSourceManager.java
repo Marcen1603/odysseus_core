@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProvid
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -48,16 +50,19 @@ import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
-public class DistributedDataSourceManager implements IDistributedDataListener, IDatadictionaryProviderListener, IDataDictionaryListener {
+public class DistributedDataSourceManager
+		implements IDistributedDataListener, IDatadictionaryProviderListener, IDataDictionaryListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DistributedDataSourceManager.class);
 	private static final String DATA_SOURCE_DISTRIBUTION_NAME = "net.data.source";
 	private static final String DISTRIBUTED_DATA_LIFETIME_CONFIG_KEY = "net.source.lifetime";
-	private static final long DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS = 60 * 60 * 1000; // 1 hour
+	private static final long DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS = 60 * 60 * 1000; // 1
+																							// hour
 
 	private static IDistributedDataManager dataManager;
 	private static IPQLGenerator pqlGenerator;
 	private static IQueryParser pqlParser;
+	private static IServerExecutor executor;
 
 	private static ISession currentSession;
 
@@ -106,6 +111,20 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 		}
 	}
 
+	// called by OSGi
+	public static void bindExecutor(IExecutor serv) {
+		if (serv instanceof IServerExecutor) {
+			executor = (IServerExecutor) serv;
+		}
+	}
+
+	// called by OSGi
+	public static void unbindExecutor(IExecutor serv) {
+		if (serv == executor) {
+			executor = null;
+		}
+	}
+
 	@Override
 	public void distributedDataManagerStarted(IDistributedDataManager sender) {
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
@@ -133,13 +152,16 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 					synchronized (importedSourcesBiMap) {
 						importedSourcesBiMap.put(addedData.getUUID(), userName + "." + sourceName);
 					}
-					
-					if( isStream ) {
-						getDataDictionary().setStream(sourceName, optLogicalOp.get(), getActiveSession());
-					} else {
-						getDataDictionary().setView(sourceName, optLogicalOp.get(), getActiveSession());
-					}
-					
+
+					// Installing the source by just adding it to the data
+					// dictionary results in the situation that the source gets
+					// installed without meta data.
+					// The PQL needs to be modified: (1) the PQL variable name
+					// must be changed to the source name to identify the source
+					// correctly; (2) the equals sign must be replaced by ::= or
+					// :=
+					String modifiedPQL = modifyPQL(pqlStatement, sourceName, isStream);
+					executor.addQuery(modifiedPQL, "PQL", getActiveSession(), Context.empty());
 				} else {
 					LOG.error("No data source from distributed data created");
 				}
@@ -150,8 +172,31 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 		}
 	}
 
+	/**
+	 * Installing the source by just adding it to the data dictionary results in
+	 * the situation that the source gets installed without meta data. The PQL
+	 * needs to be modified: (1) the PQL variable name must be changed to the
+	 * source name to identify the source correctly; (2) the equals sign must be
+	 * replaced by ::= or :=.
+	 */
+	private static String modifyPQL(String pqlStatement, String sourceName, boolean isStream) {
+		final String insertionForStream = "::=";
+		final String insertionForView = ":=";
+		// Exchange variable name to source name
+		final String variableName = pqlStatement.substring(0, pqlStatement.indexOf("=")).trim();
+		String modifiedPQL = pqlStatement.replace(variableName, sourceName);
+		// Exchange equals sign
+		if (isStream) {
+			modifiedPQL = modifiedPQL.replaceFirst("=", insertionForStream);
+		} else {
+			modifiedPQL = modifiedPQL.replaceFirst("=", insertionForView);
+		}
+		return modifiedPQL;
+	}
+
 	@Override
-	public void distributedDataModified(IDistributedDataManager sender, IDistributedData oldData, IDistributedData newData) {
+	public void distributedDataModified(IDistributedDataManager sender, IDistributedData oldData,
+			IDistributedData newData) {
 		distributedDataRemoved(sender, oldData);
 		distributedDataAdded(sender, newData);
 	}
@@ -172,7 +217,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 	@Override
 	public void distributedDataManagerStopped(IDistributedDataManager sender) {
 		getDataDictionary().removeListener(this);
-		
+
 		DataDictionaryProvider.unsubscribe(this);
 	}
 
@@ -186,7 +231,7 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			String username = streamOrView.getKey().getUser();
 
 			ILogicalOperator operator = streamOrView.getValue();
-			
+
 			boolean isStream = (dd.getStreamForTransformation(streamOrView.getKey(), getActiveSession()) != null);
 
 			createDistributedData(name, operator, username, isStream, isStream);
@@ -207,7 +252,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+			ISession session) {
 		synchronized (importedSourcesBiMap) {
 			if (!importedSourcesBiMap.containsValue(name)) {
 				createDistributedData(name, op, session.getUser().getName(), !isView, !isView);
@@ -216,7 +262,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+			ISession session) {
 		synchronized (importedSourcesBiMap) {
 			if (!importedSourcesBiMap.containsValue(name)) {
 				destroyDistributedData(name, session.getUser().getName());
@@ -224,7 +271,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 		}
 	}
 
-	private void createDistributedData(String name, ILogicalOperator op, String username, boolean isStream, boolean isPersistent) {
+	private void createDistributedData(String name, ILogicalOperator op, String username, boolean isStream,
+			boolean isPersistent) {
 		String realSourceName = removeUserFromName(name);
 		String pqlStatement = pqlGenerator.generatePQLStatement(op);
 
@@ -236,7 +284,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			json.put("isStream", isStream);
 
 			long lifetime = determineLifetime();
-			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent, lifetime);
+			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent,
+					lifetime);
 			synchronized (createdSourcesMap) {
 				createdSourcesMap.put(username + "." + realSourceName, distributedData.getUUID());
 			}
@@ -249,10 +298,11 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 	}
 
 	private static long determineLifetime() {
-		String lifetimeStr = OdysseusNetConfiguration.get(DISTRIBUTED_DATA_LIFETIME_CONFIG_KEY, "" + DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS);
+		String lifetimeStr = OdysseusNetConfiguration.get(DISTRIBUTED_DATA_LIFETIME_CONFIG_KEY,
+				"" + DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS);
 		try {
 			return Long.valueOf(lifetimeStr);
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 			return DEFAULT_DISTRIBUTED_DATA_LIFETIME_MILLIS;
 		}
 	}
@@ -292,7 +342,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 
 	private static ISession getActiveSession() {
 		if (currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
+					UserManagementProvider.getDefaultTenant().getName());
 		}
 		return currentSession;
 	}
@@ -307,7 +358,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 			LOG.debug("Parsing with pql-Parser");
 
 			IMetaAttribute metaAttribute = null;
-			List<IExecutorCommand> commands = pqlParser.parse(pqlStatement, getActiveSession(), getDataDictionary(), Context.empty(), metaAttribute, null);
+			List<IExecutorCommand> commands = pqlParser.parse(pqlStatement, getActiveSession(), getDataDictionary(),
+					Context.empty(), metaAttribute, null);
 			ILogicalQuery query = null;
 
 			for (IExecutorCommand cmd : commands) {
@@ -330,7 +382,8 @@ public class DistributedDataSourceManager implements IDistributedDataListener, I
 				LOG.info("Query is dependent from {} files.", files.size());
 				for (File file : files) {
 					if (!file.exists()) {
-						LOG.error("Could not create datasource since the specified file '" + file.getName() + "' does not exist.");
+						LOG.error("Could not create datasource since the specified file '" + file.getName()
+								+ "' does not exist.");
 						return Optional.absent();
 					}
 				}
