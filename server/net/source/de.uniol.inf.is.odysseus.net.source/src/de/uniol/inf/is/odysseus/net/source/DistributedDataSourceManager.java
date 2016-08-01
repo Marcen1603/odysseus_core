@@ -231,7 +231,8 @@ public class DistributedDataSourceManager
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
 			ISession session) {
 		synchronized (importedSourcesBiMap) {
-			if (!importedSourcesBiMap.containsValue(name)) {
+			// FIXME Distributed views do not work. See ODY-1068
+			if (!importedSourcesBiMap.containsValue(name) && !isView) {
 				createDistributedData(name, op, session.getUser().getName(), !isView, !isView);
 			}
 		}
