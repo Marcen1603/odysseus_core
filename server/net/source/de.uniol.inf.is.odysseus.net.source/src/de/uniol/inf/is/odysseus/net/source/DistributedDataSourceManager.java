@@ -34,10 +34,13 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -47,6 +50,7 @@ import de.uniol.inf.is.odysseus.net.data.IDistributedData;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataListener;
 import de.uniol.inf.is.odysseus.net.data.IDistributedDataManager;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.relational_interval.StandardQueryBuildConfigurationTemplate;
 
 public class DistributedDataSourceManager
 		implements IDistributedDataListener, IDatadictionaryProviderListener, IDataDictionaryListener {
@@ -329,7 +333,11 @@ public class DistributedDataSourceManager
 		try {
 			LOG.debug("Parsing with pql-Parser");
 
-			IMetaAttribute metaAttribute = null;
+			// Get metadata
+			List<IQueryBuildSetting<?>> settings = new StandardQueryBuildConfigurationTemplate().getConfiguration();
+			QueryBuildConfiguration buildCfg = new QueryBuildConfiguration(settings, "Standard");
+			IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(buildCfg.getTransformationConfiguration().getDefaultMetaTypeSet());
+			
 			List<IExecutorCommand> commands = pqlParser.parse(pqlStatement, getActiveSession(), getDataDictionary(),
 					Context.empty(), metaAttribute, null);
 			ILogicalQuery query = null;
