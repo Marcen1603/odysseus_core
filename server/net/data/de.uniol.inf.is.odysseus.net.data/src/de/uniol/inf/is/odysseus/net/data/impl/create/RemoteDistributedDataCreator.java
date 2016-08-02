@@ -29,7 +29,9 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWith
 import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWithUUIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataUpdatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.MultipleDistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.UpdateDistributedDataMessage;
 
 public class RemoteDistributedDataCreator implements IDistributedDataCreator, IOdysseusNodeConnectionManagerListener {
 
@@ -77,6 +79,20 @@ public class RemoteDistributedDataCreator implements IDistributedDataCreator, IO
 	@Override
 	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent) throws DistributedDataException {
 		return create(creator, data, name, persistent, -1);
+	}
+	
+	@Override
+	public Optional<IDistributedData> update(OdysseusNodeID creator, UUID uuid, JSONObject data) throws DistributedDataException {
+		checkConnection();
+		
+		UpdateDistributedDataMessage msg = new UpdateDistributedDataMessage(uuid, data);
+		
+		try {
+			DistributedDataUpdatedMessage answer = OdysseusNodeCommunicationUtils.sendAndWaitForAnswer(communicator, nodeWithContainer, msg, DistributedDataUpdatedMessage.class);
+			return Optional.fromNullable(answer.getDistributedData());
+		} catch (OdysseusNodeCommunicationException e) {
+			throw new DistributedDataException("Could not send request and receive answer for updating distributed data", e);
+		}
 	}
 
 	@Override

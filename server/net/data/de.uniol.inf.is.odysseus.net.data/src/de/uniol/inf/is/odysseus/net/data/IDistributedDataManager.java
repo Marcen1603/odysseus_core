@@ -15,6 +15,8 @@ public interface IDistributedDataManager {
 	public IDistributedData create(JSONObject data, String name, boolean persistent, long lifetime) throws DistributedDataException;
 	public IDistributedData create(JSONObject data, String name, boolean persistent) throws DistributedDataException;
 	
+	public Optional<IDistributedData> update(UUID uuid, JSONObject data) throws DistributedDataException;
+	
 	public Optional<IDistributedData> destroy( UUID uuid ) throws DistributedDataException;
 	public Collection<IDistributedData> destroy( String name ) throws DistributedDataException;
 	public Collection<IDistributedData> destroyOwn() throws DistributedDataException;

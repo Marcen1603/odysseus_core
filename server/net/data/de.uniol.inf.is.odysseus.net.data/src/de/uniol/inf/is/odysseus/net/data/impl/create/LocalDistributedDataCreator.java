@@ -58,6 +58,31 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 	public IDistributedData create(OdysseusNodeID creator, JSONObject data, String name, boolean persistent) throws DistributedDataException {
 		return create(creator, data, name, persistent, -1L);
 	}
+	
+	@Override
+	public Optional<IDistributedData> update(OdysseusNodeID creator, UUID uuid, JSONObject data) throws DistributedDataException {
+		Preconditions.checkNotNull(creator, "creator must not be null!");
+		Preconditions.checkNotNull(uuid, "uuid must not be null!");
+		Preconditions.checkNotNull(data, "data must not be null!");
+
+		LOG.info("Trying to update distributed data with uuid {}", uuid);
+		
+		Optional<IDistributedData> oldData = container.get(uuid);
+		if (oldData.isPresent()) {
+			if (oldData.get().getCreator().equals(creator)) {
+				IDistributedData newData = new DistributedData(oldData.get().getUUID(), oldData.get().getName(), data, oldData.get().isPersistent(), oldData.get().getLifetimeMillis(), System.currentTimeMillis(), creator);
+				container.add(newData);
+				LOG.info("Updated distributed data {} to {}", oldData.get(), newData);
+				return Optional.of(newData);
+			}
+
+			LOG.info("Did not update distributed data since it has an other creator node: {} instead of {}", creator, oldData.get().getCreator());
+		} else {
+			LOG.info("Specified distributed data with uuid {} not found for update", uuid);
+		}
+
+		return Optional.absent();
+	}
 
 	@Override
 	public Optional<IDistributedData> destroy(OdysseusNodeID creator, UUID uuid) throws DistributedDataException {
@@ -129,4 +154,5 @@ public class LocalDistributedDataCreator implements IDistributedDataCreator {
 
 		return destroyedDatas;
 	}
+
 }

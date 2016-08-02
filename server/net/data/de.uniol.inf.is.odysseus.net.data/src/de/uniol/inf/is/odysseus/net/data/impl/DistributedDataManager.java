@@ -53,6 +53,7 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestOdysseusNodeIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.UpdateDistributedDataMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.server.DistributedDataServer;
 
 public class DistributedDataManager extends OdysseusNetComponentAdapter implements IDistributedDataManager {
@@ -79,6 +80,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		communicator = serv;
 
 		communicator.registerMessageType(CreateDistributedDataMessage.class);
+		communicator.registerMessageType(UpdateDistributedDataMessage.class);
 		communicator.registerMessageType(DistributedDataCreatedMessage.class);
 		communicator.registerMessageType(DestroyDistributedDataWithUUIDMessage.class);
 		communicator.registerMessageType(DestroyDistributedDataWithNameMessage.class);
@@ -115,6 +117,7 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 	public static void unbindOdysseusNodeCommunicator(IOdysseusNodeCommunicator serv) {
 		if (communicator == serv) {
 			communicator.unregisterMessageType(CreateDistributedDataMessage.class);
+			communicator.unregisterMessageType(UpdateDistributedDataMessage.class);
 			communicator.unregisterMessageType(DistributedDataCreatedMessage.class);
 			communicator.unregisterMessageType(DestroyDistributedDataWithUUIDMessage.class);
 			communicator.unregisterMessageType(DestroyDistributedDataWithNameMessage.class);
@@ -251,6 +254,14 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 		}
 
 		return creator.create(localNode.getID(), data, name, persistent);
+	}
+	
+	@Override
+	public Optional<IDistributedData> update(UUID uuid, JSONObject data) throws DistributedDataException {
+		if( creator == null ) {
+			throw new DistributedDataException("Distributed data manager is not started");
+		}
+		return creator.update(localNode.getID(), uuid, data);
 	}
 
 	@Override
@@ -432,4 +443,5 @@ public class DistributedDataManager extends OdysseusNetComponentAdapter implemen
 			}
 		}
 	}
+
 }

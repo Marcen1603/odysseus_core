@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.DestroyDistributedDataWith
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCollectionMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataCreatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataDestroyedMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.DistributedDataUpdatedMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetNameMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetOdysseusNodeIDMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.GetUUIDMessage;
@@ -41,6 +42,7 @@ import de.uniol.inf.is.odysseus.net.data.impl.message.RequestNamesMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestOdysseusNodeIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.RequestUUIDsMessage;
 import de.uniol.inf.is.odysseus.net.data.impl.message.UUIDsMessage;
+import de.uniol.inf.is.odysseus.net.data.impl.message.UpdateDistributedDataMessage;
 
 public class DistributedDataServer implements IOdysseusNodeCommunicatorListener {
 
@@ -60,6 +62,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 		this.communicator = communicator;
 
 		communicator.addListener(this, CreateDistributedDataMessage.class);
+		communicator.addListener(this, UpdateDistributedDataMessage.class);
 		communicator.addListener(this, DestroyDistributedDataWithUUIDMessage.class);
 		communicator.addListener(this, DestroyDistributedDataWithNameMessage.class);
 		communicator.addListener(this, DestroyDistributedDataWithNodeIDMessage.class);
@@ -78,6 +81,7 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 
 	public void stop() {
 		communicator.removeListener(this, CreateDistributedDataMessage.class);
+		communicator.removeListener(this, UpdateDistributedDataMessage.class);
 		communicator.removeListener(this, DestroyDistributedDataWithUUIDMessage.class);
 		communicator.removeListener(this, DestroyDistributedDataWithNameMessage.class);
 		communicator.removeListener(this, DestroyDistributedDataWithNodeIDMessage.class);
@@ -110,6 +114,22 @@ public class DistributedDataServer implements IOdysseusNodeCommunicatorListener 
 			} catch (DistributedDataException e) {
 				// TODO: Handle it!
 
+			} catch (OdysseusNodeCommunicationException e) {
+				LOG.error("Could not send answer of create distributed data message", e);
+			}
+		} else if (message instanceof UpdateDistributedDataMessage) {
+			UpdateDistributedDataMessage msg = (UpdateDistributedDataMessage) message;
+
+			try {
+				Optional<IDistributedData> updatedData = creator.update(senderNode.getID(), msg.getUUID(), msg.getData());
+				if(updatedData.isPresent()) {
+					DistributedDataUpdatedMessage answer = new DistributedDataUpdatedMessage(updatedData.get());
+					communicator.send(senderNode, answer);
+				} else {
+					// TODO: Handle it!
+				}
+			} catch (DistributedDataException e) {
+				// TODO: Handle it!
 			} catch (OdysseusNodeCommunicationException e) {
 				LOG.error("Could not send answer of create distributed data message", e);
 			}
