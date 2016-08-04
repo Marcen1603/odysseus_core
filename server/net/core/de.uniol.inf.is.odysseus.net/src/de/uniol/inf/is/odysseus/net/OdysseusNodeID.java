@@ -1,11 +1,14 @@
 package de.uniol.inf.is.odysseus.net;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
-public final class OdysseusNodeID implements Comparable<OdysseusNodeID> {
+public final class OdysseusNodeID implements Comparable<OdysseusNodeID>, Serializable {
 
+	private static final long serialVersionUID = -3068104616795173918L;
+	
 	private final UUID uuid;
 	
 	OdysseusNodeID(UUID uuid) {

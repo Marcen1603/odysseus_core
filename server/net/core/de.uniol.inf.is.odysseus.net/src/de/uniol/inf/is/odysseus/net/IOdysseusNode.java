@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.net;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import com.google.common.base.Optional;
 
-public interface IOdysseusNode {
+public interface IOdysseusNode extends Serializable {
 
 	public OdysseusNodeID getID();
 	public String getName();

@@ -2,18 +2,20 @@ package de.uniol.inf.is.odysseus.net;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class OdysseusNode implements IOdysseusNode {
 
+	private static final long serialVersionUID = -4225329500758311790L;
+	
 	private final OdysseusNodeID nodeID;
 	private final String nodeName;
-	private final Map<String, String> propertyMap = Maps.newConcurrentMap();
+	private final Map<String, String> propertyMap = new ConcurrentHashMap<>();
 	private final boolean isLocal;
 	
 	public OdysseusNode( OdysseusNodeID nodeID, String nodeName, boolean isLocal ) {
