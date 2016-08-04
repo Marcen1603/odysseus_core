@@ -20,7 +20,7 @@ http://odysseus.informatik.uni-oldenburg.de/
    <launcherArgs>
       <programArgs>-console -clean -debug -nl en -data @noDefault
       </programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M -Declipse.log.level=ERROR -Dnet.node.name=TimosNode1 -Dnet.dd.local=true -Dnet.querydistribute.minport=10000 -Dnet.querydistribute.maxport=15000
+      <vmArgs>-Xms1000M -Xmx1000M -Declipse.log.level=ERROR -Dnet.node.name=Node1 -Dnet.dd.local=true -Dnet.querydistribute.minport=10000 -Dnet.querydistribute.maxport=15000 -Dnet.autostart=true
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
