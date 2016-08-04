@@ -1,13 +1,17 @@
 package de.uniol.inf.is.odysseus.net.querydistribute.parameter;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.net.util.INamedInterface;
 
-public final class InterfaceParametersPair<T extends INamedInterface> {
+public final class InterfaceParametersPair<T extends INamedInterface> implements Serializable {
 
+	private static final long serialVersionUID = -6565561845406123986L;
+	
 	private final T interf;
 	private final List<String> parameters;
 	
@@ -16,7 +20,8 @@ public final class InterfaceParametersPair<T extends INamedInterface> {
 		Preconditions.checkNotNull(parameters, "parameters must not be null!");
 		
 		this.interf = interf;
-		this.parameters = parameters;
+		// ArrayList is serializable
+		this.parameters = new ArrayList<>(parameters);
 	}
 	
 	public T getInterface() {

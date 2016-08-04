@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.net.querydistribute.parameter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class AbstractQueryDistributionParameter extends Setting<Object> implements IQueryBuildSetting<Object> {
 
 	private static final long serialVersionUID = -7263235923036142801L;
-	private final List<InterfaceNameParametersPair> pairs = Lists.newArrayList();
+	private final List<InterfaceNameParametersPair> pairs = new ArrayList<>();
 
 	protected AbstractQueryDistributionParameter() {
 		super(null);
