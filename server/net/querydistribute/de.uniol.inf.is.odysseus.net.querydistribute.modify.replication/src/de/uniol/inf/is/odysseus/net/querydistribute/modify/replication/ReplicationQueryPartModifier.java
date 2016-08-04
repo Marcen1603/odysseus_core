@@ -39,7 +39,9 @@ import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMe
  * @author Michael Brand
  */
 public class ReplicationQueryPartModifier implements IQueryPartModificator {
-
+	
+	private static final long serialVersionUID = 2375679860615607859L;
+	
 	/**
 	 * The logger for this class.
 	 */

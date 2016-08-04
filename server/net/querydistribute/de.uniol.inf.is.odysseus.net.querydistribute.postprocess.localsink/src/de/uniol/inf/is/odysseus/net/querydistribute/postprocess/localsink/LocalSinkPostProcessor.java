@@ -25,6 +25,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryDistributionPostProcess
 
 public class LocalSinkPostProcessor implements IQueryDistributionPostProcessor {
 
+	private static final long serialVersionUID = 3619658181784800329L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(LocalSinkPostProcessor.class);
 
 	private static IOdysseusNodeManager nodeManager;

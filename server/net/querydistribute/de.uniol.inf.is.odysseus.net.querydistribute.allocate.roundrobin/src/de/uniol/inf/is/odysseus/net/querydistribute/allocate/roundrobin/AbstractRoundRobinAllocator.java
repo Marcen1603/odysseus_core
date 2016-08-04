@@ -21,6 +21,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartAllocationException
 
 public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator {
 
+	private static final long serialVersionUID = -5122320619851079877L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractRoundRobinAllocator.class);
 	
 	private IOdysseusNode lastAllocatedNode;

@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryDistributionPreProcesso
 
 public class ReplaceStreamPreProcessor implements IQueryDistributionPreProcessor {
 
+	private static final long serialVersionUID = -6040772839698621972L;
+	
 	private static final String PREPROCESSOR_NAME = "ReplaceStream";
 	
 	@Override

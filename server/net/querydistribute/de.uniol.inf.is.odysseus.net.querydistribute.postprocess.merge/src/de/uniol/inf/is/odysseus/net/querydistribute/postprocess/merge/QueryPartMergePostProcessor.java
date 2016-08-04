@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.LogicalQueryPart;
 
 public class QueryPartMergePostProcessor implements IQueryDistributionPostProcessor {
 
+	private static final long serialVersionUID = -2833201754249111649L;
+	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartMergePostProcessor.class);
 
 	@Override

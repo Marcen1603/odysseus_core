@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartAllocationException
 
 public class UserAllocator implements IQueryPartAllocator {
 
+	private static final long serialVersionUID = 3337074226754855028L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(UserAllocator.class);
 	
 	private static final Random RAND = new Random(0);

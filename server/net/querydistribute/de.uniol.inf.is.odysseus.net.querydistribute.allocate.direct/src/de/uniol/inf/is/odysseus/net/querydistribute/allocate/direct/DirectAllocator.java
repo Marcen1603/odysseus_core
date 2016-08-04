@@ -15,6 +15,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartAllocationException
 
 public class DirectAllocator implements IQueryPartAllocator {
 
+	private static final long serialVersionUID = 4368655195925748979L;
+
 	@Override
 	public String getName() {
 		return "direct";

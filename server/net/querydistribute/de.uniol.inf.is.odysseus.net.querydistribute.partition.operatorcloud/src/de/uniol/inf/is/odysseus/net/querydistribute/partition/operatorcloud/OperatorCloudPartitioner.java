@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartitionException;
 
 public class OperatorCloudPartitioner implements IQueryPartitioner {
 
+	private static final long serialVersionUID = -1308477904592508422L;
+	
 	private static final String PARTITIONER_NAME = "OPERATORCLOUD";
 
 	@Override

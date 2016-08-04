@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 
 public class RoundRobinAllocator extends AbstractRoundRobinAllocator {
 
+	private static final long serialVersionUID = -5528354964652549480L;
+
 	@Override
 	public String getName() {
 		return "roundrobin";

@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryDistributionPostProcess
 
 public class LocalSourcesPostProcessor implements IQueryDistributionPostProcessor {
 
+	private static final long serialVersionUID = -3229847817618466296L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(LocalSourcesPostProcessor.class);
 	
 	private static IOdysseusNodeManager nodeManager;

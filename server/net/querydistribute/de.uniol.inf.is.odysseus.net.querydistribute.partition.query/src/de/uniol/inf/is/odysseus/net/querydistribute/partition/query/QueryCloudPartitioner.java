@@ -15,6 +15,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.QueryPartitionException;
 
 public class QueryCloudPartitioner implements IQueryPartitioner {
 
+	private static final long serialVersionUID = -7272387339519176651L;
+
 	@Override
 	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, ILogicalQuery query, QueryBuildConfiguration config, List<String> partitionerParameters) throws QueryPartitionException {
 		ILogicalQueryPart part = new LogicalQueryPart(operators);

@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
 
 public class QueryCountAllocator implements IQueryPartAllocator {
 
+	private static final long serialVersionUID = -6082815639172242805L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(QueryCountAllocator.class);
 	
 	private static IOdysseusNodeResourceUsageManager resourceUsageManager;
