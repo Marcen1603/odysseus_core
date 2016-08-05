@@ -59,20 +59,20 @@ public class OdysseusNetLoggingComponent extends OdysseusNetComponentAdapter imp
 	@Override
 	public void start() throws OdysseusNetException {
 		if (IS_RECEIVING_LOGGING) {
-//			System.err.println("Logging-Mode: Receiving");
+			new Thread("SourceDistributionThread") {
 
-			// show other nodes that we want the logging messages from them
-			try {
-				dataManager.create(new JSONObject(), LOGGING_DISTRIBUTED_DATA_NAME, false);
-
-				logMessageListener = new LogMessageListener(communicator);
-
-			} catch (DistributedDataException e) {
-				throw new OdysseusNetException("Could not create distributed data for showing receiveing log messages", e);
-			}
+				@Override
+				public void run() {
+					try {
+						dataManager.create(new JSONObject(), LOGGING_DISTRIBUTED_DATA_NAME, false);
+						logMessageListener = new LogMessageListener(communicator);
+					} catch (DistributedDataException e) {
+						e.printStackTrace();
+					}
+				}
+			}.start();
 
 		} else {
-//			System.err.println("Logging-Mode: Sending");
 
 			// we want to send our log messages to other nodes!
 			logDestinationListener = new LogDestinationDistributedDataListener();

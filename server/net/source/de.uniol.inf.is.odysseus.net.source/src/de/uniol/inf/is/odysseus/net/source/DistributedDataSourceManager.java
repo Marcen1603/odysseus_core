@@ -250,28 +250,34 @@ public class DistributedDataSourceManager
 
 	private void createDistributedData(String name, ILogicalOperator op, String username, boolean isStream,
 			boolean isPersistent) {
-		String realSourceName = removeUserFromName(name);
-		String pqlStatement = pqlGenerator.generatePQLStatement(op);
+		new Thread("SourceDistributionThread") {
+			
+			@Override
+			public void run() {
+				String realSourceName = removeUserFromName(name);
+				String pqlStatement = pqlGenerator.generatePQLStatement(op);
 
-		try {
-			JSONObject json = new JSONObject();
-			json.put("name", realSourceName);
-			json.put("user", username);
-			json.put("pql", pqlStatement);
-			json.put("isStream", isStream);
+				try {
+					JSONObject json = new JSONObject();
+					json.put("name", realSourceName);
+					json.put("user", username);
+					json.put("pql", pqlStatement);
+					json.put("isStream", isStream);
+					
+					long lifetime = determineLifetime();
+					IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent,
+							lifetime);
+					synchronized (createdSourcesMap) {
+						createdSourcesMap.put(username + "." + realSourceName, distributedData.getUUID());
+					}
 
-			long lifetime = determineLifetime();
-			IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent,
-					lifetime);
-			synchronized (createdSourcesMap) {
-				createdSourcesMap.put(username + "." + realSourceName, distributedData.getUUID());
+				} catch (JSONException e) {
+					LOG.error("Could not create json object", e);
+				} catch (DistributedDataException e) {
+					LOG.error("Could not create distributed data", e);
+				}
 			}
-
-		} catch (JSONException e) {
-			LOG.error("Could not create json object", e);
-		} catch (DistributedDataException e) {
-			LOG.error("Could not create distributed data", e);
-		}
+		}.start();
 	}
 
 	private static long determineLifetime() {

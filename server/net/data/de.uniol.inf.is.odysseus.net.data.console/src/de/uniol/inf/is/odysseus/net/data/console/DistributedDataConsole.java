@@ -199,19 +199,25 @@ public class DistributedDataConsole implements CommandProvider {
 			ci.println("usage: createDistributedData <name> <someText>");
 			return;
 		}
+		
+		new Thread("DataDistributionThread") {
+			
+			@Override
+			public void run() {
+				try {
+					JSONObject obj = new JSONObject();
+					obj.put("text", text);
 
-		try {
-			JSONObject obj = new JSONObject();
-			obj.put("text", text);
+					IDistributedData createdDistributedData = distributedDataManager.create(obj, name, false);
 
-			IDistributedData createdDistributedData = distributedDataManager.create(obj, name, false);
+					ci.println("Distributed data created. UUID is " + createdDistributedData.getUUID());
 
-			ci.println("Distributed data created. UUID is " + createdDistributedData.getUUID());
-
-		} catch (JSONException | DistributedDataException e) {
-			ci.println("Could not create distributed data: " + e.getMessage());
-			ci.printStackTrace(e);
-		}
+				} catch (JSONException | DistributedDataException e) {
+					ci.println("Could not create distributed data: " + e.getMessage());
+					ci.printStackTrace(e);
+				}
+			}
+		}.start();
 	}
 
 	public void _destroyDistributedData(CommandInterpreter ci) {

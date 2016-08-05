@@ -170,12 +170,23 @@ public final class OdysseusNodeManager implements IOdysseusNodeManager {
 	@Override
 	public IOdysseusNode getLocalNode() throws OdysseusNetException {
 		Optional<IOdysseusNetStartupManager> optStartupManager = OdysseusNetStartupManager.getInstance();
-		if (optStartupManager.isPresent() && !optStartupManager.get().isStarted()) {
+		while(!optStartupManager.isPresent()) {
+			// It is possible start the OdysseusNetStartupManager is not activated! Example is, if stuff gets recovered after a crash.
+			waitSomeTime();
+		}
+		if (!optStartupManager.get().isStarted()) {
 			throw new OdysseusNetException("OdysseusNet must be started to get local node");
 		}
 		return optStartupManager.get().getLocalOdysseusNode();
 	}
 
+	private static void waitSomeTime() {
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+		}
+	}
+	
 	@Override
 	public boolean isLocalNode(OdysseusNodeID nodeID) {
 		Preconditions.checkNotNull(nodeID, "nodeID must not be null!");
