@@ -34,8 +34,8 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 	private float randomFactorSecondsSwitchedOn = 5;
 	private float randomFactorSecondsSwitchedOff = 10;
 
-	private int sleepTime = 100;
-	private int sleepTimeRandomFactor = 20;
+	private int sleepTime = 0;
+	private int sleepTimeRandomFactor = 0;
 
 	private long timeSwitchedLastOn;
 	private long timeSwitchedLastOff;
