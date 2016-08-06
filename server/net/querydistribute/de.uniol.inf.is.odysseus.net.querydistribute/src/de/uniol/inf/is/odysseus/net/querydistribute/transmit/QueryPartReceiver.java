@@ -186,7 +186,7 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 		final List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
 		settings.addAll(configuration);
 		settings.add(ParameterDoRewrite.FALSE);
-//		settings.addAll(message.getQueryBuildSettings());
+		settings.addAll(message.getQueryBuildSettings());
 		return settings;
 	}
 }

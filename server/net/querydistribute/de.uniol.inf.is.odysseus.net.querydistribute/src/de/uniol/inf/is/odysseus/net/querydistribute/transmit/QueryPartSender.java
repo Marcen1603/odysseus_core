@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.net.querydistribute.transmit;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryB
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterRecoveryConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -242,8 +244,14 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 			if (!allocatedNode.equals(localNode)) {
 				ParameterTransformationConfiguration paramConfiguration = parameters.get(ParameterTransformationConfiguration.class);
 				Collection<String> metaTypes = paramConfiguration.getValue().getDefaultMetaTypeSet();
-				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes);
-
+				Collection<IQueryBuildSetting<?>> queryBuildSettings = new ArrayList<>();
+				Optional<ParameterRecoveryConfiguration> recoveryConfiguration = Optional.of(parameters
+						.get(ParameterRecoveryConfiguration.class));
+				if(recoveryConfiguration.isPresent()) {
+					queryBuildSettings.add(recoveryConfiguration.get());
+				}
+				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes, queryBuildSettings);
+				
 				try {
 					nodeCommunicator.send(allocatedNode, msg);
 
