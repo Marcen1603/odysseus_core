@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.net.querydistribute.transmit;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +11,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -147,7 +144,7 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 	}
 
 	private void callExecutor(AddQueryPartMessage message, IOdysseusNode senderNode) {
-		List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, message.getTransCfgName());
+		List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, message);
 		Optional<ParameterTransformationConfiguration> params = getParameterTransformationConfiguration(configuration);
 		if (params.isPresent()) {
 			params.get().getValue().addTypes(Sets.newHashSet(message.getMetadataTypes()));
@@ -162,48 +159,10 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 
 	private static String buildOdysseusScriptText(AddQueryPartMessage message) {
 		StringBuilder sb = new StringBuilder();
-
-		Collection<String> metadataTypeNames = message.getMetadataTypes();
-		Collection<Class<? extends IMetaAttribute>> metadataTypes = determineMetadataTypes(metadataTypeNames);
-		Set<String> metadataNames = MetadataRegistry.getNames();
-
-		for (Class<? extends IMetaAttribute> metadataType : metadataTypes) {
-			for (String metadataName : metadataNames) {
-				Optional<IMetaAttribute> metaAttribute = tryGetMetaAttribute(metadataName);
-				if (metaAttribute.isPresent() && metadataType.equals(metaAttribute.get().getClass())) {
-					sb.append("#NO_METADATA " + metadataName).append("\n");
-					break;
-				}
-			}
-		}
-
 		sb.append("#PARSER PQL").append("\n");
-
-		// TODO should not be set that way
 		sb.append("#ADDQUERY").append("\n");
 		sb.append(message.getPqlStatement()).append("\n");
 		return sb.toString();
-	}
-
-	private static Optional<IMetaAttribute> tryGetMetaAttribute(String metadataName) {
-		try {
-			return Optional.fromNullable(MetadataRegistry.getMetadataTypeByName(metadataName));
-		} catch (IllegalArgumentException e) {
-			return Optional.absent();
-		}
-	}
-
-	private static Collection<Class<? extends IMetaAttribute>> determineMetadataTypes(Collection<String> metadataTypeNames) {
-		Collection<Class<? extends IMetaAttribute>> result = Lists.newArrayList();
-		for (String metadataTypeName : metadataTypeNames) {
-			try {
-				IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(metadataTypeName);
-				result.add(metaAttribute.getClass());
-			} catch (Throwable t) {
-				LOG.error("Could not determine metaAttribute of '{}'", metadataTypeName);
-			}
-		}
-		return result;
 	}
 
 	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
@@ -220,13 +179,14 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 		return instance;
 	}
 
-	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(IServerExecutor executor, String cfgName) {
-		final IQueryBuildConfigurationTemplate qbc = executor.getQueryBuildConfiguration(cfgName);
+	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(IServerExecutor executor, AddQueryPartMessage message) {
+		final IQueryBuildConfigurationTemplate qbc = executor.getQueryBuildConfiguration(message.getTransCfgName());
 		final List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
 
 		final List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
 		settings.addAll(configuration);
 		settings.add(ParameterDoRewrite.FALSE);
+//		settings.addAll(message.getQueryBuildSettings());
 		return settings;
 	}
 }
