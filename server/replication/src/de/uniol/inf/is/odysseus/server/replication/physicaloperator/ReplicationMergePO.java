@@ -54,6 +54,11 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	private Object dummyForTransferSync = new Object();
 
 	/**
+	 * True, if ITrust is used as meta attribute.
+	 */
+	private boolean trustUsed = false;
+
+	/**
 	 * The comparator for pairs of {@link IStreamable} objects and ports. <br />
 	 * The start timestamps of the {@link IStreamable} objects will be
 	 * compaired.
@@ -122,6 +127,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10, comp);
 		this.inputQueue.addAll(mergePO.inputQueue);
 		this.youngestTS = mergePO.youngestTS;
+		this.trustUsed = mergePO.trustUsed;
 
 	}
 
@@ -142,6 +148,9 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			this.youngestTS = null;
 		}
 
+		this.trustUsed = getInputSchema(0).getMetaschema().stream()
+				.anyMatch(schema -> schema.getBaseSourceNames().contains("Trust"));
+		System.err.println();
 	}
 
 	@Override
@@ -201,7 +210,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 
 			this.purgeElements(this.getTS(object, true));
 			this.mergeElement(object, port);
-			this.inputQueue.add(new Pair<IStreamable, Integer>((T)object.clone(), port));
+			this.inputQueue.add(new Pair<IStreamable, Integer>((T) object.clone(), port));
 		}
 
 	}
@@ -298,17 +307,20 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			IStreamable elem = pair.getE1();
 			Integer elemPort = pair.getE2();
 
-			if ((elem.isPunctuation() && !object.isPunctuation()) || (!elem.isPunctuation() && object.isPunctuation())) {
+			if ((elem.isPunctuation() && !object.isPunctuation())
+					|| (!elem.isPunctuation() && object.isPunctuation())) {
 
 				// only one element is a punctuation
 				continue;
 
-			} else if (elem.isPunctuation() && object.isPunctuation() && !((IPunctuation) elem).getTime().equals(((IPunctuation) object).getTime())) {
+			} else if (elem.isPunctuation() && object.isPunctuation()
+					&& !((IPunctuation) elem).getTime().equals(((IPunctuation) object).getTime())) {
 
 				// not the same timestamps of the punctuations
 				continue;
 
-			} else if (!elem.isPunctuation() && !object.isPunctuation() && (!((T) elem).equals(object) || !((T) elem).getMetadata().equals(((T) object).getMetadata()))) {
+			} else if (!elem.isPunctuation() && !object.isPunctuation()
+					&& (!((T) elem).equals(object) || !((T) elem).getMetadata().equals(((T) object).getMetadata()))) {
 
 				// either the elements or the timestamps are not equal
 				continue;
