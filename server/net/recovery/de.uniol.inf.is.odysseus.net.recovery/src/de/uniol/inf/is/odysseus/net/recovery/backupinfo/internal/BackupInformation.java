@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.net.recovery.backupinfo.internal;
 
-import java.util.Optional;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,9 +80,9 @@ public final class BackupInformation implements IBackupInformation {
 
 	@Override
 	public String toString() {
-		return "BackupInformation [nodeId=" + nodeId + ", localQueryId=" + localQueryId + ", pqlStatement="
-				+ pqlStatement + ", queryState=" + queryState + ", sharedQueryId=" + sharedQueryId + ", distributorId="
-				+ distributorId + "]";
+		return "BackupInformation [nodeId=" + nodeId + ", localQueryId=" + localQueryId + ", queryState=" + queryState
+				+ ", sharedQueryId=" + sharedQueryId + ", distributorId=" + distributorId + ", pqlStatement="
+				+ pqlStatement + "]";
 	}
 
 	/**
@@ -101,13 +99,31 @@ public final class BackupInformation implements IBackupInformation {
 		return clone;
 	}
 
+	/**
+	 * Reads member field from JSON object.
+	 * 
+	 * @throws JSONException
+	 *             if any error occurs.
+	 */
+	public static IBackupInformation fromJSON(JSONObject json) throws JSONException {
+		BackupInformation info = new BackupInformation();
+		info.nodeId = json.getString("nodeId");
+		info.localQueryId = json.getInt("localQueryId");
+		info.pqlStatement = json.getString("pqlStatement");
+		info.queryState = json.getString("queryState");
+		info.sharedQueryId = json.getString("sharedQueryId");
+		info.distributorId = json.getString("distributorId");
+		return info;
+	}
+
 	@Override
 	public String getNodeId() {
 		return nodeId;
 	}
 
-	public void setNodeId(final String nodeId) {
-		this.nodeId = nodeId;
+	@Override
+	public void setNodeId(String nodeID) {
+		this.nodeId = nodeID;
 	}
 
 	@Override
@@ -115,7 +131,8 @@ public final class BackupInformation implements IBackupInformation {
 		return localQueryId;
 	}
 
-	public void setLocalQueryId(final int localQueryId) {
+	@Override
+	public void setLocalQueryId(int localQueryId) {
 		this.localQueryId = localQueryId;
 	}
 
@@ -124,7 +141,8 @@ public final class BackupInformation implements IBackupInformation {
 		return pqlStatement;
 	}
 
-	public void setPqlStatement(final String pqlStatement) {
+	@Override
+	public void setPqlStatement(String pqlStatement) {
 		this.pqlStatement = pqlStatement;
 	}
 
@@ -133,47 +151,29 @@ public final class BackupInformation implements IBackupInformation {
 		return queryState;
 	}
 
-	public void setQueryState(final String queryState) {
+	@Override
+	public void setQueryState(String queryState) {
 		this.queryState = queryState;
 	}
 
 	@Override
-	public Optional<String> getSharedQueryId() {
-		return Optional.ofNullable(sharedQueryId);
+	public String getSharedQueryId() {
+		return sharedQueryId;
 	}
 
-	public void setSharedQueryId(final String sharedQueryId) {
+	@Override
+	public void setSharedQueryId(String sharedQueryId) {
 		this.sharedQueryId = sharedQueryId;
 	}
 
 	@Override
-	public Optional<String> getDistributorId() {
-		return Optional.ofNullable(distributorId);
+	public String getDistributorId() {
+		return distributorId;
 	}
 
-	public void setDistributorId(final String distributorId) {
+	@Override
+	public void setDistributorId(String distributorId) {
 		this.distributorId = distributorId;
-	}
-
-	/**
-	 * Reads member field from JSON object.
-	 * 
-	 * @throws JSONException
-	 *             if any error occurs.
-	 */
-	public void fromJSON(JSONObject json) throws JSONException {
-		nodeId = json.getString("nodeId");
-		localQueryId = json.getInt("localQueryId");
-		pqlStatement = json.getString("pqlStatement");
-		queryState = json.getString("queryState");
-		String sharedQueryIdStr = json.getString("sharedQueryId");
-		if(!sharedQueryIdStr.equals(Optional.empty().toString())) {
-			sharedQueryId = sharedQueryIdStr.split("(")[1].split(")")[0];
-		}
-		String distributorIdStr = json.getString("distributorId");
-		if(!distributorIdStr.equals(Optional.empty().toString())) {
-			distributorId = distributorIdStr.split("(")[1].split(")")[0];
-		}
 	}
 
 }
