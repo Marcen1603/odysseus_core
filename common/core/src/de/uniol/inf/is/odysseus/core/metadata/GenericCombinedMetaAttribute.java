@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,18 +18,19 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
-public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttribute implements InvocationHandler {
+public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttribute
+		implements InvocationHandler, Serializable {
 
 	private static final long serialVersionUID = 8008635741301906632L;
 
 	final private Class<? extends IMetaAttribute>[] classes;
 	final private IMetaAttribute[] metaAttributes;
-	final private Method[] methodRetrieveValues;
 	final private String name;
-	final private Map<Method, Integer> methodAttributeMap;
 	final private List<SDFMetaSchema> schema;
-	
-	final private Set<Method> gcmMethods;
+
+	transient private Map<Method, Integer> methodAttributeMap;
+	transient private Method[] methodRetrieveValues;
+	transient private Set<Method> gcmMethods;
 
 	public GenericCombinedMetaAttribute(Class<? extends IMetaAttribute>[] classes, IMetaAttribute[] metaAttributes,
 			String name, List<SDFMetaSchema> schema) {
@@ -36,6 +41,37 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 			throw new IllegalArgumentException("Currently, generic types are only supported for base meta types!");
 		}
 
+		initMethodAttributeMap(classes);
+		initMethodRetrieveValues(classes);
+
+		this.name = name;
+		this.schema = schema;
+
+		initGcmMethods();
+
+	}
+
+	private void initGcmMethods() {
+		gcmMethods = new HashSet<>();
+
+		for (Method m : IMetaAttribute.class.getMethods()) {
+			this.gcmMethods.add(m);
+		}
+	}
+
+	private void initMethodRetrieveValues(Class<? extends IMetaAttribute>[] classes) {
+		this.methodRetrieveValues = new Method[classes.length];
+		int i = 0;
+		for (Class<? extends IMetaAttribute> c : classes) {
+			try {
+				methodRetrieveValues[i] = c.getMethod("retrieveValues", List.class);
+			} catch (NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void initMethodAttributeMap(Class<? extends IMetaAttribute>[] classes) {
 		this.methodAttributeMap = new HashMap<>();
 		for (int i = 0; i < classes.length; i++) {
 			Method[] methods = classes[i].getDeclaredMethods();
@@ -48,25 +84,21 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 				}
 			}
 		}
+	}
 
-		this.methodRetrieveValues = new Method[classes.length];
-		int i = 0;
-		for (Class<? extends IMetaAttribute> c : classes) {
-			try {
-				methodRetrieveValues[i] = c.getMethod("retrieveValues", List.class);
-			} catch (NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException {
+		try {
+			ois.defaultReadObject(); 
+			this.initMethodAttributeMap(classes);
+			this.initMethodRetrieveValues(classes);
+			this.initGcmMethods();
+		} catch (ClassNotFoundException e) {
+			throw new IOException("No class found. HELP!!");
 		}
-		this.name = name;
-		this.schema = schema;
-
-		gcmMethods = new HashSet<>();
-
-		for (Method m : IMetaAttribute.class.getMethods()) {
-			this.gcmMethods.add(m);
-		}
-
 	}
 
 	public GenericCombinedMetaAttribute(GenericCombinedMetaAttribute other) {
