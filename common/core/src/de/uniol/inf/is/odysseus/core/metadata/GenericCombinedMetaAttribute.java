@@ -92,7 +92,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 
 	private void readObject(ObjectInputStream ois) throws IOException {
 		try {
-			ois.defaultReadObject(); 
+			ois.defaultReadObject();
 			this.initMethodAttributeMap(classes);
 			this.initMethodRetrieveValues(classes);
 			this.initGcmMethods();
@@ -172,6 +172,16 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 			list.addAll(a.getInlineMergeFunctions());
 		}
 		return list;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer ret = new StringBuffer();
+		for (IMetaAttribute a : metaAttributes) {
+			ret.append(a.toString()+"|");
+		}
+		return ret.toString();
+
 	}
 
 	@Override
