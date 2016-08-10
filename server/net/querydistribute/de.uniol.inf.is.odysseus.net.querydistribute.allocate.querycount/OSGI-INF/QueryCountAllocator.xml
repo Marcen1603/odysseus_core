@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.net.querydistribute.IQueryPartAllocator"/>
    </service>
-   <reference bind="bindOdysseusNodeResourceUsageManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager" name="IOdysseusNodeResourceUsageManager" policy="static" unbind="unbindOdysseusNodeResourceUsageManager"/>
+   <reference bind="bindOdysseusNodeResourceUsageManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager" name="IOdysseusNodeResourceUsageManager" policy="dynamic" unbind="unbindOdysseusNodeResourceUsageManager"/>
 </scr:component>

@@ -4,6 +4,6 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.net.IOdysseusNetComponent"/>
    </service>
-   <reference bind="bindDistributedDataManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.data.IDistributedDataManager" name="IDistributedDataManager" policy="static" unbind="unbindDistributedDataManager"/>
-   <reference bind="bindOdysseusNodeCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator" name="IOdysseusNodeCommunicator" policy="static" unbind="unbindOdysseusNodeCommunicator"/>
+   <reference bind="bindDistributedDataManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.data.IDistributedDataManager" name="IDistributedDataManager" policy="dynamic" unbind="unbindDistributedDataManager"/>
+   <reference bind="bindOdysseusNodeCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator" name="IOdysseusNodeCommunicator" policy="dynamic" unbind="unbindOdysseusNodeCommunicator"/>
 </scr:component>

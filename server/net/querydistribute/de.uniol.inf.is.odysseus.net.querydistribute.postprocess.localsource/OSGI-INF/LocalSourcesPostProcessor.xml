@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.net.querydistribute.IQueryDistributionPostProcessor"/>
    </service>
-   <reference bind="bindOdysseusNodeManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNodeManager" name="IOdysseusNodeManager" policy="static" unbind="unbindOdysseusNodeManager"/>
+   <reference bind="bindOdysseusNodeManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.IOdysseusNodeManager" name="IOdysseusNodeManager" policy="dynamic" unbind="unbindOdysseusNodeManager"/>
 </scr:component>

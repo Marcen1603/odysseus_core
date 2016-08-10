@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator"/>
    </service>
-   <reference bind="bindOdysseusNodeConnectionManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager" name="IOdysseusNodeConnectionManager" policy="static" unbind="unbindOdysseusNodeConnectionManager"/>
+   <reference bind="bindOdysseusNodeConnectionManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.connect.IOdysseusNodeConnectionManager" name="IOdysseusNodeConnectionManager" policy="dynamic" unbind="unbindOdysseusNodeConnectionManager"/>
 </scr:component>
