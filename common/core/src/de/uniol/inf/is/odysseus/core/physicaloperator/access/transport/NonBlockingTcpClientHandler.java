@@ -51,8 +51,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class NonBlockingTcpClientHandler extends AbstractTransportHandler
-		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener,
-		TCPConnectorListener {
+		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener, TCPConnectorListener {
 	private class TcpOutputStream extends OutputStream {
 		private ByteBuffer buffer = ByteBuffer.allocate(1024);
 
@@ -77,15 +76,13 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		@Override
 		public void write(final int b) throws IOException {
 			if ((1 + this.buffer.position()) >= this.buffer.capacity()) {
-				final ByteBuffer newBuffer = ByteBuffer
-						.allocate((1 + this.buffer.position()) * 2);
+				final ByteBuffer newBuffer = ByteBuffer.allocate((1 + this.buffer.position()) * 2);
 				final int pos = this.buffer.position();
 				this.buffer.flip();
 				newBuffer.put(this.buffer);
 				this.buffer = newBuffer;
 				this.buffer.position(pos);
-				NonBlockingTcpClientHandler.LOG.debug("Extending buffer to "
-						+ this.buffer.capacity());
+				NonBlockingTcpClientHandler.LOG.debug("Extending buffer to " + this.buffer.capacity());
 			}
 			this.buffer.put((byte) b);
 		}
@@ -116,8 +113,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	// Deprecated
 	public static final String USERNAME = "user";
 
-	static final Logger LOG = LoggerFactory
-			.getLogger(NonBlockingTcpClientHandler.class);
+	static final Logger LOG = LoggerFactory.getLogger(NonBlockingTcpClientHandler.class);
 	private TCPConnector connector;
 	private List<String> hosts = new LinkedList<String>();
 	private List<Integer> ports = new LinkedList<Integer>();
@@ -131,8 +127,8 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	private int readBufferSize;
 	private SelectorThread selector;
 	private int writeBufferSize;
-	
-	/** 
+
+	/**
 	 * Time in ms to wait between two reconnect tries. <br />
 	 * -1 for disabling auto reconnect
 	 */
@@ -147,8 +143,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		super();
 	}
 
-	public NonBlockingTcpClientHandler(
-			final IProtocolHandler<?> protocolHandler, final OptionMap options) {
+	public NonBlockingTcpClientHandler(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
 		super(protocolHandler, options);
 		this.init();
 		try {
@@ -156,30 +151,35 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 			currentHost = 0;
 			connect();
 		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+			if (autoreconnectTime > 0) {
+				NonBlockingTcpClientHandler.LOG.warn(e.getMessage(), e);
+			} else {
+				NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+			}
 		}
 	}
 
 	private void connect() {
 		if (hosts.size() > 0) {
-			final InetSocketAddress address = new InetSocketAddress(
-					hosts.get(currentHost), ports.get(currentHost));
-			this.connector = new TCPConnector(this.selector, address, this,
-					this.getInitializeCommand());
+			final InetSocketAddress address = new InetSocketAddress(hosts.get(currentHost), ports.get(currentHost));
+			this.connector = new TCPConnector(this.selector, address, this, this.getInitializeCommand());
 		}
 	}
 
 	@Override
-	public void connectionEstablished(final ConnectorSelectorHandler handler,
-			final SocketChannel channel) {
+	public void connectionEstablished(final ConnectorSelectorHandler handler, final SocketChannel channel) {
 		try {
 			channel.socket().setReceiveBufferSize(this.readBufferSize);
 			channel.socket().setSendBufferSize(this.writeBufferSize);
 			this.connection = new NioTcpConnection(channel, this.selector, this);
 		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+			if (autoreconnectTime > 0) {
+				NonBlockingTcpClientHandler.LOG.warn(e.getMessage(), e);
+			} else {
+				NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+			}
 		}
-		if(this.autoreconnectTimer != null) {
+		if (this.autoreconnectTimer != null) {
 			this.autoreconnectTimer.cancel();
 			this.autoreconnectTimer = null;
 		}
@@ -187,13 +187,10 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	}
 
 	@Override
-	public void connectionFailed(final ConnectorSelectorHandler handler,
-			final Exception cause) {
+	public void connectionFailed(final ConnectorSelectorHandler handler, final Exception cause) {
 		if (currentHost + 1 < hosts.size()) {
-			infoService.warning(
-					"Could not connect to server " + hosts.get(currentHost)
-							+ " on port " + ports.get(currentHost)
-							+ " Tryin' next server", cause);
+			infoService.warning("Could not connect to server " + hosts.get(currentHost) + " on port "
+					+ ports.get(currentHost) + " Tryin' next server", cause);
 			currentHost++;
 			connect();
 			try {
@@ -201,17 +198,19 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 			} catch (IOException e) {
 			}
 		} else {
-			infoService.error("Could not connect any server " + hosts
-					+ " on ports " + ports, cause);
-			NonBlockingTcpClientHandler.LOG.error(cause.getMessage()+" for server " + hosts + " on ports " + ports, cause);
+			if (autoreconnectTime > 0) {
+				currentHost = 0;
+			} else {
+				infoService.error("Could not connect any server " + hosts + " on ports " + ports, cause);
+				NonBlockingTcpClientHandler.LOG
+						.error(cause.getMessage() + " for server " + hosts + " on ports " + ports, cause);
+			}
 		}
 	}
 
 	@Override
-	public ITransportHandler createInstance(
-			final IProtocolHandler<?> protocolHandler, final OptionMap options) {
-		final NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(
-				protocolHandler, options);
+	public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
+		final NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(protocolHandler, options);
 		return handler;
 	}
 
@@ -258,8 +257,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	}
 
 	@Override
-	public void notify(final IConnection con,
-			final ConnectionMessageReason reason) {
+	public void notify(final IConnection con, final ConnectionMessageReason reason) {
 		infoService.warning("Connection information " + con + " --> " + reason);
 		switch (reason) {
 		case ConnectionAbort:
@@ -297,9 +295,13 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		try {
 			this.connector.connect();
 		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-			infoService.error(e.getMessage(), e);
-			throw new OpenFailedException(e);
+			if (autoreconnectTime > 0) {
+				infoService.warning(e.getMessage(), e);
+			} else {
+				NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+				infoService.error(e.getMessage(), e);
+				throw new OpenFailedException(e);
+			}
 		}
 	}
 
@@ -316,8 +318,13 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		try {
 			this.connector.connect();
 		} catch (final IOException e) {
-			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-			throw new OpenFailedException(e);
+			if (autoreconnectTime > 0) {
+				infoService.warning(e.getMessage(), e);
+			} else {
+				NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+				infoService.error(e.getMessage(), e);
+				throw new OpenFailedException(e);
+			}
 		}
 		this.output = new TcpOutputStream();
 	}
@@ -352,8 +359,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	 */
 	public void setInitializeCommand(final String initializeCommand) {
 		if (initializeCommand != null) {
-			this.initializeCommand = initializeCommand.replace("\\\\n", "\n")
-					.replace("\\n", "\n").getBytes();
+			this.initializeCommand = initializeCommand.replace("\\\\n", "\n").replace("\\n", "\n").getBytes();
 		} else {
 			this.initializeCommand = null;
 		}
@@ -428,13 +434,13 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 
 	@Override
 	public void socketException(final Exception e) {
-		NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
-		
-		if(this.autoreconnectTime > 0) {
+		NonBlockingTcpClientHandler.LOG.warn(e.getMessage(), e);
+
+		if (this.autoreconnectTime > 0) {
 			infoService.info("Try to reconnect every " + this.autoreconnectTime + " ms.");
 			this.autoreconnectTimer = new Timer();
 			this.autoreconnectTimer.schedule(new TimerTask() {
-				
+
 				@Override
 				public void run() {
 					try {
@@ -443,7 +449,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 						// Try it again in <code>autoreconnectTime</code> ms
 					}
 				}
-				
+
 			}, this.autoreconnectTime, this.autoreconnectTime);
 		}
 	}
@@ -487,32 +493,22 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		setWriteBufferSize(options.getInt(WRITE_BUFFER, 10240));
 
 		if (options.containsKey(NonBlockingTcpClientHandler.INITIALIZE_ALIAS)) {
-			this.setInitializeCommand(options
-					.get(NonBlockingTcpClientHandler.INITIALIZE_ALIAS));
-			NonBlockingTcpClientHandler.LOG.warn("Parameter "
-					+ NonBlockingTcpClientHandler.INITIALIZE_ALIAS
-					+ " is deprecated. Please use "
-					+ NonBlockingTcpClientHandler.INITIALIZE);
-			infoService.warning("Parameter "
-					+ NonBlockingTcpClientHandler.INITIALIZE_ALIAS
-					+ " is deprecated. Please use "
-					+ NonBlockingTcpClientHandler.INITIALIZE);
+			this.setInitializeCommand(options.get(NonBlockingTcpClientHandler.INITIALIZE_ALIAS));
+			NonBlockingTcpClientHandler.LOG.warn("Parameter " + NonBlockingTcpClientHandler.INITIALIZE_ALIAS
+					+ " is deprecated. Please use " + NonBlockingTcpClientHandler.INITIALIZE);
+			infoService.warning("Parameter " + NonBlockingTcpClientHandler.INITIALIZE_ALIAS
+					+ " is deprecated. Please use " + NonBlockingTcpClientHandler.INITIALIZE);
 		}
 		if (options.containsKey(NonBlockingTcpClientHandler.USERNAME)) {
-			this.setInitializeCommand(options
-					.get(NonBlockingTcpClientHandler.USERNAME)
-					+ "\n"
+			this.setInitializeCommand(options.get(NonBlockingTcpClientHandler.USERNAME) + "\n"
 					+ options.get(NonBlockingTcpClientHandler.PASSWORD) + "\n");
-			NonBlockingTcpClientHandler.LOG.warn("Parameter "
-					+ NonBlockingTcpClientHandler.USERNAME
-					+ " is deprecated. Please use "
-					+ NonBlockingTcpClientHandler.INITIALIZE);
+			NonBlockingTcpClientHandler.LOG.warn("Parameter " + NonBlockingTcpClientHandler.USERNAME
+					+ " is deprecated. Please use " + NonBlockingTcpClientHandler.INITIALIZE);
 		}
 		if (options.containsKey(NonBlockingTcpClientHandler.INITIALIZE)) {
-			this.setInitializeCommand(options
-					.get(NonBlockingTcpClientHandler.INITIALIZE));
+			this.setInitializeCommand(options.get(NonBlockingTcpClientHandler.INITIALIZE));
 		}
-		if(options.containsKey(AUTORECONNECT)) {
+		if (options.containsKey(AUTORECONNECT)) {
 			this.autoreconnectTime = Long.parseLong(options.get(AUTORECONNECT));
 		}
 	}
