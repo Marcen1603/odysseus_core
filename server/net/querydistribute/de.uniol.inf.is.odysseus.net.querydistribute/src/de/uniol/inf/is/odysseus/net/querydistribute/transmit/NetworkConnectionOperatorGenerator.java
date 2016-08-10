@@ -79,7 +79,8 @@ public class NetworkConnectionOperatorGenerator implements IOperatorGenerator {
 		
 		Map<String, String> options = Maps.newHashMap();
 		options.put("host", sourceNode.getProperty("serverAddress").get());
-		options.put("port", sourcePort + ""); 
+		options.put("port", sourcePort + "");
+		options.put("autoreconnect", String.valueOf(1000));
 		
 		access.setOptionMap(options);
 		access.setAttributes(sourceOp.getOutputSchema().getAttributes());

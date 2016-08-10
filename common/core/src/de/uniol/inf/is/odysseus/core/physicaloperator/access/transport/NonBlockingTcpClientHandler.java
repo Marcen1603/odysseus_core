@@ -24,6 +24,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +106,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	// The write buffer size
 	public static final String WRITE_BUFFER = "write";
 	// Auto reconnect on disconnect
-	public static final String AUTOCONNECT = "autoconnect";
+	public static final String AUTORECONNECT = "autoreconnect";
 	// The initialization command
 	public static final String INITIALIZE = "init";
 	// Deprecated
@@ -129,7 +131,13 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	private int readBufferSize;
 	private SelectorThread selector;
 	private int writeBufferSize;
-	private boolean autoconnect;
+	
+	/** 
+	 * Time in ms to wait between two reconnect tries. <br />
+	 * -1 for disabling auto reconnect
+	 */
+	private long autoreconnectTime = -1l;
+	private Timer autoreconnectTimer;
 	NioTcpConnection connection;
 
 	static final InfoService infoService = InfoServiceFactory
@@ -170,6 +178,10 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 			this.connection = new NioTcpConnection(channel, this.selector, this);
 		} catch (final IOException e) {
 			NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+		}
+		if(this.autoreconnectTimer != null) {
+			this.autoreconnectTimer.cancel();
+			this.autoreconnectTimer = null;
 		}
 		super.fireOnConnect();
 	}
@@ -239,7 +251,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 			return false;
 		} else if (this.initializeCommand.equals(other.initializeCommand)) {
 			return false;
-		} else if (this.autoconnect != other.autoconnect) {
+		} else if (this.autoreconnectTime != other.autoreconnectTime) {
 			return false;
 		}
 		return true;
@@ -408,21 +420,6 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		return this.writeBufferSize;
 	}
 
-	/**
-	 * @param autoconnect
-	 *            the autoconnect to set
-	 */
-	public void setAutoconnect(final boolean autoconnect) {
-		this.autoconnect = autoconnect;
-	}
-
-	/**
-	 * @return the autoconnect
-	 */
-	public boolean isAutoconnect() {
-		return this.autoconnect;
-	}
-
 	@Override
 	public void socketDisconnected() {
 		super.fireOnDisconnect();
@@ -432,6 +429,23 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 	@Override
 	public void socketException(final Exception e) {
 		NonBlockingTcpClientHandler.LOG.error(e.getMessage(), e);
+		
+		if(this.autoreconnectTime > 0) {
+			infoService.info("Try to reconnect every " + this.autoreconnectTime + " ms.");
+			this.autoreconnectTimer = new Timer();
+			this.autoreconnectTimer.schedule(new TimerTask() {
+				
+				@Override
+				public void run() {
+					try {
+						NonBlockingTcpClientHandler.this.connector.connect();
+					} catch (IOException e) {
+						// Try it again in <code>autoreconnectTime</code> ms
+					}
+				}
+				
+			}, this.autoreconnectTime, this.autoreconnectTime);
+		}
 	}
 
 	private void init() {
@@ -497,6 +511,9 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler
 		if (options.containsKey(NonBlockingTcpClientHandler.INITIALIZE)) {
 			this.setInitializeCommand(options
 					.get(NonBlockingTcpClientHandler.INITIALIZE));
+		}
+		if(options.containsKey(AUTORECONNECT)) {
+			this.autoreconnectTime = Long.parseLong(options.get(AUTORECONNECT));
 		}
 	}
 }
