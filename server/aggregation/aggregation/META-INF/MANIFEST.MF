@@ -19,3 +19,4 @@ Export-Package: de.uniol.inf.is.odysseus.aggregation,
  de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.aggregation.functions.factory,
  de.uniol.inf.is.odysseus.aggregation.logicaloperator
+Bundle-ActivationPolicy: lazy
