@@ -17,4 +17,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.aggregation,
  de.uniol.inf.is.odysseus.aggregation.functions,
- de.uniol.inf.is.odysseus.aggregation.functions.factory
+ de.uniol.inf.is.odysseus.aggregation.functions.factory,
+ de.uniol.inf.is.odysseus.aggregation.logicaloperator
