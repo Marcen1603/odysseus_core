@@ -42,4 +42,3 @@ Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.serv
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception,
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response
 Bundle-Vendor: University of Oldenburg
-Bundle-ActivationPolicy: lazy

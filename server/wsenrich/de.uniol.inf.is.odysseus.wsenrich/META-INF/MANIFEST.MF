@@ -46,5 +46,4 @@ Bundle-ClassPath: lib/bcprov-jdk15on-148.jar,
  lib/json-simple-1.1.1.jar,
  lib/json-smart-1.1.jar,
  lib/commons-lang-2.6.jar
-Bundle-ActivationPolicy: lazy
 

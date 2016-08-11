@@ -19,4 +19,3 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Service-Component: OSGI-INF/TypeRegistry.xml,
  OSGI-INF/ProtobufServerTransportHandler.xml
 Export-Package: de.uniol.inf.is.odysseus.wrapper.protobuf
-Bundle-ActivationPolicy: lazy

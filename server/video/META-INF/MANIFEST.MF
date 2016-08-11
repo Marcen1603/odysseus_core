@@ -18,4 +18,3 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.imagejcv,
  de.uniol.inf.is.odysseus.core.server
 Export-Package: de.uniol.inf.is.odysseus.video.physicaloperator
-Bundle-ActivationPolicy: lazy

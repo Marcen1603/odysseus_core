@@ -32,4 +32,3 @@ Export-Package: de.uniol.inf.is.odysseus.parallelization.interoperator.constants
  de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution,
  de.uniol.inf.is.odysseus.parallelization.interoperator.strategy,
  de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry
-Bundle-ActivationPolicy: lazy

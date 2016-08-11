@@ -17,4 +17,3 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Bundle-ClassPath: lib/OpenXLS.jar,
  .
 Service-Component: OSGI-INF/XLSProtocolHandler.xml
-Bundle-ActivationPolicy: lazy

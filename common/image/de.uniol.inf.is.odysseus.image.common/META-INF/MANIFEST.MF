@@ -14,5 +14,4 @@ Export-Package: de.uniol.inf.is.odysseus.image.common,
 Require-Bundle: de.uniol.inf.is.odysseus.core
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/*
-Bundle-ActivationPolicy: lazy
 

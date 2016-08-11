@@ -23,4 +23,3 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
  org.eclipse.osgi
 Bundle-Activator: de.uniol.inf.is.odysseus.spatial.Activator
-Bundle-ActivationPolicy: lazy
