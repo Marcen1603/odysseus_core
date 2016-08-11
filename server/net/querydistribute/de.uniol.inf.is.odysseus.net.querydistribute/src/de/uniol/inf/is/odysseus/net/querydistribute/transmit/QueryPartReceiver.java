@@ -6,9 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -18,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryB
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
@@ -134,7 +131,7 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 	}
 
 	public void addQueryPart(AddQueryPartMessage message, IOdysseusNode senderNode) throws QueryDistributionException {
-		LOG.debug("PQL statement to be executed: {}", message.getPqlStatement());
+		LOG.debug("PQL statement to be executed: {}", message.getQueryText());
 
 		try {
 			callExecutor(message, senderNode);
@@ -145,34 +142,8 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 
 	private void callExecutor(AddQueryPartMessage message, IOdysseusNode senderNode) {
 		List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, message);
-		Optional<ParameterTransformationConfiguration> params = getParameterTransformationConfiguration(configuration);
-		if (params.isPresent()) {
-			params.get().getValue().addTypes(Sets.newHashSet(message.getMetadataTypes()));
-		}
-
-		String script = buildOdysseusScriptText(message);
-
-		Collection<Integer> ids = executor.addQuery(script, "OdysseusScript", QueryDistributionPlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
-
+		Collection<Integer> ids = executor.addQuery(message.getQueryText(), message.getParser(), QueryDistributionPlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
 		QueryPartController.getInstance().registerAsSlave(ids, message.getSharedQueryID(), senderNode);
-	}
-
-	private static String buildOdysseusScriptText(AddQueryPartMessage message) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("#PARSER PQL").append("\n");
-		sb.append("#ADDQUERY").append("\n");
-		sb.append(message.getPqlStatement()).append("\n");
-		return sb.toString();
-	}
-
-	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
-		for (IQueryBuildSetting<?> s : settings) {
-			if (s instanceof ParameterTransformationConfiguration) {
-				return Optional.of((ParameterTransformationConfiguration) s);
-			}
-		}
-
-		return Optional.absent();
 	}
 
 	public static QueryPartReceiver getInstance() {
@@ -186,7 +157,6 @@ public class QueryPartReceiver implements IOdysseusNodeCommunicatorListener {
 		final List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
 		settings.addAll(configuration);
 		settings.add(ParameterDoRewrite.FALSE);
-		settings.addAll(message.getQueryBuildSettings());
 		return settings;
 	}
 }
