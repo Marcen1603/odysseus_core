@@ -16,7 +16,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
  * @author Michael Brand
  *
  */
-public class ParameterRecoveryConfiguration extends Setting<Object>implements IQueryBuildSetting<Object>, Serializable {
+public class ParameterRecoveryConfiguration extends Setting<Object>
+		implements IQueryBuildSetting<Object>, Serializable {
 
 	/**
 	 * The version of this class for serialization.
@@ -26,7 +27,23 @@ public class ParameterRecoveryConfiguration extends Setting<Object>implements IQ
 	/**
 	 * The default is not to do any recovery.
 	 */
-	public static ParameterRecoveryConfiguration NoConfiguration = new ParameterRecoveryConfiguration(null, null);
+	public static final ParameterRecoveryConfiguration NoConfiguration = new ParameterRecoveryConfiguration(null, null);
+
+	/**
+	 * A string to represent the keyword in Odysseus Script.
+	 */
+	public static final String keyword = "RECOVERYCONFIGURATION";
+
+	/**
+	 * Returns a String "key1=value1 key2=value2..."
+	 */
+	private static String propertiesToString(Properties cfg) {
+		StringBuilder builder = new StringBuilder();
+		for (Object key : cfg.keySet()) {
+			builder.append(key + "=" + cfg.get(key));
+		}
+		return builder.toString();
+	}
 
 	/**
 	 * The name of the recovery executor to use. A recovery executor is like a
@@ -85,6 +102,11 @@ public class ParameterRecoveryConfiguration extends Setting<Object>implements IQ
 		super(null);
 		this.mExecutor = recoveryExecutor;
 		this.mConfig = configuration;
+	}
+
+	@Override
+	public String toOdysseusScript() {
+		return "#" + keyword + " " + this.mExecutor + propertiesToString(this.mConfig);
 	}
 
 }

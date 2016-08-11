@@ -17,7 +17,19 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltpara
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.ISetting;
 
-/** A marker interface for all parameters relevant query building 
+/**
+ * A marker interface for all parameters relevant query building
  */
-public interface IQueryBuildSetting<E> extends ISetting<E>{ 
+public interface IQueryBuildSetting<E> extends ISetting<E> {
+
+	/**
+	 * Returns an Odysseus Script text that represents the setting.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             The default implementation throws this exception.
+	 */
+	public default String toOdysseusScript() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
 }
