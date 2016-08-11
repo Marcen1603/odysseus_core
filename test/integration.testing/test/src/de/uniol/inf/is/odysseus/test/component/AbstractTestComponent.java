@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.test.component;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -121,7 +122,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 		TestReport report = new TestReport(getName(), testsets.size());
 		for (S set : testsets) {
 		    report.set(i, set.getName(), set.getQuery());
-			LOG.debug("Running sub test " + (i+1) + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
+			LOG.debug((new Date()) + "Running sub test " + (i+1) + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
 			LOG.debug(set.getQuery());
 			long start = System.nanoTime();
             StatusCode code = null;
