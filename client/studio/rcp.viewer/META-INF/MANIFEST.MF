@@ -36,3 +36,4 @@ Require-Bundle: com.google.guava;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core,
  org.eclipse.core.expressions;bundle-version="3.4.300",
  org.eclipse.ui;bundle-version="3.7.0"
+Bundle-ActivationPolicy: lazy

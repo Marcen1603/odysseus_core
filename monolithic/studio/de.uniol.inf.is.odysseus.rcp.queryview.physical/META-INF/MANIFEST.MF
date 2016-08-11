@@ -14,3 +14,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/physicalQueryViewDataProvider.xml, OSGI-INF/executor.xml
 Import-Package: de.uniol.inf.is.odysseus.rcp.views.query,
  org.slf4j
+Bundle-ActivationPolicy: lazy

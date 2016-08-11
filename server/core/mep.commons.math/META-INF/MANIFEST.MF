@@ -12,3 +12,4 @@ Import-Package: org.apache.commons.math3.stat.descriptive;version="3.2.0",
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/*
+Bundle-ActivationPolicy: lazy

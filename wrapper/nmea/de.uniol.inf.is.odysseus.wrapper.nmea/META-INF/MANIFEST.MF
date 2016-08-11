@@ -26,3 +26,4 @@ Export-Package: de.uniol.inf.is.odysseus.wrapper.nmea.sentence,
 Require-Bundle: com.google.guava,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.equinox.common
+Bundle-ActivationPolicy: lazy

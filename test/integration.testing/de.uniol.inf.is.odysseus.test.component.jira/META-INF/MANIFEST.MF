@@ -13,3 +13,4 @@ Service-Component: OSGI-INF/JiraTestComponent.xml
 Import-Package: org.osgi.framework,
  org.slf4j
 Eclipse-BundleShape: dir
+Bundle-ActivationPolicy: lazy

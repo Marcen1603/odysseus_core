@@ -13,3 +13,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.osgi.framework
 Bundle-ClassPath: lib/json-simple-1.1.1.jar,
  .
+Bundle-ActivationPolicy: lazy

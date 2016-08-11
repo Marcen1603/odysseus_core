@@ -24,3 +24,4 @@ Export-Package: de.uniol.inf.is.odysseus.benchmark,
  de.uniol.inf.is.odysseus.benchmark.result,
  de.uniol.inf.is.odysseus.benchmark.transform
 Bundle-Activator: de.uniol.inf.is.odysseus.benchmark.Activator
+Bundle-ActivationPolicy: lazy
