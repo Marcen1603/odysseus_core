@@ -133,24 +133,25 @@ public class DistributedDataSourceManager
 				String userName = data.getString("user");
 				String pqlStatement = data.getString("pql");
 				boolean isStream = data.getBoolean("isStream");
-
-				Optional<ILogicalOperator> optTopAO = parsePQLStatement(sourceName, pqlStatement);
-				if (optTopAO.isPresent()) {
-					synchronized (importedSourcesBiMap) {
-						importedSourcesBiMap.put(addedData.getUUID(), userName + "." + sourceName);
-					}
-
-					ILogicalOperator streamOrViewAO = determineStreamOrViewAO(optTopAO.get());
-					if (isStream) {
-						getDataDictionary().setStream(sourceName, streamOrViewAO, getActiveSession());
+				
+				if(!getDataDictionary().containsViewOrStream(sourceName, getActiveSession())) {
+					Optional<ILogicalOperator> optTopAO = parsePQLStatement(sourceName, pqlStatement);
+					if (optTopAO.isPresent()) {
+						synchronized (importedSourcesBiMap) {
+							importedSourcesBiMap.put(addedData.getUUID(), userName + "." + sourceName);
+						}
+	
+						ILogicalOperator streamOrViewAO = determineStreamOrViewAO(optTopAO.get());
+						if (isStream) {
+							getDataDictionary().setStream(sourceName, streamOrViewAO, getActiveSession());
+						} else {
+							getDataDictionary().setView(sourceName, streamOrViewAO, getActiveSession());
+						}
+	
 					} else {
-						getDataDictionary().setView(sourceName, streamOrViewAO, getActiveSession());
+						LOG.error("No data source from distributed data created");
 					}
-
-				} else {
-					LOG.error("No data source from distributed data created");
 				}
-
 			} catch (JSONException e) {
 				LOG.error("Could not process json-data", e);
 			}
