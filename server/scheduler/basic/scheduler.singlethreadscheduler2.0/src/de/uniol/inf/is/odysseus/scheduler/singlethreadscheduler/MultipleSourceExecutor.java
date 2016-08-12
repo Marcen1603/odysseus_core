@@ -96,7 +96,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 	private void waitForProcessableSources() {
 		synchronized (sources) {
 			boolean processableSources = false;
-			while (!processableSources && sources.size() > 0) {
+			while (!processableSources && sources.size() > 0 && !interrupt && caller.isRunning()) {
 				updateSources();
 				for (IIterableSource<?> others : sources) {
 					if (others.isOpen()) {
@@ -184,6 +184,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 	}
 
 	private void updateSources() {
+		//logger.debug("Updating sources toAdd "+toAdd+" toRemove "+toRemove);
 		boolean changed = false;
 		currentState = State.UPDATE_SOURCES;
 		List<IIterableSource<?>> list = null;
