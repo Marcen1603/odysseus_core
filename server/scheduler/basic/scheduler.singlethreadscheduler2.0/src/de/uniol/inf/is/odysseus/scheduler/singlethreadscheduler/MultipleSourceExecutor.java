@@ -18,10 +18,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 
 public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
-	static final Logger logger = LoggerFactory
-			.getLogger(MultipleSourceExecutor.class);
-	static final InfoService infoService = InfoServiceFactory
-			.getInfoService(MultipleSourceExecutor.class);
+	static final Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
+	static final InfoService infoService = InfoServiceFactory.getInfoService(MultipleSourceExecutor.class);
 	private boolean interrupt = false;
 	final private List<IIterableSource<?>> sources = new ArrayList<>();
 	final private List<IIterableSource<?>> toAdd = new LinkedList<>();
@@ -46,8 +44,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
 	private static long counter = 0;
 
-	public MultipleSourceExecutor(
-			AbstractSimpleThreadScheduler singleThreadScheduler) {
+	public MultipleSourceExecutor(AbstractSimpleThreadScheduler singleThreadScheduler) {
 		this.setName("MultiSourceExecutor #" + (counter++) + " ");
 		this.caller = singleThreadScheduler;
 	}
@@ -62,14 +59,14 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 				while (sources.size() > 0) {
 					updateSources();
 					// Need to delay some time to catch an open
-					//delay(10);
+					// delay(10);
 					boolean processableSources = processSources();
 					updateSources();
 					if (!processableSources) {
 						logger.trace("No processable sources");
 						waitForProcessableSources();
 					}
-				}// while sources.size() > 0
+				} // while sources.size() > 0
 			} // !interrupt && !isInterrupted() && caller.isRunning()
 		} catch (Exception e) {
 			// TODO: Error Handler
@@ -77,13 +74,10 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			infoService.error("Error in processing sources " + sources, e);
 		}
 
-		logger.debug("Removing Source Executor " + this.getName()
-				+ " with sources: " + sources);
+		logger.debug("Removing Source Executor " + this.getName() + " with sources: " + sources);
 		// caller.removeSourceThread(this);
 
 	}
-	
-	
 
 	private void delay(int i) {
 		try {
@@ -108,9 +102,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 				try {
 					if (!processableSources) {
 						if (logger.isTraceEnabled()) {
-							logger.trace(this.getName()
-									+ " - Waiting for open sources to process "
-									+ sources);
+							logger.trace(this.getName() + " - Waiting for open sources to process " + sources);
 						}
 						sources.wait(1000);
 					}
@@ -143,23 +135,16 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 							if (lastRun != null) {
 								try {
 
-									while (s.getDelay()
-											- (System.currentTimeMillis() - lastRun) > 0) {
-										long time = s.getDelay()
-												- (System.currentTimeMillis() - lastRun);
+									while (s.getDelay() - (System.currentTimeMillis() - lastRun) > 0) {
+										long time = s.getDelay() - (System.currentTimeMillis() - lastRun);
 										if (logger.isTraceEnabled()) {
-											logger.trace(this.hashCode()
-													+ " Sleeping ..." + time
-													+ " " + s + " "
-													+ toRemove.size() + " "
-													+ toRemove + " "
-													+ sources.size() + " "
+											logger.trace(this.hashCode() + " Sleeping ..." + time + " " + s + " "
+													+ toRemove.size() + " " + toRemove + " " + sources.size() + " "
 													+ sources);
 										}
 										sources.wait(time);
 										if (logger.isTraceEnabled()) {
-											logger.trace(this.hashCode()
-													+ " Sleeping done");
+											logger.trace(this.hashCode() + " Sleeping done");
 										}
 									}
 								} catch (InterruptedException e) {
@@ -171,8 +156,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 							transfer(s);
 						} else { // Handle all but the first source
 							long ct2 = System.currentTimeMillis();
-							if (lastRun == null
-									|| ct2 - lastRun >= s.getDelay()) {
+							if (lastRun == null || ct2 - lastRun >= s.getDelay()) {
 								transfer(s);
 							}
 						}
@@ -184,7 +168,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 	}
 
 	private void updateSources() {
-		//logger.debug("Updating sources toAdd "+toAdd+" toRemove "+toRemove);
+		// logger.debug("Updating sources toAdd "+toAdd+" toRemove "+toRemove);
 		boolean changed = false;
 		currentState = State.UPDATE_SOURCES;
 		List<IIterableSource<?>> list = null;
@@ -223,8 +207,8 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			if (lastRun == null) {
 				lastRun = -1L;
 			}
-			logger.trace("Transfer for " + s + " d=" + s.getDelay() + " real="
-					+ (ct2 - lastRun) + " n=" + ct2 + " last=" + lastRun);
+			logger.trace("Transfer for " + s + " d=" + s.getDelay() + " real=" + (ct2 - lastRun) + " n=" + ct2
+					+ " last=" + lastRun);
 		}
 		s.transferNext();
 		lastRuns.put(s, ct2);
@@ -261,7 +245,11 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			toRemove.addAll(remove);
 		}
 		// this.sourcesChangeRequested = true;
-		logger.trace("Added " + remove + " to remove list");
+		if (logger.isDebugEnabled()) {
+			if (remove.size() > 0) {
+				logger.debug("Added " + remove + " to remove list");
+			}
+		}
 		synchronized (sources) {
 			sources.notifyAll();
 		}
