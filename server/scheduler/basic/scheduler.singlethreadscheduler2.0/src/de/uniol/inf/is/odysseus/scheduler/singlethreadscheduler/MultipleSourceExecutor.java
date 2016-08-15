@@ -245,14 +245,14 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			toRemove.addAll(remove);
 		}
 		// this.sourcesChangeRequested = true;
-		if (logger.isDebugEnabled()) {
-			if (remove.size() > 0) {
-				logger.debug("Added " + remove + " to remove list");
-			}
-		}
-		synchronized (sources) {
-			sources.notifyAll();
-		}
+//		if (logger.isDebugEnabled()) {
+//			if (remove.size() > 0) {
+//				logger.debug("Added " + remove + " to remove list");
+//			}
+//		}
+//		synchronized (sources) {
+//			sources.notifyAll();
+//		}
 	}
 
 	public synchronized void addSource(IIterableSource<?> source) {
