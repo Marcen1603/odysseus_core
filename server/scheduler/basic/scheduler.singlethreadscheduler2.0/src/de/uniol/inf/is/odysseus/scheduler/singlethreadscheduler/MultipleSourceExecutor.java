@@ -261,7 +261,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			toRemove.addAll(remove);
 		}
 		// this.sourcesChangeRequested = true;
-		// logger.debug("Added " + remove + " to remove list");
+		logger.trace("Added " + remove + " to remove list");
 		synchronized (sources) {
 			sources.notifyAll();
 		}
