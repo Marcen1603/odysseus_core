@@ -1,6 +1,6 @@
 #PARSER PQL
 
-#RUNQUERY
+#ADDQUERY
 Auction = ACCESS({
               source='Auction',
               wrapper='GenericPull',

@@ -3,7 +3,7 @@
 #DROPALLSOURCES
 
 #PARSER PQL
-#RUNQUERY
+#ADDQUERY
 random1_ = CSVFILESOURCE({SCHEMA = [
 		['key1', 'Long'],
 		['value1', 'String'],
