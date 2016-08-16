@@ -5,30 +5,34 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 import de.uniol.inf.is.odysseus.test.set.QueryTestSet;
 import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.AbstractCompareSink;
 import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.ICompareSinkListener;
 
-public abstract class AbstractQueryTestComponent<T extends ITestContext, S extends QueryTestSet> extends AbstractTestComponent<T, S> implements ICompareSinkListener {
+public abstract class AbstractQueryTestComponent<T extends ITestContext, S extends QueryTestSet>
+		extends AbstractTestComponent<T, S> implements ICompareSinkListener {
 
 	private static final long PROCESSING_WAIT_TIME = 1000;
 	// after 10 Minutes: abort!
-	private static final long ABORT_PROCESSING_AFTER = 1000*60*10; 
+	private static final long ABORT_PROCESSING_AFTER = 1000 * 60 * 10;
 
 	private StatusCode processingResult = null;
 
 	private boolean waitforprocessing = true;
 	private long startedAt;
-	
-	public AbstractQueryTestComponent(){
+
+	public AbstractQueryTestComponent() {
 		this(true);
 	}
-	
-	public AbstractQueryTestComponent(boolean waitForProcessing){
-		this.waitforprocessing  = waitForProcessing;
+
+	public AbstractQueryTestComponent(boolean waitForProcessing) {
+		this.waitforprocessing = waitForProcessing;
 	}
 
 	@Override
@@ -45,19 +49,29 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 		try {
 			LOG.debug("adding " + ids.size() + " queries done.");
 			StatusCode result = prepareQueries(ids, set);
-			if(result==StatusCode.OK && waitforprocessing){
+			if (result == StatusCode.OK && waitforprocessing) {
 				for (int id : ids) {
 					LOG.debug("starting query with ID " + id + "...");
 					executor.startQuery(id, session);
 				}
-				
+
 				processingResult = null;
 				LOG.debug("query started, waiting until data is processed...");
 				result = waitProcessing();
+				if (result == StatusCode.ERROR_DEADLOCK_POSSIBLE) {
+					for (int id : ids) {
+						SimplePlanPrinter<IPhysicalOperator> planPrinter = new SimplePlanPrinter<IPhysicalOperator>(
+								true);
+						for (IPhysicalOperator op : executor.getExecutionPlan().getQueryById(id).getRoots()) {
+							String output = planPrinter.createString(op);
+							LOG.debug(output);
+						}
+					}
+				}
 				LOG.debug("processing done.");
 				// Wait one second ... currently some deadlock problems
 				Thread.sleep(1000);
-			}else{
+			} else {
 				processingResult = result;
 			}
 			LOG.debug("result: " + result);
@@ -66,12 +80,12 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} finally {			
+		} finally {
 			LOG.debug("Try to remove all queries ");
-			Thread t = new Thread(){
+			Thread t = new Thread() {
 				@Override
 				public void run() {
-					executor.removeAllQueries(session);					
+					executor.removeAllQueries(session);
 				};
 			};
 			t.start();
@@ -81,15 +95,15 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 				e.printStackTrace();
 				throw new RuntimeException("Could not remove all queries in time");
 			}
-			
+
 			LOG.debug("done");
 		}
 		return this.processingResult;
 
 	}
 
-	protected StatusCode prepareQueries(Collection<Integer> ids, S set) {		
-		return StatusCode.OK;				
+	protected StatusCode prepareQueries(Collection<Integer> ids, S set) {
+		return StatusCode.OK;
 	}
 
 	@Override
@@ -100,7 +114,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 		synchronized (this) {
 			while (processingResult == null) {
 				this.wait(PROCESSING_WAIT_TIME);
-				if(System.currentTimeMillis()-startedAt>ABORT_PROCESSING_AFTER){
+				if (System.currentTimeMillis() - startedAt > ABORT_PROCESSING_AFTER) {
 					this.processingResult = StatusCode.ERROR_DEADLOCK_POSSIBLE;
 				}
 			}
@@ -111,7 +125,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 	@Override
 	public void compareSinkProcessingDone(AbstractCompareSink<?> sink, boolean done, StatusCode result) {
 		synchronized (this) {
-			if(this.processingResult==null){
+			if (this.processingResult == null) {
 				this.processingResult = result;
 			}
 		}
