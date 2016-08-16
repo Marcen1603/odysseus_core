@@ -73,8 +73,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			e.printStackTrace();
 			infoService.error("Error in processing sources " + sources, e);
 		}
-
-		logger.debug("Removing Source Executor " + this.getName() + " with sources: " + sources);
+		logger.debug("Terminating Source Executor " + this.getName() + " with sources: " + sources);
 		// caller.removeSourceThread(this);
 
 	}
