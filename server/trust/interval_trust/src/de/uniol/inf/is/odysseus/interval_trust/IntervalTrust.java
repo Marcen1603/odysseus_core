@@ -11,10 +11,11 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
+import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
-public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITimeInterval, ITrust {
+public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITimeIntervalTrust {
 
 	private static final long serialVersionUID = 1599620389994530920L;
 
