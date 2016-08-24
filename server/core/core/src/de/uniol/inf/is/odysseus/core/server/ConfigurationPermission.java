@@ -25,4 +25,6 @@ public enum ConfigurationPermission implements IPermission {
 	public static boolean needsNoObject(IPermission action) {
 		return true;
 	}
+
+	
 }

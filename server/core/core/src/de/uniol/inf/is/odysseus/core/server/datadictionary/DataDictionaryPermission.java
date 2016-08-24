@@ -92,4 +92,7 @@ public enum DataDictionaryPermission implements IPermission {
 			return false;
 		}
 	}
+	
+	
+
 }

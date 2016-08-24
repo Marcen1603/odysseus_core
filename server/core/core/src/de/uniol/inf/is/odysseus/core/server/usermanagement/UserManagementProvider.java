@@ -52,7 +52,7 @@ public class UserManagementProvider {
 			ISession caller) {
 		if (waitForUsermanagement().hasPermission(caller,
 				UserManagementPermission.CREATE_TENANT,
-				UserManagementPermission.objectUri)) {
+				UserManagementPermission.objectURI)) {
 
 			ITenant t = new Tenant();
 			t.setName(name);

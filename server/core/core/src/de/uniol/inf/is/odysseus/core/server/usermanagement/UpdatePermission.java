@@ -10,4 +10,5 @@ public enum UpdatePermission implements IPermission {
 	public static boolean needsNoObject(IPermission action) {
 		return true;
 	}
+	
 }

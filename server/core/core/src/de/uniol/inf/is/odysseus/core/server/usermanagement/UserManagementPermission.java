@@ -54,7 +54,7 @@ public enum UserManagementPermission implements IPermission {
 	LOGOUT, GET_ALL_USER, GET_ALL, SUDO_LOGIN;
 
 
-	public final static String objectUri = "usermanagement";
+	public final static String objectURI = "usermanagement";
 	
 	/**
 	 * returns the higher action (permission) for a given action.
@@ -115,5 +115,6 @@ public enum UserManagementPermission implements IPermission {
 			return false;
 		}
 	}
+	
 
 }
