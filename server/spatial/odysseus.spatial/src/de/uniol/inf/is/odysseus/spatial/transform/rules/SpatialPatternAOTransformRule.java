@@ -5,8 +5,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.spatial.pattern.logicaloperator.SpatialPatternAO;
-import de.uniol.inf.is.odysseus.spatial.pattern.po.SpatialAreaPatternPO;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialPatternAO;
+import de.uniol.inf.is.odysseus.spatial.physicaloperator.SpatialAreaPatternPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.pattern.logicaloperator;
+package de.uniol.inf.is.odysseus.spatial.logicaloperator;
 
 /**
  * 

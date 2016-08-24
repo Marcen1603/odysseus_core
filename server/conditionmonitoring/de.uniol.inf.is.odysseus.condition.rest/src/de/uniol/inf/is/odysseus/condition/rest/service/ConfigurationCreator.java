@@ -405,50 +405,50 @@ public class ConfigurationCreator {
 		ServerConfiguration serverConfig = new ServerConfiguration();
 		// Visualization
 		serverConfig.addSourcePath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\sources.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\sources.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\transformer.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\visualization\\transformer.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\bigPipeThroughput.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\visualization\\bigPipeThroughput.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\windspeed.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\visualization\\windspeed.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\pump1.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\visualization\\pump1.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\pump2.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\visualization\\pump2.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\pump3.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\visualization\\pump3.qry",
 				"OdysseusScript");
 		// Analysis
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pumpPatternAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\pumpPatternAnalysis.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\transformerTemperatureAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\transformerTemperatureAnalysis.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\coolingPipeFlowAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\coolingPipeFlowAnalysis.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\windturbineCohortAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\windturbineCohortAnalysis.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pumpSwitchIntervalAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\pumpSwitchIntervalAnalysis.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pump1VibrationAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\pump1VibrationAnalysis.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pump2VibrationAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\pump2VibrationAnalysis.qry",
 				"OdysseusScript");
 		serverConfig.addQueryPath(
-				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pump3VibrationAnalysis.qry",
+				"C:\\Users\\Tobias\\development\\odysseusWS\\ConditionMonitoring_Master\\demonstration\\analysis\\pump3VibrationAnalysis.qry",
 				"OdysseusScript");
 
 		// Put these to the big config

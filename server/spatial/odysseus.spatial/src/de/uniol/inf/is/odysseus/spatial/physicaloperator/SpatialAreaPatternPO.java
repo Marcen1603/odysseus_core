@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.spatial.pattern.po;
+package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.pattern.logicaloperator.SpatialPattern;
-import de.uniol.inf.is.odysseus.spatial.pattern.logicaloperator.SpatialPatternAO;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialPattern;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialPatternAO;
 import de.uniol.inf.is.odysseus.spatial.utilities.SpatialUtils;
 
 @SuppressWarnings("rawtypes")
