@@ -18,6 +18,15 @@ public class SpatioTemporalDataStructureProvider {
 		}
 		return instance;
 	}
+	
+	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type) {
+		// TODO Use OSGi to bind dataStructures
+		if (getDataStructure(name) == null) {
+			addDataStructure(new NaiveSTDataStructure(name));
+		}
+		
+		return getDataStructure(name);
+	}
 
 	public void addDataStructure(IMovingObjectDataStructure dataStructure) {
 		dataStructureMap.put(dataStructure.getName(), dataStructure);

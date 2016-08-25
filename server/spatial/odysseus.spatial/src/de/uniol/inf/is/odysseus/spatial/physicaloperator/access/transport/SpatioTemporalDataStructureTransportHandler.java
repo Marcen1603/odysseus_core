@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator.access.transport;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -8,6 +10,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatioTemporalDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
@@ -28,7 +34,16 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 		super(protocolHandler, options);
 		if (options.containsKey(STRUCTURENAME)) {
 			this.dataStructureName = options.get(STRUCTURENAME);
+
+			// Output schema
+			SDFAttribute dataStructureID = new SDFAttribute(null, "dataStructure", SDFDatatype.STRING, null, null,
+					null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(dataStructureID);
+			SDFSchema outputSchema = SDFSchemaFactory.createNewTupleSchema("", outputAttributes);
+			setSchema(outputSchema);
 		}
+
 	}
 
 	@Override
@@ -83,7 +98,6 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
 		tuple.setAttribute(0, dataStructure);
 		fireProcess(tuple);
-
 	}
 
 	public String getDataStructureName() {

@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.spatial;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.spatial.physicaloperator.access.transport.SpatioTemporalDataStructureTransportHandler;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -18,6 +21,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		TransportHandlerRegistry.register(new SpatioTemporalDataStructureTransportHandler());
+		//DataHandlerRegistry.registerDataHandler(new GraphDataHandler());
+	
 	}
 
 	/*
