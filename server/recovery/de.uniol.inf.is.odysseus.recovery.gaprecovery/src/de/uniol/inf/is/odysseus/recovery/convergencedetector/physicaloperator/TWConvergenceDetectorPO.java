@@ -1,10 +1,9 @@
 package de.uniol.inf.is.odysseus.recovery.convergencedetector.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
-import de.uniol.inf.is.odysseus.trust.ITrust;
+import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -20,7 +19,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * @author Michael Brand
  *
  */
-public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<IMetaAttribute>>
+public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends ITimeIntervalTrust>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
@@ -68,13 +67,23 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<IMetaAtt
 		}
 
 		/*
-		 * It is not necessary to calculate the end of the convergence phase.
-		 * The trust will be set to 0 for every element aggregated with the
-		 * first after offline phase (meta data merge).
+		 * It is necessary to calculate the end of the convergence phase. Former
+		 * idea war to reduce the trust only for the first element, because all
+		 * elements that are in a window with that element will get a reduced
+		 * trust by the merge function. But that does only work, if the elements
+		 * get merged! It won't work for aggregations over groups!
 		 */
 
-		((ITrust) object.getMetadata()).setTrust(0);
-		this.convEndReached = true;
+		final PointInTime currentTS = object.getMetadata().getStart();
+		if (convEnd == null) {
+			convEnd = currentTS.plus(wndWidth);
+		}
+
+		if (currentTS.beforeOrEquals(convEnd)) {
+			object.getMetadata().setTrust(0);
+		} else {
+			this.convEndReached = true;
+		}
 		transfer(object);
 	}
 

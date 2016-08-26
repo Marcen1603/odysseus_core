@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.recovery.convergencedetector.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
-import de.uniol.inf.is.odysseus.trust.ITrust;
+import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -20,7 +19,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * @author Michael Brand
  *
  */
-public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<IMetaAttribute>>
+public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends ITimeIntervalTrust>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
@@ -53,7 +52,7 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<IMetaAtt
 		 * gap. At this juncture, there is no possibility in Odysseus to
 		 * determine Repeatable operators.
 		 */
-		((ITrust) object.getMetadata()).setTrust(0.5);
+		object.getMetadata().setTrust(0.5);
 		transfer(object);
 
 	}

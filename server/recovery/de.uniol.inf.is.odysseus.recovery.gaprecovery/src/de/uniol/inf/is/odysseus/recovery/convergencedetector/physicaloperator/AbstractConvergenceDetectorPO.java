@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.recovery.convergencedetector.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.recovery.convergencedetector.logicaloperator.ConvergenceDetectorAO;
+import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * @author Michael Brand
  *
  */
-public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<IMetaAttribute>>
+public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<? extends ITimeIntervalTrust>>
 		extends AbstractPipe<StreamObject, StreamObject> {
 
 	/**
