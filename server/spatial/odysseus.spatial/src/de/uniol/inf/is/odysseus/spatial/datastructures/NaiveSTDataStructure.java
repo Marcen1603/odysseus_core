@@ -18,7 +18,9 @@ import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	private List<Tuple<?>> tuples;
+
 	private String name;
+
 	private List<ISpatialListener> listeners = new ArrayList<ISpatialListener>();
 
 	public NaiveSTDataStructure(String name) {
@@ -102,7 +104,6 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		}
 	}
 
-	@Override
 	public String getName() {
 		return this.name;
 	}

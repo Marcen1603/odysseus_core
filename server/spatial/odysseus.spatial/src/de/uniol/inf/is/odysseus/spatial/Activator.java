@@ -23,6 +23,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		TransportHandlerRegistry.register(new SpatioTemporalDataStructureTransportHandler());
 		//DataHandlerRegistry.registerDataHandler(new GraphDataHandler());
+		//MovingObjectDataStructuresRegistry.register(NaiveSTDataStructure.class, NaiveSTDataStructure);
 	
 	}
 
