@@ -46,7 +46,7 @@ public class DiscardedReplicatesPostProcessor implements IQueryDistributionPostP
 
 	private static final Logger logger = LoggerFactory.getLogger(DiscardedReplicatesPostProcessor.class);
 
-	private static final String postProcessorName = "DiscardedReplicates";
+	private static final String postProcessorName = "discardedreplicates";
 
 	@Override
 	public String getName() {
