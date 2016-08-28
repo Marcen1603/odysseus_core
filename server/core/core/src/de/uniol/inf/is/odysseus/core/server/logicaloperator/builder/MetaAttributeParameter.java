@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 
 public class MetaAttributeParameter extends AbstractParameter<IMetaAttribute> {
@@ -56,16 +58,28 @@ public class MetaAttributeParameter extends AbstractParameter<IMetaAttribute> {
 		return;
 
 	}
-
 	
 	@Override
 	protected String getPQLStringInternal() {
+		return getPQLString(getValue());
+	}
+	
+	static public String getPQLString(IMetaAttribute m){
 		StringBuilder sb = new StringBuilder();
-		sb.append("'");
-		sb.append(getValue().getName());
-		sb.append("'");
+		// 29.8. Changed: Return list of base types (instead of combined type)
+		
+		List<SDFMetaSchema> schemas = m.getSchema();
+		Iterator<SDFMetaSchema> iter = schemas.iterator();
+		sb.append("[");
+		sb.append("'"+iter.next().getURIWithoutQualName()+"'");
+		while(iter.hasNext()){
+			sb.append(",'"+iter.next().getURIWithoutQualName()+"'");
+		}		
+		
+		sb.append("]");
 
 		return sb.toString();
+		
 	}
 
 }

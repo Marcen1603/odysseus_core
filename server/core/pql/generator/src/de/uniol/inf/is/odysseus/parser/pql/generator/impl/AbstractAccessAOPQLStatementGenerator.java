@@ -8,14 +8,17 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
-public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> extends AbstractPQLStatementGenerator<T> {
+public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO>
+		extends AbstractPQLStatementGenerator<T> {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractAccessAOPQLStatementGenerator.class);
@@ -30,7 +33,7 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> e
 	protected String generateParameters(T operator) {
 		final StringBuilder sb = new StringBuilder();
 		final TimestampAO timestampAO = determineTimestampAO(operator);
-		
+
 		sb.append("source='").append(operator.getName()).append("'");
 		appendIfNeeded(sb, "wrapper", determineWrapper(operator));
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());
@@ -45,24 +48,27 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> e
 		if (inputSchema != null && !inputSchema.isEmpty()) {
 			sb.append(", inputschema=").append(convertInputSchema(inputSchema));
 		}
-		
-		String metaAttributeName = operator.getLocalMetaAttribute().getName();
-		if( !Strings.isNullOrEmpty(metaAttributeName)) {
-			sb.append(", metaAttribute='").append(metaAttributeName).append("'");
+
+		IMetaAttribute metaAttribute = operator.getLocalMetaAttribute();
+		if (metaAttribute != null) {
+			// sb.append(",
+			// metaAttribute='").append(metaAttributeName).append("'");
+			sb.append(", metaAttribute=").append(MetaAttributeParameter.getPQLString(metaAttribute)).append("");
+
 		}
 		sb.append(", overwriteSchemaSourceName=").append(operator.isOverWriteSchemaSourceName());
 		sb.append(", readmetadata=").append(operator.readMetaData());
 
 		return sb.toString();
 	}
-	
+
 	private static void appendIfNeeded(StringBuilder sb, String key, String text) {
 		appendIfNeeded(sb, key, text, false);
 	}
-	
+
 	private static void appendIfNeeded(StringBuilder sb, String key, String text, boolean first) {
 		if (!Strings.isNullOrEmpty(text)) {
-			if(!first) {
+			if (!first) {
 				sb.append(",");
 			}
 			sb.append(key).append("='").append(text).append("'");
@@ -117,7 +123,7 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> e
 		for (int i = 0; i < attributes.length; i++) {
 			final SDFAttribute attribute = attributes[i];
 			sb.append("['");
-			if( !Strings.isNullOrEmpty(attribute.getSourceName())) {
+			if (!Strings.isNullOrEmpty(attribute.getSourceName())) {
 				sb.append(attribute.getSourceName());
 				sb.append("', '");
 			}
@@ -159,7 +165,7 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO> e
 		if (operator.getTransportHandler().equals("NonBlockingTcp")) {
 			return Constants.GENERIC_PUSH;
 		}
-		
+
 		return Constants.GENERIC_PULL;
 	}
 }
