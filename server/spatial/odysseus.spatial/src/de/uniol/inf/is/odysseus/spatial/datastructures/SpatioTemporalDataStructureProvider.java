@@ -26,7 +26,6 @@ public class SpatioTemporalDataStructureProvider {
 	}
 
 	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type) {
-		// TODO Use OSGi to bind dataStructures
 		if (getDataStructure(name) == null) {
 			Class<?> dataStructureClass = MovingObjectDataStructuresRegistry.getDataStructureClass(type);
 			IMovingObjectDataStructure dataStrucure = null;

@@ -61,7 +61,7 @@ public class STDataStructureAO extends UnaryLogicalOp {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		// TODO Think about what we put out here
 		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
-		SDFAttribute attr = new SDFAttribute("spatialTODO", "spatialTODO", SDFDatatype.STRING);
+		SDFAttribute attr = new SDFAttribute("dataStructureName", "dataStructureName", SDFDatatype.STRING);
 		attributeList.add(attr);
 		
 		@SuppressWarnings("unchecked")

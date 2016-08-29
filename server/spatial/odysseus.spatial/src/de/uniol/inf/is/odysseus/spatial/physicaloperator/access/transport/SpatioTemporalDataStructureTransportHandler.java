@@ -96,7 +96,7 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 	@Override
 	public void onMovingObjectDataStructureChange(IMovingObjectDataStructure dataStructure) {
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
-		tuple.setAttribute(0, dataStructure);
+		tuple.setAttribute(0, dataStructure.getName());
 		fireProcess(tuple);
 	}
 
