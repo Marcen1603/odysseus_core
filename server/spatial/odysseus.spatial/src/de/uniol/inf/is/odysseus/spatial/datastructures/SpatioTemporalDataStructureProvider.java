@@ -1,9 +1,15 @@
 package de.uniol.inf.is.odysseus.spatial.datastructures;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SpatioTemporalDataStructureProvider {
+
+	static Logger logger = LoggerFactory.getLogger(SpatioTemporalDataStructureProvider.class);
 
 	private static SpatioTemporalDataStructureProvider instance;
 	private Map<String, IMovingObjectDataStructure> dataStructureMap;
@@ -18,13 +24,22 @@ public class SpatioTemporalDataStructureProvider {
 		}
 		return instance;
 	}
-	
+
 	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type) {
 		// TODO Use OSGi to bind dataStructures
 		if (getDataStructure(name) == null) {
-			addDataStructure(new NaiveSTDataStructure(name));
+			Class<?> dataStructureClass = MovingObjectDataStructuresRegistry.getDataStructureClass(type);
+			IMovingObjectDataStructure dataStrucure = null;
+			try {
+				dataStrucure = (IMovingObjectDataStructure) dataStructureClass.getDeclaredConstructor(String.class)
+						.newInstance(name);
+				addDataStructure(dataStrucure);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				logger.error("No datastructure of type " + type + " available.");
+				e.printStackTrace();
+			}
 		}
-		
 		return getDataStructure(name);
 	}
 
