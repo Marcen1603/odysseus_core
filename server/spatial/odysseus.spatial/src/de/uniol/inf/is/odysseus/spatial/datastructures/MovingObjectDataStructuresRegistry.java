@@ -16,11 +16,11 @@ public class MovingObjectDataStructuresRegistry {
 
 	static private Map<String, Class<?>> datastructures = new HashMap<String, Class<?>>();
 
-	public static void register(Class<?> datastructure, String name) {
-		if (!datastructures.containsKey(name)) {
-			datastructures.put(name, datastructure);
+	public static void register(Class<?> datastructure, String type) {
+		if (!datastructures.containsKey(type)) {
+			datastructures.put(type, datastructure);
 		} else {
-			logger.warn("Datastructure with name " + name + " already registered");
+			logger.warn("Datastructure with name " + type + " already registered");
 		}
 	}
 

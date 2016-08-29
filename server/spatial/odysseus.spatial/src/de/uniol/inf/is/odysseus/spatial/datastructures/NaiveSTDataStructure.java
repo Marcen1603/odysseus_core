@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
  */
 public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
+	public static final String TYPE = "naive";
+	
 	private List<Tuple<?>> tuples;
 
 	private String name;

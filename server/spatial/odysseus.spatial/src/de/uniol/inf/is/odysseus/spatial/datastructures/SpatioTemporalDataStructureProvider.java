@@ -40,6 +40,7 @@ public class SpatioTemporalDataStructureProvider {
 				e.printStackTrace();
 			}
 		}
+		
 		return getDataStructure(name);
 	}
 
