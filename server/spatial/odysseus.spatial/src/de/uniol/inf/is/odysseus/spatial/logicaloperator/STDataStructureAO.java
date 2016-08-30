@@ -59,7 +59,6 @@ public class STDataStructureAO extends UnaryLogicalOp {
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		// TODO Think about what we put out here
 		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
 		SDFAttribute attr = new SDFAttribute("dataStructureName", "dataStructureName", SDFDatatype.STRING);
 		attributeList.add(attr);

@@ -38,6 +38,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		}
 	}
 
+	@Override
 	public List<Tuple<?>> getKNN(Tuple<?> tuple, int geometryPosition, int k) {
 
 		// Get the point from which we want to get the neighbors
@@ -86,6 +87,10 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		});
 
 		// Now we can return the first k elements from the sorted list
+		if (sortedTuples.size() < k) {
+			// Maybe we have less than k neighbors because the number of elements is too small
+			return sortedTuples;
+		}
 		return sortedTuples.subList(0, k);
 
 	}

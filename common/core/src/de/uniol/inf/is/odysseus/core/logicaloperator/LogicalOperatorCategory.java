@@ -37,4 +37,6 @@ public class LogicalOperatorCategory {
 
 	public static final String RDF="RDF";
 	
+	public static final String SPATIAL = "SPATIAL";
+	
 }
