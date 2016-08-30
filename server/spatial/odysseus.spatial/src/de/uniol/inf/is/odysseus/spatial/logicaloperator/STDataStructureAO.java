@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STDataStructure", doc = "Fills a spatio temporal data structure", category = {
@@ -23,6 +24,7 @@ public class STDataStructureAO extends UnaryLogicalOp {
 
 	private String dataStructureName;
 	private String dataStructureType;
+	private int geometryPosition;
 
 	public STDataStructureAO() {
 		super();
@@ -55,6 +57,15 @@ public class STDataStructureAO extends UnaryLogicalOp {
 
 	public String getDataStructureType() {
 		return this.dataStructureType;
+	}
+	
+	public int getGeometryPosition() {
+		return geometryPosition;
+	}
+
+	@Parameter(name = "geometryPosition", optional = false, type = IntegerParameter.class, isList = false, doc = "The position in the incoming tuples where the geometry attribute is.")
+	public void setGeometryPosition(int geometryPosition) {
+		this.geometryPosition = geometryPosition;
 	}
 
 	@Override

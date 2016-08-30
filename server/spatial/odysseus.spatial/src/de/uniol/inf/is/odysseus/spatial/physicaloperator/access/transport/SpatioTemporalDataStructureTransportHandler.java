@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.SpatioTemporalDataStructureProvider;
+import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 
 public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTransportHandler
@@ -60,7 +60,7 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 
 	@Override
 	public void processInOpen() throws IOException {
-		SpatioTemporalDataStructureProvider.getInstance().getDataStructure(this.dataStructureName).addListener(this);
+		SpatialDataStructureProvider.getInstance().getDataStructure(this.dataStructureName).addListener(this);
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 
 	@Override
 	public void processInClose() throws IOException {
-		SpatioTemporalDataStructureProvider.getInstance().getDataStructure(this.dataStructureName).removeListener(this);
+		SpatialDataStructureProvider.getInstance().getDataStructure(this.dataStructureName).removeListener(this);
 	}
 
 	@Override

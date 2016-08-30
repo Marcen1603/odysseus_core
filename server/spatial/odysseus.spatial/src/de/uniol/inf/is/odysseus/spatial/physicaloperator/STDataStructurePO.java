@@ -7,6 +7,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 
+/**
+ * This operator fills a given data structure with data from the incoming
+ * stream. The data structure is a spatial data structure. The name of the data
+ * structure can be used to access it.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <T>
+ */
 public class STDataStructurePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
 	private IMovingObjectDataStructure dataStructure;

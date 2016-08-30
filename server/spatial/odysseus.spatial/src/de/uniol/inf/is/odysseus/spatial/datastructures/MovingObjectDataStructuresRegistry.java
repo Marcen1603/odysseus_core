@@ -10,13 +10,39 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
 
+/**
+ * A registry to register and access the possible types of data structures.
+ * These can be used to create instances of them. The instances itself can be
+ * accessed via the SpatialDataStructureProvider.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class MovingObjectDataStructuresRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(MovingObjectDataStructuresRegistry.class);
 
-	static private Map<String, Class<?>> datastructures = new HashMap<String, Class<?>>();
+	private static Map<String, Class<?>> datastructures = new HashMap<String, Class<?>>();
 
+	/**
+	 * Registers a new type of spatial data structure so that it can be accessed
+	 * by others.
+	 * 
+	 * @param datastructure
+	 *            The class which provides the data structure. Is needs to
+	 *            implement IMovingObjectDataStructure.
+	 * @param type
+	 *            The name of the type of the data structure under which it can
+	 *            be used (e.g. in PQL).
+	 */
 	public static void register(Class<?> datastructure, String type) {
+
+		// Is it a spatial data structure?
+		if (!IMovingObjectDataStructure.class.isAssignableFrom(datastructure)) {
+			logger.warn("Given class with type " + type + " does not implement IMovingObjectDataStructure.");
+			return;
+		}
+
 		if (!datastructures.containsKey(type)) {
 			datastructures.put(type, datastructure);
 		} else {
@@ -24,6 +50,12 @@ public class MovingObjectDataStructuresRegistry {
 		}
 	}
 
+	/**
+	 * Removes a data structure from the registry.
+	 * 
+	 * @param datastructure
+	 *            The data structure that needs to be removed.
+	 */
 	static public void remove(IMovingObjectDataStructure datastructure) {
 		logger.trace("Remove datastructure " + datastructure.getName());
 		datastructures.remove(datastructure.getName().toLowerCase());
@@ -32,14 +64,24 @@ public class MovingObjectDataStructuresRegistry {
 		}
 	}
 
-	static public Class<?> getDataStructureClass(String name) {
-		Class<?> datastructure = datastructures.get(name.toLowerCase());
+	/**
+	 * Returns the data structure class for the given data structure type (name
+	 * of the type of data structure, not the instance). This class can be used
+	 * to create an instance of it.
+	 * 
+	 * @param type
+	 *            The type of data structure you want to get the class for
+	 * @return The class of the data structure so that an instance can be
+	 *         created
+	 */
+	static public Class<?> getDataStructureClass(String type) {
+		Class<?> datastructure = datastructures.get(type.toLowerCase());
 		if (datastructure != null) {
 			return datastructure;
 		}
-		logger.error("No datastrcture with name " + name + " found!");
+		logger.error("No datastrcture with name " + type + " found!");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Available datastrcture: ");
+			logger.debug("Available datastructures: ");
 			for (String k : datastructures.keySet()) {
 				logger.debug(k);
 			}
@@ -47,7 +89,13 @@ public class MovingObjectDataStructuresRegistry {
 		return null;
 	}
 
-	public static ImmutableList<String> getDataStructureNames() {
+	/**
+	 * You may want to choose a data structure from this list. These are all
+	 * registered types of data structures.
+	 * 
+	 * @return A list of all types of data structures
+	 */
+	public static ImmutableList<String> getDataStructureTypes() {
 		return ImmutableList.copyOf(datastructures.keySet());
 	}
 

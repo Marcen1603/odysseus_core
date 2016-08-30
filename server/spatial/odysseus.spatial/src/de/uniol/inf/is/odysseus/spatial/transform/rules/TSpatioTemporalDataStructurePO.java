@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.SpatioTemporalDataStructureProvider;
+import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.STDataStructureAO;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.STDataStructurePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -14,8 +14,9 @@ public class TSpatioTemporalDataStructurePO extends AbstractTransformationRule<S
 
 	@Override
 	public void execute(STDataStructureAO operator, TransformationConfiguration config) throws RuleException {
-		IMovingObjectDataStructure dataStructure = SpatioTemporalDataStructureProvider.getInstance()
-				.getOrCreateDataStructure(operator.getDataStructureName(), operator.getDataStructureType());
+		IMovingObjectDataStructure dataStructure = SpatialDataStructureProvider.getInstance()
+				.getOrCreateDataStructure(operator.getDataStructureName(), operator.getDataStructureType(),
+						operator.getGeometryPosition());
 		defaultExecute(operator, new STDataStructurePO<>(dataStructure), config, true, true);
 	}
 
