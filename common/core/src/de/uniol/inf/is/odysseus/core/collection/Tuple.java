@@ -20,6 +20,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -233,8 +234,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 				System.arraycopy(attr[i], 0, clone[i], 0, length);
 			}
 			// Handle List datatype
-			// TODO: LinkedList?
-			else if ((attr[i].getClass() == ArrayList.class)) {
+			else if ((attr[i].getClass() == ArrayList.class || attr[i].getClass() == LinkedList.class)) {
 				clone[i] = cloneList((List<?>) attr[i]);
 			}
 			// Handle the rest
