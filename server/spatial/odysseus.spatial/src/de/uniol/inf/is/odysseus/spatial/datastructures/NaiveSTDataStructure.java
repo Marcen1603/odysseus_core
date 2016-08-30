@@ -88,7 +88,8 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 			// elements is too small
 			return sortedTuples;
 		}
-		return sortedTuples.subList(0, k);
+		// Very important: Do not return the subList itself as it is only a view
+		return new ArrayList<Tuple<?>>(sortedTuples.subList(0, k));
 
 	}
 
