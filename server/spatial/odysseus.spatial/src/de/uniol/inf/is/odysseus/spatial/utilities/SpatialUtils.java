@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.spatial.utilities;
 
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.vividsolutions.jts.geom.Point;
+
 /**
  * This class provides methods used for spatial calculations.
  * 
@@ -7,6 +12,8 @@ package de.uniol.inf.is.odysseus.spatial.utilities;
  *
  */
 public class SpatialUtils {
+	
+	DefaultGeographicCRS defaultCrs = DefaultGeographicCRS.WGS84;
 
 	/**
 	 * Calculates the distance between two points on the earth in km. Uses the
@@ -34,6 +41,10 @@ public class SpatialUtils {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double distance = earthRadius * c;
 		return distance;
+	}
+
+	public static void calculateDistance(CoordinateReferenceSystem crs, Point[] points) {
+
 	}
 
 }
