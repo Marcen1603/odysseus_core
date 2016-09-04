@@ -5,14 +5,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 
 /**
- * A very simple implementation for a spatial dataStructure. No performance
+ * A very simple implementation for a spatial data structure. No performance
  * improvements are used.
  * 
  * @author Tobias Brandt
@@ -21,6 +20,8 @@ import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	public static final String TYPE = "naive";
+
+	public final static double AVERAGE_RADIUS_OF_EARTH = 6378137;
 
 	private List<Tuple<?>> tuples;
 	private int geometryPosition;
@@ -42,10 +43,10 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		}
 	}
 
+	// TODO Different distance functions should be possible (e.g. city distance
+	// metric, ...)
 	@Override
 	public List<Tuple<?>> getKNN(Geometry geometry, int k) {
-
-		Point centre = geometry.getCentroid();
 
 		// Just copy the list ...
 		List<Tuple<?>> sortedTuples = new ArrayList<Tuple<?>>(tuples);
@@ -54,9 +55,11 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 			@Override
 			public int compare(Tuple<?> o1, Tuple<?> o2) {
-				// Calculate the distance of both tuples to the center
-				double distance1 = getPoint(o1).distance(centre);
-				double distance2 = getPoint(o2).distance(centre);
+				// Calculate the distance of both tuples to the center (here we
+				// can use this distance calculation, as we are only interested
+				// in the distance comparison, not in the real distances)
+				double distance1 = getGeometry(o1).distance(geometry);
+				double distance2 = getGeometry(o2).distance(geometry);
 
 				if (distance1 < distance2) {
 					return -1;
@@ -68,13 +71,13 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 			}
 
-			private Point getPoint(Tuple<?> tuple) {
+			private Geometry getGeometry(Tuple<?> tuple) {
 				Object o = tuple.getAttribute(geometryPosition);
 				GeometryWrapper geometryWrapper = null;
 				if (o instanceof GeometryWrapper) {
 					geometryWrapper = (GeometryWrapper) o;
-					Point centre = geometryWrapper.getGeometry().getCentroid();
-					return centre;
+					Geometry geometry = geometryWrapper.getGeometry();
+					return geometry;
 				} else {
 					return null;
 				}
@@ -91,6 +94,74 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		// Very important: Do not return the subList itself as it is only a view
 		return new ArrayList<Tuple<?>>(sortedTuples.subList(0, k));
 
+	}
+
+	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range) {
+
+		List<Tuple<?>> rangeTuples = new ArrayList<Tuple<?>>();
+
+		for (Tuple<?> tuple : tuples) {
+			Object o = tuple.getAttribute(geometryPosition);
+			GeometryWrapper geometryWrapper = null;
+			if (o instanceof GeometryWrapper) {
+				geometryWrapper = (GeometryWrapper) o;
+				Geometry tupleGeometry = geometryWrapper.getGeometry();
+
+				// Distance calculation is a bit difficult as we don't always
+				// know the reference system
+
+				// Let us use the WGS84 system for now. It's not a perfect
+				// calculation, hence we have to improve it with geotools later
+				// on
+
+				// double angularUnit = tupleGeometry.distance(geometry);
+				// double realDistance = angularUnit * (Math.PI / 180) *
+				// 6378137;
+
+				double realDistance = calculateDistance(tupleGeometry.getCentroid().getX(),
+						tupleGeometry.getCentroid().getY(), geometry.getCentroid().getX(),
+						geometry.getCentroid().getY());
+
+				// TODO Use geotools or apache sis for this purpose?
+
+				if (realDistance <= range) {
+					rangeTuples.add(tuple);
+
+					System.out.println("Angular unit: " + tupleGeometry.distance(geometry) + ", real distance: "
+							+ realDistance + " m");
+				}
+
+			}
+		}
+		return rangeTuples;
+	}
+
+	/**
+	 * The haversine formula to calculate the distance between two points on the
+	 * earth. Algorithm from
+	 * http://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
+	 * 
+	 * @param lat1
+	 *            First latitude value
+	 * @param lng1
+	 *            First longitude value
+	 * @param lat2
+	 *            Second latitude value
+	 * @param lng2
+	 *            Second longitude value
+	 * @return Distance between the two points in meters
+	 */
+	public double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+
+		double latDistance = Math.toRadians(lat1 - lat2);
+		double lngDistance = Math.toRadians(lng1 - lng2);
+
+		double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + Math.cos(Math.toRadians(lat1))
+				* Math.cos(Math.toRadians(lat2)) * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
+
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		return Math.round(AVERAGE_RADIUS_OF_EARTH * c);
 	}
 
 	@Override

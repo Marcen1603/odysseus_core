@@ -49,19 +49,29 @@ public interface IMovingObjectDataStructure {
 	public String getName();
 
 	/**
-	 * Calculates the k nearest neighbors of the given geometry (of the centroid
-	 * of the geometry) and returns a list of tuples. The list can be smaller,
-	 * if there are not enough neighbors (i.e. if the total list of elements is
-	 * smaller than k).
+	 * Calculates the k nearest neighbors of the given geometry and returns a
+	 * list of tuples. The list can be smaller, if there are not enough
+	 * neighbors (i.e. if the total list of elements is smaller than k).
 	 * 
 	 * @param geometry
 	 *            The geometry for which the k nearest neighbors are searched
-	 *            (the centroid of the geometry is used for distance
-	 *            calculations)
+	 * 
 	 * @param k
 	 *            The number of neighbors
 	 * @return A list of tuples which are the nearest neighbors of the given
 	 *         geometry
 	 */
 	public List<Tuple<?>> getKNN(Geometry geometry, int k);
+
+	/**
+	 * Calculates all neighbors within the given range around the geometry.
+	 * 
+	 * @param geometry
+	 *            The geometry around which you want to know the neighborhood
+	 * @param range
+	 *            The range in meters around the geometry
+	 * @return A list with all tuples for which their geometry is in the
+	 *         neighborhood around the given geometry
+	 */
+	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range);
 }
