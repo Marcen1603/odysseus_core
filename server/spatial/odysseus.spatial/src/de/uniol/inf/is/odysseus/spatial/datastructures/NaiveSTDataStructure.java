@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
+import de.uniol.inf.is.odysseus.spatial.utilities.SpatialUtils;
 
 /**
  * A very simple implementation for a spatial data structure. No performance
@@ -107,61 +108,18 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 				geometryWrapper = (GeometryWrapper) o;
 				Geometry tupleGeometry = geometryWrapper.getGeometry();
 
-				// Distance calculation is a bit difficult as we don't always
-				// know the reference system
-
-				// Let us use the WGS84 system for now. It's not a perfect
-				// calculation, hence we have to improve it with geotools later
-				// on
-
-				// double angularUnit = tupleGeometry.distance(geometry);
-				// double realDistance = angularUnit * (Math.PI / 180) *
-				// 6378137;
-
-				double realDistance = calculateDistance(tupleGeometry.getCentroid().getX(),
-						tupleGeometry.getCentroid().getY(), geometry.getCentroid().getX(),
-						geometry.getCentroid().getY());
-
-				// TODO Use geotools or apache sis for this purpose?
+				// TODO Use the right coordinate reference system
+				SpatialUtils spatialUtils = SpatialUtils.getInstance();
+				double realDistance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+						tupleGeometry.getCentroid().getCoordinate());
 
 				if (realDistance <= range) {
 					rangeTuples.add(tuple);
-
-					System.out.println("Angular unit: " + tupleGeometry.distance(geometry) + ", real distance: "
-							+ realDistance + " m");
 				}
 
 			}
 		}
 		return rangeTuples;
-	}
-
-	/**
-	 * The haversine formula to calculate the distance between two points on the
-	 * earth. Algorithm from
-	 * http://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
-	 * 
-	 * @param lat1
-	 *            First latitude value
-	 * @param lng1
-	 *            First longitude value
-	 * @param lat2
-	 *            Second latitude value
-	 * @param lng2
-	 *            Second longitude value
-	 * @return Distance between the two points in meters
-	 */
-	public double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
-
-		double latDistance = Math.toRadians(lat1 - lat2);
-		double lngDistance = Math.toRadians(lng1 - lng2);
-
-		double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + Math.cos(Math.toRadians(lat1))
-				* Math.cos(Math.toRadians(lat2)) * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
-
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-		return Math.round(AVERAGE_RADIUS_OF_EARTH * c);
 	}
 
 	@Override

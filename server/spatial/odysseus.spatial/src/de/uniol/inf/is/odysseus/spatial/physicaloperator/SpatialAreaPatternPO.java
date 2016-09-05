@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -35,6 +37,8 @@ public class SpatialAreaPatternPO<T extends Tuple<M>, M extends ITimeInterval> e
 	// object is at the target
 	private double radius;
 	// Coordinates from the target
+	// TODO We should use an geoobject here as well instead of lat and lng
+	// directly
 	private double latTarget;
 	private double lngTarget;
 
@@ -177,7 +181,12 @@ public class SpatialAreaPatternPO<T extends Tuple<M>, M extends ITimeInterval> e
 	 * @return The distance in km between the two points
 	 */
 	private double calculateDistance() {
-		return SpatialUtils.getDistance(lastMovingLat, lastMovingLng, latTarget, lngTarget);
+		Coordinate coord1 = new Coordinate(lastMovingLat, lastMovingLng);
+		Coordinate coord2 = new Coordinate(latTarget, lngTarget);
+		
+		// TODO Use correct Coordinate Reference system
+		SpatialUtils spatialUtils = SpatialUtils.getInstance();
+		return spatialUtils.calculateDistance(coord1, coord2);
 	}
 
 	/**
