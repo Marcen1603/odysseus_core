@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.recoverytime.internal;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -34,12 +33,28 @@ public class RecoveryTime extends AbstractBaseMetaAttribute implements IRecovery
 	/**
 	 * The interface of this meta attribute.
 	 */
-	private static Class<? extends IMetaAttribute> interfaceClass = IRecoveryTime.class;
+	private static final Class<? extends IMetaAttribute> interfaceClass = IRecoveryTime.class;
 
 	/**
 	 * The meta schema name to use.
 	 */
 	private static final String schemaName = "RecoveryTime";
+
+	/**
+	 * The schema of the meta attribute.
+	 */
+	public static final List<SDFMetaSchema> schema = new ArrayList<>(1);
+
+	static {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute(schemaName, "sysTimeStart", SDFDatatype.LONG));
+		attributes.add(new SDFAttribute(schemaName, "sysTimeEnd", SDFDatatype.LONG));
+		attributes.add(new SDFAttribute(schemaName, "sysTime", SDFDatatype.LONG));
+		attributes.add(new SDFAttribute(schemaName, "appTimeStart", SDFDatatype.LONG));
+		attributes.add(new SDFAttribute(schemaName, "appTimeEnd", SDFDatatype.LONG));
+		attributes.add(new SDFAttribute(schemaName, "appTime", SDFDatatype.LONG));
+		schema.add(SDFSchemaFactory.createNewMetaSchema(schemaName, Tuple.class, attributes, interfaceClass));
+	}
 
 	/**
 	 * The system time at which the first element after a restart has been seen;
@@ -110,15 +125,7 @@ public class RecoveryTime extends AbstractBaseMetaAttribute implements IRecovery
 
 	@Override
 	public List<SDFMetaSchema> getSchema() {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute(schemaName, "sysTimeStart", SDFDatatype.LONG));
-		attributes.add(new SDFAttribute(schemaName, "sysTimeEnd", SDFDatatype.LONG));
-		attributes.add(new SDFAttribute(schemaName, "sysTime", SDFDatatype.LONG));
-		attributes.add(new SDFAttribute(schemaName, "appTimeStart", SDFDatatype.LONG));
-		attributes.add(new SDFAttribute(schemaName, "appTimeEnd", SDFDatatype.LONG));
-		attributes.add(new SDFAttribute(schemaName, "appTime", SDFDatatype.LONG));
-		return Collections.singletonList(
-				SDFSchemaFactory.createNewMetaSchema(schemaName, Tuple.class, attributes, interfaceClass));
+		return schema;
 	}
 
 	@Override
