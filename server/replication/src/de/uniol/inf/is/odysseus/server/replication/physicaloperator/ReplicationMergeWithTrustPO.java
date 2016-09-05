@@ -11,11 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMergeAO;
-import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 
 /**
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.trust.ITrust;
  * 
  * @author Michael Brand
  */
-public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends ITimeIntervalTrust>>
+public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends IMetaAttribute>>
 		extends ReplicationMergePO<T> {
 
 	/**
@@ -89,7 +89,7 @@ public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends ITime
 		}
 
 		@SuppressWarnings("unchecked")
-		double trust = ((T) object).getMetadata().getTrust();
+		double trust = ((ITrust) ((T) object).getMetadata()).getTrust();
 		synchronized (trustPerPort) {
 			trustPerPort.put(port, trust);
 		}

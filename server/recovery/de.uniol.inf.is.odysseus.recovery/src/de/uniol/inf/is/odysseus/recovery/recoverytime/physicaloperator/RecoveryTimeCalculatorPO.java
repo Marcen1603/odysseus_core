@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.recovery.recoverytime.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.recovery.recoverytime.IRecoveryTime;
-import de.uniol.inf.is.odysseus.recovery.recoverytime.ITimeIntervalTrustRecoveryTime;
+import de.uniol.inf.is.odysseus.trust.ITrust;
 
 /**
  * Uses the {@link IRecoveryTime} meta attribute to calculate the recovery time.
@@ -17,14 +19,19 @@ import de.uniol.inf.is.odysseus.recovery.recoverytime.ITimeIntervalTrustRecovery
  * 
  * @author Michael Brand
  */
-public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends ITimeIntervalTrustRecoveryTime>>
-		extends AbstractPipe<Element, Element> {
+public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<Element, IStreamObject<?>>  {
 
 	/**
 	 * Threshold for trust values. Values below mark "wrong" elements during
 	 * recovery time.
 	 */
 	private static final double trustThreshold = 1;
+
+	// The current known values to write
+	private long appTimeStart = -1;
+	private long appTimeEnd = -1;
+	private long sysTimeStart = -1;
+	private long sysTimeEnd = -1;
 
 	/**
 	 * This operator sets start points of recovery time as well as end points.
@@ -98,22 +105,28 @@ public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends IT
 
 	@Override
 	protected void process_next(Element object, int port) {
-		final long systime = System.currentTimeMillis();
-		final double trust = object.getMetadata().getTrust();
-		final long appTime = object.getMetadata().getStart().getMainPoint();
+		final long sysTime = System.currentTimeMillis();
+		final double trust = ((ITrust) object.getMetadata()).getTrust();
+		final long appTime = ((ITimeInterval) object.getMetadata()).getStart().getMainPoint();
 
 		if (state == State.waitingForStart && trust < trustThreshold) {
 			// Recovery time starts, when an element with lower trust arrives.
-			object.getMetadata().setApplicationTimeStart(appTime);
-			object.getMetadata().setSystemTimeStart(systime);
+			appTimeStart = appTime;
+			sysTimeStart = sysTime;
+			appTimeEnd = -1;
+			sysTimeEnd = -1;
 			state = State.next(state);
 		} else if (state == State.waitingForEnd && trust >= trustThreshold) {
 			// Recovery time ends, when an element with higher trust arrives.
-			object.getMetadata().setApplicationTimeEnd(appTime);
-			object.getMetadata().setSystemTimeEnd(systime);
+			appTimeEnd = appTime;
+			sysTimeEnd = sysTime;
 			state = State.next(state);
 		}
 
+		((IRecoveryTime) object.getMetadata()).setApplicationTimeStart(appTimeStart);
+		((IRecoveryTime) object.getMetadata()).setApplicationTimeEnd(appTimeEnd);
+		((IRecoveryTime) object.getMetadata()).setSystemTimeStart(sysTimeStart);
+		((IRecoveryTime) object.getMetadata()).setSystemTimeEnd(sysTimeEnd);
 		transfer(object);
 	}
 

@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMe
  * 
  * @author Michael Brand
  */
-public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T> {
+public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<T, T> {
 
 	/**
 	 * The logger for this class.

@@ -119,8 +119,8 @@ public class RecoveryTime extends AbstractBaseMetaAttribute implements IRecovery
 
 	@Override
 	public String toString() {
-		return "RecoveryTime [startSysTime=" + startSysTime + ", endSysTime=" + endSysTime + ", startAppTime="
-				+ startAppTime + ", endAppTime=" + endAppTime + "]";
+		return "RecoveryTime [startSysTime=" + startSysTime + ", endSysTime=" + endSysTime + ", sysTime=" + calcSysTime() + ", startAppTime="
+				+ startAppTime + ", endAppTime=" + endAppTime + ", appTime=" + calcAppTime() + "]";
 	}
 
 	@Override
