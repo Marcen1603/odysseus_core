@@ -20,4 +20,5 @@ Export-Package: de.uniol.inf.is.odysseus.recovery,
  de.uniol.inf.is.odysseus.recovery.crashdetector,
  de.uniol.inf.is.odysseus.recovery.installedqueries,
  de.uniol.inf.is.odysseus.recovery.recoverytime,
+ de.uniol.inf.is.odysseus.recovery.recoverytime.logicaloperator,
  de.uniol.inf.is.odysseus.recovery.systemstatelogger
