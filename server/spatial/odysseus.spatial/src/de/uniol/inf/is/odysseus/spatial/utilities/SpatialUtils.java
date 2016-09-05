@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.spatial.utilities;
 
+import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -12,8 +14,8 @@ import com.vividsolutions.jts.geom.Point;
  *
  */
 public class SpatialUtils {
-	
-	DefaultGeographicCRS defaultCrs = DefaultGeographicCRS.WGS84;
+
+	private static DefaultGeographicCRS defaultCrs = DefaultGeographicCRS.WGS84;
 
 	/**
 	 * Calculates the distance between two points on the earth in km. Uses the
@@ -43,8 +45,20 @@ public class SpatialUtils {
 		return distance;
 	}
 
-	public static void calculateDistance(CoordinateReferenceSystem crs, Point[] points) {
-
+	public static double calculateDistance(CoordinateReferenceSystem crs, Point point1, Point point2) {
+		if (crs == null) {
+			crs = defaultCrs;
+		}
+		double distance = 0.0;
+		
+		try {
+			distance = JTS.orthodromicDistance(point1.getCoordinate(), point2.getCoordinate(), crs);
+		} catch (TransformException e) {
+			e.printStackTrace();
+		}
+		
+		return distance;
+		
 	}
 
 }
