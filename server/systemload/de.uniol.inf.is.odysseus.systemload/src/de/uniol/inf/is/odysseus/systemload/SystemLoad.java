@@ -178,7 +178,7 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements ISyst
 
 	@Override
 	public String getName() {
-		return "SystemLoad";
+		return "Systemload";
 	}
 
 	@Override
