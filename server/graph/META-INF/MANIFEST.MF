@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Graph
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.incubation.graph
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.incubation.graph.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.google.common.collect,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.transform,
+ de.uniol.inf.is.odysseus.ruleengine,
+ org.eclipse.osgi.services,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.keyvalue.datahandler,
+ de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.aggregation
+Service-Component: OSGI-INF/adjacencymatrix.xml,OSGI-INF/graphbuilder.xml,OSGI-INF/KeywordProvider.xml,OSGI-INF/GraphFunctionProvider.xml,OSGI-INF/AggregationFunctionBestPost.xml, OSGI-INF/GraphDatatypeProvider.xml,OSGI-INF/AggregationFunctionGraphIntersection.xml,OSGI-INF/GraphBuilderDebs.xml,OSGI-INF/AggregationFunctionScoreUpdater.xml,
+ OSGI-INF/AggregationFunctionBestPostsDebs.xml
+Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.incubation.graph.datamodel,
+ de.uniol.inf.is.odysseus.incubation.graph.provider

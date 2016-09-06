@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.incubation.graph.adjacencymatrix">
+   <implementation class="de.uniol.inf.is.odysseus.incubation.graph.datamodel.impl.AdjacencyMatrix"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure"/>
+   </service>
+</scr:component>
