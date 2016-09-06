@@ -1,0 +1,48 @@
+<de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema>
+	<uRIWithoutQualName>source</uRIWithoutQualName>
+	<calculatedUri>source</calculatedUri>
+	<elements>
+		<de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute>
+			<qualName>item1</qualName>
+			<uRIWithoutQualName>System.null</uRIWithoutQualName>
+			<delimitter>.</delimitter>
+			<datatype class="de.uniol.inf.is.odysseus.opcua.common.core.SDFOPCUADatatype">
+				<uRIWithoutQualName>OPCValue</uRIWithoutQualName>
+				<calculatedUri>OPCValue</calculatedUri>
+				<type>GENERIC</type>
+				<subType>
+					<uRIWithoutQualName>Double</uRIWithoutQualName>
+					<calculatedUri>Double</calculatedUri>
+					<type>BASE</type>
+					<requiresDeepClone>false</requiresDeepClone>
+				</subType>
+				<requiresDeepClone>true</requiresDeepClone>
+			</datatype>
+			<dtConstraints/>
+			<number>-1</number>
+		</de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute>
+		<de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute>
+			<qualName>item2</qualName>
+			<uRIWithoutQualName>System.null</uRIWithoutQualName>
+			<delimitter>.</delimitter>
+			<datatype class="de.uniol.inf.is.odysseus.opcua.common.core.SDFOPCUADatatype">
+				<uRIWithoutQualName>OPCValue</uRIWithoutQualName>
+				<calculatedUri>OPCValue</calculatedUri>
+				<type>GENERIC</type>
+				<subType>
+					<uRIWithoutQualName>Double</uRIWithoutQualName>
+					<calculatedUri>Double</calculatedUri>
+					<type>BASE</type>
+					<requiresDeepClone>false</requiresDeepClone>
+				</subType>
+				<requiresDeepClone>true</requiresDeepClone>
+			</datatype>
+			<dtConstraints/>
+			<number>-1</number>
+		</de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute>
+	</elements>
+	<baseSourceNames>
+		<string>source</string>
+	</baseSourceNames>
+	<type>de.uniol.inf.is.odysseus.core.collection.Tuple</type>
+</de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema>

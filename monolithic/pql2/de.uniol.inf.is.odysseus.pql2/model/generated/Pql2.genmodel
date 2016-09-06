@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.uniol.inf.is.odysseus.pql2/src-gen" editDirectory="/de.uniol.inf.is.odysseus.pql2.edit/src"
+    editorDirectory="/de.uniol.inf.is.odysseus.pql2.editor/src" modelPluginID="de.uniol.inf.is.odysseus.pql2"
+    forceOverwrite="true" modelName="Pql2" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="6.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.pql2.edit"
+    editorPluginID="de.uniol.inf.is.odysseus.pql2.editor" runtimeVersion="2.11">
+  <genPackages prefix="Pql2" basePackage="de.uniol.inf.is.odysseus" disposableProviderFactory="true"
+      fileExtensions="xpql" ecorePackage="Pql2.ecore#/">
+    <genClasses ecoreClass="Pql2.ecore#//PQLModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//PQLModel/queries"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//Query">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Pql2.ecore#//Query/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//Query/op"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//TemporaryStream"/>
+    <genClasses ecoreClass="Pql2.ecore#//View"/>
+    <genClasses ecoreClass="Pql2.ecore#//SharedStream"/>
+    <genClasses ecoreClass="Pql2.ecore#//Operator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Pql2.ecore#//Operator/operatorType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//Operator/operators"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//Operator/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//OperatorList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//OperatorList/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//OperatorOrQuery">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Pql2.ecore#//OperatorOrQuery/outputPort"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//OperatorOrQuery/op"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Pql2.ecore#//OperatorOrQuery/query"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//ParameterList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//ParameterList/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Pql2.ecore#//Parameter/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//Parameter/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//ParameterValue"/>
+    <genClasses ecoreClass="Pql2.ecore#//LongParameterValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Pql2.ecore#//LongParameterValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//DoubleParameterValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Pql2.ecore#//DoubleParameterValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//StringParameterValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Pql2.ecore#//StringParameterValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//ListParameterValue"/>
+    <genClasses ecoreClass="Pql2.ecore#//MapParameterValue"/>
+    <genClasses ecoreClass="Pql2.ecore#//MapEntry">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//MapEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//MapEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//List">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//List/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="Pql2.ecore#//Map">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Pql2.ecore#//Map/elements"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

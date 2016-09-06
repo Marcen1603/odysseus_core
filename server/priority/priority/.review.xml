@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns:review xmlns:ns="http://reviewclipse.org/model/xml">
+  <period startDate="2009-10-20T17:17:25.941+02:00">
+    <assignment>
+      <author>bolles</author>
+      <reviewer>jacobi</reviewer>
+      <filter xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </assignment>
+    <assignment>
+      <author>grawunder</author>
+      <reviewer>jacobi</reviewer>
+      <filter xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </assignment>
+    <assignment>
+      <author>jsteinke</author>
+      <reviewer>jacobi</reviewer>
+      <filter xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </assignment>
+    <assignment>
+      <author>wbauer</author>
+      <reviewer>jacobi</reviewer>
+      <filter xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </assignment>
+  </period>
+  <user name="jsteinke"/>
+  <user name="grawunder"/>
+  <user name="jacobi"/>
+  <user name="wbauer"/>
+  <user name="bolles"/>
+</ns:review>

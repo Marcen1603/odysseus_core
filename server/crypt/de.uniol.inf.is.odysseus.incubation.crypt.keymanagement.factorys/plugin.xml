@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.commands"
+            defaultHandler="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.factorys.rcp.DefaultASymKeyFactoryHandler"
+            id="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.createPair"
+            name="Create Key Pair">
+      </command>
+      <category
+            id="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.commands"
+            name="Key Management">
+      </category>
+      <command
+            categoryId="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.commands"
+            defaultHandler="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.factorys.rcp.DefaultSymKeyFactoryHandler"
+            id="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.createSym"
+            name="Create Sym Key">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="de.uniol.inf.is.odysseus.rcp.odysseus.views">
+            <command
+                  commandId="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.createPair"
+                  label="Create Key Pair"
+                  style="push">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.createSym"
+                  label="Create Sym Key"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+</plugin>

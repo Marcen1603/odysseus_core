@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
+       uri = "http://www.uniol.de/inf/is/odysseus/Pql2" 
+       class = "de.uniol.inf.is.odysseus.pql2.Pql2Package"
+       genModel = "model/generated/Pql2.genmodel" /> 
+	
+  </extension>
+
+
+
+</plugin>

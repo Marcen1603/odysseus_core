@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.iql.qdl.services.QDLServiceBinding">
+   <implementation class="de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding"/>
+   <reference bind="bindOperatorBuilderFactory" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory" name="IOperatorBuilderFactory" policy="static" unbind="unbindOperatorBuilderFactory"/>
+   <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
+   <reference bind="bindPreParserKeywordProvider" cardinality="0..n" interface="de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider" name="IPreParserKeywordProvider" policy="dynamic" unbind="unbindPreParserKeywordProvider"/>
+   <reference bind="bindQDLService" cardinality="0..n" interface="de.uniol.inf.is.odysseus.iql.qdl.service.IQDLService" name="IQDLService" policy="dynamic" unbind="unbindQDLService"/>
+</scr:component>

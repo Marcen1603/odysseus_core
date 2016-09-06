@@ -1,0 +1,63 @@
+grammar de.uniol.inf.is.odysseus.Pql2 with org.eclipse.xtext.common.Terminals
+
+generate pql2 "http://www.uniol.de/inf/is/odysseus/Pql2"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+PQLModel:
+	queries+=Query*;
+
+Query:
+	TemporaryStream | View | SharedStream;
+
+TemporaryStream:
+	name=ID "=" op=Operator;
+
+View:
+	name=ID ":=" op=Operator;
+
+SharedStream:
+	name=ID "::=" op=Operator;
+
+Operator:
+	operatorType=ID "(" ((operators=OperatorList) |
+	(parameters=ParameterList ("," operators=OperatorList)?))? ")";
+
+OperatorList:
+	elements+=OperatorOrQuery ("," elements+=OperatorOrQuery)*;
+
+OperatorOrQuery:
+	(outputPort=INT ":")? (op=Operator | query=[Query]);
+
+ParameterList:
+	"{" elements+=Parameter ("," elements+=Parameter)* "}";
+
+Parameter:
+	name=ID "=" value=ParameterValue;
+
+ParameterValue:
+	LongParameterValue | DoubleParameterValue | StringParameterValue |
+	=> ListParameterValue | MapParameterValue;
+
+LongParameterValue:
+	value=INT;
+
+DoubleParameterValue:
+	value=DOUBLE;
+
+StringParameterValue:
+	value=STRING;
+
+ListParameterValue:
+	{List}
+	"[" (elements+=ParameterValue ("," elements+=ParameterValue)*)? "]";
+
+MapParameterValue:
+	{Map}
+	"[" (elements+=MapEntry ("," elements+=MapEntry)*)? "]";
+
+MapEntry:
+	key=ParameterValue "=" value=ParameterValue;
+
+terminal DOUBLE returns ecore::EDouble:
+	( ' 0 ' .. ' 9 ')* ' . ' ( ' 0 ' .. ' 9 ' ) +
+	;

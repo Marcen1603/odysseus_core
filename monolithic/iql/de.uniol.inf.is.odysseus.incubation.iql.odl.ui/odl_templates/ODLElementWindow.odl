@@ -1,0 +1,121 @@
+operator ODLElementWindow(outputMode = "MODIFIED_INPUT", minInputPorts = 1, maxInputPorts = 1) {
+	parameter long size;
+			
+	optional parameter long advance;
+	
+	optional parameter (type=ResolvedSDFAttributeParameter) SDFAttribute[] partition;
+	
+	IGroupProcessor groupProcessor;
+	
+	ITransferArea transferArea = new TITransferArea();
+
+	Map buffers = new HashMap();
+
+	PointInTime lastTs;
+		
+	on po_init {		
+		if (advance <= 0) {
+			advance = 1;
+		}
+	}
+		
+	on processOpen {	
+		if (partition != null && groupProcessor == null) {
+			groupProcessor = new RelationalGroupProcessor(getInputSchema(0), this.outputSchema, partition,null, false);			
+		} else if (groupProcessor == null){
+			groupProcessor = new NoGroupProcessor();
+		}
+		groupProcessor.init;
+		buffers.clear;
+		transferArea.init(this, 1);				
+	}	
+		
+	on processNext(Tuple tuple, int port) {
+		ITimeInterval time = tuple.metadata;		
+		lastTs = time.start;
+		long bufferId = groupProcessor.getGroupID(tuple);
+		List buffer = buffers.get(bufferId);
+		if (buffer == null) {
+			buffer = new LinkedList();
+			buffers.put(bufferId, buffer);
+		}		
+		buffer.add(tuple);
+		
+		if (buffer.size == size + 1) {
+			long elemsToSend = advance;
+			transferBuffer(buffer, elemsToSend, lastTs);
+			ping;
+		}
+
+		if (buffer.size == 0) {
+			buffers.remove(bufferId);
+		}
+	}
+	
+	on processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
+	on processDone {
+		for (Object value : buffers.values) {
+			List b = value;
+			if (b.size > 0) {
+				transferBuffer(b, b.size, lastTs.plus(1));
+				for (Object t : b) {					
+					transferArea.transfer(t);
+				}
+			}
+		}
+		transferArea.newHeartbeat(lastTs, 0);
+	}
+	
+	on processClose {
+		process_done;
+		for (Object value : buffers.values) {
+			List b = value;
+			b.clear;
+		}
+	}
+	
+	po transferBuffer(List buffer, long numberofelements,	PointInTime ts) {
+		Iterator bufferIter = buffer.iterator;
+		PointInTime start = null;
+		for (int i = 0; i < numberofelements; i++) {
+			Tuple toReturn = bufferIter.next;
+			bufferIter.remove;
+			ITimeInterval time = toReturn.metadata;
+			if (time.start.before(ts)) {
+				time.end = ts;
+				transferArea.transfer(toReturn);
+			}
+		}		
+	}
+
+	po ping {
+		PointInTime minTs = getMinTs;
+		if (minTs != null) {
+			transferArea.newHeartbeat(minTs, 0);
+		} else {
+			transferArea.newHeartbeat(lastTs, 0);
+		}
+	}
+	
+	po getMinTs : PointInTime {
+		if (buffers.size == 0) {
+			return null;
+		}		
+		PointInTime min = null;
+		for (Object value : buffers.values) {
+			List buffer = value;
+			if (!buffer.isEmpty) {
+				Tuple e = buffer.get(0);
+				ITimeInterval time = e.metadata;				
+				PointInTime test = time.start;
+				if (min == null || min.after(test)) {
+					min = test;
+				}
+			}
+		}
+		return min;
+	}
+}

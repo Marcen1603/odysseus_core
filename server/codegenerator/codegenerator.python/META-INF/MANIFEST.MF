@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Python.incubation
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.codegenerator.python
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.codegenerator.python.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.codegenerator.jre.operator.rules,
+ de.uniol.inf.is.odysseus.codegenerator.model,
+ de.uniol.inf.is.odysseus.codegenerator.operator.rule,
+ de.uniol.inf.is.odysseus.codegenerator.target.platform,
+ de.uniol.inf.is.odysseus.core.logicaloperator,
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
+Service-Component: OSGI-INF/PythonTargetPlatform.xml,OSGI-INF/CAggregateTIPORule.xml
