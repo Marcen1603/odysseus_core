@@ -1,0 +1,122 @@
+#!/bin/bash
+# /etc/init.d/odysseus
+
+### BEGIN INIT INFO
+# Provides:   odysseus
+# Required-Start: $local_fs $remote_fs
+# Required-Stop:  $local_fs $remote_fs
+# Should-Start:   $network
+# Should-Stop:    $network
+# Default-Start:  2 3 4 5
+# Default-Stop:   0 1 6
+# Short-Description:    Odysseus server
+# Description:    Init script for the Odysseus server
+### END INIT INFO
+
+NAME=odysseus-server
+DESC="Odysseus data stream management system"
+USERNAME=odysseus
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+SCREENNAME=$NAME.screen
+DAEMON=$NAME
+DAEMON_PATH="/usr/share/odysseus-server"
+
+
+ME=`whoami`
+as_user() {
+    if [ $ME == $USERNAME ] ; then
+        bash -c "$1"
+    else
+        su $USERNAME -s /bin/bash -c "$1"
+    fi
+}
+
+force_exit() {
+    echo ""
+    echo "SIGINIT CALLED - FORCE EXITING!"
+    rm $PIDFILE
+    ps aux | grep -e '$DAEMON_PATH/$DAEMON' | grep -v grep | awk '{print $2}' | xargs -i kill {}
+    ps aux | grep -e '$SCREENNAME' | grep -v grep | awk '{print $2}' | xargs -i kill {}
+    ps aux | grep -e '$SCRIPTNAME' | grep -v grep | awk '{print $2}' | xargs -i kill {}
+    
+    exit 1
+}
+
+do_command() {
+    as_user "screen -p 0 -S $SCREENNAME -X eval 'stuff \"$1\"\015'"
+}
+
+do_start() {
+    printf "%-50s" "Starting $NAME..."
+    as_user "screen -c /dev/null -dmS $SCREENNAME $DAEMON_PATH/$DAEMON"
+    as_user "screen -list | grep "\.$SCREENNAME" | cut -f1 -d'.' | tr -d -c 0-9 > $PIDFILE"
+    PID=`cat $PIDFILE`
+    if [ -z $PID ]; then
+	printf "%s\n" "Fail"
+    else
+	printf "%s\n" "Ok"
+    fi
+}
+
+do_stop() {
+    printf "%-50s" "Stopping $NAME"
+    if [ -f $PIDFILE ]; then
+        do_command exit
+        sleep 0.5
+        as_user "rm $PIDFILE"
+        printf "%s\n" "Ok"
+        rm -f $PIDFILE
+    else
+	printf "%s\n" "pidfile not found"
+    fi
+}
+
+do_status() {
+    printf "%-50s" "Checking $NAME..."
+    if [ -f $PIDFILE ]; then
+	PID=`cat $PIDFILE`
+	if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+	    printf "%s\n" "Process dead but pidfile exists"
+	else
+	    echo "Running"
+	fi
+    else
+	printf "%s\n" "Service not running"
+    fi
+}
+
+trap force_exit SIGINT
+
+case "$1" in
+  start)
+    do_start
+    ;;
+  stop)
+    do_stop
+    ;;
+  restart)
+    do_stop
+    do_start
+    ;;
+  status)
+    do_status
+    ;;
+  command)
+    if [ $# -gt 1 ]; then
+      shift
+      do_command "$*"
+    else
+      echo "Must specify server command (try 'help'?)"
+    fi
+    ;;
+
+  *)
+  echo "Usage: $0 {start|stop|status|restart|command \"server command\"}"
+  exit 1
+  ;;
+esac
+
+exit 0
+
