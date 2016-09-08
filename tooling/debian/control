@@ -1,8 +1,0 @@
-Package: odysseus-server
-Maintainer: Christian Kuka <christian@kuka.cc>
-Architecture: amd64
-Depends: libgtk2.0-0 (>= 2.8.0), openjdk-7-jre | oracle-java7-jre | sun-java7-jre
-Homepage: http://odysseus.informatik.uni-oldenburg.de/cms/en/download/
-Description: Data Stream Management System
- Odysseus, is an open source data stream management and complex event processing system. It allows to process continuous data streams from heterogeneous source using a query language.
- Odysseus is licensed under the Apache 2 License.
