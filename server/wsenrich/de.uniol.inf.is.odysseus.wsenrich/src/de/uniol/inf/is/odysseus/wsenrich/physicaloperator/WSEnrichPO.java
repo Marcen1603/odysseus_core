@@ -117,7 +117,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		}
 		initParameterPositions();
 	}
-	
+
 	@Override
 	protected List<IStreamObject<?>> internal_process(Tuple<M> inputTuple) {
 
@@ -173,7 +173,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		}
 		return queryResult;
 	}
-	
+
 
 	@Override
 	protected void internal_process_close() {
@@ -202,14 +202,14 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 	/**
 	 * Returns the Attributes that are defined in the Query for the Webservice.
-	 * 
+	 *
 	 * @param inputTuple
 	 *            the current tuple from the input stream
 	 * @return the attributes for the webservicequery
 	 */
 	private List<Option> getQueryParameters(Tuple<M> inputTuple,
 			List<Option> arguments) {
-		List<Option> queryParameters = arguments;
+		List<Option> queryParameters = new ArrayList<Option>(arguments);
 		for (int i = 0; i < parameterPositions.length; i++) {
 			queryParameters.set(i, new Option(queryParameters.get(i).getName(),
 					inputTuple.getAttribute(parameterPositions[i]).toString()));
