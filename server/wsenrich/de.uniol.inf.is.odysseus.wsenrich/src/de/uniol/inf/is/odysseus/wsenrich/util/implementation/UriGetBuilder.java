@@ -80,7 +80,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	 */
 	private void addParameters() {
 		//Add the arguments
-		if (!uri.toString().endsWith("?")){
+		if (!uri.toString().contains("?")){
 			this.uri.append("?");
 		}
 		for(Option argument : this.arguments) {
