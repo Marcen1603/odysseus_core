@@ -29,9 +29,9 @@ public class MetadataComparator<T extends IClone> implements Comparator<IStreamO
 	private static final long serialVersionUID = -1674438499933717924L;
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public int compare(IStreamObject<? extends T> o1, IStreamObject<? extends T> o2) {
-		return ((Comparable<T>)o1.getMetadata()).compareTo(o2.getMetadata());
+		return ((Comparable)o1.getMetadata()).compareTo(o2.getMetadata());
 	}
       
 }

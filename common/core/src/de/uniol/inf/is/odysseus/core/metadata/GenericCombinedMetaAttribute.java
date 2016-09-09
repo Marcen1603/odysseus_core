@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttribute
-		implements InvocationHandler, Serializable {
+		implements InvocationHandler, Serializable, Comparable<IMetaAttribute> {
 
 	private static final long serialVersionUID = 8008635741301906632L;
 
@@ -32,6 +32,10 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 	transient private Method[] methodRetrieveValues;
 	transient private Set<Method> gcmMethods;
 
+	transient private Method compareMethod;
+
+	private int compareMethodMetadataPos;
+
 	public GenericCombinedMetaAttribute(Class<? extends IMetaAttribute>[] classes, IMetaAttribute[] metaAttributes,
 			String name, List<SDFMetaSchema> schema) {
 		this.classes = classes;
@@ -43,6 +47,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 
 		initMethodAttributeMap(classes);
 		initMethodRetrieveValues(classes);
+		initCompareableMethod(classes);
 
 		this.name = name;
 		this.schema = schema;
@@ -51,12 +56,54 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 
 	}
 
+	public GenericCombinedMetaAttribute(GenericCombinedMetaAttribute other) {
+
+		this.metaAttributes = new IMetaAttribute[other.metaAttributes.length];
+		for (int i = 0; i < metaAttributes.length; i++) {
+			this.metaAttributes[i] = other.metaAttributes[i].clone();
+		}
+		// These fields are have immutable values, so reference copy is enough
+
+		this.classes = other.classes;
+		this.methodRetrieveValues = other.methodRetrieveValues;
+		this.name = other.name;
+
+		this.methodAttributeMap = other.methodAttributeMap;
+		this.schema = other.schema;
+
+		this.gcmMethods = other.gcmMethods;
+		this.compareMethod = other.compareMethod;
+
+	}
+
+	
+	private void initCompareableMethod(Class<? extends IMetaAttribute>[] classes) {
+		int i = 0;
+		for (Class<? extends IMetaAttribute> c : classes) {
+			Method[] methods = c.getMethods();
+			for (Method m:methods){
+				if (m.getName().equals("compareTo")){
+					if (this.compareMethod == null){
+						this.compareMethod = m;
+						this.compareMethodMetadataPos = i;
+					}else{
+						throw new RuntimeException("Cannot combine meta attributes with more than one compareTo method! Found "+compareMethod+" and "+m);
+					}
+				}
+			}
+			i++;
+		}
+	}
+
 	private void initGcmMethods() {
 		gcmMethods = new HashSet<>();
 
 		for (Method m : IMetaAttribute.class.getMethods()) {
 			this.gcmMethods.add(m);
 		}
+		
+		// add comparable manually
+		this.gcmMethods.add(compareMethod);
 	}
 
 	private void initMethodRetrieveValues(Class<? extends IMetaAttribute>[] classes) {
@@ -64,7 +111,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		int i = 0;
 		for (Class<? extends IMetaAttribute> c : classes) {
 			try {
-				methodRetrieveValues[i] = c.getMethod("retrieveValues", List.class);
+				methodRetrieveValues[i++] = c.getMethod("retrieveValues", List.class);
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
@@ -100,25 +147,16 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 			throw new IOException("No class found. HELP!!");
 		}
 	}
-
-	public GenericCombinedMetaAttribute(GenericCombinedMetaAttribute other) {
-
-		this.metaAttributes = new IMetaAttribute[other.metaAttributes.length];
-		for (int i = 0; i < metaAttributes.length; i++) {
-			this.metaAttributes[i] = other.metaAttributes[i].clone();
+	
+	@Override
+	public int compareTo(IMetaAttribute o) {
+		try {
+			return (int) this.compareMethod.invoke(this.metaAttributes[compareMethodMetadataPos],o);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException("Cannot compare values", e);
 		}
-		// These fields are have immutable values, so reference copy is enough
-
-		this.classes = other.classes;
-		this.methodRetrieveValues = other.methodRetrieveValues;
-		this.name = other.name;
-
-		this.methodAttributeMap = other.methodAttributeMap;
-		this.schema = other.schema;
-
-		this.gcmMethods = other.gcmMethods;
-
 	}
+
 
 	@Override
 	public IMetaAttribute createInstance() {
