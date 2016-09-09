@@ -112,6 +112,11 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 
 		// add comparable manually
 		this.gcmMethods.add(compareMethod);
+		try {
+			this.gcmMethods.add(Object.class.getMethod("toString"));
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void initMethodRetrieveValues(Class<? extends IMetaAttribute>[] classes) {
@@ -223,8 +228,12 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
-		for (IMetaAttribute a : metaAttributes) {
-			ret.append(a.toString()+"|");
+
+		if (metaAttributes.length > 0){
+			ret.append(metaAttributes[0]);
+		}
+		for (int i=1;i<metaAttributes.length;i++) {
+			ret.append(" | ").append(metaAttributes[i]);
 		}
 		return ret.toString();
 
