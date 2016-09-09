@@ -18,6 +18,14 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
+/*
+ * This class combines different meta data classes at runtime.
+ *
+ * Important: Only one of these meta data classes is allowed to implement Comparable
+ *
+ * @author: Marco Grawunder
+ */
+
 public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttribute
 		implements InvocationHandler, Serializable, Comparable<IMetaAttribute> {
 
@@ -76,7 +84,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 
 	}
 
-	
+
 	private void initCompareableMethod(Class<? extends IMetaAttribute>[] classes) {
 		int i = 0;
 		for (Class<? extends IMetaAttribute> c : classes) {
@@ -101,7 +109,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		for (Method m : IMetaAttribute.class.getMethods()) {
 			this.gcmMethods.add(m);
 		}
-		
+
 		// add comparable manually
 		this.gcmMethods.add(compareMethod);
 	}
@@ -147,7 +155,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 			throw new IOException("No class found. HELP!!");
 		}
 	}
-	
+
 	@Override
 	public int compareTo(IMetaAttribute o) {
 		try {
