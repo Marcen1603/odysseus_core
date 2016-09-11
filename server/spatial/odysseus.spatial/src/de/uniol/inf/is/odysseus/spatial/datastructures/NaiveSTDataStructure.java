@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.spatial.datastructures;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -125,23 +126,21 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		}
 		return rangeTuples;
 	}
-	
+
 	public List<Tuple<?>> queryBoundingBox(List<Coordinate> coordinates) {
 
 		// Create a polygon with the given points
 		GeometryFactory factory = new GeometryFactory();
 		LinearRing ring = factory.createLinearRing(coordinates.toArray(new Coordinate[1]));
 		Polygon polygon = factory.createPolygon(ring, null);
-		
-		// For every point in our list ask JTS if the points lies within the polygon
-		// TODO Idea: It should be quite easy to parallelize this
-		for (Tuple<?> tuple : tuples) {
-			
-		}
-		
+
+		// For every point in our list ask JTS if the points lies within the
+		// polygon
+		List<Tuple<?>> result = tuples.parallelStream().filter(e -> polygon.contains(getGeometry(e)))
+				.collect(Collectors.toList());
+
 		// Collect the points and return them
-		
-		return null;
+		return result;
 	}
 
 	@Override
@@ -166,6 +165,18 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public String getName() {
 		return this.name;
+	}
+
+	private Geometry getGeometry(Tuple<?> tuple) {
+		Object o = tuple.getAttribute(geometryPosition);
+		GeometryWrapper geometryWrapper = null;
+		if (o instanceof GeometryWrapper) {
+			geometryWrapper = (GeometryWrapper) o;
+			Geometry geometry = geometryWrapper.getGeometry();
+			return geometry;
+		} else {
+			return null;
+		}
 	}
 
 }
