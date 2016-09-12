@@ -25,10 +25,10 @@ public class BestPostsDebs<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	private static final long serialVersionUID = 6587136994118302253L;
 	
-	Map<String, Tuple<IMetaAttribute>> posts = new HashMap<String, Tuple<IMetaAttribute>>();
-	Map<String, PointInTime> timestampPost = new HashMap<String, PointInTime>();
-	Map<String, PointInTime> timestampComment = new HashMap<String, PointInTime>();
-	Map<String, Long> postScores = new HashMap<String, Long>();
+	private Map<String, PointInTime> tsPost = new HashMap<String, PointInTime>();
+	private Map<String, PointInTime> tsComment = new HashMap<String, PointInTime>();
+	private Map<String, String> postStructures = new HashMap<String, String>();
+	private String structureName;
 	
 	public BestPostsDebs() {
 		super();
@@ -50,94 +50,103 @@ public class BestPostsDebs<M extends ITimeInterval, T extends Tuple<M>> extends 
 	public void addNew(T newElement) {
 		Graph graph = newElement.getAttribute(0);
 		Graph postGraph = newElement.getAttribute(1);
-		
+
 		String node1 = graph.getNode1();
 		String node2 = graph.getNode2();
 		
-		if ((node1 != null && node1.contains("post")) || (node2 != null && node2.contains("post"))) {
-			timestampPost.put(postGraph.getNode1(), newElement.getMetadata().getStart());
+		if ((node1 != null && node1.contains("post")) || (node2 != null && node2.contains("post")) && !tsPost.containsKey(postGraph.getNode1())) {
+			tsPost.put(postGraph.getNode1(), newElement.getMetadata().getStart());
 		}
 		
-		if ((node1 != null && node1.contains("comment")) || (node2 != null && node2.contains("comment"))) {
-			timestampComment.put(postGraph.getNode1(), newElement.getMetadata().getStart());
+		if ((node1 != null && node1.contains("comment")) || (node2 != null && node2.contains("comment")) && !tsComment.containsKey(postGraph.getNode1())) {
+			tsComment.put(postGraph.getNode1(), newElement.getMetadata().getStart());
 		}
 		
-		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(postGraph.getName());
-		GraphNode node = structure.getGraphNode(postGraph.getNode1());
-		
-		Long totalScore = (Long) node.getProps().get("total_score");
-		String author = "";
-		for (GraphNode edgeNode : node.getIncomingEdges().values()) {
-			if (edgeNode.getLabel().equals("user")) {
-				author  = edgeNode.getId();
-			}
-		}
-			
-		Long numComments = 0l;
-		for (GraphNode graphNode : structure.getGraphNodes().values()) {
-			if (graphNode.getLabel().equals("comment")) {
-				numComments ++;
-			}
-		}
-		
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(4, false);
-		tuple.setAttribute(0, postGraph.getNode1());
-		tuple.setAttribute(1, author);
-		tuple.setAttribute(2, totalScore);
-		tuple.setAttribute(3, numComments);
-		
-		posts.put(postGraph.getNode1(), tuple);
-		postScores.put(postGraph.getNode1(), totalScore);
+		this.structureName = graph.getName();
+		this.postStructures.put(postGraph.getNode1(), postGraph.getName());
 	}
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
 	}
 
+	
 	@Override
-	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		@SuppressWarnings("unchecked")
-		Tuple<IMetaAttribute>[] result 
-			= new Tuple[]{new Tuple<IMetaAttribute>(4, false), new Tuple<IMetaAttribute>(4, false), new Tuple<IMetaAttribute>(4, false)};
+	public Object[] evalute(T trigger, PointInTime pointInTime) {				
+		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(structureName);
+		String[] bestPosts = new String[3];
+		Long[] bestScores = new Long[]{0l, 0l, 0l};
 		
-		String[] postNames = new String[3];
-		Long[] maxValues = new Long[]{0l, 0l, 0l};
-		for (Map.Entry<String, Long> entry : postScores.entrySet()) {
-			if (
-				entry.getValue() > maxValues[0].longValue() ||
-				(entry.getValue() == maxValues[0].longValue() && timestampPost.get(entry.getKey()).after(timestampPost.get(postNames[0]))) ||
-				(entry.getValue() == maxValues[0].longValue() && timestampPost.get(entry.getKey()).equals(timestampPost.get(postNames[0])) && (timestampComment.get(postNames[0]) == null && timestampComment.get(entry.getKey()).after(timestampComment.get(postNames[0]))))
-			) {
-				maxValues[2] = maxValues[1];
-				postNames[2] = postNames[1];
-				maxValues[1] = maxValues[0];
-				postNames[1] = postNames[0];
-				maxValues[0] = entry.getValue();
-				postNames[0] = entry.getKey();
-			} else if (
-				entry.getValue() > maxValues[1].longValue() ||
-				(entry.getValue() == maxValues[1].longValue() && timestampPost.get(entry.getKey()).after(timestampPost.get(postNames[1]))) ||
-				(entry.getValue() == maxValues[1].longValue() && timestampPost.get(entry.getKey()).equals(timestampPost.get(postNames[1])) && (timestampComment.get(postNames[1]) == null && timestampComment.get(entry.getKey()).after(timestampComment.get(postNames[1]))))
-			) {
-				maxValues[2] = maxValues[1];
-				postNames[2] = postNames[1];
-				maxValues[1] = entry.getValue();
-				postNames[1] = entry.getKey();
-			} else if (
-				entry.getValue() > maxValues[2].longValue() ||
-				(entry.getValue() == maxValues[2].longValue() && timestampPost.get(entry.getKey()).after(timestampPost.get(postNames[2]))) ||
-				(entry.getValue() == maxValues[2].longValue() && timestampPost.get(entry.getKey()).equals(timestampPost.get(postNames[2])) && (timestampComment.get(postNames[2]) == null && timestampComment.get(entry.getKey()).after(timestampComment.get(postNames[2]))))
-			) {
-				maxValues[2] = entry.getValue();
-				postNames[2] = entry.getKey();
+		for (GraphNode node : structure.getGraphNodes().values()) {
+			if (node.getLabel().equals("post")) {
+				Long totalScore = (Long) node.getProps().get("total_score");				
+				if (
+					bestPosts[0] == null ||
+					totalScore > bestScores[0] ||
+					(totalScore == bestScores[0] && !tsPost.containsKey(bestPosts[0])) ||
+					(totalScore == bestScores[0] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).after(tsPost.get(bestPosts[0]))) ||
+					(totalScore == bestScores[0] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).equals(tsPost.get(bestPosts[0])) && !tsComment.containsKey(bestPosts[0])) ||
+					(totalScore == bestScores[0] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).equals(tsPost.get(bestPosts[0])) && tsComment.containsKey(node.getId()) && tsComment.get(node.getId()).after(tsComment.get(bestPosts[0])))
+				) {
+					bestPosts[2] = bestPosts[1];
+					bestScores[2] = bestScores[1];
+					bestPosts[1] = bestPosts[0];
+					bestScores[1] = bestScores[0];
+					bestPosts[0] = node.getId();
+					bestScores[0] = totalScore;
+				} else if (
+						bestPosts[1] == null ||
+						totalScore > bestScores[1] ||
+						(totalScore == bestScores[1] && !tsPost.containsKey(bestPosts[1])) ||
+						(totalScore == bestScores[1] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).after(tsPost.get(bestPosts[1]))) ||
+						(totalScore == bestScores[1] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).equals(tsPost.get(bestPosts[1])) && !tsComment.containsKey(bestPosts[1])) ||
+						(totalScore == bestScores[1] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).equals(tsPost.get(bestPosts[1])) && tsComment.containsKey(node.getId()) && tsComment.get(node.getId()).after(tsComment.get(bestPosts[1])))
+				) {
+					bestPosts[2] = bestPosts[1];
+					bestScores[2] = bestScores[1];
+					bestPosts[1] = node.getId();
+					bestScores[1] = totalScore;
+				} else if (
+						bestPosts[2] == null ||
+						totalScore > bestScores[2] ||
+						(totalScore == bestScores[2] && !tsPost.containsKey(bestPosts[2])) ||
+						(totalScore == bestScores[2] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).after(tsPost.get(bestPosts[2]))) ||
+						(totalScore == bestScores[2] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).equals(tsPost.get(bestPosts[2])) && !tsComment.containsKey(bestPosts[2])) ||
+						(totalScore == bestScores[2] && tsPost.containsKey(node.getId()) && tsPost.get(node.getId()).equals(tsPost.get(bestPosts[2])) && tsComment.containsKey(node.getId()) && tsComment.get(node.getId()).after(tsComment.get(bestPosts[2])))
+				) {
+					bestPosts[2] = node.getId();
+					bestScores[2] = totalScore;
+				}
 			}
 		}
 		
-		result[0] = posts.get(postNames[0]);
-		result[1] = posts.get(postNames[1]);
-		result[2] = posts.get(postNames[2]);
+		Object[] res = new Object[3];
+		for (int i=0; i<bestPosts.length; i++) {
+			IGraphDataStructure<IMetaAttribute> postStructure = GraphDataStructureProvider.getInstance().getGraphDataStructure(postStructures.get(bestPosts[i]));
+			
+			String author = "";
+			Long numComments = 0l;
+			if (postStructure != null) {
+				for (String nodeId : postStructure.getGraphNodes().keySet()) {
+					if (nodeId.contains("user")) {
+						author = nodeId;
+						break;
+					} else if (nodeId.contains("comment")) {
+						numComments ++;
+					}
+				}
+			}
+			
+			Tuple<IMetaAttribute> postTuple = new Tuple<IMetaAttribute>(4, false);
+			postTuple.setAttribute(0, bestPosts[i]);
+			postTuple.setAttribute(1, author);
+			postTuple.setAttribute(2, bestScores[i]);
+			postTuple.setAttribute(3, numComments);
+			
+			res[i] = postTuple;
+		}
 		
-		return result;
+		return res;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProv
 public class GraphBuilderDebsPO<M extends ITimeInterval> extends AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
 	private GraphBuilderDebsAO graphBuilderAo;
-	private String actualDataStructure;
+	private String dataStructure;
 	
 	// Map with post_id and actual structure reference.
 	private Map<String, String> postDataStructures = new HashMap<String, String>();
@@ -57,15 +58,14 @@ public class GraphBuilderDebsPO<M extends ITimeInterval> extends AbstractPipe<Ke
 		IGraphDataStructure<IMetaAttribute> post = null;
 		
 		//Existiert bereits eine Datenstruktur für diesen Namen, wird die aktuelle Datenstruktur geklont, ansonsten wird eine neue Datenstruktur erstellt.
-		if (this.actualDataStructure != null) {
-			structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.actualDataStructure).cloneDataStructure();
+		if (this.dataStructure != null) {
+			structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.dataStructure);
 		} else {
 			structure = GraphBuilderDebsAO.dataStructureTypes.get(graphBuilderAo.getDataType()).newInstance(graphBuilderAo.getStructureName());
 		}
 		
-		// Name of social network and set actual datastructure.
 		String netName = GraphDataStructureProvider.getInstance().addGraphDataStructure(structure, object.getMetadata().getStart());
-		this.actualDataStructure = netName;
+		this.dataStructure = netName;
 		
 		// Für einzelne Posts auch eigene Graphen anlegen
 		String n1Id = (String) object.getAttribute("n1_id");
@@ -83,12 +83,13 @@ public class GraphBuilderDebsPO<M extends ITimeInterval> extends AbstractPipe<Ke
 			if (n1Id != null && n1Id.contains("post")) {
 				if (postDataStructures.containsKey(n1Id)) {
 					post = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.postDataStructures.get(n1Id));
+					name = this.postDataStructures.get(n1Id);
 				} else {
 					post = GraphBuilderDebsAO.dataStructureTypes.get(graphBuilderAo.getDataType()).newInstance(n1Id);
+					name = GraphDataStructureProvider.getInstance().addGraphDataStructure(post, PointInTime.ONE);
+					postDataStructures.put(n1Id, name);
 				}
-				
-				name = GraphDataStructureProvider.getInstance().addGraphDataStructure(post, object.getMetadata().getStart());
-				postDataStructures.put(n1Id, name);
+
 				if (n2Id != null) {
 					if (commentsRelatedToPosts.containsKey(n1Id)) {
 						commentsRelatedToPosts.get(n1Id).add(n2Id);
@@ -101,12 +102,12 @@ public class GraphBuilderDebsPO<M extends ITimeInterval> extends AbstractPipe<Ke
 			} else if (n2Id != null && n2Id.contains("post")) {
 				if (postDataStructures.containsKey(n2Id)) {
 					post = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.postDataStructures.get(n2Id));
+					name = this.postDataStructures.get(n2Id);
 				} else {
 					post = GraphBuilderDebsAO.dataStructureTypes.get(graphBuilderAo.getDataType()).newInstance(n2Id);
+					name = GraphDataStructureProvider.getInstance().addGraphDataStructure(post, PointInTime.ONE);
+					postDataStructures.put(n2Id, name);
 				}
-				
-				name = GraphDataStructureProvider.getInstance().addGraphDataStructure(post, object.getMetadata().getStart());
-				postDataStructures.put(n2Id, name);
 				
 				if (n1Id != null) {
 					if (commentsRelatedToPosts.containsKey(n2Id)) {
@@ -143,7 +144,7 @@ public class GraphBuilderDebsPO<M extends ITimeInterval> extends AbstractPipe<Ke
 				}
 				
 				post = GraphDataStructureProvider.getInstance().getGraphDataStructure(postDataStructures.get(relatedPost));
-				name = GraphDataStructureProvider.getInstance().addGraphDataStructure(post, object.getMetadata().getStart());
+				name = this.postDataStructures.get(relatedPost);
 			}
 			
 			// Füge gefundene Relation sowohl der Gesamtdatenstruktur, als auch der Datenstruktur für den Post hinzu.
@@ -168,15 +169,15 @@ public class GraphBuilderDebsPO<M extends ITimeInterval> extends AbstractPipe<Ke
 			Tuple<M> newTuple = new Tuple<M>(2, false);
 			Graph graph;
 			if (addedEntities.contains(n1Id) && addedEntities.contains(n2Id)) {
-				graph = new Graph(netName);
+				graph = new Graph(this.dataStructure);
 			} else if (addedEntities.contains(n1Id) || n1Id == null) {
-				graph = new Graph(netName, n2Id, null);
+				graph = new Graph(this.dataStructure, n2Id, null);
 				addedEntities.add(n2Id);
 			} else if (addedEntities.contains(n2Id) || n2Id == null) {
-				graph = new Graph(netName, n1Id, null);
+				graph = new Graph(this.dataStructure, n1Id, null);
 				addedEntities.add(n1Id);
 			} else {
-				graph = new Graph(netName, n1Id, n2Id);
+				graph = new Graph(this.dataStructure, n1Id, n2Id);
 				addedEntities.add(n1Id);
 				addedEntities.add(n2Id);
 			}

@@ -82,14 +82,6 @@ public class GraphNode {
 		this.incomingEdges.put(edge, other);
 	}
 	
-	public void removeOutgoingEdge(String edgeId) {
-		this.outgoingEdges.remove(edgeId);
-	}
-	
-	public void removeIncomingEdge(String edgeId) {
-		this.incomingEdges.remove(edgeId);
-	}
-	
 	public void clearEdges() {
 		this.incomingEdges = new HashMap<GraphEdge, GraphNode>();
 		this.outgoingEdges = new HashMap<GraphEdge, GraphNode>();

@@ -58,10 +58,6 @@ public class GraphDataStructureProvider {
 		return this.dataStructures.get(name);
 	}
 	
-	public Map<String, IGraphDataStructure<IMetaAttribute>> getAllGraphDataStructuresSinceTimestamp(String name, PointInTime ts) {
-		return this.dataStructures;
-	}
-	
 	public Map<String, IGraphDataStructure<IMetaAttribute>> getStructuresMap() {
 		return this.dataStructures;
 	}

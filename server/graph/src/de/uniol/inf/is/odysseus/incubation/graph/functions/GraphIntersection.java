@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.incubation.graph.functions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,9 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 			} else {		
 				Map<Pair<String, String>, GraphEdge> relations = structure.getRelations();
 				Map<Pair<String, String>, GraphEdge> relIntersect = intersection.getRelations();
+				Map<String, GraphNode> nodes = new HashMap<String, GraphNode>(structure.getGraphNodes());
+				Map<String, GraphNode> nodesIntersect = new HashMap<String, GraphNode>(intersection.getGraphNodes());
+				
 				intersection.clearDataStructure();
 				
 				for (Map.Entry<Pair<String, String>, GraphEdge> relation : relations.entrySet()) {
@@ -69,6 +73,16 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 						endingNode.clearEdges();
 						
 						intersection.addRelation(startingNode, endingNode, relation.getValue());
+						nodes.remove(startingNode);
+						nodes.remove(endingNode);
+						nodesIntersect.remove(startingNode);
+						nodesIntersect.remove(endingNode);
+					}
+				}
+				
+				for (Map.Entry<String, GraphNode> entry : nodes.entrySet()) {
+					if (nodesIntersect.containsKey(entry.getKey())) {
+						intersection.addGraphNode(entry.getValue());
 					}
 				}
 			}

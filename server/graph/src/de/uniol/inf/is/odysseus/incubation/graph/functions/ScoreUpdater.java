@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.incubation.graph.functions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,11 +25,9 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 
 	private static final long serialVersionUID = -4079751252782432026L;
 	
-	Graph graphElement;
-	Graph postGraphElement;
-	String outdated;
-	String actualDataStructure;
-	Map<String, String> actualPostDataStructures = new HashMap<String, String>();
+	String dataStructure;
+	Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(4, false);
+	List<Tuple<IMetaAttribute>> outElements = new ArrayList<Tuple<IMetaAttribute>>();
 	
 	public ScoreUpdater() {
 		super();
@@ -50,6 +47,8 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 
 	@Override
 	public void addNew(T newElement) {
+		this.outElements = new ArrayList<Tuple<IMetaAttribute>>();
+		
 		// Rufe beide Graphen (Gesamtnetzwerk, Postdatenstruktur) ab.
 		Graph graph = newElement.getAttribute(0);
 		Graph postGraph = newElement.getAttribute(1);
@@ -57,8 +56,7 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 		IGraphDataStructure<IMetaAttribute> postStructure = GraphDataStructureProvider.getInstance().getGraphDataStructure(postGraph.getName());
 		
 		// Aktualisieren der neuesten Datenstrukturen
-		this.actualDataStructure = graph.getName();
-		this.actualPostDataStructures.put(postGraph.getNode1(), postGraph.getName());
+		this.dataStructure = graph.getName();
 		
 		// Bestimme total_score
 		Long totalScore = 0l;
@@ -73,23 +71,32 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 		Map<String, Object> props = postNode.getProps();
 		props.put("total_score", totalScore);
 		postNode.setProps(props);
-		postNode = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName()).getGraphNode(postGraph.getNode1());
+		
+		postNode = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.dataStructure).getGraphNode(postGraph.getNode1());
 		postNode.setProps(props);
 		
-		graphElement = graph;
-		postGraphElement = postGraph;
-		outdated = "false";
+		Tuple<IMetaAttribute> outElement = new Tuple<IMetaAttribute>(4, false);
+		outElement.setAttribute(0, graph);
+		outElement.setAttribute(1, postGraph);
+		outElement.setAttribute(2, "false");
+		outElement.setMetadata(newElement.getMetadata().clone());
+		
+		tuple = outElement;
+		
+		outElements.add(outElement);
 	}
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
+		this.outElements = new ArrayList<Tuple<IMetaAttribute>>();
+		
 		for (T removeElement : outdatedElements) {
 			// Bestimme beide Graphen.
 			Graph graph = removeElement.getAttribute(0);
 			Graph postGraph = removeElement.getAttribute(1);
 			
-			IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.actualDataStructure);
-			IGraphDataStructure<IMetaAttribute> postStructure = GraphDataStructureProvider.getInstance().getGraphDataStructure(actualPostDataStructures.get(postGraph.getNode1()));
+			IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.dataStructure);
+			IGraphDataStructure<IMetaAttribute> postStructure = GraphDataStructureProvider.getInstance().getGraphDataStructure(postGraph.getName());
 			
 			// Betroffene Knoten.
 			String node1 = graph.getNode1();
@@ -127,8 +134,8 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 			
 			// Gleiches für node2.
 			if (node2 != null && (node2.contains("post") || node2.contains("comment"))) {
-				Map<String, Object> props = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.actualDataStructure).getGraphNode(node2).getProps();
-				Map<String, Object> postProps = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.actualDataStructure).getGraphNode(postGraph.getNode1()).getProps();
+				Map<String, Object> props = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.dataStructure).getGraphNode(node2).getProps();
+				Map<String, Object> postProps = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.dataStructure).getGraphNode(postGraph.getNode1()).getProps();
 				
 				Long singleScore = ((Long) props.get("single_score"));
 				props.put("single_score", singleScore);
@@ -154,32 +161,35 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 				}
 			}
 			
-			PointInTime diff = removeElement.getMetadata().getEnd().minus(removeElement.getMetadata().getStart());
 			PointInTime tmp = removeElement.getMetadata().getEnd();
-			removeElement.getMetadata().setEnd(tmp.plus(diff));
+			removeElement.getMetadata().setEnd(PointInTime.INFINITY);
 			removeElement.getMetadata().setStart(tmp);
-
-			// aktuellste Datenstrukturen setzen
-			Graph newGraph = new Graph(this.actualDataStructure, graph.getNode1(), graph.getNode2());
-			Graph newPostGraph = new Graph(this.actualPostDataStructures.get(postGraph.getNode1()), postGraph.getNode1(), postGraph.getNode2());
 			
-			graphElement = newGraph;
-			postGraphElement = newPostGraph;
-			outdated = "true";
+			Graph newGraph = new Graph(this.dataStructure, graph.getNode1(), graph.getNode2());
+			
+			Tuple<IMetaAttribute> outElement = new Tuple<IMetaAttribute>(4, false);			
+			outElement.setAttribute(0, newGraph);
+			outElement.setAttribute(1, postGraph);
+			outElement.setAttribute(2, "true");
+			outElement.setMetadata(removeElement.getMetadata().clone());
+			
+			tuple = outElement;
+			
+			outElements.add(tuple);
 		}
 		
 	}
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		return new Object[]{graphElement, postGraphElement, outdated};
+		return new Object[]{tuple.getAttribute(0), tuple.getAttribute(1), tuple.getAttribute(2)};
 	}
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
 		final List<SDFAttribute> res = new ArrayList<>(1);
 		res.add(new SDFAttribute(null, "graph", SDFGraphDatatype.GRAPH, null, null, null));
-		res.add(new SDFAttribute(null, "post_graph", SDFGraphDatatype.GRAPH, null, null, null));
+		res.add(new SDFAttribute(null, "postGraph", SDFGraphDatatype.GRAPH, null, null, null));
 		res.add(new SDFAttribute(null, "outdated", SDFDatatype.STRING, null, null, null));
 		return res;
 	}

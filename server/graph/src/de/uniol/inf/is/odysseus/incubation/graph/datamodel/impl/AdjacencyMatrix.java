@@ -203,4 +203,9 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			matrix.column(nodeId).clear();
 		}
 	}
+
+	@Override
+	public void addGraphNode(GraphNode node) {
+		this.graphNodes.put(node.getId(), node);
+	}
 }

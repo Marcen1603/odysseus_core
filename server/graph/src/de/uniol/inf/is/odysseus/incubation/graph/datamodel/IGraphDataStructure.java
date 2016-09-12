@@ -26,6 +26,8 @@ public interface IGraphDataStructure<M extends IMetaAttribute> {
 	
 	public Map<String, GraphNode> getGraphNodes();
 	
+	public void addGraphNode(GraphNode node);
+	
 	public GraphNode getGraphNode(String nodeId);
 	
 	public void removeGraphNode(String nodeId);
