@@ -38,13 +38,18 @@ public class ScoreUpdaterAO extends UnaryLogicalOp {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
 		SDFAttribute attr = new SDFAttribute(null, "graph", SDFGraphDatatype.GRAPH);
-		SDFAttribute attr2 = new SDFAttribute(null, "postgraph", SDFGraphDatatype.GRAPH);
+		SDFAttribute attr2 = new SDFAttribute(null, "postGraph", SDFGraphDatatype.GRAPH);
 		SDFAttribute attr3 = new SDFAttribute(null, "outdated", SDFDatatype.STRING);
 		attributeList.add(attr);
 		attributeList.add(attr2);
 		attributeList.add(attr3);
 		
-		return SDFSchemaFactory.createNewSchema("graphstructure", (Class<? extends IStreamObject<?>>) Tuple.class, attributeList, this.getInputSchema());
+		SDFSchema subSchema = SDFSchemaFactory.createNewSchema("graph", (Class<? extends IStreamObject<?>>) Tuple.class, attributeList);
+		
+		final List<SDFAttribute> res = new ArrayList<>(1);
+		res.add(new SDFAttribute(subSchema.getURI(), "elements",
+				SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, subSchema)));
+		return SDFSchemaFactory.createNewSchema("elements", (Class<? extends IStreamObject<?>>) Tuple.class, res, this.getInputSchema());
 	}
 
 }

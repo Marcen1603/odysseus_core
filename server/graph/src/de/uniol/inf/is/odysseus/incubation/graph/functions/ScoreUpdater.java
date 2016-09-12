@@ -10,11 +10,14 @@ import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
 import de.uniol.inf.is.odysseus.incubation.graph.datatype.Graph;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
@@ -75,7 +78,7 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 		postNode = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.dataStructure).getGraphNode(postGraph.getNode1());
 		postNode.setProps(props);
 		
-		Tuple<IMetaAttribute> outElement = new Tuple<IMetaAttribute>(4, false);
+		Tuple<IMetaAttribute> outElement = new Tuple<IMetaAttribute>(3, false);
 		outElement.setAttribute(0, graph);
 		outElement.setAttribute(1, postGraph);
 		outElement.setAttribute(2, "false");
@@ -161,36 +164,47 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 				}
 			}
 			
-			PointInTime tmp = removeElement.getMetadata().getEnd();
-			removeElement.getMetadata().setEnd(PointInTime.INFINITY);
-			removeElement.getMetadata().setStart(tmp);
+			ITimeInterval metaData = (ITimeInterval) removeElement.getMetadata().clone();
+			PointInTime tmp = metaData.getEnd();
+			metaData.setEnd(PointInTime.INFINITY);
+			metaData.setStart(tmp);
 			
 			Graph newGraph = new Graph(this.dataStructure, graph.getNode1(), graph.getNode2());
 			
-			Tuple<IMetaAttribute> outElement = new Tuple<IMetaAttribute>(4, false);			
+			Tuple<IMetaAttribute> outElement = new Tuple<IMetaAttribute>(3, false);			
 			outElement.setAttribute(0, newGraph);
 			outElement.setAttribute(1, postGraph);
 			outElement.setAttribute(2, "true");
-			outElement.setMetadata(removeElement.getMetadata().clone());
+			outElement.setMetadata(metaData);
 			
 			tuple = outElement;
 			
 			outElements.add(tuple);
+			outElements.add(tuple.clone());
 		}
 		
 	}
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		return new Object[]{tuple.getAttribute(0), tuple.getAttribute(1), tuple.getAttribute(2)};
+		return new Object[]{outElements};
 	}
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
+		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
+		SDFAttribute attr = new SDFAttribute(null, "graph", SDFGraphDatatype.GRAPH);
+		SDFAttribute attr2 = new SDFAttribute(null, "postGraph", SDFGraphDatatype.GRAPH);
+		SDFAttribute attr3 = new SDFAttribute(null, "outdated", SDFDatatype.STRING);
+		attributeList.add(attr);
+		attributeList.add(attr2);
+		attributeList.add(attr3);
+		
+		SDFSchema subSchema = SDFSchemaFactory.createNewSchema("graph", (Class<? extends IStreamObject<?>>) Tuple.class, attributeList);
+		
 		final List<SDFAttribute> res = new ArrayList<>(1);
-		res.add(new SDFAttribute(null, "graph", SDFGraphDatatype.GRAPH, null, null, null));
-		res.add(new SDFAttribute(null, "postGraph", SDFGraphDatatype.GRAPH, null, null, null));
-		res.add(new SDFAttribute(null, "outdated", SDFDatatype.STRING, null, null, null));
+		res.add(new SDFAttribute(subSchema.getURI(), "elements",
+				SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, subSchema)));
 		return res;
 	}
 
