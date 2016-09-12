@@ -17,7 +17,7 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unchecked")
 	public transient static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] {ITimeInterval.class, IDatarate.class};
-	
+
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return CLASSES;
@@ -28,20 +28,20 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Datarate.schema);
 	}
-	
+
 	@Override
 	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
-	
+
 	final private ITimeInterval timeInterval;
 	final private IDatarate datarate;
-	
+
 	public TimeIntervalDatarate() {
 		timeInterval = new TimeInterval();
 		datarate = new Datarate();
 	}
-	
+
 	public TimeIntervalDatarate(TimeIntervalDatarate other) {
 		timeInterval = (ITimeInterval) other.timeInterval.clone();
 		datarate = (IDatarate) other.datarate.clone();
@@ -56,23 +56,23 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 	public String getName() {
 		return "TimeIntervalDatarate";
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Methods that need to merge different types
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
 		timeInterval.retrieveValues(values);
 		datarate.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		datarate.writeValue(values.get(1));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -80,7 +80,7 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 		list.addAll(datarate.getInlineMergeFunctions());
 		return list;
 	}
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch(subtype){
@@ -91,22 +91,17 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 		}
 		return null;
 	}
-	
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i = " + timeInterval.toString(baseTime) + " | "+ datarate.toString() + ")";
-	}
-	
+
 	@Override
 	public String toString() {
 		return "( i = " + super.toString() + " | " + datarate.toString() + ")";
 	}
 
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return timeInterval.getStart();
@@ -140,7 +135,7 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 	// ------------------------------------------------------------------------------
 	// Delegates for Datarate
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public void setDatarate(double datarate) {
 		this.datarate.setDatarate(datarate);
@@ -150,6 +145,6 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 	public double getDatarate() {
 		return datarate.getDatarate();
 	}
-	
+
 
 }

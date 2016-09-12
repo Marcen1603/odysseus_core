@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -231,7 +231,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getMaxEndTs()
 	 */
@@ -319,31 +319,25 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	}
 
 	@Override
-	public String getSweepAreaAsString(PointInTime baseTime) {
+	public String getSweepAreaAsString(String tab, int max, boolean tail) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getSweepAreaAsString(String tab, int max, boolean tail) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
 	public List<T> queryOverlapsAsListExtractOutdated(ITimeInterval interval, List<T> outdated) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public String getAreaName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void setAreaName(String name) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

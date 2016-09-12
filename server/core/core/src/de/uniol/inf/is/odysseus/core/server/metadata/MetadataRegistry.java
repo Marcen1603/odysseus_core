@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.GenerateMetadataClassCode;
 import de.uniol.inf.is.odysseus.core.metadata.GenericCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -46,9 +47,9 @@ public class MetadataRegistry {
 
 	final private static Logger logger = LoggerFactory
 			.getLogger(MetadataRegistry.class);
-	
+
 	final private static InfoService info = InfoServiceFactory.getInfoService(MetadataRegistry.class);
-	
+
 	private static Map<SortedSet<String>, IMetaAttribute> combinedMetadataTypes = new HashMap<>();
 
 	private static Map<String, IMetaAttribute> byName = new HashMap<>();
@@ -100,7 +101,7 @@ public class MetadataRegistry {
 			IMetaAttribute type = combinedMetadataTypes.get(types);
 			if (type == null) {
 				logger.warn("No predefined type for "+types+". Creating generic one. Could have lower performance.");
-				info.warning("No predefined type for "+types+". Creating generic one. Could have lower performance.");				
+				info.warning("No predefined type for "+types+". Creating generic one. Could have lower performance.");
 				List<IMetaAttribute> metaDataTypes = new ArrayList<>();
 				List<Class<? extends IMetaAttribute>> classList = new ArrayList<>();
 				for (String t:types){
@@ -115,20 +116,31 @@ public class MetadataRegistry {
 						classList.add(c);
 					}
 				}
-				
-				
+
+				// first compile
+				// todo allow flag do deactivate
+				String classCode=null;
+				try {
+					classCode = GenerateMetadataClassCode.generateClassCode(classList, metaDataTypes);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				System.out.println(classCode);
+
+				// TODO: if code gen is successfully :-)
+
 				Object gen = GenericCombinedMetaAttribute.newInstance(classList, metaDataTypes);
 				type = (IMetaAttribute) gen;
 				combinedMetadataTypes.put(types,type);
-				
+
 //				throw new IllegalArgumentException("No metadata type for: "
 //						+ types.toString());
 			}
 			return type;
 		}
-		
+
 	}
-	
+
 	public static IMetaAttribute getMetadataType(List<String> metaAttributeNames) {
 		SortedSet<String> names = new TreeSet<String>();
 		for (String n: metaAttributeNames){
@@ -214,7 +226,7 @@ public class MetadataRegistry {
 		}
 		return classNames;
 	}
-	
+
 	public static SortedSet<String> toClassNames(
 			Class<? extends IMetaAttribute>[] classes) {
 		SortedSet<String> classNames = new TreeSet<String>();
@@ -235,7 +247,7 @@ public class MetadataRegistry {
 
 		Collections.sort(left);
 		Collections.sort(right);
-		
+
 		for (int i=0;i<left.size();i++){
 			String l = left.get(i);
 			String r = right.get(i);
@@ -247,8 +259,8 @@ public class MetadataRegistry {
 				cmf.add((IInlineMetadataMergeFunction<? super IMetaAttribute>) f);
 			}
 		}
-		
-		
+
+
 		return cmf;
 	}
 
@@ -256,15 +268,15 @@ public class MetadataRegistry {
 		List<String> firstStr = new ArrayList<String>(toClassNames(first));
 		return isSame(firstStr, second);
 	}
-	
+
 	public static boolean isSame(List<String> first, List<String> second){
 		if (first.size() != second.size()){
 			return false;
 		}
-		
+
 		Collections.sort(first);
 		Collections.sort(second);
-		
+
 		for (int i=0;i<first.size();i++){
 			String l = first.get(i);
 			String r = second.get(i);

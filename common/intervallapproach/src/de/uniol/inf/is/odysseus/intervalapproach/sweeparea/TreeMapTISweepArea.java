@@ -35,16 +35,16 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  */
 
 /**
- * 
+ *
  * <p> This sweep area uses Trees to access tuples by start ts resp. end ts.
- * 
+ *
  * <p>This implementation does not allow to equal elements (e1.equals(e2)) at the same start ts). MARK: Better use TreeMap<Long, List<T>)?
- * 
+ *
  * @author Cornelius Ludmann
  */
 public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>> implements ITimeIntervalSweepArea<T>, Serializable {
 	private static final long serialVersionUID = 8050753498900975533L;
-	
+
 	private final TreeMultimap<Long, T> elements = TreeMultimap.create(Comparator.naturalOrder(), new Comparator<T>() {
 
 		@Override
@@ -59,13 +59,13 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 			return Comparator.<Long>naturalOrder().compare(o1.getMetadata().getStart().getMainPoint(), o1.getMetadata().getStart().getMainPoint());
 		}
 	});
-			
+
 	private transient IPredicate<? super T> queryPredicate;
 
 	private transient IPredicate<? super T> removePredicate;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public TreeMapTISweepArea() {
 		super();
@@ -139,7 +139,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				elements.put(element.getMetadata().getStart().getMainPoint(), element);
 				elementsByEndTs.put(element.getMetadata().getEnd().getMainPoint(), element);
 			}
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -163,7 +163,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 				elements.remove(element.getMetadata().getStart().getMainPoint(), element);
 				elementsByEndTs.remove(element.getMetadata().getEnd().getMainPoint(), element);
 			}
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -226,7 +226,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public void setQueryPredicate(IPredicate<? super T> queryPredicate) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -254,7 +254,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public void setRemovePredicate(IPredicate<? super T> removePredicate) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -279,7 +279,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return result;
 	}
-	
+
 	@Override
 	public Iterator<T> extractAllElements() {
 		return extractAllElementsAsList().iterator();
@@ -332,7 +332,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		removeAll(result);
 		return result;
 	}
-	
+
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime time) {
 		return extractAllElementsAsList().iterator();
@@ -404,33 +404,33 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 			return elements.get(validity.getMainPoint()).iterator();
 		}
 	}
-	
-	
+
+
 	private List<T> overlaps(ITimeInterval interval, boolean remove) {
 		synchronized (elements) {
-			
+
 			// all elements that start before interval ends:
 			SortedSet<Long> startBeforeIntervalEnds = elements.keySet().headSet(interval.getEnd().getMainPoint());
-			
+
 			// all elements that end after interval starts:
 			SortedSet<Long> endAfterIntervalStarts = elementsByEndTs.keySet().tailSet(interval.getStart().getMainPoint());
-			
+
 			List<T> startBeforeIntervalEndsSet = new LinkedList<>();
 			for(Long ts : startBeforeIntervalEnds) {
 				startBeforeIntervalEndsSet.addAll(elements.get(ts));
 			}
-			
+
 			List<T> endAfterIntervalStartsSet = new LinkedList<>();
 			for(Long ts : endAfterIntervalStarts) {
 				endAfterIntervalStartsSet.addAll(elementsByEndTs.get(ts));
 			}
-			
+
 			startBeforeIntervalEndsSet.retainAll(endAfterIntervalStartsSet);
-			
+
 			if(remove) {
 				removeAll(startBeforeIntervalEndsSet);
 			}
-			
+
 			return startBeforeIntervalEndsSet;
 		}
 	}
@@ -442,7 +442,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	public Iterator<T> queryOverlaps(ITimeInterval interval) {
 		return overlaps(interval, false).iterator();
 	}
-	
+
 	@Override
 	public List<T> queryContains(PointInTime point) {
 		// TODO: IMPLEMENT ME!
@@ -504,15 +504,6 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getSweepAreaAsString(de.uniol.inf.is.odysseus.core.metadata.PointInTime)
-	 */
-	@Override
-	public String getSweepAreaAsString(PointInTime baseTime) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getSweepAreaAsString(java.lang.String, int, boolean)
 	 */
 	@Override
@@ -526,17 +517,17 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public String getAreaName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void setAreaName(String name) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 

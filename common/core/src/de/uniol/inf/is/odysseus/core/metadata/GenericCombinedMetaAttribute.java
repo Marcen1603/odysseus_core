@@ -288,29 +288,3 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 	}
 
 }
-
-class GenericClassLoader extends ClassLoader {
-	private List<ClassLoader> classLoader = new ArrayList<>();
-
-	public GenericClassLoader(IMetaAttribute[] metaAttribute) {
-		for (IMetaAttribute m : metaAttribute) {
-			classLoader.add(m.getClass().getClassLoader());
-		}
-	}
-
-	@Override
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		try {
-			return super.loadClass(name);
-		} catch (ClassNotFoundException e) {
-		}
-
-		for (ClassLoader c : classLoader) {
-			try {
-				return c.loadClass(name);
-			} catch (ClassNotFoundException e) {
-			}
-		}
-		return super.loadClass(name);
-	}
-}

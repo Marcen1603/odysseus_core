@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
-final public class IntervalLatencyPriority extends AbstractCombinedMetaAttribute 
+final public class IntervalLatencyPriority extends AbstractCombinedMetaAttribute
 		implements ITimeInterval, ILatency, IPriority {
 
 	private static final long serialVersionUID = -4924797905689073685L;
@@ -101,7 +101,7 @@ final public class IntervalLatencyPriority extends AbstractCombinedMetaAttribute
 		latency.writeValue(values.get(1));
 		prio.retrieveValues(values);
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -111,7 +111,7 @@ final public class IntervalLatencyPriority extends AbstractCombinedMetaAttribute
 		return list;
 	}
 
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {
@@ -125,11 +125,6 @@ final public class IntervalLatencyPriority extends AbstractCombinedMetaAttribute
 		return null;
 	}
 
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i= " + timeInterval.toString(baseTime) + " ; " + " l="
-				+ this.latency + "" + " ; p=" + this.prio + ")";
-	}
 
 	@Override
 	public String toString() {
