@@ -17,7 +17,8 @@ public class GraphDataStructureProvider {
 	private static GraphDataStructureProvider instance;
 	
 	private Map<String, IGraphDataStructure<IMetaAttribute>> dataStructures = new HashMap<String, IGraphDataStructure<IMetaAttribute>>();
-	private Map<IGraphListener, String> listeners = new HashMap<IGraphListener, String>();
+	private Map<String, String> actualDataStructures = new HashMap<String, String>();
+	private Map<String, List<IGraphListener>> listeners = new HashMap<String, List<IGraphListener>>();
 	
 	public static GraphDataStructureProvider getInstance() {
 		if (instance == null) {
@@ -29,12 +30,13 @@ public class GraphDataStructureProvider {
 	public String addGraphDataStructure(IGraphDataStructure<IMetaAttribute> structure, PointInTime ts) {
 		String key = structure.getName() + "_" + ts;
 		this.dataStructures.put(key, structure);
+		this.actualDataStructures.put(structure.getName(), key);
 		
 		Graph graph = new Graph(key);
 		
-		for (Map.Entry<IGraphListener, String> listener : listeners.entrySet()) {
-			if (key.contains(listener.getValue())) {
-				listener.getKey().graphDataStructureChange(graph);
+		if (this.listeners.get(structure.getName()) != null) {
+			for (IGraphListener listener : this.listeners.get(structure.getName())) {
+				listener.graphDataStructureChange(graph);
 			}
 		}
 		
@@ -71,10 +73,16 @@ public class GraphDataStructureProvider {
 	}
 	
 	public void addListener(IGraphListener listener, String structureName) {
-		this.listeners.put(listener, structureName);
+		List<IGraphListener> structureListener = this.listeners.get(structureName);
+		structureListener.add(listener);
+		this.listeners.put(structureName, structureListener);
 	}
 	
 	public void removeListener(IGraphListener listener) {
 		this.listeners.remove(listener);
+	}
+	
+	public String getActualStructure (String name) {
+		return this.actualDataStructures.get(name);
 	}
 }

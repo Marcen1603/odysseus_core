@@ -127,11 +127,11 @@ public class BestPostsDebs<M extends ITimeInterval, T extends Tuple<M>> extends 
 			String author = "";
 			Long numComments = 0l;
 			if (postStructure != null) {
-				for (String nodeId : postStructure.getGraphNodes().keySet()) {
-					if (nodeId.contains("user")) {
-						author = nodeId;
+				for (GraphNode node : postStructure.getGraphNodes().values()) {
+					if (node.getLabel().equals("user")) {
+						author = node.getId();
 						break;
-					} else if (nodeId.contains("comment")) {
+					} else if (node.getLabel().equals("comment")) {
 						numComments ++;
 					}
 				}

@@ -30,9 +30,11 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 
 	private static final long serialVersionUID = -4960965026820211241L;
 	
-	Map<Pair<String, String>, Integer> posts = new HashMap<Pair<String, String>, Integer>();
+	private Map<Pair<String, String>, Integer> posts = new HashMap<Pair<String, String>, Integer>();
 	@SuppressWarnings("unchecked")
-	Tuple<IMetaAttribute>[] result = new Tuple[0];
+	private Tuple<IMetaAttribute>[] result = new Tuple[0];
+	
+	private int numPosts = 0;
 	
 	@SuppressWarnings("unchecked")
 	public BestPost() {
@@ -73,16 +75,16 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
 		
 		Map<String, GraphNode> graphNodes = structure.getGraphNodes();
-		for (Map.Entry<String, GraphNode> entry : graphNodes.entrySet()) {
-			if (entry.getKey().contains("post")) {
+		for (GraphNode node : graphNodes.values()) {
+			if (node.getLabel().equals("post")) {
 				int comments = 0;
-				Map<GraphEdge, GraphNode> inEdges = entry.getValue().getIncomingEdges();
+				Map<GraphEdge, GraphNode> inEdges = node.getIncomingEdges();
 				for (Map.Entry<GraphEdge, GraphNode> edge : inEdges.entrySet()) {
 					if (edge.getKey().getLabel().equals("is_comment_of") && edge.getValue().getId().contains("comment")) {
 						comments ++;
 					}
 				}
-				posts.put(new Pair<String, String>(entry.getKey(), graph.getName()), comments);
+				posts.put(new Pair<String, String>(node.getId(), graph.getName()), comments);
 			}
 		}
 	}
@@ -111,14 +113,18 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		Tuple<IMetaAttribute>[] result = getMaxValuesOfMap(posts, 3);
+		Tuple<IMetaAttribute>[] result = getMaxValuesOfMap(posts, this.numPosts);
 		
 		return result;
 	}
 
 	@Override
 	public AbstractIncrementalAggregationFunction<M, T> clone() {
-		return new BestPost<M, T>(this);
+		BestPost<M, T> newFunction = new BestPost<M, T>(this);
+		newFunction.numPosts = this.numPosts;
+		newFunction.posts = this.posts;
+		newFunction.result = this.result.clone();
+		return newFunction;
 	}
 
 	@Override
@@ -131,6 +137,8 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters, attributeResolver);
 		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters, attributeResolver);
 		
+		this.numPosts = (int) parameters.get("numPosts");
+		
 		if (attributes == null) {
 			return new BestPost<M, T>(attributeResolver.getSchema().get(0).size(), outputNames);
 		}
@@ -139,10 +147,11 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 	
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		final List<SDFAttribute> res = new ArrayList<>(3);
-		res.add(new SDFAttribute(null, "post1", SDFDatatype.TUPLE, null, null, null));
-		res.add(new SDFAttribute(null, "post2", SDFDatatype.TUPLE, null, null, null));
-		res.add(new SDFAttribute(null, "post3", SDFDatatype.TUPLE, null, null, null));
+		final List<SDFAttribute> res = new ArrayList<>(this.numPosts);
+		
+		for (int i = 1; i <= this.numPosts; i++) {
+			res.add(new SDFAttribute(null, "post" + i, SDFDatatype.TUPLE, null, null, null));
+		}
 		
 		return res;
 	}

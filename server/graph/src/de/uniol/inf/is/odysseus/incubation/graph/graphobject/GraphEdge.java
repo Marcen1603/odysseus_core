@@ -5,24 +5,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+
 public class GraphEdge {
 
 	private String label;
 	private Map<String, String> props = new HashMap<String, String>();
 	private List<GraphNode> startingNodes = new ArrayList<GraphNode>();
 	private List<GraphNode> endingNodes = new ArrayList<GraphNode>();
+	private PointInTime createdAt;
 	
-	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes) {
+	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes, PointInTime createdAt) {
 		this.label = label;
 		this.startingNodes = startingNodes;
 		this.endingNodes = endingNodes;
+		this.createdAt = createdAt;
 	}
 	
-	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes, Map<String, String> props) {
+	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes, Map<String, String> props, PointInTime createdAt) {
 		this.label = label;
 		this.props = props;
 		this.startingNodes = startingNodes;
 		this.endingNodes = endingNodes;
+		this.createdAt = createdAt;
 	}
 	
 	public String getLabel() {
@@ -63,6 +68,10 @@ public class GraphEdge {
 	
 	public List<GraphNode> getEndingNotes() {
 		return this.endingNodes;
+	}
+	
+	public PointInTime createdAt() {
+		return this.createdAt;
 	}
 	
 	public void clearStartingNodes() {

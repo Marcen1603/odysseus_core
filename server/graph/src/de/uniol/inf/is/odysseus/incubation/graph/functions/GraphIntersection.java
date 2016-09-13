@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.incubation.graph.functions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,37 +51,36 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 			Graph graph = ((Graph) tuple.getAttribute(0));
 			
 			IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
-			Map<String, GraphNode> graphNodes = structure.getGraphNodes();
+			List<GraphNode> nodes = (List<GraphNode>) structure.getGraphNodes().values();
 			
 			if (intersection == null) {
 				intersection = structure.cloneDataStructure();
 			} else {		
 				Map<Pair<String, String>, GraphEdge> relations = structure.getRelations();
 				Map<Pair<String, String>, GraphEdge> relIntersect = intersection.getRelations();
-				Map<String, GraphNode> nodes = new HashMap<String, GraphNode>(structure.getGraphNodes());
-				Map<String, GraphNode> nodesIntersect = new HashMap<String, GraphNode>(intersection.getGraphNodes());
+				List<GraphNode> intersectNodes = (List<GraphNode>) intersection.getGraphNodes().values();
 				
 				intersection.clearDataStructure();
 				
 				for (Map.Entry<Pair<String, String>, GraphEdge> relation : relations.entrySet()) {
 					if (relIntersect.containsKey(relation.getKey()) && (relIntersect.get(relation.getKey()).equals(relation.getValue()))) {
-						GraphNode startingNode = graphNodes.get(relation.getKey().getE1());
+						GraphNode startingNode = structure.getGraphNode(relation.getKey().getE1());
 						startingNode.clearEdges();
 						
-						GraphNode endingNode = structure.getGraphNodes().get(relation.getKey().getE2());
+						GraphNode endingNode = structure.getGraphNode(relation.getKey().getE2());
 						endingNode.clearEdges();
 						
 						intersection.addRelation(startingNode, endingNode, relation.getValue());
 						nodes.remove(startingNode);
 						nodes.remove(endingNode);
-						nodesIntersect.remove(startingNode);
-						nodesIntersect.remove(endingNode);
+						intersectNodes.remove(startingNode);
+						intersectNodes.remove(endingNode);
 					}
 				}
 				
-				for (Map.Entry<String, GraphNode> entry : nodes.entrySet()) {
-					if (nodesIntersect.containsKey(entry.getKey())) {
-						intersection.addGraphNode(entry.getValue());
+				for (GraphNode node : nodes) {
+					if (intersectNodes.contains(node.getId())) {
+						intersection.addGraphNode(node);
 					}
 				}
 			}
@@ -104,7 +102,6 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 		final List<SDFAttribute> res = new ArrayList<>(1);
 		res.add(new SDFAttribute(null, "graph", SDFGraphDatatype.GRAPH, null, null, null));
 		return res;
-//		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0], SDFGraphDatatype.GRAPH, null, null, null));
 	}
 
 	@Override

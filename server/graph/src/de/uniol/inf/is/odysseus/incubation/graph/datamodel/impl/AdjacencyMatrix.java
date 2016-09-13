@@ -13,6 +13,7 @@ import com.google.common.collect.Table.Cell;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
@@ -34,7 +35,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addDataSet(KeyValueObject<M> object) {
+	public synchronized void addDataSet(KeyValueObject<M> object) {
 		String n1Id = (String) object.getAttribute("n1_id");
 		String n2Id = (String) object.getAttribute("n2_id");
 		
@@ -50,7 +51,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			if (graphNodes.containsKey(n1Id)) {
 				node1 = graphNodes.get(n1Id);
 			} else {
-				node1 = new GraphNode(n1Id, (String) attributes.get("n1_label"));
+				node1 = new GraphNode(n1Id, (String) attributes.get("n1_label"), ((ITimeInterval) object.getMetadata()).getStart());
 			}
 			
 			if (attributes.get("n1_props") != null) {
@@ -64,7 +65,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			if (graphNodes.containsKey(n2Id)) {
 				node2 = graphNodes.get(n2Id);
 			} else {
-				node2 = new GraphNode(n2Id, (String) attributes.get("n2_label"));
+				node2 = new GraphNode(n2Id, (String) attributes.get("n2_label"), ((ITimeInterval) object.getMetadata()).getStart());
 			}
 			
 			if (attributes.get("n2_props") != null) {
@@ -79,7 +80,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			List<GraphNode> startingNodes = Collections.singletonList(node1);
 			List<GraphNode> endingNodes = Collections.singletonList(node2);
 			
-			GraphEdge edge = new GraphEdge(eLabel, startingNodes, endingNodes);
+			GraphEdge edge = new GraphEdge(eLabel, startingNodes, endingNodes, ((ITimeInterval) object.getMetadata()).getStart());
 			
 			node1.addOutgoingEdge(edge, node2);
 			node2.addIncomingEdge(edge, node1);
@@ -90,7 +91,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void editDataSet(KeyValueObject<M> object) {
+	public synchronized void editDataSet(KeyValueObject<M> object) {
 		String n1Id = (String) object.getAttribute("n1_id");
 		String n2Id = (String) object.getAttribute("n2_id");
 		
@@ -109,7 +110,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 	}
 
 	@Override
-	public void deleteDataSet(KeyValueObject<M> object) {
+	public synchronized void deleteDataSet(KeyValueObject<M> object) {
 		String n1Id = (String) object.getAttribute("n1_id");
 		String n2Id = (String) object.getAttribute("n2_id");
 		
@@ -175,7 +176,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 	}
 	
 	@Override
-	public void addRelation(GraphNode node1, GraphNode node2, GraphEdge edge) {
+	public synchronized void addRelation(GraphNode node1, GraphNode node2, GraphEdge edge) {
 		this.matrix.put(node1.getId(), node2.getId(), edge);
 		this.graphNodes.put(node1.getId(), node1);
 		this.graphNodes.put(node2.getId(), node2);
@@ -190,7 +191,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 	}
 
 	@Override
-	public void removeGraphNode(String nodeId) {
+	public synchronized void removeGraphNode(String nodeId) {
 		if (this.graphNodes.containsKey(nodeId)) {
 			this.graphNodes.remove(nodeId);
 		}
@@ -205,7 +206,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 	}
 
 	@Override
-	public void addGraphNode(GraphNode node) {
+	public synchronized void addGraphNode(GraphNode node) {
 		this.graphNodes.put(node.getId(), node);
 	}
 }

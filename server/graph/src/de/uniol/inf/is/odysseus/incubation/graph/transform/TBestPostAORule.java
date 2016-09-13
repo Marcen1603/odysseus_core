@@ -34,6 +34,7 @@ public class TBestPostAORule extends AbstractTransformationRule<BestPostAO> {
 		BestPost<ITimeInterval, Tuple<ITimeInterval>> function = new BestPost<ITimeInterval, Tuple<ITimeInterval>>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("FUNCTION", "BestPost");
+		params.put("numPosts", ao.getNumPosts());
 		DirectAttributeResolver attributeResolver = new DirectAttributeResolver(ao.getInputSchema());
 		
 		function.createInstance(params, attributeResolver);

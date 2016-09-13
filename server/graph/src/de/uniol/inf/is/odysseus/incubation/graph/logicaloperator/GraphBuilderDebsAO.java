@@ -19,13 +19,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.incubation.graph.IGraphBuilder;
 import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name="GRAPHBUILDERDEBS", doc="Converts a graph stream of posts and comments to a graphdatastructure", category={LogicalOperatorCategory.TRANSFORM})
-public class GraphBuilderDebsAO extends UnaryLogicalOp implements IGraphBuilder {
+public class GraphBuilderDebsAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -4302435847704036862L;
 	
@@ -84,7 +83,6 @@ public class GraphBuilderDebsAO extends UnaryLogicalOp implements IGraphBuilder 
 		return this.datatype;
 	}
 	
-	@Override
 	public IGraphDataStructure<IMetaAttribute> getGraphDataStructure() {
 		return this.structure;
 	}

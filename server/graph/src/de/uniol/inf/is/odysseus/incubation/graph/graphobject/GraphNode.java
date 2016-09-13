@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.incubation.graph.graphobject;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+
 public class GraphNode {
 
 	private String id;
@@ -10,24 +12,28 @@ public class GraphNode {
 	private Map<String, Object> props = new HashMap<String, Object>();
 	private Map<GraphEdge, GraphNode> outgoingEdges = new HashMap<GraphEdge, GraphNode>();
 	private Map<GraphEdge, GraphNode> incomingEdges = new HashMap<GraphEdge, GraphNode>();
+	private PointInTime createdAt;
 	
-	public GraphNode(String id, String label) {
+	public GraphNode(String id, String label, PointInTime createdAt) {
 		this.id = id;
 		this.label = label;
+		this.createdAt = createdAt;
 	}
 	
-	public GraphNode(String id, String label, Map<String, Object> props) {
+	public GraphNode(String id, String label, Map<String, Object> props, PointInTime createdAt) {
 		this.id = id;
 		this.label = label;
 		this.props = props;
+		this.createdAt = createdAt;
 	}
 	
-	public GraphNode(String id, String label, Map<String, Object> props, Map<GraphEdge, GraphNode> incomingEdges, Map<GraphEdge, GraphNode> outgoingEdges) {
+	public GraphNode(String id, String label, Map<String, Object> props, Map<GraphEdge, GraphNode> incomingEdges, Map<GraphEdge, GraphNode> outgoingEdges, PointInTime createdAt) {
 		this.id = id;
 		this.label = label;
 		this.props = props;
 		this.incomingEdges = incomingEdges;
 		this.outgoingEdges = outgoingEdges;
+		this.createdAt = createdAt;
 	}
 	
 	public String  getId() {
@@ -85,6 +91,10 @@ public class GraphNode {
 	public void clearEdges() {
 		this.incomingEdges = new HashMap<GraphEdge, GraphNode>();
 		this.outgoingEdges = new HashMap<GraphEdge, GraphNode>();
+	}
+	
+	public PointInTime getCreatedAt() {
+		return this.createdAt;
 	}
 
 }

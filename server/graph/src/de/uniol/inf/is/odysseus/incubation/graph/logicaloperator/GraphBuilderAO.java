@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.incubation.graph.IGraphBuilder;
 import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
@@ -26,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name="GRAPHBUILDER", doc = "Converts a graph stream to an adjacency matrix", category={LogicalOperatorCategory.TRANSFORM})
-public class GraphBuilderAO extends UnaryLogicalOp implements IGraphBuilder {
+public class GraphBuilderAO extends UnaryLogicalOp {
 	// Static
 	private static final long serialVersionUID = -8568425936637625420L;
 
