@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * Klasse, mit deren Hilfe ein diskretes (!) rechtsoffenes Intervall zwischen
  * zwei Zeitpunkten (PointInTime) definiert werden kann die linke Grenze muss
  * immer kleiner oder gleich der rechten Grenze sein
- * 
+ *
  * @author Marco Grawunder, Jonas Jacobi
  */
 
@@ -123,7 +123,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	public void writeValue(Tuple<?> value) {
 		Object v1 = value.getAttribute(0);
 		Object v2 = value.getAttribute(1);
-		
+
 		if (v1 != null){
 			this.start = new PointInTime((long)v1);
 		}else{
@@ -134,7 +134,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		}else{
 			this.end = PointInTime.INFINITY;
 		}
-		
+
 	}
 
 	@Override
@@ -180,7 +180,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param left
 	 *            linkes Intervall
 	 * @param right
@@ -215,7 +215,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 
 	/**
 	 * Liegt das linke Intervall innerhalb des rechten
-	 * 
+	 *
 	 * @param left
 	 *            Linkes Intervall
 	 * @param right
@@ -229,7 +229,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 
 	/**
 	 * Liegt der Punkt innerhalb des Intervals
-	 * 
+	 *
 	 * @param interval
 	 * @param timestamp
 	 * @return
@@ -283,7 +283,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	 * @TODO Difference method is returning a distance between time intervals
 	 * and not the difference, example for an time interval A and an inside time
 	 * interval B: A - B = two time intervals left and right to A.
-	 * 
+	 *
 	 * minus method implements the difference
 	 */
 
@@ -309,12 +309,12 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	 * Difference method is returning a distance between time intervals and not
 	 * the difference, example for an time interval A and an inside time
 	 * interval B: A - B = two time intervals left and right to A.
-	 * 
+	 *
 	 * The method implements the behaviour difference method should have.
-	 * 
+	 *
 	 * @TODO wrap equal if-clause bodies later; and create temporary points for
 	 *       starts and ends.
-	 * 
+	 *
 	 * @param minuend
 	 * @param subtrahend
 	 * @author Jendrik Poloczek
@@ -382,7 +382,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	/**
 	 * Beim Vergleich werden zunchst die Startzeitpunkte und dann die
 	 * Endzeitpunkte der Intervalle betrachtet
-	 * 
+	 *
 	 */
 	@Override
 	public int compareTo(ITimeInterval toCompare) {
@@ -426,16 +426,10 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		return new TimeInterval(start, end);
 	}
 
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "[" + getStart().minus(baseTime).toString() + ","
-				+ getEnd().minus(baseTime).toString() + ")";
-	}
-
 	public static TimeInterval forever() {
 		return forever.clone();
 	}
-	
+
 	public boolean isEmpty(){
 		return this.start.equals(this.end);
 	}

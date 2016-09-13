@@ -99,10 +99,6 @@ final public class TimeIntervalSystemLoad extends AbstractCombinedMetaAttribute 
 		return "( i= " + timeInterval.toString() + " | sysload= " + super.toString() + " )";
 	}
 
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i= " + timeInterval.toString(baseTime) + " | sysload= " + super.toString() + " )";
-	}
 
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval

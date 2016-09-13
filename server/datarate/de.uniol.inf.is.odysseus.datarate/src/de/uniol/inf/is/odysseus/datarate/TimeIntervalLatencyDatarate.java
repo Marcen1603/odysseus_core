@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
-final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttribute 
+final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttribute
 		implements ITimeInterval, ILatency, IDatarate {
 
 	private static final long serialVersionUID = 3739945183008260647L;
@@ -61,7 +61,7 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 	public TimeIntervalLatencyDatarate clone() {
 		return new TimeIntervalLatencyDatarate(this);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "TimeIntervalLatencyDatarate";
@@ -77,14 +77,14 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 		latency.retrieveValues(values);
 		datarate.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		latency.writeValue(values.get(1));
 		datarate.writeValue(values.get(2));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -106,23 +106,18 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "i = " + timeInterval.toString() + " | l = "
 				+ latency.toString() + " | d = " + datarate.toString() + "";
 	}
-	
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "i = " + timeInterval.toString(baseTime) + " | l = "
-				+ latency.toString() + " | d = " + datarate.toString() + "";
-	}
-	
+
+
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return timeInterval.getStart();
@@ -152,17 +147,17 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 	public int compareTo(ITimeInterval o) {
 		return timeInterval.compareTo(o);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for latency
 	// ------------------------------------------------------------------------------
 
-	
+
 	@Override
 	public final long getLatency() {
 		return latency.getLatency();
 	}
-	
+
 	@Override
 	public long getMaxLatency() {
 		return latency.getMaxLatency();
@@ -177,7 +172,7 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 	public final long getLatencyStart() {
 		return latency.getLatencyStart();
 	}
-	
+
 	@Override
 	public long getMaxLatencyStart() {
 		return latency.getMaxLatencyStart();
@@ -192,7 +187,7 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 	public final void setMinLatencyStart(long timestamp) {
 		latency.setMinLatencyStart(timestamp);
 	}
-	
+
 	@Override
 	public void setMaxLatencyStart(long timestamp) {
 		latency.setMaxLatencyStart(timestamp);
@@ -201,7 +196,7 @@ final public class TimeIntervalLatencyDatarate extends AbstractCombinedMetaAttri
 	// ------------------------------------------------------------------------------
 	// Delegates for Datarate
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public void setDatarate(double datarate) {
 		this.datarate.setDatarate(datarate);

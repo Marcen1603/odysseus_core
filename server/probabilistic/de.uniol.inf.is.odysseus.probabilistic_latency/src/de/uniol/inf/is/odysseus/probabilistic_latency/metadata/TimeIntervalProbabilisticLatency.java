@@ -33,12 +33,12 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMetaAttribute 
+final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMetaAttribute
 		implements ILatency, ITimeInterval, IProbabilistic {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4833031661270663461L;
 	/** Included classes. */
@@ -80,7 +80,7 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 
 	/**
 	 * Clone constructor.
-	 * 
+	 *
 	 * @param clone
 	 *            The object to clone from
 	 */
@@ -111,14 +111,14 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 		latency.retrieveValues(values);
 		probabilistic.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		latency.writeValue(values.get(1));
 		probabilistic.writeValue(values.get(2));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -127,7 +127,7 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 		list.addAll(probabilistic.getInlineMergeFunctions());
 		return list;
 	}
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch(subtype){
@@ -147,16 +147,10 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 				+ " | prob =" + probabilistic.toString() + ")";
 	}
 
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i= " + timeInterval.toString(baseTime) + " | l="
-				+ this.latency + " | prob =" + probabilistic.toString() + ")";
-	}
-	
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return timeInterval.getStart();
@@ -186,17 +180,17 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 	public int compareTo(ITimeInterval o) {
 		return timeInterval.compareTo(o);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for latency
 	// ------------------------------------------------------------------------------
 
-	
+
 	@Override
 	public final long getLatency() {
 		return latency.getLatency();
 	}
-	
+
 	@Override
 	public long getMaxLatency() {
 		return latency.getMaxLatency();
@@ -211,7 +205,7 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 	public final long getLatencyStart() {
 		return latency.getLatencyStart();
 	}
-	
+
 	@Override
 	public long getMaxLatencyStart() {
 		return latency.getMaxLatencyStart();
@@ -226,7 +220,7 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 	public final void setMinLatencyStart(long timestamp) {
 		latency.setMinLatencyStart(timestamp);
 	}
-	
+
 	@Override
 	public void setMaxLatencyStart(long timestamp) {
 		latency.setMaxLatencyStart(timestamp);
@@ -245,8 +239,8 @@ final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMeta
 	public void setExistence(double existence) {
 		probabilistic.setExistence(existence);
 	}
-	
-	
-	
+
+
+
 
 }

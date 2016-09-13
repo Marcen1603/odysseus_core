@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,6 @@ public interface ITimeInterval extends IMetaAttribute, Comparable<ITimeInterval>
 	public void setStart(PointInTime point);
 	public void setEnd(PointInTime point);
 	public void setStartAndEnd(PointInTime start, PointInTime end);
-	public String toString(PointInTime baseTime);
 //	@Override
 //	public ITimeInterval clone();
 }

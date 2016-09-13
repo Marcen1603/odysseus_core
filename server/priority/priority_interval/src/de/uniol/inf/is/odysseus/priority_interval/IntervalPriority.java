@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 	private static final long serialVersionUID = -313473603482217362L;
 
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{
 		ITimeInterval.class, IPriority.class
 	};
 
@@ -43,32 +43,32 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 		return classes;
 	}
 
-	
+
 	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Priority.schema);
 	}
-	
+
 	@Override
 	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
-	
+
 	final private ITimeInterval timeInterval;
 	final private IPriority priority;
-	
+
 
 	public IntervalPriority() {
 		timeInterval = new TimeInterval();
 		priority = new Priority();
 	}
-	
+
 	public IntervalPriority(IntervalPriority other){
 		this.timeInterval = (ITimeInterval) other.timeInterval.clone();
 		this.priority = (IPriority) other.priority.clone();
 	}
-	
+
 	@Override
 	public IntervalPriority clone() {
 		return new IntervalPriority(this);
@@ -83,7 +83,7 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 	// Methods that need to merge different types
 	// ------------------------------------------------------------------------------
 
-	
+
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
 		timeInterval.retrieveValues(values);
@@ -95,7 +95,7 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 		timeInterval.writeValue(value.get(0));
 		priority.writeValue(value.get(1));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -103,7 +103,7 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 		list.addAll(priority.getInlineMergeFunctions());
 		return list;
 	}
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch(subtype){
@@ -115,21 +115,16 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 		return null;
 	}
 
-	
+
 	@Override
 	public String toString() {
 		return "i="+timeInterval.toString()+" p= "+this.priority;
 	}
-	
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "i="+timeInterval.toString(baseTime)+" p= "+this.priority;
-	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return timeInterval.getStart();
@@ -177,7 +172,7 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 
 
 
-	
 
-	
+
+
 }

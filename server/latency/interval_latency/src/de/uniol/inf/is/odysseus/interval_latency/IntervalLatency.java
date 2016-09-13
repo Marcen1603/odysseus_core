@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,55 +31,58 @@ import de.uniol.inf.is.odysseus.latency.Latency;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
+ *
+ *  @deprecated: Use TimeIntervalLatency instead
  */
+@Deprecated
 final public class IntervalLatency extends AbstractCombinedMetaAttribute implements ILatency, ITimeInterval {
 
 	private static final long serialVersionUID = -3129934770814427153L;
-	
+
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{
 		ITimeInterval.class, ILatency.class
 	};
-	
+
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return classes;
 	}
-	
+
 	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Latency.schema);
 	}
-	
+
 	@Override
 	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "IntervalLatency";
 	}
-	
+
 	private final ILatency latency;
 	private final ITimeInterval timeInterval;
-	
+
 	public IntervalLatency() {
 		timeInterval = new TimeInterval();
 		latency = new Latency();
 	}
-	
+
 	public IntervalLatency(IntervalLatency clone) {
 		this.timeInterval = (ITimeInterval) clone.timeInterval.clone();
 		this.latency = (ILatency) clone.latency.clone();
 	}
-	
+
 	@Override
 	public IntervalLatency clone() {
 		return new IntervalLatency(this);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Methods that need to merge different types
 	// ------------------------------------------------------------------------------
@@ -89,13 +92,13 @@ final public class IntervalLatency extends AbstractCombinedMetaAttribute impleme
 		timeInterval.retrieveValues(values);
 		latency.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		latency.writeValue(values.get(1));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -104,7 +107,7 @@ final public class IntervalLatency extends AbstractCombinedMetaAttribute impleme
 		return list;
 	}
 
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch(subtype){
@@ -115,21 +118,16 @@ final public class IntervalLatency extends AbstractCombinedMetaAttribute impleme
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "( i= " +timeInterval.toString() + " | " + " l="+ this.latency+ ")";
-	}
-	
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i= " +timeInterval.toString(baseTime) + " | " + " l="+ this.latency+ ")";
 	}
 
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return timeInterval.getStart();
@@ -159,17 +157,17 @@ final public class IntervalLatency extends AbstractCombinedMetaAttribute impleme
 	public int compareTo(ITimeInterval o) {
 		return timeInterval.compareTo(o);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for latency
 	// ------------------------------------------------------------------------------
 
-	
+
 	@Override
 	public final long getLatency() {
 		return latency.getLatency();
 	}
-	
+
 	@Override
 	public long getMaxLatency() {
 		return latency.getMaxLatency();
@@ -184,7 +182,7 @@ final public class IntervalLatency extends AbstractCombinedMetaAttribute impleme
 	public final long getLatencyStart() {
 		return latency.getLatencyStart();
 	}
-	
+
 	@Override
 	public long getMaxLatencyStart() {
 		return latency.getMaxLatencyStart();
@@ -199,11 +197,11 @@ final public class IntervalLatency extends AbstractCombinedMetaAttribute impleme
 	public final void setMinLatencyStart(long timestamp) {
 		latency.setMinLatencyStart(timestamp);
 	}
-	
+
 	@Override
 	public void setMaxLatencyStart(long timestamp) {
 		latency.setMaxLatencyStart(timestamp);
 	}
 
-	
+
 }

@@ -28,11 +28,11 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribute 
+final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribute
 		implements IProbabilisticTimeInterval {
 
 	private static final long serialVersionUID = -9030157268224460919L;
@@ -63,7 +63,7 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	}
 
 	/**
-	 * 
+	 *
 	 * Default constructor.
 	 */
 	public ProbabilisticTimeInterval() {
@@ -73,7 +73,7 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 
 	/**
 	 * Clone constructor.
-	 * 
+	 *
 	 * @param copy
 	 *            The object to copy from
 	 */
@@ -83,7 +83,7 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -92,7 +92,7 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -109,13 +109,13 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 		timeInterval.retrieveValues(values);
 		probabilistic.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		probabilistic.writeValue(values.get(1));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -134,9 +134,9 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 		}
 		return null;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -144,16 +144,10 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 		return "i=" + timeInterval.toString() + " | prob=" + this.probabilistic;
 	}
 
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "i=" + timeInterval.toString(baseTime) + " | prob="
-				+ this.probabilistic;
-	}
-	
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return timeInterval.getStart();
@@ -183,7 +177,7 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	public int compareTo(ITimeInterval o) {
 		return timeInterval.compareTo(o);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for Probabilistic
 	// ------------------------------------------------------------------------------
@@ -197,7 +191,7 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	public void setExistence(double existence) {
 		probabilistic.setExistence(existence);
 	}
-	
-	
+
+
 
 }
