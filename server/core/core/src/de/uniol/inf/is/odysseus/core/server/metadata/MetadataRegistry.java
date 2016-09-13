@@ -142,6 +142,7 @@ public class MetadataRegistry {
 
 					Class<?> cl = Compiler.compile(classCode, className);
 					type = (IMetaAttribute) cl.newInstance();
+					combinedMetadataTypes.put(types, type);
 
 					logger.info("Success.");
 
