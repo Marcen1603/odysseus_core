@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.interval_latency;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
@@ -11,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 final public class TimeIntervalLatency extends AbstractCombinedMetaAttribute implements
-		de.uniol.inf.is.odysseus.core.metadata.ITimeInterval, de.uniol.inf.is.odysseus.core.server.metadata.ILatency {
+		de.uniol.inf.is.odysseus.core.metadata.ITimeInterval, de.uniol.inf.is.odysseus.core.server.metadata.ILatency, IHasAlias {
 	private static final long serialVersionUID = 1l;
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] {
@@ -37,6 +38,11 @@ final public class TimeIntervalLatency extends AbstractCombinedMetaAttribute imp
 	@Override
 	public String getName() {
 		return "TimeIntervalLatency";
+	}
+
+	@Override
+	public String getAliasName() {
+		return "IntervalLatency";
 	}
 
 	private final de.uniol.inf.is.odysseus.core.metadata.ITimeInterval timeinterval;

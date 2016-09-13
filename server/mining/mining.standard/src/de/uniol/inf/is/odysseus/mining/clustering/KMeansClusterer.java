@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.mining.distance.EuclidianDistance;
 import de.uniol.inf.is.odysseus.mining.distance.IDistance;
 
-public class KMeansClusterer<M extends ILatencyTimeInterval> implements IClusterer<M> {
+public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
 
 	private IDistance distanceFunction = new EuclidianDistance();
 	private int k = 3;
