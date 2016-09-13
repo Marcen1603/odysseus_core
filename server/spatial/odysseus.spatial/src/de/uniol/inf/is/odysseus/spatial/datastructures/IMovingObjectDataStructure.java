@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.spatial.datastructures;
 
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
@@ -81,9 +81,9 @@ public interface IMovingObjectDataStructure {
 	 * polygon with the edges at the given coordinates
 	 * 
 	 * @param coordinates
-	 *            The coordinates of the edges of the polygon where you want to
+	 *            The points of the edges of the polygon where you want to
 	 *            search in
 	 * @return A list of tuples which lie within the given polygon
 	 */
-	public List<Tuple<?>> queryBoundingBox(List<Coordinate> coordinates);
+	public List<Tuple<?>> queryBoundingBox(List<Point> coordinates);
 }

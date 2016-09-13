@@ -62,6 +62,7 @@ public class SpatialQueryAO extends UnaryLogicalOp {
 		return geometryPosition;
 	}
 
+	// TODO It should be possible to use a datastream as input for the polygon
 	@Parameter(name = "polygonCoordinates", optional = false, type = PointParameter.class, isList = true, doc = "")
 	public void setPolygonPoints(List<Point> points) {
 		this.points = points;
