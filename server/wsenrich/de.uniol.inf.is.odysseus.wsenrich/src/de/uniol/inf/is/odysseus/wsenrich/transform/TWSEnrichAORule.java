@@ -43,19 +43,19 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 
 	@Override
 	public void execute(WSEnrichAO logical, TransformationConfiguration transformConfig) throws RuleException {
-		
-		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction = 
+
+		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMergeFunction =
 				new RelationalMergeFunction<ITimeInterval>(logical.getOutputSchema().size());
 		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
-		
+
 		ILeftMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataLeftMergeFunction = null;
 		if(logical.getOuterJoin()) {
 			dataLeftMergeFunction = new RelationalLeftMergeFunction<>(logical.getInputSchema().size(), logical.getOutputSchema().size() - logical.getInputSchema().size(), logical.getOutputSchema().size());
 		}
-		
+
 		ISoapMessageCreator soapMessageCreator;
 		IMessageManipulator soapMessageManipulator;
-		
+
 		if(logical.getServiceMethod().equals(WSEnrichAO.SERVICE_METHOD_SOAP)) {
 			soapMessageCreator = SoapMessageCreatorRegistry.getInstance(logical.getServiceMethod(), logical.getWsdlLocation(), logical.getOperation());
 			soapMessageManipulator = MessageManipulatorRegistry.getInstance(logical.getServiceMethod());
@@ -68,7 +68,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		IRequestBuilder requestBuilder = RequestBuilderRegistry.getInstance(logical.getMethod());
 		HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
 		IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getParsingMethod());
-		
+
 		ICache cacheManager;
 		//Create a cache if its activated by the user
 		if(logical.getCache()) {
@@ -76,13 +76,14 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		} else {
 			cacheManager = null;
 		}
-		
+
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(
 			logical.getServiceMethod(),
 			logical.getMethod(),
 			logical.getUrl(),
 			logical.getUrlSuffix(),
 			logical.getArguments(),
+			logical.getHeader(),
 			logical.getOperation(),
 			logical.getReceivedData(),
 			logical.getCharset(),
@@ -99,9 +100,9 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			converter,
 			keyFinder,
 			soapMessageCreator,
-			soapMessageManipulator, 
+			soapMessageManipulator,
 			cacheManager);
-		
+
 		//defaultExecute(logical, physical, transformConfig, true, true);
 		physical.setOutputSchema(logical.getOutputSchema());
 		replace(logical, physical, transformConfig);
@@ -123,11 +124,11 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	/**
-	 * Constructor for the ReadOnly Cache with a MainMemoryCacheStore. 
+	 * Constructor for the ReadOnly Cache with a MainMemoryCacheStore.
 	 * Caching Records are not modified, only read, Caching Records are
-	 * hold in the Main Memory. If no cache Entry is found, null will be 
+	 * hold in the Main Memory. If no cache Entry is found, null will be
 	 * returned. Then, the operator has to get the data from the source
 	 * @param logical
 	 * @return the cache
@@ -135,7 +136,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 	private ICache createCache(WSEnrichAO logical) {
 		ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<>(logical.getCacheSize() + 1);
 		IRemovalStrategy removalStrategy = RemovalStrategyRegistry.getInstance(logical.getRemovalStrategy(), cacheStore);
-		return new Cache(cacheStore, removalStrategy, logical.getExpirationTime(), logical.getCacheSize());	
+		return new Cache(cacheStore, removalStrategy, logical.getExpirationTime(), logical.getCacheSize());
 	}
 
 }

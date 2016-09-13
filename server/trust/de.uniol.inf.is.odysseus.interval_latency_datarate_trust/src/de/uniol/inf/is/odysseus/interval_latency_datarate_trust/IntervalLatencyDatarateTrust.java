@@ -22,7 +22,7 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 		implements ITimeInterval, ILatency, IDatarate, ITrust {
 
 	private static final long serialVersionUID = -4702722342378689458L;
-	
+
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class, ILatency.class,
 			IDatarate.class, ITrust.class };
@@ -74,7 +74,7 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	public IntervalLatencyDatarateTrust clone() {
 		return new IntervalLatencyDatarateTrust(this);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -136,12 +136,6 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	public String toString() {
 		return "( i= " + this.timeInterval.toString() + " | " + " l= " + this.latency + " | " + " | d= " + this.datarate
 				+ " | " + " t= " + this.trust + ")";
-	}
-
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i= " + this.timeInterval.toString(baseTime) + " | " + " l= " + this.latency + " | " + " | d= "
-				+ this.datarate + " | " + " t= " + this.trust + ")";
 	}
 
 	// ------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +23,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.interval_latency.IntervalLatency;
+import de.uniol.inf.is.odysseus.interval_latency.TimeIntervalLatency;
 
-public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
+public class TestproducerPO extends AbstractSource<Tuple<TimeIntervalLatency>> {
 
 	private static class ProducerThread extends Thread {
 
@@ -52,9 +52,9 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 				Long frequency = frequencies.get(j);
 				long offset = 1000000000 / frequency;
 				for (int i = 0; i < count && isRunning; ++i) {
-					Tuple<IntervalLatency> r = new Tuple<IntervalLatency>(1, false);
+					Tuple<TimeIntervalLatency> r = new Tuple<TimeIntervalLatency>(1, false);
 					r.setAttribute(0, i);
-					IntervalLatency meta = new IntervalLatency();
+					TimeIntervalLatency meta = new TimeIntervalLatency();
 					long expectedTime = lastTime + offset;
 					r.setMetadata(meta);
 					if (offset < 1000000) {
@@ -85,7 +85,7 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 				}
 			}
 		}
-		
+
 		private static void waitSomeTime(long offset) {
 			try {
 				Thread.sleep(offset / 1000000);
@@ -133,7 +133,7 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
 		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super.getMetaAttributeSchema().getAttributes());
-		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(IntervalLatency.class);
+		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(TimeIntervalLatency.class);
 		if (!metalist.contains(mataAttribute)) {
 			metalist.add(mataAttribute);
 		}

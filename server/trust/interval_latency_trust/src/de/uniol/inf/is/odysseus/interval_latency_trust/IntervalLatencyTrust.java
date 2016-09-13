@@ -19,55 +19,55 @@ import de.uniol.inf.is.odysseus.trust.Trust;
 public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implements ITimeInterval, ILatency, ITrust {
 
 	private static final long serialVersionUID = -3129934770814427153L;
-	
+
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{
 		ITimeInterval.class, ILatency.class, ITrust.class
 	};
-	
+
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return classes;
 	}
-	
+
 	public static final List<SDFMetaSchema> schema = new ArrayList<>(classes.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Latency.schema);
 		schema.addAll(Trust.schema);
 	}
-	
+
 	@Override
 	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "IntervalLatencyTrust";
 	}
-	
+
 	private final ITimeInterval timeInterval;
 	private final ILatency latency;
 	private final ITrust trust;
-	
+
 	public IntervalLatencyTrust() {
 		this.timeInterval = new TimeInterval();
 		this.latency = new Latency();
 		this.trust = new Trust();
 	}
-	
+
 	public IntervalLatencyTrust(IntervalLatencyTrust clone) {
 		this.timeInterval = (ITimeInterval) clone.timeInterval.clone();
 		this.latency = (ILatency) clone.latency.clone();
 		this.trust = clone.trust;
 	}
-	
+
 	@Override
 	public IntervalLatencyTrust clone() {
 		return new IntervalLatencyTrust(this);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -78,7 +78,7 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 		IntervalLatencyTrust other = (IntervalLatencyTrust) obj;
 		return this.trust.equals(other.trust) && this.timeInterval.equals(other.timeInterval) && this.latency.equals(other.latency);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Methods that need to merge different types
 	// ------------------------------------------------------------------------------
@@ -89,14 +89,14 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 		this.latency.retrieveValues(values);
 		this.trust.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		this.timeInterval.writeValue(values.get(0));
 		this.latency.writeValue(values.get(1));
 		this.trust.writeValue(values.get(2));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -106,7 +106,7 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 		return list;
 	}
 
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch(subtype){
@@ -120,21 +120,16 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 				return null;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "( i= " +this.timeInterval.toString() + " | " + " l="+ this.latency+" | " + " t="+ this.trust+ ")";
-	}
-	
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i= " +this.timeInterval.toString(baseTime) + " | " + " l="+ this.latency+" | " + " t="+ this.trust+ ")";
 	}
 
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return this.timeInterval.getStart();
@@ -164,17 +159,17 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	public int compareTo(ITimeInterval o) {
 		return this.timeInterval.compareTo(o);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for latency
 	// ------------------------------------------------------------------------------
 
-	
+
 	@Override
 	public final long getLatency() {
 		return this.latency.getLatency();
 	}
-	
+
 	@Override
 	public long getMaxLatency() {
 		return this.latency.getMaxLatency();
@@ -189,7 +184,7 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	public final long getLatencyStart() {
 		return this.latency.getLatencyStart();
 	}
-	
+
 	@Override
 	public long getMaxLatencyStart() {
 		return this.latency.getMaxLatencyStart();
@@ -204,12 +199,12 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	public final void setMinLatencyStart(long timestamp) {
 		this.latency.setMinLatencyStart(timestamp);
 	}
-	
+
 	@Override
 	public void setMaxLatencyStart(long timestamp) {
 		this.latency.setMaxLatencyStart(timestamp);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for trust
 	// ------------------------------------------------------------------------------
@@ -218,7 +213,7 @@ public class IntervalLatencyTrust extends AbstractCombinedMetaAttribute implemen
 	public double getTrust() {
 		return this.trust.getTrust();
 	}
-	
+
 	@Override
 	public void setTrust(double trustValue) {
 		this.trust.setTrust(trustValue);
