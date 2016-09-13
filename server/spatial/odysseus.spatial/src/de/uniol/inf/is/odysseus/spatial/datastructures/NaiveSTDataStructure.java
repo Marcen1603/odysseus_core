@@ -127,6 +127,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		return rangeTuples;
 	}
 
+	@Override
 	public List<Tuple<?>> queryBoundingBox(List<Coordinate> coordinates) {
 
 		// Create a polygon with the given points

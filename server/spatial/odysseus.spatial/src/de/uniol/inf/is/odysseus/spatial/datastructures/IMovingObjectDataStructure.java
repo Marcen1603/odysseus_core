@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.spatial.datastructures;
 
 import java.util.List;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -74,4 +75,15 @@ public interface IMovingObjectDataStructure {
 	 *         neighborhood around the given geometry
 	 */
 	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range);
+
+	/**
+	 * Queries the data structure and returns all data points which are in a
+	 * polygon with the edges at the given coordinates
+	 * 
+	 * @param coordinates
+	 *            The coordinates of the edges of the polygon where you want to
+	 *            search in
+	 * @return A list of tuples which lie within the given polygon
+	 */
+	public List<Tuple<?>> queryBoundingBox(List<Coordinate> coordinates);
 }
