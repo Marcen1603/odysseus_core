@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.compiler.Compiler;
+import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
@@ -65,7 +66,6 @@ public class MetadataRegistry {
 
 		logger.trace("New Metadatatype registered " + type.getClass());
 
-		byName.put(type.getName(), type);
 
 		Class<? extends IMetaAttribute> implementationType = type.getClass();
 		SortedSet<String> typeSet = toStringSet(type.getClasses());
@@ -83,6 +83,10 @@ public class MetadataRegistry {
 			} catch (Exception e) {
 				logger.warn("could not check wether '" + implementationType.getName()
 						+ "' supports clone() method, reason:\n\t" + e.getMessage());
+			}
+			byName.put(type.getName(), type);
+			if (type instanceof IHasAlias){
+				byName.put(((IHasAlias)type).getAliasName(), type);
 			}
 			combinedMetadataTypes.put(typeSet, type);
 		}

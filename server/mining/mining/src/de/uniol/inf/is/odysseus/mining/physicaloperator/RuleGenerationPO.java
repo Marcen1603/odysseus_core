@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,11 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
@@ -36,14 +36,14 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
-public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private int itemposition = -1;
 	private int supportposition = -1;
 	private double minconfidence = 0.9d;
-	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;	
+	final private ITimeIntervalSweepArea<Tuple<M>> sweepArea;
 	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();
 
 	public RuleGenerationPO(int itemposition, int supportposition, double confidence, ITimeIntervalSweepArea<Tuple<M>> sweepArea) {
@@ -55,7 +55,7 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# getOutputMode()
 	 */
 	@Override
@@ -65,7 +65,7 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# process_next(java.lang.Object, int)
 	 */
 	@Override
@@ -118,13 +118,13 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 	}
 
 	private Collection<AssociationRule<M>> processElements(List<Tuple<M>> qualifies) {
-		Collection<AssociationRule<M>> rules = new HashSet<>();		
-		synchronized (sweepArea) {			
+		Collection<AssociationRule<M>> rules = new HashSet<>();
+		synchronized (sweepArea) {
 			// set up the tree
 			for (Tuple<M> next : qualifies) {
 				List<Tuple<M>> tuples = next.getAttribute(itemposition);
 				int support = next.getAttribute(supportposition);
-				Pattern<M> p = new Pattern<M>(tuples, support);				
+				Pattern<M> p = new Pattern<M>(tuples, support);
 				rules.addAll(generateRuleForItemSet(p.clone()));
 			}
 		}
@@ -139,8 +139,8 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 		}
 		return rules;
 	}
-	
-	
+
+
 	private int getSupport(Pattern<M> pattern){
 		Iterator<Tuple<M>> iter = this.sweepArea.iterator();
 		List<Tuple<M>> patternTuples = pattern.getPattern();
@@ -154,7 +154,7 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 			}
 		}
 		return 0;
-		
+
 	}
 
 	private Collection<? extends AssociationRule<M>> generateRules(Pattern<M> frequentitemset, List<Pattern<M>> consequences) {
@@ -208,7 +208,7 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# processPunctuation(de.uniol.inf.is.odysseus.core.metadata.PointInTime, int)
 	 */
 
@@ -220,7 +220,7 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# isSemanticallyEqual (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
