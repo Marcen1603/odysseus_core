@@ -31,7 +31,10 @@ import de.uniol.inf.is.odysseus.latency.Latency;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
+ *
+ *  @deprecated: Use TimeIntervalLatency instead
  */
+@Deprecated
 final public class IntervalLatency extends AbstractCombinedMetaAttribute implements ILatency, ITimeInterval {
 
 	private static final long serialVersionUID = -3129934770814427153L;
