@@ -107,11 +107,14 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		requestBuilder.buildUri();
 		// String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
-		logger.trace(uri);
+		logger.trace("URI: "+uri);
+		logger.trace("PostData :"+postData);
 		// Connect to the Url
 		connection.setUri(uri);
 		connection.setArguments(requestBuilder.getPostData());
+		logger.trace("Connection arguments "+requestBuilder.getPostData());
 		if (header != null) {
+			logger.trace("Header:"+header);
 			connection.setHeaders(header);
 		}
 		connection.connect(charset, method);
