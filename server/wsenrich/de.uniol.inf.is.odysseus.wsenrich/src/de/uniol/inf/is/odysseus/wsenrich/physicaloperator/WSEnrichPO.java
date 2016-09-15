@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IConnectionForWebservic
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IKeyFinder;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageManipulator;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IRequestBuilder;
-import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.ISoapMessageCreator;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageCreator;
 
 public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple<M>, M> {
 
@@ -46,8 +46,8 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final IRequestBuilder requestBuilder;
 	private final HttpEntityToStringConverter converter;
 	private final IKeyFinder keyFinder;
-	private final ISoapMessageCreator soapMessageCreator;
-	private final IMessageManipulator soapMessageManipulator;
+	private final IMessageCreator messageCreator;
+	private final IMessageManipulator messageManipulator;
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix, List<Option> arguments,
@@ -56,7 +56,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 			IDataMergeFunction<Tuple<M>, M> dataMergeFunction, ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
 			IMetadataMergeFunction<M> metaMergeFunction, IConnectionForWebservices connection,
 			IRequestBuilder requestBuilder, HttpEntityToStringConverter converter, IKeyFinder keyFinder,
-			ISoapMessageCreator soapMessageCreator, IMessageManipulator soapMessageManipulator, ICache cacheManager) {
+			IMessageCreator soapMessageCreator, IMessageManipulator soapMessageManipulator, ICache cacheManager) {
 
 		super(cacheManager, dataMergeFunction, dataLeftMergeFunction, metaMergeFunction, uniqueKey);
 		this.serviceMethod = serviceMethod;
@@ -77,14 +77,14 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		this.requestBuilder = requestBuilder;
 		this.converter = converter;
 		this.keyFinder = keyFinder;
-		this.soapMessageCreator = soapMessageCreator;
-		this.soapMessageManipulator = soapMessageManipulator;
+		this.messageCreator = soapMessageCreator;
+		this.messageManipulator = soapMessageManipulator;
 	}
 
 	@Override
 	protected void internal_process_open() throws OpenFailedException {
-		if (soapMessageCreator != null) {
-			soapMessageCreator.buildSoapMessage();
+		if (messageCreator != null) {
+			messageCreator.buildMessage();
 		}
 		initParameterPositions();
 	}
@@ -94,10 +94,10 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
 		String postData = "";
-		if (soapMessageCreator != null && soapMessageManipulator != null) {
-			soapMessageManipulator.setMessage(soapMessageCreator.getSoapMessage());
-			soapMessageManipulator.setArguments(queryParameters);
-			postData = soapMessageManipulator.buildMessage();
+		if (messageCreator != null && messageManipulator != null) {
+			messageManipulator.setMessage(messageCreator.getMessage());
+			messageManipulator.setArguments(queryParameters);
+			postData = messageManipulator.buildMessage();
 		}
 		// Build the Url and arguments
 		requestBuilder.setUrlPrefix(url);
