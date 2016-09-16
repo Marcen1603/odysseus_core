@@ -169,7 +169,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param nonIncrementalFunctions
 	 *            A list of all non-incremental functions.
 	 * @param incrementalFunctions
@@ -178,7 +178,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            True if this operator should output new elements when elements
 	 *            get outdated.
 	 * @param evaluateAtNewElement
-	 * 
+	 *
 	 *            True, if this operator should output new elements when
 	 *            elements get valid.
 	 * @param evaluateAtDone
@@ -237,7 +237,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndices = other.groupingAttributesIndices;
 		this.hasFunctionsThatNeedStartTsOrder = other.hasFunctionsThatNeedStartTsOrder;
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		clear();
@@ -260,7 +260,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.physicaloperator.ISink#processPunctuation(
 	 * de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation, int)
@@ -273,7 +273,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
@@ -315,7 +315,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/**
 	 * Processes all outdated points before the trigger element.
-	 * 
+	 *
 	 * @param trigger
 	 *            The new element that trigger this processing.
 	 * @param triggerGroupKey
@@ -350,7 +350,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * Processes the outdated elements of a group for a specific point in time
 	 * and transfers the result.
-	 * 
+	 *
 	 * @param sweepArea
 	 *            The sweep area of the group.
 	 * @param trigger
@@ -376,6 +376,16 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		// If we have incremental functions we need to update the state of these
 		// functions even when we not want to calculate the result.
+
+		// Get and remove outdated elements.
+		/*
+		 * ODY-1107:
+		 * Moved retrieval of outdated elements outside the if-clause (evaluate || hasIncrementalFunctions),
+		 * because it does more than getting the outdated tuples, it removes them from SA.
+		 * That is also necessary for non-incremental functions.
+		 */
+		final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
+
 		if (evaluate || hasIncrementalFunctions) {
 			// TODO: Do we need deep copy here? Depends on the values of the
 			// functions, doesn't it?
@@ -397,9 +407,6 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				}
 				processNonIncrementalFunctions(result, objects, trigger, pointInTime);
 			}
-
-			// Get and remove outdated elements.
-			final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
 			if (hasIncrementalFunctions) {
 				final List<IIncrementalAggregationFunction<M, T>> statefulFunctionsForKey = getStatefulFunctions(
@@ -448,7 +455,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/**
 	 * Processes the new element.
-	 * 
+	 *
 	 * @param object
 	 *            The element.
 	 * @param groupKey
@@ -503,7 +510,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.
 	 * IPhysicalOperatorKeyValueProvider#getKeyValues()
 	 */
@@ -536,7 +543,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * getOutputMode()
 	 */
@@ -624,7 +631,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * Returns an existing or creates and stores a new sweep area for a specific
 	 * group.
-	 * 
+	 *
 	 * @param groupKey
 	 *            The group key.
 	 * @return An existing or a new sweep area for a specific group.
@@ -747,11 +754,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/**
 	 * Returns the grouping key for an object.
-	 * 
+	 *
 	 * <p>
 	 * If {@code groupingAttributeIndices} is {@code null} or empty,
 	 * {@link AggregationPO#defaultGroupingKey} will be returned.
-	 * 
+	 *
 	 * @param object
 	 *            The object.
 	 * @param groupingAttributeIndices
@@ -771,7 +778,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#isDone
 	 * ()
@@ -783,7 +790,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_done()
 	 */
@@ -859,7 +866,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
 	 * process_isSemanticallyEqual(de.uniol.inf.is.odysseus.core.
@@ -873,7 +880,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * isSemanticallyEqual(de.uniol.inf.is.odysseus.core.physicaloperator.
 	 * IPhysicalOperator)
@@ -886,7 +893,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO#getState()
 	 */
