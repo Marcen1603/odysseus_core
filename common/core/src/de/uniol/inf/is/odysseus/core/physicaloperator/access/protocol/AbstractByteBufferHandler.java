@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ abstract public class AbstractByteBufferHandler<T extends IStreamObject<? extend
 
     public static final String WRITE_METADATA = "writemetadata";
 	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
-    
+
     public AbstractByteBufferHandler() {
         super();
     }
@@ -39,8 +39,15 @@ abstract public class AbstractByteBufferHandler<T extends IStreamObject<? extend
         init_internal();
     }
 
+	protected static void insertInt(byte[] destArray, int offset, int value) {
+		destArray[offset] = (byte) (value >>> 24);
+		destArray[offset + 1] = (byte) (value >>> 16);
+		destArray[offset + 2] = (byte) (value >>> 8);
+		destArray[offset + 3] = (byte) (value);
+	}
+
     private void init_internal() {
-    	String byteOrderTxt = optionsMap.get("byteorder");    		
+    	String byteOrderTxt = optionsMap.get("byteorder");
         if ("LITTLE_ENDIAN".equalsIgnoreCase(byteOrderTxt)) {
             byteOrder = ByteOrder.LITTLE_ENDIAN;
         }
@@ -52,13 +59,13 @@ abstract public class AbstractByteBufferHandler<T extends IStreamObject<? extend
 	public ByteOrder getByteOrder() {
 		return byteOrder;
 	}
-	
+
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
-		
+
 		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
 			return ITransportExchangePattern.InOnly;
-		} 
+		}
 		return ITransportExchangePattern.OutOnly;
 	}
 }
