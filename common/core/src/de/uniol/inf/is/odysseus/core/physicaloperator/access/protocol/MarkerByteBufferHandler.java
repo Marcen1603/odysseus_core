@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
@@ -27,16 +26,13 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>>
-		extends AbstractByteBufferHandler<T> {
+		extends AbstractObjectHandlerByteBufferHandler<T> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MarkerByteBufferHandler.class);
-	protected ByteBufferHandler<T> objectHandler;
 	protected byte start;
 	protected byte end;
 
@@ -47,23 +43,13 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 	public MarkerByteBufferHandler(ITransportDirection direction, IAccessPattern access,
 			IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
-		objectHandler = new ByteBufferHandler<T>(dataHandler);
 		start = Byte.parseByte(optionsMap.get("start"));
 		end = Byte.parseByte(optionsMap.get("end"));
 	}
 
-	@Override
-	public void open() throws UnknownHostException, IOException {
-		getTransportHandler().open();
-	}
-
-	@Override
-	public void close() throws IOException {
-		getTransportHandler().close();
-	}
-
-	@Override
+	@Override	
 	public void write(T object) throws IOException {
+		// write with marker
 		ByteBuffer buffer = prepareObject(object);
 
 		int messageSizeBytes = buffer.remaining();
@@ -75,37 +61,7 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 		insertInt(rawBytes, messageSizeBytes + 4, end);
 		getTransportHandler().send(rawBytes);
 	}
-
-	protected ByteBuffer prepareObject(T object) {
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		// ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
-		// getDataHandler(), exportMetadata);
-		getDataHandler().writeData(buffer, object);
-		buffer.flip();
-		return buffer;
-	}
-
-	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options,
-			IStreamObjectDataHandler<T> dataHandler) {
-		MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>(direction, access, dataHandler, options);
-
-		return instance;
-	}
-
-	@Override
-	public String getName() {
-		return "MarkerByteBuffer";
-	}
-
-	@Override
-	public void onConnect(ITransportHandler caller) {
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-	}
-
+	
 	@Override
 	public void process(long callerId, ByteBuffer message) {
 		// TODO: handle callerId
@@ -147,14 +103,23 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 		}
 	}
 
-	protected void processObject() throws IOException, ClassNotFoundException {
-		T object = objectHandler.create();
-		if (object != null) {
-			getTransfer().transfer(object);
-		} else {
-			LOG.error("Empty object");
-		}
+	@Override
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options,
+			IStreamObjectDataHandler<T> dataHandler) {
+		MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>(direction, access, dataHandler, options);
+
+		return instance;
 	}
+
+	@Override
+	public String getName() {
+		return "MarkerByteBuffer";
+	}
+
+
+	
+
+
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
