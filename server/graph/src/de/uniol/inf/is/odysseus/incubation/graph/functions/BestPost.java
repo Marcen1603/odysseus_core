@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -30,7 +31,11 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 
 	private static final long serialVersionUID = -4960965026820211241L;
 	
-	private Map<Pair<String, String>, Integer> posts = new HashMap<Pair<String, String>, Integer>();
+	private Map<String, List<String>> structurePosts = new HashMap<String, List<String>>();
+	private Map<String, Long> postComments = new HashMap<String, Long>();
+	private List<String> posts = new ArrayList<String>();
+	private List<String> comments = new ArrayList<String>();
+	
 	@SuppressWarnings("unchecked")
 	private Tuple<IMetaAttribute>[] result = new Tuple[0];
 	
@@ -76,45 +81,48 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 		
 		Map<String, GraphNode> graphNodes = structure.getGraphNodes();
 		for (GraphNode node : graphNodes.values()) {
-			if (node.getLabel().equals("post")) {
-				int comments = 0;
-				Map<GraphEdge, GraphNode> inEdges = node.getIncomingEdges();
-				for (Map.Entry<GraphEdge, GraphNode> edge : inEdges.entrySet()) {
-					if (edge.getKey().getLabel().equals("is_comment_of") && edge.getValue().getId().contains("comment")) {
-						comments ++;
-					}
+			if (node.getLabel().equals("post") && !posts.contains(node.getId())) {
+				if (structurePosts.containsKey(graph.getName())) {
+					List<String> posts = structurePosts.get(graph.getName());
+					posts.add(node.getId());
+					structurePosts.put(graph.getName(), posts);
+				} else {
+					structurePosts.put(graph.getName(), Arrays.asList(node.getId()));
 				}
-				posts.put(new Pair<String, String>(node.getId(), graph.getName()), comments);
+				postComments.put(node.getId(), 0l);
+				this.posts.add(node.getId());
+			} else if (node.getLabel().equals("comment")) {
+				String postId = this.getRelatedPost(node.getId(), structure.getGraphNodes());
+				if (postId != null && !this.comments.contains(node.getId())) {
+					if (postComments.containsKey(postId)) {
+						postComments.put(postId, postComments.get(postId) + 1);
+					} else {
+						postComments.put(postId, 1l);
+					}
+					this.comments.add(node.getId());
+				}
 			}
 		}
 	}
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-		List<String> outdatedStructures = new ArrayList<String>();
-		
 		for (T element : outdatedElements) {
 			Graph graph = element.getAttribute(0);
-			outdatedStructures.add(graph.getName());
-		}
-		
-		// Konnte key nicht direkt entfernen, deswegen erst in Liste zwischengespeichert.
-		List<Pair<String, String>> postsToRemove = new ArrayList<Pair<String, String>>();
-		for(Map.Entry<Pair<String, String>, Integer> post : posts.entrySet()) {
-			if (outdatedStructures.contains(post.getKey().getE2())) {
-				postsToRemove.add(post.getKey());
+			
+			if (structurePosts.containsKey(graph.getName())) {
+				for (String postId : structurePosts.get(graph.getName())) {
+					postComments.remove(postId);
+				}
+				
+				structurePosts.remove(graph.getName());
 			}
-		}
-		
-		for (Pair<String, String> toRemove : postsToRemove) {
-			posts.remove(toRemove);
 		}
 	}
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		Tuple<IMetaAttribute>[] result = getMaxValuesOfMap(posts, this.numPosts);
-		
+		Tuple<IMetaAttribute>[] result = getMaxValuesOfMap();
 		return result;
 	}
 
@@ -122,7 +130,8 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 	public AbstractIncrementalAggregationFunction<M, T> clone() {
 		BestPost<M, T> newFunction = new BestPost<M, T>(this);
 		newFunction.numPosts = this.numPosts;
-		newFunction.posts = this.posts;
+		newFunction.structurePosts = this.structurePosts;
+		newFunction.postComments = this.postComments;
 		newFunction.result = this.result.clone();
 		return newFunction;
 	}
@@ -137,7 +146,7 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters, attributeResolver);
 		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters, attributeResolver);
 		
-		this.numPosts = (int) parameters.get("numPosts");
+		this.numPosts = ((Long) parameters.get("numPosts")).intValue();
 		
 		if (attributes == null) {
 			return new BestPost<M, T>(attributeResolver.getSchema().get(0).size(), outputNames);
@@ -158,38 +167,60 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 	
 	
 	@SuppressWarnings("unchecked")
-	public Tuple<IMetaAttribute>[] getMaxValuesOfMap(Map<Pair<String, String>, Integer> map, int numberOfValues) {
-		Map<Pair<String, String>, Integer> mapCopy = map;
-		List<String> usedPosts = new ArrayList<String>();
-
+	public Tuple<IMetaAttribute>[] getMaxValuesOfMap() {
 		Tuple<IMetaAttribute>[] bestPosts;
+	
+		Map<String, Long> postCommentsCopy = new HashMap<String, Long>(this.postComments);
 		
-		if (map.size() < numberOfValues) {
-			bestPosts = new Tuple[map.size()];
+		if (postCommentsCopy.size() < this.numPosts) {
+			bestPosts = new Tuple[postCommentsCopy.size()];
 		} else {
-			bestPosts = new Tuple[numberOfValues];
+			bestPosts = new Tuple[this.numPosts];
 		}
 		
-		int index = 0;
+		for (int i=0; i<bestPosts.length; i++) {
+			if (!postCommentsCopy.isEmpty()) {
+				String bestPost = Collections.max(
+						postCommentsCopy.entrySet(),
+						new Comparator<Map.Entry<String, Long>>() {
+							@Override
+							public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
+								return o1.getValue().compareTo(o2.getValue());
+							}
+							
+						}
+				).getKey();
+				
+				Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+				tuple.setAttribute(0, bestPost);
+				tuple.setAttribute(1, postCommentsCopy.get(bestPost));
+				
+				bestPosts[i] = tuple;
+				
+				postCommentsCopy.remove(bestPost);
+			}
+		}
+
+		return bestPosts;
+	}
+	
+	
+	public String getRelatedPost(String nodeId, Map<String, GraphNode> nodes) {
+		GraphNode node = nodes.get(nodeId);
 		
-		//mapCopy dient dazu, die Elemente zu entfernen, sonst bekommt man eine Fehlermeldung
-		while(index < numberOfValues && !mapCopy.isEmpty()) {
-			int maxValueInMap = Collections.max(mapCopy.values());
-			
-			for (Map.Entry<Pair<String, String>, Integer> entry : map.entrySet()) {
-				if (entry.getValue() == maxValueInMap && !usedPosts.contains(entry.getKey().getE1())) {
-					Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(new Object[]{entry.getKey().getE1(), entry.getValue()}, false);
-					bestPosts[index] = tuple;
-					usedPosts.add(entry.getKey().getE1());
-					mapCopy.remove(new Pair<String, String>(entry.getKey().getE1(), entry.getKey().getE2()));
-					break;
+		if (node.getOutgoingEdges().isEmpty()) {
+			return null;
+		}
+		
+		while (!node.getLabel().equals("post")) {
+			for (GraphEdge edge : node.getOutgoingEdges().keySet()) {
+				if (edge.getLabel().equals("is_comment_of") || edge.getLabel().equals("is_reply_of")) {
+					node = edge.getEndingNotes().get(0);
 				}
 			}
-			
-			index ++;
 		}
 		
-		return bestPosts;
+		return node.getId();
 	}
 
 }

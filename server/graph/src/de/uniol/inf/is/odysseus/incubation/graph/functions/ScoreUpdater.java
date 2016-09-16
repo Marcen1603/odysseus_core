@@ -120,8 +120,7 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-		String actualStructure = GraphDataStructureProvider.getInstance().getActualStructure(this.graphName);
-		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(actualStructure).cloneDataStructure();
+		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure("test").cloneDataStructure();
 		
 		PointInTime removeTime = pointInTime.minus(new PointInTime(60000));
 		
@@ -129,7 +128,6 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 		List<String> commentsToRemove = new ArrayList<String>();
 		
 		for (GraphNode node : structure.getGraphNodes().values()) {
-			if (node.getCreatedAt().beforeOrEquals(removeTime)) {
 				// Ist Knoten ein Post oder ein Kommentar, wird Score verringert.
 				if (node.getLabel().equals("post")) {
 					Map<String, Object> props = node.getProps();
@@ -170,7 +168,6 @@ public class ScoreUpdater<M extends ITimeInterval, T extends Tuple<M>> extends A
 						postProps.put("total_score", totalScore);
 						postScores.put(postId, totalScore);
 					}
-				}
 			}
 		}
 		

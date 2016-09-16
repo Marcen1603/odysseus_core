@@ -5,29 +5,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-
 public class GraphEdge {
 
 	private String label;
 	private Map<String, String> props = new HashMap<String, String>();
 	private List<GraphNode> startingNodes = new ArrayList<GraphNode>();
 	private List<GraphNode> endingNodes = new ArrayList<GraphNode>();
-	private PointInTime createdAt;
 	
-	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes, PointInTime createdAt) {
+	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes) {
 		this.label = label;
 		this.startingNodes = startingNodes;
 		this.endingNodes = endingNodes;
-		this.createdAt = createdAt;
 	}
 	
-	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes, Map<String, String> props, PointInTime createdAt) {
+	public GraphEdge(String label, List<GraphNode> startingNodes, List<GraphNode> endingNodes, Map<String, String> props) {
 		this.label = label;
 		this.props = props;
 		this.startingNodes = startingNodes;
 		this.endingNodes = endingNodes;
-		this.createdAt = createdAt;
 	}
 	
 	public String getLabel() {
@@ -70,10 +65,6 @@ public class GraphEdge {
 		return this.endingNodes;
 	}
 	
-	public PointInTime createdAt() {
-		return this.createdAt;
-	}
-	
 	public void clearStartingNodes() {
 		this.startingNodes = new ArrayList<GraphNode>();
 	}
@@ -82,17 +73,57 @@ public class GraphEdge {
 		this.endingNodes = new ArrayList<GraphNode>();
 	}
 	
-	public boolean equals(GraphEdge other) {
-		if (
-				this.startingNodes.equals(other.startingNodes)
-				&& this.endingNodes.equals(other.endingNodes)
-				&& this.props.equals(other.props)
-				&& this.label.equals(other.label)
-		) {
-			return true;
-		}
-		
-		return false;
+//	public boolean equals(GraphEdge other) {
+//		if (
+//				this.startingNodes.equals(other.startingNodes)
+//				&& this.endingNodes.equals(other.endingNodes)
+//				&& this.props.equals(other.props)
+//				&& this.label.equals(other.label)
+//		) {
+//			return true;
+//		}
+//		
+//		return false;
+//	}
+
+	@Override
+	public String toString() {
+		return "GraphEdge [label=" + label + ", props=" + props + ", startingNodes=" + startingNodes + ", endingNodes="
+				+ endingNodes + "]";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GraphEdge other = (GraphEdge) obj;
+		if (endingNodes == null) {
+			if (other.endingNodes != null)
+				return false;
+		} else if (!endingNodes.equals(other.endingNodes))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (props == null) {
+			if (other.props != null)
+				return false;
+		} else if (!props.equals(other.props))
+			return false;
+		if (startingNodes == null) {
+			if (other.startingNodes != null)
+				return false;
+		} else if (!startingNodes.equals(other.startingNodes))
+			return false;
+		return true;
+	}
+	
+	
 
 }

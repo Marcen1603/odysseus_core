@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.incubation.graph.graphobject;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-
 public class GraphNode {
 
 	private String id;
@@ -12,28 +10,24 @@ public class GraphNode {
 	private Map<String, Object> props = new HashMap<String, Object>();
 	private Map<GraphEdge, GraphNode> outgoingEdges = new HashMap<GraphEdge, GraphNode>();
 	private Map<GraphEdge, GraphNode> incomingEdges = new HashMap<GraphEdge, GraphNode>();
-	private PointInTime createdAt;
 	
-	public GraphNode(String id, String label, PointInTime createdAt) {
+	public GraphNode(String id, String label) {
 		this.id = id;
 		this.label = label;
-		this.createdAt = createdAt;
 	}
 	
-	public GraphNode(String id, String label, Map<String, Object> props, PointInTime createdAt) {
+	public GraphNode(String id, String label, Map<String, Object> props) {
 		this.id = id;
 		this.label = label;
 		this.props = props;
-		this.createdAt = createdAt;
 	}
 	
-	public GraphNode(String id, String label, Map<String, Object> props, Map<GraphEdge, GraphNode> incomingEdges, Map<GraphEdge, GraphNode> outgoingEdges, PointInTime createdAt) {
+	public GraphNode(String id, String label, Map<String, Object> props, Map<GraphEdge, GraphNode> incomingEdges, Map<GraphEdge, GraphNode> outgoingEdges) {
 		this.id = id;
 		this.label = label;
 		this.props = props;
 		this.incomingEdges = incomingEdges;
 		this.outgoingEdges = outgoingEdges;
-		this.createdAt = createdAt;
 	}
 	
 	public String  getId() {
@@ -92,9 +86,50 @@ public class GraphNode {
 		this.incomingEdges = new HashMap<GraphEdge, GraphNode>();
 		this.outgoingEdges = new HashMap<GraphEdge, GraphNode>();
 	}
-	
-	public PointInTime getCreatedAt() {
-		return this.createdAt;
+
+	@Override
+	public String toString() {
+		return "GraphNode [id=" + id + ", label=" + label + ", props=" + props + ", outgoingEdges=" + outgoingEdges
+				+ ", incomingEdges=" + incomingEdges + "]";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GraphNode other = (GraphNode) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (incomingEdges == null) {
+			if (other.incomingEdges != null)
+				return false;
+		} else if (!incomingEdges.equals(other.incomingEdges))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (outgoingEdges == null) {
+			if (other.outgoingEdges != null)
+				return false;
+		} else if (!outgoingEdges.equals(other.outgoingEdges))
+			return false;
+		if (props == null) {
+			if (other.props != null)
+				return false;
+		} else if (!props.equals(other.props))
+			return false;
+		return true;
+	}
+	
+	
 
 }

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProv
 public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
 	private GraphBuilderAO graphBuilderAo;
+	private String actualStructure;
 	
 	public GraphBuilderPO(GraphBuilderAO graphBuilderAo) {
 		super();
@@ -40,8 +41,6 @@ public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyVal
 	protected void process_next(KeyValueObject<M> object, int port) {
 		IGraphDataStructure<IMetaAttribute> structure;
 		
-		String actualStructure = GraphDataStructureProvider.getInstance().getActualStructure(graphBuilderAo.getStructureName());
-		
 		// Existiert bereits eine Datenstruktur für diesen Namen, wird die aktuelle Datenstruktur geklont, ansonsten wird eine neue Datenstruktur erstellt.
 		if (actualStructure != null) {
 			structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(actualStructure).cloneDataStructure();
@@ -58,6 +57,7 @@ public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyVal
 		}
 		
 		String name = GraphDataStructureProvider.getInstance().addGraphDataStructure(structure, object.getMetadata().getStart());
+		this.actualStructure = name;
 		
 		Tuple<M> newTuple = new Tuple<M>(1, false);
 		Graph graph = new Graph(name);

@@ -13,7 +13,6 @@ import com.google.common.collect.Table.Cell;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
@@ -51,7 +50,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			if (graphNodes.containsKey(n1Id)) {
 				node1 = graphNodes.get(n1Id);
 			} else {
-				node1 = new GraphNode(n1Id, (String) attributes.get("n1_label"), ((ITimeInterval) object.getMetadata()).getStart());
+				node1 = new GraphNode(n1Id, (String) attributes.get("n1_label"));
 			}
 			
 			if (attributes.get("n1_props") != null) {
@@ -65,7 +64,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			if (graphNodes.containsKey(n2Id)) {
 				node2 = graphNodes.get(n2Id);
 			} else {
-				node2 = new GraphNode(n2Id, (String) attributes.get("n2_label"), ((ITimeInterval) object.getMetadata()).getStart());
+				node2 = new GraphNode(n2Id, (String) attributes.get("n2_label"));
 			}
 			
 			if (attributes.get("n2_props") != null) {
@@ -80,7 +79,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			List<GraphNode> startingNodes = Collections.singletonList(node1);
 			List<GraphNode> endingNodes = Collections.singletonList(node2);
 			
-			GraphEdge edge = new GraphEdge(eLabel, startingNodes, endingNodes, ((ITimeInterval) object.getMetadata()).getStart());
+			GraphEdge edge = new GraphEdge(eLabel, startingNodes, endingNodes);
 			
 			node1.addOutgoingEdge(edge, node2);
 			node2.addIncomingEdge(edge, node1);
@@ -209,4 +208,39 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 	public synchronized void addGraphNode(GraphNode node) {
 		this.graphNodes.put(node.getId(), node);
 	}
+
+	@Override
+	public String toString() {
+		return "AdjacencyMatrix [graphNodes=" + graphNodes + ", name=" + name + "]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		@SuppressWarnings("unchecked")
+		AdjacencyMatrix<IMetaAttribute> other = (AdjacencyMatrix<IMetaAttribute>) obj;
+		if (graphNodes == null) {
+			if (other.graphNodes != null)
+				return false;
+		} else if (!graphNodes.equals(other.graphNodes))
+			return false;
+		if (matrix == null) {
+			if (other.matrix != null)
+				return false;
+		} else if (!matrix.equals(other.matrix))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+	
+	
 }

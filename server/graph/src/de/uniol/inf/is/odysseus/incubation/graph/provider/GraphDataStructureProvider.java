@@ -17,7 +17,6 @@ public class GraphDataStructureProvider {
 	private static GraphDataStructureProvider instance;
 	
 	private Map<String, IGraphDataStructure<IMetaAttribute>> dataStructures = new HashMap<String, IGraphDataStructure<IMetaAttribute>>();
-	private Map<String, String> actualDataStructures = new HashMap<String, String>();
 	private Map<String, List<IGraphListener>> listeners = new HashMap<String, List<IGraphListener>>();
 	
 	public static GraphDataStructureProvider getInstance() {
@@ -30,7 +29,6 @@ public class GraphDataStructureProvider {
 	public String addGraphDataStructure(IGraphDataStructure<IMetaAttribute> structure, PointInTime ts) {
 		String key = structure.getName() + "_" + ts;
 		this.dataStructures.put(key, structure);
-		this.actualDataStructures.put(structure.getName(), key);
 		
 		Graph graph = new Graph(key);
 		
@@ -80,9 +78,5 @@ public class GraphDataStructureProvider {
 	
 	public void removeListener(IGraphListener listener) {
 		this.listeners.remove(listener);
-	}
-	
-	public String getActualStructure (String name) {
-		return this.actualDataStructures.get(name);
 	}
 }

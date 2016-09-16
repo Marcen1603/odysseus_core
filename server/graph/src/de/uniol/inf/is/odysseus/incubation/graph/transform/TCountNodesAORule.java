@@ -26,9 +26,9 @@ public class TCountNodesAORule extends AbstractTransformationRule<CountNodesAO> 
 		ao.setOutputSchema(ao.getInputSchema());
 		
 		final MapAO mapAo = new MapAO();
-		String function = "countNodes(graph)";
+		String function = "countNodes(" + ao.getGraphAttribute() + ")";
 		SDFExpression expression = new SDFExpression(function, null, MEP.getInstance());
-		NamedExpression namedExpression = new NamedExpression("graph", expression, null);
+		NamedExpression namedExpression = new NamedExpression("nodeAmount", expression, null);
 		List<NamedExpression> expressions = new ArrayList<NamedExpression>();
 		expressions.add(namedExpression);
 		mapAo.setExpressions(expressions);
