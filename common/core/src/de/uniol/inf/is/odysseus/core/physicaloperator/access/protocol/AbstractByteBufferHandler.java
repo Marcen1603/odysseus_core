@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -39,6 +41,16 @@ abstract public class AbstractByteBufferHandler<T extends IStreamObject<? extend
         init_internal();
     }
 
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+	}
+
+	@Override
+	public void close() throws IOException {
+		getTransportHandler().close();
+	}
+    
 	protected static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);
 		destArray[offset + 1] = (byte) (value >>> 16);
@@ -68,4 +80,6 @@ abstract public class AbstractByteBufferHandler<T extends IStreamObject<? extend
 		}
 		return ITransportExchangePattern.OutOnly;
 	}
+	
+
 }
