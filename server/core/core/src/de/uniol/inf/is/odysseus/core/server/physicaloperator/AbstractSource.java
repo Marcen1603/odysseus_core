@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,9 +86,9 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final private OwnerHandler ownerHandler;
 
 	private boolean inOrder = true;
-	
+
 	private ILogicalOperator definingOp;
-	
+
 	/**
 	 * For stateful operators, this flag signals, that an operator state has been loaded.
 	 */
@@ -218,14 +218,14 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final protected boolean hasSingleConsumer(int port) {
 		return consumerCount.get(port) <= 1;
 	}
-	
-	// Returns wether this source delivers an element which is also stored in this source. 
+
+	// Returns wether this source delivers an element which is also stored in this source.
 	// The element then may not be modified since this source needs it in its original state
 	public boolean deliversStoredElement(int outputPort)
 	{
 		getLogger().warn("Operator " + getName() + " doesn't implement method deliversStoredElement. Cloning performance may suffer!");
 		return true;
-	}	
+	}
 
 	@Override
 	public String getName() {
@@ -283,7 +283,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator#
 	 * getOutputSchemas()
 	 */
@@ -382,7 +382,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void reconnectSinks() {
 		if (connectedSinks.size() > 0 && !readdedConnectedSinks) {
@@ -1042,7 +1042,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	protected void sendInfo(String message) {
 		infoService.info(message);
 	}
-	
+
 	// -----------------------
 	// Provenance
 	// -----------------------
@@ -1050,21 +1050,21 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	public void setLogicalOperator(ILogicalOperator op){
 		this.definingOp = op;
 	}
-	
+
 	@Override
 	public ILogicalOperator getLogicalOperator(){
 		return this.definingOp;
 	}
-	
+
 	// Methods for operator states
 	// see IStatefulPO
-	
+
 	/**
 	 * Default implementation of {@link #setState(Serializable)} that does nothing. Override it for stateful operators.
 	 */
 	protected void setStateInternal(Serializable state) {
 	}
-	
+
 	/**
 	 * Sets an operator state.
 	 */
@@ -1072,5 +1072,5 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		setStateInternal(state);
 		this.operatorStateLoaded = true;
 	}
-	
+
 }

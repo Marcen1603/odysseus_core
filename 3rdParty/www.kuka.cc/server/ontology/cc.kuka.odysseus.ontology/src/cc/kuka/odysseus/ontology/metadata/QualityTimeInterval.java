@@ -122,12 +122,6 @@ public class QualityTimeInterval extends AbstractCombinedMetaAttribute implement
     }
 
     @Override
-    public String toString(final PointInTime baseTime) {
-        return "i=" + this.timeInterval.toString(baseTime) + "| q=[completeness=" + this.quality.getCompleteness() + ", consistency=" + this.quality.getConsistency() + ", frequency="
-                + this.quality.getFrequency() + ", timeliness=" + this.getTimeliness(baseTime) + "]";
-    }
-
-    @Override
     public String getName() {
         return "QualityTimeInterval";
     }

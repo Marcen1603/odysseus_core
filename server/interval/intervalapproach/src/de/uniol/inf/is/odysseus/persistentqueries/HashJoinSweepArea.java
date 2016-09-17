@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 /**
  * This sweep area is used for equi joins over non-windowed streams. Instead of
  * a list, it uses a multi attribute hash map
- * 
+ *
  * @author Andre Bolles, Cornelius Ludmann, Marco Grawunder
  *
  */
@@ -161,7 +161,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		}
 
 	}
-	
+
 	private void putToElements(Object key, Tuple<? extends ITimeInterval> element) {
 		Set<Tuple<? extends ITimeInterval>> set = this.elements.get(key);
 		if(set == null) {
@@ -198,7 +198,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 						result.add(matchingTuple.clone());
 					}
 				}
-				
+
 			}
 		}
 
@@ -216,7 +216,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 				return c;
 			}
 		});
-		
+
 		return result.iterator();
 	}
 
@@ -238,7 +238,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	/*
 	 * non-windowed data needs no purging.
-	 * 
+	 *
 	 */
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractElements(Tuple<? extends ITimeInterval> element,
@@ -436,7 +436,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getMaxEndTs()
 	 */
@@ -523,12 +523,6 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	}
 
 	@Override
-	public String getSweepAreaAsString(PointInTime baseTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getSweepAreaAsString(String tab, int max, boolean tail) {
 		// TODO Auto-generated method stub
 		return null;
@@ -540,12 +534,12 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public String getAreaName() {
 		return this.areaName;
 	}
-	
+
 	@Override
 	public void setAreaName(String name) {
 		this.areaName = name;

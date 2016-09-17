@@ -18,6 +18,14 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
+/*
+ * This class combines different meta data classes at runtime.
+ *
+ * Important: Only one of these meta data classes is allowed to implement Comparable
+ *
+ * @author: Marco Grawunder
+ */
+
 public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttribute
 		implements InvocationHandler, Serializable, Comparable<IMetaAttribute> {
 
@@ -76,7 +84,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 
 	}
 
-	
+
 	private void initCompareableMethod(Class<? extends IMetaAttribute>[] classes) {
 		int i = 0;
 		for (Class<? extends IMetaAttribute> c : classes) {
@@ -101,9 +109,14 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		for (Method m : IMetaAttribute.class.getMethods()) {
 			this.gcmMethods.add(m);
 		}
-		
+
 		// add comparable manually
 		this.gcmMethods.add(compareMethod);
+		try {
+			this.gcmMethods.add(Object.class.getMethod("toString"));
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void initMethodRetrieveValues(Class<? extends IMetaAttribute>[] classes) {
@@ -147,7 +160,7 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 			throw new IOException("No class found. HELP!!");
 		}
 	}
-	
+
 	@Override
 	public int compareTo(IMetaAttribute o) {
 		try {
@@ -215,8 +228,12 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
-		for (IMetaAttribute a : metaAttributes) {
-			ret.append(a.toString()+"|");
+
+		if (metaAttributes.length > 0){
+			ret.append(metaAttributes[0]);
+		}
+		for (int i=1;i<metaAttributes.length;i++) {
+			ret.append(" | ").append(metaAttributes[i]);
 		}
 		return ret.toString();
 
@@ -270,30 +287,4 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		throw new RuntimeException("Method " + method + " not defined for Generic meta data type!");
 	}
 
-}
-
-class GenericClassLoader extends ClassLoader {
-	private List<ClassLoader> classLoader = new ArrayList<>();
-
-	public GenericClassLoader(IMetaAttribute[] metaAttribute) {
-		for (IMetaAttribute m : metaAttribute) {
-			classLoader.add(m.getClass().getClassLoader());
-		}
-	}
-
-	@Override
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		try {
-			return super.loadClass(name);
-		} catch (ClassNotFoundException e) {
-		}
-
-		for (ClassLoader c : classLoader) {
-			try {
-				return c.loadClass(name);
-			} catch (ClassNotFoundException e) {
-			}
-		}
-		return super.loadClass(name);
-	}
 }

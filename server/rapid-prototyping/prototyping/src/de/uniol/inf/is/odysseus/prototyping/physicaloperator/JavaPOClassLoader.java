@@ -31,6 +31,9 @@ public class JavaPOClassLoader extends ClassLoader {
         for (final Map.Entry<String, String> entry : map.entrySet()) {
             list.add(new JavaPOSource(entry.getKey(), Kind.SOURCE, entry.getValue()));
         }
+        if (compiler == null){
+        	throw new RuntimeException("No compiler found! Make sure that tools.jar is in your CLASSPATH.");
+        }
         this.compiler.getTask(null, this.manager, null, null, null, list).call();
     }
 
