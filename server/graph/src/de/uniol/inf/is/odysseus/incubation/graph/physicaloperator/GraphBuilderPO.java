@@ -57,6 +57,10 @@ public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyVal
 		}
 		
 		String name = GraphDataStructureProvider.getInstance().addGraphDataStructure(structure, object.getMetadata().getStart());
+		if (this.actualStructure != null) {
+			GraphDataStructureProvider.getInstance().setGraphVersionRead(this.actualStructure, "graphBuilderPO");
+		}
+		
 		this.actualStructure = name;
 		
 		Tuple<M> newTuple = new Tuple<M>(1, false);

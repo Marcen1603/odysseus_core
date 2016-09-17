@@ -110,6 +110,8 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 		for (T element : outdatedElements) {
 			Graph graph = element.getAttribute(0);
 			
+			GraphDataStructureProvider.getInstance().setGraphVersionRead(graph.getName(), "bestPostFunction");
+			
 			if (structurePosts.containsKey(graph.getName())) {
 				for (String postId : structurePosts.get(graph.getName())) {
 					postComments.remove(postId);

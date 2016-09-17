@@ -211,7 +211,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 
 	@Override
 	public String toString() {
-		return "AdjacencyMatrix [graphNodes=" + graphNodes + ", name=" + name + "]";
+		return "AdjacencyMatrix [name=" + name + "]";
 	}
 
 	@Override

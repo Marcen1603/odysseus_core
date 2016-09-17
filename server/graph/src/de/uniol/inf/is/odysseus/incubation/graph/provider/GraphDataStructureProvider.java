@@ -18,6 +18,7 @@ public class GraphDataStructureProvider {
 	
 	private Map<String, IGraphDataStructure<IMetaAttribute>> dataStructures = new HashMap<String, IGraphDataStructure<IMetaAttribute>>();
 	private Map<String, List<IGraphListener>> listeners = new HashMap<String, List<IGraphListener>>();
+	private Map<String, Map<String, Long>> operatorReads = new HashMap<String, Map<String, Long>>();
 	
 	public static GraphDataStructureProvider getInstance() {
 		if (instance == null) {
@@ -78,5 +79,49 @@ public class GraphDataStructureProvider {
 	
 	public void removeListener(IGraphListener listener) {
 		this.listeners.remove(listener);
+	}
+	
+	public void removeDataStructureVersion (String versionName) {
+		this.dataStructures.remove(versionName);
+	}
+	
+	public void setGraphVersionRead(String versionName, String className) {
+		String[] parts = versionName.split("_");
+		String graphName = parts[0];
+		Long timestamp = Long.valueOf(parts[1]);
+		
+		Map<String, Long> operatorVersions;
+		if (this.operatorReads.containsKey(graphName)) {
+			operatorVersions = this.operatorReads.get(graphName);
+		} else {
+			operatorVersions = new HashMap<String, Long>();
+		}
+		
+		operatorVersions.put(className, timestamp);
+		this.operatorReads.put(graphName, operatorVersions);
+		
+		List<String> removeDataStructures = new ArrayList<String>();
+		for (String key : this.dataStructures.keySet()) {
+			if (key.contains(graphName)) {
+				String [] versionParts = key.split("_");
+				Long ts = Long.valueOf(versionParts[1]);
+				
+				boolean remove = true;
+				for (Long tsRead : operatorVersions.values()) {
+					if (tsRead <= ts) {
+						remove = false;
+					}
+				}
+				
+				if (remove == true) {
+					removeDataStructures.add(key);
+				}
+			}
+		}
+		
+		// Muss über extra Liste geregelt werden, da ansonsten ConcurrentModificationException.
+		for (String name : removeDataStructures) {
+			this.removeDataStructureVersion(name);
+		}
 	}
 }

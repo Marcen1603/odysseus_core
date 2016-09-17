@@ -89,8 +89,7 @@ public class GraphNode {
 
 	@Override
 	public String toString() {
-		return "GraphNode [id=" + id + ", label=" + label + ", props=" + props + ", outgoingEdges=" + outgoingEdges
-				+ ", incomingEdges=" + incomingEdges + "]";
+		return "GraphNode [id=" + id + ", label=" + label + ", props=" + props.toString() + "]";
 	}
 
 	@Override

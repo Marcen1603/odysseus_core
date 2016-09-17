@@ -24,6 +24,8 @@ public class CountNodesFunction extends AbstractFunction<Long> {
 		Graph graph = getInputValue(0);
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
 		
+		GraphDataStructureProvider.getInstance().setGraphVersionRead(graph.getName(), "countNodesFunction");
+		
 		Integer value = structure.getGraphNodes().size();
 		return value.longValue();
 	}

@@ -42,21 +42,29 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	@Override
 	public Object[] evaluate(Collection elements, Tuple trigger, PointInTime pointInTime) {
-		System.out.println(elements.size());
 		Tuple tuple = new Tuple(1, false);
 		
 		IGraphDataStructure<IMetaAttribute> intersection = null;
 		
 		String intersectionName = "";
+		Long minTs = null;
+		String minGraphVersion = "";
 		
 		for (Object element : elements) {
 			tuple = (T) element;
 			Graph graph = ((Graph) tuple.getAttribute(0));
 			
+			Long ts = Long.valueOf(graph.getName().split("_")[1]);
+			
+			if (minTs == null || ts < minTs) {
+				minTs = ts;
+				minGraphVersion = graph.getName();
+			}
+			
 			IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
 			List<GraphNode> nodes = new ArrayList<GraphNode>(structure.getGraphNodes().values());
 			
-			intersectionName = "intersection_" + structure.getName();
+			intersectionName = "intersection" + structure.getName();
 			
 			if (intersection == null) {
 				intersection = structure.cloneDataStructure();
@@ -90,6 +98,8 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 				}
 			}
 		}
+		
+		GraphDataStructureProvider.getInstance().setGraphVersionRead(minGraphVersion, "graphIntersection");
 		
 		intersection.setName(intersectionName);
 		
