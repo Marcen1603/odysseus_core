@@ -43,11 +43,25 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 	public MarkerByteBufferHandler(ITransportDirection direction, IAccessPattern access,
 			IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
-		start = Byte.parseByte(optionsMap.get("start"));
-		end = Byte.parseByte(optionsMap.get("end"));
+		final String startMarker = optionsMap.get("start");
+		if(startMarker.length() == 1) {
+			// single character
+			start = (byte) startMarker.charAt(0);
+		} else {
+			// string with decimal digits
+			start = Byte.parseByte(startMarker);
+		}
+		final String endMarker = optionsMap.get("end");
+		if(endMarker.length() == 1) {
+			// single character
+			end = (byte) endMarker.charAt(0);
+		} else {
+			// string with decimal digits
+			end = Byte.parseByte(endMarker);
+		}
 	}
 
-	@Override	
+	@Override
 	public void write(T object) throws IOException {
 		// write with marker
 		ByteBuffer buffer = prepareObject(object);
@@ -61,7 +75,7 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 		insertInt(rawBytes, messageSizeBytes + 4, end);
 		getTransportHandler().send(rawBytes);
 	}
-	
+
 	@Override
 	public void process(long callerId, ByteBuffer message) {
 		// TODO: handle callerId
@@ -117,7 +131,7 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 	}
 
 
-	
+
 
 
 
