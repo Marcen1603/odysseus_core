@@ -26,3 +26,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  org.geotools;bundle-version="1.0.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.spatial.Activator
 Bundle-ActivationPolicy: lazy
+Import-Package: junit.framework,
+ org.junit;version="4.12.0"
