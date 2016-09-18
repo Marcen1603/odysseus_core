@@ -30,11 +30,18 @@ public class SpatialDataStructureTest extends TestCase {
 	private Point kNNTestCenter;
 	private List<Point> neighbors;
 
+	// For range test
+	private Point rangeTestCenter;
+	private List<Point> rangeNeighbors;
+
 	@Before
 	public void setUp() {
 
 		// Create the list for the kNN test
 		neighbors = new ArrayList<Point>(5);
+
+		// Create the list for the range test
+		rangeNeighbors = new ArrayList<Point>();
 
 		// Create test data
 		factory = new GeometryFactory();
@@ -58,7 +65,24 @@ public class SpatialDataStructureTest extends TestCase {
 			Point point = factory.createPoint(coord);
 			points.add(point);
 		}
+		
+		fillNeighbourTestData();
+	}
 
+	private void fillDataStructure() {
+		// Fill the data structure with test data
+		for (Point point : points) {
+			// Create the test data
+			Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
+			GeometryWrapper wrapper = new GeometryWrapper(point);
+			tuple.setAttribute(GEOMETRY_POSITION, wrapper);
+
+			// Add the data to the data structure
+			dataStructure.add(tuple);
+		}
+	}
+
+	private void fillNeighbourTestData() {
 		// Generate points which are the kNNs
 		kNNTestCenter = factory.createPoint(new Coordinate(10.0, 10.0));
 		// new Coordinate(10.0, 10.0);
@@ -79,23 +103,12 @@ public class SpatialDataStructureTest extends TestCase {
 		for (Point point : neighbors) {
 			points.add(point);
 		}
-
 	}
 
-	private void fillDataStructure() {
-		// Fill the data structure with test data
-		for (Point point : points) {
-			// Create the test data
-			Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
-			GeometryWrapper wrapper = new GeometryWrapper(point);
-			tuple.setAttribute(GEOMETRY_POSITION, wrapper);
-
-			// Add the data to the data structure
-			dataStructure.add(tuple);
-		}
-
-	}
-
+	/**
+	 * Tests whether the kNN method from the data structure works correctly. We
+	 * know the kNNs for the 5 nearest points.
+	 */
 	@Test
 	public void testkNN() {
 
@@ -126,7 +139,7 @@ public class SpatialDataStructureTest extends TestCase {
 					break;
 				}
 			}
-			
+
 			if (found) {
 				// Remove the element from the list
 				neighborsCopy.remove(geometry.getGeometry());
@@ -140,6 +153,11 @@ public class SpatialDataStructureTest extends TestCase {
 		// Now all elements should have been found. The copy of the neighbors
 		// list should be empty
 		assertEquals(neighborsCopy.size(), 0);
+	}
+
+	@Test
+	public void testRange() {
+
 	}
 
 }
