@@ -70,7 +70,7 @@ public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAtt
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<T> dataHandler) {
-		OdysseusProtocolHandler<T> instance = new OdysseusProtocolHandler<T>(
+		OdysseusProtocolHandler2<T> instance = new OdysseusProtocolHandler2<T>(
 				direction, access, dataHandler, options);
 		return instance;
 	}
