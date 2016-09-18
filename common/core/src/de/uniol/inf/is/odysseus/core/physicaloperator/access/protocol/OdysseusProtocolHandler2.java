@@ -31,24 +31,24 @@ public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAtt
 	@Override
 	public void write(T object) throws IOException {
 		ByteBuffer buffer = prepareObject(object);
-		sendWithTypeInfo(buffer, OBJECT);
+		int messageSizeBytes = buffer.remaining();
+		byte[] rawBytes = new byte[messageSizeBytes + 8 + 5]; // 8 for markers, 5 for type info
+		insertInt(rawBytes, 0, start);
+		insertInt(rawBytes, 4, messageSizeBytes + 1);
+		rawBytes[8] = OBJECT;
+		insertInt(rawBytes, messageSizeBytes + 9, end);
+		getTransportHandler().send(rawBytes);
 	}
 
 	@Override
 	public void writePunctuation(IPunctuation punctuation) throws IOException {
 		ByteBuffer buffer = prepareObject(punctuation);
-		sendWithTypeInfo(buffer,punctuation.getNumber());
-	}
-
-	private void sendWithTypeInfo(ByteBuffer buffer, byte typeInfo) throws IOException {
 		int messageSizeBytes = buffer.remaining();
-		byte[] rawBytes = new byte[messageSizeBytes + 5]; // sizeinfo = 5, typeinfo = 1
-		insertInt(rawBytes, 0, messageSizeBytes+1); // typeInfo is part of object!
-		rawBytes[4]= typeInfo;
-
-		// buffer.array() returns the complete array (1024 bytes) and
-		// did not apply the "real" size of the object
-		buffer.get(rawBytes, 5, messageSizeBytes);
+		byte[] rawBytes = new byte[messageSizeBytes + 8 + 5]; // 8 for markers, 5 for type info
+		insertInt(rawBytes, 0, start);
+		insertInt(rawBytes, 4, messageSizeBytes + 1);
+		rawBytes[8] = PUNCT;
+		insertInt(rawBytes, messageSizeBytes + 9, end);
 		getTransportHandler().send(rawBytes);
 	}
 

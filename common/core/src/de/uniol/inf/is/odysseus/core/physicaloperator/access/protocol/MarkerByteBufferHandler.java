@@ -65,12 +65,9 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 	public void write(T object) throws IOException {
 		// write with marker
 		ByteBuffer buffer = prepareObject(object);
-
 		int messageSizeBytes = buffer.remaining();
 		byte[] rawBytes = new byte[messageSizeBytes + 8];
 		insertInt(rawBytes, 0, start);
-		// buffer.array() returns the complete array (1024 bytes) and
-		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 4, messageSizeBytes);
 		insertInt(rawBytes, messageSizeBytes + 4, end);
 		getTransportHandler().send(rawBytes);
