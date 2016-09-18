@@ -122,9 +122,14 @@ public class SpatialDataStructureTest extends TestCase {
 			for (Point point : neighborsCopy) {
 				if (point.equals(geometry.getGeometry())) {
 					// We found the corresponding neighbor
-					neighbors.remove(point);
 					found = true;
+					break;
 				}
+			}
+			
+			if (found) {
+				// Remove the element from the list
+				neighborsCopy.remove(geometry.getGeometry());
 			}
 
 			// Was the element found (if not, it is not a correct neighbor)
