@@ -17,6 +17,14 @@ import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import junit.framework.TestCase;
 
+/**
+ * Tests a spatial data structure.
+ * 
+ * Hint: Coordinates are Lat/Lng
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class SpatialDataStructureTest extends TestCase {
 
 	private static final String DATA_STRUCTURE_NAME = "test";
@@ -65,8 +73,9 @@ public class SpatialDataStructureTest extends TestCase {
 			Point point = factory.createPoint(coord);
 			points.add(point);
 		}
-		
+
 		fillNeighbourTestData();
+		fillRangeTestData();
 	}
 
 	private void fillDataStructure() {
@@ -83,9 +92,10 @@ public class SpatialDataStructureTest extends TestCase {
 	}
 
 	private void fillNeighbourTestData() {
-		// Generate points which are the kNNs
+		// The point for which we search the kNNs
 		kNNTestCenter = factory.createPoint(new Coordinate(10.0, 10.0));
-		// new Coordinate(10.0, 10.0);
+
+		// Generate points which are the kNNs
 		Coordinate coord1 = new Coordinate(10.0, 10.1);
 		Coordinate coord2 = new Coordinate(10.1, 10.1);
 		Coordinate coord3 = new Coordinate(10.2, 10.2);
@@ -103,6 +113,46 @@ public class SpatialDataStructureTest extends TestCase {
 		for (Point point : neighbors) {
 			points.add(point);
 		}
+	}
+
+	private void fillRangeTestData() {
+		// The center to search a certain range. This is the center of Oldenburg
+		// downtown.
+		rangeTestCenter = factory.createPoint(new Coordinate(53.140206, 8.213074));
+
+		// Generate points which are in the range
+		// Coordinates captured with http://www.gps-coordinates.net/
+		// Distances calculated with
+		// http://www.sunearthtools.com/tools/distance.php
+		Coordinate coord1 = new Coordinate(53.14, 8.215091); // about 136.5m
+		Coordinate coord2 = new Coordinate(53.140284, 8.217452); // about 292.2
+																	// m
+		Coordinate coord3 = new Coordinate(53.139872, 8.220799); // about 516.8
+																	// m
+		Coordinate coord4 = new Coordinate(53.140052, 8.224275); // about 747.5
+																	// m
+		Coordinate coord5 = new Coordinate(53.14188, 8.243115); // about 2.0129
+																// km
+		// Huntebruecke, about 4.3577 km
+		Coordinate coord6 = new Coordinate(53.153488, 8.274529);
+		// Elsfleth, about 19.5791 km
+		Coordinate coord7 = new Coordinate(53.238099, 8.457241);
+
+		// Fill the extra list for the correct range result (as we do a 5 km
+		// range, we do not include the Elsfleth coordinate)
+		rangeNeighbors.add(factory.createPoint(coord1));
+		rangeNeighbors.add(factory.createPoint(coord2));
+		rangeNeighbors.add(factory.createPoint(coord3));
+		rangeNeighbors.add(factory.createPoint(coord4));
+		rangeNeighbors.add(factory.createPoint(coord5));
+		rangeNeighbors.add(factory.createPoint(coord6));
+
+		// And add the range neighbors to the normal list as well (and add the
+		// Elsfleth coordinate as well)
+		for (Point point : rangeNeighbors) {
+			points.add(point);
+		}
+		points.add(factory.createPoint(coord7));
 	}
 
 	/**
