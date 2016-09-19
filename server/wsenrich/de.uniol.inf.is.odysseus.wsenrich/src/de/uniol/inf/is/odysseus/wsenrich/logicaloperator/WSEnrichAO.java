@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", doc="Enrich tuples with data from external web services.", category={LogicalOperatorCategory.ENRICH})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", doc = "Enrich tuples with data from external web services.", category = {
+		LogicalOperatorCategory.ENRICH })
 public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
@@ -137,6 +138,10 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 */
 	private String wsdlLocation;
 
+	private String template;
+
+	private boolean urlIsTemplate = false;
+
 	/**
 	 * Default-Constructor for the WSEnrichAO
 	 */
@@ -154,8 +159,10 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		this.serviceMethod = wsEnrichAO.serviceMethod;
 		this.method = wsEnrichAO.method;
 		this.url = wsEnrichAO.url;
+		this.urlIsTemplate = wsEnrichAO.urlIsTemplate;
 		this.urlsuffix = wsEnrichAO.urlsuffix;
 		this.arguments = wsEnrichAO.arguments;
+		this.template = wsEnrichAO.template;
 		this.header = wsEnrichAO.header;
 		this.operation = wsEnrichAO.operation;
 		this.receivedData = wsEnrichAO.receivedData;
@@ -172,12 +179,10 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return new WSEnrichAO(this);
 	}
 
-
 	@Override
 	public void initialize() {
 		SDFSchema webserviceData = SDFSchemaFactory.createNewWithAttributes(receivedData, getInputSchema());
-		SDFSchema outputSchema = SDFSchema.union(getInputSchema(),
-				webserviceData);
+		SDFSchema outputSchema = SDFSchema.union(getInputSchema(), webserviceData);
 		setOutputSchema(outputSchema);
 	}
 
@@ -244,6 +249,25 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return this.urlsuffix;
 	}
 
+
+	public boolean isUrlIsTemplate() {
+		return urlIsTemplate;
+	}
+
+	@Parameter(type = BooleanParameter.class, name="templateURL", optional = true)
+	public void setUrlIsTemplate(boolean urlIsTemplate) {
+		this.urlIsTemplate = urlIsTemplate;
+	}
+
+	@Parameter(type = StringParameter.class, optional = true)
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
 	/**
 	 * Setter for the static part of the Url after Arguments (optional)
 	 *
@@ -266,7 +290,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param arguments
 	 */
-	@Parameter(type = OptionParameter.class, name = "arguments", isList = true)
+	@Parameter(type = OptionParameter.class, name = "arguments", isList = true, optional = true)
 	public void setArguments(List<Option> arguments) {
 		this.arguments = arguments;
 	}
@@ -288,7 +312,6 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return this.header;
 	}
 
-
 	/**
 	 * @return The name of the Operation used to call a SOAP-Webservice (only
 	 *         needed for Soap-Webservices)
@@ -298,7 +321,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	}
 
 	/**
-	 * Setter for the Operation used to call a SOAP-Webservice. (only needet for
+	 * Setter for the Operation used to call a SOAP-Webservice. (only needed for
 	 * Soap-Webservices)
 	 *
 	 * @param operation
@@ -360,8 +383,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 * Setter for the Get or Post-variable
 	 */
 	private String setGetOrPost() {
-		if (this.method.equals(POST_WITH_ARGUMENTS)
-				|| this.method.equals(POST_WITH_DOCUMENT)) {
+		if (this.method.equals(POST_WITH_ARGUMENTS) || this.method.equals(POST_WITH_DOCUMENT)) {
 			return POST_METHOD;
 		} else
 			return GET_METHOD;
@@ -373,7 +395,6 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	public String getGetOrPost() {
 		return this.getOrPost;
 	}
-
 
 	/**
 	 * Setter to enable or disable key value output in the output stream
@@ -482,8 +503,20 @@ public class WSEnrichAO extends AbstractEnrichAO {
 			valid = false;
 		}
 
-		return valid;
-	}
+		// Template checks
+		if (template != null){
 
+			if(arguments == null){
+				addError("For 'template' the field 'arguments' is required!");
+				valid = false;
+			}
+			if (!(method.equalsIgnoreCase(POST_METHOD) || method.equalsIgnoreCase(POST_WITH_ARGUMENTS) || method.equalsIgnoreCase(POST_WITH_DOCUMENT))){
+				addError("Templates can only be used with POST requests!");
+				valid = false;
+			}
+		}
+
+	return valid;
+}
 
 }

@@ -10,9 +10,9 @@ import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter;
 import com.eviware.soapui.model.iface.Operation;
 import com.eviware.soapui.support.SoapUIException;
 
-import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.ISoapMessageCreator;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageCreator;
 
-public class SoapUIImpl implements ISoapMessageCreator {
+public class SoapUIImpl implements IMessageCreator {
 	
 	/**
 	 * For Logging
@@ -63,7 +63,7 @@ public class SoapUIImpl implements ISoapMessageCreator {
 	}
 	
 	@Override
-	public void buildSoapMessage() {
+	public void buildMessage() {
 		try {	
 			this.project = new WsdlProject();
 			WsdlInterface[] wsdls = WsdlImporter.importWsdl(project, wsdlUrl);
@@ -121,12 +121,12 @@ public class SoapUIImpl implements ISoapMessageCreator {
 	}
 
 	@Override
-	public String getSoapMessage() {
+	public String getMessage() {
 		return soapMessage;
 	}
 
 	@Override
-	public ISoapMessageCreator createInstance(String wsdlLocation, String operation) {
+	public IMessageCreator createInstance(String wsdlLocation, String operation) {
 		return new SoapUIImpl(wsdlLocation, operation);
 	}
 
