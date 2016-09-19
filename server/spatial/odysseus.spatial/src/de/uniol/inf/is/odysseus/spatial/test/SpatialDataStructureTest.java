@@ -41,6 +41,7 @@ public class SpatialDataStructureTest extends TestCase {
 	// For range test
 	private Point rangeTestCenter;
 	private List<Point> rangeNeighbors;
+	private double range = 5000; // m
 
 	@Before
 	public void setUp() {
@@ -168,7 +169,8 @@ public class SpatialDataStructureTest extends TestCase {
 
 	@Test
 	public void testRange() {
-
+		List<Tuple<?>> rangeResult = dataStructure.getNeighborhood(rangeTestCenter, range);
+		assertEqualList(rangeResult, rangeNeighbors);
 	}
 
 	private void assertEqualList(List<Tuple<?>> queryResult, List<Point> correctSolution) {
