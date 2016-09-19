@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * @author Andr� Bolles, Marco Grawunder
- * 
+ *
  */
 public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? extends IMetaAttribute>> {
 
@@ -123,7 +123,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public Tuple<? extends IMetaAttribute> readData(String input, boolean handleMetaData) {
 		throw new UnsupportedOperationException("Currently not avaialable");
@@ -156,7 +156,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
 	 * #readData (java.nio.ByteBuffer)
@@ -167,7 +167,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		synchronized (buffer) {
 			// buffer.flip(); // DO NOT FLIP THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
-			// logger.debug("create "+byteBuffer);
+			//System.err.println("ByteBuffer "+buffer);
 			Object[] attributes = new Object[dataHandlers.length];
 			for (int i = 0; i < dataHandlers.length; i++) {
 				byte type = -1;
@@ -181,7 +181,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 						if (dataHandlers.length > i) {
 							logger.warn("Error parsing stream with "
 									+ dataHandlers[i].getClass() + " "
-									+ e.getMessage());
+									+ e.getMessage()+" "+e);
 						} else {
 							logger.warn("Error parsing stream with no data handler defined "
 									+ e.getMessage());
@@ -215,7 +215,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			}
 			Tuple<?> tuple = new Tuple<IMetaAttribute>(objects, false);
 			return tuple;
-			
+
 		}else{
 			List<String> str = new ArrayList<String>();
 			str.add(string);
@@ -225,7 +225,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
 	 * (java.util.List, java.lang.Object)
@@ -237,7 +237,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 		synchronized (output) {
 			for (int i = 0; i < dataHandlers.length; i++) {
-				
+
 				Object attribute = r.getAttribute(i);
 				if (attribute != null){
 					dataHandlers[i].writeData(output, attribute, options);
@@ -253,7 +253,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#writeData
 	 * (java.lang.StringBuilder, java.lang.Object)
@@ -275,7 +275,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
 	 * #writeData (java.nio.ByteBuffer, java.lang.Object)
@@ -287,7 +287,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			writeData(buffer, r, handleMetaData);
 		}
 	}
-	
+
 	@Override
 	public void writeData(ByteBuffer buffer, Tuple<? extends IMetaAttribute> object,
 			boolean handleMetaData) {
@@ -314,7 +314,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.
 	 * AbstractDataHandler #getSupportedDataTypes()
 	 */
@@ -348,7 +348,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				throw new IllegalArgumentException("Datatype cannot be used in transport!"
 						+ uri);
 			}
-			
+
 			SDFSchema subSchema;
 			if (type.isTuple()) {
 				subSchema = attribute.getDatatype().getSchema();

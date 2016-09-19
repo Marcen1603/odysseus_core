@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -14,6 +17,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAttribute>> extends MarkerByteBufferHandler<T> {
+
+	static final Logger LOG = LoggerFactory.getLogger(OdysseusProtocolHandler2.class);
 
 	final static byte OBJECT = 0;
 	final static byte PUNCT = 1;
@@ -66,9 +71,17 @@ public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAtt
 
 
 	@Override
-	protected void processObject() throws IOException, ClassNotFoundException {
-		T so = objectHandler.create();
+	protected synchronized void processObject() throws IOException, ClassNotFoundException {
+		T so = null;
+
+		try{
+			so = objectHandler.create();
+		}catch(Exception e){
+			LOG.warn("Error reading input. Clearing input buffer ... ");
+			objectHandler.clear();
+		}
 		if (so != null){
+			//System.err.println(so);
 			getTransfer().transfer(so);
 		}else{
 			IPunctuation punc = ((PunctAwareByteBufferHandler<T>)objectHandler).getPunctuation();

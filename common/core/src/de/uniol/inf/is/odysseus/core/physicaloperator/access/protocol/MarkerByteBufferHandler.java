@@ -76,32 +76,37 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 		// write with marker
 		ByteBuffer buffer = prepareObject(object);
 		int messageSizeBytes = buffer.remaining();
-		byte[] rawBytes = new byte[messageSizeBytes + 8];
+		byte[] rawBytes = new byte[messageSizeBytes + 2];
 
-		insertInt(rawBytes, 0, start);
-		buffer.get(rawBytes, 4, messageSizeBytes);
-		insertInt(rawBytes, messageSizeBytes + 4, end);
+		//insertInt(rawBytes, 0, start);
+		rawBytes[0] = start;
+		buffer.get(rawBytes, 1, messageSizeBytes);
+		//insertInt(rawBytes, messageSizeBytes + 4, end);
+		rawBytes[messageSizeBytes+1] = end;
+
 		getTransportHandler().send(rawBytes);
 	}
 
 	@Override
-	public void process(long callerId, ByteBuffer message) {
+	public synchronized void process(long callerId, ByteBuffer message) {
 		// TODO: handle callerId
 		try {
 			int startPosition = -1;
 			while (message.remaining() > 0) {
 				byte value = message.get();
+
 				// Could be inside an object --> ignore and wait for next start
 				if (startPosition > 0 && value == end) {
-					int endPosition = message.position() - 2;
+					int endPosition = message.position() - 1;
 					message.position(startPosition);
 					try {
-						objectHandler.put(message, endPosition - message.position() + 1);
+						objectHandler.put(message, endPosition - message.position());
 					} catch (IOException e) {
 						LOG.error(e.getMessage(), e);
 					}
-					message.position(endPosition + 2);
+					message.position(endPosition + 1);
 					startPosition = message.position() + 1;
+
 					processObject();
 				}
 				if (value == start) {
