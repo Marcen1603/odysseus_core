@@ -41,7 +41,11 @@ public class SpatialDataStructureTest extends TestCase {
 	// For range test
 	private Point rangeTestCenter;
 	private List<Point> rangeNeighbors;
-	private double range = 5000; // m
+	private double range = 2100; // m
+
+	// For bounding box test
+	private List<Point> polygon;
+	private List<Point> correctQueryResults;
 
 	@Before
 	public void setUp() {
@@ -51,6 +55,10 @@ public class SpatialDataStructureTest extends TestCase {
 
 		// Create the list for the range test
 		rangeNeighbors = new ArrayList<Point>();
+
+		// Create the lists for the query bounding box test
+		polygon = new ArrayList<>();
+		correctQueryResults = new ArrayList<>();
 
 		// Create test data
 		factory = new GeometryFactory();
@@ -77,6 +85,7 @@ public class SpatialDataStructureTest extends TestCase {
 
 		fillNeighbourTestData();
 		fillRangeTestData();
+		fillQueryBoundingBoxTestData();
 	}
 
 	private void fillDataStructure() {
@@ -139,21 +148,62 @@ public class SpatialDataStructureTest extends TestCase {
 		// Elsfleth, about 19.5791 km
 		Coordinate coord7 = new Coordinate(53.238099, 8.457241);
 
-		// Fill the extra list for the correct range result (as we do a 5 km
-		// range, we do not include the Elsfleth coordinate)
+		// Fill the extra list for the correct range result (as we do a 2.1 km
+		// range, we do not include the Huntebruecke and Elsfleth coordinates)
 		rangeNeighbors.add(factory.createPoint(coord1));
 		rangeNeighbors.add(factory.createPoint(coord2));
 		rangeNeighbors.add(factory.createPoint(coord3));
 		rangeNeighbors.add(factory.createPoint(coord4));
 		rangeNeighbors.add(factory.createPoint(coord5));
-		rangeNeighbors.add(factory.createPoint(coord6));
 
 		// And add the range neighbors to the normal list as well (and add the
 		// Elsfleth coordinate as well)
 		for (Point point : rangeNeighbors) {
 			points.add(point);
 		}
+		points.add(factory.createPoint(coord6));
 		points.add(factory.createPoint(coord7));
+	}
+
+	private void fillQueryBoundingBoxTestData() {
+
+		/*
+		 * Polygon for Oldenburg university main campus, created with
+		 * http://www.gmapgis.com/ 8.17698,53.14588,0.0 8.1778,53.14731,0.0
+		 * 8.17795,53.1477,0.0 8.18007,53.14886,0.0 8.18078,53.14941,0.0
+		 * 8.18267,53.1484,0.0 8.18666,53.14632,0.0 8.18569,53.14512,0.0
+		 */
+
+		polygon.add(factory.createPoint(new Coordinate(53.14588, 8.17698)));
+		polygon.add(factory.createPoint(new Coordinate(53.14731, 8.1778)));
+		polygon.add(factory.createPoint(new Coordinate(53.1477, 8.17795)));
+		polygon.add(factory.createPoint(new Coordinate(53.14886, 8.18007)));
+		polygon.add(factory.createPoint(new Coordinate(53.14941, 8.18078)));
+		polygon.add(factory.createPoint(new Coordinate(53.1484, 8.18267)));
+		polygon.add(factory.createPoint(new Coordinate(53.14632, 8.18666)));
+		polygon.add(factory.createPoint(new Coordinate(53.14512, 8.18569)));
+
+		// Points within that polygon
+		Coordinate coord1 = new Coordinate(53.147491, 8.18217); // A14
+		Coordinate coord2 = new Coordinate(53.147118, 8.181505); // A1 - A4
+		Coordinate coord3 = new Coordinate(53.147568, 8.179927); // Bib
+		Coordinate coord4 = new Coordinate(53.146642, 8.178651); // Gym
+
+		// Points that a slightly outside of the polygon
+		Coordinate noCoord1 = new Coordinate(53.149711, 8.181891); // Combi
+		Coordinate noCoord2 = new Coordinate(53.150425, 8.180614); // V
+																	// buildings
+
+		// Add the correct points to the compare list
+		correctQueryResults.add(factory.createPoint(coord1));
+		correctQueryResults.add(factory.createPoint(coord2));
+		correctQueryResults.add(factory.createPoint(coord3));
+		correctQueryResults.add(factory.createPoint(coord4));
+
+		// Add all points to the whole data set
+		points.addAll(correctQueryResults);
+		points.add(factory.createPoint(noCoord1));
+		points.add(factory.createPoint(noCoord2));
 	}
 
 	/**
@@ -167,12 +217,33 @@ public class SpatialDataStructureTest extends TestCase {
 		assertEqualList(kNN, neighbors);
 	}
 
+	/**
+	 * Tests whether the range method from the data structure works correctly.
+	 * We know the neighbors in 5,000m range
+	 */
 	@Test
 	public void testRange() {
 		List<Tuple<?>> rangeResult = dataStructure.getNeighborhood(rangeTestCenter, range);
 		assertEqualList(rangeResult, rangeNeighbors);
 	}
 
+	@Test
+	public void testBoundingBoxQuery() {
+		List<Tuple<?>> boundingBoxResult = dataStructure.queryBoundingBox(polygon);
+		assertEqualList(boundingBoxResult, correctQueryResults);
+	}
+
+	/**
+	 * Tests if the two list are "equal". Therefore, the length is tested and it
+	 * is tested if the points in the result list (the tuples) are on the same
+	 * position as the points in the correct solution. The order does not need
+	 * to be the same.
+	 * 
+	 * @param queryResult
+	 *            The result of the query from the data structure
+	 * @param correctSolution
+	 *            The points which we know are correct
+	 */
 	private void assertEqualList(List<Tuple<?>> queryResult, List<Point> correctSolution) {
 		// Copy the list with the original neighbors that need to be found
 		List<Point> correctSolutionCopy = new ArrayList<>(correctSolution);
