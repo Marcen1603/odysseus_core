@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,60 +24,59 @@ import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>> implements
-		IObjectHandler<T> {
+public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>> implements IObjectHandler<T> {
 
 	private static final int BYTEBUF_INIT = 2048;
 	ByteBuffer byteBuffer = null;
 	protected IStreamObjectDataHandler<?> dataHandler;
-	
+
 	public ByteBufferHandler() {
 	}
-	
+
 	@Override
 	public IObjectHandler<T> getInstance(IStreamObjectDataHandler<T> dataHandler) {
 		return new ByteBufferHandler<T>(dataHandler);
 	}
-	
+
 	public ByteBufferHandler(IStreamObjectDataHandler<?> dataHandler) {
 		byteBuffer = ByteBuffer.allocate(BYTEBUF_INIT);
-		this.dataHandler = dataHandler;		
+		this.dataHandler = dataHandler;
 	}
-	
-	public ByteBufferHandler(
-			ByteBufferHandler<T> objectHandler) {
+
+	public ByteBufferHandler(ByteBufferHandler<T> objectHandler) {
 		super();
 		this.dataHandler = objectHandler.dataHandler;
 	}
-	
+
 	@Override
 	public void clear() {
 		byteBuffer.clear();
 	}
 
 	@Override
-	public ByteBuffer getByteBuffer(){
+	public ByteBuffer getByteBuffer() {
 		return byteBuffer;
 	}
-	
-	@SuppressWarnings({ "unchecked"})
+
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public synchronized T create() throws IOException, ClassNotFoundException, BufferUnderflowException {
 		T retval = null;
-		synchronized(byteBuffer){		
+		synchronized (byteBuffer) {
 			byteBuffer.flip();
-			//retval = (T) ByteBufferUtil.createStreamObject(byteBuffer, (IDataHandler) dataHandler);
-			retval = (T)this.dataHandler.readData(byteBuffer);
+			// retval = (T) ByteBufferUtil.createStreamObject(byteBuffer,
+			// (IDataHandler) dataHandler);
+			retval = (T) this.dataHandler.readData(byteBuffer);
 			byteBuffer.clear();
 		}
 		return retval;
 	}
-	
+
 	private void checkAndResizeBuffer(ByteBuffer buffer, int size) {
-		if (size+byteBuffer.position()>=byteBuffer.capacity()){
+		if (size + byteBuffer.position() >= byteBuffer.capacity()) {
 			// TODO: Effizientere ?berlaufbehandlung?
-			//logger.warn("ObjectHandler OVERFLOW");
-			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit()+size+byteBuffer.position())*2);
+			// logger.warn("ObjectHandler OVERFLOW");
+			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit() + size + byteBuffer.position()) * 2);
 			int pos = byteBuffer.position();
 			byteBuffer.flip();
 			newBB.put(byteBuffer);
@@ -85,62 +84,65 @@ public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>
 			byteBuffer.position(pos);
 		}
 	}
-	
+
 	@Override
 	public void put(ByteBuffer buffer) throws IOException {
-		synchronized(buffer){
-			synchronized(byteBuffer){
-				//System.out.println("putBuffer "+buffer+" to "+byteBuffer);
+		synchronized (buffer) {
+			synchronized (byteBuffer) {
+				// System.out.println("putBuffer "+buffer+" to "+byteBuffer);
 				checkAndResizeBuffer(byteBuffer, buffer.remaining());
 				byteBuffer.put(buffer);
-				//System.out.println("putBuffer "+buffer+" to "+byteBuffer);
+				// System.out.println("putBuffer "+buffer+" to "+byteBuffer);
 			}
 		}
 	}
-	
+
 	@Override
 	public void put(ByteBuffer buffer, int size) throws IOException {
-		synchronized(buffer){
-			synchronized(byteBuffer){
-				//System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
+		synchronized (buffer) {
+			synchronized (byteBuffer) {
+				// System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
 				checkAndResizeBuffer(byteBuffer, size);
-				// Why copy each single byte?
-//				for (int i=0;i<size;i++){
-//					byteBuffer.put(buffer.get());
-//				}
-				byteBuffer.put(buffer.array(), buffer.position(), size);
-				buffer.position(buffer.position() + size);
-				//System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
+				if (buffer.isDirect()) {
+					// Fallback for direct buffers ... that do not implement e.g array
+					for (int i = 0; i < size; i++) {
+						byteBuffer.put(buffer.get());
+					}
+				} else {
+					byteBuffer.put(buffer.array(), buffer.position(), size);
+					buffer.position(buffer.position() + size);
+				}
+				// System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
 			}
 		}
-		
+
 	}
 
 	@Override
 	public void put(T value, boolean withMetadata) {
 
-		synchronized(byteBuffer){
+		synchronized (byteBuffer) {
 			checkAndResizeBuffer(byteBuffer, dataHandler.memSize(value));
 			byteBuffer.clear();
-			//ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value, dataHandler, withMetadata);
+			// ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value,
+			// dataHandler, withMetadata);
 			this.dataHandler.writeData(byteBuffer, value);
-			
 
 			byteBuffer.flip();
 		}
 	}
-	
+
 	@Override
 	public ByteBufferHandler<T> clone() {
 		return new ByteBufferHandler<T>(this);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "ByteBufferHandler";
 	}
 
-	protected final IDataHandler<?> getDataHandler()  {
+	protected final IDataHandler<?> getDataHandler() {
 		return dataHandler;
 	}
 
