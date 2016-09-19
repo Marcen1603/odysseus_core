@@ -161,28 +161,34 @@ public class SpatialDataStructureTest extends TestCase {
 	 */
 	@Test
 	public void testkNN() {
-
 		int k = neighbors.size();
-
 		List<Tuple<?>> kNN = dataStructure.getKNN(kNNTestCenter, k);
+		assertEqualList(kNN, neighbors);
+	}
 
+	@Test
+	public void testRange() {
+
+	}
+
+	private void assertEqualList(List<Tuple<?>> queryResult, List<Point> correctSolution) {
 		// Copy the list with the original neighbors that need to be found
-		List<Point> neighborsCopy = new ArrayList<>(neighbors);
+		List<Point> correctSolutionCopy = new ArrayList<>(correctSolution);
 
 		// Both lists need to have the same size
-		assertEquals(neighborsCopy.size(), kNN.size());
+		assertEquals(correctSolutionCopy.size(), queryResult.size());
 
 		// The lists need to be the same (but the order can be different)
-		for (int i = 0; i < kNN.size(); i++) {
+		for (int i = 0; i < queryResult.size(); i++) {
 
 			// The neighbor that was found
-			Tuple<?> tuple = kNN.get(i);
+			Tuple<?> tuple = queryResult.get(i);
 			GeometryWrapper geometry = tuple.getAttribute(GEOMETRY_POSITION);
 
 			// Search, if there is this geometry in the list with the correct
 			// neighbors
 			boolean found = false;
-			for (Point point : neighborsCopy) {
+			for (Point point : correctSolutionCopy) {
 				if (point.equals(geometry.getGeometry())) {
 					// We found the corresponding neighbor
 					found = true;
@@ -192,7 +198,7 @@ public class SpatialDataStructureTest extends TestCase {
 
 			if (found) {
 				// Remove the element from the list
-				neighborsCopy.remove(geometry.getGeometry());
+				correctSolutionCopy.remove(geometry.getGeometry());
 			}
 
 			// Was the element found (if not, it is not a correct neighbor)
@@ -202,12 +208,7 @@ public class SpatialDataStructureTest extends TestCase {
 
 		// Now all elements should have been found. The copy of the neighbors
 		// list should be empty
-		assertEquals(neighborsCopy.size(), 0);
-	}
-
-	@Test
-	public void testRange() {
-
+		assertEquals(correctSolutionCopy.size(), 0);
 	}
 
 }
