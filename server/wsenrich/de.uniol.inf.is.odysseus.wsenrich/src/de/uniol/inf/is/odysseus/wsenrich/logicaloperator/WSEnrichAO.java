@@ -140,6 +140,8 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	private String template;
 
+	private boolean urlIsTemplate = false;
+
 	/**
 	 * Default-Constructor for the WSEnrichAO
 	 */
@@ -157,6 +159,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		this.serviceMethod = wsEnrichAO.serviceMethod;
 		this.method = wsEnrichAO.method;
 		this.url = wsEnrichAO.url;
+		this.urlIsTemplate = wsEnrichAO.urlIsTemplate;
 		this.urlsuffix = wsEnrichAO.urlsuffix;
 		this.arguments = wsEnrichAO.arguments;
 		this.template = wsEnrichAO.template;
@@ -244,6 +247,16 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 */
 	public String getUrlSuffix() {
 		return this.urlsuffix;
+	}
+
+
+	public boolean isUrlIsTemplate() {
+		return urlIsTemplate;
+	}
+
+	@Parameter(type = BooleanParameter.class, name="templateURL", optional = true)
+	public void setUrlIsTemplate(boolean urlIsTemplate) {
+		this.urlIsTemplate = urlIsTemplate;
 	}
 
 	@Parameter(type = StringParameter.class, optional = true)
