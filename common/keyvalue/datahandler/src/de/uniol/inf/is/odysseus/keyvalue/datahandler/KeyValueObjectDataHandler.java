@@ -18,30 +18,37 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ *
+ * @author Jan-Sören Schwarz
+ * @author Marco Grawunder
+ *
+ */
+
 public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler<KeyValueObject<?>> {
 
 	protected static List<String> types = new ArrayList<String>();
 	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObjectDataHandler.class);
-	
+
 	static {
 		types.add(SDFDatatype.KEYVALUEOBJECT.getURI());
-	}	
+	}
 
 	@Override
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
-	
+
 	@Override
 	public IDataHandler<KeyValueObject<?>> getInstance(SDFSchema schema) {
 		return new KeyValueObjectDataHandler();
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return KeyValueObject.class;
 	}
-	
+
 	static public KeyValueObject<?> jsonToKVOWrapper(JsonNode node){
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		if(node.isArray()) {
@@ -51,15 +58,15 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 		} else {
 			parse(node, map, "");
 		}
-		return new KeyValueObject<>(map);		
+		return new KeyValueObject<>(map);
 	}
-	
+
 	static public KeyValueObject<?> jsonStringToKVOWrapper(String json){
 		try {
 			if(json.equals("")) {
 				throw new Exception("empty JSON-String");
 			}
-			JsonNode rootNode = jsonMapper.reader().readTree(json);	
+			JsonNode rootNode = jsonMapper.reader().readTree(json);
 			return jsonToKVOWrapper(rootNode);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,11 +74,11 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 			return null;
 		}
 	}
-	
+
 	protected KeyValueObject<?> jsonStringToKVO(String json) {
 		return jsonStringToKVOWrapper(json);
 	}
-	
+
 	static private void parse(JsonNode rootNode, Map<String, Object> map, String path) {
 		Iterator<Entry<String, JsonNode>> nodeIterator = rootNode.fields();
 		while(nodeIterator.hasNext()) {
@@ -82,10 +89,10 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 			if(path.equals("")) {
 				newPath = key;
 			} else {
-				newPath = path + "." + key;				
+				newPath = path + "." + key;
 			}
 			if(node.isArray()) {
-				map.putAll(parseArray(node, map, newPath));				
+				map.putAll(parseArray(node, map, newPath));
 			} else {
 				if(node.size() > 0) {
 					parse(node, map, newPath);
@@ -132,6 +139,6 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 		}
 		return resultList;
 	}
-	
-	
+
+
 }
