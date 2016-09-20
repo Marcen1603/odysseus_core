@@ -18,11 +18,12 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  org.osgeo.proj4j;bundle-version="1.0.0",
  com.vividsolutions.jts;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
  org.eclipse.osgi,
  org.sesame,
- org.geotools;bundle-version="1.0.0"
+ org.geotools;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ org.junit;bundle-version="4.12.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.spatial.Activator
 Bundle-ActivationPolicy: lazy

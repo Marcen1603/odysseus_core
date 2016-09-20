@@ -3,8 +3,14 @@ package de.uniol.inf.is.odysseus.spatial.datastructures;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
@@ -123,6 +129,32 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	}
 
 	@Override
+	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints) {
+
+		// Check if the first and the last point is equal. If not, we have to
+		// add the first point at the end to have a closed ring.
+		Point firstPoint = polygonPoints.get(0);
+		Point lastPoint = polygonPoints.get(polygonPoints.size() - 1);
+		if (!firstPoint.equals(lastPoint)) {
+			polygonPoints.add(firstPoint);
+		}
+
+		// Create a polygon with the given points
+		GeometryFactory factory = new GeometryFactory();
+		LinearRing ring = factory.createLinearRing(
+				polygonPoints.stream().map(p -> p.getCoordinate()).toArray(size -> new Coordinate[size]));
+		Polygon polygon = factory.createPolygon(ring, null);
+
+		// For every point in our list ask JTS if the points lies within the
+		// polygon
+		List<Tuple<?>> result = tuples.parallelStream().filter(e -> polygon.contains(getGeometry(e)))
+				.collect(Collectors.toList());
+
+		// Collect the points and return them
+		return result;
+	}
+
+	@Override
 	public void addListener(ISpatialListener listener) {
 		listeners.add(listener);
 	}
@@ -144,6 +176,18 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public String getName() {
 		return this.name;
+	}
+
+	private Geometry getGeometry(Tuple<?> tuple) {
+		Object o = tuple.getAttribute(geometryPosition);
+		GeometryWrapper geometryWrapper = null;
+		if (o instanceof GeometryWrapper) {
+			geometryWrapper = (GeometryWrapper) o;
+			Geometry geometry = geometryWrapper.getGeometry();
+			return geometry;
+		} else {
+			return null;
+		}
 	}
 
 }
