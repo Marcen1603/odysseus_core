@@ -84,7 +84,7 @@ public class CompareSinkPO
 //						.println("--------------------------------------------------------------------------------");
 //			}else{
 //				System.err
-//				.println("--------------------------------------------------------------------------------");				
+//				.println("--------------------------------------------------------------------------------");
 //			}
 		}
 	}
@@ -94,7 +94,7 @@ public class CompareSinkPO
 			// ignore punctuations
 	}
 
-	
+
 	@Override
 	protected void process_close() {
 		testRemaingTuples();
@@ -108,7 +108,7 @@ public class CompareSinkPO
 	private void testRemaingTuples() {
 		synchronized (sweepArea) {
 			for (int i = 0; i < 2; i++) {
-				Iterator<Tuple<? extends ITimeInterval>> iter = sweepArea[0]
+				Iterator<Tuple<? extends ITimeInterval>> iter = sweepArea[i]
 						.extractAllElements();
 				while (iter.hasNext()) {
 					System.err.print("UNASSIGNED TUPLES FROM PORT " + i);
