@@ -67,12 +67,13 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	@Override
 	public void writeData(ByteBuffer buffer, T object, boolean handleMetaData) {
 		writeData(buffer, (Object)object, handleMetaData);
-
 	}
 
 	@Override
 	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
-		throw new UnsupportedOperationException();
+		StringBuilder string = new StringBuilder();
+		writeJSONData(string, data);
+		output.add(string.toString());
 	}
 
 	@Override
