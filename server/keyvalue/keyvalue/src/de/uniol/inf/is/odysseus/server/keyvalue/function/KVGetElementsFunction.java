@@ -26,7 +26,6 @@ public class KVGetElementsFunction extends AbstractFunction<Tuple<IMetaAttribute
 			tuple = new Tuple<>(keyList.length, false);
 			for(int i=0;i<keyList.length;i++){
 				 tuple.setAttribute(i, kv.getAttribute(keyList[i]));
-				 System.out.println(kv.getAttributes());
 			}
 		}
 		return tuple;
