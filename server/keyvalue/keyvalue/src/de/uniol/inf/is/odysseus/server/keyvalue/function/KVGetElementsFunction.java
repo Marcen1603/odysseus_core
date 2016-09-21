@@ -22,10 +22,11 @@ public class KVGetElementsFunction extends AbstractFunction<Tuple<IMetaAttribute
 		String keys = getInputValue(1);
 		Tuple<IMetaAttribute> tuple = null;
 		if (keys != null){
-			String[] keyList = keys.split(",");
+			String[] keyList = keys.split(", ");
 			tuple = new Tuple<>(keyList.length, false);
 			for(int i=0;i<keyList.length;i++){
 				 tuple.setAttribute(i, kv.getAttribute(keyList[i]));
+				 System.out.println(kv.getAttributes());
 			}
 		}
 		return tuple;
