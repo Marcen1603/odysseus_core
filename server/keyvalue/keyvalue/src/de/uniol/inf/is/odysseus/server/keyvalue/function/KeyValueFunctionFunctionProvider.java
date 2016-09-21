@@ -12,7 +12,8 @@ public class KeyValueFunctionFunctionProvider implements IFunctionProvider {
 	public List<IFunction<?>> getFunctions() {
 		List<IFunction<?>> funcs = new ArrayList<>();
 		funcs.add(new ToKeyValueFuntion());
-
+		funcs.add(new KVGetElementFunction());
+		funcs.add(new KVGetElementsFunction());
 		return funcs;
 	}
 
