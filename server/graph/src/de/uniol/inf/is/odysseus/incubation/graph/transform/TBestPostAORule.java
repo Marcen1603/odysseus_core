@@ -24,26 +24,26 @@ public class TBestPostAORule extends AbstractTransformationRule<BestPostAO> {
 	public int getPriority() {
 		return 0;
 	}
-	
+
 	@Override
 	public void execute(BestPostAO ao, TransformationConfiguration config) throws RuleException {
 		ao.setOutputSchema(ao.getInputSchema());
-		
+
 		final AggregationAO aggregationAo = new AggregationAO();
-		
+
 		BestPost<ITimeInterval, Tuple<ITimeInterval>> function = new BestPost<ITimeInterval, Tuple<ITimeInterval>>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("FUNCTION", "BestPost");
 		params.put("numPosts", ao.getNumPosts());
 		DirectAttributeResolver attributeResolver = new DirectAttributeResolver(ao.getInputSchema());
-		
-		function.createInstance(params, attributeResolver);
-		
+
+		IAggregationFunction instance = function.createInstance(params, attributeResolver);
+
 		List<IAggregationFunction> aggregations = new ArrayList<IAggregationFunction>();
-		aggregations.add(function);
+		aggregations.add(instance);
 		aggregationAo.setAggregations(aggregations);
-		
-		
+
+
 		RestructHelper.insertOperatorBefore(aggregationAo, ao);
 		insert(aggregationAo);
 		RestructHelper.removeOperator(ao, false);
@@ -59,11 +59,11 @@ public class TBestPostAORule extends AbstractTransformationRule<BestPostAO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.SUBSTITUTION;
 	}
-	
+
 	public Class<? super BestPostAO> getConditionClass() {
 		return BestPostAO.class;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "BestPostAO -> AggregationAO";
