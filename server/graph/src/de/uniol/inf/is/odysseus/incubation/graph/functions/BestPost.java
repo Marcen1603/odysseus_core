@@ -30,55 +30,58 @@ import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProv
 public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
 	private static final long serialVersionUID = -4960965026820211241L;
-	
+
 	private Map<String, List<String>> structurePosts = new HashMap<String, List<String>>();
 	private Map<String, Long> postComments = new HashMap<String, Long>();
 	private List<String> posts = new ArrayList<String>();
 	private List<String> comments = new ArrayList<String>();
-	
+
 	@SuppressWarnings("unchecked")
 	private Tuple<IMetaAttribute>[] result = new Tuple[0];
-	
+
 	private int numPosts = 0;
-	
+
 	@SuppressWarnings("unchecked")
 	public BestPost() {
 		super();
 		result = new Tuple[0];
 	}
-	
+
 	public BestPost(final BestPost<M, T> other) {
 		super(other);
-		
+
+		this.numPosts = other.numPosts;
 		result = other.result;
 		Arrays.fill(result, new Tuple<IMetaAttribute>(1, false));
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public BestPost(final int[] attributes, final String[] outputNames) {
+	public BestPost(final int numPosts, final int[] attributes, final String[] outputNames) {
 		super(attributes, outputNames);
+		this.numPosts = numPosts;
 		this.result = new Tuple[attributes.length];
 		Arrays.fill(result, new Tuple<IMetaAttribute>(1, false));
 		if (outputNames.length != attributes.length) {
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public BestPost(final int inputAttributesLength, final String[] outputNames) {
+	public BestPost(final int numPosts, final int inputAttributesLength, final String[] outputNames) {
 		super(null, outputNames);
+		this.numPosts = numPosts;
 		this.result = new Tuple[inputAttributesLength];
 		Arrays.fill(result, new Tuple<IMetaAttribute>(1, false));
 		if (outputNames.length != inputAttributesLength) {
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
-	
+
 	@Override
 	public void addNew(T newElement) {
 		Graph graph = newElement.getAttribute(0);
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
-		
+
 		Map<String, GraphNode> graphNodes = structure.getGraphNodes();
 		for (GraphNode node : graphNodes.values()) {
 			if (node.getLabel().equals("post") && !posts.contains(node.getId())) {
@@ -109,14 +112,14 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
 		for (T element : outdatedElements) {
 			Graph graph = element.getAttribute(0);
-			
+
 			GraphDataStructureProvider.getInstance().setGraphVersionRead(graph.getName(), "bestPostFunction");
-			
+
 			if (structurePosts.containsKey(graph.getName())) {
 				for (String postId : structurePosts.get(graph.getName())) {
 					postComments.remove(postId);
 				}
-				
+
 				structurePosts.remove(graph.getName());
 			}
 		}
@@ -140,46 +143,47 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		return true;
+		final int k = AggregationFunctionParseOptionsHelper.getFunctionParameterAsInt(parameters, "numPosts", -1);
+		return k > 0;
 	}
 
 	@Override
-	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {		
-		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters, attributeResolver);
+	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
+		final int k = AggregationFunctionParseOptionsHelper.getFunctionParameterAsInt(parameters, "numPosts", -1);
+		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
+				attributeResolver, 0, false);
 		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters, attributeResolver);
-		
-		this.numPosts = ((Long) parameters.get("numPosts")).intValue();
-		
+
 		if (attributes == null) {
-			return new BestPost<M, T>(attributeResolver.getSchema().get(0).size(), outputNames);
+			return new BestPost<M, T>(k, attributeResolver.getSchema().get(0).size(), outputNames);
 		}
-		return new BestPost<M, T>(attributes, outputNames);
+		return new BestPost<M, T>(k, attributes, outputNames);
 	}
-	
+
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
 		final List<SDFAttribute> res = new ArrayList<>(this.numPosts);
-		
+
 		for (int i = 1; i <= this.numPosts; i++) {
 			res.add(new SDFAttribute(null, "post" + i, SDFDatatype.TUPLE, null, null, null));
 		}
-		
+
 		return res;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	public Tuple<IMetaAttribute>[] getMaxValuesOfMap() {
 		Tuple<IMetaAttribute>[] bestPosts;
-	
+
 		Map<String, Long> postCommentsCopy = new HashMap<String, Long>(this.postComments);
-		
+
 		if (postCommentsCopy.size() < this.numPosts) {
 			bestPosts = new Tuple[postCommentsCopy.size()];
 		} else {
 			bestPosts = new Tuple[this.numPosts];
 		}
-		
+
 		for (int i=0; i<bestPosts.length; i++) {
 			if (!postCommentsCopy.isEmpty()) {
 				String bestPost = Collections.max(
@@ -189,31 +193,31 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 							public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
 								return o1.getValue().compareTo(o2.getValue());
 							}
-							
+
 						}
 				).getKey();
-				
+
 				Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
 				tuple.setAttribute(0, bestPost);
 				tuple.setAttribute(1, postCommentsCopy.get(bestPost));
-				
+
 				bestPosts[i] = tuple;
-				
+
 				postCommentsCopy.remove(bestPost);
 			}
 		}
 
 		return bestPosts;
 	}
-	
-	
+
+
 	public String getRelatedPost(String nodeId, Map<String, GraphNode> nodes) {
 		GraphNode node = nodes.get(nodeId);
-		
+
 		if (node.getOutgoingEdges().isEmpty()) {
 			return null;
 		}
-		
+
 		while (!node.getLabel().equals("post")) {
 			for (GraphEdge edge : node.getOutgoingEdges().keySet()) {
 				if (edge.getLabel().equals("is_comment_of") || edge.getLabel().equals("is_reply_of")) {
@@ -221,7 +225,7 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 				}
 			}
 		}
-		
+
 		return node.getId();
 	}
 
