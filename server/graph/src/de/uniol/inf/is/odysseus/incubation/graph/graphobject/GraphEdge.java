@@ -72,24 +72,10 @@ public class GraphEdge {
 	public void clearEndingNodes() {
 		this.endingNodes = new ArrayList<GraphNode>();
 	}
-	
-//	public boolean equals(GraphEdge other) {
-//		if (
-//				this.startingNodes.equals(other.startingNodes)
-//				&& this.endingNodes.equals(other.endingNodes)
-//				&& this.props.equals(other.props)
-//				&& this.label.equals(other.label)
-//		) {
-//			return true;
-//		}
-//		
-//		return false;
-//	}
 
 	@Override
 	public String toString() {
-		return "GraphEdge [label=" + label + ", startingNodes=" + startingNodes.get(0).getId() + ", endingNodes="
-				+ endingNodes.get(0).getId() + "]";
+		return "GraphEdge[" + startingNodes.get(0).getId() + " --" + label + "--> " + endingNodes.get(0).getId() + "]";
 	}
 
 	@Override
