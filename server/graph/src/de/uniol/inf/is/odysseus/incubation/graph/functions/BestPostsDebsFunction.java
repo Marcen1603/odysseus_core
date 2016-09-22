@@ -119,18 +119,20 @@ public class BestPostsDebsFunction extends AbstractFunction<Tuple<IMetaAttribute
 					}
 				).getKey();
 				
-				Tuple<IMetaAttribute> postTuple = new Tuple<IMetaAttribute>(4, false);
-				postTuple.setAttribute(0, bestPost);
-				postTuple.setAttribute(1, postUser.get(bestPost));
-				postTuple.setAttribute(2, postScores.get(bestPost));
-				
-				if (postComments.containsKey(bestPost)) {
-					postTuple.setAttribute(3, postComments.get(bestPost).size());
-				} else {
-					postTuple.setAttribute(3, 0l);
+				if (postScores.get(bestPost) > 0) {
+					Tuple<IMetaAttribute> postTuple = new Tuple<IMetaAttribute>(4, false);
+					postTuple.setAttribute(0, bestPost);
+					postTuple.setAttribute(1, postUser.get(bestPost));
+					postTuple.setAttribute(2, postScores.get(bestPost));
+					
+					if (postComments.containsKey(bestPost)) {
+						postTuple.setAttribute(3, postComments.get(bestPost).size());
+					} else {
+						postTuple.setAttribute(3, 0l);
+					}
+					
+					tuple.setAttribute(i, postTuple);
 				}
-				
-				tuple.setAttribute(i, postTuple);
 				postScores.remove(bestPost);
 			}
 		}

@@ -92,7 +92,7 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 				}
 				
 				for (GraphNode node : nodes) {
-					if (intersectNodes.contains(node.getId())) {
+					if (intersectNodes.contains(node)) {
 						intersection.addGraphNode(node);
 					}
 				}
