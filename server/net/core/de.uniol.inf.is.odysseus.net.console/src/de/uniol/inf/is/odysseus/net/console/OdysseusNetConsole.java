@@ -220,14 +220,17 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		sb.append("    showLocalNode                        - Shows data of own node\n");
 		sb.append("\n");
 		sb.append("    listNetConfiguration/ls...           - Prints the current odysseus net configuration\n");
-		sb.append("    setNetConfiguration <key> <value>    - Sets key in the odysseus net configuration to spezified value\n");
-		sb.append("    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");
+		sb.append(
+				"    setNetConfiguration <key> <value>    - Sets key in the odysseus net configuration to spezified value\n");
+		sb.append(
+				"    saveNetConfiguration                 - Saves thed current odysseus net configuration in the file\n");
 		sb.append("    listNodes/ls..                       - Lists all found (!) nodes\n");
 		sb.append("    listConnectedNodes/ls...             - Lists all connected nodes\n");
 		sb.append("    describeNode/descNode <nodeid|nodename> - Shows detailed info about the specified node\n");
 		sb.append("    isConnected <nodeID | nodeName>      - Checks, if the given node is connected to this node\n");
 		sb.append("    ping                                 - Lists pings to all connected nodes\n");
-		sb.append("    listPingPositions/ls...              - Lists the positions of the connected nodes in the ping map\n");
+		sb.append(
+				"    listPingPositions/ls...              - Lists the positions of the connected nodes in the ping map\n");
 		sb.append("    resourceStatus                       - Prints current resource usage information\n");
 		sb.append("    listOdysseusNetComponents/ls...      - Prints a list of all known OdysseusNet-components\n");
 		sb.append("\n");
@@ -236,15 +239,18 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		sb.append("    listLoggedInNodes/ls...              - Prints a list of all nodes which are logged in here\n");
 		sb.append("    listLoggedToNodes/ls...              - Prints a list of all nodes which we are logged in to\n");
 		sb.append("    revokeLogin <nodeID|nodename>        - Revokes the login of specified remote node\n");
-		sb.append("    loginStatus                          - Prints lists from 'lsLoggedInNodes' and 'lsLoggedToNodes'\n");
-		sb.append("    executeCommand <peerName> <cmd>      - Remotely execute a command on a peer. Outputs are send back. Login needed!\n");
+		sb.append(
+				"    loginStatus                          - Prints lists from 'lsLoggedInNodes' and 'lsLoggedToNodes'\n");
+		sb.append(
+				"    executeCommand <peerName> <cmd>      - Remotely execute a command on a peer. Outputs are send back. Login needed!\n");
 		sb.append("    execCommand <peerName> <cmd>         - See executeCommand\n");
 		sb.append("    execCmd <peerName> <cmd>             - See executeCommand\n");
 		sb.append("\n");
 		sb.append("---Utility commands---\n");
 		sb.append("    log <level> <text>             		- Creates a log statement\n");
 		sb.append("    setLogger <logger> <level>     		- Sets the logging level of a specific logger\n");
-		sb.append("    setLoggerOdysseus <logger> <level>	- Sets the logging level of a Odysseus-logger (de.uniol.inf.is.odysseus)\n");
+		sb.append(
+				"    setLoggerOdysseus <logger> <level>	- Sets the logging level of a Odysseus-logger (de.uniol.inf.is.odysseus)\n");
 		sb.append("    listLoggers/lsLoggers <filter> 		- Lists all known loggers by name\n");
 		sb.append("\n");
 		sb.append("    listSystemProperties/ls...     		- Lists all set system properties. Filter possible\n");
@@ -252,7 +258,8 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		sb.append("    listThreads/ls... <filter>     		- Lists all currently running threads. Filter possible\n");
 		sb.append("\n");
 		sb.append("    dumpPlan <queryid>                   - Prints the physical plan of the specified query.\n");
-		sb.append("    dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis> - Prints the current stream of the specified operator.\n");
+		sb.append(
+				"    dumpStream <hashOfPhysicalOperator | nameOfOperator> <timeInMillis> - Prints the current stream of the specified operator.\n");
 		sb.append("\n");
 
 		return sb.toString();
@@ -326,7 +333,8 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		setLoggerImpl(ci, "de.uniol.inf.is.odysseus." + loggerName, logLevel, duration);
 	}
 
-	private static void setLoggerImpl(final CommandInterpreter ci, String loggerName, String logLevel, final int duration) {
+	private static void setLoggerImpl(final CommandInterpreter ci, String loggerName, String logLevel,
+			final int duration) {
 		org.apache.log4j.Level level = null;
 		try {
 			level = org.apache.log4j.Level.toLevel(logLevel.toUpperCase());
@@ -498,7 +506,8 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			final IPhysicalOperator operator = optOperator.get();
 			ci.println("Connecting to physical operator " + operator);
 
-			final DefaultStreamConnection<IStreamObject<?>> conn = new DefaultStreamConnection<IStreamObject<?>>(operator) {
+			final DefaultStreamConnection<IStreamObject<?>> conn = new DefaultStreamConnection<IStreamObject<?>>(
+					operator) {
 				@Override
 				public void process(IStreamObject<?> element, int port) {
 					ci.println(element);
@@ -696,12 +705,13 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 	public void _lsNodes(CommandInterpreter ci) {
 		String verboseArg = ci.nextArgument();
 		boolean verbose;
-		if (Strings.isNullOrEmpty(verboseArg)){
+		if (Strings.isNullOrEmpty(verboseArg)) {
 			verbose = false;
-		}else{
+		} else if (verboseArg.contentEquals("verbose")) {
+			verbose = true;
+		} else {
 			verbose = Boolean.parseBoolean(verboseArg);
 		}
-
 
 		ImmutableCollection<IOdysseusNode> foundNodes = nodeManager.getNodes();
 
@@ -720,7 +730,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		_lsNodes(ci);
 	}
 
-	public void _describeNode( CommandInterpreter ci ) {
+	public void _describeNode(CommandInterpreter ci) {
 		String nodeText = ci.nextArgument();
 		if (Strings.isNullOrEmpty(nodeText)) {
 			ci.println("usage: describeNode <nodename | nodeid>");
@@ -737,15 +747,15 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			ci.println("Logged in from node : " + loggedInNodes.contains(node));
 			ci.println("Logged to node      : " + loggedToNodes.contains(node));
 			Optional<Double> optPing = pingMap.getPing(node);
-			if(optPing.isPresent() ) {
+			if (optPing.isPresent()) {
 				ci.println("Ping                : " + optPing.get());
 			} else {
 				ci.println("No ping info available");
 			}
 			ci.println("Properties");
-			for( String key : node.getProperyKeys()) {
+			for (String key : node.getProperyKeys()) {
 				Optional<String> optValue = node.getProperty(key);
-				if( optValue.isPresent() ) {
+				if (optValue.isPresent()) {
 					ci.println("\t" + key + " = " + optValue.get());
 				} else {
 					ci.println("\t" + key + " not set");
@@ -753,17 +763,21 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			}
 
 			try {
-				Future<Optional<IResourceUsage>> futureOptUsage = resourceUsageManager.getRemoteResourceUsage(node, true);
+				Future<Optional<IResourceUsage>> futureOptUsage = resourceUsageManager.getRemoteResourceUsage(node,
+						true);
 				Optional<IResourceUsage> optUsage = futureOptUsage.get();
-				if( optUsage.isPresent() ) {
+				if (optUsage.isPresent()) {
 					IResourceUsage usage = optUsage.get();
 
 					ci.println("Resource usage");
 					ci.println("\tCPU               : Free : " + usage.getCpuMax() + " Max: " + usage.getCpuMax());
-					ci.println("\tMEM               : Free : " + usage.getMemFreeBytes() + " Max: " + usage.getMemMaxBytes());
-					ci.println("\tNET               : In : " + usage.getNetInputRate() + " Out: " + usage.getNetOutputRate() + " Max: " + usage.getNetBandwidthMax());
+					ci.println("\tMEM               : Free : " + usage.getMemFreeBytes() + " Max: "
+							+ usage.getMemMaxBytes());
+					ci.println("\tNET               : In : " + usage.getNetInputRate() + " Out: "
+							+ usage.getNetOutputRate() + " Max: " + usage.getNetBandwidthMax());
 					ci.println("\tKnown remote nodes: " + usage.getRemoteNodeCount());
-					ci.println("\tStartup ts        : " + usage.getStartupTimestamp() + " [" + new Date(usage.getStartupTimestamp()) + "]");
+					ci.println("\tStartup ts        : " + usage.getStartupTimestamp() + " ["
+							+ new Date(usage.getStartupTimestamp()) + "]");
 					ci.println("\tRunning queries   : " + usage.getRunningQueriesCount());
 					ci.println("\tStopped queries   : " + usage.getStoppedQueriesCount());
 					ci.println("\tVersion           : " + toVersionString(usage.getVersion()));
@@ -777,7 +791,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		}
 	}
 
-	public void _descNode( CommandInterpreter ci ) {
+	public void _descNode(CommandInterpreter ci) {
 		_describeNode(ci);
 	}
 
@@ -797,8 +811,8 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		ci.println("OdysseusNet stopped by console");
 	}
 
-	public void _isOdysseusNetStarted( CommandInterpreter ci ) {
-		if( startupManager.isStarted() ) {
+	public void _isOdysseusNetStarted(CommandInterpreter ci) {
+		if (startupManager.isStarted()) {
 			ci.println("OdysseusNet is started");
 		} else {
 			ci.println("OdysseusNet is NOT started");
@@ -850,7 +864,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 	}
 
 	private static Optional<IOdysseusNode> determineFirstSelectedNode(CommandInterpreter ci, String node) {
-		if( !startupManager.isStarted() ) {
+		if (!startupManager.isStarted()) {
 			ci.println("OdysseusNet not started");
 			return Optional.absent();
 		}
@@ -920,8 +934,10 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 
 		ci.println("Version " + toVersionString(u.getVersion()));
 		ci.println("Startup timestamp is " + convertTimestampToDate(u.getStartupTimestamp()));
-		ci.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( " + (((double) u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0) + " %)");
-		ci.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( " + ((u.getCpuFree() / u.getCpuMax()) * 100.0) + " %)");
+		ci.println("MEM: " + u.getMemFreeBytes() + " of " + u.getMemMaxBytes() + " Bytes free ( "
+				+ (((double) u.getMemFreeBytes() / u.getMemMaxBytes()) * 100.0) + " %)");
+		ci.println("CPU: " + u.getCpuFree() + " of " + u.getCpuMax() + " free ( "
+				+ ((u.getCpuFree() / u.getCpuMax()) * 100.0) + " %)");
 		ci.println("NET: Max   = " + u.getNetBandwidthMax());
 		ci.println("NET: Input = " + u.getNetInputRate());
 		ci.println("NET: Output= " + u.getNetOutputRate());
@@ -964,11 +980,11 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		OdysseusNodeUpdater.doReinstall();
 	}
 
-	public void _updateNode(CommandInterpreter ci ) {
+	public void _updateNode(CommandInterpreter ci) {
 		OdysseusNodeUpdater.doUpdate();
 	}
 
-	public void _restartNode(CommandInterpreter ci ) {
+	public void _restartNode(CommandInterpreter ci) {
 		OdysseusNodeUpdater.doRestart();
 	}
 
@@ -1212,7 +1228,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		_executeCommand(ci);
 	}
 
-	public void _execCmdAll(CommandInterpreter ci ) {
+	public void _execCmdAll(CommandInterpreter ci) {
 		String username = ci.nextArgument();
 		if (Strings.isNullOrEmpty(username)) {
 			ci.println("usage: execCmdAll <username> <password> <cmd>");
@@ -1234,7 +1250,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		Collection<IOdysseusNode> nodes = nodeCommunicator.getDestinationNodes();
 
 		ci.println("Sending logins...");
-		for( IOdysseusNode node : nodes ) {
+		for (IOdysseusNode node : nodes) {
 			ci.println("Login to " + node);
 			doLogin(ci, username, password, node);
 		}
@@ -1246,7 +1262,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		}
 
 		ci.println("Executing command");
-		for( IOdysseusNode node : nodes ) {
+		for (IOdysseusNode node : nodes) {
 			remoteExecuteCommand(ci, command, node);
 		}
 
@@ -1257,7 +1273,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		}
 
 		ci.println("Sending logins...");
-		for( IOdysseusNode node : nodes ) {
+		for (IOdysseusNode node : nodes) {
 			ci.println("Logout from " + node);
 			doLogout(ci, node);
 		}
@@ -1275,10 +1291,10 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		}
 	}
 
-	public void _remoteUpdate( CommandInterpreter ci ) {
+	public void _remoteUpdate(CommandInterpreter ci) {
 		String nodeStr = ci.nextArgument();
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeStr);
-		if( optNode.isPresent() ) {
+		if (optNode.isPresent()) {
 			OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes(Lists.newArrayList(optNode.get()));
 		}
 	}
@@ -1287,10 +1303,10 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes();
 	}
 
-	public void _remoteReinstall( CommandInterpreter ci ) {
+	public void _remoteReinstall(CommandInterpreter ci) {
 		String nodeStr = ci.nextArgument();
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeStr);
-		if( optNode.isPresent() ) {
+		if (optNode.isPresent()) {
 			OdysseusNodeUpdater.sendUpdateMessageToRemoteNodes(Lists.newArrayList(optNode.get()));
 		}
 	}
@@ -1299,10 +1315,10 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		OdysseusNodeUpdater.sendReinstallMessageToRemoteNodes();
 	}
 
-	public void _remoteRestart( CommandInterpreter ci ) {
+	public void _remoteRestart(CommandInterpreter ci) {
 		String nodeStr = ci.nextArgument();
 		Optional<IOdysseusNode> optNode = determineFirstSelectedNode(ci, nodeStr);
-		if( optNode.isPresent() ) {
+		if (optNode.isPresent()) {
 			OdysseusNodeUpdater.sendRestartMessageToRemoteNodes(Lists.newArrayList(optNode.get()));
 		}
 	}
