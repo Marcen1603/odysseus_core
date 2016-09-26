@@ -13,6 +13,8 @@ public class RuleProvider implements IRuleProvider {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TRegularTimeSeriesAORule());
 		rules.add(new TImputationAORule());
+		rules.add(new TModelVarianceAORule());
+		rules.add(new TForecastVarianceAORule());
 		return rules;
 	}
 }

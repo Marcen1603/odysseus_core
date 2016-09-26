@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
- * Time Series Imputation Strategie can e.g. detect missing data by time
+ * Time Series Imputation Strategy, can e.g. detect missing data by time
  * progress.
  * 
  * @author Christoph Schröer
@@ -18,8 +18,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
  */
 public class LastValueCarriedForwardImputation implements IImputation<ITimeInterval> {
 
+	/**
+	 * Strategy-Name (also for eg. logical operator)
+	 */
 	public static final String NAME = "LastValueCarriedForward";
 
+	/**
+	 * window size, in which an element is expected. is needed to detect missing
+	 * elements in this window.
+	 */
 	private TimeValueItem imputationWindowSize;
 
 	private long imputationWindowSizeMillisec;
@@ -48,6 +55,9 @@ public class LastValueCarriedForwardImputation implements IImputation<ITimeInter
 
 				// no missing data
 				this.lastElement = newElement;
+
+				// TODO: it could be, that in that element are missing
+				// attribute-values, e.g. price is missing.
 
 			} else {
 

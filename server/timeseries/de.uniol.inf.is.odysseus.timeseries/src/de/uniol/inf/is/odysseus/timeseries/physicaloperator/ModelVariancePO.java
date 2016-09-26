@@ -1,0 +1,59 @@
+package de.uniol.inf.is.odysseus.timeseries.physicaloperator;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner;
+import de.uniol.inf.is.odysseus.machine_learning.model.Model;
+import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.AbstractAutoregressionModelEstimator;
+
+/**
+ * 
+ * This is the physical operator to create models for autoregressions on data
+ * streams.
+ * 
+ * @author Christoph Schröer
+ *
+ */
+public class ModelVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
+
+	/**
+	 * TODO abstraction
+	 */
+	private AbstractLearner<Tuple<ITimeInterval>, ITimeInterval, Double> autoregressionLearner;
+
+	public ModelVariancePO(AbstractAutoregressionModelEstimator autoregressionLearner) {
+		this.autoregressionLearner = autoregressionLearner;
+
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+
+	@Override
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
+	}
+
+	@Override
+	protected void process_next(Tuple<ITimeInterval> object, int port) {
+
+		// TODO: add object to learning data...
+		// TODO: handle also, when no learning is required.
+
+		// newLearningObject
+		// this.autoregressionLearner.addLearningData(newLearningObject);
+
+		Model<Tuple<ITimeInterval>, ITimeInterval, Double> model = this.autoregressionLearner.getModel();
+		Tuple<ITimeInterval> modelTuple = new Tuple<ITimeInterval>(1, false);
+		modelTuple.setAttribute(0, model);
+
+		modelTuple.setMetadata((ITimeInterval) object.getMetadata().clone());
+
+		transfer(modelTuple);
+	}
+
+}

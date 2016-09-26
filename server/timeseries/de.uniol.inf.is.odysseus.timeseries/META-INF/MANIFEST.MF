@@ -5,7 +5,11 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.timeseries
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.timeseries.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
+Import-Package: de.uniol.inf.is.odysseus.machine_learning.learner,
+ de.uniol.inf.is.odysseus.machine_learning.model,
+ de.uniol.inf.is.odysseus.recommendation.transform,
+ de.uniol.inf.is.odysseus.recommendation.util,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
