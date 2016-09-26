@@ -23,6 +23,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 
+/**
+ * Non-incremental Aggregation-Function for calculating intersection of all graph versions in a time interval.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
 	private static final long serialVersionUID = -4772454825738888335L;
@@ -61,11 +66,14 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 				minGraphVersion = graph.getName();
 			}
 			
+			// Get GraphDataStructure
 			IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
 			List<GraphNode> nodes = new ArrayList<GraphNode>(structure.getGraphNodes().values());
 			
+			// Name of intersection graph.
 			intersectionName = "intersection" + structure.getName();
 			
+			// If actual intersection == null, intersection = graphstructure. Else calculate intersection.
 			if (intersection == null) {
 				intersection = structure.cloneDataStructure();
 			} else {		

@@ -8,6 +8,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
+/**
+ * Logical operator for CountNodes.
+ * 
+ * @author Kristian Bruns
+ */
 @LogicalOperator(name="CountNodes", minInputPorts=1, maxInputPorts=1, doc="Count nodes in a graph", category={LogicalOperatorCategory.TRANSFORM})
 public class CountNodesAO extends UnaryLogicalOp {
 

@@ -17,6 +17,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
 
+/**
+ * This class implements an AdjacencyMatrix with methods given by interface IGraphDataStructure.
+ * 
+ * @author Kristian Bruns
+ */
 public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStructure<M> {
 	
 	private Table<String, String, GraphEdge> matrix = HashBasedTable.create();
@@ -24,6 +29,9 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 	
 	private String name;
 	
+	/**
+	 * Get a new instance of AdjacencyMatrix.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public IGraphDataStructure<IMetaAttribute> newInstance(String name) {
@@ -32,6 +40,11 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		return (IGraphDataStructure<IMetaAttribute>) instance;
 	}
 
+	/**
+	 * Add new node(s).
+	 * 
+	 * @param object Key-Value-Object containing elements to add.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void addDataSet(KeyValueObject<M> object) {
@@ -73,7 +86,7 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 			graphNodes.put(n2Id, node2);
 		}
 		
-		// Node1 and Node2 than create Edge.
+		// if Node1 and Node2 exists than create Edge.
 		if (node1 != null && node2 != null) {
 			String eLabel = (String) object.getAttribute("e_label");
 			List<GraphNode> startingNodes = Collections.singletonList(node1);
@@ -88,6 +101,11 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		}
 	}
 	
+	/**
+	 * Edit existing node(s).
+	 * 
+	 * @param object Key-Value-Object containing edit data.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void editDataSet(KeyValueObject<M> object) {
@@ -108,6 +126,11 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		}
 	}
 
+	/**
+	 * Delete existing node(s) and edge.
+	 * 
+	 * @param object Key-Value-Object containing elements to remove.
+	 */
 	@Override
 	public synchronized void deleteDataSet(KeyValueObject<M> object) {
 		String n1Id = (String) object.getAttribute("n1_id");
@@ -115,12 +138,15 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		
 		String regExp = "[a-zA-Z]+[\\_]{1}[\\d]+";
 		
+		//If node1 and node2 exists, remove nodes and edge between this nodes. Otherwise remove existing edge.
 		if (Pattern.matches(regExp, n1Id) && Pattern.matches(regExp, n2Id)) {
 			this.matrix.remove(n1Id, n2Id);
 			this.graphNodes.remove(n1Id);
 			this.graphNodes.remove(n2Id);
-		} else if (Pattern.matches(regExp, n2Id)) {
+		} else if (Pattern.matches(regExp, n1Id)) {
 			this.graphNodes.remove(n1Id);
+		} else if (Pattern.matches(regExp, n2Id)) {
+			this.graphNodes.remove(n2Id);
 		}
 	}
 
@@ -139,6 +165,9 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		return "AdjacencyMatrix";
 	}
 
+	/**
+	 * Method for cloning a DataStructure.
+	 */
 	@Override
 	public IGraphDataStructure<IMetaAttribute> cloneDataStructure() {
 		AdjacencyMatrix<IMetaAttribute> newMatrix = new AdjacencyMatrix<IMetaAttribute>();
@@ -148,16 +177,28 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		return newMatrix;
 	}
 
+	/**
+	 * Get all Nodes from AdjacencyMatrix.
+	 */
 	@Override
 	public Map<String, GraphNode> getGraphNodes() {
 		return this.graphNodes;
 	}
 
+	/**
+	 * Get one edge from AdjacencyMatrix.
+	 * 
+	 * @param n1Id StartingNode id.
+	 * @param n2Id EndingNode id.
+	 */
 	@Override
 	public GraphEdge getEdge(String n1Id, String n2Id) {
 		return this.matrix.get(n1Id, n2Id);
 	}
 
+	/**
+	 * Get all Edges from AdjacencyMatrix.
+	 */
 	@Override
 	public Map<Pair<String, String>, GraphEdge> getRelations() {
 		Map<Pair<String, String>, GraphEdge> relations = new HashMap<Pair<String, String>, GraphEdge>();
@@ -168,12 +209,18 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		return relations;
 	}
 	
+	/**
+	 * Remove all nodes and edges from AdjacencyMatrix.
+	 */
 	@Override
 	public void clearDataStructure() {
 		this.matrix.clear();
 		this.graphNodes.clear();
 	}
 	
+	/**
+	 * Add an edge to AdjacencyMatrix, with GraphNodes and a GraphEdge given instead of a Key-Value-Object.
+	 */
 	@Override
 	public synchronized void addRelation(GraphNode node1, GraphNode node2, GraphEdge edge) {
 		this.matrix.put(node1.getId(), node2.getId(), edge);
@@ -184,11 +231,21 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		node2.addIncomingEdge(edge, node1);
 	}
 
+	/**
+	 * Get one GraphNode from AdjacencyMatrix.
+	 * 
+	 * @param nodeId NodeId of node.
+	 */
 	@Override
 	public GraphNode getGraphNode(String nodeId) {
 		return this.graphNodes.get(nodeId);
 	}
 
+	/**
+	 * Remove a GraphNode from AdjacencyMatrix.
+	 * 
+	 * @param nodeId NodeId of node.
+	 */
 	@Override
 	public synchronized void removeGraphNode(String nodeId) {
 		if (this.graphNodes.containsKey(nodeId)) {
@@ -204,6 +261,11 @@ public class AdjacencyMatrix<M extends IMetaAttribute> implements IGraphDataStru
 		}
 	}
 
+	/**
+	 * Add a GraphNode to AdjacencyMatrix.
+	 * 
+	 * @param node GraphNode to add.
+	 */
 	@Override
 	public synchronized void addGraphNode(GraphNode node) {
 		this.graphNodes.put(node.getId(), node);

@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing an edge of a graph.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphEdge {
 
 	private String label;

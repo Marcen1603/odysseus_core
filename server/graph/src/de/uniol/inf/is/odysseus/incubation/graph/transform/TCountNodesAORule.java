@@ -15,6 +15,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * CountNodes transformation rules.
+ * 
+ * @author Kristian Bruns
+ */
 public class TCountNodesAORule extends AbstractTransformationRule<CountNodesAO> {
 
 	public int getPriority() {

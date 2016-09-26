@@ -27,6 +27,12 @@ import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 
+/**
+ * Aggregation-Function calculating Best Posts of a social graph in a given time interval.
+ * Best Posts are those posts with the most comments.
+ * 
+ * @author Kristian
+ */
 public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
 	private static final long serialVersionUID = -4960965026820211241L;
@@ -79,9 +85,11 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 
 	@Override
 	public void addNew(T newElement) {
+		// Get graph from datastream-element.
 		Graph graph = newElement.getAttribute(0);
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
 
+		// For all nodes of graph calculate timestamps and for comments get related post.
 		Map<String, GraphNode> graphNodes = structure.getGraphNodes();
 		for (GraphNode node : graphNodes.values()) {
 			if (node.getLabel().equals("post") && !posts.contains(node.getId())) {
@@ -115,6 +123,7 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 
 			GraphDataStructureProvider.getInstance().setGraphVersionRead(graph.getName(), "bestPostFunction");
 
+			// If post was created too long ago, remove post.
 			if (structurePosts.containsKey(graph.getName())) {
 				for (String postId : structurePosts.get(graph.getName())) {
 					postComments.remove(postId);
@@ -171,7 +180,11 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 		return res;
 	}
 
-
+	/**
+	 * Calculate best x posts for GraphDataStructure.
+	 * 
+	 * @return bestPosts
+	 */
 	@SuppressWarnings("unchecked")
 	public Tuple<IMetaAttribute>[] getMaxValuesOfMap() {
 		Tuple<IMetaAttribute>[] bestPosts;
@@ -211,6 +224,15 @@ public class BestPost<M extends ITimeInterval, T extends Tuple<M>> extends Abstr
 	}
 
 
+	/**
+	 * Get related post for a comment. 
+	 * This method is useful, because a comment of a comment is also related to a post.
+	 * 
+	 * @param nodeId Id of comment.
+	 * @param nodes All nodes from graph.
+	 * 
+	 * @return Id of related post.
+	 */
 	public String getRelatedPost(String nodeId, Map<String, GraphNode> nodes) {
 		GraphNode node = nodes.get(nodeId);
 

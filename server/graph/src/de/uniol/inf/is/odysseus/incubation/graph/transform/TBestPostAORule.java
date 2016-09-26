@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * Best Post transformation rules.
+ * @author Kristian
+ *
+ */
 public class TBestPostAORule extends AbstractTransformationRule<BestPostAO> {
 
 	public int getPriority() {

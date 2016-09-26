@@ -15,11 +15,13 @@ import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProv
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * Map-Function calculates and sets scores of entities based on the rules given by DEBS Grand Challenge '16.
+ * 
+ * @author Kristian Bruns
+ */
 public class ScoreUpdaterFunction extends AbstractFunction<Graph> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2900875434766423329L;
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {{SDFGraphDatatype.GRAPH}, {SDFDatatype.LONG}};
 	
@@ -33,6 +35,7 @@ public class ScoreUpdaterFunction extends AbstractFunction<Graph> {
 
 	@Override
 	public Graph getValue() {
+		// Get graph and timeInterval.
 		Graph graph = getInputValue(0);
 		Long timeInterval = getInputValue(1);
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName()).cloneDataStructure();
@@ -96,7 +99,14 @@ public class ScoreUpdaterFunction extends AbstractFunction<Graph> {
 		return graph;
 	}
 	
-	// Ermitteln des zugehörigen Beitrags.
+	/**
+	 * Calculate post related to a comment.
+	 * 
+	 * @param nodeId Id of comment.
+	 * @param nodes All nodes from graph.
+	 * 
+	 * @return Id of related post.
+	 */
 	public String getRelatedPost(String nodeId, Map<String, GraphNode> nodes) {
 		GraphNode node = nodes.get(nodeId);
 		

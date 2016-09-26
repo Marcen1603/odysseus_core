@@ -14,6 +14,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.datatype.Graph;
 import de.uniol.inf.is.odysseus.incubation.graph.listener.IGraphListener;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 
+/**
+ * TransportHandler getting graph from provider as a listener. 
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphTransportHandler extends AbstractPushTransportHandler implements IGraphListener {
 	public static final String NAME = "Graph";
 	public static final String STRUCTURENAME = "structurename";

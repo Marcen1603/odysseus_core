@@ -7,6 +7,11 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
+/**
+ * Datatype Graph to transfer a graph in the datastream.
+ * 
+ * @author Kristian Bruns
+ */
 public class Graph implements IClone, Cloneable {
 
 	private String name;

@@ -12,6 +12,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure;
 import de.uniol.inf.is.odysseus.incubation.graph.datatype.Graph;
 import de.uniol.inf.is.odysseus.incubation.graph.listener.IGraphListener;
 
+/**
+ * Provider saving versions from all graphs and remove versions if they are not used.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphDataStructureProvider {
 	
 	private static GraphDataStructureProvider instance;
@@ -27,6 +32,14 @@ public class GraphDataStructureProvider {
 		return instance;
 	}
 	
+	/**
+	 * Save a version of a graph.
+	 * 
+	 * @param structure Graph datastructure.
+	 * @param ts Graph creation time.
+	 * 
+	 * @return version reference.
+	 */
 	public String addGraphDataStructure(IGraphDataStructure<IMetaAttribute> structure, PointInTime ts) {
 		String key = structure.getName() + "_" + ts;
 		this.dataStructures.put(key, structure);
@@ -42,6 +55,11 @@ public class GraphDataStructureProvider {
 		return key;
 	}
 	
+	/**
+	 * Delete a graph version.
+	 * 
+	 * @param name Name of graph version.
+	 */
 	public void removeGraphDataStructure(String name) {
 		List<String> keysToRemove = new ArrayList<String>();
 		for (String key : dataStructures.keySet()) {
@@ -55,36 +73,81 @@ public class GraphDataStructureProvider {
 		}
 	}
 	
+	/**
+	 * Get graphDataStructure by version name.
+	 * 
+	 * @param name Name of graph version.
+	 * 
+	 * @return Datastructure saved under this name.
+	 */
 	public IGraphDataStructure<IMetaAttribute> getGraphDataStructure(String name) {
 		return this.dataStructures.get(name);
 	}
 	
+	/**
+	 * Get all saved structures.
+	 * 
+	 * @return Map of structures.
+	 */
 	public Map<String, IGraphDataStructure<IMetaAttribute>> getStructuresMap() {
 		return this.dataStructures;
 	}
 	
+	/**
+	 * Get all structure names.
+	 * 
+	 * @return Set of names.
+	 */
 	public Set<String> getStructureNames() {
 		return this.dataStructures.keySet();
 	}
 	
+	/**
+	 * Is there a structure for the given name?
+	 * 
+	 * @param name Version name.
+	 * 
+	 * @return Boolean value, if structure exists.
+	 */
 	public boolean structureNameExists(String name) {
 		return this.dataStructures.containsKey(name);
 	}
 	
+	/**
+	 * Add a listener related to the given graph.
+	 * 
+	 * @param listener Listener class.
+	 * @param structureName Name of graph.
+	 */
 	public void addListener(IGraphListener listener, String structureName) {
 		List<IGraphListener> structureListener = this.listeners.get(structureName);
 		structureListener.add(listener);
 		this.listeners.put(structureName, structureListener);
 	}
 	
+	/**
+	 * remove Listener.
+	 * @param listener Listener class.
+	 */
 	public void removeListener(IGraphListener listener) {
 		this.listeners.remove(listener);
 	}
 	
+	/**
+	 * Remove one graph version.
+	 * 
+	 * @param versionName Name of version.
+	 */
 	public void removeDataStructureVersion (String versionName) {
 		this.dataStructures.remove(versionName);
 	}
 	
+	/**
+	 * Method calling by operators to communicate which graph version this operator has read.
+	 * 
+	 * @param versionName Name of graph version.
+	 * @param className Name of operator.
+	 */
 	public void setGraphVersionRead(String versionName, String className) {
 		String[] parts = versionName.split("_");
 		String graphName = parts[0];

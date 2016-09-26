@@ -15,6 +15,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * ScoreUpdater transformation rules.
+ * 
+ * @author Kristian Bruns
+ */
 public class TScoreUpdaterAORule extends AbstractTransformationRule<ScoreUpdaterAO> {
 
 	public int getPriority() {
@@ -26,9 +31,9 @@ public class TScoreUpdaterAORule extends AbstractTransformationRule<ScoreUpdater
 		ao.setOutputSchema(ao.getInputSchema());
 		
 		final MapAO mapAo = new MapAO();
-		String function = "scoreUpdater(" + ao.getGraphAttribute() + ", " + ao.getTimeInterval() + ")";
+		String function = "scoreUpdater(" + ao.getGraphAttribute() + ", " + ao.getTimeIntervalMillis() + ")";
 		SDFExpression expression = new SDFExpression(function, null, MEP.getInstance());
-		NamedExpression namedExpression = new NamedExpression("result", expression, null);
+		NamedExpression namedExpression = new NamedExpression("graph", expression, null);
 		List<NamedExpression> expressions = new ArrayList<NamedExpression>();
 		expressions.add(namedExpression);
 		mapAo.setExpressions(expressions);

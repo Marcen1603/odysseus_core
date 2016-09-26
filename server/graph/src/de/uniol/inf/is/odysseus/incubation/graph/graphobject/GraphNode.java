@@ -3,6 +3,11 @@ package de.uniol.inf.is.odysseus.incubation.graph.graphobject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class representing a node of a graph.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphNode {
 
 	private String id;

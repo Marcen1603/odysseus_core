@@ -8,6 +8,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
+/**
+ * Logical operator for BestPost.
+ * 
+ * @author Kristian Bruns
+ */
 @LogicalOperator(name="BestPost", minInputPorts=1, maxInputPorts=1, doc="Calculate Post with most comments in graph", category={LogicalOperatorCategory.TRANSFORM})
 public class BestPostAO extends UnaryLogicalOp {
 

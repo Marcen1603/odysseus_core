@@ -8,6 +8,11 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
 
+/**
+ * Interface for creating a new GraphDataStructure.
+ * 
+ * @author Kristian Bruns
+ */
 public interface IGraphDataStructure<M extends IMetaAttribute> {
 	
 	public IGraphDataStructure<IMetaAttribute> newInstance(String name);

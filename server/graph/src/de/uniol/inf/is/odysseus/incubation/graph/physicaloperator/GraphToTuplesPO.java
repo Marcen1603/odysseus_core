@@ -13,6 +13,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 
+/**
+ * Physical GraphToTuples operator.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphToTuplesPO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 	
 	public GraphToTuplesPO() {
@@ -36,6 +41,7 @@ public class GraphToTuplesPO<M extends IMetaAttribute> extends AbstractPipe<Tupl
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
+		// Get graph.
 		Graph graph = object.getAttribute(0);
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
 		
@@ -44,6 +50,7 @@ public class GraphToTuplesPO<M extends IMetaAttribute> extends AbstractPipe<Tupl
 		Tuple<M> output = new Tuple<M>(1, false);
 		output.setMetadata((M) object.getMetadata().clone());
 		
+		// Transfer all edges of graph.
 		Map<Pair<String, String>, GraphEdge> map = structure.getRelations();
 		for (Map.Entry<Pair<String, String>, GraphEdge> entry: map.entrySet()) {
 			output.setAttribute(0, entry.getValue().toString());
@@ -54,6 +61,7 @@ public class GraphToTuplesPO<M extends IMetaAttribute> extends AbstractPipe<Tupl
 			transfer(output);
 		}
 		
+		// Transfer all nodes that are not in an edge of graph.
 		for (GraphNode node : graphNodes.values()){
 			output.setAttribute(0, node.toString());
 			transfer(output);

@@ -24,6 +24,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
+/**
+ * Logical GraphBuilder operator.
+ * 
+ * @author Kristian Bruns
+ */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name="GRAPHBUILDER", doc = "Converts a graph stream to an adjacency matrix", category={LogicalOperatorCategory.TRANSFORM})
 public class GraphBuilderAO extends UnaryLogicalOp {
 	// Static

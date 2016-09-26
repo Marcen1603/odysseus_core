@@ -9,6 +9,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * GraphToTuples transformation rules.
+ * 
+ * @author Kristian Bruns
+ */
 public class TGraphToTuplesAORule extends AbstractTransformationRule<GraphToTuplesAO> {
 
 	public int getPriority() {

@@ -12,12 +12,21 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
+/**
+ * Logical operator for BestPostsDebs.
+ * 
+ * @author Kristian Bruns
+ */
 @LogicalOperator(name="BestPostsDebs", minInputPorts=1, maxInputPorts=1, doc="Calculate Best Posts for Query1 Debs Challenge", category={LogicalOperatorCategory.TRANSFORM})
 public class BestPostsDebsAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -3522190343381081084L;
+	private long numPosts;
 
 	public BestPostsDebsAO() {
 		super();
@@ -25,6 +34,17 @@ public class BestPostsDebsAO extends UnaryLogicalOp {
 	
 	public BestPostsDebsAO(BestPostsDebsAO other) {
 		super(other);
+		this.numPosts = other.numPosts;
+	}
+	
+	@Parameter(type=LongParameter.class, name="NUMPOSTS", optional=false, isList=false, doc="number of posts to calculate")
+	public void setNumPosts(long numPosts) {
+		this.numPosts = numPosts;
+	}
+	
+	@GetParameter(name="NUMPOSTS")
+	public long getNumPosts() {
+		return this.numPosts;
 	}
 	
 	@Override

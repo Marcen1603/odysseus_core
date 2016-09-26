@@ -11,6 +11,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.datatype.Graph;
 import de.uniol.inf.is.odysseus.incubation.graph.logicaloperator.GraphBuilderAO;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 
+/**
+ * Physical GraphBuilder operator.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
 	private GraphBuilderAO graphBuilderAo;
@@ -48,6 +53,7 @@ public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyVal
 			structure = GraphBuilderAO.dataStructureTypes.get(graphBuilderAo.getDataType()).newInstance(graphBuilderAo.getStructureName());
 		}
 		
+		// Which operation shall be executed.
 		if (object.getAttribute("method").equals("+")) {
 			structure.addDataSet((KeyValueObject<IMetaAttribute>) object);
 		} else if (object.getAttribute("method").equals("-")) {
@@ -56,6 +62,7 @@ public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyVal
 			structure.editDataSet((KeyValueObject<IMetaAttribute>) object);
 		}
 		
+		// Add graph to provider.
 		String name = GraphDataStructureProvider.getInstance().addGraphDataStructure(structure, object.getMetadata().getStart());
 		if (this.actualStructure != null) {
 			GraphDataStructureProvider.getInstance().setGraphVersionRead(this.actualStructure, "graphBuilderPO");

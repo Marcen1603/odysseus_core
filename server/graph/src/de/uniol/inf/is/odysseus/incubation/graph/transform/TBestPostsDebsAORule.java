@@ -15,6 +15,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * BestPostsDebs transformation rules.
+ * 
+ * @author Kristian Bruns
+ */
 public class TBestPostsDebsAORule extends AbstractTransformationRule<BestPostsDebsAO> {
 
 	@Override
@@ -22,9 +27,9 @@ public class TBestPostsDebsAORule extends AbstractTransformationRule<BestPostsDe
 		ao.setOutputSchema(ao.getInputSchema());
 		
 		final MapAO mapAo = new MapAO();
-		String function = "bestPostsDebs(graph)";
+		String function = "bestPostsDebs(graph, " + ao.getNumPosts() + ")";
 		SDFExpression expression = new SDFExpression(function, null, MEP.getInstance());
-		NamedExpression namedExpression = new NamedExpression("result", expression, null);
+		NamedExpression namedExpression = new NamedExpression("bestPosts", expression, null);
 		List<NamedExpression> expressions = new ArrayList<NamedExpression>();
 		expressions.add(namedExpression);
 		mapAo.setExpressions(expressions);

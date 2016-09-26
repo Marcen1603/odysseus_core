@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProv
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * Map-Function calculating the best posts based on the rules given by DEBS Grand Challenge '16.
+ * 
+ * @author Kristian Bruns
+ */
 public class BestPostsDebsFunction extends AbstractFunction<Tuple<IMetaAttribute>> {
 	private static final long serialVersionUID = -8341087533326456443L;
 	
@@ -28,18 +33,21 @@ public class BestPostsDebsFunction extends AbstractFunction<Tuple<IMetaAttribute
 	private Map<String, Long> postScores = new HashMap<String, Long>();
 	private Map<String, List<String>> postComments = new HashMap<String, List<String>>();
 	private Map<String, String> postUser = new HashMap<String, String>();
+	private long numPosts;
 	
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
-		{SDFGraphDatatype.GRAPH}
+		{SDFGraphDatatype.GRAPH}, {SDFDatatype.LONG}
 	};
 	
 	public BestPostsDebsFunction() {
-		super("bestPostsDebs", 1, BestPostsDebsFunction.ACC_TYPES, SDFDatatype.TUPLE);
+		super("bestPostsDebs", 2, BestPostsDebsFunction.ACC_TYPES, SDFDatatype.TUPLE);
 	}
 
 	@Override
 	public Tuple<IMetaAttribute> getValue() {
+		// Get graph and number of posts to calculate.
 		Graph graph = getInputValue(0);
+		this.numPosts = getInputValue(1);
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName()).cloneDataStructure();
 		
 		for (GraphNode node: structure.getGraphNodes().values()) {
@@ -49,10 +57,19 @@ public class BestPostsDebsFunction extends AbstractFunction<Tuple<IMetaAttribute
 					postTs.put(node.getId(), new PointInTime(Long.valueOf(graph.getName().split("_")[1])));
 				}
 				
+				// Save post Score
 				postScores.put(node.getId(), (Long) node.getProps().get("total_score"));
+				
+				// Get related user of post.
+				String userId = this.getRelatedUser(node.getId(), structure.getGraphNodes());
+				if (userId != null) {
+					postUser.put(node.getId(), userId);
+				}
 			} else if (node.getLabel().equals("comment")) {
+				// Get related post of comment.
 				String postId = this.getRelatedPost(node.getId(), structure.getGraphNodes());
 				if (postId != null) {
+					// Set creation time of post comment to creation time of this comment.
 					postCommentTs.put(postId, new PointInTime(Long.valueOf(graph.getName().split("_")[1])));
 					List<String> comments;
 					if (postComments.containsKey(postId)) {
@@ -67,18 +84,13 @@ public class BestPostsDebsFunction extends AbstractFunction<Tuple<IMetaAttribute
 						postComments.put(postId, comments);
 					}
 				}
-			} else if (node.getLabel().equals("user")) {
-				String postId = this.getRelatedPost(node.getId(), structure.getGraphNodes());
-				if (postId != null) {
-					postUser.put(postId, node.getId());
-				}
 			}
 		}
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(3, false);
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>((int) this.numPosts, false);
 		
 		// Bestimmung der drei besten Beiträge.
-		for (int i=0; i<3; i++) {
+		for (int i=0; i<this.numPosts; i++) {
 			if (!postScores.isEmpty()) {
 				String bestPost = Collections.max(
 					postScores.entrySet(),
@@ -142,7 +154,14 @@ public class BestPostsDebsFunction extends AbstractFunction<Tuple<IMetaAttribute
 		return tuple;
 	}
 	
-	// Ermitteln des zugehörigen Beitrags.
+	/**
+	 * Calculate related post of a given comment or user.
+	 * 
+	 * @param nodeId Id of comment or user.
+	 * @param nodes All nodes from graph.
+	 * 
+	 * @return Id of related post.
+	 */
 	public String getRelatedPost(String nodeId, Map<String, GraphNode> nodes) {
 		GraphNode node = nodes.get(nodeId);
 		
@@ -156,6 +175,34 @@ public class BestPostsDebsFunction extends AbstractFunction<Tuple<IMetaAttribute
 			for (GraphEdge edge : node.getOutgoingEdges().keySet()) {
 				if (edge.getLabel().equals("is_comment_of") || edge.getLabel().equals("is_reply_of") || edge.getLabel().equals("has_written")) {
 					node = edge.getEndingNotes().get(0);
+				}
+			}
+		}
+		
+		return node.getId();
+	}
+	
+	/**
+	 * Calculate related user of a given post.
+	 * 
+	 * @param nodeId Id of post.
+	 * @param nodes All nodes from graph.
+	 * 
+	 * @return Id of user.
+	 */
+	public String getRelatedUser(String nodeId, Map<String, GraphNode> nodes) {
+		GraphNode node = nodes.get(nodeId);
+		
+		if (node.getLabel().equals("user")) {
+			return node.getId();
+		} else if (node.getIncomingEdges().isEmpty()) {
+			return null;
+		} 
+		
+		while (!node.getLabel().equals("user")) {
+			for (GraphEdge edge : node.getIncomingEdges().keySet()) {
+				if (edge.getLabel().equals("has_written")) {
+					node = edge.getStartingNodes().get(0);
 				}
 			}
 		}
