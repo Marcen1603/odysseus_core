@@ -59,24 +59,26 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 		return 0;
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, T object, boolean handleMetaData) {
-		throw new UnsupportedOperationException();
+		writeData(buffer, (Object)object, handleMetaData);
 	}
 
 	@Override
 	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
-		throw new UnsupportedOperationException();
+		StringBuilder string = new StringBuilder();
+		writeJSONData(string, data);
+		output.add(string.toString());
 	}
 
 	@Override
 	public void writeData(StringBuilder string, Object data, boolean handleMetaData) {
-		throw new UnsupportedOperationException();
+		writeJSONData(string, data);
 	}
 
 	@Override

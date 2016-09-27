@@ -7,14 +7,15 @@ import com.google.common.base.Optional;
 
 public interface IOdysseusNode extends Serializable {
 
-	public OdysseusNodeID getID();
-	public String getName();
-	
-	public void addProperty( String key, String value );
-	public void removeProperty( String key );
-	public Optional<String> getProperty( String key );
-	public boolean existsProperty( String key );
-	public Collection<String> getProperyKeys();
-	
-	public boolean isLocal();
+	OdysseusNodeID getID();
+	String getName();
+
+	void addProperty( String key, String value );
+	void removeProperty( String key );
+	Optional<String> getProperty( String key );
+	boolean existsProperty( String key );
+	Collection<String> getProperyKeys();
+
+	boolean isLocal();
+	String toString(boolean verbose);
 }
