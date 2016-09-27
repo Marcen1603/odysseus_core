@@ -56,8 +56,8 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		optionsMap = null;
 	}
 
-	public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> datahandler,
-			OptionMap optionsMap) {
+	public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access,
+			IStreamObjectDataHandler<T> datahandler, OptionMap optionsMap) {
 		this.direction = direction;
 		this.access = access;
 		this.dataHandler = datahandler;
@@ -136,7 +136,9 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 
 	@Override
 	public void onDisonnect(ITransportHandler caller) {
-		getTransfer().propagateDone();
+		if (getTransfer() != null) {
+			getTransfer().propagateDone();
+		}
 	}
 
 	@Override
