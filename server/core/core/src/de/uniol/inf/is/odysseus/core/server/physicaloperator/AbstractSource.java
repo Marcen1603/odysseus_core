@@ -630,7 +630,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	protected void process_done() {
 	}
 
-	protected void propagateDone() {
+	public final void propagateDone() {
 		getLogger().trace("Propagate done " + getName());
 		// Could be that the query is already closed. In this cases the done
 		// event
