@@ -17,13 +17,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
  * Protocol handler to read the complete content of an input stream
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  * @param <T>
  */
 public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {
@@ -56,7 +55,7 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
 	}
-	
+
 	private void init_internal() {
 		OptionMap options = optionsMap;
 		if (options.containsKey("delay")) {
@@ -94,7 +93,7 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		}
 		lastDumpTime = System.currentTimeMillis();
 	}
-	
+
 
 	@Override
 	public void open() throws UnknownHostException, IOException {
@@ -271,19 +270,6 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		}
 	}
 
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-	
-
 
 	protected void delay() {
 		if (delayeach > 0) {
@@ -328,7 +314,7 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		}
 		return true;
 	}
-	
+
 	public long getDumpEachDocument() {
 		return dumpEachDocument;
 	}

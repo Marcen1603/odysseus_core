@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
@@ -384,7 +383,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
 	 * AbstractProtocolHandler#process(java.lang.String[])
 	 */
@@ -493,18 +492,6 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			}
 		}
 		return ITransportExchangePattern.Undefined;
-	}
-
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public int getDelayeach() {

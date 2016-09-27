@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -185,25 +185,30 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 			notifyListeners(element, port);
 		}
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void transfer(In object) {
 		// Will never be called
-		
+
 	}
-	
+
 	@Override
-	public void transfer(In object, int sourceOutPort) {	
+	public void transfer(In object, int sourceOutPort) {
 		process_internal(object, sourceOutPort);
 	}
-	
+
+	@Override
+	public void propagateDone() {
+		// will never be called
+	}
+
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		// Will never be called		
+		// Will never be called
 	}
-	
+
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
 		notifyListenersPunctuation(punctuation, outPort);
@@ -288,7 +293,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 			sendPunctuation(punctuation, port);
 		}
 	}
-	
+
 	@Override
 	public void setSuppressPunctuations(boolean suppressPunctuations) {
 		// IGNORE
@@ -303,7 +308,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	public boolean isDone() {
 		return isDone;
 	}
-	
+
 	// @Override
 	public void open() throws OpenFailedException {
 		LOG.debug("Opening");
@@ -600,40 +605,40 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	public boolean hasInput() {
 		return true;
 	}
-	
+
 	@Override
 	public void setDebug(boolean debug) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public boolean isOpenFor(IOperatorOwner owner) {
 		return false;
 	}
-	
+
 	@Override
 	public void suspend(IOperatorOwner id) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void resume(IOperatorOwner id) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void partial(IOperatorOwner id, int sheddingFactor) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setLogicalOperator(ILogicalOperator op) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

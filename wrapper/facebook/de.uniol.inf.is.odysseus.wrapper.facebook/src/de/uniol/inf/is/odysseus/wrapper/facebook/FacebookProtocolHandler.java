@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 
 /**
@@ -45,7 +44,7 @@ public class FacebookProtocolHandler extends
 
 	public FacebookProtocolHandler() {
 	}
-	
+
 	public FacebookProtocolHandler(
 			ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,OptionMap optionsMap) {
 		super(direction, access,dataHandler,optionsMap);
@@ -55,7 +54,7 @@ public class FacebookProtocolHandler extends
 	public boolean hasNext() throws IOException {
 		if (facebookMessages.size() > 0) {
 			return true;
-		} 
+		}
 		intern_open();
 		return false;
 	}
@@ -83,9 +82,9 @@ public class FacebookProtocolHandler extends
 						out.setAttribute("message", message);
 						out.setAttribute("id", id);
 						out.setAttribute("created_time", created_time);
-				
+
 						lastTimeStamp = getTimeStamp(created_time).getTime();
-				
+
 						facebookMessages.add(out);
 						firstQuery = false;
 					}
@@ -120,7 +119,7 @@ public class FacebookProtocolHandler extends
 	@Override
 	public KeyValueObject<? extends IMetaAttribute> getNext()
 			throws IOException {
-		
+
 			@SuppressWarnings("unchecked")
 			KeyValueObject<IMetaAttribute> out = facebookMessages.get(0);
 			facebookMessages.remove(0);
@@ -147,19 +146,6 @@ public class FacebookProtocolHandler extends
 		return "Facebook";
 	}
 
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-
 	/**
 	 * read the JSONObject and return it as a string
 	 * @param rd
@@ -174,9 +160,9 @@ public class FacebookProtocolHandler extends
 		}
 		return sb.toString();
 	}
-	
-	
-	
+
+
+
 	/**
 	 * convert the Facebook-TimeStamp to java timestamp
 	 * @param createdTime
@@ -203,7 +189,7 @@ public class FacebookProtocolHandler extends
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
 		if(!(o instanceof FacebookProtocolHandler)) {
 			return false;
-		} 
+		}
 		// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
 		return true;
 	}
