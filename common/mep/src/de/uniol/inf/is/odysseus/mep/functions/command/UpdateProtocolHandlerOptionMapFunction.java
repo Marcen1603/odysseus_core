@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.mep.functions.command;
 
 import de.uniol.inf.is.odysseus.core.command.TargetedCommand;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class UpdateProtocolHandlerOptionMapFunction extends AbstractTargetedCommandFunction
@@ -16,8 +16,8 @@ public class UpdateProtocolHandlerOptionMapFunction extends AbstractTargetedComm
 		final String key = ((String) getInputValue(1));
 		final String value = ((String) getInputValue(2));
 
-		return new TargetedCommand<ITransportHandler>(getTargets(), true) {
-			@Override public boolean run(ITransportHandler transportHandler) {
+		return new TargetedCommand<IProtocolHandler<?>>(getTargets(), true) {
+			@Override public boolean run(IProtocolHandler<?> transportHandler) {
 				transportHandler.updateOption(key, value);
 				return true;
 			}

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,9 +26,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class CSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractCSVHandler<T> {
-	
+
 	public static final String NAME = "CSV";
-	
+
 	public CSVProtocolHandler() {
 		super();
 	}
@@ -38,7 +38,14 @@ public class CSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
 	}
-	
+
+	@Override
+	void optionsMapChanged(String key, String value) {
+		// simply update options
+		init_internal();
+		super.optionsMapChanged(key, value);
+	}
+
 	private void init_internal() {
         if (optionsMap.containsKey(TEXT_DELIMITER)) {
             textDelimiter = optionsMap.get(TEXT_DELIMITER).toCharArray()[0];
@@ -59,12 +66,12 @@ public class CSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends
 		T retValue = getDataHandler().readData(ret.iterator(), readMeta);
 		return retValue;
 	}
-	
+
 	@Override
 	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
