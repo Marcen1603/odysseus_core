@@ -104,6 +104,13 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 		init_internal();
 	}
 
+	@Override
+	void optionsMapChanged(String key, String value) {
+		// simply update
+		init_internal();
+	}
+
+
 	private void init_internal() {
 		OptionMap options = optionsMap;
 		if (options.get(DELAY) != null) {

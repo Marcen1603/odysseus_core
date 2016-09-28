@@ -65,6 +65,16 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	}
 
 	@Override
+	public final void updateOption(String key, String value){
+		optionsMap.setOption(key, value);
+		optionsMapChanged(key,value);
+	}
+
+	void optionsMapChanged(String key, String value){
+		throw new UnsupportedOperationException("Sorry. Update of options not supported by "+this.getName());
+	}
+
+	@Override
 	public IExecutor getExecutor() {
 		return executor;
 	}

@@ -13,19 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.planmanagement;
-
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 /**
- * Used by MigrationHelper to abstract from window appraoches.
- *
- * @author Tobias Witt
+ * @author Marco Grawunder
  *
  */
-public interface IWindow {
+public interface IUpdateableWindow{
 
-	public long getWindowSize();
-	public long getWindowAdvance();
-	public WindowType getWindowType();
+	void setWindowSize(long size);
+	void setWindowAdvance(long advance);
 }

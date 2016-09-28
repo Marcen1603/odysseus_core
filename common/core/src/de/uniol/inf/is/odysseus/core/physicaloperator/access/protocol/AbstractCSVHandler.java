@@ -69,6 +69,13 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		init_internal();
 	}
 
+	@Override
+	void optionsMapChanged(String key, String value) {
+		// simply update
+		init_internal();
+		super.optionsMapChanged(key, value);
+	}
+
 	private void init_internal() {
 		OptionMap options = optionsMap;
 		if (options.containsKey(DELIMITER)) {
@@ -86,7 +93,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		if (options.containsKey(CSV_NUMBER_FORMATTER)) {
 			numberFormatter = new DecimalFormat(options.get(CSV_NUMBER_FORMATTER));
 		}
-		if (options.containsKey(CSV_WRITE_METADATA)) {			
+		if (options.containsKey(CSV_WRITE_METADATA)) {
 			INFOSERVICE.error(CSV_WRITE_METADATA+" no longer supported. Use 'writeMetadata' in SENDER instead. Meta data will not be written!", new IllegalArgumentException("Unsupported Parameter"));
 		}
 		if (options.containsKey(CSV_TRIM)) {
@@ -110,7 +117,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		notWrittenFirstLine = true;
 		super.open();
 	}
-	
+
 	@Override
 	public T getNext() throws IOException {
 		String line = super.getNextLine(reader);
