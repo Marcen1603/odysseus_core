@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for stringResponse complex type.
+ * <p>Java-Klasse f�r stringResponse complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="stringResponse">
@@ -44,7 +44,7 @@ public class StringResponse
     protected String responseValue;
 
     /**
-     * Gets the value of the responseValue property.
+     * Ruft den Wert der responseValue-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class StringResponse
     }
 
     /**
-     * Sets the value of the responseValue property.
+     * Legt den Wert der responseValue-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

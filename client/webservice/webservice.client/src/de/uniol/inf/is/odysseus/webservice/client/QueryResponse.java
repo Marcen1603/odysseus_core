@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for queryResponse complex type.
+ * <p>Java-Klasse f�r queryResponse complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="queryResponse">
@@ -59,7 +59,7 @@ public class QueryResponse
     protected String username;
 
     /**
-     * Gets the value of the queryState property.
+     * Ruft den Wert der queryState-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -71,7 +71,7 @@ public class QueryResponse
     }
 
     /**
-     * Sets the value of the queryState property.
+     * Legt den Wert der queryState-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -83,7 +83,7 @@ public class QueryResponse
     }
 
     /**
-     * Gets the value of the responseValue property.
+     * Ruft den Wert der responseValue-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -95,7 +95,7 @@ public class QueryResponse
     }
 
     /**
-     * Sets the value of the responseValue property.
+     * Legt den Wert der responseValue-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -136,7 +136,7 @@ public class QueryResponse
     }
 
     /**
-     * Gets the value of the username property.
+     * Ruft den Wert der username-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -148,7 +148,7 @@ public class QueryResponse
     }
 
     /**
-     * Sets the value of the username property.
+     * Legt den Wert der username-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

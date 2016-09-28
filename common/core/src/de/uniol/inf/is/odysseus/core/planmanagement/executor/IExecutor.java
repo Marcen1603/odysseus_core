@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,9 +43,9 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
  * Ausfuehrung und Konfigurationen zur Verfuegung gestellt. Weiterhin bietet
  * diese Schnittstelle diverse Moeglichkeiten, um Nachrichten ueber aenderungen
  * innerhalb von Odysseus zu erhalten.
- * 
+ *
  * @author Wolf Bauer, Marco Grawunder
- * 
+ *
  */
 public interface IExecutor extends IClientPlanManager {
 
@@ -57,7 +57,7 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * lists the IDs of all currently installed parsers, which can be used to
 	 * translate a query.
-	 * 
+	 *
 	 * @throws PlanManagementException
 	 */
 	public Set<String> getSupportedQueryParsers(ISession session)
@@ -67,11 +67,11 @@ public interface IExecutor extends IClientPlanManager {
 	 * Lists the names of all available metadata
 	 */
 	public Set<String> getMetadataNames(ISession session);
-	
+
 	/**
 	 * A list of tokens like static key words for a certain query parser that
 	 * can be, e.g. used for visualization.
-	 * 
+	 *
 	 * @param queryParser
 	 *            the ID of the query parser
 	 * @param user
@@ -84,7 +84,7 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Returns a list of suggestions for a certain query parser based on a hint.
 	 * This method strongly depends on the query parser
-	 * 
+	 *
 	 * @param queryParser
 	 *            the ID of the parser
 	 * @param hint
@@ -98,7 +98,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Adds a new query
-	 * 
+	 *
 	 * @param query
 	 *            The query defined as a string
 	 * @param parserID
@@ -107,11 +107,11 @@ public interface IExecutor extends IClientPlanManager {
 	 * @param queryBuildConfigurationName
 	 *            The name of the the build configuration that should be used
 	 *            during the query processing
-	 * 
+	 *
 	 * @param context
 	 *            Allows to pass some context based information to the query
 	 *            processing, e.g. current directories.
-	 * 
+	 *
 	 * @return A (potential empty) list of the IDs of the installed queries
 	 * @throws PlanManagementException
 	 * @deprecated Use addQuery without queryBuildConfigurationName instead
@@ -123,7 +123,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Adds a new query
-	 * 
+	 *
 	 * @param query
 	 *            The query defined as a string
 	 * @param parserID
@@ -132,11 +132,11 @@ public interface IExecutor extends IClientPlanManager {
 	 * @param queryBuildConfigurationName
 	 *            The name of the the build configuration that should be used
 	 *            during the query processing
-	 * 
+	 *
 	 * @param context
 	 *            Allows to pass some context based information to the query
 	 *            processing, e.g. current directories.
-	 * 
+	 *
 	 * @return A (potential empty) list of the IDs of the installed queries
 	 * @throws PlanManagementException
 	 */
@@ -145,11 +145,19 @@ public interface IExecutor extends IClientPlanManager {
 			throws PlanManagementException;
 
 	/**
+	 * Way to run a generic command
+	 *
+	 * @param command
+	 * @param caller
+	 */
+	public void runCommand(String commandExpression, ISession caller);
+
+	/**
 	 * This method tries to translate the given query to a logical plan and
 	 * delivers the output schema for the root operator Remark: It must be
 	 * shure, that there in only one output operator, else the first one will be
 	 * choosen that is found!
-	 * 
+	 *
 	 * @param query
 	 *            The query text
 	 * @param parserID
@@ -170,7 +178,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Returns the logical query for the given id
-	 * 
+	 *
 	 * @param id
 	 *            The ID of the query
 	 * @param session
@@ -181,7 +189,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Returns the logical query for the given name
-	 * 
+	 *
 	 * @param name
 	 *            The name of the query
 	 * @param session
@@ -190,16 +198,16 @@ public interface IExecutor extends IClientPlanManager {
 	 */
 	public ILogicalQuery getLogicalQueryByName(Resource name, ISession session);
 
-	
+
 	/**
 	 * Returns all IDs of all logical queries for the given user
-	 * 
+	 *
 	 * @param session
 	 *            The current user
 	 * @return The IDs of the logical queries
 	 */
 	public Collection<Integer> getLogicalQueryIds(ISession session);
-	
+
 	/**
 	 * Return the current state of the query with the given queryID
 	 * @param queryID The query id for which the state should be retrieved
@@ -207,7 +215,7 @@ public interface IExecutor extends IClientPlanManager {
 	 * @return
 	 */
 	public QueryState getQueryState(int queryID, ISession session);
-	
+
 	/**
 	 * Return the current state of the query with the given queryname
 	 * @param queryName
@@ -216,7 +224,7 @@ public interface IExecutor extends IClientPlanManager {
 	 */
 	public QueryState getQueryState(String queryName, ISession session);
 
-	
+
 	/**
 	 * Returns the current state of queries
 	 * @param id a list of query ids for which the state should be delivered
@@ -224,11 +232,11 @@ public interface IExecutor extends IClientPlanManager {
 	 * @return a list of query states where the order is the same as in the input list
 	 */
 	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session);
-	
+
 	/**
 	 * Returns all root operators of the physical query that has the given
 	 * queryID
-	 * 
+	 *
 	 * @param queryID
 	 *            The ID of the query
 	 * @param session
@@ -240,7 +248,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Starts all queries that are currently not running
-	 * 
+	 *
 	 * @param session
 	 *            The current user
 	 * @return List of queries that could be started
@@ -249,10 +257,10 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Provides a set of all registered buffer placement strategies
-	 * 
+	 *
 	 * @param session
 	 *            The current user
-	 * 
+	 *
 	 * @return A set of IDs of the strategies
 	 */
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs(
@@ -260,17 +268,17 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Provides a set of all registered scheduling strategies
-	 * 
+	 *
 	 * @param session
 	 *            The current user
-	 * 
+	 *
 	 * @return A set of IDs of the scheduling strategies
 	 */
 	public Set<String> getRegisteredSchedulingStrategies(ISession session);
 
 	/**
 	 * Provides a set of all registered schedulers
-	 * 
+	 *
 	 * @param session
 	 *            The current user
 	 * @return Set of scheduler IDs
@@ -280,7 +288,7 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Sets the the scheduler with a scheduling strategy which should be used
 	 * for creating a concrete scheduler.
-	 * 
+	 *
 	 * @param scheduler
 	 *            The scheduler factory which should be used for creating
 	 *            concrete scheduler.
@@ -295,17 +303,17 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Get the current active scheduler represented by an id.
-	 * 
+	 *
 	 * @param session
 	 *            The current user
-	 * 
+	 *
 	 * @return id of the current scheduler
 	 */
 	public String getCurrentSchedulerID(ISession session);
 
 	/**
 	 * Get the current active scheduling strategy factory represented by an id.
-	 * 
+	 *
 	 * @param session
 	 *            The current user
 	 * @return id of the current active scheduling strategy factory
@@ -314,7 +322,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Returns all registered data types
-	 * 
+	 *
 	 * @param caller
 	 *            The current user
 	 * @return The set of data types
@@ -323,7 +331,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Returns all registered wrapper names
-	 * 
+	 *
 	 * @param caller
 	 *            The current user
 	 * @return A set of wrapper IDs
@@ -332,7 +340,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Returns all registered aggregated functions for a certain data model
-	 * 
+	 *
 	 * @param datamodel
 	 *            The data model
 	 * @param caller
@@ -346,7 +354,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * The name of the executor
-	 * 
+	 *
 	 * @return the name
 	 */
 	public String getName();
@@ -355,7 +363,7 @@ public interface IExecutor extends IClientPlanManager {
 	// Session Management methods
 	/**
 	 * Logs a user in and creates a session
-	 * 
+	 *
 	 * @param username
 	 *            The user name
 	 * @param password
@@ -368,7 +376,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Logs a user in and creates a session (with default tenant)
-	 * 
+	 *
 	 * @param username
 	 *            The user name
 	 * @param password
@@ -377,26 +385,26 @@ public interface IExecutor extends IClientPlanManager {
 	 */
 	ISession login(String username, byte[] password);
 
-	
+
 	/**
 	 * Logs the user out
-	 * 
+	 *
 	 * @param caller
 	 *            The user to be logged out
 	 */
 	void logout(ISession caller);
-	
+
 	/**
 	 * Check if the given session is still valid
 	 * @param session
-	 * @return true, if session 
+	 * @return true, if session
 	 */
 	boolean isValid(ISession session);
 
 	// Facade for DataDictionary
 	/**
 	 * Removes a sink using its simple name
-	 * 
+	 *
 	 * @param name
 	 *            The name of the sink
 	 * @param caller
@@ -407,7 +415,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Removes a sink using its resource name
-	 * 
+	 *
 	 * @param name
 	 *            The resource description of the sink
 	 * @param caller
@@ -418,7 +426,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Removes a view or stream using its simple name
-	 * 
+	 *
 	 * @param name
 	 *            The name of the stream or view
 	 * @param caller
@@ -428,22 +436,22 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Removes a view or stream using its resource description
-	 * 
+	 *
 	 * @param name
 	 *            The resource description of the stream or view
 	 * @param caller
 	 *            The current user
 	 */
 	public void removeViewOrStream(Resource name, ISession caller);
-	
+
 	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller);
 
 	/**
 	 * Delivers a user-dependent set of all installed sinks
-	 * 
+	 *
 	 * A sink is named by a resource description and is represented by its top
 	 * most logical operator
-	 * 
+	 *
 	 * @param caller
 	 *            The current user
 	 * @return Pairs of resource description and the top operator
@@ -452,7 +460,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Checks whether the stream or view exists.
-	 * 
+	 *
 	 * @param name
 	 *            The resource description to be checked
 	 * @param caller
@@ -463,7 +471,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Checks whether the stream or view exists.
-	 * 
+	 *
 	 * @param name
 	 *            The name to be checked
 	 * @param caller
@@ -474,7 +482,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Invokes to reload stored queries.
-	 * 
+	 *
 	 * @param caller
 	 *            The current user
 	 */
@@ -482,7 +490,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Returns the output schema of the query identified by the given ID
-	 * 
+	 *
 	 * @param queryId
 	 *            The ID of the query
 	 * @param session
@@ -493,7 +501,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Adds a new stored procedure, which should be saved
-	 * 
+	 *
 	 * @param name
 	 *            A unique name of the procedure
 	 * @param proc
@@ -506,7 +514,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Removes a saved procedure
-	 * 
+	 *
 	 * @param name
 	 *            The name of the stored procedure that should be removed
 	 * @param caller
@@ -516,7 +524,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Gets the stored procedure by its name
-	 * 
+	 *
 	 * @param name
 	 *            The name of the procedure
 	 * @param caller
@@ -527,7 +535,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Returns the list of all saved stored procedures for the user
-	 * 
+	 *
 	 * @param caller
 	 *            The current user
 	 * @return A list of stored procedures
@@ -536,7 +544,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Checks whether a stored procedure exists
-	 * 
+	 *
 	 * @param name
 	 *            The name of the stored procedure
 	 * @param caller
@@ -547,7 +555,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Gets the name of all installed operators
-	 * 
+	 *
 	 * @param caller
 	 *            The current user
 	 * @return A list of the names
@@ -557,7 +565,7 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * Gets a description of all installed operators that can be used e.g. in
 	 * PQL
-	 * 
+	 *
 	 * @param caller
 	 *            The current user
 	 * @return a list of operator information
@@ -567,7 +575,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * Gets the logical description of a certain operator
-	 * 
+	 *
 	 * @param name
 	 *            The name of the operator
 	 * @param caller
@@ -581,7 +589,7 @@ public interface IExecutor extends IClientPlanManager {
 
 	/**
 	 * @param caller
-	 * 
+	 *
 	 */
 	public List<IUser> getUsers(ISession caller);
 
