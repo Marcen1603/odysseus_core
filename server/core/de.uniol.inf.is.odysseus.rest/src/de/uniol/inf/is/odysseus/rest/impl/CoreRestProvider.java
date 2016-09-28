@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.rest.serverresources.CreateSocketServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetQueryIdsServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.LoginServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.RemoveQueryServerResource;
+import de.uniol.inf.is.odysseus.rest.serverresources.RunCommandServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.StartQueryServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.StopQueryServerResource;
 
@@ -29,6 +30,7 @@ public class CoreRestProvider implements IRestProvider{
 		router.attach("/"+StopQueryServerResource.PATH, StopQueryServerResource.class);
 		router.attach("/"+RemoveQueryServerResource.PATH, RemoveQueryServerResource.class);
 		router.attach("/"+GetQueryIdsServerResource.PATH, GetQueryIdsServerResource.class);
+		router.attach("/"+RunCommandServerResource.PATH, RunCommandServerResource.class);
 	}
 
 }
