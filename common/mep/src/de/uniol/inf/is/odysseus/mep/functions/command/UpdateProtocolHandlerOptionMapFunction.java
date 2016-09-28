@@ -17,8 +17,8 @@ public class UpdateProtocolHandlerOptionMapFunction extends AbstractTargetedComm
 		final String value = ((String) getInputValue(2));
 
 		return new TargetedCommand<IProtocolHandler<?>>(getTargets(), true) {
-			@Override public boolean run(IProtocolHandler<?> transportHandler) {
-				transportHandler.updateOption(key, value);
+			@Override public boolean run(IProtocolHandler<?> protocolHandler) {
+				protocolHandler.updateOption(key, value);
 				return true;
 			}
 		};
