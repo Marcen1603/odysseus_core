@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * An Interface for all TransportHandler
- * 
+ *
  * @author Christian Kuka, Marco Grawunder
  *
  */
@@ -37,8 +37,8 @@ public interface ITransportHandler {
 
 	/**
 	 * This method is used to create a new instance of the transport handler
-	 * 
-	 * @param protocolHandler The connected protocol handler 
+	 *
+	 * @param protocolHandler The connected protocol handler
 	 * @param options A set of key-value pairs, can be used to configure the handler
 	 * @return
 	 */
@@ -56,9 +56,9 @@ public interface ITransportHandler {
 	 * @throws IOException
 	 */
     void open() throws UnknownHostException, IOException;
-    
+
 	void processInOpen() throws IOException;
-	
+
 	void processOutOpen() throws IOException;
 
     /**
@@ -70,7 +70,7 @@ public interface ITransportHandler {
     void processInClose() throws IOException;
 
 	void processOutClose() throws IOException;
-    
+
     /**
      * called from the framework to determine, if the transport handler will not deliver any elements (typically for
      * a file based source)
@@ -78,21 +78,21 @@ public interface ITransportHandler {
      */
     boolean isDone();
 
-    
+
     /**
      * This message is used, when the transport handler works as sender
      * @param message
      * @throws IOException
      */
     void send(byte[] message) throws IOException;
-    
+
     /**
      * This message is used, when the transport handler works as sender
      * @param message
      * @throws IOException
      */
     void send(Object message) throws IOException;
-    
+
     /**
      * Send punctuations to transport handler
      * @param punctuation
@@ -105,17 +105,17 @@ public interface ITransportHandler {
      */
     SDFSchema getSchema();
 
-    
+
     /**
      * If the transport handler needs to know the schema, it will be called here
      * @param schema
      */
     void setSchema(SDFSchema schema);
-    
+
     /**
      * This method will be called from the protocol handler to create a pull based
      * transport handler in a source
-     * 
+     *
      * @return A new input stream delivering the values to the protocol handler
      */
     InputStream getInputStream();
@@ -123,15 +123,15 @@ public interface ITransportHandler {
     /**
      * This method will be called from the protocol handler to create a pull based
      * transport handler in a sink
-     * 
+     *
      * @return A new output stream where the protocol handler writes its output to
      */
-    
+
     OutputStream getOutputStream();
-    
+
     /**
      * What kind of exchange pattern does this transport handler provide
-     * 
+     *
      * @return the Exchange Pattern (InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn)
      */
     ITransportExchangePattern getExchangePattern();
@@ -157,10 +157,16 @@ public interface ITransportHandler {
 	 * @param listener
 	 */
     void removeListener(ITransportHandlerListener listener);
-    
+
     void setExecutor(IExecutor executor);
-    
+
     IExecutor getExecutor();
 
+
+    /**
+     * option update
+     */
+
+    void updateOption(String key, String value);
 
 }

@@ -81,6 +81,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -129,12 +130,10 @@ import de.uniol.inf.is.odysseus.mep.MEP;
  * @author wolf
  *
  */
-public abstract class AbstractExecutor implements IServerExecutor,
-		ISettingChangeListener, IQueryReoptimizeListener,
+public abstract class AbstractExecutor implements IServerExecutor, ISettingChangeListener, IQueryReoptimizeListener,
 		IPlanReoptimizeListener, IDataDictionaryListener, ISessionListener {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractExecutor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractExecutor.class);
 
 	// Generic Event Handling
 	final Map<String, List<IUpdateEventListener>> updateEventListener = new HashMap<>();
@@ -184,7 +183,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/**
 	 * Alle Listener f�r Anfragebearbeitungs-Nachrichten
 	 */
-	private List<IPlanModificationListener> planModificationListener = 	new CopyOnWriteArrayList<IPlanModificationListener>();
+	private List<IPlanModificationListener> planModificationListener = new CopyOnWriteArrayList<IPlanModificationListener>();
 
 	/**
 	 * All Listener for executor command events.
@@ -251,8 +250,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * @param configuration
 	 *            Konfiguration der Ausf�hrungsumgebung.
 	 */
-	protected abstract void initializeIntern(
-			ExecutionConfiguration configuration);
+	protected abstract void initializeIntern(ExecutionConfiguration configuration);
 
 	/*
 	 * (non-Javadoc)
@@ -271,8 +269,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		initializeIntern(configuration);
 
 		if (this.executionPlan == null) {
-			throw new ExecutorInitializeException(
-					"Execution plan storage not initialized.");
+			throw new ExecutorInitializeException("Execution plan storage not initialized.");
 		}
 
 		this.configuration.addValueChangeListener(this);
@@ -363,40 +360,29 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	// called by OSGi-DS
-	public static void bindPreTransformationHandler(
-			IPreTransformationHandler serv) {
+	public static void bindPreTransformationHandler(IPreTransformationHandler serv) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(serv.getName()),
 				"preTransformationHandler's name must not be null or empty!");
-		Preconditions.checkArgument(!preTransformationHandlerMap
-				.containsKey(serv.getName().toUpperCase()),
-				"There is already a preTransformationHandler called '%s'", serv
-						.getName().toUpperCase());
-		Preconditions
-				.checkArgument(
-						canCreateInstance(serv.getClass()),
-						"Could not create instance of IPreTransformationHandler-class '%s'",
-						serv.getClass());
+		Preconditions.checkArgument(!preTransformationHandlerMap.containsKey(serv.getName().toUpperCase()),
+				"There is already a preTransformationHandler called '%s'", serv.getName().toUpperCase());
+		Preconditions.checkArgument(canCreateInstance(serv.getClass()),
+				"Could not create instance of IPreTransformationHandler-class '%s'", serv.getClass());
 
-		LOG.trace("Bound preTransformationHandler called '{}': {}", serv
-				.getName().toUpperCase(), serv.getClass());
-		preTransformationHandlerMap.put(serv.getName().toUpperCase(),
-				serv.getClass());
+		LOG.trace("Bound preTransformationHandler called '{}': {}", serv.getName().toUpperCase(), serv.getClass());
+		preTransformationHandlerMap.put(serv.getName().toUpperCase(), serv.getClass());
 	}
 
 	// called by OSGi-DS
-	public static void unbindPreTransformationHandler(
-			IPreTransformationHandler serv) {
-		if (preTransformationHandlerMap.containsKey(serv.getName()
-				.toUpperCase())) {
+	public static void unbindPreTransformationHandler(IPreTransformationHandler serv) {
+		if (preTransformationHandlerMap.containsKey(serv.getName().toUpperCase())) {
 			preTransformationHandlerMap.remove(serv.getName().toUpperCase());
 
-			LOG.trace("Unbound preTransformationHandler called '{}' : {}", serv
-					.getName().toUpperCase(), serv.getClass());
+			LOG.trace("Unbound preTransformationHandler called '{}' : {}", serv.getName().toUpperCase(),
+					serv.getClass());
 		}
 	}
 
-	private static boolean canCreateInstance(
-			Class<? extends IPreTransformationHandler> handler) {
+	private static boolean canCreateInstance(Class<? extends IPreTransformationHandler> handler) {
 		try {
 			handler.newInstance();
 			return true;
@@ -410,14 +396,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		Preconditions.checkNotNull(Strings.isNullOrEmpty(name),
 				"Name of PreTransformationHandler must not be null or empty!");
 
-		Class<? extends IPreTransformationHandler> clazz = preTransformationHandlerMap
-				.get(name.toUpperCase());
+		Class<? extends IPreTransformationHandler> clazz = preTransformationHandlerMap.get(name.toUpperCase());
 		if (clazz != null) {
 			return clazz.newInstance();
 		}
 
-		throw new InstantiationException("IPreTransformationHandler '"
-				+ name.toUpperCase() + "' is not known!");
+		throw new InstantiationException("IPreTransformationHandler '" + name.toUpperCase() + "' is not known!");
 	}
 
 	@Override
@@ -447,8 +431,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	public static IRecoveryExecutor getRecoveryExecutor(String name) {
-		for(IRecoveryExecutor recExec : recoveryExecutors) {
-			if(recExec.getName().equals(name)) {
+		for (IRecoveryExecutor recExec : recoveryExecutors) {
+			if (recExec.getName().equals(name)) {
 				return recExec;
 			}
 		}
@@ -490,8 +474,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 *
 	 * @param config
 	 */
-	public void bindQueryBuildConfiguration(
-			IQueryBuildConfigurationTemplate config) {
+	public void bindQueryBuildConfiguration(IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.put(config.getName(), config);
 		LOG.trace("Query Build Configuration " + config + " bound");
 	}
@@ -501,8 +484,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 *
 	 * @param config
 	 */
-	public void unbindQueryBuildConfiguration(
-			IQueryBuildConfigurationTemplate config) {
+	public void unbindQueryBuildConfiguration(IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.remove(config.getName());
 	}
 
@@ -534,8 +516,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * @throws SchedulerException
 	 */
 	@Override
-	public ISchedulerManager getSchedulerManager(ISession session)
-			throws SchedulerException {
+	public ISchedulerManager getSchedulerManager(ISession session) throws SchedulerException {
 		// TODO: Check access rights
 		return getSchedulerManager();
 	}
@@ -568,8 +549,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * @throws SchedulerException
 	 */
 	@Override
-	public void executionPlanChanged(PlanModificationEventType type,
-			Collection<IPhysicalQuery> affectedQueries)
+	public void executionPlanChanged(PlanModificationEventType type, Collection<IPhysicalQuery> affectedQueries)
 			throws SchedulerException, NoSchedulerLoadedException {
 		if (affectedQueries != null) {
 			for (IPhysicalQuery q : affectedQueries) {
@@ -581,9 +561,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public void executionPlanChanged(PlanModificationEventType type,
-			IPhysicalQuery affectedQuery) throws SchedulerException,
-			NoSchedulerLoadedException {
+	public void executionPlanChanged(PlanModificationEventType type, IPhysicalQuery affectedQuery)
+			throws SchedulerException, NoSchedulerLoadedException {
 		switch (type) {
 		case PLAN_REOPTIMIZE:
 		case QUERY_REOPTIMIZE:
@@ -623,11 +602,11 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void runCommand(String commandExpression, ISession caller) {
 		SDFExpression sdfExpression = new SDFExpression(commandExpression, null, MEP.getInstance());
 		RelationalExpression<IMetaAttribute> commandExpr = new RelationalExpression<IMetaAttribute>(sdfExpression);
-		commandExpr.initVars((List<SDFSchema>)null);
+		commandExpr.initVars((List<SDFSchema>) null);
 		List<Tuple<IMetaAttribute>> preProcessResult = null;
 		List<ISession> sessions = new ArrayList<>();
 		sessions.add(caller);
-		Command command = (Command) commandExpr.evaluate((Tuple<IMetaAttribute>)null, sessions, preProcessResult);
+		Command command = (Command) commandExpr.evaluate((Tuple<IMetaAttribute>) null, sessions, preProcessResult);
 
 		runCommand(command, caller);
 
@@ -635,12 +614,11 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public void runCommand(Command command, ISession caller) {
-		//	TODO: check rights
+		// TODO: check rights
 
 		if (command instanceof TargetedCommand) {
 			TargetedCommand<?> tCommand = (TargetedCommand<?>) command;
-			if (tCommand.needsTargetsResolved())
-			{
+			if (tCommand.needsTargetsResolved()) {
 				List<Object> targets = tCommand.getTargets();
 				List<Object> resolvedTargets = new ArrayList<>(targets.size());
 				for (Object target : targets)
@@ -655,48 +633,48 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	}
 
-	// This method tries to resolve a name into an operator, a transport handler or a protocol handler
+	// This method tries to resolve a name into an operator, a transport handler
+	// or a protocol handler
 	// TODO: Implement global Odysseus naming scheme?
 	@SuppressWarnings({ "rawtypes" })
-	private static Object resolveName(IServerExecutor executor, ISession caller, String name)
-	{
+	private static Object resolveName(IServerExecutor executor, ISession caller, String name) {
 		// Temporary hack to address transport and protocol handlers
 		boolean isTransport = false, isProtocol = false;
 		if (name.endsWith(".transport")) {
 			isTransport = true;
 			name = name.substring(0, name.length() - ".transport".length());
-		} else
-		if (name.endsWith(".protocol")) {
+		} else if (name.endsWith(".protocol")) {
 			isProtocol = true;
 			name = name.substring(0, name.length() - ".protocol".length());
 		}
 
-       	Resource id = new Resource(caller.getUser(), name);
-       	IPhysicalOperator targetOperator = executor.getDataDictionary(caller).getOperator(id, caller);
-       	if (targetOperator == null)
-       	{
-       		LOG.warn("Could not resolve target " + name);
-       		return null;
-       	}
-       	else if (!isTransport && !isProtocol)
-       	{
-       		return targetOperator;
-       	}
-       	else if (targetOperator instanceof ReceiverPO)
-       	{
+		Resource id = new Resource(caller.getUser(), name);
+		IPhysicalOperator targetOperator = executor.getDataDictionary(caller).getOperator(id, caller);
+		if (targetOperator == null) {
+			LOG.warn("Could not resolve target " + name);
+			return null;
+		} else if (!isTransport && !isProtocol) {
+			return targetOperator;
+		} else if (targetOperator instanceof ReceiverPO) {
 			ReceiverPO receiver = (ReceiverPO) targetOperator;
 
-       		if (isProtocol) {
-       			return receiver.getProtocolHandler();
-       		} else {
-       			return ((AbstractProtocolHandler) receiver.getProtocolHandler()).getTransportHandler();
-       		}
-       	}
-       	else
-       	{
-       		LOG.warn("Operator must be ReceiverPO if .transport or .protocol is specified!");
-       		return null;
-       	}
+			if (isProtocol) {
+				return receiver.getProtocolHandler();
+			} else {
+				return ((AbstractProtocolHandler) receiver.getProtocolHandler()).getTransportHandler();
+			}
+		} else if (targetOperator instanceof SenderPO) {
+			SenderPO sender = (SenderPO) targetOperator;
+			if (isProtocol){
+				return sender.getProtocolHandler();
+			}else{
+				return ((AbstractProtocolHandler) sender.getProtocolHandler()).getTransportHandler();
+			}
+
+		} else {
+			LOG.warn("Operator must be ReceiverPO if .transport or .protocol is specified!");
+			return null;
+		}
 	}
 
 	// ----------------------------------------------------------------------------------------
@@ -710,8 +688,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
-	protected synchronized void firePlanModificationEvent(
-			AbstractPlanModificationEvent<?> eventArgs) {
+	protected synchronized void firePlanModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		for (IPlanModificationListener listener : this.planModificationListener) {
 			try {
 				listener.planModificationEvent(eventArgs);
@@ -724,9 +701,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/**
 	 * Sends an added query to all listeners.
 	 */
-	protected synchronized void fireQueryAddedEvent(
-			String query, List<Integer> queryIds, QueryBuildConfiguration buildConfig,
-			String parserID, ISession user, Context context) {
+	protected synchronized void fireQueryAddedEvent(String query, List<Integer> queryIds,
+			QueryBuildConfiguration buildConfig, String parserID, ISession user, Context context) {
 		for (IQueryAddedListener listener : this.queryAddedListener) {
 			try {
 				listener.queryAddedEvent(query, queryIds, buildConfig, parserID, user, context);
@@ -756,8 +732,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
-	protected synchronized void firePlanExecutionEvent(
-			AbstractPlanExecutionEvent<?> eventArgs) {
+	protected synchronized void firePlanExecutionEvent(AbstractPlanExecutionEvent<?> eventArgs) {
 		for (IPlanExecutionListener listener : this.planExecutionListener) {
 			try {
 				listener.planExecutionEvent(eventArgs);
@@ -806,8 +781,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 		fireGenericEvent(IUpdateEventListener.SCHEDULING);
 
-		firePlanExecutionEvent(new PlanExecutionEvent(this,
-				PlanExecutionEventType.EXECUTION_STARTED));
+		firePlanExecutionEvent(new PlanExecutionEvent(this, PlanExecutionEventType.EXECUTION_STARTED));
 	}
 
 	/*
@@ -834,8 +808,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 		LOG.trace("Scheduler stopped.");
 
-		firePlanExecutionEvent(new PlanExecutionEvent(this,
-				PlanExecutionEventType.EXECUTION_STOPPED));
+		firePlanExecutionEvent(new PlanExecutionEvent(this, PlanExecutionEventType.EXECUTION_STOPPED));
 		// Stop Event Handler
 		EventHandler.stopDispatching();
 		fireGenericEvent(IUpdateEventListener.SCHEDULING);
@@ -844,9 +817,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanScheduling
-	 * #isRunning ()
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.executor.
+	 * IPlanScheduling #isRunning ()
 	 */
 	@Override
 	public boolean isRunning() throws SchedulerException {
@@ -869,8 +841,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public List<IPhysicalOperator> getPhysicalRoots(int queryID,
-			ISession session) {
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
 		// TODO: Check access rights
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
 		if (pq != null) {
@@ -940,8 +911,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public List<QueryState> getQueryStates(List<Integer> id,
-			List<ISession> session) {
+	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session) {
 		// For local processing, currently no session is needed
 		return getQueryStates(id);
 	}
@@ -984,8 +954,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * .IPlanModificationListener)
 	 */
 	@Override
-	public void removePlanModificationListener(
-			IPlanModificationListener listener) {
+	public void removePlanModificationListener(IPlanModificationListener listener) {
 		synchronized (this.planModificationListener) {
 			this.planModificationListener.remove(listener);
 		}
@@ -994,7 +963,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@Override
 	public void addExecutorCommandListener(IExecutorCommandListener listener) {
 		synchronized (this.executorCommandListener) {
-			if(!this.executorCommandListener.contains(listener)) {
+			if (!this.executorCommandListener.contains(listener)) {
 				this.executorCommandListener.add(listener);
 			}
 		}
@@ -1017,8 +986,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public void removeQueryAddedListener(
-			IQueryAddedListener listener) {
+	public void removeQueryAddedListener(IQueryAddedListener listener) {
 		synchronized (this.queryAddedListener) {
 			this.queryAddedListener.remove(listener);
 		}
@@ -1027,9 +995,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling
-	 * .planexecution
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.executor.
+	 * eventhandling .planexecution
 	 * .IPlanExecutionHandler#addPlanExecutionListener(de.uniol.inf
 	 * .is.odysseus.core.server. planmanagement
 	 * .executor.eventhandling.planexecution.IPlanExecutionListener)
@@ -1046,9 +1013,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling
-	 * .planexecution .
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.executor.
+	 * eventhandling .planexecution .
 	 * IPlanExecutionHandler#removePlanExecutionListener(de.uniol
 	 * .inf.is.odysseus.core.server .
 	 * planmanagement.executor.eventhandling.planexecution
@@ -1066,8 +1032,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	// ----------------------------------------------------------------------------------------------------------
 
 	@Override
-	public void addUpdateEventListener(IUpdateEventListener listener,
-			String type, ISession session) {
+	public void addUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
 		synchronized (updateEventListener) {
 			// Remember Listener (must be different for dd and other, because
 			// each
@@ -1101,8 +1066,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 					// Nothing to do. Is already listener
 					break;
 				case IUpdateEventListener.SESSION:
-					UserManagementProvider.getSessionmanagement().subscribe(
-							this);
+					UserManagementProvider.getSessionmanagement().subscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					break;
@@ -1112,8 +1076,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public void removeUpdateEventListener(IUpdateEventListener listener,
-			String type, ISession session) {
+	public void removeUpdateEventListener(IUpdateEventListener listener, String type, ISession session) {
 		synchronized (updateEventListener) {
 			List<IUpdateEventListener> l;
 			if (type != IUpdateEventListener.DATADICTIONARY) {
@@ -1144,8 +1107,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 					// Nothing to do. Stays listener
 					break;
 				case IUpdateEventListener.SESSION:
-					UserManagementProvider.getSessionmanagement().unsubscribe(
-							this);
+					UserManagementProvider.getSessionmanagement().unsubscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					break;
@@ -1155,14 +1117,14 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op, boolean isView, ISession session) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+			ISession session) {
 		fireDataDictionaryEvent(sender);
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op, boolean isView, ISession session) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+			ISession session) {
 		fireDataDictionaryEvent(sender);
 	}
 
@@ -1209,8 +1171,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * getSupportedQueryParser()
 	 */
 	@Override
-	public Set<String> getSupportedQueryParsers(ISession session)
-			throws NoCompilerLoadedException {
+	public Set<String> getSupportedQueryParsers(ISession session) throws NoCompilerLoadedException {
 		ICompiler c;
 		c = getCompiler();
 		return c.getSupportedQueryParser();
@@ -1237,9 +1198,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * (non-Javadoc)
 	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
-	 * #
-	 * removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
-	 * .event .error.IErrorEventListener)
+	 * # removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.
+	 * planmanagement .event .error.IErrorEventListener)
 	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
@@ -1257,21 +1217,18 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	@Override
 	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
-		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
-				"Executor exception (with inner error). ", eventArgs.getValue()));
+		fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR, "Executor exception (with inner error). ",
+				eventArgs.getValue()));
 	}
 
-	public void bindSystemMonitorFactory(
-			ISystemMonitorFactory systemMonitorFactory) {
+	public void bindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
 		this.systemMonitorFactory = systemMonitorFactory;
 		// initialize default system monitor
-		this.defaultSystemMonitor = this.systemMonitorFactory
-				.newSystemMonitor();
+		this.defaultSystemMonitor = this.systemMonitorFactory.newSystemMonitor();
 		this.defaultSystemMonitor.initialize(30000L);
 	}
 
-	public void unbindSystemMonitorFactory(
-			ISystemMonitorFactory systemMonitorFactory) {
+	public void unbindSystemMonitorFactory(ISystemMonitorFactory systemMonitorFactory) {
 		this.systemMonitorFactory = null;
 		if (this.defaultSystemMonitor != null) {
 			this.defaultSystemMonitor.stop();
@@ -1280,8 +1237,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public void addCompilerListener(ICompilerListener compilerListener,
-			ISession session) {
+	public void addCompilerListener(ICompilerListener compilerListener, ISession session) {
 		// TODO: Check right
 		this.compilerListener.add(compilerListener);
 		// if Compiler already bound
@@ -1292,14 +1248,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary(ITenant tenant) {
-		return (IDataDictionaryWritable) DataDictionaryProvider
-				.getDataDictionary(tenant);
+		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(tenant);
 	}
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary(ISession session) {
-		return (IDataDictionaryWritable) DataDictionaryProvider
-				.getDataDictionary(session.getTenant());
+		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(session.getTenant());
 	}
 
 	@Override
@@ -1333,15 +1287,13 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
 		ITenant tenantObj = UserManagementProvider.getTenant(tenant);
-		return UserManagementProvider.getSessionmanagement().login(username,
-				password, tenantObj);
+		return UserManagementProvider.getSessionmanagement().login(username, password, tenantObj);
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
 		ITenant tenantObj = UserManagementProvider.getDefaultTenant();
-		return UserManagementProvider.getSessionmanagement().login(username,
-				password, tenantObj);
+		return UserManagementProvider.getSessionmanagement().login(username, password, tenantObj);
 	}
 
 	@Override
@@ -1356,18 +1308,16 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	// Compiler Facade
 	@Override
-	public List<IExecutorCommand> translateQuery(String queries, String parser,
-			ISession currentUser, Context context, IMetaAttribute metaAttribute) {
-		return getCompiler().translateQuery(queries, parser, currentUser,
-				getDataDictionary(currentUser), context, metaAttribute, this);
+	public List<IExecutorCommand> translateQuery(String queries, String parser, ISession currentUser, Context context,
+			IMetaAttribute metaAttribute) {
+		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary(currentUser), context,
+				metaAttribute, this);
 	}
 
 	@Override
-	public IPhysicalQuery transform(ILogicalQuery query,
-			TransformationConfiguration transformationConfiguration,
+	public IPhysicalQuery transform(ILogicalQuery query, TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException {
-		return getCompiler().transform(query, transformationConfiguration,
-				caller, getDataDictionary(caller));
+		return getCompiler().transform(query, transformationConfiguration, caller, getDataDictionary(caller));
 	}
 
 	// DataDictionary Facade
@@ -1393,8 +1343,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
-		Set<Entry<Resource, ILogicalOperator>> source = getDataDictionary(
-				caller).getStreamsAndViews(caller);
+		Set<Entry<Resource, ILogicalOperator>> source = getDataDictionary(caller).getStreamsAndViews(caller);
 		List<ViewInformation> ret = new ArrayList<>();
 		for (Entry<Resource, ILogicalOperator> s : source) {
 			ViewInformation vi = new ViewInformation();
@@ -1407,8 +1356,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
-		Set<Entry<Resource, ILogicalOperator>> sinks = getDataDictionary(caller)
-				.getSinks(caller);
+		Set<Entry<Resource, ILogicalOperator>> sinks = getDataDictionary(caller).getSinks(caller);
 		List<SinkInformation> ret = new ArrayList<>();
 		for (Entry<Resource, ILogicalOperator> s : sinks) {
 			SinkInformation si = new SinkInformation();
@@ -1450,8 +1398,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	@Override
 	public Set<String> getRegisteredAggregateFunctions(
-			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
-			ISession caller) {
+			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
 		TreeSet<String> set = new TreeSet<>();
 		set.addAll(AggregateFunctionBuilderRegistry.getFunctionNames(datamodel));
 		return set;
@@ -1465,8 +1412,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	@Override
 	public List<String> getOperatorNames(ISession caller) {
-		return new ArrayList<String>(
-				OperatorBuilderFactory.getOperatorBuilderNames());
+		return new ArrayList<String>(OperatorBuilderFactory.getOperatorBuilderNames());
 	}
 
 	/*
@@ -1477,15 +1423,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public LogicalOperatorInformation getOperatorInformation(String name,
-			ISession caller) {
-		IOperatorBuilder builder = OperatorBuilderFactory
-				.createOperatorBuilder(name, caller, getDataDictionary(caller),
-						Context.empty(), this);
+	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller) {
+		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(name, caller, getDataDictionary(caller),
+				Context.empty(), this);
 		LogicalOperatorInformation loi = new LogicalOperatorInformation();
 		loi.setOperatorName(builder.getName());
-		LogicalOperator annotation = builder.getOperatorClass().getAnnotation(
-				LogicalOperator.class);
+		LogicalOperator annotation = builder.getOperatorClass().getAnnotation(LogicalOperator.class);
 		if (annotation != null) {
 			loi.setHidden(annotation.hidden());
 			loi.setDeprecated(annotation.deprecation());
@@ -1506,8 +1449,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			lpi.setDeprecated(param.isDeprecated());
 			lpi.setParameterClass(param.getClass());
 			lpi.setDoc(param.getDoc());
-			lpi.setPossibleValues(resolvePossibleOperatorParameterValue(
-					builder, param, caller));
+			lpi.setPossibleValues(resolvePossibleOperatorParameterValue(builder, param, caller));
 			lpi.setPossibleValuesAreDynamic(param.arePossibleValuesDynamic());
 			loi.addParameter(lpi);
 			if (param instanceof ListParameter<?>) {
@@ -1529,8 +1471,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public List<LogicalOperatorInformation> getOperatorInformations(
-			ISession caller) {
+	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller) {
 		List<LogicalOperatorInformation> infos = new ArrayList<>();
 		for (String name : getOperatorNames(caller)) {
 			infos.add(getOperatorInformation(name, caller));
@@ -1538,8 +1479,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		return infos;
 	}
 
-	private List<String> resolvePossibleOperatorParameterValue(
-			IOperatorBuilder builder, IParameter<?> param, ISession caller) {
+	private List<String> resolvePossibleOperatorParameterValue(IOperatorBuilder builder, IParameter<?> param,
+			ISession caller) {
 		if (param instanceof EnumParameter) {
 			EnumParameter eParam = (EnumParameter) param;
 			@SuppressWarnings("rawtypes")
@@ -1556,10 +1497,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		}
 		// treat special cases
 		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SOURCES")) {
-			Set<Entry<Resource, ILogicalOperator>> v = getDataDictionary(caller)
-					.getViews(caller);
-			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller)
-					.getStreams(caller);
+			Set<Entry<Resource, ILogicalOperator>> v = getDataDictionary(caller).getViews(caller);
+			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller).getStreams(caller);
 			List<String> ret = new LinkedList<>();
 			if (v != null) {
 				for (Entry<Resource, ILogicalOperator> e : v) {
@@ -1578,8 +1517,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			return new LinkedList<>(s);
 		}
 		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SINKS")) {
-			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller)
-					.getSinks(caller);
+			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller).getSinks(caller);
 			List<String> ret = new LinkedList<>();
 			if (s != null) {
 				for (Entry<Resource, ILogicalOperator> e : s) {
@@ -1614,22 +1552,19 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public List<String> getQueryParserSuggestions(String queryParser,
-			String hint, ISession user) {
+	public List<String> getQueryParserSuggestions(String queryParser, String hint, ISession user) {
 		return getCompiler().getQueryParserSuggestions(queryParser, hint, user);
 	}
 
 	@Override
-	public Map<String, List<String>> getQueryParserTokens(String queryParser,
-			ISession user) {
+	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user) {
 		return getCompiler().getQueryParserTokens(queryParser, user);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IUser> getUsers(ISession caller) {
-		return (List<IUser>) UserManagementProvider.getUsermanagement(true)
-				.getUsers(caller);
+		return (List<IUser>) UserManagementProvider.getUsermanagement(true).getUsers(caller);
 	}
 
 	@Override
