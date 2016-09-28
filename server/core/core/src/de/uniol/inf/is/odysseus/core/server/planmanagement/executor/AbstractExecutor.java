@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,11 @@ import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.command.Command;
+import de.uniol.inf.is.odysseus.core.command.TargetedCommand;
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
@@ -48,12 +52,15 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
@@ -72,6 +79,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
@@ -111,14 +119,15 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.mep.MEP;
 
 /**
  * AbstractExecutor bietet eine abstrakte Implementierung der
  * Ausf�hrungumgebung. Sie �bernimmt die Aufgabe zum einbinden von
  * OSGi-Services innerhalb des Odysseus-Frameworks.
- * 
+ *
  * @author wolf
- * 
+ *
  */
 public abstract class AbstractExecutor implements IServerExecutor,
 		ISettingChangeListener, IQueryReoptimizeListener,
@@ -154,7 +163,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	private static Map<String, Class<? extends IPreTransformationHandler>> preTransformationHandlerMap = Maps
 			.newHashMap();
 	private IQueryDistributor queryDistributor;
-	
+
 	/**
 	 * Recovery strategies.
 	 */
@@ -176,12 +185,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * Alle Listener f�r Anfragebearbeitungs-Nachrichten
 	 */
 	private List<IPlanModificationListener> planModificationListener = 	new CopyOnWriteArrayList<IPlanModificationListener>();
-	
+
 	/**
 	 * All Listener for executor command events.
 	 */
 	private List<IExecutorCommandListener> executorCommandListener = new CopyOnWriteArrayList<IExecutorCommandListener>();
-	
+
 	/**
 	 * All Listener for query added events.
 	 */
@@ -238,7 +247,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * Initialisierungen vorgenommen werden. Dies wird von initialize
 	 * aufgerufen. Hier m�ssen ein Plan und Ausf�hrungsplan-Objekt erstellt
 	 * werden.
-	 * 
+	 *
 	 * @param configuration
 	 *            Konfiguration der Ausf�hrungsumgebung.
 	 */
@@ -247,7 +256,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getConfiguration ()
 	 */
@@ -277,7 +286,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * bindOptimizer bindet einen Optimierer ein
-	 * 
+	 *
 	 * @param optimizer
 	 *            neuer Optimierer
 	 */
@@ -289,7 +298,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * unbindOptimizer entfernt einen Optimierer
-	 * 
+	 *
 	 * @param optimizer
 	 *            zu entfernender Optimierer
 	 */
@@ -303,7 +312,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * bindSchedulerManager bindet einen Scheduling-Manager ein
-	 * 
+	 *
 	 * @param schedulerManager
 	 *            neuer Scheduling-Manager
 	 */
@@ -324,7 +333,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * unbindSchedulerManager entfernt einen Scheduling-Manager
-	 * 
+	 *
 	 * @param schedulerManager
 	 *            zu entfernender Scheduling-Manager
 	 */
@@ -428,15 +437,15 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public final IQueryDistributor getQueryDistributor() {
 		return queryDistributor;
 	}
-	
+
 	public static void bindRecoveryExecutor(IRecoveryExecutor recExec) {
 		recoveryExecutors.add(recExec);
 	}
-	
+
 	public static void unbindRecoveryExecutor(IRecoveryExecutor recExec) {
 		recoveryExecutors.remove(recExec);
 	}
-	
+
 	public static IRecoveryExecutor getRecoveryExecutor(String name) {
 		for(IRecoveryExecutor recExec : recoveryExecutors) {
 			if(recExec.getName().equals(name)) {
@@ -448,7 +457,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * bindCompiler bindet eine Anfragebearbeitungs-Komponente ein
-	 * 
+	 *
 	 * @param compiler
 	 *            neue Anfragebearbeitungs-Komponente
 	 */
@@ -462,7 +471,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * unbindCompiler entfernt eine Anfragebearbeitungs-Komponente
-	 * 
+	 *
 	 * @param compiler
 	 *            zu entfernende Anfragebearbeitungs-Komponente
 	 */
@@ -478,7 +487,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * Binding of predefinded build configurations
-	 * 
+	 *
 	 * @param config
 	 */
 	public void bindQueryBuildConfiguration(
@@ -489,7 +498,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * Unbinding of predefinded build configurations
-	 * 
+	 *
 	 * @param config
 	 */
 	public void unbindQueryBuildConfiguration(
@@ -503,7 +512,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/**
 	 * optimizer liefert der aktuelle Optimierer zur�ck. Sollte keiner
 	 * vorhanden sein, wird eine Exception geworfen.
-	 * 
+	 *
 	 * @return aktueller Optimierer
 	 * @throws NoOptimizerLoadedException
 	 */
@@ -520,7 +529,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/**
 	 * schedulerManager liefert den aktuellen Scheduling-Manager. Sollte keiner
 	 * registriert sein, wird eine Exception geworfen.
-	 * 
+	 *
 	 * @return aktueller Scheduling-Manager
 	 * @throws SchedulerException
 	 */
@@ -554,7 +563,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * aktualisiert das Scheduling.
-	 * 
+	 *
 	 * @throws NoSchedulerLoadedException
 	 * @throws SchedulerException
 	 */
@@ -607,13 +616,97 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	// ----------------------------------------------------------------------------------------
+	// Run Commands
+	// ----------------------------------------------------------------------------------------
+
+	@Override
+	public void runCommand(String commandExpression, ISession caller) {
+		SDFExpression sdfExpression = new SDFExpression(commandExpression, null, MEP.getInstance());
+		RelationalExpression<IMetaAttribute> commandExpr = new RelationalExpression<IMetaAttribute>(sdfExpression);
+		commandExpr.initVars((List<SDFSchema>)null);
+		List<Tuple<IMetaAttribute>> preProcessResult = null;
+		List<ISession> sessions = new ArrayList<>();
+		sessions.add(caller);
+		Command command = (Command) commandExpr.evaluate((Tuple<IMetaAttribute>)null, sessions, preProcessResult);
+
+		runCommand(command, caller);
+
+	}
+
+	@Override
+	public void runCommand(Command command, ISession caller) {
+		//	TODO: check rights
+
+		if (command instanceof TargetedCommand) {
+			TargetedCommand<?> tCommand = (TargetedCommand<?>) command;
+			if (tCommand.needsTargetsResolved())
+			{
+				List<Object> targets = tCommand.getTargets();
+				List<Object> resolvedTargets = new ArrayList<>(targets.size());
+				for (Object target : targets)
+					resolvedTargets.add(resolveName(this, caller, target.toString()));
+				tCommand.setResolvedTargets(resolvedTargets);
+			}
+		}
+
+		command.setSession(caller);
+		command.setExecutor(this);
+		command.run();
+
+	}
+
+	// This method tries to resolve a name into an operator, a transport handler or a protocol handler
+	// TODO: Implement global Odysseus naming scheme?
+	@SuppressWarnings({ "rawtypes" })
+	private static Object resolveName(IServerExecutor executor, ISession caller, String name)
+	{
+		// Temporary hack to address transport and protocol handlers
+		boolean isTransport = false, isProtocol = false;
+		if (name.endsWith(".transport")) {
+			isTransport = true;
+			name = name.substring(0, name.length() - ".transport".length());
+		} else
+		if (name.endsWith(".protocol")) {
+			isProtocol = true;
+			name = name.substring(0, name.length() - ".protocol".length());
+		}
+
+       	Resource id = new Resource(caller.getUser(), name);
+       	IPhysicalOperator targetOperator = executor.getDataDictionary(caller).getOperator(id, caller);
+       	if (targetOperator == null)
+       	{
+       		LOG.warn("Could not resolve target " + name);
+       		return null;
+       	}
+       	else if (!isTransport && !isProtocol)
+       	{
+       		return targetOperator;
+       	}
+       	else if (targetOperator instanceof ReceiverPO)
+       	{
+			ReceiverPO receiver = (ReceiverPO) targetOperator;
+
+       		if (isProtocol) {
+       			return receiver.getProtocolHandler();
+       		} else {
+       			return ((AbstractProtocolHandler) receiver.getProtocolHandler()).getTransportHandler();
+       		}
+       	}
+       	else
+       	{
+       		LOG.warn("Operator must be ReceiverPO if .transport or .protocol is specified!");
+       		return null;
+       	}
+	}
+
+	// ----------------------------------------------------------------------------------------
 	// Events
 	// ----------------------------------------------------------------------------------------
 
 	/**
 	 * firePlanModificationEvent sendet ein Plan-Bearbeitungs-Event an alle
 	 * registrierten Listener.
-	 * 
+	 *
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
@@ -627,7 +720,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			}
 		}
 	}
-	
+
 	/**
 	 * Sends an added query to all listeners.
 	 */
@@ -642,7 +735,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			}
 		}
 	}
-	
+
 	/**
 	 * Sends an executed {@code IExecutorCommand} to all listeners.
 	 */
@@ -659,7 +752,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/**
 	 * firePlanExecutionEvent sendet ein Plan-Scheduling-Event an alle
 	 * registrierten Listener.
-	 * 
+	 *
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
@@ -676,7 +769,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/**
 	 * fireErrorEvent sendet ein Fehler-Event an alle registrierten Listener.
-	 * 
+	 *
 	 * @param eventArgs
 	 *            zu sendendes Event
 	 */
@@ -693,7 +786,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#
 	 * startExecution()
 	 */
@@ -719,7 +812,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#
 	 * stopExecution()
 	 */
@@ -750,7 +843,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanScheduling
 	 * #isRunning ()
@@ -766,7 +859,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling#
 	 * getExecutionPlan()
 	 */
@@ -864,7 +957,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.
 	 * planmodification
 	 * .IPlanModificationHandler#addPlanModificationListener(de.uniol
@@ -882,7 +975,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.
 	 * planmodification
 	 * .IPlanModificationHandler#removePlanModificationListener(de
@@ -897,7 +990,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			this.planModificationListener.remove(listener);
 		}
 	}
-	
+
 	@Override
 	public void addExecutorCommandListener(IExecutorCommandListener listener) {
 		synchronized (this.executorCommandListener) {
@@ -911,9 +1004,9 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void removeExecutorCommandListener(IExecutorCommandListener listener) {
 		synchronized (this.executorCommandListener) {
 			this.executorCommandListener.remove(listener);
-		}		
+		}
 	}
-	
+
 	@Override
 	public void addQueryAddedListener(IQueryAddedListener listener) {
 		synchronized (this.queryAddedListener) {
@@ -933,7 +1026,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling
 	 * .planexecution
@@ -952,7 +1045,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling
 	 * .planexecution .
@@ -1111,7 +1204,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getSupportedQueryParser()
 	 */
@@ -1125,7 +1218,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
 	 * #
 	 * addErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
@@ -1142,7 +1235,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
 	 * #
 	 * removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
@@ -1157,7 +1250,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener
 	 * #sendErrorEvent(de.uniol.inf.is.odysseus.core.server.event.error.
 	 * ErrorEvent)
@@ -1338,7 +1431,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getRegisteredDatatypes
 	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)
@@ -1350,7 +1443,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getRegisteredAggregateFunctions
 	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)
@@ -1366,7 +1459,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getOperatorNames(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
@@ -1378,7 +1471,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getOperatorInformation(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
@@ -1430,7 +1523,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getOperatorInformations
 	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)

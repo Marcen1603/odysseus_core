@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ import javax.security.auth.login.Configuration;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.command.Command;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -64,9 +65,9 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 /**
  * This Interface contains all methods from the executor that are accessable if
  * the executor is used on a server
- * 
+ *
  * @author Marco Grawunder
- * 
+ *
  */
 public interface IServerExecutor extends IExecutor, IPlanScheduling,
 		IPlanManager, IErrorEventHandler, IErrorEventListener, IInfoProvider, IQueryAddedHandler, IExecutorCommandHandler {
@@ -79,7 +80,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	/**
 	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als logischer Plan
 	 * vorliegt.
-	 * 
+	 *
 	 * @param logicalPlan
 	 *            logischer Plan der Anfrage
 	 * @param queryBuildConfigurationName
@@ -95,7 +96,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	/**
 	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als physischer Plan
 	 * vorliegt.
-	 * 
+	 *
 	 * @param physicalPlan
 	 *            physischer Plan der neuen Anfrage
 	 * @param queryBuildConfigurationName
@@ -106,12 +107,12 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			ISession user, String queryBuildConfigurationName,
 			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException;
-	
-	
+
+
 	/**
 	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als logischer Plan
 	 * vorliegt.
-	 * 
+	 *
 	 * @param logicalPlan
 	 *            logischer Plan der Anfrage
 	 * @param queryBuildConfigurationName
@@ -125,7 +126,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	/**
 	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als physischer Plan
 	 * vorliegt.
-	 * 
+	 *
 	 * @param physicalPlan
 	 *            physischer Plan der neuen Anfrage
 	 * @param queryBuildConfigurationName
@@ -138,7 +139,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	/**
 	 * getConfiguration liefert die aktuelle Konfiguration der
 	 * AUsfuehrungsumgebung.
-	 * 
+	 *
 	 * @return die aktuelle Konfiguration der AUsführungsumgebung
 	 */
 	public ExecutionConfiguration getConfiguration(ISession session);
@@ -150,7 +151,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	/**
 	 * Get all QueryBuildConfigurations
-	 * 
+	 *
 	 * @return all build configuration
 	 */
 	public Map<String, IQueryBuildConfigurationTemplate> getQueryBuildConfigurations();
@@ -161,16 +162,16 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	/**
 	 * Get the current active scheduler
-	 * 
+	 *
 	 * @return current active scheduler
 	 */
 
 	public IScheduler getCurrentScheduler(ISession session);
 
 	/**
-	 * 
+	 *
 	 * @return {@link Configuration} of current {@link IOptimizer}.
-	 * 
+	 *
 	 * @throws NoOptimizerLoadedException
 	 */
 	public OptimizationConfiguration getOptimizerConfiguration(ISession session)
@@ -178,9 +179,9 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	/**
 	 * Returns the default System Monitor with an fixed measure period.
-	 * 
+	 *
 	 * @return {@link ISystemMonitor}
-	 * 
+	 *
 	 * @throws NoSystemMonitorLoadedException
 	 */
 	public ISystemMonitor getDefaultSystemMonitor(ISession session)
@@ -188,18 +189,18 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	/**
 	 * Creates a new System Monitor with the specified period.
-	 * 
+	 *
 	 * @param period
 	 *            measure period.
 	 * @return {@link ISystemMonitor}
-	 * 
+	 *
 	 * @throws NoSystemMonitorLoadedException
 	 */
 	public ISystemMonitor newSystemMonitor(long period, ISession session)
 			throws NoSystemMonitorLoadedException;
 
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
-	
+
 	ICompiler getCompiler();
 
 	// Facade for Compiler
@@ -236,7 +237,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 */
 	public Collection<String> getRewriteRules();
 
-	
+
 	/**
 	 * Allows the addition of a query using all the operators of an existing query. This can be used, when it was already determined,
 	 * that the logical query in question is in every way identical to the old one and thus has no need to go through all the
@@ -252,12 +253,12 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	public Collection<String> getPreTransformationHandlerNames();
 	public boolean hasPreTransformationHandler(String name);
-	
+
 	// Query state methods, only on server
-	
+
 	/**
 	 * Returns the current state of the query with the given queryID
-	 * @param queryID The of the query 
+	 * @param queryID The of the query
 	 * @return the current state of the query
 	 */
 	public QueryState getQueryState(int queryID);
@@ -280,6 +281,13 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * Stop all running queries
 	 */
 	public void stopAllQueries(ISession user);
+
+	/**
+	 * Run a command on server
+	 * @param command
+	 * @param caller
+	 */
+	public void runCommand(Command command, ISession caller);
 
 
 }

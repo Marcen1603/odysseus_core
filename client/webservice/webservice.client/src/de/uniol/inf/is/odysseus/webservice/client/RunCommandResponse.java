@@ -15,16 +15,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r getSupportedQueryParsersResponse complex type.
+ * <p>Java-Klasse f�r runCommandResponse complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
- * &lt;complexType name="getSupportedQueryParsersResponse">
+ * &lt;complexType name="runCommandResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}stringListResponse" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}response" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,24 +34,24 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSupportedQueryParsersResponse", propOrder = {
+@XmlType(name = "runCommandResponse", propOrder = {
     "_return"
 })
 @SuppressWarnings(value = { "all" })
-public class GetSupportedQueryParsersResponse {
+public class RunCommandResponse {
 
     @XmlElement(name = "return")
-    protected StringListResponse _return;
+    protected Response _return;
 
     /**
      * Ruft den Wert der return-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link StringListResponse }
+     *     {@link Response }
      *     
      */
-    public StringListResponse getReturn() {
+    public Response getReturn() {
         return _return;
     }
 
@@ -60,10 +60,10 @@ public class GetSupportedQueryParsersResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link StringListResponse }
+     *     {@link Response }
      *     
      */
-    public void setReturn(StringListResponse value) {
+    public void setReturn(Response value) {
         this._return = value;
     }
 

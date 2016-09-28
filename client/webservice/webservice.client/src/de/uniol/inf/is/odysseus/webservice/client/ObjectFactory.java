@@ -84,6 +84,7 @@ public class ObjectFactory {
     private final static QName _GetQueryParserSuggestionsResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryParserSuggestionsResponse");
     private final static QName _GetStoredProceduresResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getStoredProceduresResponse");
     private final static QName _IsRunning_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "isRunning");
+    private final static QName _RunCommand_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "runCommand");
     private final static QName _DetermineOutputSchemaResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "determineOutputSchemaResponse");
     private final static QName _DetermineOutputSchema_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "determineOutputSchema");
     private final static QName _SetSchedulerResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "setSchedulerResponse");
@@ -174,6 +175,7 @@ public class ObjectFactory {
     private final static QName _GetOutputSchemaByQueryId_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaByQueryId");
     private final static QName _RemoveStoredProcedureResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "removeStoredProcedureResponse");
     private final static QName _Login2Response_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "login2Response");
+    private final static QName _RunCommandResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "runCommandResponse");
     private final static QName _GetWindowTypes_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getWindowTypes");
     private final static QName _GetOutputSchemaByQueryIdAndPortResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getOutputSchemaByQueryIdAndPortResponse");
     private final static QName _GetQueryParserTokens_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryParserTokens");
@@ -785,6 +787,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RunCommandResponse }
+     * 
+     */
+    public RunCommandResponse createRunCommandResponse() {
+        return new RunCommandResponse();
+    }
+
+    /**
      * Create an instance of {@link GetOutputSchemaByQueryIdAndPortResponse }
      * 
      */
@@ -1265,6 +1275,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RunCommand }
+     * 
+     */
+    public RunCommand createRunCommand() {
+        return new RunCommand();
+    }
+
+    /**
      * Create an instance of {@link DetermineOutputSchema }
      * 
      */
@@ -1590,6 +1608,14 @@ public class ObjectFactory {
      */
     public StoredProcedureResponse createStoredProcedureResponse() {
         return new StoredProcedureResponse();
+    }
+
+    /**
+     * Create an instance of {@link Resource }
+     * 
+     */
+    public Resource createResource() {
+        return new Resource();
     }
 
     /**
@@ -2178,6 +2204,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "isRunning")
     public JAXBElement<IsRunning> createIsRunning(IsRunning value) {
         return new JAXBElement<IsRunning>(_IsRunning_QNAME, IsRunning.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RunCommand }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "runCommand")
+    public JAXBElement<RunCommand> createRunCommand(RunCommand value) {
+        return new JAXBElement<RunCommand>(_RunCommand_QNAME, RunCommand.class, null, value);
     }
 
     /**
@@ -2988,6 +3023,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "login2Response")
     public JAXBElement<Login2Response> createLogin2Response(Login2Response value) {
         return new JAXBElement<Login2Response>(_Login2Response_QNAME, Login2Response.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RunCommandResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "runCommandResponse")
+    public JAXBElement<RunCommandResponse> createRunCommandResponse(RunCommandResponse value) {
+        return new JAXBElement<RunCommandResponse>(_RunCommandResponse_QNAME, RunCommandResponse.class, null, value);
     }
 
     /**
