@@ -80,7 +80,7 @@ public class GraphEdge {
 
 	@Override
 	public String toString() {
-		return "GraphEdge[" + startingNodes.get(0).getId() + " --" + label + "--> " + endingNodes.get(0).getId() + "]";
+		return "GraphEdge[" + startingNodes.get(0).getId() + " --" + label + "--> " + endingNodes.get(0).getId() + ", props: " + props.toString() + "]";
 	}
 
 	@Override
