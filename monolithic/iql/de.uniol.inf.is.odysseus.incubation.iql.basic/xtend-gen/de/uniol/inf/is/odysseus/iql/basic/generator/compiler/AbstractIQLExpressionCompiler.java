@@ -247,47 +247,20 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compileAssignmentExpr(final IQLAssignmentExpression e, final IQLJvmElementCallExpression elementCallExpr, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    String _op = e.getOp();
-    boolean _equals = _op.equals("=");
-    if (!_equals) {
-      _and = false;
-    } else {
+    if ((e.getOp().equals("=") && (elementCallExpr.getElement() instanceof JvmOperation))) {
       JvmIdentifiableElement _element = elementCallExpr.getElement();
-      _and = (_element instanceof JvmOperation);
-    }
-    if (_and) {
-      JvmIdentifiableElement _element_1 = elementCallExpr.getElement();
-      EList<JvmFormalParameter> _parameters = ((JvmOperation) _element_1).getParameters();
+      EList<JvmFormalParameter> _parameters = ((JvmOperation) _element).getParameters();
       JvmFormalParameter _get = _parameters.get(0);
       JvmTypeReference leftType = _get.getParameterType();
       IQLExpression _rightOperand = e.getRightOperand();
       TypeResult rightType = this.exprEvaluator.eval(_rightOperand);
       c.setExpectedTypeRef(leftType);
       String result = "";
-      JvmIdentifiableElement _element_2 = elementCallExpr.getElement();
-      JvmOperation op = ((JvmOperation) _element_2);
+      JvmIdentifiableElement _element_1 = elementCallExpr.getElement();
+      JvmOperation op = ((JvmOperation) _element_1);
       EList<JvmTypeReference> _exceptions = op.getExceptions();
       c.addExceptions(_exceptions);
-      boolean _and_1 = false;
-      boolean _and_2 = false;
-      boolean _isJvmArray = this.helper.isJvmArray(leftType);
-      if (!_isJvmArray) {
-        _and_2 = false;
-      } else {
-        boolean _isNull = rightType.isNull();
-        boolean _not = (!_isNull);
-        _and_2 = _not;
-      }
-      if (!_and_2) {
-        _and_1 = false;
-      } else {
-        JvmTypeReference _ref = rightType.getRef();
-        boolean _isJvmArray_1 = this.helper.isJvmArray(_ref);
-        boolean _not_1 = (!_isJvmArray_1);
-        _and_1 = _not_1;
-      }
-      if (_and_1) {
+      if (((this.helper.isJvmArray(leftType) && (!rightType.isNull())) && (!this.helper.isJvmArray(rightType.getRef())))) {
         String _canonicalName = IQLUtils.class.getCanonicalName();
         c.addImport(_canonicalName);
         boolean _isPrimitiveArray = this.helper.isPrimitiveArray(leftType);
@@ -330,16 +303,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           result = _builder_1.toString();
         }
       } else {
-        boolean _or = false;
-        boolean _isNull_1 = rightType.isNull();
-        if (_isNull_1) {
-          _or = true;
-        } else {
-          JvmTypeReference _ref_1 = rightType.getRef();
-          boolean _isAssignable = this.lookUp.isAssignable(leftType, _ref_1);
-          _or = _isAssignable;
-        }
-        if (_or) {
+        if ((rightType.isNull() || this.lookUp.isAssignable(leftType, rightType.getRef()))) {
           StringConcatenation _builder_2 = new StringConcatenation();
           String _simpleName_4 = op.getSimpleName();
           _builder_2.append(_simpleName_4, "");
@@ -350,16 +314,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _builder_2.append(")");
           result = _builder_2.toString();
         } else {
-          boolean _or_1 = false;
-          boolean _isNull_2 = rightType.isNull();
-          if (_isNull_2) {
-            _or_1 = true;
-          } else {
-            JvmTypeReference _ref_2 = rightType.getRef();
-            boolean _isCastable = this.lookUp.isCastable(leftType, _ref_2);
-            _or_1 = _isCastable;
-          }
-          if (_or_1) {
+          if ((rightType.isNull() || this.lookUp.isCastable(leftType, rightType.getRef()))) {
             String target = this.typeCompiler.compile(leftType, c, false);
             StringConcatenation _builder_3 = new StringConcatenation();
             String _simpleName_5 = op.getSimpleName();
@@ -395,62 +350,25 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compileAssignmentExpr(final IQLAssignmentExpression e, final IQLMemberSelectionExpression selExpr, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    String _op = e.getOp();
-    boolean _equals = _op.equals("=");
-    if (!_equals) {
-      _and = false;
-    } else {
+    if ((e.getOp().equals("=") && (selExpr.getSel().getMember() instanceof JvmOperation))) {
       IQLMemberSelection _sel = selExpr.getSel();
       JvmMember _member = _sel.getMember();
-      _and = (_member instanceof JvmOperation);
-    }
-    if (_and) {
-      IQLMemberSelection _sel_1 = selExpr.getSel();
-      JvmMember _member_1 = _sel_1.getMember();
-      EList<JvmFormalParameter> _parameters = ((JvmOperation) _member_1).getParameters();
+      EList<JvmFormalParameter> _parameters = ((JvmOperation) _member).getParameters();
       JvmFormalParameter _get = _parameters.get(0);
       JvmTypeReference leftType = _get.getParameterType();
       IQLExpression _rightOperand = e.getRightOperand();
       TypeResult rightType = this.exprEvaluator.eval(_rightOperand);
       c.setExpectedTypeRef(leftType);
       String result = "";
-      IQLMemberSelection _sel_2 = selExpr.getSel();
-      JvmMember _member_2 = _sel_2.getMember();
-      JvmOperation op = ((JvmOperation) _member_2);
+      IQLMemberSelection _sel_1 = selExpr.getSel();
+      JvmMember _member_1 = _sel_1.getMember();
+      JvmOperation op = ((JvmOperation) _member_1);
       EList<JvmTypeReference> _exceptions = op.getExceptions();
       c.addExceptions(_exceptions);
-      boolean _and_1 = false;
-      boolean _and_2 = false;
-      boolean _isJvmArray = this.helper.isJvmArray(leftType);
-      if (!_isJvmArray) {
-        _and_2 = false;
-      } else {
-        boolean _isNull = rightType.isNull();
-        boolean _not = (!_isNull);
-        _and_2 = _not;
-      }
-      if (!_and_2) {
-        _and_1 = false;
-      } else {
-        JvmTypeReference _ref = rightType.getRef();
-        boolean _isJvmArray_1 = this.helper.isJvmArray(_ref);
-        boolean _not_1 = (!_isJvmArray_1);
-        _and_1 = _not_1;
-      }
-      if (_and_1) {
+      if (((this.helper.isJvmArray(leftType) && (!rightType.isNull())) && (!this.helper.isJvmArray(rightType.getRef())))) {
         String _canonicalName = IQLUtils.class.getCanonicalName();
         c.addImport(_canonicalName);
-        boolean _and_3 = false;
-        boolean _hasSystemTypeCompiler = this.helper.hasSystemTypeCompiler(op);
-        if (!_hasSystemTypeCompiler) {
-          _and_3 = false;
-        } else {
-          IIQLSystemTypeCompiler _systemTypeCompiler = this.helper.getSystemTypeCompiler(op);
-          boolean _compileMethodSelectionManually = _systemTypeCompiler.compileMethodSelectionManually();
-          _and_3 = _compileMethodSelectionManually;
-        }
-        if (_and_3) {
+        if ((this.helper.hasSystemTypeCompiler(op) && this.helper.getSystemTypeCompiler(op).compileMethodSelectionManually())) {
           IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(op);
           boolean _isPrimitiveArray = this.helper.isPrimitiveArray(leftType);
           if (_isPrimitiveArray) {
@@ -547,26 +465,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           }
         }
       } else {
-        boolean _or = false;
-        boolean _isNull_1 = rightType.isNull();
-        if (_isNull_1) {
-          _or = true;
-        } else {
-          JvmTypeReference _ref_1 = rightType.getRef();
-          boolean _isAssignable = this.lookUp.isAssignable(leftType, _ref_1);
-          _or = _isAssignable;
-        }
-        if (_or) {
-          boolean _and_4 = false;
-          boolean _hasSystemTypeCompiler_1 = this.helper.hasSystemTypeCompiler(op);
-          if (!_hasSystemTypeCompiler_1) {
-            _and_4 = false;
-          } else {
-            IIQLSystemTypeCompiler _systemTypeCompiler_1 = this.helper.getSystemTypeCompiler(op);
-            boolean _compileMethodSelectionManually_1 = _systemTypeCompiler_1.compileMethodSelectionManually();
-            _and_4 = _compileMethodSelectionManually_1;
-          }
-          if (_and_4) {
+        if ((rightType.isNull() || this.lookUp.isAssignable(leftType, rightType.getRef()))) {
+          if ((this.helper.hasSystemTypeCompiler(op) && this.helper.getSystemTypeCompiler(op).compileMethodSelectionManually())) {
             IIQLSystemTypeCompiler systemTypeCompiler_1 = this.helper.getSystemTypeCompiler(op);
             StringConcatenation _builder_4 = new StringConcatenation();
             IQLExpression _leftOperand_4 = selExpr.getLeftOperand();
@@ -595,27 +495,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             result = _builder_5.toString();
           }
         } else {
-          boolean _or_1 = false;
-          boolean _isNull_2 = rightType.isNull();
-          if (_isNull_2) {
-            _or_1 = true;
-          } else {
-            JvmTypeReference _ref_2 = rightType.getRef();
-            boolean _isCastable = this.lookUp.isCastable(leftType, _ref_2);
-            _or_1 = _isCastable;
-          }
-          if (_or_1) {
+          if ((rightType.isNull() || this.lookUp.isCastable(leftType, rightType.getRef()))) {
             String target = this.typeCompiler.compile(leftType, c, false);
-            boolean _and_5 = false;
-            boolean _hasSystemTypeCompiler_2 = this.helper.hasSystemTypeCompiler(op);
-            if (!_hasSystemTypeCompiler_2) {
-              _and_5 = false;
-            } else {
-              IIQLSystemTypeCompiler _systemTypeCompiler_2 = this.helper.getSystemTypeCompiler(op);
-              boolean _compileMethodSelectionManually_2 = _systemTypeCompiler_2.compileMethodSelectionManually();
-              _and_5 = _compileMethodSelectionManually_2;
-            }
-            if (_and_5) {
+            if ((this.helper.hasSystemTypeCompiler(op) && this.helper.getSystemTypeCompiler(op).compileMethodSelectionManually())) {
               IIQLSystemTypeCompiler systemTypeCompiler_2 = this.helper.getSystemTypeCompiler(op);
               StringConcatenation _builder_6 = new StringConcatenation();
               IQLExpression _leftOperand_6 = selExpr.getLeftOperand();
@@ -647,16 +529,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               result = _builder_7.toString();
             }
           } else {
-            boolean _and_6 = false;
-            boolean _hasSystemTypeCompiler_3 = this.helper.hasSystemTypeCompiler(op);
-            if (!_hasSystemTypeCompiler_3) {
-              _and_6 = false;
-            } else {
-              IIQLSystemTypeCompiler _systemTypeCompiler_3 = this.helper.getSystemTypeCompiler(op);
-              boolean _compileMethodSelectionManually_3 = _systemTypeCompiler_3.compileMethodSelectionManually();
-              _and_6 = _compileMethodSelectionManually_3;
-            }
-            if (_and_6) {
+            if ((this.helper.hasSystemTypeCompiler(op) && this.helper.getSystemTypeCompiler(op).compileMethodSelectionManually())) {
               IIQLSystemTypeCompiler systemTypeCompiler_3 = this.helper.getSystemTypeCompiler(op);
               StringConcatenation _builder_8 = new StringConcatenation();
               IQLExpression _leftOperand_8 = selExpr.getLeftOperand();
@@ -702,78 +575,30 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       TypeResult arrayType = this.exprEvaluator.eval(_leftOperand);
       String methodName = IQLOperatorOverloadingUtils.SET;
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _and_1 = false;
-      String _op = e.getOp();
-      boolean _equals = _op.equals("=");
-      if (!_equals) {
-        _and_1 = false;
-      } else {
-        boolean _isNull = arrayType.isNull();
-        boolean _not = (!_isNull);
-        _and_1 = _not;
-      }
-      if (!_and_1) {
-        _and = false;
-      } else {
-        JvmTypeReference _ref = arrayType.getRef();
-        IQLExpression _rightOperand = e.getRightOperand();
-        EList<IQLExpression> _expressions = arrayExpr.getExpressions();
-        List<IQLExpression> _createSetterArguments = this.helper.createSetterArguments(_rightOperand, _expressions);
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, methodName, _createSetterArguments);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if (((e.getOp().equals("=") && (!arrayType.isNull())) && this.typeExtensionsDictionary.hasTypeExtensions(arrayType.getRef(), methodName, this.helper.createSetterArguments(e.getRightOperand(), arrayExpr.getExpressions())))) {
         TypeResult leftType = this.exprEvaluator.eval(arrayExpr);
-        IQLExpression _rightOperand_1 = e.getRightOperand();
-        TypeResult rightType = this.exprEvaluator.eval(_rightOperand_1);
-        boolean _isNull_1 = leftType.isNull();
-        boolean _not_1 = (!_isNull_1);
-        if (_not_1) {
-          JvmTypeReference _ref_1 = leftType.getRef();
-          c.setExpectedTypeRef(_ref_1);
+        IQLExpression _rightOperand = e.getRightOperand();
+        TypeResult rightType = this.exprEvaluator.eval(_rightOperand);
+        boolean _isNull = leftType.isNull();
+        boolean _not = (!_isNull);
+        if (_not) {
+          JvmTypeReference _ref = leftType.getRef();
+          c.setExpectedTypeRef(_ref);
         }
         String result = "";
-        JvmTypeReference _ref_2 = arrayType.getRef();
-        IQLExpression _rightOperand_2 = e.getRightOperand();
-        EList<IQLExpression> _expressions_1 = arrayExpr.getExpressions();
-        List<IQLExpression> _createSetterArguments_1 = this.helper.createSetterArguments(_rightOperand_2, _expressions_1);
-        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_2, methodName, _createSetterArguments_1);
+        JvmTypeReference _ref_1 = arrayType.getRef();
+        IQLExpression _rightOperand_1 = e.getRightOperand();
+        EList<IQLExpression> _expressions = arrayExpr.getExpressions();
+        List<IQLExpression> _createSetterArguments = this.helper.createSetterArguments(_rightOperand_1, _expressions);
+        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_1, methodName, _createSetterArguments);
         Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
-        boolean _and_2 = false;
-        boolean _and_3 = false;
-        boolean _and_4 = false;
-        boolean _isNull_2 = leftType.isNull();
-        boolean _not_2 = (!_isNull_2);
-        if (!_not_2) {
-          _and_4 = false;
-        } else {
-          JvmTypeReference _ref_3 = leftType.getRef();
-          boolean _isJvmArray = this.helper.isJvmArray(_ref_3);
-          _and_4 = _isJvmArray;
-        }
-        if (!_and_4) {
-          _and_3 = false;
-        } else {
-          boolean _isNull_3 = rightType.isNull();
-          boolean _not_3 = (!_isNull_3);
-          _and_3 = _not_3;
-        }
-        if (!_and_3) {
-          _and_2 = false;
-        } else {
-          JvmTypeReference _ref_4 = rightType.getRef();
-          boolean _isJvmArray_1 = this.helper.isJvmArray(_ref_4);
-          boolean _not_4 = (!_isJvmArray_1);
-          _and_2 = _not_4;
-        }
-        if (_and_2) {
+        if (((((!leftType.isNull()) && this.helper.isJvmArray(leftType.getRef())) && (!rightType.isNull())) && (!this.helper.isJvmArray(rightType.getRef())))) {
           String _canonicalName_1 = IQLUtils.class.getCanonicalName();
           c.addImport(_canonicalName_1);
-          JvmTypeReference _ref_5 = leftType.getRef();
-          boolean _isPrimitiveArray = this.helper.isPrimitiveArray(_ref_5);
+          JvmTypeReference _ref_2 = leftType.getRef();
+          boolean _isPrimitiveArray = this.helper.isPrimitiveArray(_ref_2);
           if (_isPrimitiveArray) {
             StringConcatenation _builder = new StringConcatenation();
             Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
@@ -789,26 +614,26 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             String _simpleName_1 = IQLUtils.class.getSimpleName();
             _builder.append(_simpleName_1, "");
             _builder.append(".");
-            JvmTypeReference _ref_6 = leftType.getRef();
-            String _arrayMethodName = this.helper.getArrayMethodName(_ref_6);
+            JvmTypeReference _ref_3 = leftType.getRef();
+            String _arrayMethodName = this.helper.getArrayMethodName(_ref_3);
             _builder.append(_arrayMethodName, "");
             _builder.append("(");
-            IQLExpression _rightOperand_3 = e.getRightOperand();
-            String _compile_1 = this.compile(_rightOperand_3, c);
+            IQLExpression _rightOperand_2 = e.getRightOperand();
+            String _compile_1 = this.compile(_rightOperand_2, c);
             _builder.append(_compile_1, "");
             _builder.append("), ");
-            EList<IQLExpression> _expressions_2 = arrayExpr.getExpressions();
+            EList<IQLExpression> _expressions_1 = arrayExpr.getExpressions();
             final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
               return this.compile(el, c);
             };
-            List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_2, _function);
+            List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_1, _function);
             String _join = IterableExtensions.join(_map, ", ");
             _builder.append(_join, "");
             _builder.append(")");
             result = _builder.toString();
           } else {
-            JvmTypeReference _ref_7 = leftType.getRef();
-            JvmType _innerType = this.typeUtils.getInnerType(_ref_7, false);
+            JvmTypeReference _ref_4 = leftType.getRef();
+            JvmType _innerType = this.typeUtils.getInnerType(_ref_4, false);
             JvmTypeReference _createTypeRef = this.typeUtils.createTypeRef(_innerType);
             String clazz = this.typeCompiler.compile(_createTypeRef, c, true);
             StringConcatenation _builder_1 = new StringConcatenation();
@@ -825,49 +650,32 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             String _simpleName_3 = IQLUtils.class.getSimpleName();
             _builder_1.append(_simpleName_3, "");
             _builder_1.append(".");
-            JvmTypeReference _ref_8 = leftType.getRef();
-            String _arrayMethodName_1 = this.helper.getArrayMethodName(_ref_8);
+            JvmTypeReference _ref_5 = leftType.getRef();
+            String _arrayMethodName_1 = this.helper.getArrayMethodName(_ref_5);
             _builder_1.append(_arrayMethodName_1, "");
             _builder_1.append("(");
             _builder_1.append(clazz, "");
             _builder_1.append(".class, ");
-            IQLExpression _rightOperand_4 = e.getRightOperand();
-            String _compile_3 = this.compile(_rightOperand_4, c);
+            IQLExpression _rightOperand_3 = e.getRightOperand();
+            String _compile_3 = this.compile(_rightOperand_3, c);
             _builder_1.append(_compile_3, "");
             _builder_1.append("), ");
-            EList<IQLExpression> _expressions_3 = arrayExpr.getExpressions();
+            EList<IQLExpression> _expressions_2 = arrayExpr.getExpressions();
             final Function1<IQLExpression, String> _function_1 = (IQLExpression el) -> {
               return this.compile(el, c);
             };
-            List<String> _map_1 = ListExtensions.<IQLExpression, String>map(_expressions_3, _function_1);
+            List<String> _map_1 = ListExtensions.<IQLExpression, String>map(_expressions_2, _function_1);
             String _join_1 = IterableExtensions.join(_map_1, ", ");
             _builder_1.append(_join_1, "");
             _builder_1.append(")");
             result = _builder_1.toString();
           }
         } else {
-          boolean _or = false;
-          boolean _or_1 = false;
-          boolean _isNull_4 = leftType.isNull();
-          if (_isNull_4) {
-            _or_1 = true;
-          } else {
-            boolean _isNull_5 = rightType.isNull();
-            _or_1 = _isNull_5;
-          }
-          if (_or_1) {
-            _or = true;
-          } else {
-            JvmTypeReference _ref_9 = leftType.getRef();
-            JvmTypeReference _ref_10 = rightType.getRef();
-            boolean _isAssignable = this.lookUp.isAssignable(_ref_9, _ref_10);
-            _or = _isAssignable;
-          }
-          if (_or) {
-            EList<IQLExpression> _expressions_4 = arrayExpr.getExpressions();
-            int _size = _expressions_4.size();
-            boolean _equals_1 = (_size == 1);
-            if (_equals_1) {
+          if (((leftType.isNull() || rightType.isNull()) || this.lookUp.isAssignable(leftType.getRef(), rightType.getRef()))) {
+            EList<IQLExpression> _expressions_3 = arrayExpr.getExpressions();
+            int _size = _expressions_3.size();
+            boolean _equals = (_size == 1);
+            if (_equals) {
               StringConcatenation _builder_2 = new StringConcatenation();
               Class<? extends IIQLTypeExtensions> _class_3 = typeOps.getClass();
               String _simpleName_4 = _class_3.getSimpleName();
@@ -879,12 +687,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile_4 = this.compile(_leftOperand_3, c);
               _builder_2.append(_compile_4, "");
               _builder_2.append(", ");
-              IQLExpression _rightOperand_5 = e.getRightOperand();
-              String _compile_5 = this.compile(_rightOperand_5, c);
+              IQLExpression _rightOperand_4 = e.getRightOperand();
+              String _compile_5 = this.compile(_rightOperand_4, c);
               _builder_2.append(_compile_5, "");
               _builder_2.append(", ");
-              EList<IQLExpression> _expressions_5 = arrayExpr.getExpressions();
-              IQLExpression _get = _expressions_5.get(0);
+              EList<IQLExpression> _expressions_4 = arrayExpr.getExpressions();
+              IQLExpression _get = _expressions_4.get(0);
               String _compile_6 = this.compile(_get, c);
               _builder_2.append(_compile_6, "");
               _builder_2.append(")");
@@ -901,48 +709,31 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile_7 = this.compile(_leftOperand_4, c);
               _builder_3.append(_compile_7, "");
               _builder_3.append(", ");
-              IQLExpression _rightOperand_6 = e.getRightOperand();
-              String _compile_8 = this.compile(_rightOperand_6, c);
+              IQLExpression _rightOperand_5 = e.getRightOperand();
+              String _compile_8 = this.compile(_rightOperand_5, c);
               _builder_3.append(_compile_8, "");
               _builder_3.append(", ");
               String _simpleName_6 = IQLUtils.class.getSimpleName();
               _builder_3.append(_simpleName_6, "");
               _builder_3.append(".createList(");
-              EList<IQLExpression> _expressions_6 = arrayExpr.getExpressions();
+              EList<IQLExpression> _expressions_5 = arrayExpr.getExpressions();
               final Function1<IQLExpression, String> _function_2 = (IQLExpression el) -> {
                 return this.compile(el, c);
               };
-              List<String> _map_2 = ListExtensions.<IQLExpression, String>map(_expressions_6, _function_2);
+              List<String> _map_2 = ListExtensions.<IQLExpression, String>map(_expressions_5, _function_2);
               String _join_2 = IterableExtensions.join(_map_2, ", ");
               _builder_3.append(_join_2, "");
               _builder_3.append("))");
               result = _builder_3.toString();
             }
           } else {
-            boolean _or_2 = false;
-            boolean _or_3 = false;
-            boolean _isNull_6 = leftType.isNull();
-            if (_isNull_6) {
-              _or_3 = true;
-            } else {
-              boolean _isNull_7 = rightType.isNull();
-              _or_3 = _isNull_7;
-            }
-            if (_or_3) {
-              _or_2 = true;
-            } else {
-              JvmTypeReference _ref_11 = leftType.getRef();
-              JvmTypeReference _ref_12 = rightType.getRef();
-              boolean _isCastable = this.lookUp.isCastable(_ref_11, _ref_12);
-              _or_2 = _isCastable;
-            }
-            if (_or_2) {
-              JvmTypeReference _ref_13 = leftType.getRef();
-              String target = this.typeCompiler.compile(_ref_13, c, false);
-              EList<IQLExpression> _expressions_7 = arrayExpr.getExpressions();
-              int _size_1 = _expressions_7.size();
-              boolean _equals_2 = (_size_1 == 1);
-              if (_equals_2) {
+            if (((leftType.isNull() || rightType.isNull()) || this.lookUp.isCastable(leftType.getRef(), rightType.getRef()))) {
+              JvmTypeReference _ref_6 = leftType.getRef();
+              String target = this.typeCompiler.compile(_ref_6, c, false);
+              EList<IQLExpression> _expressions_6 = arrayExpr.getExpressions();
+              int _size_1 = _expressions_6.size();
+              boolean _equals_1 = (_size_1 == 1);
+              if (_equals_1) {
                 StringConcatenation _builder_4 = new StringConcatenation();
                 Class<? extends IIQLTypeExtensions> _class_5 = typeOps.getClass();
                 String _simpleName_7 = _class_5.getSimpleName();
@@ -956,12 +747,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_4.append(", ((");
                 _builder_4.append(target, "");
                 _builder_4.append(")");
-                IQLExpression _rightOperand_7 = e.getRightOperand();
-                String _compile_10 = this.compile(_rightOperand_7, c);
+                IQLExpression _rightOperand_6 = e.getRightOperand();
+                String _compile_10 = this.compile(_rightOperand_6, c);
                 _builder_4.append(_compile_10, "");
                 _builder_4.append("), ");
-                EList<IQLExpression> _expressions_8 = arrayExpr.getExpressions();
-                IQLExpression _get_1 = _expressions_8.get(0);
+                EList<IQLExpression> _expressions_7 = arrayExpr.getExpressions();
+                IQLExpression _get_1 = _expressions_7.get(0);
                 String _compile_11 = this.compile(_get_1, c);
                 _builder_4.append(_compile_11, "");
                 _builder_4.append(")");
@@ -980,28 +771,28 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_5.append(", ((");
                 _builder_5.append(target, "");
                 _builder_5.append(")");
-                IQLExpression _rightOperand_8 = e.getRightOperand();
-                String _compile_13 = this.compile(_rightOperand_8, c);
+                IQLExpression _rightOperand_7 = e.getRightOperand();
+                String _compile_13 = this.compile(_rightOperand_7, c);
                 _builder_5.append(_compile_13, "");
                 _builder_5.append("), ");
                 String _simpleName_9 = IQLUtils.class.getSimpleName();
                 _builder_5.append(_simpleName_9, "");
                 _builder_5.append(".createList(");
-                EList<IQLExpression> _expressions_9 = arrayExpr.getExpressions();
+                EList<IQLExpression> _expressions_8 = arrayExpr.getExpressions();
                 final Function1<IQLExpression, String> _function_3 = (IQLExpression el) -> {
                   return this.compile(el, c);
                 };
-                List<String> _map_3 = ListExtensions.<IQLExpression, String>map(_expressions_9, _function_3);
+                List<String> _map_3 = ListExtensions.<IQLExpression, String>map(_expressions_8, _function_3);
                 String _join_3 = IterableExtensions.join(_map_3, ", ");
                 _builder_5.append(_join_3, "");
                 _builder_5.append("))");
                 result = _builder_5.toString();
               }
             } else {
-              EList<IQLExpression> _expressions_10 = arrayExpr.getExpressions();
-              int _size_2 = _expressions_10.size();
-              boolean _equals_3 = (_size_2 == 1);
-              if (_equals_3) {
+              EList<IQLExpression> _expressions_9 = arrayExpr.getExpressions();
+              int _size_2 = _expressions_9.size();
+              boolean _equals_2 = (_size_2 == 1);
+              if (_equals_2) {
                 StringConcatenation _builder_6 = new StringConcatenation();
                 Class<? extends IIQLTypeExtensions> _class_7 = typeOps.getClass();
                 String _simpleName_10 = _class_7.getSimpleName();
@@ -1013,12 +804,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 String _compile_14 = this.compile(_leftOperand_7, c);
                 _builder_6.append(_compile_14, "");
                 _builder_6.append(", ");
-                IQLExpression _rightOperand_9 = e.getRightOperand();
-                String _compile_15 = this.compile(_rightOperand_9, c);
+                IQLExpression _rightOperand_8 = e.getRightOperand();
+                String _compile_15 = this.compile(_rightOperand_8, c);
                 _builder_6.append(_compile_15, "");
                 _builder_6.append(", ");
-                EList<IQLExpression> _expressions_11 = arrayExpr.getExpressions();
-                IQLExpression _get_2 = _expressions_11.get(0);
+                EList<IQLExpression> _expressions_10 = arrayExpr.getExpressions();
+                IQLExpression _get_2 = _expressions_10.get(0);
                 String _compile_16 = this.compile(_get_2, c);
                 _builder_6.append(_compile_16, "");
                 _builder_6.append(")");
@@ -1035,18 +826,18 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 String _compile_17 = this.compile(_leftOperand_8, c);
                 _builder_7.append(_compile_17, "");
                 _builder_7.append(", ");
-                IQLExpression _rightOperand_10 = e.getRightOperand();
-                String _compile_18 = this.compile(_rightOperand_10, c);
+                IQLExpression _rightOperand_9 = e.getRightOperand();
+                String _compile_18 = this.compile(_rightOperand_9, c);
                 _builder_7.append(_compile_18, "");
                 _builder_7.append(", ");
                 String _simpleName_12 = IQLUtils.class.getSimpleName();
                 _builder_7.append(_simpleName_12, "");
                 _builder_7.append(".createList(");
-                EList<IQLExpression> _expressions_12 = arrayExpr.getExpressions();
+                EList<IQLExpression> _expressions_11 = arrayExpr.getExpressions();
                 final Function1<IQLExpression, String> _function_4 = (IQLExpression el) -> {
                   return this.compile(el, c);
                 };
-                List<String> _map_4 = ListExtensions.<IQLExpression, String>map(_expressions_12, _function_4);
+                List<String> _map_4 = ListExtensions.<IQLExpression, String>map(_expressions_11, _function_4);
                 String _join_4 = IterableExtensions.join(_map_4, ", ");
                 _builder_7.append(_join_4, "");
                 _builder_7.append("))");
@@ -1059,67 +850,22 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         return result;
       } else {
         String _xifexpression_1 = null;
-        boolean _and_5 = false;
-        boolean _and_6 = false;
-        String _op_1 = e.getOp();
-        boolean _equals_4 = _op_1.equals("=");
-        if (!_equals_4) {
-          _and_6 = false;
-        } else {
-          boolean _isNull_8 = arrayType.isNull();
-          boolean _not_5 = (!_isNull_8);
-          _and_6 = _not_5;
-        }
-        if (!_and_6) {
-          _and_5 = false;
-        } else {
-          JvmTypeReference _ref_14 = arrayType.getRef();
-          boolean _isArray = this.typeUtils.isArray(_ref_14);
-          _and_5 = _isArray;
-        }
-        if (_and_5) {
+        if (((e.getOp().equals("=") && (!arrayType.isNull())) && this.typeUtils.isArray(arrayType.getRef()))) {
           TypeResult leftType_1 = this.exprEvaluator.eval(arrayExpr);
-          IQLExpression _rightOperand_11 = e.getRightOperand();
-          TypeResult rightType_1 = this.exprEvaluator.eval(_rightOperand_11);
-          boolean _isNull_9 = leftType_1.isNull();
-          boolean _not_6 = (!_isNull_9);
-          if (_not_6) {
-            JvmTypeReference _ref_15 = leftType_1.getRef();
-            c.setExpectedTypeRef(_ref_15);
+          IQLExpression _rightOperand_10 = e.getRightOperand();
+          TypeResult rightType_1 = this.exprEvaluator.eval(_rightOperand_10);
+          boolean _isNull_1 = leftType_1.isNull();
+          boolean _not_1 = (!_isNull_1);
+          if (_not_1) {
+            JvmTypeReference _ref_7 = leftType_1.getRef();
+            c.setExpectedTypeRef(_ref_7);
           }
           String result_1 = "";
-          boolean _and_7 = false;
-          boolean _and_8 = false;
-          boolean _and_9 = false;
-          boolean _isNull_10 = leftType_1.isNull();
-          boolean _not_7 = (!_isNull_10);
-          if (!_not_7) {
-            _and_9 = false;
-          } else {
-            JvmTypeReference _ref_16 = leftType_1.getRef();
-            boolean _isJvmArray_2 = this.helper.isJvmArray(_ref_16);
-            _and_9 = _isJvmArray_2;
-          }
-          if (!_and_9) {
-            _and_8 = false;
-          } else {
-            boolean _isNull_11 = rightType_1.isNull();
-            boolean _not_8 = (!_isNull_11);
-            _and_8 = _not_8;
-          }
-          if (!_and_8) {
-            _and_7 = false;
-          } else {
-            JvmTypeReference _ref_17 = rightType_1.getRef();
-            boolean _isJvmArray_3 = this.helper.isJvmArray(_ref_17);
-            boolean _not_9 = (!_isJvmArray_3);
-            _and_7 = _not_9;
-          }
-          if (_and_7) {
+          if (((((!leftType_1.isNull()) && this.helper.isJvmArray(leftType_1.getRef())) && (!rightType_1.isNull())) && (!this.helper.isJvmArray(rightType_1.getRef())))) {
             String _canonicalName_2 = IQLUtils.class.getCanonicalName();
             c.addImport(_canonicalName_2);
-            JvmTypeReference _ref_18 = leftType_1.getRef();
-            boolean _isPrimitiveArray_1 = this.helper.isPrimitiveArray(_ref_18);
+            JvmTypeReference _ref_8 = leftType_1.getRef();
+            boolean _isPrimitiveArray_1 = this.helper.isPrimitiveArray(_ref_8);
             if (_isPrimitiveArray_1) {
               StringConcatenation _builder_8 = new StringConcatenation();
               String _simpleName_13 = de.uniol.inf.is.odysseus.iql.basic.types.extension.ListExtensions.class.getSimpleName();
@@ -1134,26 +880,26 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _simpleName_14 = IQLUtils.class.getSimpleName();
               _builder_8.append(_simpleName_14, "");
               _builder_8.append(".");
-              JvmTypeReference _ref_19 = leftType_1.getRef();
-              String _arrayMethodName_2 = this.helper.getArrayMethodName(_ref_19);
+              JvmTypeReference _ref_9 = leftType_1.getRef();
+              String _arrayMethodName_2 = this.helper.getArrayMethodName(_ref_9);
               _builder_8.append(_arrayMethodName_2, "");
               _builder_8.append("(");
-              IQLExpression _rightOperand_12 = e.getRightOperand();
-              String _compile_20 = this.compile(_rightOperand_12, c);
+              IQLExpression _rightOperand_11 = e.getRightOperand();
+              String _compile_20 = this.compile(_rightOperand_11, c);
               _builder_8.append(_compile_20, "");
               _builder_8.append("), ");
-              EList<IQLExpression> _expressions_13 = arrayExpr.getExpressions();
+              EList<IQLExpression> _expressions_12 = arrayExpr.getExpressions();
               final Function1<IQLExpression, String> _function_5 = (IQLExpression el) -> {
                 return this.compile(el, c);
               };
-              List<String> _map_5 = ListExtensions.<IQLExpression, String>map(_expressions_13, _function_5);
+              List<String> _map_5 = ListExtensions.<IQLExpression, String>map(_expressions_12, _function_5);
               String _join_5 = IterableExtensions.join(_map_5, ", ");
               _builder_8.append(_join_5, "");
               _builder_8.append(")");
               result_1 = _builder_8.toString();
             } else {
-              JvmTypeReference _ref_20 = leftType_1.getRef();
-              JvmType _innerType_1 = this.typeUtils.getInnerType(_ref_20, false);
+              JvmTypeReference _ref_10 = leftType_1.getRef();
+              JvmType _innerType_1 = this.typeUtils.getInnerType(_ref_10, false);
               JvmTypeReference _createTypeRef_1 = this.typeUtils.createTypeRef(_innerType_1);
               String clazz_1 = this.typeCompiler.compile(_createTypeRef_1, c, true);
               StringConcatenation _builder_9 = new StringConcatenation();
@@ -1169,45 +915,28 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _simpleName_16 = IQLUtils.class.getSimpleName();
               _builder_9.append(_simpleName_16, "");
               _builder_9.append(".");
-              JvmTypeReference _ref_21 = leftType_1.getRef();
-              String _arrayMethodName_3 = this.helper.getArrayMethodName(_ref_21);
+              JvmTypeReference _ref_11 = leftType_1.getRef();
+              String _arrayMethodName_3 = this.helper.getArrayMethodName(_ref_11);
               _builder_9.append(_arrayMethodName_3, "");
               _builder_9.append("(");
               _builder_9.append(clazz_1, "");
               _builder_9.append(".class, ");
-              IQLExpression _rightOperand_13 = e.getRightOperand();
-              String _compile_22 = this.compile(_rightOperand_13, c);
+              IQLExpression _rightOperand_12 = e.getRightOperand();
+              String _compile_22 = this.compile(_rightOperand_12, c);
               _builder_9.append(_compile_22, "");
               _builder_9.append("), ");
-              EList<IQLExpression> _expressions_14 = arrayExpr.getExpressions();
+              EList<IQLExpression> _expressions_13 = arrayExpr.getExpressions();
               final Function1<IQLExpression, String> _function_6 = (IQLExpression el) -> {
                 return this.compile(el, c);
               };
-              List<String> _map_6 = ListExtensions.<IQLExpression, String>map(_expressions_14, _function_6);
+              List<String> _map_6 = ListExtensions.<IQLExpression, String>map(_expressions_13, _function_6);
               String _join_6 = IterableExtensions.join(_map_6, ", ");
               _builder_9.append(_join_6, "");
               _builder_9.append(")");
               result_1 = _builder_9.toString();
             }
           } else {
-            boolean _or_4 = false;
-            boolean _or_5 = false;
-            boolean _isNull_12 = leftType_1.isNull();
-            if (_isNull_12) {
-              _or_5 = true;
-            } else {
-              boolean _isNull_13 = rightType_1.isNull();
-              _or_5 = _isNull_13;
-            }
-            if (_or_5) {
-              _or_4 = true;
-            } else {
-              JvmTypeReference _ref_22 = leftType_1.getRef();
-              JvmTypeReference _ref_23 = rightType_1.getRef();
-              boolean _isAssignable_1 = this.lookUp.isAssignable(_ref_22, _ref_23);
-              _or_4 = _isAssignable_1;
-            }
-            if (_or_4) {
+            if (((leftType_1.isNull() || rightType_1.isNull()) || this.lookUp.isAssignable(leftType_1.getRef(), rightType_1.getRef()))) {
               String _canonicalName_3 = de.uniol.inf.is.odysseus.iql.basic.types.extension.ListExtensions.class.getCanonicalName();
               c.addImport(_canonicalName_3);
               StringConcatenation _builder_10 = new StringConcatenation();
@@ -1220,42 +949,25 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile_23 = this.compile(_leftOperand_11, c);
               _builder_10.append(_compile_23, "");
               _builder_10.append(", ");
-              IQLExpression _rightOperand_14 = e.getRightOperand();
-              String _compile_24 = this.compile(_rightOperand_14, c);
+              IQLExpression _rightOperand_13 = e.getRightOperand();
+              String _compile_24 = this.compile(_rightOperand_13, c);
               _builder_10.append(_compile_24, "");
               _builder_10.append(", ");
-              EList<IQLExpression> _expressions_15 = arrayExpr.getExpressions();
+              EList<IQLExpression> _expressions_14 = arrayExpr.getExpressions();
               final Function1<IQLExpression, String> _function_7 = (IQLExpression el) -> {
                 return this.compile(el, c);
               };
-              List<String> _map_7 = ListExtensions.<IQLExpression, String>map(_expressions_15, _function_7);
+              List<String> _map_7 = ListExtensions.<IQLExpression, String>map(_expressions_14, _function_7);
               String _join_7 = IterableExtensions.join(_map_7, ", ");
               _builder_10.append(_join_7, "");
               _builder_10.append(")");
               result_1 = _builder_10.toString();
             } else {
-              boolean _or_6 = false;
-              boolean _or_7 = false;
-              boolean _isNull_14 = leftType_1.isNull();
-              if (_isNull_14) {
-                _or_7 = true;
-              } else {
-                boolean _isNull_15 = rightType_1.isNull();
-                _or_7 = _isNull_15;
-              }
-              if (_or_7) {
-                _or_6 = true;
-              } else {
-                JvmTypeReference _ref_24 = leftType_1.getRef();
-                JvmTypeReference _ref_25 = rightType_1.getRef();
-                boolean _isCastable_1 = this.lookUp.isCastable(_ref_24, _ref_25);
-                _or_6 = _isCastable_1;
-              }
-              if (_or_6) {
+              if (((leftType_1.isNull() || rightType_1.isNull()) || this.lookUp.isCastable(leftType_1.getRef(), rightType_1.getRef()))) {
                 String _canonicalName_4 = de.uniol.inf.is.odysseus.iql.basic.types.extension.ListExtensions.class.getCanonicalName();
                 c.addImport(_canonicalName_4);
-                JvmTypeReference _ref_26 = leftType_1.getRef();
-                String target_1 = this.typeCompiler.compile(_ref_26, c, false);
+                JvmTypeReference _ref_12 = leftType_1.getRef();
+                String target_1 = this.typeCompiler.compile(_ref_12, c, false);
                 StringConcatenation _builder_11 = new StringConcatenation();
                 String _simpleName_18 = de.uniol.inf.is.odysseus.iql.basic.types.extension.ListExtensions.class.getSimpleName();
                 _builder_11.append(_simpleName_18, "");
@@ -1268,15 +980,15 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_11.append(", ((");
                 _builder_11.append(target_1, "");
                 _builder_11.append(")");
-                IQLExpression _rightOperand_15 = e.getRightOperand();
-                String _compile_26 = this.compile(_rightOperand_15, c);
+                IQLExpression _rightOperand_14 = e.getRightOperand();
+                String _compile_26 = this.compile(_rightOperand_14, c);
                 _builder_11.append(_compile_26, "");
                 _builder_11.append("), ");
-                EList<IQLExpression> _expressions_16 = arrayExpr.getExpressions();
+                EList<IQLExpression> _expressions_15 = arrayExpr.getExpressions();
                 final Function1<IQLExpression, String> _function_8 = (IQLExpression el) -> {
                   return this.compile(el, c);
                 };
-                List<String> _map_8 = ListExtensions.<IQLExpression, String>map(_expressions_16, _function_8);
+                List<String> _map_8 = ListExtensions.<IQLExpression, String>map(_expressions_15, _function_8);
                 String _join_8 = IterableExtensions.join(_map_8, ", ");
                 _builder_11.append(_join_8, "");
                 _builder_11.append(")");
@@ -1294,15 +1006,15 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 String _compile_27 = this.compile(_leftOperand_13, c);
                 _builder_12.append(_compile_27, "");
                 _builder_12.append(", ");
-                IQLExpression _rightOperand_16 = e.getRightOperand();
-                String _compile_28 = this.compile(_rightOperand_16, c);
+                IQLExpression _rightOperand_15 = e.getRightOperand();
+                String _compile_28 = this.compile(_rightOperand_15, c);
                 _builder_12.append(_compile_28, "");
                 _builder_12.append(", ");
-                EList<IQLExpression> _expressions_17 = arrayExpr.getExpressions();
+                EList<IQLExpression> _expressions_16 = arrayExpr.getExpressions();
                 final Function1<IQLExpression, String> _function_9 = (IQLExpression el) -> {
                   return this.compile(el, c);
                 };
-                List<String> _map_9 = ListExtensions.<IQLExpression, String>map(_expressions_17, _function_9);
+                List<String> _map_9 = ListExtensions.<IQLExpression, String>map(_expressions_16, _function_9);
                 String _join_9 = IterableExtensions.join(_map_9, ", ");
                 _builder_12.append(_join_9, "");
                 _builder_12.append(")");
@@ -1337,38 +1049,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         c.setExpectedTypeRef(_ref);
       }
       String result = "";
-      boolean _and = false;
-      boolean _and_1 = false;
-      boolean _and_2 = false;
-      boolean _isNull_1 = leftType.isNull();
-      boolean _not_1 = (!_isNull_1);
-      if (!_not_1) {
-        _and_2 = false;
-      } else {
-        JvmTypeReference _ref_1 = leftType.getRef();
-        boolean _isJvmArray = this.helper.isJvmArray(_ref_1);
-        _and_2 = _isJvmArray;
-      }
-      if (!_and_2) {
-        _and_1 = false;
-      } else {
-        boolean _isNull_2 = rightType.isNull();
-        boolean _not_2 = (!_isNull_2);
-        _and_1 = _not_2;
-      }
-      if (!_and_1) {
-        _and = false;
-      } else {
-        JvmTypeReference _ref_2 = rightType.getRef();
-        boolean _isJvmArray_1 = this.helper.isJvmArray(_ref_2);
-        boolean _not_3 = (!_isJvmArray_1);
-        _and = _not_3;
-      }
-      if (_and) {
+      if (((((!leftType.isNull()) && this.helper.isJvmArray(leftType.getRef())) && (!rightType.isNull())) && (!this.helper.isJvmArray(rightType.getRef())))) {
         String _canonicalName = IQLUtils.class.getCanonicalName();
         c.addImport(_canonicalName);
-        JvmTypeReference _ref_3 = leftType.getRef();
-        boolean _isPrimitiveArray = this.helper.isPrimitiveArray(_ref_3);
+        JvmTypeReference _ref_1 = leftType.getRef();
+        boolean _isPrimitiveArray = this.helper.isPrimitiveArray(_ref_1);
         if (_isPrimitiveArray) {
           StringConcatenation _builder = new StringConcatenation();
           IQLExpression _leftOperand_1 = e.getLeftOperand();
@@ -1381,8 +1066,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           String _simpleName = IQLUtils.class.getSimpleName();
           _builder.append(_simpleName, "");
           _builder.append(".");
-          JvmTypeReference _ref_4 = leftType.getRef();
-          String _arrayMethodName = this.helper.getArrayMethodName(_ref_4);
+          JvmTypeReference _ref_2 = leftType.getRef();
+          String _arrayMethodName = this.helper.getArrayMethodName(_ref_2);
           _builder.append(_arrayMethodName, "");
           _builder.append("(");
           IQLExpression _rightOperand_1 = e.getRightOperand();
@@ -1391,8 +1076,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _builder.append("))");
           result = _builder.toString();
         } else {
-          JvmTypeReference _ref_5 = leftType.getRef();
-          JvmType _innerType = this.typeUtils.getInnerType(_ref_5, false);
+          JvmTypeReference _ref_3 = leftType.getRef();
+          JvmType _innerType = this.typeUtils.getInnerType(_ref_3, false);
           JvmTypeReference _createTypeRef = this.typeUtils.createTypeRef(_innerType);
           String clazz = this.typeCompiler.compile(_createTypeRef, c, true);
           StringConcatenation _builder_1 = new StringConcatenation();
@@ -1406,8 +1091,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           String _simpleName_1 = IQLUtils.class.getSimpleName();
           _builder_1.append(_simpleName_1, "");
           _builder_1.append(".");
-          JvmTypeReference _ref_6 = leftType.getRef();
-          String _arrayMethodName_1 = this.helper.getArrayMethodName(_ref_6);
+          JvmTypeReference _ref_4 = leftType.getRef();
+          String _arrayMethodName_1 = this.helper.getArrayMethodName(_ref_4);
           _builder_1.append(_arrayMethodName_1, "");
           _builder_1.append("(");
           _builder_1.append(clazz, "");
@@ -1419,24 +1104,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           result = _builder_1.toString();
         }
       } else {
-        boolean _or = false;
-        boolean _or_1 = false;
-        boolean _isNull_3 = leftType.isNull();
-        if (_isNull_3) {
-          _or_1 = true;
-        } else {
-          boolean _isNull_4 = rightType.isNull();
-          _or_1 = _isNull_4;
-        }
-        if (_or_1) {
-          _or = true;
-        } else {
-          JvmTypeReference _ref_7 = leftType.getRef();
-          JvmTypeReference _ref_8 = rightType.getRef();
-          boolean _isAssignable = this.lookUp.isAssignable(_ref_7, _ref_8);
-          _or = _isAssignable;
-        }
-        if (_or) {
+        if (((leftType.isNull() || rightType.isNull()) || this.lookUp.isAssignable(leftType.getRef(), rightType.getRef()))) {
           StringConcatenation _builder_2 = new StringConcatenation();
           IQLExpression _leftOperand_3 = e.getLeftOperand();
           String _compile_4 = this.compile(_leftOperand_3, c);
@@ -1450,26 +1118,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _builder_2.append(_compile_5, "");
           result = _builder_2.toString();
         } else {
-          boolean _or_2 = false;
-          boolean _or_3 = false;
-          boolean _isNull_5 = leftType.isNull();
-          if (_isNull_5) {
-            _or_3 = true;
-          } else {
-            boolean _isNull_6 = rightType.isNull();
-            _or_3 = _isNull_6;
-          }
-          if (_or_3) {
-            _or_2 = true;
-          } else {
-            JvmTypeReference _ref_9 = leftType.getRef();
-            JvmTypeReference _ref_10 = rightType.getRef();
-            boolean _isCastable = this.lookUp.isCastable(_ref_9, _ref_10);
-            _or_2 = _isCastable;
-          }
-          if (_or_2) {
-            JvmTypeReference _ref_11 = leftType.getRef();
-            String target = this.typeCompiler.compile(_ref_11, c, false);
+          if (((leftType.isNull() || rightType.isNull()) || this.lookUp.isCastable(leftType.getRef(), rightType.getRef()))) {
+            JvmTypeReference _ref_5 = leftType.getRef();
+            String target = this.typeCompiler.compile(_ref_5, c, false);
             StringConcatenation _builder_3 = new StringConcatenation();
             IQLExpression _leftOperand_4 = e.getLeftOperand();
             String _compile_6 = this.compile(_leftOperand_4, c);
@@ -1504,85 +1155,35 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       c.setExpectedTypeRef(null);
       return result;
     } else {
-      boolean _and_3 = false;
-      boolean _isNull_7 = leftType.isNull();
-      boolean _not_4 = (!_isNull_7);
-      if (!_not_4) {
-        _and_3 = false;
-      } else {
-        String _op_6 = e.getOp();
-        boolean _equals_1 = _op_6.equals("+=");
-        _and_3 = _equals_1;
-      }
-      if (_and_3) {
-        JvmTypeReference _ref_12 = leftType.getRef();
+      if (((!leftType.isNull()) && e.getOp().equals("+="))) {
+        JvmTypeReference _ref_6 = leftType.getRef();
         IQLExpression _leftOperand_6 = e.getLeftOperand();
         IQLExpression _rightOperand_6 = e.getRightOperand();
-        return this.compileOperatorOverloading("+", IQLOperatorOverloadingUtils.PLUS, _ref_12, _leftOperand_6, _rightOperand_6, c);
+        return this.compileOperatorOverloading("+", IQLOperatorOverloadingUtils.PLUS, _ref_6, _leftOperand_6, _rightOperand_6, c);
       } else {
-        boolean _and_4 = false;
-        boolean _isNull_8 = leftType.isNull();
-        boolean _not_5 = (!_isNull_8);
-        if (!_not_5) {
-          _and_4 = false;
-        } else {
-          String _op_7 = e.getOp();
-          boolean _equals_2 = _op_7.equals("-=");
-          _and_4 = _equals_2;
-        }
-        if (_and_4) {
-          JvmTypeReference _ref_13 = leftType.getRef();
+        if (((!leftType.isNull()) && e.getOp().equals("-="))) {
+          JvmTypeReference _ref_7 = leftType.getRef();
           IQLExpression _leftOperand_7 = e.getLeftOperand();
           IQLExpression _rightOperand_7 = e.getRightOperand();
-          return this.compileOperatorOverloading("-", IQLOperatorOverloadingUtils.MINUS, _ref_13, _leftOperand_7, _rightOperand_7, c);
+          return this.compileOperatorOverloading("-", IQLOperatorOverloadingUtils.MINUS, _ref_7, _leftOperand_7, _rightOperand_7, c);
         } else {
-          boolean _and_5 = false;
-          boolean _isNull_9 = leftType.isNull();
-          boolean _not_6 = (!_isNull_9);
-          if (!_not_6) {
-            _and_5 = false;
-          } else {
-            String _op_8 = e.getOp();
-            boolean _equals_3 = _op_8.equals("*=");
-            _and_5 = _equals_3;
-          }
-          if (_and_5) {
-            JvmTypeReference _ref_14 = leftType.getRef();
+          if (((!leftType.isNull()) && e.getOp().equals("*="))) {
+            JvmTypeReference _ref_8 = leftType.getRef();
             IQLExpression _leftOperand_8 = e.getLeftOperand();
             IQLExpression _rightOperand_8 = e.getRightOperand();
-            return this.compileOperatorOverloading("*", IQLOperatorOverloadingUtils.MULTIPLY, _ref_14, _leftOperand_8, _rightOperand_8, c);
+            return this.compileOperatorOverloading("*", IQLOperatorOverloadingUtils.MULTIPLY, _ref_8, _leftOperand_8, _rightOperand_8, c);
           } else {
-            boolean _and_6 = false;
-            boolean _isNull_10 = leftType.isNull();
-            boolean _not_7 = (!_isNull_10);
-            if (!_not_7) {
-              _and_6 = false;
-            } else {
-              String _op_9 = e.getOp();
-              boolean _equals_4 = _op_9.equals("/=");
-              _and_6 = _equals_4;
-            }
-            if (_and_6) {
-              JvmTypeReference _ref_15 = leftType.getRef();
+            if (((!leftType.isNull()) && e.getOp().equals("/="))) {
+              JvmTypeReference _ref_9 = leftType.getRef();
               IQLExpression _leftOperand_9 = e.getLeftOperand();
               IQLExpression _rightOperand_9 = e.getRightOperand();
-              return this.compileOperatorOverloading("/", IQLOperatorOverloadingUtils.DIVIDE, _ref_15, _leftOperand_9, _rightOperand_9, c);
+              return this.compileOperatorOverloading("/", IQLOperatorOverloadingUtils.DIVIDE, _ref_9, _leftOperand_9, _rightOperand_9, c);
             } else {
-              boolean _and_7 = false;
-              boolean _isNull_11 = leftType.isNull();
-              boolean _not_8 = (!_isNull_11);
-              if (!_not_8) {
-                _and_7 = false;
-              } else {
-                String _op_10 = e.getOp();
-                boolean _equals_5 = _op_10.equals("%=");
-                _and_7 = _equals_5;
-              }
-              if (_and_7) {
-                JvmTypeReference _ref_16 = leftType.getRef();
+              if (((!leftType.isNull()) && e.getOp().equals("%="))) {
+                JvmTypeReference _ref_10 = leftType.getRef();
                 IQLExpression _leftOperand_10 = e.getLeftOperand();
                 IQLExpression _rightOperand_10 = e.getRightOperand();
-                return this.compileOperatorOverloading("%", IQLOperatorOverloadingUtils.MODULO, _ref_16, _leftOperand_10, _rightOperand_10, c);
+                return this.compileOperatorOverloading("%", IQLOperatorOverloadingUtils.MODULO, _ref_10, _leftOperand_10, _rightOperand_10, c);
               } else {
                 return "";
               }
@@ -1597,23 +1198,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
-    boolean _and = false;
-    boolean _isNull = left.isNull();
-    boolean _not = (!_isNull);
-    if (!_not) {
-      _and = false;
-    } else {
-      JvmTypeReference _ref = left.getRef();
-      IQLExpression _rightOperand = e.getRightOperand();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.LOGICAL_OR, _rightOperand);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!left.isNull()) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.LOGICAL_OR, e.getRightOperand()))) {
       String _op = e.getOp();
-      JvmTypeReference _ref_1 = left.getRef();
+      JvmTypeReference _ref = left.getRef();
       IQLExpression _leftOperand_1 = e.getLeftOperand();
-      IQLExpression _rightOperand_1 = e.getRightOperand();
-      String _compileOperatorOverloading = this.compileOperatorOverloading(_op, IQLOperatorOverloadingUtils.LOGICAL_OR, _ref_1, _leftOperand_1, _rightOperand_1, c);
+      IQLExpression _rightOperand = e.getRightOperand();
+      String _compileOperatorOverloading = this.compileOperatorOverloading(_op, IQLOperatorOverloadingUtils.LOGICAL_OR, _ref, _leftOperand_1, _rightOperand, c);
       result = _compileOperatorOverloading;
     } else {
       StringConcatenation _builder = new StringConcatenation();
@@ -1624,8 +1214,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       String _op_1 = e.getOp();
       _builder.append(_op_1, "");
       _builder.append(" ");
-      IQLExpression _rightOperand_2 = e.getRightOperand();
-      String _compile_1 = this.compile(_rightOperand_2, c);
+      IQLExpression _rightOperand_1 = e.getRightOperand();
+      String _compile_1 = this.compile(_rightOperand_1, c);
       _builder.append(_compile_1, "");
       result = _builder.toString();
     }
@@ -1636,23 +1226,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
-    boolean _and = false;
-    boolean _isNull = left.isNull();
-    boolean _not = (!_isNull);
-    if (!_not) {
-      _and = false;
-    } else {
-      JvmTypeReference _ref = left.getRef();
-      IQLExpression _rightOperand = e.getRightOperand();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.LOGICAL_AND, _rightOperand);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!left.isNull()) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.LOGICAL_AND, e.getRightOperand()))) {
       String _op = e.getOp();
-      JvmTypeReference _ref_1 = left.getRef();
+      JvmTypeReference _ref = left.getRef();
       IQLExpression _leftOperand_1 = e.getLeftOperand();
-      IQLExpression _rightOperand_1 = e.getRightOperand();
-      String _compileOperatorOverloading = this.compileOperatorOverloading(_op, IQLOperatorOverloadingUtils.LOGICAL_AND, _ref_1, _leftOperand_1, _rightOperand_1, c);
+      IQLExpression _rightOperand = e.getRightOperand();
+      String _compileOperatorOverloading = this.compileOperatorOverloading(_op, IQLOperatorOverloadingUtils.LOGICAL_AND, _ref, _leftOperand_1, _rightOperand, c);
       result = _compileOperatorOverloading;
     } else {
       StringConcatenation _builder = new StringConcatenation();
@@ -1663,8 +1242,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       String _op_1 = e.getOp();
       _builder.append(_op_1, "");
       _builder.append(" ");
-      IQLExpression _rightOperand_2 = e.getRightOperand();
-      String _compile_1 = this.compile(_rightOperand_2, c);
+      IQLExpression _rightOperand_1 = e.getRightOperand();
+      String _compile_1 = this.compile(_rightOperand_1, c);
       _builder.append(_compile_1, "");
       result = _builder.toString();
     }
@@ -1675,74 +1254,36 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
-    boolean _and = false;
-    boolean _and_1 = false;
-    boolean _isNull = left.isNull();
-    boolean _not = (!_isNull);
-    if (!_not) {
-      _and_1 = false;
-    } else {
-      String _op = e.getOp();
-      boolean _equals = _op.equals("==");
-      _and_1 = _equals;
-    }
-    if (!_and_1) {
-      _and = false;
-    } else {
+    if ((((!left.isNull()) && e.getOp().equals("==")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.EQUALS, e.getRightOperand()))) {
       JvmTypeReference _ref = left.getRef();
-      IQLExpression _rightOperand = e.getRightOperand();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.EQUALS, _rightOperand);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
-      JvmTypeReference _ref_1 = left.getRef();
       IQLExpression _leftOperand_1 = e.getLeftOperand();
-      IQLExpression _rightOperand_1 = e.getRightOperand();
-      String _compileOperatorOverloading = this.compileOperatorOverloading("==", IQLOperatorOverloadingUtils.EQUALS, _ref_1, _leftOperand_1, _rightOperand_1, c);
+      IQLExpression _rightOperand = e.getRightOperand();
+      String _compileOperatorOverloading = this.compileOperatorOverloading("==", IQLOperatorOverloadingUtils.EQUALS, _ref, _leftOperand_1, _rightOperand, c);
       result = _compileOperatorOverloading;
     } else {
-      boolean _and_2 = false;
-      boolean _and_3 = false;
-      boolean _isNull_1 = left.isNull();
-      boolean _not_1 = (!_isNull_1);
-      if (!_not_1) {
-        _and_3 = false;
-      } else {
-        String _op_1 = e.getOp();
-        boolean _equals_1 = _op_1.equals("!=");
-        _and_3 = _equals_1;
-      }
-      if (!_and_3) {
-        _and_2 = false;
-      } else {
-        JvmTypeReference _ref_2 = left.getRef();
-        IQLExpression _rightOperand_2 = e.getRightOperand();
-        boolean _hasTypeExtensions_1 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_2, IQLOperatorOverloadingUtils.EQUALS_NOT, _rightOperand_2);
-        _and_2 = _hasTypeExtensions_1;
-      }
-      if (_and_2) {
-        JvmTypeReference _ref_3 = left.getRef();
+      if ((((!left.isNull()) && e.getOp().equals("!=")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.EQUALS_NOT, e.getRightOperand()))) {
+        JvmTypeReference _ref_1 = left.getRef();
         IQLExpression _leftOperand_2 = e.getLeftOperand();
-        IQLExpression _rightOperand_3 = e.getRightOperand();
-        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("!=", IQLOperatorOverloadingUtils.EQUALS_NOT, _ref_3, _leftOperand_2, _rightOperand_3, c);
+        IQLExpression _rightOperand_1 = e.getRightOperand();
+        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("!=", IQLOperatorOverloadingUtils.EQUALS_NOT, _ref_1, _leftOperand_2, _rightOperand_1, c);
         result = _compileOperatorOverloading_1;
       } else {
-        boolean _isNull_2 = left.isNull();
-        boolean _not_2 = (!_isNull_2);
-        if (_not_2) {
-          JvmTypeReference _ref_4 = left.getRef();
-          c.setExpectedTypeRef(_ref_4);
+        boolean _isNull = left.isNull();
+        boolean _not = (!_isNull);
+        if (_not) {
+          JvmTypeReference _ref_2 = left.getRef();
+          c.setExpectedTypeRef(_ref_2);
         }
         StringConcatenation _builder = new StringConcatenation();
         IQLExpression _leftOperand_3 = e.getLeftOperand();
         String _compile = this.compile(_leftOperand_3, c);
         _builder.append(_compile, "");
         _builder.append(" ");
-        String _op_2 = e.getOp();
-        _builder.append(_op_2, "");
+        String _op = e.getOp();
+        _builder.append(_op, "");
         _builder.append(" ");
-        IQLExpression _rightOperand_4 = e.getRightOperand();
-        String _compile_1 = this.compile(_rightOperand_4, c);
+        IQLExpression _rightOperand_2 = e.getRightOperand();
+        String _compile_1 = this.compile(_rightOperand_2, c);
         _builder.append(_compile_1, "");
         result = _builder.toString();
       }
@@ -1755,126 +1296,50 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
-    boolean _and = false;
-    boolean _and_1 = false;
-    boolean _isNull = left.isNull();
-    boolean _not = (!_isNull);
-    if (!_not) {
-      _and_1 = false;
-    } else {
-      String _op = e.getOp();
-      boolean _equals = _op.equals(">");
-      _and_1 = _equals;
-    }
-    if (!_and_1) {
-      _and = false;
-    } else {
+    if ((((!left.isNull()) && e.getOp().equals(">")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.GREATER_THAN, e.getRightOperand()))) {
       JvmTypeReference _ref = left.getRef();
-      IQLExpression _rightOperand = e.getRightOperand();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.GREATER_THAN, _rightOperand);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
-      JvmTypeReference _ref_1 = left.getRef();
       IQLExpression _leftOperand_1 = e.getLeftOperand();
-      IQLExpression _rightOperand_1 = e.getRightOperand();
-      String _compileOperatorOverloading = this.compileOperatorOverloading(">", IQLOperatorOverloadingUtils.GREATER_THAN, _ref_1, _leftOperand_1, _rightOperand_1, c);
+      IQLExpression _rightOperand = e.getRightOperand();
+      String _compileOperatorOverloading = this.compileOperatorOverloading(">", IQLOperatorOverloadingUtils.GREATER_THAN, _ref, _leftOperand_1, _rightOperand, c);
       result = _compileOperatorOverloading;
     } else {
-      boolean _and_2 = false;
-      boolean _and_3 = false;
-      boolean _isNull_1 = left.isNull();
-      boolean _not_1 = (!_isNull_1);
-      if (!_not_1) {
-        _and_3 = false;
-      } else {
-        String _op_1 = e.getOp();
-        boolean _equals_1 = _op_1.equals("<");
-        _and_3 = _equals_1;
-      }
-      if (!_and_3) {
-        _and_2 = false;
-      } else {
-        JvmTypeReference _ref_2 = left.getRef();
-        IQLExpression _rightOperand_2 = e.getRightOperand();
-        boolean _hasTypeExtensions_1 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_2, IQLOperatorOverloadingUtils.LESS_THAN, _rightOperand_2);
-        _and_2 = _hasTypeExtensions_1;
-      }
-      if (_and_2) {
-        JvmTypeReference _ref_3 = left.getRef();
+      if ((((!left.isNull()) && e.getOp().equals("<")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.LESS_THAN, e.getRightOperand()))) {
+        JvmTypeReference _ref_1 = left.getRef();
         IQLExpression _leftOperand_2 = e.getLeftOperand();
-        IQLExpression _rightOperand_3 = e.getRightOperand();
-        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("<", IQLOperatorOverloadingUtils.LESS_THAN, _ref_3, _leftOperand_2, _rightOperand_3, c);
+        IQLExpression _rightOperand_1 = e.getRightOperand();
+        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("<", IQLOperatorOverloadingUtils.LESS_THAN, _ref_1, _leftOperand_2, _rightOperand_1, c);
         result = _compileOperatorOverloading_1;
       } else {
-        boolean _and_4 = false;
-        boolean _and_5 = false;
-        boolean _isNull_2 = left.isNull();
-        boolean _not_2 = (!_isNull_2);
-        if (!_not_2) {
-          _and_5 = false;
-        } else {
-          String _op_2 = e.getOp();
-          boolean _equals_2 = _op_2.equals(">=");
-          _and_5 = _equals_2;
-        }
-        if (!_and_5) {
-          _and_4 = false;
-        } else {
-          JvmTypeReference _ref_4 = left.getRef();
-          IQLExpression _rightOperand_4 = e.getRightOperand();
-          boolean _hasTypeExtensions_2 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_4, IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, _rightOperand_4);
-          _and_4 = _hasTypeExtensions_2;
-        }
-        if (_and_4) {
-          JvmTypeReference _ref_5 = left.getRef();
+        if ((((!left.isNull()) && e.getOp().equals(">=")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, e.getRightOperand()))) {
+          JvmTypeReference _ref_2 = left.getRef();
           IQLExpression _leftOperand_3 = e.getLeftOperand();
-          IQLExpression _rightOperand_5 = e.getRightOperand();
-          String _compileOperatorOverloading_2 = this.compileOperatorOverloading(">=", IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, _ref_5, _leftOperand_3, _rightOperand_5, c);
+          IQLExpression _rightOperand_2 = e.getRightOperand();
+          String _compileOperatorOverloading_2 = this.compileOperatorOverloading(">=", IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, _ref_2, _leftOperand_3, _rightOperand_2, c);
           result = _compileOperatorOverloading_2;
         } else {
-          boolean _and_6 = false;
-          boolean _and_7 = false;
-          boolean _isNull_3 = left.isNull();
-          boolean _not_3 = (!_isNull_3);
-          if (!_not_3) {
-            _and_7 = false;
-          } else {
-            String _op_3 = e.getOp();
-            boolean _equals_3 = _op_3.equals("<=");
-            _and_7 = _equals_3;
-          }
-          if (!_and_7) {
-            _and_6 = false;
-          } else {
-            JvmTypeReference _ref_6 = left.getRef();
-            IQLExpression _rightOperand_6 = e.getRightOperand();
-            boolean _hasTypeExtensions_3 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_6, IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, _rightOperand_6);
-            _and_6 = _hasTypeExtensions_3;
-          }
-          if (_and_6) {
-            JvmTypeReference _ref_7 = left.getRef();
+          if ((((!left.isNull()) && e.getOp().equals("<=")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, e.getRightOperand()))) {
+            JvmTypeReference _ref_3 = left.getRef();
             IQLExpression _leftOperand_4 = e.getLeftOperand();
-            IQLExpression _rightOperand_7 = e.getRightOperand();
-            String _compileOperatorOverloading_3 = this.compileOperatorOverloading("<=", IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, _ref_7, _leftOperand_4, _rightOperand_7, c);
+            IQLExpression _rightOperand_3 = e.getRightOperand();
+            String _compileOperatorOverloading_3 = this.compileOperatorOverloading("<=", IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, _ref_3, _leftOperand_4, _rightOperand_3, c);
             result = _compileOperatorOverloading_3;
           } else {
-            boolean _isNull_4 = left.isNull();
-            boolean _not_4 = (!_isNull_4);
-            if (_not_4) {
-              JvmTypeReference _ref_8 = left.getRef();
-              c.setExpectedTypeRef(_ref_8);
+            boolean _isNull = left.isNull();
+            boolean _not = (!_isNull);
+            if (_not) {
+              JvmTypeReference _ref_4 = left.getRef();
+              c.setExpectedTypeRef(_ref_4);
             }
             StringConcatenation _builder = new StringConcatenation();
             IQLExpression _leftOperand_5 = e.getLeftOperand();
             String _compile = this.compile(_leftOperand_5, c);
             _builder.append(_compile, "");
             _builder.append(" ");
-            String _op_4 = e.getOp();
-            _builder.append(_op_4, "");
+            String _op = e.getOp();
+            _builder.append(_op, "");
             _builder.append(" ");
-            IQLExpression _rightOperand_8 = e.getRightOperand();
-            String _compile_1 = this.compile(_rightOperand_8, c);
+            IQLExpression _rightOperand_4 = e.getRightOperand();
+            String _compile_1 = this.compile(_rightOperand_4, c);
             _builder.append(_compile_1, "");
             result = _builder.toString();
           }
@@ -1909,32 +1374,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     JvmTypeReference targetType = _get.getParameterType();
     c.setExpectedTypeRef(targetType);
     String result = "";
-    boolean _and = false;
-    boolean _and_1 = false;
-    boolean _and_2 = false;
-    boolean _notEquals = (!Objects.equal(targetType, null));
-    if (!_notEquals) {
-      _and_2 = false;
-    } else {
-      boolean _isJvmArray = this.helper.isJvmArray(targetType);
-      _and_2 = _isJvmArray;
-    }
-    if (!_and_2) {
-      _and_1 = false;
-    } else {
-      boolean _isNull = rightType.isNull();
-      boolean _not = (!_isNull);
-      _and_1 = _not;
-    }
-    if (!_and_1) {
-      _and = false;
-    } else {
-      JvmTypeReference _ref = rightType.getRef();
-      boolean _isJvmArray_1 = this.helper.isJvmArray(_ref);
-      boolean _not_1 = (!_isJvmArray_1);
-      _and = _not_1;
-    }
-    if (_and) {
+    if (((((!Objects.equal(targetType, null)) && this.helper.isJvmArray(targetType)) && (!rightType.isNull())) && (!this.helper.isJvmArray(rightType.getRef())))) {
       String _canonicalName_1 = IQLUtils.class.getCanonicalName();
       c.addImport(_canonicalName_1);
       boolean _isPrimitiveArray = this.helper.isPrimitiveArray(targetType);
@@ -1987,17 +1427,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         result = _builder_1.toString();
       }
     } else {
-      boolean _and_3 = false;
-      boolean _isNull_1 = rightType.isNull();
-      boolean _not_2 = (!_isNull_1);
-      if (!_not_2) {
-        _and_3 = false;
-      } else {
-        JvmTypeReference _ref_1 = rightType.getRef();
-        boolean _isAssignable = this.lookUp.isAssignable(targetType, _ref_1);
-        _and_3 = _isAssignable;
-      }
-      if (_and_3) {
+      if (((!rightType.isNull()) && this.lookUp.isAssignable(targetType, rightType.getRef()))) {
         StringConcatenation _builder_2 = new StringConcatenation();
         Class<? extends IIQLTypeExtensions> _class_3 = typeOps.getClass();
         String _simpleName_4 = _class_3.getSimpleName();
@@ -2013,16 +1443,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _builder_2.append(")");
         result = _builder_2.toString();
       } else {
-        boolean _or = false;
-        boolean _isNull_2 = rightType.isNull();
-        if (_isNull_2) {
-          _or = true;
-        } else {
-          JvmTypeReference _ref_2 = rightType.getRef();
-          boolean _isCastable = this.lookUp.isCastable(targetType, _ref_2);
-          _or = _isCastable;
-        }
-        if (_or) {
+        if ((rightType.isNull() || this.lookUp.isCastable(targetType, rightType.getRef()))) {
           String target = this.typeCompiler.compile(targetType, c, false);
           StringConcatenation _builder_3 = new StringConcatenation();
           Class<? extends IIQLTypeExtensions> _class_4 = typeOps.getClass();
@@ -2066,74 +1487,36 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
-    boolean _and = false;
-    boolean _and_1 = false;
-    boolean _isNull = left.isNull();
-    boolean _not = (!_isNull);
-    if (!_not) {
-      _and_1 = false;
-    } else {
-      String _op = e.getOp();
-      boolean _equals = _op.equals("+");
-      _and_1 = _equals;
-    }
-    if (!_and_1) {
-      _and = false;
-    } else {
+    if ((((!left.isNull()) && e.getOp().equals("+")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.PLUS, e.getRightOperand()))) {
       JvmTypeReference _ref = left.getRef();
-      IQLExpression _rightOperand = e.getRightOperand();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.PLUS, _rightOperand);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
-      JvmTypeReference _ref_1 = left.getRef();
       IQLExpression _leftOperand_1 = e.getLeftOperand();
-      IQLExpression _rightOperand_1 = e.getRightOperand();
-      String _compileOperatorOverloading = this.compileOperatorOverloading("+", IQLOperatorOverloadingUtils.PLUS, _ref_1, _leftOperand_1, _rightOperand_1, c);
+      IQLExpression _rightOperand = e.getRightOperand();
+      String _compileOperatorOverloading = this.compileOperatorOverloading("+", IQLOperatorOverloadingUtils.PLUS, _ref, _leftOperand_1, _rightOperand, c);
       result = _compileOperatorOverloading;
     } else {
-      boolean _and_2 = false;
-      boolean _and_3 = false;
-      boolean _isNull_1 = left.isNull();
-      boolean _not_1 = (!_isNull_1);
-      if (!_not_1) {
-        _and_3 = false;
-      } else {
-        String _op_1 = e.getOp();
-        boolean _equals_1 = _op_1.equals("-");
-        _and_3 = _equals_1;
-      }
-      if (!_and_3) {
-        _and_2 = false;
-      } else {
-        JvmTypeReference _ref_2 = left.getRef();
-        IQLExpression _rightOperand_2 = e.getRightOperand();
-        boolean _hasTypeExtensions_1 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_2, IQLOperatorOverloadingUtils.MINUS, _rightOperand_2);
-        _and_2 = _hasTypeExtensions_1;
-      }
-      if (_and_2) {
-        JvmTypeReference _ref_3 = left.getRef();
+      if ((((!left.isNull()) && e.getOp().equals("-")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.MINUS, e.getRightOperand()))) {
+        JvmTypeReference _ref_1 = left.getRef();
         IQLExpression _leftOperand_2 = e.getLeftOperand();
-        IQLExpression _rightOperand_3 = e.getRightOperand();
-        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("-", IQLOperatorOverloadingUtils.MINUS, _ref_3, _leftOperand_2, _rightOperand_3, c);
+        IQLExpression _rightOperand_1 = e.getRightOperand();
+        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("-", IQLOperatorOverloadingUtils.MINUS, _ref_1, _leftOperand_2, _rightOperand_1, c);
         result = _compileOperatorOverloading_1;
       } else {
-        boolean _isNull_2 = left.isNull();
-        boolean _not_2 = (!_isNull_2);
-        if (_not_2) {
-          JvmTypeReference _ref_4 = left.getRef();
-          c.setExpectedTypeRef(_ref_4);
+        boolean _isNull = left.isNull();
+        boolean _not = (!_isNull);
+        if (_not) {
+          JvmTypeReference _ref_2 = left.getRef();
+          c.setExpectedTypeRef(_ref_2);
         }
         StringConcatenation _builder = new StringConcatenation();
         IQLExpression _leftOperand_3 = e.getLeftOperand();
         String _compile = this.compile(_leftOperand_3, c);
         _builder.append(_compile, "");
         _builder.append(" ");
-        String _op_2 = e.getOp();
-        _builder.append(_op_2, "");
+        String _op = e.getOp();
+        _builder.append(_op, "");
         _builder.append(" ");
-        IQLExpression _rightOperand_4 = e.getRightOperand();
-        String _compile_1 = this.compile(_rightOperand_4, c);
+        IQLExpression _rightOperand_2 = e.getRightOperand();
+        String _compile_1 = this.compile(_rightOperand_2, c);
         _builder.append(_compile_1, "");
         result = _builder.toString();
       }
@@ -2146,100 +1529,43 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
-    boolean _and = false;
-    boolean _and_1 = false;
-    boolean _isNull = left.isNull();
-    boolean _not = (!_isNull);
-    if (!_not) {
-      _and_1 = false;
-    } else {
-      String _op = e.getOp();
-      boolean _equals = _op.equals("*");
-      _and_1 = _equals;
-    }
-    if (!_and_1) {
-      _and = false;
-    } else {
+    if ((((!left.isNull()) && e.getOp().equals("*")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.MULTIPLY, e.getRightOperand()))) {
       JvmTypeReference _ref = left.getRef();
-      IQLExpression _rightOperand = e.getRightOperand();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.MULTIPLY, _rightOperand);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
-      JvmTypeReference _ref_1 = left.getRef();
       IQLExpression _leftOperand_1 = e.getLeftOperand();
-      IQLExpression _rightOperand_1 = e.getRightOperand();
-      String _compileOperatorOverloading = this.compileOperatorOverloading("*", IQLOperatorOverloadingUtils.MULTIPLY, _ref_1, _leftOperand_1, _rightOperand_1, c);
+      IQLExpression _rightOperand = e.getRightOperand();
+      String _compileOperatorOverloading = this.compileOperatorOverloading("*", IQLOperatorOverloadingUtils.MULTIPLY, _ref, _leftOperand_1, _rightOperand, c);
       result = _compileOperatorOverloading;
     } else {
-      boolean _and_2 = false;
-      boolean _and_3 = false;
-      boolean _isNull_1 = left.isNull();
-      boolean _not_1 = (!_isNull_1);
-      if (!_not_1) {
-        _and_3 = false;
-      } else {
-        String _op_1 = e.getOp();
-        boolean _equals_1 = _op_1.equals("/");
-        _and_3 = _equals_1;
-      }
-      if (!_and_3) {
-        _and_2 = false;
-      } else {
-        JvmTypeReference _ref_2 = left.getRef();
-        IQLExpression _rightOperand_2 = e.getRightOperand();
-        boolean _hasTypeExtensions_1 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_2, IQLOperatorOverloadingUtils.DIVIDE, _rightOperand_2);
-        _and_2 = _hasTypeExtensions_1;
-      }
-      if (_and_2) {
-        JvmTypeReference _ref_3 = left.getRef();
+      if ((((!left.isNull()) && e.getOp().equals("/")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.DIVIDE, e.getRightOperand()))) {
+        JvmTypeReference _ref_1 = left.getRef();
         IQLExpression _leftOperand_2 = e.getLeftOperand();
-        IQLExpression _rightOperand_3 = e.getRightOperand();
-        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("/", IQLOperatorOverloadingUtils.DIVIDE, _ref_3, _leftOperand_2, _rightOperand_3, c);
+        IQLExpression _rightOperand_1 = e.getRightOperand();
+        String _compileOperatorOverloading_1 = this.compileOperatorOverloading("/", IQLOperatorOverloadingUtils.DIVIDE, _ref_1, _leftOperand_2, _rightOperand_1, c);
         result = _compileOperatorOverloading_1;
       } else {
-        boolean _and_4 = false;
-        boolean _and_5 = false;
-        boolean _isNull_2 = left.isNull();
-        boolean _not_2 = (!_isNull_2);
-        if (!_not_2) {
-          _and_5 = false;
-        } else {
-          String _op_2 = e.getOp();
-          boolean _equals_2 = _op_2.equals("%");
-          _and_5 = _equals_2;
-        }
-        if (!_and_5) {
-          _and_4 = false;
-        } else {
-          JvmTypeReference _ref_4 = left.getRef();
-          IQLExpression _rightOperand_4 = e.getRightOperand();
-          boolean _hasTypeExtensions_2 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_4, IQLOperatorOverloadingUtils.MODULO, _rightOperand_4);
-          _and_4 = _hasTypeExtensions_2;
-        }
-        if (_and_4) {
-          JvmTypeReference _ref_5 = left.getRef();
+        if ((((!left.isNull()) && e.getOp().equals("%")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.MODULO, e.getRightOperand()))) {
+          JvmTypeReference _ref_2 = left.getRef();
           IQLExpression _leftOperand_3 = e.getLeftOperand();
-          IQLExpression _rightOperand_5 = e.getRightOperand();
-          String _compileOperatorOverloading_2 = this.compileOperatorOverloading("%", IQLOperatorOverloadingUtils.MODULO, _ref_5, _leftOperand_3, _rightOperand_5, c);
+          IQLExpression _rightOperand_2 = e.getRightOperand();
+          String _compileOperatorOverloading_2 = this.compileOperatorOverloading("%", IQLOperatorOverloadingUtils.MODULO, _ref_2, _leftOperand_3, _rightOperand_2, c);
           result = _compileOperatorOverloading_2;
         } else {
-          boolean _isNull_3 = left.isNull();
-          boolean _not_3 = (!_isNull_3);
-          if (_not_3) {
-            JvmTypeReference _ref_6 = left.getRef();
-            c.setExpectedTypeRef(_ref_6);
+          boolean _isNull = left.isNull();
+          boolean _not = (!_isNull);
+          if (_not) {
+            JvmTypeReference _ref_3 = left.getRef();
+            c.setExpectedTypeRef(_ref_3);
           }
           StringConcatenation _builder = new StringConcatenation();
           IQLExpression _leftOperand_4 = e.getLeftOperand();
           String _compile = this.compile(_leftOperand_4, c);
           _builder.append(_compile, "");
           _builder.append(" ");
-          String _op_3 = e.getOp();
-          _builder.append(_op_3, "");
+          String _op = e.getOp();
+          _builder.append(_op, "");
           _builder.append(" ");
-          IQLExpression _rightOperand_6 = e.getRightOperand();
-          String _compile_1 = this.compile(_rightOperand_6, c);
+          IQLExpression _rightOperand_3 = e.getRightOperand();
+          String _compile_1 = this.compile(_rightOperand_3, c);
           _builder.append(_compile_1, "");
           result = _builder.toString();
         }
@@ -2255,32 +1581,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       IQLExpression _operand = e.getOperand();
       TypeResult left = this.exprEvaluator.eval(_operand);
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _and_1 = false;
-      boolean _isNull = left.isNull();
-      boolean _not = (!_isNull);
-      if (!_not) {
-        _and_1 = false;
-      } else {
-        String _op = e.getOp();
-        boolean _equals = _op.equals("+");
-        _and_1 = _equals;
-      }
-      if (!_and_1) {
-        _and = false;
-      } else {
-        JvmTypeReference _ref = left.getRef();
-        ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX, _arrayList);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if ((((!left.isNull()) && e.getOp().equals("+")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX, new ArrayList<IQLExpression>()))) {
         String _xblockexpression_1 = null;
         {
           String methodName = IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX;
-          JvmTypeReference _ref_1 = left.getRef();
-          ArrayList<IQLExpression> _arrayList_1 = new ArrayList<IQLExpression>();
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_1, methodName, _arrayList_1);
+          JvmTypeReference _ref = left.getRef();
+          ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _arrayList);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
@@ -2300,32 +1607,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _and_2 = false;
-        boolean _and_3 = false;
-        boolean _isNull_1 = left.isNull();
-        boolean _not_1 = (!_isNull_1);
-        if (!_not_1) {
-          _and_3 = false;
-        } else {
-          String _op_1 = e.getOp();
-          boolean _equals_1 = _op_1.equals("-");
-          _and_3 = _equals_1;
-        }
-        if (!_and_3) {
-          _and_2 = false;
-        } else {
-          JvmTypeReference _ref_1 = left.getRef();
-          ArrayList<IQLExpression> _arrayList_1 = new ArrayList<IQLExpression>();
-          boolean _hasTypeExtensions_1 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_1, IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX, _arrayList_1);
-          _and_2 = _hasTypeExtensions_1;
-        }
-        if (_and_2) {
+        if ((((!left.isNull()) && e.getOp().equals("-")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX, new ArrayList<IQLExpression>()))) {
           String _xblockexpression_2 = null;
           {
             String methodName = IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX;
-            JvmTypeReference _ref_2 = left.getRef();
-            ArrayList<IQLExpression> _arrayList_2 = new ArrayList<IQLExpression>();
-            IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_2, methodName, _arrayList_2);
+            JvmTypeReference _ref = left.getRef();
+            ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
+            IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _arrayList);
             Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
             String _canonicalName = _class.getCanonicalName();
             c.addImport(_canonicalName);
@@ -2345,8 +1633,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _xifexpression_1 = _xblockexpression_2;
         } else {
           StringConcatenation _builder = new StringConcatenation();
-          String _op_2 = e.getOp();
-          _builder.append(_op_2, "");
+          String _op = e.getOp();
+          _builder.append(_op, "");
           IQLExpression _operand_1 = e.getOperand();
           String _compile = this.compile(_operand_1, c);
           _builder.append(_compile, "");
@@ -2366,23 +1654,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       TypeResult left = this.exprEvaluator.eval(_operand);
       String methodName = IQLOperatorOverloadingUtils.BOOLEAN_NOT_PREFIX;
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _isNull = left.isNull();
-      boolean _not = (!_isNull);
-      if (!_not) {
-        _and = false;
-      } else {
-        JvmTypeReference _ref = left.getRef();
-        ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, methodName, _arrayList);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if (((!left.isNull()) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), methodName, new ArrayList<IQLExpression>()))) {
         String _xblockexpression_1 = null;
         {
-          JvmTypeReference _ref_1 = left.getRef();
-          ArrayList<IQLExpression> _arrayList_1 = new ArrayList<IQLExpression>();
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_1, methodName, _arrayList_1);
+          JvmTypeReference _ref = left.getRef();
+          ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _arrayList);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
@@ -2420,32 +1697,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       IQLExpression _operand = e.getOperand();
       TypeResult left = this.exprEvaluator.eval(_operand);
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _and_1 = false;
-      boolean _isNull = left.isNull();
-      boolean _not = (!_isNull);
-      if (!_not) {
-        _and_1 = false;
-      } else {
-        String _op = e.getOp();
-        boolean _equals = _op.equals("++");
-        _and_1 = _equals;
-      }
-      if (!_and_1) {
-        _and = false;
-      } else {
-        JvmTypeReference _ref = left.getRef();
-        ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.PLUS_PREFIX, _arrayList);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if ((((!left.isNull()) && e.getOp().equals("++")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.PLUS_PREFIX, new ArrayList<IQLExpression>()))) {
         String _xblockexpression_1 = null;
         {
           String methodName = IQLOperatorOverloadingUtils.PLUS_PREFIX;
-          JvmTypeReference _ref_1 = left.getRef();
-          ArrayList<IQLExpression> _arrayList_1 = new ArrayList<IQLExpression>();
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_1, methodName, _arrayList_1);
+          JvmTypeReference _ref = left.getRef();
+          ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _arrayList);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
@@ -2465,32 +1723,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _and_2 = false;
-        boolean _and_3 = false;
-        boolean _isNull_1 = left.isNull();
-        boolean _not_1 = (!_isNull_1);
-        if (!_not_1) {
-          _and_3 = false;
-        } else {
-          String _op_1 = e.getOp();
-          boolean _equals_1 = _op_1.equals("--");
-          _and_3 = _equals_1;
-        }
-        if (!_and_3) {
-          _and_2 = false;
-        } else {
-          JvmTypeReference _ref_1 = left.getRef();
-          ArrayList<IQLExpression> _arrayList_1 = new ArrayList<IQLExpression>();
-          boolean _hasTypeExtensions_1 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_1, IQLOperatorOverloadingUtils.MINUS_PREFIX, _arrayList_1);
-          _and_2 = _hasTypeExtensions_1;
-        }
-        if (_and_2) {
+        if ((((!left.isNull()) && e.getOp().equals("--")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.MINUS_PREFIX, new ArrayList<IQLExpression>()))) {
           String _xblockexpression_2 = null;
           {
             String methodName = IQLOperatorOverloadingUtils.MINUS_PREFIX;
-            JvmTypeReference _ref_2 = left.getRef();
-            ArrayList<IQLExpression> _arrayList_2 = new ArrayList<IQLExpression>();
-            IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_2, methodName, _arrayList_2);
+            JvmTypeReference _ref = left.getRef();
+            ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
+            IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _arrayList);
             Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
             String _canonicalName = _class.getCanonicalName();
             c.addImport(_canonicalName);
@@ -2510,8 +1749,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _xifexpression_1 = _xblockexpression_2;
         } else {
           StringConcatenation _builder = new StringConcatenation();
-          String _op_2 = e.getOp();
-          _builder.append(_op_2, "");
+          String _op = e.getOp();
+          _builder.append(_op, "");
           IQLExpression _operand_1 = e.getOperand();
           String _compile = this.compile(_operand_1, c);
           _builder.append(_compile, "");
@@ -2548,32 +1787,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       IQLExpression _operand = e.getOperand();
       TypeResult right = this.exprEvaluator.eval(_operand);
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _and_1 = false;
-      boolean _isNull = right.isNull();
-      boolean _not = (!_isNull);
-      if (!_not) {
-        _and_1 = false;
-      } else {
-        String _op = e.getOp();
-        boolean _equals = _op.equals("++");
-        _and_1 = _equals;
-      }
-      if (!_and_1) {
-        _and = false;
-      } else {
-        JvmTypeReference _ref = right.getRef();
-        ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, IQLOperatorOverloadingUtils.PLUS_POSTFIX, _arrayList);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if ((((!right.isNull()) && e.getOp().equals("++")) && this.typeExtensionsDictionary.hasTypeExtensions(right.getRef(), IQLOperatorOverloadingUtils.PLUS_POSTFIX, new ArrayList<IQLExpression>()))) {
         String _xblockexpression_1 = null;
         {
           String methodName = IQLOperatorOverloadingUtils.PLUS_POSTFIX;
-          JvmTypeReference _ref_1 = right.getRef();
-          ArrayList<IQLExpression> _arrayList_1 = new ArrayList<IQLExpression>();
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_1, methodName, _arrayList_1);
+          JvmTypeReference _ref = right.getRef();
+          ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _arrayList);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
@@ -2593,32 +1813,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _and_2 = false;
-        boolean _and_3 = false;
-        boolean _isNull_1 = right.isNull();
-        boolean _not_1 = (!_isNull_1);
-        if (!_not_1) {
-          _and_3 = false;
-        } else {
-          String _op_1 = e.getOp();
-          boolean _equals_1 = _op_1.equals("--");
-          _and_3 = _equals_1;
-        }
-        if (!_and_3) {
-          _and_2 = false;
-        } else {
-          JvmTypeReference _ref_1 = right.getRef();
-          ArrayList<IQLExpression> _arrayList_1 = new ArrayList<IQLExpression>();
-          boolean _hasTypeExtensions_1 = this.typeExtensionsDictionary.hasTypeExtensions(_ref_1, IQLOperatorOverloadingUtils.MINUS_POSTFIX, _arrayList_1);
-          _and_2 = _hasTypeExtensions_1;
-        }
-        if (_and_2) {
+        if ((((!right.isNull()) && e.getOp().equals("--")) && this.typeExtensionsDictionary.hasTypeExtensions(right.getRef(), IQLOperatorOverloadingUtils.MINUS_POSTFIX, new ArrayList<IQLExpression>()))) {
           String _xblockexpression_2 = null;
           {
             String methodName = IQLOperatorOverloadingUtils.MINUS_POSTFIX;
-            JvmTypeReference _ref_2 = right.getRef();
-            ArrayList<IQLExpression> _arrayList_2 = new ArrayList<IQLExpression>();
-            IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_2, methodName, _arrayList_2);
+            JvmTypeReference _ref = right.getRef();
+            ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
+            IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _arrayList);
             Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
             String _canonicalName = _class.getCanonicalName();
             c.addImport(_canonicalName);
@@ -2641,8 +1842,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           IQLExpression _operand_1 = e.getOperand();
           String _compile = this.compile(_operand_1, c);
           _builder.append(_compile, "");
-          String _op_2 = e.getOp();
-          _builder.append(_op_2, "");
+          String _op = e.getOp();
+          _builder.append(_op, "");
           _xifexpression_1 = _builder.toString();
         }
         _xifexpression = _xifexpression_1;
@@ -2659,31 +1860,19 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       TypeResult left = this.exprEvaluator.eval(_leftOperand);
       String methodName = IQLOperatorOverloadingUtils.GET;
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _isNull = left.isNull();
-      boolean _not = (!_isNull);
-      if (!_not) {
-        _and = false;
-      } else {
-        JvmTypeReference _ref = left.getRef();
-        EList<IQLExpression> _expressions = e.getExpressions();
-        List<IQLExpression> _createGetterArguments = this.helper.createGetterArguments(_expressions);
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_ref, methodName, _createGetterArguments);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if (((!left.isNull()) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), methodName, this.helper.createGetterArguments(e.getExpressions())))) {
         String _xblockexpression_1 = null;
         {
-          JvmTypeReference _ref_1 = left.getRef();
-          EList<IQLExpression> _expressions_1 = e.getExpressions();
-          List<IQLExpression> _createGetterArguments_1 = this.helper.createGetterArguments(_expressions_1);
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref_1, methodName, _createGetterArguments_1);
+          JvmTypeReference _ref = left.getRef();
+          EList<IQLExpression> _expressions = e.getExpressions();
+          List<IQLExpression> _createGetterArguments = this.helper.createGetterArguments(_expressions);
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_ref, methodName, _createGetterArguments);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
           String _xifexpression_1 = null;
-          EList<IQLExpression> _expressions_2 = e.getExpressions();
-          int _size = _expressions_2.size();
+          EList<IQLExpression> _expressions_1 = e.getExpressions();
+          int _size = _expressions_1.size();
           boolean _equals = (_size == 1);
           if (_equals) {
             String _xblockexpression_2 = null;
@@ -2700,8 +1889,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile = this.compile(_leftOperand_1, c);
               _builder.append(_compile, "");
               _builder.append(", ");
-              EList<IQLExpression> _expressions_3 = e.getExpressions();
-              IQLExpression _get = _expressions_3.get(0);
+              EList<IQLExpression> _expressions_2 = e.getExpressions();
+              IQLExpression _get = _expressions_2.get(0);
               String _compile_1 = this.compile(_get, c);
               _builder.append(_compile_1, "");
               _builder.append(")");
@@ -2728,11 +1917,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _simpleName_1 = IQLUtils.class.getSimpleName();
               _builder.append(_simpleName_1, "");
               _builder.append(".createList(");
-              EList<IQLExpression> _expressions_3 = e.getExpressions();
+              EList<IQLExpression> _expressions_2 = e.getExpressions();
               final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
                 return this.compile(el, c);
               };
-              List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_3, _function);
+              List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_2, _function);
               String _join = IterableExtensions.join(_map, ", ");
               _builder.append(_join, "");
               _builder.append("))");
@@ -2745,24 +1934,14 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _and_1 = false;
-        boolean _isNull_1 = left.isNull();
-        boolean _not_1 = (!_isNull_1);
-        if (!_not_1) {
-          _and_1 = false;
-        } else {
-          JvmTypeReference _ref_1 = left.getRef();
-          boolean _isArray = this.typeUtils.isArray(_ref_1);
-          _and_1 = _isArray;
-        }
-        if (_and_1) {
+        if (((!left.isNull()) && this.typeUtils.isArray(left.getRef()))) {
           String _xblockexpression_2 = null;
           {
             String _canonicalName = de.uniol.inf.is.odysseus.iql.basic.types.extension.ListExtensions.class.getCanonicalName();
             c.addImport(_canonicalName);
             String _xifexpression_2 = null;
-            EList<IQLExpression> _expressions_1 = e.getExpressions();
-            int _size = _expressions_1.size();
+            EList<IQLExpression> _expressions = e.getExpressions();
+            int _size = _expressions.size();
             boolean _equals = (_size == 1);
             if (_equals) {
               StringConcatenation _builder = new StringConcatenation();
@@ -2775,8 +1954,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile = this.compile(_leftOperand_1, c);
               _builder.append(_compile, "");
               _builder.append(", ");
-              EList<IQLExpression> _expressions_2 = e.getExpressions();
-              IQLExpression _get = _expressions_2.get(0);
+              EList<IQLExpression> _expressions_1 = e.getExpressions();
+              IQLExpression _get = _expressions_1.get(0);
               String _compile_1 = this.compile(_get, c);
               _builder.append(_compile_1, "");
               _builder.append(")");
@@ -2799,11 +1978,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 String _simpleName_2 = IQLUtils.class.getSimpleName();
                 _builder_1.append(_simpleName_2, "");
                 _builder_1.append(".createList(");
-                EList<IQLExpression> _expressions_3 = e.getExpressions();
+                EList<IQLExpression> _expressions_2 = e.getExpressions();
                 final Function1<IQLExpression, String> _function = (IQLExpression el) -> {
                   return this.compile(el, c);
                 };
-                List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_3, _function);
+                List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions_2, _function);
                 String _join = IterableExtensions.join(_map, ", ");
                 _builder_1.append(_join, "");
                 _builder_1.append("))");
@@ -2820,8 +1999,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           String _compile = this.compile(_leftOperand_1, c);
           _builder.append(_compile, "");
           _builder.append("[");
-          EList<IQLExpression> _expressions_1 = e.getExpressions();
-          IQLExpression _get = _expressions_1.get(0);
+          EList<IQLExpression> _expressions = e.getExpressions();
+          IQLExpression _get = _expressions.get(0);
           String _compile_1 = this.compile(_get, c);
           _builder.append(_compile_1, "");
           _builder.append("]");
@@ -2882,26 +2061,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
         String _xifexpression_1 = null;
-        boolean _and = false;
-        JvmTypeReference _type = field.getType();
-        boolean _isJvmArray = this.helper.isJvmArray(_type);
-        if (!_isJvmArray) {
-          _and = false;
-        } else {
-          boolean _or = false;
-          JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-          boolean _equals = Objects.equal(_expectedTypeRef, null);
-          if (_equals) {
-            _or = true;
-          } else {
-            JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-            boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-            boolean _not = (!_isJvmArray_1);
-            _or = _not;
-          }
-          _and = _or;
-        }
-        if (_and) {
+        if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
           String _xblockexpression_1 = null;
           {
             String _canonicalName_1 = IQLUtils.class.getCanonicalName();
@@ -2935,40 +2095,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       _xifexpression = _xblockexpression;
     } else {
       String _xifexpression_1 = null;
-      boolean _and = false;
-      boolean _hasSystemTypeCompiler = this.helper.hasSystemTypeCompiler(field);
-      if (!_hasSystemTypeCompiler) {
-        _and = false;
-      } else {
-        IIQLSystemTypeCompiler _systemTypeCompiler = this.helper.getSystemTypeCompiler(field);
-        boolean _compileFieldSelectionManually = _systemTypeCompiler.compileFieldSelectionManually();
-        _and = _compileFieldSelectionManually;
-      }
-      if (_and) {
+      if ((this.helper.hasSystemTypeCompiler(field) && this.helper.getSystemTypeCompiler(field).compileFieldSelectionManually())) {
         String _xblockexpression_1 = null;
         {
           IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(field);
           String _xifexpression_2 = null;
-          boolean _and_1 = false;
-          JvmTypeReference _type = field.getType();
-          boolean _isJvmArray = this.helper.isJvmArray(_type);
-          if (!_isJvmArray) {
-            _and_1 = false;
-          } else {
-            boolean _or = false;
-            JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-            boolean _equals = Objects.equal(_expectedTypeRef, null);
-            if (_equals) {
-              _or = true;
-            } else {
-              JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-              boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-              boolean _not = (!_isJvmArray_1);
-              _or = _not;
-            }
-            _and_1 = _or;
-          }
-          if (_and_1) {
+          if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -3002,26 +2134,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression_1 = _xblockexpression_1;
       } else {
         String _xifexpression_2 = null;
-        boolean _and_1 = false;
-        JvmTypeReference _type = field.getType();
-        boolean _isJvmArray = this.helper.isJvmArray(_type);
-        if (!_isJvmArray) {
-          _and_1 = false;
-        } else {
-          boolean _or = false;
-          JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-          boolean _equals = Objects.equal(_expectedTypeRef, null);
-          if (_equals) {
-            _or = true;
-          } else {
-            JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-            boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-            boolean _not = (!_isJvmArray_1);
-            _or = _not;
-          }
-          _and_1 = _or;
-        }
-        if (_and_1) {
+        if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
           String _xblockexpression_2 = null;
           {
             String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -3087,34 +2200,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
           String _xifexpression_1 = null;
-          boolean _and = false;
-          boolean _and_1 = false;
-          JvmTypeReference _returnType = method.getReturnType();
-          boolean _notEquals_1 = (!Objects.equal(_returnType, null));
-          if (!_notEquals_1) {
-            _and_1 = false;
-          } else {
-            JvmTypeReference _returnType_1 = method.getReturnType();
-            boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
-            _and_1 = _isJvmArray;
-          }
-          if (!_and_1) {
-            _and = false;
-          } else {
-            boolean _or = false;
-            JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-            boolean _equals = Objects.equal(_expectedTypeRef, null);
-            if (_equals) {
-              _or = true;
-            } else {
-              JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-              boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-              boolean _not = (!_isJvmArray_1);
-              _or = _not;
-            }
-            _and = _or;
-          }
-          if (_and) {
+          if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               String _canonicalName_1 = IQLUtils.class.getCanonicalName();
@@ -3228,48 +2314,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _and = false;
-        boolean _hasSystemTypeCompiler = this.helper.hasSystemTypeCompiler(method);
-        if (!_hasSystemTypeCompiler) {
-          _and = false;
-        } else {
-          IIQLSystemTypeCompiler _systemTypeCompiler = this.helper.getSystemTypeCompiler(method);
-          boolean _compileMethodSelectionManually = _systemTypeCompiler.compileMethodSelectionManually();
-          _and = _compileMethodSelectionManually;
-        }
-        if (_and) {
+        if ((this.helper.hasSystemTypeCompiler(method) && this.helper.getSystemTypeCompiler(method).compileMethodSelectionManually())) {
           String _xblockexpression_2 = null;
           {
             IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(method);
             String _xifexpression_2 = null;
-            boolean _and_1 = false;
-            boolean _and_2 = false;
-            JvmTypeReference _returnType = method.getReturnType();
-            boolean _notEquals_1 = (!Objects.equal(_returnType, null));
-            if (!_notEquals_1) {
-              _and_2 = false;
-            } else {
-              JvmTypeReference _returnType_1 = method.getReturnType();
-              boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
-              _and_2 = _isJvmArray;
-            }
-            if (!_and_2) {
-              _and_1 = false;
-            } else {
-              boolean _or = false;
-              JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-              boolean _equals = Objects.equal(_expectedTypeRef, null);
-              if (_equals) {
-                _or = true;
-              } else {
-                JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-                boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-                boolean _not = (!_isJvmArray_1);
-                _or = _not;
-              }
-              _and_1 = _or;
-            }
-            if (_and_1) {
+            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -3311,34 +2361,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _xifexpression_1 = _xblockexpression_2;
         } else {
           String _xifexpression_2 = null;
-          boolean _and_1 = false;
-          boolean _and_2 = false;
-          JvmTypeReference _returnType = method.getReturnType();
-          boolean _notEquals_1 = (!Objects.equal(_returnType, null));
-          if (!_notEquals_1) {
-            _and_2 = false;
-          } else {
-            JvmTypeReference _returnType_1 = method.getReturnType();
-            boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
-            _and_2 = _isJvmArray;
-          }
-          if (!_and_2) {
-            _and_1 = false;
-          } else {
-            boolean _or = false;
-            JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-            boolean _equals = Objects.equal(_expectedTypeRef, null);
-            if (_equals) {
-              _or = true;
-            } else {
-              JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-              boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-              boolean _not = (!_isJvmArray_1);
-              _or = _not;
-            }
-            _and_1 = _or;
-          }
-          if (_and_1) {
+          if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_3 = null;
             {
               String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -3423,32 +2446,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         EList<IQLExpression> _elements = args.getElements();
         IQLExpression _get_1 = _elements.get(i);
         TypeResult type = this.exprEvaluator.eval(_get_1);
-        boolean _and = false;
-        boolean _and_1 = false;
-        boolean _and_2 = false;
-        boolean _notEquals_1 = (!Objects.equal(expectedTypeRef, null));
-        if (!_notEquals_1) {
-          _and_2 = false;
-        } else {
-          boolean _isJvmArray = this.helper.isJvmArray(expectedTypeRef);
-          _and_2 = _isJvmArray;
-        }
-        if (!_and_2) {
-          _and_1 = false;
-        } else {
-          boolean _isNull = type.isNull();
-          boolean _not = (!_isNull);
-          _and_1 = _not;
-        }
-        if (!_and_1) {
-          _and = false;
-        } else {
-          JvmTypeReference _ref = type.getRef();
-          boolean _isJvmArray_1 = this.helper.isJvmArray(_ref);
-          boolean _not_1 = (!_isJvmArray_1);
-          _and = _not_1;
-        }
-        if (_and) {
+        if (((((!Objects.equal(expectedTypeRef, null)) && this.helper.isJvmArray(expectedTypeRef)) && (!type.isNull())) && (!this.helper.isJvmArray(type.getRef())))) {
           String _canonicalName = IQLUtils.class.getCanonicalName();
           c.addImport(_canonicalName);
           boolean _isPrimitiveArray = this.helper.isPrimitiveArray(expectedTypeRef);
@@ -3487,50 +2485,28 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             result.add(_builder_1.toString());
           }
         } else {
-          boolean _and_3 = false;
-          boolean _isNull_1 = type.isNull();
-          boolean _not_2 = (!_isNull_1);
-          if (!_not_2) {
-            _and_3 = false;
-          } else {
-            JvmFormalParameter _get_4 = parameters.get(i);
-            JvmTypeReference _parameterType = _get_4.getParameterType();
-            JvmTypeReference _ref_1 = type.getRef();
-            boolean _isAssignable = this.lookUp.isAssignable(_parameterType, _ref_1);
-            _and_3 = _isAssignable;
-          }
-          if (_and_3) {
+          if (((!type.isNull()) && this.lookUp.isAssignable(parameters.get(i).getParameterType(), type.getRef()))) {
             EList<IQLExpression> _elements_3 = args.getElements();
-            IQLExpression _get_5 = _elements_3.get(i);
-            String _compile_2 = this.compile(_get_5, c);
+            IQLExpression _get_4 = _elements_3.get(i);
+            String _compile_2 = this.compile(_get_4, c);
             result.add(_compile_2);
           } else {
-            boolean _and_4 = false;
-            boolean _isNull_2 = type.isNull();
-            boolean _not_3 = (!_isNull_2);
-            if (!_not_3) {
-              _and_4 = false;
-            } else {
-              JvmTypeReference _ref_2 = type.getRef();
-              boolean _isCastable = this.lookUp.isCastable(expectedTypeRef, _ref_2);
-              _and_4 = _isCastable;
-            }
-            if (_and_4) {
+            if (((!type.isNull()) && this.lookUp.isCastable(expectedTypeRef, type.getRef()))) {
               String target = this.typeCompiler.compile(expectedTypeRef, c, false);
               StringConcatenation _builder_2 = new StringConcatenation();
               _builder_2.append("((");
               _builder_2.append(target, "");
               _builder_2.append(")");
               EList<IQLExpression> _elements_4 = args.getElements();
-              IQLExpression _get_6 = _elements_4.get(i);
-              String _compile_3 = this.compile(_get_6, c);
+              IQLExpression _get_5 = _elements_4.get(i);
+              String _compile_3 = this.compile(_get_5, c);
               _builder_2.append(_compile_3, "");
               _builder_2.append(")");
               result.add(_builder_2.toString());
             } else {
               EList<IQLExpression> _elements_5 = args.getElements();
-              IQLExpression _get_7 = _elements_5.get(i);
-              String _compile_4 = this.compile(_get_7, c);
+              IQLExpression _get_6 = _elements_5.get(i);
+              String _compile_4 = this.compile(_get_6, c);
               result.add(_compile_4);
             }
           }
@@ -3580,32 +2556,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         if (_notEquals) {
           c.setExpectedTypeRef(expectedTypeRef);
         }
-        boolean _and = false;
-        boolean _and_1 = false;
-        boolean _and_2 = false;
-        boolean _notEquals_1 = (!Objects.equal(expectedTypeRef, null));
-        if (!_notEquals_1) {
-          _and_2 = false;
-        } else {
-          boolean _isJvmArray = this.helper.isJvmArray(expectedTypeRef);
-          _and_2 = _isJvmArray;
-        }
-        if (!_and_2) {
-          _and_1 = false;
-        } else {
-          boolean _isNull = type.isNull();
-          boolean _not = (!_isNull);
-          _and_1 = _not;
-        }
-        if (!_and_1) {
-          _and = false;
-        } else {
-          JvmTypeReference _ref = type.getRef();
-          boolean _isJvmArray_1 = this.helper.isJvmArray(_ref);
-          boolean _not_1 = (!_isJvmArray_1);
-          _and = _not_1;
-        }
-        if (_and) {
+        if (((((!Objects.equal(expectedTypeRef, null)) && this.helper.isJvmArray(expectedTypeRef)) && (!type.isNull())) && (!this.helper.isJvmArray(type.getRef())))) {
           String _canonicalName = IQLUtils.class.getCanonicalName();
           c.addImport(_canonicalName);
           boolean _isPrimitiveArray = this.helper.isPrimitiveArray(expectedTypeRef);
@@ -3642,33 +2593,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             result = _builder_1.toString();
           }
         } else {
-          boolean _and_3 = false;
-          boolean _isNull_1 = type.isNull();
-          boolean _not_2 = (!_isNull_1);
-          if (!_not_2) {
-            _and_3 = false;
-          } else {
-            JvmTypeReference _ref_1 = type.getRef();
-            boolean _isAssignable = this.lookUp.isAssignable(expectedTypeRef, _ref_1);
-            _and_3 = _isAssignable;
-          }
-          if (_and_3) {
+          if (((!type.isNull()) && this.lookUp.isAssignable(expectedTypeRef, type.getRef()))) {
             IQLExpression _value_3 = el.getValue();
             String _compile_2 = this.compile(_value_3, c);
             String _plus = (result + _compile_2);
             result = _plus;
           } else {
-            boolean _and_4 = false;
-            boolean _isNull_2 = type.isNull();
-            boolean _not_3 = (!_isNull_2);
-            if (!_not_3) {
-              _and_4 = false;
-            } else {
-              JvmTypeReference _ref_2 = type.getRef();
-              boolean _isCastable = this.lookUp.isCastable(expectedTypeRef, _ref_2);
-              _and_4 = _isCastable;
-            }
-            if (_and_4) {
+            if (((!type.isNull()) && this.lookUp.isCastable(expectedTypeRef, type.getRef()))) {
               String target = this.typeCompiler.compile(expectedTypeRef, c, false);
               StringConcatenation _builder_2 = new StringConcatenation();
               _builder_2.append("((");
@@ -3736,58 +2667,30 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       JvmDeclaredType containerType = ((JvmDeclaredType) _eContainer);
       JvmTypeReference typeRef = this.typeUtils.createTypeRef(containerType);
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _notEquals = (!Objects.equal(thisType, null));
-      if (!_notEquals) {
-        _and = false;
-      } else {
-        String _simpleName = field.getSimpleName();
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(thisType, _simpleName);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if (((!Objects.equal(thisType, null)) && this.typeExtensionsDictionary.hasTypeExtensions(thisType, field.getSimpleName()))) {
         String _xblockexpression_1 = null;
         {
-          String _simpleName_1 = field.getSimpleName();
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(thisType, _simpleName_1);
+          String _simpleName = field.getSimpleName();
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(thisType, _simpleName);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
           String _xifexpression_1 = null;
-          boolean _and_1 = false;
-          JvmTypeReference _type = field.getType();
-          boolean _isJvmArray = this.helper.isJvmArray(_type);
-          if (!_isJvmArray) {
-            _and_1 = false;
-          } else {
-            boolean _or = false;
-            JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-            boolean _equals = Objects.equal(_expectedTypeRef, null);
-            if (_equals) {
-              _or = true;
-            } else {
-              JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-              boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-              boolean _not = (!_isJvmArray_1);
-              _or = _not;
-            }
-            _and_1 = _or;
-          }
-          if (_and_1) {
+          if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               String _canonicalName_1 = IQLUtils.class.getCanonicalName();
               c.addImport(_canonicalName_1);
               StringConcatenation _builder = new StringConcatenation();
-              String _simpleName_2 = IQLUtils.class.getSimpleName();
-              _builder.append(_simpleName_2, "");
+              String _simpleName_1 = IQLUtils.class.getSimpleName();
+              _builder.append(_simpleName_1, "");
               _builder.append(".toList(");
               Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
-              String _simpleName_3 = _class_1.getSimpleName();
-              _builder.append(_simpleName_3, "");
+              String _simpleName_2 = _class_1.getSimpleName();
+              _builder.append(_simpleName_2, "");
               _builder.append(".");
-              String _simpleName_4 = field.getSimpleName();
-              _builder.append(_simpleName_4, "");
+              String _simpleName_3 = field.getSimpleName();
+              _builder.append(_simpleName_3, "");
               _builder.append(")");
               _xblockexpression_2 = _builder.toString();
             }
@@ -3795,11 +2698,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           } else {
             StringConcatenation _builder = new StringConcatenation();
             Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
-            String _simpleName_2 = _class_1.getSimpleName();
-            _builder.append(_simpleName_2, "");
+            String _simpleName_1 = _class_1.getSimpleName();
+            _builder.append(_simpleName_1, "");
             _builder.append(".");
-            String _simpleName_3 = field.getSimpleName();
-            _builder.append(_simpleName_3, "");
+            String _simpleName_2 = field.getSimpleName();
+            _builder.append(_simpleName_2, "");
             _xifexpression_1 = _builder.toString();
           }
           _xblockexpression_1 = _xifexpression_1;
@@ -3807,40 +2710,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _and_1 = false;
-        boolean _hasSystemTypeCompiler = this.helper.hasSystemTypeCompiler(field);
-        if (!_hasSystemTypeCompiler) {
-          _and_1 = false;
-        } else {
-          IIQLSystemTypeCompiler _systemTypeCompiler = this.helper.getSystemTypeCompiler(field);
-          boolean _compileFieldSelectionManually = _systemTypeCompiler.compileFieldSelectionManually();
-          _and_1 = _compileFieldSelectionManually;
-        }
-        if (_and_1) {
+        if ((this.helper.hasSystemTypeCompiler(field) && this.helper.getSystemTypeCompiler(field).compileFieldSelectionManually())) {
           String _xblockexpression_2 = null;
           {
             IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(field);
             String _xifexpression_2 = null;
-            boolean _and_2 = false;
-            JvmTypeReference _type = field.getType();
-            boolean _isJvmArray = this.helper.isJvmArray(_type);
-            if (!_isJvmArray) {
-              _and_2 = false;
-            } else {
-              boolean _or = false;
-              JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-              boolean _equals = Objects.equal(_expectedTypeRef, null);
-              if (_equals) {
-                _or = true;
-              } else {
-                JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-                boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-                boolean _not = (!_isJvmArray_1);
-                _or = _not;
-              }
-              _and_2 = _or;
-            }
-            if (_and_2) {
+            if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -3849,8 +2724,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 boolean _isStatic = field.isStatic();
                 if (_isStatic) {
                   StringConcatenation _builder = new StringConcatenation();
-                  String _simpleName_1 = IQLUtils.class.getSimpleName();
-                  _builder.append(_simpleName_1, "");
+                  String _simpleName = IQLUtils.class.getSimpleName();
+                  _builder.append(_simpleName, "");
                   _builder.append(".toList(");
                   String _compile = this.typeCompiler.compile(typeRef, c, true);
                   _builder.append(_compile, "");
@@ -3876,8 +2751,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               boolean _isStatic = field.isStatic();
               if (_isStatic) {
                 StringConcatenation _builder = new StringConcatenation();
-                String _simpleName_1 = IQLUtils.class.getSimpleName();
-                _builder.append(_simpleName_1, "");
+                String _simpleName = IQLUtils.class.getSimpleName();
+                _builder.append(_simpleName, "");
                 _builder.append(".toList(");
                 String _compileFieldSelection = systemTypeCompiler.compileFieldSelection(field);
                 _builder.append(_compileFieldSelection, "");
@@ -3899,39 +2774,20 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           boolean _isStatic = field.isStatic();
           if (_isStatic) {
             String _xifexpression_3 = null;
-            boolean _and_2 = false;
-            JvmTypeReference _type = field.getType();
-            boolean _isJvmArray = this.helper.isJvmArray(_type);
-            if (!_isJvmArray) {
-              _and_2 = false;
-            } else {
-              boolean _or = false;
-              JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-              boolean _equals = Objects.equal(_expectedTypeRef, null);
-              if (_equals) {
-                _or = true;
-              } else {
-                JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-                boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-                boolean _not = (!_isJvmArray_1);
-                _or = _not;
-              }
-              _and_2 = _or;
-            }
-            if (_and_2) {
+            if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 String _canonicalName = IQLUtils.class.getCanonicalName();
                 c.addImport(_canonicalName);
                 StringConcatenation _builder = new StringConcatenation();
-                String _simpleName_1 = IQLUtils.class.getSimpleName();
-                _builder.append(_simpleName_1, "");
+                String _simpleName = IQLUtils.class.getSimpleName();
+                _builder.append(_simpleName, "");
                 _builder.append(".toList(");
                 String _compile = this.typeCompiler.compile(typeRef, c, true);
                 _builder.append(_compile, "");
                 _builder.append(".");
-                String _simpleName_2 = field.getSimpleName();
-                _builder.append(_simpleName_2, "");
+                String _simpleName_1 = field.getSimpleName();
+                _builder.append(_simpleName_1, "");
                 _builder.append(")");
                 _xblockexpression_3 = _builder.toString();
               }
@@ -3941,51 +2797,32 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile = this.typeCompiler.compile(typeRef, c, true);
               _builder.append(_compile, "");
               _builder.append(".");
-              String _simpleName_1 = field.getSimpleName();
-              _builder.append(_simpleName_1, "");
+              String _simpleName = field.getSimpleName();
+              _builder.append(_simpleName, "");
               _xifexpression_3 = _builder.toString();
             }
             _xifexpression_2 = _xifexpression_3;
           } else {
             String _xifexpression_4 = null;
-            boolean _and_3 = false;
-            JvmTypeReference _type_1 = field.getType();
-            boolean _isJvmArray_2 = this.helper.isJvmArray(_type_1);
-            if (!_isJvmArray_2) {
-              _and_3 = false;
-            } else {
-              boolean _or_1 = false;
-              JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-              boolean _equals_1 = Objects.equal(_expectedTypeRef_2, null);
-              if (_equals_1) {
-                _or_1 = true;
-              } else {
-                JvmTypeReference _expectedTypeRef_3 = c.getExpectedTypeRef();
-                boolean _isJvmArray_3 = this.helper.isJvmArray(_expectedTypeRef_3);
-                boolean _not_1 = (!_isJvmArray_3);
-                _or_1 = _not_1;
-              }
-              _and_3 = _or_1;
-            }
-            if (_and_3) {
+            if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_4 = null;
               {
                 String _canonicalName = IQLUtils.class.getCanonicalName();
                 c.addImport(_canonicalName);
                 StringConcatenation _builder_1 = new StringConcatenation();
-                String _simpleName_2 = IQLUtils.class.getSimpleName();
-                _builder_1.append(_simpleName_2, "");
+                String _simpleName_1 = IQLUtils.class.getSimpleName();
+                _builder_1.append(_simpleName_1, "");
                 _builder_1.append(".toList(");
-                String _simpleName_3 = field.getSimpleName();
-                _builder_1.append(_simpleName_3, "");
+                String _simpleName_2 = field.getSimpleName();
+                _builder_1.append(_simpleName_2, "");
                 _builder_1.append(")");
                 _xblockexpression_4 = _builder_1.toString();
               }
               _xifexpression_4 = _xblockexpression_4;
             } else {
               StringConcatenation _builder_1 = new StringConcatenation();
-              String _simpleName_2 = field.getSimpleName();
-              _builder_1.append(_simpleName_2, "");
+              String _simpleName_1 = field.getSimpleName();
+              _builder_1.append(_simpleName_1, "");
               _xifexpression_4 = _builder_1.toString();
             }
             _xifexpression_2 = _xifexpression_4;
@@ -4001,26 +2838,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLJvmElementCallExpression e, final IQLVariableDeclaration varDecl, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _ref = varDecl.getRef();
-    boolean _isJvmArray = this.helper.isJvmArray(_ref);
-    if (!_isJvmArray) {
-      _and = false;
-    } else {
-      boolean _or = false;
-      JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-      boolean _equals = Objects.equal(_expectedTypeRef, null);
-      if (_equals) {
-        _or = true;
-      } else {
-        JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-        boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-        boolean _not = (!_isJvmArray_1);
-        _or = _not;
-      }
-      _and = _or;
-    }
-    if (_and) {
+    if ((this.helper.isJvmArray(varDecl.getRef()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
       String _xblockexpression = null;
       {
         String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -4046,26 +2864,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLJvmElementCallExpression e, final JvmFormalParameter parameter, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _parameterType = parameter.getParameterType();
-    boolean _isJvmArray = this.helper.isJvmArray(_parameterType);
-    if (!_isJvmArray) {
-      _and = false;
-    } else {
-      boolean _or = false;
-      JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-      boolean _equals = Objects.equal(_expectedTypeRef, null);
-      if (_equals) {
-        _or = true;
-      } else {
-        JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-        boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-        boolean _not = (!_isJvmArray_1);
-        _or = _not;
-      }
-      _and = _or;
-    }
-    if (_and) {
+    if ((this.helper.isJvmArray(parameter.getParameterType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
       String _xblockexpression = null;
       {
         String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -4110,66 +2909,30 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       JvmDeclaredType containerType = ((JvmDeclaredType) _eContainer);
       JvmTypeReference typeRef = this.typeUtils.createTypeRef(containerType);
       String _xifexpression = null;
-      boolean _and = false;
-      boolean _notEquals_1 = (!Objects.equal(thisType, null));
-      if (!_notEquals_1) {
-        _and = false;
-      } else {
-        String _simpleName = method.getSimpleName();
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(thisType, _simpleName, list);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if (((!Objects.equal(thisType, null)) && this.typeExtensionsDictionary.hasTypeExtensions(thisType, method.getSimpleName(), list))) {
         String _xblockexpression_1 = null;
         {
-          String _simpleName_1 = method.getSimpleName();
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(thisType, _simpleName_1, list);
+          String _simpleName = method.getSimpleName();
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(thisType, _simpleName, list);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
           String _xifexpression_1 = null;
-          boolean _and_1 = false;
-          boolean _and_2 = false;
-          JvmTypeReference _returnType = method.getReturnType();
-          boolean _notEquals_2 = (!Objects.equal(_returnType, null));
-          if (!_notEquals_2) {
-            _and_2 = false;
-          } else {
-            JvmTypeReference _returnType_1 = method.getReturnType();
-            boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
-            _and_2 = _isJvmArray;
-          }
-          if (!_and_2) {
-            _and_1 = false;
-          } else {
-            boolean _or = false;
-            JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-            boolean _equals = Objects.equal(_expectedTypeRef, null);
-            if (_equals) {
-              _or = true;
-            } else {
-              JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-              boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-              boolean _not = (!_isJvmArray_1);
-              _or = _not;
-            }
-            _and_1 = _or;
-          }
-          if (_and_1) {
+          if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               String _canonicalName_1 = IQLUtils.class.getCanonicalName();
               c.addImport(_canonicalName_1);
               StringConcatenation _builder = new StringConcatenation();
-              String _simpleName_2 = IQLUtils.class.getSimpleName();
-              _builder.append(_simpleName_2, "");
+              String _simpleName_1 = IQLUtils.class.getSimpleName();
+              _builder.append(_simpleName_1, "");
               _builder.append(".toList(");
               Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
-              String _simpleName_3 = _class_1.getSimpleName();
-              _builder.append(_simpleName_3, "");
+              String _simpleName_2 = _class_1.getSimpleName();
+              _builder.append(_simpleName_2, "");
               _builder.append(".");
-              String _simpleName_4 = method.getSimpleName();
-              _builder.append(_simpleName_4, "");
+              String _simpleName_3 = method.getSimpleName();
+              _builder.append(_simpleName_3, "");
               _builder.append("(this");
               {
                 EList<JvmFormalParameter> _parameters = method.getParameters();
@@ -4193,11 +2956,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             if (_ignoreFirstParameter) {
               StringConcatenation _builder = new StringConcatenation();
               Class<? extends IIQLTypeExtensions> _class_1 = typeOps.getClass();
-              String _simpleName_2 = _class_1.getSimpleName();
-              _builder.append(_simpleName_2, "");
+              String _simpleName_1 = _class_1.getSimpleName();
+              _builder.append(_simpleName_1, "");
               _builder.append(".");
-              String _simpleName_3 = method.getSimpleName();
-              _builder.append(_simpleName_3, "");
+              String _simpleName_2 = method.getSimpleName();
+              _builder.append(_simpleName_2, "");
               _builder.append("(this");
               {
                 EList<JvmFormalParameter> _parameters = method.getParameters();
@@ -4216,11 +2979,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             } else {
               StringConcatenation _builder_1 = new StringConcatenation();
               Class<? extends IIQLTypeExtensions> _class_2 = typeOps.getClass();
-              String _simpleName_4 = _class_2.getSimpleName();
-              _builder_1.append(_simpleName_4, "");
+              String _simpleName_3 = _class_2.getSimpleName();
+              _builder_1.append(_simpleName_3, "");
               _builder_1.append(".");
-              String _simpleName_5 = method.getSimpleName();
-              _builder_1.append(_simpleName_5, "");
+              String _simpleName_4 = method.getSimpleName();
+              _builder_1.append(_simpleName_4, "");
               _builder_1.append("(");
               IQLArgumentsList _args_3 = m.getArgs();
               EList<JvmFormalParameter> _parameters_2 = method.getParameters();
@@ -4236,48 +2999,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _and_1 = false;
-        boolean _hasSystemTypeCompiler = this.helper.hasSystemTypeCompiler(method);
-        if (!_hasSystemTypeCompiler) {
-          _and_1 = false;
-        } else {
-          IIQLSystemTypeCompiler _systemTypeCompiler = this.helper.getSystemTypeCompiler(method);
-          boolean _compileMethodSelectionManually = _systemTypeCompiler.compileMethodSelectionManually();
-          _and_1 = _compileMethodSelectionManually;
-        }
-        if (_and_1) {
+        if ((this.helper.hasSystemTypeCompiler(method) && this.helper.getSystemTypeCompiler(method).compileMethodSelectionManually())) {
           String _xblockexpression_2 = null;
           {
             IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(method);
             String _xifexpression_2 = null;
-            boolean _and_2 = false;
-            boolean _and_3 = false;
-            JvmTypeReference _returnType = method.getReturnType();
-            boolean _notEquals_2 = (!Objects.equal(_returnType, null));
-            if (!_notEquals_2) {
-              _and_3 = false;
-            } else {
-              JvmTypeReference _returnType_1 = method.getReturnType();
-              boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
-              _and_3 = _isJvmArray;
-            }
-            if (!_and_3) {
-              _and_2 = false;
-            } else {
-              boolean _or = false;
-              JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-              boolean _equals = Objects.equal(_expectedTypeRef, null);
-              if (_equals) {
-                _or = true;
-              } else {
-                JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-                boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-                boolean _not = (!_isJvmArray_1);
-                _or = _not;
-              }
-              _and_2 = _or;
-            }
-            if (_and_2) {
+            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 String _canonicalName = IQLUtils.class.getCanonicalName();
@@ -4286,8 +3013,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 boolean _isStatic = method.isStatic();
                 if (_isStatic) {
                   StringConcatenation _builder = new StringConcatenation();
-                  String _simpleName_1 = IQLUtils.class.getSimpleName();
-                  _builder.append(_simpleName_1, "");
+                  String _simpleName = IQLUtils.class.getSimpleName();
+                  _builder.append(_simpleName, "");
                   _builder.append(".toList(");
                   String _compile = this.typeCompiler.compile(typeRef, c, true);
                   _builder.append(_compile, "");
@@ -4301,8 +3028,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                   _xifexpression_3 = _builder.toString();
                 } else {
                   StringConcatenation _builder_1 = new StringConcatenation();
-                  String _simpleName_2 = IQLUtils.class.getSimpleName();
-                  _builder_1.append(_simpleName_2, "");
+                  String _simpleName_1 = IQLUtils.class.getSimpleName();
+                  _builder_1.append(_simpleName_1, "");
                   _builder_1.append(".toList(");
                   IQLArgumentsList _args_3 = m.getArgs();
                   EList<JvmFormalParameter> _parameters_1 = method.getParameters();
@@ -4348,47 +3075,20 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           boolean _isStatic = method.isStatic();
           if (_isStatic) {
             String _xifexpression_3 = null;
-            boolean _and_2 = false;
-            boolean _and_3 = false;
-            JvmTypeReference _returnType = method.getReturnType();
-            boolean _notEquals_2 = (!Objects.equal(_returnType, null));
-            if (!_notEquals_2) {
-              _and_3 = false;
-            } else {
-              JvmTypeReference _returnType_1 = method.getReturnType();
-              boolean _isJvmArray = this.helper.isJvmArray(_returnType_1);
-              _and_3 = _isJvmArray;
-            }
-            if (!_and_3) {
-              _and_2 = false;
-            } else {
-              boolean _or = false;
-              JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-              boolean _equals = Objects.equal(_expectedTypeRef, null);
-              if (_equals) {
-                _or = true;
-              } else {
-                JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-                boolean _isJvmArray_1 = this.helper.isJvmArray(_expectedTypeRef_1);
-                boolean _not = (!_isJvmArray_1);
-                _or = _not;
-              }
-              _and_2 = _or;
-            }
-            if (_and_2) {
+            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 String _canonicalName = IQLUtils.class.getCanonicalName();
                 c.addImport(_canonicalName);
                 StringConcatenation _builder = new StringConcatenation();
-                String _simpleName_1 = IQLUtils.class.getSimpleName();
-                _builder.append(_simpleName_1, "");
+                String _simpleName = IQLUtils.class.getSimpleName();
+                _builder.append(_simpleName, "");
                 _builder.append(".toList(");
                 String _compile = this.typeCompiler.compile(typeRef, c, true);
                 _builder.append(_compile, "");
                 _builder.append(".");
-                String _simpleName_2 = method.getSimpleName();
-                _builder.append(_simpleName_2, "");
+                String _simpleName_1 = method.getSimpleName();
+                _builder.append(_simpleName_1, "");
                 _builder.append("(");
                 IQLArgumentsList _args_2 = m.getArgs();
                 EList<JvmFormalParameter> _parameters = method.getParameters();
@@ -4403,8 +3103,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile = this.typeCompiler.compile(typeRef, c, true);
               _builder.append(_compile, "");
               _builder.append(".");
-              String _simpleName_1 = method.getSimpleName();
-              _builder.append(_simpleName_1, "");
+              String _simpleName = method.getSimpleName();
+              _builder.append(_simpleName, "");
               _builder.append("(");
               IQLArgumentsList _args_2 = m.getArgs();
               EList<JvmFormalParameter> _parameters = method.getParameters();
@@ -4416,49 +3116,22 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             _xifexpression_2 = _xifexpression_3;
           } else {
             String _xifexpression_4 = null;
-            boolean _and_4 = false;
-            boolean _and_5 = false;
-            JvmTypeReference _returnType_2 = method.getReturnType();
-            boolean _notEquals_3 = (!Objects.equal(_returnType_2, null));
-            if (!_notEquals_3) {
-              _and_5 = false;
-            } else {
-              JvmTypeReference _returnType_3 = method.getReturnType();
-              boolean _isJvmArray_2 = this.helper.isJvmArray(_returnType_3);
-              _and_5 = _isJvmArray_2;
-            }
-            if (!_and_5) {
-              _and_4 = false;
-            } else {
-              boolean _or_1 = false;
-              JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-              boolean _equals_1 = Objects.equal(_expectedTypeRef_2, null);
-              if (_equals_1) {
-                _or_1 = true;
-              } else {
-                JvmTypeReference _expectedTypeRef_3 = c.getExpectedTypeRef();
-                boolean _isJvmArray_3 = this.helper.isJvmArray(_expectedTypeRef_3);
-                boolean _not_1 = (!_isJvmArray_3);
-                _or_1 = _not_1;
-              }
-              _and_4 = _or_1;
-            }
-            if (_and_4) {
+            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_4 = null;
               {
                 String _canonicalName = IQLUtils.class.getCanonicalName();
                 c.addImport(_canonicalName);
                 StringConcatenation _builder_1 = new StringConcatenation();
-                String _simpleName_2 = IQLUtils.class.getSimpleName();
-                _builder_1.append(_simpleName_2, "");
+                String _simpleName_1 = IQLUtils.class.getSimpleName();
+                _builder_1.append(_simpleName_1, "");
                 _builder_1.append(".toList(");
-                String _simpleName_3 = method.getSimpleName();
-                _builder_1.append(_simpleName_3, "");
+                String _simpleName_2 = method.getSimpleName();
+                _builder_1.append(_simpleName_2, "");
                 _builder_1.append("(");
                 {
                   IQLArgumentsList _args_3 = m.getArgs();
-                  boolean _notEquals_4 = (!Objects.equal(_args_3, null));
-                  if (_notEquals_4) {
+                  boolean _notEquals_1 = (!Objects.equal(_args_3, null));
+                  if (_notEquals_1) {
                     IQLArgumentsList _args_4 = m.getArgs();
                     EList<JvmFormalParameter> _parameters_1 = method.getParameters();
                     String _compile_2 = this.compile(_args_4, _parameters_1, c);
@@ -4471,13 +3144,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _xifexpression_4 = _xblockexpression_4;
             } else {
               StringConcatenation _builder_1 = new StringConcatenation();
-              String _simpleName_2 = method.getSimpleName();
-              _builder_1.append(_simpleName_2, "");
+              String _simpleName_1 = method.getSimpleName();
+              _builder_1.append(_simpleName_1, "");
               _builder_1.append("(");
               {
                 IQLArgumentsList _args_3 = m.getArgs();
-                boolean _notEquals_4 = (!Objects.equal(_args_3, null));
-                if (_notEquals_4) {
+                boolean _notEquals_1 = (!Objects.equal(_args_3, null));
+                if (_notEquals_1) {
                   IQLArgumentsList _args_4 = m.getArgs();
                   EList<JvmFormalParameter> _parameters_1 = method.getParameters();
                   String _compile_2 = this.compile(_args_4, _parameters_1, c);
@@ -4522,38 +3195,18 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLNewExpression e, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    boolean _and_1 = false;
-    IQLArgumentsList _argsList = e.getArgsList();
-    boolean _notEquals = (!Objects.equal(_argsList, null));
-    if (!_notEquals) {
-      _and_1 = false;
-    } else {
-      IQLArgumentsMap _argsMap = e.getArgsMap();
-      boolean _notEquals_1 = (!Objects.equal(_argsMap, null));
-      _and_1 = _notEquals_1;
-    }
-    if (!_and_1) {
-      _and = false;
-    } else {
-      IQLArgumentsMap _argsMap_1 = e.getArgsMap();
-      EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-      int _size = _elements.size();
-      boolean _greaterThan = (_size > 0);
-      _and = _greaterThan;
-    }
-    if (_and) {
+    if ((((!Objects.equal(e.getArgsList(), null)) && (!Objects.equal(e.getArgsMap(), null))) && (e.getArgsMap().getElements().size() > 0))) {
       String _xblockexpression = null;
       {
         JvmTypeReference _ref = e.getRef();
-        IQLArgumentsList _argsList_1 = e.getArgsList();
-        EList<IQLExpression> _elements_1 = _argsList_1.getElements();
-        JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref, _elements_1);
+        IQLArgumentsList _argsList = e.getArgsList();
+        EList<IQLExpression> _elements = _argsList.getElements();
+        JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref, _elements);
         EList<JvmTypeReference> _exceptions = constructor.getExceptions();
         c.addExceptions(_exceptions);
         String _xifexpression_1 = null;
-        boolean _notEquals_2 = (!Objects.equal(constructor, null));
-        if (_notEquals_2) {
+        boolean _notEquals = (!Objects.equal(constructor, null));
+        if (_notEquals) {
           StringConcatenation _builder = new StringConcatenation();
           _builder.append("get");
           JvmTypeReference _ref_1 = e.getRef();
@@ -4567,14 +3220,14 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           String _compile = this.typeCompiler.compile(_ref_3, c, true);
           _builder.append(_compile, "");
           _builder.append("(");
-          IQLArgumentsList _argsList_2 = e.getArgsList();
+          IQLArgumentsList _argsList_1 = e.getArgsList();
           EList<JvmFormalParameter> _parameters = constructor.getParameters();
-          String _compile_1 = this.compile(_argsList_2, _parameters, c);
+          String _compile_1 = this.compile(_argsList_1, _parameters, c);
           _builder.append(_compile_1, "");
           _builder.append("), ");
-          IQLArgumentsMap _argsMap_2 = e.getArgsMap();
+          IQLArgumentsMap _argsMap = e.getArgsMap();
           JvmTypeReference _ref_4 = e.getRef();
-          String _compile_2 = this.compile(_argsMap_2, _ref_4, c);
+          String _compile_2 = this.compile(_argsMap, _ref_4, c);
           _builder.append(_compile_2, "");
           _builder.append(")");
           _xifexpression_1 = _builder.toString();
@@ -4592,13 +3245,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           String _compile_3 = this.typeCompiler.compile(_ref_7, c, true);
           _builder_1.append(_compile_3, "");
           _builder_1.append("(");
-          IQLArgumentsList _argsList_3 = e.getArgsList();
-          String _compile_4 = this.compile(_argsList_3, c);
+          IQLArgumentsList _argsList_2 = e.getArgsList();
+          String _compile_4 = this.compile(_argsList_2, c);
           _builder_1.append(_compile_4, "");
           _builder_1.append("), ");
-          IQLArgumentsMap _argsMap_3 = e.getArgsMap();
+          IQLArgumentsMap _argsMap_1 = e.getArgsMap();
           JvmTypeReference _ref_8 = e.getRef();
-          String _compile_5 = this.compile(_argsMap_3, _ref_8, c);
+          String _compile_5 = this.compile(_argsMap_1, _ref_8, c);
           _builder_1.append(_compile_5, "");
           _builder_1.append(")");
           _xifexpression_1 = _builder_1.toString();
@@ -4608,26 +3261,14 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       _xifexpression = _xblockexpression;
     } else {
       String _xifexpression_1 = null;
-      boolean _and_2 = false;
-      IQLArgumentsMap _argsMap_2 = e.getArgsMap();
-      boolean _notEquals_2 = (!Objects.equal(_argsMap_2, null));
-      if (!_notEquals_2) {
-        _and_2 = false;
-      } else {
-        IQLArgumentsMap _argsMap_3 = e.getArgsMap();
-        EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_3.getElements();
-        int _size_1 = _elements_1.size();
-        boolean _greaterThan_1 = (_size_1 > 0);
-        _and_2 = _greaterThan_1;
-      }
-      if (_and_2) {
+      if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
         String _xblockexpression_1 = null;
         {
           JvmTypeReference _ref = e.getRef();
           ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
           JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref, _arrayList);
-          boolean _notEquals_3 = (!Objects.equal(constructor, null));
-          if (_notEquals_3) {
+          boolean _notEquals = (!Objects.equal(constructor, null));
+          if (_notEquals) {
             EList<JvmTypeReference> _exceptions = constructor.getExceptions();
             c.addExceptions(_exceptions);
           }
@@ -4644,9 +3285,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           String _compile = this.typeCompiler.compile(_ref_3, c, true);
           _builder.append(_compile, "");
           _builder.append("(), ");
-          IQLArgumentsMap _argsMap_4 = e.getArgsMap();
+          IQLArgumentsMap _argsMap = e.getArgsMap();
           JvmTypeReference _ref_4 = e.getRef();
-          String _compile_1 = this.compile(_argsMap_4, _ref_4, c);
+          String _compile_1 = this.compile(_argsMap, _ref_4, c);
           _builder.append(_compile_1, "");
           _builder.append(")");
           _xblockexpression_1 = _builder.toString();
@@ -4654,18 +3295,18 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression_1 = _xblockexpression_1;
       } else {
         String _xifexpression_2 = null;
-        IQLArgumentsList _argsList_1 = e.getArgsList();
-        boolean _notEquals_3 = (!Objects.equal(_argsList_1, null));
-        if (_notEquals_3) {
+        IQLArgumentsList _argsList = e.getArgsList();
+        boolean _notEquals = (!Objects.equal(_argsList, null));
+        if (_notEquals) {
           String _xblockexpression_2 = null;
           {
             JvmTypeReference _ref = e.getRef();
-            IQLArgumentsList _argsList_2 = e.getArgsList();
-            EList<IQLExpression> _elements_2 = _argsList_2.getElements();
-            JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref, _elements_2);
+            IQLArgumentsList _argsList_1 = e.getArgsList();
+            EList<IQLExpression> _elements = _argsList_1.getElements();
+            JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref, _elements);
             String _xifexpression_3 = null;
-            boolean _notEquals_4 = (!Objects.equal(constructor, null));
-            if (_notEquals_4) {
+            boolean _notEquals_1 = (!Objects.equal(constructor, null));
+            if (_notEquals_1) {
               String _xblockexpression_3 = null;
               {
                 EList<JvmTypeReference> _exceptions = constructor.getExceptions();
@@ -4676,9 +3317,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 String _compile = this.typeCompiler.compile(_ref_1, c, true);
                 _builder.append(_compile, "");
                 _builder.append("(");
-                IQLArgumentsList _argsList_3 = e.getArgsList();
+                IQLArgumentsList _argsList_2 = e.getArgsList();
                 EList<JvmFormalParameter> _parameters = constructor.getParameters();
-                String _compile_1 = this.compile(_argsList_3, _parameters, c);
+                String _compile_1 = this.compile(_argsList_2, _parameters, c);
                 _builder.append(_compile_1, "");
                 _builder.append(")");
                 _xblockexpression_3 = _builder.toString();
@@ -4691,8 +3332,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               String _compile = this.typeCompiler.compile(_ref_1, c, true);
               _builder.append(_compile, "");
               _builder.append("(");
-              IQLArgumentsList _argsList_3 = e.getArgsList();
-              String _compile_1 = this.compile(_argsList_3, c);
+              IQLArgumentsList _argsList_2 = e.getArgsList();
+              String _compile_1 = this.compile(_argsList_2, c);
               _builder.append(_compile_1, "");
               _builder.append(")");
               _xifexpression_3 = _builder.toString();
@@ -4722,8 +3363,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               JvmTypeReference _ref_1 = e.getRef();
               ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
               JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_1, _arrayList);
-              boolean _notEquals_4 = (!Objects.equal(constructor, null));
-              if (_notEquals_4) {
+              boolean _notEquals_1 = (!Objects.equal(constructor, null));
+              if (_notEquals_1) {
                 EList<JvmTypeReference> _exceptions = constructor.getExceptions();
                 c.addExceptions(_exceptions);
               }
@@ -4748,21 +3389,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionDouble e, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (!_notEquals) {
-      _and = false;
-    } else {
-      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_expectedTypeRef_1, "doubleToType", e);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "doubleToType", e))) {
       String _xblockexpression = null;
       {
-        JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef_2, "doubleToType", e);
+        JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef, "doubleToType", e);
         Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
@@ -4779,12 +3410,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       _xifexpression = _xblockexpression;
     } else {
       String _xifexpression_1 = null;
-      JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-      boolean _notEquals_1 = (!Objects.equal(_expectedTypeRef_2, null));
-      if (_notEquals_1) {
+      JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+      boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
+      if (_notEquals) {
         String _xifexpression_2 = null;
-        JvmTypeReference _expectedTypeRef_3 = c.getExpectedTypeRef();
-        boolean _isFloat = this.typeUtils.isFloat(_expectedTypeRef_3);
+        JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
+        boolean _isFloat = this.typeUtils.isFloat(_expectedTypeRef_1);
         if (_isFloat) {
           StringConcatenation _builder = new StringConcatenation();
           double _value = e.getValue();
@@ -4793,8 +3424,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _xifexpression_2 = _builder.toString();
         } else {
           String _xifexpression_3 = null;
-          JvmTypeReference _expectedTypeRef_4 = c.getExpectedTypeRef();
-          boolean _isDouble = this.typeUtils.isDouble(_expectedTypeRef_4, true);
+          JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
+          boolean _isDouble = this.typeUtils.isDouble(_expectedTypeRef_2, true);
           if (_isDouble) {
             StringConcatenation _builder_1 = new StringConcatenation();
             double _value_1 = e.getValue();
@@ -4823,21 +3454,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionInt e, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (!_notEquals) {
-      _and = false;
-    } else {
-      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_expectedTypeRef_1, "intToType", e);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "intToType", e))) {
       String _xblockexpression = null;
       {
-        JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef_2, "intToType", e);
+        JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef, "intToType", e);
         Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
@@ -4854,12 +3475,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       _xifexpression = _xblockexpression;
     } else {
       String _xifexpression_1 = null;
-      JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-      boolean _notEquals_1 = (!Objects.equal(_expectedTypeRef_2, null));
-      if (_notEquals_1) {
+      JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+      boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
+      if (_notEquals) {
         String _xifexpression_2 = null;
-        JvmTypeReference _expectedTypeRef_3 = c.getExpectedTypeRef();
-        boolean _isFloat = this.typeUtils.isFloat(_expectedTypeRef_3);
+        JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
+        boolean _isFloat = this.typeUtils.isFloat(_expectedTypeRef_1);
         if (_isFloat) {
           StringConcatenation _builder = new StringConcatenation();
           int _value = e.getValue();
@@ -4868,8 +3489,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _xifexpression_2 = _builder.toString();
         } else {
           String _xifexpression_3 = null;
-          JvmTypeReference _expectedTypeRef_4 = c.getExpectedTypeRef();
-          boolean _isDouble = this.typeUtils.isDouble(_expectedTypeRef_4, true);
+          JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
+          boolean _isDouble = this.typeUtils.isDouble(_expectedTypeRef_2, true);
           if (_isDouble) {
             StringConcatenation _builder_1 = new StringConcatenation();
             int _value_1 = e.getValue();
@@ -4878,8 +3499,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             _xifexpression_3 = _builder_1.toString();
           } else {
             String _xifexpression_4 = null;
-            JvmTypeReference _expectedTypeRef_5 = c.getExpectedTypeRef();
-            boolean _isLong = this.typeUtils.isLong(_expectedTypeRef_5, true);
+            JvmTypeReference _expectedTypeRef_3 = c.getExpectedTypeRef();
+            boolean _isLong = this.typeUtils.isLong(_expectedTypeRef_3, true);
             if (_isLong) {
               StringConcatenation _builder_2 = new StringConcatenation();
               int _value_2 = e.getValue();
@@ -4910,21 +3531,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionString e, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (!_notEquals) {
-      _and = false;
-    } else {
-      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_expectedTypeRef_1, "stringToType", e);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "stringToType", e))) {
       String _xblockexpression = null;
       {
-        JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef_2, "stringToType", e);
+        JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef, "stringToType", e);
         Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
@@ -4941,12 +3552,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       _xifexpression = _xblockexpression;
     } else {
       String _xifexpression_1 = null;
-      JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-      boolean _notEquals_1 = (!Objects.equal(_expectedTypeRef_2, null));
-      if (_notEquals_1) {
+      JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+      boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
+      if (_notEquals) {
         String _xifexpression_2 = null;
-        JvmTypeReference _expectedTypeRef_3 = c.getExpectedTypeRef();
-        boolean _isCharacter = this.typeUtils.isCharacter(_expectedTypeRef_3);
+        JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
+        boolean _isCharacter = this.typeUtils.isCharacter(_expectedTypeRef_1);
         if (_isCharacter) {
           String _value = e.getValue();
           String _plus = ("\'" + _value);
@@ -4975,21 +3586,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionBoolean e, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (!_notEquals) {
-      _and = false;
-    } else {
-      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_expectedTypeRef_1, "booleanToType", e);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "booleanToType", e))) {
       String _xblockexpression = null;
       {
-        JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef_2, "booleanToType", e);
+        JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef, "booleanToType", e);
         Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
@@ -5040,21 +3641,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       String _substring_1 = _value_2.substring(_plus, _length);
       int to = Integer.parseInt(_substring_1);
       String _xifexpression = null;
-      boolean _and = false;
-      JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-      boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-      if (!_notEquals) {
-        _and = false;
-      } else {
-        JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-        boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_expectedTypeRef_1, "rangeToType", e);
-        _and = _hasTypeExtensions;
-      }
-      if (_and) {
+      if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "rangeToType", e))) {
         String _xblockexpression_1 = null;
         {
-          JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef_2, "rangeToType", e);
+          JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+          IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef, "rangeToType", e);
           Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
           String _canonicalName = _class.getCanonicalName();
           c.addImport(_canonicalName);
@@ -5106,21 +3697,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionList e, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (!_notEquals) {
-      _and = false;
-    } else {
-      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_expectedTypeRef_1, "listToType", e);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "listToType", e))) {
       String _xblockexpression = null;
       {
-        JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef_2, "listToType", e);
+        JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef, "listToType", e);
         Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
@@ -5170,21 +3751,11 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionMap e, final G c) {
     String _xifexpression = null;
-    boolean _and = false;
-    JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (!_notEquals) {
-      _and = false;
-    } else {
-      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
-      boolean _hasTypeExtensions = this.typeExtensionsDictionary.hasTypeExtensions(_expectedTypeRef_1, "mapToType", e);
-      _and = _hasTypeExtensions;
-    }
-    if (_and) {
+    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "mapToType", e))) {
       String _xblockexpression = null;
       {
-        JvmTypeReference _expectedTypeRef_2 = c.getExpectedTypeRef();
-        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef_2, "mapToType", e);
+        JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+        IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(_expectedTypeRef, "mapToType", e);
         Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
         String _canonicalName = _class.getCanonicalName();
         c.addImport(_canonicalName);
