@@ -5,7 +5,12 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.timeseries
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.timeseries.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: de.uniol.inf.is.odysseus.machine_learning.learner,
+Import-Package: com.google.common.collect,
+ de.uniol.inf.is.odysseus.aggregation,
+ de.uniol.inf.is.odysseus.aggregation.functions,
+ de.uniol.inf.is.odysseus.aggregation.functions.factory,
+ de.uniol.inf.is.odysseus.aggregation.logicaloperator,
+ de.uniol.inf.is.odysseus.machine_learning.learner,
  de.uniol.inf.is.odysseus.machine_learning.model,
  de.uniol.inf.is.odysseus.recommendation.transform,
  de.uniol.inf.is.odysseus.recommendation.util,
@@ -17,8 +22,9 @@ Import-Package: de.uniol.inf.is.odysseus.machine_learning.learner,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
-Service-Component: OSGI-INF/TransformationService.xml
+Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.timeseries,
+ de.uniol.inf.is.odysseus.timeseries.autoregression.aggregation,
  de.uniol.inf.is.odysseus.timeseries.logicaloperator,
  de.uniol.inf.is.odysseus.timeseries.physicaloperator,
  de.uniol.inf.is.odysseus.timeseries.transform
