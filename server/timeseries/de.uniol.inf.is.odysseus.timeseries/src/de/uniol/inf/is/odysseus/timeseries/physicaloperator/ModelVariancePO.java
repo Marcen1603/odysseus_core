@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner;
 import de.uniol.inf.is.odysseus.machine_learning.model.Model;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.AbstractAutoregressionModelEstimator;
+import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.IAutoregressionEstimator;
+import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionForecaster;
 
 /**
  * 
@@ -21,9 +23,9 @@ public class ModelVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 	/**
 	 * TODO abstraction
 	 */
-	private AbstractLearner<Tuple<ITimeInterval>, ITimeInterval, Double> autoregressionLearner;
+	private IAutoregressionEstimator<Tuple<ITimeInterval>> autoregressionLearner;
 
-	public ModelVariancePO(AbstractAutoregressionModelEstimator autoregressionLearner) {
+	public ModelVariancePO(IAutoregressionEstimator<Tuple<ITimeInterval>> autoregressionLearner) {
 		this.autoregressionLearner = autoregressionLearner;
 
 	}
@@ -47,7 +49,7 @@ public class ModelVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 		// newLearningObject
 		// this.autoregressionLearner.addLearningData(newLearningObject);
 
-		Model<Tuple<ITimeInterval>, ITimeInterval, Double> model = this.autoregressionLearner.getModel();
+		IAutoregressionForecaster model = this.autoregressionLearner.getModel();
 		Tuple<ITimeInterval> modelTuple = new Tuple<ITimeInterval>(1, false);
 		modelTuple.setAttribute(0, model);
 

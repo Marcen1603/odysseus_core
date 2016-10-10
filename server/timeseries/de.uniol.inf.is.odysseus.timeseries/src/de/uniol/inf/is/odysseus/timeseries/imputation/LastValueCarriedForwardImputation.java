@@ -2,12 +2,11 @@ package de.uniol.inf.is.odysseus.timeseries.imputation;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * Time Series Imputation Strategy, can e.g. detect missing data by time
@@ -16,30 +15,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
  * @author Christoph Schröer
  *
  */
-public class LastValueCarriedForwardImputation implements IImputation<ITimeInterval> {
+public class LastValueCarriedForwardImputation extends AbstractTupleBasedImputation {
 
 	/**
 	 * Strategy-Name (also for eg. logical operator)
 	 */
 	public static final String NAME = "LastValueCarriedForward";
 
-	/**
-	 * window size, in which an element is expected. is needed to detect missing
-	 * elements in this window.
-	 */
-	private TimeValueItem imputationWindowSize;
-
-	private long imputationWindowSizeMillisec;
-
 	private Tuple<ITimeInterval> lastElement;
 
-	public LastValueCarriedForwardImputation(TimeValueItem imputationWindowSize) {
-		this.imputationWindowSize = imputationWindowSize;
-
-		long imputationWindowTime = this.imputationWindowSize.getTime();
-		TimeUnit imputationWindowTimeUnit = this.imputationWindowSize.getUnit();
-		this.imputationWindowSizeMillisec = TimeUnit.MILLISECONDS.convert(imputationWindowTime,
-				imputationWindowTimeUnit);
+	public LastValueCarriedForwardImputation() {
 	}
 
 	@Override
@@ -49,6 +34,14 @@ public class LastValueCarriedForwardImputation implements IImputation<ITimeInter
 		if (this.lastElement == null) {
 			this.lastElement = newElement;
 		} else {
+
+			// the imputationWindowTime to detect missing data is based on the
+			// difference
+			// between end and start timestamp of the last element.
+			PointInTime lastStart = this.lastElement.getMetadata().getStart();
+			PointInTime lastEnd = this.lastElement.getMetadata().getEnd();
+			PointInTime betweenEndAndStart = lastEnd.minus(lastStart);
+			long imputationWindowTime = betweenEndAndStart.getMainPoint();
 
 			// there is a lastElement
 			if (this.lastElement.getMetadata().getEnd().equals(newElement.getMetadata().getStart())) {
@@ -61,13 +54,15 @@ public class LastValueCarriedForwardImputation implements IImputation<ITimeInter
 
 			} else {
 
-				// missing data
-				PointInTime imputedDataEndTime = this.lastElement.getMetadata().getEnd(); // first
-																							// initialization
+				// there are missing data
+
+				// first initialization
+				PointInTime imputedDataEndTime = this.lastElement.getMetadata().getEnd();
+
 				do {
 
 					PointInTime imputedDataStartTime = imputedDataEndTime;
-					imputedDataEndTime = imputedDataStartTime.plus(this.imputationWindowSizeMillisec);
+					imputedDataEndTime = imputedDataStartTime.plus(imputationWindowTime);
 					Tuple<ITimeInterval> imputationElement = this.lastElement.clone();
 					imputationElement.getMetadata().setStartAndEnd(imputedDataStartTime, imputedDataEndTime);
 
@@ -76,12 +71,22 @@ public class LastValueCarriedForwardImputation implements IImputation<ITimeInter
 
 				} while (!(imputedDataEndTime.equals(newElement.getMetadata().getStart())));
 
-				// new element is now the last element
+				// new element is the last element now
 				this.lastElement = newElement;
 			}
 		}
 
 		return imputingData;
+	}
+
+	@Override
+	public String getName() {
+		return LastValueCarriedForwardImputation.NAME;
+	}
+
+	@Override
+	public IImputation<Tuple<ITimeInterval>, ITimeInterval> createInstance(Map<String, String> optionsMap) {
+		return new LastValueCarriedForwardImputation();
 	}
 
 }

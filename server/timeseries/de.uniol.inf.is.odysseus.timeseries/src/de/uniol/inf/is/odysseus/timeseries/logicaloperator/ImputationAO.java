@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
+import de.uniol.inf.is.odysseus.timeseries.imputation.ImputationRegistry;
 import de.uniol.inf.is.odysseus.timeseries.imputation.LastValueCarriedForwardImputation;
 
 /**
@@ -57,7 +58,7 @@ public class ImputationAO extends UnaryLogicalOp {
 		return this.imputationWindowSize;
 	}
 
-	@Parameter(name = "imputation_window_size", type = TimeParameter.class, doc = "Window size of regular time series to detect missing data.")
+	@Parameter(name = "imputation_window_size", type = TimeParameter.class, doc = "Window size of regular time series to detect missing data.", optional = true)
 	public void setImputationWindowSize(TimeValueItem imputationWindowSize) {
 		this.imputationWindowSize = imputationWindowSize;
 	}
@@ -66,7 +67,7 @@ public class ImputationAO extends UnaryLogicalOp {
 		return this.imputationStrategy;
 	}
 
-	@Parameter(name = "imputation_strategy", type = StringParameter.class, doc = "Strategy to impute missing data.", optional = true)
+	@Parameter(name = "imputation_strategy", type = StringParameter.class, doc = "Strategy to impute missing data.", optional = true, possibleValues = "getImputationStrategies")
 	public void setImputationStrategy(String imputationStrategy) {
 		this.imputationStrategy = imputationStrategy;
 	}
@@ -99,4 +100,9 @@ public class ImputationAO extends UnaryLogicalOp {
 	public Map<String, String> getOptionsMap() {
 		return optionsMap;
 	}
+
+	public List<String> getImputationStrategies() {
+		return ImputationRegistry.getInstance().getImputationStrategies();
+	}
+
 }

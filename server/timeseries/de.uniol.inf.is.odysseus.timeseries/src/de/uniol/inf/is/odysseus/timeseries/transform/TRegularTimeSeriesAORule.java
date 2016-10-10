@@ -28,7 +28,6 @@ public class TRegularTimeSeriesAORule extends AbstractTransformationRule<Regular
 	public void execute(final RegularTimeSeriesAO operator, final TransformationConfiguration config)
 			throws RuleException {
 
-		// TODO other strategies
 		// current implementation of previous value-method
 		
 		// it is a tumbling window
@@ -37,12 +36,12 @@ public class TRegularTimeSeriesAORule extends AbstractTransformationRule<Regular
 		timewindowAO.setWindowSize(timeValueItem);
 		timewindowAO.setWindowSlide(timeValueItem);
 		
-		RestructHelper.insertOperatorBefore(timewindowAO, operator); // QN ?
+		RestructHelper.insertOperatorBefore(timewindowAO, operator); 
 		insert(timewindowAO);
 		
 		// Aggregation to the last elements of TimeWindow-Intervall
 		AggregateAO aggregateAO = new AggregateAO();
-		RestructHelper.insertOperatorBefore(aggregateAO, timewindowAO); // QN ?
+		RestructHelper.insertOperatorBefore(aggregateAO, timewindowAO); 
 
 		SDFSchema inputSchema = operator.getInputSchema();
 		List<SDFAttribute> inputAttributes =  inputSchema.getAttributes();
@@ -54,7 +53,6 @@ public class TRegularTimeSeriesAORule extends AbstractTransformationRule<Regular
 		
 		insert(aggregateAO);
 		
-		// QN ?
 		RestructHelper.removeOperator(operator, false);
 		retract(operator);
 
@@ -62,14 +60,11 @@ public class TRegularTimeSeriesAORule extends AbstractTransformationRule<Regular
 
 	@Override
 	public boolean isExecutable(final RegularTimeSeriesAO operator, final TransformationConfiguration config) {
-		// QN: Welche Bedeutung hat dies?
 		return true;
 	}
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-
-		// QN: Welche Bedeutung hat dies?
 		return TransformRuleFlowGroup.SUBSTITUTION;
 	}
 

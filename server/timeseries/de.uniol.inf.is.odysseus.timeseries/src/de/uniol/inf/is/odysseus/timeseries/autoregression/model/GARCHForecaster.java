@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.timeseries.autoregression.model;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
@@ -17,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  * @author Christoph Schröer
  *
  */
-public class GARCHForecaster implements IAutoregressionForecaster {
+public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 
 	/**
 	 * Number of residuals. also called number of autoregressive parameter
@@ -95,14 +96,14 @@ public class GARCHForecaster implements IAutoregressionForecaster {
 		String stringRepresentation = this.getClass().getSimpleName() + "[";
 		stringRepresentation += "omega = " + this.omega + "; ";
 		stringRepresentation += "alphas: ";
-		
+
 		Integer alphaIndex = 1;
 		for (Double alpha : this.alphas) {
 			stringRepresentation += "[alpha_" + alphaIndex.toString();
 			alphaIndex++;
 			stringRepresentation += "=" + alpha.toString() + "]";
 		}
-		
+
 		Integer betaIndex = 1;
 		stringRepresentation += ";betas:";
 		for (Double beta : this.betas) {
@@ -136,7 +137,7 @@ public class GARCHForecaster implements IAutoregressionForecaster {
 
 			return varianceNextPeriod;
 		} else {
-			throw new IllegalArgumentException("Length of residuals and/or varinces ist not equal q/p.");
+			throw new IllegalArgumentException("Length of residuals and/or varinces is not equal q/p.");
 		}
 	}
 
@@ -191,12 +192,6 @@ public class GARCHForecaster implements IAutoregressionForecaster {
 	}
 
 	@Override
-	public Double predict(Tuple<ITimeInterval> object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Integer getQ() {
 		return this.q;
 	}
@@ -216,6 +211,11 @@ public class GARCHForecaster implements IAutoregressionForecaster {
 
 	public Double getOmega() {
 		return omega;
+	}
+
+	@Override
+	public IClone clone() {
+		return this;
 	}
 
 }

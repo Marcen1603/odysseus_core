@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.timeseries.transform;
 
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -26,7 +25,7 @@ public class TModelVarianceAORule extends AbstractTransformationRule<ModelVarian
 	@Override
 	public void execute(final ModelVarianceAO operator, final TransformationConfiguration config) throws RuleException {
 
-		AutoregressionEstimatorFactory<ITimeInterval> factory = new AutoregressionEstimatorFactory<>(
+		AutoregressionEstimatorFactory factory = new AutoregressionEstimatorFactory(
 				operator.getLearningMode());
 
 		AbstractAutoregressionModelEstimator estimator = factory.createEstimator(operator.getModelName(),

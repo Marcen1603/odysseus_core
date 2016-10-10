@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
  *
  */
 @LogicalOperator(name = "REGULAR_TIME_SERIES", minInputPorts = 1, maxInputPorts = 1, category = {
-		LogicalOperatorCategory.MINING }, doc = "Create a regular time series on irregular time series.")
+		LogicalOperatorCategory.MINING }, doc = "Create a regular time series on irregular time series with previous value method.")
 public class RegularTimeSeriesAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 7752589543824364696L;

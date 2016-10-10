@@ -16,14 +16,14 @@ import de.uniol.inf.is.odysseus.timeseries.imputation.IImputation;
  * @author Christoph Schröer
  *
  */
-public class ImputationPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
+public class ImputationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/**
 	 * Imputation stragey, how to deal with missing data.
 	 */
-	private IImputation<ITimeInterval> imputationStrategy;
+	private IImputation<Tuple<M>, M> imputationStrategy;
 
-	public ImputationPO(IImputation<ITimeInterval> imputationStrategy) {
+	public ImputationPO(IImputation<Tuple<M>, M> imputationStrategy) {
 		this.imputationStrategy = imputationStrategy;
 
 	}
@@ -39,12 +39,12 @@ public class ImputationPO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITime
 	}
 
 	@Override
-	protected void process_next(Tuple<ITimeInterval> object, int port) {
+	protected void process_next(Tuple<M> object, int port) {
 
-		List<Tuple<ITimeInterval>> imputationDataList = this.imputationStrategy.getImputationData(object);
+		List<Tuple<M>> imputationDataList = this.imputationStrategy.getImputationData(object);
 
 		if (!imputationDataList.isEmpty()) {
-			for (Tuple<ITimeInterval> imputationData : imputationDataList) {
+			for (Tuple<M> imputationData : imputationDataList) {
 				transfer(imputationData);
 			}
 		}
