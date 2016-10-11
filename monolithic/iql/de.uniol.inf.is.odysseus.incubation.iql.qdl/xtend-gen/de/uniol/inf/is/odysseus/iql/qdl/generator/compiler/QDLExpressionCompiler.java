@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.iql.qdl.generator.compiler;
 import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLExpressionCompiler;
@@ -112,40 +111,20 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
     boolean _isOperator = this.helper.isOperator(_ref);
     if (_isOperator) {
       String _xifexpression_1 = null;
-      boolean _and = false;
-      boolean _and_1 = false;
-      IQLArgumentsList _argsList = e.getArgsList();
-      boolean _notEquals = (!Objects.equal(_argsList, null));
-      if (!_notEquals) {
-        _and_1 = false;
-      } else {
-        IQLArgumentsMap _argsMap = e.getArgsMap();
-        boolean _notEquals_1 = (!Objects.equal(_argsMap, null));
-        _and_1 = _notEquals_1;
-      }
-      if (!_and_1) {
-        _and = false;
-      } else {
-        IQLArgumentsMap _argsMap_1 = e.getArgsMap();
-        EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-        int _size = _elements.size();
-        boolean _greaterThan = (_size > 0);
-        _and = _greaterThan;
-      }
-      if (_and) {
+      if ((((!Objects.equal(e.getArgsList(), null)) && (!Objects.equal(e.getArgsMap(), null))) && (e.getArgsMap().getElements().size() > 0))) {
         String _xblockexpression = null;
         {
           JvmTypeReference _ref_1 = e.getRef();
+          IQLArgumentsList _argsList = e.getArgsList();
+          EList<IQLExpression> _elements = _argsList.getElements();
+          JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_1, _elements);
           IQLArgumentsList _argsList_1 = e.getArgsList();
           EList<IQLExpression> _elements_1 = _argsList_1.getElements();
-          JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_1, _elements_1);
-          IQLArgumentsList _argsList_2 = e.getArgsList();
-          EList<IQLExpression> _elements_2 = _argsList_2.getElements();
-          int _size_1 = _elements_2.size();
-          boolean args = (_size_1 > 0);
+          int _size = _elements_1.size();
+          boolean args = (_size > 0);
           String _xifexpression_2 = null;
-          boolean _notEquals_2 = (!Objects.equal(constructor, null));
-          if (_notEquals_2) {
+          boolean _notEquals = (!Objects.equal(constructor, null));
+          if (_notEquals) {
             StringConcatenation _builder = new StringConcatenation();
             _builder.append("getOperator");
             JvmTypeReference _ref_2 = e.getRef();
@@ -168,14 +147,14 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
                 _builder.append(", ");
               }
             }
-            IQLArgumentsList _argsList_3 = e.getArgsList();
+            IQLArgumentsList _argsList_2 = e.getArgsList();
             EList<JvmFormalParameter> _parameters = constructor.getParameters();
-            String _compile_1 = this.compile(_argsList_3, _parameters, context);
+            String _compile_1 = this.compile(_argsList_2, _parameters, context);
             _builder.append(_compile_1, "");
             _builder.append("), operators,  ");
-            IQLArgumentsMap _argsMap_2 = e.getArgsMap();
+            IQLArgumentsMap _argsMap = e.getArgsMap();
             JvmTypeReference _ref_6 = e.getRef();
-            String _compile_2 = this.compile(_argsMap_2, _ref_6, context);
+            String _compile_2 = this.compile(_argsMap, _ref_6, context);
             _builder.append(_compile_2, "");
             _builder.append(")");
             _xifexpression_2 = _builder.toString();
@@ -202,13 +181,13 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
                 _builder_1.append(", ");
               }
             }
-            IQLArgumentsList _argsList_4 = e.getArgsList();
-            String _compile_4 = this.compile(_argsList_4, context);
+            IQLArgumentsList _argsList_3 = e.getArgsList();
+            String _compile_4 = this.compile(_argsList_3, context);
             _builder_1.append(_compile_4, "");
             _builder_1.append("), operators,  ");
-            IQLArgumentsMap _argsMap_3 = e.getArgsMap();
+            IQLArgumentsMap _argsMap_1 = e.getArgsMap();
             JvmTypeReference _ref_11 = e.getRef();
-            String _compile_5 = this.compile(_argsMap_3, _ref_11, context);
+            String _compile_5 = this.compile(_argsMap_1, _ref_11, context);
             _builder_1.append(_compile_5, "");
             _builder_1.append(")");
             _xifexpression_2 = _builder_1.toString();
@@ -218,19 +197,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
         _xifexpression_1 = _xblockexpression;
       } else {
         String _xifexpression_2 = null;
-        boolean _and_2 = false;
-        IQLArgumentsMap _argsMap_2 = e.getArgsMap();
-        boolean _notEquals_2 = (!Objects.equal(_argsMap_2, null));
-        if (!_notEquals_2) {
-          _and_2 = false;
-        } else {
-          IQLArgumentsMap _argsMap_3 = e.getArgsMap();
-          EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_3.getElements();
-          int _size_1 = _elements_1.size();
-          boolean _greaterThan_1 = (_size_1 > 0);
-          _and_2 = _greaterThan_1;
-        }
-        if (_and_2) {
+        if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
           StringConcatenation _builder = new StringConcatenation();
           _builder.append("getOperator");
           JvmTypeReference _ref_1 = e.getRef();
@@ -248,30 +215,30 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
           String _shortName_1 = this.typeUtils.getShortName(_ref_4, false);
           _builder.append(_shortName_1, "");
           _builder.append("\"), operators,  ");
-          IQLArgumentsMap _argsMap_4 = e.getArgsMap();
+          IQLArgumentsMap _argsMap = e.getArgsMap();
           JvmTypeReference _ref_5 = e.getRef();
-          String _compile_1 = this.compile(_argsMap_4, _ref_5, context);
+          String _compile_1 = this.compile(_argsMap, _ref_5, context);
           _builder.append(_compile_1, "");
           _builder.append(")");
           _xifexpression_2 = _builder.toString();
         } else {
           String _xifexpression_3 = null;
-          IQLArgumentsList _argsList_1 = e.getArgsList();
-          boolean _notEquals_3 = (!Objects.equal(_argsList_1, null));
-          if (_notEquals_3) {
+          IQLArgumentsList _argsList = e.getArgsList();
+          boolean _notEquals = (!Objects.equal(_argsList, null));
+          if (_notEquals) {
             String _xblockexpression_1 = null;
             {
               JvmTypeReference _ref_6 = e.getRef();
+              IQLArgumentsList _argsList_1 = e.getArgsList();
+              EList<IQLExpression> _elements = _argsList_1.getElements();
+              JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_6, _elements);
               IQLArgumentsList _argsList_2 = e.getArgsList();
-              EList<IQLExpression> _elements_2 = _argsList_2.getElements();
-              JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_6, _elements_2);
-              IQLArgumentsList _argsList_3 = e.getArgsList();
-              EList<IQLExpression> _elements_3 = _argsList_3.getElements();
-              int _size_2 = _elements_3.size();
-              boolean args = (_size_2 > 0);
+              EList<IQLExpression> _elements_1 = _argsList_2.getElements();
+              int _size = _elements_1.size();
+              boolean args = (_size > 0);
               String _xifexpression_4 = null;
-              boolean _notEquals_4 = (!Objects.equal(constructor, null));
-              if (_notEquals_4) {
+              boolean _notEquals_1 = (!Objects.equal(constructor, null));
+              if (_notEquals_1) {
                 StringConcatenation _builder_1 = new StringConcatenation();
                 _builder_1.append("getOperator");
                 JvmTypeReference _ref_7 = e.getRef();
@@ -294,9 +261,9 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
                     _builder_1.append(", ");
                   }
                 }
-                IQLArgumentsList _argsList_4 = e.getArgsList();
+                IQLArgumentsList _argsList_3 = e.getArgsList();
                 EList<JvmFormalParameter> _parameters = constructor.getParameters();
-                String _compile_3 = this.compile(_argsList_4, _parameters, context);
+                String _compile_3 = this.compile(_argsList_3, _parameters, context);
                 _builder_1.append(_compile_3, "");
                 _builder_1.append("), operators)");
                 _xifexpression_4 = _builder_1.toString();
@@ -323,8 +290,8 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCom
                     _builder_2.append(", ");
                   }
                 }
-                IQLArgumentsList _argsList_5 = e.getArgsList();
-                String _compile_5 = this.compile(_argsList_5, context);
+                IQLArgumentsList _argsList_4 = e.getArgsList();
+                String _compile_5 = this.compile(_argsList_4, context);
                 _builder_2.append(_compile_5, "");
                 _builder_2.append(")>, operators)");
                 _xifexpression_4 = _builder_2.toString();
