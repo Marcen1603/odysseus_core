@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,13 @@ package de.uniol.inf.is.odysseus.core.predicate;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
  * This is an abstract superclass for all predicates, that provides an empty
  * init method.
- * 
+ *
  * @author Andre Bolles, Christian Kuka
  *
  */
@@ -32,7 +33,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     private static final long serialVersionUID = -2182745249884399237L;
 
     /**
-     * 
+     *
      * Class constructor.
      *
      */
@@ -40,7 +41,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     }
 
     /**
-     * 
+     *
      * Class constructor.
      *
      * @param pred
@@ -50,14 +51,14 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
     abstract public AbstractPredicate<T> clone();
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
@@ -67,7 +68,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     // TODO: IMplement in Child Classes...
@@ -76,8 +77,13 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
         return false;
     }
 
+    @Override
+    public IPunctuation processPunctuation(IPunctuation punctuation) {
+    	return punctuation;
+    }
+
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -86,14 +92,14 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
     public boolean isAlwaysTrue() {
         return false;
     }
-    
+
     @Override
     public boolean isAlwaysFalse() {
     	return false;
@@ -101,7 +107,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if not implemented in inherited class.
      */
@@ -112,7 +118,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if not implemented in inherited class.
      */
@@ -123,7 +129,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if not implemented in inherited class.
      */
@@ -131,7 +137,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T> {
     public IPredicate<T> not() {
         throw new UnsupportedOperationException("Negation not supported for " + this.getClass());
     }
-    
+
     @Override
     public List<? extends IPredicate<? super T>> conjunctiveSplit() {
         throw new UnsupportedOperationException("Spit not supported for " + this.getClass());

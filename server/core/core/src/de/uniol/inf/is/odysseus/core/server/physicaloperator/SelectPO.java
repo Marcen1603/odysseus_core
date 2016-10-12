@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,7 +50,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>impl
 
 	/**
 	 * Set the heartbeat rate
-	 * 
+	 *
 	 * @param heartbeatRate
 	 */
 	public void setHeartbeatRate(int heartbeatRate) {
@@ -87,7 +87,8 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>impl
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+		IPunctuation puncToSend = predicate.processPunctuation(punctuation);
+		sendPunctuation(puncToSend);
 	}
 
 	@Override
