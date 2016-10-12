@@ -1,3 +1,9 @@
 /.metadata/
 /.recommenders/
 /External Plug-in Libraries/
+*.prefs
+
+# Xtext files #
+###############
+*.xtendbin
+*._trace
