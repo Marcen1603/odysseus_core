@@ -1,6 +1,7 @@
 /.metadata/
 /.recommenders/
 /External Plug-in Libraries/
+<<<<<<< HEAD
 *.prefs
 *.classpath
 *.project
@@ -9,3 +10,5 @@
 ###############
 *.xtendbin
 *._trace
+=======
+>>>>>>> parent of 8ad21d0... Added gitignore that excludes ._trace, .xtendbin and .prefs files.
