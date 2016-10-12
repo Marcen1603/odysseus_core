@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package 
+			uri = "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/Cql"
+			class = "de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage"
+			genModel = "model/generated/Cql.genmodel" />
+	</extension>
+</plugin>

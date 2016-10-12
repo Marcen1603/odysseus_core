@@ -1,0 +1,9 @@
+grammar de.uniol.inf.is.odysseus.parser.novel.cql.Cql with org.eclipse.xtext.common.Terminals
+
+generate cql "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/Cql"
+
+Model:
+	greetings+=Greeting*;
+	
+Greeting:
+	'Hello' name=ID '!';
