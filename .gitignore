@@ -2,6 +2,8 @@
 /.recommenders/
 /External Plug-in Libraries/
 *.prefs
+*.classpath
+*.project
 
 # Xtext files #
 ###############
