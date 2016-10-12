@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,17 +33,17 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * @author Marco Grawunder
  */
 @SuppressWarnings({ "rawtypes" })
-public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPipe<T, T> {
+public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPipe<T, T> implements IHasPredicates {
 
-	private List<IPredicate<? super T>> predicates;
+	private List<IPredicate<?>> predicates;
 	final boolean overlappingPredicates;
-	
+
 	/**
 	 * if an element is routed to an output, heartbeats will be send to all other outputs.
 	 */
 	final boolean sendingHeartbeats;
 
-	public RoutePO(List<IPredicate<? super T>> predicates,
+	public RoutePO(List<IPredicate<T>> predicates,
 			boolean overlappingPredicates, boolean sendingHeartbeats) {
 		super();
 		this.overlappingPredicates = overlappingPredicates;
@@ -51,17 +51,15 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 		initPredicates(predicates);
 	}
 
-	public RoutePO(RoutePO<T> splitPO) {
-		super();
-		this.overlappingPredicates = splitPO.overlappingPredicates;
-		this.sendingHeartbeats = splitPO.sendingHeartbeats;
-		initPredicates(splitPO.predicates);
+	@Override
+	public List<IPredicate<?>> getPredicates() {
+		return predicates;
 	}
 
-	private void initPredicates(List<IPredicate<? super T>> predicates) {
-		this.predicates = new ArrayList<IPredicate<? super T>>(
+	private void initPredicates(List<IPredicate<T>> predicates) {
+		this.predicates = new ArrayList<IPredicate<?>>(
 				predicates.size());
-		for (IPredicate<? super T> p : predicates) {
+		for (IPredicate<?> p : predicates) {
 			this.predicates.add(p.clone());
 		}
 	}
@@ -80,7 +78,7 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 			routedToPorts = Lists.newArrayList();
 		}
 		for (int i = 0; i < predicates.size(); i++) {
-			if (predicates.get(i).evaluate(object)) {
+			if (((IPredicate<T>)predicates.get(i)).evaluate(object)) {
 				T out = object;
 				// If object is send to multiple output ports
 				// it MUST be cloned!
@@ -104,18 +102,18 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 				routedToPorts.add(predicates.size());
 			}
 		}
-		
+
 		if ((sendingHeartbeats) && (routedToPorts != null)) {
 			// Sending heartbeats to all other ports
 			for(int i = 0; i < predicates.size(); i++) {
-				
+
 				if(!routedToPorts.contains(i))
 					this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()), i);
-				
+
 			}
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		for (int i=0;i<predicates.size();i++){

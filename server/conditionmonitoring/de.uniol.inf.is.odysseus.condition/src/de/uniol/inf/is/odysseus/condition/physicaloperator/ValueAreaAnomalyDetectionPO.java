@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 /**
  * An operator that finds anomalies when the values are not in the declared area
  * and gives the anomalies a score.
- * 
+ *
  * @author Tobias Brandt
  *
  * @param <T>
@@ -39,7 +39,7 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 
 	/**
 	 * Create the physical operator from the logical operator.
-	 * 
+	 *
 	 * @param ao
 	 */
 	@SuppressWarnings("unchecked")
@@ -107,7 +107,7 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	/**
 	 * Calculates the anomaly score, a value between 0 and 1. (Will actually
 	 * never reach 1)
-	 * 
+	 *
 	 * @param distance
 	 *            Distance to good area
 	 * @return Anomaly score (0, 1]
@@ -143,7 +143,8 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+		IPunctuation outPunctuation = predicate.processPunctuation(punctuation);
+		sendPunctuation(outPunctuation);
 	}
 
 	@Override

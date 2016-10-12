@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,18 +19,19 @@ import java.io.Serializable;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
  * Base Interface for all types of predicates
- * 
+ *
  * @author Jonas Jacobi, Christian Kuka
  */
 public interface IPredicate<T> extends IClone, Serializable {
 
     /**
      * Evaluate the predicate with the input
-     * 
+     *
      * @param input
      *            The input
      * @return <code>true</code> if the input fulfills the predicate,
@@ -40,7 +41,7 @@ public interface IPredicate<T> extends IClone, Serializable {
 
     /**
      * Evaluate the predicate with a left and a right input (e.g. in joins)
-     * 
+     *
      * @param left
      *            The left input
      * @param right
@@ -50,9 +51,18 @@ public interface IPredicate<T> extends IClone, Serializable {
      */
 	Boolean evaluate(T left, T right);
 
+	/**
+	 * Some predicates may want to receive information from punctutions. The predicate
+	 * can modify the punctuation or send the original punctuation back
+	 *
+	 * @param punctuation The punctuation
+	 * @return the old or a new punctation (e.g. send by an operator)
+	 */
+	IPunctuation processPunctuation(IPunctuation punctuation);
+
     /**
      * Checks if this predicate is contained in another predicate.
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return <code>true</code> if contained, <code>false</code> if not or not
@@ -62,30 +72,30 @@ public interface IPredicate<T> extends IClone, Serializable {
 
     /**
      * Get the list of all attributes in this predicate.
-     * 
+     *
      * @return A {@link List} of all {@link SDFAttribute} in the predicate
      */
     public List<SDFAttribute> getAttributes();
 
     /**
      * Checks whether the predicate always evaluate to <code>true</code>
-     * 
+     *
      * @return Flag whether the predicate always evaluate to <code>true</code>
      */
     public boolean isAlwaysTrue();
 
     /**
      * Checks whether the predicate always evaluate to <code>false</code>
-     * 
+     *
      * @return Flag whether the predicate always evaluate to <code>false</code>
      */
     public boolean isAlwaysFalse();
 
-    
+
     /**
      * Returns the conjunction of this predicate and the given predicate.
-     * 
-     * 
+     *
+     *
      * @param predicate
      *            The predicate
      * @return The conjunction of the two predicates
@@ -94,7 +104,7 @@ public interface IPredicate<T> extends IClone, Serializable {
 
     /**
      * Returns the disjunction of this predicate and the given predicate.
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return The disjunction of the two predicates
@@ -103,14 +113,14 @@ public interface IPredicate<T> extends IClone, Serializable {
 
     /**
      * Returns the negation of this predicate.
-     * 
+     *
      * @return The negation of this predicate
      */
     IPredicate<T> not();
 
     /**
      * Compares two predicates for equality.
-     * 
+     *
      * @param predicate
      *            The predicate to compare with
      * @return true, if both predicates are equal
@@ -118,7 +128,7 @@ public interface IPredicate<T> extends IClone, Serializable {
     public boolean equals(IPredicate<T> predicate);
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override

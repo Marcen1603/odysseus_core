@@ -6,6 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -24,6 +25,11 @@ public class RelationalExpression<T extends IMetaAttribute> extends AbstractRela
 	public RelationalExpression(RelationalExpression<T> other) {
 		super(other);
 	}
+
+    @Override
+    public IPunctuation processPunctuation(IPunctuation punctuation) {
+    	return punctuation;
+    }
 
 	@Override
 	public List<RelationalExpression<T>> conjunctiveSplit() {
@@ -76,7 +82,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends AbstractRela
 						expr.or(((AbstractRelationalExpression<T>) predicate).getMEPExpression()).toString(), attributeResolver,
 						expression.getExpressionParser());
 				return new RelationalExpression<T>(newExpression);
-			
+
 		}
 		throw new IllegalArgumentException("Cannot process with " + predicate);
 	}
