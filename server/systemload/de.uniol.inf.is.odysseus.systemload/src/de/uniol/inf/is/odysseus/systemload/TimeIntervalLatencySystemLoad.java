@@ -110,11 +110,6 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 		return "i=" + timeInterval.toString() + "| +l=" + latency.toString() + " | sysload= " + systemload.toString();
 	}
 
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "i=" + timeInterval.toString(baseTime) + "| +l=" + latency.toString() + " | sysload= " + systemload.toString();
-	}
-
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,10 +95,10 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 		// To not merge if join predicate is equals predicate
 		if (sel != null) {
 			Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
-			if (PredicateHelper.checkEqualsPredicate(join.getPredicate(), neededAttrs, join.getInputSchema(0),
+			if (join.getPredicate() != null && (PredicateHelper.checkEqualsPredicate(join.getPredicate(), neededAttrs, join.getInputSchema(0),
 					join.getInputSchema(1))
 					|| PredicateHelper.checkEqualsPredicate(join.getPredicate(), neededAttrs, join.getInputSchema(1),
-							join.getInputSchema(0))) {
+							join.getInputSchema(0)))) {
 				return false;
 			}
 		}

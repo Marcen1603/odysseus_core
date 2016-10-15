@@ -77,13 +77,13 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 			l.process(m);
 		}
 	}
-	
+
 	public void fireProcess(T m, int port) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(m, port);
 		}
 	}
-	
+
 	public void fireProcess(String[] message) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(message);
@@ -172,7 +172,7 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 	 * {@link ITransportHandler#createInstance(IProtocolHandler, Map))} based on
 	 * the current configuration. This is useful for comparing and serialising
 	 * different TransportHandler-instances.
-	 * 
+	 *
 	 * @return
 	 */
 	public OptionMap getOptionsMap() {
@@ -189,6 +189,10 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 
 	public SDFSchema getSchema() {
 		return schema;
+	}
+
+	public void optionsMapChanged(String key, String value) {
+		throw new UnsupportedOperationException("Sorry. Update of options not supported by "+this.callOnMe.getName());
 	}
 
 }

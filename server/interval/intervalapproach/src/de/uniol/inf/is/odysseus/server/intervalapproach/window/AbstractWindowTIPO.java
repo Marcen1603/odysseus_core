@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IUpdateableWindow;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
@@ -32,9 +33,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
 
 public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T>
-		implements IWindow {
-	protected final long windowSize;
-	protected final long windowAdvance;
+		implements IWindow, IUpdateableWindow {
+	protected long windowSize;
+	protected long windowAdvance;
 	protected final WindowType windowType;
 	protected final boolean partitioned;
 	final boolean usesSlideParam;
@@ -97,8 +98,19 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		return windowSize;
 	}
 
+	@Override
+	public void setWindowSize(long newWindowSize){
+		this.windowSize = newWindowSize;
+	}
+
+	@Override
 	public long getWindowAdvance() {
 		return windowAdvance;
+	}
+
+	@Override
+	public void setWindowAdvance(long newWindowAdvance){
+		this.windowAdvance = newWindowAdvance;
 	}
 
 	public long getWindowSizeMillis() {

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -101,16 +101,14 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 
 /**
- * 
+ *
  * @author Merlin Wasmann, Marco Grawunder
- * 
+ *
  */
 public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	InfoService INFO = InfoServiceFactory.getInfoService(WsClient.class);
 
-	// TODO: Combine login with connection where to login and store into server
-	private static final String REMOVEME = "";
 	// TODO: When connecting to multiple servers ... query id is not unique
 	// anymore --> need server in gui
 
@@ -127,17 +125,21 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 					synchronized (this) {
 						wait(UPDATEINTERVAL);
 					}
-					WsClient.this.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-					WsClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
-					WsClient.this.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
-					WsClient.this.fireUpdateEvent(IUpdateEventListener.SESSION);
-					WsClient.this.fireUpdateEvent(IUpdateEventListener.USER);
+					fireAllUpdateEvents();
 				} catch (InterruptedException e) {
 					// e.printStackTrace();
 				}
 			}
 		}
 	};
+
+	private void fireAllUpdateEvents() {
+		WsClient.this.fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
+		WsClient.this.fireUpdateEvent(IUpdateEventListener.QUERY);
+		WsClient.this.fireUpdateEvent(IUpdateEventListener.SCHEDULING);
+		WsClient.this.fireUpdateEvent(IUpdateEventListener.SESSION);
+		WsClient.this.fireUpdateEvent(IUpdateEventListener.USER);
+	}
 
 	private Runner generateEvents = new Runner();
 
@@ -189,7 +191,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/**
 	 * connect
-	 * 
+	 *
 	 * @param connectString
 	 *            String: expected format is
 	 *            wsdlLocation;serviceNamespace;service
@@ -210,7 +212,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/**
 	 * Setup the client with given wsdlLocation and the service
-	 * 
+	 *
 	 * @param wsdlLocation
 	 * @param service
 	 */
@@ -267,18 +269,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		throw new RuntimeException("Login with username and password cannot be used in web service");
-		// String securitytoken = getWebserviceServer(REMOVEME).login2(username,
-		// new String(password)).getResponseValue();
-		// if (securitytoken == null){
-		// return null;
-		// }
-		// IUser user = new WsClientUser(username, password, true);
-		// WsClientSession session = new WsClientSession(user, null, REMOVEME);
-		// session.setToken(securitytoken);
-		// ClientSessionStore.addSession(REMOVEME, session);
-		// fireUpdateEvent(IUpdateEventListener.SESSION);
-		// return session;
+		throw new RuntimeException("Login with username and password cannot be used in web service. Must use login(String username, byte[] password, String tenant, String connectString) ");
 	}
 
 	@Override
@@ -605,6 +596,17 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
+	public void runCommand(String commandExpression, ISession caller) {
+		assureLogin(caller);
+		try{
+			getWebserviceServer(caller.getConnectionName()).runCommand(caller.getToken(), commandExpression);
+			fireAllUpdateEvents();
+		}catch (InvalidUserDataException_Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user,
 			String queryBuildConfigurationName, Context context) throws PlanManagementException { //
 		assureLogin(user);
@@ -650,7 +652,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	/**
 	 * method to create an instance of LogicalQuery from an instance of
 	 * LogicalQueryInfo
-	 * 
+	 *
 	 * @param info
 	 * @param queryState
 	 * @return LogicalQuery
@@ -663,7 +665,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
 		query.setUser(caller);
-		query.setName(Resource.specialCreateResource(info.getName(),caller.getUser()));
+		query.setName(Resource.specialCreateResource(info.getName().toString(),caller.getUser()));
 
 		return query;
 	}
@@ -717,7 +719,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		if (dataHandler == null){
 			throw new RuntimeException("Cannot find data handler for type "+type);
 		}
-		
+
 		// TODO: Handle generic metadata ...
 		dataHandler.setMetaAttribute(new TimeInterval());
 		List<SocketAddress> adr = ((IClientExecutor) exec).getSocketConnectionInformation(queryId, caller);
@@ -768,7 +770,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/**
 	 * Returns a SocketAddress object
-	 * 
+	 *
 	 * @param queryId
 	 * @return SocketAddress
 	 */
@@ -825,20 +827,20 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		for (SdfAttributeInformation attrInfo : attributeInfos) {
 			attributes.add(createAttributeFromInformation(attrInfo));
 		}
-		
+
 		try{
 			Class<?> typeClass = Class.forName(info.getTypeClass());
 			return SDFSchemaFactory.createNewSchema(uri, typeClass, attributes);
 		}catch(Exception e){
 			e.printStackTrace();
-		}		
+		}
 		return SDFSchemaFactory.createNewTupleSchema(uri, attributes);
 	}
 
 	private SDFAttribute createAttributeFromInformation(SdfAttributeInformation info) {
 		// TODO Extend SdfAttributeInformation
 		SDFDatatype dt = createDatatypeFromInformation(info.getDatatype());
-		
+
 		return new SDFAttribute(info.getSourcename(), info.getAttributename(), SDFDatatype.createTypeWithSubSchema(
 				dt, dt.getSubType(), createSchemaFromInformation(info.getSubschema())));
 	}
@@ -848,7 +850,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		SDFSchema subschema = null;
 		if (info.getSubtype() != null) {
 			subtype = createDatatypeFromInformation(info.getSubtype());
-		} 
+		}
 		if (info.getSubSchema() != null) {
 			subschema = createSchemaFromInformation(info.getSubSchema());
 		}
@@ -1086,7 +1088,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getOperatorNames(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
@@ -1110,7 +1112,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getOperatorInformations
 	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)
@@ -1140,7 +1142,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getOperatorInformation(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
@@ -1198,7 +1200,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getRegisteredDatatypes
 	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)
@@ -1230,7 +1232,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
 	 * getRegisteredAggregateFunctions(java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
@@ -1345,25 +1347,25 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public Set<String> getMetadataNames(ISession session) {
 		if( session == null ) {
 			return null;
 		}
-		
+
 		assureLogin(session);
 		WebserviceServer webserviceServer = getWebserviceServer(session.getConnectionName());
 		if( webserviceServer != null ) {
 			try {
 				StringListResponse names = webserviceServer.getMetadataNames(session.getToken());
 				return new HashSet<String>(names.getResponseValue());
-				
+
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
-		
+
 		return null;
 	}
 

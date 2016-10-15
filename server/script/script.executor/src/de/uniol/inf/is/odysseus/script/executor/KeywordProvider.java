@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.script.keyword.RemoveQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.RequiredFeaturePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ResetUpdateSitePreparserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ResumeQueryPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.RunCommandPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SleepPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.StartAllClosedQueriesPreParserKeyword;
@@ -61,7 +62,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 	@Override
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = new HashMap<String, Class<? extends IPreParserKeyword>>();
-		
+
 		keywords.put(LoginUserPreParserKeyword.LOGIN, LoginUserPreParserKeyword.class);
 		keywords.put(LogoutUserPreParserKeyword.LOGOUT, LogoutUserPreParserKeyword.class);
 		keywords.put(AddQueryPreParserKeyword.QUERY, AddQueryPreParserKeyword.class);
@@ -78,11 +79,11 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(StopSchedulerPreParserKeyword.KEYWORD, StopSchedulerPreParserKeyword.class);
 		keywords.put(BufferPlacementPreParserKeyword.BUFFERPLACEMENT, BufferPlacementPreParserKeyword.class);
 		keywords.put(ParserPreParserKeyword.PARSER, ParserPreParserKeyword.class);
-		keywords.put(TransCfgPreParserKeyword.TRANSCFG, TransCfgPreParserKeyword.class);			
+		keywords.put(TransCfgPreParserKeyword.TRANSCFG, TransCfgPreParserKeyword.class);
 		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);
 		keywords.put(DropStoredProcedure.DROPPROCEDURE, DropStoredProcedure.class);
 		keywords.put(PlanGenerationMethodPreParserKeyword.PLANGENERATIONMETHOD, PlanGenerationMethodPreParserKeyword.class);
-		keywords.put(RequiredFeaturePreParserKeyword.REQUIRED, RequiredFeaturePreParserKeyword.class);		
+		keywords.put(RequiredFeaturePreParserKeyword.REQUIRED, RequiredFeaturePreParserKeyword.class);
 		keywords.put(UpdateFeaturePreParserKeyword.UPDATE, UpdateFeaturePreParserKeyword.class);
 		keywords.put(PreTransformationHandlerPreParserKeyword.KEYWORD, PreTransformationHandlerPreParserKeyword.class);
 		keywords.put(ActivateRewriteRulePreParserKeyword.ACTIVATEREWRITERULE, ActivateRewriteRulePreParserKeyword.class);
@@ -97,6 +98,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(WaitForQueryPreParserKeyword.NAME, WaitForQueryPreParserKeyword.class);
 		keywords.put(UpdateSitePreparserKeyword.NAME, UpdateSitePreparserKeyword.class);
 		keywords.put(ResetUpdateSitePreparserKeyword.NAME, ResetUpdateSitePreparserKeyword.class);
+		keywords.put(RunCommandPreParserKeyword.NAME, RunCommandPreParserKeyword.class);
 		return keywords;
 	}
 }

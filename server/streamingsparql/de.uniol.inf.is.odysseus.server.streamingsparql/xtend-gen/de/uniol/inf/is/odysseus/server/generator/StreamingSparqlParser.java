@@ -312,23 +312,13 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
       for (final String variable : duplicates) {
         Collection<StreamingSparqlTriplePatternMatching> _values = this.triplePatternMatchingMap.values();
         final Function1<StreamingSparqlTriplePatternMatching, Boolean> _function = (StreamingSparqlTriplePatternMatching p) -> {
-          boolean _or = false;
-          String _subject = p.getSubject();
-          boolean _equals_3 = _subject.equals(variable);
-          if (_equals_3) {
-            _or = true;
-          } else {
-            String _object = p.getObject();
-            boolean _equals_4 = _object.equals(variable);
-            _or = _equals_4;
-          }
-          return Boolean.valueOf(_or);
+          return Boolean.valueOf((p.getSubject().equals(variable) || p.getObject().equals(variable)));
         };
         Iterable<StreamingSparqlTriplePatternMatching> _filter = IterableExtensions.<StreamingSparqlTriplePatternMatching>filter(_values, _function);
         List<StreamingSparqlTriplePatternMatching> _list = IterableExtensions.<StreamingSparqlTriplePatternMatching>toList(_filter);
         varToPattern.put(variable, _list);
       }
-      final ArrayList<TripleToJoin> listToJoin = new ArrayList<TripleToJoin>();
+      ArrayList<TripleToJoin> listToJoin = new ArrayList<TripleToJoin>();
       boolean _isEmpty = listToJoin.isEmpty();
       if (_isEmpty) {
         final String v = duplicates.get(0);
@@ -351,27 +341,20 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
       while ((!IteratorExtensions.isEmpty(duplicatesIterator))) {
         {
           final ArrayList<TripleToJoin> toAdd = this.listToJoinIteration(duplicatesIterator, varToPattern, listToJoin);
-          boolean _and = false;
-          boolean _notEquals_3 = (!Objects.equal(toAdd, null));
-          if (!_notEquals_3) {
-            _and = false;
-          } else {
-            boolean _isEmpty_1 = toAdd.isEmpty();
-            boolean _not = (!_isEmpty_1);
-            _and = _not;
-          }
-          if (_and) {
+          if (((!Objects.equal(toAdd, null)) && (!toAdd.isEmpty()))) {
             listToJoin.addAll(toAdd);
           }
           boolean _hasNext = duplicatesIterator.hasNext();
-          boolean _not_1 = (!_hasNext);
-          if (_not_1) {
+          boolean _not = (!_hasNext);
+          if (_not) {
             Iterator<String> _iterator = duplicates.iterator();
             duplicatesIterator = _iterator;
           }
         }
       }
       final ArrayList<TripleToJoin> listOfMultiplePredicates = new ArrayList<TripleToJoin>();
+      final ArrayList<TripleToJoin> newlist = new ArrayList<TripleToJoin>();
+      final ArrayList<TripleToJoin> listwithmorethanonepattern2 = new ArrayList<TripleToJoin>();
       for (final TripleToJoin element : listToJoin) {
         {
           final Function1<TripleToJoin, Boolean> _function_1 = (TripleToJoin p) -> {
@@ -381,28 +364,50 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
           };
           Iterable<TripleToJoin> _filter_1 = IterableExtensions.<TripleToJoin>filter(listToJoin, _function_1);
           final List<TripleToJoin> j = IterableExtensions.<TripleToJoin>toList(_filter_1);
+          int _size_4 = j.size();
+          boolean _equals_3 = (_size_4 == 1);
+          if (_equals_3) {
+            newlist.addAll(j);
+          } else {
+            if (((j.size() > 1) && (!listwithmorethanonepattern2.containsAll(j)))) {
+              listwithmorethanonepattern2.addAll(j);
+            }
+          }
+        }
+      }
+      newlist.addAll(listwithmorethanonepattern2);
+      listToJoin = newlist;
+      for (final TripleToJoin element_1 : listToJoin) {
+        {
+          final Function1<TripleToJoin, Boolean> _function_1 = (TripleToJoin p) -> {
+            StreamingSparqlTriplePatternMatching _pattern2 = p.getPattern2();
+            StreamingSparqlTriplePatternMatching _pattern2_1 = element_1.getPattern2();
+            return Boolean.valueOf(Objects.equal(_pattern2, _pattern2_1));
+          };
+          Iterable<TripleToJoin> _filter_1 = IterableExtensions.<TripleToJoin>filter(listToJoin, _function_1);
+          final List<TripleToJoin> j = IterableExtensions.<TripleToJoin>toList(_filter_1);
           boolean _isEmpty_1 = this.joinMap.isEmpty();
           if (_isEmpty_1) {
-            StreamingSparqlTriplePatternMatching _pattern1 = element.getPattern1();
+            StreamingSparqlTriplePatternMatching _pattern1 = element_1.getPattern1();
             String _id = _pattern1.getId();
             String _plus = ((("join" + Integer.valueOf(this.cnt)) + " = join({predicate = \'") + _id);
             String _plus_1 = (_plus + ".");
-            String _variable = element.getVariable();
+            String _variable = element_1.getVariable();
             String _plus_2 = (_plus_1 + _variable);
             String _plus_3 = (_plus_2 + 
               " = ");
-            StreamingSparqlTriplePatternMatching _pattern2 = element.getPattern2();
+            StreamingSparqlTriplePatternMatching _pattern2 = element_1.getPattern2();
             String _id_1 = _pattern2.getId();
             String _plus_4 = (_plus_3 + _id_1);
             String _plus_5 = (_plus_4 + ".");
-            String _variable_1 = element.getVariable();
+            String _variable_1 = element_1.getVariable();
             String _plus_6 = (_plus_5 + _variable_1);
             String _plus_7 = (_plus_6 + "\'}, ");
-            StreamingSparqlTriplePatternMatching _pattern1_1 = element.getPattern1();
+            StreamingSparqlTriplePatternMatching _pattern1_1 = element_1.getPattern1();
             String _id_2 = _pattern1_1.getId();
             String _plus_8 = (_plus_7 + _id_2);
             String _plus_9 = (_plus_8 + ", ");
-            StreamingSparqlTriplePatternMatching _pattern2_1 = element.getPattern2();
+            StreamingSparqlTriplePatternMatching _pattern2_1 = element_1.getPattern2();
             String _id_3 = _pattern2_1.getId();
             String _plus_10 = (_plus_9 + _id_3);
             String _plus_11 = (_plus_10 + ")");
@@ -441,7 +446,7 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
                 }
               }
               _builder_2.append("\'}, ");
-              StreamingSparqlTriplePatternMatching _pattern2_3 = element.getPattern2();
+              StreamingSparqlTriplePatternMatching _pattern2_3 = element_1.getPattern2();
               String _id_6 = _pattern2_3.getId();
               _builder_2.append(_id_6, "");
               _builder_2.append(", join");
@@ -694,41 +699,31 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
     final Iterator<TripleToJoin> listToJoinIterator = listToJoin.iterator();
     final ArrayList<TripleToJoin> listToAdd = new ArrayList<TripleToJoin>();
     final String variable = duplicatesIterator.next();
-    final List<StreamingSparqlTriplePatternMatching> list = varToPattern.get(variable);
+    final List<StreamingSparqlTriplePatternMatching> patterns = varToPattern.get(variable);
     while (listToJoinIterator.hasNext()) {
       {
         final TripleToJoin joinElement = listToJoinIterator.next();
         final Function1<StreamingSparqlTriplePatternMatching, Boolean> _function = (StreamingSparqlTriplePatternMatching p) -> {
-          boolean _or = false;
-          StreamingSparqlTriplePatternMatching _pattern1 = joinElement.getPattern1();
-          boolean _equals = Objects.equal(p, _pattern1);
-          if (_equals) {
-            _or = true;
-          } else {
-            StreamingSparqlTriplePatternMatching _pattern2 = joinElement.getPattern2();
-            boolean _equals_1 = Objects.equal(p, _pattern2);
-            _or = _equals_1;
-          }
-          return Boolean.valueOf(_or);
+          return Boolean.valueOf((Objects.equal(p, joinElement.getPattern1()) || Objects.equal(p, joinElement.getPattern2())));
         };
-        Iterable<StreamingSparqlTriplePatternMatching> _filter = IterableExtensions.<StreamingSparqlTriplePatternMatching>filter(list, _function);
+        Iterable<StreamingSparqlTriplePatternMatching> _filter = IterableExtensions.<StreamingSparqlTriplePatternMatching>filter(patterns, _function);
         List<StreamingSparqlTriplePatternMatching> filteredList = IterableExtensions.<StreamingSparqlTriplePatternMatching>toList(_filter);
         int _size = filteredList.size();
         boolean _greaterThan = (_size > 0);
         if (_greaterThan) {
           StreamingSparqlTriplePatternMatching _get = filteredList.get(0);
-          list.remove(_get);
+          patterns.remove(_get);
           StreamingSparqlTriplePatternMatching _get_1 = filteredList.get(0);
-          StreamingSparqlTriplePatternMatching _get_2 = list.get(0);
+          StreamingSparqlTriplePatternMatching _get_2 = patterns.get(0);
           String _replace = variable.replace("?", "");
           TripleToJoin _tripleToJoin = new TripleToJoin(_get_1, _get_2, _replace);
-          listToJoin.add(_tripleToJoin);
-          int _size_1 = list.size();
+          listToAdd.add(_tripleToJoin);
+          int _size_1 = patterns.size();
           int _minus = (_size_1 - 1);
           ExclusiveRange _doubleDotLessThan = new ExclusiveRange(0, _minus, true);
           for (final Integer k : _doubleDotLessThan) {
-            StreamingSparqlTriplePatternMatching _get_3 = list.get((k).intValue());
-            StreamingSparqlTriplePatternMatching _get_4 = list.get(((k).intValue() + 1));
+            StreamingSparqlTriplePatternMatching _get_3 = patterns.get((k).intValue());
+            StreamingSparqlTriplePatternMatching _get_4 = patterns.get(((k).intValue() + 1));
             String _replace_1 = variable.replace("?", "");
             TripleToJoin _tripleToJoin_1 = new TripleToJoin(_get_3, _get_4, _replace_1);
             listToAdd.add(_tripleToJoin_1);

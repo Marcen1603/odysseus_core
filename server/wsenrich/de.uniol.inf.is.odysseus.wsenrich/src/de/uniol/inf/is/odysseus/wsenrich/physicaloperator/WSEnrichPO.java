@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.wsenrich.physicaloperator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -25,15 +24,17 @@ import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IConnectionForWebservic
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IKeyFinder;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageManipulator;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IRequestBuilder;
-import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.ISoapMessageCreator;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageCreator;
 
-public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple<M>,M> {
+public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple<M>, M> {
 
 	private final String serviceMethod;
 	private final String method;
 	private final String url;
+	private final Boolean urlIsTemplate;
 	private final String urlsuffix;
 	private final List<Option> arguments;
+	private final List<Option> header;
 	private final String operation;
 	private final List<SDFAttribute> receivedData;
 	private final String charset;
@@ -46,30 +47,26 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final IRequestBuilder requestBuilder;
 	private final HttpEntityToStringConverter converter;
 	private final IKeyFinder keyFinder;
-	private final ISoapMessageCreator soapMessageCreator;
-	private final IMessageManipulator soapMessageManipulator;
+	private final IMessageCreator messageCreator;
+	private final IMessageManipulator messageManipulator;
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 
-	public WSEnrichPO(String serviceMethod, String method, String url,
-			String urlsuffix, List<Option> arguments, String operation,
-			List<SDFAttribute> receivedData, String charset,
-			String parsingMethod, boolean outerJoin, boolean keyValueOutput,
-			boolean multiTupleOutput, int[] uniqueKey,
-			IDataMergeFunction<Tuple<M>, M> dataMergeFunction,
-			ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
-			IMetadataMergeFunction<M> metaMergeFunction,
-			IConnectionForWebservices connection,
-			IRequestBuilder requestBuilder,
-			HttpEntityToStringConverter converter, IKeyFinder keyFinder,
-			ISoapMessageCreator soapMessageCreator,
-			IMessageManipulator soapMessageManipulator, ICache cacheManager) {
+	public WSEnrichPO(String serviceMethod, String method, String url, Boolean urlIsTemplate, String urlsuffix, List<Option> arguments,
+			List<Option> header, String operation, List<SDFAttribute> receivedData, String charset,
+			String parsingMethod, boolean outerJoin, boolean keyValueOutput, boolean multiTupleOutput, int[] uniqueKey,
+			IDataMergeFunction<Tuple<M>, M> dataMergeFunction, ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
+			IMetadataMergeFunction<M> metaMergeFunction, IConnectionForWebservices connection,
+			IRequestBuilder requestBuilder, HttpEntityToStringConverter converter, IKeyFinder keyFinder,
+			IMessageCreator soapMessageCreator, IMessageManipulator soapMessageManipulator, ICache cacheManager) {
 
 		super(cacheManager, dataMergeFunction, dataLeftMergeFunction, metaMergeFunction, uniqueKey);
 		this.serviceMethod = serviceMethod;
 		this.method = method;
 		this.url = url;
+		this.urlIsTemplate = urlIsTemplate;
 		this.urlsuffix = urlsuffix;
 		this.arguments = arguments;
+		this.header = header;
 		this.operation = operation;
 		this.receivedData = receivedData;
 		this.charset = charset;
@@ -82,52 +79,27 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		this.requestBuilder = requestBuilder;
 		this.converter = converter;
 		this.keyFinder = keyFinder;
-		this.soapMessageCreator = soapMessageCreator;
-		this.soapMessageManipulator = soapMessageManipulator;
-	}
-
-	public WSEnrichPO(WSEnrichPO<M> wsEnrichPO) {
-		super(wsEnrichPO);
-		this.serviceMethod = wsEnrichPO.serviceMethod;
-		this.method = wsEnrichPO.method;
-		this.url = wsEnrichPO.url;
-		this.urlsuffix = wsEnrichPO.urlsuffix;
-		this.arguments = wsEnrichPO.arguments;
-		this.operation = wsEnrichPO.operation;
-		this.receivedData = wsEnrichPO.receivedData;
-		this.charset = wsEnrichPO.charset;
-		this.parsingMethod = wsEnrichPO.parsingMethod;
-		this.outerJoin = wsEnrichPO.outerJoin;
-		this.keyValueOutput = wsEnrichPO.keyValueOutput;
-		this.multiTupleOutput = wsEnrichPO.multiTupleOutput;
-		this.parameterPositions = Arrays.copyOf(wsEnrichPO.parameterPositions,
-				wsEnrichPO.parameterPositions.length);
-		this.connection = wsEnrichPO.connection;
-		this.requestBuilder = wsEnrichPO.requestBuilder;
-		this.converter = wsEnrichPO.converter;
-		this.keyFinder = wsEnrichPO.keyFinder;
-		this.soapMessageCreator = wsEnrichPO.soapMessageCreator;
-		this.soapMessageManipulator = wsEnrichPO.soapMessageManipulator;
+		this.messageCreator = soapMessageCreator;
+		this.messageManipulator = soapMessageManipulator;
 	}
 
 	@Override
 	protected void internal_process_open() throws OpenFailedException {
-		if (soapMessageCreator != null) {
-			soapMessageCreator.buildSoapMessage();
+		if (messageCreator != null) {
+			messageCreator.buildMessage();
 		}
 		initParameterPositions();
 	}
-	
+
 	@Override
 	protected List<IStreamObject<?>> internal_process(Tuple<M> inputTuple) {
 
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
 		String postData = "";
-		if (soapMessageCreator != null && soapMessageManipulator != null) {
-			soapMessageManipulator.setMessage(soapMessageCreator
-					.getSoapMessage());
-			soapMessageManipulator.setArguments(queryParameters);
-			postData = soapMessageManipulator.buildMessage();
+		if (messageCreator != null && messageManipulator != null) {
+			messageManipulator.setMessage(messageCreator.getMessage());
+			messageManipulator.setArguments(queryParameters);
+			postData = messageManipulator.buildMessage();
 		}
 		// Build the Url and arguments
 		requestBuilder.setUrlPrefix(url);
@@ -137,10 +109,19 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		requestBuilder.buildUri();
 		// String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
-		logger.trace(uri);
+		if (urlIsTemplate){
+			uri = replace(queryParameters, uri);
+		}
+		logger.trace("URI: "+uri);
+		logger.trace("PostData :"+postData);
 		// Connect to the Url
 		connection.setUri(uri);
 		connection.setArguments(requestBuilder.getPostData());
+		logger.trace("Connection arguments "+requestBuilder.getPostData());
+		if (header != null) {
+			logger.trace("Header:"+header);
+			connection.setHeaders(header);
+		}
 		connection.connect(charset, method);
 		HttpEntity entity = connection.retrieveBody();
 		// Convert the Http Entity into a String, finally close the Http
@@ -152,15 +133,13 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		// them to the tuple(s)
 		keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
 
-		ArrayList<IStreamObject<?>> queryResult = new ArrayList<IStreamObject<?>>(
-				keyFinder.getTupleCount());
+		ArrayList<IStreamObject<?>> queryResult = new ArrayList<IStreamObject<?>>(keyFinder.getTupleCount());
 
 		for (int i = 0; i < keyFinder.getTupleCount(); i++) {
 			Tuple<M> wsTuple = new Tuple<>(receivedData.size(), false);
 			for (int j = 0; j < receivedData.size(); j++) {
 				keyFinder.setSearch(receivedData.get(j).getAttributeName());
-				Object value = keyFinder.getValueOf(keyFinder.getSearch(),
-						keyValueOutput, i);
+				Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
 				if ((value == null || value.equals("")) && !outerJoin) {
 					return null;
 				} else if ((value == null || value.equals("")) && outerJoin) {
@@ -173,7 +152,15 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		}
 		return queryResult;
 	}
-	
+
+	private String replace(List<Option> queryParameters, String uri) {
+		String newUri = uri;
+		for (Option o:queryParameters){
+			newUri = newUri.replaceAll(o.getName(), o.getValue());
+		}
+
+		return newUri;
+	}
 
 	@Override
 	protected void internal_process_close() {
@@ -190,11 +177,9 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		for (int i = 0; i < arguments.size(); i++) {
 			String variableName = arguments.get(i).getValue();
 			// Attributes of InputSchema are the Values of the KeyValueList
-			SDFAttribute attribute = getOutputSchema().findAttribute(
-					variableName);
+			SDFAttribute attribute = getOutputSchema().findAttribute(variableName);
 			if (attribute == null) {
-				throw new RuntimeException("Could not find attribute "
-						+ variableName + " in InputTuple.");
+				throw new RuntimeException("Could not find attribute " + variableName + " in InputTuple.");
 			}
 			parameterPositions[i] = getOutputSchema().indexOf(attribute);
 		}
@@ -202,14 +187,13 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 	/**
 	 * Returns the Attributes that are defined in the Query for the Webservice.
-	 * 
+	 *
 	 * @param inputTuple
 	 *            the current tuple from the input stream
 	 * @return the attributes for the webservicequery
 	 */
-	private List<Option> getQueryParameters(Tuple<M> inputTuple,
-			List<Option> arguments) {
-		List<Option> queryParameters = arguments;
+	private List<Option> getQueryParameters(Tuple<M> inputTuple, List<Option> arguments) {
+		List<Option> queryParameters = new ArrayList<Option>(arguments);
 		for (int i = 0; i < parameterPositions.length; i++) {
 			queryParameters.set(i, new Option(queryParameters.get(i).getName(),
 					inputTuple.getAttribute(parameterPositions[i]).toString()));
@@ -253,8 +237,19 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 			for (int i = 0; i < arguments.size(); i++) {
 
 				if (!arguments.get(i).getName().equals(temp.get(i).getName())
-						|| !arguments.get(i).getValue()
-								.equals(temp.get(i).getValue()))
+						|| !arguments.get(i).getValue().equals(temp.get(i).getValue()))
+					return false;
+			}
+		}
+		if (header == null) {
+			if (other.header != null)
+				return false;
+		} else if (header != null && other.header != null) {
+			List<Option> temp = other.header;
+			for (int i = 0; i < header.size(); i++) {
+
+				if (!header.get(i).getName().equals(temp.get(i).getName())
+						|| !header.get(i).getValue().equals(temp.get(i).getValue()))
 					return false;
 			}
 		}
@@ -307,7 +302,5 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 		return true;
 	}
-
-
 
 }

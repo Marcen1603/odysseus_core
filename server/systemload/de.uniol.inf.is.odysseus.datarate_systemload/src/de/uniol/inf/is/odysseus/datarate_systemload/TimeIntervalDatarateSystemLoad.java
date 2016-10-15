@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 import de.uniol.inf.is.odysseus.systemload.SystemLoad;
 import de.uniol.inf.is.odysseus.systemload.SystemLoadEntry;
 
-final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAttribute 
+final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAttribute
 		implements ITimeInterval, IDatarate, ISystemLoad  {
 
 	private static final long serialVersionUID = -3865342510097346722L;
@@ -30,14 +30,14 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return CLASSES;
 	}
-	
+
 	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(CLASSES.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Datarate.schema);
 		schema.addAll(SystemLoad.schema);
 	}
-	
+
 	@Override
 	public List<SDFMetaSchema> getSchema() {
 		return schema;
@@ -75,12 +75,6 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 	}
 
 	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i = "+ timeInterval.toString(baseTime) +"| datarate = "
-				+ datarate.toString() + "| sysload = " + systemload.toString() + " )";
-	}
-	
-	@Override
 	public String getName() {
 		return "TimeIntervalDatarateSystemLoad";
 	}
@@ -98,7 +92,7 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 		datarate.writeValue(values.get(1));
 		systemload.writeValue(values.get(2));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -107,7 +101,7 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 		list.addAll(systemload.getInlineMergeFunctions());
 		return list;
 	}
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {
@@ -168,11 +162,11 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 	public double getDatarate() {
 		return datarate.getDatarate();
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for Systemload
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public void addSystemLoad(String name) {
 		systemload.addSystemLoad(name);
@@ -211,5 +205,5 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 	@Override
 	public SystemLoadEntry getSystemLoad(String name) {
 		return systemload.getSystemLoad(name);
-	}	
+	}
 }

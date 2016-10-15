@@ -17,11 +17,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.TextLogMetaData;
 
-public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler 
+public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 {
 	public static final String NAME = "TextFileLogger";
 	static final Runtime RUNTIME = Runtime.getRuntime();
@@ -35,37 +34,37 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 
 	// Return that no attributes will be left
 	@Override protected int[] getRemainingAttributes() { return new int[0]; }
-	
-	public TextFileLoggerProtocolHandler() 
+
+	public TextFileLoggerProtocolHandler()
 	{
 		super();
 	}
 
-	public TextFileLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, OptionMap options) 
+	public TextFileLoggerProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, OptionMap options)
 	{
-		super(direction, access, dataHandler, options);		
-		
+		super(direction, access, dataHandler, options);
+
 		extension = options.get("extension", "raw");
 	}
-	
+
 	@Override
-	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<Tuple<?>> dataHandler) 
+	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<Tuple<?>> dataHandler)
 	{
 		return new TextFileLoggerProtocolHandler(direction, access, dataHandler, options);
-	}	
-	
-	@Override protected LogMetaData startLoggingInternal(Tuple<?> object) throws IOException 
+	}
+
+	@Override protected LogMetaData startLoggingInternal(Tuple<?> object) throws IOException
 	{
 		logFileName = getFileNameBase() + "." + extension;
 		logFileStream = new BufferedWriter(new FileWriter(logFileName));
-		
-		TextLogMetaData logMetaData = new TextLogMetaData();		
+
+		TextLogMetaData logMetaData = new TextLogMetaData();
 		logMetaData.rawFile = new File(logFileName).getName();
-		
-		return logMetaData; 
+
+		return logMetaData;
 	}
 
-	@Override protected void stopLoggingInternal(LogMetaData logMetaData) 
+	@Override protected void stopLoggingInternal(LogMetaData logMetaData)
 	{
 		if (logFileStream != null)
 		{
@@ -73,40 +72,40 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 			{
 				logFileStream.close();
 			}
-			catch (IOException e) 
+			catch (IOException e)
 			{
 			}
-	
+
 			logFileStream = null;
-		}		
+		}
 	}
 
-	@Override protected void writeInternal(Tuple<?> object, long timeStamp) throws IOException 
+	@Override protected void writeInternal(Tuple<?> object, long timeStamp) throws IOException
 	{
 		try
 		{
 			StringBuilder rawString = new StringBuilder();
 			getDataHandler().writeCSVData(rawString, object, writeOptions);
-			logFileStream.write(rawString.toString() + "\n");			
-		}		
+			logFileStream.write(rawString.toString() + "\n");
+		}
 		catch (Exception e)
 		{
 			throw new IOException(e);
 		}
-	}	
-	
+	}
+
 	@Override protected long getLogFileSize() {
 		return new File(logFileName).length();
-	}	
+	}
 
 	@Override
-	public boolean hasNext() throws IOException 
+	public boolean hasNext() throws IOException
 	{
 		return false;
 	}
 
 	@Override
-	public Tuple<?> getNext() throws IOException 
+	public Tuple<?> getNext() throws IOException
 	{
 		return null;
 	}
@@ -125,29 +124,17 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 		}
 	}
 
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override public boolean isDone() { return true; }
-	
+
 	@Override
-	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o)
 	{
 		if (!(o instanceof TextFileLoggerProtocolHandler)) return false;
 		if (!super.isSemanticallyEqualImpl(o)) return false;
-		
-		TextFileLoggerProtocolHandler other = (TextFileLoggerProtocolHandler) o; 
+
+		TextFileLoggerProtocolHandler other = (TextFileLoggerProtocolHandler) o;
 		if (extension.equals(other.extension)) return false;
-		
+
 		return true;
 	}
 }

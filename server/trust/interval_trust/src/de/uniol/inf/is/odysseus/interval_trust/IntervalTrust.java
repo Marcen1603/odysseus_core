@@ -61,7 +61,7 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 	public IntervalTrust clone() {
 		return new IntervalTrust(this);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -106,17 +106,12 @@ public class IntervalTrust extends AbstractCombinedMetaAttribute implements ITim
 			return this.trust.getValue(0, index);
 		default:
 			return null;
-		}		
+		}
 	}
 
 	@Override
 	public String toString() {
 		return "( i= " + this.timeInterval.toString() + " | " + " l=" + this.trust + ")";
-	}
-
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i= " + this.timeInterval.toString(baseTime) + " | " + " l=" + this.trust + ")";
 	}
 
 	// ------------------------------------------------------------------------------

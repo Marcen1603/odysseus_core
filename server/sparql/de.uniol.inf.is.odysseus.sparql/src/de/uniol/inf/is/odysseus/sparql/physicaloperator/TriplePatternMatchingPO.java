@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatchingAO;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatchingAO;
  * okay, a new tuple will be generated, that only contains the attribes that are
  * variable, so in the above case only the attributes subject and object will be
  * in the output tuple. However, these attributes will be renamed to ?x and ?y.
- * 
+ *
  * After that there will be a check for a graph variable. If the triple pattern
  * is in a graph var term of the query an additional attribute for the graph
  * variable will be generated and filled with the name of the stream this triple
@@ -45,15 +46,15 @@ import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatchingAO;
  * be a triple pattern matching for each named stream. This named stream is
  * stored in the triple pattern matching and used as value for the graph
  * variable attribute.
- * 
+ *
  * In the following operators the graph variable attribute will also be checked
  * in the predicates (e. g. a join prediate).
- * 
+ *
  * @author Andr� Bolles <andre.bolles@uni-oldenburg.de>
- * 
+ *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IHasPredicate{
 
 	private Triple queryTriple;
 
@@ -97,8 +98,14 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 
 	@Override
+	public IPredicate getPredicate() {
+		return predicate;
+	}
+
+	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+		IPunctuation outPunctuation = predicate.processPunctuation(punctuation);
+		sendPunctuation(outPunctuation);
 	}
 
 	private Tuple<M> preprocess(Tuple<M> element) {

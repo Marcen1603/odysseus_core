@@ -23,11 +23,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", doc="Enrich tuples with data from external web services.", category={LogicalOperatorCategory.ENRICH})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", doc = "Enrich tuples with data from external web services.", category = {
+		LogicalOperatorCategory.ENRICH })
 public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -9004473427566266528L;
 
@@ -97,6 +98,11 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	private List<Option> arguments;
 
 	/**
+	 * Header information
+	 */
+	private List<Option> header;
+
+	/**
 	 * The name of the operation to call a Soap-Webservice
 	 */
 	private String operation;
@@ -132,6 +138,10 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 */
 	private String wsdlLocation;
 
+	private String template;
+
+	private boolean urlIsTemplate = false;
+
 	/**
 	 * Default-Constructor for the WSEnrichAO
 	 */
@@ -141,7 +151,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Constructor for the WSEnrichAO
-	 * 
+	 *
 	 * @param wsEnrichAO
 	 */
 	public WSEnrichAO(WSEnrichAO wsEnrichAO) {
@@ -149,8 +159,11 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		this.serviceMethod = wsEnrichAO.serviceMethod;
 		this.method = wsEnrichAO.method;
 		this.url = wsEnrichAO.url;
+		this.urlIsTemplate = wsEnrichAO.urlIsTemplate;
 		this.urlsuffix = wsEnrichAO.urlsuffix;
 		this.arguments = wsEnrichAO.arguments;
+		this.template = wsEnrichAO.template;
+		this.header = wsEnrichAO.header;
 		this.operation = wsEnrichAO.operation;
 		this.receivedData = wsEnrichAO.receivedData;
 		this.charset = wsEnrichAO.charset;
@@ -166,12 +179,10 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return new WSEnrichAO(this);
 	}
 
-
 	@Override
 	public void initialize() {
 		SDFSchema webserviceData = SDFSchemaFactory.createNewWithAttributes(receivedData, getInputSchema());
-		SDFSchema outputSchema = SDFSchema.union(getInputSchema(),
-				webserviceData);
+		SDFSchema outputSchema = SDFSchema.union(getInputSchema(), webserviceData);
 		setOutputSchema(outputSchema);
 	}
 
@@ -189,7 +200,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Setter for the Service-Method. Value has to be REST or SOAP
-	 * 
+	 *
 	 * @param serviceMethod
 	 */
 	@Parameter(type = StringParameter.class, name = "serviceMethod")
@@ -206,7 +217,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Setter for the Method to call the Webservice. It has to be REST or SOAP
-	 * 
+	 *
 	 * @param method
 	 */
 	@Parameter(type = StringParameter.class, name = "method")
@@ -223,7 +234,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Setter for the static part of the Url before Arguments
-	 * 
+	 *
 	 * @param url
 	 */
 	@Parameter(type = StringParameter.class, name = "url")
@@ -238,9 +249,28 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return this.urlsuffix;
 	}
 
+
+	public boolean isUrlIsTemplate() {
+		return urlIsTemplate;
+	}
+
+	@Parameter(type = BooleanParameter.class, name="templateURL", optional = true)
+	public void setUrlIsTemplate(boolean urlIsTemplate) {
+		this.urlIsTemplate = urlIsTemplate;
+	}
+
+	@Parameter(type = StringParameter.class, optional = true)
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
 	/**
 	 * Setter for the static part of the Url after Arguments (optional)
-	 * 
+	 *
 	 * @param urlSuffix
 	 */
 	@Parameter(type = StringParameter.class, name = "urlSuffix", optional = true)
@@ -257,12 +287,29 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Setter for the arguments received from the Datastream
-	 * 
+	 *
 	 * @param arguments
 	 */
-	@Parameter(type = OptionParameter.class, name = "arguments", isList = true)
+	@Parameter(type = OptionParameter.class, name = "arguments", isList = true, optional = true)
 	public void setArguments(List<Option> arguments) {
 		this.arguments = arguments;
+	}
+
+	/**
+	 * Setter for the headers
+	 *
+	 * @param arguments
+	 */
+	@Parameter(type = OptionParameter.class, name = "header", isList = true, optional = true)
+	public void setHeader(List<Option> header) {
+		this.header = header;
+	}
+
+	/**
+	 * @return The headers
+	 */
+	public List<Option> getHeader() {
+		return this.header;
 	}
 
 	/**
@@ -274,9 +321,9 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	}
 
 	/**
-	 * Setter for the Operation used to call a SOAP-Webservice. (only needet for
+	 * Setter for the Operation used to call a SOAP-Webservice. (only needed for
 	 * Soap-Webservices)
-	 * 
+	 *
 	 * @param operation
 	 */
 	@Parameter(type = StringParameter.class, name = "operation", optional = true)
@@ -305,7 +352,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Setter for the charset
-	 * 
+	 *
 	 * @param charset
 	 *            The charset. Standard ist UTF-8
 	 */
@@ -323,7 +370,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Setter for the return type of the webservice-response. Can be XML or JSON
-	 * 
+	 *
 	 * @param parsingMethod
 	 *            the return type
 	 */
@@ -336,8 +383,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 * Setter for the Get or Post-variable
 	 */
 	private String setGetOrPost() {
-		if (this.method.equals(POST_WITH_ARGUMENTS)
-				|| this.method.equals(POST_WITH_DOCUMENT)) {
+		if (this.method.equals(POST_WITH_ARGUMENTS) || this.method.equals(POST_WITH_DOCUMENT)) {
 			return POST_METHOD;
 		} else
 			return GET_METHOD;
@@ -350,10 +396,9 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return this.getOrPost;
 	}
 
-	
 	/**
 	 * Setter to enable or disable key value output in the output stream
-	 * 
+	 *
 	 * @param keyValueOutput
 	 */
 	@Parameter(type = BooleanParameter.class, optional = true, name = "keyValueOutput")
@@ -377,14 +422,14 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * Setter for the url to the location of the wsdl file
-	 * 
+	 *
 	 * @param wsdlLocation
 	 */
 	@Parameter(type = StringParameter.class, optional = true, name = "wsdlLocation")
 	public void setWsdlLocaton(String wsdlLocation) {
 		this.wsdlLocation = wsdlLocation;
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		boolean valid = super.isValid();
@@ -458,8 +503,20 @@ public class WSEnrichAO extends AbstractEnrichAO {
 			valid = false;
 		}
 
-		return valid;
-	}
+		// Template checks
+		if (template != null){
 
+			if(arguments == null){
+				addError("For 'template' the field 'arguments' is required!");
+				valid = false;
+			}
+			if (!(method.equalsIgnoreCase(POST_METHOD) || method.equalsIgnoreCase(POST_WITH_ARGUMENTS) || method.equalsIgnoreCase(POST_WITH_DOCUMENT))){
+				addError("Templates can only be used with POST requests!");
+				valid = false;
+			}
+		}
+
+	return valid;
+}
 
 }

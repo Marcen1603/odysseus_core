@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,9 +52,9 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  * Daten- und Metadatenmodell betrachtet werden. Die Logik des in dieser Klasse
  * implementierten Operators entspricht jedoch der Logik eines JoinOperators im
  * Intervallansatz.
- * 
+ *
  * @author Jonas Jacobi, abolles, jan steinke
- * 
+ *
  * @param <K>
  *            Metadatentyp
  * @param <T>
@@ -162,7 +162,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public void setCardinalities(Cardinalities card) {
 		this.card = card;
 	}
-	
+
 	public Cardinalities getCardinalities() {
 		return this.card;
 	}
@@ -187,9 +187,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
-	@Override public boolean deliversStoredElement(int outputPort) { 
-		return true; 
+
+	@Override public boolean deliversStoredElement(int outputPort) {
+		return true;
 	}
 
 	@Override
@@ -307,7 +307,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 		}
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
@@ -371,7 +371,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public void processPunctuation(IPunctuation inPunctuation, int port) {
+		IPunctuation punctuation = joinPredicate.processPunctuation(inPunctuation);
 		if (punctuation.isHeartbeat()) {
 			synchronized (this) {
 				this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
@@ -434,7 +435,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	/**
 	 * Returns the latest endtimestamp in both sweepareas.
-	 * 
+	 *
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -527,7 +528,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			map.put("Left Area Has End TS Order", ((AbstractTISweepArea<?>) areas[0]).hasEndTsOrder() + "");
 			map.put("Right Area Has End TS Order", ((AbstractTISweepArea<?>) areas[1]).hasEndTsOrder() + "");
 		}
-		
+
 		if(areas[0] instanceof IPhysicalOperatorKeyValueProvider) {
 			for(Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[0]).getKeyValues().entrySet().iterator(); iter.hasNext();){
 				Entry<String, String> e = iter.next();
@@ -540,7 +541,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				map.put("Right Area - " + e.getKey(), e.getValue());
 			}
 		}
-		
+
 		map.put("OutputQueue", transferFunction.size() + "");
 		map.put("Watermark", transferFunction.getWatermark() + "");
 		return map;

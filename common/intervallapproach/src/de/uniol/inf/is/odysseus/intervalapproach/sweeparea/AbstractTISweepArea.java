@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,11 +47,11 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		AbstractSweepArea<T>implements Comparable<AbstractTISweepArea<T>>, ITimeIntervalSweepArea<T> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractTISweepArea.class);
-	
+
 	private static final long serialVersionUID = 3380347798012193584L;
 
 	protected T lastInserted = null;
-	
+
 	/**
 	 * <p>
 	 * This is <code>true</code> iff the end timestamp of the data stream
@@ -59,7 +59,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	 * information to decide if we can use the binary search in
 	 * {@link AbstractTimeIntervalSweepArea#extractElements(IStreamObject, de.uniol.inf.is.odysseus.core.Order)}
 	 * (e.g., in DefaultTISweepArea) or similar methods.
-	 * 
+	 *
 	 * <p>
 	 * XXX: This flag is set to <code>true</code> only if the end timestamp has
 	 * a strictly increasing order (no equal values). For the current
@@ -70,7 +70,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	 */
 	protected boolean hasEndTsOrder = false;
 
-	
+
 	transient Comparator<T> purgeComparator = new Comparator<T>() {
 
 		@Override
@@ -82,7 +82,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 
 		}
 	};
-	
+
 	// Must be public for service --> do not call directly
 	public AbstractTISweepArea() {
 		this(new FastArrayList<T>());
@@ -97,11 +97,11 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 			throws InstantiationException, IllegalAccessException {
 		super(defaultTISweepArea);
 	}
-	
+
 	// ---------------------------------------------------------------------------------------
 	// Implementations from ISweepArea
 	// ---------------------------------------------------------------------------------------
-	
+
 	/**
 	 * Removes all elements from this sweep area that are totally before
 	 * "element". The while loop in this method can be broken, if the next
@@ -167,7 +167,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 			}
 		}
 	}
-	
+
 	@Override
 	public Iterator<T> extractElements(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
@@ -189,7 +189,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	// ---------------------------------------------------------------------------------------
 	// Implementations from ITimeIntervalSweepArea
 	// ----------------------------------------------------------------------------------------
-	
+
 	@Override
 	public void purgeElementsBefore(PointInTime time) {
 		synchronized (getElements()) {
@@ -206,12 +206,12 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 			}
 		}
 	}
-	
+
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime time) {
 		return extractElementsBeforeAsList(time).iterator();
 	}
-	
+
 	@Override
 	public List<T> extractElementsBeforeAsList(PointInTime time) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -235,12 +235,12 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval;
 	}
-	
+
 	@Override
 	public T peekLast() {
 		return getElements().size() != 0 ? getElements().get(getElements().size() - 1) : null;
 	}
-	
+
 	@Override
 	public Iterator<T> extractElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -260,7 +260,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval.iterator();
 	}
-	
+
 	@Override
 	public Iterator<T> queryElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -275,7 +275,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval.iterator();
 	}
-	
+
 	@Override
 	public Iterator<T> extractElementsStartingBeforeOrEquals(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<>();
@@ -293,8 +293,8 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval.iterator();
 	}
-	
-	
+
+
 	@Override
 	public Iterator<T> extractElementsStartingEquals(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -312,12 +312,12 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval.iterator();
 	}
-	
+
 	@Override
 	public Iterator<T> queryOverlaps(ITimeInterval t) {
 		return queryOverlapsAsList(t).iterator();
 	}
-	
+
 	@Override
 	public List<T> queryContains(PointInTime point) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -330,12 +330,12 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval;
 	}
-	
+
 	@Override
 	public Iterator<T> extractOverlaps(ITimeInterval t) {
 		return extractOverlapsAsList(t).iterator();
 	}
-	
+
 	@Override
 	public List<T> queryOverlapsAsList(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -348,7 +348,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval;
 	}
-	
+
 	@Override
 	public List<T> queryOverlapsAsListExtractOutdated(ITimeInterval interval, List<T> outdated) {
 		ArrayList<T> retval = new ArrayList<T>();
@@ -368,7 +368,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 						break;
 					}
 				}
-				
+
 			}
 		}
 		return retval;
@@ -389,10 +389,10 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return retval;
 	}
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @return the max start timestamp of all elements currently in the sweep
 	 *         area. Should be the start timestamp of the last element in the
 	 *         linked list.
@@ -404,7 +404,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return the min start timestamp of all elements currently in the sweep
 	 *         area. Should be the start timestamp of the first element in the
@@ -431,16 +431,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 	}
 
-	@Override
-	public String getSweepAreaAsString(PointInTime baseTime) {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
-		for (T element : getElements()) {
-			buf.append(element).append(" ");
-			buf.append("{META ").append(element.getMetadata().toString(baseTime)).append("}\n");
-		}
-		return buf.toString();
-	}
-	
+
 	@Override
 	public String getSweepAreaAsString(String tab, int max, boolean tail) {
 		StringBuffer buf = new StringBuffer(tab);
@@ -468,7 +459,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 
 	/**
 	 * Deliver all elements containing the time stamp. Sweep area is not changed
-	 * 
+	 *
 	 * @param timestamp
 	 * @return
 	 */
@@ -528,19 +519,19 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return pos;
 	}
-	
+
 	/**
 	 * <p>
 	 * Checks if the end timestamp order is given after insertion of
 	 * <code>element</code> at pos <code>pos</code>.
-	 * 
+	 *
 	 * <p>
 	 * If the list of elements is empty, this method returns always true.
-	 * 
+	 *
 	 * <p>
 	 * If the elements are unordered already (hasEndTsOrder is false and the
 	 * list of elements is not empty), this method returns false.
-	 * 
+	 *
 	 * @param element
 	 *            The element to insert.
 	 * @param pos
@@ -587,10 +578,10 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		hasEndTsOrder = false;
 		super.insertAll(toBeInserted);
 	}
-	
+
 	/**
 	 * Set the latest end timestamp for this sweeparea. Should happen on insert.
-	 * 
+	 *
 	 * @param current end timestamp of the currently inserted element.
 	 */
 	protected void setLatestTimeStamp(T current) {
@@ -598,7 +589,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 			this.lastInserted = current;
 		}
 	}
-	
+
 	@Override
 	public PointInTime getMaxEndTs() {
 		if(LOG.isDebugEnabled()) {
@@ -606,21 +597,21 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return (this.lastInserted != null ? this.lastInserted.getMetadata().getEnd() : null);
 	}
-	
+
 	@Override
 	public String getName() {
 		return this.getClass().getName();
 	}
-	
+
 	public boolean hasEndTsOrder() {
 		return hasEndTsOrder;
 	}
-	
+
 	@Override
 	public Iterator<T> extractAllElements() {
 		return extractAllElementsAsList().iterator();
 	}
-	
+
 	@Override
 	public List<T> extractAllElementsAsList() {
 		LinkedList<T> result = new LinkedList<T>();
@@ -634,7 +625,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		}
 		return result;
 	}
-	
+
 	@Override
 	abstract public ITimeIntervalSweepArea<T> clone();
 

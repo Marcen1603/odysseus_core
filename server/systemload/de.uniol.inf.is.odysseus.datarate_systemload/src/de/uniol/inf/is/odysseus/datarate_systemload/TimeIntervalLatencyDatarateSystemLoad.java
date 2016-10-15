@@ -90,7 +90,7 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 		datarate.retrieveValues(values);
 		systemload.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
@@ -108,7 +108,7 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 		list.addAll(systemload.getInlineMergeFunctions());
 		return list;
 	}
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {
@@ -127,13 +127,6 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	@Override
 	public String toString() {
 		return "( i = " + timeInterval + " | l = "
-				+ latency + " | datarate = " + datarate
-				+ " | sysload = )" + systemload;
-	}
-
-	@Override
-	public String toString(PointInTime baseTime) {
-		return "( i = " + timeInterval.toString(baseTime) + " | l = "
 				+ latency + " | datarate = " + datarate
 				+ " | sysload = )" + systemload;
 	}
@@ -263,7 +256,7 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	public int getNetLoad(String name) {
 		return systemload.getNetLoad(name);
 	}
-	
+
 	@Override
 	public void insert(ISystemLoad other) {
 		systemload.insert(other);
@@ -272,6 +265,6 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	@Override
 	public SystemLoadEntry getSystemLoad(String name) {
 		return systemload.getSystemLoad(name);
-	}	
+	}
 
 }

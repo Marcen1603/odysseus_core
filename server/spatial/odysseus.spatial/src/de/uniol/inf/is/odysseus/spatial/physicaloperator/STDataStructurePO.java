@@ -42,6 +42,7 @@ public class STDataStructurePO<T extends IStreamObject<?>> extends AbstractPipe<
 		// And put out a tuple with the name of the dataStructure
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
 		tuple.setAttribute(0, dataStructure.getName());
+		tuple.setMetadata(object.getMetadata());
 		if (tuple instanceof IStreamObject<?>)
 			transfer((T) tuple);
 	}

@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
@@ -358,15 +357,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       _builder.append("\t");
       _builder.newLine();
       {
-        boolean _or = false;
-        if (operatorValidate) {
-          _or = true;
-        } else {
-          int _size = parametersToValidate.size();
-          boolean _greaterThan = (_size > 0);
-          _or = _greaterThan;
-        }
-        if (_or) {
+        if ((operatorValidate || (parametersToValidate.size() > 0))) {
           _builder.append("\t");
           _builder.append("@Override");
           _builder.newLine();
@@ -382,9 +373,9 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
             }
           }
           {
-            int _size_1 = parametersToValidate.size();
-            boolean _greaterThan_1 = (_size_1 > 0);
-            if (_greaterThan_1) {
+            int _size = parametersToValidate.size();
+            boolean _greaterThan = (_size > 0);
+            if (_greaterThan) {
               _builder.append(" && validateParameters()");
             }
           }
@@ -398,9 +389,9 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       _builder.append("\t");
       _builder.newLine();
       {
-        int _size_2 = parametersToValidate.size();
-        boolean _greaterThan_2 = (_size_2 > 0);
-        if (_greaterThan_2) {
+        int _size_1 = parametersToValidate.size();
+        boolean _greaterThan_1 = (_size_1 > 0);
+        if (_greaterThan_1) {
           _builder.append("\t");
           _builder.append("protected boolean validateParameters() {");
           _builder.newLine();
@@ -506,23 +497,11 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            boolean _and = false;
-            IQLArgumentsMap _argsMap = e.getArgsMap();
-            boolean _notEquals = (!Objects.equal(_argsMap, null));
-            if (!_notEquals) {
-              _and = false;
-            } else {
-              IQLArgumentsMap _argsMap_1 = e.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-              int _size_3 = _elements.size();
-              boolean _greaterThan_3 = (_size_3 > 0);
-              _and = _greaterThan_3;
-            }
-            if (_and) {
+            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmTypeReference _ref = e.getRef();
-              IQLArgumentsMap _argsMap_2 = e.getArgsMap();
-              CharSequence _createGetterMethod = this.createGetterMethod(_ref, _argsMap_2, context);
+              IQLArgumentsMap _argsMap = e.getArgsMap();
+              CharSequence _createGetterMethod = this.createGetterMethod(_ref, _argsMap, context);
               _builder.append(_createGetterMethod, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -534,34 +513,12 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLAttribute a : attributes) {
           {
-            boolean _and_1 = false;
-            boolean _and_2 = false;
-            IQLVariableInitialization _init = a.getInit();
-            boolean _notEquals_1 = (!Objects.equal(_init, null));
-            if (!_notEquals_1) {
-              _and_2 = false;
-            } else {
-              IQLVariableInitialization _init_1 = a.getInit();
-              IQLArgumentsMap _argsMap_3 = _init_1.getArgsMap();
-              boolean _notEquals_2 = (!Objects.equal(_argsMap_3, null));
-              _and_2 = _notEquals_2;
-            }
-            if (!_and_2) {
-              _and_1 = false;
-            } else {
-              IQLVariableInitialization _init_2 = a.getInit();
-              IQLArgumentsMap _argsMap_4 = _init_2.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_4.getElements();
-              int _size_4 = _elements_1.size();
-              boolean _greaterThan_4 = (_size_4 > 0);
-              _and_1 = _greaterThan_4;
-            }
-            if (_and_1) {
+            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmTypeReference _type_2 = a.getType();
-              IQLVariableInitialization _init_3 = a.getInit();
-              IQLArgumentsMap _argsMap_5 = _init_3.getArgsMap();
-              CharSequence _createGetterMethod_1 = this.createGetterMethod(_type_2, _argsMap_5, context);
+              IQLVariableInitialization _init = a.getInit();
+              IQLArgumentsMap _argsMap_1 = _init.getArgsMap();
+              CharSequence _createGetterMethod_1 = this.createGetterMethod(_type_2, _argsMap_1, context);
               _builder.append(_createGetterMethod_1, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -573,29 +530,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLVariableStatement a_1 : varStmts) {
           {
-            boolean _and_3 = false;
-            boolean _and_4 = false;
-            IQLVariableInitialization _init_4 = a_1.getInit();
-            boolean _notEquals_3 = (!Objects.equal(_init_4, null));
-            if (!_notEquals_3) {
-              _and_4 = false;
-            } else {
-              IQLVariableInitialization _init_5 = a_1.getInit();
-              IQLArgumentsMap _argsMap_6 = _init_5.getArgsMap();
-              boolean _notEquals_4 = (!Objects.equal(_argsMap_6, null));
-              _and_4 = _notEquals_4;
-            }
-            if (!_and_4) {
-              _and_3 = false;
-            } else {
-              IQLVariableInitialization _init_6 = a_1.getInit();
-              IQLArgumentsMap _argsMap_7 = _init_6.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_2 = _argsMap_7.getElements();
-              int _size_5 = _elements_2.size();
-              boolean _greaterThan_5 = (_size_5 > 0);
-              _and_3 = _greaterThan_5;
-            }
-            if (_and_3) {
+            if ((((!Objects.equal(a_1.getInit(), null)) && (!Objects.equal(a_1.getInit().getArgsMap(), null))) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmIdentifiableElement _var = a_1.getVar();
               IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
@@ -604,9 +539,9 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
               JvmTypeReference type_2 = decl.getRef();
               _builder.newLineIfNotEmpty();
               _builder.append("\t");
-              IQLVariableInitialization _init_7 = a_1.getInit();
-              IQLArgumentsMap _argsMap_8 = _init_7.getArgsMap();
-              CharSequence _createGetterMethod_2 = this.createGetterMethod(type_2, _argsMap_8, context);
+              IQLVariableInitialization _init_1 = a_1.getInit();
+              IQLArgumentsMap _argsMap_2 = _init_1.getArgsMap();
+              CharSequence _createGetterMethod_2 = this.createGetterMethod(type_2, _argsMap_2, context);
               _builder.append(_createGetterMethod_2, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -1030,23 +965,11 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            boolean _and = false;
-            IQLArgumentsMap _argsMap = e.getArgsMap();
-            boolean _notEquals = (!Objects.equal(_argsMap, null));
-            if (!_notEquals) {
-              _and = false;
-            } else {
-              IQLArgumentsMap _argsMap_1 = e.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-              int _size = _elements.size();
-              boolean _greaterThan = (_size > 0);
-              _and = _greaterThan;
-            }
-            if (_and) {
+            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmTypeReference _ref = e.getRef();
-              IQLArgumentsMap _argsMap_2 = e.getArgsMap();
-              CharSequence _createGetterMethod = this.createGetterMethod(_ref, _argsMap_2, context);
+              IQLArgumentsMap _argsMap = e.getArgsMap();
+              CharSequence _createGetterMethod = this.createGetterMethod(_ref, _argsMap, context);
               _builder.append(_createGetterMethod, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -1058,34 +981,12 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLAttribute a : attributes) {
           {
-            boolean _and_1 = false;
-            boolean _and_2 = false;
-            IQLVariableInitialization _init = a.getInit();
-            boolean _notEquals_1 = (!Objects.equal(_init, null));
-            if (!_notEquals_1) {
-              _and_2 = false;
-            } else {
-              IQLVariableInitialization _init_1 = a.getInit();
-              IQLArgumentsMap _argsMap_3 = _init_1.getArgsMap();
-              boolean _notEquals_2 = (!Objects.equal(_argsMap_3, null));
-              _and_2 = _notEquals_2;
-            }
-            if (!_and_2) {
-              _and_1 = false;
-            } else {
-              IQLVariableInitialization _init_2 = a.getInit();
-              IQLArgumentsMap _argsMap_4 = _init_2.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_4.getElements();
-              int _size_1 = _elements_1.size();
-              boolean _greaterThan_1 = (_size_1 > 0);
-              _and_1 = _greaterThan_1;
-            }
-            if (_and_1) {
+            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmTypeReference _type_1 = a.getType();
-              IQLVariableInitialization _init_3 = a.getInit();
-              IQLArgumentsMap _argsMap_5 = _init_3.getArgsMap();
-              CharSequence _createGetterMethod_1 = this.createGetterMethod(_type_1, _argsMap_5, context);
+              IQLVariableInitialization _init = a.getInit();
+              IQLArgumentsMap _argsMap_1 = _init.getArgsMap();
+              CharSequence _createGetterMethod_1 = this.createGetterMethod(_type_1, _argsMap_1, context);
               _builder.append(_createGetterMethod_1, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -1096,29 +997,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLVariableStatement a_1 : varStmts) {
           {
-            boolean _and_3 = false;
-            boolean _and_4 = false;
-            IQLVariableInitialization _init_4 = a_1.getInit();
-            boolean _notEquals_3 = (!Objects.equal(_init_4, null));
-            if (!_notEquals_3) {
-              _and_4 = false;
-            } else {
-              IQLVariableInitialization _init_5 = a_1.getInit();
-              IQLArgumentsMap _argsMap_6 = _init_5.getArgsMap();
-              boolean _notEquals_4 = (!Objects.equal(_argsMap_6, null));
-              _and_4 = _notEquals_4;
-            }
-            if (!_and_4) {
-              _and_3 = false;
-            } else {
-              IQLVariableInitialization _init_6 = a_1.getInit();
-              IQLArgumentsMap _argsMap_7 = _init_6.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_2 = _argsMap_7.getElements();
-              int _size_2 = _elements_2.size();
-              boolean _greaterThan_2 = (_size_2 > 0);
-              _and_3 = _greaterThan_2;
-            }
-            if (_and_3) {
+            if ((((!Objects.equal(a_1.getInit(), null)) && (!Objects.equal(a_1.getInit().getArgsMap(), null))) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmIdentifiableElement _var = a_1.getVar();
               IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
@@ -1127,9 +1006,9 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
               JvmTypeReference type_1 = decl.getRef();
               _builder.newLineIfNotEmpty();
               _builder.append("\t");
-              IQLVariableInitialization _init_7 = a_1.getInit();
-              IQLArgumentsMap _argsMap_8 = _init_7.getArgsMap();
-              CharSequence _createGetterMethod_2 = this.createGetterMethod(type_1, _argsMap_8, context);
+              IQLVariableInitialization _init_1 = a_1.getInit();
+              IQLArgumentsMap _argsMap_2 = _init_1.getArgsMap();
+              CharSequence _createGetterMethod_2 = this.createGetterMethod(type_1, _argsMap_2, context);
               _builder.append(_createGetterMethod_2, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -1190,20 +1069,11 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
   
   public String compile(final ODLMethod m, final IODLGeneratorContext context) {
     String _xifexpression = null;
-    boolean _and = false;
-    boolean _isValidate = m.isValidate();
-    if (!_isValidate) {
-      _and = false;
-    } else {
-      String _simpleName = m.getSimpleName();
-      boolean _notEquals = (!Objects.equal(_simpleName, null));
-      _and = _notEquals;
-    }
-    if (_and) {
+    if ((m.isValidate() && (!Objects.equal(m.getSimpleName(), null)))) {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("private boolean validate");
-      String _simpleName_1 = m.getSimpleName();
-      _builder.append(_simpleName_1, "");
+      String _simpleName = m.getSimpleName();
+      _builder.append(_simpleName, "");
       _builder.append("()");
       _builder.newLineIfNotEmpty();
       _builder.append("\t");
@@ -1216,16 +1086,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       _xifexpression = _builder.toString();
     } else {
       String _xifexpression_1 = null;
-      boolean _and_1 = false;
-      boolean _isValidate_1 = m.isValidate();
-      if (!_isValidate_1) {
-        _and_1 = false;
-      } else {
-        String _simpleName_2 = m.getSimpleName();
-        boolean _equals = Objects.equal(_simpleName_2, null);
-        _and_1 = _equals;
-      }
-      if (_and_1) {
+      if ((m.isValidate() && Objects.equal(m.getSimpleName(), null))) {
         StringConcatenation _builder_1 = new StringConcatenation();
         _builder_1.append("protected boolean validate()");
         _builder_1.newLine();
@@ -1247,37 +1108,15 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
             String returnT = "";
             EventMethodsFactory _instance = EventMethodsFactory.getInstance();
             boolean _isAo = context.isAo();
-            String _simpleName_3 = m.getSimpleName();
+            String _simpleName_1 = m.getSimpleName();
             EList<JvmFormalParameter> _parameters = m.getParameters();
-            IEventMethod eventMethod = _instance.getEventMethod(_isAo, _simpleName_3, _parameters);
-            boolean _and_2 = false;
-            JvmTypeReference _returnType = m.getReturnType();
-            boolean _notEquals_1 = (!Objects.equal(_returnType, null));
-            if (!_notEquals_1) {
-              _and_2 = false;
-            } else {
-              String _simpleName_4 = m.getSimpleName();
-              boolean _equalsIgnoreCase = _simpleName_4.equalsIgnoreCase(className);
-              boolean _not = (!_equalsIgnoreCase);
-              _and_2 = _not;
-            }
-            if (_and_2) {
-              JvmTypeReference _returnType_1 = m.getReturnType();
-              String _compile_2 = this.typeCompiler.compile(_returnType_1, context, false);
+            IEventMethod eventMethod = _instance.getEventMethod(_isAo, _simpleName_1, _parameters);
+            if (((!Objects.equal(m.getReturnType(), null)) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
+              JvmTypeReference _returnType = m.getReturnType();
+              String _compile_2 = this.typeCompiler.compile(_returnType, context, false);
               returnT = _compile_2;
             } else {
-              boolean _and_3 = false;
-              JvmTypeReference _returnType_2 = m.getReturnType();
-              boolean _equals_1 = Objects.equal(_returnType_2, null);
-              if (!_equals_1) {
-                _and_3 = false;
-              } else {
-                String _simpleName_5 = m.getSimpleName();
-                boolean _equalsIgnoreCase_1 = _simpleName_5.equalsIgnoreCase(className);
-                boolean _not_1 = (!_equalsIgnoreCase_1);
-                _and_3 = _not_1;
-              }
-              if (_and_3) {
+              if ((Objects.equal(m.getReturnType(), null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
                 returnT = "void";
               }
             }
@@ -1297,8 +1136,8 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
             _builder_2.append("(");
             {
               EList<JvmFormalParameter> _parameters_1 = m.getParameters();
-              boolean _notEquals_2 = (!Objects.equal(_parameters_1, null));
-              if (_notEquals_2) {
+              boolean _notEquals = (!Objects.equal(_parameters_1, null));
+              if (_notEquals) {
                 EList<JvmFormalParameter> _parameters_2 = m.getParameters();
                 final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
                   return this.compile(p, context);
