@@ -1,38 +1,82 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.Cipher;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptPunctuation;
 import de.uniol.inf.is.odysseus.incubation.crypt.provider.ICryptor;
 
+//TODO output shema setzen
 /**
+ * The physical operator to crypt datastreams
+ * 
  * @author MarkMilster
  *
  */
 public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
-	private ICryptor cryptor;
-	private List<SDFAttribute> inputSchema;
-	private List<SDFAttribute> restrictionList;
+	private static final int DEFAULT_PUNCTUATION_DELAY = 10;
 
-	public SimpleCryptPO(ICryptor cryptor, List<SDFAttribute> inputSchema, List<SDFAttribute> restrictionList) {
+	private Integer punctuationDelay = DEFAULT_PUNCTUATION_DELAY;
+	private int counter = 0;
+
+	protected ICryptor cryptor;
+	protected List<SDFAttribute> inputSchema;
+	protected List<SDFAttribute> restrictionList;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param cryptor
+	 *            The crypto, which will be used for crypting the datastreams
+	 * @param inputSchema
+	 *            the inputSchema of the dataStream
+	 * @param restrictionList
+	 *            The restriction List of the attributes, which will be crypted
+	 * @param punctuationDelay
+	 *            The delay of crypted elements, after which the
+	 *            CryptPunctuation will be send.
+	 */
+	public SimpleCryptPO(ICryptor cryptor, List<SDFAttribute> inputSchema, List<SDFAttribute> restrictionList,
+			Integer punctuationDelay) {
 		super();
 		this.cryptor = cryptor;
 		this.inputSchema = inputSchema;
 		this.restrictionList = restrictionList;
-		this.cryptor.init();
+		if (punctuationDelay != null) {
+			this.punctuationDelay = punctuationDelay;
+		}
 	}
 
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param cryptPO
+	 *            The SimpleCryptPO, which will be copied.
+	 */
 	public SimpleCryptPO(SimpleCryptPO<T> cryptPO) {
 		super(cryptPO);
 		this.cryptor = cryptPO.getCryptor();
 		this.inputSchema = cryptPO.inputSchema;
 		this.restrictionList = cryptPO.restrictionList;
+		this.punctuationDelay = cryptPO.punctuationDelay;
+	}
+
+	@Override
+	protected void process_open() {
+		this.cryptor.init();
 	}
 
 	@Override
@@ -45,24 +89,18 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 		return OutputMode.MODIFIED_INPUT;
 	}
 
-	// TODO in metadaten uebertragen, welches attribut mit welchem verfahren
-	// verschluesselt wurde, und welcher key (also receiverID und streamID (ist
-	// receiverID notwendig? nein weil jeder receiver kennt seine eigene ID, ist
-	// streamID notwendig? nein, kann man auch absprechen opder doch
-	// uebertragen, oder irgendwie die richtige aus odysseus nutzen (queryID)))
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected void process_next(T object, int port) {
 		if (object instanceof Tuple) {
 			Tuple tuple = (Tuple) object;
-			// TODO Doku: mit dem attributes parameter muss man angeben, welches
-			// Attribut ver/entschlüsselt werden soll
 			// TODO Ausblick: beim decrypting attributes auch in metadaten mit
 			// übertragen genau wie alles andere (momentan ist es
 			// absprachesache)
 			// Tuple restrictedTuple = tuple.restrict(this.restrictionList,
 			// true);
 
+			CryptPunctuation punctuation = null;
 			for (int i = 0; i < tuple.getAttributes().length; i++) {
 				// TODO Ausblick: in Metadaten speichern, welche attribute
 				// verschluesselt wurden und wie --> dann braucht man den
@@ -73,21 +111,49 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 				// beim Decrypting (Nutzerfreundlich, da haufiger als
 				// encrypting)
 
+				if (this.cryptor.getMode() == Cipher.ENCRYPT_MODE) {
+					PointInTime point = ((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart();
+					if (this.counter % this.punctuationDelay == 0) {
+						punctuation = CryptPunctuation.createNewCryptPunctuation(point);
+					}
+				}
 				Object attributeValue = tuple.getAttribute(i);
 				SDFAttribute attribute = this.inputSchema.get(i);
 				for (SDFAttribute retAtr : this.restrictionList) {
 					if (retAtr.equals(attribute)) {
+						if (punctuation != null) {
+							punctuation.getCryptedAttributes().add(retAtr);
+							punctuation.getAlgorithms().add(this.cryptor.getAlgorithm());
+						}
 						attributeValue = this.cryptor.cryptObject(attributeValue);
+
+						SDFDatatype outType = SDFDatatype.getType(attributeValue.getClass().getSimpleName());
+						if (outType != null) {
+							// parsed to a other type as object
+							SDFSchema output = this.getOutputSchema();
+							List<SDFAttribute> newOutput = new ArrayList<SDFAttribute>();
+							for (int u = 0; u < output.size(); u++) {
+								if (u == i) {
+									newOutput.add(output.get(u).clone(outType));
+								} else {
+									newOutput.add(output.get(u));
+								}
+
+							}
+							// TODO newOutput noch wirklich als OutputSchema
+							// setzen
+						}
 						break;
 					}
 				}
-
-				// if (this.restrictionList.contains(attribute)) {
-				// attribute = this.cryptor.cryptObject(attribute);
-				// }
 				tuple.setAttribute(i, attributeValue);
+
+			}
+			if (punctuation != null) {
+				this.sendPunctuation(punctuation);
 			}
 			transfer((T) tuple);
+
 		} else if (object instanceof KeyValueObject) {
 			KeyValueObject keyValue = (KeyValueObject) object;
 			Object[] keys = keyValue.getAttributes().keySet().toArray();
@@ -98,17 +164,11 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 			}
 			transfer((T) keyValue);
 		}
-		// Map map = object.getGetValueMap();
-		// Object[] entry = map.entrySet().toArray();
-		// Object[] key = map.keySet().toArray();
-		// for (int i = 0; i < entry.length; i++) {
-		// Object crypted = this.cryptor.cryptObject(entry[i]);
-		// object.setKeyValue(key[i].toString(), crypted);
-		// }
-		// transfer(object);
 	}
 
 	/**
+	 * Returns the cryptor, which will be used for crypting the datastream.
+	 * 
 	 * @return the cryptor
 	 */
 	public ICryptor getCryptor() {

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.factorys;
 
 import java.security.Key;
@@ -13,6 +10,8 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret.DefaultSymKeyVault;
 
 /**
+ * Factory for SymKeys with some default settings.
+ * 
  * @author MarkMilster
  *
  */
@@ -24,10 +23,18 @@ public class DefaultSymKeyFactory implements ISymKeyFactory {
 
 	private static DefaultSymKeyFactory INSTANCE;
 
+	/**
+	 * Default constructor
+	 */
 	private DefaultSymKeyFactory() {
 
 	}
 
+	/**
+	 * Returns the instance of the DefaultSymKeyFactory
+	 * 
+	 * @return The instance of the DefaultSymKeyFactory
+	 */
 	public static DefaultSymKeyFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new DefaultSymKeyFactory();

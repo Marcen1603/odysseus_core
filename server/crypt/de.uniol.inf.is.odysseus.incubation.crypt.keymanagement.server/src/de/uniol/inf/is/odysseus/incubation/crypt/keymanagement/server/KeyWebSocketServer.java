@@ -4,8 +4,11 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server;
 
 import java.net.InetSocketAddress;
-import java.util.Collection;
+import java.security.PublicKey;
+import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -20,14 +23,17 @@ import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.StringMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.IKeyManager;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.KeyManager;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.EncKeyWrapper;
+import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.JsonUtils;
+import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.MoreFileUtils;
 
 /**
- * A server to communicate with laotseClients and to distribute requests to the
- * LaotseDb, Mosaik and Odysseus.
+ * A server to communicate with crypt Clients
  *
  */
 public class KeyWebSocketServer extends WebSocketServer {
+
+	private static final String PROPERTIES_PATH = "Config/Server.properties";
 	private Gson gson;
 	private static KeyWebSocketServer instance;
 
@@ -50,21 +56,27 @@ public class KeyWebSocketServer extends WebSocketServer {
 	}
 
 	/**
-	 * Returns the LaotseWebSocketServer instance.
+	 * Returns the KeymanagementSocketServer instance.
 	 * 
 	 * @return the websocketserver instance.
 	 */
 	public static KeyWebSocketServer getInstance() {
-		// TODO config file?
 		if (instance == null) {
-			instance = new KeyWebSocketServer(new InetSocketAddress("localhost", 8887));
+			String path = MoreFileUtils.getAbsolutePath(Activator.getContext().getBundle(), PROPERTIES_PATH);
+			try {
+				PropertiesConfiguration credentials = new PropertiesConfiguration(path);
+				instance = new KeyWebSocketServer(
+						new InetSocketAddress(credentials.getString("hostname"), credentials.getInt("port")));
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
+
 		}
 		return instance;
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int arg1, String arg2, boolean arg3) {
-		// TODO logger?
 		System.out.println("Closed connection to " + conn.getRemoteSocketAddress());
 	}
 
@@ -112,7 +124,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 	private void onGetEncKeyMessage(WebSocket conn, GetEncKeyMessage message4) {
 		if (message4 != null) {
 			EncKeyWrapper encKey = this.keyManager.getEncSymKey(message4.getReceiverId(), message4.getStreamId());
-			EncKeyMessage encKeyMessage = new EncKeyMessage(encKey);
+			EncKeyMessage encKeyMessage = new EncKeyMessage(encKey, message4.getReceiver());
 			String json = JsonUtils.getJsonString(encKeyMessage);
 			conn.send(json);
 		}
@@ -120,13 +132,25 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	private void onPublicKeyMessage(WebSocket conn, PublicKeyMessage message3) {
 		if (message3 != null) {
-			this.keyManager.setPublicKey(message3.getPublicKey());
+			for (int i = 0; i < message3.getPublicKey().size(); i++) {
+				this.keyManager.setPublicKey(message3.getPublicKey().get(i));
+			}
 		}
 	}
 
 	private void onGetPublicKeyMessage(WebSocket conn, GetPublicKeyMessage message2) {
 		if (message2 != null) {
-			PublicKeyMessage pubKeyMessage = new PublicKeyMessage(this.keyManager.getPublicKey(message2.getId()));
+			List<KeyWrapper<PublicKey>> pubKeys = this.keyManager.getPublicKey(message2.getId());
+			PublicKeyMessage pubKeyMessage = new PublicKeyMessage(pubKeys);
+
+			// workaround for interface
+			// Gson gson = new
+			// GsonBuilder().registerTypeAdapter(PublicKey.class, new
+			// InterfaceAdapter<PublicKey>()).create();
+			// String serialized = gson.toJson(pubKeyMessage);
+			// String json = gson.toJson(new String[] {
+			// pubKeyMessage.getClass().getSimpleName(), serialized });
+
 			String json = JsonUtils.getJsonString(pubKeyMessage);
 			conn.send(json);
 		}
@@ -139,40 +163,6 @@ public class KeyWebSocketServer extends WebSocketServer {
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake arg1) {
 		System.out.println("Connected to " + conn.getRemoteSocketAddress());
-	}
-
-	/**
-	 * Sends a string to all connected clients.
-	 * 
-	 * @param json
-	 *            the string.
-	 */
-	private void broadcast(String json) {
-		Collection<WebSocket> sockets = connections();
-		synchronized (sockets) {
-			for (WebSocket socket : sockets) {
-				socket.send(json);
-			}
-		}
-	}
-
-	/**
-	 * Sends a String to all connected sockets except conn.
-	 * 
-	 * @param json
-	 *            the string.
-	 * @param conn
-	 *            the websocket that should not receive json.
-	 */
-	private void broadcastExceptConn(WebSocket conn, String json) {
-		Collection<WebSocket> sockets = connections();
-		synchronized (sockets) {
-			for (WebSocket socket : sockets) {
-				if (socket != conn) {
-					socket.send(json);
-				}
-			}
-		}
 	}
 
 }

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault;
 
 import java.security.Key;
@@ -14,11 +11,22 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.Converter;
 
 /**
+ * This is a KeyVault, stored in a Database.<br>
+ * This class manages the storing of keys in the database. 
+ * 
  * @author MarkMilster
  *
  */
 public class DbKeyVault extends AbstractDbKeyVault implements IDbKeyVault {
 
+	/**
+	 * Constructor, which uses credentials, stored in a Configuration file, to
+	 * connect to a database.
+	 * 
+	 * @param path
+	 *            Path to the Configuration file, with connection-credentials to
+	 *            the database.
+	 */
 	public DbKeyVault(String path) {
 		super(path);
 	}
@@ -47,16 +55,6 @@ public class DbKeyVault extends AbstractDbKeyVault implements IDbKeyVault {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		// try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-		// if (generatedKeys.next()) {
-		// key.setId(generatedKeys.getInt(1));
-		// } else {
-		// throw new SQLException("Creating key failed, no ID obtained.");
-		// }
-		// } catch (SQLException e) {
-		// e.printStackTrace();
-		// }
 
 		try {
 			stmt.close();

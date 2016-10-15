@@ -1,21 +1,20 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util;
 
 import com.google.gson.Gson;
 
 /**
+ * Class with some util methods for JSON. Copied from PGSESAdata.
+ * 
  * @author PGSESAdata
  *
  */
 public class JsonUtils {
-	// TODO nice to have: es muesste in extra package das was auf dem server
-	// laufen soll und das was lokal lauft
+
 	/**
-	 * Creates a json string representing a String array holding two values: 1.
-	 * The simple name of the class of message. 2. The serialized form of
-	 * message.
+	 * Creates a json string representing a String array holding two values:
+	 * <br>
+	 * 1. The simple name of the class of message. <br>
+	 * 2. The serialized form of message.
 	 * 
 	 * @param message
 	 *            the message to be parsed to json.

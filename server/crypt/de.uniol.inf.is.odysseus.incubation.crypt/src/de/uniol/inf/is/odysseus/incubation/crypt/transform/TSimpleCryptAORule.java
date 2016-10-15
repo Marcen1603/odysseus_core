@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.SimpleCryptPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 
 /**
+ * AORule of SimpleCrypt
+ * 
  * @author MarkMilster
  *
  */
@@ -27,7 +29,7 @@ public class TSimpleCryptAORule extends TAbstractCryptAORule<SimpleCryptAO> {
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			SimpleCryptPO<?> cryptPO = new SimpleCryptPO<>(cryptor, inputSchema, restrictionList);
+			SimpleCryptPO<?> cryptPO = new SimpleCryptPO<>(cryptor, inputSchema, restrictionList, punctuationDelay);
 			defaultExecute(cryptAO, cryptPO, transformConfig, true, true);
 		} catch (RuleException e1) {
 			e1.printStackTrace();

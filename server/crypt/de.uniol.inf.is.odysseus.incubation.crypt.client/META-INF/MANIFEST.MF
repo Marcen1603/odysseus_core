@@ -10,4 +10,6 @@ Export-Package: de.uniol.inf.is.odysseus.incubation.crypt.client
 Require-Bundle: org.java-websocket,
  com.google.code.gson;bundle-version="2.2.4",
  de.uniol.inf.is.odysseus.incubation.crypt.keymanagement,
- de.uniol.inf.is.odysseus.incubation.crypt.common
+ de.uniol.inf.is.odysseus.incubation.crypt.common,
+ org.apache.commons.configuration,
+ org.apache.commons.lang;bundle-version="2.6.0"

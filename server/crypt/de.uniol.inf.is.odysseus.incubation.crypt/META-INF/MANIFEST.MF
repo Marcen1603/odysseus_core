@@ -18,4 +18,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  org.apache.commons.codec_1_7;bundle-version="1.7.0",
  de.uniol.inf.is.odysseus.incubation.crypt.client,
  de.uniol.inf.is.odysseus.incubation.crypt.keymanagement,
- de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret
+ de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret,
+ org.java-websocket;bundle-version="1.3.0"

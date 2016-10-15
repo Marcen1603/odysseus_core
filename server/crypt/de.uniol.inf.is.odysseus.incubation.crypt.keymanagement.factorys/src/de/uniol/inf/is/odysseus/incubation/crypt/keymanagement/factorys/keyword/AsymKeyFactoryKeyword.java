@@ -15,6 +15,12 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.ASymKeyWrapp
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+/**
+ * A PreParserKeyword, used to create a AsymKeyPair
+ * 
+ * @author MarkMilster
+ *
+ */
 public class AsymKeyFactoryKeyword extends AbstractPreParserKeyword {
 
 	public static final String NAME = "CREATEASYMKEYS";
@@ -27,13 +33,15 @@ public class AsymKeyFactoryKeyword extends AbstractPreParserKeyword {
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
 			Context context, IServerExecutor executor) throws OdysseusScriptException {
-		// TODO use the size as second parameter --> Using Keyword Parameter Parser
+		// TODO nice to have: use the size as second parameter --> Using Keyword
+		// Parameter Parser
 		ASymKeyWrapper keys = DefaultAsymKeyFactory.getInstance().createAsymKeyPair(parameter, 1024, null,
 				"Created by Keyword");
 		DefaultAsymKeyFactory.getInstance().saveAsymKeys(keys);
 		return null;
 	}
 
+	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
 		return new ArrayList<String>(Arrays.asList(DefaultAsymKeyFactory.ALGORITHMS));
 	}

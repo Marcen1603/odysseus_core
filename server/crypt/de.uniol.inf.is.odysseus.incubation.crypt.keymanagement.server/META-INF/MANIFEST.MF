@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Server
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -10,4 +10,6 @@ Export-Package: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server
 Require-Bundle: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement,
  org.java-websocket,
  com.google.code.gson;bundle-version="2.2.4",
- de.uniol.inf.is.odysseus.incubation.crypt.common
+ de.uniol.inf.is.odysseus.incubation.crypt.common,
+ org.apache.commons.configuration,
+ org.apache.commons.lang;bundle-version="2.6.0"

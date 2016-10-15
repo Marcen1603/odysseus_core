@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.provider;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -8,9 +5,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
@@ -19,6 +14,8 @@ import org.apache.commons.codec.binary.Base64;
 import de.uniol.inf.is.odysseus.incubation.crypt.util.ByteConverter;
 
 /**
+ * This class is a cryptographic Provider with some util functions
+ * 
  * @author MarkMilster
  *
  */
@@ -31,11 +28,29 @@ public class Cryptor implements ICryptor {
 	private byte[] cryptedMessage;
 	private int mode;
 	private String algorithm;
+	private boolean initialized = false;
 
+	@Override
+	public boolean isInitialized() {
+		return initialized;
+	}
+
+	/**
+	 * Constructs a Cryptor with the spcified algorithm
+	 * 
+	 * @param algorithm
+	 *            The algorithm, which will be used for crypting
+	 */
 	public Cryptor(String algorithm) {
 		this.setAlgorithm(algorithm);
 	}
 
+	/**
+	 * Copy constructor
+	 * 
+	 * @param cryptor
+	 *            The Cryptor, which will be copied
+	 */
 	public Cryptor(ICryptor cryptor) {
 		this.setKey(cryptor.getKey());
 		this.setMessage(cryptor.getMessage());
@@ -56,6 +71,7 @@ public class Cryptor implements ICryptor {
 	public void init() {
 		try {
 			this.cipher.init(this.mode, this.key, this.initVector);
+			this.initialized = true;
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
 			e.printStackTrace();
 		}
@@ -65,6 +81,7 @@ public class Cryptor implements ICryptor {
 	@Override
 	public void setKey(Key key) {
 		this.key = key;
+		this.initialized = false;
 	}
 
 	@Override
@@ -75,6 +92,7 @@ public class Cryptor implements ICryptor {
 	@Override
 	public void setInitVector(byte[] initVector) {
 		this.initVector = new IvParameterSpec(initVector);
+		this.initialized = false;
 	}
 
 	@Override
@@ -85,6 +103,7 @@ public class Cryptor implements ICryptor {
 	@Override
 	public void setMode(int mode) {
 		this.mode = mode;
+		this.initialized = false;
 	}
 
 	@Override
@@ -140,8 +159,12 @@ public class Cryptor implements ICryptor {
 	@Override
 	public byte[] crypt() {
 		try {
-			this.cryptedMessage = this.cipher.doFinal(this.message);
-		} catch (IllegalBlockSizeException | BadPaddingException e) {
+			if (this.isInitialized()) {
+				this.cryptedMessage = this.cipher.doFinal(this.message);
+			} else {
+				throw new Exception("Cryptor was not initialized");
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return this.cryptedMessage;
@@ -163,9 +186,6 @@ public class Cryptor implements ICryptor {
 		}
 	}
 
-	/**
-	 * @return the algorithm
-	 */
 	public String getAlgorithm() {
 		return algorithm;
 	}

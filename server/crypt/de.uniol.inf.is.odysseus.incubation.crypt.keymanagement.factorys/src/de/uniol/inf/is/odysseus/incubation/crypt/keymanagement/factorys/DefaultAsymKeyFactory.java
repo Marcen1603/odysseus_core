@@ -13,16 +13,30 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret.DefaultPrivKeyVault;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret.IPrivKeyVault;
 
+/**
+ * Factory, to create ASymKey with some Default Setting
+ * 
+ * @author MarkMilster
+ *
+ */
 public class DefaultAsymKeyFactory implements IAsymKeyFactory {
 
 	private static DefaultAsymKeyFactory INSTANCE;
 
 	public static final String[] ALGORITHMS = { "DiffieHellman", "DSA", "RSA", "EC" };
 
+	/**
+	 * Default constructor
+	 */
 	private DefaultAsymKeyFactory() {
 
 	}
 
+	/**
+	 * Returns the instance of this Factory
+	 * 
+	 * @return The instance
+	 */
 	public static DefaultAsymKeyFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new DefaultAsymKeyFactory();
@@ -60,9 +74,14 @@ public class DefaultAsymKeyFactory implements IAsymKeyFactory {
 		return asymKeyWrapper;
 	}
 
-	// TODO die key factorys in extra bundle packen und auch ueber den server
-	// den keymanager ansprechen --> keymanagerserver und
-	// secretkeymanagerTrennen und client dafuer auch in extra bundle
+	/**
+	 * Store both parts of the keys (public and private) to the default vaults.
+	 * <br>
+	 * The PublicKey will be stored with the KeyManager.<br>
+	 * The PrivateKey will be stored in the DefaultPrivKeyVault.
+	 * 
+	 * @param keys
+	 */
 	public void saveAsymKeys(ASymKeyWrapper keys) {
 		// save public Key
 		KeyManager.getInstance().setPublicKey(keys.getPublicKeyWrapper());
