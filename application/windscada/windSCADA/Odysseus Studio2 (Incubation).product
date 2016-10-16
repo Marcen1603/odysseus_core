@@ -109,6 +109,9 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.security.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.complexnumber.feature" version="1.0.0.qualifier"/>
       <feature id="windscadaanwendung.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.incubation.crypt.feature.server" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.incubation.crypt.feautre.client" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.net.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
