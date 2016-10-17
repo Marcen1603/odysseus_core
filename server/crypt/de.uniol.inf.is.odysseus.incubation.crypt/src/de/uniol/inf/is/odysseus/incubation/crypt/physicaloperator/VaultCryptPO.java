@@ -137,7 +137,6 @@ public class VaultCryptPO<T extends IStreamObject<?>> extends SimpleCryptPO<T> i
 				// TODO Nice to have: sicherstellen, dass nur zur db geschrieben
 				// wird, wenn erfolgreich (Konsistenz waren)
 				client.sendGetPublicKeyMessage(this.receiverId);
-				this.cryptor.init();
 			} else if (this.cryptor.getMode() == Cipher.DECRYPT_MODE) {
 				client.addEncKeyListener(receiver);
 				this.loadDecryptKey();
@@ -161,7 +160,11 @@ public class VaultCryptPO<T extends IStreamObject<?>> extends SimpleCryptPO<T> i
 		this.keyWrapper = symKeyVault.getSymKey(this.keyId);
 		cryptor.setKey(keyWrapper.getKey());
 		if (!this.cryptor.isInitialized()) {
-			this.cryptor.init();
+			try {
+				this.cryptor.init();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

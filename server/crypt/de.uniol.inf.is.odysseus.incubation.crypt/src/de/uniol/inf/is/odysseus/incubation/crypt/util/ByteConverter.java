@@ -7,6 +7,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 
 /**
  * This is a util class to convert byte streams
@@ -76,5 +77,11 @@ public class ByteConverter {
 		}
 		return o;
 	}
-
+	
+	public static byte[] byteBufferToBytes(ByteBuffer byteBuffer) {
+		byte[] bytes = new byte[byteBuffer.remaining()];
+		byteBuffer.get(bytes, 0, bytes.length);
+		return bytes;
+	}
+	
 }

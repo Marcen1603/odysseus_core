@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.crypto.Cipher;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -125,9 +124,25 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 							punctuation.getCryptedAttributes().add(retAtr);
 							punctuation.getAlgorithms().add(this.cryptor.getAlgorithm());
 						}
-						attributeValue = this.cryptor.cryptObject(attributeValue);
+						// if (attributeValue instanceof ByteBuffer) {
+						// // this should be happen at DECRYPTING
+						// attributeValue =
+						// ByteConverter.byteBufferToBytes((ByteBuffer)
+						// attributeValue);
+						// }
+						attributeValue = this.cryptor.cryptObjectViaString(attributeValue);
 
+						// Encrypting: STRING; Decrypting: AnyObject
 						SDFDatatype outType = SDFDatatype.getType(attributeValue.getClass().getSimpleName());
+
+						// if (attributeValue instanceof byte[]) {
+						// // this should be happen at ENCRYPTING
+						// attributeValue = ByteBuffer.wrap((byte[])
+						// attributeValue);
+						// System.out.println(attributeValue.toString());
+						// outType = SDFDatatype.getType("BYTEBUFFER");
+						// }
+
 						if (outType != null) {
 							// parsed to a other type as object
 							SDFSchema output = this.getOutputSchema();
@@ -154,16 +169,18 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 			}
 			transfer((T) tuple);
 
-		} else if (object instanceof KeyValueObject) {
-			KeyValueObject keyValue = (KeyValueObject) object;
-			Object[] keys = keyValue.getAttributes().keySet().toArray();
-			for (int i = 0; i < keyValue.getAttributes().entrySet().size(); i++) {
-				Object obj = keyValue.getAttribute(keys[i].toString());
-				Object crypted = this.cryptor.cryptObject(obj);
-				keyValue.setAttribute(keys[i].toString(), crypted);
-			}
-			transfer((T) keyValue);
-		}
+		} 
+		// else if (object instanceof KeyValueObject) {
+		// KeyValueObject keyValue = (KeyValueObject) object;
+		// Object[] keys = keyValue.getAttributes().keySet().toArray();
+		// for (int i = 0; i < keyValue.getAttributes().entrySet().size(); i++)
+		// {
+		// Object obj = keyValue.getAttribute(keys[i].toString());
+		// Object crypted = this.cryptor.cryptObject(obj);
+		// keyValue.setAttribute(keys[i].toString(), crypted);
+		// }
+		// transfer((T) keyValue);
+		// }
 	}
 
 	/**

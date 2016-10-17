@@ -22,7 +22,7 @@ public class CryptCommandAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2829044762236991290L;
 
-	private Map<String, String> parameter;
+	private Map<String, Object> parameter;
 	private String algorithm;
 	private String initVector;
 	private int receiverID;
@@ -101,7 +101,7 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	 * @return The key represents the occurrence of the parameter. <br>
 	 *         The value is the parameter, which will be crypted
 	 */
-	public Map<String, String> getParameter() {
+	public Map<String, Object> getParameter() {
 		return parameter;
 	}
 
@@ -113,7 +113,7 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	 *            The value is the parameter, which will be crypted
 	 */
 	@Parameter(type = StringParameter.class, name = "parameter", optional = false, isMap = true)
-	public void setParameter(Map<String, String> parameter) {
+	public void setParameter(Map<String, Object> parameter) {
 		this.parameter = parameter;
 	}
 
@@ -138,7 +138,7 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	}
 
 	/**
-	 * Returns the initVector, which will be used for crypting. 
+	 * Returns the initVector, which will be used for crypting.
 	 * 
 	 * @return the initVector
 	 */
@@ -147,7 +147,7 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	}
 
 	/**
-	 * Sets the initVector, which will be used for crypting. 
+	 * Sets the initVector, which will be used for crypting.
 	 * 
 	 * @param initVector
 	 *            the initVector to set

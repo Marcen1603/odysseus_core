@@ -53,24 +53,30 @@ public class DefaultAsymKeyFactory implements IAsymKeyFactory {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		// TODO what todo, if you use an invalid algorithm?
-		KeyPair keyPair = keygen.genKeyPair();
 
-		LocalDateTime generated = LocalDateTime.now();
-		KeyWrapper<PublicKey> publicKeyWrapper = new KeyWrapper<>();
-		publicKeyWrapper.setKey(keyPair.getPublic());
-		publicKeyWrapper.setId(KeyManager.getInstance().getNextAsymKeyId());
-		publicKeyWrapper.setCreated(generated);
-		publicKeyWrapper.setValid(valid);
-		publicKeyWrapper.setComment(comment);
+		ASymKeyWrapper asymKeyWrapper = null;
+		try {
+			KeyPair keyPair = keygen.genKeyPair();
 
-		KeyWrapper<PrivateKey> privateKeyWrapper = new KeyWrapper<>();
-		privateKeyWrapper.acquireMetadata(publicKeyWrapper);
-		privateKeyWrapper.setKey(keyPair.getPrivate());
+			LocalDateTime generated = LocalDateTime.now();
+			KeyWrapper<PublicKey> publicKeyWrapper = new KeyWrapper<>();
+			publicKeyWrapper.setKey(keyPair.getPublic());
+			publicKeyWrapper.setId(KeyManager.getInstance().getNextAsymKeyId());
+			publicKeyWrapper.setCreated(generated);
+			publicKeyWrapper.setValid(valid);
+			publicKeyWrapper.setComment(comment);
 
-		ASymKeyWrapper asymKeyWrapper = new ASymKeyWrapper();
-		asymKeyWrapper.setPrivateKeyWrapper(privateKeyWrapper);
-		asymKeyWrapper.setPublicKeyWrapper(publicKeyWrapper);
+			KeyWrapper<PrivateKey> privateKeyWrapper = new KeyWrapper<>();
+			privateKeyWrapper.acquireMetadata(publicKeyWrapper);
+			privateKeyWrapper.setKey(keyPair.getPrivate());
+
+			asymKeyWrapper = new ASymKeyWrapper();
+			asymKeyWrapper.setPrivateKeyWrapper(privateKeyWrapper);
+			asymKeyWrapper.setPublicKeyWrapper(publicKeyWrapper);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return asymKeyWrapper;
 	}
 

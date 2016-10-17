@@ -26,21 +26,23 @@ public class PublicKeyMessage implements Serializable {
 	 * the mathematical information about the key and you dont have trouble
 	 * parsing an interface to jdbc
 	 */
-	private ArrayList<KeyWrapper<RSAPublicKeySpec>> publicKey;
+	private List<KeyWrapper<RSAPublicKeySpec>> publicKey;
 
 	/**
 	 * Default constructor for parsing in JSON
 	 */
 	public PublicKeyMessage() {
-
+		this.publicKey = new ArrayList<>();
 	}
 
 	/**
 	 * Constructor with List of publicKeys
 	 * 
-	 * @param publicKey List of publicKeys to save in this message
+	 * @param publicKey
+	 *            List of publicKeys to save in this message
 	 */
 	public PublicKeyMessage(List<KeyWrapper<PublicKey>> publicKey) {
+		this.publicKey = new ArrayList<>();
 		this.setPublicKey(publicKey);
 	}
 

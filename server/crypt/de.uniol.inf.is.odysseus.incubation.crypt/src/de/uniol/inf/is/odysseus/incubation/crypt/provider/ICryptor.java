@@ -10,6 +10,8 @@ import java.security.Key;
  *
  */
 public interface ICryptor {
+	
+	public static final String OPE_LONG_ALGORITHM = "OPELONG";
 
 	/**
 	 * Initializes the cryptographic engine with the metadata given in the
@@ -156,5 +158,13 @@ public interface ICryptor {
 	 * @return the crypted object
 	 */
 	public Object cryptObject(Object object);
+	
+	/**
+	 * Encrypting any object to a Base64String and Decrypting it back to the original Object.
+	 * 
+	 * @param object the object to crypt
+	 * @return the crypted object; at encrypting a String; at decrypting the original object
+	 */
+	public Object cryptObjectViaString(Object object);
 
 }

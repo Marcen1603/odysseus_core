@@ -25,8 +25,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 
 	public static final SDFSchema schema;
 
-	// TODO: bleibt beides bei String??
-	protected Map<String, String> cryptedPredicates;
+	protected Map<String, Object> cryptedPredicates;
 
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -145,7 +144,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 	 * 
 	 * @return the cryptedPredicates
 	 */
-	public Map<String, String> getCryptedPredicates() {
+	public Map<String, Object> getCryptedPredicates() {
 		return cryptedPredicates;
 	}
 
@@ -155,7 +154,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 	 * @param cryptedPredicates
 	 *            the cryptedPredicates to set
 	 */
-	public void setCryptedPredicates(Map<String, String> cryptedPredicates) {
+	public void setCryptedPredicates(Map<String, Object> cryptedPredicates) {
 		this.cryptedPredicates = cryptedPredicates;
 	}
 

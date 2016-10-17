@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.provider;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
@@ -11,6 +9,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.commons.codec.binary.Base64;
 
+import de.uniol.inf.is.odysseus.incubation.crypt.jope.OPE;
 import de.uniol.inf.is.odysseus.incubation.crypt.util.ByteConverter;
 
 /**
@@ -72,7 +71,9 @@ public class Cryptor implements ICryptor {
 		try {
 			this.cipher.init(this.mode, this.key, this.initVector);
 			this.initialized = true;
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+		} catch (Exception e) {
+			// maybe this is no Problem, e.g. if you use a other Cryptographic
+			// Engine
 			e.printStackTrace();
 		}
 		this.cryptedMessage = null;
@@ -128,24 +129,33 @@ public class Cryptor implements ICryptor {
 
 	@Override
 	public Object cryptObject(Object object) {
-		byte[] bytes = null;
-
-		// convert to byteArray
-		if (object instanceof byte[]) {
-			bytes = (byte[]) object;
+		if (this.algorithm.equals(ICryptor.OPE_LONG_ALGORITHM)) {
+			return this.cryptObjectOPE(object);
 		} else {
-			bytes = ByteConverter.objectToBytes(object);
+			byte[] bytes = null;
+
+			// convert to byteArray
+			if (object instanceof byte[]) {
+				bytes = (byte[]) object;
+			} else {
+				bytes = ByteConverter.objectToBytes(object);
+			}
+
+			// crypt
+			byte[] crypted = this.crypt(bytes);
+			Object fin = crypted;
+
+			// encrypt: return byte[]; decrypt: return original Object
+			if (this.getMode() == Cipher.DECRYPT_MODE) {
+				fin = ByteConverter.bytesToObject(crypted);
+			}
+			return fin;
 		}
 
-		// crypt
-		byte[] crypted = this.crypt(bytes);
-		Object fin = crypted;
+	}
 
-		// encrypt: return byte[]; decrypt: return original Object
-		if (this.getMode() == Cipher.DECRYPT_MODE) {
-			fin = ByteConverter.bytesToObject(crypted);
-		}
-		return fin;
+	private Long cryptObjectOPE(Object object) {
+		return OPE.crypt(Long.valueOf(object.toString()), this.mode, this.key);
 	}
 
 	@Override
@@ -182,12 +192,31 @@ public class Cryptor implements ICryptor {
 		try {
 			this.cipher = Cipher.getInstance(this.algorithm);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+			// maybe this is no Problem, e.g. if you use a other Cryptographic
+			// Engine
 			e.printStackTrace();
 		}
 	}
 
 	public String getAlgorithm() {
 		return algorithm;
+	}
+
+	@Override
+	public Object cryptObjectViaString(Object object) {
+		if (this.getMode() == Cipher.DECRYPT_MODE && object instanceof String) {
+			// String to byte[]
+			object = Base64.decodeBase64((String) object);
+		}
+
+		// returns:: Encrypting: encrypted byte[]; Decrypting: decrypted Object
+		object = this.cryptObject(object);
+
+		if (this.getMode() == Cipher.ENCRYPT_MODE && object instanceof byte[]) {
+			// enc byte[] to enc String
+			object = Base64.encodeBase64String((byte[]) object);
+		}
+		return object;
 	}
 
 }

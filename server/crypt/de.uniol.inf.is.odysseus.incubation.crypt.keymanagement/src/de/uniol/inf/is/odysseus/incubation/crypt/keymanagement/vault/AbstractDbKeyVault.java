@@ -41,7 +41,6 @@ public abstract class AbstractDbKeyVault {
 		} catch (ConfigurationException e1) {
 			e1.printStackTrace();
 		}
-		// TODO show a exception to the user, if you could not connect to mysql
 		IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getFactory(type);
 		IDatabaseConnection dbconn = factory.createConnection(this.credentials.getString("server"),
 				this.credentials.getInt("port"), this.credentials.getString("database"),

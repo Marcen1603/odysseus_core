@@ -161,20 +161,19 @@ public abstract class AbstractCryptAO extends UnaryLogicalOp {
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema output = super.getOutputSchemaIntern(pos);
-		if (this.mode.equals(ENCRYPT_MODE)) {
-			for (SDFAttribute atr : output.getAttributes()) {
-				if (this.attributes.contains(atr)) {
-					if (this.mode.equals(ENCRYPT_MODE)) {
-						atr.clone(SDFDatatype.OBJECT);
-						//TODO nach encrypt wirklich bytearray in byte buffer packen
-					} else if (this.mode.equals(DECRYPT_MODE)) {
-						atr.clone(SDFDatatype.OBJECT);
-						//TODO richtigen datentyp nach parsing rausfinden? --> also das ganze output schema erst im PO setzen
-					}
+		for (SDFAttribute atr : output.getAttributes()) {
+			if (this.attributes.contains(atr)) {
+				if (this.mode.equals(ENCRYPT_MODE)) {
+					atr.clone(SDFDatatype.STRING);
+					// TODO das atr auch wirklich setzen
+				} else if (this.mode.equals(DECRYPT_MODE)) {
+					atr.clone(SDFDatatype.OBJECT);
+					// TODO richtigen datentyp nach parsing rausfinden! --> also
+					// das ganze output schema erst im PO setzen? (wenn das hier also rausfaellt, dann muss die if Encrypt abfrage doch vor der schleife)
 				}
 			}
 		}
-		
+
 		SDFSchema input = super.getInputSchema();
 		List<SDFAttribute> newOutput = new ArrayList<SDFAttribute>();
 		// check, if types are equal

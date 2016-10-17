@@ -22,7 +22,6 @@ public class TSimpleCryptAORule extends TAbstractCryptAORule<SimpleCryptAO> {
 		try {
 			super.execute(cryptAO, transformConfig);
 			try {
-				// TODO use Base64?
 				// TODO Ausblick: eigenen parameter fuer verfahren und
 				// schluesseltyp nehmen
 				cryptor.setKey(new SecretKeySpec(cryptAO.getKey().getBytes("UTF-8"), "AES"));

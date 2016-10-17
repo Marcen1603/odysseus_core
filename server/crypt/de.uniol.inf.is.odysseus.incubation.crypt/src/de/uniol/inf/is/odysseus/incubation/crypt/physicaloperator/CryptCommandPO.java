@@ -27,8 +27,8 @@ import de.uniol.inf.is.odysseus.incubation.crypt.util.KeyReceiverClient;
 public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IReceiver {
 
 	protected ICryptor cryptor;
-	protected Map<String, String> parameter;
-	protected Map<String, String> cryptedParameter;
+	protected Map<String, Object> parameter;
+	protected Map<String, Object> cryptedParameter;
 	protected int receiverId;
 	protected int streamId;
 
@@ -71,7 +71,7 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 * @return The key represents the occurrence of the parameter. <br>
 	 *         The value is the parameter, which will be crypted
 	 */
-	public Map<String, String> getParameter() {
+	public Map<String, Object> getParameter() {
 		return parameter;
 	}
 
@@ -82,7 +82,7 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 *            The key represents the occurrence of the parameter. <br>
 	 *            The value is the parameter, which will be crypted
 	 */
-	public void setParameter(Map<String, String> parameter) {
+	public void setParameter(Map<String, Object> parameter) {
 		this.parameter = parameter;
 	}
 
@@ -99,7 +99,7 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 * @param parameter
 	 *            The parameters, which will be crypted
 	 */
-	public CryptCommandPO(ICryptor cryptor, int receiverId, int streamId, Map<String, String> parameter) {
+	public CryptCommandPO(ICryptor cryptor, int receiverId, int streamId, Map<String, Object> parameter) {
 		super();
 		this.cryptor = cryptor;
 		this.receiverId = receiverId;
@@ -131,10 +131,10 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 			client.addEncKeyListener(receiver);
 			// init key
 			this.loadEncryptKey();
-			this.cryptParameter();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		this.cryptParameter();
 	}
 
 	/**
@@ -168,13 +168,14 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	protected void cryptParameter() {
 		// TODO cryptParameters() in extra util Klasse auslagern?
 		this.cryptedParameter = new HashMap<>();
-		for (Entry<String, String> entry : this.parameter.entrySet()) {
+		for (Entry<String, Object> entry : this.parameter.entrySet()) {
 			String key = entry.getKey();
-			String param = entry.getValue();
-			String crypted = this.cryptor.cryptBase64String(param);
-			System.out.println(param + " crypted to: " + crypted);
-			this.cryptedParameter.put(key, crypted);
-			// TODO fire CryptPredicatesPunctuation
+			Object param = entry.getValue();
+			Object crypted = this.cryptor.cryptObjectViaString(param);
+			System.out.println(param + " crypted to: " + crypted.toString());
+			this.cryptedParameter.put(key, crypted.toString());
+			
+			// TODO fire CryptedPredicatesPunctuation
 		}
 	}
 
