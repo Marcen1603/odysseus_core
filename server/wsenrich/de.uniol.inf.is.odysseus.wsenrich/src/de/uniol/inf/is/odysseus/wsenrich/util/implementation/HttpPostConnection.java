@@ -66,13 +66,16 @@ public class HttpPostConnection extends AbstractConnectionForWebservices {
 	private HttpResponse response;
 
 	/**
-	 * Constructor for the Http Post Connecton with arguments
-	 * Connects automatically to the given Url
-	 * @param url the url for the request
-	 * @param arguments the arguments which will be added in the Http Body
+	 * Constructor for the Http Post Connecton with arguments Connects
+	 * automatically to the given Url
+	 *
+	 * @param url
+	 *            the url for the request
+	 * @param arguments
+	 *            the arguments which will be added in the Http Body
 	 */
 	public HttpPostConnection() {
-		//Needed for ConnectionForWebservicesRegistry
+		// Needed for ConnectionForWebservicesRegistry
 	}
 
 	@Override
@@ -91,23 +94,27 @@ public class HttpPostConnection extends AbstractConnectionForWebservices {
 	}
 
 	@Override
-	public void connect(String charset, String contentType) {
+	public void connect(String charset, String method, String contentType) {
 		try {
-	//		synchronized(this) {
+			// synchronized(this) {
 
-	//			Thread.sleep(10);
+			// Thread.sleep(10);
 
-	//		}
+			// }
 			this.httpClient = new DefaultHttpClient();
 			this.httpClient.getParams().setParameter("http.connection.stalecheck", true);
 			this.httpPost = new HttpPost(url);
 			this.httpPost.addHeader(CONTENT_ENCODING, charset);
-			if(contentType.equals(WSEnrichAO.POST_WITH_ARGUMENTS)) {
-				this.httpPost.addHeader(CONTENT_TYPE, TEXT_CONTENT);
-			} else if (contentType.equals(WSEnrichAO.POST_WITH_DOCUMENT)) {
-				this.httpPost.addHeader(CONTENT_TYPE, XML_CONTENT);
+			if (contentType != null && contentType.length() > 0) {
+				this.httpPost.addHeader(CONTENT_TYPE, contentType);
+			} else {
+				if (method.equals(WSEnrichAO.POST_WITH_ARGUMENTS)) {
+					this.httpPost.addHeader(CONTENT_TYPE, TEXT_CONTENT);
+				} else if (method.equals(WSEnrichAO.POST_WITH_DOCUMENT)) {
+					this.httpPost.addHeader(CONTENT_TYPE, XML_CONTENT);
+				}
 			}
-			for (Option o:getHeader()){
+			for (Option o : getHeader()) {
 				this.httpPost.addHeader(o.getName(), o.getValue());
 			}
 			this.httpPost.setEntity(new StringEntity(argument));
