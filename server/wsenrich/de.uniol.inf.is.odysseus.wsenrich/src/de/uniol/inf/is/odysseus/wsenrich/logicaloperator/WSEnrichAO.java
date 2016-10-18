@@ -83,6 +83,11 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	private String method;
 
 	/**
+	 * Allow to set the content type
+	 */
+	private String contentType;
+
+	/**
 	 * The static HTTP-URL-Part before the arguments
 	 */
 	private String url;
@@ -158,6 +163,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		super(wsEnrichAO);
 		this.serviceMethod = wsEnrichAO.serviceMethod;
 		this.method = wsEnrichAO.method;
+		this.contentType = wsEnrichAO.contentType;
 		this.url = wsEnrichAO.url;
 		this.urlIsTemplate = wsEnrichAO.urlIsTemplate;
 		this.urlsuffix = wsEnrichAO.urlsuffix;
@@ -223,6 +229,15 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	@Parameter(type = StringParameter.class, name = "method")
 	public void setMethod(String method) {
 		this.method = method;
+	}
+
+	@Parameter(type = StringParameter.class, name = "contentType")
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getContentType() {
+		return contentType;
 	}
 
 	/**
