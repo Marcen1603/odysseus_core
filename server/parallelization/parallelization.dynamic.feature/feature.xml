@@ -20,6 +20,10 @@
          id="de.uniol.inf.is.odysseus.parallelization.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.parallelization.optimization"
          download-size="0"
