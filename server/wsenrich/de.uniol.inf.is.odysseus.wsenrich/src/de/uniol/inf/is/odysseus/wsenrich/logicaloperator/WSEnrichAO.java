@@ -231,7 +231,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		this.method = method;
 	}
 
-	@Parameter(type = StringParameter.class, name = "contentType")
+	@Parameter(type = StringParameter.class, name = "contentType", optional = true)
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
