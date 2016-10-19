@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wsenrich.util.implementation;
 
 import java.io.IOException;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -118,6 +119,11 @@ public class HttpPostConnection extends AbstractConnectionForWebservices {
 				this.httpPost.addHeader(o.getName(), o.getValue());
 			}
 			this.httpPost.setEntity(new StringEntity(argument));
+			if (logger.isTraceEnabled()){
+				logger.trace(httpPost.toString());
+				for (Header h:httpPost.getAllHeaders())
+				logger.trace(h+"");
+			}
 			this.response = this.httpClient.execute(httpPost);
 		} catch (IOException e) {
 			logger.error("Error while connecting to the specified Url. Cause: {}", e.getMessage());
