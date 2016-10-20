@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
@@ -56,7 +57,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 /**
  * This class represents the physical implementation of the aggregation
  * operation in the interval approach
- * 
+ *
  * @author Marco Grawunder
  *
  * @param
@@ -113,7 +114,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	/**
 	 * Create a new aggregation operator
-	 * 
+	 *
 	 * @param inputSchema
 	 *            : The input schema of the operator
 	 * @param outputSchema
@@ -145,7 +146,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * if set to a value higher than -1, every dumpAtValueCount elements are
 	 * also written, even if no new elements has reached its final value. The
 	 * result element has a shorter validity.
-	 * 
+	 *
 	 * @param dumpAtValueCount
 	 *            : A which rate, should additional output be created
 	 */
@@ -157,7 +158,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * The aggreation can created concrete values as output, e.g. 20 for an AVG
 	 * aggregation. If the aggregation is splitted partial aggregates can be
 	 * used to keep the state, e.g. Sum = 100, Count = 5 for an average.
-	 * 
+	 *
 	 * @param outputPA
 	 *            if set to true, partial aggregate will be used in the output
 	 *            instead of real values
@@ -168,7 +169,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	/**
 	 * Does this aggregation return partial aggregates
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isOutputPA() {
@@ -190,7 +191,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		IGroupProcessor<R, W> g = getGroupProcessor();
@@ -395,7 +396,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * the values of the grouping attributes in this group and the meta data of
 	 * the partial aggregate This function creates output elements and sends
 	 * them to the transferArea
-	 * 
+	 *
 	 * @param results
 	 *            The calculated aggregation values
 	 * @param groupID
@@ -418,7 +419,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * values of the grouping attributes in this group and the meta data of the
 	 * partial aggregate This function creates output elements and sends them to
 	 * the transferArea
-	 * 
+	 *
 	 * @param results
 	 *            : The partial aggregates for the input attributes
 	 * @param groupID
@@ -449,7 +450,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	/**
 	 * For an IPlanMigrationStrategy that directly manipulates the operator
 	 * states.
-	 * 
+	 *
 	 * @return State of {@link StreamGroupingWithAggregationPO}.
 	 */
 	public Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
@@ -461,37 +462,37 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa, R newElem,
 			boolean outputPA) {
-		
+
 		// Copy meta data because timestamp will be changed during run
 		Q newElemMeta = (Q) newElem.getMetadata().clone();
-		
+
 		// The list of found elements that cannot be changed anymore
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
 		List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> outdated = new LinkedList<>();
 		// Get all overlapping elements but KEEP them in the area, remove outdated
 		List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifierList = sa
 				.queryOverlapsAsListExtractOutdated(newElem.getMetadata(), outdated);
-		
+
 		for (PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e:outdated){
 			PairMap<SDFSchema, AggregateFunction, W, Q> out = calcEval(e, true);
 			out.setMetadata(e.getMetadata());
 			returnValues.add(out);
 		}
-		
+
 		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = qualifierList.iterator();
-		
+
 		while(qualifies.hasNext()){
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> pa = qualifies.next();
 			// Now test different cases:
 			// Case 1: elemToAdd starts later
 			if (pa.getMetadata().getStart().before(newElemMeta.getStart())){
-				// in this case, the pa has a part before the new element that does not overlap and 
+				// in this case, the pa has a part before the new element that does not overlap and
 				// can be written out
 				PairMap<SDFSchema, AggregateFunction, W, Q> out = calcEval(pa, true);
 				out.setMetadata((Q) pa.getMetadata().clone());
 				out.getMetadata().setStartAndEnd(pa.getMetadata().getStart(), newElemMeta.getStart());
 				returnValues.add(out);
-				
+
 				// Now two cases the elemToAdd ends later or not
 				if (pa.getMetadata().getEnd().beforeOrEquals(newElemMeta.getEnd())){
 					// In this case the PA can be updated and no need to insert again
@@ -510,9 +511,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 						newElem = null;
 						assert(!qualifies.hasNext());
 					}
-				}else{ 
+				}else{
 					// elemToAdd ends earlier
-					// in this case the partial aggregate needs to be split into a new merged version and 
+					// in this case the partial aggregate needs to be split into a new merged version and
 					// timestamp changed version
 					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem, true);
 					// Merge metadata
@@ -521,20 +522,20 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					// Remark: Altough the timestamps are changed, the order in the area is not changed!
 					newMeta.setStartAndEnd(newElemMeta.getStart(), newElemMeta.getEnd());
 					merged.setMetadata(newMeta);
-					
+
 					// update the remaing pa
 					pa.getMetadata().setStart(newElemMeta.getEnd());
 
 					// first update than insert!! else order could be wrong
 					saInsert(sa, merged, newMeta);
 
-					
+
 					// the element is fully integrated
 					newElem = null;
 					assert(!qualifies.hasNext());
 				}
-				
-			}else{ 
+
+			}else{
 				// Case 2: elemToAdd starts earlier or same
 				// is there a new part before?
 				if (newElemMeta.getStart().before(pa.getMetadata().getStart())){
@@ -542,8 +543,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					meta.setStartAndEnd(newElemMeta.getStart(), pa.getMetadata().getStart());
 					saInsert(sa, calcInit(newElem),meta);
 				}
-				
-				// now again both cases: elementToAdd end later than pa and not 
+
+				// now again both cases: elementToAdd end later than pa and not
 				if (newElemMeta.getEnd().afterOrEquals(pa.getMetadata().getEnd())){
 					// in this case the pa can be updated
 					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem, false);
@@ -562,10 +563,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 						assert(!qualifies.hasNext());
 					}
 
-					
+
 				}else{
 					// elemToAdd ends earlier
-					// in this case the partial aggregate needs to be split into a new merged version and 
+					// in this case the partial aggregate needs to be split into a new merged version and
 					// timestamp changed version
 					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem, true);
 					// Merge metadata
@@ -574,10 +575,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					// Remark: Altough the timestamps are changed, the order in the area is not changed!
 					newMeta.setStartAndEnd(pa.getMetadata().getStart(), newElemMeta.getEnd());
 					merged.setMetadata(newMeta);
-			
+
 					// update the remaing pa
 					pa.getMetadata().setStart(newElemMeta.getEnd());
-					
+
 					// first update than insert!! else order could be wrong
 					saInsert(sa, merged, newMeta);
 					// the element is fully integrated
@@ -585,36 +586,36 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					assert(!qualifies.hasNext());
 				}
 			}
-			
-			
+
+
 		} // while qualifies.hasNext();
-		// Now there could be a rest or a non overlapping 
+		// Now there could be a rest or a non overlapping
 		if (newElem != null){
 			saInsert(sa, calcInit(newElem),newElemMeta);
 		}
-		
+
 		return returnValues;
 	}
-	
-	
+
+
 	/**
 	 * This method does for every group/sweep area the core calculation of the
 	 * new aggregation state, when a new element is inserted. This algorithm is
 	 * inspired by the online aggregation algorithm of [Hellerstein] and the
 	 * stream algorithm from [Kraemer]. It allow to apply different aggregations
 	 * functions on multiple attributes
-	 * 
+	 *
 	 * Different cases are handled: 1) The element does not overlap with any
 	 * existing elements --> Create a new partial aggregate (init) 2) The
 	 * element overlaps with other existing elements --> build overlapping areas
 	 * a) part before or after an overlap --> init b) part overlapping --> merge
-	 * 
+	 *
 	 * ------------------------------------------------------------------------
 	 * ---------------------- ---pa1------- ---pa2----------
 	 * ----------newElem-----
-	 * 
+	 *
 	 * --> -pa1- --pa1+nE- -ne --pa2+n2-- --ne--
-	 * 
+	 *
 	 * @param sa
 	 *            The sweep area that should be updated
 	 * @param elemToAdd
@@ -727,7 +728,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	/**
 	 * Handle the case where p1 and p2 are end time stamps
-	 * 
+	 *
 	 * @param sa
 	 *            : The sweep are
 	 * @param elemToAdd
@@ -922,7 +923,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		elem.setMetadata(t);
 		sa.insert(elem);
 	}
-	
+
 	@Override
 	public IOperatorState getState() {
 		synchronized (this.groups) {
@@ -977,6 +978,16 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return drainAtClose;
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (ipo instanceof AggregateTIPO){
+			return super.isSemanticallyEqual(ipo);
+		}else{
+			return false;
+		}
+	}
+
+
 }
 
 /**
@@ -984,7 +995,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
  * intervals. Each point stores the left or right side of the interval
  * (isStartPoint = true --> left side, else right side) Additionally, a load
  * field can be used to keep reference data.
- * 
+ *
  * @author Marco Grawunder
  *
  */
