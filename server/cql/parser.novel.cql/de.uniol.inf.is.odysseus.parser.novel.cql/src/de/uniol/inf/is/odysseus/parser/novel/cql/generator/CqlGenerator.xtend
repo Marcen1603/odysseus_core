@@ -20,6 +20,10 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Bracket
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv
 
 /**
  * Generates code from your model files on save.
@@ -79,21 +83,49 @@ class CqlGenerator extends AbstractGenerator
 			{
 				Or:
 				{
+					unpackExpression(e.left)
 					where_clause += '|| '
-					unpackExpression(e.left)	
-				}
-				And: 
-				{
-					where_clause += '&& '
 					unpackExpression(e.right)
 				}
+				And:
+				{
+					unpackExpression(e.left)
+					where_clause += '&& '
+					unpackExpression(e.right)
+				}  
 				Equality:
 				{
-					
+					unpackExpression(e.left)
+					where_clause += e.op + ' '
+					unpackExpression(e.right)
+				}
+				Comparision:
+				{
+					unpackExpression(e.left)
+					where_clause += e.op + ' '
+					unpackExpression(e.right)	
+				}
+				Plus:
+				{
+					unpackExpression(e.left)
+					where_clause += '+ '
+					unpackExpression(e.right)
+				}
+				Minus:
+				{
+					unpackExpression(e.left)
+					where_clause += '- '
+					unpackExpression(e.right)					
+				}
+				MulOrDiv:
+				{
+					unpackExpression(e.left)
+					where_clause += e.op + ' '
+					unpackExpression(e.right)
 				}
 				NOT:
 				{
-					where_clause += '! '
+					where_clause += '!'
 					unpackExpression(e.expression)
 				}
 				Bracket:
@@ -119,7 +151,7 @@ class CqlGenerator extends AbstractGenerator
 			where_clause += str
 		}
 	}
-
+	
 //Get data types from the context of each expression; look at WHERE clause
 	def CharSequence buildAccessOP(Select_Statement stmt)
 	'''
