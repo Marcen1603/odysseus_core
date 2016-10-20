@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model#getGreetings <em>Greetings</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model#getStatements <em>Statements</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getModel()
@@ -26,19 +26,19 @@ import org.eclipse.emf.ecore.EObject;
 public interface Model extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Greetings</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Greeting}.
+   * Returns the value of the '<em><b>Statements</b></em>' containment reference list.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Statement}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Greetings</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Statements</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Greetings</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getModel_Greetings()
+   * @return the value of the '<em>Statements</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getModel_Statements()
    * @model containment="true"
    * @generated
    */
-  EList<Greeting> getGreetings();
+  EList<Statement> getStatements();
 
 } // Model

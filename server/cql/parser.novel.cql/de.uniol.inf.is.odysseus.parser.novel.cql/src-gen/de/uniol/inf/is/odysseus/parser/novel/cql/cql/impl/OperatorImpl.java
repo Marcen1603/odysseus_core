@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Greeting;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Operator;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -15,18 +15,18 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Greeting</b></em>'.
+ * An implementation of the model object '<em><b>Operator</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.GreetingImpl#getName <em>Name</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.OperatorImpl#getName <em>Name</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeting
+public class OperatorImpl extends MinimalEObjectImpl.Container implements Operator
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -53,7 +53,7 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
    * <!-- end-user-doc -->
    * @generated
    */
-  protected GreetingImpl()
+  protected OperatorImpl()
   {
     super();
   }
@@ -66,7 +66,7 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
   @Override
   protected EClass eStaticClass()
   {
-    return CqlPackage.Literals.GREETING;
+    return CqlPackage.Literals.OPERATOR;
   }
 
   /**
@@ -89,7 +89,7 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CqlPackage.GREETING__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, CqlPackage.OPERATOR__NAME, oldName, name));
   }
 
   /**
@@ -102,7 +102,7 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
   {
     switch (featureID)
     {
-      case CqlPackage.GREETING__NAME:
+      case CqlPackage.OPERATOR__NAME:
         return getName();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -118,7 +118,7 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
   {
     switch (featureID)
     {
-      case CqlPackage.GREETING__NAME:
+      case CqlPackage.OPERATOR__NAME:
         setName((String)newValue);
         return;
     }
@@ -135,7 +135,7 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
   {
     switch (featureID)
     {
-      case CqlPackage.GREETING__NAME:
+      case CqlPackage.OPERATOR__NAME:
         setName(NAME_EDEFAULT);
         return;
     }
@@ -152,7 +152,7 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
   {
     switch (featureID)
     {
-      case CqlPackage.GREETING__NAME:
+      case CqlPackage.OPERATOR__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
@@ -175,4 +175,4 @@ public class GreetingImpl extends MinimalEObjectImpl.Container implements Greeti
     return result.toString();
   }
 
-} //GreetingImpl
+} //OperatorImpl

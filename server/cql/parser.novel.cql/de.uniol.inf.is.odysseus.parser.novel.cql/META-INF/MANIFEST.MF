@@ -18,7 +18,6 @@ Require-Bundle: org.eclipse.xtext,
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql.cql,
- de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr,
  de.uniol.inf.is.odysseus.parser.novel.cql.services,
  de.uniol.inf.is.odysseus.parser.novel.cql.scoping,
  de.uniol.inf.is.odysseus.parser.novel.cql.validation,
@@ -27,5 +26,6 @@ Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql.cql,
  de.uniol.inf.is.odysseus.parser.novel.cql.cql.util,
  de.uniol.inf.is.odysseus.parser.novel.cql.generator,
  de.uniol.inf.is.odysseus.parser.novel.cql.serializer,
- de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal
+ de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal,
+ de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr
 Import-Package: org.apache.log4j

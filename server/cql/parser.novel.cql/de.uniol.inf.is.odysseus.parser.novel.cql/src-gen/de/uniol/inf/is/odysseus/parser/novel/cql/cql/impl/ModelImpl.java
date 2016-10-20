@@ -4,8 +4,8 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Greeting;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Statement;
 
 import java.util.Collection;
 
@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ModelImpl#getGreetings <em>Greetings</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ModelImpl#getStatements <em>Statements</em>}</li>
  * </ul>
  *
  * @generated
@@ -37,14 +37,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
 public class ModelImpl extends MinimalEObjectImpl.Container implements Model
 {
   /**
-   * The cached value of the '{@link #getGreetings() <em>Greetings</em>}' containment reference list.
+   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getGreetings()
+   * @see #getStatements()
    * @generated
    * @ordered
    */
-  protected EList<Greeting> greetings;
+  protected EList<Statement> statements;
 
   /**
    * <!-- begin-user-doc -->
@@ -72,13 +72,13 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Greeting> getGreetings()
+  public EList<Statement> getStatements()
   {
-    if (greetings == null)
+    if (statements == null)
     {
-      greetings = new EObjectContainmentEList<Greeting>(Greeting.class, this, CqlPackage.MODEL__GREETINGS);
+      statements = new EObjectContainmentEList<Statement>(Statement.class, this, CqlPackage.MODEL__STATEMENTS);
     }
-    return greetings;
+    return statements;
   }
 
   /**
@@ -91,8 +91,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CqlPackage.MODEL__GREETINGS:
-        return ((InternalEList<?>)getGreetings()).basicRemove(otherEnd, msgs);
+      case CqlPackage.MODEL__STATEMENTS:
+        return ((InternalEList<?>)getStatements()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -107,8 +107,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CqlPackage.MODEL__GREETINGS:
-        return getGreetings();
+      case CqlPackage.MODEL__STATEMENTS:
+        return getStatements();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -124,9 +124,9 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CqlPackage.MODEL__GREETINGS:
-        getGreetings().clear();
-        getGreetings().addAll((Collection<? extends Greeting>)newValue);
+      case CqlPackage.MODEL__STATEMENTS:
+        getStatements().clear();
+        getStatements().addAll((Collection<? extends Statement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -142,8 +142,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CqlPackage.MODEL__GREETINGS:
-        getGreetings().clear();
+      case CqlPackage.MODEL__STATEMENTS:
+        getStatements().clear();
         return;
     }
     super.eUnset(featureID);
@@ -159,8 +159,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CqlPackage.MODEL__GREETINGS:
-        return greetings != null && !greetings.isEmpty();
+      case CqlPackage.MODEL__STATEMENTS:
+        return statements != null && !statements.isEmpty();
     }
     return super.eIsSet(featureID);
   }

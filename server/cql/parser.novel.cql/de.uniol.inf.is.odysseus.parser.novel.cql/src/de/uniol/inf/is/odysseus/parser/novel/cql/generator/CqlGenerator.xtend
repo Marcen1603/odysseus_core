@@ -3,23 +3,134 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.And
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Attribute
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.BoolConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.NOT
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Statement
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.StringConstant
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Bracket
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality
 
 /**
  * Generates code from your model files on save.
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
-class CqlGenerator extends AbstractGenerator {
+class CqlGenerator extends AbstractGenerator 
+{
 
-	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(typeof(Greeting))
-//				.map[name]
-//				.join(', '))
+//	@Inject extension IQualifiedNameProvider
+
+	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) 
+	{
+		for(e : resource.allContents.toIterable.filter(typeof(Statement)))
+			fsa.generateFile(
+//				e.fullyQualifiedName.toString() + '.pql',
+				resource.URI.lastSegment.replace('.cql', 'pql') ,
+				e.parseStatement()
+			)
 	}
+	
+//HINT Use strg + < or >  to generate « or »	
+	def CharSequence parseStatement(Statement stmt)
+	'''
+	«switch stmt.type 
+	{
+	Select_Statement : parseSelect(stmt.type as Select_Statement)
+	}
+	»
+	'''
+	
+	def void foo(Expression e)
+	{
+		switch e
+		{
+			And: e.left
+		}
+	}
+
+	var where_clause = ''
+
+	def CharSequence parseSelect(Select_Statement stmt)
+	{
+	where_clause = ''
+	'''
+	SELECT({
+			predicate=«unpackExpression(stmt.conditions.get(0))»
+	}, «buildAccessOP(stmt)»)
+	'''
+	}
+
+	def CharSequence unpackExpression(Expression e)
+	{
+		if(!e.eContents.empty)
+		{
+			switch e
+			{
+				Or:
+				{
+					where_clause += '|| '
+					unpackExpression(e.left)	
+				}
+				And: 
+				{
+					where_clause += '&& '
+					unpackExpression(e.right)
+				}
+				Equality:
+				{
+					
+				}
+				NOT:
+				{
+					where_clause += '! '
+					unpackExpression(e.expression)
+				}
+				Bracket:
+				{
+					where_clause += '(' 
+					unpackExpression(e.inner)
+					where_clause += ')' 
+				} 
+			}
+			println(where_clause) //TODO Remove after debugging
+		} 
+		else
+		{
+			var str = ''
+			switch e
+			{
+				IntConstant: 	str = e.value + ' '
+				DoubleConstant: str = e.value + ' '
+				StringConstant: str = e.value + ' '
+				BoolConstant: 	str = e.value + ' '
+				Attribute: 		str = e.value.name + ' '
+			}
+			where_clause += str
+		}
+	}
+
+//Get data types from the context of each expression; look at WHERE clause
+	def CharSequence buildAccessOP(Select_Statement stmt)
+	'''
+	ACCESS({source='Source'
+			wrapper='GenericPush'
+			transport='TCPClient'
+			dataHandler='Tuple'
+			schema=[
+					[]
+					[]]
+	})
+	'''
+
 }

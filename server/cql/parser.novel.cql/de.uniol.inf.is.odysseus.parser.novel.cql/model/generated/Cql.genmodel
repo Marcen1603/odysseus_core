@@ -6,11 +6,108 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.12">
   <genPackages prefix="Cql" basePackage="de.uniol.inf.is.odysseus.parser.novel.cql"
       disposableProviderFactory="true" fileExtensions="cql" ecorePackage="Cql.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Cql.ecore#//FunctionType">
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/SUM"/>
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/ADD"/>
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/MAX"/>
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/MIN"/>
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/COUNT"/>
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/AVG"/>
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/LAST"/>
+      <genEnumLiterals ecoreEnumLiteral="Cql.ecore#//FunctionType/FIRST"/>
+    </genEnums>
     <genClasses ecoreClass="Cql.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Model/greetings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Model/statements"/>
     </genClasses>
-    <genClasses ecoreClass="Cql.ecore#//Greeting">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Greeting/name"/>
+    <genClasses ecoreClass="Cql.ecore#//Statement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Statement/type"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Nested_Statement"/>
+    <genClasses ecoreClass="Cql.ecore#//Expression"/>
+    <genClasses ecoreClass="Cql.ecore#//Alias">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Alias/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Source">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Source/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Attribute">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cql.ecore#//Attribute/value"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cql.ecore#//Attribute/source"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Attribute/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//ExpressionModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//ExpressionModel/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Select_Statement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Select_Statement/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Select_Statement/attributes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Select_Statement/sources"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Select_Statement/conditions"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Operator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Operator/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Condition">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cql.ecore#//Condition/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Condition/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Value">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Value/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Scalar_Function">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Scalar_Function/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Create_Statement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Create_Statement/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//IntConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//IntConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//DoubleConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//DoubleConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//StringConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//StringConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//BoolConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//BoolConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Or">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Or/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Or/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//And">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//And/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//And/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Equality">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Equality/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Equality/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Equality/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Comparision">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Comparision/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Comparision/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Comparision/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Plus">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Plus/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Plus/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Minus">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Minus/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Minus/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//MulOrDiv">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//MulOrDiv/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//MulOrDiv/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//MulOrDiv/right"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//Bracket">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Bracket/inner"/>
+    </genClasses>
+    <genClasses ecoreClass="Cql.ecore#//NOT">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//NOT/expression"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

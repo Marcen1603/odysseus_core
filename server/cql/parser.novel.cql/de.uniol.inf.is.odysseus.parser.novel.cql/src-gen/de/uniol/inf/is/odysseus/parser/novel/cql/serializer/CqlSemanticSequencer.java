@@ -4,9 +4,32 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.serializer;
 
 import com.google.inject.Inject;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Alias;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.And;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Attribute;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.BoolConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Bracket;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Condition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Greeting;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Create_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.NOT;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Operator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Scalar_Function;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Source;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.StringConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Value;
 import de.uniol.inf.is.odysseus.parser.novel.cql.services.CqlGrammarAccess;
 import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
@@ -33,11 +56,102 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		Set<Parameter> parameters = context.getEnabledBooleanParameters();
 		if (epackage == CqlPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
-			case CqlPackage.GREETING:
-				sequence_Greeting(context, (Greeting) semanticObject); 
+			case CqlPackage.ALIAS:
+				sequence_Alias(context, (Alias) semanticObject); 
+				return; 
+			case CqlPackage.AND:
+				sequence_And(context, (And) semanticObject); 
+				return; 
+			case CqlPackage.ATTRIBUTE:
+				if (rule == grammarAccess.getAtomicRule()
+						|| rule == grammarAccess.getExpressionRule()
+						|| rule == grammarAccess.getOrRule()
+						|| action == grammarAccess.getOrAccess().getOrLeftAction_1_0()
+						|| rule == grammarAccess.getAndRule()
+						|| action == grammarAccess.getAndAccess().getAndLeftAction_1_0()
+						|| rule == grammarAccess.getEqualitiyRule()
+						|| action == grammarAccess.getEqualitiyAccess().getEqualityLeftAction_1_0()
+						|| rule == grammarAccess.getComparisonRule()
+						|| action == grammarAccess.getComparisonAccess().getComparisionLeftAction_1_0()
+						|| rule == grammarAccess.getPlusOrMinusRule()
+						|| action == grammarAccess.getPlusOrMinusAccess().getPlusLeftAction_1_0_0_0()
+						|| action == grammarAccess.getPlusOrMinusAccess().getMinusLeftAction_1_0_1_0()
+						|| rule == grammarAccess.getMulOrDivRule()
+						|| action == grammarAccess.getMulOrDivAccess().getMulOrDivLeftAction_1_0()
+						|| rule == grammarAccess.getPrimaryRule()) {
+					sequence_Atomic(context, (Attribute) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getAttributeRule()) {
+					sequence_Attribute(context, (Attribute) semanticObject); 
+					return; 
+				}
+				else break;
+			case CqlPackage.BOOL_CONSTANT:
+				sequence_Atomic(context, (BoolConstant) semanticObject); 
+				return; 
+			case CqlPackage.BRACKET:
+				sequence_Primary(context, (Bracket) semanticObject); 
+				return; 
+			case CqlPackage.COMPARISION:
+				sequence_Comparison(context, (Comparision) semanticObject); 
+				return; 
+			case CqlPackage.CONDITION:
+				sequence_Condition(context, (Condition) semanticObject); 
+				return; 
+			case CqlPackage.CREATE_STATEMENT:
+				sequence_Create_Statement(context, (Create_Statement) semanticObject); 
+				return; 
+			case CqlPackage.DOUBLE_CONSTANT:
+				sequence_Atomic(context, (DoubleConstant) semanticObject); 
+				return; 
+			case CqlPackage.EQUALITY:
+				sequence_Equalitiy(context, (Equality) semanticObject); 
+				return; 
+			case CqlPackage.EXPRESSION_MODEL:
+				sequence_ExpressionModel(context, (ExpressionModel) semanticObject); 
+				return; 
+			case CqlPackage.INT_CONSTANT:
+				sequence_Atomic(context, (IntConstant) semanticObject); 
+				return; 
+			case CqlPackage.MINUS:
+				sequence_PlusOrMinus(context, (Minus) semanticObject); 
 				return; 
 			case CqlPackage.MODEL:
 				sequence_Model(context, (Model) semanticObject); 
+				return; 
+			case CqlPackage.MUL_OR_DIV:
+				sequence_MulOrDiv(context, (MulOrDiv) semanticObject); 
+				return; 
+			case CqlPackage.NOT:
+				sequence_Primary(context, (NOT) semanticObject); 
+				return; 
+			case CqlPackage.OPERATOR:
+				sequence_Operator(context, (Operator) semanticObject); 
+				return; 
+			case CqlPackage.OR:
+				sequence_Or(context, (Or) semanticObject); 
+				return; 
+			case CqlPackage.PLUS:
+				sequence_PlusOrMinus(context, (Plus) semanticObject); 
+				return; 
+			case CqlPackage.SCALAR_FUNCTION:
+				sequence_Scalar_Function(context, (Scalar_Function) semanticObject); 
+				return; 
+			case CqlPackage.SELECT_STATEMENT:
+				sequence_Select_Statement(context, (Select_Statement) semanticObject); 
+				return; 
+			case CqlPackage.SOURCE:
+				sequence_Source(context, (Source) semanticObject); 
+				return; 
+			case CqlPackage.STATEMENT:
+				sequence_Statement(context, (Statement) semanticObject); 
+				return; 
+			case CqlPackage.STRING_CONSTANT:
+				sequence_Atomic(context, (StringConstant) semanticObject); 
+				return; 
+			case CqlPackage.VALUE:
+				sequence_Value(context, (Value) semanticObject); 
 				return; 
 			}
 		if (errorAcceptor != null)
@@ -46,19 +160,295 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Greeting returns Greeting
+	 *     Alias returns Alias
 	 *
 	 * Constraint:
 	 *     name=ID
 	 */
-	protected void sequence_Greeting(ISerializationContext context, Greeting semanticObject) {
+	protected void sequence_Alias(ISerializationContext context, Alias semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.GREETING__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.GREETING__NAME));
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.ALIAS__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.ALIAS__NAME));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getGreetingAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
+		feeder.accept(grammarAccess.getAliasAccess().getNameIDTerminalRuleCall_0(), semanticObject.getName());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns And
+	 *     Or returns And
+	 *     Or.Or_1_0 returns And
+	 *     And returns And
+	 *     And.And_1_0 returns And
+	 *
+	 * Constraint:
+	 *     (left=And_And_1_0 right=Equalitiy)
+	 */
+	protected void sequence_And(ISerializationContext context, And semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.AND__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.AND__LEFT));
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.AND__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.AND__RIGHT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAndAccess().getAndLeftAction_1_0(), semanticObject.getLeft());
+		feeder.accept(grammarAccess.getAndAccess().getRightEqualitiyParserRuleCall_1_2_0(), semanticObject.getRight());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Atomic returns Attribute
+	 *     Expression returns Attribute
+	 *     Or returns Attribute
+	 *     Or.Or_1_0 returns Attribute
+	 *     And returns Attribute
+	 *     And.And_1_0 returns Attribute
+	 *     Equalitiy returns Attribute
+	 *     Equalitiy.Equality_1_0 returns Attribute
+	 *     Comparison returns Attribute
+	 *     Comparison.Comparision_1_0 returns Attribute
+	 *     PlusOrMinus returns Attribute
+	 *     PlusOrMinus.Plus_1_0_0_0 returns Attribute
+	 *     PlusOrMinus.Minus_1_0_1_0 returns Attribute
+	 *     MulOrDiv returns Attribute
+	 *     MulOrDiv.MulOrDiv_1_0 returns Attribute
+	 *     Primary returns Attribute
+	 *
+	 * Constraint:
+	 *     value=[Attribute|ID]
+	 */
+	protected void sequence_Atomic(ISerializationContext context, Attribute semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.ATTRIBUTE__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.ATTRIBUTE__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicAccess().getValueAttributeIDTerminalRuleCall_4_1_0_1(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Atomic returns BoolConstant
+	 *     Expression returns BoolConstant
+	 *     Or returns BoolConstant
+	 *     Or.Or_1_0 returns BoolConstant
+	 *     And returns BoolConstant
+	 *     And.And_1_0 returns BoolConstant
+	 *     Equalitiy returns BoolConstant
+	 *     Equalitiy.Equality_1_0 returns BoolConstant
+	 *     Comparison returns BoolConstant
+	 *     Comparison.Comparision_1_0 returns BoolConstant
+	 *     PlusOrMinus returns BoolConstant
+	 *     PlusOrMinus.Plus_1_0_0_0 returns BoolConstant
+	 *     PlusOrMinus.Minus_1_0_1_0 returns BoolConstant
+	 *     MulOrDiv returns BoolConstant
+	 *     MulOrDiv.MulOrDiv_1_0 returns BoolConstant
+	 *     Primary returns BoolConstant
+	 *
+	 * Constraint:
+	 *     (value='TRUE' | value='FALSE')
+	 */
+	protected void sequence_Atomic(ISerializationContext context, BoolConstant semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Atomic returns DoubleConstant
+	 *     Expression returns DoubleConstant
+	 *     Or returns DoubleConstant
+	 *     Or.Or_1_0 returns DoubleConstant
+	 *     And returns DoubleConstant
+	 *     And.And_1_0 returns DoubleConstant
+	 *     Equalitiy returns DoubleConstant
+	 *     Equalitiy.Equality_1_0 returns DoubleConstant
+	 *     Comparison returns DoubleConstant
+	 *     Comparison.Comparision_1_0 returns DoubleConstant
+	 *     PlusOrMinus returns DoubleConstant
+	 *     PlusOrMinus.Plus_1_0_0_0 returns DoubleConstant
+	 *     PlusOrMinus.Minus_1_0_1_0 returns DoubleConstant
+	 *     MulOrDiv returns DoubleConstant
+	 *     MulOrDiv.MulOrDiv_1_0 returns DoubleConstant
+	 *     Primary returns DoubleConstant
+	 *
+	 * Constraint:
+	 *     value=FLOAT_NUMBER
+	 */
+	protected void sequence_Atomic(ISerializationContext context, DoubleConstant semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.DOUBLE_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.DOUBLE_CONSTANT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicAccess().getValueFLOAT_NUMBERTerminalRuleCall_1_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Atomic returns IntConstant
+	 *     Expression returns IntConstant
+	 *     Or returns IntConstant
+	 *     Or.Or_1_0 returns IntConstant
+	 *     And returns IntConstant
+	 *     And.And_1_0 returns IntConstant
+	 *     Equalitiy returns IntConstant
+	 *     Equalitiy.Equality_1_0 returns IntConstant
+	 *     Comparison returns IntConstant
+	 *     Comparison.Comparision_1_0 returns IntConstant
+	 *     PlusOrMinus returns IntConstant
+	 *     PlusOrMinus.Plus_1_0_0_0 returns IntConstant
+	 *     PlusOrMinus.Minus_1_0_1_0 returns IntConstant
+	 *     MulOrDiv returns IntConstant
+	 *     MulOrDiv.MulOrDiv_1_0 returns IntConstant
+	 *     Primary returns IntConstant
+	 *
+	 * Constraint:
+	 *     value=INT
+	 */
+	protected void sequence_Atomic(ISerializationContext context, IntConstant semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.INT_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.INT_CONSTANT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicAccess().getValueINTTerminalRuleCall_0_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Atomic returns StringConstant
+	 *     Expression returns StringConstant
+	 *     Or returns StringConstant
+	 *     Or.Or_1_0 returns StringConstant
+	 *     And returns StringConstant
+	 *     And.And_1_0 returns StringConstant
+	 *     Equalitiy returns StringConstant
+	 *     Equalitiy.Equality_1_0 returns StringConstant
+	 *     Comparison returns StringConstant
+	 *     Comparison.Comparision_1_0 returns StringConstant
+	 *     PlusOrMinus returns StringConstant
+	 *     PlusOrMinus.Plus_1_0_0_0 returns StringConstant
+	 *     PlusOrMinus.Minus_1_0_1_0 returns StringConstant
+	 *     MulOrDiv returns StringConstant
+	 *     MulOrDiv.MulOrDiv_1_0 returns StringConstant
+	 *     Primary returns StringConstant
+	 *
+	 * Constraint:
+	 *     value=STRING
+	 */
+	protected void sequence_Atomic(ISerializationContext context, StringConstant semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.STRING_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.STRING_CONSTANT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicAccess().getValueSTRINGTerminalRuleCall_2_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Attribute returns Attribute
+	 *
+	 * Constraint:
+	 *     (source=[Source|ID]? name=ID)
+	 */
+	protected void sequence_Attribute(ISerializationContext context, Attribute semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns Comparision
+	 *     Or returns Comparision
+	 *     Or.Or_1_0 returns Comparision
+	 *     And returns Comparision
+	 *     And.And_1_0 returns Comparision
+	 *     Equalitiy returns Comparision
+	 *     Equalitiy.Equality_1_0 returns Comparision
+	 *     Comparison returns Comparision
+	 *     Comparison.Comparision_1_0 returns Comparision
+	 *
+	 * Constraint:
+	 *     (left=Comparison_Comparision_1_0 (op='>=' | op='<=' | op='<' | op='>') right=PlusOrMinus)
+	 */
+	protected void sequence_Comparison(ISerializationContext context, Comparision semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Condition returns Condition
+	 *
+	 * Constraint:
+	 *     ((left=[Attribute|ID] right=Expression) | (right=Expression left=[Attribute|ID]))
+	 */
+	protected void sequence_Condition(ISerializationContext context, Condition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Create_Statement returns Create_Statement
+	 *
+	 * Constraint:
+	 *     name='CREATE'
+	 */
+	protected void sequence_Create_Statement(ISerializationContext context, Create_Statement semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.CREATE_STATEMENT__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.CREATE_STATEMENT__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCreate_StatementAccess().getNameCREATEKeyword_0(), semanticObject.getName());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns Equality
+	 *     Or returns Equality
+	 *     Or.Or_1_0 returns Equality
+	 *     And returns Equality
+	 *     And.And_1_0 returns Equality
+	 *     Equalitiy returns Equality
+	 *     Equalitiy.Equality_1_0 returns Equality
+	 *
+	 * Constraint:
+	 *     (left=Equalitiy_Equality_1_0 (op='==' | op='!=') right=Comparison)
+	 */
+	protected void sequence_Equalitiy(ISerializationContext context, Equality semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ExpressionModel returns ExpressionModel
+	 *
+	 * Constraint:
+	 *     elements+=Expression*
+	 */
+	protected void sequence_ExpressionModel(ISerializationContext context, ExpressionModel semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -67,10 +457,290 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Model returns Model
 	 *
 	 * Constraint:
-	 *     greetings+=Greeting+
+	 *     statements+=Statement+
 	 */
 	protected void sequence_Model(ISerializationContext context, Model semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns MulOrDiv
+	 *     Or returns MulOrDiv
+	 *     Or.Or_1_0 returns MulOrDiv
+	 *     And returns MulOrDiv
+	 *     And.And_1_0 returns MulOrDiv
+	 *     Equalitiy returns MulOrDiv
+	 *     Equalitiy.Equality_1_0 returns MulOrDiv
+	 *     Comparison returns MulOrDiv
+	 *     Comparison.Comparision_1_0 returns MulOrDiv
+	 *     PlusOrMinus returns MulOrDiv
+	 *     PlusOrMinus.Plus_1_0_0_0 returns MulOrDiv
+	 *     PlusOrMinus.Minus_1_0_1_0 returns MulOrDiv
+	 *     MulOrDiv returns MulOrDiv
+	 *     MulOrDiv.MulOrDiv_1_0 returns MulOrDiv
+	 *
+	 * Constraint:
+	 *     (left=MulOrDiv_MulOrDiv_1_0 (op='*' | op='/') right=Primary)
+	 */
+	protected void sequence_MulOrDiv(ISerializationContext context, MulOrDiv semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Operator returns Operator
+	 *
+	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_Operator(ISerializationContext context, Operator semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.OPERATOR__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.OPERATOR__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getOperatorAccess().getNameIDTerminalRuleCall_0(), semanticObject.getName());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns Or
+	 *     Or returns Or
+	 *     Or.Or_1_0 returns Or
+	 *
+	 * Constraint:
+	 *     (left=Or_Or_1_0 right=And)
+	 */
+	protected void sequence_Or(ISerializationContext context, Or semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.OR__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.OR__LEFT));
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.OR__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.OR__RIGHT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getOrAccess().getOrLeftAction_1_0(), semanticObject.getLeft());
+		feeder.accept(grammarAccess.getOrAccess().getRightAndParserRuleCall_1_2_0(), semanticObject.getRight());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns Minus
+	 *     Or returns Minus
+	 *     Or.Or_1_0 returns Minus
+	 *     And returns Minus
+	 *     And.And_1_0 returns Minus
+	 *     Equalitiy returns Minus
+	 *     Equalitiy.Equality_1_0 returns Minus
+	 *     Comparison returns Minus
+	 *     Comparison.Comparision_1_0 returns Minus
+	 *     PlusOrMinus returns Minus
+	 *     PlusOrMinus.Plus_1_0_0_0 returns Minus
+	 *     PlusOrMinus.Minus_1_0_1_0 returns Minus
+	 *
+	 * Constraint:
+	 *     (left=PlusOrMinus_Minus_1_0_1_0 right=MulOrDiv)
+	 */
+	protected void sequence_PlusOrMinus(ISerializationContext context, Minus semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.MINUS__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.MINUS__LEFT));
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.MINUS__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.MINUS__RIGHT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPlusOrMinusAccess().getMinusLeftAction_1_0_1_0(), semanticObject.getLeft());
+		feeder.accept(grammarAccess.getPlusOrMinusAccess().getRightMulOrDivParserRuleCall_1_1_0(), semanticObject.getRight());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns Plus
+	 *     Or returns Plus
+	 *     Or.Or_1_0 returns Plus
+	 *     And returns Plus
+	 *     And.And_1_0 returns Plus
+	 *     Equalitiy returns Plus
+	 *     Equalitiy.Equality_1_0 returns Plus
+	 *     Comparison returns Plus
+	 *     Comparison.Comparision_1_0 returns Plus
+	 *     PlusOrMinus returns Plus
+	 *     PlusOrMinus.Plus_1_0_0_0 returns Plus
+	 *     PlusOrMinus.Minus_1_0_1_0 returns Plus
+	 *
+	 * Constraint:
+	 *     (left=PlusOrMinus_Plus_1_0_0_0 right=MulOrDiv)
+	 */
+	protected void sequence_PlusOrMinus(ISerializationContext context, Plus semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.PLUS__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.PLUS__LEFT));
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.PLUS__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.PLUS__RIGHT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPlusOrMinusAccess().getPlusLeftAction_1_0_0_0(), semanticObject.getLeft());
+		feeder.accept(grammarAccess.getPlusOrMinusAccess().getRightMulOrDivParserRuleCall_1_1_0(), semanticObject.getRight());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns Bracket
+	 *     Or returns Bracket
+	 *     Or.Or_1_0 returns Bracket
+	 *     And returns Bracket
+	 *     And.And_1_0 returns Bracket
+	 *     Equalitiy returns Bracket
+	 *     Equalitiy.Equality_1_0 returns Bracket
+	 *     Comparison returns Bracket
+	 *     Comparison.Comparision_1_0 returns Bracket
+	 *     PlusOrMinus returns Bracket
+	 *     PlusOrMinus.Plus_1_0_0_0 returns Bracket
+	 *     PlusOrMinus.Minus_1_0_1_0 returns Bracket
+	 *     MulOrDiv returns Bracket
+	 *     MulOrDiv.MulOrDiv_1_0 returns Bracket
+	 *     Primary returns Bracket
+	 *
+	 * Constraint:
+	 *     inner=Expression
+	 */
+	protected void sequence_Primary(ISerializationContext context, Bracket semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.BRACKET__INNER) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.BRACKET__INNER));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPrimaryAccess().getInnerExpressionParserRuleCall_0_2_0(), semanticObject.getInner());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns NOT
+	 *     Or returns NOT
+	 *     Or.Or_1_0 returns NOT
+	 *     And returns NOT
+	 *     And.And_1_0 returns NOT
+	 *     Equalitiy returns NOT
+	 *     Equalitiy.Equality_1_0 returns NOT
+	 *     Comparison returns NOT
+	 *     Comparison.Comparision_1_0 returns NOT
+	 *     PlusOrMinus returns NOT
+	 *     PlusOrMinus.Plus_1_0_0_0 returns NOT
+	 *     PlusOrMinus.Minus_1_0_1_0 returns NOT
+	 *     MulOrDiv returns NOT
+	 *     MulOrDiv.MulOrDiv_1_0 returns NOT
+	 *     Primary returns NOT
+	 *
+	 * Constraint:
+	 *     expression=Primary
+	 */
+	protected void sequence_Primary(ISerializationContext context, NOT semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.NOT__EXPRESSION) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.NOT__EXPRESSION));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPrimaryAccess().getExpressionPrimaryParserRuleCall_1_2_0(), semanticObject.getExpression());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Scalar_Function returns Scalar_Function
+	 *
+	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_Scalar_Function(ISerializationContext context, Scalar_Function semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.SCALAR_FUNCTION__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.SCALAR_FUNCTION__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getScalar_FunctionAccess().getNameIDTerminalRuleCall_0(), semanticObject.getName());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Nested_Statement returns Select_Statement
+	 *     Select_Statement returns Select_Statement
+	 *
+	 * Constraint:
+	 *     (
+	 *         name='SELECT' 
+	 *         attributes+=Attribute+ 
+	 *         attributes+=Attribute* 
+	 *         sources+=Source+ 
+	 *         sources+=Source* 
+	 *         conditions+=Expression+
+	 *     )
+	 */
+	protected void sequence_Select_Statement(ISerializationContext context, Select_Statement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Source returns Source
+	 *
+	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_Source(ISerializationContext context, Source semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.SOURCE__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.SOURCE__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getSourceAccess().getNameIDTerminalRuleCall_0(), semanticObject.getName());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Statement returns Statement
+	 *
+	 * Constraint:
+	 *     (type=Select_Statement | type=Create_Statement)
+	 */
+	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Value returns Value
+	 *
+	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_Value(ISerializationContext context, Value semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.VALUE__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.VALUE__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getValueAccess().getNameIDTerminalRuleCall_0(), semanticObject.getName());
+		feeder.finish();
 	}
 	
 	
