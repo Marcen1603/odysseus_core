@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGeneratio
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 
 /**
- * @author Jan Sören Schwarz
+ * @author Jan Sï¿½ren Schwarz
  */
 public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<T, T> implements IHasPredicate {
 
@@ -85,5 +85,10 @@ public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<
 
 	public void setHeartbeatGenerationStrategy(IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
+	}
+
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		//TODO
 	}
 }

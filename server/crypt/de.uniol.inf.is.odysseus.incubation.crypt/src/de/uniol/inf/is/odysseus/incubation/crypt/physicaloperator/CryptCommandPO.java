@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.incubation.crypt.client.KeyWebSocketClient;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
+import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptPunctuation;
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedPredicatePunctuation;
+import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedValue;
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.KeyPunctuation;
 import de.uniol.inf.is.odysseus.incubation.crypt.provider.ICryptor;
 import de.uniol.inf.is.odysseus.incubation.crypt.util.KeyReceiverClient;
@@ -27,8 +29,8 @@ import de.uniol.inf.is.odysseus.incubation.crypt.util.KeyReceiverClient;
 public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IReceiver {
 
 	protected ICryptor cryptor;
-	protected Map<String, Object> parameter;
-	protected Map<String, Object> cryptedParameter;
+	protected Map<String, String> originalPredicate;
+	protected Map<String, CryptedValue> cryptedPredicate = new HashMap<>();
 	protected int receiverId;
 	protected int streamId;
 
@@ -71,8 +73,8 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 * @return The key represents the occurrence of the parameter. <br>
 	 *         The value is the parameter, which will be crypted
 	 */
-	public Map<String, Object> getParameter() {
-		return parameter;
+	public Map<String, String> getParameter() {
+		return originalPredicate;
 	}
 
 	/**
@@ -82,8 +84,8 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 *            The key represents the occurrence of the parameter. <br>
 	 *            The value is the parameter, which will be crypted
 	 */
-	public void setParameter(Map<String, Object> parameter) {
-		this.parameter = parameter;
+	public void setParameter(Map<String, String> parameter) {
+		this.originalPredicate = parameter;
 	}
 
 	/**
@@ -99,12 +101,12 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 * @param parameter
 	 *            The parameters, which will be crypted
 	 */
-	public CryptCommandPO(ICryptor cryptor, int receiverId, int streamId, Map<String, Object> parameter) {
+	public CryptCommandPO(ICryptor cryptor, int receiverId, int streamId, Map<String, String> predicate) {
 		super();
 		this.cryptor = cryptor;
 		this.receiverId = receiverId;
 		this.streamId = streamId;
-		this.parameter = parameter;
+		this.originalPredicate = predicate;
 	}
 
 	/**
@@ -118,8 +120,8 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 		this.cryptor = cryptCommandPO.cryptor;
 		this.receiverId = cryptCommandPO.receiverId;
 		this.streamId = cryptCommandPO.streamId;
-		this.parameter = cryptCommandPO.parameter;
-		this.cryptedParameter = cryptCommandPO.cryptedParameter;
+		this.originalPredicate = cryptCommandPO.originalPredicate;
+		this.cryptedPredicate = cryptCommandPO.cryptedPredicate;
 	}
 
 	@Override
@@ -129,12 +131,12 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 			KeyReceiverClient receiver = new KeyReceiverClient(this);
 			client.addPubKeyReceiver(receiver);
 			client.addEncKeyListener(receiver);
-			// init key
 			this.loadEncryptKey();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		this.cryptParameter();
+		this.sendNewPunctuation();
 	}
 
 	/**
@@ -167,41 +169,58 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 */
 	protected void cryptParameter() {
 		// TODO cryptParameters() in extra util Klasse auslagern?
-		this.cryptedParameter = new HashMap<>();
-		for (Entry<String, Object> entry : this.parameter.entrySet()) {
-			String key = entry.getKey();
-			Object param = entry.getValue();
-			Object crypted = this.cryptor.cryptObjectViaString(param);
-			System.out.println(param + " crypted to: " + crypted.toString());
-			this.cryptedParameter.put(key, crypted.toString());
-			
-			// TODO fire CryptedPredicatesPunctuation
+		for (Entry<String, String> entry : this.originalPredicate.entrySet()) {
+			String oldKey = entry.getKey();
+			Object originalValue = entry.getValue();
+			Object crypted = this.cryptor.cryptObjectViaString(originalValue);
+			System.out.println(originalValue + " crypted to: " + crypted.toString());
+			CryptedValue oldCryptedValue = this.cryptedPredicate.get(oldKey);
+			String oldCryptedString = null;
+			String newKey = null;
+			if (oldCryptedValue == null) {
+				oldCryptedString = originalValue.toString();
+				newKey = oldKey;
+			} else {
+				oldCryptedString = oldCryptedValue.getNewValue();
+				newKey = oldKey.replaceAll(oldCryptedValue.getOldValue(), oldCryptedString);
+			}
+			CryptedValue newCryptedValue = new CryptedValue(oldCryptedString, crypted.toString());
+			this.cryptedPredicate.put(newKey, newCryptedValue);
 		}
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		CryptedPredicatePunctuation predPunc = null;
 		if (punctuation instanceof KeyPunctuation) {
 			KeyPunctuation keypunc = (KeyPunctuation) punctuation;
 			if (this.streamId == keypunc.getStreamId()) {
 				for (Integer id : keypunc.getReceiverId()) {
 					if (this.receiverId == id.intValue()) {
 						// id is your own receiverID
-						this.loadEncryptKey();
-						this.cryptParameter();
-						predPunc = CryptedPredicatePunctuation
-								.createNewCryptedPredicatePunctuation(System.currentTimeMillis());
-						predPunc.setCryptedPredicates(this.cryptedParameter);
-						break;
+						try {
+							this.loadEncryptKey();
+							this.cryptParameter();
+							this.sendNewPunctuation();
+							break;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
-		}
-		if (predPunc != null) {
-			this.sendPunctuation(predPunc);
+		} else if (punctuation instanceof CryptPunctuation) {
+			if (this.cryptor.isInitialized()) {
+				this.sendNewPunctuation();
+			}
 		}
 		this.sendPunctuation(punctuation);
+	}
+
+	private void sendNewPunctuation() {
+		CryptedPredicatePunctuation predPunc = CryptedPredicatePunctuation
+				.createNewCryptedPredicatePunctuation(System.currentTimeMillis());
+		predPunc.setCryptedPredicates(this.cryptedPredicate);
+		this.sendPunctuation(predPunc);
 	}
 
 	@Override

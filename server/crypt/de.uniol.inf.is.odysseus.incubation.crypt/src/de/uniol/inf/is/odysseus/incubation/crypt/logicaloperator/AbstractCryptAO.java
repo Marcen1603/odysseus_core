@@ -6,11 +6,13 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.incubation.crypt.provider.Cryptor;
 
 /**
  * This is the abstract Class of the CryptAO. Every CryptAO should extend this.
@@ -31,6 +33,7 @@ public abstract class AbstractCryptAO extends UnaryLogicalOp {
 	private String mode;
 	private List<SDFAttribute> attributes;
 	private Integer punctuationDelay;
+	// private List<SDFAttribute> outputSchema;
 
 	/**
 	 * Default Constructor.
@@ -52,6 +55,7 @@ public abstract class AbstractCryptAO extends UnaryLogicalOp {
 		this.mode = abstractCryptAO.mode;
 		this.attributes = abstractCryptAO.attributes;
 		this.punctuationDelay = abstractCryptAO.punctuationDelay;
+		// this.outputSchema = abstractCryptAO.outputSchema;
 	}
 
 	/**
@@ -115,26 +119,6 @@ public abstract class AbstractCryptAO extends UnaryLogicalOp {
 	}
 
 	/**
-	 * Returns the List of Attributes, that will be crypted.
-	 * 
-	 * @return The List of Attributes, that will be crypted.
-	 */
-	public List<SDFAttribute> getAttributes() {
-		return attributes;
-	}
-
-	/**
-	 * Sets the parameter Attributes.
-	 * 
-	 * @param attributes
-	 *            The List of Attributes, that will be crypted.
-	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "attributes", optional = true, isList = true)
-	public void setAttributes(List<SDFAttribute> attributes) {
-		this.attributes = attributes;
-	}
-
-	/**
 	 * Returns the punctuationDelay. After every punctuationDelay crypted
 	 * Object, a CryptPunctuation will be sent.
 	 * 
@@ -158,29 +142,55 @@ public abstract class AbstractCryptAO extends UnaryLogicalOp {
 		this.punctuationDelay = punctuationDelay;
 	}
 
+	/**
+	 * Sets the outputSchema of the crypted Attributes. <br>
+	 * The given attributes will be crypted. <br>
+	 * At Encrypting Mode the Datatype does'nt matter.<br>
+	 * At Decrypting Mode you have to specify the datatype of the decrypted
+	 * Attributes.
+	 * 
+	 * @param attributes
+	 */
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "SchemaOfCrypted", isList = true, optional = false, doc = "The output schema. You only have to set the Schema of the crypted Attributes")
+	public void setAttributes(List<SDFAttribute> attributes) {
+		this.attributes = attributes;
+	}
+
+	public List<SDFAttribute> getAttributes() {
+		return attributes;
+	}
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema output = super.getOutputSchemaIntern(pos);
+		List<SDFAttribute> newAttributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute atr : output.getAttributes()) {
-			if (this.attributes.contains(atr)) {
-				if (this.mode.equals(ENCRYPT_MODE)) {
-					atr.clone(SDFDatatype.STRING);
-					// TODO das atr auch wirklich setzen
-				} else if (this.mode.equals(DECRYPT_MODE)) {
-					atr.clone(SDFDatatype.OBJECT);
-					// TODO richtigen datentyp nach parsing rausfinden! --> also
-					// das ganze output schema erst im PO setzen? (wenn das hier also rausfaellt, dann muss die if Encrypt abfrage doch vor der schleife)
+			boolean found = false;
+			for (SDFAttribute userAtr : this.attributes) {
+				if (userAtr.getAttributeName().equals(atr.getAttributeName())) {
+					// found mathing Attribute
+					// atr will be crypted
+					found = true;
+					if (this.mode.equals(ENCRYPT_MODE)) {
+						if (this.getAlgorithm().equals(Cryptor.OPE_LONG_ALGORITHM)) {
+							newAttributes.add(atr.clone(SDFDatatype.LONG));
+						} else {
+							newAttributes.add(atr.clone(SDFDatatype.STRING));
+						}
+					} else if (this.mode.equals(DECRYPT_MODE)) {
+						newAttributes.add(atr.clone(userAtr.getDatatype()));
+					}
+					break;
 				}
+			}
+			if (!found) {
+				// atr won't be crypted
+				newAttributes.add(atr);
 			}
 		}
 
-		SDFSchema input = super.getInputSchema();
-		List<SDFAttribute> newOutput = new ArrayList<SDFAttribute>();
-		// check, if types are equal
-		for (int i = 0; i < output.size(); i++) {
-			newOutput.add(output.get(i).clone(input.get(i).getDatatype()));
-		}
-		return super.getOutputSchemaIntern(pos);
+		SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(newAttributes, output);
+		return newSchema;
 	}
 
 }

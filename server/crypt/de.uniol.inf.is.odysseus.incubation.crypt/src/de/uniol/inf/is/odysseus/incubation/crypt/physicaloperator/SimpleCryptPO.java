@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -11,13 +10,10 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptPunctuation;
 import de.uniol.inf.is.odysseus.incubation.crypt.provider.ICryptor;
 
-//TODO output shema setzen
 /**
  * The physical operator to crypt datastreams
  * 
@@ -119,45 +115,14 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 				Object attributeValue = tuple.getAttribute(i);
 				SDFAttribute attribute = this.inputSchema.get(i);
 				for (SDFAttribute retAtr : this.restrictionList) {
-					if (retAtr.equals(attribute)) {
+					String retAtrName = retAtr.getAttributeName();
+					if (retAtrName.equals(attribute.getAttributeName())) {
 						if (punctuation != null) {
 							punctuation.getCryptedAttributes().add(retAtr);
 							punctuation.getAlgorithms().add(this.cryptor.getAlgorithm());
 						}
-						// if (attributeValue instanceof ByteBuffer) {
-						// // this should be happen at DECRYPTING
-						// attributeValue =
-						// ByteConverter.byteBufferToBytes((ByteBuffer)
-						// attributeValue);
-						// }
 						attributeValue = this.cryptor.cryptObjectViaString(attributeValue);
 
-						// Encrypting: STRING; Decrypting: AnyObject
-						SDFDatatype outType = SDFDatatype.getType(attributeValue.getClass().getSimpleName());
-
-						// if (attributeValue instanceof byte[]) {
-						// // this should be happen at ENCRYPTING
-						// attributeValue = ByteBuffer.wrap((byte[])
-						// attributeValue);
-						// System.out.println(attributeValue.toString());
-						// outType = SDFDatatype.getType("BYTEBUFFER");
-						// }
-
-						if (outType != null) {
-							// parsed to a other type as object
-							SDFSchema output = this.getOutputSchema();
-							List<SDFAttribute> newOutput = new ArrayList<SDFAttribute>();
-							for (int u = 0; u < output.size(); u++) {
-								if (u == i) {
-									newOutput.add(output.get(u).clone(outType));
-								} else {
-									newOutput.add(output.get(u));
-								}
-
-							}
-							// TODO newOutput noch wirklich als OutputSchema
-							// setzen
-						}
 						break;
 					}
 				}
@@ -169,18 +134,7 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 			}
 			transfer((T) tuple);
 
-		} 
-		// else if (object instanceof KeyValueObject) {
-		// KeyValueObject keyValue = (KeyValueObject) object;
-		// Object[] keys = keyValue.getAttributes().keySet().toArray();
-		// for (int i = 0; i < keyValue.getAttributes().entrySet().size(); i++)
-		// {
-		// Object obj = keyValue.getAttribute(keys[i].toString());
-		// Object crypted = this.cryptor.cryptObject(obj);
-		// keyValue.setAttribute(keys[i].toString(), crypted);
-		// }
-		// transfer((T) keyValue);
-		// }
+		}
 	}
 
 	/**

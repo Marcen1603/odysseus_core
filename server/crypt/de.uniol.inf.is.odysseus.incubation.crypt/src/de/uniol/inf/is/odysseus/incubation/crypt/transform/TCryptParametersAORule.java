@@ -1,9 +1,15 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.transform;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.incubation.crypt.predicates.ISecurityPredicate;
+import de.uniol.inf.is.odysseus.incubation.crypt.predicates.SecurityPredicateFactory;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -17,8 +23,22 @@ public class TCryptParametersAORule<P extends AbstractLogicalOperator> extends A
 
 	@Override
 	public void execute(P operator, TransformationConfiguration config) throws RuleException {
-		// TODO Auto-generated method stub
-
+		if (operator instanceof IHasPredicate) {
+			IPredicate<?> predicate = ((IHasPredicate) operator).getPredicate();
+			if (predicate instanceof ISecurityPredicate) {
+				return;
+			}
+			ISecurityPredicate<?> securityPredicate = SecurityPredicateFactory
+					.createSecurityPredicate(operator.getName(), predicate);
+			((IHasPredicate) operator).setPredicate(securityPredicate);
+		} else if (operator instanceof IHasPredicates) {
+			List<IPredicate<?>> predicates = ((IHasPredicates) operator).getPredicates();
+			List<IPredicate<?>> securityPredicates = new ArrayList<>();
+			for (IPredicate<?> predicate : predicates) {
+				securityPredicates.add(SecurityPredicateFactory.createSecurityPredicate(operator.getName(), predicate));
+			}
+			((IHasPredicates) operator).setPredicates(securityPredicates);
+		}
 	}
 
 	@Override
@@ -28,7 +48,7 @@ public class TCryptParametersAORule<P extends AbstractLogicalOperator> extends A
 
 	@Override
 	public String getName() {
-		return "Encrypt Predicates";
+		return "Create SecurityPredicates";
 	}
 
 	@Override

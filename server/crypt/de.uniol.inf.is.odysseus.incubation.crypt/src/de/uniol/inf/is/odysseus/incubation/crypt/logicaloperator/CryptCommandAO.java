@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.logicaloperator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -22,7 +23,7 @@ public class CryptCommandAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2829044762236991290L;
 
-	private Map<String, Object> parameter;
+	private Map<String, String> predicate = new HashMap<>();
 	private String algorithm;
 	private String initVector;
 	private int receiverID;
@@ -83,7 +84,7 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	 */
 	public CryptCommandAO(CryptCommandAO cryptCommandAO) {
 		super(cryptCommandAO);
-		this.parameter = cryptCommandAO.parameter;
+		this.predicate = cryptCommandAO.predicate;
 		this.algorithm = cryptCommandAO.algorithm;
 		this.initVector = cryptCommandAO.initVector;
 		this.streamID = cryptCommandAO.streamID;
@@ -101,10 +102,11 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	 * @return The key represents the occurrence of the parameter. <br>
 	 *         The value is the parameter, which will be crypted
 	 */
-	public Map<String, Object> getParameter() {
-		return parameter;
+	public Map<String, String> getParameter() {
+		return predicate;
 	}
 
+	// TODO rename parameter here und sont ueberall
 	/**
 	 * Sets the map of parameters, which will be crypted.
 	 * 
@@ -113,8 +115,8 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	 *            The value is the parameter, which will be crypted
 	 */
 	@Parameter(type = StringParameter.class, name = "parameter", optional = false, isMap = true)
-	public void setParameter(Map<String, Object> parameter) {
-		this.parameter = parameter;
+	public void setParameter(Map<String, String> parameter) {
+		this.predicate = parameter;
 	}
 
 	/**

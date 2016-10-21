@@ -189,6 +189,12 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		}
 		return pred;
 	}
+	
+	@Override
+	public void setPredicates(List<IPredicate<?>> predicates) {
+		this.startCondition = predicates.get(0);
+		this.endCondition = predicates.get(1);
+	}
 
 	/*
 	 * (non-Javadoc)

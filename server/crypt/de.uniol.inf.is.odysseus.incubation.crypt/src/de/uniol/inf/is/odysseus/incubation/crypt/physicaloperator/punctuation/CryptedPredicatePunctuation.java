@@ -25,7 +25,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 
 	public static final SDFSchema schema;
 
-	protected Map<String, Object> cryptedPredicates;
+	protected Map<String, CryptedValue> cryptedPredicates;
 
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -87,7 +87,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 
 	@Override
 	public String toString() {
-		return "CryptPunctuation " + getTime();
+		return "CryptedPredicatePunctuation " + getTime();
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 	 * 
 	 * @return the cryptedPredicates
 	 */
-	public Map<String, Object> getCryptedPredicates() {
+	public Map<String, CryptedValue> getCryptedPredicates() {
 		return cryptedPredicates;
 	}
 
@@ -154,7 +154,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 	 * @param cryptedPredicates
 	 *            the cryptedPredicates to set
 	 */
-	public void setCryptedPredicates(Map<String, Object> cryptedPredicates) {
+	public void setCryptedPredicates(Map<String, CryptedValue> cryptedPredicates) {
 		this.cryptedPredicates = cryptedPredicates;
 	}
 

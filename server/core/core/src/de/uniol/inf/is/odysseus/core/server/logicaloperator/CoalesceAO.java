@@ -172,4 +172,11 @@ public class CoalesceAO extends AggregateAO implements IHasPredicates {
 	public void setHeartbeatrate(long heartbeatrate) {
 		this.heartbeatrate = heartbeatrate;
 	}
+
+	@Override
+	public void setPredicates(List<IPredicate<?>> predicates) {
+		this.setPredicate(predicates.get(0));
+		this.setStartPredicate(predicates.get(1));
+		this.setEndPredicate(predicates.get(2));
+	}
 }

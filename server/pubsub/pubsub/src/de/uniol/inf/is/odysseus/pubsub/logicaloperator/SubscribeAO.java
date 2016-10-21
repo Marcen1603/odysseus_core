@@ -198,4 +198,9 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 		return new SubscribeAO(this);
 	}
 
+	@Override
+	public void setPredicates(List<IPredicate<?>> predicates) {
+		//TODO
+	}
+
 }

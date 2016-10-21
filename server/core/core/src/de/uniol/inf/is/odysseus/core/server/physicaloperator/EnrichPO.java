@@ -161,4 +161,9 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		return buffer.size();
 	}
 
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		//TODO
+	}
+
 }

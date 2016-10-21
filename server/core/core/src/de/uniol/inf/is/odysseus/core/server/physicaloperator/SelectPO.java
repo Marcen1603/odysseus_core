@@ -175,4 +175,10 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>impl
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		this.predicate = (IPredicate<? super T>) predicate;
+	}
+
 }

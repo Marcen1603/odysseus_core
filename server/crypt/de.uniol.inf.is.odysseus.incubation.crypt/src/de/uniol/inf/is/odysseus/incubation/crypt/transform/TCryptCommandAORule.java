@@ -45,7 +45,7 @@ public class TCryptCommandAORule<C extends CryptCommandAO> extends AbstractTrans
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.METAOBJECTS;
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 	@Override
