@@ -13,7 +13,7 @@ public interface IConnectionForWebservices {
 	 * @param the charset of the retrieved data
 	 * @param the contentType of the retrieved data, eg. XML or JSON
 	 */
-	public void connect(String charset, String contentType);
+	public void connect(String charset, String method, String contentType);
 
 	/**
 	 * Method to close the HTTP Endpoint connection
