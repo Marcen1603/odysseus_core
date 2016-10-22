@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.AutomaticStrategyInitializer;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.interoperator.InterOperatorStrategyInitializer;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intraoperator.IntraOperatorStrategyInitializer;
 import de.uniol.inf.is.odysseus.parallelization.preexecution.AbstractParallelizationPreExecutionHandler;
@@ -34,6 +35,7 @@ public class AutomaticParallelizationPreExecutionHandler extends AbstractParalle
 			throws OdysseusScriptException {
 		// TODO Auto-generated method stub
 		LOG.debug("Automatic parallelization starting");
+		new AutomaticStrategyInitializer().initialize(settings);
 		new IntraOperatorStrategyInitializer().initialize(settings);
 		new InterOperatorStrategyInitializer().initialize(settings);
 		LOG.debug("Parallelization strategies initialized");
