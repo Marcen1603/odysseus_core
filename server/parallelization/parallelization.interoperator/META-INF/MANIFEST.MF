@@ -31,4 +31,5 @@ Export-Package: de.uniol.inf.is.odysseus.parallelization.interoperator.constants
  de.uniol.inf.is.odysseus.parallelization.interoperator.parameter,
  de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution,
  de.uniol.inf.is.odysseus.parallelization.interoperator.strategy,
- de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry
+ de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry,
+ de.uniol.inf.is.odysseus.parallelization.interoperator.transform

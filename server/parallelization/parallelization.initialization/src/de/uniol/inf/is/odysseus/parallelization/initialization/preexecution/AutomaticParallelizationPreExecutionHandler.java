@@ -26,6 +26,7 @@ public class AutomaticParallelizationPreExecutionHandler extends AbstractParalle
 	@Override
 	public void validateParameters(String parameterString) {
 		LOG.info("Validating parameters for " + TYPE + " parallelization");
+		LOG.debug("Parameter String: " + parameterString);
 	}
 
 	@Override

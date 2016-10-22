@@ -22,8 +22,8 @@ public class IntraOperatorStrategyInitializer extends AbstractParallelizationStr
 	private static final Logger LOG = LoggerFactory.getLogger(IntraOperatorStrategyInitializer.class);
 
 	// default to 0 avoids parallelizing all operators
-	private static final int globalDegreeOfParallelization = 2;
-	private static final int globalBuffersize = 1000;
+	private static final int globalDegreeOfParallelization = 0;
+	private static final int globalBuffersize = 0;
 
 	@Override
 	public void initialize(List<IQueryBuildSetting<?>> settings) throws OdysseusScriptException {
