@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.parallelization.initialization.strategies;
+package de.uniol.inf.is.odysseus.parallelization.initialization.strategies.interoperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,9 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter.HandlerParameterPair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.AbstractParallelizationStrategyInitializer;
+import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intraoperator.IntraOperatorStrategyInitializer;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelInterOperatorSetting;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.InterOperatorParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -24,8 +27,8 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 public class InterOperatorStrategyInitializer extends AbstractParallelizationStrategyInitializer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(IntraOperatorStrategyInitializer.class);
-	
-	//TODO default to 0 to avoid parallelization for all operators
+
+	// TODO default to 0 to avoid parallelization for all operators
 	private static int DEFAULT_DEGREE = 2;
 	private static int DEFAULT_BUFFERSIZE = 1000;
 	private static boolean DEFAULT_ALLOW_OPTIMIZATION = false;
@@ -36,10 +39,12 @@ public class InterOperatorStrategyInitializer extends AbstractParallelizationStr
 		PreTransformationHandlerParameter newPreTransformationHandler = createPreTransformationHandlerParameter();
 		checkIfInterOperatorSettingAlreadyExists(settings, newPreTransformationHandler);
 		PreTransformationHandlerParameter exists = null;
+		ParallelInterOperatorSetting exists2 = null;
 		for (IQueryBuildSetting<?> setting : settings) {
 			if (setting.getClass().equals(PreTransformationHandlerParameter.class)) {
 				exists = (PreTransformationHandlerParameter) setting;
-				break;
+			} else if (setting.getClass().equals(ParallelInterOperatorSetting.class)) {
+				exists2 = (ParallelInterOperatorSetting) setting;
 			}
 		}
 		if (exists == null) {
@@ -49,22 +54,29 @@ public class InterOperatorStrategyInitializer extends AbstractParallelizationStr
 				exists.add(newPair.name, newPair.parameters);
 			}
 		}
+		if (exists2 == null) {
+			settings.add(new ParallelInterOperatorSetting());
+		}
 		LOG.debug("Added initial settings for automatic Inter_Operator parallelization");
 
 	}
 
 	private PreTransformationHandlerParameter createPreTransformationHandlerParameter() {
 		List<Pair<String, String>> parameterList = new ArrayList<Pair<String, String>>();
-		
-		Pair<String,String> degree = new Pair<String, String>(InterOperatorGlobalKeywordParameter.DEGREE_OF_PARALLELIZATION.name(),String.valueOf(DEFAULT_DEGREE));
+
+		Pair<String, String> degree = new Pair<String, String>(
+				InterOperatorGlobalKeywordParameter.DEGREE_OF_PARALLELIZATION.name(), String.valueOf(DEFAULT_DEGREE));
 		parameterList.add(degree);
-		Pair<String,String> buffer = new Pair<String, String>(InterOperatorGlobalKeywordParameter.BUFFERSIZE.name(),String.valueOf(DEFAULT_BUFFERSIZE));
+		Pair<String, String> buffer = new Pair<String, String>(InterOperatorGlobalKeywordParameter.BUFFERSIZE.name(),
+				String.valueOf(DEFAULT_BUFFERSIZE));
 		parameterList.add(buffer);
-		Pair<String,String> optimization = new Pair<String, String>(InterOperatorGlobalKeywordParameter.OPTIMIZATION.name(),String.valueOf(DEFAULT_ALLOW_OPTIMIZATION));
+		Pair<String, String> optimization = new Pair<String, String>(
+				InterOperatorGlobalKeywordParameter.OPTIMIZATION.name(), String.valueOf(DEFAULT_ALLOW_OPTIMIZATION));
 		parameterList.add(optimization);
-		Pair<String,String> threadedBuffer = new Pair<String, String>(InterOperatorGlobalKeywordParameter.THREADEDBUFFER.name(),String.valueOf(DEFUALT_USE_THREADEDBUFFER));
+		Pair<String, String> threadedBuffer = new Pair<String, String>(
+				InterOperatorGlobalKeywordParameter.THREADEDBUFFER.name(), String.valueOf(DEFUALT_USE_THREADEDBUFFER));
 		parameterList.add(threadedBuffer);
-		
+
 		PreTransformationHandlerParameter newParameter = new PreTransformationHandlerParameter();
 		newParameter.add(InterOperatorParallelizationPreTransformationHandler.HANDLER_NAME, parameterList);
 		return newParameter;
@@ -82,6 +94,12 @@ public class InterOperatorStrategyInitializer extends AbstractParallelizationStr
 									"AUTOMATIC parallelization initializes other parallelization types. Do not use #PARALLELIZATION INTER_OPERATOR.");
 						}
 					}
+				}
+			} else if (setting.getClass().equals(ParallelInterOperatorSetting.class)) {
+				ParallelInterOperatorSetting parallelInterOperatorSetting = (ParallelInterOperatorSetting) setting;
+				if (!parallelInterOperatorSetting.getOperatorIds().isEmpty()) {
+					throw new OdysseusScriptException(
+							"There are already individual settings for INTER_OPERATOR parallelization");
 				}
 			}
 		}

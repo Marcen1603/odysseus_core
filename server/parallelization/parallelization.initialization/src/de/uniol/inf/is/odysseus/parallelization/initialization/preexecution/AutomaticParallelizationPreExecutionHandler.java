@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.InterOperatorStrategyInitializer;
-import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IntraOperatorStrategyInitializer;
+import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.interoperator.InterOperatorStrategyInitializer;
+import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intraoperator.IntraOperatorStrategyInitializer;
 import de.uniol.inf.is.odysseus.parallelization.preexecution.AbstractParallelizationPreExecutionHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
