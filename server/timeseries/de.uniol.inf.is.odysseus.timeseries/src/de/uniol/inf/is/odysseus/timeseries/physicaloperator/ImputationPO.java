@@ -52,4 +52,10 @@ public class ImputationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 		transfer(object);
 	}
 
+	@Override
+	public String toString() {
+		String imputationPOString = "ImputationPO, Imputation strategy: " + this.imputationStrategy.getName();
+		return imputationPOString;
+	}
+
 }

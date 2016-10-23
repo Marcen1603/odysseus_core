@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
@@ -30,13 +33,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.AbstractAutoregressionModelEstimator;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.AutoregressionEstimatorFactory;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.IAutoregressionEstimator;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionForecaster;
 import de.uniol.inf.is.odysseus.timeseries.logicaloperator.LearningMode;
 
 /**
+ * Aggregation Function to estimate model for forecasting variance
+ * 
  * @author Christoph Schröer
  *
  */
@@ -47,6 +51,9 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 	 * 
 	 */
 	private static final long serialVersionUID = 6481641905388320088L;
+	
+	protected static Logger logger = LoggerFactory
+			.getLogger(ModelVariance.class);
 
 	private IAutoregressionEstimator<Double> autoregressionLearner;
 
@@ -73,7 +80,7 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 	@Override
 	public void addNew(T newElement) {
 		Object[] elementsValue = getAttributes(newElement);
-
+		logger.debug("addNew");
 		if (elementsValue != null) {
 			Object residual = elementsValue[0];
 
@@ -88,7 +95,7 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-
+		logger.debug("removeOutdated");
 		for (T outdatedElement : outdatedElements) {
 			Object[] elementsValue = getAttributes(outdatedElement);
 
@@ -108,7 +115,9 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-
+		
+		logger.debug("evaluate");
+		
 		// TODO: add object to learning data...
 		// TODO: handle also, when no learning is required.
 
@@ -133,9 +142,7 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-
 		return this.outputAttributes;
-
 	}
 
 	@Override
@@ -196,7 +203,7 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 		Map<String, String> model_options = AggregationFunctionParseOptionsHelper.getFunctionParameterAsMap(parameters,
 				"model_options");
 
-		AbstractAutoregressionModelEstimator<Double> estimator = factory.createEstimator(model_name, model_options);
+		IAutoregressionEstimator<Double> estimator = factory.createEstimator(model_name, model_options);
 
 		ModelVariance<M, T> modelVariance = new ModelVariance<>(residualInputAttributesIndices, outputAttributesNames,
 				outputAttributesLocal, estimator);

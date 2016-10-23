@@ -38,7 +38,7 @@ public class GARCH11Forecaster extends GARCHForecaster {
 	@Override
 	public Double forecast(LinkedList<Double> residuals, Integer timeHorizon) {
 		if (timeHorizon == 1) {
-			super.forecast(residuals);
+			return this.forecast(residuals);
 		} else if (timeHorizon > 1) {
 			Double sigma_tPlus1 = super.forecast(residuals);
 
@@ -55,7 +55,7 @@ public class GARCH11Forecaster extends GARCHForecaster {
 	@Override
 	public Double forecast(LinkedList<Double> lagResiduals, LinkedList<Double> lagVariances, Integer timeHorizon) {
 		if (timeHorizon == 1) {
-			return super.forecast(lagResiduals, lagVariances);
+			return this.forecast(lagResiduals, lagVariances);
 		} else if (timeHorizon > 1) {
 			Double sigma_tPlus1 = super.forecast(lagResiduals, lagVariances);
 

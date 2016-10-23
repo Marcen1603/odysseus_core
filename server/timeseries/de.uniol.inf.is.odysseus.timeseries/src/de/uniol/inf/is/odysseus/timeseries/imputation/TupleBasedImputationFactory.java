@@ -4,7 +4,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * Factory to create Imputation(@see IImputation)-Objects.

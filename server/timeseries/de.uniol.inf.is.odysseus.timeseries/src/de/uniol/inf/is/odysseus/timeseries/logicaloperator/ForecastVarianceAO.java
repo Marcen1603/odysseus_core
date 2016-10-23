@@ -30,8 +30,14 @@ public class ForecastVarianceAO extends AbstractLogicalOperator {
 
 	public final static String FORECASTED_VARIANCE_ATTRIBUTE_NAME = "forcasted_variance";
 
+	public final static String FORECASTED_TIME_HORIZON_ATTRIBUTE_NAME = "forcasted_time_horizon";
+
+	public final static String FORECASTED_TIME_INTERVAL_START_ATTRIBUTE_NAME = "forcasted_time_interval_start";
+
+	public final static String FORECASTED_TIME_INTERVAL_END_ATTRIBUTE_NAME = "forcasted_time_interval_end";
+
 	// QN: was ist besser, options oder parameter?
-	private Integer forecastHorizon;
+	private Integer forecastHorizon = 1;
 
 	/**
 	 * Attribute in input data stream for residual.
@@ -93,7 +99,7 @@ public class ForecastVarianceAO extends AbstractLogicalOperator {
 		return forecastHorizon;
 	}
 
-	@Parameter(name = "forecast_horizon", type = IntegerParameter.class, doc = "Number of forecasting horizons.", optional = true)
+	@Parameter(name = "forecast_horizon", type = IntegerParameter.class, doc = "Number of forecasting horizons. Default is 1.", optional = true)
 	public void setForecastHorizon(Integer forecastHorizon) {
 		this.forecastHorizon = forecastHorizon;
 	}
@@ -170,6 +176,18 @@ public class ForecastVarianceAO extends AbstractLogicalOperator {
 		final SDFAttribute attributeId = new SDFAttribute(null, ForecastVarianceAO.FORECASTED_VARIANCE_ATTRIBUTE_NAME,
 				SDFDatatype.DOUBLE, null, null, null);
 		attributes.add(attributeId);
+
+		final SDFAttribute attributeTimeHorizon = new SDFAttribute(null,
+				ForecastVarianceAO.FORECASTED_TIME_HORIZON_ATTRIBUTE_NAME, SDFDatatype.INTEGER, null, null, null);
+		attributes.add(attributeTimeHorizon);
+
+		final SDFAttribute attributeIntervalStart = new SDFAttribute(null,
+				ForecastVarianceAO.FORECASTED_TIME_INTERVAL_START_ATTRIBUTE_NAME, SDFDatatype.STRING, null, null, null);
+		attributes.add(attributeIntervalStart);
+
+		final SDFAttribute attributeIntervalEnd = new SDFAttribute(null,
+				ForecastVarianceAO.FORECASTED_TIME_INTERVAL_END_ATTRIBUTE_NAME, SDFDatatype.STRING, null, null, null);
+		attributes.add(attributeIntervalEnd);
 
 		final SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(0));
 		return outSchema;

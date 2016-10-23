@@ -38,14 +38,9 @@ public class TForecastVarianceAORule extends AbstractTransformationRule<Forecast
 			insertJoinBefore(operator);
 		}
 
+		// get the attribute ports
 		final int modelPort = FindAttributeHelper.findPortWithAttribute(operator, operator.getModelAttribute());
 		final int elementsPort = FindAttributeHelper.findPortWithAttribute(operator, operator.getResidualAttribute());
-
-		// Indizes
-		final int modelAttributeIndex = FindAttributeHelper.findAttributeIndex(operator, operator.getModelAttribute(),
-				modelPort);
-		final int residualAttibuteIndex = FindAttributeHelper.findAttributeIndex(operator,
-				operator.getResidualAttribute(), elementsPort);
 
 		if (modelPort == -1) {
 			throw new IllegalArgumentException("Model port not found.");
@@ -54,13 +49,19 @@ public class TForecastVarianceAORule extends AbstractTransformationRule<Forecast
 			throw new IllegalArgumentException("Elements port not found.");
 		}
 
+		// get the attribute indizes in tuple
+		final int modelAttributeIndex = FindAttributeHelper.findAttributeIndex(operator, operator.getModelAttribute(),
+				modelPort);
+		final int residualAttibuteIndex = FindAttributeHelper.findAttributeIndex(operator,
+				operator.getResidualAttribute(), elementsPort);
+
 		final Map<ForecastVarianceTupleSchema, Integer> map = new HashMap<ForecastVarianceTupleSchema, Integer>();
 
 		map.put(ForecastVarianceTupleSchema.MODEL, modelAttributeIndex);
 		map.put(ForecastVarianceTupleSchema.RESIDUAL, residualAttibuteIndex);
 		final TupleSchemaHelper<ITimeInterval, ForecastVarianceTupleSchema> tsh = new TupleSchemaHelper<>(map);
 
-		final ForecastVariancePO po = new ForecastVariancePO(tsh);
+		final ForecastVariancePO po = new ForecastVariancePO(tsh, operator.getForecastHorizon());
 
 		defaultExecute(operator, po, config, true, true);
 	}

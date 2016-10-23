@@ -12,8 +12,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.timeseries.imputation.ImputationRegistry;
 import de.uniol.inf.is.odysseus.timeseries.imputation.LastValueCarriedForwardImputation;
 
@@ -31,8 +29,6 @@ public class ImputationAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 7752589543824364696L;
 
-	private TimeValueItem imputationWindowSize = null;
-
 	private String imputationStrategy = LastValueCarriedForwardImputation.NAME; // Default
 
 	private final Map<String, String> optionsMap = new HashMap<>();
@@ -40,7 +36,6 @@ public class ImputationAO extends UnaryLogicalOp {
 
 	public ImputationAO(final ImputationAO op) {
 		super(op);
-		this.imputationWindowSize = op.getImputationWindowSize();
 		this.imputationStrategy = op.getImputationStrategy();
 		this.optionsMap.putAll(op.optionsMap);
 	}
@@ -54,15 +49,6 @@ public class ImputationAO extends UnaryLogicalOp {
 		return new ImputationAO(this);
 	}
 
-	public TimeValueItem getImputationWindowSize() {
-		return this.imputationWindowSize;
-	}
-
-	@Parameter(name = "imputation_window_size", type = TimeParameter.class, doc = "Window size of regular time series to detect missing data.", optional = true)
-	public void setImputationWindowSize(TimeValueItem imputationWindowSize) {
-		this.imputationWindowSize = imputationWindowSize;
-	}
-
 	public String getImputationStrategy() {
 		return this.imputationStrategy;
 	}
@@ -72,7 +58,7 @@ public class ImputationAO extends UnaryLogicalOp {
 		this.imputationStrategy = imputationStrategy;
 	}
 
-	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options for imputation strategy.")
 	public void setOptions(List<Option> value) {
 		for (Option option : value) {
 			optionsMap.put(option.getName().toLowerCase(), option.getValue());

@@ -49,13 +49,9 @@ public class LastValueCarriedForwardImputation extends AbstractTupleBasedImputat
 				// no missing data
 				this.lastElement = newElement;
 
-				// TODO: it could be, that in that element are missing
-				// attribute-values, e.g. price is missing.
-
 			} else {
 
 				// there are missing data
-
 				// first initialization
 				PointInTime imputedDataEndTime = this.lastElement.getMetadata().getEnd();
 

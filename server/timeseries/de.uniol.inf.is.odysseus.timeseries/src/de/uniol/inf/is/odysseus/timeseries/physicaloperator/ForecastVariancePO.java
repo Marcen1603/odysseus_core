@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.timeseries.physicaloperator;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -29,10 +30,18 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 		RESIDUAL, MODEL
 	}
 
+	private Integer forecastHorizon = 1;
+
 	private LinkedList<Tuple<ITimeInterval>> sampleResiduals;
 
+	/**
+	 * list with historical (lag) residuals
+	 */
 	private LinkedList<Double> lagResiduals;
 
+	/**
+	 * list with historical (lag) variances
+	 */
 	private LinkedList<Double> lagVariances;
 
 	/**
@@ -50,7 +59,16 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 		this.sampleResiduals = new LinkedList<Tuple<ITimeInterval>>();
 		this.lagResiduals = new LinkedList<Double>();
 		this.lagVariances = new LinkedList<Double>();
+		this.forecastHorizon = 1;
+	}
 
+	public ForecastVariancePO(TupleSchemaHelper<ITimeInterval, ForecastVarianceTupleSchema> tupleSchemaHelper,
+			Integer forecastHorizon) {
+		this.tupleSchemaHelper = tupleSchemaHelper;
+		this.sampleResiduals = new LinkedList<Tuple<ITimeInterval>>();
+		this.lagResiduals = new LinkedList<Double>();
+		this.lagVariances = new LinkedList<Double>();
+		this.forecastHorizon = forecastHorizon;
 	}
 
 	@Override
@@ -80,6 +98,15 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 		final Double residual = this.tupleSchemaHelper.getAttributeValue(object, ForecastVarianceTupleSchema.RESIDUAL);
 
 		PointInTime currentStart = object.getMetadata().getStart();
+		// between
+		PointInTime between;
+
+		try {
+			Tuple<ITimeInterval> lastElement = this.sampleResiduals.getLast();
+			between = object.getMetadata().getStart().minus(lastElement.getMetadata().getStart());
+		} catch (Exception e) {
+			between = object.getMetadata().getEnd().minus(object.getMetadata().getStart());
+		}
 
 		// add current object to sampleData
 		this.sampleResiduals.add(object);
@@ -98,8 +125,19 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 		if (countOfResiudals > this.lagResiduals.size() || countOfVariances > this.lagVariances.size()) {
 			// not enough data yet
 			// transfer default variance
-			Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(1, false);
+
+			// PointInTime between =
+			// object.getMetadata().getEnd().minus(object.getMetadata().getStart());
+			// PointInTime currentForecastStart = object.getMetadata().getEnd();
+			PointInTime currentForecastStart = object.getMetadata().getStart().plus(between);
+			Date start = new Date(currentForecastStart.getMainPoint());
+			Date end = new Date(currentForecastStart.plus(between).getMainPoint());
+
+			Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(4, false);
 			varianceForecastTuple.setAttribute(0, 0.0);
+			varianceForecastTuple.setAttribute(1, 1);
+			varianceForecastTuple.setAttribute(2, Long.toString(currentForecastStart.getMainPoint()));
+			varianceForecastTuple.setAttribute(3, Long.toString(currentForecastStart.plus(between).getMainPoint()));
 
 			this.updateLagVariances(countOfVariances, 0.0);
 
@@ -109,32 +147,64 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 
 		} else {
 
-			// if model not changed, laged can be used, else new recalculation
-			double varianceForecast;
+			// recalulcation of whole stochastic process
+			LinkedList<Double> sampleResidualsDouble = new LinkedList<Double>();
 			if (hasModelChanged) {
 
-				// recalulcation of whole stochastic process
-				LinkedList<Double> sampleResidualsDouble = new LinkedList<Double>();
 				for (Tuple<ITimeInterval> tuple : this.sampleResiduals) {
 					final Double sampleResidual = this.tupleSchemaHelper.getAttributeValue(tuple,
 							ForecastVarianceTupleSchema.RESIDUAL);
 					sampleResidualsDouble.add(sampleResidual);
 				}
-
-				// new stochastic process with new model
-				varianceForecast = model.forecast(sampleResidualsDouble);
-			} else {
-				varianceForecast = model.forecast(this.lagResiduals, this.lagVariances);
 			}
 
-			this.updateLagVariances(countOfVariances, varianceForecast);
+			// PointInTime between =
+			// object.getMetadata().getEnd().minus(object.getMetadata().getStart());
+			// PointInTime currentForecastStart = object.getMetadata().getEnd();
+			PointInTime currentForecastStart = object.getMetadata().getStart().plus(between);
+			for (int currentForecastHorizon = 1; currentForecastHorizon <= this.forecastHorizon; currentForecastHorizon++, currentForecastStart = currentForecastStart
+					.plus(between)) {
 
-			Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(1, false);
-			varianceForecastTuple.setAttribute(0, varianceForecast);
+				// if model not changed, lagged data can be used, else new
+				// recalculation
+				double varianceForecast;
+				if (hasModelChanged) {
+					// new stochastic process with new model
+					varianceForecast = model.forecast(sampleResidualsDouble, currentForecastHorizon);
+				} else {
+					varianceForecast = model.forecast(this.lagResiduals, this.lagVariances, currentForecastHorizon);
+				}
 
-			varianceForecastTuple.setMetadata((ITimeInterval) object.getMetadata().clone());
+				if (currentForecastHorizon == 1) {
+					// only at the first time horizon the lags have to be
+					// updated.
+					this.updateLagVariances(countOfVariances, varianceForecast);
+				}
 
-			transfer(varianceForecastTuple);
+				Date start = new Date(currentForecastStart.getMainPoint());
+				Date end = new Date(currentForecastStart.plus(between).getMainPoint());
+
+				Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(4, false);
+				varianceForecastTuple.setAttribute(0, varianceForecast);
+				varianceForecastTuple.setAttribute(1, currentForecastHorizon);
+//				varianceForecastTuple.setAttribute(2, currentForecastStart);
+//				varianceForecastTuple.setAttribute(3, currentForecastStart.plus(between));
+//				
+				// XXX: String, because predicates with timestamps do   not function
+				varianceForecastTuple.setAttribute(2, Long.toString(currentForecastStart.getMainPoint()));
+				varianceForecastTuple.setAttribute(3, Long.toString(currentForecastStart.plus(between).getMainPoint()));
+				
+				// Tuple<ITimeInterval> oldTuple = object.clone();
+				// oldTuple.setAttribute(oldTuple.getAttributes().length + 1,
+				// varianceForecast);
+
+				//
+				//
+				varianceForecastTuple.setMetadata((ITimeInterval) object.getMetadata().clone());
+
+				transfer(varianceForecastTuple);
+
+			}
 
 		}
 
