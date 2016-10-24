@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.incubation.crypt.util.KeyReceiverClient;
  * @author MarkMilster
  *
  */
-public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IReceiver {
+public class CryptPredicatesPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IReceiver {
 
 	protected ICryptor cryptor;
 	protected Map<String, String> originalPredicate;
@@ -101,7 +101,7 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 * @param parameter
 	 *            The parameters, which will be crypted
 	 */
-	public CryptCommandPO(ICryptor cryptor, int receiverId, int streamId, Map<String, String> predicate) {
+	public CryptPredicatesPO(ICryptor cryptor, int receiverId, int streamId, Map<String, String> predicate) {
 		super();
 		this.cryptor = cryptor;
 		this.receiverId = receiverId;
@@ -112,16 +112,16 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	/**
 	 * Copy constructor
 	 * 
-	 * @param cryptCommandPO
-	 *            The cryptCommandPO, which will be copied
+	 * @param cryptPredicatesPO
+	 *            The cryptPredicatesPO, which will be copied
 	 */
-	public CryptCommandPO(CryptCommandPO<T> cryptCommandPO) {
-		super(cryptCommandPO);
-		this.cryptor = cryptCommandPO.cryptor;
-		this.receiverId = cryptCommandPO.receiverId;
-		this.streamId = cryptCommandPO.streamId;
-		this.originalPredicate = cryptCommandPO.originalPredicate;
-		this.cryptedPredicate = cryptCommandPO.cryptedPredicate;
+	public CryptPredicatesPO(CryptPredicatesPO<T> cryptPredicatesPO) {
+		super(cryptPredicatesPO);
+		this.cryptor = cryptPredicatesPO.cryptor;
+		this.receiverId = cryptPredicatesPO.receiverId;
+		this.streamId = cryptPredicatesPO.streamId;
+		this.originalPredicate = cryptPredicatesPO.originalPredicate;
+		this.cryptedPredicate = cryptPredicatesPO.cryptedPredicate;
 	}
 
 	@Override
@@ -168,7 +168,6 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 	 * Crypts the specified parameters.
 	 */
 	protected void cryptParameter() {
-		// TODO cryptParameters() in extra util Klasse auslagern?
 		for (Entry<String, String> entry : this.originalPredicate.entrySet()) {
 			String oldKey = entry.getKey();
 			Object originalValue = entry.getValue();
@@ -216,6 +215,10 @@ public class CryptCommandPO<T extends IStreamObject<?>> extends AbstractPipe<T, 
 		this.sendPunctuation(punctuation);
 	}
 
+	/**
+	 * Creates and sends a new CryptedPredicatePunctuation<br>
+	 * The punctuation contains the actual cryptedPredicates Map
+	 */
 	private void sendNewPunctuation() {
 		CryptedPredicatePunctuation predPunc = CryptedPredicatePunctuation
 				.createNewCryptedPredicatePunctuation(System.currentTimeMillis());

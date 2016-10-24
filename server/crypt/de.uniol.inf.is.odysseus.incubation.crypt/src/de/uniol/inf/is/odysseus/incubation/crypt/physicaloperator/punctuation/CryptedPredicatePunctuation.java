@@ -14,6 +14,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
+ * This Punctuation contains a Map with cryptedPredicates.<br>
+ * It could be used to set cryptedPredicates into an operator.
+ * 
  * @author MarkMilster
  *
  */

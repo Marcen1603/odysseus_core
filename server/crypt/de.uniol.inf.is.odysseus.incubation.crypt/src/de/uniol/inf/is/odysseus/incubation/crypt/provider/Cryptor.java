@@ -154,6 +154,13 @@ public class Cryptor implements ICryptor {
 
 	}
 
+	/**
+	 * Crypt a object with the OPE algorithm
+	 * 
+	 * @param object
+	 *            The object to crypt
+	 * @return The crypted object in Long representation
+	 */
 	private Long cryptObjectOPE(Object object) {
 		return OPE.crypt(Long.valueOf(object.toString()), this.mode, this.key);
 	}

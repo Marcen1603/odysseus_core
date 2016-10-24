@@ -12,6 +12,9 @@ import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.Cr
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedValue;
 
 /**
+ * Security version of RelationalExpression, which provides features for
+ * crypting.
+ * 
  * @author MarkMilster
  *
  */
@@ -21,16 +24,25 @@ public class SecurityRelationalExpression<T extends IMetaAttribute> extends Rela
 	private static final long serialVersionUID = -7127164706383555587L;
 	private String operatorName;
 
-	public SecurityRelationalExpression(String operatorName, SDFExpression expression) {
-		super(expression);
-		this.operatorName = operatorName;
-	}
-
+	/**
+	 * Copy constructor
+	 * 
+	 * @param other
+	 *            The SecurityRelationalExpression, which will be copied
+	 */
 	public SecurityRelationalExpression(SecurityRelationalExpression<T> other) {
 		super(other);
 		this.operatorName = other.operatorName;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param operatorName
+	 *            The name of the operator, this Predicate will be used in
+	 * @param original
+	 *            RelationalExpression, which will be copied
+	 */
 	public SecurityRelationalExpression(String operatorName, RelationalExpression<T> original) {
 		super(original);
 		this.operatorName = operatorName;
@@ -42,10 +54,10 @@ public class SecurityRelationalExpression<T extends IMetaAttribute> extends Rela
 		if (punctuation instanceof CryptedPredicatePunctuation) {
 			CryptedPredicatePunctuation cryptPunctuation = (CryptedPredicatePunctuation) punctuation;
 			String expressionStr = this.getExpression().getExpressionString();
-			// TODO nice to have: so machen, dass man nicht die richtige form
-			// eingeben muss, sondern so tippen kann, wie sonst auch
-			// TODO in punc kann man wenn man moechte noch den name des
-			// operators setzen
+			// TODO nice to have: parse the expressionStr in a more user friedly
+			// mode
+			// TODO you could set the name of the Operators in Crypt_Predicates
+			// and the Punctuation
 			Set<String> keys = cryptPunctuation.getCryptedPredicates().keySet();
 			String newExpressionStr = new String(expressionStr);
 			for (String key : keys) {

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server;
 
 import java.net.InetSocketAddress;
@@ -50,6 +47,9 @@ public class KeyWebSocketServer extends WebSocketServer {
 		init();
 	}
 
+	/**
+	 * Initiates this server
+	 */
 	private void init() {
 		this.gson = new Gson();
 		this.keyManager = KeyManager.getInstance();
@@ -115,12 +115,28 @@ public class KeyWebSocketServer extends WebSocketServer {
 		}
 	}
 
+	/**
+	 * On EncryptedKeyMessage received
+	 * 
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message5
+	 *            The EncKeyMessage
+	 */
 	private void onEncKeyMessage(WebSocket conn, EncKeyMessage message5) {
 		if (message5 != null) {
 			this.keyManager.setEncSymKey(message5.getEncKey());
 		}
 	}
 
+	/**
+	 * On GetEncKeyMessage received
+	 * 
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message4
+	 *            The GetEncKeyMessage
+	 */
 	private void onGetEncKeyMessage(WebSocket conn, GetEncKeyMessage message4) {
 		if (message4 != null) {
 			EncKeyWrapper encKey = this.keyManager.getEncSymKey(message4.getReceiverId(), message4.getStreamId());
@@ -130,6 +146,14 @@ public class KeyWebSocketServer extends WebSocketServer {
 		}
 	}
 
+	/**
+	 * On PublicKeyMessage received
+	 * 
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message3
+	 *            The PublicKeyMessage
+	 */
 	private void onPublicKeyMessage(WebSocket conn, PublicKeyMessage message3) {
 		if (message3 != null) {
 			for (int i = 0; i < message3.getPublicKey().size(); i++) {
@@ -138,6 +162,14 @@ public class KeyWebSocketServer extends WebSocketServer {
 		}
 	}
 
+	/**
+	 * On GetPublicKeyMessage Received
+	 * 
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message2
+	 *            The GetPubkicKeyMessage
+	 */
 	private void onGetPublicKeyMessage(WebSocket conn, GetPublicKeyMessage message2) {
 		if (message2 != null) {
 			List<KeyWrapper<PublicKey>> pubKeys = this.keyManager.getPublicKey(message2.getId());
@@ -156,6 +188,14 @@ public class KeyWebSocketServer extends WebSocketServer {
 		}
 	}
 
+	/**
+	 * On String Message received
+	 * 
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message
+	 *            The String message
+	 */
 	private void onStringMessage(WebSocket conn, StringMessage message) {
 		System.out.println(message.getString());
 	}

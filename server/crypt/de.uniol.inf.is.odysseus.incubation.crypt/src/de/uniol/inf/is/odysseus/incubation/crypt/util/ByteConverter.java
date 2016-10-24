@@ -49,7 +49,9 @@ public class ByteConverter {
 
 	/**
 	 * Parse a byteArray to an object
-	 * @param bytes The byteArray to parse 
+	 * 
+	 * @param bytes
+	 *            The byteArray to parse
 	 * @return The object out of the byteArray
 	 */
 	public static Object bytesToObject(byte[] bytes) {
@@ -77,11 +79,18 @@ public class ByteConverter {
 		}
 		return o;
 	}
-	
+
+	/**
+	 * Parses a byteBuffer to a byteArray
+	 * 
+	 * @param byteBuffer
+	 *            the byteBuffer to parse
+	 * @return the byteArray, containing the bytes in the ByteBuffer
+	 */
 	public static byte[] byteBufferToBytes(ByteBuffer byteBuffer) {
 		byte[] bytes = new byte[byteBuffer.remaining()];
 		byteBuffer.get(bytes, 0, bytes.length);
 		return bytes;
 	}
-	
+
 }

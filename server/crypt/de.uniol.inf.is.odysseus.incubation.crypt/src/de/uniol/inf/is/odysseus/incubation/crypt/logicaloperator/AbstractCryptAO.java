@@ -33,7 +33,6 @@ public abstract class AbstractCryptAO extends UnaryLogicalOp {
 	private String mode;
 	private List<SDFAttribute> attributes;
 	private Integer punctuationDelay;
-	// private List<SDFAttribute> outputSchema;
 
 	/**
 	 * Default Constructor.

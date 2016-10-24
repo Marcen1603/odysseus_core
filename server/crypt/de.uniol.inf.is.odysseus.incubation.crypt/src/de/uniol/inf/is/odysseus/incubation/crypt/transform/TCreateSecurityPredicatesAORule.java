@@ -16,10 +16,14 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
+ * This Rule creates a SecurityPredicate for every Predicate and sets it instead
+ * of the Predicate in every IHasPredicate and IHasPredicates. It will be run
+ * every time, a operator starts.
+ * 
  * @author MarkMilster
  *
  */
-public class TCryptParametersAORule<P extends AbstractLogicalOperator> extends AbstractTransformationRule<P> {
+public class TCreateSecurityPredicatesAORule<P extends AbstractLogicalOperator> extends AbstractTransformationRule<P> {
 
 	@Override
 	public void execute(P operator, TransformationConfiguration config) throws RuleException {

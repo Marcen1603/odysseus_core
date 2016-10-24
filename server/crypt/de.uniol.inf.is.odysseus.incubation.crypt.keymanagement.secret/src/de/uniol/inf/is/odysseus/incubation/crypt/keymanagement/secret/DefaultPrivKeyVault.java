@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret;
 
 import java.security.PrivateKey;
@@ -12,6 +9,8 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault.FileKeyVaul
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault.IKeyVault;
 
 /**
+ * Default Vault for Private Keys
+ * 
  * @author MarkMilster
  *
  */
@@ -21,6 +20,9 @@ public class DefaultPrivKeyVault implements IPrivKeyVault {
 
 	private IKeyVault privKeyVault;
 
+	/**
+	 * Default constructor
+	 */
 	public DefaultPrivKeyVault() {
 		this.privKeyVault = new FileKeyVault(DEFAULT_PRIVATEKEYS_PATH);
 	}

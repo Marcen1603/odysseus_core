@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author MarkMilster
  *
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CRYPT_COMMAND", doc = "Encrypting Parameters for a query on crypted datastream", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CRYPT_PREDICATES", doc = "Encrypting Predicates for a query on crypted datastream", category = {
 		LogicalOperatorCategory.ADVANCED })
-public class CryptCommandAO extends UnaryLogicalOp {
+public class CryptPredicatesAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2829044762236991290L;
 
@@ -72,50 +72,49 @@ public class CryptCommandAO extends UnaryLogicalOp {
 	/**
 	 * Default constructor.
 	 */
-	public CryptCommandAO() {
+	public CryptPredicatesAO() {
 		super();
 	}
 
 	/**
 	 * Copy Constructor.
 	 * 
-	 * @param cryptCommandAO
-	 *            The cryptCommandAO, which will be copied
+	 * @param cryptPredicatesAO
+	 *            The cryptPredicatesAO, which will be copied
 	 */
-	public CryptCommandAO(CryptCommandAO cryptCommandAO) {
-		super(cryptCommandAO);
-		this.predicate = cryptCommandAO.predicate;
-		this.algorithm = cryptCommandAO.algorithm;
-		this.initVector = cryptCommandAO.initVector;
-		this.streamID = cryptCommandAO.streamID;
-		this.receiverID = cryptCommandAO.receiverID;
+	public CryptPredicatesAO(CryptPredicatesAO cryptPredicatesAO) {
+		super(cryptPredicatesAO);
+		this.predicate = cryptPredicatesAO.predicate;
+		this.algorithm = cryptPredicatesAO.algorithm;
+		this.initVector = cryptPredicatesAO.initVector;
+		this.streamID = cryptPredicatesAO.streamID;
+		this.receiverID = cryptPredicatesAO.receiverID;
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new CryptCommandAO(this);
+		return new CryptPredicatesAO(this);
 	}
 
 	/**
-	 * Returns the map of parameters, which will be crypted.
+	 * Returns the map of predicates, which will be crypted.
 	 * 
-	 * @return The key represents the occurrence of the parameter. <br>
-	 *         The value is the parameter, which will be crypted
+	 * @return The key represents the occurrence of the predicates. <br>
+	 *         The value is a map of predicates, which will be crypted
 	 */
-	public Map<String, String> getParameter() {
+	public Map<String, String> getPredicates() {
 		return predicate;
 	}
 
-	// TODO rename parameter here und sont ueberall
 	/**
-	 * Sets the map of parameters, which will be crypted.
+	 * Sets the map of predicates, which will be crypted.
 	 * 
-	 * @param parameter
+	 * @param predicates
 	 *            The key represents the occurrence of the parameter. <br>
 	 *            The value is the parameter, which will be crypted
 	 */
-	@Parameter(type = StringParameter.class, name = "parameter", optional = false, isMap = true)
-	public void setParameter(Map<String, String> parameter) {
+	@Parameter(type = StringParameter.class, name = "predicates", optional = false, isMap = true)
+	public void setPredicates(Map<String, String> parameter) {
 		this.predicate = parameter;
 	}
 
