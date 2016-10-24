@@ -844,7 +844,8 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
 		//Scalar_Function:
-		//	name=ID //	('UCASE(' | 'ucase(' | 'LCASE(' | 'lcase(' | 'MID(' | 'mid(' |
+		//	name=ID
+		//	//	('UCASE(' | 'ucase(' | 'LCASE(' | 'lcase(' | 'MID(' | 'mid(' |
 		//	//	 'LEN(' | 'len(' | 'ROUND(' | 'round(' | 'NOW(' | 'now(' |
 		//	//	 'FORMAT(' | 'format('
 		//	//	)
@@ -1272,7 +1273,8 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Scalar_Function:
-	//	name=ID //	('UCASE(' | 'ucase(' | 'LCASE(' | 'lcase(' | 'MID(' | 'mid(' |
+	//	name=ID
+	//	//	('UCASE(' | 'ucase(' | 'LCASE(' | 'lcase(' | 'MID(' | 'mid(' |
 	//	//	 'LEN(' | 'len(' | 'ROUND(' | 'round(' | 'NOW(' | 'now(' |
 	//	//	 'FORMAT(' | 'format('
 	//	//	)

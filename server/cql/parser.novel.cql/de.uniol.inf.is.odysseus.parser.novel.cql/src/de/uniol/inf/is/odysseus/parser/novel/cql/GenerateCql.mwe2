@@ -12,7 +12,13 @@ Workflow {
 			project = StandardProjectConfig {
 				baseName = "de.uniol.inf.is.odysseus.parser.novel.cql"
 				rootPath = rootPath
+				runtimeTest = {
+					enabled = true
+				}
 				eclipsePlugin = {
+					enabled = true
+				}
+				eclipsePluginTest = {
 					enabled = true
 				}
 				createEclipseMetaData = true
@@ -34,5 +40,4 @@ Workflow {
 			}
 		}
 	}
-//TODO Configure case insensivity for the grammar
 }
