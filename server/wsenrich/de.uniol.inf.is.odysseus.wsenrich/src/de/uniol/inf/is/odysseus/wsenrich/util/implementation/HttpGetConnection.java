@@ -61,7 +61,7 @@ public class HttpGetConnection extends AbstractConnectionForWebservices {
 	}
 
 	@Override
-	public void connect(String charset, String contentType) {
+	public void connect(String charset, String method, String contentType) {
 		//Nothing to do with contentType ia a Http Get Connection
 		try {
 	//		synchronized(this) {

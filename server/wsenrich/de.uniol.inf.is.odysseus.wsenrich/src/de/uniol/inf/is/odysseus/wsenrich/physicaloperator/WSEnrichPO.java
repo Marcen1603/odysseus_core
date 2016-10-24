@@ -30,6 +30,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 	private final String serviceMethod;
 	private final String method;
+	private final String contentType;
 	private final String url;
 	private final Boolean urlIsTemplate;
 	private final String urlsuffix;
@@ -51,7 +52,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final IMessageManipulator messageManipulator;
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 
-	public WSEnrichPO(String serviceMethod, String method, String url, Boolean urlIsTemplate, String urlsuffix, List<Option> arguments,
+	public WSEnrichPO(String serviceMethod, String method, String contentType, String url, Boolean urlIsTemplate, String urlsuffix, List<Option> arguments,
 			List<Option> header, String operation, List<SDFAttribute> receivedData, String charset,
 			String parsingMethod, boolean outerJoin, boolean keyValueOutput, boolean multiTupleOutput, int[] uniqueKey,
 			IDataMergeFunction<Tuple<M>, M> dataMergeFunction, ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
@@ -62,6 +63,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		super(cacheManager, dataMergeFunction, dataLeftMergeFunction, metaMergeFunction, uniqueKey);
 		this.serviceMethod = serviceMethod;
 		this.method = method;
+		this.contentType = contentType;
 		this.url = url;
 		this.urlIsTemplate = urlIsTemplate;
 		this.urlsuffix = urlsuffix;
@@ -122,7 +124,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 			logger.trace("Header:"+header);
 			connection.setHeaders(header);
 		}
-		connection.connect(charset, method);
+		connection.connect(charset, method, contentType);
 		HttpEntity entity = connection.retrieveBody();
 		// Convert the Http Entity into a String, finally close the Http
 		// Connection
