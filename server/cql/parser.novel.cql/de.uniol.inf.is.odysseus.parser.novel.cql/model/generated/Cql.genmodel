@@ -35,14 +35,14 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cql.ecore#//Attribute/source"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Attribute/name"/>
     </genClasses>
-    <genClasses ecoreClass="Cql.ecore#//ExpressionModel">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//ExpressionModel/elements"/>
+    <genClasses ecoreClass="Cql.ecore#//ExpressionsModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//ExpressionsModel/elements"/>
     </genClasses>
     <genClasses ecoreClass="Cql.ecore#//Select_Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Select_Statement/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Select_Statement/attributes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Select_Statement/sources"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Select_Statement/conditions"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cql.ecore#//Select_Statement/predicates"/>
     </genClasses>
     <genClasses ecoreClass="Cql.ecore#//Operator">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//Operator/name"/>

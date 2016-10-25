@@ -73,7 +73,7 @@ public class CqlFactoryImpl extends EFactoryImpl implements CqlFactory
       case CqlPackage.ALIAS: return createAlias();
       case CqlPackage.SOURCE: return createSource();
       case CqlPackage.ATTRIBUTE: return createAttribute();
-      case CqlPackage.EXPRESSION_MODEL: return createExpressionModel();
+      case CqlPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
       case CqlPackage.SELECT_STATEMENT: return createSelect_Statement();
       case CqlPackage.OPERATOR: return createOperator();
       case CqlPackage.CONDITION: return createCondition();
@@ -214,10 +214,10 @@ public class CqlFactoryImpl extends EFactoryImpl implements CqlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ExpressionModel createExpressionModel()
+  public ExpressionsModel createExpressionsModel()
   {
-    ExpressionModelImpl expressionModel = new ExpressionModelImpl();
-    return expressionModel;
+    ExpressionsModelImpl expressionsModel = new ExpressionsModelImpl();
+    return expressionsModel;
   }
 
   /**

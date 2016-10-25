@@ -275,24 +275,24 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
 	}
-	public class ExpressionModelElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.ExpressionModel");
+	public class ExpressionsModelElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.ExpressionsModel");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cExpressionModelAction_0 = (Action)cGroup.eContents().get(0);
+		private final Action cExpressionsModelAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cElementsAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cElementsExpressionParserRuleCall_1_0 = (RuleCall)cElementsAssignment_1.eContents().get(0);
 		
 		////Function: functionType=FunctionType '(' value=Attribute ')' ;
 		//// Expressions //////////////////////////////////////////////////////////
-		//ExpressionModel:
-		//	{ExpressionModel} elements+=Expression*;
+		//ExpressionsModel:
+		//	{ExpressionsModel} elements+=Expression*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{ExpressionModel} elements+=Expression*
+		//{ExpressionsModel} elements+=Expression*
 		public Group getGroup() { return cGroup; }
 		
-		//{ExpressionModel}
-		public Action getExpressionModelAction_0() { return cExpressionModelAction_0; }
+		//{ExpressionsModel}
+		public Action getExpressionsModelAction_0() { return cExpressionsModelAction_0; }
 		
 		//elements+=Expression*
 		public Assignment getElementsAssignment_1() { return cElementsAssignment_1; }
@@ -665,8 +665,8 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSourcesSourceParserRuleCall_6_1_0 = (RuleCall)cSourcesAssignment_6_1.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cWHEREKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
-		private final Assignment cConditionsAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
-		private final RuleCall cConditionsExpressionParserRuleCall_7_1_0 = (RuleCall)cConditionsAssignment_7_1.eContents().get(0);
+		private final Assignment cPredicatesAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
+		private final RuleCall cPredicatesExpressionsModelParserRuleCall_7_1_0 = (RuleCall)cPredicatesAssignment_7_1.eContents().get(0);
 		
 		////	Atomic (
 		////		{Plus.left=current} '+' | {Minus.left=current} '-' 
@@ -678,11 +678,11 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		//	'DISTINCT'?
 		//	attributes+=Attribute+ (',' attributes+=Attribute)*
 		//	'FROM'
-		//	sources+=Source+ (',' sources+=Source)* ('WHERE' conditions+=Expression+);
+		//	sources+=Source+ (',' sources+=Source)* ('WHERE' predicates=ExpressionsModel);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//name='SELECT' 'DISTINCT'? attributes+=Attribute+ (',' attributes+=Attribute)* 'FROM' sources+=Source+ (','
-		//sources+=Source)* ('WHERE' conditions+=Expression+)
+		//sources+=Source)* ('WHERE' predicates=ExpressionsModel)
 		public Group getGroup() { return cGroup; }
 		
 		//name='SELECT'
@@ -733,17 +733,17 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		//Source
 		public RuleCall getSourcesSourceParserRuleCall_6_1_0() { return cSourcesSourceParserRuleCall_6_1_0; }
 		
-		//('WHERE' conditions+=Expression+)
+		//('WHERE' predicates=ExpressionsModel)
 		public Group getGroup_7() { return cGroup_7; }
 		
 		//'WHERE'
 		public Keyword getWHEREKeyword_7_0() { return cWHEREKeyword_7_0; }
 		
-		//conditions+=Expression+
-		public Assignment getConditionsAssignment_7_1() { return cConditionsAssignment_7_1; }
+		//predicates=ExpressionsModel
+		public Assignment getPredicatesAssignment_7_1() { return cPredicatesAssignment_7_1; }
 		
-		//Expression
-		public RuleCall getConditionsExpressionParserRuleCall_7_1_0() { return cConditionsExpressionParserRuleCall_7_1_0; }
+		//ExpressionsModel
+		public RuleCall getPredicatesExpressionsModelParserRuleCall_7_1_0() { return cPredicatesExpressionsModelParserRuleCall_7_1_0; }
 	}
 	public class OperatorElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Operator");
@@ -961,7 +961,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	private final SourceElements pSource;
 	private final AttributeElements pAttribute;
 	private final FunctionTypeElements eFunctionType;
-	private final ExpressionModelElements pExpressionModel;
+	private final ExpressionsModelElements pExpressionsModel;
 	private final ExpressionElements pExpression;
 	private final OrElements pOr;
 	private final AndElements pAnd;
@@ -995,7 +995,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		this.pSource = new SourceElements();
 		this.pAttribute = new AttributeElements();
 		this.eFunctionType = new FunctionTypeElements();
-		this.pExpressionModel = new ExpressionModelElements();
+		this.pExpressionsModel = new ExpressionsModelElements();
 		this.pExpression = new ExpressionElements();
 		this.pOr = new OrElements();
 		this.pAnd = new AndElements();
@@ -1129,14 +1129,14 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	////Function: functionType=FunctionType '(' value=Attribute ')' ;
 	//// Expressions //////////////////////////////////////////////////////////
-	//ExpressionModel:
-	//	{ExpressionModel} elements+=Expression*;
-	public ExpressionModelElements getExpressionModelAccess() {
-		return pExpressionModel;
+	//ExpressionsModel:
+	//	{ExpressionsModel} elements+=Expression*;
+	public ExpressionsModelElements getExpressionsModelAccess() {
+		return pExpressionsModel;
 	}
 	
-	public ParserRule getExpressionModelRule() {
-		return getExpressionModelAccess().getRule();
+	public ParserRule getExpressionsModelRule() {
+		return getExpressionsModelAccess().getRule();
 	}
 	
 	//Expression:
@@ -1229,7 +1229,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	//	'DISTINCT'?
 	//	attributes+=Attribute+ (',' attributes+=Attribute)*
 	//	'FROM'
-	//	sources+=Source+ (',' sources+=Source)* ('WHERE' conditions+=Expression+);
+	//	sources+=Source+ (',' sources+=Source)* ('WHERE' predicates=ExpressionsModel);
 	public Select_StatementElements getSelect_StatementAccess() {
 		return pSelect_Statement;
 	}

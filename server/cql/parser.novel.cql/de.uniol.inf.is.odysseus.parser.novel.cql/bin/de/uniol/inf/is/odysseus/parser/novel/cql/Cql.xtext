@@ -37,7 +37,7 @@ enum FunctionType: SUM | ADD | MAX | MIN | COUNT | AVG | LAST | FIRST ;
 
 // Expressions //////////////////////////////////////////////////////////
 
-ExpressionModel: {ExpressionModel} elements+=Expression*;
+ExpressionsModel: {ExpressionsModel} elements+=Expression*;
 
 Expression: Or;
 
@@ -96,7 +96,7 @@ Select_Statement:
 	attributes+=Attribute+ (',' attributes+=Attribute)*
 	'FROM'
 	sources+=Source+ (',' sources+=Source)*
-	('WHERE' (conditions+=Expression+ ))//| attribute=[Attribute] 'IN' '(' values+=Value ')'))?
+	('WHERE' (predicates=ExpressionsModel ))//| attribute=[Attribute] 'IN' '(' values+=Value ')'))?
 //	(('ORDER' 'BY' | 'order' 'by') ordering+=[Attribute]+ ('ASC' | 'asc' | 'DESC' | 'desc')? )?
 //	(('HAVING' | 'having') havingFunction=[Parameter] havingOperator=Operator havingValue=Value)?
 //	';'

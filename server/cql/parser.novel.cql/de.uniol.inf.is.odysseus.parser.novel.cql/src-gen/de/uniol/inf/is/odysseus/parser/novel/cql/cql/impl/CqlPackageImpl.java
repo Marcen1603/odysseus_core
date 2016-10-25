@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Create_Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FunctionType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus;
@@ -103,7 +103,7 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass expressionModelEClass = null;
+  private EClass expressionsModelEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -453,9 +453,9 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getExpressionModel()
+  public EClass getExpressionsModel()
   {
-    return expressionModelEClass;
+    return expressionsModelEClass;
   }
 
   /**
@@ -463,9 +463,9 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getExpressionModel_Elements()
+  public EReference getExpressionsModel_Elements()
   {
-    return (EReference)expressionModelEClass.getEStructuralFeatures().get(0);
+    return (EReference)expressionsModelEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -513,7 +513,7 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSelect_Statement_Conditions()
+  public EReference getSelect_Statement_Predicates()
   {
     return (EReference)select_StatementEClass.getEStructuralFeatures().get(3);
   }
@@ -1049,14 +1049,14 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
     createEReference(attributeEClass, ATTRIBUTE__SOURCE);
     createEAttribute(attributeEClass, ATTRIBUTE__NAME);
 
-    expressionModelEClass = createEClass(EXPRESSION_MODEL);
-    createEReference(expressionModelEClass, EXPRESSION_MODEL__ELEMENTS);
+    expressionsModelEClass = createEClass(EXPRESSIONS_MODEL);
+    createEReference(expressionsModelEClass, EXPRESSIONS_MODEL__ELEMENTS);
 
     select_StatementEClass = createEClass(SELECT_STATEMENT);
     createEAttribute(select_StatementEClass, SELECT_STATEMENT__NAME);
     createEReference(select_StatementEClass, SELECT_STATEMENT__ATTRIBUTES);
     createEReference(select_StatementEClass, SELECT_STATEMENT__SOURCES);
-    createEReference(select_StatementEClass, SELECT_STATEMENT__CONDITIONS);
+    createEReference(select_StatementEClass, SELECT_STATEMENT__PREDICATES);
 
     operatorEClass = createEClass(OPERATOR);
     createEAttribute(operatorEClass, OPERATOR__NAME);
@@ -1194,14 +1194,14 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
     initEReference(getAttribute_Source(), this.getSource(), null, "source", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAttribute_Name(), ecorePackage.getEString(), "name", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(expressionModelEClass, ExpressionModel.class, "ExpressionModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getExpressionModel_Elements(), this.getExpression(), null, "elements", null, 0, -1, ExpressionModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(expressionsModelEClass, ExpressionsModel.class, "ExpressionsModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getExpressionsModel_Elements(), this.getExpression(), null, "elements", null, 0, -1, ExpressionsModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(select_StatementEClass, Select_Statement.class, "Select_Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getSelect_Statement_Name(), ecorePackage.getEString(), "name", null, 0, 1, Select_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelect_Statement_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, Select_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelect_Statement_Sources(), this.getSource(), null, "sources", null, 0, -1, Select_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelect_Statement_Conditions(), this.getExpression(), null, "conditions", null, 0, -1, Select_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSelect_Statement_Predicates(), this.getExpressionsModel(), null, "predicates", null, 0, 1, Select_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(operatorEClass, Operator.class, "Operator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getOperator_Name(), ecorePackage.getEString(), "name", null, 0, 1, Operator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

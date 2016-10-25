@@ -111,9 +111,9 @@ public class CqlAdapterFactory extends AdapterFactoryImpl
         return createAttributeAdapter();
       }
       @Override
-      public Adapter caseExpressionModel(ExpressionModel object)
+      public Adapter caseExpressionsModel(ExpressionsModel object)
       {
-        return createExpressionModelAdapter();
+        return createExpressionsModelAdapter();
       }
       @Override
       public Adapter caseSelect_Statement(Select_Statement object)
@@ -338,16 +338,16 @@ public class CqlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel <em>Expression Model</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel <em>Expressions Model</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel
    * @generated
    */
-  public Adapter createExpressionModelAdapter()
+  public Adapter createExpressionsModelAdapter()
   {
     return null;
   }

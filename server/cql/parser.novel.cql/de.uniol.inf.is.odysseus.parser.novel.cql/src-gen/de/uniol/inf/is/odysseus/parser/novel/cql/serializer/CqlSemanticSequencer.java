@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Create_Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model;
@@ -108,8 +108,8 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CqlPackage.EQUALITY:
 				sequence_Equalitiy(context, (Equality) semanticObject); 
 				return; 
-			case CqlPackage.EXPRESSION_MODEL:
-				sequence_ExpressionModel(context, (ExpressionModel) semanticObject); 
+			case CqlPackage.EXPRESSIONS_MODEL:
+				sequence_ExpressionsModel(context, (ExpressionsModel) semanticObject); 
 				return; 
 			case CqlPackage.INT_CONSTANT:
 				sequence_Atomic(context, (IntConstant) semanticObject); 
@@ -442,12 +442,12 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     ExpressionModel returns ExpressionModel
+	 *     ExpressionsModel returns ExpressionsModel
 	 *
 	 * Constraint:
 	 *     elements+=Expression*
 	 */
-	protected void sequence_ExpressionModel(ISerializationContext context, ExpressionModel semanticObject) {
+	protected void sequence_ExpressionsModel(ISerializationContext context, ExpressionsModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -688,7 +688,7 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         attributes+=Attribute* 
 	 *         sources+=Source+ 
 	 *         sources+=Source* 
-	 *         conditions+=Expression+
+	 *         predicates=ExpressionsModel
 	 *     )
 	 */
 	protected void sequence_Select_Statement(ISerializationContext context, Select_Statement semanticObject) {
