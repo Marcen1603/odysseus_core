@@ -414,6 +414,51 @@ ruleAttribute returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleExpressionsModel
+entryRuleExpressionsModel returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getExpressionsModelRule()); }
+	iv_ruleExpressionsModel=ruleExpressionsModel
+	{ $current=$iv_ruleExpressionsModel.current; }
+	EOF;
+
+// Rule ExpressionsModel
+ruleExpressionsModel returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				$current = forceCreateModelElement(
+					grammarAccess.getExpressionsModelAccess().getExpressionsModelAction_0(),
+					$current);
+			}
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getExpressionsModelAccess().getElementsExpressionParserRuleCall_1_0());
+				}
+				lv_elements_1_0=ruleExpression
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getExpressionsModelRule());
+					}
+					add(
+						$current,
+						"elements",
+						lv_elements_1_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Expression");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+	)
+;
+
 // Entry rule entryRuleExpression
 entryRuleExpression returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getExpressionRule()); }
@@ -1135,22 +1180,22 @@ ruleSelect_Statement returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getSelect_StatementAccess().getConditionsExpressionParserRuleCall_7_1_0());
+						newCompositeNode(grammarAccess.getSelect_StatementAccess().getPredicatesExpressionsModelParserRuleCall_7_1_0());
 					}
-					lv_conditions_10_0=ruleExpression
+					lv_predicates_10_0=ruleExpressionsModel
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getSelect_StatementRule());
 						}
-						add(
+						set(
 							$current,
-							"conditions",
-							lv_conditions_10_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Expression");
+							"predicates",
+							lv_predicates_10_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.ExpressionsModel");
 						afterParserOrEnumRuleCall();
 					}
 				)
-			)+
+			)
 		)
 	)
 ;

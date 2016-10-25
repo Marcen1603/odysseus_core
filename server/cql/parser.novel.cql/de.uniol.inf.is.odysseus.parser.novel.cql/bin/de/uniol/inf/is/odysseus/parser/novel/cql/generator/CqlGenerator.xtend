@@ -70,7 +70,7 @@ class CqlGenerator extends AbstractGenerator
 	where_clause = ''
 	'''
 	SELECT({
-			predicate=«unpackExpression(stmt.conditions.get(0))»
+			predicate=«unpackExpression(stmt.predicates.elements.get(0))»
 	}, «buildAccessOP(stmt)»)
 	'''
 	}

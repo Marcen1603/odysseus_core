@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel;
 
 import java.util.Collection;
 
@@ -23,18 +23,18 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Expression Model</b></em>'.
+ * An implementation of the model object '<em><b>Expressions Model</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionModelImpl#getElements <em>Elements</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionsModelImpl#getElements <em>Elements</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements ExpressionModel
+public class ExpressionsModelImpl extends MinimalEObjectImpl.Container implements ExpressionsModel
 {
   /**
    * The cached value of the '{@link #getElements() <em>Elements</em>}' containment reference list.
@@ -51,7 +51,7 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ExpressionModelImpl()
+  protected ExpressionsModelImpl()
   {
     super();
   }
@@ -64,7 +64,7 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
   @Override
   protected EClass eStaticClass()
   {
-    return CqlPackage.Literals.EXPRESSION_MODEL;
+    return CqlPackage.Literals.EXPRESSIONS_MODEL;
   }
 
   /**
@@ -76,7 +76,7 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
   {
     if (elements == null)
     {
-      elements = new EObjectContainmentEList<Expression>(Expression.class, this, CqlPackage.EXPRESSION_MODEL__ELEMENTS);
+      elements = new EObjectContainmentEList<Expression>(Expression.class, this, CqlPackage.EXPRESSIONS_MODEL__ELEMENTS);
     }
     return elements;
   }
@@ -91,7 +91,7 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case CqlPackage.EXPRESSION_MODEL__ELEMENTS:
+      case CqlPackage.EXPRESSIONS_MODEL__ELEMENTS:
         return ((InternalEList<?>)getElements()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -107,7 +107,7 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case CqlPackage.EXPRESSION_MODEL__ELEMENTS:
+      case CqlPackage.EXPRESSIONS_MODEL__ELEMENTS:
         return getElements();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -124,7 +124,7 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case CqlPackage.EXPRESSION_MODEL__ELEMENTS:
+      case CqlPackage.EXPRESSIONS_MODEL__ELEMENTS:
         getElements().clear();
         getElements().addAll((Collection<? extends Expression>)newValue);
         return;
@@ -142,7 +142,7 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case CqlPackage.EXPRESSION_MODEL__ELEMENTS:
+      case CqlPackage.EXPRESSIONS_MODEL__ELEMENTS:
         getElements().clear();
         return;
     }
@@ -159,10 +159,10 @@ public class ExpressionModelImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case CqlPackage.EXPRESSION_MODEL__ELEMENTS:
+      case CqlPackage.EXPRESSIONS_MODEL__ELEMENTS:
         return elements != null && !elements.isEmpty();
     }
     return super.eIsSet(featureID);
   }
 
-} //ExpressionModelImpl
+} //ExpressionsModelImpl

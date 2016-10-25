@@ -255,14 +255,14 @@ public interface CqlPackage extends EPackage
   int ATTRIBUTE_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 3;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionModelImpl <em>Expression Model</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionsModelImpl <em>Expressions Model</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionModelImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getExpressionModel()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionsModelImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getExpressionsModel()
    * @generated
    */
-  int EXPRESSION_MODEL = 7;
+  int EXPRESSIONS_MODEL = 7;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -271,16 +271,16 @@ public interface CqlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int EXPRESSION_MODEL__ELEMENTS = 0;
+  int EXPRESSIONS_MODEL__ELEMENTS = 0;
 
   /**
-   * The number of structural features of the '<em>Expression Model</em>' class.
+   * The number of structural features of the '<em>Expressions Model</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int EXPRESSION_MODEL_FEATURE_COUNT = 1;
+  int EXPRESSIONS_MODEL_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.Select_StatementImpl <em>Select Statement</em>}' class.
@@ -320,13 +320,13 @@ public interface CqlPackage extends EPackage
   int SELECT_STATEMENT__SOURCES = NESTED_STATEMENT_FEATURE_COUNT + 2;
 
   /**
-   * The feature id for the '<em><b>Conditions</b></em>' containment reference list.
+   * The feature id for the '<em><b>Predicates</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SELECT_STATEMENT__CONDITIONS = NESTED_STATEMENT_FEATURE_COUNT + 3;
+  int SELECT_STATEMENT__PREDICATES = NESTED_STATEMENT_FEATURE_COUNT + 3;
 
   /**
    * The number of structural features of the '<em>Select Statement</em>' class.
@@ -1099,25 +1099,25 @@ public interface CqlPackage extends EPackage
   EAttribute getAttribute_Name();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel <em>Expression Model</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel <em>Expressions Model</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Expression Model</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel
+   * @return the meta object for class '<em>Expressions Model</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel
    * @generated
    */
-  EClass getExpressionModel();
+  EClass getExpressionsModel();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel#getElements <em>Elements</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel#getElements <em>Elements</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Elements</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel#getElements()
-   * @see #getExpressionModel()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel#getElements()
+   * @see #getExpressionsModel()
    * @generated
    */
-  EReference getExpressionModel_Elements();
+  EReference getExpressionsModel_Elements();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement <em>Select Statement</em>}'.
@@ -1163,15 +1163,15 @@ public interface CqlPackage extends EPackage
   EReference getSelect_Statement_Sources();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getConditions <em>Conditions</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getPredicates <em>Predicates</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Conditions</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getConditions()
+   * @return the meta object for the containment reference '<em>Predicates</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getPredicates()
    * @see #getSelect_Statement()
    * @generated
    */
-  EReference getSelect_Statement_Conditions();
+  EReference getSelect_Statement_Predicates();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Operator <em>Operator</em>}'.
@@ -1832,14 +1832,14 @@ public interface CqlPackage extends EPackage
     EAttribute ATTRIBUTE__NAME = eINSTANCE.getAttribute_Name();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionModelImpl <em>Expression Model</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionsModelImpl <em>Expressions Model</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionModelImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getExpressionModel()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.ExpressionsModelImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getExpressionsModel()
      * @generated
      */
-    EClass EXPRESSION_MODEL = eINSTANCE.getExpressionModel();
+    EClass EXPRESSIONS_MODEL = eINSTANCE.getExpressionsModel();
 
     /**
      * The meta object literal for the '<em><b>Elements</b></em>' containment reference list feature.
@@ -1847,7 +1847,7 @@ public interface CqlPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference EXPRESSION_MODEL__ELEMENTS = eINSTANCE.getExpressionModel_Elements();
+    EReference EXPRESSIONS_MODEL__ELEMENTS = eINSTANCE.getExpressionsModel_Elements();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.Select_StatementImpl <em>Select Statement</em>}' class.
@@ -1884,12 +1884,12 @@ public interface CqlPackage extends EPackage
     EReference SELECT_STATEMENT__SOURCES = eINSTANCE.getSelect_Statement_Sources();
 
     /**
-     * The meta object literal for the '<em><b>Conditions</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Predicates</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT_STATEMENT__CONDITIONS = eINSTANCE.getSelect_Statement_Conditions();
+    EReference SELECT_STATEMENT__PREDICATES = eINSTANCE.getSelect_Statement_Predicates();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.OperatorImpl <em>Operator</em>}' class.

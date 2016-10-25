@@ -123,10 +123,10 @@ public class CqlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CqlPackage.EXPRESSION_MODEL:
+      case CqlPackage.EXPRESSIONS_MODEL:
       {
-        ExpressionModel expressionModel = (ExpressionModel)theEObject;
-        T result = caseExpressionModel(expressionModel);
+        ExpressionsModel expressionsModel = (ExpressionsModel)theEObject;
+        T result = caseExpressionsModel(expressionsModel);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -394,17 +394,17 @@ public class CqlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Expression Model</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Expressions Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Expression Model</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Expressions Model</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseExpressionModel(ExpressionModel object)
+  public T caseExpressionsModel(ExpressionsModel object)
   {
     return null;
   }

@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Source;
 
@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.Select_StatementImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.Select_StatementImpl#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.Select_StatementImpl#getSources <em>Sources</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.Select_StatementImpl#getConditions <em>Conditions</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.Select_StatementImpl#getPredicates <em>Predicates</em>}</li>
  * </ul>
  *
  * @generated
@@ -83,14 +83,14 @@ public class Select_StatementImpl extends Nested_StatementImpl implements Select
   protected EList<Source> sources;
 
   /**
-   * The cached value of the '{@link #getConditions() <em>Conditions</em>}' containment reference list.
+   * The cached value of the '{@link #getPredicates() <em>Predicates</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getConditions()
+   * @see #getPredicates()
    * @generated
    * @ordered
    */
-  protected EList<Expression> conditions;
+  protected ExpressionsModel predicates;
 
   /**
    * <!-- begin-user-doc -->
@@ -169,13 +169,47 @@ public class Select_StatementImpl extends Nested_StatementImpl implements Select
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Expression> getConditions()
+  public ExpressionsModel getPredicates()
   {
-    if (conditions == null)
+    return predicates;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetPredicates(ExpressionsModel newPredicates, NotificationChain msgs)
+  {
+    ExpressionsModel oldPredicates = predicates;
+    predicates = newPredicates;
+    if (eNotificationRequired())
     {
-      conditions = new EObjectContainmentEList<Expression>(Expression.class, this, CqlPackage.SELECT_STATEMENT__CONDITIONS);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CqlPackage.SELECT_STATEMENT__PREDICATES, oldPredicates, newPredicates);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return conditions;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setPredicates(ExpressionsModel newPredicates)
+  {
+    if (newPredicates != predicates)
+    {
+      NotificationChain msgs = null;
+      if (predicates != null)
+        msgs = ((InternalEObject)predicates).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CqlPackage.SELECT_STATEMENT__PREDICATES, null, msgs);
+      if (newPredicates != null)
+        msgs = ((InternalEObject)newPredicates).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CqlPackage.SELECT_STATEMENT__PREDICATES, null, msgs);
+      msgs = basicSetPredicates(newPredicates, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CqlPackage.SELECT_STATEMENT__PREDICATES, newPredicates, newPredicates));
   }
 
   /**
@@ -192,8 +226,8 @@ public class Select_StatementImpl extends Nested_StatementImpl implements Select
         return ((InternalEList<?>)getAttributes()).basicRemove(otherEnd, msgs);
       case CqlPackage.SELECT_STATEMENT__SOURCES:
         return ((InternalEList<?>)getSources()).basicRemove(otherEnd, msgs);
-      case CqlPackage.SELECT_STATEMENT__CONDITIONS:
-        return ((InternalEList<?>)getConditions()).basicRemove(otherEnd, msgs);
+      case CqlPackage.SELECT_STATEMENT__PREDICATES:
+        return basicSetPredicates(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -214,8 +248,8 @@ public class Select_StatementImpl extends Nested_StatementImpl implements Select
         return getAttributes();
       case CqlPackage.SELECT_STATEMENT__SOURCES:
         return getSources();
-      case CqlPackage.SELECT_STATEMENT__CONDITIONS:
-        return getConditions();
+      case CqlPackage.SELECT_STATEMENT__PREDICATES:
+        return getPredicates();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -242,9 +276,8 @@ public class Select_StatementImpl extends Nested_StatementImpl implements Select
         getSources().clear();
         getSources().addAll((Collection<? extends Source>)newValue);
         return;
-      case CqlPackage.SELECT_STATEMENT__CONDITIONS:
-        getConditions().clear();
-        getConditions().addAll((Collection<? extends Expression>)newValue);
+      case CqlPackage.SELECT_STATEMENT__PREDICATES:
+        setPredicates((ExpressionsModel)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -269,8 +302,8 @@ public class Select_StatementImpl extends Nested_StatementImpl implements Select
       case CqlPackage.SELECT_STATEMENT__SOURCES:
         getSources().clear();
         return;
-      case CqlPackage.SELECT_STATEMENT__CONDITIONS:
-        getConditions().clear();
+      case CqlPackage.SELECT_STATEMENT__PREDICATES:
+        setPredicates((ExpressionsModel)null);
         return;
     }
     super.eUnset(featureID);
@@ -292,8 +325,8 @@ public class Select_StatementImpl extends Nested_StatementImpl implements Select
         return attributes != null && !attributes.isEmpty();
       case CqlPackage.SELECT_STATEMENT__SOURCES:
         return sources != null && !sources.isEmpty();
-      case CqlPackage.SELECT_STATEMENT__CONDITIONS:
-        return conditions != null && !conditions.isEmpty();
+      case CqlPackage.SELECT_STATEMENT__PREDICATES:
+        return predicates != null;
     }
     return super.eIsSet(featureID);
   }

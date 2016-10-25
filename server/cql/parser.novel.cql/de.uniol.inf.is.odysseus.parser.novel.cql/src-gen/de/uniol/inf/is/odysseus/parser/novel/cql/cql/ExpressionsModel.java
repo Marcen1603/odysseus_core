@@ -9,21 +9,21 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Expression Model</b></em>'.
+ * A representation of the model object '<em><b>Expressions Model</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionModel#getElements <em>Elements</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel#getElements <em>Elements</em>}</li>
  * </ul>
  *
- * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getExpressionModel()
+ * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getExpressionsModel()
  * @model
  * @generated
  */
-public interface ExpressionModel extends EObject
+public interface ExpressionsModel extends EObject
 {
   /**
    * Returns the value of the '<em><b>Elements</b></em>' containment reference list.
@@ -35,10 +35,10 @@ public interface ExpressionModel extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Elements</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getExpressionModel_Elements()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getExpressionsModel_Elements()
    * @model containment="true"
    * @generated
    */
   EList<Expression> getElements();
 
-} // ExpressionModel
+} // ExpressionsModel

@@ -87,13 +87,13 @@ public interface CqlFactory extends EFactory
   Attribute createAttribute();
 
   /**
-   * Returns a new object of class '<em>Expression Model</em>'.
+   * Returns a new object of class '<em>Expressions Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Expression Model</em>'.
+   * @return a new object of class '<em>Expressions Model</em>'.
    * @generated
    */
-  ExpressionModel createExpressionModel();
+  ExpressionsModel createExpressionsModel();
 
   /**
    * Returns a new object of class '<em>Select Statement</em>'.

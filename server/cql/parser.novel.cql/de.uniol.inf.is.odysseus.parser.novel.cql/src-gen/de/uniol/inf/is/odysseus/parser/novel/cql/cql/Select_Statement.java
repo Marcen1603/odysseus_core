@@ -17,7 +17,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getSources <em>Sources</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getConditions <em>Conditions</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getPredicates <em>Predicates</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getSelect_Statement()
@@ -85,19 +85,29 @@ public interface Select_Statement extends Nested_Statement
   EList<Source> getSources();
 
   /**
-   * Returns the value of the '<em><b>Conditions</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression}.
+   * Returns the value of the '<em><b>Predicates</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Conditions</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Predicates</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Conditions</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getSelect_Statement_Conditions()
+   * @return the value of the '<em>Predicates</em>' containment reference.
+   * @see #setPredicates(ExpressionsModel)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getSelect_Statement_Predicates()
    * @model containment="true"
    * @generated
    */
-  EList<Expression> getConditions();
+  ExpressionsModel getPredicates();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement#getPredicates <em>Predicates</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Predicates</em>' containment reference.
+   * @see #getPredicates()
+   * @generated
+   */
+  void setPredicates(ExpressionsModel value);
 
 } // Select_Statement
