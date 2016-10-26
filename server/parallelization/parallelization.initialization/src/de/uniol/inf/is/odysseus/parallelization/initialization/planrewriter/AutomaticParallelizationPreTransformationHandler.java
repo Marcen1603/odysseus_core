@@ -35,8 +35,8 @@ public class AutomaticParallelizationPreTransformationHandler implements IPreTra
 	public void preTransform(IServerExecutor executor, ISession caller, ILogicalQuery query,
 			QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters, Context context) {
 		LOG.info("Starting automatic configuration of parallelization.");
-		// TODO Auto-generated method stub
-
+		Planrewriter rewriter = new Planrewriter();
+		rewriter.rewritePlan(query, config, handlerParameters);
 	}
 
 }

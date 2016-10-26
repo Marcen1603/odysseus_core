@@ -33,7 +33,6 @@ public class AutomaticParallelizationPreExecutionHandler extends AbstractParalle
 	@Override
 	public void preExecute(String parameterString, List<IQueryBuildSetting<?>> settings)
 			throws OdysseusScriptException {
-		// TODO Auto-generated method stub
 		LOG.debug("Automatic parallelization starting");
 		new AutomaticStrategyInitializer().initialize(settings);
 		new IntraOperatorStrategyInitializer().initialize(settings);

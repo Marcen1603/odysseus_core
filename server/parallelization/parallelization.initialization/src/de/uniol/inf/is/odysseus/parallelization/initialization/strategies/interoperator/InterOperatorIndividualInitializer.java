@@ -3,7 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.initialization.strategies.interoperator;
 
-import java.util.List;
+import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.parallelization.initialization.exception.ParallelizationTransormationException;
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.Para
  */
 public class InterOperatorIndividualInitializer {
 	
-	public static void createInterIndividualConfiguration(List<IQueryBuildSetting<?>> settings, String operatorId,
+	public static void createInterIndividualConfiguration(Collection<IQueryBuildSetting<?>> settings, String operatorId,
 			int degree, int bufferSize, String parallelizationStrategy, String fragmentationStrategy)
 			throws ParallelizationTransormationException {
 		ParallelOperatorConfiguration newConfiguration = new ParallelOperatorConfiguration();
@@ -24,7 +24,7 @@ public class InterOperatorIndividualInitializer {
 		newConfiguration.setBufferSize(bufferSize);
 		newConfiguration.setStartParallelizationId(operatorId);
 		//TODO add possibility to build parallel region
-		newConfiguration.setEndParallelizationId(operatorId);
+		newConfiguration.setEndParallelizationId(null);
 		newConfiguration.setMultithreadingStrategy(parallelizationStrategy);
 		newConfiguration.setFragementationType(fragmentationStrategy);
 		
