@@ -3,33 +3,44 @@ package de.uniol.inf.is.odysseus.core.server.store;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 
 @SuppressWarnings("rawtypes")
 public class StoreRegistry {
 
-	// TODO: Make generic with services
-	
+	static final Logger LOG = LoggerFactory.getLogger(StoreRegistry.class);
+
 	static final Map<String, IStore<?,?>> stores = new HashMap<>();
-	static{
-		stores.put(FileStore.TYPE, new FileStore());
-		stores.put(MemoryStore.TYPE, new MemoryStore());
+
+	public void bind(IStore store){
+		if (!stores.containsKey(store.getType())){
+			stores.put(store.getType(), store);
+		}else{
+			LOG.warn("Store with "+store.getType()+" already registered. Ignoring "+store);
+		}
 	}
-	
-	public StoreRegistry() {		
+
+	public void unbind(IStore store){
+		stores.remove(store.getType());
 	}
-	
+
+	public StoreRegistry() {
+	}
+
 	public static IStore<?,?> createStore(
 			String storeType, OptionMap storeOptions) throws StoreException{
-		
+
 		IStore<?,?> store = stores.get(storeType.toLowerCase());
 		if (store != null){
 			return store.newInstance(storeOptions);
 		}
-		
+
 		return null;
 	}
 
-	
-	
+
+
 }
