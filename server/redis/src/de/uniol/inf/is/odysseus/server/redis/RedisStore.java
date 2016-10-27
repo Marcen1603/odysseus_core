@@ -51,7 +51,10 @@ public class RedisStore<STORETYPE> implements IStore<String, STORETYPE> {
 		List<String> list = new ArrayList<>(keys);
 		Collections.sort(list);
 		List<Entry<String, STORETYPE>> result = new ArrayList<>();
-		list.forEach((String key) -> result.add(Maps.immutableEntry(key, get(key))));
+		for (int i=0;i<limit;i++){
+			String key = list.get(i);
+			result.add(Maps.immutableEntry(key, get(key)));
+		}
 		return result;
 	}
 
@@ -101,9 +104,11 @@ public class RedisStore<STORETYPE> implements IStore<String, STORETYPE> {
 
 	@Override
 	public void clear() throws StoreException {
-		//jedis.keys("*").forEach((String key) -> jedis.del(key));
+		// jedis.keys("*").forEach((String key) -> jedis.del(key));
 		String[] keys = jedis.keys("*").toArray(new String[0]);
-		jedis.del(keys);
+		if (keys.length > 0) {
+			jedis.del(keys);
+		}
 	}
 
 	@Override
@@ -119,7 +124,7 @@ public class RedisStore<STORETYPE> implements IStore<String, STORETYPE> {
 	@Override
 	public void dumpTo(StringBuffer buffer) {
 		Set<String> keys = keySet();
-		keys.forEach((String key)-> buffer.append(key).append(get(key)));
+		keys.forEach((String key) -> buffer.append(key).append("-->").append(get(key)).append("\n"));
 	}
 
 	@Override
@@ -128,6 +133,42 @@ public class RedisStore<STORETYPE> implements IStore<String, STORETYPE> {
 	}
 
 	public static void main(String[] args) {
+
+		RedisStore<Object> factory = new RedisStore<>();
+		OptionMap options = new OptionMap();
+		options.setOption(HOST, "192.168.1.51");
+		options.setOption(PORT, "6379");
+		IStore<String, Object> store = factory.newInstance(options);
+
+		StringBuffer buffer;
+		buffer = new StringBuffer();
+		store.dumpTo(buffer);
+		System.out.println(buffer);
+
+		store.clear();
+
+		buffer = new StringBuffer();
+		store.dumpTo(buffer);
+		System.out.println(buffer);
+
+		String value = "VALUE";
+		store.put("v1", value);
+
+		buffer = new StringBuffer();
+		store.dumpTo(buffer);
+		System.out.println(buffer);
+
+		for (int i = 0; i < 1000; i++) {
+			store.put("id" + i, "value_" + i);
+		}
+
+		buffer = new StringBuffer();
+		store.dumpTo(buffer);
+		System.out.println(buffer);
+
+		System.out.println(store.getOrderedByKey(10));
+
+		store.clear();
 	}
 
 }
