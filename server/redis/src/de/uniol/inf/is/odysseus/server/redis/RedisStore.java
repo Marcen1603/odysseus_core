@@ -51,9 +51,13 @@ public class RedisStore<STORETYPE> implements IStore<String, STORETYPE> {
 		List<String> list = new ArrayList<>(keys);
 		Collections.sort(list);
 		List<Entry<String, STORETYPE>> result = new ArrayList<>();
-		for (int i=0;i<limit;i++){
-			String key = list.get(i);
-			result.add(Maps.immutableEntry(key, get(key)));
+		if (limit > 0) {
+			for (int i = 0; i < limit; i++) {
+				String key = list.get(i);
+				result.add(Maps.immutableEntry(key, get(key)));
+			}
+		} else {
+			list.forEach((String key) -> result.add(Maps.immutableEntry(key, get(key))));
 		}
 		return result;
 	}
