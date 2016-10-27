@@ -101,7 +101,9 @@ public class RedisStore<STORETYPE> implements IStore<String, STORETYPE> {
 
 	@Override
 	public void clear() throws StoreException {
-		jedis.keys("*").forEach((String key) -> jedis.del(key));
+		//jedis.keys("*").forEach((String key) -> jedis.del(key));
+		String[] keys = jedis.keys("*").toArray(new String[0]);
+		jedis.del(keys);
 	}
 
 	@Override
