@@ -30,9 +30,10 @@ public class KeyPunctuation extends AbstractPunctuation {
 
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("KeyPunctuation", "type", SDFDatatype.INTEGER));
+		attributes.add(new SDFAttribute("KeyPunctuation", "point", SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("KeyPunctuation", "receiverIds", SDFDatatype.LIST_INTEGER));
 		attributes.add(new SDFAttribute("KeyPunctuation", "streamIds", SDFDatatype.INTEGER));
-		attributes.add(new SDFAttribute("CryptPunctuation", "point", SDFDatatype.TIMESTAMP));
 		schema = SDFSchemaFactory.createNewSchema("CryptPunctuation", Tuple.class, attributes);
 	}
 
@@ -141,10 +142,12 @@ public class KeyPunctuation extends AbstractPunctuation {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Tuple<?> getValue() {
-		Tuple<?> ret = new Tuple(3, true);
-		ret.setAttribute(0, this.getReceiverId());
-		ret.setAttribute(1, this.getStreamId());
-		ret.setAttribute(2, getTime().getMainPoint());
+		Tuple<?> ret = new Tuple(4, true);
+		ret.setAttribute(0, NUMBER);
+		ret.setAttribute(1, getTime().getMainPoint());
+		ret.setAttribute(2, this.getReceiverId());
+		ret.setAttribute(3, this.getStreamId());
+		
 		return ret;
 	}
 

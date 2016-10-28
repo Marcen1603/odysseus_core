@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.incubation.crypt.client.KeyWebSocketClient;
@@ -136,7 +137,7 @@ public class CryptPredicatesPO<T extends IStreamObject<?>> extends AbstractPipe<
 			e.printStackTrace();
 		}
 		this.cryptParameter();
-		this.sendNewPunctuation();
+		this.sendNewPunctuation(new PointInTime(System.currentTimeMillis()));
 	}
 
 	/**
@@ -199,7 +200,7 @@ public class CryptPredicatesPO<T extends IStreamObject<?>> extends AbstractPipe<
 						try {
 							this.loadEncryptKey();
 							this.cryptParameter();
-							this.sendNewPunctuation();
+							this.sendNewPunctuation(punctuation.getTime());
 							break;
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -209,7 +210,7 @@ public class CryptPredicatesPO<T extends IStreamObject<?>> extends AbstractPipe<
 			}
 		} else if (punctuation instanceof CryptPunctuation) {
 			if (this.cryptor.isInitialized()) {
-				this.sendNewPunctuation();
+				this.sendNewPunctuation(punctuation.getTime());
 			}
 		}
 		this.sendPunctuation(punctuation);
@@ -219,9 +220,8 @@ public class CryptPredicatesPO<T extends IStreamObject<?>> extends AbstractPipe<
 	 * Creates and sends a new CryptedPredicatePunctuation<br>
 	 * The punctuation contains the actual cryptedPredicates Map
 	 */
-	private void sendNewPunctuation() {
-		CryptedPredicatePunctuation predPunc = CryptedPredicatePunctuation
-				.createNewCryptedPredicatePunctuation(System.currentTimeMillis());
+	private void sendNewPunctuation(PointInTime point) {
+		CryptedPredicatePunctuation predPunc = CryptedPredicatePunctuation.createNewCryptedPredicatePunctuation(point);
 		predPunc.setCryptedPredicates(this.cryptedPredicate);
 		this.sendPunctuation(predPunc);
 	}

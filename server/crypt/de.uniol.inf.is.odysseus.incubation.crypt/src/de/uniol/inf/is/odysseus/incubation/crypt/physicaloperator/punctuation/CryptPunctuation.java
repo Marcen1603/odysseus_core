@@ -30,9 +30,10 @@ public class CryptPunctuation extends AbstractPunctuation {
 
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("CryptPunctuation", "type", SDFDatatype.INTEGER));
+		attributes.add(new SDFAttribute("CryptPunctuation", "point", SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("CryptPunctuation", "cryptedAttributes", SDFDatatype.LIST));
 		attributes.add(new SDFAttribute("CryptPunctuation", "algorithms", SDFDatatype.LIST_STRING));
-		attributes.add(new SDFAttribute("CryptPunctuation", "point", SDFDatatype.TIMESTAMP));
 		schema = SDFSchemaFactory.createNewSchema("CryptPunctuation", Tuple.class, attributes);
 	}
 
@@ -137,10 +138,11 @@ public class CryptPunctuation extends AbstractPunctuation {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Tuple<?> getValue() {
-		Tuple<?> ret = new Tuple(3, true);
-		ret.setAttribute(0, this.cryptedAttributes);
-		ret.setAttribute(1, this.algorithms);
-		ret.setAttribute(2, getTime().getMainPoint());
+		Tuple<?> ret = new Tuple(4, true);
+		ret.setAttribute(0, NUMBER);
+		ret.setAttribute(1, getTime().getMainPoint());
+		ret.setAttribute(2, this.cryptedAttributes);
+		ret.setAttribute(3, this.algorithms);
 		return ret;
 	}
 

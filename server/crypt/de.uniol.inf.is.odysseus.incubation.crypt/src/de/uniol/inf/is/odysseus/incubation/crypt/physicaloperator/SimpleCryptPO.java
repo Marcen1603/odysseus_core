@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.incubation.crypt.provider.ICryptor;
  */
 public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
-	private static final int DEFAULT_PUNCTUATION_DELAY = 10;
+	private static final int DEFAULT_PUNCTUATION_DELAY = 100;
 
 	private Integer punctuationDelay = DEFAULT_PUNCTUATION_DELAY;
 	private int counter = 0;
