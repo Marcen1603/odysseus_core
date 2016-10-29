@@ -28,13 +28,13 @@ public class ForecastVarianceAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 7752589543824364696L;
 
-	public final static String FORECASTED_VARIANCE_ATTRIBUTE_NAME = "forcasted_variance";
+	public final static String FORECASTED_VARIANCE_ATTRIBUTE_NAME = "forecasted_variance";
 
-	public final static String FORECASTED_TIME_HORIZON_ATTRIBUTE_NAME = "forcasted_time_horizon";
+	public final static String FORECASTED_TIME_HORIZON_ATTRIBUTE_NAME = "forecasted_time_horizon";
 
-	public final static String FORECASTED_TIME_INTERVAL_START_ATTRIBUTE_NAME = "forcasted_time_interval_start";
+	public final static String FORECASTED_TIME_INTERVAL_START_ATTRIBUTE_NAME = "forecasted_time_interval_start";
 
-	public final static String FORECASTED_TIME_INTERVAL_END_ATTRIBUTE_NAME = "forcasted_time_interval_end";
+	public final static String FORECASTED_TIME_INTERVAL_END_ATTRIBUTE_NAME = "forecasted_time_interval_end";
 
 	// QN: was ist besser, options oder parameter?
 	private Integer forecastHorizon = 1;

@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionF
  * 
  * @author Christoph Schröer
  */
-public interface IAutoregressionEstimator<T> {
+public interface IAutoregressionEstimator<T>  {
 
 	public String getName();
 
