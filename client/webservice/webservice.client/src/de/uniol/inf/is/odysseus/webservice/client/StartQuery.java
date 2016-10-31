@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for startQuery complex type.
+ * <p>Java-Klasse f�r startQuery complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="startQuery">
@@ -45,7 +45,7 @@ public class StartQuery {
     protected int queryID;
 
     /**
-     * Gets the value of the securitytoken property.
+     * Ruft den Wert der securitytoken-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class StartQuery {
     }
 
     /**
-     * Sets the value of the securitytoken property.
+     * Legt den Wert der securitytoken-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class StartQuery {
     }
 
     /**
-     * Gets the value of the queryID property.
+     * Ruft den Wert der queryID-Eigenschaft ab.
      * 
      */
     public int getQueryID() {
@@ -77,7 +77,7 @@ public class StartQuery {
     }
 
     /**
-     * Sets the value of the queryID property.
+     * Legt den Wert der queryID-Eigenschaft fest.
      * 
      */
     public void setQueryID(int value) {

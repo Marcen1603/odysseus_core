@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for sdfDatatypeInformation complex type.
+ * <p>Java-Klasse f�r sdfDatatypeInformation complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="sdfDatatypeInformation">
@@ -53,7 +53,7 @@ public class SdfDatatypeInformation {
     protected SdfSchemaInformation subSchema;
 
     /**
-     * Gets the value of the uri property.
+     * Ruft den Wert der uri-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -65,7 +65,7 @@ public class SdfDatatypeInformation {
     }
 
     /**
-     * Sets the value of the uri property.
+     * Legt den Wert der uri-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -77,7 +77,7 @@ public class SdfDatatypeInformation {
     }
 
     /**
-     * Gets the value of the type property.
+     * Ruft den Wert der type-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -89,7 +89,7 @@ public class SdfDatatypeInformation {
     }
 
     /**
-     * Sets the value of the type property.
+     * Legt den Wert der type-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -101,7 +101,7 @@ public class SdfDatatypeInformation {
     }
 
     /**
-     * Gets the value of the subtype property.
+     * Ruft den Wert der subtype-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -113,7 +113,7 @@ public class SdfDatatypeInformation {
     }
 
     /**
-     * Sets the value of the subtype property.
+     * Legt den Wert der subtype-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -125,7 +125,7 @@ public class SdfDatatypeInformation {
     }
 
     /**
-     * Gets the value of the subSchema property.
+     * Ruft den Wert der subSchema-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -137,7 +137,7 @@ public class SdfDatatypeInformation {
     }
 
     /**
-     * Sets the value of the subSchema property.
+     * Legt den Wert der subSchema-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

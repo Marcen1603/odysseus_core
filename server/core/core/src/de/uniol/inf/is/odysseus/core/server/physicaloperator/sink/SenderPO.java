@@ -32,6 +32,10 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implem
 		this.protocolHandler = senderPO.protocolHandler;
 	}
 
+	public Object getProtocolHandler() {
+		return protocolHandler;
+	}
+
 	@Override
 	protected void process_next(T object, int port) {
 		ProtocolHandlerAction action = protocolHandler.getAction();
@@ -117,5 +121,6 @@ public class SenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implem
 		}
 		return m;
 	}
+
 
 }

@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.core.objecthandler.PunctAwareByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -34,28 +33,6 @@ public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAtt
 		objectHandler = new PunctAwareByteBufferHandler<T>(dataHandler);
 	}
 
-
-	protected ByteBuffer prepareObject(IPunctuation punctuation) {
-		ByteBuffer buffer;
-		int puncNumber = punctuation.getNumber();
-		// TODO: Move to registry
-		switch(puncNumber){
-		case 1:
-		case 2:
-			buffer = ByteBuffer.allocate(1024);
-			buffer.put(punctuation.getNumber());
-			PunctAwareByteBufferHandler.dataHandlerList.get(puncNumber-1).writeData(buffer, punctuation.getValue());
-			break;
-		default:
-			byte[] data = ObjectByteConverter.objectToBytes(punctuation);
-			buffer = ByteBuffer.allocate(data.length+4);
-			buffer.put(punctuation.getNumber());
-			buffer.putInt(data.length);
-			buffer.put(data);
-		}
-		buffer.flip();
-		return buffer;
-	}
 
 	@Override
 	protected ByteBuffer prepareObject(T object) {

@@ -57,7 +57,7 @@ import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Sample;
 /**
  * Protocol Handler for the SICK protocol supporting LMS100 and LMS151 laser
  * scanner
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class LMS1xxProtocolHandler extends
@@ -113,14 +113,14 @@ public class LMS1xxProtocolHandler extends
 	private boolean passiveMode;
 
 	/**
-     * 
+     *
      */
 	public LMS1xxProtocolHandler() {
 		super();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param direction
 	 * @param access
 	 * @param dataHandler
@@ -133,19 +133,19 @@ public class LMS1xxProtocolHandler extends
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
 	}
-	
+
 	private void init_internal() {
 		this.buffer = ByteBuffer.allocateDirect(1024);
 		setByteOrder(optionsMap.get(BYTEORDER, "BIG_ENDIAN"));
 		setUsername(optionsMap.get(USERNAME, "client"));
-		setPassword(optionsMap.get(PASSWORD, "client"));		
+		setPassword(optionsMap.get(PASSWORD, "client"));
 		setAddRawData(optionsMap.getBoolean(INIT_RAWDATA, false));
 		setIgnoreTimestamp(optionsMap.getBoolean(IGNORE_TIMESTAMP, false));
 		setPassiveMode(optionsMap.getBoolean(PASSIVE_MODE, false));
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -154,7 +154,7 @@ public class LMS1xxProtocolHandler extends
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -169,7 +169,7 @@ public class LMS1xxProtocolHandler extends
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -187,20 +187,20 @@ public class LMS1xxProtocolHandler extends
 				} else if (this.username.equalsIgnoreCase("service")) {
 					send(LMS1xxConstants.SET_ACCESS_MODE_SERVICE_COMMAND.getBytes(this.charset));
 				}
-				
+
 				TimeZone tz = TimeZone.getTimeZone("UTC");
 				Calendar now = Calendar.getInstance(tz);
 				SimpleDateFormat df = new SimpleDateFormat("+yyyy +M +d +h +m +s +S");
 				df.setTimeZone(tz);
-				String timeString = LMS1xxConstants.SET_DATETIME_COMMAND + " " + df.format(now.getTime());				
-				send(timeString.toString().getBytes(charset));								
-				
+				String timeString = LMS1xxConstants.SET_DATETIME_COMMAND + " " + df.format(now.getTime());
+				send(timeString.toString().getBytes(charset));
+
 				send(LMS1xxConstants.RUN_COMMAND.getBytes(charset));
-				
+
 				send(LMS1xxConstants.STOP_SCAN_COMMAND.getBytes(charset));
-				
+
 				send(LMS1xxConstants.START_SCAN_COMMAND.getBytes(charset));
-								
+
 			} catch (IOException e) {
 				LMS1xxProtocolHandler.LOG.error(e.getMessage(), e);
 			}
@@ -208,7 +208,7 @@ public class LMS1xxProtocolHandler extends
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -245,7 +245,7 @@ public class LMS1xxProtocolHandler extends
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -290,7 +290,7 @@ public class LMS1xxProtocolHandler extends
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -304,10 +304,11 @@ public class LMS1xxProtocolHandler extends
 			}
 			LMS1xxProtocolHandler.LOG.debug("Disconnected");
 		}
+		getTransfer().propagateDone();
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -318,7 +319,7 @@ public class LMS1xxProtocolHandler extends
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -382,7 +383,7 @@ public class LMS1xxProtocolHandler extends
 			this.setByteOrder(ByteOrder.BIG_ENDIAN);
 		}
 	}
-	
+
 	public boolean doesAddRawData() {
 		return addRawData;
 	}
@@ -390,19 +391,19 @@ public class LMS1xxProtocolHandler extends
 	public void setAddRawData(boolean addRawData) {
 		this.addRawData = addRawData;
 	}
-	
+
 	public void setIgnoreTimestamp(boolean ignore) {
 		ignoreTimestamp  = ignore;
 	}
-	
+
 	public boolean doesIgnoreTimestamp() {
 		return ignoreTimestamp;
-	}	
-	
+	}
+
 	public void setPassiveMode(boolean passiveMode) {
 		this.passiveMode = passiveMode;
 	}
-	
+
 	public boolean isInPassiveMode() {
 		return passiveMode;
 	}
@@ -618,12 +619,12 @@ public class LMS1xxProtocolHandler extends
 			@SuppressWarnings("unused")
 			final int angularPosition = Integer.parseInt(data[pos++], 16);
 		}
-		
+
 		measurement.setTimeStamp(calendar.getTimeInMillis());
-		
+
 		return measurement;
 	}
-	
+
 	public static Map<String, Object> measurementToMap(Measurement measurement)
 	{
 		final Map<String, Object> event = new HashMap<String, Object>();
@@ -718,60 +719,60 @@ public class LMS1xxProtocolHandler extends
 		return event;
 	}
 
-	private KeyValueObject<IMetaAttribute> parseLMS1xx(final String message) 
-			throws LMS1xxLoginException,	LMS1xxUnknownMessageException 
+	private KeyValueObject<IMetaAttribute> parseLMS1xx(final String message)
+			throws LMS1xxLoginException,	LMS1xxUnknownMessageException
 	{
 		final String[] data = message.split(" ");
-		if (message.startsWith(LMS1xxConstants.SRA)) 
+		if (message.startsWith(LMS1xxConstants.SRA))
 		{
-			if (LMS1xxConstants.LCM_STATE.equalsIgnoreCase(data[1])) 
+			if (LMS1xxConstants.LCM_STATE.equalsIgnoreCase(data[1]))
 			{
 				final int dirtyness = Integer.parseInt(data[2]);
 				LMS1xxProtocolHandler.LOG.info("Dirtyness {} ", dirtyness);
 			}
-		} 
-		else if (message.startsWith(LMS1xxConstants.SEA)) 
+		}
+		else if (message.startsWith(LMS1xxConstants.SEA))
 		{
 			LMS1xxProtocolHandler.LOG.debug("Receive message {} ({} byte)", message, message.getBytes().length);
-		} 
-		else if (message.startsWith(LMS1xxConstants.SAN)) 
+		}
+		else if (message.startsWith(LMS1xxConstants.SAN))
 		{
-			if (LMS1xxConstants.SET_ACCESS_MODE.equalsIgnoreCase(data[1])) 
+			if (LMS1xxConstants.SET_ACCESS_MODE.equalsIgnoreCase(data[1]))
 			{
 				LMS1xxProtocolHandler.LOG.info("Login success {}", data[2]);
-			} 
-			else if (LMS1xxConstants.SET_DATETIME.equalsIgnoreCase(data[1])) 
+			}
+			else if (LMS1xxConstants.SET_DATETIME.equalsIgnoreCase(data[1]))
 			{
 				LMS1xxProtocolHandler.LOG.info("Set date time success {}", data[2]);
-			} 
-			else 
+			}
+			else
 			{
 				LMS1xxProtocolHandler.LOG.debug("Receive message {} ({} byte)", message, message.getBytes().length);
 			}
-		} 
-		else if (message.startsWith(LMS1xxConstants.SSN)) 
+		}
+		else if (message.startsWith(LMS1xxConstants.SSN))
 		{
 			if (LMS1xxConstants.LMD_SCANDATA.equalsIgnoreCase(data[1]))
 			{
 				Measurement measurement = parseLMS1xxScanData(data);
 //				System.out.println("Timestamp diff = " + (measurement.getTimeStamp() - System.currentTimeMillis()));
-				
+
 				if (ignoreTimestamp)
 					measurement.setTimeStamp(System.currentTimeMillis());
-					
+
 				Map<String, Object> event = measurementToMap(measurement);
-				
+
 				if (addRawData)
 					event.put(LMS1xxProtocolHandler.RAW_DATA, (char) LMS1xxConstants.STX + message + (char) LMS1xxConstants.ETX);
-				
+
 				return new KeyValueObject<>(event);
 			}
 		}
-		else if (message.startsWith(LMS1xxConstants.SFA)) 
+		else if (message.startsWith(LMS1xxConstants.SFA))
 			throw new LMS1xxLoginException(message);
 		else
 			throw new LMS1xxUnknownMessageException(message);
-		
+
 		return null;
 	}
 

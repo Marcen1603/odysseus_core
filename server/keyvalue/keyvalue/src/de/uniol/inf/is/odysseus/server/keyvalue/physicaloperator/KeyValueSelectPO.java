@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,16 +31,16 @@ public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<
 
 	private IPredicate<? super T> predicate;
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
-	
+
 	@Override
 	public IPredicate<? super T> getPredicate() {
 		return predicate;
 	}
 
 	public KeyValueSelectPO(IPredicate<? super T> predicate){
-		this.predicate = predicate.clone();	
+		this.predicate = predicate.clone();
 	}
-	
+
 	public KeyValueSelectPO(KeyValueSelectPO<T> po){
 		super(po);
 		this.predicate = po.predicate.clone();
@@ -51,7 +51,7 @@ public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-	
+
 	@Override
 	protected void process_next(T object, int port) {
 		if (predicate.evaluate(object)) {
@@ -63,19 +63,20 @@ public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<
 			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+		IPunctuation outPunctuation = predicate.processPunctuation(punctuation);
+		sendPunctuation(outPunctuation);
 	}
-	
+
 	@Override
 	public void process_open() throws OpenFailedException{
 	}
-	
+
 	@Override
 	public String toString(){
-		return super.toString() + " predicate: " + this.getPredicate().toString(); 
+		return super.toString() + " predicate: " + this.getPredicate().toString();
 	}
 
 	public IHeartbeatGenerationStrategy<T> getHeartbeatGenerationStrategy() {

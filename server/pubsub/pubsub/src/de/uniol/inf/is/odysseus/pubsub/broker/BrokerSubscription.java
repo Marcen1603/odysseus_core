@@ -48,7 +48,7 @@ public class BrokerSubscription<T extends IStreamObject<?>> implements Comparabl
 
 	public BrokerSubscription(SubscribePO<T> subscriber) {
 		this.setSubscriber(subscriber);
-		this.setPredicates(subscriber.getPredicates());
+		this.setPredicates(subscriber.getPredicates2());
 		this.setTopics(subscriber.getTopics());
 	}
 

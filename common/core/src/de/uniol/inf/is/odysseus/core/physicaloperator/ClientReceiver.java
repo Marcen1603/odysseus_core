@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +61,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * ReceiverPO without AbstractSource but with ISource
- * 
+ *
  * @author Merlin Wasmann, Marco Grawunder
  */
 public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implements ISource<W>,
@@ -179,7 +179,7 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	public List<ISession> getSessions() {
 		return null;
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
@@ -553,7 +553,7 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 		propagateDone();
 	}
 
-	final protected void propagateDone() {
+	final public void propagateDone() {
 		// Could be that the query is already closed. In this cases the done
 		// event
 		// does not of any interest any more
@@ -670,7 +670,7 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 			}
 		}
 	}
-	
+
 	@Override
 	public void close(IOperatorOwner id) {
 		this.processClose();
@@ -794,7 +794,7 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	@Override
 	public void setLogicalOperator(ILogicalOperator op) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

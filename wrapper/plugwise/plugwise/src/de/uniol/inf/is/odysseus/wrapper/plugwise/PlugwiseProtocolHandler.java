@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
@@ -32,7 +31,7 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 		super(direction, access, dataHandler, options);
 		init_internal();
 	}
-	
+
 	private void init_internal() {
 		if (optionsMap.containsKey(CIRCLE_MAC)) {
 			circleMac = optionsMap.get(CIRCLE_MAC);
@@ -40,7 +39,7 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 			throw new IllegalArgumentException("No Circle Mac defined!");
 		}
 	}
-	
+
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
@@ -53,8 +52,8 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 
 	@SuppressWarnings("unused")
 	private byte[] getMessage(byte[] id, byte[] mac, byte[] args){
-		
-		
+
+
 		byte[] header = { 0x05, 0x05, 0x03, 0x03 };
 		byte[] footer = { 0x0d, 0x0a };
 
@@ -65,7 +64,7 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 		if(args != null){
 			messageLength+=args.length;
 		}
-		
+
 		byte[] message = new byte[messageLength];
 		System.arraycopy(id, 0, message, 0, id.length);
 		int curPos = id.length;
@@ -78,8 +77,8 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 			System.arraycopy(args, 0, message, curPos, args.length);
 			curPos += args.length;
 		}
-		
-		
+
+
 		byte[] chksum = Checksum.getCRC16_bytes(message);
 
 		byte[] toSend = new byte[header.length+footer.length+id.length+chksum.length];
@@ -89,10 +88,10 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 		System.arraycopy(chksum, 0, toSend, header.length+message.length, chksum.length);
 		System.arraycopy(footer, 0, toSend, header.length+message.length+chksum.length, footer.length);
 		return toSend;
-		
+
 	}
-	
-	
+
+
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
@@ -103,7 +102,7 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 
 		byte[] init = {0x00, 0x0a, (byte) 0xb4, (byte) 0xc3};
 		getTransportHandler().send(init);
-		
+
 		//0017000D6F0000B1B9A90180CC
 		byte[] on1 = {0x00,0x17,0x00,0x0D,0x6F,0x00,0x00,(byte) 0xB1,(byte) 0xB9,(byte) 0xA9,0x01,(byte) 0x80,(byte) 0xCC};
 		getTransportHandler().send(on1);
@@ -127,18 +126,6 @@ public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> ex
 	@Override
 	public String getName() {
 		return NAME;
-	}
-
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

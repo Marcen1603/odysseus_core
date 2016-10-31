@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for logicalQueryInfo complex type.
+ * <p>Java-Klasse f�r logicalQueryInfo complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="logicalQueryInfo">
@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="parserID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="containsCycles" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="priority" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="name" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}resource" minOccurs="0"/>
  *         &lt;element name="notice" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parameters" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}pair" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
@@ -61,13 +61,13 @@ public class LogicalQueryInfo {
     protected String parserID;
     protected boolean containsCycles;
     protected int priority;
-    protected String name;
+    protected Resource name;
     protected String notice;
     @XmlElement(nillable = true)
     protected List<Pair> parameters;
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      */
     public int getId() {
@@ -75,7 +75,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      */
     public void setId(int value) {
@@ -83,7 +83,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the queryText property.
+     * Ruft den Wert der queryText-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -95,7 +95,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the queryText property.
+     * Legt den Wert der queryText-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -107,7 +107,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the parserID property.
+     * Ruft den Wert der parserID-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -119,7 +119,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the parserID property.
+     * Legt den Wert der parserID-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -131,7 +131,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the containsCycles property.
+     * Ruft den Wert der containsCycles-Eigenschaft ab.
      * 
      */
     public boolean isContainsCycles() {
@@ -139,7 +139,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the containsCycles property.
+     * Legt den Wert der containsCycles-Eigenschaft fest.
      * 
      */
     public void setContainsCycles(boolean value) {
@@ -147,7 +147,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the priority property.
+     * Ruft den Wert der priority-Eigenschaft ab.
      * 
      */
     public int getPriority() {
@@ -155,7 +155,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the priority property.
+     * Legt den Wert der priority-Eigenschaft fest.
      * 
      */
     public void setPriority(int value) {
@@ -163,31 +163,31 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Gets the value of the name property.
+     * Ruft den Wert der name-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Resource }
      *     
      */
-    public String getName() {
+    public Resource getName() {
         return name;
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Resource }
      *     
      */
-    public void setName(String value) {
+    public void setName(Resource value) {
         this.name = value;
     }
 
     /**
-     * Gets the value of the notice property.
+     * Ruft den Wert der notice-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -199,7 +199,7 @@ public class LogicalQueryInfo {
     }
 
     /**
-     * Sets the value of the notice property.
+     * Legt den Wert der notice-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

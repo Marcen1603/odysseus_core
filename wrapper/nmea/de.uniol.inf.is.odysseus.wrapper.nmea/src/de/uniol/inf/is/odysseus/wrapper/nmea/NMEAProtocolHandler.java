@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.AISSentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.Sentence;
 import de.uniol.inf.is.odysseus.wrapper.nmea.sentence.SentenceFactory;
@@ -48,9 +47,9 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
  * This wrapper can be used as a ProtocolHandler (NMEA 0183) with GenericPush or
  * GenericPull. The DataHandler (KeyValueObject) should be used with this
  * ProtocolHandler.
- * 
+ *
  * @author Jurgen Boger <juergen.boger@offis.de>
- * 
+ *
  */
 public class NMEAProtocolHandler extends
 		AbstractProtocolHandler<KeyValueObject<IMetaAttribute>> {
@@ -153,7 +152,7 @@ public class NMEAProtocolHandler extends
 
 	/**
 	 * Parses the given String an return a KeyValueObject.
-	 * 
+	 *
 	 * @param nmea
 	 *            String to be parsed.
 	 * @return List of KeyValueObjects (original parsed and decoded parsed
@@ -221,18 +220,18 @@ public class NMEAProtocolHandler extends
 	public void write(KeyValueObject<IMetaAttribute> object)
 			throws IOException {
 		try {
-			//Case1: Avoid writing decoded AIS messages, because such messages are only processed 
+			//Case1: Avoid writing decoded AIS messages, because such messages are only processed
 			//and transfered between the operators (transfered, not transported, from operator to another)
 			if(object.getKeyValue("decodedAIS") != null)
 				return;
-			//Case2: get the sentence from MetaData if existed  
+			//Case2: get the sentence from MetaData if existed
 			Object obj = object.getKeyValue("originalNMEA");
 			if (obj instanceof Sentence)
 			{
 				Sentence sentence = (Sentence) obj;
 				getTransportHandler().send(sentence.toNMEA().getBytes());
 			}
-			//Case3: create the sentence out from the key-value attributes 
+			//Case3: create the sentence out from the key-value attributes
 			else
 			{
 				Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAttributes());
@@ -259,18 +258,6 @@ public class NMEAProtocolHandler extends
 	}
 
 	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
 		if (!(o instanceof NMEAProtocolHandler)) {
 			return false;
@@ -280,7 +267,7 @@ public class NMEAProtocolHandler extends
 			return true;
 		}
 	}
-	
+
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
@@ -288,5 +275,5 @@ public class NMEAProtocolHandler extends
 		} else {
 			return ITransportExchangePattern.OutOnly;
 		}
-	}	
+	}
 }

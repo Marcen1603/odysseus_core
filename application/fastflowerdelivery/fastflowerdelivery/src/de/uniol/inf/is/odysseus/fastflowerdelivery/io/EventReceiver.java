@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.Receive
  */
 @SuppressWarnings("rawtypes")
 public class EventReceiver extends Thread implements ITransferHandler {
-	
+
 	/**
 	 * As soon as this thread is started, it will open a the connection
 	 * to odysseus. The sinks in odysseus need to be running already
@@ -43,29 +43,29 @@ public class EventReceiver extends Thread implements ITransferHandler {
 	public void run() {
 		openConnection();
 	}
-	
+
 	/**
 	 * The host address of odysseus
 	 */
 	private String host;
-	
+
 	/**
-	 * The port to listen on 
+	 * The port to listen on
 	 */
 	private int port;
-	
+
 	/**
 	 * Used to translate and process any incoming data.
 	 */
 	private ISinkEventHandler sinkEventHandler;
-	
+
 	/**
 	 * Creates the event receiver
-	 * 
+	 *
 	 * @param hostAddress
 	 * 			The host address of odysseus
 	 * @param port
-	 * 			The port to listen on 
+	 * 			The port to listen on
 	 * @param sinkEventHandler
 	 * 			The handler used to translate and process the incoming data
 	 */
@@ -74,36 +74,36 @@ public class EventReceiver extends Thread implements ITransferHandler {
 		this.port = port;
 		this.sinkEventHandler = sinkEventHandler;
 	}
-	
+
 	/**
 	 * Starts the event receiver by opening a ReceiverPO
 	 */
 	@SuppressWarnings("unchecked")
-	private void openConnection() {		
+	private void openConnection() {
 		OptionMap options = new OptionMap();
 		options.setOption("host", host);
 		options.setOption("port", "" + port);
 		options.setOption("autoconnect", "false");
-		
+
 		 IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.getStreamObjectDataHandler(
 						"tuple", getSchema());
-		
+
 		ReceiverPO receiver = new ReceiverPO();
 		IProtocolHandler ph = ProtocolHandlerRegistry.getInstance(
 				"sizebytebuffer", ITransportDirection.IN, IAccessPattern.PUSH, options,
 				dataHandler);
 		ph.setTransfer(this);
-		
+
 		ITransportHandler transportHandler = TransportHandlerRegistry.getInstance(
 				"nonblockingtcp", ph, options);
-		
+
 		ph.setTransportHandler(transportHandler);
-		
+
 		receiver.setProtocolHandler(ph);
-		
+
 		receiver.open(null, 0, 0, null, null);
 	}
-	
+
 	/**
 	 * Calls the processTuple method on the sink event handler,
 	 * passing any tuple received
@@ -113,14 +113,14 @@ public class EventReceiver extends Thread implements ITransferHandler {
 		if(toTransfer instanceof Tuple)
 			sinkEventHandler.processTuple((Tuple)toTransfer);
 	}
-	
+
 	/**
 	 * Builds the SDFSchema from the data provided by the sink event handler
 	 * @return the SDFSchema to use for this receiver
 	 */
 	private SDFSchema getSchema() {
 		ArrayList<SDFAttribute> attr = new ArrayList<SDFAttribute>();
-		for(String dataType : sinkEventHandler.getSchema()) 
+		for(String dataType : sinkEventHandler.getSchema())
 			attr.add(new SDFAttribute("", "", new SDFDatatype(dataType), null, null, null));
 		return SDFSchemaFactory.createNewTupleSchema("", attr);
 	}
@@ -131,13 +131,19 @@ public class EventReceiver extends Thread implements ITransferHandler {
 	@Override
 	public void transfer(Object object, int sourceOutPort) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void propagateDone() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

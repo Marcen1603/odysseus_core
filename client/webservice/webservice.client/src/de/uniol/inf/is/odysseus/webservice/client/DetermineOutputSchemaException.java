@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DetermineOutputSchemaException complex type.
+ * <p>Java-Klasse f�r DetermineOutputSchemaException complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="DetermineOutputSchemaException">
@@ -42,7 +42,7 @@ public class DetermineOutputSchemaException {
     protected String message;
 
     /**
-     * Gets the value of the message property.
+     * Ruft den Wert der message-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -54,7 +54,7 @@ public class DetermineOutputSchemaException {
     }
 
     /**
-     * Sets the value of the message property.
+     * Legt den Wert der message-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

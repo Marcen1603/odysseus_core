@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 
 /**
  * Used by MigrationHelper to abstract from window appraoches.
- * 
+ *
  * @author Tobias Witt
  *
  */
 public interface IWindow {
-	
+
 	public long getWindowSize();
+	public long getWindowAdvance();
 	public WindowType getWindowType();
 }

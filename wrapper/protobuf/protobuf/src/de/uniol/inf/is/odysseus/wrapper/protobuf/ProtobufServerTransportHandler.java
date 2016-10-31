@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -69,7 +69,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		SimpleChannelHandler implements ITransportHandler{
 
 	final AbstractTransportHandlerDelegate<Tuple<IMetaAttribute>> delegate;
-	
+
 	private static final String NAME = "ProtobufServer";
 	public static Logger logger = LoggerFactory
 			.getLogger(ProtobufServerTransportHandler.class);
@@ -80,44 +80,49 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	private List<ChannelHandlerContext> channelHandlerContextList = new CopyOnWriteArrayList<ChannelHandlerContext>();
 	final private SocketAddress address;
 	final private R messagePrototype;
-	
+
 	private IExecutor executor;
-			
+
 	public ProtobufServerTransportHandler() {
 		delegate = new AbstractTransportHandlerDelegate<>(null, null, this,null);
 		address = null;
 		messagePrototype = null;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ProtobufServerTransportHandler(IProtocolHandler protocolHandler, OptionMap options) {
 		int port = Integer.parseInt(options.get("port"));
-		
+
 		this.address = new InetSocketAddress("0.0.0.0",port);
 		this.messagePrototype = (R) ProtobufTypeRegistry.getMessageType(options.get("type"));
 		if (messagePrototype == null){
 			throw new RuntimeException( new IllegalArgumentException("No valid type given: " +options.get("type")));
 		}
-		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), protocolHandler.getDirection(), this, options); 
-		
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), protocolHandler.getDirection(), this, options);
+
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);
-		
+
 	}
 
 	@Override
 	public IExecutor getExecutor() {
 		return executor;
 	}
-	
+
 	@Override
 	public void setExecutor(IExecutor executor) {
 		this.executor = executor;
 	}
-	
+
+	@Override
+	public void updateOption(String key, String value) {
+		throw new UnsupportedOperationException("Sorry. Update of options not supported by "+this.getName());
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.jboss.netty.channel.SimpleChannelHandler#channelBound(org.jboss.netty
 	 * .channel.ChannelHandlerContext,
@@ -131,7 +136,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.jboss.netty.channel.SimpleChannelHandler#channelConnected(org.jboss
 	 * .netty.channel.ChannelHandlerContext,
@@ -146,7 +151,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.jboss.netty.channel.SimpleChannelHandler#channelDisconnected(org.
 	 * jboss.netty.channel.ChannelHandlerContext,
@@ -163,7 +168,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.jboss.netty.channel.SimpleChannelHandler#messageReceived(org.jboss
 	 * .netty.channel.ChannelHandlerContext,
@@ -177,9 +182,9 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 				logger.debug(new Date() + ":Received message No." + counter);
 			}
 		}
-		
+
 		GeneratedMessage input = (GeneratedMessage) m;
-		
+
 		Map<FieldDescriptor, Object> test = input.getAllFields();
 		Tuple<IMetaAttribute> ret = new Tuple<>(delegate.getSchema().size(), false);
 
@@ -190,13 +195,13 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 			}
 		}
 
-		
+
 		delegate.fireProcess(ret);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.jboss.netty.channel.SimpleChannelHandler#exceptionCaught(org.jboss
 	 * .netty.channel.ChannelHandlerContext,
@@ -207,32 +212,32 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		logger.error("Exception caught: " + e);
 		ctx.getChannel().close();
 	}
-	
+
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		delegate.open();
 	}
-	
+
 	@Override
 	public void processInOpen() throws IOException {
-		open(address, messagePrototype);		
+		open(address, messagePrototype);
 	}
-	
+
 	@Override
 	public void setSchema(SDFSchema schema) {
 		delegate.setSchema(schema);
 	}
-	
+
 	@Override
 	public SDFSchema getSchema() {
 		return delegate.getSchema();
 	}
-	
+
 	@Override
 	public void processOutOpen() throws IOException {
-		
+
 	}
-	
+
 	public void open(SocketAddress address, final R message) {
 		if (bootstrap == null) {
 			ChannelFactory factory = new NioServerSocketChannelFactory(
@@ -265,7 +270,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		}
 	}
 
-	
+
 	@Override
 	public void processInClose() throws IOException {
 		for (ChannelHandlerContext ctx:channelHandlerContextList){
@@ -274,13 +279,13 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		openChannel.disconnect();
 		openChannel.close().awaitUninterruptibly();
 	}
-	
+
 	@Override
 	public void processOutClose() throws IOException {
 		throw new RuntimeException("Not implemented");
 
 	}
-	
+
 	@Override
 	public synchronized void close() throws IOException {
 		delegate.close();
@@ -302,7 +307,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	public void send(byte[] message) throws IOException {
 		throw new RuntimeException("Not implemented");
 	}
-	
+
 	@Override
 	public void send(Object message) throws IOException {
 		throw new RuntimeException("Not implemented");
@@ -345,7 +350,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation) {
 		// Nothing to do

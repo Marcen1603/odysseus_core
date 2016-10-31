@@ -295,6 +295,11 @@ public class BaDaStRecoveryTransferHandler<StreamObject extends IStreamObject<IM
 	}
 
 	@Override
+	public void propagateDone() {
+		this.recoveryPO.propagateDone();
+	}
+
+	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
 		this.recoveryPO.sendPunctuation(punctuation, 0);
 	}
