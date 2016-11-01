@@ -12,6 +12,9 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.initialization.exception.ParallelizationTransormationException;
+import de.uniol.inf.is.odysseus.parallelization.initialization.plananalysis.IPlanAnalyser;
+import de.uniol.inf.is.odysseus.parallelization.initialization.plananalysis.StandardPlanAnalyser;
+import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParallelizationIndividualConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.interoperator.InterOperatorIndividualInitializer;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intraoperator.IntraOperatorIndividualInitializer;
 
@@ -24,13 +27,17 @@ public class Planrewriter {
 	private final static Logger LOG = LoggerFactory.getLogger(Planrewriter.class);
 	
 	public void rewritePlan(ILogicalQuery query, QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters){
-		//TODO
+		//TODO remove 
 		try {
 			InterOperatorIndividualInitializer.createInterIndividualConfiguration(config.values(), "test_inter", 4, 10000, "JoinTransformationStrategy", "HashFragmentAO");
 		} catch (ParallelizationTransormationException e) {
 			LOG.error(e.getMessage(), e);
 		}
 		IntraOperatorIndividualInitializer.createIndividualIntraOperatorConfiguration(config.values(), "test_intra", 4, 10000);
+		//TODO use List
+		IPlanAnalyser planAnalyzer = new StandardPlanAnalyser();
+		List<IParallelizationIndividualConfiguration> possibleParallelizations = planAnalyzer.getParalisableOperators(query);
+		//LOG.debug("Parallizable operators / regions: " + possibleParallelizations.size());
 	}
 
 }
