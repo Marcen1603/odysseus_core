@@ -6,10 +6,16 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.BoolConstant
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Bracket
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.NOT
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Select_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.StringConstant
@@ -17,13 +23,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Bracket
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant
 
 /**
  * Generates code from your model files on save.
@@ -143,7 +143,7 @@ class CqlGenerator extends AbstractGenerator
 			switch e
 			{
 				IntConstant: 	str = e.value + ' '
-				DoubleConstant: str = e.value + ' '
+				FloatConstant: str = e.value + ' '
 				StringConstant: str = e.value + ' '
 				BoolConstant: 	str = e.value + ' '
 				Attribute: 		str = e.value.name + ' '

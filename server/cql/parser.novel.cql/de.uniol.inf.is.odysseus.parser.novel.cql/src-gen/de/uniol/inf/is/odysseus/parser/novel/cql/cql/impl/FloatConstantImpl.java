@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -14,18 +14,18 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Double Constant</b></em>'.
+ * An implementation of the model object '<em><b>Float Constant</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.DoubleConstantImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.FloatConstantImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
+public class FloatConstantImpl extends ExpressionImpl implements FloatConstant
 {
   /**
    * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
@@ -52,7 +52,7 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
    * <!-- end-user-doc -->
    * @generated
    */
-  protected DoubleConstantImpl()
+  protected FloatConstantImpl()
   {
     super();
   }
@@ -65,7 +65,7 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
   @Override
   protected EClass eStaticClass()
   {
-    return CqlPackage.Literals.DOUBLE_CONSTANT;
+    return CqlPackage.Literals.FLOAT_CONSTANT;
   }
 
   /**
@@ -88,7 +88,7 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
     String oldValue = value;
     value = newValue;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CqlPackage.DOUBLE_CONSTANT__VALUE, oldValue, value));
+      eNotify(new ENotificationImpl(this, Notification.SET, CqlPackage.FLOAT_CONSTANT__VALUE, oldValue, value));
   }
 
   /**
@@ -101,7 +101,7 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
   {
     switch (featureID)
     {
-      case CqlPackage.DOUBLE_CONSTANT__VALUE:
+      case CqlPackage.FLOAT_CONSTANT__VALUE:
         return getValue();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -117,7 +117,7 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
   {
     switch (featureID)
     {
-      case CqlPackage.DOUBLE_CONSTANT__VALUE:
+      case CqlPackage.FLOAT_CONSTANT__VALUE:
         setValue((String)newValue);
         return;
     }
@@ -134,7 +134,7 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
   {
     switch (featureID)
     {
-      case CqlPackage.DOUBLE_CONSTANT__VALUE:
+      case CqlPackage.FLOAT_CONSTANT__VALUE:
         setValue(VALUE_EDEFAULT);
         return;
     }
@@ -151,7 +151,7 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
   {
     switch (featureID)
     {
-      case CqlPackage.DOUBLE_CONSTANT__VALUE:
+      case CqlPackage.FLOAT_CONSTANT__VALUE:
         return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
     }
     return super.eIsSet(featureID);
@@ -174,4 +174,4 @@ public class DoubleConstantImpl extends ExpressionImpl implements DoubleConstant
     return result.toString();
   }
 
-} //DoubleConstantImpl
+} //FloatConstantImpl

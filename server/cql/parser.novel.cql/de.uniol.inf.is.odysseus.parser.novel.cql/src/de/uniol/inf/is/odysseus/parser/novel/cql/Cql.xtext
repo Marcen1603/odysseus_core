@@ -4,21 +4,22 @@ generate cql "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/Cql"
 
 Model: statements+=Statement*;
 	
-Statement:  (type=Select_Statement| type=Create_Statement) ';' ; 
+Statement:  (type=Select_Statement| type=Create_Statement) (';')? ; 
 
 Nested_Statement: '(' Select_Statement ')' ;
 
 // Data types //////////////////////////////////////////////////////////
 
 Atomic returns Expression:
+//	{NumberConstant} (value=INT | value=INT '.' INT) |
 	{IntConstant} value=INT |
-	{DoubleConstant} value= FLOAT_NUMBER |
+	{FloatConstant} value=FLOAT_NUMBER |
 	{StringConstant} value=STRING |
-	{BoolConstant} value=('TRUE' | 'FALSE')
-	| {Attribute} value=[Attribute]
+	{BoolConstant} value=('TRUE' | 'FALSE') |
+	{Attribute} value=[Attribute]
 ;
 
-terminal FLOAT_NUMBER: ('1'..'9') ('0'..'9')* '.' ('0'..'9');
+terminal FLOAT_NUMBER:  INT '.' INT ;
 
 Alias: 
 	name=ID
@@ -37,7 +38,7 @@ enum FunctionType: SUM | ADD | MAX | MIN | COUNT | AVG | LAST | FIRST ;
 
 // Expressions //////////////////////////////////////////////////////////
 
-ExpressionsModel: {ExpressionsModel} elements+=Expression*;
+ExpressionsModel: {ExpressionsModel} elements+=Expression+;
 
 Expression: Or;
 
@@ -48,6 +49,15 @@ Or returns Expression:
 And returns Expression:
 	Equalitiy ({And.left=current} 'AND' right=Equalitiy)*
 ;
+
+
+//Or returns Expression:
+//	And ({Or.left=current} 'OR' right=And)*
+//;
+//
+//And returns Expression:
+//	Equalitiy ({And.left=current} 'AND' right=Equalitiy)*
+//;
 
 Equalitiy returns Expression:
 	Comparison (

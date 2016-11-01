@@ -53,10 +53,10 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
 		//Statement:
-		//	(type=Select_Statement | type=Create_Statement) ';';
+		//	(type=Select_Statement | type=Create_Statement) ';'?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(type=Select_Statement | type=Create_Statement) ';'
+		//(type=Select_Statement | type=Create_Statement) ';'?
 		public Group getGroup() { return cGroup; }
 		
 		//(type=Select_Statement | type=Create_Statement)
@@ -74,7 +74,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		//Create_Statement
 		public RuleCall getTypeCreate_StatementParserRuleCall_0_1_0() { return cTypeCreate_StatementParserRuleCall_0_1_0; }
 		
-		//';'
+		//';'?
 		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
 	}
 	public class Nested_StatementElements extends AbstractParserRuleElementFinder {
@@ -108,7 +108,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cValueAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cValueINTTerminalRuleCall_0_1_0 = (RuleCall)cValueAssignment_0_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Action cDoubleConstantAction_1_0 = (Action)cGroup_1.eContents().get(0);
+		private final Action cFloatConstantAction_1_0 = (Action)cGroup_1.eContents().get(0);
 		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cValueFLOAT_NUMBERTerminalRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
@@ -129,11 +129,11 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//// Data types //////////////////////////////////////////////////////////
 		//Atomic Expression:
-		//	{IntConstant} value=INT | {DoubleConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
+		//	{IntConstant} value=INT | {FloatConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
 		//	value=('TRUE' | 'FALSE') | {Attribute} value=[Attribute]
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{IntConstant} value=INT | {DoubleConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
+		//{IntConstant} value=INT | {FloatConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
 		//value=('TRUE' | 'FALSE') | {Attribute} value=[Attribute]
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
@@ -149,11 +149,11 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getValueINTTerminalRuleCall_0_1_0() { return cValueINTTerminalRuleCall_0_1_0; }
 		
-		//{DoubleConstant} value=FLOAT_NUMBER
+		//{FloatConstant} value=FLOAT_NUMBER
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//{DoubleConstant}
-		public Action getDoubleConstantAction_1_0() { return cDoubleConstantAction_1_0; }
+		//{FloatConstant}
+		public Action getFloatConstantAction_1_0() { return cFloatConstantAction_1_0; }
 		
 		//value=FLOAT_NUMBER
 		public Assignment getValueAssignment_1_1() { return cValueAssignment_1_1; }
@@ -1050,7 +1050,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Statement:
-	//	(type=Select_Statement | type=Create_Statement) ';';
+	//	(type=Select_Statement | type=Create_Statement) ';'?;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -1071,7 +1071,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//// Data types //////////////////////////////////////////////////////////
 	//Atomic Expression:
-	//	{IntConstant} value=INT | {DoubleConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
+	//	{IntConstant} value=INT | {FloatConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
 	//	value=('TRUE' | 'FALSE') | {Attribute} value=[Attribute]
 	public AtomicElements getAtomicAccess() {
 		return pAtomic;
@@ -1082,7 +1082,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal FLOAT_NUMBER:
-	//	'1'..'9' '0'..'9'* '.' '0'..'9';
+	//	INT '.' INT;
 	public TerminalRule getFLOAT_NUMBERRule() {
 		return tFLOAT_NUMBER;
 	}

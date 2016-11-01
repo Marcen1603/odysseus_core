@@ -66,7 +66,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="IntConstant" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DoubleConstant" eSuperTypes="#//Expression">
+  <eClassifiers xsi:type="ecore:EClass" name="FloatConstant" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StringConstant" eSuperTypes="#//Expression">

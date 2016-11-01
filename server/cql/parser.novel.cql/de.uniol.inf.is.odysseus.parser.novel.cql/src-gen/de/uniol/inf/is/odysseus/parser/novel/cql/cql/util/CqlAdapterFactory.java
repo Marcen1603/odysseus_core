@@ -151,9 +151,9 @@ public class CqlAdapterFactory extends AdapterFactoryImpl
         return createIntConstantAdapter();
       }
       @Override
-      public Adapter caseDoubleConstant(DoubleConstant object)
+      public Adapter caseFloatConstant(FloatConstant object)
       {
-        return createDoubleConstantAdapter();
+        return createFloatConstantAdapter();
       }
       @Override
       public Adapter caseStringConstant(StringConstant object)
@@ -458,16 +458,16 @@ public class CqlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant <em>Double Constant</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant <em>Float Constant</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant
    * @generated
    */
-  public Adapter createDoubleConstantAdapter()
+  public Adapter createFloatConstantAdapter()
   {
     return null;
   }

@@ -181,11 +181,11 @@ public class CqlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CqlPackage.DOUBLE_CONSTANT:
+      case CqlPackage.FLOAT_CONSTANT:
       {
-        DoubleConstant doubleConstant = (DoubleConstant)theEObject;
-        T result = caseDoubleConstant(doubleConstant);
-        if (result == null) result = caseExpression(doubleConstant);
+        FloatConstant floatConstant = (FloatConstant)theEObject;
+        T result = caseFloatConstant(floatConstant);
+        if (result == null) result = caseExpression(floatConstant);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -522,17 +522,17 @@ public class CqlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Double Constant</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Float Constant</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Double Constant</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Float Constant</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseDoubleConstant(DoubleConstant object)
+  public T caseFloatConstant(FloatConstant object)
   {
     return null;
   }

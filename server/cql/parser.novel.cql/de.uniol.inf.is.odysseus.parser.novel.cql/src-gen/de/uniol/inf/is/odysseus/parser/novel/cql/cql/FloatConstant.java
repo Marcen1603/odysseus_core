@@ -6,21 +6,21 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cql;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Double Constant</b></em>'.
+ * A representation of the model object '<em><b>Float Constant</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant#getValue <em>Value</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant#getValue <em>Value</em>}</li>
  * </ul>
  *
- * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getDoubleConstant()
+ * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getFloatConstant()
  * @model
  * @generated
  */
-public interface DoubleConstant extends Expression
+public interface FloatConstant extends Expression
 {
   /**
    * Returns the value of the '<em><b>Value</b></em>' attribute.
@@ -32,14 +32,14 @@ public interface DoubleConstant extends Expression
    * <!-- end-user-doc -->
    * @return the value of the '<em>Value</em>' attribute.
    * @see #setValue(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getDoubleConstant_Value()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage#getFloatConstant_Value()
    * @model
    * @generated
    */
   String getValue();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant#getValue <em>Value</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant#getValue <em>Value</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Value</em>' attribute.
@@ -48,4 +48,4 @@ public interface DoubleConstant extends Expression
    */
   void setValue(String value);
 
-} // DoubleConstant
+} // FloatConstant

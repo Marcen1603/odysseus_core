@@ -154,10 +154,12 @@ ruleStatement returns [EObject current=null]
 				)
 			)
 		)
-		otherlv_2=';'
-		{
-			newLeafNode(otherlv_2, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
-		}
+		(
+			otherlv_2=';'
+			{
+				newLeafNode(otherlv_2, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
+			}
+		)?
 	)
 ;
 
@@ -209,7 +211,7 @@ ruleAtomic returns [EObject current=null]
 			(
 				{
 					$current = forceCreateModelElement(
-						grammarAccess.getAtomicAccess().getDoubleConstantAction_1_0(),
+						grammarAccess.getAtomicAccess().getFloatConstantAction_1_0(),
 						$current);
 				}
 			)
@@ -1231,7 +1233,7 @@ ruleCreate_Statement returns [EObject current=null]
 	)
 ;
 
-RULE_FLOAT_NUMBER : '1'..'9' ('0'..'9')* '.' '0'..'9';
+RULE_FLOAT_NUMBER : RULE_INT '.' RULE_INT;
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

@@ -515,14 +515,14 @@ public interface CqlPackage extends EPackage
   int INT_CONSTANT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.DoubleConstantImpl <em>Double Constant</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.FloatConstantImpl <em>Float Constant</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.DoubleConstantImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getDoubleConstant()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.FloatConstantImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getFloatConstant()
    * @generated
    */
-  int DOUBLE_CONSTANT = 15;
+  int FLOAT_CONSTANT = 15;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -531,16 +531,16 @@ public interface CqlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DOUBLE_CONSTANT__VALUE = EXPRESSION_FEATURE_COUNT + 0;
+  int FLOAT_CONSTANT__VALUE = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Double Constant</em>' class.
+   * The number of structural features of the '<em>Float Constant</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DOUBLE_CONSTANT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+  int FLOAT_CONSTANT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.StringConstantImpl <em>String Constant</em>}' class.
@@ -1311,25 +1311,25 @@ public interface CqlPackage extends EPackage
   EAttribute getIntConstant_Value();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant <em>Double Constant</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant <em>Float Constant</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Double Constant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant
+   * @return the meta object for class '<em>Float Constant</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant
    * @generated
    */
-  EClass getDoubleConstant();
+  EClass getFloatConstant();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant#getValue <em>Value</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant#getValue <em>Value</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant#getValue()
-   * @see #getDoubleConstant()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant#getValue()
+   * @see #getFloatConstant()
    * @generated
    */
-  EAttribute getDoubleConstant_Value();
+  EAttribute getFloatConstant_Value();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.StringConstant <em>String Constant</em>}'.
@@ -2008,14 +2008,14 @@ public interface CqlPackage extends EPackage
     EAttribute INT_CONSTANT__VALUE = eINSTANCE.getIntConstant_Value();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.DoubleConstantImpl <em>Double Constant</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.FloatConstantImpl <em>Float Constant</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.DoubleConstantImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getDoubleConstant()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.FloatConstantImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.CqlPackageImpl#getFloatConstant()
      * @generated
      */
-    EClass DOUBLE_CONSTANT = eINSTANCE.getDoubleConstant();
+    EClass FLOAT_CONSTANT = eINSTANCE.getFloatConstant();
 
     /**
      * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
@@ -2023,7 +2023,7 @@ public interface CqlPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute DOUBLE_CONSTANT__VALUE = eINSTANCE.getDoubleConstant_Value();
+    EAttribute FLOAT_CONSTANT__VALUE = eINSTANCE.getFloatConstant_Value();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.StringConstantImpl <em>String Constant</em>}' class.

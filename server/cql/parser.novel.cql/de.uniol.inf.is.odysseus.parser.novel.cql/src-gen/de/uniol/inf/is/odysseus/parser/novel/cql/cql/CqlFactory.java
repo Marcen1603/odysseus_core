@@ -159,13 +159,13 @@ public interface CqlFactory extends EFactory
   IntConstant createIntConstant();
 
   /**
-   * Returns a new object of class '<em>Double Constant</em>'.
+   * Returns a new object of class '<em>Float Constant</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Double Constant</em>'.
+   * @return a new object of class '<em>Float Constant</em>'.
    * @generated
    */
-  DoubleConstant createDoubleConstant();
+  FloatConstant createFloatConstant();
 
   /**
    * Returns a new object of class '<em>String Constant</em>'.

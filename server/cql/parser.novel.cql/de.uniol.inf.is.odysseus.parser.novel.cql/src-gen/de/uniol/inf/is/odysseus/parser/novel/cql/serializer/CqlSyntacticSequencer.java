@@ -21,11 +21,13 @@ public class CqlSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected CqlGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_Select_Statement_DISTINCTKeyword_1_q;
+	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (CqlGrammarAccess) access;
 		match_Select_Statement_DISTINCTKeyword_1_q = new TokenAlias(false, true, grammarAccess.getSelect_StatementAccess().getDISTINCTKeyword_1());
+		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
 	}
 	
 	@Override
@@ -42,6 +44,8 @@ public class CqlSyntacticSequencer extends AbstractSyntacticSequencer {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
 			if (match_Select_Statement_DISTINCTKeyword_1_q.equals(syntax))
 				emit_Select_Statement_DISTINCTKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Statement_SemicolonKeyword_1_q.equals(syntax))
+				emit_Statement_SemicolonKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -54,6 +58,18 @@ public class CqlSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     name='SELECT' (ambiguity) attributes+=Attribute
 	 */
 	protected void emit_Select_Statement_DISTINCTKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     ';'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     type=Create_Statement (ambiguity) (rule end)
+	 *     type=Select_Statement (ambiguity) (rule end)
+	 */
+	protected void emit_Statement_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

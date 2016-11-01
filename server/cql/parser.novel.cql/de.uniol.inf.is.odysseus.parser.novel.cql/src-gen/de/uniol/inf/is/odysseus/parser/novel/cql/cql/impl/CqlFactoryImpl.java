@@ -81,7 +81,7 @@ public class CqlFactoryImpl extends EFactoryImpl implements CqlFactory
       case CqlPackage.SCALAR_FUNCTION: return createScalar_Function();
       case CqlPackage.CREATE_STATEMENT: return createCreate_Statement();
       case CqlPackage.INT_CONSTANT: return createIntConstant();
-      case CqlPackage.DOUBLE_CONSTANT: return createDoubleConstant();
+      case CqlPackage.FLOAT_CONSTANT: return createFloatConstant();
       case CqlPackage.STRING_CONSTANT: return createStringConstant();
       case CqlPackage.BOOL_CONSTANT: return createBoolConstant();
       case CqlPackage.OR: return createOr();
@@ -302,10 +302,10 @@ public class CqlFactoryImpl extends EFactoryImpl implements CqlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public DoubleConstant createDoubleConstant()
+  public FloatConstant createFloatConstant()
   {
-    DoubleConstantImpl doubleConstant = new DoubleConstantImpl();
-    return doubleConstant;
+    FloatConstantImpl floatConstant = new FloatConstantImpl();
+    return floatConstant;
   }
 
   /**

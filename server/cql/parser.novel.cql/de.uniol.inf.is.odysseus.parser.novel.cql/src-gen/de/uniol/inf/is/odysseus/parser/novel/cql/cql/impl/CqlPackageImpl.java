@@ -13,10 +13,10 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Condition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlFactory;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Create_Statement;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FunctionType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus;
@@ -159,7 +159,7 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass doubleConstantEClass = null;
+  private EClass floatConstantEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -653,9 +653,9 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getDoubleConstant()
+  public EClass getFloatConstant()
   {
-    return doubleConstantEClass;
+    return floatConstantEClass;
   }
 
   /**
@@ -663,9 +663,9 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDoubleConstant_Value()
+  public EAttribute getFloatConstant_Value()
   {
-    return (EAttribute)doubleConstantEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)floatConstantEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1077,8 +1077,8 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
     intConstantEClass = createEClass(INT_CONSTANT);
     createEAttribute(intConstantEClass, INT_CONSTANT__VALUE);
 
-    doubleConstantEClass = createEClass(DOUBLE_CONSTANT);
-    createEAttribute(doubleConstantEClass, DOUBLE_CONSTANT__VALUE);
+    floatConstantEClass = createEClass(FLOAT_CONSTANT);
+    createEAttribute(floatConstantEClass, FLOAT_CONSTANT__VALUE);
 
     stringConstantEClass = createEClass(STRING_CONSTANT);
     createEAttribute(stringConstantEClass, STRING_CONSTANT__VALUE);
@@ -1159,7 +1159,7 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
     attributeEClass.getESuperTypes().add(this.getExpression());
     select_StatementEClass.getESuperTypes().add(this.getNested_Statement());
     intConstantEClass.getESuperTypes().add(this.getExpression());
-    doubleConstantEClass.getESuperTypes().add(this.getExpression());
+    floatConstantEClass.getESuperTypes().add(this.getExpression());
     stringConstantEClass.getESuperTypes().add(this.getExpression());
     boolConstantEClass.getESuperTypes().add(this.getExpression());
     orEClass.getESuperTypes().add(this.getExpression());
@@ -1222,8 +1222,8 @@ public class CqlPackageImpl extends EPackageImpl implements CqlPackage
     initEClass(intConstantEClass, IntConstant.class, "IntConstant", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIntConstant_Value(), ecorePackage.getEInt(), "value", null, 0, 1, IntConstant.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(doubleConstantEClass, DoubleConstant.class, "DoubleConstant", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDoubleConstant_Value(), ecorePackage.getEString(), "value", null, 0, 1, DoubleConstant.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(floatConstantEClass, FloatConstant.class, "FloatConstant", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getFloatConstant_Value(), ecorePackage.getEString(), "value", null, 0, 1, FloatConstant.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(stringConstantEClass, StringConstant.class, "StringConstant", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStringConstant_Value(), ecorePackage.getEString(), "value", null, 0, 1, StringConstant.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

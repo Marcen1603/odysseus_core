@@ -13,9 +13,9 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Condition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Create_Statement;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.DoubleConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model;
@@ -102,14 +102,14 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CqlPackage.CREATE_STATEMENT:
 				sequence_Create_Statement(context, (Create_Statement) semanticObject); 
 				return; 
-			case CqlPackage.DOUBLE_CONSTANT:
-				sequence_Atomic(context, (DoubleConstant) semanticObject); 
-				return; 
 			case CqlPackage.EQUALITY:
 				sequence_Equalitiy(context, (Equality) semanticObject); 
 				return; 
 			case CqlPackage.EXPRESSIONS_MODEL:
 				sequence_ExpressionsModel(context, (ExpressionsModel) semanticObject); 
+				return; 
+			case CqlPackage.FLOAT_CONSTANT:
+				sequence_Atomic(context, (FloatConstant) semanticObject); 
 				return; 
 			case CqlPackage.INT_CONSTANT:
 				sequence_Atomic(context, (IntConstant) semanticObject); 
@@ -263,30 +263,30 @@ public class CqlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Atomic returns DoubleConstant
-	 *     Expression returns DoubleConstant
-	 *     Or returns DoubleConstant
-	 *     Or.Or_1_0 returns DoubleConstant
-	 *     And returns DoubleConstant
-	 *     And.And_1_0 returns DoubleConstant
-	 *     Equalitiy returns DoubleConstant
-	 *     Equalitiy.Equality_1_0 returns DoubleConstant
-	 *     Comparison returns DoubleConstant
-	 *     Comparison.Comparision_1_0 returns DoubleConstant
-	 *     PlusOrMinus returns DoubleConstant
-	 *     PlusOrMinus.Plus_1_0_0_0 returns DoubleConstant
-	 *     PlusOrMinus.Minus_1_0_1_0 returns DoubleConstant
-	 *     MulOrDiv returns DoubleConstant
-	 *     MulOrDiv.MulOrDiv_1_0 returns DoubleConstant
-	 *     Primary returns DoubleConstant
+	 *     Atomic returns FloatConstant
+	 *     Expression returns FloatConstant
+	 *     Or returns FloatConstant
+	 *     Or.Or_1_0 returns FloatConstant
+	 *     And returns FloatConstant
+	 *     And.And_1_0 returns FloatConstant
+	 *     Equalitiy returns FloatConstant
+	 *     Equalitiy.Equality_1_0 returns FloatConstant
+	 *     Comparison returns FloatConstant
+	 *     Comparison.Comparision_1_0 returns FloatConstant
+	 *     PlusOrMinus returns FloatConstant
+	 *     PlusOrMinus.Plus_1_0_0_0 returns FloatConstant
+	 *     PlusOrMinus.Minus_1_0_1_0 returns FloatConstant
+	 *     MulOrDiv returns FloatConstant
+	 *     MulOrDiv.MulOrDiv_1_0 returns FloatConstant
+	 *     Primary returns FloatConstant
 	 *
 	 * Constraint:
 	 *     value=FLOAT_NUMBER
 	 */
-	protected void sequence_Atomic(ISerializationContext context, DoubleConstant semanticObject) {
+	protected void sequence_Atomic(ISerializationContext context, FloatConstant semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.DOUBLE_CONSTANT__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.DOUBLE_CONSTANT__VALUE));
+			if (transientValues.isValueTransient(semanticObject, CqlPackage.Literals.FLOAT_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CqlPackage.Literals.FLOAT_CONSTANT__VALUE));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getAtomicAccess().getValueFLOAT_NUMBERTerminalRuleCall_1_1_0(), semanticObject.getValue());

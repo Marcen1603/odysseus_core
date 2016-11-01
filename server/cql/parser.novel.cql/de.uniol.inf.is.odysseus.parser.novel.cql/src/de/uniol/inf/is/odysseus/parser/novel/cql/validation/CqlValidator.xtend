@@ -3,22 +3,26 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.validation
 
+import static org.eclipse.emf.ecore.util.EcoreUtil.*
+import static extension org.eclipse.xtext.EcoreUtil2.*
+
 import com.google.inject.Inject
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.And
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.NOT
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsType
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.validation.Check
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.NOT
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.And
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality
-import javax.xml.ws.EndpointReference
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Attribute
+import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model
 
 /**
  * This class contains custom validation rules. 
@@ -34,20 +38,19 @@ class CqlValidator extends AbstractCqlValidator
 	
 	def private checkExpectedBoolean(Expression e, EReference ref)
 	{
-		checkExpectedType(e, ExpressionsTypeProvider::boolType, ref)
+		checkExpectedType(e, ref, ExpressionsTypeProvider::boolType)
 	}
 	
-	def private checkExpectedInt(Expression e, EReference ref)
+	def private checkExpectedNumber(Expression e, EReference ref)
 	{
-		checkExpectedType(e, ExpressionsTypeProvider::intType, ref)
+		checkExpectedType(e, ref, ExpressionsTypeProvider::intType, ExpressionsTypeProvider::floatType)
 	}
 	
 	
-	def checkExpectedType(Expression e, ExpressionsType type, EReference ref) 
+	def checkExpectedType(Expression e, EReference ref, ExpressionsType ... type) 
 	{
 		val actualType = getTypeAndNotNull(e, ref)
-		println("actualType= " + actualType)
-		if(actualType != type)
+		if(!type.contains(actualType))
 		{
 			error("expected " +  e +" type, but was actually " + actualType, ref, WRONG_TYPE)
 		}
@@ -56,7 +59,6 @@ class CqlValidator extends AbstractCqlValidator
 	def ExpressionsType getTypeAndNotNull(Expression e, EReference ref) 
 	{
 		var type = e?.typeFor
-		println("type= " + type)
 		if(type == null)
 			error("null type", ref, WRONG_TYPE)
 		return type	
@@ -64,66 +66,73 @@ class CqlValidator extends AbstractCqlValidator
 
 	@Check def checkType(Plus type)
 	{ 
-		checkExpectedInt(type.left, CqlPackage$Literals::PLUS__LEFT)
-		checkExpectedInt(type.right, CqlPackage$Literals::PLUS__RIGHT)
+		checkExpectedNumber(type.left, CqlPackage.Literals::PLUS__LEFT)
+		checkExpectedNumber(type.right, CqlPackage.Literals::PLUS__RIGHT)
 	}
 	
 	@Check def checkType(MulOrDiv type)
 	{ 
-		checkExpectedInt(type.left, CqlPackage$Literals::PLUS__LEFT)
-		checkExpectedInt(type.right, CqlPackage$Literals::PLUS__RIGHT)
+		checkExpectedNumber(type.left, CqlPackage.Literals::PLUS__LEFT)
+		checkExpectedNumber(type.right, CqlPackage.Literals::PLUS__RIGHT)
 	}
 	
 	@Check def checkType(Minus type)
 	{ 
-		checkExpectedInt(type.left, CqlPackage$Literals::PLUS__LEFT)
-		checkExpectedInt(type.right, CqlPackage$Literals::PLUS__RIGHT)
+		checkExpectedNumber(type.left, CqlPackage.Literals::PLUS__LEFT)
+		checkExpectedNumber(type.right, CqlPackage.Literals::PLUS__RIGHT)
 	}
 	
 	@Check def checkType(NOT type)
 	{
-		checkExpectedBoolean(type.expression, CqlPackage$Literals::NOT__EXPRESSION)
+		checkExpectedBoolean(type.expression, CqlPackage.Literals::NOT__EXPRESSION)
 	}
 	
 	@Check def checkType(And type)
 	{
-		checkExpectedBoolean(type.left, CqlPackage$Literals::AND__LEFT)
-		checkExpectedBoolean(type.right, CqlPackage$Literals::AND__RIGHT)
+		checkExpectedBoolean(type.left, CqlPackage.Literals::AND__LEFT)
+		checkExpectedBoolean(type.right, CqlPackage.Literals::AND__RIGHT)
 	}
 	
 	@Check def checkType(Or type)
 	{
-		checkExpectedBoolean(type.left, CqlPackage$Literals::OR__LEFT)
-		checkExpectedBoolean(type.right, CqlPackage$Literals::OR__RIGHT)
+		checkExpectedBoolean(type.left, CqlPackage.Literals::OR__LEFT)
+		checkExpectedBoolean(type.right, CqlPackage.Literals::OR__RIGHT)
 	}
 	
 	@Check def checkType(Equality type)
 	{
-		val left = getTypeAndNotNull(type.left, CqlPackage$Literals::EQUALITY__LEFT)
-		val right = getTypeAndNotNull(type.right, CqlPackage$Literals::EQUALITY__RIGHT)
+		val left = getTypeAndNotNull(type.left, CqlPackage.Literals::EQUALITY__LEFT)
+		val right = getTypeAndNotNull(type.right, CqlPackage.Literals::EQUALITY__RIGHT)
 		checkExpectedSame(left, right)			
 	}
 	
 	@Check def checkType(Comparision type)
 	{
-		val left = getTypeAndNotNull(type.left, CqlPackage$Literals::COMPARISION__LEFT)
-		val right = getTypeAndNotNull(type.right, CqlPackage$Literals::COMPARISION__RIGHT)
+		val left = getTypeAndNotNull(type.left, CqlPackage.Literals::COMPARISION__LEFT)
+		val right = getTypeAndNotNull(type.right, CqlPackage.Literals::COMPARISION__RIGHT)
 		checkExpectedSame(left, right)			
-		checkNotBoolean(left, CqlPackage$Literals::COMPARISION__LEFT)
-		checkNotBoolean(left, CqlPackage$Literals::COMPARISION__RIGHT)
+		checkNotBoolean(left, CqlPackage.Literals::COMPARISION__LEFT)
+		checkNotBoolean(left, CqlPackage.Literals::COMPARISION__RIGHT)
 	}	
+	
+	@Check def checkType(Attribute type)
+	{
+		val list = ExpressionsTypeProvider::attributesDefinedBefore(type)
+		println(type.previousSibling)
+				
+	}
 	
 	def checkExpectedSame(ExpressionsType left, ExpressionsType right) 
 	{
 		if(left != null && right != null && right != left)
 			error("expected the same type, but was " + left + ", " + right,
-				CqlPackage$Literals::EQUALITY.EIDAttribute, WRONG_TYPE
+				CqlPackage.Literals::EQUALITY.EIDAttribute, WRONG_TYPE
 			)
 	}
 	
 	def checkNotBoolean(ExpressionsType type, EReference ref)
 	{
 		if(type == ExpressionsTypeProvider::boolType)
-			error("cannont be boolean", ref, WRONG_TYPE)
+			error("cannot be boolean", ref, WRONG_TYPE)
 	}
 }

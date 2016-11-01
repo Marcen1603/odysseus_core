@@ -63,8 +63,8 @@
     <genClasses ecoreClass="Cql.ecore#//IntConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//IntConstant/value"/>
     </genClasses>
-    <genClasses ecoreClass="Cql.ecore#//DoubleConstant">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//DoubleConstant/value"/>
+    <genClasses ecoreClass="Cql.ecore#//FloatConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//FloatConstant/value"/>
     </genClasses>
     <genClasses ecoreClass="Cql.ecore#//StringConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cql.ecore#//StringConstant/value"/>
