@@ -59,7 +59,7 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 			buffer = ByteBuffer.allocate(data.length+5);
 			buffer.put(punctuation.getNumber());
 			buffer.putInt(data.length);
-			buffer.put(data);
+			buffer.put(data,5, data.length);
 		}
 		buffer.flip();
 		return buffer;
