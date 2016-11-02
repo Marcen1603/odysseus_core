@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsType
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider
-import de.uniol.inf.is.odysseus.parser.novel.cql.validation.AbstractCQLValidator
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.validation.Check
 
@@ -29,7 +28,7 @@ import org.eclipse.xtext.validation.Check
 class CQLValidator extends AbstractCQLValidator 
 {
 
-	public static val WRONG_TYPE = "de.uniol.inf.is.odysseus.parser.novel.CQL.WrongType";
+	public static val WRONG_TYPE = "de.uniol.inf.is.odysseus.parser.novel.cql.WrongType";
 	
 	@Inject extension ExpressionsTypeProvider
 	

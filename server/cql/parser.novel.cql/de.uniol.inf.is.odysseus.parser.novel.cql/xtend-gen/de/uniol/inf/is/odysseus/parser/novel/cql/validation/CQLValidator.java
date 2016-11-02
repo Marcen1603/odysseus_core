@@ -33,7 +33,7 @@ import org.eclipse.xtext.xbase.lib.Extension;
  */
 @SuppressWarnings("all")
 public class CQLValidator extends AbstractCQLValidator {
-  public final static String WRONG_TYPE = "de.uniol.inf.is.odysseus.parser.novel.CQL.WrongType";
+  public final static String WRONG_TYPE = "de.uniol.inf.is.odysseus.parser.novel.cql.WrongType";
   
   @Inject
   @Extension
