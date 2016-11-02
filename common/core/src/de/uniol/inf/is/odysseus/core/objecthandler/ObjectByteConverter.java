@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -12,8 +11,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// There is a copy of this class in de.uniol.inf.is.odysseus.p2p_new
-// please sync them!
+import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
+
 public final class ObjectByteConverter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ObjectByteConverter.class);
@@ -29,7 +28,7 @@ public final class ObjectByteConverter {
 		final ByteArrayInputStream bis = new ByteArrayInputStream(data);
 		ObjectInput in = null;
 		try {
-			in = new ObjectInputStream(bis);
+			in = new OsgiObjectInputStream(bis);
 			return in.readObject();
 		} catch (IOException | ClassNotFoundException e) {
 			LOG.error("Could not read object", e);
