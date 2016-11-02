@@ -1,34 +1,26 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.typing;
 
 import com.google.common.base.Objects;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.And;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Attribute;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.BoolConstant;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.NOT;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.StringConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.BoolType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.FloatType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.IntType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.StringType;
 import java.util.Arrays;
-import java.util.List;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.xbase.lib.Functions.Function1;
-import org.eclipse.xtext.xbase.lib.InputOutput;
-import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class ExpressionsTypeProvider {
@@ -187,28 +179,6 @@ public class ExpressionsTypeProvider {
   
   protected ExpressionsType _typeFor(final Attribute e) {
     return ExpressionsTypeProvider.boolType;
-  }
-  
-  public static String attributesDefinedBefore(final Expression e) {
-    String _xblockexpression = null;
-    {
-      ExpressionsModel _containerOfType = EcoreUtil2.<ExpressionsModel>getContainerOfType(e, ExpressionsModel.class);
-      final EList<Expression> allElements = _containerOfType.getElements();
-      int _size = allElements.size();
-      String _plus = ("size: " + Integer.valueOf(_size));
-      String _plus_1 = (_plus + " , list:");
-      String _plus_2 = (_plus_1 + allElements);
-      InputOutput.<String>println(_plus_2);
-      final Function1<Expression, Boolean> _function = (Expression it) -> {
-        return Boolean.valueOf(EcoreUtil.isAncestor(it, e));
-      };
-      final Expression contained = IterableExtensions.<Expression>findFirst(allElements, _function);
-      InputOutput.<String>println(("contained: " + contained));
-      int _indexOf = allElements.indexOf(contained);
-      final List<Expression> sublist = allElements.subList(0, _indexOf);
-      _xblockexpression = InputOutput.<String>println(("sub list: " + sublist));
-    }
-    return _xblockexpression;
   }
   
   public ExpressionsType typeFor(final Expression e) {

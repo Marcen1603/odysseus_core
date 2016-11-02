@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests;
 
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model;
-import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CqlInjectorProvider;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
+import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
-@InjectWith(CqlInjectorProvider.class)
+@InjectWith(CQLInjectorProvider.class)
 @SuppressWarnings("all")
 public class StatementsTest {
   @Inject

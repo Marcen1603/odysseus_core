@@ -1,25 +1,22 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.typing
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.And
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Attribute
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.BoolConstant
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Comparision
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Equality
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Expression
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.ExpressionsModel
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.FloatConstant
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.IntConstant
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Minus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.MulOrDiv
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.NOT
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Or
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Plus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.StringConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 
 import static org.eclipse.emf.ecore.util.EcoreUtil.*
-
-import static extension org.eclipse.xtext.EcoreUtil2.*
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.impl.AttributeImpl
 
 class ExpressionsTypeProvider 
 {
@@ -98,19 +95,19 @@ class ExpressionsTypeProvider
 		boolType
 	}
 	
-	def static attributesDefinedBefore(Expression e)
-	{
-		val allElements = e.getContainerOfType(typeof(ExpressionsModel)).elements
-		
-		println("size: "+ allElements.size + " , list:" + allElements) //TODO Remove after debugging
-		         
-		val contained = allElements.findFirst[isAncestor(it, e)]
-		println("contained: " + contained)		         
-		
-		val sublist = allElements.subList(0, allElements.indexOf(contained))
-		
-		println("sub list: " + sublist)
-	}
+//	def static attributesDefinedBefore(Expression e)
+//	{
+//		val allElements = e.getContainerOfType(typeof(ExpressionsModel)).elements
+//		
+//		println("size: "+ allElements.size + " , list:" + allElements) //TODO Remove after debugging
+//		         
+//		val contained = allElements.findFirst[isAncestor(it, e)]
+//		println("contained: " + contained)		         
+//		
+//		val sublist = allElements.subList(0, allElements.indexOf(contained))
+//		
+//		println("sub list: " + sublist)
+//	}
 	
 //	def dispatch ExpressionsType typeFor(Minus e)
 //	{

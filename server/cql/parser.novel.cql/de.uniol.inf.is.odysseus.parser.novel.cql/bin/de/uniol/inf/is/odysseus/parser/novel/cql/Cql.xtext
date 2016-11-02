@@ -1,6 +1,6 @@
-grammar de.uniol.inf.is.odysseus.parser.novel.cql.Cql with org.eclipse.xtext.common.Terminals
+grammar de.uniol.inf.is.odysseus.parser.novel.cql.CQL with org.eclipse.xtext.common.Terminals
 
-generate cql "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/Cql"
+generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
 Model: statements+=Statement*;
 	

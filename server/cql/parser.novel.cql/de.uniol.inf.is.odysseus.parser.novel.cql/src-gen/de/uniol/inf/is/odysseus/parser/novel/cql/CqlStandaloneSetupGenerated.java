@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.ISetup;
@@ -14,7 +14,7 @@ import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 
 @SuppressWarnings("all")
-public class CqlStandaloneSetupGenerated implements ISetup {
+public class CQLStandaloneSetupGenerated implements ISetup {
 
 	@Override
 	public Injector createInjectorAndDoEMFRegistration() {
@@ -26,12 +26,12 @@ public class CqlStandaloneSetupGenerated implements ISetup {
 	}
 	
 	public Injector createInjector() {
-		return Guice.createInjector(new CqlRuntimeModule());
+		return Guice.createInjector(new CQLRuntimeModule());
 	}
 	
 	public void register(Injector injector) {
-		if (!EPackage.Registry.INSTANCE.containsKey("http://www.uniol.de/inf/is/odysseus/parser/novel/cql/Cql")) {
-			EPackage.Registry.INSTANCE.put("http://www.uniol.de/inf/is/odysseus/parser/novel/cql/Cql", CqlPackage.eINSTANCE);
+		if (!EPackage.Registry.INSTANCE.containsKey("http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL")) {
+			EPackage.Registry.INSTANCE.put("http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL", CQLPackage.eINSTANCE);
 		}
 		IResourceFactory resourceFactory = injector.getInstance(IResourceFactory.class);
 		IResourceServiceProvider serviceProvider = injector.getInstance(IResourceServiceProvider.class);

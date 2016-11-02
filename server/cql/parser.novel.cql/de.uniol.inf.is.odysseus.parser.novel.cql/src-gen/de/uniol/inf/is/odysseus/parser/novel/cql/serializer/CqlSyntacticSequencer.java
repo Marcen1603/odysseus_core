@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.serializer;
 
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CqlGrammarAccess;
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.IGrammarAccess;
@@ -17,15 +17,15 @@ import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISyn
 import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 
 @SuppressWarnings("all")
-public class CqlSyntacticSequencer extends AbstractSyntacticSequencer {
+public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 
-	protected CqlGrammarAccess grammarAccess;
+	protected CQLGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_Select_Statement_DISTINCTKeyword_1_q;
 	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
-		grammarAccess = (CqlGrammarAccess) access;
+		grammarAccess = (CQLGrammarAccess) access;
 		match_Select_Statement_DISTINCTKeyword_1_q = new TokenAlias(false, true, grammarAccess.getSelect_StatementAccess().getDISTINCTKeyword_1());
 		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
 	}

@@ -3,8 +3,8 @@
 <plugin>
 	<extension point="org.eclipse.emf.ecore.generated_package">
 		<package 
-			uri = "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/Cql"
-			class = "de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage"
-			genModel = "model/generated/Cql.genmodel" />
+			uri = "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
+			class = "de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage"
+			genModel = "model/generated/CQL.genmodel" />
 	</extension>
 </plugin>

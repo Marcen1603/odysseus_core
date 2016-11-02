@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests
 
 import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -13,8 +13,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
-@InjectWith(CqlInjectorProvider)
-class CqlParsingTest{
+@InjectWith(CQLInjectorProvider)
+class CQLParsingTest{
 
 	@Inject
 	ParseHelper<Model> parseHelper

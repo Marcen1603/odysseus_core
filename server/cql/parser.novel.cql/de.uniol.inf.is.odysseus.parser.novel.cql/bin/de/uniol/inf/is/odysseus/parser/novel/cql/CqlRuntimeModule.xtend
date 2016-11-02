@@ -7,5 +7,5 @@ package de.uniol.inf.is.odysseus.parser.novel.cql
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
-class CqlRuntimeModule extends AbstractCqlRuntimeModule {
+class CQLRuntimeModule extends AbstractCQLRuntimeModule {
 }

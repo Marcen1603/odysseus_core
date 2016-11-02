@@ -10,7 +10,7 @@ import org.eclipse.xtext.parser.antlr.AbstractInternalAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
 import org.eclipse.xtext.parser.antlr.AntlrDatatypeRuleToken;
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CqlGrammarAccess;
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 
 
 
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @SuppressWarnings("all")
-public class InternalCqlParser extends AbstractInternalAntlrParser {
+public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_INT", "RULE_FLOAT_NUMBER", "RULE_STRING", "RULE_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "';'", "'TRUE'", "'FALSE'", "'.'", "'OR'", "'AND'", "'=='", "'!='", "'>='", "'<='", "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "'('", "')'", "'NOT'", "'SELECT'", "'DISTINCT'", "','", "'FROM'", "'WHERE'", "'CREATE'"
     };
@@ -63,23 +63,23 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
     // delegators
 
 
-        public InternalCqlParser(TokenStream input) {
+        public InternalCQLParser(TokenStream input) {
             this(input, new RecognizerSharedState());
         }
-        public InternalCqlParser(TokenStream input, RecognizerSharedState state) {
+        public InternalCQLParser(TokenStream input, RecognizerSharedState state) {
             super(input, state);
              
         }
         
 
-    public String[] getTokenNames() { return InternalCqlParser.tokenNames; }
-    public String getGrammarFileName() { return "InternalCql.g"; }
+    public String[] getTokenNames() { return InternalCQLParser.tokenNames; }
+    public String getGrammarFileName() { return "InternalCQL.g"; }
 
 
 
-     	private CqlGrammarAccess grammarAccess;
+     	private CQLGrammarAccess grammarAccess;
 
-        public InternalCqlParser(TokenStream input, CqlGrammarAccess grammarAccess) {
+        public InternalCQLParser(TokenStream input, CQLGrammarAccess grammarAccess) {
             this(input);
             this.grammarAccess = grammarAccess;
             registerRules(grammarAccess.getGrammar());
@@ -91,7 +91,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
        	}
 
        	@Override
-       	protected CqlGrammarAccess getGrammarAccess() {
+       	protected CQLGrammarAccess getGrammarAccess() {
        		return grammarAccess;
        	}
 
@@ -99,7 +99,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleModel"
-    // InternalCql.g:65:1: entryRuleModel returns [EObject current=null] : iv_ruleModel= ruleModel EOF ;
+    // InternalCQL.g:65:1: entryRuleModel returns [EObject current=null] : iv_ruleModel= ruleModel EOF ;
     public final EObject entryRuleModel() throws RecognitionException {
         EObject current = null;
 
@@ -107,8 +107,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:65:46: (iv_ruleModel= ruleModel EOF )
-            // InternalCql.g:66:2: iv_ruleModel= ruleModel EOF
+            // InternalCQL.g:65:46: (iv_ruleModel= ruleModel EOF )
+            // InternalCQL.g:66:2: iv_ruleModel= ruleModel EOF
             {
              newCompositeNode(grammarAccess.getModelRule()); 
             pushFollow(FOLLOW_1);
@@ -135,7 +135,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleModel"
-    // InternalCql.g:72:1: ruleModel returns [EObject current=null] : ( (lv_statements_0_0= ruleStatement ) )* ;
+    // InternalCQL.g:72:1: ruleModel returns [EObject current=null] : ( (lv_statements_0_0= ruleStatement ) )* ;
     public final EObject ruleModel() throws RecognitionException {
         EObject current = null;
 
@@ -146,10 +146,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:78:2: ( ( (lv_statements_0_0= ruleStatement ) )* )
-            // InternalCql.g:79:2: ( (lv_statements_0_0= ruleStatement ) )*
+            // InternalCQL.g:78:2: ( ( (lv_statements_0_0= ruleStatement ) )* )
+            // InternalCQL.g:79:2: ( (lv_statements_0_0= ruleStatement ) )*
             {
-            // InternalCql.g:79:2: ( (lv_statements_0_0= ruleStatement ) )*
+            // InternalCQL.g:79:2: ( (lv_statements_0_0= ruleStatement ) )*
             loop1:
             do {
                 int alt1=2;
@@ -162,10 +162,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt1) {
             	case 1 :
-            	    // InternalCql.g:80:3: (lv_statements_0_0= ruleStatement )
+            	    // InternalCQL.g:80:3: (lv_statements_0_0= ruleStatement )
             	    {
-            	    // InternalCql.g:80:3: (lv_statements_0_0= ruleStatement )
-            	    // InternalCql.g:81:4: lv_statements_0_0= ruleStatement
+            	    // InternalCQL.g:80:3: (lv_statements_0_0= ruleStatement )
+            	    // InternalCQL.g:81:4: lv_statements_0_0= ruleStatement
             	    {
 
             	    				newCompositeNode(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_0());
@@ -183,7 +183,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    					current,
             	    					"statements",
             	    					lv_statements_0_0,
-            	    					"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Statement");
+            	    					"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
             	    				afterParserOrEnumRuleCall();
             	    			
 
@@ -218,7 +218,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStatement"
-    // InternalCql.g:101:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
+    // InternalCQL.g:101:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
     public final EObject entryRuleStatement() throws RecognitionException {
         EObject current = null;
 
@@ -226,8 +226,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:101:50: (iv_ruleStatement= ruleStatement EOF )
-            // InternalCql.g:102:2: iv_ruleStatement= ruleStatement EOF
+            // InternalCQL.g:101:50: (iv_ruleStatement= ruleStatement EOF )
+            // InternalCQL.g:102:2: iv_ruleStatement= ruleStatement EOF
             {
              newCompositeNode(grammarAccess.getStatementRule()); 
             pushFollow(FOLLOW_1);
@@ -254,7 +254,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStatement"
-    // InternalCql.g:108:1: ruleStatement returns [EObject current=null] : ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? ) ;
+    // InternalCQL.g:108:1: ruleStatement returns [EObject current=null] : ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? ) ;
     public final EObject ruleStatement() throws RecognitionException {
         EObject current = null;
 
@@ -268,13 +268,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:114:2: ( ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? ) )
-            // InternalCql.g:115:2: ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? )
+            // InternalCQL.g:114:2: ( ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? ) )
+            // InternalCQL.g:115:2: ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? )
             {
-            // InternalCql.g:115:2: ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? )
-            // InternalCql.g:116:3: ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )?
+            // InternalCQL.g:115:2: ( ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )? )
+            // InternalCQL.g:116:3: ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) ) (otherlv_2= ';' )?
             {
-            // InternalCql.g:116:3: ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) )
+            // InternalCQL.g:116:3: ( ( (lv_type_0_0= ruleSelect_Statement ) ) | ( (lv_type_1_0= ruleCreate_Statement ) ) )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -292,13 +292,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             }
             switch (alt2) {
                 case 1 :
-                    // InternalCql.g:117:4: ( (lv_type_0_0= ruleSelect_Statement ) )
+                    // InternalCQL.g:117:4: ( (lv_type_0_0= ruleSelect_Statement ) )
                     {
-                    // InternalCql.g:117:4: ( (lv_type_0_0= ruleSelect_Statement ) )
-                    // InternalCql.g:118:5: (lv_type_0_0= ruleSelect_Statement )
+                    // InternalCQL.g:117:4: ( (lv_type_0_0= ruleSelect_Statement ) )
+                    // InternalCQL.g:118:5: (lv_type_0_0= ruleSelect_Statement )
                     {
-                    // InternalCql.g:118:5: (lv_type_0_0= ruleSelect_Statement )
-                    // InternalCql.g:119:6: lv_type_0_0= ruleSelect_Statement
+                    // InternalCQL.g:118:5: (lv_type_0_0= ruleSelect_Statement )
+                    // InternalCQL.g:119:6: lv_type_0_0= ruleSelect_Statement
                     {
 
                     						newCompositeNode(grammarAccess.getStatementAccess().getTypeSelect_StatementParserRuleCall_0_0_0());
@@ -316,7 +316,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     							current,
                     							"type",
                     							lv_type_0_0,
-                    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Select_Statement");
+                    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Select_Statement");
                     						afterParserOrEnumRuleCall();
                     					
 
@@ -329,13 +329,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCql.g:137:4: ( (lv_type_1_0= ruleCreate_Statement ) )
+                    // InternalCQL.g:137:4: ( (lv_type_1_0= ruleCreate_Statement ) )
                     {
-                    // InternalCql.g:137:4: ( (lv_type_1_0= ruleCreate_Statement ) )
-                    // InternalCql.g:138:5: (lv_type_1_0= ruleCreate_Statement )
+                    // InternalCQL.g:137:4: ( (lv_type_1_0= ruleCreate_Statement ) )
+                    // InternalCQL.g:138:5: (lv_type_1_0= ruleCreate_Statement )
                     {
-                    // InternalCql.g:138:5: (lv_type_1_0= ruleCreate_Statement )
-                    // InternalCql.g:139:6: lv_type_1_0= ruleCreate_Statement
+                    // InternalCQL.g:138:5: (lv_type_1_0= ruleCreate_Statement )
+                    // InternalCQL.g:139:6: lv_type_1_0= ruleCreate_Statement
                     {
 
                     						newCompositeNode(grammarAccess.getStatementAccess().getTypeCreate_StatementParserRuleCall_0_1_0());
@@ -353,7 +353,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     							current,
                     							"type",
                     							lv_type_1_0,
-                    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Create_Statement");
+                    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Create_Statement");
                     						afterParserOrEnumRuleCall();
                     					
 
@@ -368,7 +368,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCql.g:157:3: (otherlv_2= ';' )?
+            // InternalCQL.g:157:3: (otherlv_2= ';' )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -377,7 +377,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             }
             switch (alt3) {
                 case 1 :
-                    // InternalCql.g:158:4: otherlv_2= ';'
+                    // InternalCQL.g:158:4: otherlv_2= ';'
                     {
                     otherlv_2=(Token)match(input,12,FOLLOW_2); 
 
@@ -412,7 +412,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAtomic"
-    // InternalCql.g:167:1: entryRuleAtomic returns [EObject current=null] : iv_ruleAtomic= ruleAtomic EOF ;
+    // InternalCQL.g:167:1: entryRuleAtomic returns [EObject current=null] : iv_ruleAtomic= ruleAtomic EOF ;
     public final EObject entryRuleAtomic() throws RecognitionException {
         EObject current = null;
 
@@ -420,8 +420,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:167:47: (iv_ruleAtomic= ruleAtomic EOF )
-            // InternalCql.g:168:2: iv_ruleAtomic= ruleAtomic EOF
+            // InternalCQL.g:167:47: (iv_ruleAtomic= ruleAtomic EOF )
+            // InternalCQL.g:168:2: iv_ruleAtomic= ruleAtomic EOF
             {
              newCompositeNode(grammarAccess.getAtomicRule()); 
             pushFollow(FOLLOW_1);
@@ -448,7 +448,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAtomic"
-    // InternalCql.g:174:1: ruleAtomic returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) ) ;
+    // InternalCQL.g:174:1: ruleAtomic returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) ) ;
     public final EObject ruleAtomic() throws RecognitionException {
         EObject current = null;
 
@@ -463,10 +463,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:180:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) ) )
-            // InternalCql.g:181:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) )
+            // InternalCQL.g:180:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) ) )
+            // InternalCQL.g:181:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) )
             {
-            // InternalCql.g:181:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) )
+            // InternalCQL.g:181:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) ) | ( () ( (otherlv_9= RULE_ID ) ) ) )
             int alt5=5;
             switch ( input.LA(1) ) {
             case RULE_INT:
@@ -504,13 +504,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             switch (alt5) {
                 case 1 :
-                    // InternalCql.g:182:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // InternalCQL.g:182:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
                     {
-                    // InternalCql.g:182:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
-                    // InternalCql.g:183:4: () ( (lv_value_1_0= RULE_INT ) )
+                    // InternalCQL.g:182:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // InternalCQL.g:183:4: () ( (lv_value_1_0= RULE_INT ) )
                     {
-                    // InternalCql.g:183:4: ()
-                    // InternalCql.g:184:5: 
+                    // InternalCQL.g:183:4: ()
+                    // InternalCQL.g:184:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -520,11 +520,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCql.g:190:4: ( (lv_value_1_0= RULE_INT ) )
-                    // InternalCql.g:191:5: (lv_value_1_0= RULE_INT )
+                    // InternalCQL.g:190:4: ( (lv_value_1_0= RULE_INT ) )
+                    // InternalCQL.g:191:5: (lv_value_1_0= RULE_INT )
                     {
-                    // InternalCql.g:191:5: (lv_value_1_0= RULE_INT )
-                    // InternalCql.g:192:6: lv_value_1_0= RULE_INT
+                    // InternalCQL.g:191:5: (lv_value_1_0= RULE_INT )
+                    // InternalCQL.g:192:6: lv_value_1_0= RULE_INT
                     {
                     lv_value_1_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -553,13 +553,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCql.g:210:3: ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) )
+                    // InternalCQL.g:210:3: ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) )
                     {
-                    // InternalCql.g:210:3: ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) )
-                    // InternalCql.g:211:4: () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) )
+                    // InternalCQL.g:210:3: ( () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) ) )
+                    // InternalCQL.g:211:4: () ( (lv_value_3_0= RULE_FLOAT_NUMBER ) )
                     {
-                    // InternalCql.g:211:4: ()
-                    // InternalCql.g:212:5: 
+                    // InternalCQL.g:211:4: ()
+                    // InternalCQL.g:212:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -569,11 +569,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCql.g:218:4: ( (lv_value_3_0= RULE_FLOAT_NUMBER ) )
-                    // InternalCql.g:219:5: (lv_value_3_0= RULE_FLOAT_NUMBER )
+                    // InternalCQL.g:218:4: ( (lv_value_3_0= RULE_FLOAT_NUMBER ) )
+                    // InternalCQL.g:219:5: (lv_value_3_0= RULE_FLOAT_NUMBER )
                     {
-                    // InternalCql.g:219:5: (lv_value_3_0= RULE_FLOAT_NUMBER )
-                    // InternalCql.g:220:6: lv_value_3_0= RULE_FLOAT_NUMBER
+                    // InternalCQL.g:219:5: (lv_value_3_0= RULE_FLOAT_NUMBER )
+                    // InternalCQL.g:220:6: lv_value_3_0= RULE_FLOAT_NUMBER
                     {
                     lv_value_3_0=(Token)match(input,RULE_FLOAT_NUMBER,FOLLOW_2); 
 
@@ -587,7 +587,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     							current,
                     							"value",
                     							lv_value_3_0,
-                    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.FLOAT_NUMBER");
+                    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT_NUMBER");
                     					
 
                     }
@@ -602,13 +602,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCql.g:238:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
+                    // InternalCQL.g:238:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
                     {
-                    // InternalCql.g:238:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
-                    // InternalCql.g:239:4: () ( (lv_value_5_0= RULE_STRING ) )
+                    // InternalCQL.g:238:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
+                    // InternalCQL.g:239:4: () ( (lv_value_5_0= RULE_STRING ) )
                     {
-                    // InternalCql.g:239:4: ()
-                    // InternalCql.g:240:5: 
+                    // InternalCQL.g:239:4: ()
+                    // InternalCQL.g:240:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -618,11 +618,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCql.g:246:4: ( (lv_value_5_0= RULE_STRING ) )
-                    // InternalCql.g:247:5: (lv_value_5_0= RULE_STRING )
+                    // InternalCQL.g:246:4: ( (lv_value_5_0= RULE_STRING ) )
+                    // InternalCQL.g:247:5: (lv_value_5_0= RULE_STRING )
                     {
-                    // InternalCql.g:247:5: (lv_value_5_0= RULE_STRING )
-                    // InternalCql.g:248:6: lv_value_5_0= RULE_STRING
+                    // InternalCQL.g:247:5: (lv_value_5_0= RULE_STRING )
+                    // InternalCQL.g:248:6: lv_value_5_0= RULE_STRING
                     {
                     lv_value_5_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -651,13 +651,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCql.g:266:3: ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) )
+                    // InternalCQL.g:266:3: ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) )
                     {
-                    // InternalCql.g:266:3: ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) )
-                    // InternalCql.g:267:4: () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) )
+                    // InternalCQL.g:266:3: ( () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) ) )
+                    // InternalCQL.g:267:4: () ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) )
                     {
-                    // InternalCql.g:267:4: ()
-                    // InternalCql.g:268:5: 
+                    // InternalCQL.g:267:4: ()
+                    // InternalCQL.g:268:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -667,13 +667,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCql.g:274:4: ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) )
-                    // InternalCql.g:275:5: ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) )
+                    // InternalCQL.g:274:4: ( ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) ) )
+                    // InternalCQL.g:275:5: ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) )
                     {
-                    // InternalCql.g:275:5: ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) )
-                    // InternalCql.g:276:6: (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' )
+                    // InternalCQL.g:275:5: ( (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' ) )
+                    // InternalCQL.g:276:6: (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' )
                     {
-                    // InternalCql.g:276:6: (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' )
+                    // InternalCQL.g:276:6: (lv_value_7_1= 'TRUE' | lv_value_7_2= 'FALSE' )
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -691,7 +691,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt4) {
                         case 1 :
-                            // InternalCql.g:277:7: lv_value_7_1= 'TRUE'
+                            // InternalCQL.g:277:7: lv_value_7_1= 'TRUE'
                             {
                             lv_value_7_1=(Token)match(input,13,FOLLOW_2); 
 
@@ -707,7 +707,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalCql.g:288:7: lv_value_7_2= 'FALSE'
+                            // InternalCQL.g:288:7: lv_value_7_2= 'FALSE'
                             {
                             lv_value_7_2=(Token)match(input,14,FOLLOW_2); 
 
@@ -738,13 +738,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalCql.g:303:3: ( () ( (otherlv_9= RULE_ID ) ) )
+                    // InternalCQL.g:303:3: ( () ( (otherlv_9= RULE_ID ) ) )
                     {
-                    // InternalCql.g:303:3: ( () ( (otherlv_9= RULE_ID ) ) )
-                    // InternalCql.g:304:4: () ( (otherlv_9= RULE_ID ) )
+                    // InternalCQL.g:303:3: ( () ( (otherlv_9= RULE_ID ) ) )
+                    // InternalCQL.g:304:4: () ( (otherlv_9= RULE_ID ) )
                     {
-                    // InternalCql.g:304:4: ()
-                    // InternalCql.g:305:5: 
+                    // InternalCQL.g:304:4: ()
+                    // InternalCQL.g:305:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -754,11 +754,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCql.g:311:4: ( (otherlv_9= RULE_ID ) )
-                    // InternalCql.g:312:5: (otherlv_9= RULE_ID )
+                    // InternalCQL.g:311:4: ( (otherlv_9= RULE_ID ) )
+                    // InternalCQL.g:312:5: (otherlv_9= RULE_ID )
                     {
-                    // InternalCql.g:312:5: (otherlv_9= RULE_ID )
-                    // InternalCql.g:313:6: otherlv_9= RULE_ID
+                    // InternalCQL.g:312:5: (otherlv_9= RULE_ID )
+                    // InternalCQL.g:313:6: otherlv_9= RULE_ID
                     {
 
                     						if (current==null) {
@@ -804,7 +804,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSource"
-    // InternalCql.g:329:1: entryRuleSource returns [EObject current=null] : iv_ruleSource= ruleSource EOF ;
+    // InternalCQL.g:329:1: entryRuleSource returns [EObject current=null] : iv_ruleSource= ruleSource EOF ;
     public final EObject entryRuleSource() throws RecognitionException {
         EObject current = null;
 
@@ -812,8 +812,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:329:47: (iv_ruleSource= ruleSource EOF )
-            // InternalCql.g:330:2: iv_ruleSource= ruleSource EOF
+            // InternalCQL.g:329:47: (iv_ruleSource= ruleSource EOF )
+            // InternalCQL.g:330:2: iv_ruleSource= ruleSource EOF
             {
              newCompositeNode(grammarAccess.getSourceRule()); 
             pushFollow(FOLLOW_1);
@@ -840,7 +840,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSource"
-    // InternalCql.g:336:1: ruleSource returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalCQL.g:336:1: ruleSource returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleSource() throws RecognitionException {
         EObject current = null;
 
@@ -850,14 +850,14 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:342:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalCql.g:343:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalCQL.g:342:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalCQL.g:343:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalCql.g:343:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalCql.g:344:3: (lv_name_0_0= RULE_ID )
+            // InternalCQL.g:343:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalCQL.g:344:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalCql.g:344:3: (lv_name_0_0= RULE_ID )
-            // InternalCql.g:345:4: lv_name_0_0= RULE_ID
+            // InternalCQL.g:344:3: (lv_name_0_0= RULE_ID )
+            // InternalCQL.g:345:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -899,7 +899,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAttribute"
-    // InternalCql.g:364:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
+    // InternalCQL.g:364:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
     public final EObject entryRuleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -907,8 +907,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:364:50: (iv_ruleAttribute= ruleAttribute EOF )
-            // InternalCql.g:365:2: iv_ruleAttribute= ruleAttribute EOF
+            // InternalCQL.g:364:50: (iv_ruleAttribute= ruleAttribute EOF )
+            // InternalCQL.g:365:2: iv_ruleAttribute= ruleAttribute EOF
             {
              newCompositeNode(grammarAccess.getAttributeRule()); 
             pushFollow(FOLLOW_1);
@@ -935,7 +935,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAttribute"
-    // InternalCql.g:371:1: ruleAttribute returns [EObject current=null] : ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) ) ;
+    // InternalCQL.g:371:1: ruleAttribute returns [EObject current=null] : ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) ) ;
     public final EObject ruleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -947,13 +947,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:377:2: ( ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) ) )
-            // InternalCql.g:378:2: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) )
+            // InternalCQL.g:377:2: ( ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) ) )
+            // InternalCQL.g:378:2: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) )
             {
-            // InternalCql.g:378:2: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) )
-            // InternalCql.g:379:3: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) )
+            // InternalCQL.g:378:2: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) ) )
+            // InternalCQL.g:379:3: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )? ( (lv_name_2_0= RULE_ID ) )
             {
-            // InternalCql.g:379:3: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )?
+            // InternalCQL.g:379:3: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= '.' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -966,13 +966,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             }
             switch (alt6) {
                 case 1 :
-                    // InternalCql.g:380:4: ( (otherlv_0= RULE_ID ) ) otherlv_1= '.'
+                    // InternalCQL.g:380:4: ( (otherlv_0= RULE_ID ) ) otherlv_1= '.'
                     {
-                    // InternalCql.g:380:4: ( (otherlv_0= RULE_ID ) )
-                    // InternalCql.g:381:5: (otherlv_0= RULE_ID )
+                    // InternalCQL.g:380:4: ( (otherlv_0= RULE_ID ) )
+                    // InternalCQL.g:381:5: (otherlv_0= RULE_ID )
                     {
-                    // InternalCql.g:381:5: (otherlv_0= RULE_ID )
-                    // InternalCql.g:382:6: otherlv_0= RULE_ID
+                    // InternalCQL.g:381:5: (otherlv_0= RULE_ID )
+                    // InternalCQL.g:382:6: otherlv_0= RULE_ID
                     {
 
                     						if (current==null) {
@@ -999,11 +999,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCql.g:398:3: ( (lv_name_2_0= RULE_ID ) )
-            // InternalCql.g:399:4: (lv_name_2_0= RULE_ID )
+            // InternalCQL.g:398:3: ( (lv_name_2_0= RULE_ID ) )
+            // InternalCQL.g:399:4: (lv_name_2_0= RULE_ID )
             {
-            // InternalCql.g:399:4: (lv_name_2_0= RULE_ID )
-            // InternalCql.g:400:5: lv_name_2_0= RULE_ID
+            // InternalCQL.g:399:4: (lv_name_2_0= RULE_ID )
+            // InternalCQL.g:400:5: lv_name_2_0= RULE_ID
             {
             lv_name_2_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -1048,7 +1048,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpressionsModel"
-    // InternalCql.g:420:1: entryRuleExpressionsModel returns [EObject current=null] : iv_ruleExpressionsModel= ruleExpressionsModel EOF ;
+    // InternalCQL.g:420:1: entryRuleExpressionsModel returns [EObject current=null] : iv_ruleExpressionsModel= ruleExpressionsModel EOF ;
     public final EObject entryRuleExpressionsModel() throws RecognitionException {
         EObject current = null;
 
@@ -1056,8 +1056,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:420:57: (iv_ruleExpressionsModel= ruleExpressionsModel EOF )
-            // InternalCql.g:421:2: iv_ruleExpressionsModel= ruleExpressionsModel EOF
+            // InternalCQL.g:420:57: (iv_ruleExpressionsModel= ruleExpressionsModel EOF )
+            // InternalCQL.g:421:2: iv_ruleExpressionsModel= ruleExpressionsModel EOF
             {
              newCompositeNode(grammarAccess.getExpressionsModelRule()); 
             pushFollow(FOLLOW_1);
@@ -1084,7 +1084,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpressionsModel"
-    // InternalCql.g:427:1: ruleExpressionsModel returns [EObject current=null] : ( () ( (lv_elements_1_0= ruleExpression ) )* ) ;
+    // InternalCQL.g:427:1: ruleExpressionsModel returns [EObject current=null] : ( () ( (lv_elements_1_0= ruleExpression ) )+ ) ;
     public final EObject ruleExpressionsModel() throws RecognitionException {
         EObject current = null;
 
@@ -1095,14 +1095,14 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:433:2: ( ( () ( (lv_elements_1_0= ruleExpression ) )* ) )
-            // InternalCql.g:434:2: ( () ( (lv_elements_1_0= ruleExpression ) )* )
+            // InternalCQL.g:433:2: ( ( () ( (lv_elements_1_0= ruleExpression ) )+ ) )
+            // InternalCQL.g:434:2: ( () ( (lv_elements_1_0= ruleExpression ) )+ )
             {
-            // InternalCql.g:434:2: ( () ( (lv_elements_1_0= ruleExpression ) )* )
-            // InternalCql.g:435:3: () ( (lv_elements_1_0= ruleExpression ) )*
+            // InternalCQL.g:434:2: ( () ( (lv_elements_1_0= ruleExpression ) )+ )
+            // InternalCQL.g:435:3: () ( (lv_elements_1_0= ruleExpression ) )+
             {
-            // InternalCql.g:435:3: ()
-            // InternalCql.g:436:4: 
+            // InternalCQL.g:435:3: ()
+            // InternalCQL.g:436:4: 
             {
 
             				current = forceCreateModelElement(
@@ -1112,7 +1112,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCql.g:442:3: ( (lv_elements_1_0= ruleExpression ) )*
+            // InternalCQL.g:442:3: ( (lv_elements_1_0= ruleExpression ) )+
+            int cnt7=0;
             loop7:
             do {
                 int alt7=2;
@@ -1125,10 +1126,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt7) {
             	case 1 :
-            	    // InternalCql.g:443:4: (lv_elements_1_0= ruleExpression )
+            	    // InternalCQL.g:443:4: (lv_elements_1_0= ruleExpression )
             	    {
-            	    // InternalCql.g:443:4: (lv_elements_1_0= ruleExpression )
-            	    // InternalCql.g:444:5: lv_elements_1_0= ruleExpression
+            	    // InternalCQL.g:443:4: (lv_elements_1_0= ruleExpression )
+            	    // InternalCQL.g:444:5: lv_elements_1_0= ruleExpression
             	    {
 
             	    					newCompositeNode(grammarAccess.getExpressionsModelAccess().getElementsExpressionParserRuleCall_1_0());
@@ -1146,7 +1147,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    						current,
             	    						"elements",
             	    						lv_elements_1_0,
-            	    						"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Expression");
+            	    						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Expression");
             	    					afterParserOrEnumRuleCall();
             	    				
 
@@ -1157,8 +1158,12 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop7;
+            	    if ( cnt7 >= 1 ) break loop7;
+                        EarlyExitException eee =
+                            new EarlyExitException(7, input);
+                        throw eee;
                 }
+                cnt7++;
             } while (true);
 
 
@@ -1184,7 +1189,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpression"
-    // InternalCql.g:465:1: entryRuleExpression returns [EObject current=null] : iv_ruleExpression= ruleExpression EOF ;
+    // InternalCQL.g:465:1: entryRuleExpression returns [EObject current=null] : iv_ruleExpression= ruleExpression EOF ;
     public final EObject entryRuleExpression() throws RecognitionException {
         EObject current = null;
 
@@ -1192,8 +1197,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:465:51: (iv_ruleExpression= ruleExpression EOF )
-            // InternalCql.g:466:2: iv_ruleExpression= ruleExpression EOF
+            // InternalCQL.g:465:51: (iv_ruleExpression= ruleExpression EOF )
+            // InternalCQL.g:466:2: iv_ruleExpression= ruleExpression EOF
             {
              newCompositeNode(grammarAccess.getExpressionRule()); 
             pushFollow(FOLLOW_1);
@@ -1220,7 +1225,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpression"
-    // InternalCql.g:472:1: ruleExpression returns [EObject current=null] : this_Or_0= ruleOr ;
+    // InternalCQL.g:472:1: ruleExpression returns [EObject current=null] : this_Or_0= ruleOr ;
     public final EObject ruleExpression() throws RecognitionException {
         EObject current = null;
 
@@ -1231,8 +1236,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:478:2: (this_Or_0= ruleOr )
-            // InternalCql.g:479:2: this_Or_0= ruleOr
+            // InternalCQL.g:478:2: (this_Or_0= ruleOr )
+            // InternalCQL.g:479:2: this_Or_0= ruleOr
             {
 
             		newCompositeNode(grammarAccess.getExpressionAccess().getOrParserRuleCall());
@@ -1266,7 +1271,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleOr"
-    // InternalCql.g:490:1: entryRuleOr returns [EObject current=null] : iv_ruleOr= ruleOr EOF ;
+    // InternalCQL.g:490:1: entryRuleOr returns [EObject current=null] : iv_ruleOr= ruleOr EOF ;
     public final EObject entryRuleOr() throws RecognitionException {
         EObject current = null;
 
@@ -1274,8 +1279,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:490:43: (iv_ruleOr= ruleOr EOF )
-            // InternalCql.g:491:2: iv_ruleOr= ruleOr EOF
+            // InternalCQL.g:490:43: (iv_ruleOr= ruleOr EOF )
+            // InternalCQL.g:491:2: iv_ruleOr= ruleOr EOF
             {
              newCompositeNode(grammarAccess.getOrRule()); 
             pushFollow(FOLLOW_1);
@@ -1302,7 +1307,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOr"
-    // InternalCql.g:497:1: ruleOr returns [EObject current=null] : (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* ) ;
+    // InternalCQL.g:497:1: ruleOr returns [EObject current=null] : (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* ) ;
     public final EObject ruleOr() throws RecognitionException {
         EObject current = null;
 
@@ -1316,11 +1321,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:503:2: ( (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* ) )
-            // InternalCql.g:504:2: (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* )
+            // InternalCQL.g:503:2: ( (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* ) )
+            // InternalCQL.g:504:2: (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* )
             {
-            // InternalCql.g:504:2: (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* )
-            // InternalCql.g:505:3: this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )*
+            // InternalCQL.g:504:2: (this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )* )
+            // InternalCQL.g:505:3: this_And_0= ruleAnd ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getOrAccess().getAndParserRuleCall_0());
@@ -1334,7 +1339,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             			current = this_And_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCql.g:513:3: ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )*
+            // InternalCQL.g:513:3: ( () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) ) )*
             loop8:
             do {
                 int alt8=2;
@@ -1347,10 +1352,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt8) {
             	case 1 :
-            	    // InternalCql.g:514:4: () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) )
+            	    // InternalCQL.g:514:4: () otherlv_2= 'OR' ( (lv_right_3_0= ruleAnd ) )
             	    {
-            	    // InternalCql.g:514:4: ()
-            	    // InternalCql.g:515:5: 
+            	    // InternalCQL.g:514:4: ()
+            	    // InternalCQL.g:515:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -1364,11 +1369,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    				newLeafNode(otherlv_2, grammarAccess.getOrAccess().getORKeyword_1_1());
             	    			
-            	    // InternalCql.g:525:4: ( (lv_right_3_0= ruleAnd ) )
-            	    // InternalCql.g:526:5: (lv_right_3_0= ruleAnd )
+            	    // InternalCQL.g:525:4: ( (lv_right_3_0= ruleAnd ) )
+            	    // InternalCQL.g:526:5: (lv_right_3_0= ruleAnd )
             	    {
-            	    // InternalCql.g:526:5: (lv_right_3_0= ruleAnd )
-            	    // InternalCql.g:527:6: lv_right_3_0= ruleAnd
+            	    // InternalCQL.g:526:5: (lv_right_3_0= ruleAnd )
+            	    // InternalCQL.g:527:6: lv_right_3_0= ruleAnd
             	    {
 
             	    						newCompositeNode(grammarAccess.getOrAccess().getRightAndParserRuleCall_1_2_0());
@@ -1386,7 +1391,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"right",
             	    							lv_right_3_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.And");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.And");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -1427,7 +1432,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAnd"
-    // InternalCql.g:549:1: entryRuleAnd returns [EObject current=null] : iv_ruleAnd= ruleAnd EOF ;
+    // InternalCQL.g:549:1: entryRuleAnd returns [EObject current=null] : iv_ruleAnd= ruleAnd EOF ;
     public final EObject entryRuleAnd() throws RecognitionException {
         EObject current = null;
 
@@ -1435,8 +1440,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:549:44: (iv_ruleAnd= ruleAnd EOF )
-            // InternalCql.g:550:2: iv_ruleAnd= ruleAnd EOF
+            // InternalCQL.g:549:44: (iv_ruleAnd= ruleAnd EOF )
+            // InternalCQL.g:550:2: iv_ruleAnd= ruleAnd EOF
             {
              newCompositeNode(grammarAccess.getAndRule()); 
             pushFollow(FOLLOW_1);
@@ -1463,7 +1468,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAnd"
-    // InternalCql.g:556:1: ruleAnd returns [EObject current=null] : (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* ) ;
+    // InternalCQL.g:556:1: ruleAnd returns [EObject current=null] : (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* ) ;
     public final EObject ruleAnd() throws RecognitionException {
         EObject current = null;
 
@@ -1477,11 +1482,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:562:2: ( (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* ) )
-            // InternalCql.g:563:2: (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* )
+            // InternalCQL.g:562:2: ( (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* ) )
+            // InternalCQL.g:563:2: (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* )
             {
-            // InternalCql.g:563:2: (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* )
-            // InternalCql.g:564:3: this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )*
+            // InternalCQL.g:563:2: (this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )* )
+            // InternalCQL.g:564:3: this_Equalitiy_0= ruleEqualitiy ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getAndAccess().getEqualitiyParserRuleCall_0());
@@ -1495,7 +1500,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             			current = this_Equalitiy_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCql.g:572:3: ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )*
+            // InternalCQL.g:572:3: ( () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) ) )*
             loop9:
             do {
                 int alt9=2;
@@ -1508,10 +1513,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt9) {
             	case 1 :
-            	    // InternalCql.g:573:4: () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) )
+            	    // InternalCQL.g:573:4: () otherlv_2= 'AND' ( (lv_right_3_0= ruleEqualitiy ) )
             	    {
-            	    // InternalCql.g:573:4: ()
-            	    // InternalCql.g:574:5: 
+            	    // InternalCQL.g:573:4: ()
+            	    // InternalCQL.g:574:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -1525,11 +1530,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    				newLeafNode(otherlv_2, grammarAccess.getAndAccess().getANDKeyword_1_1());
             	    			
-            	    // InternalCql.g:584:4: ( (lv_right_3_0= ruleEqualitiy ) )
-            	    // InternalCql.g:585:5: (lv_right_3_0= ruleEqualitiy )
+            	    // InternalCQL.g:584:4: ( (lv_right_3_0= ruleEqualitiy ) )
+            	    // InternalCQL.g:585:5: (lv_right_3_0= ruleEqualitiy )
             	    {
-            	    // InternalCql.g:585:5: (lv_right_3_0= ruleEqualitiy )
-            	    // InternalCql.g:586:6: lv_right_3_0= ruleEqualitiy
+            	    // InternalCQL.g:585:5: (lv_right_3_0= ruleEqualitiy )
+            	    // InternalCQL.g:586:6: lv_right_3_0= ruleEqualitiy
             	    {
 
             	    						newCompositeNode(grammarAccess.getAndAccess().getRightEqualitiyParserRuleCall_1_2_0());
@@ -1547,7 +1552,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"right",
             	    							lv_right_3_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Equalitiy");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Equalitiy");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -1588,7 +1593,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEqualitiy"
-    // InternalCql.g:608:1: entryRuleEqualitiy returns [EObject current=null] : iv_ruleEqualitiy= ruleEqualitiy EOF ;
+    // InternalCQL.g:608:1: entryRuleEqualitiy returns [EObject current=null] : iv_ruleEqualitiy= ruleEqualitiy EOF ;
     public final EObject entryRuleEqualitiy() throws RecognitionException {
         EObject current = null;
 
@@ -1596,8 +1601,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:608:50: (iv_ruleEqualitiy= ruleEqualitiy EOF )
-            // InternalCql.g:609:2: iv_ruleEqualitiy= ruleEqualitiy EOF
+            // InternalCQL.g:608:50: (iv_ruleEqualitiy= ruleEqualitiy EOF )
+            // InternalCQL.g:609:2: iv_ruleEqualitiy= ruleEqualitiy EOF
             {
              newCompositeNode(grammarAccess.getEqualitiyRule()); 
             pushFollow(FOLLOW_1);
@@ -1624,7 +1629,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEqualitiy"
-    // InternalCql.g:615:1: ruleEqualitiy returns [EObject current=null] : (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) ;
+    // InternalCQL.g:615:1: ruleEqualitiy returns [EObject current=null] : (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) ;
     public final EObject ruleEqualitiy() throws RecognitionException {
         EObject current = null;
 
@@ -1639,11 +1644,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:621:2: ( (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) )
-            // InternalCql.g:622:2: (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
+            // InternalCQL.g:621:2: ( (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) )
+            // InternalCQL.g:622:2: (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
             {
-            // InternalCql.g:622:2: (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
-            // InternalCql.g:623:3: this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )*
+            // InternalCQL.g:622:2: (this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
+            // InternalCQL.g:623:3: this_Comparison_0= ruleComparison ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getEqualitiyAccess().getComparisonParserRuleCall_0());
@@ -1657,7 +1662,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             			current = this_Comparison_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCql.g:631:3: ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )*
+            // InternalCQL.g:631:3: ( () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) ) )*
             loop11:
             do {
                 int alt11=2;
@@ -1670,10 +1675,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt11) {
             	case 1 :
-            	    // InternalCql.g:632:4: () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) )
+            	    // InternalCQL.g:632:4: () ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) ) ( (lv_right_3_0= ruleComparison ) )
             	    {
-            	    // InternalCql.g:632:4: ()
-            	    // InternalCql.g:633:5: 
+            	    // InternalCQL.g:632:4: ()
+            	    // InternalCQL.g:633:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -1683,13 +1688,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCql.g:639:4: ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) )
-            	    // InternalCql.g:640:5: ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) )
+            	    // InternalCQL.g:639:4: ( ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) ) )
+            	    // InternalCQL.g:640:5: ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) )
             	    {
-            	    // InternalCql.g:640:5: ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) )
-            	    // InternalCql.g:641:6: (lv_op_2_1= '==' | lv_op_2_2= '!=' )
+            	    // InternalCQL.g:640:5: ( (lv_op_2_1= '==' | lv_op_2_2= '!=' ) )
+            	    // InternalCQL.g:641:6: (lv_op_2_1= '==' | lv_op_2_2= '!=' )
             	    {
-            	    // InternalCql.g:641:6: (lv_op_2_1= '==' | lv_op_2_2= '!=' )
+            	    // InternalCQL.g:641:6: (lv_op_2_1= '==' | lv_op_2_2= '!=' )
             	    int alt10=2;
             	    int LA10_0 = input.LA(1);
 
@@ -1707,7 +1712,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt10) {
             	        case 1 :
-            	            // InternalCql.g:642:7: lv_op_2_1= '=='
+            	            // InternalCQL.g:642:7: lv_op_2_1= '=='
             	            {
             	            lv_op_2_1=(Token)match(input,18,FOLLOW_13); 
 
@@ -1723,7 +1728,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCql.g:653:7: lv_op_2_2= '!='
+            	            // InternalCQL.g:653:7: lv_op_2_2= '!='
             	            {
             	            lv_op_2_2=(Token)match(input,19,FOLLOW_13); 
 
@@ -1747,11 +1752,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCql.g:666:4: ( (lv_right_3_0= ruleComparison ) )
-            	    // InternalCql.g:667:5: (lv_right_3_0= ruleComparison )
+            	    // InternalCQL.g:666:4: ( (lv_right_3_0= ruleComparison ) )
+            	    // InternalCQL.g:667:5: (lv_right_3_0= ruleComparison )
             	    {
-            	    // InternalCql.g:667:5: (lv_right_3_0= ruleComparison )
-            	    // InternalCql.g:668:6: lv_right_3_0= ruleComparison
+            	    // InternalCQL.g:667:5: (lv_right_3_0= ruleComparison )
+            	    // InternalCQL.g:668:6: lv_right_3_0= ruleComparison
             	    {
 
             	    						newCompositeNode(grammarAccess.getEqualitiyAccess().getRightComparisonParserRuleCall_1_2_0());
@@ -1769,7 +1774,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"right",
             	    							lv_right_3_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Comparison");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Comparison");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -1810,7 +1815,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComparison"
-    // InternalCql.g:690:1: entryRuleComparison returns [EObject current=null] : iv_ruleComparison= ruleComparison EOF ;
+    // InternalCQL.g:690:1: entryRuleComparison returns [EObject current=null] : iv_ruleComparison= ruleComparison EOF ;
     public final EObject entryRuleComparison() throws RecognitionException {
         EObject current = null;
 
@@ -1818,8 +1823,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:690:51: (iv_ruleComparison= ruleComparison EOF )
-            // InternalCql.g:691:2: iv_ruleComparison= ruleComparison EOF
+            // InternalCQL.g:690:51: (iv_ruleComparison= ruleComparison EOF )
+            // InternalCQL.g:691:2: iv_ruleComparison= ruleComparison EOF
             {
              newCompositeNode(grammarAccess.getComparisonRule()); 
             pushFollow(FOLLOW_1);
@@ -1846,7 +1851,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComparison"
-    // InternalCql.g:697:1: ruleComparison returns [EObject current=null] : (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) ;
+    // InternalCQL.g:697:1: ruleComparison returns [EObject current=null] : (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) ;
     public final EObject ruleComparison() throws RecognitionException {
         EObject current = null;
 
@@ -1863,11 +1868,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:703:2: ( (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) )
-            // InternalCql.g:704:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
+            // InternalCQL.g:703:2: ( (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) )
+            // InternalCQL.g:704:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
             {
-            // InternalCql.g:704:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
-            // InternalCql.g:705:3: this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
+            // InternalCQL.g:704:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
+            // InternalCQL.g:705:3: this_PlusOrMinus_0= rulePlusOrMinus ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getComparisonAccess().getPlusOrMinusParserRuleCall_0());
@@ -1881,7 +1886,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             			current = this_PlusOrMinus_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCql.g:713:3: ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
+            // InternalCQL.g:713:3: ( () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
             loop13:
             do {
                 int alt13=2;
@@ -1894,10 +1899,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt13) {
             	case 1 :
-            	    // InternalCql.g:714:4: () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) )
+            	    // InternalCQL.g:714:4: () ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) ) ( (lv_right_3_0= rulePlusOrMinus ) )
             	    {
-            	    // InternalCql.g:714:4: ()
-            	    // InternalCql.g:715:5: 
+            	    // InternalCQL.g:714:4: ()
+            	    // InternalCQL.g:715:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -1907,13 +1912,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCql.g:721:4: ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) )
-            	    // InternalCql.g:722:5: ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) )
+            	    // InternalCQL.g:721:4: ( ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) ) )
+            	    // InternalCQL.g:722:5: ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) )
             	    {
-            	    // InternalCql.g:722:5: ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) )
-            	    // InternalCql.g:723:6: (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' )
+            	    // InternalCQL.g:722:5: ( (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' ) )
+            	    // InternalCQL.g:723:6: (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' )
             	    {
-            	    // InternalCql.g:723:6: (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' )
+            	    // InternalCQL.g:723:6: (lv_op_2_1= '>=' | lv_op_2_2= '<=' | lv_op_2_3= '<' | lv_op_2_4= '>' )
             	    int alt12=4;
             	    switch ( input.LA(1) ) {
             	    case 20:
@@ -1945,7 +1950,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    switch (alt12) {
             	        case 1 :
-            	            // InternalCql.g:724:7: lv_op_2_1= '>='
+            	            // InternalCQL.g:724:7: lv_op_2_1= '>='
             	            {
             	            lv_op_2_1=(Token)match(input,20,FOLLOW_15); 
 
@@ -1961,7 +1966,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCql.g:735:7: lv_op_2_2= '<='
+            	            // InternalCQL.g:735:7: lv_op_2_2= '<='
             	            {
             	            lv_op_2_2=(Token)match(input,21,FOLLOW_15); 
 
@@ -1977,7 +1982,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 3 :
-            	            // InternalCql.g:746:7: lv_op_2_3= '<'
+            	            // InternalCQL.g:746:7: lv_op_2_3= '<'
             	            {
             	            lv_op_2_3=(Token)match(input,22,FOLLOW_15); 
 
@@ -1993,7 +1998,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 4 :
-            	            // InternalCql.g:757:7: lv_op_2_4= '>'
+            	            // InternalCQL.g:757:7: lv_op_2_4= '>'
             	            {
             	            lv_op_2_4=(Token)match(input,23,FOLLOW_15); 
 
@@ -2017,11 +2022,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCql.g:770:4: ( (lv_right_3_0= rulePlusOrMinus ) )
-            	    // InternalCql.g:771:5: (lv_right_3_0= rulePlusOrMinus )
+            	    // InternalCQL.g:770:4: ( (lv_right_3_0= rulePlusOrMinus ) )
+            	    // InternalCQL.g:771:5: (lv_right_3_0= rulePlusOrMinus )
             	    {
-            	    // InternalCql.g:771:5: (lv_right_3_0= rulePlusOrMinus )
-            	    // InternalCql.g:772:6: lv_right_3_0= rulePlusOrMinus
+            	    // InternalCQL.g:771:5: (lv_right_3_0= rulePlusOrMinus )
+            	    // InternalCQL.g:772:6: lv_right_3_0= rulePlusOrMinus
             	    {
 
             	    						newCompositeNode(grammarAccess.getComparisonAccess().getRightPlusOrMinusParserRuleCall_1_2_0());
@@ -2039,7 +2044,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"right",
             	    							lv_right_3_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.PlusOrMinus");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.PlusOrMinus");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -2080,7 +2085,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePlusOrMinus"
-    // InternalCql.g:794:1: entryRulePlusOrMinus returns [EObject current=null] : iv_rulePlusOrMinus= rulePlusOrMinus EOF ;
+    // InternalCQL.g:794:1: entryRulePlusOrMinus returns [EObject current=null] : iv_rulePlusOrMinus= rulePlusOrMinus EOF ;
     public final EObject entryRulePlusOrMinus() throws RecognitionException {
         EObject current = null;
 
@@ -2088,8 +2093,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:794:52: (iv_rulePlusOrMinus= rulePlusOrMinus EOF )
-            // InternalCql.g:795:2: iv_rulePlusOrMinus= rulePlusOrMinus EOF
+            // InternalCQL.g:794:52: (iv_rulePlusOrMinus= rulePlusOrMinus EOF )
+            // InternalCQL.g:795:2: iv_rulePlusOrMinus= rulePlusOrMinus EOF
             {
              newCompositeNode(grammarAccess.getPlusOrMinusRule()); 
             pushFollow(FOLLOW_1);
@@ -2116,7 +2121,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePlusOrMinus"
-    // InternalCql.g:801:1: rulePlusOrMinus returns [EObject current=null] : (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) ;
+    // InternalCQL.g:801:1: rulePlusOrMinus returns [EObject current=null] : (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) ;
     public final EObject rulePlusOrMinus() throws RecognitionException {
         EObject current = null;
 
@@ -2131,11 +2136,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:807:2: ( (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) )
-            // InternalCql.g:808:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
+            // InternalCQL.g:807:2: ( (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) )
+            // InternalCQL.g:808:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
             {
-            // InternalCql.g:808:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
-            // InternalCql.g:809:3: this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
+            // InternalCQL.g:808:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
+            // InternalCQL.g:809:3: this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getPlusOrMinusAccess().getMulOrDivParserRuleCall_0());
@@ -2149,7 +2154,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             			current = this_MulOrDiv_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCql.g:817:3: ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
+            // InternalCQL.g:817:3: ( ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
             loop15:
             do {
                 int alt15=2;
@@ -2162,9 +2167,9 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt15) {
             	case 1 :
-            	    // InternalCql.g:818:4: ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) )
+            	    // InternalCQL.g:818:4: ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) ) ( (lv_right_5_0= ruleMulOrDiv ) )
             	    {
-            	    // InternalCql.g:818:4: ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) )
+            	    // InternalCQL.g:818:4: ( ( () otherlv_2= '+' ) | ( () otherlv_4= '-' ) )
             	    int alt14=2;
             	    int LA14_0 = input.LA(1);
 
@@ -2182,13 +2187,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt14) {
             	        case 1 :
-            	            // InternalCql.g:819:5: ( () otherlv_2= '+' )
+            	            // InternalCQL.g:819:5: ( () otherlv_2= '+' )
             	            {
-            	            // InternalCql.g:819:5: ( () otherlv_2= '+' )
-            	            // InternalCql.g:820:6: () otherlv_2= '+'
+            	            // InternalCQL.g:819:5: ( () otherlv_2= '+' )
+            	            // InternalCQL.g:820:6: () otherlv_2= '+'
             	            {
-            	            // InternalCql.g:820:6: ()
-            	            // InternalCql.g:821:7: 
+            	            // InternalCQL.g:820:6: ()
+            	            // InternalCQL.g:821:7: 
             	            {
 
             	            							current = forceCreateModelElementAndSet(
@@ -2209,13 +2214,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCql.g:833:5: ( () otherlv_4= '-' )
+            	            // InternalCQL.g:833:5: ( () otherlv_4= '-' )
             	            {
-            	            // InternalCql.g:833:5: ( () otherlv_4= '-' )
-            	            // InternalCql.g:834:6: () otherlv_4= '-'
+            	            // InternalCQL.g:833:5: ( () otherlv_4= '-' )
+            	            // InternalCQL.g:834:6: () otherlv_4= '-'
             	            {
-            	            // InternalCql.g:834:6: ()
-            	            // InternalCql.g:835:7: 
+            	            // InternalCQL.g:834:6: ()
+            	            // InternalCQL.g:835:7: 
             	            {
 
             	            							current = forceCreateModelElementAndSet(
@@ -2238,11 +2243,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCql.g:847:4: ( (lv_right_5_0= ruleMulOrDiv ) )
-            	    // InternalCql.g:848:5: (lv_right_5_0= ruleMulOrDiv )
+            	    // InternalCQL.g:847:4: ( (lv_right_5_0= ruleMulOrDiv ) )
+            	    // InternalCQL.g:848:5: (lv_right_5_0= ruleMulOrDiv )
             	    {
-            	    // InternalCql.g:848:5: (lv_right_5_0= ruleMulOrDiv )
-            	    // InternalCql.g:849:6: lv_right_5_0= ruleMulOrDiv
+            	    // InternalCQL.g:848:5: (lv_right_5_0= ruleMulOrDiv )
+            	    // InternalCQL.g:849:6: lv_right_5_0= ruleMulOrDiv
             	    {
 
             	    						newCompositeNode(grammarAccess.getPlusOrMinusAccess().getRightMulOrDivParserRuleCall_1_1_0());
@@ -2260,7 +2265,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"right",
             	    							lv_right_5_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.MulOrDiv");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MulOrDiv");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -2301,7 +2306,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMulOrDiv"
-    // InternalCql.g:871:1: entryRuleMulOrDiv returns [EObject current=null] : iv_ruleMulOrDiv= ruleMulOrDiv EOF ;
+    // InternalCQL.g:871:1: entryRuleMulOrDiv returns [EObject current=null] : iv_ruleMulOrDiv= ruleMulOrDiv EOF ;
     public final EObject entryRuleMulOrDiv() throws RecognitionException {
         EObject current = null;
 
@@ -2309,8 +2314,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:871:49: (iv_ruleMulOrDiv= ruleMulOrDiv EOF )
-            // InternalCql.g:872:2: iv_ruleMulOrDiv= ruleMulOrDiv EOF
+            // InternalCQL.g:871:49: (iv_ruleMulOrDiv= ruleMulOrDiv EOF )
+            // InternalCQL.g:872:2: iv_ruleMulOrDiv= ruleMulOrDiv EOF
             {
              newCompositeNode(grammarAccess.getMulOrDivRule()); 
             pushFollow(FOLLOW_1);
@@ -2337,7 +2342,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMulOrDiv"
-    // InternalCql.g:878:1: ruleMulOrDiv returns [EObject current=null] : (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) ;
+    // InternalCQL.g:878:1: ruleMulOrDiv returns [EObject current=null] : (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) ;
     public final EObject ruleMulOrDiv() throws RecognitionException {
         EObject current = null;
 
@@ -2352,11 +2357,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:884:2: ( (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) )
-            // InternalCql.g:885:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
+            // InternalCQL.g:884:2: ( (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) )
+            // InternalCQL.g:885:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
             {
-            // InternalCql.g:885:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
-            // InternalCql.g:886:3: this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
+            // InternalCQL.g:885:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
+            // InternalCQL.g:886:3: this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getMulOrDivAccess().getPrimaryParserRuleCall_0());
@@ -2370,7 +2375,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             			current = this_Primary_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCql.g:894:3: ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
+            // InternalCQL.g:894:3: ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
             loop17:
             do {
                 int alt17=2;
@@ -2383,10 +2388,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt17) {
             	case 1 :
-            	    // InternalCql.g:895:4: () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) )
+            	    // InternalCQL.g:895:4: () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ( (lv_right_3_0= rulePrimary ) )
             	    {
-            	    // InternalCql.g:895:4: ()
-            	    // InternalCql.g:896:5: 
+            	    // InternalCQL.g:895:4: ()
+            	    // InternalCQL.g:896:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -2396,13 +2401,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCql.g:902:4: ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) )
-            	    // InternalCql.g:903:5: ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) )
+            	    // InternalCQL.g:902:4: ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) )
+            	    // InternalCQL.g:903:5: ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) )
             	    {
-            	    // InternalCql.g:903:5: ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) )
-            	    // InternalCql.g:904:6: (lv_op_2_1= '*' | lv_op_2_2= '/' )
+            	    // InternalCQL.g:903:5: ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) )
+            	    // InternalCQL.g:904:6: (lv_op_2_1= '*' | lv_op_2_2= '/' )
             	    {
-            	    // InternalCql.g:904:6: (lv_op_2_1= '*' | lv_op_2_2= '/' )
+            	    // InternalCQL.g:904:6: (lv_op_2_1= '*' | lv_op_2_2= '/' )
             	    int alt16=2;
             	    int LA16_0 = input.LA(1);
 
@@ -2420,7 +2425,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt16) {
             	        case 1 :
-            	            // InternalCql.g:905:7: lv_op_2_1= '*'
+            	            // InternalCQL.g:905:7: lv_op_2_1= '*'
             	            {
             	            lv_op_2_1=(Token)match(input,26,FOLLOW_19); 
 
@@ -2436,7 +2441,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCql.g:916:7: lv_op_2_2= '/'
+            	            // InternalCQL.g:916:7: lv_op_2_2= '/'
             	            {
             	            lv_op_2_2=(Token)match(input,27,FOLLOW_19); 
 
@@ -2460,11 +2465,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCql.g:929:4: ( (lv_right_3_0= rulePrimary ) )
-            	    // InternalCql.g:930:5: (lv_right_3_0= rulePrimary )
+            	    // InternalCQL.g:929:4: ( (lv_right_3_0= rulePrimary ) )
+            	    // InternalCQL.g:930:5: (lv_right_3_0= rulePrimary )
             	    {
-            	    // InternalCql.g:930:5: (lv_right_3_0= rulePrimary )
-            	    // InternalCql.g:931:6: lv_right_3_0= rulePrimary
+            	    // InternalCQL.g:930:5: (lv_right_3_0= rulePrimary )
+            	    // InternalCQL.g:931:6: lv_right_3_0= rulePrimary
             	    {
 
             	    						newCompositeNode(grammarAccess.getMulOrDivAccess().getRightPrimaryParserRuleCall_1_2_0());
@@ -2482,7 +2487,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"right",
             	    							lv_right_3_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Primary");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Primary");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -2523,7 +2528,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePrimary"
-    // InternalCql.g:953:1: entryRulePrimary returns [EObject current=null] : iv_rulePrimary= rulePrimary EOF ;
+    // InternalCQL.g:953:1: entryRulePrimary returns [EObject current=null] : iv_rulePrimary= rulePrimary EOF ;
     public final EObject entryRulePrimary() throws RecognitionException {
         EObject current = null;
 
@@ -2531,8 +2536,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:953:48: (iv_rulePrimary= rulePrimary EOF )
-            // InternalCql.g:954:2: iv_rulePrimary= rulePrimary EOF
+            // InternalCQL.g:953:48: (iv_rulePrimary= rulePrimary EOF )
+            // InternalCQL.g:954:2: iv_rulePrimary= rulePrimary EOF
             {
              newCompositeNode(grammarAccess.getPrimaryRule()); 
             pushFollow(FOLLOW_1);
@@ -2559,7 +2564,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePrimary"
-    // InternalCql.g:960:1: rulePrimary returns [EObject current=null] : ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) ;
+    // InternalCQL.g:960:1: rulePrimary returns [EObject current=null] : ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) ;
     public final EObject rulePrimary() throws RecognitionException {
         EObject current = null;
 
@@ -2577,10 +2582,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:966:2: ( ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) )
-            // InternalCql.g:967:2: ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
+            // InternalCQL.g:966:2: ( ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) )
+            // InternalCQL.g:967:2: ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
             {
-            // InternalCql.g:967:2: ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
+            // InternalCQL.g:967:2: ( ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' ) | ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
             int alt18=3;
             switch ( input.LA(1) ) {
             case 28:
@@ -2612,13 +2617,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             switch (alt18) {
                 case 1 :
-                    // InternalCql.g:968:3: ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' )
+                    // InternalCQL.g:968:3: ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' )
                     {
-                    // InternalCql.g:968:3: ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' )
-                    // InternalCql.g:969:4: () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')'
+                    // InternalCQL.g:968:3: ( () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')' )
+                    // InternalCQL.g:969:4: () otherlv_1= '(' ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= ')'
                     {
-                    // InternalCql.g:969:4: ()
-                    // InternalCql.g:970:5: 
+                    // InternalCQL.g:969:4: ()
+                    // InternalCQL.g:970:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -2632,11 +2637,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_1, grammarAccess.getPrimaryAccess().getLeftParenthesisKeyword_0_1());
                     			
-                    // InternalCql.g:980:4: ( (lv_inner_2_0= ruleExpression ) )
-                    // InternalCql.g:981:5: (lv_inner_2_0= ruleExpression )
+                    // InternalCQL.g:980:4: ( (lv_inner_2_0= ruleExpression ) )
+                    // InternalCQL.g:981:5: (lv_inner_2_0= ruleExpression )
                     {
-                    // InternalCql.g:981:5: (lv_inner_2_0= ruleExpression )
-                    // InternalCql.g:982:6: lv_inner_2_0= ruleExpression
+                    // InternalCQL.g:981:5: (lv_inner_2_0= ruleExpression )
+                    // InternalCQL.g:982:6: lv_inner_2_0= ruleExpression
                     {
 
                     						newCompositeNode(grammarAccess.getPrimaryAccess().getInnerExpressionParserRuleCall_0_2_0());
@@ -2654,7 +2659,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     							current,
                     							"inner",
                     							lv_inner_2_0,
-                    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Expression");
+                    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Expression");
                     						afterParserOrEnumRuleCall();
                     					
 
@@ -2674,13 +2679,13 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCql.g:1005:3: ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) )
+                    // InternalCQL.g:1005:3: ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) )
                     {
-                    // InternalCql.g:1005:3: ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) )
-                    // InternalCql.g:1006:4: () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) )
+                    // InternalCQL.g:1005:3: ( () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) ) )
+                    // InternalCQL.g:1006:4: () otherlv_5= 'NOT' ( (lv_expression_6_0= rulePrimary ) )
                     {
-                    // InternalCql.g:1006:4: ()
-                    // InternalCql.g:1007:5: 
+                    // InternalCQL.g:1006:4: ()
+                    // InternalCQL.g:1007:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -2694,11 +2699,11 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_5, grammarAccess.getPrimaryAccess().getNOTKeyword_1_1());
                     			
-                    // InternalCql.g:1017:4: ( (lv_expression_6_0= rulePrimary ) )
-                    // InternalCql.g:1018:5: (lv_expression_6_0= rulePrimary )
+                    // InternalCQL.g:1017:4: ( (lv_expression_6_0= rulePrimary ) )
+                    // InternalCQL.g:1018:5: (lv_expression_6_0= rulePrimary )
                     {
-                    // InternalCql.g:1018:5: (lv_expression_6_0= rulePrimary )
-                    // InternalCql.g:1019:6: lv_expression_6_0= rulePrimary
+                    // InternalCQL.g:1018:5: (lv_expression_6_0= rulePrimary )
+                    // InternalCQL.g:1019:6: lv_expression_6_0= rulePrimary
                     {
 
                     						newCompositeNode(grammarAccess.getPrimaryAccess().getExpressionPrimaryParserRuleCall_1_2_0());
@@ -2716,7 +2721,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     							current,
                     							"expression",
                     							lv_expression_6_0,
-                    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Primary");
+                    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Primary");
                     						afterParserOrEnumRuleCall();
                     					
 
@@ -2732,7 +2737,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCql.g:1038:3: this_Atomic_7= ruleAtomic
+                    // InternalCQL.g:1038:3: this_Atomic_7= ruleAtomic
                     {
 
                     			newCompositeNode(grammarAccess.getPrimaryAccess().getAtomicParserRuleCall_2());
@@ -2772,7 +2777,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSelect_Statement"
-    // InternalCql.g:1050:1: entryRuleSelect_Statement returns [EObject current=null] : iv_ruleSelect_Statement= ruleSelect_Statement EOF ;
+    // InternalCQL.g:1050:1: entryRuleSelect_Statement returns [EObject current=null] : iv_ruleSelect_Statement= ruleSelect_Statement EOF ;
     public final EObject entryRuleSelect_Statement() throws RecognitionException {
         EObject current = null;
 
@@ -2780,8 +2785,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:1050:57: (iv_ruleSelect_Statement= ruleSelect_Statement EOF )
-            // InternalCql.g:1051:2: iv_ruleSelect_Statement= ruleSelect_Statement EOF
+            // InternalCQL.g:1050:57: (iv_ruleSelect_Statement= ruleSelect_Statement EOF )
+            // InternalCQL.g:1051:2: iv_ruleSelect_Statement= ruleSelect_Statement EOF
             {
              newCompositeNode(grammarAccess.getSelect_StatementRule()); 
             pushFollow(FOLLOW_1);
@@ -2808,7 +2813,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSelect_Statement"
-    // InternalCql.g:1057:1: ruleSelect_Statement returns [EObject current=null] : ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) ) ;
+    // InternalCQL.g:1057:1: ruleSelect_Statement returns [EObject current=null] : ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) ) ;
     public final EObject ruleSelect_Statement() throws RecognitionException {
         EObject current = null;
 
@@ -2833,17 +2838,17 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:1063:2: ( ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) ) )
-            // InternalCql.g:1064:2: ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) )
+            // InternalCQL.g:1063:2: ( ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) ) )
+            // InternalCQL.g:1064:2: ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) )
             {
-            // InternalCql.g:1064:2: ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) )
-            // InternalCql.g:1065:3: ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) )
+            // InternalCQL.g:1064:2: ( ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) ) )
+            // InternalCQL.g:1065:3: ( (lv_name_0_0= 'SELECT' ) ) (otherlv_1= 'DISTINCT' )? ( (lv_attributes_2_0= ruleAttribute ) )+ (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )* otherlv_5= 'FROM' ( (lv_sources_6_0= ruleSource ) )+ (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )* (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) )
             {
-            // InternalCql.g:1065:3: ( (lv_name_0_0= 'SELECT' ) )
-            // InternalCql.g:1066:4: (lv_name_0_0= 'SELECT' )
+            // InternalCQL.g:1065:3: ( (lv_name_0_0= 'SELECT' ) )
+            // InternalCQL.g:1066:4: (lv_name_0_0= 'SELECT' )
             {
-            // InternalCql.g:1066:4: (lv_name_0_0= 'SELECT' )
-            // InternalCql.g:1067:5: lv_name_0_0= 'SELECT'
+            // InternalCQL.g:1066:4: (lv_name_0_0= 'SELECT' )
+            // InternalCQL.g:1067:5: lv_name_0_0= 'SELECT'
             {
             lv_name_0_0=(Token)match(input,31,FOLLOW_23); 
 
@@ -2861,7 +2866,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCql.g:1079:3: (otherlv_1= 'DISTINCT' )?
+            // InternalCQL.g:1079:3: (otherlv_1= 'DISTINCT' )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -2870,7 +2875,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             }
             switch (alt19) {
                 case 1 :
-                    // InternalCql.g:1080:4: otherlv_1= 'DISTINCT'
+                    // InternalCQL.g:1080:4: otherlv_1= 'DISTINCT'
                     {
                     otherlv_1=(Token)match(input,32,FOLLOW_23); 
 
@@ -2882,7 +2887,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCql.g:1085:3: ( (lv_attributes_2_0= ruleAttribute ) )+
+            // InternalCQL.g:1085:3: ( (lv_attributes_2_0= ruleAttribute ) )+
             int cnt20=0;
             loop20:
             do {
@@ -2896,10 +2901,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt20) {
             	case 1 :
-            	    // InternalCql.g:1086:4: (lv_attributes_2_0= ruleAttribute )
+            	    // InternalCQL.g:1086:4: (lv_attributes_2_0= ruleAttribute )
             	    {
-            	    // InternalCql.g:1086:4: (lv_attributes_2_0= ruleAttribute )
-            	    // InternalCql.g:1087:5: lv_attributes_2_0= ruleAttribute
+            	    // InternalCQL.g:1086:4: (lv_attributes_2_0= ruleAttribute )
+            	    // InternalCQL.g:1087:5: lv_attributes_2_0= ruleAttribute
             	    {
 
             	    					newCompositeNode(grammarAccess.getSelect_StatementAccess().getAttributesAttributeParserRuleCall_2_0());
@@ -2917,7 +2922,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    						current,
             	    						"attributes",
             	    						lv_attributes_2_0,
-            	    						"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Attribute");
+            	    						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
             	    					afterParserOrEnumRuleCall();
             	    				
 
@@ -2936,7 +2941,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                 cnt20++;
             } while (true);
 
-            // InternalCql.g:1104:3: (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )*
+            // InternalCQL.g:1104:3: (otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) ) )*
             loop21:
             do {
                 int alt21=2;
@@ -2949,17 +2954,17 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt21) {
             	case 1 :
-            	    // InternalCql.g:1105:4: otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) )
+            	    // InternalCQL.g:1105:4: otherlv_3= ',' ( (lv_attributes_4_0= ruleAttribute ) )
             	    {
             	    otherlv_3=(Token)match(input,33,FOLLOW_23); 
 
             	    				newLeafNode(otherlv_3, grammarAccess.getSelect_StatementAccess().getCommaKeyword_3_0());
             	    			
-            	    // InternalCql.g:1109:4: ( (lv_attributes_4_0= ruleAttribute ) )
-            	    // InternalCql.g:1110:5: (lv_attributes_4_0= ruleAttribute )
+            	    // InternalCQL.g:1109:4: ( (lv_attributes_4_0= ruleAttribute ) )
+            	    // InternalCQL.g:1110:5: (lv_attributes_4_0= ruleAttribute )
             	    {
-            	    // InternalCql.g:1110:5: (lv_attributes_4_0= ruleAttribute )
-            	    // InternalCql.g:1111:6: lv_attributes_4_0= ruleAttribute
+            	    // InternalCQL.g:1110:5: (lv_attributes_4_0= ruleAttribute )
+            	    // InternalCQL.g:1111:6: lv_attributes_4_0= ruleAttribute
             	    {
 
             	    						newCompositeNode(grammarAccess.getSelect_StatementAccess().getAttributesAttributeParserRuleCall_3_1_0());
@@ -2977,7 +2982,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"attributes",
             	    							lv_attributes_4_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Attribute");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -2999,7 +3004,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_5, grammarAccess.getSelect_StatementAccess().getFROMKeyword_4());
             		
-            // InternalCql.g:1133:3: ( (lv_sources_6_0= ruleSource ) )+
+            // InternalCQL.g:1133:3: ( (lv_sources_6_0= ruleSource ) )+
             int cnt22=0;
             loop22:
             do {
@@ -3013,10 +3018,10 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt22) {
             	case 1 :
-            	    // InternalCql.g:1134:4: (lv_sources_6_0= ruleSource )
+            	    // InternalCQL.g:1134:4: (lv_sources_6_0= ruleSource )
             	    {
-            	    // InternalCql.g:1134:4: (lv_sources_6_0= ruleSource )
-            	    // InternalCql.g:1135:5: lv_sources_6_0= ruleSource
+            	    // InternalCQL.g:1134:4: (lv_sources_6_0= ruleSource )
+            	    // InternalCQL.g:1135:5: lv_sources_6_0= ruleSource
             	    {
 
             	    					newCompositeNode(grammarAccess.getSelect_StatementAccess().getSourcesSourceParserRuleCall_5_0());
@@ -3034,7 +3039,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    						current,
             	    						"sources",
             	    						lv_sources_6_0,
-            	    						"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Source");
+            	    						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Source");
             	    					afterParserOrEnumRuleCall();
             	    				
 
@@ -3053,7 +3058,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                 cnt22++;
             } while (true);
 
-            // InternalCql.g:1152:3: (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )*
+            // InternalCQL.g:1152:3: (otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) ) )*
             loop23:
             do {
                 int alt23=2;
@@ -3066,17 +3071,17 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
                 switch (alt23) {
             	case 1 :
-            	    // InternalCql.g:1153:4: otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) )
+            	    // InternalCQL.g:1153:4: otherlv_7= ',' ( (lv_sources_8_0= ruleSource ) )
             	    {
             	    otherlv_7=(Token)match(input,33,FOLLOW_6); 
 
             	    				newLeafNode(otherlv_7, grammarAccess.getSelect_StatementAccess().getCommaKeyword_6_0());
             	    			
-            	    // InternalCql.g:1157:4: ( (lv_sources_8_0= ruleSource ) )
-            	    // InternalCql.g:1158:5: (lv_sources_8_0= ruleSource )
+            	    // InternalCQL.g:1157:4: ( (lv_sources_8_0= ruleSource ) )
+            	    // InternalCQL.g:1158:5: (lv_sources_8_0= ruleSource )
             	    {
-            	    // InternalCql.g:1158:5: (lv_sources_8_0= ruleSource )
-            	    // InternalCql.g:1159:6: lv_sources_8_0= ruleSource
+            	    // InternalCQL.g:1158:5: (lv_sources_8_0= ruleSource )
+            	    // InternalCQL.g:1159:6: lv_sources_8_0= ruleSource
             	    {
 
             	    						newCompositeNode(grammarAccess.getSelect_StatementAccess().getSourcesSourceParserRuleCall_6_1_0());
@@ -3094,7 +3099,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             	    							current,
             	    							"sources",
             	    							lv_sources_8_0,
-            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Source");
+            	    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Source");
             	    						afterParserOrEnumRuleCall();
             	    					
 
@@ -3112,18 +3117,18 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            // InternalCql.g:1177:3: (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) )
-            // InternalCql.g:1178:4: otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) )
+            // InternalCQL.g:1177:3: (otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) ) )
+            // InternalCQL.g:1178:4: otherlv_9= 'WHERE' ( (lv_predicates_10_0= ruleExpressionsModel ) )
             {
             otherlv_9=(Token)match(input,35,FOLLOW_22); 
 
             				newLeafNode(otherlv_9, grammarAccess.getSelect_StatementAccess().getWHEREKeyword_7_0());
             			
-            // InternalCql.g:1182:4: ( (lv_predicates_10_0= ruleExpressionsModel ) )
-            // InternalCql.g:1183:5: (lv_predicates_10_0= ruleExpressionsModel )
+            // InternalCQL.g:1182:4: ( (lv_predicates_10_0= ruleExpressionsModel ) )
+            // InternalCQL.g:1183:5: (lv_predicates_10_0= ruleExpressionsModel )
             {
-            // InternalCql.g:1183:5: (lv_predicates_10_0= ruleExpressionsModel )
-            // InternalCql.g:1184:6: lv_predicates_10_0= ruleExpressionsModel
+            // InternalCQL.g:1183:5: (lv_predicates_10_0= ruleExpressionsModel )
+            // InternalCQL.g:1184:6: lv_predicates_10_0= ruleExpressionsModel
             {
 
             						newCompositeNode(grammarAccess.getSelect_StatementAccess().getPredicatesExpressionsModelParserRuleCall_7_1_0());
@@ -3141,7 +3146,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
             							current,
             							"predicates",
             							lv_predicates_10_0,
-            							"de.uniol.inf.is.odysseus.parser.novel.cql.Cql.ExpressionsModel");
+            							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionsModel");
             						afterParserOrEnumRuleCall();
             					
 
@@ -3176,7 +3181,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreate_Statement"
-    // InternalCql.g:1206:1: entryRuleCreate_Statement returns [EObject current=null] : iv_ruleCreate_Statement= ruleCreate_Statement EOF ;
+    // InternalCQL.g:1206:1: entryRuleCreate_Statement returns [EObject current=null] : iv_ruleCreate_Statement= ruleCreate_Statement EOF ;
     public final EObject entryRuleCreate_Statement() throws RecognitionException {
         EObject current = null;
 
@@ -3184,8 +3189,8 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCql.g:1206:57: (iv_ruleCreate_Statement= ruleCreate_Statement EOF )
-            // InternalCql.g:1207:2: iv_ruleCreate_Statement= ruleCreate_Statement EOF
+            // InternalCQL.g:1206:57: (iv_ruleCreate_Statement= ruleCreate_Statement EOF )
+            // InternalCQL.g:1207:2: iv_ruleCreate_Statement= ruleCreate_Statement EOF
             {
              newCompositeNode(grammarAccess.getCreate_StatementRule()); 
             pushFollow(FOLLOW_1);
@@ -3212,7 +3217,7 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreate_Statement"
-    // InternalCql.g:1213:1: ruleCreate_Statement returns [EObject current=null] : ( (lv_name_0_0= 'CREATE' ) ) ;
+    // InternalCQL.g:1213:1: ruleCreate_Statement returns [EObject current=null] : ( (lv_name_0_0= 'CREATE' ) ) ;
     public final EObject ruleCreate_Statement() throws RecognitionException {
         EObject current = null;
 
@@ -3222,14 +3227,14 @@ public class InternalCqlParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCql.g:1219:2: ( ( (lv_name_0_0= 'CREATE' ) ) )
-            // InternalCql.g:1220:2: ( (lv_name_0_0= 'CREATE' ) )
+            // InternalCQL.g:1219:2: ( ( (lv_name_0_0= 'CREATE' ) ) )
+            // InternalCQL.g:1220:2: ( (lv_name_0_0= 'CREATE' ) )
             {
-            // InternalCql.g:1220:2: ( (lv_name_0_0= 'CREATE' ) )
-            // InternalCql.g:1221:3: (lv_name_0_0= 'CREATE' )
+            // InternalCQL.g:1220:2: ( (lv_name_0_0= 'CREATE' ) )
+            // InternalCQL.g:1221:3: (lv_name_0_0= 'CREATE' )
             {
-            // InternalCql.g:1221:3: (lv_name_0_0= 'CREATE' )
-            // InternalCql.g:1222:4: lv_name_0_0= 'CREATE'
+            // InternalCQL.g:1221:3: (lv_name_0_0= 'CREATE' )
+            // InternalCQL.g:1222:4: lv_name_0_0= 'CREATE'
             {
             lv_name_0_0=(Token)match(input,36,FOLLOW_2); 
 

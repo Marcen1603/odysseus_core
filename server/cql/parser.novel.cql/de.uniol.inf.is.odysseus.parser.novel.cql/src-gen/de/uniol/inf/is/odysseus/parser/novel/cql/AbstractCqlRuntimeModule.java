@@ -3,19 +3,8 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql;
 
-import com.google.inject.Binder;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
-import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CqlGenerator;
-import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CqlAntlrTokenFileProvider;
-import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CqlParser;
-import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal.InternalCqlLexer;
-import de.uniol.inf.is.odysseus.parser.novel.cql.scoping.CqlScopeProvider;
-import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CqlSemanticSequencer;
-import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CqlSyntacticSequencer;
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CqlGrammarAccess;
-import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CqlValidator;
 import java.util.Properties;
+
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.generator.IGenerator2;
@@ -50,22 +39,36 @@ import org.eclipse.xtext.serializer.sequencer.ISyntacticSequencer;
 import org.eclipse.xtext.service.DefaultRuntimeModule;
 import org.eclipse.xtext.service.SingletonBinding;
 
+import com.google.inject.Binder;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
+
+import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CQLAntlrTokenFileProvider;
+import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CQLParser;
+import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal.InternalCQLLexer;
+import de.uniol.inf.is.odysseus.parser.novel.cql.scoping.CQLScopeProvider;
+import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CQLSemanticSequencer;
+import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CQLSyntacticSequencer;
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
+import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CQLValidator;
+
 /**
- * Manual modifications go to {@link CqlRuntimeModule}.
+ * Manual modifications go to {@link CQLRuntimeModule}.
  */
 @SuppressWarnings("all")
-public abstract class AbstractCqlRuntimeModule extends DefaultRuntimeModule {
+public abstract class AbstractCQLRuntimeModule extends DefaultRuntimeModule {
 
 	protected Properties properties = null;
 
 	@Override
 	public void configure(Binder binder) {
-		properties = tryBindProperties(binder, "de/uniol/inf/is/odysseus/parser/novel/cql/Cql.properties");
+		properties = tryBindProperties(binder, "de/uniol/inf/is/odysseus/parser/novel/cql/CQL.properties");
 		super.configure(binder);
 	}
 	
 	public void configureLanguageName(Binder binder) {
-		binder.bind(String.class).annotatedWith(Names.named(Constants.LANGUAGE_NAME)).toInstance("de.uniol.inf.is.odysseus.parser.novel.cql.Cql");
+		binder.bind(String.class).annotatedWith(Names.named(Constants.LANGUAGE_NAME)).toInstance("de.uniol.inf.is.odysseus.parser.novel.cql.CQL");
 	}
 	
 	public void configureFileExtensions(Binder binder) {
@@ -80,17 +83,17 @@ public abstract class AbstractCqlRuntimeModule extends DefaultRuntimeModule {
 	
 	// contributed by org.eclipse.xtext.xtext.generator.grammarAccess.GrammarAccessFragment2
 	public Class<? extends IGrammarAccess> bindIGrammarAccess() {
-		return CqlGrammarAccess.class;
+		return CQLGrammarAccess.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.serializer.SerializerFragment2
 	public Class<? extends ISemanticSequencer> bindISemanticSequencer() {
-		return CqlSemanticSequencer.class;
+		return CQLSemanticSequencer.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.serializer.SerializerFragment2
 	public Class<? extends ISyntacticSequencer> bindISyntacticSequencer() {
-		return CqlSyntacticSequencer.class;
+		return CQLSyntacticSequencer.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.serializer.SerializerFragment2
@@ -100,7 +103,7 @@ public abstract class AbstractCqlRuntimeModule extends DefaultRuntimeModule {
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
 	public Class<? extends IParser> bindIParser() {
-		return CqlParser.class;
+		return CQLParser.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
@@ -110,12 +113,12 @@ public abstract class AbstractCqlRuntimeModule extends DefaultRuntimeModule {
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
 	public Class<? extends IAntlrTokenFileProvider> bindIAntlrTokenFileProvider() {
-		return CqlAntlrTokenFileProvider.class;
+		return CQLAntlrTokenFileProvider.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
 	public Class<? extends Lexer> bindLexer() {
-		return InternalCqlLexer.class;
+		return InternalCQLLexer.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
@@ -124,26 +127,26 @@ public abstract class AbstractCqlRuntimeModule extends DefaultRuntimeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
-	public Provider<InternalCqlLexer> provideInternalCqlLexer() {
-		return LexerProvider.create(InternalCqlLexer.class);
+	public Provider<InternalCQLLexer> provideInternalCQLLexer() {
+		return LexerProvider.create(InternalCQLLexer.class);
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
 	public void configureRuntimeLexer(Binder binder) {
 		binder.bind(Lexer.class)
 			.annotatedWith(Names.named(LexerBindings.RUNTIME))
-			.to(InternalCqlLexer.class);
+			.to(InternalCQLLexer.class);
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.validation.ValidatorFragment2
 	@SingletonBinding(eager=true)
-	public Class<? extends CqlValidator> bindCqlValidator() {
-		return CqlValidator.class;
+	public Class<? extends CQLValidator> bindCQLValidator() {
+		return CQLValidator.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.scoping.ImportNamespacesScopingFragment2
 	public Class<? extends IScopeProvider> bindIScopeProvider() {
-		return CqlScopeProvider.class;
+		return CQLScopeProvider.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.scoping.ImportNamespacesScopingFragment2
@@ -188,7 +191,7 @@ public abstract class AbstractCqlRuntimeModule extends DefaultRuntimeModule {
 	
 	// contributed by org.eclipse.xtext.xtext.generator.generator.GeneratorFragment2
 	public Class<? extends IGenerator2> bindIGenerator2() {
-		return CqlGenerator.class;
+		return CQLGenerator.class;
 	}
 	
 }

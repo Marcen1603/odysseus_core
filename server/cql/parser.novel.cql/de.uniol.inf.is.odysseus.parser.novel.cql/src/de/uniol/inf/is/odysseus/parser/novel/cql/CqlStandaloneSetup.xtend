@@ -7,9 +7,9 @@ package de.uniol.inf.is.odysseus.parser.novel.cql
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */
-class CqlStandaloneSetup extends CqlStandaloneSetupGenerated {
+class CQLStandaloneSetup extends CQLStandaloneSetupGenerated {
 
 	def static void doSetup() {
-		new CqlStandaloneSetup().createInjectorAndDoEMFRegistration()
+		new CQLStandaloneSetup().createInjectorAndDoEMFRegistration()
 	}
 }

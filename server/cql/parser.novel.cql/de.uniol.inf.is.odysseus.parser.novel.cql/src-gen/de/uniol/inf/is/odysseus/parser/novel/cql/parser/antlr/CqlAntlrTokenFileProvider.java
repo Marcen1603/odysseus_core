@@ -6,11 +6,11 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr;
 import java.io.InputStream;
 import org.eclipse.xtext.parser.antlr.IAntlrTokenFileProvider;
 
-public class CqlAntlrTokenFileProvider implements IAntlrTokenFileProvider {
+public class CQLAntlrTokenFileProvider implements IAntlrTokenFileProvider {
 
 	@Override
 	public InputStream getAntlrTokenFile() {
 		ClassLoader classLoader = getClass().getClassLoader();
-		return classLoader.getResourceAsStream("de/uniol/inf/is/odysseus/parser/novel/cql/parser/antlr/internal/InternalCql.tokens");
+		return classLoader.getResourceAsStream("de/uniol/inf/is/odysseus/parser/novel/cql/parser/antlr/internal/InternalCQL.tokens");
 	}
 }

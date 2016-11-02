@@ -8,12 +8,12 @@ import java.util.List;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 
-public abstract class AbstractCqlValidator extends AbstractDeclarativeValidator {
+public abstract class AbstractCQLValidator extends AbstractDeclarativeValidator {
 	
 	@Override
 	protected List<EPackage> getEPackages() {
 		List<EPackage> result = new ArrayList<EPackage>();
-		result.add(de.uniol.inf.is.odysseus.parser.novel.cql.cql.CqlPackage.eINSTANCE);
+		result.add(de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage.eINSTANCE);
 		return result;
 	}
 	

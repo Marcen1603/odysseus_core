@@ -25,10 +25,10 @@ import org.eclipse.xtext.service.AbstractElementFinder.AbstractGrammarElementFin
 import org.eclipse.xtext.service.GrammarProvider;
 
 @Singleton
-public class CqlGrammarAccess extends AbstractGrammarElementFinder {
+public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public class ModelElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Model");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Model");
 		private final Assignment cStatementsAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cStatementsStatementParserRuleCall_0 = (RuleCall)cStatementsAssignment.eContents().get(0);
 		
@@ -43,7 +43,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getStatementsStatementParserRuleCall_0() { return cStatementsStatementParserRuleCall_0; }
 	}
 	public class StatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Statement");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
 		private final Assignment cTypeAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
@@ -78,7 +78,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
 	}
 	public class Nested_StatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Nested_Statement");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Nested_Statement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cLeftParenthesisKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final RuleCall cSelect_StatementParserRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
@@ -101,7 +101,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightParenthesisKeyword_2() { return cRightParenthesisKeyword_2; }
 	}
 	public class AtomicElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Atomic");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Atomic");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
 		private final Action cIntConstantAction_0_0 = (Action)cGroup_0.eContents().get(0);
@@ -207,7 +207,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getValueAttributeIDTerminalRuleCall_4_1_0_1() { return cValueAttributeIDTerminalRuleCall_4_1_0_1; }
 	}
 	public class AliasElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Alias");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Alias");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
@@ -222,7 +222,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
 	}
 	public class SourceElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Source");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Source");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
@@ -237,7 +237,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
 	}
 	public class AttributeElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Attribute");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cGroup.eContents().get(0);
 		private final Assignment cSourceAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
@@ -276,7 +276,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
 	}
 	public class ExpressionsModelElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.ExpressionsModel");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionsModel");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cExpressionsModelAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cElementsAssignment_1 = (Assignment)cGroup.eContents().get(1);
@@ -285,23 +285,23 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		////Function: functionType=FunctionType '(' value=Attribute ')' ;
 		//// Expressions //////////////////////////////////////////////////////////
 		//ExpressionsModel:
-		//	{ExpressionsModel} elements+=Expression*;
+		//	{ExpressionsModel} elements+=Expression+;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{ExpressionsModel} elements+=Expression*
+		//{ExpressionsModel} elements+=Expression+
 		public Group getGroup() { return cGroup; }
 		
 		//{ExpressionsModel}
 		public Action getExpressionsModelAction_0() { return cExpressionsModelAction_0; }
 		
-		//elements+=Expression*
+		//elements+=Expression+
 		public Assignment getElementsAssignment_1() { return cElementsAssignment_1; }
 		
 		//Expression
 		public RuleCall getElementsExpressionParserRuleCall_1_0() { return cElementsExpressionParserRuleCall_1_0; }
 	}
 	public class ExpressionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Expression");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Expression");
 		private final RuleCall cOrParserRuleCall = (RuleCall)rule.eContents().get(1);
 		
 		//Expression:
@@ -312,7 +312,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getOrParserRuleCall() { return cOrParserRuleCall; }
 	}
 	public class OrElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Or");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Or");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cAndParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
@@ -347,7 +347,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getRightAndParserRuleCall_1_2_0() { return cRightAndParserRuleCall_1_2_0; }
 	}
 	public class AndElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.And");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.And");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cEqualitiyParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
@@ -382,7 +382,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getRightEqualitiyParserRuleCall_1_2_0() { return cRightEqualitiyParserRuleCall_1_2_0; }
 	}
 	public class EqualitiyElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Equalitiy");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Equalitiy");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cComparisonParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
@@ -394,6 +394,13 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cRightAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
 		private final RuleCall cRightComparisonParserRuleCall_1_2_0 = (RuleCall)cRightAssignment_1_2.eContents().get(0);
 		
+		////Or returns Expression:
+		////	And ({Or.left=current} 'OR' right=And)*
+		////;
+		////
+		////And returns Expression:
+		////	Equalitiy ({And.left=current} 'AND' right=Equalitiy)*
+		////;
 		//Equalitiy Expression:
 		//	Comparison ({Equality.left=current} op=('==' | '!=') right=Comparison)*
 		@Override public ParserRule getRule() { return rule; }
@@ -429,7 +436,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getRightComparisonParserRuleCall_1_2_0() { return cRightComparisonParserRuleCall_1_2_0; }
 	}
 	public class ComparisonElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Comparison");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Comparison");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cPlusOrMinusParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
@@ -484,7 +491,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getRightPlusOrMinusParserRuleCall_1_2_0() { return cRightPlusOrMinusParserRuleCall_1_2_0; }
 	}
 	public class PlusOrMinusElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.PlusOrMinus");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.PlusOrMinus");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cMulOrDivParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
@@ -539,7 +546,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getRightMulOrDivParserRuleCall_1_1_0() { return cRightMulOrDivParserRuleCall_1_1_0; }
 	}
 	public class MulOrDivElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.MulOrDiv");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MulOrDiv");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cPrimaryParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
@@ -586,7 +593,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getRightPrimaryParserRuleCall_1_2_0() { return cRightPrimaryParserRuleCall_1_2_0; }
 	}
 	public class PrimaryElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Primary");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Primary");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
 		private final Action cBracketAction_0_0 = (Action)cGroup_0.eContents().get(0);
@@ -645,7 +652,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getAtomicParserRuleCall_2() { return cAtomicParserRuleCall_2; }
 	}
 	public class Select_StatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Select_Statement");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Select_Statement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final Keyword cNameSELECTKeyword_0_0 = (Keyword)cNameAssignment_0.eContents().get(0);
@@ -746,7 +753,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getPredicatesExpressionsModelParserRuleCall_7_1_0() { return cPredicatesExpressionsModelParserRuleCall_7_1_0; }
 	}
 	public class OperatorElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Operator");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Operator");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
@@ -761,7 +768,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
 	}
 	public class ConditionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Condition");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Condition");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
 		private final Assignment cLeftAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
@@ -820,7 +827,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getLeftAttributeIDTerminalRuleCall_1_1_0_1() { return cLeftAttributeIDTerminalRuleCall_1_1_0_1; }
 	}
 	public class ValueElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Value");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Value");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
@@ -839,7 +846,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
 	}
 	public class Scalar_FunctionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Scalar_Function");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Scalar_Function");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
@@ -859,7 +866,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
 	}
 	public class Create_StatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.Create_Statement");
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Create_Statement");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final Keyword cNameCREATEKeyword_0 = (Keyword)cNameAssignment.eContents().get(0);
 		
@@ -877,7 +884,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	public class FunctionTypeElements extends AbstractEnumRuleElementFinder {
-		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.FunctionType");
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FunctionType");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cSUMEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
 		private final Keyword cSUMSUMKeyword_0_0 = (Keyword)cSUMEnumLiteralDeclaration_0.eContents().get(0);
@@ -982,7 +989,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalsGrammarAccess gaTerminals;
 
 	@Inject
-	public CqlGrammarAccess(GrammarProvider grammarProvider,
+	public CQLGrammarAccess(GrammarProvider grammarProvider,
 			TerminalsGrammarAccess gaTerminals) {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.gaTerminals = gaTerminals;
@@ -990,7 +997,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		this.pStatement = new StatementElements();
 		this.pNested_Statement = new Nested_StatementElements();
 		this.pAtomic = new AtomicElements();
-		this.tFLOAT_NUMBER = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.Cql.FLOAT_NUMBER");
+		this.tFLOAT_NUMBER = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT_NUMBER");
 		this.pAlias = new AliasElements();
 		this.pSource = new SourceElements();
 		this.pAttribute = new AttributeElements();
@@ -1015,7 +1022,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
 		Grammar grammar = grammarProvider.getGrammar(this);
 		while (grammar != null) {
-			if ("de.uniol.inf.is.odysseus.parser.novel.cql.Cql".equals(grammar.getName())) {
+			if ("de.uniol.inf.is.odysseus.parser.novel.cql.CQL".equals(grammar.getName())) {
 				return grammar;
 			}
 			List<Grammar> grammars = grammar.getUsedGrammars();
@@ -1130,7 +1137,7 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 	////Function: functionType=FunctionType '(' value=Attribute ')' ;
 	//// Expressions //////////////////////////////////////////////////////////
 	//ExpressionsModel:
-	//	{ExpressionsModel} elements+=Expression*;
+	//	{ExpressionsModel} elements+=Expression+;
 	public ExpressionsModelElements getExpressionsModelAccess() {
 		return pExpressionsModel;
 	}
@@ -1169,6 +1176,13 @@ public class CqlGrammarAccess extends AbstractGrammarElementFinder {
 		return getAndAccess().getRule();
 	}
 	
+	////Or returns Expression:
+	////	And ({Or.left=current} 'OR' right=And)*
+	////;
+	////
+	////And returns Expression:
+	////	Equalitiy ({And.left=current} 'AND' right=Equalitiy)*
+	////;
 	//Equalitiy Expression:
 	//	Comparison ({Equality.left=current} op=('==' | '!=') right=Comparison)*
 	public EqualitiyElements getEqualitiyAccess() {

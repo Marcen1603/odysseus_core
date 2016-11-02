@@ -10,6 +10,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.scoping
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
  * on how and when to use it.
  */
-class CqlScopeProvider extends AbstractCqlScopeProvider {
+class CQLScopeProvider extends AbstractCQLScopeProvider {
 
 }

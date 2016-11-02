@@ -4,15 +4,15 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr;
 
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal.InternalCqlParser;
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CqlGrammarAccess;
+import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal.InternalCQLParser;
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 import org.eclipse.xtext.parser.antlr.AbstractAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 
-public class CqlParser extends AbstractAntlrParser {
+public class CQLParser extends AbstractAntlrParser {
 
 	@Inject
-	private CqlGrammarAccess grammarAccess;
+	private CQLGrammarAccess grammarAccess;
 
 	@Override
 	protected void setInitialHiddenTokens(XtextTokenStream tokenStream) {
@@ -21,8 +21,8 @@ public class CqlParser extends AbstractAntlrParser {
 	
 
 	@Override
-	protected InternalCqlParser createParser(XtextTokenStream stream) {
-		return new InternalCqlParser(stream, getGrammarAccess());
+	protected InternalCQLParser createParser(XtextTokenStream stream) {
+		return new InternalCQLParser(stream, getGrammarAccess());
 	}
 
 	@Override 
@@ -30,11 +30,11 @@ public class CqlParser extends AbstractAntlrParser {
 		return "Model";
 	}
 
-	public CqlGrammarAccess getGrammarAccess() {
+	public CQLGrammarAccess getGrammarAccess() {
 		return this.grammarAccess;
 	}
 
-	public void setGrammarAccess(CqlGrammarAccess grammarAccess) {
+	public void setGrammarAccess(CQLGrammarAccess grammarAccess) {
 		this.grammarAccess = grammarAccess;
 	}
 }

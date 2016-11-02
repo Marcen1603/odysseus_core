@@ -5,14 +5,14 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.tests;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.uniol.inf.is.odysseus.parser.novel.cql.CqlRuntimeModule;
-import de.uniol.inf.is.odysseus.parser.novel.cql.CqlStandaloneSetup;
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLRuntimeModule;
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLStandaloneSetup;
 import org.eclipse.xtext.junit4.GlobalRegistries;
 import org.eclipse.xtext.junit4.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.junit4.IInjectorProvider;
 import org.eclipse.xtext.junit4.IRegistryConfigurator;
 
-public class CqlInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
+public class CQLInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
 
 	protected GlobalStateMemento stateBeforeInjectorCreation;
 	protected GlobalStateMemento stateAfterInjectorCreation;
@@ -33,7 +33,7 @@ public class CqlInjectorProvider implements IInjectorProvider, IRegistryConfigur
 	}
 
 	protected Injector internalCreateInjector() {
-		return new CqlStandaloneSetup() {
+		return new CQLStandaloneSetup() {
 			@Override
 			public Injector createInjector() {
 				return Guice.createInjector(createRuntimeModule());
@@ -41,13 +41,13 @@ public class CqlInjectorProvider implements IInjectorProvider, IRegistryConfigur
 		}.createInjectorAndDoEMFRegistration();
 	}
 
-	protected CqlRuntimeModule createRuntimeModule() {
+	protected CQLRuntimeModule createRuntimeModule() {
 		// make it work also with Maven/Tycho and OSGI
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=493672
-		return new CqlRuntimeModule() {
+		return new CQLRuntimeModule() {
 			@Override
 			public ClassLoader bindClassLoaderToInstance() {
-				return CqlInjectorProvider.class
+				return CQLInjectorProvider.class
 						.getClassLoader();
 			}
 		};

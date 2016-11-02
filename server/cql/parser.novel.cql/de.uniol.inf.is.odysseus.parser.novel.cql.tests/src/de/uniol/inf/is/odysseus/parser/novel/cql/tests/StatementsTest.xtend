@@ -1,16 +1,16 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests
 
 import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.novel.cql.cql.Model
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.XtextRunner
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
 import org.eclipse.xtext.junit4.InjectWith
-import org.junit.Test
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.junit.Test
+import org.junit.runner.RunWith
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(CqlInjectorProvider))
+@InjectWith(typeof(CQLInjectorProvider))
 class StatementsTest 
 {
 

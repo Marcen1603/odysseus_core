@@ -5,5 +5,5 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.scoping;
 
 import org.eclipse.xtext.scoping.impl.DelegatingScopeProvider;
 
-public abstract class AbstractCqlScopeProvider extends DelegatingScopeProvider {
+public abstract class AbstractCQLScopeProvider extends DelegatingScopeProvider {
 }
