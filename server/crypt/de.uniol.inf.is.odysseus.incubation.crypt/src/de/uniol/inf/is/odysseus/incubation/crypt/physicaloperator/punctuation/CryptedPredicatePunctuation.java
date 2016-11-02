@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -24,14 +22,14 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 
 	private static final long serialVersionUID = 42424242L;
 
-	final static byte NUMBER = 1;
+	final static byte NUMBER = 3;
 
-	public static final SDFSchema schema;
+	public static final transient SDFSchema schema;
 
-	protected Map<String, CryptedValue> cryptedPredicates;
+	protected HashMap<String, CryptedValue> cryptedPredicates;
 
 	static {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		ArrayList<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("CryptedPredicatePunctuation", "type", SDFDatatype.INTEGER));
 		attributes.add(new SDFAttribute("CryptedPredicatePunctuation", "point", SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("CryptedPredicatePunctuation", "cryptedPredicates", SDFDatatype.OBJECT));
@@ -149,7 +147,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 	 * 
 	 * @return the cryptedPredicates
 	 */
-	public Map<String, CryptedValue> getCryptedPredicates() {
+	public HashMap<String, CryptedValue> getCryptedPredicates() {
 		return cryptedPredicates;
 	}
 
@@ -159,7 +157,7 @@ public class CryptedPredicatePunctuation extends AbstractPunctuation {
 	 * @param cryptedPredicates
 	 *            the cryptedPredicates to set
 	 */
-	public void setCryptedPredicates(Map<String, CryptedValue> cryptedPredicates) {
+	public void setCryptedPredicates(HashMap<String, CryptedValue> cryptedPredicates) {
 		this.cryptedPredicates = cryptedPredicates;
 	}
 

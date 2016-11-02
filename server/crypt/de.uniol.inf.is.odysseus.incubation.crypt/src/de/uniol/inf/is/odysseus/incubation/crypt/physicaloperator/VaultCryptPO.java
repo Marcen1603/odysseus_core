@@ -134,8 +134,6 @@ public class VaultCryptPO<T extends IStreamObject<?>> extends SimpleCryptPO<T> i
 			if (this.cryptor.getMode() == Cipher.ENCRYPT_MODE) {
 				client.addPubKeyReceiver(receiver);
 				this.loadEncryptKey();
-				// TODO Nice to have: sicherstellen, dass nur zur db geschrieben
-				// wird, wenn erfolgreich (Konsistenz waren)
 				client.sendGetPublicKeyMessage(this.receiverId);
 			} else if (this.cryptor.getMode() == Cipher.DECRYPT_MODE) {
 				client.addEncKeyListener(receiver);

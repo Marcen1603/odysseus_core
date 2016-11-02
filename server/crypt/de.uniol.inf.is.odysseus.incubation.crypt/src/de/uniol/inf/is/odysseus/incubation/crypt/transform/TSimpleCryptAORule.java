@@ -22,8 +22,7 @@ public class TSimpleCryptAORule extends TAbstractCryptAORule<SimpleCryptAO> {
 		try {
 			super.execute(cryptAO, transformConfig);
 			try {
-				// TODO Ausblick: eigenen parameter fuer verfahren und
-				// schluesseltyp nehmen
+				//TODO make "AES" configurable
 				cryptor.setKey(new SecretKeySpec(cryptAO.getKey().getBytes("UTF-8"), "AES"));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();

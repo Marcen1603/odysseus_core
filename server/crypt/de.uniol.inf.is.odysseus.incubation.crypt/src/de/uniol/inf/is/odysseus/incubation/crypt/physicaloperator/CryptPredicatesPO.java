@@ -222,7 +222,7 @@ public class CryptPredicatesPO<T extends IStreamObject<?>> extends AbstractPipe<
 	 */
 	private void sendNewPunctuation(PointInTime point) {
 		CryptedPredicatePunctuation predPunc = CryptedPredicatePunctuation.createNewCryptedPredicatePunctuation(point);
-		predPunc.setCryptedPredicates(this.cryptedPredicate);
+		predPunc.setCryptedPredicates((HashMap<String, CryptedValue>) this.cryptedPredicate);
 		this.sendPunctuation(predPunc);
 	}
 

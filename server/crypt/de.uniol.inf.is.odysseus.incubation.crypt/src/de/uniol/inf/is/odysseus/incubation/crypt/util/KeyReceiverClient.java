@@ -65,7 +65,6 @@ public class KeyReceiverClient implements IEncKeyReceiver, IPubKeyReceiver {
 			KeyWrapper<Key> symKey = this.receiver.getKeyWrapper();
 			int streamId = this.receiver.getStreamId();
 			EncKeyWrapper encSymKeyWrapper = receiverCryptor.encryptSymKey(symKey, pubKeyWrapper, streamId);
-			// TODO ausblick: in keyManager keys zwischenspeichern
 			KeyWebSocketClient client;
 			client = KeyWebSocketClient.instance();
 			client.sendEncKeyMessage(encSymKeyWrapper);

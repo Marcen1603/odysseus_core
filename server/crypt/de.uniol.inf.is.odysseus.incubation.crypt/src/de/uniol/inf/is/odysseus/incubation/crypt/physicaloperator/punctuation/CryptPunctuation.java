@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -21,15 +20,15 @@ public class CryptPunctuation extends AbstractPunctuation {
 
 	private static final long serialVersionUID = -7457813773892856504L;
 
-	final static byte NUMBER = 1;
+	final static byte NUMBER = 3;
 
-	public static final SDFSchema schema;
+	public static final transient SDFSchema schema;
 
-	private List<SDFAttribute> cryptedAttributes;
-	private List<String> algorithms;
+	private ArrayList<SDFAttribute> cryptedAttributes;
+	private ArrayList<String> algorithms;
 
 	static {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		ArrayList<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("CryptPunctuation", "type", SDFDatatype.INTEGER));
 		attributes.add(new SDFAttribute("CryptPunctuation", "point", SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("CryptPunctuation", "cryptedAttributes", SDFDatatype.LIST));
@@ -151,7 +150,7 @@ public class CryptPunctuation extends AbstractPunctuation {
 	 * 
 	 * @return the cryptedAttributes
 	 */
-	public List<SDFAttribute> getCryptedAttributes() {
+	public ArrayList<SDFAttribute> getCryptedAttributes() {
 		return cryptedAttributes;
 	}
 
@@ -161,7 +160,7 @@ public class CryptPunctuation extends AbstractPunctuation {
 	 * @param cryptedAttributes
 	 *            the cryptedAttributes to set
 	 */
-	public void setCryptedAttributes(List<SDFAttribute> cryptedAttributes) {
+	public void setCryptedAttributes(ArrayList<SDFAttribute> cryptedAttributes) {
 		this.cryptedAttributes = cryptedAttributes;
 	}
 
@@ -170,7 +169,7 @@ public class CryptPunctuation extends AbstractPunctuation {
 	 * 
 	 * @return the algorithms
 	 */
-	public List<String> getAlgorithms() {
+	public ArrayList<String> getAlgorithms() {
 		return algorithms;
 	}
 
@@ -180,7 +179,7 @@ public class CryptPunctuation extends AbstractPunctuation {
 	 * @param algorithms
 	 *            the algorithms to set
 	 */
-	public void setAlgorithms(List<String> algorithms) {
+	public void setAlgorithms(ArrayList<String> algorithms) {
 		this.algorithms = algorithms;
 	}
 

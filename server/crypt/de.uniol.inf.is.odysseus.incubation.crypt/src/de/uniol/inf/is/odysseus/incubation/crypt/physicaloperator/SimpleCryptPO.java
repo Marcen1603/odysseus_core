@@ -89,23 +89,8 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 	protected void process_next(T object, int port) {
 		if (object instanceof Tuple) {
 			Tuple tuple = (Tuple) object;
-			// TODO Ausblick: beim decrypting attributes auch in metadaten mit
-			// übertragen genau wie alles andere (momentan ist es
-			// absprachesache)
-			// Tuple restrictedTuple = tuple.restrict(this.restrictionList,
-			// true);
-
 			CryptPunctuation punctuation = null;
 			for (int i = 0; i < tuple.getAttributes().length; i++) {
-				// TODO Ausblick: in Metadaten speichern, welche attribute
-				// verschluesselt wurden und wie --> dann braucht man den
-				// algorithmus gar nicht angeben, genau so receiverID
-				// automatisch erkennen, zb aus benutzerdaten, und streamID
-				// automatisch mit in metadaten uebertragen (genau wie
-				// algorithmus)--> dann braucht man gar keine Parameter mehr
-				// beim Decrypting (Nutzerfreundlich, da haufiger als
-				// encrypting)
-
 				if (this.cryptor.getMode() == Cipher.ENCRYPT_MODE) {
 					PointInTime point = ((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart();
 					if (this.counter % this.punctuationDelay == 0) {

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -21,15 +20,15 @@ public class KeyPunctuation extends AbstractPunctuation {
 
 	private static final long serialVersionUID = -2335894573246260211L;
 
-	final static byte NUMBER = 1;
+	final static byte NUMBER = 3;
 
-	public static final SDFSchema schema;
+	public static final transient SDFSchema schema;
 
-	private List<Integer> receiverId;
+	private ArrayList<Integer> receiverId;
 	private int streamId;
 
 	static {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		ArrayList<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("KeyPunctuation", "type", SDFDatatype.INTEGER));
 		attributes.add(new SDFAttribute("KeyPunctuation", "point", SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("KeyPunctuation", "receiverIds", SDFDatatype.LIST_INTEGER));
@@ -147,7 +146,7 @@ public class KeyPunctuation extends AbstractPunctuation {
 		ret.setAttribute(1, getTime().getMainPoint());
 		ret.setAttribute(2, this.getReceiverId());
 		ret.setAttribute(3, this.getStreamId());
-		
+
 		return ret;
 	}
 
@@ -156,7 +155,7 @@ public class KeyPunctuation extends AbstractPunctuation {
 	 * 
 	 * @return the receiverId
 	 */
-	public List<Integer> getReceiverId() {
+	public ArrayList<Integer> getReceiverId() {
 		return receiverId;
 	}
 
@@ -166,7 +165,7 @@ public class KeyPunctuation extends AbstractPunctuation {
 	 * @param receiverId
 	 *            the receiverId to set
 	 */
-	public void setReceiverId(List<Integer> receiverId) {
+	public void setReceiverId(ArrayList<Integer> receiverId) {
 		this.receiverId = receiverId;
 	}
 

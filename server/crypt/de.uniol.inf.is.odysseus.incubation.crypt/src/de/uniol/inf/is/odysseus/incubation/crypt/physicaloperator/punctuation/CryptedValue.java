@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation;
 
+import java.io.Serializable;
+
 /**
  * This is a wrapper for two values.<br>
  * You could use it for storing the old and the new value of an ecrypted value.
@@ -7,8 +9,10 @@ package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation;
  * @author MarkMilster
  *
  */
-public class CryptedValue {
+public class CryptedValue implements Serializable {
 
+	private static final long serialVersionUID = 7718539702445727602L;
+	
 	private String oldValue;
 	private String newValue;
 

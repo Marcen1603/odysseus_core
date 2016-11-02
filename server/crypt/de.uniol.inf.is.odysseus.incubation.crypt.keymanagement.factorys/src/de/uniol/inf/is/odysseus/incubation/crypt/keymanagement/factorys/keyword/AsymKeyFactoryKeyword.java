@@ -33,8 +33,7 @@ public class AsymKeyFactoryKeyword extends AbstractPreParserKeyword {
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
 			Context context, IServerExecutor executor) throws OdysseusScriptException {
-		// TODO nice to have: use the size as second parameter --> Using Keyword
-		// Parameter Parser
+		// TODO use the size as second parameter by ssing KeywordParameterParser
 		ASymKeyWrapper keys = DefaultAsymKeyFactory.getInstance().createAsymKeyPair(parameter, 1024, null,
 				"Created by Keyword");
 		DefaultAsymKeyFactory.getInstance().saveAsymKeys(keys);
