@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
  * like a strategy defining what to backup/recover in which order. Additionally,
  * the parameter contains the configuration for the recovery executor as key
  * value pairs.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -53,7 +53,7 @@ public class ParameterRecoveryConfiguration extends Setting<Object>
 
 	/**
 	 * Gets the recovery executor to use.
-	 * 
+	 *
 	 * @return The name of the recovery executor to use. A recovery executor is
 	 *         like a strategy defining what to backup/recover in which order.
 	 */
@@ -68,7 +68,7 @@ public class ParameterRecoveryConfiguration extends Setting<Object>
 
 	/**
 	 * Gets the configuration.
-	 * 
+	 *
 	 * @return The configuration for the recovery executor as key value pairs.
 	 */
 	public Properties getConfiguration() {
@@ -77,7 +77,7 @@ public class ParameterRecoveryConfiguration extends Setting<Object>
 
 	/**
 	 * Adds an entry to the configuration.
-	 * 
+	 *
 	 * @param key
 	 *            The key for the entry.
 	 * @param value
@@ -89,7 +89,7 @@ public class ParameterRecoveryConfiguration extends Setting<Object>
 
 	/**
 	 * Creates a new parameter for recovery configurations
-	 * 
+	 *
 	 * @param recoveryExecutor
 	 *            The name of the recovery executor to use. A recovery executor
 	 *            is like a strategy defining what to backup/recover in which
@@ -106,6 +106,10 @@ public class ParameterRecoveryConfiguration extends Setting<Object>
 
 	@Override
 	public String toOdysseusScript() {
+		// No recovery if recovery executor is not set. In this case, generate no Odysseus Script.
+		if(mExecutor == null) {
+			throw new UnsupportedOperationException();
+		}
 		return "#" + keyword + " " + this.mExecutor + propertiesToString(this.mConfig);
 	}
 
