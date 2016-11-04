@@ -20,8 +20,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
@@ -140,9 +139,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	@Override
 	public void writeJSONData(StringBuilder string, Object data) {
 		try {
-			if (data instanceof NestedKeyValueObject<?>) {
-				string.append(jsonMapper.writer().writeValueAsString(((T) data).getAttributes()));
-			} else if (data instanceof KeyValueObject<?>) {
+			if (data instanceof KeyValueObject<?>) {
 				string.append(jsonMapper.writer().writeValueAsString(((T) data).getAttributesAsNestedMap()));
 			}
 			// System.out.println("writeJSONData: " + string.toString());
@@ -155,13 +152,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	@Override
 	public byte[] writeBSONData(Object data) {
 		try {
-			if (data instanceof NestedKeyValueObject) {
-				byte[] tmp = bsonMapper.writer().writeValueAsBytes(((T) data).getAttributes());
-				// System.out.println("writeBSONData: " + tmp);
-				return tmp;
-			} else if (data instanceof KeyValueObject<?>) {
-				return bsonMapper.writer().writeValueAsBytes(((T) data).getAttributes());
-			}
+			return bsonMapper.writer().writeValueAsBytes(((T) data).getAttributes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -170,11 +161,6 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 
 	@SuppressWarnings("unchecked")
 	private T jsonStringToKVO(String json) {
-		if (this instanceof KeyValueObjectDataHandler) {
-			return (T) ((KeyValueObjectDataHandler) this).jsonStringToKVO(json);
-		} else if (this instanceof NestedKeyValueObjectDataHandler) {
-			return (T) ((NestedKeyValueObjectDataHandler) this).jsonStringToKVO(json);
-		}
-		return null;
+		return (T) ((KeyValueObjectDataHandler) this).jsonStringToKVO(json);
 	}
 }

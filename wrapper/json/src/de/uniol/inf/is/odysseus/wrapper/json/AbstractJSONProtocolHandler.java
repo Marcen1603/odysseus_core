@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
@@ -79,14 +79,14 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 	 * Reads the next complete JSON object/array from InputStreamReader. This
 	 * method skips all chars of the stream reader until the start of a JSON
 	 * object/array.
-	 * 
+	 *
 	 * <p>
 	 * Note: Finding the next JSON object/array in the input stream fails when
 	 * the input stream starts in between two quotation marks of a string value
 	 * that has an opening bracket.
-	 * 
+	 *
 	 * Specification for read in: http://json.org/
-	 * 
+	 *
 	 * @return The next complete JSON object or array as string or {@code null}
 	 *         when no next object or array exists.
 	 */

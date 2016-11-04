@@ -16,7 +16,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.keyvalue.datahandler,
  de.uniol.inf.is.odysseus.mep,
- de.uniol.inf.is.odysseus.aggregation
+ de.uniol.inf.is.odysseus.aggregation,
+ de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
 Service-Component: OSGI-INF/adjacencymatrix.xml,OSGI-INF/graphbuilder.xml,OSGI-INF/KeywordProvider.xml,OSGI-INF/GraphFunctionProvider.xml,OSGI-INF/AggregationFunctionBestPost.xml, OSGI-INF/GraphDatatypeProvider.xml,OSGI-INF/AggregationFunctionGraphIntersection.xml,OSGI-INF/GraphBuilderDebs.xml,OSGI-INF/AggregationFunctionScoreUpdater.xml,
  OSGI-INF/AggregationFunctionBestPostsDebs.xml
 Bundle-ActivationPolicy: lazy

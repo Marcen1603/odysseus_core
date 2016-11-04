@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -35,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
  * Implementation of map operator for key value objects.
@@ -70,17 +69,9 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 
 		T outputVal;
 		if(this.keepAllAttributes) {
-			if(this.getOutputSchema().getType() == NestedKeyValueObject.class) {
-				outputVal = (T) new NestedKeyValueObject<>((NestedKeyValueObject<?>) object);
-			} else {
-				outputVal = (T) new KeyValueObject<>(object);
-			}
+			outputVal = (T) new KeyValueObject<>(object);
 		} else {
-			if(this.getOutputSchema().getType() == NestedKeyValueObject.class) {
-				outputVal = (T) new NestedKeyValueObject<>();
-			} else {
-				outputVal = (T) new KeyValueObject<>();
-			}
+			outputVal = (T) new KeyValueObject<>();
 			outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
 			if (object.getGetValueMap() != null) {
 				for (Entry<String, Object> entry : object.getGetValueMap().entrySet()) {

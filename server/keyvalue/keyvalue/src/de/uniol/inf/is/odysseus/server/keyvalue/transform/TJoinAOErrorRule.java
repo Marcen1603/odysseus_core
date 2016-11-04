@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -27,42 +26,42 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * This rule is used to throw an error if a join is used with a key value input
  * else there will be a runtime error (null pointer) because areas are not set
- * 
+ *
  * If join for key value in implemented, remove this rule!
- * 
+ *
  * @author Marco Grawunder
  *
  */
 public class TJoinAOErrorRule extends AbstractTransformationRule<JoinAO> {
 
 	@Override
-	public int getPriority() {		
+	public int getPriority() {
 		return Integer.MAX_VALUE;
 	}
 
 	@Override
 	public void execute(JoinAO operator, TransformationConfiguration transformConfig) throws RuleException {
 
-		if(operator.getInputSchema(0).getType() == KeyValueObject.class || operator.getInputSchema(0).getType() == NestedKeyValueObject.class ||
-				operator.getInputSchema(1).getType() == KeyValueObject.class || operator.getInputSchema(1).getType() == NestedKeyValueObject.class){
+		if(operator.getInputSchema(0).getType() == KeyValueObject.class ||
+				operator.getInputSchema(1).getType() == KeyValueObject.class ){
 				throw new RuntimeException("Join is not possible for KeyValue. Use KeyValueToTuple");
-			}	
+			}
 	}
-	
-	
+
+
 
 	@Override
 	public boolean isExecutable(JoinAO operator, TransformationConfiguration transformConfig) {
 		return true;
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
-	public Class<? super JoinAO> getConditionClass() {	
+	public Class<? super JoinAO> getConditionClass() {
 		return JoinAO.class;
 	}
 

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.GeneratedMessageLite;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.wrapper.xovis.communication.gpbObjects.XovisEventObj.XovisEvent;
 

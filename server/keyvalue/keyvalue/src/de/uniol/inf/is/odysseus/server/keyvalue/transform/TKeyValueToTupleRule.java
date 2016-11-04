@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -35,8 +34,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 	@Override
 	public boolean isExecutable(KeyValueToTupleAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == KeyValueObject.class || 
-				operator.getInputSchema().getType() == NestedKeyValueObject.class) &&
+		if ((operator.getInputSchema().getType() == KeyValueObject.class) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}
@@ -74,7 +72,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 	/**
 	 * Checks if the schema contains starttimestamp or endtimestamp and metadata need to be updated.
-	 * 
+	 *
 	 * @param sdfSchema
 	 * @return
 	 */
@@ -96,7 +94,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
 	public Class<? super KeyValueToTupleAO> getConditionClass() {
 		return KeyValueToTupleAO.class;

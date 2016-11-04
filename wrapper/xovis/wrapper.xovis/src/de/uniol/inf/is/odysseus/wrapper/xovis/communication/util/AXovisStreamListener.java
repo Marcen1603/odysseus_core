@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.GeneratedMessageLite;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 public abstract class AXovisStreamListener implements Runnable {
 

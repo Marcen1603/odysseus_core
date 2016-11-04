@@ -10,18 +10,18 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObject<T> {
+class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObject<T> {
 
 	private static final long serialVersionUID = 3646987825952423104L;
-	
+
 	public NestedKeyValueObject() {
 		super();
 	}
-	
+
 	public NestedKeyValueObject(NestedKeyValueObject<T> nestedKeyValueObject) {
 		super(nestedKeyValueObject);
 	}
-	
+
 	public NestedKeyValueObject(Map<String, Object> map) {
 		super(map);
 	}
@@ -56,7 +56,7 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 	/**
 	 * Adds the given value to a existing collection identified by the key.
 	 * If there is no collection an exception is raised.
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
@@ -67,14 +67,14 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 		Map<String, Object> map = this.attributes;
 		for(int i = 0; i < path.length - 1; i++) {
 			map = (Map<String, Object>) map.get(path[i]);
-		}		
-		
+		}
+
 		String leafKey = path[path.length - 1];
 		Object oldAttribute = map.get(leafKey);
 		if (oldAttribute != null && !(oldAttribute instanceof Collection)) {
 			throw new RuntimeException("Cannot add value to non collection type");
 		}
-		
+
 		if (oldAttribute == null) {
 			map.put(leafKey, new ArrayList<Object>());
 		}
@@ -83,7 +83,7 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 
 	/**
 	 * Set the value to given key. If there had been a value already, it will be overridden.
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
@@ -134,7 +134,7 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Object recursiveRemoveAttribute(String[] path, Map<String, Object> map) throws NullPointerException {
 		if(path.length > 2) {
@@ -166,7 +166,7 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 		}
 		return size;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private int recursiveSize(Map<String, Object> map) {
 		int size = 0;
