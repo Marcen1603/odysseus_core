@@ -43,8 +43,6 @@ public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<NamedExpression> namedExpressions;
-	// Expressions used for KeyValueMap
-	private List<String[]> kvExpressions;
 	private List<SDFExpression> expressions;
 	/** The number of threads used for processing the expressions. */
 	private int threads = 0;
@@ -62,7 +60,6 @@ public class MapAO extends UnaryLogicalOp {
 	public MapAO(MapAO ao) {
 		super(ao);
 		this.setExpressions(ao.namedExpressions);
-		this.kvExpressions = ao.kvExpressions;
 		this.threads = ao.threads;
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 		this.allowNullValue = ao.allowNullValue;
@@ -195,9 +192,6 @@ public class MapAO extends UnaryLogicalOp {
 					.createNewWithAttributes(attrs, getInputSchema()),
 					getInputSchema().getURI(), false);
 			setOutputSchema(s);
-		} else if (kvExpressions != null) {
-			SDFSchema s = SDFSchemaFactory.createNewWithAttributes(null, getInputSchema());
-			setOutputSchema(s);
 		}
 	}
 
@@ -216,16 +210,6 @@ public class MapAO extends UnaryLogicalOp {
 	public List<NamedExpression> getExpressions() {
 		return this.namedExpressions;
 	}
-
-//	@Parameter(type = UncheckedExpressionParamter.class, name = "KVExpressions", isList = true, optional = true, doc = "A list of expressions for use with key value objects.")
-//	public void setKVExpressions(List<String[]> kvExpressions) {
-//		this.kvExpressions = kvExpressions;
-//		setOutputSchema(null);
-//	}
-//
-//	public List<String[]> getKVExpressions() {
-//		return this.kvExpressions;
-//	}
 
 	@Parameter(type = BooleanParameter.class, name = "keepAllAttributes", optional = true, doc = "Only for use with key value objects. If set to true, map will keep all attributes - even if not mentioned in kvexpressions.")
 	public void setKeepAllAttributes(boolean keepAllAttributes) {
@@ -301,26 +285,6 @@ public class MapAO extends UnaryLogicalOp {
 		calcOutputSchema();
 		return getOutputSchema();
 	}
-
-//	@Override
-//	public boolean isValid() {
-//		if ((getInputSchema().getType() == KeyValueObject.class || getInputSchema()
-//				.getType() == NestedKeyValueObject.class)) {
-//			if ((this.kvExpressions != null && !this.kvExpressions.isEmpty())) {
-//				return true;
-//			} else {
-//				addError("Parameter KVEXPRESSIONS has to be set.");
-//				return false;
-//			}
-//		} else if ((this.namedExpressions != null && !this.namedExpressions
-//				.isEmpty())) {
-//			return true;
-//		} else {
-//			addError("Parameter EXPRESSIONS has to be set.");
-//			return false;
-//		}
-//
-//	}
 
 	@Override
 	public void initialize() {
