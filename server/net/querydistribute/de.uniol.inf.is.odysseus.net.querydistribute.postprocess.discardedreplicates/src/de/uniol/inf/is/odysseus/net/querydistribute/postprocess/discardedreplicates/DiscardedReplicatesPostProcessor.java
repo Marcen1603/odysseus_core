@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
@@ -17,17 +14,15 @@ import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.querydistribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.net.querydistribute.IQueryDistributionPostProcessor;
 import de.uniol.inf.is.odysseus.net.querydistribute.QueryDistributionPostProcessorException;
-import de.uniol.inf.is.odysseus.recovery.recoverytime.logicaloperator.RecoveryTimeCalculatorAO;
 import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMergeAO;
 
 /**
- * Post processor to insert a {@link RecoveryTimeCalculatorAO} and a sender for
- * each {@link ReplicationMergeAO}. The sender will be inserted for the output
- * port 1 that is not used normally. All discarded replicates are sent to port
- * 1. The sender writes the data in a CSV file (one file per merger). The only
- * argument for this post processor is the path to the CSV files. The names of
- * the files are determined by the {@link ReplicationMergeAO} (name and
- * hashCode). <br />
+ * Post processor to insert a sender for each {@link ReplicationMergeAO}. The
+ * sender will be inserted for the output port 1 that is not used normally. All
+ * discarded replicates are sent to port 1. The sender writes the data in a CSV
+ * file (one file per merger). The only argument for this post processor is the
+ * path to the CSV files. The names of the files are determined by the
+ * {@link ReplicationMergeAO} (name and hashCode). <br />
  * <br />
  * Used sender settings: <br />
  * - transport handler "file" <br />
@@ -39,15 +34,13 @@ import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMe
  * ".csv" <br />
  * - "append", "true" <br />
  * - "writeMetaData", "true
- * 
+ *
  * @author Michael Brand
  *
  */
 public class DiscardedReplicatesPostProcessor implements IQueryDistributionPostProcessor {
 
 	private static final long serialVersionUID = 1670612711118701115L;
-
-	private static final Logger logger = LoggerFactory.getLogger(DiscardedReplicatesPostProcessor.class);
 
 	private static final String postProcessorName = "discardedreplicates";
 
@@ -67,26 +60,10 @@ public class DiscardedReplicatesPostProcessor implements IQueryDistributionPostP
 		final String path = parameters.get(0);
 		allocationMap.keySet()
 				.forEach(part -> part.getOperators().stream().filter(operator -> operator instanceof ReplicationMergeAO)
-						.forEach(operator -> insertOperators((ReplicationMergeAO) operator, part, path, caller)));
+						.forEach(operator -> insertSender((ReplicationMergeAO) operator, part, path, caller)));
 	}
 
-	private static void insertOperators(ReplicationMergeAO merger, ILogicalQueryPart part, String path,
-			ISession caller) {
-		RecoveryTimeCalculatorAO calculator = insertRecoveryTimeCalculator(merger, part);
-		insertSender(merger, calculator, part, path, caller);
-		logger.info("Inserted recovery time calculator and sender after {}", merger);
-	}
-
-	private static RecoveryTimeCalculatorAO insertRecoveryTimeCalculator(ReplicationMergeAO merger,
-			ILogicalQueryPart part) {
-		RecoveryTimeCalculatorAO calculator = new RecoveryTimeCalculatorAO();
-		calculator.subscribeToSource(merger, 0, 1, merger.getOutputSchema());
-		part.addOperator(calculator);
-		return calculator;
-	}
-
-	private static void insertSender(ReplicationMergeAO merger, RecoveryTimeCalculatorAO calculator,
-			ILogicalQueryPart part, String path, ISession caller) {
+	private static void insertSender(ReplicationMergeAO merger, ILogicalQueryPart part, String path, ISession caller) {
 		SenderAO sender = new SenderAO();
 		sender.setTransportHandler("file");
 		sender.setDataHandler("tuple");
@@ -100,7 +77,7 @@ public class DiscardedReplicatesPostProcessor implements IQueryDistributionPostP
 		sender.setOptionMap(options);
 		sender.setSink(new Resource(caller.getUser(), merger.toString()));
 		sender.setName(postProcessorName);
-		sender.subscribeToSource(calculator, 0, 0, calculator.getOutputSchema());
+		sender.subscribeToSource(merger, 0, 1, merger.getOutputSchema());
 		part.addOperator(sender);
 	}
 
