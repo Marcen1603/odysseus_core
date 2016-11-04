@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getConnectionInformationWithPorts complex type.
+ * <p>Java-Klasse f�r getConnectionInformationWithPorts complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="getConnectionInformationWithPorts">
@@ -57,7 +57,7 @@ public class GetConnectionInformationWithPorts {
     protected boolean nullValues;
 
     /**
-     * Gets the value of the securitytoken property.
+     * Ruft den Wert der securitytoken-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -69,7 +69,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Sets the value of the securitytoken property.
+     * Legt den Wert der securitytoken-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -81,7 +81,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Gets the value of the queryId property.
+     * Ruft den Wert der queryId-Eigenschaft ab.
      * 
      */
     public int getQueryId() {
@@ -89,7 +89,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Sets the value of the queryId property.
+     * Legt den Wert der queryId-Eigenschaft fest.
      * 
      */
     public void setQueryId(int value) {
@@ -97,7 +97,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Gets the value of the rootPort property.
+     * Ruft den Wert der rootPort-Eigenschaft ab.
      * 
      */
     public int getRootPort() {
@@ -105,7 +105,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Sets the value of the rootPort property.
+     * Legt den Wert der rootPort-Eigenschaft fest.
      * 
      */
     public void setRootPort(int value) {
@@ -113,7 +113,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Gets the value of the minPort property.
+     * Ruft den Wert der minPort-Eigenschaft ab.
      * 
      */
     public int getMinPort() {
@@ -121,7 +121,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Sets the value of the minPort property.
+     * Legt den Wert der minPort-Eigenschaft fest.
      * 
      */
     public void setMinPort(int value) {
@@ -129,7 +129,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Gets the value of the maxPort property.
+     * Ruft den Wert der maxPort-Eigenschaft ab.
      * 
      */
     public int getMaxPort() {
@@ -137,7 +137,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Sets the value of the maxPort property.
+     * Legt den Wert der maxPort-Eigenschaft fest.
      * 
      */
     public void setMaxPort(int value) {
@@ -145,7 +145,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Gets the value of the nullValues property.
+     * Ruft den Wert der nullValues-Eigenschaft ab.
      * 
      */
     public boolean isNullValues() {
@@ -153,7 +153,7 @@ public class GetConnectionInformationWithPorts {
     }
 
     /**
-     * Sets the value of the nullValues property.
+     * Legt den Wert der nullValues-Eigenschaft fest.
      * 
      */
     public void setNullValues(boolean value) {

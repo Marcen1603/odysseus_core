@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -133,7 +133,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.security.ssl.SSLServerSocketProvider;
 
 /**
- * 
+ *
  * @author Dennis Geesen, Thore Stratmann, Marco Grawunder
  */
 
@@ -246,6 +246,19 @@ public class WebserviceServer {
 			throw new CreateQueryException(e.toString());
 		}
 	}
+
+	public Response runCommand(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "command") String command) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		try{
+			ExecutorServiceBinding.getExecutor().runCommand(command, user);
+		}catch(Exception e){
+			throw new RuntimeException(e);
+		}
+		return new Response(true);
+
+	}
+
+
 
 	public StringListResponse getInstalledSources(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
@@ -717,10 +730,10 @@ public class WebserviceServer {
 			logger.warn("Do not use param nullValues. Use correct datahandler (e.g. NullAwareTuple) instead.");
 		}
 		Class<? extends IStreamObject> typeClass = root.getOutputSchema().getType();
-		
+
 		handler = DataHandlerRegistry.getStreamObjectDataHandler(typeClass.getSimpleName(), root.getOutputSchema());
 
-		
+
 //		if (nullValues) {
 //			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
 //		} else {
@@ -1139,7 +1152,7 @@ public class WebserviceServer {
 		List<String> names = WindowType.getValues();
 		return new StringListResponse(names, true);
 	}
-	
+
 	public StringListResponse getMetadataNames(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		loginWithSecurityToken(securityToken);
@@ -1162,7 +1175,7 @@ public class WebserviceServer {
 		SDFSchemaInformation schemaInfo = new SDFSchemaInformation(schema.getURI(), attributeInfos, schema.getType());
 		return schemaInfo;
 	}
-	
+
 
 
 	private static SDFAttributeInformation createAttributeInformation(SDFAttribute attribute) {
@@ -1190,5 +1203,5 @@ public class WebserviceServer {
 		return new SDFDatatypeInformation(datatype.getURI(), datatype.getType(), subtype, subSchema);
 	}
 
-	
+
 }

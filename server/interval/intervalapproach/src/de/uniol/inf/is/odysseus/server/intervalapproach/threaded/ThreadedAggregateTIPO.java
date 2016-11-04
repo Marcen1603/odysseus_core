@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -42,7 +43,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 /**
  * Physical operator for aggregation which supports multithreading. Works only
  * if the operator has grouping attributes
- * 
+ *
  * @author ChrisToenjesDeye
  */
 public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
@@ -69,7 +70,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 	/**
 	 * Constructor for physical aggregate operator (threaded)
-	 * 
+	 *
 	 * @param inputSchema
 	 * @param outputSchema
 	 * @param groupingAttributes
@@ -123,7 +124,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 	/**
 	 * Initializes the given number of workers for this aggregate operator
-	 * 
+	 *
 	 * @param degree
 	 */
 	private void initWorker(int degree) {
@@ -195,7 +196,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	/**
 	 * calculates the thread number for the given groupId. Calculation is done
 	 * by RoundRobin or Hash
-	 * 
+	 *
 	 * @param groupID
 	 * @return
 	 */
@@ -325,5 +326,14 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 				String.valueOf(useRoundRobinAllocation));
 		return map;
 
+	}
+
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (ipo instanceof ThreadedAggregateTIPO){
+			return super.isSemanticallyEqual(ipo);
+		}else{
+			return false;
+		}
 	}
 }

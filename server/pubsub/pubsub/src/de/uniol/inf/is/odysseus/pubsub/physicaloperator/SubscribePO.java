@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a joinPlan of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.TopicHelper;
 import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
@@ -34,11 +35,11 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
 
 /**
  * Physical Subscribe Operator. The Operator provides the subscribe functionality in publish/Subscribe systems.
- * 
+ *
  * @author ChrisToenjesDeye
- * 
+ *
  */
-public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements Observer{
+public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements Observer, IHasPredicates{
 
 	private List<IPredicate<? super T>> predicates;
 	private boolean newBrokerNeeded;
@@ -72,11 +73,11 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	@Override
 	public void update(Observable observable, Object object) {
 		// transfer object to next operator, object send from broker via Observer
-		transfer((T) object);	
+		transfer((T) object);
 	}
 
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
@@ -94,7 +95,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 			BrokerTopologyRegistry.putSubscriberIntoPendingList(domain, this);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void subscribe(IBrokerTopology<?> topology){
 		// needed if subscribe was before topology exists
@@ -106,7 +107,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 			}
 		}
 	}
-	
+
 	@Override
 	protected void process_close() {
 		// unsubscribe and unregister from topology
@@ -117,7 +118,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 			BrokerTopologyRegistry.unregister(domain);
 		}
 	}
-	
+
 	private void initPredicates(List<IPredicate<? super T>> predicates) {
 		this.predicates = new ArrayList<IPredicate<? super T>>(
 				predicates.size());
@@ -125,13 +126,24 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 			this.predicates.add(p.clone());
 		}
 	}
-	
+
 	public String getIdentifier() {
 		return identifier;
 	}
 
-	public List<IPredicate<? super T>> getPredicates() {
+	public List<IPredicate<? super T>> getPredicates2() {
 		return predicates;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List<IPredicate<?>> getPredicates() {
+		// This is necessary because of cast problems :-/
+		List<IPredicate<?>> preds = new ArrayList<>(predicates.size());
+		for (IPredicate p:predicates){
+			preds.add(p);
+		}
+		return preds;
 	}
 
 	public List<Topic> getTopics() {
@@ -148,11 +160,17 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		// subscriber operator is like a source. Objects will send by observer
 		// from brokers in publish/Subscribe systems. See update() Method.
 	}
-	
+
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-	//	sendPunctuation(punctuation);
+		// TODO: Is there a way, that subscriptions can get punctuations?
+		IPunctuation retPunc = punctuation;
+		for (IPredicate p:predicates){
+			retPunc = p.processPunctuation(punctuation);
+		}
+		sendPunctuation(retPunc);
 	}
-	
+
 
 }

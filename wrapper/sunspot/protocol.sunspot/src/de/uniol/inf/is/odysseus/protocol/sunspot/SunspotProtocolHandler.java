@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +28,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
  * @author Dennis Geesen
  * @param <T>
- * 
+ *
  */
 public class SunspotProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
@@ -50,7 +49,7 @@ public class SunspotProtocolHandler<T extends IStreamObject<IMetaAttribute>> ext
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
 	 * IProtocolHandler#open()
 	 */
@@ -70,7 +69,7 @@ public class SunspotProtocolHandler<T extends IStreamObject<IMetaAttribute>> ext
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
 	 * IProtocolHandler#close()
 	 */
@@ -83,7 +82,7 @@ public class SunspotProtocolHandler<T extends IStreamObject<IMetaAttribute>> ext
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
 	 * AbstractProtocolHandler#write(java.lang.Object)
 	 */
@@ -94,7 +93,7 @@ public class SunspotProtocolHandler<T extends IStreamObject<IMetaAttribute>> ext
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
 	 * IProtocolHandler
 	 * #createInstance(de.uniol.inf.is.odysseus.core.physicaloperator
@@ -115,25 +114,13 @@ public class SunspotProtocolHandler<T extends IStreamObject<IMetaAttribute>> ext
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.
 	 * IProtocolHandler#getName()
 	 */
 	@Override
 	public String getName() {
 		return "Sunspot";
-	}
-
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,16 +60,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
 
 /**
  * XML Protocol Handler which transforms a complete xml document into a nested key-value object and vice versa
- * 
+ *
  * @author Henrik Surm
- * 
+ *
  */
-public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> 
+public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T>
 {
     public static final String NAME = "XML2";
 
@@ -77,7 +76,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
     private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	private static DocumentBuilder db;
 	private static TransformerFactory tf = TransformerFactory.newInstance();
-    
+
     static
     {
     	try {
@@ -87,64 +86,64 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 			e.printStackTrace();
 		}
     }
-    
+
     private InputStream input;
     private BufferedWriter output;
     private Transformer transformer;
     private List<T> result = new LinkedList<>();
 
     @Override public String getName() { return NAME; }
-    
-    public XMLProtocolHandler2() 
+
+    public XMLProtocolHandler2()
     {
         super();
     }
 
-    public XMLProtocolHandler2(final ITransportDirection direction, final IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap options) 
+    public XMLProtocolHandler2(final ITransportDirection direction, final IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap options)
     {
         super(direction, access, dataHandler, options);
-        
+
 		try {
 			transformer = tf.newTransformer();
 		} catch (TransformerConfigurationException e) {
 			throw new RuntimeException(e);
 		}
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");        
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
     }
 
-    @Override public void open() throws UnknownHostException, IOException 
+    @Override public void open() throws UnknownHostException, IOException
     {
         getTransportHandler().open();
-        if (getDirection().equals(ITransportDirection.IN)) 
+        if (getDirection().equals(ITransportDirection.IN))
         {
             if ((getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL)))
                 input = getTransportHandler().getInputStream();
         }
-        else 
+        else
         {
         	if ((getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL)))
         		output = new BufferedWriter(new OutputStreamWriter(getTransportHandler().getOutputStream()));
         }
     }
 
-    @Override public void close() throws IOException 
+    @Override public void close() throws IOException
     {
         if (getDirection().equals(ITransportDirection.IN) && input != null)
         {
         	if (input != null)
         		input.close();
         }
-        else 
+        else
         {
         	if (output != null)
         		output.close();
         }
-        
+
         getTransportHandler().close();
     }
 
-    @Override public boolean hasNext() throws IOException 
+    @Override public boolean hasNext() throws IOException
     {
         try {
             return result.size() > 0 || this.input.available() > 0;
@@ -153,9 +152,9 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
         }
     }
 
-    @Override public void process(InputStream message) 
+    @Override public void process(InputStream message)
     {
-        try 
+        try
         {
             getTransfer().transfer(parseXml(message));
         }
@@ -164,7 +163,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
         }
     }
 
-    @Override public void process(long callerId, ByteBuffer message) 
+    @Override public void process(long callerId, ByteBuffer message)
     {
         try {
             getTransfer().transfer(parseXml(new ByteBufferBackedInputStream(message)));
@@ -177,7 +176,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 	@SuppressWarnings("unchecked")
 	public static void traverseNode(Node node, MultiMap<String, Object> targetMap)
 	{
-		if (node instanceof Text && node.getNodeValue().trim().equals("")) 
+		if (node instanceof Text && node.getNodeValue().trim().equals(""))
 			return;
 
 		String key = node.getNodeName();
@@ -191,18 +190,18 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 			value = nodes.item(0).getNodeValue();
 		else
 		{
-			MultiMap<String, Object> map = new MultiHashMap<String, Object>(); 
+			MultiMap<String, Object> map = new MultiHashMap<String, Object>();
 			for (int i=0; i<nodes.getLength(); i++)
 				traverseNode(nodes.item(i), map);
-			
+
 			value = map;
 		}
-		
+
 		NamedNodeMap attributes = node.getAttributes();
 		if (attributes.getLength() > 0)
 		{
 			MultiMap<String, Object> map;
-			
+
 			if (value instanceof String)
 			{
 				map = new MultiHashMap<String, Object>();
@@ -211,15 +210,15 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 			}
 			else
 			if (value instanceof MultiMap)
-			{				
+			{
 				map = (MultiMap<String, Object>)value;
 			}
 			else
 				throw new RuntimeException("asd");
-			
+
 			for (int i=0; i<attributes.getLength(); i++)
 				map.put("Attribute@" + attributes.item(i).getNodeName(), attributes.item(i).getNodeValue());
-		}				
+		}
 		targetMap.put(key, value);
 	}
 
@@ -230,20 +229,20 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 		{
 			String key = e.getKey();
 			Collection<Object> values = e.getValue();
-			
+
 			String newRoot;
-			if (root != null) 
+			if (root != null)
 				newRoot = root + "." + key;
 			else
 				newRoot = key;
-									
+
 			for (Object obj : values)
 			{
 				if (obj instanceof MultiHashMap)
 					mapDepthFirstSearch(kvObject, newRoot,(MultiHashMap<String, Object>) obj);
 				else
 				{
-					Object existingAttribute = kvObject.getAttribute(newRoot); 
+					Object existingAttribute = kvObject.getAttribute(newRoot);
 					if (existingAttribute == null)
 						kvObject.setAttribute(newRoot, obj);
 					else
@@ -253,17 +252,17 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 							kvObject.setAttribute(newRoot, null);
 							kvObject.addAttributeValue(newRoot, existingAttribute);
 						}
-						
+
 						kvObject.addAttributeValue(newRoot, obj);
 					}
 				}
 			}
 		}
 	}
-    
-	
+
+
     @SuppressWarnings("unchecked")
-	private T parseXml(InputStream input) throws IOException 
+	private T parseXml(InputStream input) throws IOException
     {
         // Deliver Input from former runs
         if (result.size() > 0)
@@ -272,7 +271,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
         if (input.available() == 0)
             return null;
 
-        try 
+        try
         {
             Document doc = db.parse(input);
             try {
@@ -282,17 +281,17 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
             catch (Throwable t) {
                 // Nothing
             }
-            
-/*        	DOMSource domSource = new DOMSource(doc);        	
+
+/*        	DOMSource domSource = new DOMSource(doc);
         	StringWriter strWriter = new StringWriter();
    			transformer.transform(domSource, new StreamResult(strWriter));
    			String str = strWriter.toString();*/
-            
+
    			MultiHashMap<String, Object> targetMap = new MultiHashMap<>();
    			traverseNode(doc.getDocumentElement().getChildNodes().item(1), targetMap);
-   			
+
             NestedKeyValueObject<? extends IMetaAttribute> resultObj = new NestedKeyValueObject<>();
-            mapDepthFirstSearch(resultObj, null, targetMap);            
+            mapDepthFirstSearch(resultObj, null, targetMap);
             result.add((T) resultObj);
            	return result.size() > 0 ? result.remove(0) : null;
         }
@@ -304,7 +303,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
     }
 
     @Override
-    public T getNext() throws IOException 
+    public T getNext() throws IOException
     {
         return parseXml(input);
     }
@@ -313,26 +312,26 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 	private void addListToNode(Document doc, Node root, String itemName, List<Object> list)
     {
     	for (Object obj : list)
-    	{    	
+    	{
     		Element node = doc.createElement(itemName);
     		root.appendChild(node);
-    		
+
     		if (obj instanceof Map)
     			addMapToNode(doc, node, (Map<String, Object>) obj);
     		if (obj instanceof List)
     			throw new UnsupportedOperationException("A list may not contain a list. Use a map inbetween!");
     		else
-    			node.appendChild(doc.createTextNode(obj.toString()));    		
+    			node.appendChild(doc.createTextNode(obj.toString()));
     	}
     }
-    
+
     @SuppressWarnings("unchecked")
 	private void addMapToNode(Document doc, Node root, Map<String, Object> map)
     {
     	for (Entry<String, Object> e : map.entrySet())
-    	{    	
+    	{
     		Object value = e.getValue();
-    		
+
     		if (value instanceof List)
     		{
     			addListToNode(doc, root, e.getKey(), (List<Object>) value);
@@ -344,31 +343,31 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
     				addMapToNode(doc, node, (Map<String, Object>) value);
     			else
     				node.appendChild(doc.createTextNode(value.toString()));
-    			
+
     			root.appendChild(node);
     		}
     	}
     }
-    
+
     @Override
-    public void write(final T object) throws IOException 
+    public void write(final T object) throws IOException
     {
     	Map<String, Object> map = object.getAttributes();
-    	
+
     	Document doc = db.newDocument();
     	Element root = doc.createElement("root");
     	addMapToNode(doc, root, map);
     	doc.appendChild(root);
     	DOMSource domSource = new DOMSource(doc);
-    	
+
     	StringWriter strWriter = new StringWriter();
-    	
+
     	try {
 			transformer.transform(domSource, new StreamResult(strWriter));
 			String str = strWriter.toString();
-			
+
 //			System.out.println(str);
-			
+
 			if (output != null)
 				output.write(str);
 			else
@@ -395,20 +394,10 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
     }
 
     @Override
-    public void onConnect(final ITransportHandler caller) {
-
-    }
-
-    @Override
-    public void onDisonnect(final ITransportHandler caller) {
-
-    }
-
-    @Override
     public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
         if (!(o instanceof XMLProtocolHandler2))
             return false;
-        
+
         return true;
     }
 }

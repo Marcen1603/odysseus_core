@@ -1,0 +1,33 @@
+package de.uniol.inf.is.odysseus.spatial.transform.rules;
+
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialQueryAO;
+import de.uniol.inf.is.odysseus.spatial.physicaloperator.SpatialQueryPO;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+
+public class TSpatialQueryAOTransformRule extends AbstractTransformationRule<SpatialQueryAO> {
+
+	@Override
+	public void execute(SpatialQueryAO operator, TransformationConfiguration config) throws RuleException {
+		IMovingObjectDataStructure dataStructure = SpatialDataStructureProvider.getInstance()
+				.getDataStructure(operator.getDataStructureName());
+		defaultExecute(operator, new SpatialQueryPO<>(dataStructure, operator.getPolygonPoints()), config, true, true);
+
+	}
+
+	@Override
+	public boolean isExecutable(SpatialQueryAO operator, TransformationConfiguration config) {
+		return operator.isAllPhysicalInputSet();
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+
+}

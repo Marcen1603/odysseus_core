@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 /**
  * Protocol Handler to receive custom NMEA string from the FerryBox software by HS Jena
- * 
+ *
  * @author Henrik Surm
  */
 @SuppressWarnings("unused")
@@ -29,7 +29,7 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 	public static final String NAME = "FerryBox";
 
 	@Override public String getName() { return FerryBoxProtocolHandler.NAME; }
-	
+
 	public FerryBoxProtocolHandler() {
 		super();
 	}
@@ -37,7 +37,7 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 	public FerryBoxProtocolHandler(ITransportDirection direction, IAccessPattern access,
 			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
-	}	
+	}
 
 	@Override
 	public IProtocolHandler<KeyValueObject<IMetaAttribute>> createInstance(ITransportDirection direction,
@@ -45,25 +45,12 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 		return new FerryBoxProtocolHandler(direction, access, dataHandler, options);
 	}
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * @throws IOException 
-	 */
-	@Override
-	public void onConnect(final ITransportHandler caller) {
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-	}
-	
 	private String[] header = null;
-	
+
 	private void processLine(String line)
-	{		
+	{
 		if (line.length() == 0) return;
-			
+
 		// The first message fills the header
 		if (header == null)
 		{
@@ -74,41 +61,41 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 			// Split received nmea string w/o checksum and fill map
 			String[] lines = line.substring(0, line.length()-4).split(",");
 			Map<String, Object> event = new HashMap<>();
-			
+
 			// Ignore first entry, since it is the nmea code $icbm
 			int i=0;
 			for (String entry : lines)
 			{
 				if (i > 0)
 					event.put(header[i], entry);
-				
+
 				i++;
 			}
-			
+
 			KeyValueObject<IMetaAttribute> kvObject = new KeyValueObject<>(event);
 			getTransfer().transfer(kvObject);
-		}		
+		}
 	}
-	
+
 	@Override
-	public void process(long callerId, final ByteBuffer message) 
+	public void process(long callerId, final ByteBuffer message)
 	{
 		String asString = new String(message.array(), 0, message.limit(), charset);
-		
+
 		String[] lines = asString.split("\n");
 		for (String line : lines)
-			processLine(line);			
+			processLine(line);
 	}
 
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		return ITransportExchangePattern.InOnly;
 	}
-	
+
 	@Override
 	public boolean isSemanticallyEqualImpl(final IProtocolHandler<?> other) {
 		if (!(other instanceof FerryBoxProtocolHandler)) return false;
-		
+
 		return true;
 	}
 }

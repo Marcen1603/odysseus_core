@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,16 +53,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
 
 /**
  * Data Handler for XML documents The schema attribute names define the XPath
  * for the attribute values
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHandler<T> {
     public static final String NAME = "XML";
@@ -86,7 +85,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
 
     /**
      * Create a new XML Data Handler
-     * 
+     *
      */
     public XMLProtocolHandler() {
         super();
@@ -94,7 +93,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
 
     /**
      * Create a new XML Data Handler
-     * 
+     *
      * @param direction
      * @param access
      * @param transfer
@@ -361,16 +360,6 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
         else {
             return ITransportExchangePattern.OutOnly;
         }
-    }
-
-    @Override
-    public void onConnect(final ITransportHandler caller) {
-
-    }
-
-    @Override
-    public void onDisonnect(final ITransportHandler caller) {
-
     }
 
     @Override

@@ -21,7 +21,7 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractObjectHandlerByteBufferHandler.class);
-	
+
 	protected ByteBufferHandler<T> objectHandler;
 
 	public AbstractObjectHandlerByteBufferHandler() {
@@ -43,7 +43,6 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 		}
 	}
 
-
 	protected ByteBuffer prepareObject(IPunctuation punctuation) {
 		ByteBuffer buffer;
 		int puncNumber = punctuation.getNumber();
@@ -52,6 +51,7 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 		case 1:
 		case 2:
 			buffer = ByteBuffer.allocate(1024);
+			buffer.put(punctuation.getNumber());
 			PunctAwareByteBufferHandler.dataHandlerList.get(puncNumber-1).writeData(buffer, punctuation.getValue());
 			break;
 		default:
@@ -63,16 +63,15 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 		buffer.flip();
 		return buffer;
 	}
-	
+
 	protected ByteBuffer prepareObject(T object) {
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		// ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
-		// getDataHandler(), exportMetadata);
 		getDataHandler().writeData(buffer, object);
 		buffer.flip();
 		return buffer;
 	}
-	
+
+
 	protected void processObject() throws IOException, ClassNotFoundException {
 		T object = objectHandler.create();
 		if (object != null) {
@@ -81,5 +80,5 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 			LOG.error("Empty object");
 		}
 	}
-	
+
 }

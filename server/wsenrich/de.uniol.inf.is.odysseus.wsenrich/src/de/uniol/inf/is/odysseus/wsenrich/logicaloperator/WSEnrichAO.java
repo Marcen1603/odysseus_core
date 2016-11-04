@@ -83,6 +83,11 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	private String method;
 
 	/**
+	 * Allow to set the content type
+	 */
+	private String contentType;
+
+	/**
 	 * The static HTTP-URL-Part before the arguments
 	 */
 	private String url;
@@ -140,6 +145,8 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	private String template;
 
+	private boolean urlIsTemplate = false;
+
 	/**
 	 * Default-Constructor for the WSEnrichAO
 	 */
@@ -156,7 +163,9 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		super(wsEnrichAO);
 		this.serviceMethod = wsEnrichAO.serviceMethod;
 		this.method = wsEnrichAO.method;
+		this.contentType = wsEnrichAO.contentType;
 		this.url = wsEnrichAO.url;
+		this.urlIsTemplate = wsEnrichAO.urlIsTemplate;
 		this.urlsuffix = wsEnrichAO.urlsuffix;
 		this.arguments = wsEnrichAO.arguments;
 		this.template = wsEnrichAO.template;
@@ -222,6 +231,15 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		this.method = method;
 	}
 
+	@Parameter(type = StringParameter.class, name = "contentType", optional = true)
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
 	/**
 	 * @return The static part of the Url before Arguments
 	 */
@@ -244,6 +262,16 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 */
 	public String getUrlSuffix() {
 		return this.urlsuffix;
+	}
+
+
+	public boolean isUrlIsTemplate() {
+		return urlIsTemplate;
+	}
+
+	@Parameter(type = BooleanParameter.class, name="templateURL", optional = true)
+	public void setUrlIsTemplate(boolean urlIsTemplate) {
+		this.urlIsTemplate = urlIsTemplate;
 	}
 
 	@Parameter(type = StringParameter.class, optional = true)

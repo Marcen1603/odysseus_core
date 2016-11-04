@@ -53,7 +53,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends Aggreg
 	protected void process_next(IStreamObject<M> object, int port) {
 		watermark = object.getMetadata().getStart();
 	}
-	
+
 	protected PointInTime getWatermark() {
 		return watermark;
 	}
@@ -72,7 +72,7 @@ abstract public class AbstractCoalescePO<M extends ITimeInterval> extends Aggreg
 		IPunctuation punc = punctuationsOutputQueue.peek();
 		while (punc != null && punc.getTime().before(watermark)) {
 //			System.err.println("OUT: PUNC: " + punc.getTime());
-			
+
 			sendPunctuation(punctuationsOutputQueue.poll());
 			punc = punctuationsOutputQueue.peek();
 		}

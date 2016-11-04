@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,12 +56,22 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		optionsMap = null;
 	}
 
-	public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> datahandler,
-			OptionMap optionsMap) {
+	public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access,
+			IStreamObjectDataHandler<T> datahandler, OptionMap optionsMap) {
 		this.direction = direction;
 		this.access = access;
 		this.dataHandler = datahandler;
 		this.optionsMap = optionsMap;
+	}
+
+	@Override
+	public final void updateOption(String key, String value){
+		optionsMap.setOption(key, value);
+		optionsMapChanged(key,value);
+	}
+
+	void optionsMapChanged(String key, String value){
+		throw new UnsupportedOperationException("Sorry. Update of options not supported by "+this.getName());
 	}
 
 	@Override
@@ -136,11 +146,14 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 
 	@Override
 	public void onDisonnect(ITransportHandler caller) {
+		if (getTransfer() != null) {
+			getTransfer().propagateDone();
+		}
 	}
 
 	@Override
 	public void process(String[] message) {
-		List<String> msg = Arrays.asList(message); 
+		List<String> msg = Arrays.asList(message);
 		getTransfer().transfer(getDataHandler().readData(msg.iterator()));
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,11 +32,11 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 
 	final AbstractTransportHandlerDelegate<IStreamObject<IMetaAttribute>> delegate;
 	IExecutor executor;
-	
+
 	public AbstractTransportHandler(){
 		delegate = new AbstractTransportHandlerDelegate<>(null, null, this,null);
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public AbstractTransportHandler(IProtocolHandler protocolHandler, OptionMap optionsMap) {
 		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), protocolHandler.getDirection(), this, optionsMap);
@@ -48,12 +48,12 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	final public void setSchema(SDFSchema schema) {
 		delegate.setSchema(schema);
 	}
-	
+
 	@Override
 	final public SDFSchema getSchema() {
 		return delegate.getSchema();
 	}
-	
+
 	@Override
 	public void setExecutor(IExecutor executor) {
 		this.executor = executor;
@@ -63,13 +63,13 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	public IExecutor getExecutor() {
 		return executor;
 	}
-	
+
 	@Override
 	public boolean isDone() {
 		return false;
 	}
 
-	
+
 	@Override
 	public boolean isSemanticallyEqual(ITransportHandler other) {
 		if(!this.getExchangePattern().equals(other.getExchangePattern())) {
@@ -79,7 +79,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		}
 		return isSemanticallyEqualImpl(other);
 	}
-	
+
 	public abstract boolean isSemanticallyEqualImpl(ITransportHandler other);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -109,11 +109,11 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	public ITransportExchangePattern getExchangePattern() {
 		return delegate.getExchangePattern();
 	}
-	
+
 	final public OptionMap getOptionsMap() {
 		return delegate.getOptionsMap();
 	}
-		
+
 	final public void fireProcess(long callerId, ByteBuffer message) {
 		delegate.fireProcess(callerId, message);
 	}
@@ -121,15 +121,15 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	final public void fireProcess(ByteBuffer message) {
 		delegate.fireProcess(0, message);
 	}
-	
+
 	final public void fireProcess(InputStream message){
 		delegate.fireProcess(message);
 	}
-	
+
 	final public void fireProcess(String[] message) {
 		delegate.fireProcess(message);
 	}
-	
+
 	final public void fireProcess(IStreamObject<IMetaAttribute> message){
 		delegate.fireProcess(message);
 	}
@@ -141,15 +141,25 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	final public void fireOnDisconnect() {
 		delegate.fireOnDisconnect(this);
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation) {
 		// Default: Nothing to do
 	}
-	
+
 	@Override
 	public void send(Object message) throws IOException {
 		// empty default implementation
+	}
+
+	@Override
+	public void updateOption(String key, String value) {
+		this.getOptionsMap().setOption(key, value);
+		optionsMapChanged(key,value);
+	}
+
+	private void optionsMapChanged(String key, String value) {
+		delegate.optionsMapChanged(key,value);
 	}
 
 }

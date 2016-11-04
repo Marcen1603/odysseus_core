@@ -32,7 +32,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractObjectHandlerByteBufferHandler<T> {
 
+	public static final String START = "start";
+	public static final String END = "end";
+
 	private static final Logger LOG = LoggerFactory.getLogger(MarkerByteBufferHandler.class);
+
 	protected byte start;
 	protected byte end;
 
@@ -43,42 +47,66 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 	public MarkerByteBufferHandler(ITransportDirection direction, IAccessPattern access,
 			IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
-		start = Byte.parseByte(optionsMap.get("start"));
-		end = Byte.parseByte(optionsMap.get("end"));
+		optionsMap.checkRequiredException(START);
+		final String startMarker = optionsMap.get(START);
+		if (startMarker.length() == 1) {
+			// single character
+			start = (byte) startMarker.charAt(0);
+		} else {
+			// string with decimal digits
+			start = Byte.parseByte(startMarker);
+		}
+		if (optionsMap.containsKey(END)) {
+			final String endMarker = optionsMap.get(END);
+			if (endMarker.length() == 1) {
+				// single character
+				end = (byte) endMarker.charAt(0);
+			} else {
+				// string with decimal digits
+				end = Byte.parseByte(endMarker);
+
+			}
+		} else {
+			end = start;
+		}
 	}
 
-	@Override	
+	@Override
 	public void write(T object) throws IOException {
 		// write with marker
 		ByteBuffer buffer = prepareObject(object);
-
 		int messageSizeBytes = buffer.remaining();
-		byte[] rawBytes = new byte[messageSizeBytes + 8];
-		insertInt(rawBytes, 0, start);
-		// buffer.array() returns the complete array (1024 bytes) and
-		// did not apply the "real" size of the object
-		buffer.get(rawBytes, 4, messageSizeBytes);
-		insertInt(rawBytes, messageSizeBytes + 4, end);
+		byte[] rawBytes = new byte[messageSizeBytes + 2];
+
+		//insertInt(rawBytes, 0, start);
+		rawBytes[0] = start;
+		buffer.get(rawBytes, 1, messageSizeBytes);
+		//insertInt(rawBytes, messageSizeBytes + 4, end);
+		rawBytes[messageSizeBytes+1] = end;
+
 		getTransportHandler().send(rawBytes);
 	}
-	
+
 	@Override
-	public void process(long callerId, ByteBuffer message) {
+	public synchronized void process(long callerId, ByteBuffer message) {
 		// TODO: handle callerId
 		try {
-			int startPosition = 0;
+			int startPosition = -1;
 			while (message.remaining() > 0) {
 				byte value = message.get();
-				if (value == end) {
-					int endPosition = message.position() - 2;
+
+				// Could be inside an object --> ignore and wait for next start
+				if (startPosition > 0 && value == end) {
+					int endPosition = message.position() - 1;
 					message.position(startPosition);
 					try {
-						objectHandler.put(message, endPosition - message.position() + 1);
+						objectHandler.put(message, endPosition - message.position());
 					} catch (IOException e) {
 						LOG.error(e.getMessage(), e);
 					}
-					message.position(endPosition + 2);
+					message.position(endPosition + 1);
 					startPosition = message.position() + 1;
+
 					processObject();
 				}
 				if (value == start) {
@@ -115,11 +143,6 @@ public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 	public String getName() {
 		return "MarkerByteBuffer";
 	}
-
-
-	
-
-
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  * Left Join: Works as a join with one exception: elements on the left input (0)
  * will be transfered even if there is no join partner. In this case the schema
  * will be filled with null values.
- * 
+ *
  * @author Michael Brand
  *
  * @param <K>
@@ -199,9 +199,10 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 		}
 
 	}
-	
+
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public void processPunctuation(IPunctuation inPunctuation, int port) {
+		IPunctuation punctuation = joinPredicate.processPunctuation(inPunctuation);
 		if (punctuation.isHeartbeat()) {
 			synchronized (this) {
 				// Left Join: if elements in the left sweep area (0) shall be
@@ -223,7 +224,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof LeftJoinTIPO)) {
@@ -231,7 +232,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 		}
 		return super.process_isSemanticallyEqual(ipo);
 	}
-	
+
 	@Override
 	public boolean isContainedIn(IPipe<T, T> ip) {
 		if (!(ip instanceof LeftJoinTIPO)) {

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,21 +50,21 @@ public interface IProtocolHandler<T extends IStreamObject<? extends IMetaAttribu
      * @return
      */
     String getName();
-    
+
     /**
-     * The exchange pattern of the underlying transport handler 
+     * The exchange pattern of the underlying transport handler
      * @return
      */
     ITransportExchangePattern getExchangePattern();
 
-	
+
 	/**
 	 * Is called from the framework, when the query is started
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
     void open() throws UnknownHostException, IOException;
-    
+
     /**
      * Is called from the framework, when the query is stopped
      * @throws IOException
@@ -91,7 +91,7 @@ public interface IProtocolHandler<T extends IStreamObject<? extends IMetaAttribu
      */
 	boolean isDone();
 
-    
+
     /**
      * in cased of OUT direction, write this object and send it to the transport handler
      * @param object
@@ -105,22 +105,22 @@ public interface IProtocolHandler<T extends IStreamObject<? extends IMetaAttribu
      * @throws IOException
      */
     void writePunctuation(IPunctuation punctuation) throws IOException;
-    
-    
+
+
     /**
      * Assigns the transport handler to the protocol handler
      * @param transportHandler
      */
     void setTransportHandler(ITransportHandler transportHandler);
-    
-    
+
+
     /**
      * In push based szenarios: The the class, that should receive the data
-     * 
+     *
      * @param transfer
      */
     void setTransfer(ITransferHandler<T> transfer);
-    
+
     /**
      * Retrieves direction IN or OUT
      * @return
@@ -133,22 +133,29 @@ public interface IProtocolHandler<T extends IStreamObject<? extends IMetaAttribu
      */
     IAccessPattern getAccessPattern();
 
-    
+
     /**
      * Needed for query sharing
      * @param other
      * @return
      */
 	boolean isSemanticallyEqual(IProtocolHandler<?> other);
-	
+
 	ProtocolHandlerAction getAction();
-	
+
 	IExecutor getExecutor();
-	
+
 	void setExecutor(IExecutor executor);
-	
+
 	SDFSchema getSchema();
-	
+
 	void setSchema(SDFSchema schema);
+
+    /**
+     * option update
+     */
+
+    void updateOption(String key, String value);
+
 
 }

@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -13,6 +16,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAttribute>> extends MarkerByteBufferHandler<T> {
+
+	static final Logger LOG = LoggerFactory.getLogger(OdysseusProtocolHandler2.class);
 
 	final static byte OBJECT = 0;
 	final static byte PUNCT = 1;
@@ -28,34 +33,32 @@ public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAtt
 		objectHandler = new PunctAwareByteBufferHandler<T>(dataHandler);
 	}
 
-	@Override
-	public void write(T object) throws IOException {
-		ByteBuffer buffer = prepareObject(object);
-		sendWithTypeInfo(buffer, OBJECT);
-	}
 
 	@Override
-	public void writePunctuation(IPunctuation punctuation) throws IOException {
-		ByteBuffer buffer = prepareObject(punctuation);
-		sendWithTypeInfo(buffer,punctuation.getNumber());
+	protected ByteBuffer prepareObject(T object) {
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		// add type info OBJECT
+		buffer.put(OBJECT);
+		getDataHandler().writeData(buffer, object);
+		buffer.flip();
+		return buffer;
 	}
 
-	private void sendWithTypeInfo(ByteBuffer buffer, byte typeInfo) throws IOException {
-		int messageSizeBytes = buffer.remaining();
-		byte[] rawBytes = new byte[messageSizeBytes + 5]; // sizeinfo = 5, typeinfo = 1
-		insertInt(rawBytes, 0, messageSizeBytes+1); // typeInfo is part of object!
-		rawBytes[4]= typeInfo;
 
-		// buffer.array() returns the complete array (1024 bytes) and
-		// did not apply the "real" size of the object
-		buffer.get(rawBytes, 5, messageSizeBytes);
-		getTransportHandler().send(rawBytes);
-	}
+
 
 	@Override
-	protected void processObject() throws IOException, ClassNotFoundException {
-		T so = objectHandler.create();
+	protected synchronized void processObject() throws IOException, ClassNotFoundException {
+		T so = null;
+
+		try{
+			so = objectHandler.create();
+		}catch(Exception e){
+			LOG.warn("Error reading input. Clearing input buffer ... ");
+			objectHandler.clear();
+		}
 		if (so != null){
+			//System.err.println(so);
 			getTransfer().transfer(so);
 		}else{
 			IPunctuation punc = ((PunctAwareByteBufferHandler<T>)objectHandler).getPunctuation();
@@ -70,7 +73,7 @@ public class OdysseusProtocolHandler2<T extends IStreamObject<? extends IMetaAtt
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<T> dataHandler) {
-		OdysseusProtocolHandler<T> instance = new OdysseusProtocolHandler<T>(
+		OdysseusProtocolHandler2<T> instance = new OdysseusProtocolHandler2<T>(
 				direction, access, dataHandler, options);
 		return instance;
 	}

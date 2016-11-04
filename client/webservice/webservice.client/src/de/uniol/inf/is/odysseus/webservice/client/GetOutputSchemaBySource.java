@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getOutputSchemaBySource complex type.
+ * <p>Java-Klasse f�r getOutputSchemaBySource complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="getOutputSchemaBySource">
@@ -45,7 +45,7 @@ public class GetOutputSchemaBySource {
     protected String sourcename;
 
     /**
-     * Gets the value of the securitytoken property.
+     * Ruft den Wert der securitytoken-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class GetOutputSchemaBySource {
     }
 
     /**
-     * Sets the value of the securitytoken property.
+     * Legt den Wert der securitytoken-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class GetOutputSchemaBySource {
     }
 
     /**
-     * Gets the value of the sourcename property.
+     * Ruft den Wert der sourcename-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class GetOutputSchemaBySource {
     }
 
     /**
-     * Sets the value of the sourcename property.
+     * Legt den Wert der sourcename-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

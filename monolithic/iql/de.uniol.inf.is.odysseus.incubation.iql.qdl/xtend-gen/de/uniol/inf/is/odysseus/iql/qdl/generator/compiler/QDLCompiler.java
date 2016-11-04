@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.iql.qdl.generator.compiler;
 
 import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
@@ -234,59 +233,19 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
           JvmTypeReference type = decl.getRef();
           _builder.newLineIfNotEmpty();
           {
-            boolean _and = false;
-            boolean _and_1 = false;
-            IQLVariableInitialization _init = a.getInit();
-            boolean _notEquals = (!Objects.equal(_init, null));
-            if (!_notEquals) {
-              _and_1 = false;
-            } else {
-              IQLVariableInitialization _init_1 = a.getInit();
-              IQLArgumentsMap _argsMap = _init_1.getArgsMap();
-              boolean _notEquals_1 = (!Objects.equal(_argsMap, null));
-              _and_1 = _notEquals_1;
-            }
-            if (!_and_1) {
-              _and = false;
-            } else {
-              IQLVariableInitialization _init_2 = a.getInit();
-              IQLArgumentsMap _argsMap_1 = _init_2.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-              int _size = _elements.size();
-              boolean _greaterThan = (_size > 0);
-              _and = _greaterThan;
-            }
-            if (_and) {
+            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
-              IQLVariableInitialization _init_3 = a.getInit();
-              IQLArgumentsMap _argsMap_2 = _init_3.getArgsMap();
-              CharSequence _createGetterMethod = this.createGetterMethod(type, _argsMap_2, context);
+              IQLVariableInitialization _init = a.getInit();
+              IQLArgumentsMap _argsMap = _init.getArgsMap();
+              CharSequence _createGetterMethod = this.createGetterMethod(type, _argsMap, context);
               _builder.append(_createGetterMethod, "\t");
               _builder.newLineIfNotEmpty();
             } else {
-              boolean _and_2 = false;
-              boolean _and_3 = false;
-              IQLVariableInitialization _init_4 = a.getInit();
-              boolean _notEquals_2 = (!Objects.equal(_init_4, null));
-              if (!_notEquals_2) {
-                _and_3 = false;
-              } else {
-                IQLVariableInitialization _init_5 = a.getInit();
-                IQLArgumentsList _argsList = _init_5.getArgsList();
-                boolean _notEquals_3 = (!Objects.equal(_argsList, null));
-                _and_3 = _notEquals_3;
-              }
-              if (!_and_3) {
-                _and_2 = false;
-              } else {
-                boolean _isOperator = this.helper.isOperator(type);
-                _and_2 = _isOperator;
-              }
-              if (_and_2) {
+              if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsList(), null))) && this.helper.isOperator(type))) {
                 _builder.append("\t");
-                IQLVariableInitialization _init_6 = a.getInit();
-                IQLArgumentsMap _argsMap_3 = _init_6.getArgsMap();
-                CharSequence _createGetterMethod_1 = this.createGetterMethod(type, _argsMap_3, context);
+                IQLVariableInitialization _init_1 = a.getInit();
+                IQLArgumentsMap _argsMap_1 = _init_1.getArgsMap();
+                CharSequence _createGetterMethod_1 = this.createGetterMethod(type, _argsMap_1, context);
                 _builder.append(_createGetterMethod_1, "\t");
                 _builder.newLineIfNotEmpty();
               }
@@ -299,33 +258,21 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            boolean _and_4 = false;
-            IQLArgumentsMap _argsMap_4 = e.getArgsMap();
-            boolean _notEquals_4 = (!Objects.equal(_argsMap_4, null));
-            if (!_notEquals_4) {
-              _and_4 = false;
-            } else {
-              IQLArgumentsMap _argsMap_5 = e.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_5.getElements();
-              int _size_1 = _elements_1.size();
-              boolean _greaterThan_1 = (_size_1 > 0);
-              _and_4 = _greaterThan_1;
-            }
-            if (_and_4) {
+            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmTypeReference _ref = e.getRef();
-              IQLArgumentsMap _argsMap_6 = e.getArgsMap();
-              CharSequence _createGetterMethod_2 = this.createGetterMethod(_ref, _argsMap_6, context);
+              IQLArgumentsMap _argsMap_2 = e.getArgsMap();
+              CharSequence _createGetterMethod_2 = this.createGetterMethod(_ref, _argsMap_2, context);
               _builder.append(_createGetterMethod_2, "\t");
               _builder.newLineIfNotEmpty();
             } else {
               JvmTypeReference _ref_1 = e.getRef();
-              boolean _isOperator_1 = this.helper.isOperator(_ref_1);
-              if (_isOperator_1) {
+              boolean _isOperator = this.helper.isOperator(_ref_1);
+              if (_isOperator) {
                 _builder.append("\t");
                 JvmTypeReference _ref_2 = e.getRef();
-                IQLArgumentsMap _argsMap_7 = e.getArgsMap();
-                CharSequence _createGetterMethod_3 = this.createGetterMethod(_ref_2, _argsMap_7, context);
+                IQLArgumentsMap _argsMap_3 = e.getArgsMap();
+                CharSequence _createGetterMethod_3 = this.createGetterMethod(_ref_2, _argsMap_3, context);
                 _builder.append(_createGetterMethod_3, "\t");
                 _builder.newLineIfNotEmpty();
               }
@@ -377,23 +324,13 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.append(_simpleName_1, "");
       _builder.append("> operators");
       {
-        boolean _and = false;
-        boolean _notEquals = (!Objects.equal(map, null));
-        if (!_notEquals) {
-          _and = false;
-        } else {
-          EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
-          int _size = _elements.size();
-          boolean _greaterThan = (_size > 0);
-          _and = _greaterThan;
-        }
-        if (_and) {
+        if (((!Objects.equal(map, null)) && (map.getElements().size() > 0))) {
           _builder.append(", ");
-          EList<IQLArgumentsMapKeyValue> _elements_1 = map.getElements();
+          EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
           final Function1<IQLArgumentsMapKeyValue, String> _function = (IQLArgumentsMapKeyValue el) -> {
             return super.compile(el, typeRef, context);
           };
-          List<String> _map = ListExtensions.<IQLArgumentsMapKeyValue, String>map(_elements_1, _function);
+          List<String> _map = ListExtensions.<IQLArgumentsMapKeyValue, String>map(_elements, _function);
           String _join = IterableExtensions.join(_map, ", ");
           _builder.append(_join, "");
         }
@@ -404,11 +341,11 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.append("operators.add(type);");
       _builder.newLine();
       {
-        boolean _notEquals_1 = (!Objects.equal(map, null));
-        if (_notEquals_1) {
+        boolean _notEquals = (!Objects.equal(map, null));
+        if (_notEquals) {
           {
-            EList<IQLArgumentsMapKeyValue> _elements_2 = map.getElements();
-            for(final IQLArgumentsMapKeyValue el : _elements_2) {
+            EList<IQLArgumentsMapKeyValue> _elements_1 = map.getElements();
+            for(final IQLArgumentsMapKeyValue el : _elements_1) {
               {
                 JvmIdentifiableElement _key = el.getKey();
                 if ((_key instanceof JvmOperation)) {
