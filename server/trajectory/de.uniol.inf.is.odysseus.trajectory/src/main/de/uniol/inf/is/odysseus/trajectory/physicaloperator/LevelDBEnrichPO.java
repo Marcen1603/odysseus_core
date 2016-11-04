@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 
 /**
  * A physical operator for <tt>LevelDBEnrichAO</tt>.

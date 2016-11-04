@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,7 @@ package de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -29,9 +28,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * This operator transforms a Tuple to a KeyValueObject
- * 
+ *
  * @author Jan S�ren Schwarz
- * 
+ *
  * @param <M>
  */
 
@@ -66,8 +65,6 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 		KeyValueObject<M> output = null;
 		if (getOutputSchema().getType() == KeyValueObject.class) {
 			output = new KeyValueObject<M>();
-		} else if (getOutputSchema().getType() == NestedKeyValueObject.class) {
-			output = new NestedKeyValueObject<M>();
 		}
 		for (int pos =0;pos<sdfSchema.size(); pos++) {
 			SDFAttribute attr = sdfSchema.get(pos);
@@ -82,8 +79,8 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 						output.addAttributeValue(name, subObj);
 					}else{
 						output.addAttributeValue(name, o.get(i));
-					}				
-					
+					}
+
 					// Lists from Lists?
 				}
 			}

@@ -20,34 +20,34 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * This class is used to represent objects as simple key value pairs
- * 
+ *
  * @author Marco Grawunder, Jan Soeren Schwarz
  *
  * @param <T>
  */
 
-public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable{
-	
+class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable{
+
 	final private static long serialVersionUID = -94667746890198612L;
 
 	final protected Map<String, Object> attributes = new LinkedHashMap<String, Object>();
 
 	final protected static Logger LOG = LoggerFactory.getLogger(KeyValueObject.class);
-	
+
 	public KeyValueObject(){
 	}
-	
+
 	public KeyValueObject(KeyValueObject<T> other){
 		super(other);
 		this.attributes.putAll(new LinkedHashMap<String, Object>(other.attributes));
 	}
-	
+
 	public KeyValueObject(Map<String,Object> map) {
 		if(map != null && map.size() > 0) {
 			this.attributes.putAll(map);
 		}
 	}
-	
+
 	//-----------------------------------------------
 	// attribute methods
 	// ----------------------------------------------
@@ -56,7 +56,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	public <K> K getAttribute(String key) {
 		return (K) this.attributes.get(key);
 	}
-	
+
 	public final Map<String, Object> getAttributes() {
 		return this.attributes;
 	}
@@ -64,7 +64,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	/**
 	 * Adds the given value to a existing collection identified by the key.
 	 * If there is no collection an exception is raised.
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
@@ -80,7 +80,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		}
 		((Collection<Object>) this.attributes.get(key)).add(value);
 	}
-	
+
 	public void add(String qualName, KeyValueObject<T> subObj) {
 		for (Entry<String, Object> v: subObj.attributes.entrySet()){
 			setAttribute(qualName+"."+v.getKey(), v.getValue());
@@ -89,14 +89,14 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 
 	/**
 	 * Set the value to given key. If there had been a value already, it will be overridden.
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
 	public void setAttribute(String key, Object value) {
 		this.attributes.put(key, value);
 	}
-	
+
 	public void setAttributes(List<String> keys, List<Object> values){
 		if (keys.size() != values.size()){
 			throw new IllegalArgumentException("Lists need to have the same length!");
@@ -118,12 +118,12 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	public Object removeAttribute(String key) {
 		return this.attributes.remove(key);
 	}
-	
+
 	public int size() {
 		return this.attributes.size();
 	}
-	
-	
+
+
 	@Override
 	protected IStreamObject<T> process_merge(IStreamObject<T> left,
 			IStreamObject<T> right, Order order) {
@@ -131,7 +131,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		merged.attributes.putAll(((KeyValueObject<T>)right).attributes);
 		return merged;
 	}
-	
+
 	public boolean isEmpty() {
 		if(attributes.size() <= 0) {
 			return true;
@@ -139,7 +139,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 			return false;
 		}
 	}
-	
+
 	// ---------------------------------
 	// output methods
 	// ---------------------------------
@@ -148,7 +148,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	public String toString() {
 		return toString(true);
 	}
-	
+
 	@Override
 	public String toString(boolean withMetadata) {
 		StringBuffer retBuff = new StringBuffer();
@@ -163,12 +163,12 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		StringBuffer retBuff = new StringBuffer();
 		for(Entry<String, Object> e : attributes.entrySet()){
 			retBuff.append(e.getKey()+" = "+e.getValue());
-			retBuff.append(System.lineSeparator());			
+			retBuff.append(System.lineSeparator());
 		}
 		return retBuff.toString();
 	}
 	// ------------------------------------
-	
+
 	@Override
 	public KeyValueObject<T> clone() {
 		return new KeyValueObject<T>(this);
@@ -186,7 +186,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	public Map<String, Object> getAttributesAsNestedMap() {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		Map<String, Object> tmpMap;
-		Set<Entry<String, Object>> entrySet = this.attributes.entrySet();		
+		Set<Entry<String, Object>> entrySet = this.attributes.entrySet();
 		for(Entry<String, Object> entry: entrySet) {
 			String[] path = entry.getKey().split("\\.");
 			tmpMap = map;
@@ -203,7 +203,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 		}
 		return map;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -212,7 +212,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 				+ ((attributes == null) ? 0 : attributes.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public final boolean equals(Object o) {
 		if (!(o instanceof KeyValueObject)) {
@@ -243,7 +243,7 @@ public class KeyValueObject <T extends IMetaAttribute> extends AbstractStreamObj
 	/**
 	 * Like normal equals-method but has a tolerance for double and float
 	 * comparisons.
-	 * 
+	 *
 	 * @param o
 	 * @return
 	 */

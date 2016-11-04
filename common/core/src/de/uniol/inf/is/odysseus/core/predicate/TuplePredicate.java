@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -37,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class TuplePredicate {
 
 	Logger logger = LoggerFactory.getLogger(TuplePredicate.class);
-	
+
 	private SDFExpression expression;
 
 	// stores which attributes are needed at which position for
@@ -60,7 +59,7 @@ public class TuplePredicate {
 		this.neededAttributes = expression.getAllAttributes();
 	}
 
-	
+
 	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		init(leftSchema, rightSchema, true);
 	}
@@ -130,7 +129,7 @@ public class TuplePredicate {
 		// logger.debug("Cloned "+this+ " "+attributePositions);
 	}
 
-	
+
 	public boolean evaluate(Tuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
@@ -142,7 +141,7 @@ public class TuplePredicate {
 		return (Boolean) this.expression.getValue();
 	}
 
-	
+
 	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
@@ -154,21 +153,21 @@ public class TuplePredicate {
 		return (Boolean) this.expression.getValue();
 	}
 
-	public boolean evaluate(Tuple<?> input, KeyValueObject<?> additional) {
-		Object[] values = new Object[neededAttributes.size()];
-
-		for (int i = 0; i < neededAttributes.size(); ++i) {
-			if (!fromRightChannel[i]) {
-				values[i] = input.getAttribute(this.attributePositions[i]);
-			} else {
-				values[i] = additional.getAttribute(neededAttributes.get(i).getURI());
-			}
-		}
-//		this.expression.bindMetaAttribute(input.getMetadata());
-//		this.expression.bindAdditionalContent(input.getAdditionalContent());
-		this.expression.bindVariables(values);
-		return (Boolean) this.expression.getValue();
-	}
+//	public boolean evaluate(Tuple<?> input, KeyValueObject<?> additional) {
+//		Object[] values = new Object[neededAttributes.size()];
+//
+//		for (int i = 0; i < neededAttributes.size(); ++i) {
+//			if (!fromRightChannel[i]) {
+//				values[i] = input.getAttribute(this.attributePositions[i]);
+//			} else {
+//				values[i] = additional.getAttribute(neededAttributes.get(i).getURI());
+//			}
+//		}
+////		this.expression.bindMetaAttribute(input.getMetadata());
+////		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindVariables(values);
+//		return (Boolean) this.expression.getValue();
+//	}
 
 	@Override
 	public TuplePredicate clone() {
@@ -209,6 +208,6 @@ public class TuplePredicate {
 	public SDFExpression getExpression() {
 		return expression;
 	}
-	
+
 
 }

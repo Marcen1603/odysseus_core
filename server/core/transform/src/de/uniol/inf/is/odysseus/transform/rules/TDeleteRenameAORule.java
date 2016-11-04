@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
@@ -37,19 +35,21 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO> {
 	}
 
 	@Override
-	public void execute(RenameAO rename, TransformationConfiguration transformConfig) throws RuleException {		
+	public void execute(RenameAO rename, TransformationConfiguration transformConfig) throws RuleException {
 		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(rename, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
-		retract(rename);		
+		retract(rename);
 	}
 
 	@Override
-	public boolean isExecutable(RenameAO operator, TransformationConfiguration transformConfig) { 
-		// Remove only if child not rename. Do not remove top renaming, when schemas are different 
-		return !operator.isNoOp() && (!isInputRenameAO(operator) && !(isLastOne(operator) && !schemaEquals(operator)) && !hasSupscriptions(operator) && 
-				!isKeyValue(operator));
+	public boolean isExecutable(RenameAO operator, TransformationConfiguration transformConfig) {
+		// Remove only if child not rename. Do not remove top renaming, when schemas are different
+		return !operator.isNoOp() && (!isInputRenameAO(operator) && !(isLastOne(operator) && !schemaEquals(operator)) && !hasSupscriptions(operator)
+				// TODO: what are these rename and keyvalue things
+				//&& !isKeyValue(operator)
+				);
 	}
 
 	private boolean schemaEquals(RenameAO operator) {
@@ -60,7 +60,7 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO> {
 		}
 		return false;
 	}
-	
+
 	private boolean isInputRenameAO(RenameAO operator) {
 		return (operator.getInputAO() instanceof RenameAO);
 	}
@@ -68,11 +68,10 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO> {
 	private boolean hasSupscriptions(RenameAO operator) {
 		return (operator.getSubscriptions().size() == 0);
 	}
-	
-	private boolean isKeyValue(RenameAO operator) {
-		return (operator.getInputSchema().getType() == KeyValueObject.class || 
-				operator.getInputSchema().getType() == NestedKeyValueObject.class);
-	}
+
+//	private boolean isKeyValue(RenameAO operator) {
+//		return (operator.getInputSchema().getType() == KeyValueObject.class );
+//	}
 
 	@Override
 	public String getName() {

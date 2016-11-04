@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IConnectionForWebservices;

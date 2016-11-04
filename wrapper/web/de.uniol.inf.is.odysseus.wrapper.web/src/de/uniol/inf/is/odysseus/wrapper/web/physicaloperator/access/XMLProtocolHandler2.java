@@ -50,8 +50,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -223,7 +222,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 	}
 
 	@SuppressWarnings("unchecked")
-	private void mapDepthFirstSearch(NestedKeyValueObject<? extends IMetaAttribute> kvObject, String root, MultiHashMap<String, Object> map)
+	private void mapDepthFirstSearch(KeyValueObject<? extends IMetaAttribute> kvObject, String root, MultiHashMap<String, Object> map)
 	{
 		for (Entry<String, Collection<Object>> e : map.entrySet())
 		{
@@ -290,7 +289,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
    			MultiHashMap<String, Object> targetMap = new MultiHashMap<>();
    			traverseNode(doc.getDocumentElement().getChildNodes().item(1), targetMap);
 
-            NestedKeyValueObject<? extends IMetaAttribute> resultObj = new NestedKeyValueObject<>();
+            KeyValueObject<? extends IMetaAttribute> resultObj = new KeyValueObject<>();
             mapDepthFirstSearch(resultObj, null, targetMap);
             result.add((T) resultObj);
            	return result.size() > 0 ? result.remove(0) : null;

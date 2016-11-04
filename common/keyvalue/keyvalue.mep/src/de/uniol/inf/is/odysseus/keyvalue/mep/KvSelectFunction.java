@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.mep.functions.kv;
+package de.uniol.inf.is.odysseus.keyvalue.mep;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 

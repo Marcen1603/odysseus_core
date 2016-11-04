@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -23,8 +22,7 @@ public class TKeyValueRenameRule extends AbstractTransformationRule<RenameAO> {
 	@Override
 	public boolean isExecutable(RenameAO operator,
 			TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == KeyValueObject.class || 
-				operator.getInputSchema().getType() == NestedKeyValueObject.class) &&
+		if ((operator.getInputSchema().getType() == KeyValueObject.class) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		} else {
@@ -46,9 +44,9 @@ public class TKeyValueRenameRule extends AbstractTransformationRule<RenameAO> {
 	public int getPriority() {
 		return 1;
 	}
-	
+
 	@Override
-	public Class<? super RenameAO> getConditionClass() {	
+	public Class<? super RenameAO> getConditionClass() {
 		return RenameAO.class;
 	}
 }
