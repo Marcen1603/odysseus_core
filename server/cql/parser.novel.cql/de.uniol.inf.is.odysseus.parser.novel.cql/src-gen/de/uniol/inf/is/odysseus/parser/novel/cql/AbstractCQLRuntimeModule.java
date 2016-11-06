@@ -3,8 +3,19 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql;
 
+import com.google.inject.Binder;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
+import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CQLAntlrTokenFileProvider;
+import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CQLParser;
+import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal.InternalCQLLexer;
+import de.uniol.inf.is.odysseus.parser.novel.cql.scoping.CQLScopeProvider;
+import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CQLSemanticSequencer;
+import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CQLSyntacticSequencer;
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
+import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CQLValidator;
 import java.util.Properties;
-
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.generator.IGenerator2;
@@ -38,20 +49,6 @@ import org.eclipse.xtext.serializer.sequencer.ISemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ISyntacticSequencer;
 import org.eclipse.xtext.service.DefaultRuntimeModule;
 import org.eclipse.xtext.service.SingletonBinding;
-
-import com.google.inject.Binder;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
-
-import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
-import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CQLAntlrTokenFileProvider;
-import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.CQLParser;
-import de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal.InternalCQLLexer;
-import de.uniol.inf.is.odysseus.parser.novel.cql.scoping.CQLScopeProvider;
-import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CQLSemanticSequencer;
-import de.uniol.inf.is.odysseus.parser.novel.cql.serializer.CQLSyntacticSequencer;
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
-import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CQLValidator;
 
 /**
  * Manual modifications go to {@link CQLRuntimeModule}.

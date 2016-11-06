@@ -17,7 +17,6 @@ public class Activator implements BundleActivator
 	@Override
 	public void start(BundleContext arg0) throws Exception 
 	{
-		System.out.println("Activator::CQL2Parser");
 		CQLParser.addQueryParameter(priorityParameter);
 	}
 
