@@ -55,8 +55,7 @@ public class HistoricalSimulationVaRForecaster extends NumericalVaRForecaster im
 		}
 
 		if (timeHorizon > 1) {
-			// Square-Rule
-			valueAtRisk = valueAtRisk * Math.sqrt(timeHorizon);
+			valueAtRisk = this.getVaRByTimeHorizon(valueAtRisk, timeHorizon);
 		}
 
 		return valueAtRisk;

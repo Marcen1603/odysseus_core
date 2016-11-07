@@ -22,7 +22,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Christoph Schröer
  *
  */
-@LogicalOperator(name = "FORECAST_VARIANCE", minInputPorts = 1, maxInputPorts = 2, category = {
+@Deprecated
+@LogicalOperator(deprecation = true, name = "FORECAST_VARIANCE", minInputPorts = 1, maxInputPorts = 2, category = {
 		LogicalOperatorCategory.MINING }, doc = "Operator forecasts variances for the next time period(s). Operatore requires model and data stream (with current resiudals and varaince) as input.")
 public class ForecastVarianceAO extends AbstractLogicalOperator {
 

@@ -11,7 +11,7 @@ abstract public class VaRForecaster implements IVaRForecaster {
 
 	protected RealDistribution distribution;
 
-	public VaRForecaster(HistoricalSimulationVaRForecaster o) {
+	public VaRForecaster(VaRForecaster o) {
 		this.distribution = o.distribution;
 	}
 
@@ -22,5 +22,10 @@ abstract public class VaRForecaster implements IVaRForecaster {
 	public void setDistribution(RealDistribution distribution) {
 		this.distribution = distribution;
 	}
-	
+
+	protected Double getVaRByTimeHorizon(double valueAtRisk, int timeHorizon) {
+		// Square-Rule
+		return valueAtRisk * Math.sqrt(timeHorizon);
+	}
+
 }

@@ -33,20 +33,32 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.finance.risk.var.estimator.IVaRModelEstimator;
 import de.uniol.inf.is.odysseus.finance.risk.var.estimator.VaRModelEstimatorFactory;
 import de.uniol.inf.is.odysseus.finance.risk.var.model.IVaRForecaster;
 import de.uniol.inf.is.odysseus.timeseries.IHasEstimationData;
 
 /**
- * Aggregation Function to estimate model for forecasting variance
+ * Aggregation Function to estimate model for forecasting Value at Risk.
  * 
  * @author Christoph Schröer
  *
  */
 public class VaRModelAggregation<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractIncrementalAggregationFunction<M, T>implements IAggregationFunctionFactory {
+
+	/**
+	 * Parameter-names
+	 */
+	public final static String ESTIMATOR_NAME_PARAM_NAME = "estimator_name";
+	public final static String ESTIMATOR_OPTIONS_PARAM_NAME = "estimator_options";
+	public final static String RETURN_ATTR_PARAM_NAME = "return_attribute";
+	public final static String VOLATILITY_ATTR_PARAM_NAME = "volatility_attribute";
+
+	/**
+	 * Default additional output attribute names
+	 */
+	public final static String VAR_MODEL_ATTRIBUTE_NAME = "var_model";
 
 	/**
 	 * 
@@ -79,7 +91,6 @@ public class VaRModelAggregation<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public void addNew(T newElement) {
-		logger.debug("addNew");
 		if (this.varModelEstimator instanceof IHasEstimationData<?>) {
 			if (newElement != null) {
 				((IHasEstimationData) this.varModelEstimator).addEstimationData(newElement);
@@ -89,7 +100,6 @@ public class VaRModelAggregation<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-		logger.debug("removeOutdated");
 		if (this.varModelEstimator instanceof IHasEstimationData<?>) {
 			for (T outdatedElement : outdatedElements) {
 
@@ -102,27 +112,12 @@ public class VaRModelAggregation<M extends ITimeInterval, T extends Tuple<M>>
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
 
-		logger.debug("evaluate");
-
-		// TODO: add object to learning data...
-		// TODO: handle also, when no learning is required.
-
-		// newLearningObject
-		// this.autoregressionLearner.addLearningData(trigger);
-
 		this.varModelEstimator.estimateModel();
-		
+
 		Object[] returnObjects = new Object[this.outputAttributes.size()];
 
 		IVaRForecaster model = this.varModelEstimator.getModel();
 		returnObjects[0] = model;
-
-		// Object[] outputAttributes = trigger.getAttributes();
-		// for (int i = 1; i < returnObjects.length; ++i) {
-		//
-		// returnObjects[i] = outputAttributes[i - 1];
-		//
-		// }
 
 		return returnObjects;
 
@@ -135,74 +130,42 @@ public class VaRModelAggregation<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-
-		// Model
-
-		return true;
+		return parameters.containsKey(VaRModelAggregation.ESTIMATOR_NAME_PARAM_NAME);
 	}
 
 	@Override
 	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
 
-		// int[] residualInputAttributesIndices =
-		// AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-		// attributeResolver, "residual_attribute");
-		//
-		// if (residualInputAttributesIndices == null) {
 		int[] residualInputAttributesIndices = AggregationFunctionParseOptionsHelper
 				.getInputAttributeIndices(parameters, attributeResolver, 0, false);
-				// }
 
 		// output attributes
-		// the first output attribute is the model
-		// the rest attributes are the input attributes
-		final SDFSchema inputSchema = attributeResolver.getSchema().get(0);
-
-		final String[] outputAttributesNames = new String[1]; // only one model as output
-
+		final String[] outputAttributesNames = new String[1]; // only one model
+																// as output
 		// one output attribute
 		String outputName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
 				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
 		if (outputName == null) {
 			// Default
-			outputAttributesNames[0] = "var_model";
+			outputAttributesNames[0] = VaRModelAggregation.VAR_MODEL_ATTRIBUTE_NAME;
 		}
 
-		SDFAttribute outputVarianceAttribute = new SDFAttribute(null, outputAttributesNames[0], SDFDatatype.OBJECT,
-				null, null, null);
 		Collection<SDFAttribute> outputAttributesLocal = new ArrayList<>();
-		outputAttributesLocal.add(outputVarianceAttribute);
-
-		//
-		// int ouputIndex = 1;
-		// for (SDFAttribute inputAttribute : inputSchema.getAttributes()) {
-		//
-		// outputAttributesNames[ouputIndex] =
-		// AggregationFunctionParseOptionsHelper.getFunctionName(parameters) +
-		// "_"
-		// + inputAttribute.getAttributeName();
-		// SDFAttribute outputAttribute = new SDFAttribute(null,
-		// outputAttributesNames[ouputIndex],
-		// inputAttribute.getDatatype(), null, null, null);
-		// outputAttributesLocal.add(outputAttribute);
-		//
-		// ouputIndex++;
-		// }
+		SDFAttribute outputVaRAttribute = new SDFAttribute(null, outputAttributesNames[0], SDFDatatype.OBJECT, null,
+				null, null);
+		outputAttributesLocal.add(outputVaRAttribute);
 
 		// Factory to create the estimator
 		VaRModelEstimatorFactory factory = new VaRModelEstimatorFactory(parameters, attributeResolver);
 
 		String estimator_name = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
-				"estimator_name");
+				VaRModelAggregation.ESTIMATOR_NAME_PARAM_NAME);
 
-		// if(AggregationFunctionParseOptionsHelper.){
-		//
-		// }
-		//
-		Map<String, String> estimator_options = null;
-		if (parameters.containsKey("estimator_options")) {
+		Map<String, String> estimator_options = new HashMap<>();
+		if (parameters.containsKey(VaRModelAggregation.ESTIMATOR_OPTIONS_PARAM_NAME)) {
+
 			estimator_options = AggregationFunctionParseOptionsHelper.getFunctionParameterAsMap(parameters,
-					"estimator_options");
+					VaRModelAggregation.ESTIMATOR_OPTIONS_PARAM_NAME);
 		}
 
 		IVaRModelEstimator estimator = factory.createEstimator(estimator_name, estimator_options);

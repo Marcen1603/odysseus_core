@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.timeseries.autoregression.estimator;
 
-import java.util.List;
-
+import de.uniol.inf.is.odysseus.timeseries.IHasEstimationData;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionForecaster;
 
 /**
@@ -10,19 +9,9 @@ import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionF
  * 
  * @author Christoph Schröer
  */
-public interface IAutoregressionEstimator<T>  {
+public interface IAutoregressionEstimator<T> extends IHasEstimationData<T> {
 
 	public String getName();
-
-	public void addEstimationData(T newEstimationObject);
-
-	public void addEstimationData(List<T> newEstimationObjects);
-
-	public void removeEstimationData(T oldEstimationObject);
-
-	public void removeEstimationData(List<T> oldEstimationObjects);
-
-	public void clear();
 
 	public boolean isEstimated();
 

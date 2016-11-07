@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.timeseries.autoregression.estimator;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionForecaster;
@@ -33,23 +32,8 @@ abstract public class AbstractAutoregressionModelEstimator<T> implements IAutore
 	}
 
 	@Override
-	public void addEstimationData(List<T> newEstimationObjects) {
-		if (this.estimationData.addAll(newEstimationObjects)) {
-			this.isModelUpToDate = false;
-		}
-	}
-
-	@Override
 	public void removeEstimationData(T oldEstimationObject) {
 		this.estimationData.removeFirst();
-		this.isModelUpToDate = false;
-	}
-
-	@Override
-	public void removeEstimationData(List<T> oldEstimationObjects) {
-		for (T old : oldEstimationObjects) {
-			this.removeEstimationData(old);
-		}
 		this.isModelUpToDate = false;
 	}
 

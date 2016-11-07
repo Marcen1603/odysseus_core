@@ -4,6 +4,9 @@ import de.uniol.inf.is.odysseus.finance.risk.var.model.IVaRForecaster;
 
 /**
  * 
+ * A VaRModelEstimator estimates and creates a Value-at-Risk model for
+ * forecasting.
+ * 
  * @author Christoph Schröer
  *
  */

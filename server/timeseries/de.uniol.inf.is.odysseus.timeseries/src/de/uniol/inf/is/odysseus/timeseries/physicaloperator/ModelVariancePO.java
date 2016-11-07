@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionF
  * @author Christoph Schröer
  *
  */
+@Deprecated
 public class ModelVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
 
 	/**

@@ -19,12 +19,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.EstimationMode;
 
 /**
  * @author Christoph Schröer
  *
  */
-@LogicalOperator(name = "MODEL_VARIANCE", minInputPorts = 1, maxInputPorts = 1, category = {
+@Deprecated
+@LogicalOperator(deprecation = true, name = "MODEL_VARIANCE", minInputPorts = 1, maxInputPorts = 1, category = {
 		LogicalOperatorCategory.MINING }, doc = "Operator creates autoregressive model for variance forecasting.")
 public class ModelVarianceAO extends UnaryLogicalOp {
 
@@ -49,7 +51,7 @@ public class ModelVarianceAO extends UnaryLogicalOp {
 
 	// for non learning mode:
 
-	private LearningMode learningMode;
+	private EstimationMode learningMode;
 
 	private final Map<String, String> optionsMap = new HashMap<>();
 	private List<Option> optionsList;
@@ -190,12 +192,12 @@ public class ModelVarianceAO extends UnaryLogicalOp {
 
 	// For learning mode
 
-	public LearningMode getLearningMode() {
+	public EstimationMode getLearningMode() {
 		return learningMode;
 	}
 
 	@Parameter(type = EnumParameter.class, name = "learning_mode", optional = true, doc = "Optionale parameter, if no learning is needed. Then, the parameters alphas, betas and omega must be set.")
-	public void setLearningMode(LearningMode learningMode) {
+	public void setLearningMode(EstimationMode learningMode) {
 		this.learningMode = learningMode;
 	}
 

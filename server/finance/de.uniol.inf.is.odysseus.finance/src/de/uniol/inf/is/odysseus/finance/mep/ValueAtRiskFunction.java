@@ -6,6 +6,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * 
+ * MEP Function to calculate a the value at risk by a given VaR-Model, the
+ * confidence level and the time horizon.
+ * 
  * @author Christoph Schröer
  *
  */
@@ -32,9 +35,9 @@ public class ValueAtRiskFunction extends AbstractFunction<Double> {
 		IVaRForecaster varForecaster = (IVaRForecaster) this.getInputValue(0);
 		double confidenceLevel = this.getNumericalInputValue(1);
 		int timeHorizon = (int) (long) this.getInputValue(2);
-		
-		Double var = varForecaster.getVaR(confidenceLevel,  timeHorizon);
-		
+
+		Double var = varForecaster.getVaR(confidenceLevel, timeHorizon);
+
 		return var;
 	}
 

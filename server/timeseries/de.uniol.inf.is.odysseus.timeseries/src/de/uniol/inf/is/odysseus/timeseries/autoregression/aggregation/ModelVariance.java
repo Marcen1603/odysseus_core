@@ -35,8 +35,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.AutoregressionEstimatorFactory;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.IAutoregressionEstimator;
+import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.EstimationMode;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionForecaster;
-import de.uniol.inf.is.odysseus.timeseries.logicaloperator.LearningMode;
 
 /**
  * Aggregation Function to estimate model for forecasting variance
@@ -55,7 +55,10 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 	protected static Logger logger = LoggerFactory
 			.getLogger(ModelVariance.class);
 
-	private IAutoregressionEstimator<Double> autoregressionLearner;
+	/**
+	 * the estimator to estimate the autoregrassion forecaster
+	 */
+	private IAutoregressionEstimator<Double> autoregressionEstimator;
 
 	private Collection<SDFAttribute> outputAttributes;
 
@@ -67,25 +70,24 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 	public ModelVariance(final int[] inputAttributesIndices, final String[] outputAttribute,
 			Collection<SDFAttribute> outputAttributes, IAutoregressionEstimator<Double> autoregressionLearner) {
 		super(inputAttributesIndices, outputAttribute);
-		this.autoregressionLearner = autoregressionLearner;
+		this.autoregressionEstimator = autoregressionLearner;
 		this.outputAttributes = outputAttributes;
 	}
 
 	public ModelVariance(ModelVariance<M, T> modelVariance) {
 		super(modelVariance);
-		this.autoregressionLearner = modelVariance.autoregressionLearner;
+		this.autoregressionEstimator = modelVariance.autoregressionEstimator;
 		this.outputAttributes = modelVariance.outputAttributes;
 	}
 
 	@Override
 	public void addNew(T newElement) {
 		Object[] elementsValue = getAttributes(newElement);
-		logger.debug("addNew");
 		if (elementsValue != null) {
 			Object residual = elementsValue[0];
 
 			if (residual instanceof Double) {
-				this.autoregressionLearner.addEstimationData((Double) residual);
+				this.autoregressionEstimator.addEstimationData((Double) residual);
 			} else {
 				throw new IllegalArgumentException("The value of the residual attribute should be double, current: "
 						+ residual.getClass().getName());
@@ -95,7 +97,6 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-		logger.debug("removeOutdated");
 		for (T outdatedElement : outdatedElements) {
 			Object[] elementsValue = getAttributes(outdatedElement);
 
@@ -103,7 +104,7 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 				Object oldResidual = elementsValue[0];
 
 				if (oldResidual instanceof Double) {
-					this.autoregressionLearner.removeEstimationData((Double) oldResidual);
+					this.autoregressionEstimator.removeEstimationData((Double) oldResidual);
 				} else {
 					throw new IllegalArgumentException("The value of the residual attribute should be double, current: "
 							+ oldResidual.getClass().getName());
@@ -116,17 +117,9 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
 		
-		logger.debug("evaluate");
-		
-		// TODO: add object to learning data...
-		// TODO: handle also, when no learning is required.
-
-		// newLearningObject
-		// this.autoregressionLearner.addLearningData(trigger);
-
 		Object[] returnObjects = new Object[this.outputAttributes.size()];
 
-		IAutoregressionForecaster<Double> model = this.autoregressionLearner.getModel();
+		IAutoregressionForecaster<Double> model = this.autoregressionEstimator.getModel();
 		returnObjects[0] = model;
 
 		Object[] outputAttributes = trigger.getAttributes();
@@ -147,8 +140,6 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-
-		// Model
 
 		return true;
 	}
@@ -196,7 +187,7 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 		// Factory to create the estimator
 		AutoregressionEstimatorFactory factory = new AutoregressionEstimatorFactory(
-				LearningMode.valueOf((String) parameters.get("learning_mode")));
+				EstimationMode.valueOf((String) parameters.get("estimation_mode")));
 
 		String model_name = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
 				"model_name");

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionF
  * @author Christoph Schröer
  *
  */
+@Deprecated
 public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
 
 	public enum ForecastVarianceTupleSchema {
@@ -147,7 +148,7 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 
 		} else {
 
-			// recalulcation of whole stochastic process
+			// recalculation of whole stochastic process
 			LinkedList<Double> sampleResidualsDouble = new LinkedList<Double>();
 			if (hasModelChanged) {
 
