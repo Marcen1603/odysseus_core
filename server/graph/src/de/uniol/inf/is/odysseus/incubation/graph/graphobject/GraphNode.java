@@ -3,6 +3,11 @@ package de.uniol.inf.is.odysseus.incubation.graph.graphobject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class representing a node of a graph.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphNode {
 
 	private String id;
@@ -82,17 +87,53 @@ public class GraphNode {
 		this.incomingEdges.put(edge, other);
 	}
 	
-	public void removeOutgoingEdge(String edgeId) {
-		this.outgoingEdges.remove(edgeId);
-	}
-	
-	public void removeIncomingEdge(String edgeId) {
-		this.incomingEdges.remove(edgeId);
-	}
-	
 	public void clearEdges() {
 		this.incomingEdges = new HashMap<GraphEdge, GraphNode>();
 		this.outgoingEdges = new HashMap<GraphEdge, GraphNode>();
 	}
+
+	@Override
+	public String toString() {
+		return "GraphNode [id=" + id + ", label=" + label + ", props=" + props.toString() + "]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GraphNode other = (GraphNode) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (incomingEdges == null) {
+			if (other.incomingEdges != null)
+				return false;
+		} else if (!incomingEdges.equals(other.incomingEdges))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (outgoingEdges == null) {
+			if (other.outgoingEdges != null)
+				return false;
+		} else if (!outgoingEdges.equals(other.outgoingEdges))
+			return false;
+		if (props == null) {
+			if (other.props != null)
+				return false;
+		} else if (!props.equals(other.props))
+			return false;
+		return true;
+	}
+	
+	
 
 }

@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * GraphIntersection transformation rules.
+ * 
+ * @author Kristian Bruns
+ */
 public class TGraphIntersectionAORule extends AbstractTransformationRule<GraphIntersectionAO> {
 
 	public int getPriority() {

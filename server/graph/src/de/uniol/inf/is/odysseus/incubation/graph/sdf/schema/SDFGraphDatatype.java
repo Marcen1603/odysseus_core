@@ -6,6 +6,11 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * SDFDatatype for graph datatype.
+ * 
+ * @author Kristian Bruns
+ */
 public class SDFGraphDatatype extends SDFDatatype {	
 	/**
 	 * 

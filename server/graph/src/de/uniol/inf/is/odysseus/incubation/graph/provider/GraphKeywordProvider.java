@@ -7,6 +7,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.keyword.GraphdatastructureDropK
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
+/**
+ * Provider for keyword registration in the system.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphKeywordProvider implements IPreParserKeywordProvider {
 
 	@Override
