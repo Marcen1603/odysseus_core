@@ -9,6 +9,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * GraphBuilder transformation rules.
+ * 
+ * @author Kristian Bruns
+ */
 public class TGraphBuilderAORule extends AbstractTransformationRule<GraphBuilderAO> {
 
 	public int getPriority() {

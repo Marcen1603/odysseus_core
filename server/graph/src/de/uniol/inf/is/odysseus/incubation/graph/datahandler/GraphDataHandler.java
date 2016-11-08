@@ -12,6 +12,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.incubation.graph.datatype.Graph;
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 
+/**
+ * DataHandler of graph datatype.
+ * 
+ * @author Kristian Bruns
+ *
+ */
 public class GraphDataHandler extends AbstractDataHandler<Graph> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
