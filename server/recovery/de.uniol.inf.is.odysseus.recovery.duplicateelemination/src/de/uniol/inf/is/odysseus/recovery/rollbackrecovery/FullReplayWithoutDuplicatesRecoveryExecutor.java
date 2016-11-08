@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.badast.BaDaStRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.duplicateelemination.DuplicateEliminationRecoveryComponent;
+import de.uniol.inf.is.odysseus.recovery.recoverytime.RecoveryTimeCalculatorComponent;
 
 /**
  * The full replay without duplicates recovery executor represents a complete
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.recovery.duplicateelemination.DuplicateEliminati
  * operator states backed up, the stream processing is redone from the very
  * first element in case of recovery. Additionally it eliminates duplicates, so
  * all results are the same as without crash.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -47,6 +48,7 @@ public class FullReplayWithoutDuplicatesRecoveryExecutor extends AbstractRecover
 		List<IRecoveryComponent> components = new ArrayList<>();
 		components.add(new BaDaStRecoveryComponent());
 		components.add(new DuplicateEliminationRecoveryComponent());
+		components.add(new RecoveryTimeCalculatorComponent());
 		instance.init(config, components);
 		return instance;
 	}

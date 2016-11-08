@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.recovery.badast.BaDaStRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.checkpointing.CheckpointingRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.duplicatesdetector.DuplicatesDetectorRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.processingimage.ProcessingImageRecoveryComponent;
+import de.uniol.inf.is.odysseus.recovery.recoverytime.RecoveryTimeCalculatorComponent;
 
 /**
  * The rollback recovery executor represents a complete non-distributed recovery
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.recovery.processingimage.ProcessingImageRecovery
  * as not processed stream elements and the states of operators and
  * subscriptions. It may result in duplicates after recovery, because all
  * elements after the last checkpoint are reprocessed.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -50,6 +51,7 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 		components.add(new ProcessingImageRecoveryComponent());
 		components.add(new BaDaStRecoveryComponent());
 		components.add(new DuplicatesDetectorRecoveryComponent());
+		components.add(new RecoveryTimeCalculatorComponent());
 		instance.init(config, components);
 		((CheckpointingRecoveryComponent) instance.components.get(0))
 				.addCheckpointManagerListener((ProcessingImageRecoveryComponent) instance.components.get(1));
