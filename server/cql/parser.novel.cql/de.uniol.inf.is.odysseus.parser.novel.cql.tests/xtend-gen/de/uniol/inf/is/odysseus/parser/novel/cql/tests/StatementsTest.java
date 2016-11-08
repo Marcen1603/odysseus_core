@@ -35,7 +35,7 @@ public class StatementsTest {
       _builder.newLine();
       _builder.append("FROM R1");
       _builder.newLine();
-      _builder.append("WHERE attr1 > 2;");
+      _builder.append("WHERE 1 > 2;");
       _builder.newLine();
       Model _parse = this._parseHelper.parse(_builder);
       this._validationTestHelper.assertNoErrors(_parse);

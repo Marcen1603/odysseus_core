@@ -25,7 +25,7 @@ class StatementsTest
 		'''
 		SELECT attr1
 		FROM R1
-		WHERE attr1 > 2;
+		WHERE 1 > 2;
 		'''.parse.assertNoErrors	
 	}	
 	
