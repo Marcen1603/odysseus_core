@@ -68,9 +68,23 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 
 			@Override
 			public void walk(ILogicalOperator operator) {
-				if (!(operator instanceof TopAO) && operator.isSinkOperator() && !operator.isSourceOperator()) {
+				if (isSinkOperator(operator)) {
 					insertRecoveryTimeCalculator(operator, new RecoveryTimeCalculatorAO());
 				}
+			}
+
+			/**
+			 * Sink = Real sink or last operator without subscriptions
+			 */
+			private boolean isSinkOperator(ILogicalOperator operator) {
+				if (operator instanceof TopAO) {
+					return false;
+				} else if ((operator.isSinkOperator() && !operator.isSourceOperator())) {
+					return true;
+				}
+				Collection<LogicalSubscription> subscriptions = operator.getSubscriptions();
+				return subscriptions.isEmpty()
+						|| (subscriptions.size() == 1 && subscriptions.iterator().next().getTarget() instanceof TopAO);
 			}
 		});
 	}
