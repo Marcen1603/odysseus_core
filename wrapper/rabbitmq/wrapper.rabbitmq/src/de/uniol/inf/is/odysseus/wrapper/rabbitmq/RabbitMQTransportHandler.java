@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.concurrent.TimeoutException;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -118,7 +120,12 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInOpen() throws IOException {
-		internalOpen();
+		try {
+			internalOpen();
+		} catch (TimeoutException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		if (publishStyle == PublishStyle.PublishSubscribe)
 		{
@@ -153,10 +160,15 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processOutOpen() throws IOException {
-		internalOpen();
+		try {
+			internalOpen();
+		} catch (TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	private void internalOpen() throws IOException {
+	private void internalOpen() throws IOException, TimeoutException {
 		ConnectionFactory factory = new ConnectionFactory();
 		if (username != null) {
 			factory.setUsername(username);
@@ -179,7 +191,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		switch (publishStyle)
 		{
 		case WorkQueue:
-			channel.queueDeclare(queueName, false, false, false, null);
+			channel.queueDeclare(queueName, true, false, false, null);
 			break;
 			
 		case PublishSubscribe:			
@@ -190,15 +202,25 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInClose() throws IOException {
-		internalClose();
+		try {
+			internalClose();
+		} catch (TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		internalClose();
+		try {
+			internalClose();
+		} catch (TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	private void internalClose() throws IOException {
+	private void internalClose() throws IOException, TimeoutException {
 		channel.close();
 		connection.close();
 	}
