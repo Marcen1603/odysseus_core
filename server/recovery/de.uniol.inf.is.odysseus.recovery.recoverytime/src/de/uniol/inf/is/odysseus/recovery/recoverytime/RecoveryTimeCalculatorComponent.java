@@ -14,13 +14,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.OperatorCollector;
-import de.uniol.inf.is.odysseus.recovery.recoverytime.IRecoveryTime;
 import de.uniol.inf.is.odysseus.recovery.recoverytime.logicaloperator.RecoveryTimeCalculatorAO;
 import de.uniol.inf.is.odysseus.trust.ITrust;
 
@@ -68,7 +68,7 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 
 			@Override
 			public void walk(ILogicalOperator operator) {
-				if (operator.isSinkOperator() && !operator.isSourceOperator()) {
+				if (!(operator instanceof TopAO) && operator.isSinkOperator() && !operator.isSourceOperator()) {
 					insertRecoveryTimeCalculator(operator, new RecoveryTimeCalculatorAO());
 				}
 			}
@@ -95,7 +95,7 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 			return;
 		}
 		calculator.subscribeToSource(subToSink.getTarget(), 0, subToSink.getSourceOutPort(), subToSink.getSchema());
-		sink.subscribeToSource(calculator, 0, subToSink.getSourceOutPort(), subToSink.getSchema());
+		sink.subscribeToSource(calculator, subToSink.getSinkInPort(), 0, subToSink.getSchema());
 	}
 
 }
