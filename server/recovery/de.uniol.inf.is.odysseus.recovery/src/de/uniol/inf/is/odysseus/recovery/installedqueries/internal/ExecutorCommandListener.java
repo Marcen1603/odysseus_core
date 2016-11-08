@@ -3,14 +3,13 @@ package de.uniol.inf.is.odysseus.recovery.installedqueries.internal;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.executorcommand.IExecutorCommandListener;
 import de.uniol.inf.is.odysseus.recovery.installedqueries.IInstalledQueriesHandler;
 
 /**
  * A listener for executed {@link IExecutorCommand}s ({@link CreateQueryCommand}
  * and {@link AddQueryCommand}).
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -23,7 +22,7 @@ public class ExecutorCommandListener implements IExecutorCommandListener {
 
 	/**
 	 * Creates a new listener.
-	 * 
+	 *
 	 * @param handler
 	 *            The {@link IInstalledQueriesHandler} that handles the backup.
 	 */
@@ -33,10 +32,7 @@ public class ExecutorCommandListener implements IExecutorCommandListener {
 
 	@Override
 	public void executorCommandEvent(IExecutorCommand command) {
-		if (command instanceof CreateSinkCommand) {
-			// CQL sink!
-			this.handler.backup((CreateSinkCommand) command, System.currentTimeMillis());
-		} else if (command instanceof AddQueryCommand) {
+		if (command instanceof AddQueryCommand) {
 			this.handler.backup((AddQueryCommand) command, System.currentTimeMillis());
 		}
 	}
