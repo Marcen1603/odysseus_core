@@ -19,7 +19,7 @@ public class TKeyValueProjectRule extends AbstractTransformationRule<ProjectAO>{
 
 	@Override
 	public void execute(ProjectAO operator, TransformationConfiguration config) throws RuleException {
-		KeyValueProjectPO<KeyValueObject<IMetaAttribute>> projectPO = new KeyValueProjectPO<KeyValueObject<IMetaAttribute>>(operator.getPaths());
+		KeyValueProjectPO<KeyValueObject<IMetaAttribute>> projectPO = new KeyValueProjectPO<KeyValueObject<IMetaAttribute>>(operator.getAttributes());
 		defaultExecute(operator, projectPO, config, true, false);
 	}
 

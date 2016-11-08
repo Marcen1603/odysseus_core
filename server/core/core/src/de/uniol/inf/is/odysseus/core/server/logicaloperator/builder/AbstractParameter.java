@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpressionParseException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * This is an abstract parameter. In this abstract base class all attributes are defined, that a common for all parameters
- * 
+ *
  * @author Jonas Jacobi, Marco Grawunder
  */
 public abstract class AbstractParameter<T> implements IParameter<T> {
@@ -42,7 +42,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private REQUIREMENT requirement = REQUIREMENT.OPTIONAL;
 	private USAGE usage = USAGE.RECENT;
 	private T value;
-	private IAttributeResolver resolver;
+	private DirectAttributeResolver resolver;
 	private IDataDictionary dd;
 	private IServerExecutor serverExecutor;
 	private ISession caller;
@@ -110,7 +110,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public String getDoc() {
 		if (this.doc == null || this.doc.isEmpty()) {
 			return DEFAULT_DOC_TEXT;
-		} 
+		}
 		return this.doc;
 	}
 
@@ -167,7 +167,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 			this.errors.add("Could not parse parameter value " + getName());
 			this.errors.add(e.getMessage());
 			//e.printStackTrace();
-			return false;			
+			return false;
 		}catch (Exception e) {
 			this.errors.add("illegal value for parameter " + getName());
 			this.errors.add(e.getMessage());
@@ -194,13 +194,13 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		if( errors == null || errors.isEmpty() ) {
 			return "[No error message available]";
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
-		
+
 		for( String error : errors) {
 			sb.append("\t").append(error).append("\n");
 		}
-		
+
 		return sb.toString();
 	}
 
@@ -223,15 +223,15 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	@Override
-	public IAttributeResolver getAttributeResolver() {
+	public DirectAttributeResolver getAttributeResolver() {
 		return this.resolver;
 	}
 
 	@Override
-	public void setAttributeResolver(IAttributeResolver resolver) {
+	public void setAttributeResolver(DirectAttributeResolver resolver) {
 		this.resolver = resolver;
 	}
-	
+
 	@Override
 	public IDataDictionary getDataDictionary() {
 		return dd;
@@ -241,12 +241,12 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public void setDataDictionary(IDataDictionary dd) {
 		this.dd = dd;
 	}
-	
+
 	@Override
 	public void setServerExecutor(IServerExecutor serverExecutor) {
 		this.serverExecutor = serverExecutor;
 	}
-	
+
 	@Override
 	public IServerExecutor getServerExecutor() {
 		return serverExecutor;
@@ -256,22 +256,22 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public void setCaller(ISession caller) {
 		this.caller = caller;
 	}
-	
+
 	@Override
 	public ISession getCaller() {
 		return caller;
 	}
-	
+
 	@Override
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
+
 	@Override
 	public Context getContext() {
 		return context;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -307,22 +307,22 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	protected abstract String getPQLStringInternal();
-	
+
 	@Override
-	public String getPossibleValueMethod() {	
+	public String getPossibleValueMethod() {
 		return possibleValueMethod;
 	}
-	
+
 	@Override
 	public void setPossibleValueMethod(String possibleValueMethod) {
-		this.possibleValueMethod = possibleValueMethod;	
+		this.possibleValueMethod = possibleValueMethod;
 	}
-	
+
 	@Override
 	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic){
 		this.possibleValuesAreDynamic =possibleValuesAreDynamic;
 	}
-	
+
 	@Override
 	public boolean arePossibleValuesDynamic() {
 		return possibleValuesAreDynamic;

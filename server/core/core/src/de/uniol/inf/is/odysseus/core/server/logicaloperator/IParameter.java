@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -67,9 +67,9 @@ public interface IParameter<T> extends Serializable {
 
 	boolean isMandatory();
 
-	void setAttributeResolver(IAttributeResolver resolver);
+	void setAttributeResolver(DirectAttributeResolver resolver);
 
-	IAttributeResolver getAttributeResolver();
+	DirectAttributeResolver getAttributeResolver();
 
 	void setDataDictionary(IDataDictionary dd);
 

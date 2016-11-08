@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 
 public class ListParameter<T> extends AbstractParameter<List<T>> {
@@ -64,7 +64,7 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 	}
 
 	@Override
-	public void setAttributeResolver(IAttributeResolver resolver) {
+	public void setAttributeResolver(DirectAttributeResolver resolver) {
 		super.setAttributeResolver(resolver);
 		singleParameter.setAttributeResolver(resolver);
 	}

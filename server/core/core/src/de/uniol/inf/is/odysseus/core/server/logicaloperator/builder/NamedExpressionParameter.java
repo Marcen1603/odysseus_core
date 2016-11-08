@@ -16,12 +16,10 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
@@ -57,17 +55,17 @@ public class NamedExpressionParameter extends AbstractParameter<NamedExpression>
 			expression = (String) inputValue;
 		}
 		if (getAttributeResolver() != null) {
-			IAttributeResolver attrresolver = getAttributeResolver();
+			DirectAttributeResolver attrresolver = getAttributeResolver();
 			if (attrresolver.isEmpty()){
 				attrresolver = null;
 			}else{
-				// FIXME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				// TODO: This is a hack. This is used e.g. in key value cases where the
-				// timestamp is defined as only attribute in the schema
-				Set<SDFAttribute> allAttributes = attrresolver.getAllAttributes();
-				if (allAttributes.size() == 1){
-					if (allAttributes.iterator().next().getDatatype().isStartTimestamp()){
-						attrresolver = null;
+				if (attrresolver.getSchema().size() > 0){
+					try {
+						if (attrresolver.getSchema().get(0).getType().newInstance().isSchemaLess()){
+							attrresolver = null;
+						}
+					} catch (InstantiationException | IllegalAccessException e) {
+						e.printStackTrace();
 					}
 				}
 			}

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class ResolvedSDFAttributeParameter extends
 		AbstractParameter<SDFAttribute> {
@@ -38,18 +39,28 @@ public class ResolvedSDFAttributeParameter extends
 
 	@Override
 	protected void internalAssignment() {
-		
+
 		if( inputValue instanceof SDFAttribute ) {
 			setValue((SDFAttribute)inputValue);
 			return;
 		}
-		
+
 		if (getAttributeResolver() == null) {
 			throw new RuntimeException("missing attribute resolver");
 		}
 		try {
-			SDFAttribute attribute = getAttributeResolver().getAttribute(
-					(String) this.inputValue);
+			boolean checkInputSchema = false;
+			if (getAttributeResolver().getSchema().size() > 0){
+				checkInputSchema = !getAttributeResolver().getSchema().get(0).getType().newInstance().isSchemaLess();
+			}
+
+			SDFAttribute attribute;
+			if (checkInputSchema){
+				attribute = getAttributeResolver().getAttribute(
+						(String) this.inputValue);
+			}else{
+				attribute = new SDFAttribute(null,(String)inputValue, SDFDatatype.STRING);
+			}
 
 			setValue(attribute);
 		}catch(NoSuchAttributeException e){
@@ -63,7 +74,7 @@ public class ResolvedSDFAttributeParameter extends
 	protected String getPQLStringInternal() {
 		if( !Strings.isNullOrEmpty(getValue().getSourceName())) {
 			return "'" + getValue().getSourceName() + "." + getValue().getAttributeName() + "'";
-		} 
+		}
 		return "'" + getValue().getAttributeName() + "'";
 	}
 }
