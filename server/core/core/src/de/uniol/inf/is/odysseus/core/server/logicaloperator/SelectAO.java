@@ -19,6 +19,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -31,13 +32,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", doc = "The select operator filters the incoming data stream according to the given predicate.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Select+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", doc = "The select operator filters the incoming data stream according to the given predicate.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Select+operator", category = {
+		LogicalOperatorCategory.BASE })
 public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int rate;
 
 	private IPredicate<?> predicate;
-	
+
 	public SelectAO() {
 		super();
 	}
@@ -65,14 +67,14 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
 	@Parameter(type = PredicateParameter.class)
 	public void setPredicate(IPredicate predicate) {
 		this.predicate = predicate;
-		
+
 	}
 
 	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
 	}
-	
+
 	@Override
 	public SelectAO clone() {
 		return new SelectAO(this);
@@ -81,6 +83,13 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
 	@Override
 	public String toString() {
 		return super.toString() + getPredicate();
+	}
+
+	@Override
+	public OperatorStateType getStateType() {
+		// FIXME check if predicate is stateful
+		return IOperatorState.OperatorStateType.STATELESS;
+
 	}
 
 }

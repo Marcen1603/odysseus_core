@@ -27,17 +27,10 @@ public class StandardPlanAnalyser extends AbstractPlanAnalyser {
 	 */
 	@Override
 	public List<IParallelizationIndividualConfiguration> getParalisableOperators(ILogicalQuery query) {
-		// get logical sources
-		FindSourcesLogicalVisitor<ILogicalOperator> sourceVisitor = new FindSourcesLogicalVisitor<>();
 		GenericGraphWalker graphWalker = new GenericGraphWalker<>();
-		graphWalker.prefixWalk(query.getLogicalPlan(), sourceVisitor);
-		List<ILogicalOperator> sourcesList = sourceVisitor.getResult();
-		LOG.debug("Number of sources in query " + query.getID() + ": " + sourcesList.size());
-		for(int i=0;i<sourcesList.size();i++) {
-			LOG.debug(sourcesList.get(i).getName());
-		}
-		//FIXME return list
-		return null;
+		FindParallelizationPossibilitiesVisitor<ILogicalOperator> parallelizeVisitor = new FindParallelizationPossibilitiesVisitor<>(String.valueOf(query.getID()));
+		graphWalker.prefixWalk(query.getLogicalPlan(), parallelizeVisitor);
+		return parallelizeVisitor.getResult();
 	}
 
 }
