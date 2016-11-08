@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.trust.ITrust;
  * Recovery time is defined as the time between the first element after a
  * restart and the first trustworthy element. Recovery time is measured in
  * system time as well as in application time.
- * 
+ *
  * @author Michael Brand
  */
 public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<Element, IStreamObject<?>>  {
@@ -27,16 +27,10 @@ public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends IM
 	 */
 	private static final double trustThreshold = 1;
 
-	// The current known values to write
-	private long appTimeStart = -1;
-	private long appTimeEnd = -1;
-	private long sysTimeStart = -1;
-	private long sysTimeEnd = -1;
-
 	/**
 	 * This operator sets start points of recovery time as well as end points.
 	 * Which to set is determined by the state.
-	 * 
+	 *
 	 * @author Michael Brand
 	 *
 	 */
@@ -78,6 +72,12 @@ public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends IM
 	 */
 	private State state = State.waitingForStart;
 
+	// The current known values to write
+	private long appTimeStart = -1;
+	private long appTimeEnd = -1;
+	private long sysTimeStart = -1;
+	private long sysTimeEnd = -1;
+
 	/**
 	 * Empty constructor.
 	 */
@@ -91,6 +91,10 @@ public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends IM
 	public RecoveryTimeCalculatorPO(RecoveryTimeCalculatorPO<Element> other) {
 		super(other);
 		state = other.state;
+		this.appTimeStart = other.appTimeStart;
+		this.appTimeEnd = other.appTimeEnd;
+		this.sysTimeStart = other.sysTimeStart;
+		this.sysTimeEnd = other.sysTimeEnd;
 	}
 
 	@Override
@@ -123,11 +127,13 @@ public class RecoveryTimeCalculatorPO<Element extends IStreamObject<? extends IM
 			state = State.next(state);
 		}
 
-		((IRecoveryTime) object.getMetadata()).setApplicationTimeStart(appTimeStart);
-		((IRecoveryTime) object.getMetadata()).setApplicationTimeEnd(appTimeEnd);
-		((IRecoveryTime) object.getMetadata()).setSystemTimeStart(sysTimeStart);
-		((IRecoveryTime) object.getMetadata()).setSystemTimeEnd(sysTimeEnd);
-		transfer(object);
+		@SuppressWarnings("unchecked")
+		Element copy = (Element) object.clone();
+		((IRecoveryTime) copy.getMetadata()).setApplicationTimeStart(appTimeStart);
+		((IRecoveryTime) copy.getMetadata()).setApplicationTimeEnd(appTimeEnd);
+		((IRecoveryTime) copy.getMetadata()).setSystemTimeStart(sysTimeStart);
+		((IRecoveryTime) copy.getMetadata()).setSystemTimeEnd(sysTimeEnd);
+		transfer(copy);
 	}
 
 	@Override

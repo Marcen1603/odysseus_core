@@ -10,6 +10,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.recovery.checkpointing;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.recovery.processingimage,
- de.uniol.inf.is.odysseus.recovery.badast;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.recovery.badast;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.recovery.recoverytime
 Service-Component: OSGI-INF/RollbackRecoveryExecutor.xml
 Bundle-ActivationPolicy: lazy
