@@ -5,10 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionarySinkListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractCreateStreamOrViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractDropStreamOrViewCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropStreamCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropViewCommand;
@@ -17,9 +14,9 @@ import de.uniol.inf.is.odysseus.recovery.installedqueries.IInstalledQueriesHandl
 
 /**
  * Class to listen to changes within an {@code IDataDictionary}, to create
- * {@link IExecutorCommands} for new sources, removed sources, new sinks and
- * removed sinks, and to call {@code QueryStateRecoveryComponent} to store them.
- * 
+ * {@link IExecutorCommands} for removed sources and sinks, and to call
+ * {@code QueryStateRecoveryComponent} to store them.
+ *
  * @author Michael Brand
  *
  */
@@ -32,7 +29,7 @@ public class DataDictionaryListener implements IDataDictionaryListener, IDataDic
 
 	/**
 	 * Creates a new listener.
-	 * 
+	 *
 	 * @param handler
 	 *            The {@link IInstalledQueriesHandler} that handles the backup.
 	 */
@@ -42,10 +39,8 @@ public class DataDictionaryListener implements IDataDictionaryListener, IDataDic
 
 	@Override
 	public void addedSinkDefinition(IDataDictionary sender, String name, ILogicalOperator op, ISession caller) {
-		// CreateSinkCommands are backed up by ExecutorCommandListener.
-		// This is because using this method here causes serialization errors,
-		// when a sink is created in PQL. PQL sinks are part of queries and now
-		// backed up within the AddQueryCommands.
+		// CreateSinkCommands are backed up by ExecutorCommandListener by
+		// AddQueryCommands.
 	}
 
 	@Override
@@ -58,16 +53,8 @@ public class DataDictionaryListener implements IDataDictionaryListener, IDataDic
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
 			ISession session) {
-		// name is the full qualified resource name,which is not allowed for
-		// create commands!
-		String sourceName = new Resource(name).getResourceName();
-		AbstractCreateStreamOrViewCommand command;
-		if (isView) {
-			command = new CreateViewCommand(sourceName, op, session);
-		} else {
-			command = new CreateStreamCommand(sourceName, op, session);
-		}
-		this.handler.backup(command, System.currentTimeMillis());
+		/// AbstractCreateStreamOrViewCommands are backed up by
+		/// ExecutorCommandListener by AddQueryCommands.
 	}
 
 	@Override
