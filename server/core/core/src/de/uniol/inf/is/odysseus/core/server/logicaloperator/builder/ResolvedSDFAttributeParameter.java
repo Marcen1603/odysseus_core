@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.List;
+
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
@@ -59,7 +61,14 @@ public class ResolvedSDFAttributeParameter extends
 				attribute = getAttributeResolver().getAttribute(
 						(String) this.inputValue);
 			}else{
-				attribute = new SDFAttribute(null,(String)inputValue, SDFDatatype.STRING);
+				// Create a new Attribute (e.g. in case of key value)
+				if (this.inputValue instanceof List){
+					attribute = CreateSDFAttributeParameter.determineAttribute((List<?>)this.inputValue, getDataDictionary());
+				}else if (this.inputValue instanceof String){
+					attribute = new SDFAttribute(null,(String)inputValue, SDFDatatype.STRING);
+				}else{
+					attribute = null;
+				}
 			}
 
 			setValue(attribute);

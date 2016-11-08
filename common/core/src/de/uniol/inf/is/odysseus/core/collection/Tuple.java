@@ -67,11 +67,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		immutables.add(Short.class);
 	}
 
-	/**
-	 * Allows subclasses to call the implicit super constructor. To not allow
-	 * other classes to use the constructor it is protected.
-	 */
-	protected Tuple() {
+
+	public Tuple() {
 		requiresDeepClone = false;
 	}
 
