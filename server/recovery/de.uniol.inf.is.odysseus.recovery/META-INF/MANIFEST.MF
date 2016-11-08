@@ -9,15 +9,10 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
  de.uniol.inf.is.odysseus.systemlog;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- com.google.guava;bundle-version="18.0.0",
- de.uniol.inf.is.odysseus.trust,
- de.uniol.inf.is.odysseus.transform,
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0"
+ com.google.guava;bundle-version="18.0.0"
 Service-Component: OSGI-INF/SystemStateLogger.xml,OSGI-INF/CrashDetector.xml,OSGI-INF/InstalledQueriesHandler.xml,OSGI-INF/RecoveryTime.xml
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.recovery,
  de.uniol.inf.is.odysseus.recovery.crashdetector,
  de.uniol.inf.is.odysseus.recovery.installedqueries,
- de.uniol.inf.is.odysseus.recovery.recoverytime,
- de.uniol.inf.is.odysseus.recovery.recoverytime.logicaloperator,
  de.uniol.inf.is.odysseus.recovery.systemstatelogger
