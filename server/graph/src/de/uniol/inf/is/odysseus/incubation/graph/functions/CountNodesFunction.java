@@ -8,6 +8,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProv
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
+/**
+ * Map-Function for counting nodes in a graph.
+ * 
+ * @author Kristian Bruns
+ */
 public class CountNodesFunction extends AbstractFunction<Long> {
 	
 	private static final long serialVersionUID = 7964522823576486110L;
@@ -20,9 +25,13 @@ public class CountNodesFunction extends AbstractFunction<Long> {
 	}
 
 	@Override
-	public Long getValue() {		
+	public Long getValue() {	
+		// Get graph.
 		Graph graph = getInputValue(0);
 		IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
+		
+		// Mark this graph as read by this operator.
+		GraphDataStructureProvider.getInstance().setGraphVersionRead(graph.getName(), "countNodesFunction");
 		
 		Integer value = structure.getGraphNodes().size();
 		return value.longValue();

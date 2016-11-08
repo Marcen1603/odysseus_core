@@ -8,6 +8,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.incubation.graph.datahandler.GraphDataHandler;
 import de.uniol.inf.is.odysseus.incubation.graph.physicaloperator.access.transport.GraphTransportHandler;
 
+/**
+ * Graph bundle Activator.
+ * 
+ * @author Kristian Bruns
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;

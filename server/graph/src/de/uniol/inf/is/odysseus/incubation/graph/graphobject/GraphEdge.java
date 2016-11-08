@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing an edge of a graph.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphEdge {
 
 	private String label;
@@ -72,18 +77,44 @@ public class GraphEdge {
 	public void clearEndingNodes() {
 		this.endingNodes = new ArrayList<GraphNode>();
 	}
-	
-	public boolean equals(GraphEdge other) {
-		if (
-				this.startingNodes.equals(other.startingNodes)
-				&& this.endingNodes.equals(other.endingNodes)
-				&& this.props.equals(other.props)
-				&& this.label.equals(other.label)
-		) {
-			return true;
-		}
-		
-		return false;
+
+	@Override
+	public String toString() {
+		return "GraphEdge[" + startingNodes.get(0).getId() + " --" + label + "--> " + endingNodes.get(0).getId() + ", props: " + props.toString() + "]";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GraphEdge other = (GraphEdge) obj;
+		if (endingNodes == null) {
+			if (other.endingNodes != null)
+				return false;
+		} else if (!endingNodes.equals(other.endingNodes))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (props == null) {
+			if (other.props != null)
+				return false;
+		} else if (!props.equals(other.props))
+			return false;
+		if (startingNodes == null) {
+			if (other.startingNodes != null)
+				return false;
+		} else if (!startingNodes.equals(other.startingNodes))
+			return false;
+		return true;
+	}
+	
+	
 
 }
