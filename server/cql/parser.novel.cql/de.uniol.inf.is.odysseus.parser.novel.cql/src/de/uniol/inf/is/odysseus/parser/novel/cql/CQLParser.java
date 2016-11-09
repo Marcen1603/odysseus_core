@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.parser.novel.cql;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,30 +46,58 @@ public class CQLParser implements IQueryParser
 	@Inject 
 	private IResourceValidator resourceValidator;
 	
-	@Override
-	public String getLanguage() { return "CQL2"; }//TODO return "CQL"; } 
+	private Injector injector;
+	private GeneratorDelegate generator;
+	private XtextResourceSet resourceSet;
+	private Resource resource;
+	
+	public CQLParser() 
+	{
+		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
+		injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
+		generator = injector.getInstance(GeneratorDelegate.class);
+		resourceSet = injector.getInstance(XtextResourceSet.class);
+		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+		resource = resourceSet.createResource(URI.createURI("dummy:/example.cql"));
+	}
 
 	@Override
 	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException 
 	{
-		
-		String cql_query = query.replace("#PARSER CQL2", "").replace("RUNQUERY", "");
-		
-		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
-		Injector injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();// do this only once per application
-		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
-		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		Resource resource = resourceSet.createResource(URI.createURI("dummy:/example.cql"));
-		InputStream in = new ByteArrayInputStream(cql_query.getBytes());
-		try {
+		try(InputStream in = new ByteArrayInputStream(query.getBytes())) 
+		{
 			resource.load(in, resourceSet.getLoadOptions());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{ 
+			throw new QueryParseException("internal error while loading the cql model", e); 
 		}
-		Model model = (Model) resource.getContents().get(0);
 		
+		Model model = (Model) resource.getContents().get(0);
+		validate();
+		return new PQLParser().parse(generatePQLString(query, model), user, dd, context, metaAttribute, executor);
+	}
+
+	private String generatePQLString(String str, Model model) throws QueryParseException
+	{
+		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+		generator.doGenerate(model.eResource(), fsa);
+		String pqlString = null;
+		for (Entry<String, CharSequence> file : fsa.getTextFiles().entrySet()) 
+		{
+			  pqlString = file.getValue().toString();
+			  fsa.deleteFile(file.getKey());
+		}
+		if (pqlString != null)
+			return pqlString;
+		else
+			new QueryParseException("given cql query was empty and could not be transformed to a pql query");
+		return null;
+	}
+
+	private void validate() throws QueryParseException
+	{
 //		 Validation
 //		IResourceValidator validator = (resourceSet).getResourceServiceProvider().getResourceValidator();
 //		List<Issue> issues = resourceValidator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
@@ -75,25 +105,8 @@ public class CQLParser implements IQueryParser
 //		{
 //		  System.out.println(issue.getMessage());
 //		}
-		
-		GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
-		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-		generator.doGenerate(model.eResource(), fsa);
-		String pqlString = null;
-		for (Entry<String, CharSequence> file : fsa.getTextFiles().entrySet()) 
-		{
-//			  System.out.println("Generated file path : "+file.getKey());
-//			  System.out.println("Generated file contents : "+file.getValue());
-			  pqlString = file.getValue().toString();
-			  fsa.deleteFile(file.getKey());
-		}
-		
-//		System.out.println("PQLSTRING::");
-//		System.out.println(pqlString);
-		
-		return new PQLParser().parse(pqlString, user, dd, context, metaAttribute, executor);
 	}
-
+	
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) 
 	{
@@ -107,6 +120,9 @@ public class CQLParser implements IQueryParser
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getLanguage() { return "CQL2"; }//TODO return "CQL"; } 
 
 	public static void addQueryParameter(IParameter<?> parameter) 
 	{
