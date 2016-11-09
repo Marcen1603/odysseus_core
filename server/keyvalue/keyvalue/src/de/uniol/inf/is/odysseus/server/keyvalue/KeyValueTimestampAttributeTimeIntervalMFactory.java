@@ -21,7 +21,7 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 	final private String startAttrKey;
 	final private String endAttrKey;
 	final private SimpleDateFormat df;
-	
+
 	// Time is separated to different attributes
 	final private String startTimestampYearKey;
 	final private String startTimestampMonthKey;
@@ -47,7 +47,7 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 		} else {
 			this.timezone = TimeZone.getTimeZone("UTC");
 		}
-		
+
 		if (dateFormat != null) {
 			if (locale != null) {
 				df = new SimpleDateFormat(dateFormat, locale);
@@ -58,7 +58,7 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 		} else {
 			df = null;
 		}
-		
+
 		startTimestampYearKey = null;
 		startTimestampMonthKey = null;
 		startTimestampDayKey = null;
@@ -81,28 +81,28 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 		this.startAttrKey = null;
 		this.endAttrKey = null;
 
-		this.startTimestampYearKey = 
-				((startTimestampYear != null && startTimestampYear.length() > 0) ? 
+		this.startTimestampYearKey =
+				((startTimestampYear != null && startTimestampYear.length() > 0) ?
 						startTimestampYear : null);
-		this.startTimestampMonthKey = 
-				((startTimestampMonth != null && startTimestampMonth.length() > 0) ? 
+		this.startTimestampMonthKey =
+				((startTimestampMonth != null && startTimestampMonth.length() > 0) ?
 						startTimestampMonth : null);
-		this.startTimestampDayKey = 
-				((startTimestampDay != null && startTimestampDay.length() > 0) ? 
+		this.startTimestampDayKey =
+				((startTimestampDay != null && startTimestampDay.length() > 0) ?
 						startTimestampDay : null);
-		this.startTimestampHourKey = 
-				((startTimestampHour != null && startTimestampHour.length() > 0) ? 
+		this.startTimestampHourKey =
+				((startTimestampHour != null && startTimestampHour.length() > 0) ?
 						startTimestampHour : null);
-		this.startTimestampMinuteKey = 
-				((startTimestampMinute != null && startTimestampMinute.length() > 0) ? 
+		this.startTimestampMinuteKey =
+				((startTimestampMinute != null && startTimestampMinute.length() > 0) ?
 						startTimestampMinute : null);
-		this.startTimestampSecondKey = 
-				((startTimestampSecond != null && startTimestampSecond.length() > 0) ? 
+		this.startTimestampSecondKey =
+				((startTimestampSecond != null && startTimestampSecond.length() > 0) ?
 						startTimestampSecond : null);
-		this.startTimestampMillisecondKey = 
-				((startTimestampMillisecond != null && startTimestampMillisecond.length() > 0) ? 
+		this.startTimestampMillisecondKey =
+				((startTimestampMillisecond != null && startTimestampMillisecond.length() > 0) ?
 						startTimestampMillisecond : null);
-		
+
 		this.factor = factor;
 		this.offset = 0;
 
@@ -137,7 +137,7 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 			int second = (Integer) (startTimestampSecondKey != null ? inElem
 					.getAttribute(startTimestampSecondKey) : 0);
 			cal.set(year, month - 1, day, hour, minute, second);
-			
+
 			long ts = cal.getTimeInMillis();
 			if (startTimestampMillisecondKey != null) {
 				ts = ts	+ ((Long) inElem.getAttribute(startTimestampMillisecondKey));
@@ -145,7 +145,7 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 			if (factor > 0) {
 				ts *= factor;
 			}
-			
+
 			ts+=offset;
 
 			PointInTime start = new PointInTime(ts);
@@ -170,14 +170,14 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 		if (df != null) {
 			String timeString = (String) inElem.getAttribute(attrKey);
 			try {
-				timeN = df.parse(timeString).getTime();				
+				timeN = df.parse(timeString).getTime();
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException("Date cannot be parsed! "
 						+ timeString + " with " + df.toPattern());
 			}
 		} else {
-			timeN = (Number) inElem.getAttribute(attrKey);
+			timeN = inElem.getNumberAttribute(attrKey);
 		}
 		if (factor != 0){
 			timeN = timeN.longValue() * factor;
@@ -185,7 +185,7 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 		if (offset > 0){
 			timeN= timeN.longValue() + offset;
 		}
-		
+
 		PointInTime time = null;
 		if (timeN == null || timeN.longValue() == -1) {
 			time = PointInTime.getInfinityTime();

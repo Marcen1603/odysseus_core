@@ -30,7 +30,7 @@ public class KeyValueUnnestPO<T extends KeyValueObject<IMetaAttribute>> extends 
 
 	@Override
 	protected void process_next(T object, int port) {
-		Map<String, Object> attributes = object.getAttributes();
+		Map<String, Object> attributes = object.getAsKeyValueMap();
 
 		// find each attribute starting with attribute
 

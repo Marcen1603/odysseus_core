@@ -69,9 +69,9 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 
 		T outputVal;
 		if(this.keepAllAttributes) {
-			outputVal = (T) new KeyValueObject<>(object);
+			outputVal = (T) KeyValueObject.createInstance((KeyValueObject)object);
 		} else {
-			outputVal = (T) new KeyValueObject<>();
+			outputVal = (T) KeyValueObject.createInstance();
 			outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
 			if (object.getGetValueMap() != null) {
 				for (Entry<String, Object> entry : object.getGetValueMap().entrySet()) {

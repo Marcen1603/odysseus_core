@@ -46,7 +46,7 @@ public class XovisEventStreamListener extends AXovisStreamListener {
 			inputStream.popLimit(oldLimit);
 			// process the received event (print it)
 
-			KeyValueObject<IMetaAttribute> out = new KeyValueObject<IMetaAttribute>();
+			KeyValueObject<IMetaAttribute> out = KeyValueObject.createInstance();
 			out.setAttribute("timestamp", event.getTimeStampMilliseconds());
 			out.setAttribute("objectID", event.getObjectId());
 			out.setAttribute("eventType", event.getType());

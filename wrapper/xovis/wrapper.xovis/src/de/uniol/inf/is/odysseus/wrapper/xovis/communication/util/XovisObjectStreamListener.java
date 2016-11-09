@@ -26,16 +26,16 @@ public class XovisObjectStreamListener extends AXovisStreamListener {
 		 * Receive the sensor stream continuously. Here the tcp packets are
 		 * received and parsed to objects.
 		 */
-		// buffer for the receiving datagram 
+		// buffer for the receiving datagram
 		byte[] receiveData = new byte[65536];
 		try {
-			DatagramPacket receiveDatagram = new DatagramPacket(receiveData, receiveData.length); 
-			uDPClientSocket.receive(receiveDatagram); 
-			// copy the received data to a byte array 
-			byte[] payload = Arrays.copyOf(receiveDatagram.getData(), receiveDatagram.getLength()); 
-			// parse the received byte data to object positions 
+			DatagramPacket receiveDatagram = new DatagramPacket(receiveData, receiveData.length);
+			uDPClientSocket.receive(receiveDatagram);
+			// copy the received data to a byte array
+			byte[] payload = Arrays.copyOf(receiveDatagram.getData(), receiveDatagram.getLength());
+			// parse the received byte data to object positions
 			ObjectPositions positions = ObjectPositions.parseFrom(payload);
-			
+
 			// process the received object positions (print them)
 			// System.out.println("Received " + positions.getObjectCount()
 			// + " object positions at "
@@ -45,7 +45,7 @@ public class XovisObjectStreamListener extends AXovisStreamListener {
 				// System.out.println("Object positions:");
 				for (TrackedObject p : positions.getObjectList()) {
 
-					KeyValueObject<IMetaAttribute> out = new KeyValueObject<IMetaAttribute>();
+					KeyValueObject<IMetaAttribute> out = KeyValueObject.createInstance();
 					out.setAttribute("timestamp",
 							positions.getTimeStampMilliseconds());
 					out.setAttribute("status", positions.getStatus());

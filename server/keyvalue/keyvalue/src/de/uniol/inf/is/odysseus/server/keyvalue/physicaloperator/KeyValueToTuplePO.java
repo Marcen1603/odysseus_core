@@ -19,9 +19,9 @@ import de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator.KeyValueToTupleA
 
 /**
  * This operator transforms a KeyValueObject to a Tuple
- * 
+ *
  * @author Marco Grawunder, Jan Sören Schwarz
- * 
+ *
  * @param <M>
  */
 
@@ -74,8 +74,8 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 			String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
 			if(attributeName.endsWith("*")) {
 				final String attr = attributeName.substring(0, attributeName.length()-1);
-				
-				Iterator<Entry<String, Object>> iter = input.getAttributes().entrySet().stream().filter(e -> e.getKey().startsWith(attr)).iterator();
+
+				Iterator<Entry<String, Object>> iter = input.getAsKeyValueMap().entrySet().stream().filter(e -> e.getKey().startsWith(attr)).iterator();
 				if(!iter.hasNext()) {
 					dataValues.add(null);
 				} else {
@@ -92,7 +92,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					dataValues.add(sb.toString());
 				}
 			} else {
-				if (input.getAttributes().containsKey(attributeName)) {
+				if (input.containsKey(attributeName)) {
 					Object attribute = input.getAttribute(attributeName);
 					if (attribute instanceof List) {
 						if(((List<?>) attribute).size() == 0) {
@@ -119,7 +119,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					}
 				} else {
 					dataValues.add(null);
-				}	
+				}
 			}
 		}
 		Tuple<M> output = (Tuple<M>) tHandler.readData(dataValues.iterator());

@@ -13,16 +13,17 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-import de.undercouch.bson4jackson.BsonFactory;
+//import com.fasterxml.jackson.core.JsonFactory;
+//import com.fasterxml.jackson.core.JsonParser;
+//import com.fasterxml.jackson.core.JsonProcessingException;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.SerializationFeature;
+//
+//import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject<? extends IMetaAttribute>>
 		extends AbstractStreamObjectDataHandler<T> {
@@ -32,15 +33,15 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	// private CharsetDecoder decoder = charset.newDecoder();
 	private CharsetEncoder encoder = charset.newEncoder();
 
-	static protected ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
-	static protected ObjectMapper bsonMapper = new ObjectMapper(new BsonFactory());
-
-	static {
-		jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-		bsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-		jsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-		bsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-	}
+//	static protected ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
+//	static protected ObjectMapper bsonMapper = new ObjectMapper(new BsonFactory());
+//
+//	static {
+//		jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+//		bsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+//		jsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+//		bsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+//	}
 
 	public AbstractKeyValueObjectDataHandler() {
 		super(null);
@@ -86,9 +87,9 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 		try {
 			if (buffer.remaining() > 0) {
 				CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(buffer);
-				return jsonStringToKVO(decoded.toString());
+				return (T) KeyValueObject.createInstance(decoded.toString());
 			}
-		} catch (CharacterCodingException e) {
+		} catch (IOException e) {
 			LOG.error("Could not decode data with KeyValueObject handler", e);
 		}
 		return null;
@@ -104,7 +105,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 			}
 
 			CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(ByteBuffer.wrap(buffer));
-			return jsonStringToKVO(decoded.toString());
+			return (T) KeyValueObject.createInstance(decoded.toString());
 		} catch (IOException e) {
 			LOG.error("Could not decode data with KeyValueObject handler", e);
 		}
@@ -114,7 +115,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	@Override
 	public T readData(Iterator<String> message, boolean handleMetaData) {
 		// TODO: Find a way to handle metadata in key value
-		return jsonStringToKVO(message.next());
+		return (T) KeyValueObject.createInstance(message.next());
 	}
 
 	@Override
@@ -138,29 +139,21 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	@SuppressWarnings("unchecked")
 	@Override
 	public void writeJSONData(StringBuilder string, Object data) {
-		try {
-			if (data instanceof KeyValueObject<?>) {
-				string.append(jsonMapper.writer().writeValueAsString(((T) data).getAttributesAsNestedMap()));
-			}
-			// System.out.println("writeJSONData: " + string.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (data instanceof KeyValueObject<?>) {
+			string.append((((T) data).toString()));
 		}
+		// System.out.println("writeJSONData: " + string.toString());
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public byte[] writeBSONData(Object data) {
-		try {
-			return bsonMapper.writer().writeValueAsBytes(((T) data).getAttributes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public byte[] writeBSONData(Object data) {
+//		try {
+//			return bsonMapper.writer().writeValueAsBytes(((T) data).getAsKeyValueMap());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 
-	@SuppressWarnings("unchecked")
-	private T jsonStringToKVO(String json) {
-		return (T) ((KeyValueObjectDataHandler) this).jsonStringToKVO(json);
-	}
 }

@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
  * This predicate can be evaluated with a KeyValueObject. The attribute names in
  * the expression
  * must correspond to the keys in the KeyValueObject
- * 
+ *
  * @author Marco Grawunder, Christian Kuka
  *
  */
@@ -32,7 +32,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
     final List<SDFAttribute> neededAttributes;
 
     /**
-     * 
+     *
      * Class constructor.
      *
      * @param expression
@@ -43,7 +43,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
     }
 
     /**
-     * 
+     *
      * Class constructor.
      *
      * @param other
@@ -54,7 +54,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -69,7 +69,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -86,7 +86,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -139,7 +139,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
         String predicate = "a*10-100 > b";
         SDFExpression expression = new SDFExpression(predicate, null, MEP.getInstance());
         KeyValueObjectPredicate pre = new KeyValueObjectPredicate(expression);
-        KeyValueObject<IMetaAttribute> input = new KeyValueObject<>();
+        KeyValueObject<IMetaAttribute> input = KeyValueObject.createInstance();
         input.setAttribute("a", 10);
         input.setAttribute("b", 8);
         System.out.println(pre.evaluate(input));

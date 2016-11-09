@@ -15,12 +15,12 @@ public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe
 		super();
 		this.paths = paths;
 	}
-	
+
 	public KeyValueProjectPO(KeyValueProjectPO<T> po) {
 		super(po);
 		this.paths = po.paths;
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -29,7 +29,7 @@ public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
-		KeyValueObject<IMetaAttribute> newObject = new KeyValueObject<IMetaAttribute>();
+		KeyValueObject<IMetaAttribute> newObject = KeyValueObject.createInstance();
 		for(SDFAttribute path: this.paths) {
 			String pathURI = path.getURI();
 			if(object.getAttribute(pathURI) != null) {
@@ -46,7 +46,7 @@ public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe
 			transfer((T) newObject);
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);

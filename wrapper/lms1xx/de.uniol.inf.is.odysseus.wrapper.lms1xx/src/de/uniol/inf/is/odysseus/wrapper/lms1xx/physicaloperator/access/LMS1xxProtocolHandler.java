@@ -765,7 +765,7 @@ public class LMS1xxProtocolHandler extends
 				if (addRawData)
 					event.put(LMS1xxProtocolHandler.RAW_DATA, (char) LMS1xxConstants.STX + message + (char) LMS1xxConstants.ETX);
 
-				return new KeyValueObject<>(event);
+				return KeyValueObject.createInstance(event);
 			}
 		}
 		else if (message.startsWith(LMS1xxConstants.SFA))

@@ -78,7 +78,7 @@ public class FacebookProtocolHandler extends
 					String created_time = singlePost.getString("created_time");
 
 					if (firstQuery|| getTimeStamp(created_time).getTime() > lastTimeStamp && !(id.equals("empty"))) {
-						KeyValueObject<IMetaAttribute> out = new KeyValueObject<IMetaAttribute>();
+						KeyValueObject<IMetaAttribute> out = KeyValueObject.createInstance();
 						out.setAttribute("message", message);
 						out.setAttribute("id", id);
 						out.setAttribute("created_time", created_time);

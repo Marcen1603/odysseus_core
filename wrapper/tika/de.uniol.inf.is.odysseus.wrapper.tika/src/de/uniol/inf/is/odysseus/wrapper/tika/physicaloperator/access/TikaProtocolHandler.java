@@ -60,7 +60,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
     private final AutoDetectParser parser;
 
     /**
-     * 
+     *
      */
     public TikaProtocolHandler() {
         super();
@@ -68,7 +68,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
     }
 
     /**
-     * 
+     *
      * @param direction
      * @param access
      * @param dataHandler
@@ -86,9 +86,9 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
             LOG.debug(p.getKey() + ": " + p.getValue());
         }
     }
-    
+
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -97,7 +97,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -108,7 +108,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -136,7 +136,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
             }
             event.put("content", content);
 
-            object = new KeyValueObject<>(event);
+            object = KeyValueObject.createInstance(event);
         }
         catch (IOException | SAXException | TikaException e) {
             LOG.error(e.getMessage(), e);
@@ -146,7 +146,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -172,7 +172,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
             }
             event.put("content", content);
 
-            object = new KeyValueObject<>(event);
+            object = KeyValueObject.createInstance(event);
             this.getTransfer().transfer(object);
         }
         catch (IOException | SAXException | TikaException e) {
@@ -183,7 +183,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
 
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -192,7 +192,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMet
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override

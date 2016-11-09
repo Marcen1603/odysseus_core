@@ -24,7 +24,7 @@ public abstract class AbstractNoSQLJsonSourcePO<M extends IMetaAttribute> extend
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractNoSQLJsonSourcePO.class);
-	
+
     protected static Gson gson = new Gson();
 
     public AbstractNoSQLJsonSourcePO(AbstractNoSQLSourceAO abstractNoSQLSourceAO) {
@@ -47,7 +47,7 @@ public abstract class AbstractNoSQLJsonSourcePO<M extends IMetaAttribute> extend
             //noinspection unchecked    Map<String, Object> will be returned
 			Map<String, Object> jsonMap = gson.fromJson(string, map.getClass());
 
-            KeyValueObject keyValueObject = new KeyValueObject(jsonMap);
+            KeyValueObject keyValueObject = KeyValueObject.createInstance(jsonMap);
     		M meta = null;
     		try {
     			meta = getMetadataInstance();

@@ -62,35 +62,35 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 
 	@SuppressWarnings("unchecked")
 	private KeyValueObject<M> convertToKeyValue(Tuple<M> input, SDFSchema sdfSchema) {
-		KeyValueObject<M> output = null;
-		if (getOutputSchema().getType() == KeyValueObject.class) {
-			output = new KeyValueObject<M>();
-		}
-		for (int pos =0;pos<sdfSchema.size(); pos++) {
-			SDFAttribute attr = sdfSchema.get(pos);
-
-			if (attr.getDatatype().isListValue()) {
-				List<?> o = input.getAttribute(pos);
-				for (int i=0;i<o.size();i++) {
-					String name = attr.getQualName();
-					// Could be a tuple or a base object
-					if (attr.getDatatype().getSubType().isTuple()){
-						KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)o.get(i), attr.getDatatype().getSchema());
-						output.addAttributeValue(name, subObj);
-					}else{
-						output.addAttributeValue(name, o.get(i));
-					}
-
-					// Lists from Lists?
-				}
-			}
-			if (attr.getDatatype().isTuple()) {
-				KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)input.getAttribute(pos), attr.getDatatype().getSchema());
-				output.add(attr.getQualName(),subObj);
-			} else {
-				output.setAttribute(attr.getQualName(), input.getAttribute(pos));
-			}
-		}
+		KeyValueObject<M> output = KeyValueObject.fromTuple(input, sdfSchema);
+//		if (getOutputSchema().getType() == KeyValueObject.class) {
+//			output = new KeyValueObject<M>();
+//		}
+//		for (int pos =0;pos<sdfSchema.size(); pos++) {
+//			SDFAttribute attr = sdfSchema.get(pos);
+//
+//			if (attr.getDatatype().isListValue()) {
+//				List<?> o = input.getAttribute(pos);
+//				for (int i=0;i<o.size();i++) {
+//					String name = attr.getQualName();
+//					// Could be a tuple or a base object
+//					if (attr.getDatatype().getSubType().isTuple()){
+//						KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)o.get(i), attr.getDatatype().getSchema());
+//						output.addAttributeValue(name, subObj);
+//					}else{
+//						output.addAttributeValue(name, o.get(i));
+//					}
+//
+//					// Lists from Lists?
+//				}
+//			}
+//			if (attr.getDatatype().isTuple()) {
+//				KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)input.getAttribute(pos), attr.getDatatype().getSchema());
+//				output.add(attr.getQualName(),subObj);
+//			} else {
+//				output.setAttribute(attr.getQualName(), input.getAttribute(pos));
+//			}
+//		}
 		return output;
 	}
 

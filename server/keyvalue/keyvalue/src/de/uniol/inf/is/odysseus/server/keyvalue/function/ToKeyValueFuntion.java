@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.function;
 
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.keyvalue.datahandler.KeyValueObjectDataHandler;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.mep.AbstractUnaryStringInputFunction;
 
 public class ToKeyValueFuntion extends AbstractUnaryStringInputFunction<KeyValueObject<? extends IMetaAttribute>> {
@@ -17,7 +16,7 @@ public class ToKeyValueFuntion extends AbstractUnaryStringInputFunction<KeyValue
 	@Override
 	public KeyValueObject<? extends IMetaAttribute> getValue() {
 		String json = getInputValue(0);
-		return KeyValueObjectDataHandler.jsonStringToKVOWrapper(json);
+		return KeyValueObject.createInstance(json);
 	}
 
 }

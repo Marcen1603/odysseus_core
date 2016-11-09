@@ -1,13 +1,12 @@
 package de.uniol.inf.is.odysseus.wrapper.ferrybox.physicaloperator.access;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -16,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtoc
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
  * Protocol Handler to receive custom NMEA string from the FerryBox software by HS Jena
@@ -72,7 +71,7 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 				i++;
 			}
 
-			KeyValueObject<IMetaAttribute> kvObject = new KeyValueObject<>(event);
+			KeyValueObject<IMetaAttribute> kvObject = KeyValueObject.createInstance(event);
 			getTransfer().transfer(kvObject);
 		}
 	}
