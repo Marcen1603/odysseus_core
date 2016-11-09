@@ -23,12 +23,12 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 
 	public static final List<SDFMetaSchema> schema = new ArrayList<>(
 			CLASSES.length);
-	
+
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return CLASSES;
 	}
-	
+
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Datarate", "datarate",
@@ -63,7 +63,7 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 	public void writeValue(Tuple<?> value) {
 		this.datarate = value.getAttribute(0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
@@ -74,7 +74,7 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 		return null;
 	}
 
-	
+
 	@Override
 	public String getName() {
 		return "Datarate";
@@ -89,7 +89,7 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 	public double getDatarate() {
 		return datarate;
 	}
-	
+
 	@Override
 	public IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
 		return new DatarateMergeFunction();
@@ -98,6 +98,30 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 	@Override
 	public IDatarate clone() {
 		return new Datarate(this);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(datarate);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Datarate other = (Datarate) obj;
+		if (Double.doubleToLongBits(datarate) != Double.doubleToLongBits(other.datarate))
+			return false;
+		return true;
 	}
 
 	@Override
