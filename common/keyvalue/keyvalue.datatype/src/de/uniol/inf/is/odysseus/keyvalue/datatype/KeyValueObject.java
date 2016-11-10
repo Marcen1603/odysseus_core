@@ -305,23 +305,45 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 					// throw new RuntimeException("Implement me!!");
 					((ArrayNode) father).add(mapper.convertValue(value, JsonNode.class));
 				} else {
-					((ObjectNode) father).set(subkeys[i], mapper.convertValue(value, JsonNode.class));
+					int start = subkeys[i].indexOf("[")+1;
+					if (start > 0){
+						String lkey = subkeys[i].substring(0, start-1);
+						int pos = Integer.parseInt(subkeys[i].substring(start, subkeys[i].indexOf("]")));
+						JsonNode subnode = father.get(lkey);
+						if (pos < ((ArrayNode)subnode).size()){
+							((ArrayNode)subnode).set(pos, mapper.convertValue(value, JsonNode.class));
+						}else{
+							((ArrayNode)subnode).add(mapper.convertValue(value, JsonNode.class));
+						}
+					}else{
+						((ObjectNode) father).set(subkeys[i], mapper.convertValue(value, JsonNode.class));
+					}
 				}
 			} else {
-				JsonNode subKey = node.get(subkeys[i]);
-				if (subKey == null) {
+				int start = subkeys[i].indexOf("[")+1;
+				JsonNode subNode;
+				if (start > 0){
+					String lkey = subkeys[i].substring(0, start-1);
+					int pos = Integer.parseInt(subkeys[i].substring(start, subkeys[i].indexOf("]")));
+					subNode = father.get(lkey);
+					subNode = ((ArrayNode)subNode).get(pos);
+				}else{
+					subNode = father.get(subkeys[i]);
+				}
+
+				if (subNode == null) {
 					if (subkeys[i].endsWith("]")) {
-						subKey = nodeFactory.arrayNode();
+						subNode = nodeFactory.arrayNode();
 					} else {
-						subKey = nodeFactory.objectNode();
+						subNode = nodeFactory.objectNode();
 					}
 					if (father.isArray()) {
-						((ArrayNode) father).add(subKey);
+						((ArrayNode) father).add(subNode);
 					} else {
-						((ObjectNode) father).set(subkeys[i], subKey);
+						((ObjectNode) father).set(subkeys[i], subNode);
 					}
 				}
-				father = subKey;
+				father = subNode;
 			}
 		}
 		this.flat.put(key, value);
@@ -674,9 +696,18 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		obj.removeAttribute("channels.channel0");
 		System.out.println(obj.toString());
 
+		obj.removeAttribute("channels");
+		System.out.println(obj.toString());
+
+
 		System.out.println(kv.removeAttribute("results[0].columns[0]"));
 
 		System.out.println(kv);
+
+		kv.setAttribute("results[0].columns[1]", "path2");
+
+		System.out.println(kv);
+
 
 	}
 
