@@ -5,7 +5,7 @@ import com.google.common.base.Optional;
 /**
  * Enumeration of all tags within system log entries used to backup query
  * states.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -33,30 +33,6 @@ public enum QueryStateLogTag {
 		@Override
 		public String toString() {
 			return "QUERYREMOVED";
-		}
-
-	},
-
-	/**
-	 * The tag for system log entries identifying an added sink.
-	 */
-	SINK_ADDED {
-
-		@Override
-		public String toString() {
-			return "SINKADDED";
-		}
-
-	},
-
-	/**
-	 * The tag for system log entries identifying an added source.
-	 */
-	SOURCE_ADDED {
-
-		@Override
-		public String toString() {
-			return "SOURCEADDED";
 		}
 
 	},
@@ -99,7 +75,7 @@ public enum QueryStateLogTag {
 
 	/**
 	 * Gets an enum entry for a given tag.
-	 * 
+	 *
 	 * @param tag
 	 *            The string representation of the tag.
 	 * @return The enum entry represented by the tag, if present.
@@ -115,7 +91,7 @@ public enum QueryStateLogTag {
 
 	/**
 	 * Checks, if there is an enum entry for a given tag.
-	 * 
+	 *
 	 * @param tag
 	 *            The string representation of the tag.
 	 * @return True, if there is an enum entry represented by the tag.

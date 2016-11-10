@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.recovery.recoverytime.IRecoveryTime;
  * Recovery time is defined as the time between the first element after a
  * restart and the first trustworthy element. Recovery time is measured in
  * system time as well as in application time.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -89,7 +89,7 @@ public class RecoveryTime extends AbstractBaseMetaAttribute implements IRecovery
 	/**
 	 * Creates a new recovery time meta attribute as the copy of an existing
 	 * one.
-	 * 
+	 *
 	 * @param other
 	 *            The meta attribute to copy.
 	 */
@@ -104,6 +104,37 @@ public class RecoveryTime extends AbstractBaseMetaAttribute implements IRecovery
 	@Override
 	public IMetaAttribute clone() {
 		return new RecoveryTime(this);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (endAppTime ^ (endAppTime >>> 32));
+		result = prime * result + (int) (endSysTime ^ (endSysTime >>> 32));
+		result = prime * result + (int) (startAppTime ^ (startAppTime >>> 32));
+		result = prime * result + (int) (startSysTime ^ (startSysTime >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RecoveryTime other = (RecoveryTime) obj;
+		if (endAppTime != other.endAppTime)
+			return false;
+		if (endSysTime != other.endSysTime)
+			return false;
+		if (startAppTime != other.startAppTime)
+			return false;
+		if (startSysTime != other.startSysTime)
+			return false;
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")

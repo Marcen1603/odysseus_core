@@ -7,6 +7,11 @@ import de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 
+/**
+ * Provider registers graph datatype in the system.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphDatatypeProvider implements IDatatypeProvider {
 
 	@Override

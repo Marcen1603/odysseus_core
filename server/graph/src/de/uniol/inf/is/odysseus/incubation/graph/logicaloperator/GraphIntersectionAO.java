@@ -5,6 +5,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
+/**
+ * Logical operator for GraphIntersection.
+ * 
+ * @author Kristian Bruns
+ */
 @LogicalOperator(name="GraphIntersection", minInputPorts=1, maxInputPorts=1, doc="Calculate intersection of all graphs", category={LogicalOperatorCategory.TRANSFORM})
 public class GraphIntersectionAO extends UnaryLogicalOp {
 	

@@ -117,6 +117,11 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		} catch (NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
+		try {
+			this.gcmMethods.add(Object.class.getMethod("equals", Object.class));
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void initMethodRetrieveValues(Class<? extends IMetaAttribute>[] classes) {
@@ -244,6 +249,26 @@ public final class GenericCombinedMetaAttribute extends AbstractCombinedMetaAttr
 		Object v = Proxy.newProxyInstance(new GenericClassLoader(metaAttributes), classes,
 				new GenericCombinedMetaAttribute(this));
 		return (IMetaAttribute) v;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == this) {
+			return true;
+		} else if(!(obj instanceof GenericCombinedMetaAttribute)) {
+			return false;
+		}
+
+		GenericCombinedMetaAttribute other = (GenericCombinedMetaAttribute) obj;
+		if(metaAttributes.length != other.metaAttributes.length) {
+			return false;
+		}
+		for(int i = 0; i < metaAttributes.length; i++) {
+			if(!metaAttributes[i].equals(other.metaAttributes[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static Object newInstance(List<Class<? extends IMetaAttribute>> classes,
