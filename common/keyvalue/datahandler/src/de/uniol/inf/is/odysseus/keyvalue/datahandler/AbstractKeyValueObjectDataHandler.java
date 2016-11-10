@@ -81,6 +81,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 		writeJSONData(string, data);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T readData(ByteBuffer buffer, boolean handleMetaData) {
 		// TODO: Find a way to handle metadata in key value
@@ -95,6 +96,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T readData(InputStream inputStream, boolean handleMetaData) {
 		// TODO: Find a way to handle metadata in key value
@@ -112,6 +114,7 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T readData(Iterator<String> message, boolean handleMetaData) {
 		// TODO: Find a way to handle metadata in key value

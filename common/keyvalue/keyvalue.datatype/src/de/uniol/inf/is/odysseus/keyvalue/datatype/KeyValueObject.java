@@ -91,7 +91,8 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 			e.printStackTrace();
 		}
 		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
-		ret.node = (ObjectNode) node;
+		ret.setNode(node);
+
 		return ret;
 	}
 
@@ -104,14 +105,14 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 			e.printStackTrace();
 		}
 		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
-		ret.node = (ObjectNode) node;
+		ret.setNode(node);
 		return ret;
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
 
 	public KeyValueObject() {
-		this.node = nodeFactory.objectNode();
+		setNode(nodeFactory.objectNode());
 	}
 
 	private KeyValueObject(Map<String, Object> map) {
@@ -121,12 +122,13 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 				node.set(e.getKey(), mapper.convertValue(e.getValue(), JsonNode.class));
 			}
 		}
-		this.node = node;
+		setNode(node);
 	}
 
 	private KeyValueObject(String json) {
 		try {
 			node = (ObjectNode) jsonMapper.reader().readTree(json);
+			setNode(node);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -134,8 +136,14 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	private KeyValueObject(KeyValueObject<T> other) {
 		super(other);
-		this.node = other.node.deepCopy();
+		setNode(other.node.deepCopy());
 	}
+
+	private void setNode(JsonNode node) {
+		this.node = (ObjectNode) node;
+		toKeyValue(node, flat, "");
+	}
+
 
 	// -----------------------------------------------
 	// attribute methods
@@ -143,22 +151,14 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	@SuppressWarnings("unchecked")
 	public <K> K getAttribute(String key) {
-		JsonNode v = this.node.get(key);
-		if (v != null) {
-			if (v.isNumber()) {
-				return (K) v.numberValue();
-			}
-			return (K) v.asText();
-		}else{
-			return null;
-		}
+		return (K) flat.get(key);
 	}
 
 	public Number getNumberAttribute(String key) {
 		return this.node.get(key).numberValue();
 	}
 
-	public Map<String, Object> path(String path) {
+	public Map<String, Object> path2(String path) {
 		Map<String, Object> res = new TreeMap<>();
 		if (path.startsWith("/")) {
 			findPath(node, res, "", "." + path.substring(1));
@@ -168,7 +168,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		return res;
 	}
 
-	public Object path2(String path) {
+	public Object path(String path) {
 		if (!configured) {
 			Configuration.setDefaults(new Configuration.Defaults() {
 
@@ -232,7 +232,6 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	//
 	// }
 
-	@Deprecated
 	public final Map<String, Object> getAsKeyValueMap() {
 		if (flat.size() == 0) {
 			toKeyValue(node, flat, "");
@@ -244,7 +243,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		if (!node.isNull()) {
 			if (!node.isContainerNode()) {
 				// remove first "."
-				result.put(path.substring(1), node);
+				result.put(path.substring(1), toObject(node));
 			} else {
 				// e.g. array inside of array
 				if (node.isArray()) {
@@ -265,11 +264,22 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 						} else {
 							String p = path + "." + entry.getKey();
 							// remove first "."
-							result.put(p.substring(1), n);
+							result.put(p.substring(1), toObject(n));
 						}
 					}
 				}
 			}
+		}
+	}
+
+	private Object toObject(JsonNode v){
+		if (v != null) {
+			if (v.isNumber()) {
+				return v.numberValue();
+			}
+			return v.asText();
+		}else{
+			return null;
 		}
 	}
 
@@ -286,22 +296,23 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	 */
 	public void setAttribute(String key, Object value) {
 		this.node.set(key, mapper.convertValue(value, JsonNode.class));
+		this.flat.put(key, value);
 	}
 
 	public Object removeAttribute(String key) {
+		this.flat.remove(key);
 		return this.node.remove(key);
 	}
 
 	public int size() {
-		// TODO: Is this the correct return value
-		return this.node.size();
+		return flat.size();
 	}
 
 	@Override
 	protected IStreamObject<T> process_merge(IStreamObject<T> left, IStreamObject<T> right, Order order) {
 		JsonNode m = merge(((KeyValueObject<T>) left).node.deepCopy(), ((KeyValueObject<T>) right).node);
 		KeyValueObject<T> merged = new KeyValueObject<T>();
-		merged.node = (ObjectNode) m;
+		merged.setNode(m);
 		return merged;
 	}
 
@@ -377,9 +388,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		if (node == null) {
 			if (other.node != null)
 				return false;
-		} else if
-		// TODO: Compare attribute wise!!
-		(!node.equals(other.node))
+		} else if (!node.equals(other.node))
 			return false;
 		return true;
 	}
@@ -471,11 +480,15 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	// static helper
 	// ------------------------------------------------------------------------------------------------
 
-	public static KeyValueObject fromTuple(Tuple tuple, SDFSchema schema) {
-		KeyValueObject ret = new KeyValueObject<>();
+	public static KeyValueObject<IMetaAttribute> fromTuple(Tuple<IMetaAttribute> tuple, SDFSchema schema) {
+		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
 		ret.setMetadata(tuple.getMetadata().clone());
 		int pos = 0;
 		for (SDFAttribute a : schema) {
+
+
+
+
 			// TODO: nested structure
 			if (a.getDatatype().isTuple()) {
 				throw new RuntimeException("Nesting currently not supported!");
@@ -581,7 +594,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		// System.out.println(e.getKey() + " --> " + e.getValue());
 		// }
 
-		System.out.println(kv.path2("$.results[0].data[0].row[0]"));
+		System.out.println(kv.path("$.results[0].data[0].row[0]"));
 
 		// System.out.println();
 		// map = kv.path("/results[0].data");

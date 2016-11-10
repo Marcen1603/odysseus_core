@@ -72,13 +72,16 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 			outputVal = (T) KeyValueObject.createInstance((KeyValueObject)object);
 		} else {
 			outputVal = (T) KeyValueObject.createInstance();
-			outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
-			if (object.getGetValueMap() != null) {
-				for (Entry<String, Object> entry : object.getGetValueMap().entrySet()) {
-					outputVal.setKeyValue(entry.getKey(), entry.getValue());
-				}
-			}
+			// WTF???
+			//			if (object.getGetValueMap() != null) {
+//				for (Entry<String, Object> entry : object.getGetValueMap().entrySet()) {
+//					outputVal.setKeyValue(entry.getKey(), entry.getValue());
+//				}
+//			}
 		}
+
+		outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
+
 
 		boolean nullValueOccured = false;
 		synchronized (this.expressions) {
@@ -86,7 +89,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 				Object[] values = new Object[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					if (object != null) {
-						values[j] = object.getAttribute(removePoint(this.variables[i][j]));
+						values[j] = object.getAttribute(this.variables[i][j]);
 					}
 				}
 				SDFExpression expr = this.expressions.get(i).expression;
@@ -136,7 +139,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 			this.variables[i++] = newArray;
 			int j = 0;
 			for (SDFAttribute curAttribute : neededAttributes) {
-				newArray[j++] = curAttribute.toString();
+				newArray[j++] = removePoint(curAttribute.toString());
 			}
 			if (Strings.isNullOrEmpty(expression.name)){
 				String newName = expression.expression.getExpressionString();

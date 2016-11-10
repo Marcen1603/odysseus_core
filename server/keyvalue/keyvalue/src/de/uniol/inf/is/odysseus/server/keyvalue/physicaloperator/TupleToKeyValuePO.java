@@ -15,16 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
  * This operator transforms a Tuple to a KeyValueObject
@@ -62,7 +58,7 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 
 	@SuppressWarnings("unchecked")
 	private KeyValueObject<M> convertToKeyValue(Tuple<M> input, SDFSchema sdfSchema) {
-		KeyValueObject<M> output = KeyValueObject.fromTuple(input, sdfSchema);
+		KeyValueObject<M> output = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) input, sdfSchema);
 //		if (getOutputSchema().getType() == KeyValueObject.class) {
 //			output = new KeyValueObject<M>();
 //		}

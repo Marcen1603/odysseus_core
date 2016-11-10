@@ -1,15 +1,14 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 
 /**
@@ -38,7 +37,8 @@ public abstract class AbstractNoSQLJsonSinkPO<T extends IStreamObject<?>> extend
         }
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected final synchronized void process_next_tuple_to_write(List<T> elementsToWrite) {
 
         ArrayList<String> jsons = new ArrayList<>();
@@ -46,9 +46,9 @@ public abstract class AbstractNoSQLJsonSinkPO<T extends IStreamObject<?>> extend
         for (T elem : elementsToWrite) {
         	final String json;
         	if (tupleMode){
-        		json = toJsonString((Tuple<?>) elem);
+        		json = KeyValueObject.fromTuple(((Tuple<IMetaAttribute>) elem), getInputSchema(0)).toString();
         	}else{
-        		json = toJsonString((KeyValueObject<?>)elem);
+        		json =( (KeyValueObject<?>)elem).toString();
         	}
             jsons.add(json);
         }
@@ -63,13 +63,5 @@ public abstract class AbstractNoSQLJsonSinkPO<T extends IStreamObject<?>> extend
      * @param jsonToWrite list with JSON strings
      */
     protected abstract void process_next_json_to_write(List<String> jsonToWrite);
-
-    private String toJsonString(KeyValueObject<?> tuple){
-        return tuple.toString();
-    }
-
-    private String toJsonString(Tuple<?> tuple){
-    	return KeyValueObject.fromTuple(tuple, getInputSchema(0)).toString();
-    }
 
 }
