@@ -144,7 +144,6 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		toKeyValue(node, flat, "");
 	}
 
-
 	// -----------------------------------------------
 	// attribute methods
 	// ----------------------------------------------
@@ -272,13 +271,13 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		}
 	}
 
-	private Object toObject(JsonNode v){
+	private Object toObject(JsonNode v) {
 		if (v != null) {
 			if (v.isNumber()) {
 				return v.numberValue();
 			}
 			return v.asText();
-		}else{
+		} else {
 			return null;
 		}
 	}
@@ -295,7 +294,30 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	 * @param value
 	 */
 	public void setAttribute(String key, Object value) {
-		this.node.set(key, mapper.convertValue(value, JsonNode.class));
+		// Must create hierarchy based on "."!
+		String subkeys[] = key.split("\\.");
+		ObjectNode father = node;
+		for (int i = 0; i < subkeys.length; i++) {
+
+			if (i == subkeys.length - 1) {
+				if (father.isArray()) {
+					throw new RuntimeException("Implement me!!");
+				} else {
+					father.set(subkeys[i], mapper.convertValue(value, JsonNode.class));
+				}
+			} else {
+				ObjectNode subKey = (ObjectNode) node.get(subkeys[i]);
+				if (subKey == null) {
+					if (father.isArray()) {
+						throw new RuntimeException("Implement me!!");
+					} else {
+						subKey = nodeFactory.objectNode();
+						father.set(subkeys[i], subKey);
+					}
+				}
+				father = subKey;
+			}
+		}
 		this.flat.put(key, value);
 	}
 
@@ -485,9 +507,6 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		ret.setMetadata(tuple.getMetadata().clone());
 		int pos = 0;
 		for (SDFAttribute a : schema) {
-
-
-
 
 			// TODO: nested structure
 			if (a.getDatatype().isTuple()) {
