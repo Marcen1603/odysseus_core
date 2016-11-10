@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
@@ -296,23 +297,28 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	public void setAttribute(String key, Object value) {
 		// Must create hierarchy based on "."!
 		String subkeys[] = key.split("\\.");
-		ObjectNode father = node;
+		JsonNode father = node;
 		for (int i = 0; i < subkeys.length; i++) {
 
 			if (i == subkeys.length - 1) {
 				if (father.isArray()) {
-					throw new RuntimeException("Implement me!!");
+					// throw new RuntimeException("Implement me!!");
+					((ArrayNode) father).add(mapper.convertValue(value, JsonNode.class));
 				} else {
-					father.set(subkeys[i], mapper.convertValue(value, JsonNode.class));
+					((ObjectNode) father).set(subkeys[i], mapper.convertValue(value, JsonNode.class));
 				}
 			} else {
-				ObjectNode subKey = (ObjectNode) node.get(subkeys[i]);
+				JsonNode subKey = node.get(subkeys[i]);
 				if (subKey == null) {
-					if (father.isArray()) {
-						throw new RuntimeException("Implement me!!");
+					if (subkeys[i].endsWith("]")) {
+						subKey = nodeFactory.arrayNode();
 					} else {
 						subKey = nodeFactory.objectNode();
-						father.set(subkeys[i], subKey);
+					}
+					if (father.isArray()) {
+						((ArrayNode) father).add(subKey);
+					} else {
+						((ObjectNode) father).set(subkeys[i], subKey);
 					}
 				}
 				father = subKey;
@@ -322,8 +328,42 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	public Object removeAttribute(String key) {
-		this.flat.remove(key);
-		return this.node.remove(key);
+		String[] subkeys = key.split("\\.");
+		JsonNode subnode = node;
+		for (int i = 0; i < subkeys.length-1; i++) {
+
+			int start = subkeys[i].indexOf("[")+1;
+			if (start > 0) {
+				int pos = Integer.parseInt(subkeys[i].substring(start, subkeys[i].indexOf("]")));
+				ArrayNode arrayNode = ((ArrayNode)subnode.get(subkeys[i].substring(0, start-1)));
+				subnode = arrayNode.get(pos);
+			} else {
+				subnode = subnode.get(subkeys[i]);
+			}
+		}
+		String lastKey = subkeys[subkeys.length - 1];
+		if (subnode.isArray()) {
+			subnode = subnode.get(lastKey);
+			int start = lastKey.indexOf("[") + 1;
+			if (start > 0) {
+				int pos = Integer.parseInt(lastKey.substring(start, lastKey.indexOf("]")));
+				((ArrayNode) subnode).remove(pos);
+			} else {
+				((ArrayNode) subnode).removeAll();
+			}
+		} else {
+
+			int start = lastKey.indexOf("[") + 1;
+			if (start > 0){
+				subnode = subnode.get(lastKey.substring(0,start-1));
+				int pos = Integer.parseInt(lastKey.substring(start, lastKey.indexOf("]")));
+				((ArrayNode) subnode).remove(pos);
+			}else{
+				((ObjectNode) subnode).remove(lastKey);
+			}
+
+		}
+		return this.flat.remove(key);
 	}
 
 	public int size() {
@@ -607,6 +647,8 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 		KeyValueObject<IMetaAttribute> kv = new KeyValueObject<>(json1);
 
+		System.out.println(kv.toStringWithNewlines());
+
 		Map<String, Object> map;
 		map = kv.getAsKeyValueMap();
 		// for (Entry<String, Object> e : map.entrySet()) {
@@ -614,6 +656,8 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		// }
 
 		System.out.println(kv.path("$.results[0].data[0].row[0]"));
+
+
 
 		// System.out.println();
 		// map = kv.path("/results[0].data");
@@ -624,9 +668,15 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		// System.out.println(kv.toStringWithNewlines());
 		// System.out.println(""+kv.path("results[0].data[0].row[0].[0]"));
 
-		String input = "<channels><channel0>A</channel0><channel1>B</channel1><channel2>C</channel2></channels>";
+		String input = "<xml><channels><channel0>A</channel0><channel1>B</channel1><channel2>C</channel2></channels></xml>";
 		KeyValueObject<IMetaAttribute> obj = KeyValueObject.createFromXML(input);
 		System.out.println(obj.toString());
+		obj.removeAttribute("channels.channel0");
+		System.out.println(obj.toString());
+
+		System.out.println(kv.removeAttribute("results[0].columns[0]"));
+
+		System.out.println(kv);
 
 	}
 
