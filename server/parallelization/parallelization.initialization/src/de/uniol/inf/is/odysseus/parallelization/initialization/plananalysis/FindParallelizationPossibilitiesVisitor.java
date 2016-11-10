@@ -4,7 +4,6 @@
 package de.uniol.inf.is.odysseus.parallelization.initialization.plananalysis;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,15 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParallelizationIndividualConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.interoperator.InterOperatorParallelizationConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intraoperator.IntraOperatorParallelizationConfiguration;
-import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
-import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.IParallelizingRule;
-
 /**
  * @author Dennis Nowak
  *
@@ -63,12 +58,14 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 				LOG.debug("Node " + node.getUniqueIdentifier() + " has unknown state type.");
 				break;
 			case STATELESS:
-				IParallelizationIndividualConfiguration statelessConfig = new InterOperatorParallelizationConfiguration(node,"","RoundRobinFragmentAO");
+				IParallelizationIndividualConfiguration statelessConfig = new InterOperatorParallelizationConfiguration(
+						node, "GenericStatelessTransformationStrategy", "RoundRobinFragmentAO");
 				this.possibleParallelizations.add(statelessConfig);
 				LOG.debug("Node " + node.getUniqueIdentifier() + " is stateless.");
 				break;
 			case PARTITIONED_STATE:
-				IParallelizationIndividualConfiguration partitionConfig = new InterOperatorParallelizationConfiguration(node,"","HashFragmentAO");
+				IParallelizationIndividualConfiguration partitionConfig = new InterOperatorParallelizationConfiguration(
+						node, "GenericGroupedTransformationStrategy", "HashFragmentAO");
 				this.possibleParallelizations.add(partitionConfig);
 				LOG.debug("Node " + node.getUniqueIdentifier() + " has partitioned state.");
 				break;
@@ -113,15 +110,10 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 	}
 
 	private boolean isIntraParallizable(ILogicalOperator operator) {
-		//FIXME ask Operator if it is parallelizable with current configuration
-		List<Class<?>> list = new ArrayList<>();
-		list.add(operator.getClass());
-		Iterator<IRule<?, ?>> ruleIterator = TransformationInventory.getInstance().getCurrentInstance()
-				.iteratorRules(TransformRuleFlowGroup.TRANSFORMATION, list);
-		while (ruleIterator.hasNext()) {
-			if (ruleIterator.next() instanceof IParallelizingRule) {
-				return true;
-			}
+		// FIXME ask Operator if it is parallelizable with current configuration
+		// TODO make it configurable
+		if (operator instanceof AggregateAO) {
+			return true;
 		}
 		return false;
 	}

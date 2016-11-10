@@ -31,9 +31,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.threaded.ThreadedAggregateTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.IParallelizingRule;
 
-public class TAggregationTIPORule extends AbstractIntervalTransformationRule<AggregateAO> implements IParallelizingRule{
+public class TAggregationTIPORule extends AbstractIntervalTransformationRule<AggregateAO> {
 
 	@SuppressWarnings("unchecked")
 	@Override
