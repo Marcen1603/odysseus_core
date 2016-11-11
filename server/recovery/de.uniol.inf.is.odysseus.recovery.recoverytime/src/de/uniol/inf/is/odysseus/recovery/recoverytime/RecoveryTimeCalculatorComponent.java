@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.OperatorCollector;
 import de.uniol.inf.is.odysseus.recovery.recoverytime.logicaloperator.RecoveryTimeCalculatorAO;
-import de.uniol.inf.is.odysseus.trust.ITrust;
 
 /**
  * Component that inserts {@link RecoveryTimeCalculatorAO}s before each sink in
@@ -68,7 +67,9 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 
 			@Override
 			public void walk(ILogicalOperator operator) {
-				if (isSinkOperator(operator)) {
+				SDFSchema schema = operator.getInputSchema(0);
+				if (schema.hasMetatype(IRecoveryTime.class) && schema.hasMetatype(ITimeInterval.class)
+						&& isSinkOperator(operator)) {
 					insertRecoveryTimeCalculator(operator, new RecoveryTimeCalculatorAO());
 				}
 			}
@@ -103,11 +104,6 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 	 */
 	private static void insertRecoveryTimeCalculator(ILogicalOperator sink, LogicalSubscription subToSink,
 			RecoveryTimeCalculatorAO calculator) {
-		SDFSchema schema = subToSink.getSchema();
-		if (!schema.hasMetatype(IRecoveryTime.class) || !schema.hasMetatype(ITrust.class)
-				|| !schema.hasMetatype(ITimeInterval.class)) {
-			return;
-		}
 		calculator.subscribeToSource(subToSink.getTarget(), 0, subToSink.getSourceOutPort(), subToSink.getSchema());
 		sink.subscribeToSource(calculator, subToSink.getSinkInPort(), 0, subToSink.getSchema());
 	}
