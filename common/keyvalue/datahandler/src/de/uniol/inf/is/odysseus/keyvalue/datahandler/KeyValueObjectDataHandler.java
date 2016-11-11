@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.keyvalue.datahandler;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
 
 /**
  *
@@ -26,7 +24,7 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObjectDataHandler.class);
 
 	static {
-		types.add(SDFDatatype.KEYVALUEOBJECT.getURI());
+		types.add(SDFKeyValueDatatype.KEYVALUEOBJECT.getURI());
 	}
 
 	@Override

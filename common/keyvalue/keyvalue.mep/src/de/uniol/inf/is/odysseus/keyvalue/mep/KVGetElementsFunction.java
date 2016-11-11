@@ -1,6 +1,7 @@
-package de.uniol.inf.is.odysseus.server.keyvalue.function;
+package de.uniol.inf.is.odysseus.keyvalue.mep;
 
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -10,7 +11,7 @@ public class KVGetElementsFunction extends AbstractFunction<Tuple<IMetaAttribute
 
 	private static final long serialVersionUID = -7563778697648088501L;
 	private static final SDFDatatype[][] acceptedTypes = new SDFDatatype[][] {
-		new SDFDatatype[] { SDFDatatype.KEYVALUEOBJECT}, {SDFDatatype.STRING}};
+		new SDFDatatype[] { SDFKeyValueDatatype.KEYVALUEOBJECT}, {SDFDatatype.STRING}};
 
 	public KVGetElementsFunction(){
 		super("getElements", 2, acceptedTypes, SDFDatatype.OBJECT, false);

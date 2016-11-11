@@ -685,7 +685,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 		KeyValueObject<IMetaAttribute> kv = new KeyValueObject<>(json1);
 
-		// System.out.println(kv.toStringWithNewlines());
+		System.out.println(kv.toStringWithNewlines());
 
 //		Map<String, Object> map;
 //		map = kv.getAsKeyValueMap();

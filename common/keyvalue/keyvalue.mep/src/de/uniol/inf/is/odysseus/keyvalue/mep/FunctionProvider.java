@@ -12,6 +12,10 @@ public class FunctionProvider implements IFunctionProvider {
 	public List<IFunction<?>> getFunctions() {
 		List<IFunction<?>> funcs = new ArrayList<IFunction<?>>();
 		funcs.add(new KvSelectFunction());
+		funcs.add(new KvPathFunction());
+		funcs.add(new ToKeyValueFuntion());
+		funcs.add(new KVGetElementFunction());
+		funcs.add(new KVGetElementsFunction());
 		return funcs;
 	}
 
