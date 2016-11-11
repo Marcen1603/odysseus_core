@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMe
  * handle scenarios in which an input stream delivers unequal elements compared
  * to the other input stream. Such a scenario can occur if an input stream is
  * the result of query part that has been recovered after a failure.
- * 
+ *
  * @author Michael Brand
  */
 public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<T, T> {
@@ -43,7 +43,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute
 
 	/**
 	 * Delivers a timestamp of an {@link IStreamable} object.
-	 * 
+	 *
 	 * @param object
 	 *            The object.
 	 * @param searchForStartTS
@@ -115,7 +115,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute
 
 	/**
 	 * Creates a new {@link ReplicationMergePO} as a copy of an existing one.
-	 * 
+	 *
 	 * @param mergePO
 	 *            The {@link ReplicationMergePO} to be copied.
 	 */
@@ -179,7 +179,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute
 	/**
 	 * Checks, if the start timestamp of the object is younger or equal to the
 	 * youngest seen and updates the youngest seen if necessary.
-	 * 
+	 *
 	 * @return True if the object is is younger or equal. False means that the
 	 *         object can be rejected.
 	 */
@@ -229,7 +229,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute
 	 * <code>port</code> is the maximum count over all ports. Otherwise the
 	 * object will not transfered. <br />
 	 * This method also adds <code>object</code> to the input queue.
-	 * 
+	 *
 	 * @param object
 	 *            The object to be merged
 	 * @param port
@@ -258,11 +258,21 @@ public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute
 					&& !((IPunctuation) elem).getTime().equals(((IPunctuation) object).getTime())) {
 				// not the same timestamps of the punctuations
 				continue;
-			} else if (!elem.isPunctuation() && !object.isPunctuation()
-					&& (!((T) elem).equals(object) || !((T) elem).getMetadata().equals(((T) object).getMetadata()))) {
-				// either the elements or the timestamps are not equal
-				continue;
-			} else if (countToPortMap.containsKey(elemPort)) {
+			} else if (!elem.isPunctuation() && !object.isPunctuation()) {
+				if(!((T) elem).equals(object)) {
+					// not the same elements
+					continue;
+				} else {
+					// same elements, what about time stamps?
+					ITimeInterval ti1 = ((ITimeInterval) ((T) elem).getMetadata());
+					ITimeInterval ti2 = ((ITimeInterval) ((T) object).getMetadata());
+					if(!ti1.getStart().equals(ti2.getStart()) || !ti1.getEnd().equals(ti2.getEnd())) {
+						// not the same time stamps
+						continue;
+					}
+				}
+			}
+			if (countToPortMap.containsKey(elemPort)) {
 				// port is already in the map
 				countToPortMap.put(elemPort, countToPortMap.get(elemPort) + 1);
 			} else {
