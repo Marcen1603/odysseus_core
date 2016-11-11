@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,7 +50,7 @@ public class PQLParser implements IQueryParser {
 	public String getLanguage() {
 		return "PQL";
 	}
-	
+
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query,
 			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute, IServerExecutor executor)
@@ -68,7 +68,7 @@ public class PQLParser implements IQueryParser {
 		PQLParserImpl.setContext(context);
 		PQLParserImpl.setMetaAttribute(metaAttribute);
 		PQLParserImpl.setServerExecutor(executor);
-		
+
 		boolean updateQueryId = true;
 		if (context != null && context.containsKey("tempQuery")) {
 			updateQueryId = !(Boolean) context.get("tempQuery");
@@ -194,6 +194,12 @@ public class PQLParser implements IQueryParser {
 		for (IParameter<?> parameter : parameterObjects) {
 			String parameterName = parameter.getName();
 			boolean hasParameter = tmpParameters.containsKey(parameterName);
+			// check for alias parameter
+			if (!hasParameter){
+				parameterName = parameter.getAliasName();
+				hasParameter = tmpParameters.containsKey(parameterName);
+			}
+
 			if (!hasParameter) {
 				parameter.setInputValue(null);
 				if (parameter.isMandatory()) {

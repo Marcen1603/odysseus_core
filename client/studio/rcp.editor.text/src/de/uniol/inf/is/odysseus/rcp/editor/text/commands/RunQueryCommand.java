@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,7 +66,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
             	if (editorInput instanceof IFileEditorInput) {
             		IFile file = ((IFileEditorInput) editorInput).getFile();
                     runFile(file);
-            	} 
+            	}
             }
         }
 
@@ -76,13 +76,13 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
     @Override
     public boolean isEnabled() {
         List<IFile> fileList = getSelectedFiles();
-        
+
         for( IFile file : fileList ) {
         	if( !FileExecutorRegistry.hasFileExecutor(file.getFileExtension())) {
         		return false;
         	}
         }
-        
+
         return true;
     }
 
@@ -114,7 +114,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
     	runFiles(Collections.singletonList(file));
     }
 
-    
+
     private void runFiles(List<IFile> filesToRun) {
         try {
             for (IFile file : filesToRun) {
@@ -139,6 +139,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
                 	String text = readLinesFromFile(scriptFile);
                 	executor.run(text, ParserClientUtil.createRCPContext(scriptFile));
                } catch (final Throwable ex) {
+            	   ex.printStackTrace();
                     ExceptionErrorDialog.open(new Status(IStatus.ERROR, IEditorTextParserConstants.PLUGIN_ID, "'Parsing and Executing Query' has encountered a problem.\n\nScript Execution Error: " + ex.getMessage(), ex), ex);
                     // return new Status(IStatus.ERROR,
                     // IEditorTextParserConstants.PLUGIN_ID,
@@ -150,7 +151,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
         job.setUser(true);
         job.schedule();
     }
-    
+
     private static String readLinesFromFile(IFile queryFile) throws CoreException, IOException {
         if (!queryFile.isSynchronized(IResource.DEPTH_ZERO)) {
             queryFile.refreshLocal(IResource.DEPTH_ZERO, null);

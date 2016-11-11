@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -26,8 +25,7 @@ public class TKeyValueSelectRule extends AbstractTransformationRule<SelectAO>{
 
 	@Override
 	public boolean isExecutable(SelectAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == KeyValueObject.class || 
-				operator.getInputSchema().getType() == NestedKeyValueObject.class) &&
+		if ((operator.getInputSchema().getType() == KeyValueObject.class ) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}
@@ -43,9 +41,9 @@ public class TKeyValueSelectRule extends AbstractTransformationRule<SelectAO>{
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
-	public Class<? super SelectAO> getConditionClass() {	
+	public Class<? super SelectAO> getConditionClass() {
 		return SelectAO.class;
 	}
 

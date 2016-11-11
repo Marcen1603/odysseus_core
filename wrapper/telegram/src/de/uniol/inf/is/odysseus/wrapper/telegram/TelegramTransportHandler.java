@@ -5,16 +5,19 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.keyvalue.datahandler.KeyValueObjectDataHandler;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 public class TelegramTransportHandler extends AbstractPushTransportHandler {
+
+
+	final static private ObjectMapper mapper = new ObjectMapper();
 
 	static final String NAME = "telegram";
 	static final String TOKEN = "telegram.api.token";
@@ -60,9 +63,11 @@ public class TelegramTransportHandler extends AbstractPushTransportHandler {
 						if (isRunning) {
 							// res can be empty
 							for (JsonNode n : res) {
-								@SuppressWarnings("unchecked")
-								KeyValueObject<IMetaAttribute> kv = (KeyValueObject<IMetaAttribute>) KeyValueObjectDataHandler
-										.jsonToKVOWrapper(n);
+//								@SuppressWarnings("unchecked")
+//								KeyValueObject<IMetaAttribute> kv = (KeyValueObject<IMetaAttribute>) KeyValueObjectDataHandler
+//										.jsonToKVOWrapper(n);
+								// TODO: Find a solution to add JsonNode directly to KeyValueObject ...
+								KeyValueObject<IMetaAttribute> kv = KeyValueObject.createInstance(mapper.writeValueAsString(n));
 								TelegramTransportHandler.this.fireProcess(kv);
 							}
 						} else {
@@ -111,7 +116,7 @@ public class TelegramTransportHandler extends AbstractPushTransportHandler {
 			if (chatID == null){
 				throw new RuntimeException("Cannot find attribute with name chat.id");
 			}
-			
+
 			String text = (String) kvMessage.getAttribute("text");
 			if (text == null){
 				throw new RuntimeException("Cannot find attribute with name text");

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
@@ -54,7 +55,21 @@ public class NamedExpressionParameter extends AbstractParameter<NamedExpression>
 			expression = (String) inputValue;
 		}
 		if (getAttributeResolver() != null) {
-			setValue(new NamedExpression(name, new SDFExpression("", expression, getAttributeResolver(),
+			DirectAttributeResolver attrresolver = getAttributeResolver();
+			if (attrresolver.isEmpty()){
+				attrresolver = null;
+			}else{
+				if (attrresolver.getSchema().size() > 0){
+					try {
+						if (attrresolver.getSchema().get(0).getType().newInstance().isSchemaLess()){
+							attrresolver = null;
+						}
+					} catch (InstantiationException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			setValue(new NamedExpression(name, new SDFExpression("", expression, attrresolver,
 					MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()), type));
 		} else {
 			throw new RuntimeException("missing expression or attribute resolver");
@@ -70,7 +85,7 @@ public class NamedExpressionParameter extends AbstractParameter<NamedExpression>
 			if (in.size() == 2) {
 				return "['" + in.get(0) + "', '" + in.get(1) + "']";
 			}else if (in.size() == 3){
-				return "['" + in.get(0) + "', '" + in.get(1)+ "', '" + in.get(2) + "']";				
+				return "['" + in.get(0) + "', '" + in.get(1)+ "', '" + in.get(2) + "']";
 			}
 			throw new RuntimeException("Could not determine name/expression pair!");
 

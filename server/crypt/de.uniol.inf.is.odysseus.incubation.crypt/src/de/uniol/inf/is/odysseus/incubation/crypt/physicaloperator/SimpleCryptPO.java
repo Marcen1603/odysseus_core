@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -90,8 +90,8 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 			transfer((T) tuple);
 		} else if (object instanceof KeyValueObject) {
 			KeyValueObject keyValue = (KeyValueObject) object;
-			Object[] keys = keyValue.getAttributes().keySet().toArray();
-			for (int i = 0; i < keyValue.getAttributes().entrySet().size(); i++) {
+			Object[] keys = keyValue.getAsKeyValueMap().keySet().toArray();
+			for (int i = 0; i < keyValue.getAsKeyValueMap().entrySet().size(); i++) {
 				Object obj = keyValue.getAttribute(keys[i].toString());
 				Object crypted = this.cryptor.cryptObject(obj);
 				keyValue.setAttribute(keys[i].toString(), crypted);

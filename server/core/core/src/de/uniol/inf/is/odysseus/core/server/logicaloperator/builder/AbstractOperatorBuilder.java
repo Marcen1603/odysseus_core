@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -177,21 +176,21 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	public IDataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
-	
+
 	@Override
 	public void setServerExecutor(IServerExecutor executor) {
 		this.executor = executor;
 	}
-	
+
 	protected IServerExecutor getServerExecutor(){
 		return executor;
 	}
-	
+
 	@Override
 	public void setMetaAttribute(IMetaAttribute metaAttribute) {
 		this.metaAttribute = metaAttribute;
 	}
-	
+
 	public IMetaAttribute getMetaAttribute() {
 		return metaAttribute;
 	}
@@ -225,7 +224,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		for (InputOperatorItem opItem : inputOperators.values()) {
 			inputSchema.add(opItem.operator.getOutputSchema(opItem.outputPort));
 		}
-		IAttributeResolver attributeResolver = new DirectAttributeResolver(
+		DirectAttributeResolver attributeResolver = new DirectAttributeResolver(
 				inputSchema);
 
 		// check parameters
@@ -348,7 +347,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder
 	 * #getCategories()

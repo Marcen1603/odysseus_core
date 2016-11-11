@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.incubation.graph.datamodel;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;

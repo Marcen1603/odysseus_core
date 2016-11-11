@@ -14,7 +14,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	private Map<String, Object> keyValueMap;
 	private T metadata = null;
 	private boolean timeOrderMarker = true;
-	
+
 	public AbstractStreamObject() {
 	}
 
@@ -30,10 +30,15 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	}
 
 	@Override
+	public boolean isSchemaLess() {
+		return true;
+	}
+
+	@Override
 	final public Object getKeyValue(String name) {
 		return keyValueMap.get(name);
 	}
-	
+
 	@Override
 	final public boolean hasKeyValue(String name) {
 		return this.keyValueMap.containsKey(name);
@@ -97,7 +102,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		}
 
 		this.timeOrderMarker = left.isTimeProgressMarker() && right.isTimeProgressMarker();
-		
+
 		return ret;
 	}
 
@@ -117,12 +122,12 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isTimeProgressMarker() {
 		return timeOrderMarker;
 	}
-	
+
 	@Override
 	public void setTimeProgressMarker(boolean timeOrderMarker) {
 		this.timeOrderMarker = timeOrderMarker;
@@ -154,7 +159,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		// Default with no restriction
 		return equals(o);
 	}
-	
+
 	@Override
 	public boolean equals(IStreamObject<IMetaAttribute> o, boolean compareMeta) {
 		boolean ret = equals(o);
