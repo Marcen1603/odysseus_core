@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
@@ -42,6 +42,10 @@ public interface IParameter<T> extends Serializable {
 	void setName(String name);
 
 	String getName();
+
+	void setAliasName(String aliasname);
+
+	String getAliasName();
 
 	void setDoc(String doc);
 
@@ -74,7 +78,7 @@ public interface IParameter<T> extends Serializable {
 	void setDataDictionary(IDataDictionary dd);
 
 	IDataDictionary getDataDictionary();
-	
+
 	void setServerExecutor(IServerExecutor serverExecutor);
 
 	IServerExecutor getServerExecutor();
@@ -98,5 +102,6 @@ public interface IParameter<T> extends Serializable {
 	boolean arePossibleValuesDynamic();
 
 	void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic);
+
 
 }

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,6 +42,11 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 	}
 
 	@Override
+	public String getAliasName() {
+		return this.singleParameter.getAliasName();
+	}
+
+	@Override
 	protected void internalAssignment() {
 		// TODO allgemein input parametertyp ueberpruefen
 		try {
@@ -71,7 +76,7 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 
 	public IParameter<T> getSingleParameter() {
 		return singleParameter;
-	}	
+	}
 
 	@Override
 	protected String getPQLStringInternal() {
@@ -80,7 +85,7 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 		Object[] inputList = ((List<?>)inputValue).toArray(new Object[0]);
 		for (int i = 0; i < inputList.length; i++) {
 			Object o = inputList[i];
-			
+
 			singleParameter.setInputValue(o);
 			singleParameter.setAttributeResolver(getAttributeResolver());
 			singleParameter.setDataDictionary(getDataDictionary());

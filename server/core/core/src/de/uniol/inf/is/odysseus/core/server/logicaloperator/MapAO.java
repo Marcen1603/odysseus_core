@@ -195,7 +195,7 @@ public class MapAO extends UnaryLogicalOp {
 		}
 	}
 
-	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = false, doc = "A list of expressions.")
+	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", aliasname="kvExpressions", isList = true, optional = false, doc = "A list of expressions.")
 	public void setExpressions(List<NamedExpression> namedExpressions) {
 		this.namedExpressions = namedExpressions;
 		expressions = new ArrayList<>();

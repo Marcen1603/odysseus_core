@@ -28,7 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
- * This is an abstract parameter. In this abstract base class all attributes are defined, that a common for all parameters
+ * This is an abstract parameter. In this abstract base class all attributes are
+ * defined, that a common for all parameters
  *
  * @author Jonas Jacobi, Marco Grawunder
  */
@@ -38,6 +39,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	private static final long serialVersionUID = -5259685918656067407L;
 	private String name;
+	private String aliasName;
 	private String doc;
 	private REQUIREMENT requirement = REQUIREMENT.OPTIONAL;
 	private USAGE usage = USAGE.RECENT;
@@ -53,7 +55,6 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	private String possibleValueMethod = "";
 	private boolean possibleValuesAreDynamic = false;
-
 
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage) {
 		this(name, requirement, usage, null);
@@ -84,6 +85,15 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public void setName(String name) {
 		this.name = name.toUpperCase();
+	}
+
+	public void setAliasName(String aliasName) {
+		this.aliasName = aliasName.toUpperCase();
+	}
+
+	@Override
+	public String getAliasName() {
+		return aliasName;
 	}
 
 	@Override
@@ -145,11 +155,11 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.errors.clear();
 		this.warnings.clear();
 		if (this.requirement == REQUIREMENT.MANDATORY && inputValue == null) {
-			this.errors.add("Required Parameter "+this.getName()+" is missing");
+			this.errors.add("Required Parameter " + this.getName() + " is missing");
 			return false;
 		}
 		if (isDeprecated()) {
-			this.warnings.add(this.getName()+" is deprecated!");
+			this.warnings.add(this.getName() + " is deprecated!");
 		}
 		try {
 			if (inputValue != null) {
@@ -159,16 +169,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 					return false;
 				}
 			}
-		}catch (ValidationException e){
+		} catch (ValidationException e) {
 			this.errors.add("Validation error for parameter " + getName());
 			this.errors.add(e.getMessage());
 			return false;
-		}catch(SDFExpressionParseException e){
+		} catch (SDFExpressionParseException e) {
 			this.errors.add("Could not parse parameter value " + getName());
 			this.errors.add(e.getMessage());
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return false;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			this.errors.add("illegal value for parameter " + getName());
 			this.errors.add(e.getMessage());
 			return false;
@@ -185,19 +195,20 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public final T getValue() {
 		if (!validate()) {
-			throw new RuntimeException("Parameter could not be validated due to following errors:\n" + toErrorString(getErrors()));
+			throw new RuntimeException(
+					"Parameter could not be validated due to following errors:\n" + toErrorString(getErrors()));
 		}
 		return value;
 	}
 
 	private static String toErrorString(List<String> errors) {
-		if( errors == null || errors.isEmpty() ) {
+		if (errors == null || errors.isEmpty()) {
 			return "[No error message available]";
 		}
 
 		StringBuilder sb = new StringBuilder();
 
-		for( String error : errors) {
+		for (String error : errors) {
 			sb.append("\t").append(error).append("\n");
 		}
 
@@ -319,8 +330,8 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	@Override
-	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic){
-		this.possibleValuesAreDynamic =possibleValuesAreDynamic;
+	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic) {
+		this.possibleValuesAreDynamic = possibleValuesAreDynamic;
 	}
 
 	@Override
