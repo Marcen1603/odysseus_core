@@ -152,14 +152,6 @@ public class BaDaStRecoveryTransferHandler<StreamObject extends IStreamObject<IM
 		} else {
 			// Transfer from BaDaSt until we can go live again!
 
-			// Set meta data
-			try {
-				object.setMetadata(getMetadataInstance());
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-			updateMetadata(object);
-
 			if (this.firstElementFromSourceAfterRestart == null
 					&& this.recoveryPO.getFirstElementAfterRestart().isPresent()) {
 				this.firstElementFromSourceAfterRestart = this.recoveryPO.getFirstElementAfterRestart().get();
