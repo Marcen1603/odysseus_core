@@ -58,7 +58,7 @@ public class ProjectAO extends UnaryLogicalOp {
 	}
 
 	// Must be another name than setOutputSchema, else this method is not found!
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = false, isList = true, doc ="A list of attributes that should be used.")
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", aliasname="PATHS", optional = false, isList = true, doc ="A list of attributes that should be used.")
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
 		attributes = outputSchema;
 	}
