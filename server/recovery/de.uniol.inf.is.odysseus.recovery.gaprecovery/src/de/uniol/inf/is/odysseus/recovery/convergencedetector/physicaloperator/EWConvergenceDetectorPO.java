@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.recovery.convergencedetector.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
-import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -15,17 +15,17 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * <br />
  * In a logical plan, a {@link EWConvergenceDetectorPO} should be placed
  * directly after {@link ElementWindowAO}s
- * 
+ *
  * @author Michael Brand
  *
  */
-public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends ITimeIntervalTrust>>
+public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
 	 * Creates a new {@link EWConvergenceDetectorPO} as a copy of an existing
 	 * one.
-	 * 
+	 *
 	 * @param other
 	 *            The {@link EWConvergenceDetectorPO} to copy.
 	 */
@@ -35,7 +35,7 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 
 	/**
 	 * Creates a new {@link EWConvergenceDetectorPO}.
-	 * 
+	 *
 	 * @param width
 	 *            The width of the window (elements).
 	 * @param advance
@@ -52,7 +52,7 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 		 * gap. At this juncture, there is no possibility in Odysseus to
 		 * determine Repeatable operators.
 		 */
-		object.getMetadata().setTrust(0.5);
+		((Trust) object.getMetadata()).setTrust(0.5);
 		transfer(object);
 
 	}

@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.recovery.convergencedetector.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
-import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -15,11 +16,11 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * <br />
  * In a logical plan, a {@link TWConvergenceDetectorAO} should be placed
  * directly after {@link TimeWindowAO}s.
- * 
+ *
  * @author Michael Brand
  *
  */
-public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends ITimeIntervalTrust>>
+public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
@@ -36,7 +37,7 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 	/**
 	 * Creates a new {@link TWConvergenceDetectorPO} as a copy of an existing
 	 * one.
-	 * 
+	 *
 	 * @param other
 	 *            The {@link TWConvergenceDetectorPO} to copy.
 	 */
@@ -48,7 +49,7 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 
 	/**
 	 * Creates a new {@link TWConvergenceDetectorPO}.
-	 * 
+	 *
 	 * @param width
 	 *            The width of the window (time instants).
 	 * @param advance
@@ -74,13 +75,13 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 		 * get merged! It won't work for aggregations over groups!
 		 */
 
-		final PointInTime currentTS = object.getMetadata().getStart();
+		final PointInTime currentTS = ((ITimeInterval) object.getMetadata()).getStart();
 		if (convEnd == null) {
 			convEnd = currentTS.plus(wndWidth);
 		}
 
 		if (currentTS.beforeOrEquals(convEnd)) {
-			object.getMetadata().setTrust(0);
+			((Trust) object.getMetadata()).setTrust(0);
 		} else {
 			this.convEndReached = true;
 		}
