@@ -185,17 +185,19 @@ public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute
 	 */
 	protected boolean precheck(IStreamable object, int port) {
 		final PointInTime ts = getTS(object, true);
-
 		synchronized (this.dummyForYTSSync) {
-			if (this.youngestTS != null && ts.before(this.youngestTS))
-				return false;
-			else if (this.youngestTS == null || ts.after(this.youngestTS)) {
+			return youngestTS == null || ts.afterOrEquals(youngestTS);
+		}
+	}
+
+	private void updateYoungestTS(IStreamable object) {
+		final PointInTime ts = getTS(object, true);
+		synchronized (this.dummyForYTSSync) {
+			if (this.youngestTS == null || ts.after(this.youngestTS)) {
 				this.youngestTS = ts;
 				logger.debug("Set youngest timestamp to {}.", this.youngestTS);
 			}
 		}
-		return true;
-
 	}
 
 	/**
@@ -315,6 +317,8 @@ public class ReplicationMergePO<T extends IStreamObject<? extends IMetaAttribute
 			this.mergeElement(object, port);
 			this.inputQueue.add(new Pair<IStreamable, Integer>((IStreamable) object.clone(), port));
 		}
+
+		updateYoungestTS(object);
 	}
 
 	@Override
