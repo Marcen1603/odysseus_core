@@ -75,17 +75,19 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 		 * get merged! It won't work for aggregations over groups!
 		 */
 
-		final PointInTime currentTS = ((ITimeInterval) object.getMetadata()).getStart();
+		@SuppressWarnings("unchecked")
+		final StreamObject clone = (StreamObject) object.clone();
+		final PointInTime currentTS = ((ITimeInterval) clone.getMetadata()).getStart();
 		if (convEnd == null) {
 			convEnd = currentTS.plus(wndWidth);
 		}
 
 		if (currentTS.beforeOrEquals(convEnd)) {
-			((Trust) object.getMetadata()).setTrust(0);
+			((Trust) clone.getMetadata()).setTrust(0);
 		} else {
 			this.convEndReached = true;
 		}
-		transfer(object);
+		transfer(clone);
 	}
 
 }

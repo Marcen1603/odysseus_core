@@ -52,8 +52,10 @@ public class EWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 		 * gap. At this juncture, there is no possibility in Odysseus to
 		 * determine Repeatable operators.
 		 */
-		((Trust) object.getMetadata()).setTrust(0.5);
-		transfer(object);
+		@SuppressWarnings("unchecked")
+		final StreamObject clone = (StreamObject) object.clone();
+		((Trust) clone.getMetadata()).setTrust(0.5);
+		transfer(clone);
 
 	}
 
