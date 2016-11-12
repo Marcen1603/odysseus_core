@@ -53,6 +53,9 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	public void setupTest(T context) {
 		executor = ExecutorProvider.getExeuctor();
 		session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
+		if (context.getDataRootPath() == null){
+			LOG.error("Error in context "+context);
+		}
 		testsets = createTestSets(context);
 	}
 
