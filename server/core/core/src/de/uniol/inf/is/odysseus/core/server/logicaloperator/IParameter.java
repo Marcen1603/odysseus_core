@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -42,6 +42,10 @@ public interface IParameter<T> extends Serializable {
 	void setName(String name);
 
 	String getName();
+
+	void setAliasName(String aliasname);
+
+	String getAliasName();
 
 	void setDoc(String doc);
 
@@ -67,14 +71,14 @@ public interface IParameter<T> extends Serializable {
 
 	boolean isMandatory();
 
-	void setAttributeResolver(IAttributeResolver resolver);
+	void setAttributeResolver(DirectAttributeResolver resolver);
 
-	IAttributeResolver getAttributeResolver();
+	DirectAttributeResolver getAttributeResolver();
 
 	void setDataDictionary(IDataDictionary dd);
 
 	IDataDictionary getDataDictionary();
-	
+
 	void setServerExecutor(IServerExecutor serverExecutor);
 
 	IServerExecutor getServerExecutor();
@@ -98,5 +102,6 @@ public interface IParameter<T> extends Serializable {
 	boolean arePossibleValuesDynamic();
 
 	void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic);
+
 
 }

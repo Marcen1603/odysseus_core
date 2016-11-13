@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -88,7 +88,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 	public void write(T kvObject) throws IOException {
 		StringBuilder string = new StringBuilder();
 		if (startTimestampKey != null) {
-			if (!kvObject.getAttributes().containsKey(startTimestampKey)) {
+			if (!kvObject.containsKey(startTimestampKey)) {
 				kvObject.setAttribute(startTimestampKey,
 						((ITimeInterval) kvObject.getMetadata()).getStart()
 								.getMainPoint());
@@ -99,7 +99,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 			}
 		}
 		if (endTimestampKey != null) {
-			if (!kvObject.getAttributes().containsKey(endTimestampKey)) {
+			if (!kvObject.containsKey(endTimestampKey)) {
 				kvObject.setAttribute(endTimestampKey,
 						((ITimeInterval) kvObject.getMetadata()).getEnd()
 								.getMainPoint());

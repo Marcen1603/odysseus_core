@@ -28,7 +28,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -181,8 +181,7 @@ public class NMEAProtocolHandler extends
 			this.aishandler.handleAISSentence(aissentence);
 			if (this.aishandler.getDecodedAISMessage() != null) {
 				aissentence.toDecodedPayloadMap(event);
-				KeyValueObject<IMetaAttribute> decodedAIS = new KeyValueObject<>(
-						event);
+				KeyValueObject<IMetaAttribute> decodedAIS = KeyValueObject.createInstance(event);
 				// Important to parse the decodedAIS as a sentence in order to
 				// prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
@@ -194,7 +193,7 @@ public class NMEAProtocolHandler extends
 			}
 			// The Original message:
 			Map<String, Object> originalEvent = sentence.toMap();
-			KeyValueObject<IMetaAttribute> originalAIS = new KeyValueObject<>(
+			KeyValueObject<IMetaAttribute> originalAIS = KeyValueObject.createInstance(
 					originalEvent);
 			originalAIS.setKeyValue("originalNMEA", sentence);
 			// ensure the order, original fragment (if it's the second fragment,
@@ -208,7 +207,7 @@ public class NMEAProtocolHandler extends
 		// Handling other NMEA Sentences
 		else {
 			event = sentence.toMap();
-			KeyValueObject<IMetaAttribute> undecodedNMEA = new KeyValueObject<>(
+			KeyValueObject<IMetaAttribute> undecodedNMEA = KeyValueObject.createInstance(
 					event);
 			undecodedNMEA.setKeyValue("originalNMEA", sentence);
 			res.add(undecodedNMEA);
@@ -234,7 +233,7 @@ public class NMEAProtocolHandler extends
 			//Case3: create the sentence out from the key-value attributes
 			else
 			{
-				Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAttributes());
+				Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAsKeyValueMap());
 				getTransportHandler().send(sentence.toNMEA().getBytes());
 			}
 		} catch (Exception e) {

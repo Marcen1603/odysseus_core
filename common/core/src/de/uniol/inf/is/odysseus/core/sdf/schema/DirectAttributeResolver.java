@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +50,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		this.schemas.addAll(schemaList2);
 	}
 
-	
+
 	public DirectAttributeResolver(Set<IVariable> vars) {
 		List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
 		for (IVariable var : vars) {
@@ -81,10 +82,29 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 						schemas.get(0));
 				return new SDFAttribute(schemas.get(0).getURIWithoutQualName(), SDFAttribute.THIS, dt);
 			}
-			
+
 			return new SDFAttribute(schemas.get(0).getURIWithoutQualName(), SDFAttribute.THIS, SDFDatatype.OBJECT);
 		}
 		throw new NoSuchAttributeException("no such attribute: " + name);
+	}
+
+	@Override
+	public Set<SDFAttribute> getAllAttributes() {
+		Set<SDFAttribute> set = new HashSet<>();
+		for (SDFSchema schema: schemas){
+			set.addAll(schema.getAttributes());
+		}
+		return set;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (SDFSchema schema: schemas){
+			if (schema.size() != 0){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

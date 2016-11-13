@@ -26,6 +26,12 @@ public class NamedExpression implements IClone {
 		}
 	}
 
+	public NamedExpression(String newName, NamedExpression copyFrom) {
+		this.name = newName;
+		this.expression = copyFrom.expression.clone();
+		this.datatype = copyFrom.datatype;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder("['");

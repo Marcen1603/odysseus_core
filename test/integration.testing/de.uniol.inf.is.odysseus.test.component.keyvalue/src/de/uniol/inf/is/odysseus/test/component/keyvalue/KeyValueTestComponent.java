@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.test.set.ExpectedOutputTestSet;
 import de.uniol.inf.is.odysseus.test.set.TestSetFactory;
 
 /**
- * 
+ *
  * @author Jan Soeren Schwarz
  *
  */
@@ -34,29 +34,21 @@ public class KeyValueTestComponent extends AbstractQueryExpectedOutputTestCompon
 	public KeyValueTestComponent() {
 		super();
 	}
-	
+
 	@Override
 	public List<ExpectedOutputTestSet> createTestSets(BasicTestContext context) {
-//		try {
-//			URL kvURL = new URL(context.getDataRootPath() + "kv/");
-//			List<ExpectedOutputTestSet> testSets = TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(new URL(context.getDataRootPath() + "kv/"), "KEYVALUEOBJECT");	
-//			URL nestedKVURL = new URL(context.getDataRootPath() + "nestedkv/");
-//			testSets.addAll(TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(nestedKVURL, "NESTEDKEYVALUEOBJECT"));
-//			return testSets;
-//		} catch (MalformedURLException e) {
-//		}
 		try {
 			return TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(new URL(context.getDataRootPath() + "kv/"), "KEYVALUEOBJECT");
 		} catch (MalformedURLException e) {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "KeyValue Test Component";
 	}
-	
+
 	@Override
 	public boolean isActivated() {
 		return true;
