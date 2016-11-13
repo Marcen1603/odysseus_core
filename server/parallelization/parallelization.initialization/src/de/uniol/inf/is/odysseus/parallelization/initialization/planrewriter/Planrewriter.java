@@ -46,10 +46,10 @@ public class Planrewriter {
 		List<IParallelizationIndividualConfiguration> possibleParallelizations = planAnalyzer
 				.getParalisableOperators(query);
 		LOG.debug("Parallizable operators / regions: " + possibleParallelizations.size());
-		chooseParallelizationIntra(possibleParallelizations, config.values());
+		chooseParallelizationRandom(possibleParallelizations, config.values());
 	}
 
-	private void chooseParallelizationRandom(List<IParallelizationIndividualConfiguration> possibleParallelizations) {
+	private void chooseParallelizationRandom(List<IParallelizationIndividualConfiguration> possibleParallelizations, Collection<IQueryBuildSetting<?>> settings) {
 		int random = (int) (Math.random() * possibleParallelizations.size());
 		LOG.debug(String.valueOf(random));
 		IParallelizationIndividualConfiguration config = possibleParallelizations.get(random);
@@ -58,6 +58,7 @@ public class Planrewriter {
 		LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier() + " to "
 				+ PerformanceDetectionHelper.getNumberOfCores() + ".");
 		LOG.debug("Partitioning strategy: " + config.getClass());
+		config.execute(settings);
 	}
 
 	private void chooseParallelizationIntra(List<IParallelizationIndividualConfiguration> possibleParallelizations, Collection<IQueryBuildSetting<?>> settings) {
@@ -70,6 +71,17 @@ public class Planrewriter {
 				LOG.debug("Partitioning strategy: " + config.getClass());
 				config.execute(settings);
 			}
+		}
+	}
+	
+	private void chooseParallelizationAllTwice(List<IParallelizationIndividualConfiguration> possibleParallelizations, Collection<IQueryBuildSetting<?>> settings) {
+		for(IParallelizationIndividualConfiguration config: possibleParallelizations){
+			config.setParallelizationDegree(2);
+			config.setBufferSize(10000);
+			LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier()
+					+ " to " + PerformanceDetectionHelper.getNumberOfCores() + ".");
+			LOG.debug("Partitioning strategy: " + config.getClass());
+			config.execute(settings);
 		}
 	}
 

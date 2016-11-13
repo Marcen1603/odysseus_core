@@ -36,7 +36,6 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState.OperatorStateType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializeProperty;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;

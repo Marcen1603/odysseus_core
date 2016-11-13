@@ -236,7 +236,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 
 		Class<? extends ILogicalOperator> operatorClass = selectedStrategy
 				.getOperatorType();
-		if (operatorClass == operatorForTransformation.getClass()) {
+		if (operatorClass.isAssignableFrom(operatorForTransformation.getClass())) {
 			// evaluate compatibility of strategy and operator
 			int compatibility = selectedStrategy
 					.evaluateCompatibility(operatorForTransformation);

@@ -18,5 +18,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.ruleengine
 Service-Component: OSGI-INF/AutomaticParallelizationPreParserKeywordProvider.xml,
  OSGI-INF/AutomaticPreExecutionHandler.xml,
- OSGI-INF/AutomaticParallelizationPreTransformationHandler.xml
+ OSGI-INF/AutomaticParallelizationPreTransformationHandler.xml,
+ OSGI-INF/GenericGroupedTransformationStrategy.xml,
+ OSGI-INF/GenericStatelessTransformationStrategy.xml
 Bundle-ActivationPolicy: lazy

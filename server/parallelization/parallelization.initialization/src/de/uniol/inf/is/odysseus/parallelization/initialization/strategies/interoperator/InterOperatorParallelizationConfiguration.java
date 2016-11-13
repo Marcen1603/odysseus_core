@@ -25,7 +25,8 @@ public class InterOperatorParallelizationConfiguration extends AbstractParalleli
 
 	public InterOperatorParallelizationConfiguration(ILogicalOperator operator, String parallelizationStrategy, String fragmentationStrategy) {
 		super(operator);
-		// TODO Auto-generated constructor stub
+		this.parallelizationStrategy = parallelizationStrategy;
+		this.fragmentationStrategy = fragmentationStrategy;
 	}
 
 

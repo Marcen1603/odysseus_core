@@ -27,6 +27,7 @@ Service-Component: OSGI-INF/InterOperatorParallelizationPreTransformationHandler
  OSGI-INF/FastMedianTransformationStrategy.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.interoperator.configuration,
  de.uniol.inf.is.odysseus.parallelization.interoperator.constants,
+ de.uniol.inf.is.odysseus.parallelization.interoperator.exception,
  de.uniol.inf.is.odysseus.parallelization.interoperator.helper,
  de.uniol.inf.is.odysseus.parallelization.interoperator.keyword,
  de.uniol.inf.is.odysseus.parallelization.interoperator.parameter,
