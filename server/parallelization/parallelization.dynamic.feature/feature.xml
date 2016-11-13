@@ -24,6 +24,10 @@
          id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.planmigration.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.parallelization.optimization"
          download-size="0"
@@ -33,13 +37,6 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.parallelization.initialization"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration"
          download-size="0"
          install-size="0"
          version="0.0.0"

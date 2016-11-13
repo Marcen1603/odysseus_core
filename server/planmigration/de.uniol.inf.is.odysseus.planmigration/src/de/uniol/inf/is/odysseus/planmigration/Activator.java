@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.server.planmanagement.optimization.planmigration;
+package de.uniol.inf.is.odysseus.planmigration;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
