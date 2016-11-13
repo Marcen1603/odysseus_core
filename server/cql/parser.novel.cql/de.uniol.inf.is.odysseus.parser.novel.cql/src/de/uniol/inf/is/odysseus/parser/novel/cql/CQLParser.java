@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
@@ -78,25 +79,29 @@ public class CQLParser implements IQueryParser
 //		}
 
 		// Get all sources from from PQL query
-		System.out.println("CQL DICTIONARY#####"+dd.hashCode());
-		System.out.println("CONTAINED VIEWS##"+dd.getViews(user).size());
-		System.out.println("CONTAINED STREAMS##"+dd.getStreams(user).size());
-		System.out.println("CONTAINED SOURCES##"+dd.getSources().size());
-		System.out.println("CONTAINED SINKS##"+dd.getSinks(user).size());
-		System.out.println("CONTAINED PROCEDURES##"+dd.getStoredProcedures(user).size());
-//		System.out.println("CONTAINED PROCEDURES##"+dd.get.size());
-		System.out.println("CONTAINED QUERIES##"+dd.getQueries(user.getUser(), user).size());
-		Set<ILogicalOperator> sources = dd.getSources().values()
-													    .stream()
-													    .map(e -> e.getLogicalOperator())
-													    .collect(Collectors.toSet());
+//		System.out.println("CQL DICTIONARY#####"+dd.hashCode());
+//		System.out.println("CONTAINED VIEWS##"+dd.getViews(user).size());
+//		System.out.println("CONTAINED STREAMS##"+dd.getStreams(user).size());
+//		System.out.println("CONTAINED SOURCES##"+dd.getSources().size());
+//		System.out.println("CONTAINED SINKS##"+dd.getSinks(user).size());
+//		System.out.println("CONTAINED PROCEDURES##"+dd.getStoredProcedures(user).size());
+//		System.out.println("CONTAINED QUERIES##"+dd.getQueries(user.getUser(), user).size());
+		
+//		Set<ILogicalOperator> sources = dd.getSources().values()
+//													    .stream()
+//													    .map(e -> e.getLogicalOperator())
+//													    .collect(Collectors.toSet());
+		Set<ILogicalOperator> sources2 = executor.getExecutionPlan().getQueries()
+																    .stream()
+																    .map(e -> e.getLogicalQuery().getLogicalPlan())
+																    .collect(Collectors.toSet());
 		// Get all streams from CQL query//TODO Remove this after debugging
-		Set<ILogicalOperator> streams = dd.getStreams(user)
+		Set<ILogicalOperator> streams = dd.getStreamsAndViews(user)
 														.stream()
 														.map(e -> e.getValue())
 														.collect(Collectors.toSet());
-		sources.addAll(streams);
-		getSchema(sources);
+		sources2.addAll(streams);
+		getSchema(sources2);
 		///
 		
 		try(InputStream in = new ByteArrayInputStream(query.getBytes())) 
@@ -117,12 +122,12 @@ public class CQLParser implements IQueryParser
 	{
 
 //		set.stream().forEach(e -> System.out.println("HERE"+e.getOutputSchema()));
-		System.out.println("SCHEMA##");
+		System.out.println("SCHEMA BEGIN##");
 //		set.stream().forEach(e -> System.out.println(e.getOutputSchema().getAttributes().toString()));
 		Iterator<ILogicalOperator> it = set.iterator();
 		while(it.hasNext())
 			System.out.println(((ILogicalOperator) it.next()).getOutputSchema().toString());
-		
+		System.out.println("SCHEMA END##");
 //		set.stream()
 //		   .map(e -> e.getOutputSchema())
 //		   .map(e -> e.getAttributes().stream()
