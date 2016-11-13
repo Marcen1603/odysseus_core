@@ -1,24 +1,25 @@
 package de.uniol.inf.is.odysseus.incubation.graph.transform;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
-import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.incubation.graph.functions.ScoreUpdater;
 import de.uniol.inf.is.odysseus.incubation.graph.logicaloperator.ScoreUpdaterAO;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * ScoreUpdater transformation rules.
+ * 
+ * @author Kristian Bruns
+ */
 public class TScoreUpdaterAORule extends AbstractTransformationRule<ScoreUpdaterAO> {
 
 	public int getPriority() {
@@ -26,22 +27,18 @@ public class TScoreUpdaterAORule extends AbstractTransformationRule<ScoreUpdater
 	}
 	
 	@Override
-	public void execute(ScoreUpdaterAO ao, TransformationConfiguration config) throws RuleException {				
-		final AggregationAO aggregationAo = new AggregationAO();
+	public void execute(ScoreUpdaterAO ao, TransformationConfiguration config) throws RuleException {
+		ao.setOutputSchema(ao.getInputSchema());
 		
-		ScoreUpdater<ITimeInterval, Tuple<ITimeInterval>> function = new ScoreUpdater<ITimeInterval, Tuple<ITimeInterval>>();
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("FUNCTION", "ScoreUpdater");
-		DirectAttributeResolver attributeResolver = new DirectAttributeResolver(ao.getInputSchema());
-		
-		function.createInstance(params, attributeResolver);
-		
-		List<IAggregationFunction> aggregations = new ArrayList<IAggregationFunction>();
-		aggregations.add(function);
-		aggregationAo.setAggregations(aggregations);
-		
-		RestructHelper.insertOperatorBefore(aggregationAo, ao);
-		insert(aggregationAo);
+		final MapAO mapAo = new MapAO();
+		String function = "scoreUpdater(" + ao.getGraphAttribute() + ", " + ao.getTimeIntervalMillis() + ")";
+		SDFExpression expression = new SDFExpression(function, null, MEP.getInstance());
+		NamedExpression namedExpression = new NamedExpression("graph", expression, null);
+		List<NamedExpression> expressions = new ArrayList<NamedExpression>();
+		expressions.add(namedExpression);
+		mapAo.setExpressions(expressions);
+		RestructHelper.insertOperatorBefore(mapAo, ao);
+		insert(mapAo);
 		RestructHelper.removeOperator(ao, false);
 		retract(ao);
 	}
@@ -58,6 +55,11 @@ public class TScoreUpdaterAORule extends AbstractTransformationRule<ScoreUpdater
 	@Override
 	public boolean isExecutable(ScoreUpdaterAO operator, TransformationConfiguration config) {
 		return true;
+	}
+	
+	@Override
+	public String getName() {
+		return "ScoreUpdaterAO -> MapAO";
 	}
 
 }

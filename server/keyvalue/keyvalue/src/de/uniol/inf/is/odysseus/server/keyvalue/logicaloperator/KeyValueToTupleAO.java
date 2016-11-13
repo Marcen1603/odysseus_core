@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	private static final long serialVersionUID = 4804826171047928513L;
-	
+
 	private boolean keepInputObject = false;
 	private String type = "";
 	private List<RenameAttribute> attributes;
@@ -33,7 +33,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	public KeyValueToTupleAO() {
 	}
-	
+
 	public KeyValueToTupleAO(KeyValueToTupleAO keyValueToTuple) {
 		super(keyValueToTuple);
 		this.keepInputObject = keyValueToTuple.keepInputObject;
@@ -44,25 +44,25 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	public void setAttributes(List<RenameAttribute> attributes){
 		this.attributes = attributes;
 	}
-	
+
 	public List<RenameAttribute> getAttributes() {
 		return this.attributes;
 	}
-	
-	@Parameter(name = "type", type=StringParameter.class, optional= false )
+
+	@Parameter(name = "type", type=StringParameter.class, optional= true, deprecated = true )
 	public void setType(String type){
 		this.type = type;
 	}
-	
+
 	public String getType() {
 		return this.type;
 	}
-	
-	@Parameter(name = "keepInput", type=BooleanParameter.class )
+
+	@Parameter(name = "keepInput", type=BooleanParameter.class, optional = true, deprecated = true )
 	public void setKeepInputObject(boolean keepInputObject) {
 		this.keepInputObject = keepInputObject;
 	}
-	
+
 	public boolean isKeepInputObject() {
 		return keepInputObject;
 	}
@@ -74,7 +74,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 		} else {
 			removeParameterInfo("DATEFORMAT");
 		}
-		
+
 		this.dateFormat = dateFormat;
 	}
 
@@ -97,12 +97,12 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 				name = name.substring(0, name.length()-1);
 			}
 			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(), sdfAtt.getDtConstraints()));
-		} 
+		}
 		@SuppressWarnings("unchecked")
 		SDFSchema schema = SDFSchemaFactory.createNewSchema(type, (Class<? extends IStreamObject<?>>) Tuple.class, attributeList,getInputSchema());
 		return schema;
 	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new KeyValueToTupleAO(this);

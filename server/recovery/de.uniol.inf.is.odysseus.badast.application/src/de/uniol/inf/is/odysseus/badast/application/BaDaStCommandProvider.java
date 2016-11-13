@@ -38,7 +38,7 @@ import kafka.message.MessageAndOffset;
  * - closeRecorder <br />
  * - startBaDaSt <br />
  * - stopBaDaSt <br />
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -153,7 +153,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Parses arguments.
-	 * 
+	 *
 	 * @param ci
 	 *            All arguments should be key value pairs (key=value).
 	 */
@@ -170,7 +170,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Parses arguments.
-	 * 
+	 *
 	 * @param line
 	 *            All arguments should be key value pairs (key=value), each
 	 *            separated by a blank.
@@ -182,7 +182,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Parses arguments.
-	 * 
+	 *
 	 * @param line
 	 *            All arguments should be key value pairs (key=value).
 	 */
@@ -200,7 +200,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Creates and initializes a new recorder.
-	 * 
+	 *
 	 * @param cfg
 	 *            Any key should be {@link #TYPE_CONFIG} and all other needed
 	 *            keys depend on the recorder type.
@@ -229,7 +229,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Creates and initializes a new recorder.
-	 * 
+	 *
 	 * @param ci
 	 *            All arguments should be key value pairs (key=value). Any key
 	 *            should be {@link #TYPE_CONFIG} and all other needed keys
@@ -246,7 +246,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Checks, if a given recorder type is known.
-	 * 
+	 *
 	 * @param type
 	 *            The type to check.
 	 * @throws BaDaStException
@@ -263,7 +263,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Checks, if a given recorder name is known.
-	 * 
+	 *
 	 * @param name
 	 *            The name to check.
 	 * @throws BaDaStException
@@ -277,7 +277,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Checks, if a given recorder type is still free to use.
-	 * 
+	 *
 	 * @param name
 	 *            The name to check.
 	 * @throws BaDaStException
@@ -291,7 +291,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Starts an existing recorder.
-	 * 
+	 *
 	 * @param ci
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
@@ -323,7 +323,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Starts an existing recorder.
-	 * 
+	 *
 	 * @param ci
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
@@ -339,7 +339,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Closes and removes an existing recorder.
-	 * 
+	 *
 	 * @param cfg
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
@@ -368,7 +368,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Closes and removes an existing recorder.
-	 * 
+	 *
 	 * @param ci
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
@@ -380,6 +380,24 @@ public class BaDaStCommandProvider implements CommandProvider {
 		} catch (BaDaStException e) {
 			ci.println(e.getMessage());
 		}
+	}
+
+	/**
+	 * Closes and removes all existing recorders.
+	 *
+	 * @param ci
+	 *            Should contain no argument.
+	 */
+	@Help(description = "Closes and removes all existing BaDaSt recorders.", parameter = "none")
+	public void _closeAllRecorders(CommandInterpreter ci) {
+		recorders.values().stream().forEach(recorder -> {
+			try {
+				recorder.close();
+			} catch (Exception e) {
+				ci.println(e.getMessage());
+			}
+		});
+		recorders.clear();
 	}
 
 	@Help(description = "Starts the BaDaSt application.")
@@ -434,7 +452,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
 	 * Executes a given BaDaSt command
-	 * 
+	 *
 	 * @param command
 	 *            The command: either lsRecorderTypes, lsRecorders,
 	 *            createRecorder, startRecorder or closeRecorder.
@@ -460,10 +478,10 @@ public class BaDaStCommandProvider implements CommandProvider {
 			throw new BaDaStException(command + " is an unknown BaDaSt command!");
 		}
 	}
-	
+
 	/**
 	 * Consumes a given topic from the Kafka server.
-	 * 
+	 *
 	 * @param ci
 	 *            Should contain two arguments "key=value", where key 1 is
 	 *            {@link #SOURCENAME_CONFIG} and key 2 is {@code offset}.

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute> {
@@ -49,7 +50,6 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 		this(name, requirement, USAGE.RECENT);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalAssignment() {
 		if (inputValue instanceof SDFAttribute) {
@@ -57,23 +57,9 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 			return;
 		}
 
-		List<?> l1 = (List<?>) inputValue;
-		List<List<String>> constraintList = null;
-		
-		if (l1.get(l1.size() - 1) instanceof List) {
-			constraintList = (List<List<String>>) l1.get(l1.size() - 1);
-			l1.remove(l1.size() - 1);
-		}
+		SDFAttribute value = determineAttribute((List<?>) inputValue,getDataDictionary());
 
-		List<String> list = (List<String>) l1;
-
-		if (list.size() == 3) {
-			setValue(determineAttribute(list.get(0), list.get(1), list.get(2), constraintList));
-		} else if (list.size() == 2) {
-			setValue(determineAttribute(null, list.get(0), list.get(1), constraintList));
-		} else {
-			throw new IllegalArgumentException("Wrong number of inputs for SDFAttribute. Expecting [sourcename] attributename and datatype [constraintlist].");
-		}
+		setValue(value);
 	}
 
 	@Override
@@ -110,7 +96,29 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 		return sb.toString();
 	}
 
-	private SDFAttribute determineAttribute(String sourcename, String attributeName, String dataTypeName, List<List<String>> constraintList) {
+	@SuppressWarnings("unchecked")
+	public static SDFAttribute determineAttribute(List<?> l1, IDataDictionary dd){
+
+		List<List<String>> constraintList = null;
+
+		if (l1.get(l1.size() - 1) instanceof List) {
+			constraintList = (List<List<String>>) l1.get(l1.size() - 1);
+			l1.remove(l1.size() - 1);
+		}
+
+		List<String> list = (List<String>) l1;
+
+		if (list.size() == 3) {
+			return determineAttribute(list.get(0), list.get(1), list.get(2), constraintList, dd);
+		} else if (list.size() == 2) {
+			return determineAttribute(null, list.get(0), list.get(1), constraintList, dd);
+		} else {
+			throw new IllegalArgumentException("Wrong number of inputs for SDFAttribute. Expecting [sourcename] attributename and datatype [constraintlist].");
+		}
+
+	}
+
+	public static SDFAttribute determineAttribute(String sourcename, String attributeName, String dataTypeName, List<List<String>> constraintList, IDataDictionary dd) {
 		try {
 			SDFUnit unit = null;
 			List<SDFConstraint> dtList = new LinkedList<>();
@@ -135,22 +143,22 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 			// what about List<List<Integer>> ??
 			if (pos > 0) {
 				String upperTypeStr = dataTypeName.substring(0, pos);
-				SDFDatatype upperType = getDataDictionary().getDatatype(upperTypeStr);
+				SDFDatatype upperType = dd.getDatatype(upperTypeStr);
 				String subTypeListStr = dataTypeName.substring(pos + 1, dataTypeName.length() - 1);
 				final SDFDatatype dataType;
 				List<SDFDatatype> subTypeList = new LinkedList<SDFDatatype>();
 				String[] subtypes = subTypeListStr.split(",");
 				if (subtypes.length > 0) {
 					for (String t : subtypes) {
-						subTypeList.add(getDataDictionary().getDatatype(t.trim()));
+						subTypeList.add(dd.getDatatype(t.trim()));
 					}
 				} else {
-					subTypeList.add(getDataDictionary().getDatatype(subTypeListStr));
+					subTypeList.add(dd.getDatatype(subTypeListStr));
 				}
-				dataType = getDataDictionary().getDatatype(upperType, subTypeList);
+				dataType = dd.getDatatype(upperType, subTypeList);
 				return new SDFAttribute(sourcename, attributeName, dataType, unit, dtList);
 			}
-			return new SDFAttribute(sourcename, attributeName, getDataDictionary().getDatatype(dataTypeName), unit, dtList);
+			return new SDFAttribute(sourcename, attributeName, dd.getDatatype(dataTypeName), unit, dtList);
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e);
 		}

@@ -12,7 +12,7 @@ percentage = ACCESS({
 	options=[['filename', '${BUNDLE-ROOT}\testdata\project\input0.json']],
 	schema=[['id','STARTTIMESTAMP']]
 	})
-project0 = project({paths = [['percentage', 'Integer']]}, percentage)
+project0 = project({attributes = [['percentage', 'Integer']]}, percentage)
 
 ///SENDERjson = SENDER({
 ///	transport='File',

@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.recovery.installedqueries;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractCreateStreamOrViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractDropStreamOrViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.PartialQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.RemoveQueryCommand;
@@ -25,21 +23,11 @@ import de.uniol.inf.is.odysseus.systemlog.ISystemLog;
  * restored. This is because in some cases, recovery strategies do some
  * processing between reinstallation and restarting a query. To restore the
  * query states, call {@link #recoverQueryStates()}.
- * 
+ *
  * @author Michael Brand
  *
  */
 public interface IInstalledQueriesHandler {
-
-	/**
-	 * Backup of a new source.
-	 *
-	 * @param cmd
-	 *            The {@link IExecutorCommand} that created the source.
-	 * @param ts
-	 *            The time stamp for the {@link ISystemLog}.
-	 */
-	public void backup(AbstractCreateStreamOrViewCommand cmd, long ts);
 
 	/**
 	 * Backup of a source removal.
@@ -50,16 +38,6 @@ public interface IInstalledQueriesHandler {
 	 *            The time stamp for the {@link ISystemLog}.
 	 */
 	public void backup(AbstractDropStreamOrViewCommand cmd, long ts);
-
-	/**
-	 * Backup of a new sink.
-	 *
-	 * @param cmd
-	 *            The {@link IExecutorCommand} that created the sink.
-	 * @param ts
-	 *            The time stamp for the {@link ISystemLog}.
-	 */
-	public void backup(CreateSinkCommand cmd, long ts);
 
 	/**
 	 * Backup of a sink removal.
@@ -74,7 +52,7 @@ public interface IInstalledQueriesHandler {
 	/**
 	 * Backup of a new query (part 2). <br />
 	 * Works only together with {@link #backup(CreateQueryCommand, long)}.
-	 * 
+	 *
 	 * @param cmd
 	 *            The {@link IExecutorCommand} that created the source.
 	 * @param ts
@@ -84,7 +62,7 @@ public interface IInstalledQueriesHandler {
 
 	/**
 	 * Backup of a query removal.
-	 * 
+	 *
 	 * @param cmd
 	 *            The {@link IExecutorCommand} that deleted the query.
 	 * @param ts
@@ -95,7 +73,7 @@ public interface IInstalledQueriesHandler {
 	/**
 	 * Backup of a query change after that the query gets only a partial of the
 	 * incoming streams.
-	 * 
+	 *
 	 * @param cmd
 	 *            The {@link IExecutorCommand} that changed the query.
 	 * @param ts
@@ -105,7 +83,7 @@ public interface IInstalledQueriesHandler {
 
 	/**
 	 * Backup of a query change after that the query is running.
-	 * 
+	 *
 	 * @param cmd
 	 *            The {@link IExecutorCommand} that changed the query.
 	 * @param ts
@@ -115,7 +93,7 @@ public interface IInstalledQueriesHandler {
 
 	/**
 	 * Backup of a query change after that the query is inactive.
-	 * 
+	 *
 	 * @param cmd
 	 *            The {@link IExecutorCommand} that changed the query.
 	 * @param ts
@@ -125,7 +103,7 @@ public interface IInstalledQueriesHandler {
 
 	/**
 	 * Backup of a query change after that the query is suspended.
-	 * 
+	 *
 	 * @param cmd
 	 *            The {@link IExecutorCommand} that changed the query.
 	 * @param ts
@@ -136,7 +114,7 @@ public interface IInstalledQueriesHandler {
 	/**
 	 * Backup of a query change after that the query is running again (after
 	 * suspension).
-	 * 
+	 *
 	 * @param cmd
 	 *            The {@link IExecutorCommand} that changed the query.
 	 * @param ts

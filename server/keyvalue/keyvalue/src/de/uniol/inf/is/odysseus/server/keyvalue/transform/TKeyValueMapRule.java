@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -41,8 +40,7 @@ public class TKeyValueMapRule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema(0).getType() == KeyValueObject.class || 
-				operator.getInputSchema(0).getType() == NestedKeyValueObject.class) &&
+		if ((operator.getInputSchema(0).getType() == KeyValueObject.class) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}

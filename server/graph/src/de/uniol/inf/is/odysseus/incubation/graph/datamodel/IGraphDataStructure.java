@@ -2,12 +2,17 @@ package de.uniol.inf.is.odysseus.incubation.graph.datamodel;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphEdge;
 import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
 
+/**
+ * Interface for creating a new GraphDataStructure.
+ * 
+ * @author Kristian Bruns
+ */
 public interface IGraphDataStructure<M extends IMetaAttribute> {
 	
 	public IGraphDataStructure<IMetaAttribute> newInstance(String name);
@@ -25,6 +30,8 @@ public interface IGraphDataStructure<M extends IMetaAttribute> {
 	public void addDataSet(KeyValueObject<M> object);
 	
 	public Map<String, GraphNode> getGraphNodes();
+	
+	public void addGraphNode(GraphNode node);
 	
 	public GraphNode getGraphNode(String nodeId);
 	

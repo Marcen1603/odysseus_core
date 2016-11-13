@@ -16,7 +16,7 @@ keyvaluetotuple0 = KEYVALUETOTUPLE({schema=[['id','STARTTIMESTAMP'],['percentage
 
 longToInt = MAP({EXPRESSIONS=[['toInteger(id)','id'],['percentage','percentage']]}, keyvaluetotuple0)
 
-tupletokeyvalue0 = TUPLETOKEYVALUE({type='KEYVALUEOBJECT'}, longToInt)
+tupletokeyvalue0 = TUPLETOKEYVALUE(longToInt)
 
 ///SENDERjson = SENDER({
 ///	transport='File',

@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.recovery.convergencedetector.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.recovery.convergencedetector.logicaloperator.ConvergenceDetectorAO;
-import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * <br />
  * In a logical plan, a {@link ConvergenceDetectorAO} should be placed directly
  * after window operators.
- * 
+ *
  * @author Michael Brand
  *
  */
-public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<? extends ITimeIntervalTrust>>
+public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractPipe<StreamObject, StreamObject> {
 
 	/**
@@ -36,7 +36,7 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 	/**
 	 * Creates a new {@link AbstractConvergenceDetectorPO} as a copy of an
 	 * existing one.
-	 * 
+	 *
 	 * @param other
 	 *            The {@link AbstractConvergenceDetectorPO} to copy.
 	 */
@@ -48,7 +48,7 @@ public abstract class AbstractConvergenceDetectorPO<StreamObject extends IStream
 
 	/**
 	 * Creates a new {@link AbstractConvergenceDetectorPO}.
-	 * 
+	 *
 	 * @param width
 	 *            The width of the window (time instants or elements).
 	 * @param advance

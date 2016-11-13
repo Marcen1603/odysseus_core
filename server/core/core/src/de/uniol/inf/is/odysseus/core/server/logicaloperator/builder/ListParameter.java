@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 
 public class ListParameter<T> extends AbstractParameter<List<T>> {
@@ -39,6 +39,11 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 
 	public ListParameter(IParameter<T> singleParameter) {
 		this.singleParameter = singleParameter;
+	}
+
+	@Override
+	public String getAliasName() {
+		return this.singleParameter.getAliasName();
 	}
 
 	@Override
@@ -64,14 +69,14 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 	}
 
 	@Override
-	public void setAttributeResolver(IAttributeResolver resolver) {
+	public void setAttributeResolver(DirectAttributeResolver resolver) {
 		super.setAttributeResolver(resolver);
 		singleParameter.setAttributeResolver(resolver);
 	}
 
 	public IParameter<T> getSingleParameter() {
 		return singleParameter;
-	}	
+	}
 
 	@Override
 	protected String getPQLStringInternal() {
@@ -80,7 +85,7 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 		Object[] inputList = ((List<?>)inputValue).toArray(new Object[0]);
 		for (int i = 0; i < inputList.length; i++) {
 			Object o = inputList[i];
-			
+
 			singleParameter.setInputValue(o);
 			singleParameter.setAttributeResolver(getAttributeResolver());
 			singleParameter.setDataDictionary(getDataDictionary());

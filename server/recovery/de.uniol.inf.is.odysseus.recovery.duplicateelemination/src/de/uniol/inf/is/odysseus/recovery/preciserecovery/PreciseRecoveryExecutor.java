@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.recovery.badast.BaDaStRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.checkpointing.CheckpointingRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.duplicateelemination.DuplicateEliminationRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.processingimage.ProcessingImageRecoveryComponent;
+import de.uniol.inf.is.odysseus.recovery.recoverytime.RecoveryTimeCalculatorComponent;
 
 /**
  * The precise recovery executor represents a complete non-distributed recovery
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.recovery.processingimage.ProcessingImageRecovery
  * as not processed stream elements and the states of operators and
  * subscriptions. Additionally it eliminates duplicates, so all results are the
  * same as without crash.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -50,6 +51,7 @@ public class PreciseRecoveryExecutor extends AbstractRecoveryExecutor {
 		components.add(new ProcessingImageRecoveryComponent());
 		components.add(new BaDaStRecoveryComponent());
 		components.add(new DuplicateEliminationRecoveryComponent());
+		components.add(new RecoveryTimeCalculatorComponent());
 		instance.init(config, components);
 		((CheckpointingRecoveryComponent) instance.components.get(0))
 				.addCheckpointManagerListener((ProcessingImageRecoveryComponent) instance.components.get(1));

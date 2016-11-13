@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,19 +44,25 @@ public @interface Parameter {
 	public String name() default "";
 
 	/**
+	 * To allow compatibility of older versions an alias name of the parameter can be given
+	 */
+	public String aliasname() default "";
+
+
+	/**
 	 * Defines whether a parameter is optional and not mandatory for the logical
 	 * operator. Default is false (==parameter is mandatory).
 	 */
 	public boolean optional() default false;
-	
+
 	/**
 	 * Defines whether the parameter type should be encapsulated by a ListParameter,
 	 * so the return value of the created parameter would be List<value of parameter type>.
-	 * 
-	 * if isMap is used too, isList indicates if the value of the map is a list 
+	 *
+	 * if isMap is used too, isList indicates if the value of the map is a list
 	 */
 	public boolean isList() default false;
-	
+
 	/**
 	 * Defines if the parameter is deprecated
 	 */
@@ -65,24 +71,24 @@ public @interface Parameter {
 	/**
 	 * Defines whether the parameter should be encapsulated by a MapParameter,
 	 * so the return value of the created parameter would be Map<String, value of parameter type>.
-	 * 
+	 *
 	 * set isList to true to indicate that the value of the map is a list
 	 */
 	public boolean isMap() default false;
 
 	/**
 	 * Defines the type of the key for map parameters. its similar to the type parameter.
-	 * the value part of the map is provided via the type attribute 
+	 * the value part of the map is provided via the type attribute
 	 */
 	@SuppressWarnings("rawtypes")
 	Class<? extends IParameter> keytype() default StringParameter.class;
-	
+
 	String doc() default "No description";
-	
+
 	/**
-	 * Defines the name of the getter that delivers the list of the possible value for this parameters  
+	 * Defines the name of the getter that delivers the list of the possible value for this parameters
 	 */
 	public String possibleValues() default "";
-	
+
 	public boolean possibleValuesAreDynamic() default false;
 }

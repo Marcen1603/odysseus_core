@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +28,8 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 		IClone, Serializable, IStreamable {
 	/**
 	 * Gets the default meta data used processing purposes (e.g. timestamps, priority or latency)
-	 * This meta data is assigned to each object in the meta data creation po 
-	 * 
+	 * This meta data is assigned to each object in the meta data creation po
+	 *
 	 * @return
 	 */
 	public M getMetadata();
@@ -40,43 +40,43 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 */
 	public void setMetadata(M metadata);
 
-	/** 
+	/**
 	 * Allow any object to be attached, do not use this method for
 	 * often accessed meta data, (e.g. timestamps)
-	 * 
+	 *
 	 * @param name The name (key) of the meta data, if key already exists the
 	 * content will be overwritten
 	 * @param content The content to be stored
 	 */
 	void setKeyValue(String name, Object content);
-	
+
 	/**
 	 * Retrieve attached meta data object with name
-	 * 
+	 *
 	 * @param name The name (key) of the meta data
 	 * @return the stored meta data object
 	 */
 	Object getKeyValue(String name);
-	
+
 	boolean hasKeyValue(String name);
 
 	void setKeyValueMap(Map<String, Object> metaMap);
 	Map<String, Object> getGetValueMap();
-    
+
 	boolean isTimeProgressMarker();
 	void setTimeProgressMarker(boolean timeProgressMarker);
-	
+
     /**
-     * 
+     *
      */
     IStreamObject<M> merge(IStreamObject<M> left, IStreamObject<M> right, IMetadataMergeFunction<M> metamerge, Order order);
-    
+
     @Override
     public int hashCode();
-    
+
     /**
      * Creates a new instance of the current streaming object.
-     * 
+     *
      * @return A new instance of the streaming object class.
      */
     IStreamable newInstance();
@@ -95,4 +95,5 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 
 	String toString(boolean printMetadata);
 
+	boolean isSchemaLess();
 }

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +15,18 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 
 public abstract class AbstractRelationalMergeFunction<T extends Tuple<M>, M extends IMetaAttribute> implements IDataMergeFunction<T, M> {
 
 	protected int schemaSize;
-	
+
 	protected AbstractRelationalMergeFunction(int outputSchemaSize){
 		this.schemaSize = outputSchemaSize;
 	}
-	
+
 	protected Object[] mergeAttributes(Object[] leftAttributes, Object[] rightAttributes){
 		Object[] newAttributes = new Object[this.schemaSize];
 		if (leftAttributes != null) {
@@ -39,8 +39,8 @@ public abstract class AbstractRelationalMergeFunction<T extends Tuple<M>, M exte
 		}
 		return newAttributes;
 	}
-	
-	
+
+
 	@Override
 	public abstract AbstractRelationalMergeFunction<T, M> clone();
 }

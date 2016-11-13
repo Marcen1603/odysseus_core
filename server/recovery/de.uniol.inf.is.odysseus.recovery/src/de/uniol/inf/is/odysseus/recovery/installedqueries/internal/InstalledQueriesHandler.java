@@ -18,11 +18,9 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractCreateStreamOrViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractDropStreamOrViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.AbstractQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.PartialQueryCommand;
@@ -54,7 +52,7 @@ import de.uniol.inf.is.odysseus.systemlog.ISystemLogEntry;
  * restored. This is because in some cases, recovery strategies do some
  * processing between reinstallation and restarting a query. To restore the
  * query states, call {@link #recoverQueryStates()}.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -214,7 +212,7 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 
 	/**
 	 * Backup of an {@link IExecutorCommand}.
-	 * 
+	 *
 	 * @param tag
 	 *            The tag for the system log.
 	 * @param cmd
@@ -227,18 +225,8 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 	}
 
 	@Override
-	public void backup(AbstractCreateStreamOrViewCommand cmd, long ts) {
-		backup(QueryStateLogTag.SOURCE_ADDED, cmd, ts);
-	}
-
-	@Override
 	public void backup(AbstractDropStreamOrViewCommand cmd, long ts) {
 		backup(QueryStateLogTag.SOURCE_REMOVED, cmd, ts);
-	}
-
-	@Override
-	public void backup(CreateSinkCommand cmd, long ts) {
-		backup(QueryStateLogTag.SINK_ADDED, cmd, ts);
 	}
 
 	@Override
@@ -248,10 +236,7 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 
 	@Override
 	public void backup(AddQueryCommand cmd, long ts) {
-		if (!cmd.getCreatedQueryIds().isEmpty()) {
-			// otherwise source or cql sink
-			backup(QueryStateLogTag.QUERY_ADDED, cmd, ts);
-		}
+		backup(QueryStateLogTag.QUERY_ADDED, cmd, ts);
 	}
 
 	@Override
@@ -297,13 +282,12 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 	 * Determines the system log entries that are relevant: add/removal of
 	 * sources, sinks and queries, and query state changes. The latter will not
 	 * be returned but stored in {@link #queryStateChangesToRecover}.
+	 * FIXME: At he moment the execution order is exactly as within the log. This is
+	 * because we use AddQueryCommands for sources, sinks and queries. That
+	 * makes it impossible(?) to map for example DropSinkCommands to an
+	 * AddQueryCommand.
 	 */
 	private List<IExecutorCommand> determineCommandsToRecover(List<ISystemLogEntry> log) {
-		// Commands mapped to the resource
-		Map<String, AbstractCreateStreamOrViewCommand> sources = new HashMap<>();
-		Map<String, CreateSinkCommand> sinks = new HashMap<>();
-		Map<Integer, AddQueryCommand> queries = new HashMap<>();
-
 		// Collect executor commands to be executed.
 		List<IExecutorCommand> executionOrder = new ArrayList<>();
 
@@ -312,21 +296,10 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 				QueryStateLogTag tag = QueryStateLogTag.fromString(entry.getTag()).get();
 				IExecutorCommand command = ExecutorCommandSerializer.deserialize(entry.getInformation().get());
 				switch (tag) {
-				case SOURCE_ADDED:
-					AbstractCreateStreamOrViewCommand createSourceCommand = (AbstractCreateStreamOrViewCommand) command;
-					sources.put(createSourceCommand.getName(), createSourceCommand);
-					executionOrder.add(createSourceCommand);
-					break;
 				case SOURCE_REMOVED:
-					executionOrder.remove(sources.remove(((AbstractDropStreamOrViewCommand) command).getName()));
-					break;
-				case SINK_ADDED:
-					CreateSinkCommand createSinkCommand = (CreateSinkCommand) command;
-					sinks.put(createSinkCommand.getName(), createSinkCommand);
-					executionOrder.add(createSinkCommand);
-					break;
 				case SINK_REMOVED:
-					executionOrder.remove(sinks.remove(((DropSinkCommand) command).getName()));
+				case QUERY_REMOVED:
+					executionOrder.add(command);
 					break;
 				case QUERY_ADDED:
 					AddQueryCommand addQueryCommand = (AddQueryCommand) command;
@@ -335,17 +308,9 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 							addQueryCommand.getTransCfgName(), addQueryCommand.getContext(),
 							setRecoveryNeeded(addQueryCommand.getAddSettings()), addQueryCommand.startQueries());
 					executionOrder.add(modifiedCommand);
-					for (int queryId : modifiedCommand.getCreatedQueryIds()) {
-						queries.put(queryId, modifiedCommand);
-					}
-					break;
-				case QUERY_REMOVED:
-					RemoveQueryCommand removeCommand = (RemoveQueryCommand) command;
-					AddQueryCommand tmp = queries.remove(removeCommand.getQueryId().get());
-					executionOrder.remove(tmp);
-					this.queryCommandMap.remove(removeCommand.getQueryId().get());
 					break;
 				default: /* QUERYSTATE_CHANGED */
+					executionOrder.add(command);
 					AbstractQueryCommand queryChangeCommand = (AbstractQueryCommand) command;
 					int queryId = queryChangeCommand.getQueryId().get();
 					if (!this.queryCommandMap.containsKey(queryId)) {
@@ -361,7 +326,7 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 	/**
 	 * Inserts "recoveryneeded=true" as parameter for the
 	 * {@code RecoveryConfigKeyword}.
-	 * 
+	 *
 	 * @param addSettings
 	 *            The original additional settings.
 	 * @return The enhanced additional settings.

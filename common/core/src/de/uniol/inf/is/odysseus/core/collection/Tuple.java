@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 /**
  * This class represents a tuple, i.e. a collection of objects of different
  * types that can be accessed via positions
- * 
+ *
  * @author Marco Grawunder, Jonas Jacobi
  */
 public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
@@ -67,17 +67,14 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		immutables.add(Short.class);
 	}
 
-	/**
-	 * Allows subclasses to call the implicit super constructor. To not allow
-	 * other classes to use the constructor it is protected.
-	 */
-	protected Tuple() {
+
+	public Tuple() {
 		requiresDeepClone = false;
 	}
 
 	/**
 	 * Erzeugt ein leeres Tuple ohne Schemainformationen
-	 * 
+	 *
 	 * @param attributeCount
 	 *            Anzahl der Attribute des Tuples
 	 * @param requiresDeepClone
@@ -96,7 +93,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	/**
 	 * Creates a new Tuple without copying the attributes from the other tuple
 	 * but using the given Attributes
-	 * 
+	 *
 	 * @param copy
 	 * @param newAttributes
 	 * @param requiresDeepClone
@@ -121,7 +118,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	/**
 	 * Creates a new Tuple with out attributes
-	 * 
+	 *
 	 * @param copy
 	 * @param requiresDeepClone
 	 */
@@ -134,7 +131,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	/**
 	 * Erzeugt ein neues Tuple mit Attributen und ohne Schemainformationen
-	 * 
+	 *
 	 * @param attributes
 	 *            Attributbelegung des neuen Tuples
 	 * @param requiresDeepClone
@@ -156,7 +153,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	/**
 	 * Erzeugt ein neues Tuple mit einem Attribut
-	 * 
+	 *
 	 * @param attribute
 	 *            Attributbelegung des neuen Tuples
 	 * @param requiresDeepClone
@@ -167,6 +164,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.attributes = new Object[1];
 		attributes[0] = attribute;
 		this.requiresDeepClone = requiresDeepClone;
+	}
+
+	@Override
+	public boolean isSchemaLess() {
+		return false;
 	}
 
 	// -----------------------------------------------------------------
@@ -208,7 +210,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 * object by using Cloner lib to perform a deep clone. This behavior will be
 	 * removed in future versions and prints a warning about not supporting
 	 * IClone interface.
-	 * 
+	 *
 	 * @param attr
 	 *            The attribute array
 	 * @return clone attribute array
@@ -253,7 +255,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 	/**
 	 * Creates a clone of a List attribute.
-	 * 
+	 *
 	 * @param list
 	 *            The list
 	 * @return cloned list
@@ -319,11 +321,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 * Objektes wird durch die Reihenfolge der Attribute im Array festgelegt
 	 * Beispiel: attrList[1]=14,attrList[2]=12 erzeugt ein neues Objekt, welches
 	 * die Attribute 14 und 12 enthaelt.
-	 * 
+	 *
 	 * Falls das aktuelle Tuple keine Schemainformationen enthaelt, wird das
 	 * neue auch ohne erzeugt. Ansonsten enthaelt das neue Tuple auch die
 	 * passenden Schemainformationen.
-	 * 
+	 *
 	 * @param attrList
 	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
 	 *            attrList enth�lt
@@ -354,7 +356,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	/**
 	 * Creates a new instance from the current tuple and appends the given
 	 * attribute object to it
-	 * 
+	 *
 	 * @param object
 	 *            the object to append
 	 * @return a new created and extended copy
@@ -366,7 +368,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	/**
 	 * Creates a new instance from the current tuple if the createNew param is
 	 * true or uses the current instance and appends the given attribute object
-	 * 
+	 *
 	 * @param object
 	 *            the object to append
 	 * @param createNew
@@ -493,7 +495,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	/**
 	 * Like normal equals-method but has a tolerance for double and float
 	 * comparisons.
-	 * 
+	 *
 	 * @param o
 	 * @return
 	 */
@@ -689,7 +691,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 * Returns a hash code for the values of the specified attributes. Note:
 	 * this method generates a hash code only for the given attributes, not for
 	 * the hole tuple
-	 * 
+	 *
 	 * @param attributeNumbers
 	 *            the position of the attributes in the tuple
 	 * @return the generated hash code for the given attributes

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a joinPlan of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
@@ -35,9 +35,9 @@ import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 /**
  * Tests for hierarchical Filtering
- * 
+ *
  * @author ChrisToenjesDeye
- * 
+ *
  */
 public class HierarchicalFilteringTest<T extends IStreamObject<?>> {
 
@@ -61,63 +61,63 @@ public class HierarchicalFilteringTest<T extends IStreamObject<?>> {
 				topics, predicates);
 		Assert.assertTrue(matchedSubscriber.contains(subscriber.getIdentifier()));
 	}
-	
+
 	@Test
 	public void differentFiltersMatchTest() {
 		List<String> subscribertopics = new ArrayList<String>();
 		subscribertopics.add("news");
-		
+
 		List<String> publisherTopics = new ArrayList<String>();
 		publisherTopics.add("news.wirtschaft");
 		publisherTopics.add("news.politik");
-		
+
 		List<IPredicate<? super T>> predicates = new ArrayList<IPredicate<? super T>>();
 
 		List<String> matchedSubscriber = processFiltering(subscribertopics,
 				publisherTopics, predicates);
 		Assert.assertTrue(matchedSubscriber.contains(subscriber.getIdentifier()));
 	}
-	
+
 	@Test
 	public void differentFiltersNotMatchTest() {
 		List<String> subscribertopics = new ArrayList<String>();
 		subscribertopics.add("news.wirtschaft");
 		subscribertopics.add("news.politik");
-		
+
 		List<String> publisherTopics = new ArrayList<String>();
 		publisherTopics.add("news");
-		
-		
+
+
 		List<IPredicate<? super T>> predicates = new ArrayList<IPredicate<? super T>>();
 
 		List<String> matchedSubscriber = processFiltering(subscribertopics,
 				publisherTopics, predicates);
 		Assert.assertFalse(matchedSubscriber.contains(subscriber.getIdentifier()));
 	}
-	
+
 	@Test
 	public void publisherHasNoTopicsTest() {
 		List<String> subscribertopics = new ArrayList<String>();
 		subscribertopics.add("news.wirtschaft");
 		subscribertopics.add("news.politik");
-		
+
 		List<String> publisherTopics = new ArrayList<String>();
-		
+
 		List<IPredicate<? super T>> predicates = new ArrayList<IPredicate<? super T>>();
 
 		List<String> matchedSubscriber = processFiltering(subscribertopics,
 				publisherTopics, predicates);
 		Assert.assertTrue(matchedSubscriber.contains(subscriber.getIdentifier()));
 	}
-	
+
 	@Test
 	public void subscriberHasNoTopicsTest() {
 		List<String> subscribertopics = new ArrayList<String>();
-		
+
 		List<String> publisherTopics = new ArrayList<String>();
 		publisherTopics.add("news.wirtschaft");
 		publisherTopics.add("news.politik");
-		
+
 		List<IPredicate<? super T>> predicates = new ArrayList<IPredicate<? super T>>();
 
 		List<String> matchedSubscriber = processFiltering(subscribertopics,
@@ -139,7 +139,7 @@ public class HierarchicalFilteringTest<T extends IStreamObject<?>> {
 
 		filter.reinitializeFilter(subscriptions, advertisements);
 		List<String> matchedSubscriber = filter.filter(
-				(T) new KeyValueObject<>(), publisher.getIdentifier());
+				(T) KeyValueObject.createInstance(), publisher.getIdentifier());
 		return matchedSubscriber;
 	}
 

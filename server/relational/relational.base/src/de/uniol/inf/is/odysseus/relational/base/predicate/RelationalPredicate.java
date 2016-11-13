@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.relational.base.predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -115,28 +114,28 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = getValue(r,i);
 		}
-		
+
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
 
-	public boolean evaluate(Tuple<?> input, KeyValueObject<?> additional) {
-		Object[] values = new Object[neededAttributes.size()];
-
-		for (int i = 0; i < neededAttributes.size(); ++i) {
-			if (!fromRightChannel[i]) {
-				
-				values[i] = getValue(input,i);
-			} else {
-				values[i] = additional.getAttribute(neededAttributes.get(i)
-						.getURI());
-			}
-		}
-//		this.expression.bindMetaAttribute(input.getMetadata());
-//		this.expression.bindAdditionalContent(input.getAdditionalContent());
-		this.expression.bindVariables(values);
-		return (Boolean) this.expression.getValue();
-	}
+//	public boolean evaluate(Tuple<?> input, KeyValueObject<?> additional) {
+//		Object[] values = new Object[neededAttributes.size()];
+//
+//		for (int i = 0; i < neededAttributes.size(); ++i) {
+//			if (!fromRightChannel[i]) {
+//
+//				values[i] = getValue(input,i);
+//			} else {
+//				values[i] = additional.getAttribute(neededAttributes.get(i)
+//						.getURI());
+//			}
+//		}
+////		this.expression.bindMetaAttribute(input.getMetadata());
+////		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindVariables(values);
+//		return (Boolean) this.expression.getValue();
+//	}
 
 	@Override
 	public RelationalPredicate clone() {
@@ -225,9 +224,9 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		pred.init(schema, null, false);
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
 		tuple.setAttribute(0, 8);
-		KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
-		additional.setAttribute("b", 5);
-		System.out.println(pred.evaluate(tuple, additional));
+//		KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
+//		additional.setAttribute("b", 5);
+//		System.out.println(pred.evaluate(tuple, additional));
 	}
 
 }
