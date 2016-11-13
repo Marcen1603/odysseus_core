@@ -5,6 +5,8 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.ecore.EObject;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Select Statement</b></em>'.
@@ -24,7 +26,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface Select_Statement extends Nested_Statement
+public interface Select_Statement extends EObject
 {
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.

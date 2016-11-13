@@ -3,6 +3,8 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -15,6 +17,8 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement#getName <em>Name</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement#getAttributes <em>Attributes</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement#getDatatypes <em>Datatypes</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreate_Statement()
@@ -48,5 +52,37 @@ public interface Create_Statement extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Attributes</b></em>' containment reference list.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Attributes</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Attributes</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreate_Statement_Attributes()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Attribute> getAttributes();
+
+  /**
+   * Returns the value of the '<em><b>Datatypes</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Datatypes</em>' attribute list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Datatypes</em>' attribute list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreate_Statement_Datatypes()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getDatatypes();
 
 } // Create_Statement

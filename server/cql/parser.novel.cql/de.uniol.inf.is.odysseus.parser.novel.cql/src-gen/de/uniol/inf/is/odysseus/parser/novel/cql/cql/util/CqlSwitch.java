@@ -87,13 +87,6 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.NESTED_STATEMENT:
-      {
-        Nested_Statement nested_Statement = (Nested_Statement)theEObject;
-        T result = caseNested_Statement(nested_Statement);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case CQLPackage.EXPRESSION:
       {
         Expression expression = (Expression)theEObject;
@@ -134,7 +127,6 @@ public class CQLSwitch<T> extends Switch<T>
       {
         Select_Statement select_Statement = (Select_Statement)theEObject;
         T result = caseSelect_Statement(select_Statement);
-        if (result == null) result = caseNested_Statement(select_Statement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -309,22 +301,6 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseStatement(Statement object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Nested Statement</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Nested Statement</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseNested_Statement(Nested_Statement object)
   {
     return null;
   }

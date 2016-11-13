@@ -68,7 +68,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
     {
       case CQLPackage.MODEL: return createModel();
       case CQLPackage.STATEMENT: return createStatement();
-      case CQLPackage.NESTED_STATEMENT: return createNested_Statement();
       case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.ALIAS: return createAlias();
       case CQLPackage.SOURCE: return createSource();
@@ -152,17 +151,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     StatementImpl statement = new StatementImpl();
     return statement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Nested_Statement createNested_Statement()
-  {
-    Nested_StatementImpl nested_Statement = new Nested_StatementImpl();
-    return nested_Statement;
   }
 
   /**

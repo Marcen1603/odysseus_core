@@ -22,7 +22,6 @@
     <genClasses ecoreClass="CQL.ecore#//Statement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Statement/type"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Nested_Statement"/>
     <genClasses ecoreClass="CQL.ecore#//Expression"/>
     <genClasses ecoreClass="CQL.ecore#//Alias">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Alias/name"/>
@@ -59,6 +58,8 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Create_Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Statement/attributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/datatypes"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//IntConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//IntConstant/value"/>

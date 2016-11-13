@@ -42,15 +42,6 @@ public interface CQLFactory extends EFactory
   Statement createStatement();
 
   /**
-   * Returns a new object of class '<em>Nested Statement</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Nested Statement</em>'.
-   * @generated
-   */
-  Nested_Statement createNested_Statement();
-
-  /**
    * Returns a new object of class '<em>Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

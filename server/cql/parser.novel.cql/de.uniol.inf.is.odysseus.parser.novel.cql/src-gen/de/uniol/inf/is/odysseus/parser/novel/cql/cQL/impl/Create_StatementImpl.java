@@ -3,15 +3,26 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EDataTypeEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,6 +33,8 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Create_StatementImpl#getName <em>Name</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Create_StatementImpl#getAttributes <em>Attributes</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Create_StatementImpl#getDatatypes <em>Datatypes</em>}</li>
  * </ul>
  *
  * @generated
@@ -47,6 +60,26 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getAttributes() <em>Attributes</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAttributes()
+   * @generated
+   * @ordered
+   */
+  protected EList<Attribute> attributes;
+
+  /**
+   * The cached value of the '{@link #getDatatypes() <em>Datatypes</em>}' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDatatypes()
+   * @generated
+   * @ordered
+   */
+  protected EList<String> datatypes;
 
   /**
    * <!-- begin-user-doc -->
@@ -97,6 +130,50 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<Attribute> getAttributes()
+  {
+    if (attributes == null)
+    {
+      attributes = new EObjectContainmentEList<Attribute>(Attribute.class, this, CQLPackage.CREATE_STATEMENT__ATTRIBUTES);
+    }
+    return attributes;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<String> getDatatypes()
+  {
+    if (datatypes == null)
+    {
+      datatypes = new EDataTypeEList<String>(String.class, this, CQLPackage.CREATE_STATEMENT__DATATYPES);
+    }
+    return datatypes;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case CQLPackage.CREATE_STATEMENT__ATTRIBUTES:
+        return ((InternalEList<?>)getAttributes()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -104,6 +181,10 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
     {
       case CQLPackage.CREATE_STATEMENT__NAME:
         return getName();
+      case CQLPackage.CREATE_STATEMENT__ATTRIBUTES:
+        return getAttributes();
+      case CQLPackage.CREATE_STATEMENT__DATATYPES:
+        return getDatatypes();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -113,6 +194,7 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -120,6 +202,14 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
     {
       case CQLPackage.CREATE_STATEMENT__NAME:
         setName((String)newValue);
+        return;
+      case CQLPackage.CREATE_STATEMENT__ATTRIBUTES:
+        getAttributes().clear();
+        getAttributes().addAll((Collection<? extends Attribute>)newValue);
+        return;
+      case CQLPackage.CREATE_STATEMENT__DATATYPES:
+        getDatatypes().clear();
+        getDatatypes().addAll((Collection<? extends String>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -138,6 +228,12 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
       case CQLPackage.CREATE_STATEMENT__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case CQLPackage.CREATE_STATEMENT__ATTRIBUTES:
+        getAttributes().clear();
+        return;
+      case CQLPackage.CREATE_STATEMENT__DATATYPES:
+        getDatatypes().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -154,6 +250,10 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
     {
       case CQLPackage.CREATE_STATEMENT__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case CQLPackage.CREATE_STATEMENT__ATTRIBUTES:
+        return attributes != null && !attributes.isEmpty();
+      case CQLPackage.CREATE_STATEMENT__DATATYPES:
+        return datatypes != null && !datatypes.isEmpty();
     }
     return super.eIsSet(featureID);
   }
@@ -171,6 +271,8 @@ public class Create_StatementImpl extends MinimalEObjectImpl.Container implement
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
     result.append(name);
+    result.append(", datatypes: ");
+    result.append(datatypes);
     result.append(')');
     return result.toString();
   }

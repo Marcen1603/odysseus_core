@@ -409,16 +409,10 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Create_Statement returns Create_Statement
 	 *
 	 * Constraint:
-	 *     name='CREATE'
+	 *     (name=ID attributes+=Attribute+ datatypes+=DataType+ (attributes+=Attribute datatypes+=DataType)*)
 	 */
 	protected void sequence_Create_Statement(ISerializationContext context, Create_Statement semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STATEMENT__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STATEMENT__NAME));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getCreate_StatementAccess().getNameCREATEKeyword_0(), semanticObject.getName());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -678,7 +672,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Nested_Statement returns Select_Statement
 	 *     Select_Statement returns Select_Statement
 	 *
 	 * Constraint:

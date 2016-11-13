@@ -6,7 +6,7 @@ Model: statements+=Statement*;
 	
 Statement:  (type=Select_Statement| type=Create_Statement) (';')? ; 
 
-Nested_Statement: '(' Select_Statement ')' ;
+//Nested_Statement: '(' Select_Statement ')' ;
 
 // Data types //////////////////////////////////////////////////////////
 
@@ -28,6 +28,11 @@ Alias:
 Source: 
 	name=ID
 ;
+
+//TODO Add more data types
+DataType: ('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN' 
+	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
+);
 
 Attribute: ((source=[Source] '.')? name=ID ); //| Function);
 //TODO Validator: do not allow "Source1 AS Alias1.attr1"
@@ -139,6 +144,13 @@ Scalar_Function:
 ;
 
 Create_Statement:
-	name='CREATE'	
-//	('CREATE' | 'create')
+	'CREATE' 'STREAM'
+	name = ID
+	'('
+	attributes+= Attribute+ 
+	datatypes+= DataType+
+	(',' attributes+=Attribute datatypes+= DataType)*
+	')'
 ;
+
+

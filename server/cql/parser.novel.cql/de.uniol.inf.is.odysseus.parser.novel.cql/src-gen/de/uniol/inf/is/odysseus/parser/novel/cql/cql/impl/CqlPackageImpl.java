@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Nested_Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Operator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
@@ -62,13 +61,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass statementEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass nested_StatementEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -353,16 +345,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getNested_Statement()
-  {
-    return nested_StatementEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getExpression()
   {
     return expressionEClass;
@@ -626,6 +608,26 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EAttribute getCreate_Statement_Name()
   {
     return (EAttribute)create_StatementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getCreate_Statement_Attributes()
+  {
+    return (EReference)create_StatementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreate_Statement_Datatypes()
+  {
+    return (EAttribute)create_StatementEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1034,8 +1036,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     statementEClass = createEClass(STATEMENT);
     createEReference(statementEClass, STATEMENT__TYPE);
 
-    nested_StatementEClass = createEClass(NESTED_STATEMENT);
-
     expressionEClass = createEClass(EXPRESSION);
 
     aliasEClass = createEClass(ALIAS);
@@ -1073,6 +1073,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     create_StatementEClass = createEClass(CREATE_STATEMENT);
     createEAttribute(create_StatementEClass, CREATE_STATEMENT__NAME);
+    createEReference(create_StatementEClass, CREATE_STATEMENT__ATTRIBUTES);
+    createEAttribute(create_StatementEClass, CREATE_STATEMENT__DATATYPES);
 
     intConstantEClass = createEClass(INT_CONSTANT);
     createEAttribute(intConstantEClass, INT_CONSTANT__VALUE);
@@ -1157,7 +1159,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     // Add supertypes to classes
     attributeEClass.getESuperTypes().add(this.getExpression());
-    select_StatementEClass.getESuperTypes().add(this.getNested_Statement());
     intConstantEClass.getESuperTypes().add(this.getExpression());
     floatConstantEClass.getESuperTypes().add(this.getExpression());
     stringConstantEClass.getESuperTypes().add(this.getExpression());
@@ -1178,8 +1179,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatement_Type(), ecorePackage.getEObject(), null, "type", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(nested_StatementEClass, Nested_Statement.class, "Nested_Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(expressionEClass, Expression.class, "Expression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1218,6 +1217,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(create_StatementEClass, Create_Statement.class, "Create_Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCreate_Statement_Name(), ecorePackage.getEString(), "name", null, 0, 1, Create_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreate_Statement_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, Create_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreate_Statement_Datatypes(), ecorePackage.getEString(), "datatypes", null, 0, -1, Create_Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(intConstantEClass, IntConstant.class, "IntConstant", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIntConstant_Value(), ecorePackage.getEInt(), "value", null, 0, 1, IntConstant.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
