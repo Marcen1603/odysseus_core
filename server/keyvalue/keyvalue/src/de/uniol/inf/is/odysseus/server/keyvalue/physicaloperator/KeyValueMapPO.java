@@ -63,7 +63,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		this.removeAttributes = mapAO.getRemoveAttributes();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	final protected void process_next(T object, int port) {
 
