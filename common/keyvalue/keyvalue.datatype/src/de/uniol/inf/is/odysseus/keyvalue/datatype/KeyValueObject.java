@@ -56,9 +56,9 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	final static private ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
 
 	final static private JacksonXmlModule module = new JacksonXmlModule();
-	static { // to default to using "unwrapped" Lists:
-		module.setDefaultUseWrapper(false);
-	}
+//	static { // to default to using "unwrapped" Lists:
+//		module.setDefaultUseWrapper(false);
+//	}
 	final static private XmlMapper xmlMapper = new XmlMapper(module);
 
 	final static private JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
