@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+//import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -54,7 +54,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	final static private ObjectMapper mapper = new ObjectMapper();
 	final static private ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
 
-	final static private XmlMapper xmlMapper = new XmlMapper();
+//	final static private XmlMapper xmlMapper = new XmlMapper();
 
 	final static private JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
@@ -81,30 +81,32 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	public static KeyValueObject<IMetaAttribute> createFromXML(InputStream input) {
-		JsonNode node = null;
-		try {
-			node = xmlMapper.readValue(input, JsonNode.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
-		ret.setNode(node);
-
-		return ret;
+		throw new RuntimeException("XML currently not supported!");
+//		JsonNode node = null;
+//		try {
+//			//node = xmlMapper.readValue(input, JsonNode.class);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
+//		ret.setNode(node);
+//
+//		return ret;
 	}
 
 	public static KeyValueObject<IMetaAttribute> createFromXML(String input) {
-		JsonNode node = null;
-		try {
-			node = xmlMapper.readValue(input, JsonNode.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
-		ret.setNode(node);
-		return ret;
+		throw new RuntimeException("XML currently not supported!");
+//		JsonNode node = null;
+//		try {
+//			node = xmlMapper.readValue(input, JsonNode.class);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
+//		ret.setNode(node);
+//		return ret;
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
@@ -454,11 +456,12 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	public String getAsXML() {
-		try {
-			return xmlMapper.writeValueAsString(node);
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		throw new RuntimeException("XML currently not supported!");
+		//		try {
+//			return xmlMapper.writeValueAsString(node);
+//		} catch (JsonProcessingException e) {
+//			throw new RuntimeException(e);
+//		}
 	}
 	// ------------------------------------
 
