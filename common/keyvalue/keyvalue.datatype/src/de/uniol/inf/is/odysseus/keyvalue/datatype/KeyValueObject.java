@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -55,11 +54,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	final static private ObjectMapper mapper = new ObjectMapper();
 	final static private ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
 
-	final static private JacksonXmlModule module = new JacksonXmlModule();
-//	static { // to default to using "unwrapped" Lists:
-//		module.setDefaultUseWrapper(false);
-//	}
-	final static private XmlMapper xmlMapper = new XmlMapper(module);
+	final static private XmlMapper xmlMapper = new XmlMapper();
 
 	final static private JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
