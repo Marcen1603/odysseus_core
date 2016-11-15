@@ -35,17 +35,17 @@ public class CSVFileSink extends AbstractSenderAO {
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PUSH);
 	}
-	
+
 	public CSVFileSink(CSVFileSink other){
 		super(other);
 		this.optionList.addAll(other.optionList);
 	}
-	
+
 	@Override
 	public CSVFileSink clone() {
 		return new CSVFileSink(this);
 	}
-	
+
 	@Override
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
 	public void setOptions(List<Option> value) {
@@ -54,16 +54,16 @@ public class CSVFileSink extends AbstractSenderAO {
 		}
 		optionList.addAll(value);
 	}
-	
+
 	public List<Option> getOptions() {
 		return optionList;
 	}
-	
+
 	@Parameter(type = FileNameParameter.class, name = "filename", optional = false)
 	public void setFilename(String filename) {
 		addOption(FileHandler.FILENAME,filename);
 	}
-	
+
 	public String getFilename() {
 		return getOption(FileHandler.FILENAME);
 	}
@@ -72,7 +72,7 @@ public class CSVFileSink extends AbstractSenderAO {
 	public void setDelimiter(String delimiter) {
 		addOption(AbstractCSVHandler.CSV_DELIMITER, delimiter);
 	}
-	
+
 	public String getDelimiter() {
 		return getOption(AbstractCSVHandler.CSV_DELIMITER);
 	}
@@ -81,45 +81,45 @@ public class CSVFileSink extends AbstractSenderAO {
 	public void setNullValueText(String nullValueText) {
 		addOption(AbstractCSVHandler.NULL_VALUE_TEXT, nullValueText);
 	}
-	
+
 	public String getNullValueText() {
 		return getOption(AbstractCSVHandler.NULL_VALUE_TEXT);
 	}
 
-	
+
 	@Parameter(type = StringParameter.class, name = "textdelimiter", optional = true, doc = "Delimiter for Strings. No default.")
 	public void setTextDelimiter(String textDelimiter) {
 		addOption(AbstractCSVHandler.CSV_TEXT_DELIMITER, textDelimiter);
 		textDelimiterSet  = true;
 	}
-	
+
 	public String getTextDelimiter() {
 		return getOption(AbstractCSVHandler.CSV_TEXT_DELIMITER);
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = AbstractCSVHandler.CSV_FLOATING_FORMATTER, optional = true, doc = "Formatter for floating numbers.")
 	public void setFloatingFormatter(String value) {
 		addOption(AbstractCSVHandler.CSV_FLOATING_FORMATTER, value);
 	}
-	
+
 	public String getFloatingFormatter() {
 		return getOption(AbstractCSVHandler.CSV_FLOATING_FORMATTER);
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = AbstractCSVHandler.CSV_NUMBER_FORMATTER, optional = true, doc = "Formatter for integer numbers.")
 	public void setNumberFormatter(String value) {
 		addOption(AbstractCSVHandler.CSV_NUMBER_FORMATTER, value);
 	}
-	
+
 	public String getNumberFormatter() {
 		return getOption(AbstractCSVHandler.CSV_NUMBER_FORMATTER);
 	}
-	
+
 	@Parameter(type = IntegerParameter.class, name = AbstractFileHandler.WRITEDELAYSIZE, optional = true, doc = "Write only every nth element")
 	public void setWriteDelaySize(int value){
 		addOption(AbstractFileHandler.WRITEDELAYSIZE, ""+value);
 	}
-	
+
 	public Integer getWriteDelaySize() {
 		String valueStr = getOption(AbstractFileHandler.WRITEDELAYSIZE);
 		if( Strings.isNullOrEmpty(valueStr)) {
@@ -128,19 +128,11 @@ public class CSVFileSink extends AbstractSenderAO {
 		return Integer.valueOf(valueStr);
 	}
 
-	@Override
-	@Parameter(type = BooleanParameter.class, name = "WRITEMETADATA", optional = true, doc = "Write metadata.")
-	public void setWriteMetaData(boolean writeMetaData){
-		addOption(AbstractCSVHandler.CSV_WRITE_METADATA, Boolean.toString(writeMetaData));
-		super.setWriteMetaData(writeMetaData);
-	}
-	
-
 	@Parameter(type = BooleanParameter.class, name = FileHandler.CREATEDIR, optional = true, doc = "Create dir if not exists.")
 	public void createDir(Boolean value){
 		addOption(FileHandler.CREATEDIR, Boolean.toString(value));
 	}
-		
+
 	@Override
 	public String getProtocolHandler() {
 		if (textDelimiterSet){
@@ -149,5 +141,5 @@ public class CSVFileSink extends AbstractSenderAO {
 			return SimpleCSVProtocolHandler.NAME;
 		}
 	}
-		
+
 }

@@ -16,16 +16,17 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class SimpleByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractByteBufferHandler<T> {
+public class SimpleByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>>
+		extends AbstractByteBufferHandler<T> {
 
 	final static String NAME = "SimpleByteBuffer";
 	final static Logger LOG = LoggerFactory.getLogger(SimpleByteBufferHandler.class);
-	
-    protected ByteBufferHandler<T> objectHandler;
-    
-    private static String bufferSizeOption = "buffersize";
-    private int bufferSize = 1024;
-	
+
+	protected ByteBufferHandler<T> objectHandler;
+
+	private static String bufferSizeOption = "buffersize";
+	private int bufferSize = 1024;
+
 	public SimpleByteBufferHandler() {
 		super();
 	}
@@ -35,15 +36,20 @@ public class SimpleByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 			IStreamObjectDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler, options);
 		objectHandler = new ByteBufferHandler<T>(dataHandler);
-		if(options.containsKey(bufferSizeOption))
+		if(options.containsKey(bufferSizeOption)) {
 			this.bufferSize = options.getInt(bufferSizeOption, this.bufferSize);
+		}
+		// Set the byte order
+		objectHandler.getByteBuffer().order(this.byteOrder);
 	}
 
 	@Override
 	public void write(T object) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(this.bufferSize);
+		buffer.order(this.byteOrder);
 		getDataHandler().writeData(buffer, object);
-		//ByteBufferUtil.toBuffer(buffer, (IStreamObject)object, getDataHandler(), exportMetadata);
+		// ByteBufferUtil.toBuffer(buffer, (IStreamObject)object,
+		// getDataHandler(), exportMetadata);
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -51,15 +57,13 @@ public class SimpleByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 		// buffer.array() returns the complete array (1024 bytes) and
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 0, messageSizeBytes);
-		getTransportHandler().send(rawBytes);		
+		getTransportHandler().send(rawBytes);
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction,
-			IAccessPattern access, OptionMap options,
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<T> dataHandler) {
-		return new SimpleByteBufferHandler<>(direction, access, options,
-				dataHandler);
+		return new SimpleByteBufferHandler<>(direction, access, options, dataHandler);
 	}
 
 	@Override
@@ -74,50 +78,44 @@ public class SimpleByteBufferHandler<T extends IStreamObject<? extends IMetaAttr
 		try {
 			objectHandler.put(message);
 		} catch (IOException e) {
-			LOG.error(e.getMessage(),e);			
+			LOG.error(e.getMessage(), e);
 		}
 		T object = null;
 		try {
 			object = objectHandler.create();
-		} catch (ClassNotFoundException | BufferUnderflowException
-				| IOException e) {
-			LOG.error(e.getMessage(),e);
+		} catch (ClassNotFoundException | BufferUnderflowException | IOException e) {
+			LOG.error(e.getMessage(), e);
 		}
-		if (object != null){
+		if (object != null) {
 			getTransfer().transfer(object);
-		}else{
-			LOG.error ("Empty object");
+		} else {
+			LOG.error("Empty object");
 		}
 	}
-	
+
 	@Override
-	public boolean hasNext() throws IOException 
-	{
-		if (getTransportHandler().getInputStream() != null) 
+	public boolean hasNext() throws IOException {
+		if (getTransportHandler().getInputStream() != null)
 			return getTransportHandler().getInputStream().available() > 0;
-		else 
+		else
 			return false;
 	}
 
 	@Override
-	public T getNext() throws IOException 
-	{
+	public T getNext() throws IOException {
 		InputStream input = getTransportHandler().getInputStream();
 		int size = Math.min(input.available(), objectHandler.getByteBuffer().limit());
-		input.read(objectHandler.getByteBuffer().array(), 0, size);			
-		
+		input.read(objectHandler.getByteBuffer().array(), 0, size);
+
 		objectHandler.getByteBuffer().position(size);
-		
-		try 
-		{
+
+		try {
 			return objectHandler.create();
-		} 
-		catch (ClassNotFoundException | BufferUnderflowException e) 
-		{
+		} catch (ClassNotFoundException | BufferUnderflowException e) {
 			LOG.error(e.getMessage(), e);
 			return null;
 		}
-	}	
+	}
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
