@@ -41,7 +41,7 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	@Override
 	final public boolean hasKeyValue(String name) {
-		return this.keyValueMap.containsKey(name);
+		return (this.keyValueMap!=null) && this.keyValueMap.containsKey(name);
 	}
 
 	@Override
