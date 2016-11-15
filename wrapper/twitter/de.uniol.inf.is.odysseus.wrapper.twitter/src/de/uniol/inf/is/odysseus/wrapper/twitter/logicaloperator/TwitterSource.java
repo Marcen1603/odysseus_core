@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.wrapper.twitter.logicaloperator;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -41,7 +41,7 @@ public class TwitterSource extends AbstractAccessAO {
 
 	public TwitterSource(Resource name, String wrapper,
 			String transportHandler, String protocolHandler,
-			String dataHandler, Map<String, String> optionsMap) {
+			String dataHandler, OptionMap optionsMap) {
 		super(name, wrapper, transportHandler, protocolHandler, dataHandler,
 				optionsMap);
 	}

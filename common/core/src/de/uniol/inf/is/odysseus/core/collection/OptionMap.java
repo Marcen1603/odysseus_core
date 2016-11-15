@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.collection;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,38 +17,58 @@ import java.util.Map.Entry;
 
 public class OptionMap {
 
-	private Map<String, String> optionMap = new HashMap<>();
+	private Map<String, Object> optionMap = new HashMap<>();
 	private Map<String, Boolean> keyRead = new HashMap<String, Boolean>();
 
 	public OptionMap() {
 	}
 
-	public OptionMap(Map<String, String> optionMap) {
-		if (optionMap != null) {
-			for (Entry<String, String> e : optionMap.entrySet()) {
-				overwriteOption(e.getKey().toLowerCase(), e.getValue());
-			}
-		}
+	public void clear() {
+		optionMap.clear();
+		keyRead.clear();
+	}
+	
+	public OptionMap(Map<String, Object> optionMap) {
+		putAll(optionMap);
 	}
 
+	public void putAll(Map<String, Object> options) {
+		if (options != null) {
+			for (Entry<String, Object> e : options.entrySet()) {
+				overwriteOption(e.getKey().toLowerCase(), e.getValue());
+			}
+		}		
+	}
+	
 	public OptionMap(List<Option> optionMap) {
+		addAll(optionMap);
+	}
+	
+	public void addAll(List<Option> optionMap) {
 		if (optionMap != null) {
 			for (Option e : optionMap) {
 				overwriteOption(e.getName().toLowerCase(), e.getValue());
 			}
 		}
 	}
-
 	
 	public OptionMap(OptionMap optionMap) {
+		addAll(optionMap);
+	}
+
+	public Map<String, Object> getOptions(){
+		return Collections.unmodifiableMap(optionMap);
+	}
+	
+	public void addAll(OptionMap optionMap) {
 		if (optionMap != null){
-			for (Entry<String, String> e : optionMap.optionMap.entrySet()) {
+			for (Entry<String, Object> e : optionMap.optionMap.entrySet()) {
 				overwriteOption(e.getKey().toLowerCase(), e.getValue());
 			}	
 		}
 	}
 
-	public void setOption(String key, String value) {
+	public void setOption(String key, Object value) {
 		if (optionMap.containsKey(key.toLowerCase())) {
 			throw new IllegalStateException("Option " + key.toLowerCase()
 					+ " already set with value " + optionMap.get(key));
@@ -55,7 +76,7 @@ public class OptionMap {
 		overwriteOption(key.toLowerCase(), value);
 	}
 
-	public void overwriteOption(String key, String value) {
+	public void overwriteOption(String key, Object value) {
 		optionMap.put(key.toLowerCase(), value);
 		keyRead.put(key.toLowerCase(), Boolean.FALSE);
 	}
@@ -64,11 +85,18 @@ public class OptionMap {
 		return optionMap.containsKey(key.toLowerCase());
 	}
 
-	public String get(String key) {
+	@SuppressWarnings("unchecked")
+	public <K> K getValue(String key) {
 		if (optionMap.containsKey(key.toLowerCase())) {
 			keyRead.put(key.toLowerCase(), Boolean.TRUE);
 		}
-		return optionMap.get(key.toLowerCase());
+		return (K) optionMap.get(key.toLowerCase());
+	}
+
+	
+	public String get(String key) {
+		Object ret = getValue(key);
+		return ret != null?ret+"":null;
 	}
 	
 	public String getString(String key){
@@ -150,4 +178,15 @@ public class OptionMap {
 	public String toString() {
 		return optionMap.toString();
 	}
+
+	public static OptionMap fromStringMap(Map<String, String> options) {
+		OptionMap ret = new OptionMap();
+		for (Entry<String, String> e:options.entrySet()){
+			ret.setOption(e.getKey(), e.getValue());
+		}
+		return ret;
+	}
+
+
+
 }

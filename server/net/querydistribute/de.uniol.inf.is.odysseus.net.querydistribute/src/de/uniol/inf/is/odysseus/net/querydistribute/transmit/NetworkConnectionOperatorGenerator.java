@@ -1,14 +1,12 @@
 package de.uniol.inf.is.odysseus.net.querydistribute.transmit;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -77,10 +75,10 @@ public class NetworkConnectionOperatorGenerator implements IOperatorGenerator {
 		access.setWrapper("GenericPush");
 		access.setProtocolHandler("Odysseus");
 		
-		Map<String, String> options = Maps.newHashMap();
-		options.put("host", sourceNode.getProperty("serverAddress").get());
-		options.put("port", sourcePort + "");
-		options.put("autoreconnect", String.valueOf(1000));
+		OptionMap options = new OptionMap();
+		options.setOption("host", sourceNode.getProperty("serverAddress").get());
+		options.setOption("port", sourcePort + "");
+		options.setOption("autoreconnect", String.valueOf(1000));
 		
 		access.setOptionMap(options);
 		access.setAttributes(sourceOp.getOutputSchema().getAttributes());
@@ -102,8 +100,8 @@ public class NetworkConnectionOperatorGenerator implements IOperatorGenerator {
 		senderAO.setProtocolHandler("Odysseus");
 		senderAO.setWriteMetaData(true);
 		
-		Map<String, String> options = Maps.newHashMap();
-		options.put("port", sourcePort + ""); 
+		OptionMap options = new OptionMap();
+		options.setOption("port", sourcePort + ""); 
 		
 		senderAO.setOptionMap(options);
 		senderAO.setSink(new Resource("System.OdysseusNetSender_" + sourcePort));
