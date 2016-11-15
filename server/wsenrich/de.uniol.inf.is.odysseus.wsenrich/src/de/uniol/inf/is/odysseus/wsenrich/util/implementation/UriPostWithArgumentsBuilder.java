@@ -87,7 +87,7 @@ public class UriPostWithArgumentsBuilder implements IRequestBuilder {
 		for(Option argument : this.arguments) {
 		//replace whitespaces if present
 		String name = argument.getName().replace(BLANK, BLANKDELMITTER);
-		String value = argument.getValue().replace(BLANK, BLANKDELMITTER);	
+		String value = (""+argument.getValue()).replace(BLANK, BLANKDELMITTER);	
 		this.postData.append(name + KEYVALUEDELMITER
 				+ value + ARGUMENTDELMITER);
 		}

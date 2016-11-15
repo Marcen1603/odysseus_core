@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.logicaloperator;
 
 import java.util.List;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -34,7 +34,7 @@ public class HDFSource extends AbstractAccessAO {
 
 	public HDFSource(Resource name, String wrapper, String transportHandler,
 			String protocolHandler, String dataHandler,
-			Map<String, String> optionsMap) {
+			OptionMap optionsMap) {
 		super(name, wrapper, transportHandler, protocolHandler, dataHandler,
 				optionsMap);
 	}

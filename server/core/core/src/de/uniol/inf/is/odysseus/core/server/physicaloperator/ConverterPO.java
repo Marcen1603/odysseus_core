@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -18,11 +18,11 @@ public class ConverterPO<R extends IStreamObject<IMetaAttribute>, W extends IStr
 
 	IDataHandler<R> inputDataHandler;
 	IProtocolHandler<W> protocolHandler;
-	Map<String, String> options;
+	OptionMap options;
 
 	public ConverterPO(IDataHandler<R> inputDataHandler,
 			IDataHandler<W> outputDataHandler,
-			IProtocolHandler<W> protocolHandler, Map<String, String> options) {
+			IProtocolHandler<W> protocolHandler, OptionMap options) {
 		super();
 		this.inputDataHandler = inputDataHandler;
 		this.protocolHandler = protocolHandler;

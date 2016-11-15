@@ -181,7 +181,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 			return isValid;
 		} catch (Exception e) {
 			// TODO: REMOVE
-			// e.printStackTrace();
+			e.printStackTrace();
 			throw new RuntimeException("Error in operator " + op + " "
 					+ e.getMessage(), e);
 		}
@@ -216,6 +216,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 				if (e instanceof InvocationTargetException) {
 					thr = e.getCause();
 				}
+				e.printStackTrace();
 				throw new IllegalParameterException("Error in parameter "
 						+ parameter.getName() + " " + thr.getMessage());
 			}

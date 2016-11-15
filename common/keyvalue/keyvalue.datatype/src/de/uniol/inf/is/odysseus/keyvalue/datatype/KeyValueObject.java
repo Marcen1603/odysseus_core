@@ -154,7 +154,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	public Number getNumberAttribute(String key) {
-		return this.node.get(key).numberValue();
+		return (Number)flat.get(key);
 	}
 
 	public Map<String, Object> path2(String path) {
