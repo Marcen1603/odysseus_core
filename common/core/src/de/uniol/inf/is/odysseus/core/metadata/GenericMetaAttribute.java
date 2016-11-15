@@ -4,25 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public class GenericMetaAttribute extends AbstractBaseMetaAttribute implements IGenericMetaAttribute{
+
+	public static final String NAME = "Generic";
 
 	private static final long serialVersionUID = 437486308811181701L;
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IGenericMetaAttribute.class };
 
-	private List<SDFMetaSchema> schema = new ArrayList<>();
+	public static final List<SDFMetaSchema> schema = new ArrayList<>();
+	static{
+		List<SDFAttribute> attributes = new ArrayList<>();
+		attributes.add(new SDFAttribute("Generic", "content", new SDFDatatype("GEN_TUPLE",SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.TUPLE)));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("Generic", Tuple.class, attributes, IGenericMetaAttribute.class));
+	}
 	private Tuple<?> content;
 	
 	public GenericMetaAttribute(){
 	}
 	
 	public GenericMetaAttribute(GenericMetaAttribute genericMetaAttribute) {
-		this.schema = genericMetaAttribute.getSchema();
 		this.content = genericMetaAttribute.content.clone();
 	}
 
@@ -33,30 +40,8 @@ public class GenericMetaAttribute extends AbstractBaseMetaAttribute implements I
 
 	@Override
 	public String getName() {
-		return "Generic";
-	}
-
-	@Override
-	public void clearSchema() {
-		this.schema.clear();
-	}
-	
-	@Override
-	public void addSchema(SDFMetaSchema schema) {
-		this.schema.add(schema);
-	}
-	
-	@Override
-	public void addSchema(List<SDFMetaSchema> schema) {
-		this.schema.addAll(schema);
-	}
-	
-	@Override
-	public void addSchema(SDFSchema schema) {
-		SDFMetaSchema newSchema = SDFSchemaFactory.createNewMetaSchema("Generic", Tuple.class, schema.getAttributes(), IGenericMetaAttribute.class);
-		this.schema.add(newSchema);
-	}
-	
+		return NAME;
+	}	
 	
 	@Override
 	public List<SDFMetaSchema> getSchema() {
@@ -64,9 +49,7 @@ public class GenericMetaAttribute extends AbstractBaseMetaAttribute implements I
 	}
 
 	@Override
-	public void setContent(Tuple<?> tuple, List<SDFMetaSchema> schema) {
-		schema.clear();
-		addSchema(schema);
+	public void setContent(Tuple<?> tuple) {
 		this.content = tuple.clone();
 	}
 	
