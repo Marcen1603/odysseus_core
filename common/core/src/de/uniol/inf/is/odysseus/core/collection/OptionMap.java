@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * This class provides options that can be set once and has a marker for
@@ -144,6 +145,10 @@ public class OptionMap {
 		if (!missing.isEmpty()){
 			throw new IllegalArgumentException("The following required options are not set: "+missing);
 		}
+	}
+	
+	public Set<String> getKeySet() {
+		return optionMap.keySet();
 	}
 	
 	@Override
