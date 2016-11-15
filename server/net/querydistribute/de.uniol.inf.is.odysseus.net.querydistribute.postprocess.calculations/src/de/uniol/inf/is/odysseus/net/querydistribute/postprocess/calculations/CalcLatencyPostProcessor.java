@@ -8,7 +8,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -46,10 +45,13 @@ public class CalcLatencyPostProcessor implements IQueryDistributionPostProcessor
 	public void postProcess(IServerExecutor serverExecutor, ISession caller,
 			Map<ILogicalQueryPart, IOdysseusNode> allocationMap, ILogicalQuery query, QueryBuildConfiguration config,
 			List<String> parameters) throws QueryDistributionPostProcessorException {
+		// Insert calc latency operators
 		allocationMap.keySet()
 				.forEach(part -> part.getOperators().stream()
 						.filter(operator -> operator.isSinkOperator() && !operator.isSourceOperator())
 						.forEach(operator -> insertCalcLatencyAO(operator, part)));
+		// Insert latency metadata
+		MetaDataInserter.insertMetaData(allocationMap.keySet(), ILatency.class);
 	}
 
 	/**
@@ -69,10 +71,6 @@ public class CalcLatencyPostProcessor implements IQueryDistributionPostProcessor
 	 * part.
 	 */
 	private static CalcLatencyAO insertCalcLatencyAO(ILogicalOperator sink, LogicalSubscription subToSink) {
-		SDFSchema schema = subToSink.getSchema();
-		if (!schema.hasMetatype(ILatency.class)) {
-			return null;
-		}
 		CalcLatencyAO calcLatencyAO = new CalcLatencyAO();
 		calcLatencyAO.subscribeToSource(subToSink.getTarget(), 0, subToSink.getSourceOutPort(), subToSink.getSchema());
 		sink.subscribeToSource(calcLatencyAO, subToSink.getSinkInPort(), 0, subToSink.getSchema());
