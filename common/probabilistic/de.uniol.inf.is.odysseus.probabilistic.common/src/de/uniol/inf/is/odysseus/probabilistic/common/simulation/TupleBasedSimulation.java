@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -15,12 +17,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  * 
  * @author Christoph Schröer
  *
- * @param <H> 
- * @param <T>
- * @param <M>
+ * @param <H> Type of the historical data
+ * @param <M> Type of the metadata
  */
 abstract public class TupleBasedSimulation<H extends Tuple<M>, M extends ITimeInterval>
 		implements ISimulation<H, Double> {
+
+	protected static Logger logger = LoggerFactory.getLogger(TupleBasedSimulation.class);
 
 	protected List<Double> simulatedData = new ArrayList<>();
 
@@ -56,7 +59,8 @@ abstract public class TupleBasedSimulation<H extends Tuple<M>, M extends ITimeIn
 			index++;
 		}
 
-		RealDistribution discreteDistribution = new EnumeratedRealDistribution(inputData, inputProbabilities);
+		RealDistribution discreteDistribution = null;
+		discreteDistribution = new EnumeratedRealDistribution(inputData, inputProbabilities);
 
 		return discreteDistribution;
 	}

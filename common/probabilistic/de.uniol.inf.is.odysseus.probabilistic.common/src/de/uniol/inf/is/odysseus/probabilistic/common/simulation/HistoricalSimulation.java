@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
+ * This class represents and implements a historical simulation.
  * 
  * @author Christoph Schröer
  *
