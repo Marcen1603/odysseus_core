@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * This class provides options that can be set once and has a marker for
@@ -185,6 +186,10 @@ public class OptionMap {
 			ret.setOption(e.getKey(), e.getValue());
 		}
 		return ret;
+	}
+	
+	public Set<String> getKeySet() {
+		return this.optionMap.keySet();
 	}
 
 
