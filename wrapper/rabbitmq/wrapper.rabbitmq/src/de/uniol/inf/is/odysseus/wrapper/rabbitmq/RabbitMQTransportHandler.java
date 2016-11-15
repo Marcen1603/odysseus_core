@@ -34,7 +34,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	public static final String DURABLE = "durable";
 	public static final String EXCLUSIVE = "exclusive";
 	public static final String AUTO_DELETE = "auto_delete";
-
+	
 	public static final String OPTIONS_PREFIX = "rabbit.";
 
 	public enum PublishStyle {
@@ -202,34 +202,16 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 			boolean durable = options.getBoolean(DURABLE, false);
 			boolean exclusive = options.getBoolean(EXCLUSIVE, false);
 			boolean autoDelete = options.getBoolean(AUTO_DELETE, false);
-
+			
 			Set<String> keySet = options.getKeySet();
 			Object[] keys = keySet.stream().filter(key -> key.startsWith(OPTIONS_PREFIX)).toArray();
 			for (Object key : keys) {
 				if (key instanceof String) {
 					String keyString = (String) key;
-					String value = options.get(keyString);
-
+					Object value = options.get(keyString);
 					// Remove the prefix when we insert it so the real args
 					String argKey = keyString.replaceFirst(OPTIONS_PREFIX, "");
-
-					// Maybe we don't have a string, but an int, long or boolean
-					if (argKey.startsWith("integer.")) {
-						int intValue = Integer.parseInt(value);
-						argKey = argKey.replaceFirst("integer.", "");
-						args.put(argKey, intValue);
-					} else if (argKey.startsWith("long.")) {
-						long longValue = Long.parseLong(value);
-						argKey = argKey.replaceFirst("long.", "");
-						args.put(argKey, longValue);
-					} else if (argKey.startsWith("boolean.")) {
-						boolean booleanValue = Boolean.parseBoolean(value);
-						argKey = argKey.replaceFirst("boolean.", "");
-						args.put(argKey, booleanValue);
-					} else {
-						// It's a normal string
-						args.put(argKey, value);
-					}
+					args.put(argKey, value);
 				}
 			}
 
