@@ -55,6 +55,8 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 	public final static String FORECASTED_TIME_HORIZON_ATTRIBUTE_NAME = "forecasted_time_horizon";
 
+	public final static String FORECASTED_TIME_HORIZON_PARAMETER_NAME = "time_horizon";
+
 	/**
 	 * 
 	 */
@@ -124,8 +126,6 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
 
-		logger.debug("evaluate");
-
 		Object[] elementsValues = getAttributes(trigger);
 
 		double residual = (double) elementsValues[0]; // resiudal
@@ -154,41 +154,41 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 			// transfer default variance
 			this.updateLagVariances(countOfVariances, forecastedVariance);
 		} else {
-			
-			
+
 			// recalculation of whole stochastic process
 			LinkedList<Double> sampleResidualsDouble = new LinkedList<Double>();
 			if (hasModelChanged) {
 
 				for (T tuple : this.sampleResiduals) {
-					
+
 					Object[] elementTupleValues = getAttributes(tuple);
 
 					double residualTuple = (double) elementTupleValues[0]; // residual
-					
+
 					sampleResidualsDouble.add(residualTuple);
 				}
 			}
-			
-//			for (int currentForecastHorizon = 1; currentForecastHorizon <= this.forecastHorizon; currentForecastHorizon++) {
 
-				// if model not changed, lagged data can be used, else new
-				// recalculation
-				if (hasModelChanged) {
-					// new stochastic process with new model
-					forecastedVariance = forecaster.forecast(sampleResidualsDouble, this.forecastHorizon);
-				} else {
-					forecastedVariance = forecaster.forecast(this.lagResiduals, this.lagVariances, this.forecastHorizon);
-				}
+			// for (int currentForecastHorizon = 1; currentForecastHorizon <=
+			// this.forecastHorizon; currentForecastHorizon++) {
 
-				if (this.forecastHorizon == 1) {
-					// only at the first time horizon the lags have to be
-					// updated.
-					this.updateLagVariances(countOfVariances, forecastedVariance);
-				}
+			// if model not changed, lagged data can be used, else new
+			// recalculation
+			if (hasModelChanged) {
+				// new stochastic process with new model
+				forecastedVariance = forecaster.forecast(sampleResidualsDouble, this.forecastHorizon);
+			} else {
+				forecastedVariance = forecaster.forecast(this.lagResiduals, this.lagVariances, this.forecastHorizon);
+			}
 
-//			}
-			
+			if (this.forecastHorizon == 1) {
+				// only at the first time horizon the lags have to be
+				// updated.
+				this.updateLagVariances(countOfVariances, forecastedVariance);
+			}
+
+			// }
+
 		}
 
 		returnObjects[0] = forecastedVariance;
@@ -262,20 +262,18 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 		SDFAttribute outputVarianceAttribute = new SDFAttribute(null, outputAttributesNames[0], SDFDatatype.OBJECT,
 				null, null, null);
-		
+
 		SDFAttribute outputTimeHorizonAttribute = new SDFAttribute(null, outputAttributesNames[1], SDFDatatype.INTEGER,
 				null, null, null);
-		
+
 		Collection<SDFAttribute> outputAttributesLocal = new ArrayList<>();
 		outputAttributesLocal.add(outputVarianceAttribute);
 		outputAttributesLocal.add(outputTimeHorizonAttribute);
-		
 
 		int ouputIndex = 2;
 		for (SDFAttribute inputAttribute : inputSchema.getAttributes()) {
 
-			outputAttributesNames[ouputIndex] = AggregationFunctionParseOptionsHelper.getFunctionName(parameters) + "_"
-					+ inputAttribute.getAttributeName();
+			outputAttributesNames[ouputIndex] = inputAttribute.getAttributeName();
 			SDFAttribute outputAttribute = new SDFAttribute(null, outputAttributesNames[ouputIndex],
 					inputAttribute.getDatatype(), null, null, null);
 			outputAttributesLocal.add(outputAttribute);
@@ -283,8 +281,8 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 			ouputIndex++;
 		}
 
-		int time_horizon = AggregationFunctionParseOptionsHelper.getFunctionParameterAsInt(parameters, "time_horizon",
-				1);
+		int time_horizon = AggregationFunctionParseOptionsHelper.getFunctionParameterAsInt(parameters,
+				ForecastVariance.FORECASTED_TIME_HORIZON_PARAMETER_NAME, 1);
 
 		// create the aggregation function
 		ForecastVariance<M, T> forecastVarianceFunction = new ForecastVariance<>(inputAttributesIndices,
@@ -317,5 +315,4 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 			this.lagVariances.removeFirst();
 		}
 	}
-
 }

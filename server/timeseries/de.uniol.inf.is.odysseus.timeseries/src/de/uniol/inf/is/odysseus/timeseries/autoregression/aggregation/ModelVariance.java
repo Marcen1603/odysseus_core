@@ -149,6 +149,9 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 		int[] residualInputAttributesIndices = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
 				attributeResolver, "residual_attribute");
+		
+		
+		
 		if (residualInputAttributesIndices == null) {
 			residualInputAttributesIndices = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
 					attributeResolver, 0, false);
@@ -175,9 +178,9 @@ public class ModelVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 		int ouputIndex = 1;
 		for (SDFAttribute inputAttribute : inputSchema.getAttributes()) {
-
-			outputAttributesNames[ouputIndex] = AggregationFunctionParseOptionsHelper.getFunctionName(parameters) + "_"
-					+ inputAttribute.getAttributeName();
+			
+			// output attributes of input attributes with same name
+			outputAttributesNames[ouputIndex] = inputAttribute.getAttributeName();
 			SDFAttribute outputAttribute = new SDFAttribute(null, outputAttributesNames[ouputIndex],
 					inputAttribute.getDatatype(), null, null, null);
 			outputAttributesLocal.add(outputAttribute);
