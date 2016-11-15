@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
@@ -19,9 +20,9 @@ import de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator.KeyValueToTupleA
 
 /**
  * This operator transforms a KeyValueObject to a Tuple
- * 
+ *
  * @author Marco Grawunder, Jan Sören Schwarz
- * 
+ *
  * @param <M>
  */
 
@@ -32,38 +33,22 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 
 	boolean keepInputObject;
 
-	public KeyValueToTuplePO(boolean keepInputObject, SDFSchema outputSchema) {
-		this.keepInputObject = keepInputObject;
+	public KeyValueToTuplePO(SDFSchema outputSchema) {
 		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler
 				.createInstance(outputSchema);
 		setOutputSchema(outputSchema);
 	}
 
 	public KeyValueToTuplePO(KeyValueToTupleAO operator) {
-		this.keepInputObject = operator.isKeepInputObject();
 		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler
 				.createInstance(operator.getOutputSchema());
 		this.renameAttributes = operator.getAttributes();
 		setOutputSchema(operator.getOutputSchema());
 	}
 
-	public KeyValueToTuplePO(KeyValueToTuplePO<M> keyValueToTuplePO) {
-		super(keyValueToTuplePO);
-		this.keepInputObject = keyValueToTuplePO.keepInputObject;
-		this.tHandler = keyValueToTuplePO.tHandler;
-	}
-
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
-	}
-
-	public void setKeepInputObject(boolean keepInputObject) {
-		this.keepInputObject = keepInputObject;
-	}
-
-	public boolean isKeepInputObject() {
-		return keepInputObject;
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -74,8 +59,8 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 			String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
 			if(attributeName.endsWith("*")) {
 				final String attr = attributeName.substring(0, attributeName.length()-1);
-				
-				Iterator<Entry<String, Object>> iter = input.getAttributes().entrySet().stream().filter(e -> e.getKey().startsWith(attr)).iterator();
+
+				Iterator<Entry<String, Object>> iter = input.getAsKeyValueMap().entrySet().stream().filter(e -> e.getKey().startsWith(attr)).iterator();
 				if(!iter.hasNext()) {
 					dataValues.add(null);
 				} else {
@@ -92,7 +77,9 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					dataValues.add(sb.toString());
 				}
 			} else {
-				if (input.getAttributes().containsKey(attributeName)) {
+				if (getOutputSchema().getAttributes().get(i).getDatatype().equals(SDFKeyValueDatatype.KEYVALUEOBJECT)){
+					dataValues.add(input.toString());
+				}else if (input.containsKey(attributeName)) {
 					Object attribute = input.getAttribute(attributeName);
 					if (attribute instanceof List) {
 						if(((List<?>) attribute).size() == 0) {
@@ -119,7 +106,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					}
 				} else {
 					dataValues.add(null);
-				}	
+				}
 			}
 		}
 		Tuple<M> output = (Tuple<M>) tHandler.readData(dataValues.iterator());

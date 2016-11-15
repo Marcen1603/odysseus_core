@@ -12,7 +12,7 @@ json2 = ACCESS({
 	options=[['filename','${BUNDLE-ROOT}\testdata\map\input.json']],
 	schema=[['timestamp','STARTTIMESTAMP']]
 })
-mapped2 = MAP({kvExpressions = [['customer.id', 'kaeufer.id'],
+mapped2 = MAP({expressions = [['customer.id', 'kaeufer.id'],
 								['sum/2', 'sum']
 							]}, json2)
 

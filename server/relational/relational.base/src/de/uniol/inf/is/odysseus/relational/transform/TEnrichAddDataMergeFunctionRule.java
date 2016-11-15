@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.EnrichPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;

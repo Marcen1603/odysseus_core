@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.recovery.convergencedetector.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
-import de.uniol.inf.is.odysseus.trust.ITimeIntervalTrust;
+import de.uniol.inf.is.odysseus.trust.ITrust;
 import de.uniol.inf.is.odysseus.trust.Trust;
 
 /**
@@ -15,40 +15,33 @@ import de.uniol.inf.is.odysseus.trust.Trust;
  * <br />
  * In a logical plan, a {@link TWConvergenceDetectorAO} should be placed
  * directly after {@link TimeWindowAO}s.
- * 
+ *
  * @author Michael Brand
  *
  */
-public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends ITimeIntervalTrust>>
+public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractConvergenceDetectorPO<StreamObject> {
 
 	/**
-	 * The time stamp, which marks the end of the convergence phase. Inclusive,
-	 * so all time stamps AFTER this are outside the convergence phase.
+	 * Shortcut to check, if we marked the first element.
 	 */
-	private PointInTime convEnd = null;
-
-	/**
-	 * Shortcut to check, if we are AFTER {@link #convEnd}.
-	 */
-	private boolean convEndReached = false;
+	private boolean firstMarked = false;
 
 	/**
 	 * Creates a new {@link TWConvergenceDetectorPO} as a copy of an existing
 	 * one.
-	 * 
+	 *
 	 * @param other
 	 *            The {@link TWConvergenceDetectorPO} to copy.
 	 */
 	public TWConvergenceDetectorPO(TWConvergenceDetectorPO<StreamObject> other) {
 		super(other);
-		this.convEnd = other.convEnd;
-		this.convEndReached = other.convEndReached;
+		this.firstMarked = other.firstMarked;
 	}
 
 	/**
 	 * Creates a new {@link TWConvergenceDetectorPO}.
-	 * 
+	 *
 	 * @param width
 	 *            The width of the window (time instants).
 	 * @param advance
@@ -60,31 +53,20 @@ public class TWConvergenceDetectorPO<StreamObject extends IStreamObject<? extend
 
 	@Override
 	protected void process_next(StreamObject object, int port) {
-		if (this.convEndReached) {
+		if (this.firstMarked) {
 			// We're done - shortcut
 			transfer(object);
 			return;
 		}
 
-		/*
-		 * It is necessary to calculate the end of the convergence phase. Former
-		 * idea war to reduce the trust only for the first element, because all
-		 * elements that are in a window with that element will get a reduced
-		 * trust by the merge function. But that does only work, if the elements
-		 * get merged! It won't work for aggregations over groups!
-		 */
+		// FIXME find a way to mark the correct set of elements.
+		// Because of groups there might be more than one element!
 
-		final PointInTime currentTS = object.getMetadata().getStart();
-		if (convEnd == null) {
-			convEnd = currentTS.plus(wndWidth);
-		}
-
-		if (currentTS.beforeOrEquals(convEnd)) {
-			object.getMetadata().setTrust(0);
-		} else {
-			this.convEndReached = true;
-		}
-		transfer(object);
+		@SuppressWarnings("unchecked")
+		final StreamObject clone = (StreamObject) object.clone();
+		((ITrust) clone.getMetadata()).setTrust(0);
+		this.firstMarked = true;
+		transfer(clone);
 	}
 
 }

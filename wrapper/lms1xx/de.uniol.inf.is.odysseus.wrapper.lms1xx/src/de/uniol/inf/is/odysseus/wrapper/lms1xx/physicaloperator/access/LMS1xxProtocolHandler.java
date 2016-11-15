@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -765,7 +765,7 @@ public class LMS1xxProtocolHandler extends
 				if (addRawData)
 					event.put(LMS1xxProtocolHandler.RAW_DATA, (char) LMS1xxConstants.STX + message + (char) LMS1xxConstants.ETX);
 
-				return new KeyValueObject<>(event);
+				return KeyValueObject.createInstance(event);
 			}
 		}
 		else if (message.startsWith(LMS1xxConstants.SFA))

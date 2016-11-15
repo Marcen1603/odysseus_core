@@ -28,7 +28,7 @@ import kafka.message.MessageAndOffset;
  * Based on example from
  * https://cwiki.apache.org/confluence/display/KAFKA/0.8.0+SimpleConsumer+
  * Example
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -164,8 +164,8 @@ public class KafkaSubscriberController extends Thread implements ISubscriberCont
 						// Don't know what error may arise from Kafka. Try to
 						// continue
 						// but shut down for continuous errors.
-						LOG.error("Error while consuming from Kafka. Reason: " + t.getMessage() + ". Error counter = "
-								+ ++errorsInARow);
+						LOG.error("Error while consuming from Kafka. Error counter = "
+								+ ++errorsInARow, t);
 						if (consumer != null) {
 							consumer.close();
 							consumer = null;
@@ -195,7 +195,7 @@ public class KafkaSubscriberController extends Thread implements ISubscriberCont
 
 	/**
 	 * Gets the earliest available offset from Kafka.
-	 * 
+	 *
 	 * @return The earliest offset to be used. May be higher than 0, if older
 	 *         elements are already deleted from Kafka server.
 	 */

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
  * This class represents data types. For some default data types there exists
  * static implementations. Data types can be simple (BASE), Lists (MULTI_VALUE)
  * or complex (TUPLE, BEAN).
- * 
+ *
  * @author Marco Grawunder
  */
 public class SDFDatatype extends SDFElement implements Serializable {
@@ -57,7 +57,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	public static final SDFDatatype TRIPLE = new SDFDatatype("Triple",
 			SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.OBJECT);
-	
+
 	/**
 	 * predefined datatypes
 	 */
@@ -79,11 +79,6 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype BYTEBUFFER = new SDFDatatype("ByteBuffer");
 	public static final SDFDatatype HEXSTRING = new SDFDatatype("HexString");
 	public static final SDFDatatype COMMAND = new SDFDatatype("Command");
-
-	public static final SDFDatatype KEYVALUEOBJECT = new SDFDatatype(
-			"KeyValueObject");
-	public static final SDFDatatype NESTEDKEYVALUEOBJECT = new SDFDatatype(
-			"NestedKeyValueObject");
 
 	public static final SDFDatatype START_TIMESTAMP = new SDFDatatype(
 			"StartTimestamp");
@@ -195,10 +190,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype[] DISCRETE_NUMBERS = new SDFDatatype[] {
 			BYTE, SHORT, INTEGER, LONG, START_TIMESTAMP, END_TIMESTAMP,
 			TIMESTAMP, UNSIGNEDINT16 };
-	
+
 	public static final SDFDatatype[] FLOATING_NUMBERS = new SDFDatatype[] {
 			FLOAT, DOUBLE };
-	
+
 	public static final SDFDatatype[] NUMBERS = new SDFDatatype[DISCRETE_NUMBERS.length+FLOATING_NUMBERS.length];
 	static{
 		int i = 0;
@@ -209,16 +204,16 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			NUMBERS[i++] = s;
 		}
 	}
-	
+
 	public static final SDFDatatype[] NUMBERS_OBJECT = new SDFDatatype[NUMBERS.length+1] ;
 	static{
 		int i = 0;
 		for (SDFDatatype s:NUMBERS){
 			NUMBERS_OBJECT[i++] = s;
-		}		
+		}
 		NUMBERS_OBJECT[i++] = OBJECT;
 	}
-	
+
 	public static final SDFDatatype[] LONG_NUMBERS = new SDFDatatype[] { LONG,
 			START_TIMESTAMP, END_TIMESTAMP, TIMESTAMP };
 
@@ -231,10 +226,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	static{
 
 		types.add(SDFDatatype.OBJECT);
-		
+
 		types.add(SDFDatatype.TUPLE);
 		types.add(SDFDatatype.NTUPLE);
-		
+
 		types.add(SDFDatatype.DATE);
 		types.add(SDFDatatype.DOUBLE);
 		types.add(SDFDatatype.END_TIMESTAMP);
@@ -255,7 +250,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		for (SDFDatatype t: LISTS){
 			types.add(t);
 		}
-		
+
 		types.add(SDFDatatype.STRING);
 		types.add(SDFDatatype.DSTRING);
 		types.add(SDFDatatype.DOCUMENT);
@@ -271,12 +266,12 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.LIST_PARTIAL_AGGREGATE);
-		
+
 		for (SDFDatatype t:types){
 			nameMap.put(t.getURI().toLowerCase(), t);
 		}
 	}
-	
+
 	private static final long serialVersionUID = 8585322290347489841L;
 
 	private final KindOfDatatype type;
@@ -357,7 +352,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		this(datatypeName, type, SDFSchemaFactory.createNewSchema("", Tuple.class, attributes), false);
 	}
 
-	
+
 	public SDFDatatype(SDFDatatype sdfDatatype) {
 		super(sdfDatatype);
 		if (sdfDatatype.schema != null) {
@@ -369,7 +364,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		}
 		this.requiresDeepClone = sdfDatatype.requiresDeepClone;
 	}
-	
+
 	public SDFDatatype(String uri, KindOfDatatype type, SDFDatatype subType, SDFSchema subSchema) {
 		this(uri,type,subSchema);
 		this.subType = subType;
@@ -378,10 +373,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static List<SDFDatatype> getTypes() {
 		return types;
 	}
-	
+
 	public static SDFDatatype getType(String name) {
 		return nameMap.get(name.toLowerCase());
-	} 
+	}
 
 	@Override
 	// TODO: sp�ter wieder entfernen!!
@@ -420,7 +415,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public SDFDatatype.KindOfDatatype getType(){
 		return type;
 	}
-	
+
 	public boolean isComplex() {
 		return this.type == SDFDatatype.KindOfDatatype.MULTI_VALUE
 				|| this.type == SDFDatatype.KindOfDatatype.TUPLE
@@ -471,7 +466,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
     public boolean isBoolean() {
         return this.getURI().equals(BOOLEAN.getURI());
     }
-    
+
 	public boolean isDouble() {
 		return this.getURI().equals(DOUBLE.getURI());
 	}
@@ -495,15 +490,15 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public boolean isByte() {
 		return this.getURI().equals(BYTE.getURI());
 	}
-	
+
 	public boolean isByteBuffer() {
 		return this.getURI().equals(BYTEBUFFER.getURI());
-	}	
+	}
 
     public boolean isChar() {
         return this.getURI().equals(CHAR.getURI());
     }
-    
+
 	public boolean isString() {
 		return this.getURI().equals(STRING.getURI());
 	}
@@ -539,7 +534,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	/**
 	 * State if the function returns a complex object that requires a deep clone
 	 * during transfer. Default should be false.
-	 * 
+	 *
 	 * @return true, if the output requires deep clone
 	 */
 	public boolean requiresDeepClone() {
@@ -562,7 +557,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	/**
 	 * Checks whether this datatype is semantically equal to <code>other</code>
-	 * 
+	 *
 	 * @param other
 	 * @return
 	 */
@@ -593,7 +588,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	/**
 	 * This method checks whether this type can be casted into
 	 * <code>other</code>.
-	 * 
+	 *
 	 * @param other
 	 * @return True, if this type can be casted into <code>other</code>
 	 */
@@ -637,7 +632,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public static SDFDatatype createTypeWithSubSchema(SDFDatatype type, SDFSchema subSchema) {
-		
+
 		if (type.isListValue()){
 			if (type.subType.isTuple()){
 				return new SDFDatatype(type.getURI(), KindOfDatatype.LIST, type.subType, subSchema);
@@ -648,7 +643,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		}
 		return new SDFDatatype(type.getURI(), type.type, subSchema);
 	}
-	
+
 	public static SDFDatatype createTypeWithSubSchema(SDFDatatype type, SDFDatatype subType, SDFSchema subSchema) {
 		if (type.isListValue()){
 			if (subType.isTuple()){

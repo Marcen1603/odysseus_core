@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
@@ -191,7 +193,10 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		switch (publishStyle)
 		{
 		case WorkQueue:
-			channel.queueDeclare(queueName, true, false, false, null);
+			// Add a time to live (cause the server adds this and thus we have to expect it)
+			Map<String, Object> args = new HashMap<>();
+			args.put("x-message-ttl", 1000L);
+			channel.queueDeclare(queueName, true, false, false, args);
 			break;
 			
 		case PublishSubscribe:			

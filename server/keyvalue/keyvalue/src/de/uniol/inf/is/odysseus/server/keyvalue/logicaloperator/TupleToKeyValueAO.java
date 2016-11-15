@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -46,27 +45,11 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 		return new TupleToKeyValueAO(this);
 	}
 
-	@Parameter(type = StringParameter.class, name = "TYPE", optional = true, isList = false, doc = "type of key value object the tuples will be transformed to")
-	public void setType(String type) {
-		if (type.equalsIgnoreCase("KEYVALUEOBJECT")) {
-			this.type = KeyValueObject.class;
-		} else if (type.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
-			this.type = NestedKeyValueObject.class;
-		} else {
-			this.type = null;
-		}
-	}
-
-	@GetParameter(name = "TYPE")
-	public String getType() {
-		return this.type.getSimpleName();
-	}
-
 	@SuppressWarnings("rawtypes")
 	public Class<? extends IStreamObject> getTypeClass() {
 		return this.type;
-	}	
-	
+	}
+
 	@Override
 	public boolean isValid() {
 		if (this.type != null

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
@@ -29,13 +29,13 @@ public class KeyValueRenamePO<T extends KeyValueObject<M>, M extends IMetaAttrib
 	boolean keepInputObject;
 
 	public KeyValueRenamePO() {
-		
+
 	}
 
 	public KeyValueRenamePO(RenameAO renameAO) {
 		this.renameMap = renameAO.getAliasesAsMap();
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -44,16 +44,16 @@ public class KeyValueRenamePO<T extends KeyValueObject<M>, M extends IMetaAttrib
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T input, int port) {
-		Map<String, Object> attributes = input.getAttributes();
+		// TODO: find a better way ...
+		Map<String, Object> attributes = input.getAsKeyValueMap();
 		for(Entry<String, String> renamePair : this.renameMap.entrySet()) {
 			attributes.put(renamePair.getValue(), attributes.remove(renamePair.getKey()));
 		}
-		@SuppressWarnings({ "rawtypes" })
-		T output = (T) new KeyValueObject(attributes);
-		if (input.getMetadata() != null) {	
+		T output = (T) KeyValueObject.createInstance(attributes);
+		if (input.getMetadata() != null) {
 			output.setMetadata((M) input.getMetadata().clone());
 		}
-		transfer(output);	
+		transfer(output);
 	}
 
 	@Override
