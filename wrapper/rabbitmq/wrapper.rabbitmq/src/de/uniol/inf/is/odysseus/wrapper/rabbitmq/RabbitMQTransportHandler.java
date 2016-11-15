@@ -208,7 +208,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 			for (Object key : keys) {
 				if (key instanceof String) {
 					String keyString = (String) key;
-					Object value = options.get(keyString);
+					Object value = options.getValue(keyString);
 					// Remove the prefix when we insert it so the real args
 					String argKey = keyString.replaceFirst(OPTIONS_PREFIX, "");
 					args.put(argKey, value);
