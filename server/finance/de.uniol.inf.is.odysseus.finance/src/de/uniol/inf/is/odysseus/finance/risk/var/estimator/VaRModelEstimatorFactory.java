@@ -4,7 +4,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.finance.risk.var.aggregation.VaRModelAggregation;
+import de.uniol.inf.is.odysseus.finance.risk.var.aggregation.ModelValueAtRisk;
 import de.uniol.inf.is.odysseus.finance.risk.var.estimator.analytical.VarianceCovarianceEstimator;
 
 /**
@@ -29,7 +29,7 @@ public class VaRModelEstimatorFactory {
 		if (estimatorName.equalsIgnoreCase(ReturnHistoricalSimulationEstimator.NAME)) {
 
 			int[] returnInputAttributesIndices = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-					attributeResolver, VaRModelAggregation.RETURN_ATTR_PARAM_NAME);
+					attributeResolver, ModelValueAtRisk.RETURN_ATTR_PARAM_NAME);
 
 			int returnIndex = returnInputAttributesIndices[0];
 
@@ -39,10 +39,10 @@ public class VaRModelEstimatorFactory {
 		} else if (estimatorName.equalsIgnoreCase(VolatilityIntegratedHistoricalSimulationEstimator.NAME)) {
 
 			int[] returnInputAttributesIndices = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-					attributeResolver, VaRModelAggregation.RETURN_ATTR_PARAM_NAME);
+					attributeResolver, ModelValueAtRisk.RETURN_ATTR_PARAM_NAME);
 
 			int[] volatilityInputAttributesIndices = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-					attributeResolver, VaRModelAggregation.VOLATILITY_ATTR_PARAM_NAME);
+					attributeResolver, ModelValueAtRisk.VOLATILITY_ATTR_PARAM_NAME);
 
 			int returnIndex = returnInputAttributesIndices[0];
 
@@ -55,7 +55,7 @@ public class VaRModelEstimatorFactory {
 		} else if (estimatorName.equalsIgnoreCase(VarianceCovarianceEstimator.NAME)) {
 
 			int[] varianceInputAttributesIndices = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-					attributeResolver, VaRModelAggregation.VOLATILITY_ATTR_PARAM_NAME);
+					attributeResolver, ModelValueAtRisk.VOLATILITY_ATTR_PARAM_NAME);
 			int varianceIndex = varianceInputAttributesIndices[0];
 
 			IVaRModelEstimator estimator = null;

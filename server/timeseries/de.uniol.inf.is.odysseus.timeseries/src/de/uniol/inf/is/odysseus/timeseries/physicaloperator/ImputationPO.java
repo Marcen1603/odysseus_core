@@ -30,6 +30,7 @@ public class ImputationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+		// TODO: if time progress after lastElement+k: lastElement can be send!
 		sendPunctuation(punctuation);
 	}
 

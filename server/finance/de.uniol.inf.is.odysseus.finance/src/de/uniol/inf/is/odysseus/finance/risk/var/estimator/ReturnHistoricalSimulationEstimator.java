@@ -23,8 +23,7 @@ import de.uniol.inf.is.odysseus.timeseries.IHasEstimationData;
  * @author Christoph Schröer
  *
  */
-public class ReturnHistoricalSimulationEstimator extends HistoricalSimulationEstimator
-		implements IHasEstimationData<Tuple<ITimeInterval>> {
+public class ReturnHistoricalSimulationEstimator extends HistoricalSimulationEstimator {
 
 	protected static Logger logger = LoggerFactory.getLogger(ReturnHistoricalSimulationEstimator.class);
 
