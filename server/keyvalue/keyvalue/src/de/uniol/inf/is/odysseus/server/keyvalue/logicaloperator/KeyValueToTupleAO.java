@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -98,9 +99,12 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 			}
 			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(), sdfAtt.getDtConstraints()));
 		}
+		final List<SDFMetaSchema> metaSchema;
+		metaSchema = getInputSchema().getMetaschema();
 		@SuppressWarnings("unchecked")
 		SDFSchema schema = SDFSchemaFactory.createNewSchema(type, (Class<? extends IStreamObject<?>>) Tuple.class, attributeList,getInputSchema());
-		return schema;
+		SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+		return outputSchema;
 	}
 
 	@Override
