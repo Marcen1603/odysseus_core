@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.datarate_systemload;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
@@ -154,13 +155,23 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void setDatarate(double datarate) {
-		this.datarate.setDatarate(datarate);
+	public void setDatarate(String key, double datarate) {
+		this.datarate.setDatarate(key, datarate);
 	}
 
 	@Override
-	public double getDatarate() {
-		return datarate.getDatarate();
+	public double getDatarate(String key) {
+		return datarate.getDatarate(key);
+	}
+
+	@Override
+	public Map<String, Double> getDatarates() {
+		return datarate.getDatarates();
+	}
+
+	@Override
+	public void setDatarates(Map<String, Double> datarates) {
+		datarate.setDatarates(datarates);
 	}
 
 	// ------------------------------------------------------------------------------
