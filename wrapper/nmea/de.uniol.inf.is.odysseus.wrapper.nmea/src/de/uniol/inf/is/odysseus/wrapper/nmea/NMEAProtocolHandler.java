@@ -52,12 +52,12 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
  *
  */
 public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<IMetaAttribute>> {
-	
+
 	private static final String NMEA = "NMEA";
-	private static final String DECODED_AIS = "decodedAIS";
+//	private static final String DECODED_AIS = "decodedAIS";
 	private static final String DELAY = "delay";
-	private static final String ORIGINAL_NMEA = "originalNMEA";
-	
+//	private static final String ORIGINAL_NMEA = "originalNMEA";
+
 	/** Logger for this class. */
 	private final Logger LOG = LoggerFactory.getLogger(NMEAProtocolHandler.class);
 	/** Input stream as BufferedReader (Only in GenericPull). */
@@ -183,7 +183,9 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 				// Important to parse the decodedAIS as a sentence in order to
 				// prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
-				decodedAIS.setKeyValue(DECODED_AIS, this.aishandler.getDecodedAISMessage());
+				// NO LONGER SUPPORTED
+				// decodedAIS.setKeyValue(DECODED_AIS,
+				// this.aishandler.getDecodedAISMessage());
 				this.aishandler.resetDecodedAISMessage();
 				// The decoded message
 				res.add(decodedAIS);
@@ -191,7 +193,8 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 			// The Original message:
 			Map<String, Object> originalEvent = sentence.toMap();
 			KeyValueObject<IMetaAttribute> originalAIS = KeyValueObject.createInstance(originalEvent);
-			originalAIS.setKeyValue(ORIGINAL_NMEA, sentence);
+			// NO LONGER SUPPORTED
+			// originalAIS.setKeyValue(ORIGINAL_NMEA, sentence);
 			// ensure the order, original fragment (if it's the second fragment,
 			// then it should follow the first original fragment) then the
 			// decoded message
@@ -204,7 +207,8 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 		else {
 			event = sentence.toMap();
 			KeyValueObject<IMetaAttribute> undecodedNMEA = KeyValueObject.createInstance(event);
-			undecodedNMEA.setKeyValue(ORIGINAL_NMEA, sentence);
+			// no longer supported
+			//undecodedNMEA.setKeyValue(ORIGINAL_NMEA, sentence);
 			res.add(undecodedNMEA);
 		}
 		this.nextList.addAll(res);
@@ -217,17 +221,18 @@ public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 			// are only processed
 			// and transfered between the operators (transfered, not
 			// transported, from operator to another)
-			if (object.hasKeyValue(DECODED_AIS))
-				return;
-			// Case2: get the sentence from MetaData if existed
-			if (object.hasKeyValue(ORIGINAL_NMEA)) {
-				Object obj = object.getKeyValue(ORIGINAL_NMEA);
-				if (obj instanceof Sentence) {
-					Sentence sentence = (Sentence) obj;
-					getTransportHandler().send(sentence.toNMEA().getBytes());
-					return;
-				}
-			}
+			// NO LONGER SUPPORTED!
+			// if (object.hasKeyValue(DECODED_AIS))
+			// return;
+			// // Case2: get the sentence from MetaData if existed
+			// if (object.hasKeyValue(ORIGINAL_NMEA)) {
+			// Object obj = object.getKeyValue(ORIGINAL_NMEA);
+			// if (obj instanceof Sentence) {
+			// Sentence sentence = (Sentence) obj;
+			// getTransportHandler().send(sentence.toNMEA().getBytes());
+			// return;
+			// }
+			// }
 			// Case3: create the sentence out from the key-value attributes
 			Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAsKeyValueMap());
 			getTransportHandler().send(sentence.toNMEA().getBytes());

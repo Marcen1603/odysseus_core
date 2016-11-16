@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -128,7 +128,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		}
 
 		updateTuples((Tuple<?>) element);
-		
+
 		refresh();
 	}
 
@@ -225,7 +225,7 @@ public class StreamTableEditor implements IStreamEditorType {
 							synchronized( filterMonitor) {
 								filter = new TupleFilter(filterExpressionString, getSchema());
 							}
-							
+
 							toolbarLabel.setText(toolbarLabel.getText() + " [ " + filter.getExpressionString() + " ]");
 						} catch (ParseException e1) {
 							new ExceptionWindow("Could not apply filter '" + filterExpressionString + "'", e1);
@@ -285,7 +285,7 @@ public class StreamTableEditor implements IStreamEditorType {
 
 		});
 
-		
+
         final ToolItem exportButton = new ToolItem(toolbar, SWT.PUSH);
         exportButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("export"));
         exportButton.setToolTipText("Export");
@@ -300,7 +300,7 @@ public class StreamTableEditor implements IStreamEditorType {
                 }
             }
         });
-        
+
         ToolItem clearButton = new ToolItem(toolbar, SWT.PUSH);
         clearButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("clear"));
         clearButton.setToolTipText("Clear");
@@ -311,7 +311,7 @@ public class StreamTableEditor implements IStreamEditorType {
         			synchronized( tuples ) {
         				tuples.clear();
         			}
-        			
+
         			refresh();
         		}
         	}
@@ -459,9 +459,9 @@ public class StreamTableEditor implements IStreamEditorType {
 				TableViewerColumn col = createColumn(tableViewer, getSchema().get(attributeIndex));
 				layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
-			
+
 			if (isShowingMetadata) {
-				
+
 				List<SDFMetaSchema> metaschemaList = getSchema().getMetaschema();
 				if( metaschemaList != null ) {
 					for( int i = 0; i < metaschemaList.size(); i++) {
@@ -475,16 +475,9 @@ public class StreamTableEditor implements IStreamEditorType {
 				} else {
 					TableViewerColumn metadataColumn = createMetadataColumn(tableViewer);
 					layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
-	
-					TableViewerColumn metadataMapColumn = createMetadataMapColumn(tableViewer);
-					layout.setColumnData(metadataMapColumn.getColumn(), new ColumnWeightData(weight, 25, true));
 				}
 			}
-			
-			if (isShowingHashCode){
-				TableViewerColumn hashCodeColumn = createHashCodeColumn(tableViewer);
-				layout.setColumnData(hashCodeColumn.getColumn(), new ColumnWeightData(weight,10,true));
-			}
+
 
 		} finally {
 			getParent().layout();
@@ -560,53 +553,8 @@ public class StreamTableEditor implements IStreamEditorType {
 
 		return col;
 	}
-	private TableViewerColumn createMetadataMapColumn(TableViewer tableViewer) {
-		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
-		col.getColumn().setText("MetadataMap");
-		col.getColumn().setAlignment(SWT.CENTER);
 
-		col.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				try {
-					Object metadataMap = ((Tuple<?>) cell.getElement()).getGetValueMap();
-					if (metadataMap != null) {
-						cell.setText(metadataMap.toString());
-					} else {
-						cell.setText("<null>");
-					}
-					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 
-				} catch (Throwable t) {
-					LOG.error("Could not retrieve metadataMap", t);
-					cell.setText("<Error>");
-				}
-			}
-		});
-
-		return col;
-	}
-
-	private TableViewerColumn createHashCodeColumn(TableViewer tableViewer) {
-		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
-		col.getColumn().setText("hashCode / Object.hashCode");
-		col.getColumn().setAlignment(SWT.CENTER);
-
-		col.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				int hashCode = ((Tuple<?>) cell.getElement()).hashCode();
-				int hashCode2 = System.identityHashCode(cell.getElement());
-				
-				cell.setText(hashCode+" / "+hashCode2);
-				cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-			}
-		});
-
-		return col;
-	}
-
-	
 	private void stopRefreshThread() {
 		if (desyncThread != null) {
 			desyncThread.stopRunning();

@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -24,6 +27,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", doc="Translates a key-value/json object to a tuple", category={LogicalOperatorCategory.TRANSFORM})
 public class KeyValueToTupleAO extends UnaryLogicalOp{
+
+	Logger LOG =  LoggerFactory.getLogger(KeyValueToTupleAO.class);
 
 	private static final long serialVersionUID = 4804826171047928513L;
 
@@ -62,6 +67,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	@Parameter(name = "keepInput", type=BooleanParameter.class, optional = true, deprecated = true )
 	public void setKeepInputObject(boolean keepInputObject) {
 		this.keepInputObject = keepInputObject;
+		LOG.warn("KeepInput is no longer supported. Please use explicite attribute with datatype keyvalue");
 	}
 
 	public boolean isKeepInputObject() {
@@ -119,5 +125,6 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	public boolean readMetaData() {
 		return false;
 	}
+
 
 }
