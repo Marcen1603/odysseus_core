@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +96,7 @@ public class ConvergenceDetectorComponent implements IRecoveryComponent {
 							advance = new TimeValueItem(1, tw.getBaseTimeUnit());
 						}
 						ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(tw.getWindowSize(), advance,
-								TimeUnit.SECONDS);
+								tw.getBaseTimeUnit());
 						insertConvergenceDetector(tw, convergenceDetector);
 					} else if (operator instanceof ElementWindowAO) {
 						ElementWindowAO ew = (ElementWindowAO) operator;
