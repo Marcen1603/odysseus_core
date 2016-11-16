@@ -2,14 +2,11 @@ package de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.metadata.GenericMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -24,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateAndRenameSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", doc="Translates a key-value/json object to a tuple", category={LogicalOperatorCategory.TRANSFORM})
 public class KeyValueToTupleAO extends UnaryLogicalOp{
@@ -104,17 +100,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(), sdfAtt.getDtConstraints()));
 		}
 		final List<SDFMetaSchema> metaSchema;
-		if(keepInputObject){
-			// metaschema must be extended with generic meta attribute for storing old value
-			SortedSet<String> set = new TreeSet<>();
-			set.addAll(this.getInputSchema().getMetaAttributeNames());
-			set.addAll(MetadataRegistry.toClassNames(GenericMetaAttribute.classes));
-			IMetaAttribute metaType = MetadataRegistry.getMetadataType(set);
-			
-			metaSchema = MetadataRegistry.getMetadataSchema(set);
-		}else{
-			metaSchema = getInputSchema().getMetaschema();
-		}
+		metaSchema = getInputSchema().getMetaschema();
 		@SuppressWarnings("unchecked")
 		SDFSchema schema = SDFSchemaFactory.createNewSchema(type, (Class<? extends IStreamObject<?>>) Tuple.class, attributeList,getInputSchema());
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
