@@ -183,15 +183,15 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	 * Default implemtation of CVS, BSON, JSON
 	 */
 
-	@Override
-	public byte[] writeBSONData(Object data) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
-		throw new UnsupportedOperationException();
-	}
+//	@Override
+//	public byte[] writeBSONData(Object data) {
+//		throw new UnsupportedOperationException();
+//	}
+//
+//	@Override
+//	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
+//		throw new UnsupportedOperationException();
+//	}
 
 	@Override
 	public void writeCSVData(StringBuilder string, Object data, WriteOptions options) {

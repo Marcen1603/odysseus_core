@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.IBSONWriter;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
 
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
  *
  */
 
-public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<KeyValueObject<?>> {
+public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<KeyValueObject<?>> implements IBSONWriter {
 
 	protected static List<String> types = new ArrayList<String>();
 	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObjectDataHandler.class);
@@ -129,11 +130,15 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 				"writeData() is not implemented in this DataHandler! writeJSONData should be used instead.");
 	}
 
-	@Override
-	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
+	private void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
 		if (data instanceof KeyValueObject<?>) {
 			string.append((((KeyValueObject<?>) data).toString()));
 		}
+	}
+
+	@Override
+	public byte[] writeBSONData(KeyValueObject<?> kvObject) {
+		return kvObject.getAsBSON();
 	}
 
 	@Override

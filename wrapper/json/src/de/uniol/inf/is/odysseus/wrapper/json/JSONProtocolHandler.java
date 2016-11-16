@@ -110,7 +110,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 			}
 		}
 
-		this.getDataHandler().writeJSONData(string, kvObject, writemetadata);
+		this.getDataHandler().writeData(string, kvObject, writemetadata);
 
 		string.append(System.getProperty("line.separator"));
 		CharBuffer charBuffer = CharBuffer.wrap(string);

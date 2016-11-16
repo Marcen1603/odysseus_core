@@ -699,4 +699,8 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	}
 
+	public byte[] getAsBSON() {
+		throw new RuntimeException("Currently not supported");
+	}
+
 }

@@ -36,7 +36,7 @@ public interface IStreamObjectDataHandler<T extends IStreamObject<? extends IMet
 
 	public void writeCSVData(StringBuilder string, Object data, WriteOptions options);
 
-	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData);
-
-	public byte[] writeBSONData(Object data);
+//	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData);
+//
+//	public byte[] writeBSONData(Object data);
 }
