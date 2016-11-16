@@ -57,52 +57,61 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 		List<String> dataValues = new ArrayList<String>();
 		for (int i = 0; i < getOutputSchema().size(); i++) {
 			String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
-			if(attributeName.endsWith("*")) {
-				final String attr = attributeName.substring(0, attributeName.length()-1);
+			if (attributeName.endsWith("*")) {
+				final String attr = attributeName.substring(0, attributeName.length() - 1);
 
-				Iterator<Entry<String, Object>> iter = input.getAsKeyValueMap().entrySet().stream().filter(e -> e.getKey().startsWith(attr)).iterator();
-				if(!iter.hasNext()) {
+				Iterator<Entry<String, Object>> iter = input.getAsKeyValueMap().entrySet().stream()
+						.filter(e -> e.getKey().startsWith(attr)).iterator();
+				if (!iter.hasNext()) {
 					dataValues.add(null);
 				} else {
 					StringBuilder sb = new StringBuilder();
-					while(iter.hasNext()) {
+					while (iter.hasNext()) {
 						Entry<String, Object> entry = iter.next();
 						sb.append(entry.getKey().substring(attr.length()));
 						sb.append("|");
 						sb.append(entry.getValue());
-						if(iter.hasNext()) {
+						if (iter.hasNext()) {
 							sb.append("\n");
 						}
 					}
 					dataValues.add(sb.toString());
 				}
 			} else {
-				if (getOutputSchema().getAttributes().get(i).getDatatype().equals(SDFKeyValueDatatype.KEYVALUEOBJECT)){
+				if (getOutputSchema().getAttributes().get(i).getDatatype().equals(SDFKeyValueDatatype.KEYVALUEOBJECT)) {
 					dataValues.add(input.toString());
-				}else if (input.containsKey(attributeName)) {
+				} else if (input.containsKey(attributeName)) {
 					Object attribute = input.getAttribute(attributeName);
-					if (attribute instanceof List) {
-						if(((List<?>) attribute).size() == 0) {
-							dataValues.add(null);
-						} else {
-							StringBuilder sb = new StringBuilder();
-							for(Iterator<Object> iter = ((List<Object>) attribute).iterator(); iter.hasNext(); ) {
-								sb.append(iter.next());
-								if(iter.hasNext()) {
-									sb.append("\n");
+					if (attribute != null) {
+						if (attribute instanceof List) {
+							if (((List<?>) attribute).size() == 0) {
+								dataValues.add(null);
+							} else {
+								StringBuilder sb = new StringBuilder();
+								for (Iterator<Object> iter = ((List<Object>) attribute).iterator(); iter.hasNext();) {
+									sb.append(iter.next());
+									if (iter.hasNext()) {
+										sb.append("\n");
+									}
 								}
-							}
-							dataValues.add(sb.toString());
-	//						for (Object object : (List<Object>) attribute) {
-								// Add data values as single values. The data handler
-								// handles this as a list. It will create a list over a
-								// couple of entries in the list. Only works if the list
+								dataValues.add(sb.toString());
+								// for (Object object : (List<Object>)
+								// attribute) {
+								// Add data values as single values. The data
+								// handler
+								// handles this as a list. It will create a list
+								// over a
+								// couple of entries in the list. Only works if
+								// the list
 								// is the last element!
-	//							dataValues.add(object.toString());
-	//						}
+								// dataValues.add(object.toString());
+								// }
+							}
+						} else {
+							dataValues.add(attribute.toString());
 						}
-					} else {
-						dataValues.add(attribute.toString());
+					}else{
+						dataValues.add(null);
 					}
 				} else {
 					dataValues.add(null);
