@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 /**
  * This operator finds anomalies / outliers. Therefore, the mean gaussian
  * standard deviation is calculated and compared to the newest tuple
- * 
+ *
  * @author Tobias Brandt
  *
  */
@@ -201,15 +201,15 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * Searches for the correct information for this tuple. The correct
 	 * information is the one with the newest timestamp that is older than the
 	 * one of the tuple.
-	 * 
+	 *
 	 * The new info and the next tuple normally have the same timestamp. We
 	 * don't use the info which is made with the current tuple cause we want an
 	 * info which is uninfluenced by a potential anomaly. Therefore, is searches
 	 * for "startTime.before(tupleStartTime)" and not
 	 * "startTime.beforeOrEquals(tupleStartTime)"
-	 * 
+	 *
 	 * Also purges old tuples in the infoMap
-	 * 
+	 *
 	 * @param tuple
 	 * @return
 	 */
@@ -258,7 +258,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	/**
 	 * Returns the newest info which is older than the given tuple and does not
 	 * check, if there is a tuple after that one.
-	 * 
+	 *
 	 * @param tuple
 	 * @return
 	 */
@@ -284,7 +284,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	/**
 	 * Removes the old values from the operator internal storage due to the
 	 * timestamps set by the window
-	 * 
+	 *
 	 * @param tuples
 	 *            The list of tuples from which the old ones have to be removed
 	 * @param start
@@ -342,7 +342,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	/**
 	 * Processes a tuple with the given values. This includes the calculation of
 	 * the anomaly score. Transfers the tuple if it is an anomaly
-	 * 
+	 *
 	 * @param gId
 	 *            The id if the group for this tuple
 	 * @param sensorValue
@@ -355,7 +355,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 *            The tuple which has to be transfered if it is an anomaly
 	 * @param info
 	 *            The deviationInformation for the group
-	 * 
+	 *
 	 */
 	private void processTuple(Object gId, double sensorValue, T tuple, DeviationInformation info) {
 
@@ -413,7 +413,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * Sends the tuples within a window if the window and the next window has an
 	 * outlier - but does not send the tuples at the margins (which were no
 	 * outliers and the window before / after had no outlier, too)
-	 * 
+	 *
 	 * @param tuples
 	 * @param info
 	 */
@@ -441,7 +441,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	/**
 	 * Transfers a tuple to the next operator and appends the given information
-	 * 
+	 *
 	 * @param originalTuple
 	 *            The tuple which needs to be enriched
 	 * @param punctuationDuration
@@ -468,7 +468,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	/**
 	 * Checks, if the given value is an anomaly with the interval set by the ao
-	 * 
+	 *
 	 * @param sensorValue
 	 *            The value which we won't to know about if it's an anomaly
 	 * @param standardDeviation
@@ -487,7 +487,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	/**
 	 * Calculates the anomaly score, a value between 0 and 1.
-	 * 
+	 *
 	 * @param distance
 	 *            Distance to good area
 	 * @return Anomaly score (0, 1]
@@ -525,7 +525,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	/**
 	 * Helper function to easily get the value in the attribute specified in the
 	 * valueAttributeName variable via the AO
-	 * 
+	 *
 	 * @param tuple
 	 *            The tuple where this attribute is in
 	 * @return The double value in the tuple
@@ -572,7 +572,6 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 							Tuple lastTuple = lastDataTuple;
 							Tuple tuple = new Tuple(lastTuple);
-							tuple.setKeyValue("start", punctuation.getTime());
 							double anomalyScore = calcAnomalyScore(time.getMainPoint(), info.mean,
 									info.standardDeviation, interval);
 							transferTuple(tuple, time.getMainPoint(), anomalyScore, info.mean, info.standardDeviation);

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
 public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
@@ -82,7 +82,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void init() {
 		for (SDFAttribute attribute : this.inputSchema) {
@@ -99,7 +99,6 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	private synchronized void process_data(Tuple<M> object ) {
 		PointInTime currentTime = object.getMetadata().getStart();
 		if (currentTime.after(lastCut)) {
-			long tillTime = System.nanoTime();
 			init();
 			// get all elements from the sweep area that can be processed
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
@@ -124,7 +123,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 			if (pool.size() > 0) {
 				// first, we need to calculate possible split points for
 				// continuous valued attributes
-				PointInTime totalMin = lastCut;				
+				PointInTime totalMin = lastCut;
 				// fill all attributes - without class-attribute
 				List<SDFAttribute> allAttributes = new ArrayList<>();
 				for (SDFAttribute attribute : inputSchema) {
@@ -134,16 +133,13 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 				}
 				// get the best split for the root
 				TreeNode root = new TreeNode();
-				getNextSplit(pool, allAttributes, root);			
-				long afterTime = System.nanoTime();
+				getNextSplit(pool, allAttributes, root);
 				Tuple<M> newtuple = new Tuple<M>(1, false);
 				@SuppressWarnings("unchecked")
 				M meta = (M) pool.get(pool.size() - 1).getMetadata().clone();
 				meta.setStartAndEnd(totalMin, PointInTime.getInfinityTime());
 				newtuple.setMetadata(meta);
 				newtuple.setAttribute(0, root);
-				newtuple.setKeyValue("LATENCY_BEFORE", tillTime);
-				newtuple.setKeyValue("LATENCY_AFTER", afterTime);
 				// root.printSubTree();
 				transfer(newtuple);
 
@@ -187,7 +183,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 
 	@SuppressWarnings("unchecked")
 	private void getNextSplit(List<Tuple<M>> pool, List<SDFAttribute> attributesToCheck, TreeNode parent) {
-		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);	
+		ArrayList<SDFAttribute> attributes = new ArrayList<>(attributesToCheck);
 		// first, calculate splitting points for pool and attributes!
 		Map<SDFAttribute, List<RelationalExpression<M>>> splittingPoints = calculateSplittingPoints(pool, attributes);
 		// the, find the best split

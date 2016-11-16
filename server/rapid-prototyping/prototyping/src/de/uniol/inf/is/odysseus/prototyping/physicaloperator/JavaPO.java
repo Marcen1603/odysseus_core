@@ -113,7 +113,7 @@ public class JavaPO<M extends IMetaAttribute, T extends Tuple<M>> extends Abstra
     protected void process_next(final T object, final int port) {
         Object[] attributes = new Object[] {};
         try {
-            attributes = (Object[]) this.udfMethod.invoke(this.udfInstance, object.getAttributes(), object.getGetValueMap());
+            attributes = (Object[]) this.udfMethod.invoke(this.udfInstance, object.getAttributes());
         }
         catch (final Throwable e) {
             JavaPO.LOG.error(e.getMessage(), e);

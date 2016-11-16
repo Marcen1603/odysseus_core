@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.Order;
@@ -39,29 +38,6 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 * @param metadata
 	 */
 	public void setMetadata(M metadata);
-
-	/**
-	 * Allow any object to be attached, do not use this method for
-	 * often accessed meta data, (e.g. timestamps)
-	 *
-	 * @param name The name (key) of the meta data, if key already exists the
-	 * content will be overwritten
-	 * @param content The content to be stored
-	 */
-	void setKeyValue(String name, Object content);
-
-	/**
-	 * Retrieve attached meta data object with name
-	 *
-	 * @param name The name (key) of the meta data
-	 * @return the stored meta data object
-	 */
-	Object getKeyValue(String name);
-
-	boolean hasKeyValue(String name);
-
-	void setKeyValueMap(Map<String, Object> metaMap);
-	Map<String, Object> getGetValueMap();
 
 	boolean isTimeProgressMarker();
 	void setTimeProgressMarker(boolean timeProgressMarker);
@@ -95,5 +71,32 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 
 	String toString(boolean printMetadata);
 
+	/**
+	 * If an object provides a schema, all input is the same and access can be optmized and
+	 * possible processing can be checked at compile time
+	 * @return
+	 */
 	boolean isSchemaLess();
+
+	/**
+	 * This methods allows to mark an object with a value
+	 * This value should only be used inside a single operator and will not be merged or transferred
+	 * @param key
+	 * @param value
+	 */
+	void setTransientMarker(String key, Object value);
+
+	/**
+	 * returns true, if the object contains this transient marker
+	 * @param key
+	 * @return
+	 */
+	boolean hasTransientMarker(String key);
+
+	/**
+	 * returns the value for this transient marker
+	 * @param key
+	 * @return
+	 */
+	Object getTransientMarker(String key);
 }
