@@ -1118,6 +1118,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlanChanged(PlanModificationEventType.QUERY_START, queryToStart);
 			} catch (Exception e) {
 				LOG.warn("Query not started. An Error during optimizing occurd (ID: " + queryToStart.getID() + ").", e);
+				// Could be that the query was internal started. So stop again
+				queryToStart.stop();
 				throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: "
 						+ queryToStart.getID() + "). " + e.getMessage(), e);
 			} finally {
