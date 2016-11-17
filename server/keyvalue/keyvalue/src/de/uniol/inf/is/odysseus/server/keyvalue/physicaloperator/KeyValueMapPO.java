@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,36 +51,20 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 	private List<NamedExpression> expressions;
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
-	final private boolean keepAllAttributes;
-	final private List<String> removeAttributes;
 
 	public KeyValueMapPO(MapAO mapAO) {
 		this.inputSchema = mapAO.getInputSchema();
 		initExpressions(mapAO.getExpressions());
 		this.allowNull = false;
-		this.keepAllAttributes = mapAO.isKeepAllAttributes();
-		this.removeAttributes = mapAO.getRemoveAttributes();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	@Override
 	final protected void process_next(T object, int port) {
 
-		T outputVal;
-		if(this.keepAllAttributes) {
-			outputVal = (T) KeyValueObject.createInstance((KeyValueObject)object);
-		} else {
-			outputVal = (T) KeyValueObject.createInstance();
-			// WTF???
-			//			if (object.getGetValueMap() != null) {
-//				for (Entry<String, Object> entry : object.getGetValueMap().entrySet()) {
-//					outputVal.setKeyValue(entry.getKey(), entry.getValue());
-//				}
-//			}
-		}
+		T outputVal = (T) KeyValueObject.createInstance();
 
 		outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
-
 
 		boolean nullValueOccured = false;
 		synchronized (this.expressions) {
@@ -114,13 +97,6 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 						sendWarning("Cannot calc result for " + object
 								+ " with expression " + expr, e);
 					}
-				}
-			}
-		}
-		if(this.keepAllAttributes) {
-			if(this.removeAttributes != null && this.removeAttributes.size() > 0) {
-				for(String att: this.removeAttributes) {
-					outputVal.removeAttribute(att);
 				}
 			}
 		}
@@ -165,6 +141,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+
 	}
 
 	@Override
