@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * @author Jonas Jacobi
@@ -49,9 +48,6 @@ public class MapAO extends UnaryLogicalOp {
 	private boolean evaluateOnPunctuation = false;
 	private boolean allowNullValue = true;
 	private boolean suppressErrors = false;
-	///private boolean printNull = false;
-	private boolean keepAllAttributes = false;
-	private List<String> removeAttributes;
 
 	public MapAO() {
 		super();
@@ -64,8 +60,6 @@ public class MapAO extends UnaryLogicalOp {
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 		this.allowNullValue = ao.allowNullValue;
 		this.suppressErrors = ao.suppressErrors;
-		this.keepAllAttributes = ao.keepAllAttributes;
-		this.removeAttributes = ao.removeAttributes;
 	}
 
 	public List<SDFExpression> getExpressionList() {
@@ -209,24 +203,6 @@ public class MapAO extends UnaryLogicalOp {
 
 	public List<NamedExpression> getExpressions() {
 		return this.namedExpressions;
-	}
-
-	@Parameter(type = BooleanParameter.class, name = "keepAllAttributes", optional = true, doc = "Only for use with key value objects. If set to true, map will keep all attributes - even if not mentioned in kvexpressions.")
-	public void setKeepAllAttributes(boolean keepAllAttributes) {
-		this.keepAllAttributes = keepAllAttributes;
-	}
-
-	public boolean isKeepAllAttributes() {
-		return this.keepAllAttributes;
-	}
-
-	@Parameter(type = StringParameter.class, name = "removeAttributes", isList = true, optional = true, doc = "A list of attributes to remove. Only for use with key value objects.")
-	public void setRemoveAttributes(List<String> removeAttributes) {
-		this.removeAttributes = removeAttributes;
-	}
-
-	public List<String> getRemoveAttributes() {
-		return this.removeAttributes;
 	}
 
 	/**
