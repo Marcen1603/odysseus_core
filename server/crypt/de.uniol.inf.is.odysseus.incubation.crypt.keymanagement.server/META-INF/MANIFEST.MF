@@ -12,4 +12,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.incubation.crypt.keymanagement,
  com.google.code.gson;bundle-version="2.2.4",
  de.uniol.inf.is.odysseus.incubation.crypt.common,
  org.apache.commons.configuration,
- org.apache.commons.lang;bundle-version="2.6.0"
+ org.apache.commons.lang;bundle-version="2.6.0",
+ de.uniol.inf.is.odysseus.core.server

@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.trust.ITrust;
  * transferred, other replicas discarded). The alternative
  * {@link ReplicationMergePO} ignores the trust values and transfers the first
  * element it gets.
- * 
+ *
  * @author Michael Brand
  */
 public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends IMetaAttribute>>
@@ -64,7 +64,7 @@ public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends IMeta
 	/**
 	 * Creates a new {@link ReplicationMergeWithTrustPO} as a copy of an
 	 * existing one.
-	 * 
+	 *
 	 * @param mergePO
 	 *            The {@link ReplicationMergeWithTrustPO} to be copied.
 	 */
@@ -84,8 +84,8 @@ public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends IMeta
 	 */
 	@Override
 	protected boolean precheck(IStreamable object, int port) {
-		if (object.isPunctuation()) {
-			return super.precheck(object, port);
+		if (!super.precheck(object, port)) {
+			return false;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -106,6 +106,7 @@ public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends IMeta
 					portsWithHighestTrust.add(port);
 					logger.debug("New port with highest trust: {}", port);
 				}
+				return true;
 			} else {
 				// trust too low
 				if (portsWithHighestTrust.contains(port)) {
@@ -123,7 +124,6 @@ public class ReplicationMergeWithTrustPO<T extends IStreamObject<? extends IMeta
 				return false;
 			}
 		}
-		return super.precheck(object, port);
 	}
 
 	/**

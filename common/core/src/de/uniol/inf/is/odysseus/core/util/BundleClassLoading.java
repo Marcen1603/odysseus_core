@@ -30,9 +30,7 @@
 
 package de.uniol.inf.is.odysseus.core.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleWiring;

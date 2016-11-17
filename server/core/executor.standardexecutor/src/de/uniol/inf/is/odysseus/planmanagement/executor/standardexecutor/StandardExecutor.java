@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -106,11 +106,11 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
  * tasks of this object are:
- * 
+ *
  * - adding new queries - control scheduling, optimization and query processing
  * - send events of intern changes - providing execution informations -
  * providing and executing admission control reactions if possible
- * 
+ *
  * @author Wolf Bauer, Jonas Jacobi, Tobias Witt, Marco Grawunder, Dennis
  *         Geesen, Timo Michelsen (AC)
  */
@@ -160,7 +160,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#
 	 * getInfos ()
 	 */
@@ -195,7 +195,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor#
 	 * initializeIntern
 	 * (de.uniol.inf.is.odysseus.core.server.planmanagement.executor
@@ -208,7 +208,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.configuration.
 	 * IValueChangeListener
 	 * #settingChanged(de.uniol.inf.is.odysseus.core.server.planmanagement
@@ -222,7 +222,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	/**
 	 * Creates a list of queries based on a query as a string, a parser id and
 	 * build parameters.
-	 * 
+	 *
 	 * @param queryStr
 	 *            query as a string (e. g. CQL). Can contain more then one query
 	 *            (e. g. ";"-separated).
@@ -402,7 +402,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 * will be called BEFORE
 	 * {@link IRecoveryExecutor#activateBackup(QueryBuildConfiguration, ISession, List)}
 	 * .
-	 * 
+	 *
 	 * @param parameter
 	 *            The used {@link ParameterRecoveryConfiguration} with the
 	 *            {@link IRecoveryExecutor} and it's configuration.
@@ -416,6 +416,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 */
 	private List<ILogicalQuery> prepareRecovery(ParameterRecoveryConfiguration parameter,
 			QueryBuildConfiguration parameters, ISession caller, List<ILogicalQuery> queries) {
+		if(queries.isEmpty()) {
+			return queries;
+		}
 		LOG.debug("Beginning preparation for recovery");
 		List<ILogicalQuery> tmpQueries = Lists.newArrayList(queries);
 		IRecoveryExecutor recoveryExecutor = getRecoveryExecutor(parameter.getRecoveryExecutor());
@@ -439,7 +442,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 * Optimize new queries and set the resulting execution plan. After setting
 	 * the execution plan all new queries are stored in the global queries
 	 * storage ({@link IExecutionPlan}).
-	 * 
+	 *
 	 * @param newQueries
 	 *            Queries to process.
 	 * @throws NoOptimizerLoadedException
@@ -595,7 +598,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 * Get a {@link IBufferPlacementStrategy} by an ID.
 	 * {@link IBufferPlacementStrategy} services are managed by the optimization
 	 * module.
-	 * 
+	 *
 	 * @param strategy
 	 *            ID of the requested strategy.
 	 * @return {@link IBufferPlacementStrategy} for an ID. Null if no
@@ -846,12 +849,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				newSettings.add(overwrite);
 			}
 		}
-		
+
 		if (context == null) {
 			context = Context.empty();
 		}
 
-		
+
 		@SuppressWarnings("unchecked")
 		List<String> activeRules = (ArrayList<String>) context.get("ACTIVATEREWRITERULE");
 		@SuppressWarnings("unchecked")
@@ -898,7 +901,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				}
 			}
 		}
-		
+
 		RewriteConfiguration rewriteConfig;
 		// Only if one of the sets had values, the rule base should change
 		// else use default rule base
@@ -929,13 +932,13 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			config.getTransformationConfiguration().setOption("NO_METADATA", "true");
 			config.getTransformationConfiguration().removeTypes();
 		}
-		
+
 		for (IQueryBuildSetting<?> iQueryBuildSetting : newSettings) {
 			config.getTransformationConfiguration().setOption(iQueryBuildSetting.getClass().getName(),
 					iQueryBuildSetting);
 		}
 
-		
+
 		config = validateBuildParameters(config);
 
 		return config;
@@ -1070,7 +1073,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager
 	 * #startQuery (int)
@@ -1115,6 +1118,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlanChanged(PlanModificationEventType.QUERY_START, queryToStart);
 			} catch (Exception e) {
 				LOG.warn("Query not started. An Error during optimizing occurd (ID: " + queryToStart.getID() + ").", e);
+				// Could be that the query was internal started. So stop again
+				queryToStart.stop();
 				throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: "
 						+ queryToStart.getID() + "). " + e.getMessage(), e);
 			} finally {
@@ -1177,7 +1182,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager
 	 * #stopQuery (int)
@@ -1346,7 +1351,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	private void partialQuery(int sheddingFactor, ISession caller, IPhysicalQuery queryToPartial) {
 		try {
 			final QueryState newState;
-			
+
 			if (sheddingFactor > 0) {
 				newState = QueryState.next(queryToPartial.getState(), QueryFunction.PARTIAL);
 			} else {
@@ -1363,7 +1368,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_PARTIAL, queryToPartial));
 			}else{
 				firePlanModificationEvent(
-						new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_RESUME, queryToPartial));				
+						new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_RESUME, queryToPartial));
 			}
 
 		} catch (Exception e) {
@@ -1376,7 +1381,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.query.
 	 * IQueryReoptimizeListener
 	 * #reoptimize(de.uniol.inf.is.odysseus.core.server.
@@ -1404,7 +1409,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.plan.
 	 * IPlanReoptimizeListener #
 	 * reoptimizeRequest(de.uniol.inf.is.odysseus.core.
@@ -1437,7 +1442,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getRegisteredBufferPlacementStrategies()
 	 */
@@ -1454,7 +1459,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getRegisteredSchedulingStrategyFactories()
 	 */
@@ -1471,7 +1476,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getRegisteredSchedulerFactories()
 	 */
@@ -1488,7 +1493,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * setScheduler(java.lang.String, java.lang.String)
 	 */
@@ -1504,7 +1509,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getCurrentSchedulingStrategy()
 	 */
@@ -1520,7 +1525,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getCurrentScheduler()
 	 */
@@ -1667,7 +1672,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			return null;
 		}
 	}
-	
+
 	@Override
 	public Set<String> getMetadataNames(ISession session) {
 		return new HashSet<String>(MetadataRegistry.getNames());

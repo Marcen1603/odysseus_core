@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.checkpointing.CheckpointingRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.convergencedetector.ConvergenceDetectorComponent;
 import de.uniol.inf.is.odysseus.recovery.processingimage.ProcessingImageRecoveryComponent;
+import de.uniol.inf.is.odysseus.recovery.recoverytime.RecoveryTimeCalculatorComponent;
 
 /**
  * The stateful gap recovery executor represents a complete non-distributed
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.recovery.processingimage.ProcessingImageRecovery
  * as well as processing images. Since there are no incoming elements backed up,
  * results after system restart might differ (convergence phase). But the
  * recovery of a processing image may shorten the convergence phase.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -48,6 +49,7 @@ public class StatefulGapRecoveryExecutor extends AbstractRecoveryExecutor {
 		components.add(new CheckpointingRecoveryComponent());
 		components.add(new ProcessingImageRecoveryComponent());
 		components.add(new ConvergenceDetectorComponent());
+		components.add(new RecoveryTimeCalculatorComponent());
 		instance.init(config, components);
 		((CheckpointingRecoveryComponent) instance.components.get(0))
 				.addCheckpointManagerListener((ProcessingImageRecoveryComponent) instance.components.get(1));

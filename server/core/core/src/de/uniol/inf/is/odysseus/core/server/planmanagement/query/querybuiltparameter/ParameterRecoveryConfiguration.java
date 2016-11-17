@@ -38,11 +38,14 @@ public class ParameterRecoveryConfiguration extends Setting<Object>
 	 * Returns a String "key1=value1 key2=value2..."
 	 */
 	private static String propertiesToString(Properties cfg) {
+		if(cfg == null || cfg.isEmpty()) {
+			return "";
+		}
 		StringBuilder builder = new StringBuilder();
 		for (Object key : cfg.keySet()) {
-			builder.append(key + "=" + cfg.get(key));
+			builder.append(key + "=" + cfg.get(key) + " ");
 		}
-		return builder.toString();
+		return builder.substring(0, builder.length()-1);
 	}
 
 	/**
@@ -110,7 +113,7 @@ public class ParameterRecoveryConfiguration extends Setting<Object>
 		if(mExecutor == null) {
 			throw new UnsupportedOperationException();
 		}
-		return "#" + keyword + " " + this.mExecutor + propertiesToString(this.mConfig);
+		return "#" + keyword + " " + this.mExecutor + " " + propertiesToString(this.mConfig);
 	}
 
 }

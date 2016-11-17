@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
 /**
  * Helper class to create a protocol handler for BaDaSt.
- * 
+ *
  * @author Michael
  *
  */
@@ -23,7 +23,7 @@ public class BaDaStRecoveryProtocolHandlerCreator {
 
 	/**
 	 * Creates a new protocol handler.
-	 * 
+	 *
 	 * @param access
 	 *            The access to the source, which is recorded by BaDaSt.
 	 * @param transferHandler
@@ -36,6 +36,7 @@ public class BaDaStRecoveryProtocolHandlerCreator {
 			AbstractAccessAO access, ITransferHandler<StreamObject> transferHandler) {
 		IStreamObjectDataHandler<StreamObject> dataHandler = (IStreamObjectDataHandler<StreamObject>) DataHandlerRegistry
 				.getStreamObjectDataHandler(access.getDataHandler(), access.getOutputSchema());
+		dataHandler.setMetaAttribute(access.getLocalMetaAttribute());
 		OptionMap options = new OptionMap(access.getOptions());
 		IAccessPattern pattern;
 		if (Constants.GENERIC_PULL.equalsIgnoreCase(access.getWrapper())) {

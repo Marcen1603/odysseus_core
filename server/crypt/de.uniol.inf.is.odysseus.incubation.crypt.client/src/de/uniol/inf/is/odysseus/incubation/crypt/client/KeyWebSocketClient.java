@@ -6,13 +6,12 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import com.google.gson.Gson;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.EncKeyMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.GetEncKeyMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.GetPublicKeyMessage;
@@ -21,15 +20,12 @@ import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.StringMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.EncKeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.JsonUtils;
-import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.MoreFileUtils;
 
 /**
  * Client for the Cryptor to communicate with the KeymanagementServer.
  *
  */
 public class KeyWebSocketClient extends WebSocketClient {
-
-	public static final String PROPERTIES_PATH = "Config/Client.properties";
 
 	private static KeyWebSocketClient instance;
 	private Gson gson;
@@ -61,11 +57,8 @@ public class KeyWebSocketClient extends WebSocketClient {
 	public static KeyWebSocketClient instance() throws Exception {
 		if (instance == null || instance.getConnection().isClosed()) {
 			System.out.println("Connecting to server");
-			String path = MoreFileUtils.getAbsolutePath(Activator.getContext().getBundle(), PROPERTIES_PATH);
-			Configuration credentials = new PropertiesConfiguration(path);
-			String serverUri = credentials.getString("uri");
 			try {
-				instance = new KeyWebSocketClient(new URI(serverUri));
+				instance = new KeyWebSocketClient(new URI(OdysseusConfiguration.get("crypt.client.uri")));
 			} catch (URISyntaxException ex) {
 				throw new Exception("Uri Syntax invalid", ex);
 			}

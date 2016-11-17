@@ -5,12 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-
-import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.Activator;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.EncKeyWrapper;
-import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.MoreFileUtils;
 
 /**
  * Specialized DatabaseKeyVault for storing EncSymKeys.
@@ -20,26 +15,11 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.MoreFileUtil
  */
 public class DbEncSymKeyVault extends AbstractDbKeyVault implements IDbEncSymKeyVault {
 
-	public static String PROPERTIES_PATH = "Config/encSymKeyVault.properties";
-
 	/**
 	 * Default constructor, which uses the default Configuration file.
 	 */
 	public DbEncSymKeyVault() {
-		super(getDefaultString());
-	}
-
-	/**
-	 * Returns the absolute path of the default configuration file, which is
-	 * stored in this bundle.
-	 * 
-	 * @return
-	 */
-	private static String getDefaultString() {
-		BundleContext context = Activator.getContext();
-		Bundle bundle = context.getBundle();
-		String string = MoreFileUtils.getAbsolutePath(bundle, PROPERTIES_PATH);
-		return string;
+		super(AbstractDbKeyVault.Configuration.encSymKeys);
 	}
 
 	@Override

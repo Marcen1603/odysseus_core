@@ -9,13 +9,17 @@ public class Document<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		implements Serializable {
 
 	final String content;
-	
+
 	private static final long serialVersionUID = -3819422555208481383L;
 
 	public Document(String content){
 		this.content = content;
 	}
-	
+
+	public Document(){
+		this.content = "";
+	}
+
 	public String getContent() {
 		return content;
 	}
@@ -33,12 +37,12 @@ public class Document<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		// Document is immutable
 		return this;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "\""+content+"\"";
 	}
-	
+
 	@Override
 	public String toString(boolean printMetadata) {
 		return "\""+content+"\""+(printMetadata?getMetadata():"");

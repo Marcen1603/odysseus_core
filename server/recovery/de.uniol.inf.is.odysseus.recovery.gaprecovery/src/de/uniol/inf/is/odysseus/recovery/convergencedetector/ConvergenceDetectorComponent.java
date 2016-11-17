@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.trust.ITrust;
 /**
  * Component that inserts {@link ConvergenceDetectorAO}s after each time or
  * element window after recovery in order to adjust the {@link ITrust}.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -86,26 +86,29 @@ public class ConvergenceDetectorComponent implements IRecoveryComponent {
 
 			@Override
 			public void walk(ILogicalOperator operator) {
-				if (TimeWindowAO.class.isInstance(operator)) {
-					TimeWindowAO tw = (TimeWindowAO) operator;
-					// Advance may be null
-					TimeValueItem advance = tw.getWindowAdvance();
-					if (advance == null) {
-						advance = new TimeValueItem(1, tw.getBaseTimeUnit());
+				SDFSchema schema = operator.getInputSchema(0);
+				if(operator instanceof AbstractWindowAO && schema.hasMetatype(ITrust.class)) {
+					if (operator instanceof TimeWindowAO) {
+						TimeWindowAO tw = (TimeWindowAO) operator;
+						// Advance may be null
+						TimeValueItem advance = tw.getWindowAdvance();
+						if (advance == null) {
+							advance = new TimeValueItem(1, tw.getBaseTimeUnit());
+						}
+						ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(tw.getWindowSize(), advance,
+								tw.getBaseTimeUnit());
+						insertConvergenceDetector(tw, convergenceDetector);
+					} else if (operator instanceof ElementWindowAO) {
+						ElementWindowAO ew = (ElementWindowAO) operator;
+						// Advance may be null
+						Long advance = ew.getWindowAdvanceE();
+						if (advance == null) {
+							advance = new Long(1);
+						}
+						ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(
+								ew.getWindowSizeE().longValue(), advance.longValue());
+						insertConvergenceDetector(ew, convergenceDetector);
 					}
-					ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(tw.getWindowSize(), advance,
-							tw.getBaseTimeUnit());
-					insertConvergenceDetector(tw, convergenceDetector);
-				} else if (ElementWindowAO.class.isInstance(operator)) {
-					ElementWindowAO ew = (ElementWindowAO) operator;
-					// Advance may be null
-					Long advance = ew.getWindowAdvanceE();
-					if (advance == null) {
-						advance = new Long(1);
-					}
-					ConvergenceDetectorAO convergenceDetector = new ConvergenceDetectorAO(
-							ew.getWindowSizeE().longValue(), advance.longValue());
-					insertConvergenceDetector(ew, convergenceDetector);
 				}
 			}
 		});
@@ -116,13 +119,9 @@ public class ConvergenceDetectorComponent implements IRecoveryComponent {
 	 * operator.
 	 */
 	static void insertConvergenceDetector(AbstractWindowAO windowAO, ConvergenceDetectorAO convergenceDetector) {
-		SDFSchema schema = windowAO.getInputSchema();
-		if (!schema.hasMetatype(ITrust.class)) {
-			return;
-		}
 		Collection<LogicalSubscription> subs = new ArrayList<>(windowAO.getSubscriptions());
 		windowAO.unsubscribeFromAllSinks();
-		convergenceDetector.subscribeToSource(windowAO, 0, 0, schema);
+		convergenceDetector.subscribeToSource(windowAO, 0, 0, windowAO.getInputSchema());
 		for (LogicalSubscription sub : subs) {
 			convergenceDetector.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
 					sub.getSchema());

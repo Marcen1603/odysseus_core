@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
@@ -39,8 +40,9 @@ public class SenderAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		}
 	}
 
-	private static Object convertOptionsMap(Map<String, String> optionsMap) {
+	private static Object convertOptionsMap(OptionMap options) {
 		StringBuilder sb = new StringBuilder();
+		Map<String, Object> optionsMap = options.getOptions();
 		sb.append("[");
 
 		String[] keys = optionsMap.keySet().toArray(new String[0]);
@@ -49,7 +51,7 @@ public class SenderAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 			sb.append("[");
 
 			Object key = keys[i];
-			String value = optionsMap.get(key);
+			Object value = optionsMap.get(key);
 			sb.append(convertValue(key)).append(",").append(convertValue(value));
 
 			sb.append("]");

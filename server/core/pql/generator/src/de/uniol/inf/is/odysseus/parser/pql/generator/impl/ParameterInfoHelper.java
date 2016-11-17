@@ -18,7 +18,6 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -27,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParamete
 public class ParameterInfoHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ParameterInfoHelper.class);
-	
+
 	public static void prepareParameterInfos(Collection<ILogicalOperator> operators) {
 		for (ILogicalOperator operator : operators) {
 			try {
@@ -52,7 +51,7 @@ public class ParameterInfoHelper {
 				if (parameterAnnotation.deprecated()) {
 					continue;
 				}
-				
+
 				String parameterName = parameterAnnotation.name();
 				if (Strings.isNullOrEmpty(parameterName)) {
 					parameterName = curProperty.getName();
@@ -104,7 +103,7 @@ public class ParameterInfoHelper {
 					for (LogicalSubscription sub : operator.getSubscribedToSource()) {
 						inputSchema.add(sub.getTarget().getOutputSchema(sub.getSourceOutPort()));
 					}
-					IAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchema);
+					DirectAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchema);
 					listParameter.setAttributeResolver(attributeResolver);
 					if (!listParameter.validate()) { // invokes internal
 														// assignment
@@ -117,8 +116,8 @@ public class ParameterInfoHelper {
 					}
 
 					pqlString = listParameter.getPQLString();
-					
-					
+
+
 				} else {
 					parameter.setInputValue(parameterValue);
 
@@ -126,7 +125,7 @@ public class ParameterInfoHelper {
 					for (LogicalSubscription sub : operator.getSubscribedToSource()) {
 						inputSchema.add(sub.getTarget().getOutputSchema(sub.getSourceOutPort()));
 					}
-					IAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchema);
+					DirectAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchema);
 
 					parameter.setAttributeResolver(attributeResolver);
 					if (!parameter.validate()) { // invokes internal assignment

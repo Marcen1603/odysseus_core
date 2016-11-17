@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,15 +33,15 @@ import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDoubl
 
 /**
  * A probabilistic tuple for probabilistic continuous data.
- * 
+ *
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
+ *
  * @param <T>
  */
 public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4389825802466821416L;
     /** The probabilistic distribution function (Gaussian mixture model). */
@@ -49,7 +49,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Creates a new probabilistic tuple with the given number of attributes.
-     * 
+     *
      * @param count
      *            The number of attributes
      * @param requiresDeepClone
@@ -63,7 +63,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Creates a new probabilistic tuple with the given number of attributes.
-     * 
+     *
      * @param count
      *            The number of attributes
      * @param distributions
@@ -80,7 +80,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Creates a new probabilistic tuple with the given attributes.
-     * 
+     *
      * @param attributes
      *            The attributes
      * @param requiresDeepClone
@@ -95,7 +95,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     /**
      * Creates a new probabilistic tuple with the given attributes and
      * distributions.
-     * 
+     *
      * @param attributes
      *            The attributes
      * @param distributions
@@ -113,7 +113,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     /**
      * Creates a new probabilistic tuple with the given attributes based on the
      * copy of another tuple.
-     * 
+     *
      * @param copy
      *            The copy
      * @param newAttrs
@@ -138,7 +138,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     /**
      * Creates a new probabilistic tuple with the given attributes and
      * distributions based on the copy of another tuple.
-     * 
+     *
      * @param copy
      *            The copy
      * @param newAttrs
@@ -173,7 +173,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Clone constructor.
-     * 
+     *
      * @param copy
      *            The copy
      */
@@ -196,9 +196,12 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
         this.distributions = new MultivariateMixtureDistribution[0];
     }
 
+    public ProbabilisticTuple(){
+    }
+
     /**
      * Gets the distributions at the given index.
-     * 
+     *
      * @param index
      *            The index
      * @return The distribution at the given position or <code>null</code> if no
@@ -211,7 +214,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Sets the distribution at the given index.
-     * 
+     *
      * @param index
      *            The index
      * @param distribution
@@ -225,7 +228,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Sets the distributions.
-     * 
+     *
      * @param distributions
      *            The distributions
      */
@@ -236,7 +239,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Gets the distributions.
-     * 
+     *
      * @return All distributions in this tuple
      */
     public final MultivariateMixtureDistribution[] getDistributions() {
@@ -247,7 +250,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
      * Creates a new instance from the current tuple if the createNew param is
      * true or uses the current instance and appends the given attribute object
      * and distribution.
-     * 
+     *
      * @param object
      *            the object to append
      * @param distribution
@@ -272,7 +275,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.core.collection.Tuple#restrict(int,
      * boolean)
      */
@@ -283,7 +286,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.core.collection.Tuple#restrict(int[],
      * boolean)
      */
@@ -330,7 +333,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Restricts the tuple to the given attribute position.
-     * 
+     *
      * @param attr
      *            The attribute position
      * @param restrictMatrix
@@ -345,7 +348,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Restricts the tuple to the given list of attribute positions.
-     * 
+     *
      * @param attrList
      *            The list of attribute positions
      * @param restrictMatrix
@@ -417,7 +420,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.collection.Tuple#process_merge(de.uniol
      * .inf.is.odysseus.core.metadata.IStreamObject,
@@ -436,7 +439,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Merges the two given tuple into one tuple.
-     * 
+     *
      * @param left
      *            The tuple from the left
      * @param right
@@ -471,7 +474,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Merges the two given attributes into one attributes.
-     * 
+     *
      * @param leftAttributes
      *            The attributes from the first tuple
      * @param rightAttributes
@@ -512,7 +515,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /**
      * Merges the two given distributions list into one distribution list.
-     * 
+     *
      * @param leftDistributions
      *            The distributions from the first tuple
      * @param rightDistributions
@@ -565,7 +568,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
     /**
      * Creates a new probabilistic tuple with the given attributes and
      * distributions.
-     * 
+     *
      * @param createNew
      *            if <code>true</code> creates a new tuple, if
      *            <code>false</code> reuse the existing tuple
@@ -587,7 +590,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.core.collection.Tuple#clone()
      */
     @Override
@@ -597,7 +600,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.core.collection.Tuple#toString()
      */
     @Override

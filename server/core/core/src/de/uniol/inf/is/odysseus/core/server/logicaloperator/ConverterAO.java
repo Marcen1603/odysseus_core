@@ -7,6 +7,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -31,13 +32,12 @@ public class ConverterAO extends UnaryLogicalOp {
 	private String dateFormat;
 	private String source;
 	private boolean updateMeta = true;
-	final private Map<String, String> optionsMap;
+	final private OptionMap optionsMap = new OptionMap();
 	private final List<Option> options = Lists.newArrayList();
 	private List<SDFAttribute> outputAttributes;
 
 	public ConverterAO() {
 		super();
-		optionsMap = new HashMap<>();
 	}
 
 	public ConverterAO(ConverterAO converterAO) {
@@ -45,7 +45,7 @@ public class ConverterAO extends UnaryLogicalOp {
 		this.protocolHandler = converterAO.protocolHandler;
 		this.inputDataHandler = converterAO.inputDataHandler;
 		this.outputDataHandler = converterAO.outputDataHandler;
-		this.optionsMap = new HashMap<String, String>(converterAO.optionsMap);
+		this.optionsMap.addAll(converterAO.optionsMap);
 		this.options.addAll(converterAO.options);
 		this.outputAttributes = converterAO.outputAttributes;
 		this.source = converterAO.source;
@@ -82,7 +82,7 @@ public class ConverterAO extends UnaryLogicalOp {
 	@Parameter(name = "options", isList = true, type = OptionParameter.class, optional = true, doc = "Additional options. See help doc for further information")
 	public void setOptions(List<Option> ops) {
 		for (Option option : ops) {
-			optionsMap.put(option.getName().toLowerCase(), option.getValue());
+			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
 		}
 		options.addAll(ops);
 	}
@@ -91,12 +91,12 @@ public class ConverterAO extends UnaryLogicalOp {
 		return options;
 	}
 
-	public void setOptionMap(Map<String, String> ops) {
+	public void setOptionMap(OptionMap ops) {
 		optionsMap.clear();
-		optionsMap.putAll(ops);
+		optionsMap.addAll(ops);
 	}	
 	
-	public Map<String, String> getOptionMap() {
+	public OptionMap getOptionMap() {
 		return optionsMap;
 	}
 

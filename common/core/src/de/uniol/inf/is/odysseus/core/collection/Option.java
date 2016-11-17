@@ -22,9 +22,9 @@ public class Option implements Serializable {
 	private static final long serialVersionUID = -8166330236620056043L;
 	
 	String name;
-	String value;
+	Object value;
 	
-	public Option(String name, String value) {
+	public Option(String name, Object value) {
 		super();
 		this.name = name;
 		this.value = value;
@@ -34,13 +34,18 @@ public class Option implements Serializable {
 		return name;
 	}
 	
-	public String getValue() {
-		return value;
+	@SuppressWarnings("unchecked")
+	public <K> K getValue() {
+		return (K) value;
 	}
 
 	@Override
 	public String toString() {
-		return "['"+name+"','"+value+"']";
+		if (value instanceof Number){
+			return "['"+name+"',"+value+"]";
+		}else{
+			return "['"+name+"','"+value+"']";
+		}
 	}
 	
 }

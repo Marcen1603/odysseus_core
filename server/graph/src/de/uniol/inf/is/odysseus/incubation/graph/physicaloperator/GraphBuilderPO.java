@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.incubation.graph.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -11,10 +11,15 @@ import de.uniol.inf.is.odysseus.incubation.graph.datatype.Graph;
 import de.uniol.inf.is.odysseus.incubation.graph.logicaloperator.GraphBuilderAO;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 
+/**
+ * Physical GraphBuilder operator.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
 	private GraphBuilderAO graphBuilderAo;
-	private String actualDataStructure;
+	private String actualStructure;
 	
 	public GraphBuilderPO(GraphBuilderAO graphBuilderAo) {
 		super();
@@ -42,12 +47,13 @@ public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyVal
 		IGraphDataStructure<IMetaAttribute> structure;
 		
 		// Existiert bereits eine Datenstruktur für diesen Namen, wird die aktuelle Datenstruktur geklont, ansonsten wird eine neue Datenstruktur erstellt.
-		if (this.actualDataStructure != null) {
-			structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(this.actualDataStructure).cloneDataStructure();
+		if (actualStructure != null) {
+			structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(actualStructure).cloneDataStructure();
 		} else {
 			structure = GraphBuilderAO.dataStructureTypes.get(graphBuilderAo.getDataType()).newInstance(graphBuilderAo.getStructureName());
 		}
 		
+		// Which operation shall be executed.
 		if (object.getAttribute("method").equals("+")) {
 			structure.addDataSet((KeyValueObject<IMetaAttribute>) object);
 		} else if (object.getAttribute("method").equals("-")) {
@@ -56,9 +62,13 @@ public class GraphBuilderPO<M extends ITimeInterval> extends AbstractPipe<KeyVal
 			structure.editDataSet((KeyValueObject<IMetaAttribute>) object);
 		}
 		
+		// Add graph to provider.
 		String name = GraphDataStructureProvider.getInstance().addGraphDataStructure(structure, object.getMetadata().getStart());
+		if (this.actualStructure != null) {
+			GraphDataStructureProvider.getInstance().setGraphVersionRead(this.actualStructure, "graphBuilderPO");
+		}
 		
-		this.actualDataStructure = name;
+		this.actualStructure = name;
 		
 		Tuple<M> newTuple = new Tuple<M>(1, false);
 		Graph graph = new Graph(name);

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
@@ -36,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.UncheckedExpressionParamter;
 
 /**
  * @author Jonas Jacobi
@@ -46,8 +43,6 @@ public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<NamedExpression> namedExpressions;
-	// Expressions used for KeyValueMap
-	private List<String[]> kvExpressions;
 	private List<SDFExpression> expressions;
 	/** The number of threads used for processing the expressions. */
 	private int threads = 0;
@@ -65,7 +60,6 @@ public class MapAO extends UnaryLogicalOp {
 	public MapAO(MapAO ao) {
 		super(ao);
 		this.setExpressions(ao.namedExpressions);
-		this.kvExpressions = ao.kvExpressions;
 		this.threads = ao.threads;
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 		this.allowNullValue = ao.allowNullValue;
@@ -101,15 +95,9 @@ public class MapAO extends UnaryLogicalOp {
 				// name!
 				String lastString = null;
 				String toSplit;
-				// if (exprString.startsWith("__")) {
-				// toSplit = exprString.substring(exprString.indexOf(".") + 1);
-				// if (exprString.indexOf(".") > -1) {
-				// lastString = exprString.substring(0,
-				// exprString.indexOf(".") - 1);
-				// }
-				// } else {
+
 				toSplit = exprString;
-				// }
+
 				String[] split = SDFElement.splitURI(toSplit);
 				final SDFElement elem;
 				if (split[1] != null && split[1].length() > 0) {
@@ -204,13 +192,10 @@ public class MapAO extends UnaryLogicalOp {
 					.createNewWithAttributes(attrs, getInputSchema()),
 					getInputSchema().getURI(), false);
 			setOutputSchema(s);
-		} else if (kvExpressions != null) {
-			SDFSchema s = SDFSchemaFactory.createNewWithAttributes(null, getInputSchema());
-			setOutputSchema(s);
 		}
 	}
 
-	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", isList = true, optional = true, doc = "A list of expressions.")
+	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", aliasname="kvExpressions", isList = true, optional = false, doc = "A list of expressions.")
 	public void setExpressions(List<NamedExpression> namedExpressions) {
 		this.namedExpressions = namedExpressions;
 		expressions = new ArrayList<>();
@@ -226,21 +211,11 @@ public class MapAO extends UnaryLogicalOp {
 		return this.namedExpressions;
 	}
 
-	@Parameter(type = UncheckedExpressionParamter.class, name = "KVExpressions", isList = true, optional = true, doc = "A list of expressions for use with key value objects.")
-	public void setKVExpressions(List<String[]> kvExpressions) {
-		this.kvExpressions = kvExpressions;
-		setOutputSchema(null);
-	}
-
-	public List<String[]> getKVExpressions() {
-		return this.kvExpressions;
-	}
-
 	@Parameter(type = BooleanParameter.class, name = "keepAllAttributes", optional = true, doc = "Only for use with key value objects. If set to true, map will keep all attributes - even if not mentioned in kvexpressions.")
 	public void setKeepAllAttributes(boolean keepAllAttributes) {
 		this.keepAllAttributes = keepAllAttributes;
 	}
-	
+
 	public boolean isKeepAllAttributes() {
 		return this.keepAllAttributes;
 	}
@@ -260,7 +235,7 @@ public class MapAO extends UnaryLogicalOp {
 	 * equal to 1 or 0 indicates that no threads should be used. And a value
 	 * lower than 0 indicates automatic threads number selection based on the
 	 * number of expressions and the number of available processors.
-	 * 
+	 *
 	 * @param threads
 	 *            The number of threads
 	 */
@@ -271,7 +246,7 @@ public class MapAO extends UnaryLogicalOp {
 
 	/**
 	 * Gets the number of threads used for processing the expressions
-	 * 
+	 *
 	 * @return The number of threads
 	 */
 	public int getThreads() {
@@ -309,25 +284,6 @@ public class MapAO extends UnaryLogicalOp {
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		calcOutputSchema();
 		return getOutputSchema();
-	}
-
-	@Override
-	public boolean isValid() {
-		if ((getInputSchema().getType() == KeyValueObject.class || getInputSchema()
-				.getType() == NestedKeyValueObject.class)) {
-			if ((this.kvExpressions != null && !this.kvExpressions.isEmpty())) {
-				return true;
-			} else {
-				addError("Parameter KVEXPRESSIONS has to be set.");
-				return false;
-			}
-		} else if ((this.namedExpressions != null && !this.namedExpressions
-				.isEmpty())) {
-			return true;
-		} else {
-			addError("Parameter EXPRESSIONS has to be set.");
-			return false;
-		}
 	}
 
 	@Override

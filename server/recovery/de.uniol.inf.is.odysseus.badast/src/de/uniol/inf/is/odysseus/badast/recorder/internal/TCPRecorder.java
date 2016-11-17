@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.badast.recorder.internal;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Properties;
 
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.badast.recorder.IBaDaStRecorder;
  * entries of the configuration. {@link #BUFFERSIZE_CONFIG} must also be set.
  * The recorder publishes the read bytes as byte arrays to the used publish
  * subscribe system.
- * 
+ *
  * @author Michael Brand
  */
 @ABaDaStRecorder(type = "TCPRecorder", parameters = { TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG })
@@ -44,21 +45,11 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 
 		try (Socket clientSocket = new Socket(this.getConfig().getProperty(HOST_CONFIG),
 				Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG)));
-				BufferedInputStream inStream = new BufferedInputStream(clientSocket.getInputStream());
-				@SuppressWarnings("unchecked")
-		// TODO IPublisher<byte[]> publisher = (IPublisher<byte[]>)
-		// (IPublisher<?>) PublisherFactory.createPublisher(Byte.class,
-		// getName())) {
-		IPublisher<String> publisher = (IPublisher<String>) (IPublisher<?>) PublisherFactory
-				.createPublisher(String.class, getName())) {
+				BufferedReader inReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				IPublisher<String> publisher = PublisherFactory.createPublisher(String.class, getName())) {
 			while (this.continueReading) {
-				int numBytes = inStream.available();
-				if (numBytes > 0) {
-					byte[] bytes = new byte[numBytes];
-					inStream.read(bytes);
-					// TODO publisher.publish(new Record<byte[]>(topic, bytes));
-					publisher.publish(new Record<String>(topic, new String(bytes)));
-				}
+				String message = inReader.readLine();
+				publisher.publish(new Record<String>(topic, message + '\n'));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from server!", e);

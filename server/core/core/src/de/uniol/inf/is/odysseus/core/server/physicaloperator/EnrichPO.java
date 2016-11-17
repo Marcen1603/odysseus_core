@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
 public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		extends AbstractPipe<T, T> implements IHasPredicate {
@@ -134,12 +135,12 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		super.process_close();
 		this.buffer.clear();
 		synchronized (cache) {
-			this.cache.clear();			
+			this.cache.clear();
 		}
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {	
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		predicate.processPunctuation(punctuation);
 	}
 

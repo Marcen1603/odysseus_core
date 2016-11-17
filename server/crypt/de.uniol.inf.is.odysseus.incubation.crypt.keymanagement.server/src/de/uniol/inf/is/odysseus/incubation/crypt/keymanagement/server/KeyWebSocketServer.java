@@ -4,14 +4,13 @@ import java.net.InetSocketAddress;
 import java.security.PublicKey;
 import java.util.List;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import com.google.gson.Gson;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.EncKeyMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.GetEncKeyMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.GetPublicKeyMessage;
@@ -22,15 +21,12 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.KeyManager;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.EncKeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.JsonUtils;
-import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.MoreFileUtils;
 
 /**
  * A server to communicate with crypt Clients
  *
  */
 public class KeyWebSocketServer extends WebSocketServer {
-
-	private static final String PROPERTIES_PATH = "Config/Server.properties";
 	private Gson gson;
 	private static KeyWebSocketServer instance;
 
@@ -62,15 +58,8 @@ public class KeyWebSocketServer extends WebSocketServer {
 	 */
 	public static KeyWebSocketServer getInstance() {
 		if (instance == null) {
-			String path = MoreFileUtils.getAbsolutePath(Activator.getContext().getBundle(), PROPERTIES_PATH);
-			try {
-				PropertiesConfiguration credentials = new PropertiesConfiguration(path);
-				instance = new KeyWebSocketServer(
-						new InetSocketAddress(credentials.getString("hostname"), credentials.getInt("port")));
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
-
+			instance = new KeyWebSocketServer(new InetSocketAddress(OdysseusConfiguration.get("crypt.server.hostname"),
+					Integer.parseInt(OdysseusConfiguration.get("crypt.server.port"))));
 		}
 		return instance;
 	}

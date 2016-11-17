@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -88,7 +88,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 	public void write(T kvObject) throws IOException {
 		StringBuilder string = new StringBuilder();
 		if (startTimestampKey != null) {
-			if (!kvObject.getAttributes().containsKey(startTimestampKey)) {
+			if (!kvObject.containsKey(startTimestampKey)) {
 				kvObject.setAttribute(startTimestampKey,
 						((ITimeInterval) kvObject.getMetadata()).getStart()
 								.getMainPoint());
@@ -99,7 +99,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 			}
 		}
 		if (endTimestampKey != null) {
-			if (!kvObject.getAttributes().containsKey(endTimestampKey)) {
+			if (!kvObject.containsKey(endTimestampKey)) {
 				kvObject.setAttribute(endTimestampKey,
 						((ITimeInterval) kvObject.getMetadata()).getEnd()
 								.getMainPoint());
@@ -110,15 +110,8 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 			}
 		}
 
-		this.getDataHandler().writeJSONData(string, kvObject);
+		this.getDataHandler().writeData(string, kvObject, writemetadata);
 
-		if (writemetadata) {
-			// FIXME: Handle meta data for json objects
-			throw new RuntimeException("Metadata are not supported when writing json");
-			//			string.append(" | META | "
-//					+ kvObject.getMetadata().csvToString(new WriteOptions(';', ' ',
-//							new DecimalFormat(), new DecimalFormat(), false)));
-		}
 		string.append(System.getProperty("line.separator"));
 		CharBuffer charBuffer = CharBuffer.wrap(string);
 		ByteBuffer bBuffer = Charset.forName("UTF-8").encode(charBuffer);

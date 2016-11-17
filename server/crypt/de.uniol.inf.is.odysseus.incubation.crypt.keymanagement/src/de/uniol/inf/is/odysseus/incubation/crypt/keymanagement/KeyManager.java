@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.EncKeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
-import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.MoreFileUtils;
+import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault.AbstractDbKeyVault;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault.DbEncSymKeyVault;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault.DbKeyVault;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault.IDbEncSymKeyVault;
@@ -20,8 +20,6 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault.IDbKeyVault
  *
  */
 public class KeyManager implements IKeyManager {
-
-	public static final String PROPERTIES_PATH = "Config/pubKeyVault.properties";
 
 	private static KeyManager instance;
 
@@ -46,8 +44,7 @@ public class KeyManager implements IKeyManager {
 	 */
 	private KeyManager() {
 		this.encSymKeyVault = new DbEncSymKeyVault();
-		this.pubKeyVault = new DbKeyVault(
-				MoreFileUtils.getAbsolutePath(Activator.getContext().getBundle(), PROPERTIES_PATH));
+		this.pubKeyVault = new DbKeyVault(AbstractDbKeyVault.Configuration.pubKeys);
 	}
 
 	/*

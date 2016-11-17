@@ -98,7 +98,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					Iterator<T> extracted = this.areas[otherport].extractElements(object, order);
 					while (extracted.hasNext()) {
 						T next = extracted.next();
-						if (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey)) {
+						if (!next.hasTransientMarker(cMetaDataKey)) {
 							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
 							this.transferFunction.transfer(out);
 						}
@@ -147,7 +147,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 			// Left Join: if this is the left input port, mark the object as
 			// join partner found
 			if (hit && port == 0) {
-				object.setKeyValue(cMetaDataKey, new Boolean(true));
+				object.setTransientMarker(cMetaDataKey, Boolean.TRUE);
 			}
 
 			while (qualifies.hasNext()) {
@@ -157,9 +157,9 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 
 				// Left Join: if "next" is from the left sweep area, mark it as
 				// join partner found
-				if (hit && otherport == 0 && (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey))) {
+				if (hit && otherport == 0 && (!next.hasTransientMarker(cMetaDataKey))) {
 					this.areas[otherport].remove(next);
-					next.setKeyValue(cMetaDataKey, new Boolean(true));
+					next.setTransientMarker(cMetaDataKey, Boolean.TRUE);
 					this.areas[otherport].insert(next);
 				}
 
@@ -211,7 +211,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					Iterator<T> extracted = this.areas[port^1].extractElementsBefore(punctuation.getTime());
 					while (extracted.hasNext()) {
 						T next = extracted.next();
-						if (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey)) {
+						if (!next.hasTransientMarker(cMetaDataKey)) {
 							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
 							this.transferFunction.transfer(out);
 						}

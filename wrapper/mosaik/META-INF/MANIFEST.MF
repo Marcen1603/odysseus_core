@@ -7,7 +7,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/MosaikProtocolHandler.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- com.fasterxml.jackson
+ com.fasterxml.jackson,
+ de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0"
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.slf4j,
  org.osgi.framework

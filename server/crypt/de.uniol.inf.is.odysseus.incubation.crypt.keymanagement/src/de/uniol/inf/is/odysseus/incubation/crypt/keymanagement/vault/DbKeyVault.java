@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.Converter;
 
 /**
  * This is a KeyVault, stored in a Database.<br>
- * This class manages the storing of keys in the database. 
+ * This class manages the storing of keys in the database.
  * 
  * @author MarkMilster
  *
@@ -23,12 +23,12 @@ public class DbKeyVault extends AbstractDbKeyVault implements IDbKeyVault {
 	 * Constructor, which uses credentials, stored in a Configuration file, to
 	 * connect to a database.
 	 * 
-	 * @param path
-	 *            Path to the Configuration file, with connection-credentials to
-	 *            the database.
+	 * @param configuration
+	 *            Enum, which specifies the configuration of the vault to
+	 *            connect to the database
 	 */
-	public DbKeyVault(String path) {
-		super(path);
+	public DbKeyVault(AbstractDbKeyVault.Configuration configuration) {
+		super(configuration);
 	}
 
 	public boolean insertKey(KeyWrapper<?> key) {

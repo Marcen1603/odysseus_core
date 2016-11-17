@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -88,9 +88,13 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 	private TimeUnit baseTimeUnit = null;
+
+	/**
+	 * Contains a value, if {@link #determineBaseTimeUnit()} has been called once; null else.
+	 */
 	private IMetaAttribute metaattribute = null;
-	
-	
+
+
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 //		for (IPredicate<?> pred : op.predicates) {
 //			this.predicates.add(pred.clone());
@@ -105,7 +109,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		this.debug = op.debug;
 		this.suppressPunctuation = op.suppressPunctuation;
 		this.baseTimeUnit = op.baseTimeUnit;
-		
+
 	}
 
 	public AbstractLogicalOperator() {
@@ -123,7 +127,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
 	 * #clone()
@@ -139,7 +143,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
 	 * #getInputSchema (int)
@@ -182,11 +186,11 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void setMetadata(IMetaAttribute metaattribute) {
 		this.metaattribute = metaattribute;
 	}
-	
+
 	protected IMetaAttribute getMetaAttribute() {
 		return metaattribute;
 	}
-	
+
 	@Override
 	public Map<Integer, SDFSchema> getOutputSchemaMap() {
 		return Collections.unmodifiableMap(outputSchema);
@@ -210,7 +214,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	final public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(0, outputSchema);
 	}
-	
+
 	public TimeUnit getBaseTimeUnit() {
 		if (baseTimeUnit == null) {
 			determineBaseTimeUnit();
@@ -246,7 +250,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 			}
 		}
 	}
-	
+
 	public void setBaseTimeUnit(TimeUnit baseTimeUnit) {
 		this.baseTimeUnit = baseTimeUnit;
 	}
@@ -254,7 +258,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
 	 * #getPOName ()
@@ -284,7 +288,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
 	 * #setPOName (java.lang.String)
@@ -294,12 +298,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Parameter(name="suppressPunctuations", type= BooleanParameter.class, optional = true, doc ="If set to true, no punctuations will be delivered from this operator. Default is false")
 	public void setSuppressPunctuations(boolean suppressPunctuation) {
 		this.suppressPunctuation = suppressPunctuation;
 	}
-		
+
 	@Override
 	public boolean isSuppressPunctuations() {
 		return suppressPunctuation;
@@ -310,12 +314,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
-	
+
 	@Override
 	public boolean isDebug() {
 		return debug;
 	}
-	
+
 	@Override
 	public void addOwner(IOperatorOwner owner) {
 		ownerHandler.addOwner(owner);
@@ -407,7 +411,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
 	 * #setPhysInputPO (int,
@@ -437,7 +441,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
 	 * #getPhysInputPO (int)
@@ -569,17 +573,17 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void unsubscribeFromAllSinks() {		
-			for(LogicalSubscription subscription: this.subscriptions){	
+	public void unsubscribeFromAllSinks() {
+			for(LogicalSubscription subscription: this.subscriptions){
 				unsubscribeSink(subscription);
-			}					
+			}
 	}
 
 //	@Override
 //	final public Collection<LogicalSubscription> getSubscriptions() {
 //		return new Vector<LogicalSubscription>(this.subscriptions);
 //	}
-	
+
 	@Override
 	final public Collection<LogicalSubscription> getSubscriptions() {
 		return Collections.unmodifiableCollection(this.subscriptions);
@@ -674,7 +678,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	protected void addError(String e) {
 		this.errors.add(e);
 	}
-	
+
 	@Deprecated
 	protected void addError(Exception e){
 		addError(e.getMessage());

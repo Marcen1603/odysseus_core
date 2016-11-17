@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -10,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -24,8 +28,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", doc="Translates a key-value/json object to a tuple", category={LogicalOperatorCategory.TRANSFORM})
 public class KeyValueToTupleAO extends UnaryLogicalOp{
 
+	Logger LOG =  LoggerFactory.getLogger(KeyValueToTupleAO.class);
+
 	private static final long serialVersionUID = 4804826171047928513L;
-	
+
 	private boolean keepInputObject = false;
 	private String type = "";
 	private List<RenameAttribute> attributes;
@@ -33,7 +39,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	public KeyValueToTupleAO() {
 	}
-	
+
 	public KeyValueToTupleAO(KeyValueToTupleAO keyValueToTuple) {
 		super(keyValueToTuple);
 		this.keepInputObject = keyValueToTuple.keepInputObject;
@@ -44,25 +50,26 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	public void setAttributes(List<RenameAttribute> attributes){
 		this.attributes = attributes;
 	}
-	
+
 	public List<RenameAttribute> getAttributes() {
 		return this.attributes;
 	}
-	
-	@Parameter(name = "type", type=StringParameter.class, optional= false )
+
+	@Parameter(name = "type", type=StringParameter.class, optional= true, deprecated = true )
 	public void setType(String type){
 		this.type = type;
 	}
-	
+
 	public String getType() {
 		return this.type;
 	}
-	
-	@Parameter(name = "keepInput", type=BooleanParameter.class )
+
+	@Parameter(name = "keepInput", type=BooleanParameter.class, optional = true, deprecated = true )
 	public void setKeepInputObject(boolean keepInputObject) {
 		this.keepInputObject = keepInputObject;
+		LOG.warn("KeepInput is no longer supported. Please use explicite attribute with datatype keyvalue");
 	}
-	
+
 	public boolean isKeepInputObject() {
 		return keepInputObject;
 	}
@@ -74,7 +81,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 		} else {
 			removeParameterInfo("DATEFORMAT");
 		}
-		
+
 		this.dateFormat = dateFormat;
 	}
 
@@ -97,12 +104,15 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 				name = name.substring(0, name.length()-1);
 			}
 			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(), sdfAtt.getDtConstraints()));
-		} 
+		}
+		final List<SDFMetaSchema> metaSchema;
+		metaSchema = getInputSchema().getMetaschema();
 		@SuppressWarnings("unchecked")
 		SDFSchema schema = SDFSchemaFactory.createNewSchema(type, (Class<? extends IStreamObject<?>>) Tuple.class, attributeList,getInputSchema());
-		return schema;
+		SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+		return outputSchema;
 	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new KeyValueToTupleAO(this);
@@ -115,5 +125,6 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	public boolean readMetaData() {
 		return false;
 	}
+
 
 }

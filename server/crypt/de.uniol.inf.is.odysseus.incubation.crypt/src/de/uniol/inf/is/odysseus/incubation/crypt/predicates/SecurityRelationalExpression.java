@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedPredicatePunctuation;
+import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedPredicatesPunctuation;
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedValue;
 
 /**
@@ -51,8 +51,8 @@ public class SecurityRelationalExpression<T extends IMetaAttribute> extends Rela
 	@Override
 	public IPunctuation processPunctuation(IPunctuation punctuation) {
 		punctuation = super.processPunctuation(punctuation);
-		if (punctuation instanceof CryptedPredicatePunctuation) {
-			CryptedPredicatePunctuation cryptPunctuation = (CryptedPredicatePunctuation) punctuation;
+		if (punctuation instanceof CryptedPredicatesPunctuation) {
+			CryptedPredicatesPunctuation cryptPunctuation = (CryptedPredicatesPunctuation) punctuation;
 			String expressionStr = this.getExpression().getExpressionString();
 			// TODO nice to have: parse the expressionStr in a more user friedly
 			// mode

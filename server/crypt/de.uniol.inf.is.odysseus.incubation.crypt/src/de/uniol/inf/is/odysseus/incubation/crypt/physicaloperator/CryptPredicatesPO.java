@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.incubation.crypt.client.KeyWebSocketClient;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptPunctuation;
-import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedPredicatePunctuation;
+import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedPredicatesPunctuation;
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.CryptedValue;
 import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.punctuation.KeyPunctuation;
 import de.uniol.inf.is.odysseus.incubation.crypt.provider.ICryptor;
@@ -221,7 +221,8 @@ public class CryptPredicatesPO<T extends IStreamObject<?>> extends AbstractPipe<
 	 * The punctuation contains the actual cryptedPredicates Map
 	 */
 	private void sendNewPunctuation(PointInTime point) {
-		CryptedPredicatePunctuation predPunc = CryptedPredicatePunctuation.createNewCryptedPredicatePunctuation(point);
+		CryptedPredicatesPunctuation predPunc = CryptedPredicatesPunctuation
+				.createNewCryptedPredicatesPunctuation(point);
 		predPunc.setCryptedPredicates((HashMap<String, CryptedValue>) this.cryptedPredicate);
 		this.sendPunctuation(predPunc);
 	}

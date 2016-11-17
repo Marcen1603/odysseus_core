@@ -118,7 +118,8 @@ public class SimpleCryptPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 				this.sendPunctuation(punctuation);
 			}
 			transfer((T) tuple);
-
+		} else {
+			transfer(object);
 		}
 	}
 

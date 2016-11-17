@@ -85,7 +85,7 @@ public class DuplicateEliminationRecoveryComponent implements IRecoveryComponent
 						// backup is called after recovery. So
 						// duplicateelimination=true will be overridden
 						// otherwise
-						sender.getOptionsMap().put(DUPLICATEELIMINATION_OPTION_KEY, String.valueOf(recovery));
+						sender.getOptionsMap().setOption(DUPLICATEELIMINATION_OPTION_KEY, String.valueOf(recovery));
 					}
 				}
 			}

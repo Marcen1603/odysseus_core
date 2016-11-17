@@ -1,22 +1,26 @@
 package de.uniol.inf.is.odysseus.keyvalue.datahandler;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.IBSONWriter;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
 
 /**
  *
@@ -25,13 +29,116 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  *
  */
 
-public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler<KeyValueObject<?>> {
+public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<KeyValueObject<?>> implements IBSONWriter {
 
 	protected static List<String> types = new ArrayList<String>();
 	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObjectDataHandler.class);
+	private Charset charset = Charset.forName("UTF-8");
+	private CharsetEncoder encoder = charset.newEncoder();
+
 
 	static {
-		types.add(SDFDatatype.KEYVALUEOBJECT.getURI());
+		types.add(SDFKeyValueDatatype.KEYVALUEOBJECT.getURI());
+	}
+
+	@Override
+	public int memSize(Object attribute, boolean handleMetaData) {
+		StringBuilder builder = new StringBuilder();
+		writeJSONData(builder, attribute, handleMetaData);
+		ByteBuffer charBuffer;
+		try {
+			charBuffer = encoder.encode(CharBuffer.wrap(builder.toString()));
+			return charBuffer.limit();
+		} catch (CharacterCodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		return 0;
+	}
+
+	@Override
+	public void writeData(ByteBuffer buffer, KeyValueObject<?> object, boolean handleMetaData) {
+		writeData(buffer, (Object)object, handleMetaData);
+	}
+
+	@Override
+	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
+		StringBuilder string = new StringBuilder();
+		writeJSONData(string, data, handleMetaData);
+		output.add(string.toString());
+	}
+
+	@Override
+	public void writeData(StringBuilder string, Object data, boolean handleMetaData) {
+		writeJSONData(string, data, handleMetaData);
+	}
+
+	@Override
+	public KeyValueObject<?> readData(ByteBuffer buffer, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
+		try {
+			if (buffer.remaining() > 0) {
+				CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(buffer);
+				return (KeyValueObject<?>) KeyValueObject.createInstance(decoded.toString());
+			}
+		} catch (IOException e) {
+			LOG.error("Could not decode data with KeyValueObject handler", e);
+		}
+		return null;
+	}
+
+	@Override
+	public KeyValueObject<?> readData(InputStream inputStream, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
+		try {
+			byte[] buffer = new byte[inputStream.available()];
+			for (int i = 0; inputStream.available() > 0; i++) {
+				buffer[i] = (byte) inputStream.read();
+			}
+
+			CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(ByteBuffer.wrap(buffer));
+			return (KeyValueObject<?>) KeyValueObject.createInstance(decoded.toString());
+		} catch (IOException e) {
+			LOG.error("Could not decode data with KeyValueObject handler", e);
+		}
+		return null;
+	}
+
+	@Override
+	public KeyValueObject<?> readData(Iterator<String> message, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
+		return (KeyValueObject<?>) KeyValueObject.createInstance(message.next());
+	}
+
+	@Override
+	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData) {
+		StringBuilder builder = new StringBuilder();
+		writeJSONData(builder, data, handleMetaData);
+		ByteBuffer charBuffer;
+		try {
+			charBuffer = encoder.encode(CharBuffer.wrap(builder.toString()));
+			buffer.put(charBuffer);
+			return;
+		} catch (CharacterCodingException e) {
+			e.printStackTrace();
+		}
+
+		// TODO: Find a way to handle metadata in key value
+		throw new IllegalArgumentException(
+				"writeData() is not implemented in this DataHandler! writeJSONData should be used instead.");
+	}
+
+	private void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
+		if (data instanceof KeyValueObject<?>) {
+			string.append((((KeyValueObject<?>) data).toString()));
+		}
+	}
+
+	@Override
+	public byte[] writeBSONData(KeyValueObject<?> kvObject) {
+		return kvObject.getAsBSON();
 	}
 
 	@Override
@@ -48,97 +155,5 @@ public class KeyValueObjectDataHandler extends AbstractKeyValueObjectDataHandler
 	public Class<?> createsType() {
 		return KeyValueObject.class;
 	}
-
-	static public KeyValueObject<?> jsonToKVOWrapper(JsonNode node){
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		if(node.isArray()) {
-			for(int i = 0; i < node.size(); ++i) {
-				parse(node.get(i), map, "" + i);
-			}
-		} else {
-			parse(node, map, "");
-		}
-		return new KeyValueObject<>(map);
-	}
-
-	static public KeyValueObject<?> jsonStringToKVOWrapper(String json){
-		try {
-			if(json.equals("")) {
-				throw new Exception("empty JSON-String");
-			}
-			JsonNode rootNode = jsonMapper.reader().readTree(json);
-			return jsonToKVOWrapper(rootNode);
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.debug(e.getMessage());
-			return null;
-		}
-	}
-
-	protected KeyValueObject<?> jsonStringToKVO(String json) {
-		return jsonStringToKVOWrapper(json);
-	}
-
-	static private void parse(JsonNode rootNode, Map<String, Object> map, String path) {
-		Iterator<Entry<String, JsonNode>> nodeIterator = rootNode.fields();
-		while(nodeIterator.hasNext()) {
-			Entry<String, JsonNode> nodeEntry = nodeIterator.next();
-			JsonNode node = nodeEntry.getValue();
-			String key = nodeEntry.getKey();
-			String newPath;
-			if(path.equals("")) {
-				newPath = key;
-			} else {
-				newPath = path + "." + key;
-			}
-			if(node.isArray()) {
-				map.putAll(parseArray(node, map, newPath));
-			} else {
-				if(node.size() > 0) {
-					parse(node, map, newPath);
-				} else {
-					if(node.isInt()) {
-						map.put(newPath, node.asInt());
-					} else if(node.isTextual()) {
-						map.put(newPath, node.asText());
-					} else if(node.isBoolean()) {
-						map.put(newPath, node.asBoolean());
-					} else if(node.isDouble()) {
-						map.put(newPath, node.asDouble());
-					} else if(node.isLong()) {
-						map.put(newPath, node.asLong());
-					}
-				}
-			}
-		}
-	}
-
-	static private Map<String, Object> parseArray(JsonNode rootNode, Map<String, Object> map, String path) {
-		Map<String,Object> resultList = new HashMap<String,Object>();
-		Iterator<JsonNode> elements = rootNode.elements();
-		int pos = 0;
-		while(elements.hasNext()) {
-			JsonNode node = elements.next();
-			String key = path+"["+pos+"]";
-			if(node.isInt()) {
-				resultList.put(key,node.asInt());
-			} else if(node.isTextual()) {
-				resultList.put(key,node.asText());
-			} else if(node.isBoolean()) {
-				resultList.put(key,node.asBoolean());
-			} else if(node.isDouble()) {
-				resultList.put(key,node.asDouble());
-			} else if(node.isLong()) {
-				resultList.put(key,node.asLong());
-			} else if(node.isObject()){
-				Map<String,Object> subMap = new HashMap<String, Object>();
-				parse(node, subMap, key);
-				resultList.putAll(subMap);
-			}
-			pos++;
-		}
-		return resultList;
-	}
-
 
 }

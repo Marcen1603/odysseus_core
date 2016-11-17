@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.badast.recorder;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.badast.BaDaStSender;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -124,7 +124,7 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 	 *            {@code ILogicalOperator}).
 	 * @return The configuration as {@code Properties} object.
 	 */
-	private Properties createRecorderConfig(Map<String, String> sourceAccessParameters) {
+	private Properties createRecorderConfig(OptionMap sourceAccessParameters) {
 		Properties config = new Properties();
 		config.put(AbstractBaDaStRecorder.TYPE_CONFIG, this.type);
 		config.put(AbstractBaDaStRecorder.SOURCENAME_CONFIG, this.sourcename.toString());
@@ -144,9 +144,9 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 		}
 		// Check, if source definition contains all needed options
 		// (parameters of ABaDaStRecorder)
-		Map<String, String> sourceAccessParameters = sourceAccess.getOptionsMap();
+		OptionMap sourceAccessParameters = sourceAccess.getOptionsMap();
 		for (String recorderParameter : this.parameterKeys) {
-			if (!sourceAccessParameters.keySet().contains(recorderParameter)) {
+			if (!sourceAccessParameters.containsKey(recorderParameter)) {
 				throw new RuntimeException("CreateBaDaStRecorderCommand: " + this.sourcename.getResourceName()
 						+ " misses the parameter " + recorderParameter + "!");
 			}

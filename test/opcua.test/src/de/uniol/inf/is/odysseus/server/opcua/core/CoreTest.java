@@ -14,18 +14,22 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.inductiveautomation.opcua.stack.core.*;
+import com.inductiveautomation.opcua.stack.core.Identifiers;
 import com.inductiveautomation.opcua.stack.core.types.builtin.DataValue;
 import com.inductiveautomation.opcua.stack.core.types.builtin.LocalizedText;
 import com.inductiveautomation.opcua.stack.core.types.builtin.NodeId;
@@ -47,16 +51,15 @@ import com.xafero.turjumaan.server.sdk.api.INodeModel;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider;
-import de.uniol.inf.is.odysseus.mep.AbstractExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.mep.AbstractExpression;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.security.provider.ISecurityProvider;
 import de.uniol.inf.is.odysseus.server.opcua.TestActivator;
@@ -106,7 +109,7 @@ public class CoreTest {
 		// Get and start Jena
 		String symNameJ = "org.apache.jena.2.13";
 		bundleJ = OsgiUtil.find(ctx.getBundles(), symNameJ);
-		bundleJ.start();		
+		bundleJ.start();
 		// Get and start server
 		String symNameS = "de.uniol.inf.is.odysseus.opcua.server";
 		bundleS = OsgiUtil.find(ctx.getBundles(), symNameS);
@@ -159,7 +162,7 @@ public class CoreTest {
 		assertEquals(size, funcs.size());
 		return funcs;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private <T> AbstractExpression<T> newConstant(Class<T> clazz, T value, SDFDatatype type) {
 		try {
@@ -172,7 +175,7 @@ public class CoreTest {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private void testFunctions(List<IFunction<?>> funcs) {
 		Object obj = null;
 		SDFDatatype type = ((IDatatypeProvider) dsC.Registered.get(IDatatypeProvider.class)).getDatatypes().get(0);
@@ -380,8 +383,8 @@ public class CoreTest {
 		proto.getQueue().clear();
 		assertTrue(proto.getQueue().isEmpty());
 	}
-	
-	private INodeModel findModel(ITransportHandler tp) throws IllegalArgumentException, 
+
+	private INodeModel findModel(ITransportHandler tp) throws IllegalArgumentException,
 			IllegalAccessException, ClassNotFoundException, NoSuchFieldException, SecurityException {
 		Class<?> compCl = tp.getClass().getClassLoader().loadClass("de.uniol.inf.is" +
 				".odysseus.server" + ".opcua.binding.OPCUAComponent");
@@ -390,14 +393,14 @@ public class CoreTest {
 		compFld.setAccessible(true);
 		return (INodeModel) compFld.get(compInst);
 	}
-	
+
 	@Test
 	public void testTransportHandlerSink2() throws Exception {
 		String input1 = "-1.33884403712E11[timestamp=130817462344640893, quality=0, error=0],1457926604959";
 		String input2 = "1.7295632E-26[timestamp=130817462344640893, quality=0, error=0]";
 		// Get initial instance
 		ITransportHandler tp = (ITransportHandler)dsS.Registered.get(ITransportHandler.class);
-		INodeModel model = findModel(tp);		
+		INodeModel model = findModel(tp);
 		// Set first options
 		OptionMap opt1 = toOptMap(loadProps("res/model-def-t1a.txt"));
 		opt1.setOption("nodes", "ns=1;i=93 | ns=1;i=94");
@@ -422,7 +425,7 @@ public class CoreTest {
 		// Check the variables!
 		check(model);
 		// Graph it!
-		graph(model);			
+		graph(model);
 		// Close the handler
 		handler2.processOutClose();
 		// Close first handler
@@ -436,7 +439,7 @@ public class CoreTest {
 		assertTrue(ph1.getQueue().isEmpty());
 		assertTrue(ph2.getQueue().isEmpty());
 	}
-	
+
 	private Map<AttributeIds, Object> getNodeDetails(INodeModel onm, String nid) {
 		NodeId id = NodeId.parse(nid);
 		Map<AttributeIds, Object> details = new LinkedHashMap<>();
@@ -452,14 +455,14 @@ public class CoreTest {
 		}
 		return details;
 	}
-	
+
 	private void check(INodeModel onm) {
 		// UA NodeSet
 		Map<AttributeIds, Object> a = getNodeDetails(onm, "i=2256");
 		assertEquals("ServerStatus", a.get(AttributeIds.DisplayName));
 		assertEquals(Identifiers.ServerStatusDataType, a.get(AttributeIds.DataType));
-		assertEquals(NodeClass.Variable, a.get(AttributeIds.NodeClass));		
-		assertEquals(ServerState.Running, ((ServerStatusDataType)a.get(AttributeIds.Value)).getState());	
+		assertEquals(NodeClass.Variable, a.get(AttributeIds.NodeClass));
+		assertEquals(ServerState.Running, ((ServerStatusDataType)a.get(AttributeIds.Value)).getState());
 	    assertEquals("ServerStatus", a.get(AttributeIds.BrowseName));
 	    assertEquals(1000.0, a.get(AttributeIds.MinimumSamplingInterval));
 	    assertEquals(NodeId.parse("i=2256"), a.get(AttributeIds.NodeId));
@@ -540,9 +543,9 @@ public class CoreTest {
 		assertEquals(null, d.get(AttributeIds.ArrayDimensions));
 		assertEquals(ValueRanks.Scalar.getValue(), d.get(AttributeIds.ValueRank));
 	}
-	
+
 	private void graph(INodeModel onm) throws IOException, InterruptedException {
-		(new File("out")).mkdir();		
+		(new File("out")).mkdir();
 		// Set entry
 		NodeId s = Identifiers.ObjectsFolder;
 		// Coloring options
@@ -560,7 +563,7 @@ public class CoreTest {
 		g.layout(Layout.sfdp).dot(new File("out/test2f.dot")).browse().write().graph().clean();
 		g.layout(Layout.twopi).dot(new File("out/test3f.dot")).browse().write().graph().clean();
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	public void testTransportHandlerNoInStreamImpl() {
 		ITransportHandler tp = (ITransportHandler) dsW.Registered.get(ITransportHandler.class);
