@@ -61,7 +61,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 	@Override
 	protected void process_next(KeyValueObject<M> input, int port) {
 		List<String> dataValues = new ArrayList<String>(getOutputSchema().size());
-		for(int i=0;i<getOutputSchema().size();i++){
+		for (int i = 0; i < getOutputSchema().size(); i++) {
 			dataValues.add(null);
 		}
 		Object[] notToParse = new Object[getOutputSchema().size()];
@@ -70,63 +70,29 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 				String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
 				SDFDatatype outputDatatype = getOutputSchema().getAttributes().get(i).getDatatype();
 
-				if (attributeName.endsWith("*")) {
-					final String attr = attributeName.substring(0, attributeName.length() - 1);
-
-					Iterator<Entry<String, Object>> iter = input.getAsKeyValueMap().entrySet().stream()
-							.filter(e -> e.getKey().startsWith(attr)).iterator();
-					if (iter.hasNext()) {
-						StringBuilder sb = new StringBuilder();
-						while (iter.hasNext()) {
-							Entry<String, Object> entry = iter.next();
-							sb.append(entry.getKey().substring(attr.length()));
-							sb.append("|");
-							sb.append(entry.getValue());
-							if (iter.hasNext()) {
-								sb.append("\n");
-							}
-						}
-						dataValues.set(i, sb.toString());
+				if (outputDatatype.equals(SDFKeyValueDatatype.KEYVALUEOBJECT)) {
+					if (attributeName.equals("$")) {
+						notToParse[i] = input.clone();
+					} else {
+						notToParse[i] = input.path(attributeName);
 					}
-				} else {
-
-					if (outputDatatype.equals(SDFKeyValueDatatype.KEYVALUEOBJECT)) {
-						if (attributeName.equals("$")) {
-							notToParse[i] = input.clone();
-						} else {
-							notToParse[i] = input.path(attributeName);
-						}
-					} else if (outputDatatype.isListValue()) {
-						// In this attributeName should be a reference to an
-						// array
-						// getAttribute delivers only the last element in an
-						// path so
-						// path must be used
-						List listObj = input.path(attributeName);
-						notToParse[i] = listObj;
-					} else if (input.containsKey(attributeName)) {
-						Object attribute = input.getAttribute(attributeName);
-						if (attribute != null) {
-							if (attribute instanceof List) {
-								if (((List<?>) attribute).size() != 0) {
-									StringBuilder sb = new StringBuilder();
-									for (Iterator<Object> iter = ((List<Object>) attribute).iterator(); iter
-											.hasNext();) {
-										sb.append(iter.next());
-										if (iter.hasNext()) {
-											sb.append("\n");
-										}
-									}
-									dataValues.set(i, sb.toString());
-								}
-							} else {
-								dataValues.set(i, attribute.toString());
-							}
-						}
+				} else if (outputDatatype.isListValue()) {
+					// In this attributeName should be a reference to an
+					// array
+					// getAttribute delivers only the last element in an
+					// path so
+					// path must be used
+					List listObj = input.path(attributeName);
+					notToParse[i] = listObj;
+				} else if (input.containsKey(attributeName)) {
+					if (outputDatatype.isNumeric()) {
+						notToParse[i] = input.getNumberAttribute(attributeName);
+					} else {
+						dataValues.set(i, input.getAttribute(attributeName));
 					}
 				}
 			} catch (Exception e) {
-				logger.warn(e.getMessage(),e);
+				logger.warn(e.getMessage(), e);
 			}
 
 		}
