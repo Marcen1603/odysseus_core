@@ -61,6 +61,9 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 	@Override
 	protected void process_next(KeyValueObject<M> input, int port) {
 		List<String> dataValues = new ArrayList<String>(getOutputSchema().size());
+		for(int i=0;i<getOutputSchema().size();i++){
+			dataValues.add(null);
+		}
 		Object[] notToParse = new Object[getOutputSchema().size()];
 		for (int i = 0; i < getOutputSchema().size(); i++) {
 			try {
@@ -123,7 +126,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					}
 				}
 			} catch (Exception e) {
-				logger.warn(e.getMessage());
+				logger.warn(e.getMessage(),e);
 			}
 
 		}
