@@ -15,11 +15,13 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.OperatorCollector;
 import de.uniol.inf.is.odysseus.recovery.badast.logicaloperator.BaDaStSyncAO;
@@ -29,7 +31,7 @@ import de.uniol.inf.is.odysseus.recovery.badast.logicaloperator.BaDaStSyncAO;
  * data streams. <br />
  * <br />
  * The component uses the Backup of Data Streams (BaDaSt) application.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -49,6 +51,11 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 	 * The ids of all queries, recovery is activated for.
 	 */
 	private static final Set<Integer> queryIdsForRecovery = new HashSet<>();
+
+	/**
+	 * An active session of the super user.
+	 */
+	private ISession activeSession = null;
 
 	@Override
 	public List<ILogicalQuery> activateRecovery(QueryBuildConfiguration qbConfig, ISession session,
@@ -78,33 +85,39 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 	/**
 	 * Inserts a {@link BaDaStSyncAO} after each access operator.
 	 */
-	private static void insertBaDaStSynchronizors(ILogicalQuery query, boolean recovery) {
+	private void insertBaDaStSynchronizors(ILogicalQuery query, boolean recovery) {
+		final Set<String> recordedSources = BaDaStRecorderRegistry.getRecordedSources();
 		List<ILogicalOperator> operators = OperatorCollector.collect(query.getLogicalPlan());
-		new LogicalGraphWalker(operators).walk(new IOperatorWalker<ILogicalOperator>() {
+		new LogicalGraphWalker(operators).walk(op -> walkingStep(op, recordedSources, recovery));
+	}
 
-			/**
-			 * All recorded sources.
-			 */
-			private final Set<String> recordedSources = BaDaStRecorderRegistry.getRecordedSources();
-
-			@Override
-			public void walk(ILogicalOperator operator) {
-				// XXX Works only with AbstractAccessAO, not with StreamAO,
-				// because I need the protocol and data handler
-				if (AbstractAccessAO.class.isInstance(operator)
-						&& recordedSources.contains(((AbstractAccessAO) operator).getAccessAOName().toString())) {
-					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
-					BaDaStSyncAO sync = new BaDaStSyncAO(sourceAccess, recovery);
-					Collection<LogicalSubscription> subs = new ArrayList<>(operator.getSubscriptions());
-					operator.unsubscribeFromAllSinks();
-					sync.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
-					for (LogicalSubscription sub : subs) {
-						sync.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
-								sub.getSchema());
-					}
-				}
+	/**
+	 * Inserts a {@link BaDaStSyncAO} after each access operator.
+	 */
+	private void walkingStep(ILogicalOperator operator, Set<String> recordedSources, boolean recovery) {
+		if (operator instanceof AbstractAccessAO
+				&& recordedSources.contains(((AbstractAccessAO) operator).getAccessAOName().toString())) {
+			AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
+			BaDaStSyncAO sync = new BaDaStSyncAO(sourceAccess, recovery);
+			Collection<LogicalSubscription> subs = new ArrayList<>(operator.getSubscriptions());
+			operator.unsubscribeFromAllSinks();
+			sync.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
+			for (LogicalSubscription sub : subs) {
+				sync.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 			}
-		});
+		} else if (operator instanceof StreamAO) {
+			List<ILogicalOperator> operators = OperatorCollector
+					.collect(DataDictionaryProvider.getDataDictionary(UserManagementProvider.getDefaultTenant())
+							.getStreamForTransformation(((StreamAO) operator).getStreamname(), getSession()));
+			new LogicalGraphWalker(operators).walk(op -> walkingStep(op, recordedSources, recovery));
+		}
+	}
+
+	protected ISession getSession() {
+		if (activeSession == null || !activeSession.isValid()) {
+			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null);
+		}
+		return activeSession;
 	}
 
 }

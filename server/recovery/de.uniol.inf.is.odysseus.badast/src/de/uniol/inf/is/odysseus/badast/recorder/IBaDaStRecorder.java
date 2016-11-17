@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.badast.BaDaStException;
  * Concrete implementations have to be annotated with {@link ABaDaStRecorder}
  * and there must be a component definition to make the implementation
  * available.
- * 
+ *
  * @author Michael Brand
  *
  * @param <V>
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.badast.BaDaStException;
  *            system.
  */
 public interface IBaDaStRecorder extends AutoCloseable {
-	
+
 	/**
 	 * The key for configuration, where the recorder type is set.
 	 */
@@ -36,13 +36,18 @@ public interface IBaDaStRecorder extends AutoCloseable {
 	public static final String SOURCENAME_CONFIG = "sourcename";
 
 	/**
+	 * The key for configuration, where the view name is set.
+	 */
+	public static final String VIEWNAME_CONFIG = "viewname";
+
+	/**
 	 * Gets the name of the recorder.
 	 */
 	public String getName();
 
 	/**
 	 * Gets the configuration.
-	 * 
+	 *
 	 * @return A key value store holding the configuration, which is set by
 	 *         calling {@link #newInstance(Properties)}.
 	 */
@@ -51,7 +56,7 @@ public interface IBaDaStRecorder extends AutoCloseable {
 	/**
 	 * Starts the recorder: subscribe to the data source, read it and publish it
 	 * to the used publish subscribe system.
-	 * 
+	 *
 	 * @throws BaDaStException
 	 *             if any error occurs.
 	 */
@@ -59,7 +64,7 @@ public interface IBaDaStRecorder extends AutoCloseable {
 
 	/**
 	 * Creates a new instance of the recorder type.
-	 * 
+	 *
 	 * @param cfg
 	 *            A key value store holding the configuration, which may differ
 	 *            for different recorder types.
