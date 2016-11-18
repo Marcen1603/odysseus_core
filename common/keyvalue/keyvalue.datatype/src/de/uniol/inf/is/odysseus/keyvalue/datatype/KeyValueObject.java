@@ -168,7 +168,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<KeyValueObject<IMetaAttribute>> path(String path) {
+	public List<Object> path(String path) {
 		if (!configured) {
 			Configuration.setDefaults(new Configuration.Defaults() {
 
@@ -193,28 +193,36 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 			configured = true;
 		}
 		JsonNode res = JsonPath.read(node, path);
+		// Result could be an array of elements
 		if (res.isArray()) {
 			@SuppressWarnings("rawtypes")
-			List ret = new ArrayList<>();
+			List ret = new ArrayList<>(((ArrayNode) res).size());
 			for (JsonNode n : ((ArrayNode) res)) {
 				if (n.isArray() || n.isObject()) {
 					KeyValueObject<IMetaAttribute> kv = createInstance();
 					kv.setNode(n.deepCopy());
 					ret.add(kv);
-				}else{
-					if (n.isNumber()){
+				} else {
+					if (n.isNumber()) {
 						ret.add(n.numberValue());
-					}else{
+					} else {
 						ret.add(n.toString());
 					}
 				}
 			}
 			return ret;
 		}
-		List<KeyValueObject<IMetaAttribute>> ret = new ArrayList<>();
-		KeyValueObject<IMetaAttribute> kv = createInstance();
-		kv.setNode(res);
-		ret.add(kv);
+		// or a single element (Object, Number or String)
+		List<Object> ret = new ArrayList<>(1);
+		if (res.isObject()) {
+			KeyValueObject<IMetaAttribute> kv = createInstance();
+			kv.setNode(res);
+			ret.add(kv);
+		} else if (res.isNumber()) {
+			ret.add(res.numberValue());
+		} else {
+			ret.add(res.textValue());
+		}
 		return ret;
 	}
 
@@ -317,6 +325,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	 * @param key
 	 * @param value
 	 */
+	@SuppressWarnings("unchecked")
 	public void setAttribute(String key, Object value) {
 		// Must create hierarchy based on "."!
 		String subkeys[] = key.split("\\.");
@@ -339,7 +348,24 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 							((ArrayNode) subnode).add(mapper.convertValue(value, JsonNode.class));
 						}
 					} else {
-						((ObjectNode) father).set(subkeys[i], mapper.convertValue(value, JsonNode.class));
+						if (value instanceof KeyValueObject) {
+							((ObjectNode) father).set(subkeys[i],
+									((KeyValueObject<IMetaAttribute>) value).node.deepCopy());
+						} else if (value instanceof List) {
+							// FIXME: Currently a hack
+							try {
+								JsonNode node = jsonMapper.reader().readTree(value.toString());
+								((ObjectNode) father).set(subkeys[i],node);
+							} catch (JsonProcessingException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						} else {
+							((ObjectNode) father).set(subkeys[i], mapper.convertValue(value, JsonNode.class));
+						}
 					}
 				}
 			} else {
@@ -598,7 +624,11 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 			if (a.getDatatype().isTuple()) {
 				throw new RuntimeException("Nesting currently not supported!");
 			}
-			ret.setAttribute(a.getAttributeName(), tuple.getAttribute(pos++));
+			try {
+				ret.setAttribute(a.getAttributeName(), tuple.getAttribute(pos++));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return ret;
 	}
@@ -702,8 +732,8 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 		// System.out.println(e.getKey() + " --> " + e.getValue());
 		// }
 
-		List<KeyValueObject<IMetaAttribute>> res = kv.path("$.results[0].data[*].row[0]");
-		for (KeyValueObject<IMetaAttribute> kvo : res) {
+		List<Object> res = kv.path("$.results[0].data[*].row[0]");
+		for (Object kvo : res) {
 			System.out.println(kvo);
 		}
 

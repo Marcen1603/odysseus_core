@@ -12,7 +12,7 @@ percentage = ACCESS({
 	options=[['filename', '${BUNDLE-ROOT}\testdata\keyvaluetotupletimestamp\input0.json']]
 })
 
-keyvaluetotuple0 = KEYVALUETOTUPLE({schema=[['id','STARTTIMESTAMP'],['percentage','Integer']], KEEPINPUT = 'false', TYPE = 'type'}, percentage)
+keyvaluetotuple0 = KEYVALUETOTUPLE({schema=[['id','STARTTIMESTAMP'],['percentage','Integer']]}, percentage)
 
 longToInt = MAP({EXPRESSIONS=[['toInteger(id)','id'],['percentage','percentage']]}, keyvaluetotuple0)
 

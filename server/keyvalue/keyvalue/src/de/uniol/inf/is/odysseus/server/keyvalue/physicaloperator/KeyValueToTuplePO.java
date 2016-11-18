@@ -67,10 +67,10 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 			try {
 				String attributeName = this.renameAttributes.get(i).getAttribute().getAttributeName();
 				SDFDatatype outputDatatype = getOutputSchema().getAttributes().get(i).getDatatype();
-
 				if (outputDatatype.equals(SDFKeyValueDatatype.KEYVALUEOBJECT)) {
 					if (attributeName.equals("$")) {
 						notToParse[i] = input.clone();
+						((KeyValueObject<IMetaAttribute>)notToParse[i]).setMetadata(null);
 					} else {
 						notToParse[i] = input.path(attributeName);
 					}
@@ -87,6 +87,16 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 						notToParse[i] = input.getNumberAttribute(attributeName);
 					} else {
 						dataValues.set(i, input.getAttribute(attributeName));
+					}
+				}else{
+					// try with path expression
+					List<Object> v = input.path(attributeName);
+					if (!outputDatatype.isListValue()){
+						if (v.size() == 1){
+							notToParse[i] = v.get(0);
+						}
+					}else{
+						notToParse[i] = v;
 					}
 				}
 			} catch (Exception e) {

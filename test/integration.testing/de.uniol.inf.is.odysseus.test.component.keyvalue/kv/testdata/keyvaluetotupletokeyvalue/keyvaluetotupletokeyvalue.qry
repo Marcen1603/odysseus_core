@@ -13,7 +13,7 @@ percentage = ACCESS({
 	schema=[['id','STARTTIMESTAMP']]
 })
 
-keyvaluetotuple0 = KEYVALUETOTUPLE({schema=[['id','Integer'],['percentage','Integer']], KEEPINPUT = 'false', TYPE = 'type'}, percentage)
+keyvaluetotuple0 = KEYVALUETOTUPLE({schema=[['id','Integer'],['percentage','Integer']]}, percentage)
 
 tupletokeyvalue0 = TUPLETOKEYVALUE(keyvaluetotuple0)
 
