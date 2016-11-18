@@ -54,7 +54,7 @@ public class CreateAndRenameSDFAttributeParameter extends
 
 		List<String> list = (List<String>) l1;
 
-		if (list.size() == 3) {			
+		if (list.size() == 3) {
 			setValue(new RenameAttribute(determineAttribute(null, list.get(0), list.get(2),
 					constraintList), list.get(1)));
 		} else if (list.size() == 2) {
@@ -62,7 +62,7 @@ public class CreateAndRenameSDFAttributeParameter extends
 					constraintList), ""));
 		} else {
 			throw new IllegalArgumentException(
-					"Wrong number of inputs for SDFAttribute. Expecting [sourcename] attributename and datatype [constraintlist].");
+					"Wrong number of inputs for SDFAttribute. Expecting [path] attributename and datatype [constraintlist].");
 		}
 	}
 
