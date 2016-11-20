@@ -151,6 +151,34 @@ public class RestructHelper {
 		return ret;
 
 	}
+	
+	/**
+	 * Inserts a new logical operator (toInsert) before the operator before
+	 * (e.g. closer to the root!)
+	 * 
+	 * @param toInsert
+	 * @param before
+	 * @return
+	 */
+	public static Collection<ILogicalOperator> insertOperatorBefore(
+			ILogicalOperator toInsert, ILogicalOperator before,  int sinkInPort, int sourceOutPort) {
+		List<ILogicalOperator> ret = new ArrayList<>();
+		Collection<LogicalSubscription> subs = before.getSubscriptions();
+		for (LogicalSubscription sub : subs) {
+			if(sourceOutPort == sub.getSourceOutPort()){
+				before.unsubscribeSink(sub);
+				// What about the source out port
+				toInsert.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
+						sub.getSourceOutPort(), sub.getSchema());
+				ret.add(sub.getTarget());
+			}
+		}
+		toInsert.subscribeToSource(before, sinkInPort, sourceOutPort, before.getOutputSchema());
+		ret.add(before);
+		ret.add(toInsert);
+		return ret;
+
+	}
 
 	public static Collection<ILogicalOperator> simpleOperatorSwitch(
 			UnaryLogicalOp father, UnaryLogicalOp son) {
