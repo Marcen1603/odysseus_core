@@ -30,8 +30,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Attribute">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CQL.ecore#//Attribute/value"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CQL.ecore#//Attribute/source"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Attribute/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//ExpressionsModel">
@@ -72,6 +70,9 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//BoolConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//BoolConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//AttributeRef">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//AttributeRef/value"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Or">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Or/left"/>

@@ -3,11 +3,15 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
@@ -20,10 +24,17 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+import java.util.HashSet
+import java.util.Map
+import java.util.Set
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import java.util.List
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess.Select_StatementElements
+import java.lang.ProcessBuilder.Redirect.Type
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 
 /**
  * Generates code from your model files on save.
@@ -35,134 +46,235 @@ class CQLGenerator extends AbstractGenerator
 
 //	@Inject extension IQualifiedNameProvider
 
+	var Set<SDFAttribute> attributes = new HashSet
+	var Map<String, SDFAttribute> map
+
+	def void setSchema(Set<SDFSchema> s)
+	{
+		for(SDFSchema t : s)
+		{
+			print(t)//TODO Remove after debugging
+			attributes.addAll(t.attributes)
+		}
+	}
+
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) 
 	{
+		
+		var i = 0 ;
+//		var ref = 
+		
+		
 		for(e : resource.allContents.toIterable.filter(typeof(Statement)))
+		{
 			fsa.generateFile(
 //				e.fullyQualifiedName.toString() + '.pql',
-				resource.URI.lastSegment.replace('.cql', 'pql') ,
+//				 i + " " + resource.URI.lastSegment.replace('.cql', '.pql'),
+				""+ i++,	
 				e.parseStatement()
 			)
+		}
 	}
 	
-//HINT Use strg + < or >  to generate « or »	
 	def CharSequence parseStatement(Statement stmt)
 	'''
 	«switch stmt.type 
 	{
 	Select_Statement : parseSelect(stmt.type as Select_Statement)
+	Create_Statement : parseCreate(stmt.type as Create_Statement)
 	}
 	»
 	'''
 	
-	def void foo(Expression e)
+	def parseCreate(Create_Statement statement) 
 	{
-		switch e
-		{
-			And: e.left
-		}
+		println("create")
+		'''
+		CREATE
+		'''
 	}
 
-	var where_clause = ''
+
 
 	def CharSequence parseSelect(Select_Statement stmt)
 	{
-	where_clause = ''
-	'''
-	SELECT({
-			predicate=«unpackExpression(stmt.predicates.elements.get(0))»
-	}, «buildAccessOP(stmt)»)
-	'''
+		predicate = ''
+		if(!stmt.attributes.empty)//SELECT attr1, attr2 ...
+		{
+			'''
+			SELECT({predicate=
+			«buildPredicate(stmt.predicates.elements.get(0))»},
+			«buildAccessOP(stmt)»)
+			'''
+		}
+		else// SELECT * ...
+		{
+			if(stmt.predicates == null)//SELECT * FROM src1, src2;
+			{
+				'''
+				«buildAccessOP(stmt)»	
+				'''		
+			}
+			else//SELECT * FROM src1, src2 WHERE ... ;
+			{ 
+//				stmt.eS
+				'''
+				SELECT({predicate=
+				«buildPredicate(stmt.predicates.elements.get(0))»},
+				«buildAccessOP(stmt)»)
+				'''					
+			}
+		}
 	}
 
-	def CharSequence unpackExpression(Expression e)
+	var predicate = ''
+	def CharSequence buildPredicate(Expression e)
 	{
+		println(predicate)
 		if(!e.eContents.empty)
 		{
 			switch e
 			{
 				Or:
 				{
-					unpackExpression(e.left)
-					where_clause += '|| '
-					unpackExpression(e.right)
+					buildPredicate(e.left)
+					predicate += '||'
+					buildPredicate(e.right)
 				}
 				And:
 				{
-					unpackExpression(e.left)
-					where_clause += '&& '
-					unpackExpression(e.right)
+					buildPredicate(e.left)
+					predicate += '&&'
+					buildPredicate(e.right)
 				}  
 				Equality:
 				{
-					unpackExpression(e.left)
-					where_clause += e.op + ' '
-					unpackExpression(e.right)
+					buildPredicate(e.left)
+					predicate += e.op
+					buildPredicate(e.right)
 				}
 				Comparision:
 				{
-					unpackExpression(e.left)
-					where_clause += e.op + ' '
-					unpackExpression(e.right)	
+					buildPredicate(e.left)
+					predicate += e.op
+					buildPredicate(e.right)	
 				}
 				Plus:
 				{
-					unpackExpression(e.left)
-					where_clause += '+ '
-					unpackExpression(e.right)
+					buildPredicate(e.left)
+					predicate += '+'
+					buildPredicate(e.right)
 				}
 				Minus:
 				{
-					unpackExpression(e.left)
-					where_clause += '- '
-					unpackExpression(e.right)					
+					buildPredicate(e.left)
+					predicate += '-'
+					buildPredicate(e.right)					
 				}
 				MulOrDiv:
 				{
-					unpackExpression(e.left)
-					where_clause += e.op + ' '
-					unpackExpression(e.right)
+					buildPredicate(e.left)
+					predicate += e.op
+					buildPredicate(e.right)
 				}
 				NOT:
 				{
-					where_clause += '!'
-					unpackExpression(e.expression)
+					predicate += '!'
+					buildPredicate(e.expression)
 				}
 				Bracket:
 				{
-					where_clause += '(' 
-					unpackExpression(e.inner)
-					where_clause += ')' 
-				} 
+					predicate += '(' 
+					buildPredicate(e.inner)
+					predicate += ')' 
+				}
+				AttributeRef:
+				{
+					predicate += e.value.name
+				}  	 
 			}
-			println(where_clause) //TODO Remove after debugging
 		} 
 		else
 		{
 			var str = ''
 			switch e
 			{
-				IntConstant: 	str = e.value + ' '
-				FloatConstant: str = e.value + ' '
-				StringConstant: str = e.value + ' '
-				BoolConstant: 	str = e.value + ' '
-				Attribute: 		str = e.value.name + ' '
+				IntConstant: 	str = e.value + ''
+				FloatConstant:  str = e.value
+				StringConstant: str = e.value
+				BoolConstant: 	str = e.value
+	
 			}
-			where_clause += str
+			predicate += str
 		}
 	}
 	
-//Get data types from the context of each expression; look at WHERE clause
+	
+	//TODO Implement buildProjectOP
+	def CharSequence buildProjectOP(Select_Statement stmt)
+	{
+		'''
+		PROJECT({attributes = [«»]}, )
+		'''
+	}
+	
 	def CharSequence buildAccessOP(Select_Statement stmt)
-	'''
-	ACCESS({source='Source'
-			wrapper='GenericPush'
-			transport='TCPClient'
-			dataHandler='Tuple'
-			schema=[
-					[]
-					[]]
-	})
-	'''
+	{
+		'''
+		ACCESS
+		(
+			{	
+				source      = 'Source'
+				wrapper     = 'GenericPush'
+				transport   = 'TCPClient'
+				dataHandler = 'Tuple'
+				schema = [«buildSchema(stmt)»]
+			}
+		)
+		'''
+	}
 
+	//TODO Refactore	
+	def CharSequence buildSchema(Select_Statement stmt)
+	{
+		var str = '\n'
+		var i = 0
+		var SDFDatatype type
+		var String alias
+		var List<Attribute> a = stmt.attributes
+		if(a.size == 0)
+		{
+			for(src : stmt.sources)
+				for(attr : attributes)
+				{
+					if(attr.sourceName.equals(src.name.replace("FROM","")))//TODO Currently hacked
+					{
+						alias = attr.attributeName
+						type = attr.datatype
+						str += "['" + alias + "', '" + type.toString + "'],\n"
+					}
+				}
+			str = str.substring(0, str.length - 2)
+		}
+		else
+		{
+			while(i < a.size)
+			{
+				alias = a.get(i).name 
+				for(attr : attributes)
+				{
+					if(attr.attributeName.equals(alias))
+					{
+						type = attr.datatype
+						if(i != a.size - 1)
+							str += "['" + alias + "', '" + type.toString + "'],\n"
+						else
+							str += "['" + alias + "', '" + type.toString + "']\n"
+					}
+				}
+				i++ 								
+			}
+		}
+		str
+	}	
 }

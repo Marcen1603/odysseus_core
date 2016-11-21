@@ -4,7 +4,7 @@ generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
 Model: statements+=Statement*;
 	
-Statement:  (type=Select_Statement| type=Create_Statement) (';')? ; 
+Statement:  (type=Select_Statement | type=Create_Statement) (';')? ; 
 
 //Nested_Statement: '(' Select_Statement ')' ;
 
@@ -16,7 +16,8 @@ Atomic returns Expression:
 	{FloatConstant} value=FLOAT_NUMBER |
 	{StringConstant} value=STRING |
 	{BoolConstant} value=('TRUE' | 'FALSE') |
-	{Attribute} value=[Attribute]
+	{AttributeRef} value=Attribute//TODO A SELECT * query offers no reference for an attribute.
+								  //At the moment is no actual referencing possible!  
 ;
 
 terminal FLOAT_NUMBER:  INT '.' INT ;
@@ -34,7 +35,8 @@ DataType: ('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN'
 	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
 );
 
-Attribute: ((source=[Source] '.')? name=ID ); //| Function);
+Attribute: name=ID;
+ 
 //TODO Validator: do not allow "Source1 AS Alias1.attr1"
 
 enum FunctionType: SUM | ADD | MAX | MIN | COUNT | AVG | LAST | FIRST ;
@@ -108,10 +110,10 @@ Primary returns Expression:
 Select_Statement:
 	name='SELECT'
 	('DISTINCT')?
-	attributes+=Attribute+ (',' attributes+=Attribute)*
+	( '*' | attributes+=Attribute+ (',' attributes+=Attribute)*)
 	'FROM'
-	sources+=Source+ (',' sources+=Source)*
-	('WHERE' (predicates=ExpressionsModel ))//| attribute=[Attribute] 'IN' '(' values+=Value ')'))?
+	(sources+=Source+ (',' sources+=Source)*)
+	('WHERE' (predicates=ExpressionsModel))?//| attribute=[Attribute] 'IN' '(' values+=Value ')'))?
 //	(('ORDER' 'BY' | 'order' 'by') ordering+=[Attribute]+ ('ASC' | 'asc' | 'DESC' | 'desc')? )?
 //	(('HAVING' | 'having') havingFunction=[Parameter] havingOperator=Operator havingValue=Value)?
 //	';'

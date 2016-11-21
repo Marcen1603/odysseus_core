@@ -44,6 +44,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPlusOrMinusAccess().getAlternatives_1_0(), "rule__PlusOrMinus__Alternatives_1_0");
 					put(grammarAccess.getMulOrDivAccess().getOpAlternatives_1_1_0(), "rule__MulOrDiv__OpAlternatives_1_1_0");
 					put(grammarAccess.getPrimaryAccess().getAlternatives(), "rule__Primary__Alternatives");
+					put(grammarAccess.getSelect_StatementAccess().getAlternatives_2(), "rule__Select_Statement__Alternatives_2");
 					put(grammarAccess.getConditionAccess().getAlternatives(), "rule__Condition__Alternatives");
 					put(grammarAccess.getFunctionTypeAccess().getAlternatives(), "rule__FunctionType__Alternatives");
 					put(grammarAccess.getStatementAccess().getGroup(), "rule__Statement__Group__0");
@@ -52,8 +53,6 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicAccess().getGroup_2(), "rule__Atomic__Group_2__0");
 					put(grammarAccess.getAtomicAccess().getGroup_3(), "rule__Atomic__Group_3__0");
 					put(grammarAccess.getAtomicAccess().getGroup_4(), "rule__Atomic__Group_4__0");
-					put(grammarAccess.getAttributeAccess().getGroup(), "rule__Attribute__Group__0");
-					put(grammarAccess.getAttributeAccess().getGroup_0(), "rule__Attribute__Group_0__0");
 					put(grammarAccess.getExpressionsModelAccess().getGroup(), "rule__ExpressionsModel__Group__0");
 					put(grammarAccess.getOrAccess().getGroup(), "rule__Or__Group__0");
 					put(grammarAccess.getOrAccess().getGroup_1(), "rule__Or__Group_1__0");
@@ -72,9 +71,11 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPrimaryAccess().getGroup_0(), "rule__Primary__Group_0__0");
 					put(grammarAccess.getPrimaryAccess().getGroup_1(), "rule__Primary__Group_1__0");
 					put(grammarAccess.getSelect_StatementAccess().getGroup(), "rule__Select_Statement__Group__0");
-					put(grammarAccess.getSelect_StatementAccess().getGroup_3(), "rule__Select_Statement__Group_3__0");
-					put(grammarAccess.getSelect_StatementAccess().getGroup_6(), "rule__Select_Statement__Group_6__0");
-					put(grammarAccess.getSelect_StatementAccess().getGroup_7(), "rule__Select_Statement__Group_7__0");
+					put(grammarAccess.getSelect_StatementAccess().getGroup_2_1(), "rule__Select_Statement__Group_2_1__0");
+					put(grammarAccess.getSelect_StatementAccess().getGroup_2_1_1(), "rule__Select_Statement__Group_2_1_1__0");
+					put(grammarAccess.getSelect_StatementAccess().getGroup_4(), "rule__Select_Statement__Group_4__0");
+					put(grammarAccess.getSelect_StatementAccess().getGroup_4_1(), "rule__Select_Statement__Group_4_1__0");
+					put(grammarAccess.getSelect_StatementAccess().getGroup_5(), "rule__Select_Statement__Group_5__0");
 					put(grammarAccess.getConditionAccess().getGroup_0(), "rule__Condition__Group_0__0");
 					put(grammarAccess.getConditionAccess().getGroup_1(), "rule__Condition__Group_1__0");
 					put(grammarAccess.getCreate_StatementAccess().getGroup(), "rule__Create_Statement__Group__0");
@@ -89,8 +90,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicAccess().getValueAssignment_4_1(), "rule__Atomic__ValueAssignment_4_1");
 					put(grammarAccess.getAliasAccess().getNameAssignment(), "rule__Alias__NameAssignment");
 					put(grammarAccess.getSourceAccess().getNameAssignment(), "rule__Source__NameAssignment");
-					put(grammarAccess.getAttributeAccess().getSourceAssignment_0_0(), "rule__Attribute__SourceAssignment_0_0");
-					put(grammarAccess.getAttributeAccess().getNameAssignment_1(), "rule__Attribute__NameAssignment_1");
+					put(grammarAccess.getAttributeAccess().getNameAssignment(), "rule__Attribute__NameAssignment");
 					put(grammarAccess.getExpressionsModelAccess().getElementsAssignment_1(), "rule__ExpressionsModel__ElementsAssignment_1");
 					put(grammarAccess.getOrAccess().getRightAssignment_1_2(), "rule__Or__RightAssignment_1_2");
 					put(grammarAccess.getAndAccess().getRightAssignment_1_2(), "rule__And__RightAssignment_1_2");
@@ -104,11 +104,11 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPrimaryAccess().getInnerAssignment_0_2(), "rule__Primary__InnerAssignment_0_2");
 					put(grammarAccess.getPrimaryAccess().getExpressionAssignment_1_2(), "rule__Primary__ExpressionAssignment_1_2");
 					put(grammarAccess.getSelect_StatementAccess().getNameAssignment_0(), "rule__Select_Statement__NameAssignment_0");
-					put(grammarAccess.getSelect_StatementAccess().getAttributesAssignment_2(), "rule__Select_Statement__AttributesAssignment_2");
-					put(grammarAccess.getSelect_StatementAccess().getAttributesAssignment_3_1(), "rule__Select_Statement__AttributesAssignment_3_1");
-					put(grammarAccess.getSelect_StatementAccess().getSourcesAssignment_5(), "rule__Select_Statement__SourcesAssignment_5");
-					put(grammarAccess.getSelect_StatementAccess().getSourcesAssignment_6_1(), "rule__Select_Statement__SourcesAssignment_6_1");
-					put(grammarAccess.getSelect_StatementAccess().getPredicatesAssignment_7_1(), "rule__Select_Statement__PredicatesAssignment_7_1");
+					put(grammarAccess.getSelect_StatementAccess().getAttributesAssignment_2_1_0(), "rule__Select_Statement__AttributesAssignment_2_1_0");
+					put(grammarAccess.getSelect_StatementAccess().getAttributesAssignment_2_1_1_1(), "rule__Select_Statement__AttributesAssignment_2_1_1_1");
+					put(grammarAccess.getSelect_StatementAccess().getSourcesAssignment_4_0(), "rule__Select_Statement__SourcesAssignment_4_0");
+					put(grammarAccess.getSelect_StatementAccess().getSourcesAssignment_4_1_1(), "rule__Select_Statement__SourcesAssignment_4_1_1");
+					put(grammarAccess.getSelect_StatementAccess().getPredicatesAssignment_5_1(), "rule__Select_Statement__PredicatesAssignment_5_1");
 					put(grammarAccess.getOperatorAccess().getNameAssignment(), "rule__Operator__NameAssignment");
 					put(grammarAccess.getConditionAccess().getLeftAssignment_0_0(), "rule__Condition__LeftAssignment_0_0");
 					put(grammarAccess.getConditionAccess().getRightAssignment_0_1(), "rule__Condition__RightAssignment_0_1");
