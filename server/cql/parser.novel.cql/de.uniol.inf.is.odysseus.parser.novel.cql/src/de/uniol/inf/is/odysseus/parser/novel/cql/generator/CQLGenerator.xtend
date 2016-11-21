@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
@@ -22,19 +23,17 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 import java.util.HashSet
+import java.util.List
 import java.util.Map
 import java.util.Set
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import java.util.List
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess.Select_StatementElements
-import java.lang.ProcessBuilder.Redirect.Type
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 
 /**
  * Generates code from your model files on save.
@@ -53,7 +52,7 @@ class CQLGenerator extends AbstractGenerator
 	{
 		for(SDFSchema t : s)
 		{
-			print(t)//TODO Remove after debugging
+//			print(t)//TODO Remove after debugging
 			attributes.addAll(t.attributes)
 		}
 	}
@@ -86,15 +85,25 @@ class CQLGenerator extends AbstractGenerator
 	»
 	'''
 	
-	def parseCreate(Create_Statement statement) 
+	def parseCreate(Create_Statement stmt)
 	{
-		println("create")
+		var args = ''
+		var size = stmt.attributes.size
+		for(var i = 0; i < size -1; i++)
+		{
+			args += "['" + stmt.attributes.get(i).name + "','" + stmt.datatypes.get(i) + "'],\n"
+		}
+		args += "['" + stmt.attributes.get(size - 1).name + "','" + stmt.datatypes.get(size - 1) + "']"
 		'''
-		CREATE
+		«stmt.name» := ACCESS({Source = '«stmt.name»', 
+		Wrapper = 'GenericPush',
+		Schema = [«args»],
+		transport = 'NonBlockingTcp',
+		protocol = 'SizeByteBuffer',
+		dataHandler ='Tuple',
+		Options =[['port', '«stmt.port»'],['host', '«stmt.host»']]})
 		'''
 	}
-
-
 
 	def CharSequence parseSelect(Select_Statement stmt)
 	{
@@ -104,7 +113,7 @@ class CQLGenerator extends AbstractGenerator
 			'''
 			SELECT({predicate=
 			«buildPredicate(stmt.predicates.elements.get(0))»},
-			«buildAccessOP(stmt)»)
+			«buildAccessOP(stmt.attributes, stmt.sources)»)
 			'''
 		}
 		else// SELECT * ...
@@ -112,7 +121,7 @@ class CQLGenerator extends AbstractGenerator
 			if(stmt.predicates == null)//SELECT * FROM src1, src2;
 			{
 				'''
-				«buildAccessOP(stmt)»	
+				«buildAccessOP(stmt.attributes, stmt.sources)»	
 				'''		
 			}
 			else//SELECT * FROM src1, src2 WHERE ... ;
@@ -121,7 +130,7 @@ class CQLGenerator extends AbstractGenerator
 				'''
 				SELECT({predicate=
 				«buildPredicate(stmt.predicates.elements.get(0))»},
-				«buildAccessOP(stmt)»)
+				«buildAccessOP(stmt.attributes, stmt.sources)»)
 				'''					
 			}
 		}
@@ -130,7 +139,6 @@ class CQLGenerator extends AbstractGenerator
 	var predicate = ''
 	def CharSequence buildPredicate(Expression e)
 	{
-		println(predicate)
 		if(!e.eContents.empty)
 		{
 			switch e
@@ -218,7 +226,7 @@ class CQLGenerator extends AbstractGenerator
 		'''
 	}
 	
-	def CharSequence buildAccessOP(Select_Statement stmt)
+	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src)
 	{
 		'''
 		ACCESS
@@ -228,29 +236,28 @@ class CQLGenerator extends AbstractGenerator
 				wrapper     = 'GenericPush'
 				transport   = 'TCPClient'
 				dataHandler = 'Tuple'
-				schema = [«buildSchema(stmt)»]
+				schema = [«buildSchema(attr, src)»]
 			}
 		)
 		'''
 	}
 
 	//TODO Refactore	
-	def CharSequence buildSchema(Select_Statement stmt)
+	def CharSequence buildSchema(List<Attribute> attr, List<Source> src)
 	{
 		var str = '\n'
 		var i = 0
 		var SDFDatatype type
 		var String alias
-		var List<Attribute> a = stmt.attributes
-		if(a.size == 0)
+		if(attr.size == 0)
 		{
-			for(src : stmt.sources)
-				for(attr : attributes)
+			for(s : src)
+				for(a : attributes)
 				{
-					if(attr.sourceName.equals(src.name.replace("FROM","")))//TODO Currently hacked
+					if(a.sourceName.equals(s.name.replace("FROM","")))//TODO Currently hacked
 					{
-						alias = attr.attributeName
-						type = attr.datatype
+						alias = a.attributeName
+						type = a.datatype
 						str += "['" + alias + "', '" + type.toString + "'],\n"
 					}
 				}
@@ -258,15 +265,15 @@ class CQLGenerator extends AbstractGenerator
 		}
 		else
 		{
-			while(i < a.size)
+			while(i < attr.size)
 			{
-				alias = a.get(i).name 
-				for(attr : attributes)
+				alias = attr.get(i).name 
+				for(a : attributes)
 				{
-					if(attr.attributeName.equals(alias))
+					if(a.attributeName.equals(alias))
 					{
-						type = attr.datatype
-						if(i != a.size - 1)
+						type = a.datatype
+						if(i != attr.size - 1)
 							str += "['" + alias + "', '" + type.toString + "'],\n"
 						else
 							str += "['" + alias + "', '" + type.toString + "']\n"

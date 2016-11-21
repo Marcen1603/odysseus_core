@@ -146,13 +146,17 @@ Scalar_Function:
 ;
 
 Create_Statement:
-	'CREATE' 'STREAM'
+	'CREATE' type=('STREAM' | 'VIEW' | 'SINK')
 	name = ID
 	'('
 	attributes+= Attribute+ 
 	datatypes+= DataType+
 	(',' attributes+=Attribute datatypes+= DataType)*
 	')'
+	'CHANNEL'
+	host=ID
+	':'
+	port=INT
 ;
 
 

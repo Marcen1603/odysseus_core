@@ -26,16 +26,14 @@ public class CQLDictionaryDummy extends CQLDictionary
 	}
 	
 	
-	public CQLDictionaryDummy(String src, SDFAttribute ...attribute) 
+	public CQLDictionaryDummy(String src, String ... datatypes) 
 	{
 		super.attributes = new HashMap<>();
-		SDFAttribute[] attributes = 
-			{
-					new SDFAttribute(src, "attr1", new SDFDatatype("Integer")),
-					new SDFAttribute(src, "attr2", new SDFDatatype("String"))
-					// ...
-			};
-		
+		SDFAttribute[] attributes = new SDFAttribute[datatypes.length];
+		for(int i = 0; i < datatypes.length; i++)
+		{
+			attributes[i] = new SDFAttribute(src, "attr"+(i+1), new SDFDatatype(datatypes[i]));
+		}
 		add(Arrays.asList(attributes));
 	}
 	

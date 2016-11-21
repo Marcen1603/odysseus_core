@@ -55,9 +55,12 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Scalar_Function/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Create_Statement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Statement/attributes"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/datatypes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/host"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/port"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//IntConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//IntConstant/value"/>

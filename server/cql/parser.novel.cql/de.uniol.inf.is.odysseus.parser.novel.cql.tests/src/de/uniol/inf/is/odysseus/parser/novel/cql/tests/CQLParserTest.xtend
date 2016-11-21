@@ -4,23 +4,19 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests
 
 import com.google.inject.Inject
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator
-import java.util.Collection
+import java.util.Set
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
-import java.util.Set
-import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CQLValidator
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.eclipse.xtext.validation.Issue
-import java.util.ArrayList
 
 @RunWith(XtextRunner)
 @InjectWith(CQLInjectorProvider)
@@ -30,7 +26,6 @@ class CQLParserTest
 	@Inject extension ValidationTestHelper
 	@Inject extension CQLGenerator
 	@Inject extension ParseHelper<Model>
-	@Inject CQLDictionaryDummy dictionary
 	
 	@Test def void SelectAllTest1() 
 	{ 
@@ -52,7 +47,7 @@ class CQLParserTest
 					]
 				}
 			)"
-		)
+		, new CQLDictionaryDummy())
 	}
 
 	@Test def void SelectAllTest2() 
@@ -80,7 +75,7 @@ class CQLParserTest
 					}
 				)
  			)"
-		)
+		, new CQLDictionaryDummy)
 	}
 	
 	@Test def void SelectAttr1Attr2() 
@@ -108,16 +103,59 @@ class CQLParserTest
 					}
 				)
  			)"
-		)
+		, new CQLDictionaryDummy)
 	}
 	
-	def void assertCorrectGenerated(String s, String t) 
+	@Test def void CreateStream1()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;"
+			,
+			"stream1 := ACCESS
+			(
+				{ Source = 'stream1', 
+				  Wrapper = 'GenericPush',
+				  Schema = [['attr1', 'INTEGER']],
+				transport = 'NonBlockingTcp',
+				protocol = 'SizeByteBuffer',
+				dataHandler ='Tuple',
+				Options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+		, null)
+	}
+	
+	@Test def void CreateStream2()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) CHANNEL localhost : 54321;"
+			,
+			"stream1 := ACCESS
+			(
+				{ Source = 'stream1', 
+				  Wrapper = 'GenericPush',
+				  Schema = [['attr1', 'INTEGER'],
+							['attr2', 'STRING'],
+							['attr3', 'BOOLEAN']],
+				transport = 'NonBlockingTcp',
+				protocol = 'SizeByteBuffer',
+				dataHandler ='Tuple',
+				Options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+		, null)
+	}
+	
+	def void assertCorrectGenerated(String s, String t, CQLDictionaryDummy dictionary) 
 	{
 		
 		s.parse.assertNoErrors
 		var model = s.parse 
 		val fsa = new InMemoryFileSystemAccess()
-		schema = dictionary.schema as Set<SDFSchema>
+		if(dictionary != null)
+			schema = dictionary.schema as Set<SDFSchema>
         doGenerate(model.eResource(), fsa, null)
         var query = ''
 		for(e : fsa.textFiles.entrySet)
