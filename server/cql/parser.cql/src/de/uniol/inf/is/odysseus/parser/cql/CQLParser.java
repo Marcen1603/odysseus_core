@@ -25,8 +25,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -1501,6 +1503,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					.jjtGetNumChildren() - 1);
 			options = visit(optionsNode, null);
 		}
+		OptionMap ops = OptionMap.fromStringMap(options);
+		
 		// build ao
 		SenderAO sender = new SenderAO();
 		sender.setDataHandler(datahandler);
@@ -1509,7 +1513,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sender.setTransportHandler(transport);
 		sender.setName(name);
 		sender.setOutputSchema(outputSchema);
-		sender.setOptionMap(options);
+		sender.setOptionMap(ops);
 		sender.setSink(new Resource(getCaller().getUser(), name));
 
 		CreateSinkCommand cmd = new CreateSinkCommand(name, sender, getCaller());
@@ -1586,12 +1590,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			options = visit(optionsNode, null);
 		}
 
+		OptionMap optionMap = new OptionMap();
+		for (Entry<String, String> e:options.entrySet()){
+			optionMap.setOption(e.getKey(), e.getValue());
+		}
+		
 		if (!WrapperRegistry.containsWrapper(wrapper)) {
 			throw new QueryParseException("Wrapper " + wrapper + " is unknown.");
 		}
 
 		AccessAO access = new AccessAO(new Resource(getCaller().getUser(),
-				sourceName), wrapper, transport, protocol, datahandler, options);
+				sourceName), wrapper, transport, protocol, datahandler, optionMap);
 		access.setLocalMetaAttribute(metaAttribute);
 		access.setOutputSchema(outputSchema);
 		CreateStreamCommand cmd = new CreateStreamCommand(sourceName, access,

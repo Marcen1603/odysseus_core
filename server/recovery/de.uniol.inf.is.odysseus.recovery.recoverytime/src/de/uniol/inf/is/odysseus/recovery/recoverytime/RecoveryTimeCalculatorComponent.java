@@ -68,7 +68,7 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 			@Override
 			public void walk(ILogicalOperator operator) {
 				SDFSchema schema = operator.getInputSchema(0);
-				if (schema.hasMetatype(IRecoveryTime.class) && schema.hasMetatype(ITimeInterval.class)
+				if (schema != null && schema.hasMetatype(IRecoveryTime.class) && schema.hasMetatype(ITimeInterval.class)
 						&& isSinkOperator(operator)) {
 					insertRecoveryTimeCalculator(operator, new RecoveryTimeCalculatorAO());
 				}

@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.net.querydistribute.postprocess.discardedreplicates;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
@@ -70,10 +70,10 @@ public class DiscardedReplicatesPostProcessor implements IQueryDistributionPostP
 		sender.setWrapper("GenericPush");
 		sender.setProtocolHandler("csv");
 		sender.setWriteMetaData(true);
-		final Map<String, String> options = new HashMap<>();
-		options.put("createDir", String.valueOf(true));
-		options.put("filename", path + "/" + merger.getName() + merger.hashCode() + ".csv");
-		options.put("append", String.valueOf(true));
+		final OptionMap options = new OptionMap();
+		options.setOption("createDir", String.valueOf(true));
+		options.setOption("filename", path + "/" + merger.getName() + merger.hashCode() + ".csv");
+		options.setOption("append", String.valueOf(true));
 		sender.setOptionMap(options);
 		sender.setSink(new Resource(caller.getUser(), merger.toString()));
 		sender.setName(postProcessorName);

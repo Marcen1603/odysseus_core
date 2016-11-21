@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.undercouch.bson4jackson.BsonFactory;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.IBSONWriter;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -18,20 +19,23 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 public class BSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>> extends AbstractJSONProtocolHandler<T> {
-	
+
 	public static final String NAME = "BSON";
-	
+
 	public BSONProtocolHandler() {
 		this.init_internal();
 	}
-	
+
 
 	public BSONProtocolHandler(
 			ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,OptionMap optionsMap) {
 		super(direction,access,dataHandler,optionsMap);
+		if (! (dataHandler instanceof IBSONWriter)){
+			throw new IllegalArgumentException("Datahandler "+dataHandler+" cannot be used together with BSONProtocolHandler");
+		}
 		this.init_internal();
 	}
-	
+
 	private void init_internal() {
 		mapper = new ObjectMapper(new BsonFactory());
 		mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
@@ -46,7 +50,7 @@ public class BSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>> exten
 		BSONProtocolHandler<T> instance = new BSONProtocolHandler<T>(direction, access, dataHandler, options);
 		return instance;
 	}
-	
+
 	@Override
 	public void process(long callerId, ByteBuffer buffer) {
 		// TODO: check if callerId is relevant
@@ -81,6 +85,6 @@ public class BSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>> exten
 	@Override
 	public void write(T kvObject)
 			throws IOException {
-		this.getTransportHandler().send(this.getDataHandler().writeBSONData(kvObject));
+		this.getTransportHandler().send(((IBSONWriter)this.getDataHandler()).writeBSONData(kvObject));
 	}
 }

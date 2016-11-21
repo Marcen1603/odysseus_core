@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
 public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>>{
 
@@ -119,13 +119,12 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		processLock.unlock();
 	}
 
-	private void processData(PointInTime currentTime) {		
+	private void processData(PointInTime currentTime) {
 		if (currentTime.after(lastCut)) {
 			// hole alle elemente, die definitiv bearbeitet werden k�nnen, weil
 			// sie echt vor der aktuellen zeit sind
 			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
 
-			long beforeFPM = System.nanoTime();
 			// baue daraus eine transaktion und z�hle die vorkommen f�r die
 			// flist
 			Transaction<M> transaction = new Transaction<M>();
@@ -148,7 +147,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 			PointInTime totalMin = lastCut;
 			PointInTime totalMax = currentTime;
-			
+
 			synchronized (this.flist) {
 				// create a new fp-tree
 				FPTree<M> thetree = new FPTree<M>();
@@ -177,7 +176,6 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 					}
 
 					ArrayList<Pattern<M>> results = fpgrowth(thetree);
-					long afterFPM = System.nanoTime();
 					int i = 0;
 					for (Pattern<M> p : results) {
 						if(p.getSupport()<this.minsupport){
@@ -195,12 +193,10 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 						newtuple.setAttribute(0, i);
 						newtuple.setAttribute(1, p.getPattern());
 						newtuple.setAttribute(2, p.getSupport());
-						newtuple.setKeyValue("LATENCY_BEFORE", beforeFPM);
-						newtuple.setKeyValue("LATENCY_AFTER", afterFPM);
 						i++;
-						
+
 						transfer(newtuple);
-											
+
 						maxLength = Math.max(maxLength, p.getPattern().size());
 					}
 
@@ -210,7 +206,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			lastCut = currentTime;
 			// als letztes k�nnen wir noch alle Elemente rauswerfen, die in
 			// Zukunft unwichtig sind
-			sweepArea.purgeElementsBefore(currentTime);			
+			sweepArea.purgeElementsBefore(currentTime);
 		}
 	}
 
@@ -220,9 +216,9 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		fpgrowth(tree, pattern, allPatterns);
 		return allPatterns;
 	}
-	
-	
-	
+
+
+
 	private void fpgrowth(FPTree<M> tree, Pattern<M> pattern, ArrayList<Pattern<M>> allPatterns) {
 
 		// if(tree.hasSingePrefixPath()){
@@ -259,7 +255,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {		
+	public void processPunctuation(IPunctuation punctuation, int port) {
 //		processLock.lock();
 //		processData(timestamp);
 //		processLock.unlock();

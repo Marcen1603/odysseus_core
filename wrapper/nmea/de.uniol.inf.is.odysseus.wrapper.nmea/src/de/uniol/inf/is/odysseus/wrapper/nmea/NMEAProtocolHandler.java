@@ -51,11 +51,15 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
  * @author Jurgen Boger <juergen.boger@offis.de>
  *
  */
-public class NMEAProtocolHandler extends
-		AbstractProtocolHandler<KeyValueObject<IMetaAttribute>> {
+public class NMEAProtocolHandler extends AbstractProtocolHandler<KeyValueObject<IMetaAttribute>> {
+
+	private static final String NMEA = "NMEA";
+//	private static final String DECODED_AIS = "decodedAIS";
+	private static final String DELAY = "delay";
+//	private static final String ORIGINAL_NMEA = "originalNMEA";
+
 	/** Logger for this class. */
-	private final Logger LOG = LoggerFactory
-			.getLogger(NMEAProtocolHandler.class);
+	private final Logger LOG = LoggerFactory.getLogger(NMEAProtocolHandler.class);
 	/** Input stream as BufferedReader (Only in GenericPull). */
 	protected BufferedReader reader;
 	/** Find next object to be returned for GenericPull. */
@@ -69,13 +73,11 @@ public class NMEAProtocolHandler extends
 	public NMEAProtocolHandler() {
 	}
 
-	public NMEAProtocolHandler(ITransportDirection direction,
-			IAccessPattern access,
-			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler,
-			OptionMap optionsMap) {
+	public NMEAProtocolHandler(ITransportDirection direction, IAccessPattern access,
+			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
-		if (optionsMap.containsKey("delay")) {
-			delay = Integer.parseInt(optionsMap.get("delay"));
+		if (optionsMap.containsKey(DELAY)) {
+			delay = Integer.parseInt(optionsMap.get(DELAY));
 		}
 	}
 
@@ -84,10 +86,8 @@ public class NMEAProtocolHandler extends
 		getTransportHandler().open();
 		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
 			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
-					|| (this.getAccessPattern()
-							.equals(IAccessPattern.ROBUST_PULL))) {
-				this.reader = new BufferedReader(new InputStreamReader(
-						getTransportHandler().getInputStream()));
+					|| (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
+				this.reader = new BufferedReader(new InputStreamReader(getTransportHandler().getInputStream()));
 			}
 		} else {
 			// TODO: Implement output NMEA
@@ -118,16 +118,14 @@ public class NMEAProtocolHandler extends
 	}
 
 	@Override
-	public KeyValueObject<IMetaAttribute> getNext()
-			throws IOException {
+	public KeyValueObject<IMetaAttribute> getNext() throws IOException {
 		if (delay > 0) {
 			try {
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
 			}
 		}
-		KeyValueObject<IMetaAttribute> next = this.nextList.size() != 0 ? this.nextList
-				.remove(0) : null;
+		KeyValueObject<IMetaAttribute> next = this.nextList.size() != 0 ? this.nextList.remove(0) : null;
 		return next;
 	}
 
@@ -185,17 +183,18 @@ public class NMEAProtocolHandler extends
 				// Important to parse the decodedAIS as a sentence in order to
 				// prepare the fields which will be used in writing.
 				this.aishandler.getDecodedAISMessage().parse();
-				decodedAIS.setKeyValue("decodedAIS",
-						this.aishandler.getDecodedAISMessage());
+				// NO LONGER SUPPORTED
+				// decodedAIS.setKeyValue(DECODED_AIS,
+				// this.aishandler.getDecodedAISMessage());
 				this.aishandler.resetDecodedAISMessage();
 				// The decoded message
 				res.add(decodedAIS);
 			}
 			// The Original message:
 			Map<String, Object> originalEvent = sentence.toMap();
-			KeyValueObject<IMetaAttribute> originalAIS = KeyValueObject.createInstance(
-					originalEvent);
-			originalAIS.setKeyValue("originalNMEA", sentence);
+			KeyValueObject<IMetaAttribute> originalAIS = KeyValueObject.createInstance(originalEvent);
+			// NO LONGER SUPPORTED
+			// originalAIS.setKeyValue(ORIGINAL_NMEA, sentence);
 			// ensure the order, original fragment (if it's the second fragment,
 			// then it should follow the first original fragment) then the
 			// decoded message
@@ -207,53 +206,53 @@ public class NMEAProtocolHandler extends
 		// Handling other NMEA Sentences
 		else {
 			event = sentence.toMap();
-			KeyValueObject<IMetaAttribute> undecodedNMEA = KeyValueObject.createInstance(
-					event);
-			undecodedNMEA.setKeyValue("originalNMEA", sentence);
+			KeyValueObject<IMetaAttribute> undecodedNMEA = KeyValueObject.createInstance(event);
+			// no longer supported
+			//undecodedNMEA.setKeyValue(ORIGINAL_NMEA, sentence);
 			res.add(undecodedNMEA);
 		}
 		this.nextList.addAll(res);
 	}
 
 	@Override
-	public void write(KeyValueObject<IMetaAttribute> object)
-			throws IOException {
+	public void write(KeyValueObject<IMetaAttribute> object) throws IOException {
 		try {
-			//Case1: Avoid writing decoded AIS messages, because such messages are only processed
-			//and transfered between the operators (transfered, not transported, from operator to another)
-			if(object.getKeyValue("decodedAIS") != null)
-				return;
-			//Case2: get the sentence from MetaData if existed
-			Object obj = object.getKeyValue("originalNMEA");
-			if (obj instanceof Sentence)
-			{
-				Sentence sentence = (Sentence) obj;
-				getTransportHandler().send(sentence.toNMEA().getBytes());
-			}
-			//Case3: create the sentence out from the key-value attributes
-			else
-			{
-				Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAsKeyValueMap());
-				getTransportHandler().send(sentence.toNMEA().getBytes());
-			}
+			// Case1: Avoid writing decoded AIS messages, because such messages
+			// are only processed
+			// and transfered between the operators (transfered, not
+			// transported, from operator to another)
+			// NO LONGER SUPPORTED!
+			// if (object.hasKeyValue(DECODED_AIS))
+			// return;
+			// // Case2: get the sentence from MetaData if existed
+			// if (object.hasKeyValue(ORIGINAL_NMEA)) {
+			// Object obj = object.getKeyValue(ORIGINAL_NMEA);
+			// if (obj instanceof Sentence) {
+			// Sentence sentence = (Sentence) obj;
+			// getTransportHandler().send(sentence.toNMEA().getBytes());
+			// return;
+			// }
+			// }
+			// Case3: create the sentence out from the key-value attributes
+			Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAsKeyValueMap());
+			getTransportHandler().send(sentence.toNMEA().getBytes());
+
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public IProtocolHandler<KeyValueObject<IMetaAttribute>> createInstance(
-			ITransportDirection direction, IAccessPattern access,
-			OptionMap options,
+	public IProtocolHandler<KeyValueObject<IMetaAttribute>> createInstance(ITransportDirection direction,
+			IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler) {
-		NMEAProtocolHandler instance = new NMEAProtocolHandler(direction,
-				access, dataHandler, options);
+		NMEAProtocolHandler instance = new NMEAProtocolHandler(direction, access, dataHandler, options);
 		return instance;
 	}
 
 	@Override
 	public String getName() {
-		return "NMEA";
+		return NMEA;
 	}
 
 	@Override

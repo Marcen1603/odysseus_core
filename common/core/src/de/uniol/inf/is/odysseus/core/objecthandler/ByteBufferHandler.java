@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.objecthandler;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;

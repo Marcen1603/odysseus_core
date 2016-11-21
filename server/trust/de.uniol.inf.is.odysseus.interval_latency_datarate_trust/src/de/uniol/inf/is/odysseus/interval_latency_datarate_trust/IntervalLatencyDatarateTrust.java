@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.interval_latency_datarate_trust;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
@@ -221,14 +222,25 @@ public class IntervalLatencyDatarateTrust extends AbstractCombinedMetaAttribute
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void setDatarate(double value) {
-		this.datarate.setDatarate(value);
+	public void setDatarate(String key, double datarate) {
+		this.datarate.setDatarate(key, datarate);
 	}
 
 	@Override
-	public double getDatarate() {
-		return this.datarate.getDatarate();
+	public double getDatarate(String key) {
+		return datarate.getDatarate(key);
 	}
+
+	@Override
+	public Map<String, Double> getDatarates() {
+		return datarate.getDatarates();
+	}
+
+	@Override
+	public void setDatarates(Map<String, Double> datarates) {
+		datarate.setDatarates(datarates);
+	}
+
 
 	// ------------------------------------------------------------------------------
 	// Delegates for trust

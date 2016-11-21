@@ -86,12 +86,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 				synchronized (this.sweepArea) {
 					TimeInterval ti = new TimeInterval(startP, endP);
 					List<Tuple<M>> qualifies = this.sweepArea.queryOverlapsAsList(ti);
-
-					long tillGenerate = System.nanoTime();
-
 					Collection<AssociationRule<M>> rules = processElements(qualifies);
-
-					long afterGenerate = System.nanoTime();
 					for (AssociationRule<M> rule : rules) {
 
 						Tuple<M> newtuple = new Tuple<M>(1, false);
@@ -100,8 +95,6 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 						M metadata = (M) element.getMetadata().clone();
 						newtuple.setMetadata(metadata);
 						newtuple.getMetadata().setStartAndEnd(startP, endP);
-						newtuple.setKeyValue("LATENCY_BEFORE", tillGenerate);
-						newtuple.setKeyValue("LATENCY_AFTER", afterGenerate);
 						transfer(newtuple);
 
 					}
