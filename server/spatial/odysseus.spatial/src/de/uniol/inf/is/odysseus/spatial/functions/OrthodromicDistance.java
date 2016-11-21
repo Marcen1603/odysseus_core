@@ -1,15 +1,19 @@
 package de.uniol.inf.is.odysseus.spatial.functions;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
+import de.uniol.inf.is.odysseus.spatial.utilities.SpatialUtils;
 
 /**
  * 
  * @author Tobias Brandt
  *
  */
-public class SpatialDistanceMeters extends AbstractFunction<Double> {
+public class OrthodromicDistance extends AbstractFunction<Double> {
 
 	private static final long serialVersionUID = 2781229248245144554L;
 
@@ -20,15 +24,19 @@ public class SpatialDistanceMeters extends AbstractFunction<Double> {
 			SDFSpatialDatatype.SPATIAL_GEOMETRY };
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { accTypes1, accTypes1 };
 
-	public SpatialDistanceMeters() {
-		super("SpatialDistanceMeters", 2, accTypes, SDFDatatype.DOUBLE);
+	public OrthodromicDistance() {
+		super("OrthodromicDistance", 2, accTypes, SDFDatatype.DOUBLE);
 	}
 
 	@Override
 	public Double getValue() {
-		
-		// TODO Auto-generated method stub
-		return null;
+		// TODO Use given SRID and use WGS 84 only if no SRID is given
+		Geometry firstGeometry = ((GeometryWrapper) this.getInputValue(0)).getGeometry();
+		Geometry secondGeometry = ((GeometryWrapper) this.getInputValue(1)).getGeometry();
+
+		double distance = SpatialUtils.getInstance().calculateDistance(firstGeometry.getCoordinate(),
+				secondGeometry.getCoordinate());
+		return distance;
 	}
 
 }
