@@ -1,0 +1,71 @@
+#PARSER PQL
+
+#ADDQUERY
+Auction = ACCESS({
+              source='Auction',
+              wrapper='GenericPull',
+              transport='file',
+              protocol='SimpleCSV',
+              datahandler='Tuple',
+              metaattribute=[
+                  'TimeInterval'
+              ],
+              options=[
+                ['filename', '${BUNDLE-ROOT}\testdaten\leftjoin\input0.csv'],
+                ['csv.delimiter', ','],
+                ['csv.trim', 'true']
+              ],
+              schema=[
+                ['timestamp', 'STARTTIMESTAMP'],
+                ['id', 'INTEGER'],
+                ['itemname', 'STRING'],
+                ['description', 'STRING'],
+                ['initialbid', 'INTEGER'],
+                ['reserve', 'INTEGER'],
+                ['expires', 'LONG'],
+                ['seller', 'INTEGER'],
+                ['category', 'INTEGER']
+              ]
+            }
+          )
+
+Bid = ACCESS({
+          source='Bid',
+          wrapper='GenericPull',
+          transport='file',
+          protocol='SimpleCSV',
+          datahandler='Tuple',
+          metaattribute=[
+                  'TimeInterval'
+          ],
+          options=[
+			['filename', '${BUNDLE-ROOT}\testdaten\leftjoin\input1.csv'],
+            ['csv.delimiter', ','],
+            ['csv.trim', 'true']
+          ],
+          schema=[
+            ['timestamp', 'STARTTIMESTAMP'],
+            ['auction', 'INTEGER'],
+            ['bidder', 'INTEGER'],
+            ['datetime', 'LONG'],
+            ['price', 'DOUBLE']
+          ]
+        }
+      )
+
+bidWnd = ELEMENTWINDOW({
+              size = 1
+            },
+            Bid
+          )
+auctionWnd = ELEMENTWINDOW({
+                  size = 1
+                },
+                auction
+              )
+out = LEFTJOIN({
+          predicate='id=auction'
+        },
+        auctionWnd,
+        bidWnd
+      )
