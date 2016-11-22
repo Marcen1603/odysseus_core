@@ -32,7 +32,6 @@ public class SpatialDataStructureTest extends TestCase {
 	private static final String DATA_STRUCTURE_NAME = "test";
 	private static final int GEOMETRY_POSITION = 0;
 
-	private List<Point> points;
 	private IMovingObjectDataStructure dataStructure;
 	private GeometryFactory factory;
 
@@ -74,36 +73,12 @@ public class SpatialDataStructureTest extends TestCase {
 		// Create test data
 		factory = new GeometryFactory();
 		fillCoordinateList();
-
-		// Fill the data structure with test data
-		fillDataStructure();
 	}
 
 	private void fillCoordinateList() {
-		points = new ArrayList<Point>();
-
-		for (double i = 0; i < 1000; i++) {
-			// Create the test data
-			// TODO Generate better data
-			Coordinate coord = new Coordinate(53.0 + (i / 1000), 19.0 + (i / 1000));
-			Point point = factory.createPoint(coord);
-			points.add(point);
-		}
-
 		fillNeighbourTestData();
 		fillRangeTestData();
 		fillQueryBoundingBoxTestData();
-	}
-
-	private void fillDataStructure() {
-		// Fill the data structure with test data
-		int i = 0;
-		for (Point point : points) {
-			Tuple<ITimeInterval> tuple = createTuple(point, i, i + 10);
-			// Add the data to the data structure
-			dataStructure.add(tuple);
-			i++;
-		}
 	}
 
 	private Tuple<ITimeInterval> createTuple(Point point, long start, long end) {
@@ -121,6 +96,11 @@ public class SpatialDataStructureTest extends TestCase {
 		// The point for which we search the kNNs
 		kNNTestCenter = factory.createPoint(new Coordinate(10.0, 10.0));
 
+		// Add a point exactly at the center (should be in the results from a
+		// distance point of view) but make it timely way before to test if it
+		// gets removed by the data structure automatically
+		Coordinate tooEarlyCoord = new Coordinate(10.0, 10.0);
+
 		// Generate points which are the kNNs
 		Coordinate coord1 = new Coordinate(10.0, 10.1);
 		Coordinate coord2 = new Coordinate(10.1, 10.1);
@@ -135,9 +115,13 @@ public class SpatialDataStructureTest extends TestCase {
 		neighbors.add(factory.createPoint(coord4));
 		neighbors.add(factory.createPoint(coord5));
 
+		// Add the coordinate which is timely before at the beginning
+		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(tooEarlyCoord), 0, 10);
+		dataStructure.add(tuple);
+
 		// And add the neighbors to the normal list as well
 		for (Point point : neighbors) {
-			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
+			tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
 					testSearchInterval.getEnd().getMainPoint());
 			dataStructure.add(tuple);
 		}

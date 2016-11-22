@@ -34,12 +34,13 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	private int geometryPosition;
 	private String name;
-	
+
 	private DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	private List<ISpatialListener> listeners = new ArrayList<ISpatialListener>();
 
-	public NaiveSTDataStructure(String name, int geometryPosition) throws InstantiationException, IllegalAccessException {
+	public NaiveSTDataStructure(String name, int geometryPosition)
+			throws InstantiationException, IllegalAccessException {
 		this.name = name;
 		this.geometryPosition = geometryPosition;
 		this.sweepArea = new DefaultTISweepArea<>();
@@ -50,6 +51,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	public void add(Object o) {
 		if (o instanceof Tuple<?>) {
 			this.sweepArea.insert((Tuple<ITimeInterval>) o);
+			this.sweepArea.purgeElements((Tuple<ITimeInterval>) o, null);
 			notifyListeners();
 		}
 	}
@@ -110,9 +112,9 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	@Override
 	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range, ITimeInterval t) {
-		
+
 		List<Tuple<ITimeInterval>> elements = this.sweepArea.extractOverlapsAsList(t);
-		
+
 		List<Tuple<?>> rangeTuples = new ArrayList<Tuple<?>>();
 
 		for (Tuple<?> tuple : elements) {
@@ -140,7 +142,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 
 		List<Tuple<ITimeInterval>> elements = this.sweepArea.extractOverlapsAsList(t);
-		
+
 		// Check if the first and the last point is equal. If not, we have to
 		// add the first point at the end to have a closed ring.
 		Point firstPoint = polygonPoints.get(0);
