@@ -60,7 +60,6 @@ public class KeyValueUnnestPO<T extends KeyValueObject<IMetaAttribute>> extends 
 			e.getValue().putAll(remaing);
 			@SuppressWarnings("unchecked")
 			T kv = (T) object.newInstance();
-			kv.setKeyValueMap(e.getValue());
 			kv.setMetadata(object.getMetadata().clone());
 			transfer((T) kv);
 		}

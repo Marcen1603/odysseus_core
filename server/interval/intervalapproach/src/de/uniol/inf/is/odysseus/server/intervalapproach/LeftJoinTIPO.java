@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.Iterator;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +99,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					Iterator<T> extracted = this.areas[otherport].extractElements(object, order);
 					while (extracted.hasNext()) {
 						T next = extracted.next();
-						if (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey)) {
+						if (!next.hasTransientMarker(cMetaDataKey)) {
 							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
 							this.transferFunction.transfer(out);
 						}
@@ -147,7 +148,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 			// Left Join: if this is the left input port, mark the object as
 			// join partner found
 			if (hit && port == 0) {
-				object.setKeyValue(cMetaDataKey, new Boolean(true));
+				object.setTransientMarker(cMetaDataKey, Boolean.TRUE);
 			}
 
 			while (qualifies.hasNext()) {
@@ -157,9 +158,9 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 
 				// Left Join: if "next" is from the left sweep area, mark it as
 				// join partner found
-				if (hit && otherport == 0 && (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey))) {
+				if (hit && otherport == 0 && (!next.hasTransientMarker(cMetaDataKey))) {
 					this.areas[otherport].remove(next);
-					next.setKeyValue(cMetaDataKey, new Boolean(true));
+					next.setTransientMarker(cMetaDataKey, Boolean.TRUE);
 					this.areas[otherport].insert(next);
 				}
 
@@ -201,6 +202,22 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 	}
 
 	@Override
+	protected void process_done(int port) {
+		if (port == 1) {
+			// There are no more join partners for every element in sweep area
+			// with port 0
+
+			StreamSupport.stream(this.areas[0].spliterator(), false)
+					.filter(elem -> !elem.hasTransientMarker(cMetaDataKey)).forEach(elem -> {
+						T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(elem);
+						this.transferFunction.transfer(out);
+					});
+			this.areas[0].clear();
+		}
+		super.process_done(port);
+	}
+
+	@Override
 	public void processPunctuation(IPunctuation inPunctuation, int port) {
 		IPunctuation punctuation = joinPredicate.processPunctuation(inPunctuation);
 		if (punctuation.isHeartbeat()) {
@@ -208,16 +225,16 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if elements in the left sweep area (0) shall be
 				// purged, check, if they had join partners before.
 				if (port == 1) {
-					Iterator<T> extracted = this.areas[port^1].extractElementsBefore(punctuation.getTime());
+					Iterator<T> extracted = this.areas[port ^ 1].extractElementsBefore(punctuation.getTime());
 					while (extracted.hasNext()) {
 						T next = extracted.next();
-						if (next.getGetValueMap() == null || !next.hasKeyValue(cMetaDataKey)) {
+						if (!next.hasTransientMarker(cMetaDataKey)) {
 							T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(next);
 							this.transferFunction.transfer(out);
 						}
 					}
 				} else {
-					this.areas[port^1].purgeElementsBefore(punctuation.getTime());
+					this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
 				}
 			}
 		}

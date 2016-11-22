@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -88,8 +89,10 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO>
 		return sb.toString();
 	}
 
-	private static Object convertOptionsMap(Map<String, String> optionsMap) {
+	private static Object convertOptionsMap(OptionMap options) {
 		final StringBuilder sb = new StringBuilder();
+		Map<String, Object> optionsMap = options.getOptions();
+		
 		sb.append("[");
 
 		final String[] keys = optionsMap.keySet().toArray(new String[0]);
@@ -98,7 +101,7 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO>
 			sb.append("[");
 
 			final Object key = keys[i];
-			final String value = optionsMap.get(key);
+			final Object value = optionsMap.get(key);
 			sb.append(convertValue(key)).append(",").append(convertValue(value));
 
 			sb.append("]");

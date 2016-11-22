@@ -15,11 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -46,7 +46,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	private boolean writeMetaData;
 	private String protocolHandler;
 	private String transportHandler;
-	final private Map<String, String> optionsMap = new HashMap<>();
+	final private OptionMap optionsMap = new OptionMap();
 	private String wrapper;
 
 	/**
@@ -67,10 +67,10 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	 *            The options
 	 */
 	public AbstractSenderAO(Resource sink, String wrapper,
-			Map<String, String> optionsMap) {
+			OptionMap optionsMap) {
 		this.sink = sink;
 		this.wrapper = wrapper;
-		this.optionsMap.putAll(optionsMap);
+		this.optionsMap.addAll(optionsMap);
 	}
 
 	/**
@@ -87,11 +87,11 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	 *            The options
 	 */
 	public AbstractSenderAO(Resource sink, String wrapper, String dataHandler,
-			Map<String, String> optionsMap) {
+			OptionMap optionsMap) {
 		this.sink = sink;
 		this.wrapper = wrapper;
 		this.dataHandler = dataHandler;
-		this.optionsMap.putAll(optionsMap);
+		this.optionsMap.addAll(optionsMap);
 	}
 
 	/**
@@ -105,7 +105,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		this.sink = senderAO.sink;
 		this.wrapper = senderAO.wrapper;
 		this.dataHandler = senderAO.dataHandler;
-		this.optionsMap.putAll(senderAO.optionsMap);
+		this.optionsMap.addAll(senderAO.optionsMap);
 		this.protocolHandler = senderAO.protocolHandler;
 		this.transportHandler = senderAO.transportHandler;
 		this.writeMetaData = senderAO.writeMetaData;
@@ -159,17 +159,17 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	public void setOptions(List<Option> value) {
 		this.optionsMap.clear();
 		for (Option option : value) {
-			optionsMap.put(option.getName().toLowerCase(), option.getValue());
+			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
 		}
 	}
 	
-	public void setOptionMap(Map<String, String> options) {
+	public void setOptionMap(OptionMap options) {
 		this.optionsMap.clear();
-		this.optionsMap.putAll(options);
+		this.optionsMap.addAll(options);
 	}
 	
 	protected void addOption(String key, String value) {
-		optionsMap.put(key.toLowerCase(), value);
+		optionsMap.setOption(key.toLowerCase(), value);
 	}
 
 	protected String getOption( String key ) {
@@ -179,7 +179,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	/**
 	 * @return The options
 	 */
-	public Map<String, String> getOptionsMap() {
+	public OptionMap getOptionsMap() {
 		return optionsMap;
 	}
 

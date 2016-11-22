@@ -52,7 +52,7 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	public boolean isHandleMetadata() {
 		return handleMetadata;
 	}
-	
+
 	public boolean hasMetadata(){
 		return metaDataHandler != null;
 	}
@@ -66,7 +66,7 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 		newMeta.writeValues(res);
 		return newMeta;
 	}
-	
+
 
 	protected final IMetaAttribute readMetaData(Iterator<String> input) {
 		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
@@ -94,7 +94,7 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 		list.add(input);
 		return readData(list.iterator(), handleMetaData);
 	}
-	
+
 	protected final void writeMetaData(List<String> output, IMetaAttribute metaAttribute, WriteOptions options) {
 		List<Tuple<?>> v = new ArrayList<Tuple<?>>();
 		metaAttribute.retrieveValues(v);
@@ -183,22 +183,22 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	 * Default implemtation of CVS, BSON, JSON
 	 */
 
-	@Override
-	public byte[] writeBSONData(Object data) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void writeJSONData(StringBuilder string, Object data) {
-		throw new UnsupportedOperationException();
-	}
+//	@Override
+//	public byte[] writeBSONData(Object data) {
+//		throw new UnsupportedOperationException();
+//	}
+//
+//	@Override
+//	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
+//		throw new UnsupportedOperationException();
+//	}
 
 	@Override
 	public void writeCSVData(StringBuilder string, Object data, WriteOptions options) {
 		List<String> values = new ArrayList<>();
-		
+
 		writeData(values, data, options);
-				
+
 		for (int i=0;i<values.size();i++){
 			string.append(values.get(i));
 			if (i<values.size()-1){
@@ -212,9 +212,9 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 //		} else {
 //			throw new UnsupportedOperationException();
 //		}
-//		
+//
 //		System.err.println("JUST FOR DEBUG");
-		
+
 	}
 
 }

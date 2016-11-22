@@ -8,7 +8,7 @@ Auction = ACCESS({
               protocol='SimpleCSV',
               datahandler='Tuple',
               metaattribute=[
-                  'TimeInterval'                  
+                  'TimeInterval'
               ],
               options=[
                 ['filename', '${BUNDLE-ROOT}\testdaten\leftjoin\input0.csv'],
@@ -17,19 +17,18 @@ Auction = ACCESS({
               ],
               schema=[
                 ['timestamp', 'STARTTIMESTAMP'],
-	            ['id', 'INTEGER'],
-	            ['itemname', 'STRING'],
-	            ['description', 'STRING'],
-	            ['initialbid', 'INTEGER'],
-	            ['reserve', 'INTEGER'],
-	            ['expires', 'LONG'],
-	            ['seller', 'INTEGER'],
-	            ['category', 'INTEGER']
-                
+                ['id', 'INTEGER'],
+                ['itemname', 'STRING'],
+                ['description', 'STRING'],
+                ['initialbid', 'INTEGER'],
+                ['reserve', 'INTEGER'],
+                ['expires', 'LONG'],
+                ['seller', 'INTEGER'],
+                ['category', 'INTEGER']
               ]
             }
           )
-    
+
 Bid = ACCESS({
           source='Bid',
           wrapper='GenericPull',
@@ -37,16 +36,16 @@ Bid = ACCESS({
           protocol='SimpleCSV',
           datahandler='Tuple',
           metaattribute=[
-                  'TimeInterval'                  
+                  'TimeInterval'
           ],
           options=[
-            ['filename', '${BUNDLE-ROOT}\testdaten\leftjoin\input1.csv'],
+			['filename', '${BUNDLE-ROOT}\testdaten\leftjoin\input1.csv'],
             ['csv.delimiter', ','],
             ['csv.trim', 'true']
           ],
           schema=[
             ['timestamp', 'STARTTIMESTAMP'],
-        	['auction', 'INTEGER'],
+            ['auction', 'INTEGER'],
             ['bidder', 'INTEGER'],
             ['datetime', 'LONG'],
             ['price', 'DOUBLE']
@@ -54,6 +53,19 @@ Bid = ACCESS({
         }
       )
 
-bidWnd = ELEMENTWINDOW({SIZE = 1}, Bid)
-auctionWnd = ELEMENTWINDOW({SIZE = 1}, auction)
-out = LEFTJOIN({predicate='id=auction'}, auctionWnd, bidWnd)
+bidWnd = ELEMENTWINDOW({
+              size = 1
+            },
+            Bid
+          )
+auctionWnd = ELEMENTWINDOW({
+                  size = 1
+                },
+                auction
+              )
+out = LEFTJOIN({
+          predicate='id=auction'
+        },
+        auctionWnd,
+        bidWnd
+      )

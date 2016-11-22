@@ -19,20 +19,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
@@ -251,10 +250,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 		String wrapperName = Constants.GENERIC_PUSH;
-		Map<String, String> options = new HashMap<String, String>();
-		options.put("host", host);
-		options.put("port", port + "");
-		options.put("autoconnect", autoReconnect + "");
+		OptionMap options = new OptionMap();
+		options.setOption("host", host);
+		options.setOption("port", new Integer(port));
+		options.setOption("autoconnect", new Boolean(autoReconnect));
 		Resource resource = new Resource(caller.getUser(), name);
 		AccessAO source = new AccessAO(resource, wrapperName, "NonBlockingTcp",
 				"SizeByteBuffer", new TupleDataHandler()
@@ -276,11 +275,11 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		}
 		String wrapperName = Constants.GENERIC_PULL;
-		Map<String, String> options = new HashMap<String, String>();
-		options.put("filename", filename);
+		OptionMap options = new OptionMap();
+		options.setOption("filename", filename);
 
 		// TODO: read delimiter
-		options.put("delimiter", ";");
+		options.setOption("delimiter", ";");
 		Resource resource = new Resource(caller.getUser(), name);
 		AccessAO source = new AccessAO(resource, wrapperName, "File", type,
 				new TupleDataHandler().getSupportedDataTypes().get(0), options);

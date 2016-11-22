@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,11 +35,11 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
 public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
-	protected static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);	
+	protected static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);
 	final private ITimeIntervalSweepArea<Tuple<M>> treeSA;
 	final private ITimeIntervalSweepArea<Tuple<M>> elementSA;
 	@SuppressWarnings("unchecked")
@@ -114,14 +114,13 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 			if (port == portofclassifier) {
 				classifyAndTransfer(tuple, qualified);
 			} else {
-				classifyAndTransfer(qualified, tuple);				
+				classifyAndTransfer(qualified, tuple);
 			}
 		}
 	}
 
 	protected void classifyAndTransfer(Tuple<M> classifierTuple, Tuple<M> toClassify) {
 		IClassifier<M> classifier = classifierTuple.getAttribute(classifierAttribute);
-		long tillLearn = System.nanoTime();
 		Object clazz = classifier.classify(toClassify);
 		if (clazz == null) {
 			logger.warn("value is unknown, so that the tuple could not be classified, tuple: " + toClassify);
@@ -129,12 +128,9 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 			sendPunctuation(Heartbeat.createNewHeartbeat(min));
 			return;
 		}
-		long afterLearn = System.nanoTime();
 		Tuple<M> newtuple = toClassify.append(clazz);
 		M metadata = this.metadataMerge.mergeMetadata(newtuple.getMetadata(), classifierTuple.getMetadata());
 		newtuple.setMetadata(metadata);
-		newtuple.setKeyValue("LATENCY_BEFORE", tillLearn);
-		newtuple.setKeyValue("LATENCY_AFTER", afterLearn);
 		transfer(newtuple);
 	}
 

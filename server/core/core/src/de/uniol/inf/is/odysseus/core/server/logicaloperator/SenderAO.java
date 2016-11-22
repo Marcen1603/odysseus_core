@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -23,12 +23,12 @@ public class SenderAO extends AbstractSenderAO {
 	}
 
 	public SenderAO(Resource sink, String wrapper,
-			Map<String, String> optionsMap) {
+			OptionMap optionsMap) {
 		super(sink, wrapper, optionsMap);
 	}
 
 	public SenderAO(Resource sink, String wrapper, String dataHandler,
-			Map<String, String> optionsMap) {
+			OptionMap optionsMap) {
 		super(sink, wrapper, dataHandler, optionsMap);
 	}
 

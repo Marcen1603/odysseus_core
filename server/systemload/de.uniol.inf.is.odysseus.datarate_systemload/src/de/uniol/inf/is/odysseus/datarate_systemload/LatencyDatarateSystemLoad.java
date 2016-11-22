@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.datarate_systemload;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
@@ -31,12 +32,12 @@ final public class LatencyDatarateSystemLoad extends AbstractCombinedMetaAttribu
 		schema.addAll(Latency.schema);
 		schema.addAll(SystemLoad.schema);
 	}
-	
+
 	@Override
 	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
-	
+
 	final private IDatarate datarate;
 	final private ILatency latency;
 	final private ISystemLoad systemload;
@@ -68,14 +69,14 @@ final public class LatencyDatarateSystemLoad extends AbstractCombinedMetaAttribu
 		latency.retrieveValues(values);
 		systemload.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		datarate.writeValue(values.get(0));
 		latency.writeValue(values.get(1));
-		systemload.writeValue(values.get(2));		
+		systemload.writeValue(values.get(2));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -84,7 +85,7 @@ final public class LatencyDatarateSystemLoad extends AbstractCombinedMetaAttribu
 		list.addAll(systemload.getInlineMergeFunctions());
 		return list;
 	}
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch(subtype){
@@ -113,13 +114,23 @@ final public class LatencyDatarateSystemLoad extends AbstractCombinedMetaAttribu
 	// ------------------------------------------------------------------------------
 
 	@Override
-	public void setDatarate(double datarate) {
-		this.datarate.setDatarate(datarate);
+	public void setDatarate(String key, double datarate) {
+		this.datarate.setDatarate(key, datarate);
 	}
 
 	@Override
-	public double getDatarate() {
-		return datarate.getDatarate();
+	public double getDatarate(String key) {
+		return datarate.getDatarate(key);
+	}
+
+	@Override
+	public Map<String, Double> getDatarates() {
+		return datarate.getDatarates();
+	}
+
+	@Override
+	public void setDatarates(Map<String, Double> datarates) {
+		datarate.setDatarates(datarates);
 	}
 
 	// ------------------------------------------------------------------------------
@@ -208,6 +219,6 @@ final public class LatencyDatarateSystemLoad extends AbstractCombinedMetaAttribu
 	@Override
 	public SystemLoadEntry getSystemLoad(String name) {
 		return systemload.getSystemLoad(name);
-	}	
-	
+	}
+
 }
