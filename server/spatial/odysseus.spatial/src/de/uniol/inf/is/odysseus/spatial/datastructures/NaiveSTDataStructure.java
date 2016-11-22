@@ -13,6 +13,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.SpatialUtils;
@@ -30,22 +32,24 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	public final static double AVERAGE_RADIUS_OF_EARTH = 6378137;
 
-	private List<Tuple<?>> tuples;
 	private int geometryPosition;
 	private String name;
+	
+	private DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	private List<ISpatialListener> listeners = new ArrayList<ISpatialListener>();
 
-	public NaiveSTDataStructure(String name, int geometryPosition) {
-		tuples = new ArrayList<Tuple<?>>();
+	public NaiveSTDataStructure(String name, int geometryPosition) throws InstantiationException, IllegalAccessException {
 		this.name = name;
 		this.geometryPosition = geometryPosition;
+		this.sweepArea = new DefaultTISweepArea<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Object o) {
 		if (o instanceof Tuple<?>) {
-			tuples.add((Tuple<?>) o);
+			this.sweepArea.insert((Tuple<ITimeInterval>) o);
 			notifyListeners();
 		}
 	}
@@ -53,10 +57,11 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	// TODO Different distance functions should be possible (e.g. city distance
 	// metric, ...)
 	@Override
-	public List<Tuple<?>> getKNN(Geometry geometry, int k) {
+	public List<Tuple<?>> getKNN(Geometry geometry, int k, ITimeInterval t) {
 
+		List<Tuple<ITimeInterval>> elements = this.sweepArea.extractOverlapsAsList(t);
 		// Just copy the list ...
-		List<Tuple<?>> sortedTuples = new ArrayList<Tuple<?>>(tuples);
+		List<Tuple<?>> sortedTuples = new ArrayList<Tuple<?>>(elements);
 		// and sort the list by the distance to the given point
 		sortedTuples.sort(new Comparator<Tuple<?>>() {
 
@@ -103,11 +108,14 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	}
 
-	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range) {
-
+	@Override
+	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range, ITimeInterval t) {
+		
+		List<Tuple<ITimeInterval>> elements = this.sweepArea.extractOverlapsAsList(t);
+		
 		List<Tuple<?>> rangeTuples = new ArrayList<Tuple<?>>();
 
-		for (Tuple<?> tuple : tuples) {
+		for (Tuple<?> tuple : elements) {
 			Object o = tuple.getAttribute(geometryPosition);
 			GeometryWrapper geometryWrapper = null;
 			if (o instanceof GeometryWrapper) {
@@ -129,8 +137,10 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	}
 
 	@Override
-	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints) {
+	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 
+		List<Tuple<ITimeInterval>> elements = this.sweepArea.extractOverlapsAsList(t);
+		
 		// Check if the first and the last point is equal. If not, we have to
 		// add the first point at the end to have a closed ring.
 		Point firstPoint = polygonPoints.get(0);
@@ -147,7 +157,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 		// For every point in our list ask JTS if the points lies within the
 		// polygon
-		List<Tuple<?>> result = tuples.parallelStream().filter(e -> polygon.contains(getGeometry(e)))
+		List<Tuple<?>> result = elements.parallelStream().filter(e -> polygon.contains(getGeometry(e)))
 				.collect(Collectors.toList());
 
 		// Collect the points and return them

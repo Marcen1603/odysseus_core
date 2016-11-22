@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 
 /**
@@ -59,10 +60,16 @@ public interface IMovingObjectDataStructure {
 	 * 
 	 * @param k
 	 *            The number of neighbors
+	 * 
+	 * @param t
+	 *            The time interval of the element where we search the neighbors
+	 *            for. Only neighbors are considered which intervals overlap
+	 *            this time interval.
+	 * 
 	 * @return A list of tuples which are the nearest neighbors of the given
 	 *         geometry
 	 */
-	public List<Tuple<?>> getKNN(Geometry geometry, int k);
+	public List<Tuple<?>> getKNN(Geometry geometry, int k, ITimeInterval t);
 
 	/**
 	 * Calculates all neighbors within the given range around the geometry.
@@ -71,10 +78,14 @@ public interface IMovingObjectDataStructure {
 	 *            The geometry around which you want to know the neighborhood
 	 * @param range
 	 *            The range in meters around the geometry
+	 * @param t
+	 *            The time interval of the element where we search the neighbors
+	 *            for. Only neighbors are considered which intervals overlap
+	 *            this time interval.
 	 * @return A list with all tuples for which their geometry is in the
 	 *         neighborhood around the given geometry
 	 */
-	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range);
+	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range, ITimeInterval t);
 
 	/**
 	 * Queries the data structure and returns all data points which are in a
@@ -83,7 +94,11 @@ public interface IMovingObjectDataStructure {
 	 * @param coordinates
 	 *            The points of the edges of the polygon where you want to
 	 *            search in
+	 * @param t
+	 *            The time interval of the element where we search the neighbors
+	 *            for. Only neighbors are considered which intervals overlap
+	 *            this time interval.
 	 * @return A list of tuples which lie within the given polygon
 	 */
-	public List<Tuple<?>> queryBoundingBox(List<Point> coordinates);
+	public List<Tuple<?>> queryBoundingBox(List<Point> coordinates, ITimeInterval t);
 }

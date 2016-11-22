@@ -11,7 +11,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
@@ -33,6 +35,8 @@ public class SpatialDataStructureTest extends TestCase {
 	private List<Point> points;
 	private IMovingObjectDataStructure dataStructure;
 	private GeometryFactory factory;
+
+	private TimeInterval testSearchInterval = new TimeInterval(new PointInTime(5000), new PointInTime(5100));
 
 	// For kNN test
 	private Point kNNTestCenter;
@@ -60,22 +64,25 @@ public class SpatialDataStructureTest extends TestCase {
 		polygon = new ArrayList<>();
 		correctQueryResults = new ArrayList<>();
 
+		// Create the data structure that needs to be tested
+		try {
+			dataStructure = new NaiveSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
 		// Create test data
 		factory = new GeometryFactory();
 		fillCoordinateList();
 
-		// Create the data structure that needs to be tested
-		dataStructure = new NaiveSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
-
 		// Fill the data structure with test data
 		fillDataStructure();
-
 	}
 
 	private void fillCoordinateList() {
 		points = new ArrayList<Point>();
 
-		for (int i = 0; i < 1000; i++) {
+		for (double i = 0; i < 1000; i++) {
 			// Create the test data
 			// TODO Generate better data
 			Coordinate coord = new Coordinate(53.0 + (i / 1000), 19.0 + (i / 1000));
@@ -90,15 +97,24 @@ public class SpatialDataStructureTest extends TestCase {
 
 	private void fillDataStructure() {
 		// Fill the data structure with test data
+		int i = 0;
 		for (Point point : points) {
-			// Create the test data
-			Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
-			GeometryWrapper wrapper = new GeometryWrapper(point);
-			tuple.setAttribute(GEOMETRY_POSITION, wrapper);
-
+			Tuple<ITimeInterval> tuple = createTuple(point, i, i + 10);
 			// Add the data to the data structure
 			dataStructure.add(tuple);
+			i++;
 		}
+	}
+
+	private Tuple<ITimeInterval> createTuple(Point point, long start, long end) {
+		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(1, false);
+		GeometryWrapper wrapper = new GeometryWrapper(point);
+		tuple.setAttribute(GEOMETRY_POSITION, wrapper);
+
+		ITimeInterval metadata = new TimeInterval(new PointInTime(start), new PointInTime(end));
+		tuple.setMetadata(metadata);
+
+		return tuple;
 	}
 
 	private void fillNeighbourTestData() {
@@ -121,7 +137,9 @@ public class SpatialDataStructureTest extends TestCase {
 
 		// And add the neighbors to the normal list as well
 		for (Point point : neighbors) {
-			points.add(point);
+			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
+					testSearchInterval.getEnd().getMainPoint());
+			dataStructure.add(tuple);
 		}
 	}
 
@@ -159,10 +177,17 @@ public class SpatialDataStructureTest extends TestCase {
 		// And add the range neighbors to the normal list as well (and add the
 		// Elsfleth coordinate as well)
 		for (Point point : rangeNeighbors) {
-			points.add(point);
+			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
+					testSearchInterval.getEnd().getMainPoint());
+			dataStructure.add(tuple);
 		}
-		points.add(factory.createPoint(coord6));
-		points.add(factory.createPoint(coord7));
+
+		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(coord6),
+				testSearchInterval.getStart().getMainPoint(), testSearchInterval.getEnd().getMainPoint());
+		dataStructure.add(tuple);
+		tuple = createTuple(factory.createPoint(coord7), testSearchInterval.getStart().getMainPoint(),
+				testSearchInterval.getEnd().getMainPoint());
+		dataStructure.add(tuple);
 	}
 
 	private void fillQueryBoundingBoxTestData() {
@@ -201,9 +226,18 @@ public class SpatialDataStructureTest extends TestCase {
 		correctQueryResults.add(factory.createPoint(coord4));
 
 		// Add all points to the whole data set
-		points.addAll(correctQueryResults);
-		points.add(factory.createPoint(noCoord1));
-		points.add(factory.createPoint(noCoord2));
+		for (Point point : correctQueryResults) {
+			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
+					testSearchInterval.getEnd().getMainPoint());
+			dataStructure.add(tuple);
+		}
+
+		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(noCoord1),
+				testSearchInterval.getStart().getMainPoint(), testSearchInterval.getEnd().getMainPoint());
+		dataStructure.add(tuple);
+		tuple = createTuple(factory.createPoint(noCoord2), testSearchInterval.getStart().getMainPoint(),
+				testSearchInterval.getEnd().getMainPoint());
+		dataStructure.add(tuple);
 	}
 
 	/**
@@ -213,7 +247,7 @@ public class SpatialDataStructureTest extends TestCase {
 	@Test
 	public void testkNN() {
 		int k = neighbors.size();
-		List<Tuple<?>> kNN = dataStructure.getKNN(kNNTestCenter, k);
+		List<Tuple<?>> kNN = dataStructure.getKNN(kNNTestCenter, k, testSearchInterval);
 		assertEqualList(kNN, neighbors);
 	}
 
@@ -223,13 +257,13 @@ public class SpatialDataStructureTest extends TestCase {
 	 */
 	@Test
 	public void testRange() {
-		List<Tuple<?>> rangeResult = dataStructure.getNeighborhood(rangeTestCenter, range);
+		List<Tuple<?>> rangeResult = dataStructure.getNeighborhood(rangeTestCenter, range, testSearchInterval);
 		assertEqualList(rangeResult, rangeNeighbors);
 	}
 
 	@Test
 	public void testBoundingBoxQuery() {
-		List<Tuple<?>> boundingBoxResult = dataStructure.queryBoundingBox(polygon);
+		List<Tuple<?>> boundingBoxResult = dataStructure.queryBoundingBox(polygon, testSearchInterval);
 		assertEqualList(boundingBoxResult, correctQueryResults);
 	}
 
