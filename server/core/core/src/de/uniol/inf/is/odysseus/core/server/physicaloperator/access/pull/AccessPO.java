@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,17 +34,17 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.Receive
 /**
  * This class represents all sources that need to be scheduled to deliver input
  * (pull). For all sources that push their data use ReceivePO
- * 
- * 
+ *
+ *
  * @author Marco Grawunder
- * 
+ *
  * @param <R>
  *            The immediate values that are send to
  * @param <W>
  *            The Output that is written by this operator.
  */
-public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends ReceiverPO<W,M>
-		implements IMetadataInitializer<M, W>, IIterableSource<W>   {
+public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends ReceiverPO<W, M>
+		implements IMetadataInitializer<M, W>, IIterableSource<W> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 
@@ -55,9 +55,9 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> exte
 	final private AtomicBoolean isClosing = new AtomicBoolean(false);
 
 	IIterableSchedulerSource iteratableSourceDelegate = new IterableSchedulerSourceDelegate();
-	
+
 	public AccessPO(IProtocolHandler<W> protocolHandler, long maxTimeToWaitForNewEventMS, boolean readMetaData) {
-		super(protocolHandler,readMetaData);
+		super(protocolHandler, readMetaData);
 		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
 	}
 
@@ -128,15 +128,17 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> exte
 		return false;
 	}
 
-	public boolean doDone() {
-		isDone = true;
-		propagateDone();
+	private boolean doDone() {
+		if (!isDone) {
+			isDone = true;
+			propagateDone();
+		}
 		return false;
 	}
 
 	private void tryPropagateDone() {
 		try {
-			propagateDone();
+			doDone();
 		} catch (Throwable throwable) {
 			LOG.error("Exception during propagating done", throwable);
 			sendError("Exception during propagating done", throwable);
