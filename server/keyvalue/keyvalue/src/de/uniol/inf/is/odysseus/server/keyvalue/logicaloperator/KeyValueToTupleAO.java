@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -22,12 +25,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateAndRen
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", doc="Translates a key-value/json object to a tuple", category={LogicalOperatorCategory.TRANSFORM})
-public class KeyValueToTupleAO extends UnaryLogicalOp{
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "KeyValueToTuple", doc = "Translates a key-value/json object to a tuple", category = {
+		LogicalOperatorCategory.TRANSFORM })
+public class KeyValueToTupleAO extends UnaryLogicalOp {
+
+	Logger LOG = LoggerFactory.getLogger(KeyValueToTupleAO.class);
 
 	private static final long serialVersionUID = 4804826171047928513L;
 
-	private boolean keepInputObject = false;
 	private String type = "";
 	private List<RenameAttribute> attributes;
 	private String dateFormat;
@@ -37,12 +42,11 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	public KeyValueToTupleAO(KeyValueToTupleAO keyValueToTuple) {
 		super(keyValueToTuple);
-		this.keepInputObject = keyValueToTuple.keepInputObject;
 		this.attributes = keyValueToTuple.attributes;
 	}
 
-	@Parameter(name="Schema", type=CreateAndRenameSDFAttributeParameter.class, optional=false, isList=true)
-	public void setAttributes(List<RenameAttribute> attributes){
+	@Parameter(name = "Schema", type = CreateAndRenameSDFAttributeParameter.class, optional = false, isList = true)
+	public void setAttributes(List<RenameAttribute> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -50,8 +54,17 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 		return this.attributes;
 	}
 
-	@Parameter(name = "type", type=StringParameter.class, optional= true, deprecated = true )
-	public void setType(String type){
+	@Parameter(name = "keepInput", type=BooleanParameter.class, optional = true, deprecated = true )
+	public void setKeepInputObject(boolean keepInputObject) {
+		if (keepInputObject = false){
+			LOG.warn("KeepInput is no longer supported. Please use JsonPath ($) with datatype keyvalue");
+		}else{
+			LOG.error("KeepInput is no longer supported. Please use JsonPath ($) with datatype keyvalue");
+		}
+	}
+
+	@Parameter(name = "type", type = StringParameter.class, optional = true, deprecated = false)
+	public void setType(String type) {
 		this.type = type;
 	}
 
@@ -59,18 +72,9 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 		return this.type;
 	}
 
-	@Parameter(name = "keepInput", type=BooleanParameter.class, optional = true, deprecated = true )
-	public void setKeepInputObject(boolean keepInputObject) {
-		this.keepInputObject = keepInputObject;
-	}
-
-	public boolean isKeepInputObject() {
-		return keepInputObject;
-	}
-
-	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true, doc="If using a string for date information, use this format to parse the date (in Java syntax).")
+	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true, doc = "If using a string for date information, use this format to parse the date (in Java syntax).")
 	public void setDateFormat(String dateFormat) {
-		if(!Strings.isNullOrEmpty(dateFormat)) {
+		if (!Strings.isNullOrEmpty(dateFormat)) {
 			addParameterInfo("DATEFORMAT", "'" + dateFormat + "'");
 		} else {
 			removeParameterInfo("DATEFORMAT");
@@ -86,23 +90,26 @@ public class KeyValueToTupleAO extends UnaryLogicalOp{
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
-		for(RenameAttribute att: attributes) {
+		for (RenameAttribute att : attributes) {
 			SDFAttribute sdfAtt = att.getAttribute();
 			String name;
-			if(!att.getNewName().equals("")) {
+			if (!att.getNewName().equals("")) {
 				name = att.getNewName();
 			} else {
 				name = att.getAttribute().getQualName();
 			}
-			if(name.endsWith("*")) {
-				name = name.substring(0, name.length()-1);
-			}
-			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(), sdfAtt.getDtConstraints()));
+			// replace JSONPATH_SPECIFIC_VALUES
+			name = name.replace("$", "root").replace("*", "_").replace(".", "_").replace("[", "_").replace("]", "_")
+					.replace("'", "_").replace(")", "_").replace("(", "_").replace("?", "_");
+
+			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(),
+					sdfAtt.getDtConstraints()));
 		}
 		final List<SDFMetaSchema> metaSchema;
 		metaSchema = getInputSchema().getMetaschema();
 		@SuppressWarnings("unchecked")
-		SDFSchema schema = SDFSchemaFactory.createNewSchema(type, (Class<? extends IStreamObject<?>>) Tuple.class, attributeList,getInputSchema());
+		SDFSchema schema = SDFSchemaFactory.createNewSchema(type, (Class<? extends IStreamObject<?>>) Tuple.class,
+				attributeList, getInputSchema());
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
 		return outputSchema;
 	}

@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCS
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 
 /**
  * Sink, which compares calculated relational tuple with predefined tuple. Used
@@ -62,30 +63,40 @@ public class TICompareSink<T extends IStreamObject<ITimeInterval>> extends Abstr
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void process_open() throws OpenFailedException {
-		synchronized (expected) {
-			this.expected.clear();
-			this.inputdata.clear();
-			IStreamObjectDataHandler<T> dh = (IStreamObjectDataHandler<T>) DataHandlerRegistry.getDataHandler(this.dataHandler, getOutputSchema());
-			OptionMap options = new OptionMap();
-			options.setOption(AbstractCSVHandler.DELIMITER, "|");
-			SimpleCSVProtocolHandler csvreader = (SimpleCSVProtocolHandler) new SimpleCSVProtocolHandler().createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
+		try {
+			synchronized (expected) {
+				this.expected.clear();
+				this.inputdata.clear();
+				IStreamObjectDataHandler<T> dh = (IStreamObjectDataHandler<T>) DataHandlerRegistry
+						.getDataHandler(this.dataHandler, getOutputSchema());
+				dh.setMetaAttribute(MetadataRegistry.getMetadataType(getOutputSchema().getMetaAttributeNames()));
+				OptionMap options = new OptionMap();
+				options.setOption(AbstractCSVHandler.DELIMITER, "|");
+				SimpleCSVProtocolHandler csvreader = (SimpleCSVProtocolHandler) new SimpleCSVProtocolHandler()
+						.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
 
-			for (Pair<String, String> csv : expectedOriginals) {
-				T tuple;
-				if (csv.getE2() == null || csv.getE2().equals("")){
-					tuple = (T) csvreader.convertLine(csv.getE1(), true);					
-				}else{
-					tuple = (T) csvreader.convertLine(csv.getE1(), false);
-					TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
-					((Tuple)tuple).setMetadata(ti);					
+				for (Pair<String, String> csv : expectedOriginals) {
+					T tuple;
+					if (csv.getE2() == null || csv.getE2().equals("")) {
+						tuple = (T) csvreader.convertLine(csv.getE1(), true);
+					} else {
+						tuple = (T) csvreader.convertLine(csv.getE1(), false);
+						TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
+						((Tuple) tuple).setMetadata(ti);
+					}
+					this.expected.insert(tuple);
+					if (tracing) {
+						System.out.println("load expected tuple: " + tuple);
+					}
 				}
-				this.expected.insert(tuple);
-				if(tracing){
-					System.out.println("load expected tuple: "+tuple);
-				}
+				logger.debug("expected data loaded");
+
 			}
-			logger.debug("expected data loaded");
+		} catch (Exception e) {
+			System.err.println("Error reading compare data");
+			e.printStackTrace();
+			System.err.println();
 		}
 	}
-	
+
 }

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,11 +194,6 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 			@SuppressWarnings("unchecked")
 			T meta = (T) from.getMetadata().clone();
 			outputVal.setMetadata(meta);
-		}
-		if (from.getGetValueMap() != null) {
-			for (Entry<String, Object> entry : from.getGetValueMap().entrySet()) {
-				outputVal.setKeyValue(entry.getKey(), entry.getValue());
-			}
 		}
 		return outputVal;
 	}

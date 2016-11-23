@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator.KeyValueSelectPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -19,7 +19,7 @@ public class TKeyValueSelectRule extends AbstractTransformationRule<SelectAO>{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(SelectAO operator, TransformationConfiguration config) throws RuleException {
-		KeyValueSelectPO<?> keyValueSelectPO = new KeyValueSelectPO(operator.getPredicate());
+		SelectPO<?> keyValueSelectPO = new SelectPO(operator.getPredicate());
 		defaultExecute(operator, keyValueSelectPO, config, true, false);
 	}
 
@@ -30,11 +30,6 @@ public class TKeyValueSelectRule extends AbstractTransformationRule<SelectAO>{
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "SelectAO --> KeyValueSelectPO";
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
- * 
+ *
  * @author Dennis Geesen Created at: 14.05.2012
  */
 public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
@@ -92,12 +92,8 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 					TimeInterval ti = new TimeInterval(startP, endP);
 					List<Tuple<M>> qualifies = this.sweepArea.queryOverlapsAsList(ti);
 
-					long tillLearn = System.nanoTime();
-
 					IClassifier<M> classifier = learn.createClassifier(qualifies);
 					if (classifier != null) {
-
-						long afterLearn = System.nanoTime();
 
 						M metadata = (M) object.getMetadata().clone();
 						Tuple<M> newTuple = new Tuple<M>(1, false);
@@ -106,8 +102,6 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 						newTuple.getMetadata().setStartAndEnd(startP, endP);
 						// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
 						// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
-						newTuple.setKeyValue("LATENCY_BEFORE", tillLearn);
-						newTuple.setKeyValue("LATENCY_AFTER", afterLearn);						
 						transfer(newTuple);
 					}
 					// System.out.println("TRANSFER: " + (System.currentTimeMillis() - time - duration));
@@ -124,7 +118,7 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 		}
 
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);

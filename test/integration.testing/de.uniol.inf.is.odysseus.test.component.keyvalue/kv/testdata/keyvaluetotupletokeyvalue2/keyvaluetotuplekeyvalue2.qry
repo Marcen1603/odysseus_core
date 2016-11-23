@@ -1,0 +1,61 @@
+#PARSER PQL
+#ADDQUERY
+json2 = ACCESS({
+            source='json',
+            wrapper='GenericPull',
+            transport='File',
+            protocol='JSON',
+            datahandler='KeyValueObject',
+        options=[['filename','${BUNDLE-ROOT}/testdata/keyvaluetotupletokeyvalue2/input0.json']],
+            schema = [['ts','STARTTIMESTAMP']]                                     
+          }                
+        )
+        
+
+/// Convert KeyValueObject (Nodes) to tuples
+kv = KEYVALUETOTUPLE({
+          schema=[
+            ['$', 'KeyValueObject'],
+            ['uuid', 'String'],
+            ['pathCnt', 'Integer'],
+            ['nodeCnt', 'Integer'],
+            ['isLastNode', 'Boolean'],
+            ['stopUri', 'String'],
+            ['stopName', 'String'],
+            ['mode', 'String'],
+            ['platform', 'String'],
+            ['serviceLine', 'String'],
+            ['headingDirection', 'String'],
+            ['poiUri', 'String'],
+            ['geom', 'String'],
+            ['longitude', 'String'],
+            ['latitude', 'String'],
+            ['street', 'String'],
+            ['number', 'String'],
+            ['postalCode', 'String'],
+            ['town', 'String'],
+            ['scheduleName', 'String'],
+            ['monday', 'List(Integer)'],
+            ['$..monday.length()','mondayCount','Integer'],
+            ['tuesday', 'List(Integer)'],
+            ['wednesday', 'List(Integer)'],
+            ['thursday', 'List(Integer)'],
+            ['friday', 'List(Integer)'],
+            ['saturday', 'List(Integer)'],
+            ['sunday', 'List(Integer)'],
+            ['comment', 'String'],
+            ['validFrom', 'Integer'],
+            ['validUntil', 'Integer'],
+            ['$.uuid', 'String'],
+            ['$.pathCnt', 'Integer'], 
+			['$.monday', 'List(Integer)'],
+			['$.monday[0]', 'Integer'],
+			['$.stopUri', 'String'], 
+			['$.isLastNode', 'Boolean'], 
+			['$.geom', 'String'] 
+          ]
+        },
+        json2
+      ) 
+
+out = TUPLETOKEYVALUE(kv)

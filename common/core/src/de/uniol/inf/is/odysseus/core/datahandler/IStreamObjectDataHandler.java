@@ -17,7 +17,7 @@ public interface IStreamObjectDataHandler<T extends IStreamObject<? extends IMet
 	T readData(InputStream inputStream, boolean handleMetaData) throws IOException;
 
 	T readData(String input, boolean handleMetaData);
-	
+
 	T readData(Iterator<String> input, boolean handleMetaData);
 
 	void writeData(ByteBuffer buffer, Object data, boolean handleMetaData);
@@ -27,16 +27,16 @@ public interface IStreamObjectDataHandler<T extends IStreamObject<? extends IMet
 	void writeData(StringBuilder string, Object data, boolean handleMetaData);
 
 	void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options);
-	
+
 	int memSize(Object attribute, boolean handleMetaData);
 
 	boolean isHandleMetadata();
-	
+
 	void setMetaAttribute(IMetaAttribute metaAttribute);
-	
+
 	public void writeCSVData(StringBuilder string, Object data, WriteOptions options);
 
-	public void writeJSONData(StringBuilder string, Object data);
-
-	public byte[] writeBSONData(Object data);
+//	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData);
+//
+//	public byte[] writeBSONData(Object data);
 }

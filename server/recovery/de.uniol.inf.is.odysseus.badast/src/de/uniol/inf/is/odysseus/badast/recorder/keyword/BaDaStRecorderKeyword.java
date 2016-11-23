@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.badast.recorder.keyword;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,8 +14,6 @@ import de.uniol.inf.is.odysseus.badast.recorder.ABaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.recorder.CreateBaDaStRecorderCommand;
 import de.uniol.inf.is.odysseus.badast.recorder.IBaDaStRecorder;
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.collection.IPair;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -29,7 +28,7 @@ import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
  * {@link IBaDaStRecorder#SOURCENAME_CONFIG}. <br />
  * Such a keyword has to be executed after the source is published within the
  * {@code IDataDictionary}.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -52,7 +51,7 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 
 	/**
 	 * Binds an implementation of {@code IBaDaStRecorder}.
-	 * 
+	 *
 	 * @param recorder
 	 *            An instance of the implementation.
 	 */
@@ -70,7 +69,7 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 
 	/**
 	 * Unbinds an implementation of {@code IBaDaStRecorder}.
-	 * 
+	 *
 	 * @param recorder
 	 *            An instance of the implementation.
 	 */
@@ -85,7 +84,7 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 
 	/**
 	 * Gets the name.
-	 * 
+	 *
 	 * @return A String representing the keyword.
 	 */
 	public static String getName() {
@@ -97,21 +96,24 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 	 *
 	 * @param parameter
 	 *            The parameter to parse.
-	 * @return The value for {@link IBaDaStRecorder#TYPE_CONFIG} as E1 and the
-	 *         value for {@link IBaDaStRecorder#SOURCENAME_CONFIG}} as E2.
+	 * @return The values for {@link IBaDaStRecorder#TYPE_CONFIG} as first
+	 *         element, {@link IBaDaStRecorder#SOURCENAME_CONFIG}} as second
+	 *         element, and {@link IBaDaStRecorder#VIEWNAME_CONFIG}} as third
+	 *         element.
 	 * @throws DataDictionaryException
-	 *             if {@code parameter} is not a blank separated list of two key
+	 *             if {@code parameter} is not a blank separated list of three key
 	 *             value pairs or if the keys are wrong.
 	 */
-	private static IPair<String, String> parseParameter(String parameter) throws DataDictionaryException {
-		String typeValue, sourcenameValue;
+	private static List<String> parseParameter(String parameter) throws DataDictionaryException {
+		List<String> out = new ArrayList<>();
 		String[] args = parameter.split(" ");
-		if (args.length != 2) {
-			throw new DataDictionaryException("BaDaStRecorderKeyword needs exactly two parameters!");
+		if (args.length != 3) {
+			throw new DataDictionaryException("BaDaStRecorderKeyword needs exactly three parameters!");
 		}
-		typeValue = parsePartialParameter(args[0], IBaDaStRecorder.TYPE_CONFIG);
-		sourcenameValue = parsePartialParameter(args[1], IBaDaStRecorder.SOURCENAME_CONFIG);
-		return new Pair<>(typeValue, sourcenameValue);
+		out.add(parsePartialParameter(args[0], IBaDaStRecorder.TYPE_CONFIG));
+		out.add(parsePartialParameter(args[1], IBaDaStRecorder.SOURCENAME_CONFIG));
+		out.add(parsePartialParameter(args[2], IBaDaStRecorder.VIEWNAME_CONFIG));
+		return out;
 	}
 
 	/**
@@ -144,25 +146,26 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws DataDictionaryException {
-		// Parse type and source name (only parameters)
-		IPair<String, String> typeAndSourcename = parseParameter(parameter);
+		// Parse type, source and view name (only parameters)
+		List<String> typeSourceAndViewName = parseParameter(parameter);
 		// Check, if recorder is bound
-		if (!recorders.containsKey(typeAndSourcename.getE1())) {
+		if (!recorders.containsKey(typeSourceAndViewName.get(0))) {
 			throw new DataDictionaryException(
-					"BaDaStRecorderKeyword: " + typeAndSourcename.getE1() + " is an unknown type of BaDaStRecorders!");
+					"BaDaStRecorderKeyword: " + typeSourceAndViewName.get(0) + " is an unknown type of BaDaStRecorders!");
 		}
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
 			Context context, IServerExecutor executor) throws DataDictionaryException {
-		// Parse type and source name (only parameters)
-		IPair<String, String> typeAndSourcename = parseParameter(parameter);
-		Resource sourcename = new Resource(caller.getUser(), typeAndSourcename.getE2());
+		// Parse type, source and view name (only parameters)
+		List<String> typeSourceAndViewName = parseParameter(parameter);
+		Resource sourcename = new Resource(caller.getUser(), typeSourceAndViewName.get(1));
+		Resource viewname = new Resource(caller.getUser(), typeSourceAndViewName.get(2));
 		List<String> recorderParameters = Arrays.asList(
-				recorders.get(typeAndSourcename.getE1()).getClass().getAnnotation(ABaDaStRecorder.class).parameters());
+				recorders.get(typeSourceAndViewName.get(0)).getClass().getAnnotation(ABaDaStRecorder.class).parameters());
 		return Collections.singletonList((IExecutorCommand) new CreateBaDaStRecorderCommand(caller,
-				typeAndSourcename.getE1(), sourcename, recorderParameters));
+				typeSourceAndViewName.get(0), sourcename, viewname, recorderParameters));
 	}
 
 }
