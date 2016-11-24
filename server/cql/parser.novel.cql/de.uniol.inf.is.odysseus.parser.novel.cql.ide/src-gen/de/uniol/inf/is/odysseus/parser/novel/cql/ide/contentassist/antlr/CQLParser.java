@@ -45,7 +45,9 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMulOrDivAccess().getOpAlternatives_1_1_0(), "rule__MulOrDiv__OpAlternatives_1_1_0");
 					put(grammarAccess.getPrimaryAccess().getAlternatives(), "rule__Primary__Alternatives");
 					put(grammarAccess.getSelect_StatementAccess().getAlternatives_2(), "rule__Select_Statement__Alternatives_2");
+					put(grammarAccess.getWindowAccess().getAlternatives_1(), "rule__Window__Alternatives_1");
 					put(grammarAccess.getConditionAccess().getAlternatives(), "rule__Condition__Alternatives");
+					put(grammarAccess.getCreate_StatementAccess().getTypeAlternatives_1_0(), "rule__Create_Statement__TypeAlternatives_1_0");
 					put(grammarAccess.getFunctionTypeAccess().getAlternatives(), "rule__FunctionType__Alternatives");
 					put(grammarAccess.getStatementAccess().getGroup(), "rule__Statement__Group__0");
 					put(grammarAccess.getAtomicAccess().getGroup_0(), "rule__Atomic__Group_0__0");
@@ -74,8 +76,17 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getSelect_StatementAccess().getGroup_2_1(), "rule__Select_Statement__Group_2_1__0");
 					put(grammarAccess.getSelect_StatementAccess().getGroup_2_1_1(), "rule__Select_Statement__Group_2_1_1__0");
 					put(grammarAccess.getSelect_StatementAccess().getGroup_4(), "rule__Select_Statement__Group_4__0");
-					put(grammarAccess.getSelect_StatementAccess().getGroup_4_1(), "rule__Select_Statement__Group_4_1__0");
+					put(grammarAccess.getSelect_StatementAccess().getGroup_4_2(), "rule__Select_Statement__Group_4_2__0");
 					put(grammarAccess.getSelect_StatementAccess().getGroup_5(), "rule__Select_Statement__Group_5__0");
+					put(grammarAccess.getWindowAccess().getGroup(), "rule__Window__Group__0");
+					put(grammarAccess.getWindow_UnboundedAccess().getGroup(), "rule__Window_Unbounded__Group__0");
+					put(grammarAccess.getWindow_UnboundedAccess().getGroup_1(), "rule__Window_Unbounded__Group_1__0");
+					put(grammarAccess.getWindow_TimebasedAccess().getGroup(), "rule__Window_Timebased__Group__0");
+					put(grammarAccess.getWindow_TimebasedAccess().getGroup_5(), "rule__Window_Timebased__Group_5__0");
+					put(grammarAccess.getWindow_TimebasedAccess().getGroup_7(), "rule__Window_Timebased__Group_7__0");
+					put(grammarAccess.getWindow_TuplebasedAccess().getGroup(), "rule__Window_Tuplebased__Group__0");
+					put(grammarAccess.getWindow_TuplebasedAccess().getGroup_4(), "rule__Window_Tuplebased__Group_4__0");
+					put(grammarAccess.getWindow_TuplebasedAccess().getGroup_6(), "rule__Window_Tuplebased__Group_6__0");
 					put(grammarAccess.getConditionAccess().getGroup_0(), "rule__Condition__Group_0__0");
 					put(grammarAccess.getConditionAccess().getGroup_1(), "rule__Condition__Group_1__0");
 					put(grammarAccess.getCreate_StatementAccess().getGroup(), "rule__Create_Statement__Group__0");
@@ -107,8 +118,21 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getSelect_StatementAccess().getAttributesAssignment_2_1_0(), "rule__Select_Statement__AttributesAssignment_2_1_0");
 					put(grammarAccess.getSelect_StatementAccess().getAttributesAssignment_2_1_1_1(), "rule__Select_Statement__AttributesAssignment_2_1_1_1");
 					put(grammarAccess.getSelect_StatementAccess().getSourcesAssignment_4_0(), "rule__Select_Statement__SourcesAssignment_4_0");
-					put(grammarAccess.getSelect_StatementAccess().getSourcesAssignment_4_1_1(), "rule__Select_Statement__SourcesAssignment_4_1_1");
+					put(grammarAccess.getSelect_StatementAccess().getWindowsAssignment_4_1(), "rule__Select_Statement__WindowsAssignment_4_1");
+					put(grammarAccess.getSelect_StatementAccess().getSourcesAssignment_4_2_1(), "rule__Select_Statement__SourcesAssignment_4_2_1");
+					put(grammarAccess.getSelect_StatementAccess().getWindowsAssignment_4_2_2(), "rule__Select_Statement__WindowsAssignment_4_2_2");
 					put(grammarAccess.getSelect_StatementAccess().getPredicatesAssignment_5_1(), "rule__Select_Statement__PredicatesAssignment_5_1");
+					put(grammarAccess.getWindowAccess().getTypeAssignment_1_0(), "rule__Window__TypeAssignment_1_0");
+					put(grammarAccess.getWindowAccess().getTypeAssignment_1_1(), "rule__Window__TypeAssignment_1_1");
+					put(grammarAccess.getWindowAccess().getTypeAssignment_1_2(), "rule__Window__TypeAssignment_1_2");
+					put(grammarAccess.getWindow_TimebasedAccess().getSizeAssignment_3(), "rule__Window_Timebased__SizeAssignment_3");
+					put(grammarAccess.getWindow_TimebasedAccess().getUnitAssignment_4(), "rule__Window_Timebased__UnitAssignment_4");
+					put(grammarAccess.getWindow_TimebasedAccess().getAdvance_sizeAssignment_5_1(), "rule__Window_Timebased__Advance_sizeAssignment_5_1");
+					put(grammarAccess.getWindow_TimebasedAccess().getAdvance_unitAssignment_5_2(), "rule__Window_Timebased__Advance_unitAssignment_5_2");
+					put(grammarAccess.getWindow_TimebasedAccess().getPartition_attributeAssignment_7_2(), "rule__Window_Timebased__Partition_attributeAssignment_7_2");
+					put(grammarAccess.getWindow_TuplebasedAccess().getSizeAssignment_3(), "rule__Window_Tuplebased__SizeAssignment_3");
+					put(grammarAccess.getWindow_TuplebasedAccess().getAdvance_sizeAssignment_4_1(), "rule__Window_Tuplebased__Advance_sizeAssignment_4_1");
+					put(grammarAccess.getWindow_TuplebasedAccess().getPartition_attributeAssignment_6_2(), "rule__Window_Tuplebased__Partition_attributeAssignment_6_2");
 					put(grammarAccess.getOperatorAccess().getNameAssignment(), "rule__Operator__NameAssignment");
 					put(grammarAccess.getConditionAccess().getLeftAssignment_0_0(), "rule__Condition__LeftAssignment_0_0");
 					put(grammarAccess.getConditionAccess().getRightAssignment_0_1(), "rule__Condition__RightAssignment_0_1");
@@ -116,11 +140,14 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConditionAccess().getLeftAssignment_1_1(), "rule__Condition__LeftAssignment_1_1");
 					put(grammarAccess.getValueAccess().getNameAssignment(), "rule__Value__NameAssignment");
 					put(grammarAccess.getScalar_FunctionAccess().getNameAssignment(), "rule__Scalar_Function__NameAssignment");
+					put(grammarAccess.getCreate_StatementAccess().getTypeAssignment_1(), "rule__Create_Statement__TypeAssignment_1");
 					put(grammarAccess.getCreate_StatementAccess().getNameAssignment_2(), "rule__Create_Statement__NameAssignment_2");
 					put(grammarAccess.getCreate_StatementAccess().getAttributesAssignment_4(), "rule__Create_Statement__AttributesAssignment_4");
 					put(grammarAccess.getCreate_StatementAccess().getDatatypesAssignment_5(), "rule__Create_Statement__DatatypesAssignment_5");
 					put(grammarAccess.getCreate_StatementAccess().getAttributesAssignment_6_1(), "rule__Create_Statement__AttributesAssignment_6_1");
 					put(grammarAccess.getCreate_StatementAccess().getDatatypesAssignment_6_2(), "rule__Create_Statement__DatatypesAssignment_6_2");
+					put(grammarAccess.getCreate_StatementAccess().getHostAssignment_9(), "rule__Create_Statement__HostAssignment_9");
+					put(grammarAccess.getCreate_StatementAccess().getPortAssignment_11(), "rule__Create_Statement__PortAssignment_11");
 				}
 			};
 		}

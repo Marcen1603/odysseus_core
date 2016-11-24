@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+import java.io.File
 import java.util.HashSet
 import java.util.List
 import java.util.Map
@@ -59,11 +60,7 @@ class CQLGenerator extends AbstractGenerator
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) 
 	{
-		
 		var i = 0 ;
-//		var ref = 
-		
-		
 		for(e : resource.allContents.toIterable.filter(typeof(Statement)))
 		{
 			fsa.generateFile(
@@ -108,31 +105,30 @@ class CQLGenerator extends AbstractGenerator
 	def CharSequence parseSelect(Select_Statement stmt)
 	{
 		predicate = ''
-		if(!stmt.attributes.empty)//SELECT attr1, attr2 ...
+		if(stmt.predicates == null)
 		{
 			'''
+			«FOR src : stmt.sources»
+				«src.name» := «buildAccessOP(stmt.attributes, src)»
+			«ENDFOR»
+			'''		
+		}
+		else
+		{ 
+			var srcs =''
+			for(var i = 0; i < stmt.sources.size - 1; i++)
+			{
+				srcs += stmt.sources.get(i).name + ','
+			}
+			srcs += stmt.sources.get(stmt.sources.size - 1).name
+			'''
+			«FOR src : stmt.sources»
+				«src.name» := «buildAccessOP(stmt.attributes, src)»
+			«ENDFOR»
 			SELECT({predicate=
 			«buildPredicate(stmt.predicates.elements.get(0))»},
-			«buildAccessOP(stmt.attributes, stmt.sources)»)
-			'''
-		}
-		else// SELECT * ...
-		{
-			if(stmt.predicates == null)//SELECT * FROM src1, src2;
-			{
-				'''
-				«buildAccessOP(stmt.attributes, stmt.sources)»	
-				'''		
-			}
-			else//SELECT * FROM src1, src2 WHERE ... ;
-			{ 
-//				stmt.eS
-				'''
-				SELECT({predicate=
-				«buildPredicate(stmt.predicates.elements.get(0))»},
-				«buildAccessOP(stmt.attributes, stmt.sources)»)
-				'''					
-			}
+			«srcs»)
+			'''					
 		}
 	}
 
@@ -209,7 +205,7 @@ class CQLGenerator extends AbstractGenerator
 			{
 				IntConstant: 	str = e.value + ''
 				FloatConstant:  str = e.value
-				StringConstant: str = e.value
+				StringConstant: str = "'" + e.value + "'"
 				BoolConstant: 	str = e.value
 	
 			}
@@ -217,22 +213,13 @@ class CQLGenerator extends AbstractGenerator
 		}
 	}
 	
-	
-	//TODO Implement buildProjectOP
-	def CharSequence buildProjectOP(Select_Statement stmt)
-	{
-		'''
-		PROJECT({attributes = [«»]}, )
-		'''
-	}
-	
-	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src)
+	def CharSequence buildAccessOP(List<Attribute> attr, Source src)
 	{
 		'''
 		ACCESS
 		(
 			{	
-				source      = 'Source'
+				source      = '«src.name»'
 				wrapper     = 'GenericPush'
 				transport   = 'TCPClient'
 				dataHandler = 'Tuple'
@@ -243,44 +230,35 @@ class CQLGenerator extends AbstractGenerator
 	}
 
 	//TODO Refactore	
-	def CharSequence buildSchema(List<Attribute> attr, List<Source> src)
+	def CharSequence buildSchema(List<Attribute> attr, Source src)
 	{
 		var str = '\n'
-		var i = 0
 		var SDFDatatype type
 		var String alias
 		if(attr.size == 0)
 		{
-			for(s : src)
-				for(a : attributes)
+			for(a : attributes)
+			{
+				if(a.sourceName.equals(src.name))
 				{
-					if(a.sourceName.equals(s.name.replace("FROM","")))//TODO Currently hacked
-					{
-						alias = a.attributeName
-						type = a.datatype
-						str += "['" + alias + "', '" + type.toString + "'],\n"
-					}
+					alias = a.attributeName
+					type = a.datatype
+					str += "['" + alias + "', '" + type.toString + "'],\n"
 				}
+			}
 			str = str.substring(0, str.length - 2)
 		}
 		else
 		{
-			while(i < attr.size)
+			for(a : attributes)
 			{
-				alias = attr.get(i).name 
-				for(a : attributes)
+				if(a.sourceName.equals(src.name))
 				{
-					if(a.attributeName.equals(alias))
-					{
-						type = a.datatype
-						if(i != attr.size - 1)
-							str += "['" + alias + "', '" + type.toString + "'],\n"
-						else
-							str += "['" + alias + "', '" + type.toString + "']\n"
-					}
+					type = a.datatype
+					str += "['" + a.attributeName + "', '" + type.toString + "'],\n"
 				}
-				i++ 								
 			}
+			str = str.substring(0, str.length - 2)
 		}
 		str
 	}	

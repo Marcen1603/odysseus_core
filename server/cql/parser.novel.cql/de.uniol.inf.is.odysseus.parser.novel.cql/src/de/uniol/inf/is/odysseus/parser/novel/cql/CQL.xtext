@@ -14,7 +14,7 @@ Atomic returns Expression:
 //	{NumberConstant} (value=INT | value=INT '.' INT) |
 	{IntConstant} value=INT |
 	{FloatConstant} value=FLOAT_NUMBER |
-	{StringConstant} value=STRING |
+	{StringConstant} value= STRING |
 	{BoolConstant} value=('TRUE' | 'FALSE') |
 	{AttributeRef} value=Attribute//TODO A SELECT * query offers no reference for an attribute.
 								  //At the moment is no actual referencing possible!  
@@ -112,12 +112,46 @@ Select_Statement:
 	('DISTINCT')?
 	( '*' | attributes+=Attribute+ (',' attributes+=Attribute)*)
 	'FROM'
-	(sources+=Source+ (',' sources+=Source)*)
+	(sources+=Source+ (windows+=Window)? (',' sources+=Source (windows+=Window)?)*)
 	('WHERE' (predicates=ExpressionsModel))?//| attribute=[Attribute] 'IN' '(' values+=Value ')'))?
 //	(('ORDER' 'BY' | 'order' 'by') ordering+=[Attribute]+ ('ASC' | 'asc' | 'DESC' | 'desc')? )?
 //	(('HAVING' | 'having') havingFunction=[Parameter] havingOperator=Operator havingValue=Value)?
 //	';'
 ;
+
+Window : '['
+	(   type=Window_Unbounded | 
+		type=Window_Timebased | 
+		type=Window_Tuplebased
+	) 
+;
+
+Window_Unbounded returns WindowType: 
+	{WindowType} 
+	('[' 'UNBOUNDED' ']')?
+;
+
+Window_Timebased returns WindowType:
+	{WindowType}
+	'['
+	'SIZE' size=INT unit=STRING
+	('ADVANCE' advance_size=INT advance_unit=STRING)?
+	'TIME'
+	('PARTITION' 'BY' partition_attribute=Attribute)?
+	']'
+;
+
+Window_Tuplebased returns WindowType:
+	{WindowType}
+	'['
+	'SIZE' size=INT
+	('ADVANCE' advance_size=INT)?
+	'TUPLE'
+	('PARTITION' 'BY' partition_attribute=Attribute)?
+	']'	
+;
+
+
 
 Operator:
 	name=ID

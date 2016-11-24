@@ -20,7 +20,7 @@ import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(CQLInjectorProvider)
-class CQLParserTest
+class CQLParsingTest
 {
 
 	@Inject extension ValidationTestHelper
@@ -31,12 +31,12 @@ class CQLParserTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT * FROM stream1;" 
+			"SELECT * FROM stream1;"
 			,
-			"ACCESS
+			"stream1 := ACCESS
 			(
 				{
-					source      = 'Source'
+					source      = 'stream1'
 					wrapper     = 'GenericPush'
 					transport   = 'TCPClient'
 					dataHandler = 'Tuple'
@@ -54,27 +54,63 @@ class CQLParserTest
 	{ 
 		assertCorrectGenerated
 		(
+			"SELECT * FROM stream1, stream2;"
+			,
+			"stream1 := ACCESS
+			(
+				{
+					source      = 'stream1'
+					wrapper     = 'GenericPush'
+					transport   = 'TCPClient'
+					dataHandler = 'Tuple'
+					schema = 
+					[
+						['attr1', 'Integer'],
+						['attr2', 'String']
+					]
+				}
+			)		
+			
+			stream2 := ACCESS
+			(
+				{
+					source      = 'stream2'
+					wrapper     = 'GenericPush'
+					transport   = 'TCPClient'
+					dataHandler = 'Tuple'
+					schema = 
+					[
+						['attr4', 'String'],
+						['attr3', 'Integer']
+					]
+				}
+			)"
+		, new CQLDictionaryDummy())
+	}
+
+	@Test def void SelectAllTest3() 
+	{ 
+		assertCorrectGenerated
+		(
 			"SELECT * FROM stream1 WHERE (attr1 < 125);" 
 			,
-			"SELECT
+			"
+			stream1 := ACCESS
 			(
-				{ predicate=(attr1 < 125) }, 
-			
-				ACCESS
-				(
-					{ 
-						source      = 'Source'
-						wrapper     = 'GenericPush'
-						transport   = 'TCPClient'
-						dataHandler = 'Tuple'
-						schema = 
-						[
-							['attr1', 'Integer'],
-							['attr2', 'String']	
-						]
-					}
-				)
- 			)"
+				{ 
+					source      = 'stream1'
+					wrapper     = 'GenericPush'
+					transport   = 'TCPClient'
+					dataHandler = 'Tuple'
+					schema = 
+					[
+						['attr1', 'Integer'],
+						['attr2', 'String']	
+					]
+				}
+			)
+
+			SELECT({ predicate=(attr1 < 125) }, stream1)"
 		, new CQLDictionaryDummy)
 	}
 	
@@ -84,25 +120,64 @@ class CQLParserTest
 		(
 			"SELECT attr1, attr2 FROM stream1 WHERE (attr1 < 125);" 
 			,
-			"SELECT
+			"
+			stream1 := ACCESS
 			(
-				{ predicate=(attr1 < 125) }, 
-			
-				ACCESS
-				(
-					{ 
-						source      = 'Source'
-						wrapper     = 'GenericPush'
-						transport   = 'TCPClient'
-						dataHandler = 'Tuple'
-						schema = 
-						[
-							['attr1', 'Integer'],
-							['attr2', 'String']	
-						]
-					}
-				)
- 			)"
+				{ 
+					source      = 'stream1'
+					wrapper     = 'GenericPush'
+					transport   = 'TCPClient'
+					dataHandler = 'Tuple'
+					schema = 
+					[
+						['attr1', 'Integer'],
+						['attr2', 'String']	
+					]
+				}
+			)
+
+			SELECT({ predicate=(attr1 < 125) }, stream1)"
+		, new CQLDictionaryDummy)
+	}
+	
+	@Test def void SelectAttr1Attr2Attr3() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1, attr2, attr4 FROM stream1, stream2 WHERE (attr1 < 125 AND attr4 == 'Test');" 
+			,
+			"
+			stream1 := ACCESS
+			(
+				{ 
+					source      = 'stream1'
+					wrapper     = 'GenericPush'
+					transport   = 'TCPClient'
+					dataHandler = 'Tuple'
+					schema = 
+					[
+						['attr1', 'Integer'],
+						['attr2', 'String']	
+					]
+				}
+			)
+
+			stream2 := ACCESS
+			(
+				{ 
+					source      = 'stream2'
+					wrapper     = 'GenericPush'
+					transport   = 'TCPClient'
+					dataHandler = 'Tuple'
+					schema = 
+					[
+						['attr4', 'String'],	
+						['attr3', 'Integer']
+					]
+				}
+			)
+
+			SELECT({ predicate=(attr1 < 125 && attr4 == 'Test') }, stream1, stream2)"
 		, new CQLDictionaryDummy)
 	}
 	
@@ -117,10 +192,10 @@ class CQLParserTest
 				{ Source = 'stream1', 
 				  Wrapper = 'GenericPush',
 				  Schema = [['attr1', 'INTEGER']],
-				transport = 'NonBlockingTcp',
-				protocol = 'SizeByteBuffer',
-				dataHandler ='Tuple',
-				Options =[['port', '54321'],['host', 'localhost']]
+				  transport = 'NonBlockingTcp',
+				  protocol = 'SizeByteBuffer',
+				  dataHandler ='Tuple',
+				  Options =[['port', '54321'],['host', 'localhost']]
 				}
 			)"
 		, null)

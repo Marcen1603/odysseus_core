@@ -39,7 +39,18 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Select_Statement/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/attributes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/sources"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/windows"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/predicates"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Window">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Window/type"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//WindowType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/unit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/advance_size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/advance_unit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//WindowType/partition_attribute"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Operator">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Operator/name"/>
