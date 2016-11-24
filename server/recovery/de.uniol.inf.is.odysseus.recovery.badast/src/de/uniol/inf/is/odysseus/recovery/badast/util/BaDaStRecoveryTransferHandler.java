@@ -326,4 +326,10 @@ public class BaDaStRecoveryTransferHandler<StreamObject extends IStreamObject<IM
 		this.mMetaDataInitializer.updateMetadata(object);
 	}
 
+	@Override
+	public boolean isDone() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
