@@ -1,174 +1,225 @@
 package de.uniol.inf.is.odysseus.wrapper.kafka.physicaloperator.access;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
-public class KafkaTransportHandler extends AbstractPushTransportHandler {
+/**
+ * Transport handler to push data to Kafka as well as to consume data from
+ * Kafka.
+ *
+ * @author Michael Brand
+ * @version 0.10.1.0
+ * @see <a href="https://kafka.apache.org">kafka.apache.org</a>
+ */
+public class KafkaTransportHandler extends AbstractTransportHandler {
 
-	// TODO add available properties
-	public static final String NAME = "Kafka";
-	public static final String BROKERLIST = "metadata.broker.list";
-	public static final String REQUIRED_ACKS = "request.required.acks";
-	public static final String PRODUCER_TYPE = "producer.type";
-	public static final String SERIALIZER_CLASS = "serializer.class";
-	public static final String PARTITIONER_CLASS = "partitioner.class";
-	public static final String KEYNAME = "keyname";
+	/**
+	 * The logger for this class
+	 */
+	private static final Logger log = LoggerFactory.getLogger("KafkaTransportHandler");
 
-	// own properties
-	public static final String TOPIC = "topicName";
-	public static final String SHARE_PRODUCER = "shareProducer";
-	public static final String SAMPLE_SIZE = "sampleSize";
+	/**
+	 * The name of the transport handler for usage in a query language.
+	 */
+	private static final String name = "Kafka";
 
-	private String topicName;
-	private boolean shareProducer;
-	private long sampleSize;
-	private Properties props;
-	private Producer<String, String> producer;
-	private ProducerConfig config;
-	private String keyname;
-	private Map<String, List<KeyedMessage<String, String>>> messages = new HashMap<String, List<KeyedMessage<String, String>>>();
+	/**
+	 * The options key of the Kafka topic.
+	 */
+	private static final String topicKey = "topic";
 
+	/**
+	 * The options key of the message type (String or byte[]).
+	 */
+	private static final String messageTypeKey = "messagetype";
+
+	/**
+	 * The default properties for Kafka producers.
+	 */
+	private static final Properties defaultProducerProperties = initProperties("producer.properties");
+
+	/**
+	 * The default properties for Kafka consumers.
+	 */
+	private static final Properties defaultConsumerProperties = initProperties("consumer.properties");
+
+	/**
+	 * Loads properties from a file.
+	 *
+	 * @param filename
+	 *            Name of properties file relative to bundle root.
+	 * @return The loaded properties or empty properties, if something went
+	 *         wrong.
+	 */
+	private static Properties initProperties(String filename) {
+		Properties properties = new Properties();
+		try {
+			properties.load(new FileInputStream(new File(filename)));
+		} catch (IOException e) {
+			log.error("Could not load Kafka properties from file ' {}'!", filename);
+		}
+		return properties;
+	}
+
+	/**
+	 * Supported message types for kafka.
+	 */
+	private static enum MessageType {
+		string, bytearray;
+	}
+
+	/**
+	 * The Kafka topic to publish in.
+	 */
+	private String topic;
+
+	/**
+	 * The Kafka producer, if this transport handler is used to send data.
+	 */
+	private Optional<Producer<String, ?>> producer = Optional.empty();
+
+	/**
+	 * Default constructor for OSGi service.
+	 */
 	public KafkaTransportHandler() {
 		super();
 	}
 
-	public KafkaTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
+	/**
+	 * Creates a new Kafka transport handler.
+	 *
+	 * @param protocolHandler
+	 *            The protocol handler to use.
+	 * @param options
+	 *            The options set by the user. Used to exchange default settings
+	 *            for Kafka.
+	 */
+	private KafkaTransportHandler(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
 		super(protocolHandler, options);
 		init(options);
 	}
 
-	@Override
-	public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
-		final KafkaTransportHandler handler = new KafkaTransportHandler(protocolHandler, options);
-		return handler;
+	/**
+	 * Initializes the properties for Kafka producer/consumer, topic and message
+	 * type.
+	 *
+	 * @param options
+	 *            The options set by the user. Used to exchange default settings
+	 *            for Kafka.
+	 * @throws IllegalArgumentException
+	 *             if options does not contain {@link #topicKey} or
+	 *             {@link #messageTypeKey}. If value of {@link #messageTypeKey}
+	 *             is not in {@link MessageType}.
+	 * @throws NullPointerException
+	 *             if options is null.
+	 */
+	private void init(final OptionMap options) throws IllegalArgumentException, NullPointerException {
+		Objects.requireNonNull(options);
+		options.checkRequiredException(topicKey, messageTypeKey);
+
+		// load default properties
+		Properties properties = new Properties();
+		properties.putAll(defaultProducerProperties);
+		properties.putAll(defaultConsumerProperties);
+
+		// replace default properties with options set by user
+		options.getKeySet().stream().filter(key -> properties.containsKey(key))
+				.forEach(key -> properties.put(key, options.get(key)));
+
+		// set topic
+		topic = options.get(topicKey);
+
+		// create producer: may throw Nullpointer or IllegalArgument, if message
+		// type is not correct
+		producer = Optional.of(createProducer(new ProducerConfig(properties),
+				MessageType.valueOf(options.get(messageTypeKey).toLowerCase())));
 	}
 
-	private void init(final OptionMap options) {
-		props = new Properties();
-
-		if (options.containsKey(BROKERLIST)) {
-			props.put(BROKERLIST, options.get(BROKERLIST));
+	/**
+	 * Creates either a string producer or a byte array producer.
+	 */
+	private static Producer<String, ?> createProducer(final ProducerConfig config, MessageType messageType) {
+		switch (messageType) {
+		case bytearray:
+			return new Producer<String, byte[]>(config);
+		case string:
+			return new Producer<String, String>(config);
+		default:
+			throw new IllegalArgumentException("Unknown message type!");
 		}
-		if (options.containsKey(REQUIRED_ACKS)) {
-			props.put(REQUIRED_ACKS, options.get(REQUIRED_ACKS));
-		}
-		if (options.containsKey(PRODUCER_TYPE)) {
-			props.put(PRODUCER_TYPE, options.get(PRODUCER_TYPE));
-		}
-		if (options.containsKey(SERIALIZER_CLASS)) {
-			props.put(SERIALIZER_CLASS, options.get(SERIALIZER_CLASS));
-		}
-		if (options.containsKey(PARTITIONER_CLASS)) {
-			props.put(PARTITIONER_CLASS, options.get(PARTITIONER_CLASS));
-		}
-		this.keyname = options.get(KEYNAME, null);
-		this.sampleSize = options.getLong(SAMPLE_SIZE, 1);
-		this.shareProducer = options.getBoolean(SHARE_PRODUCER, false);
-		this.topicName = options.get(TOPIC);
 	}
 
 	@Override
-	public ITransportExchangePattern getExchangePattern() {
-		return ITransportExchangePattern.OutOnly;
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
+		return new KafkaTransportHandler(protocolHandler, options);
 	}
 
 	@Override
 	public String getName() {
-		return NAME;
+		return name;
 	}
 
 	@Override
 	public void processOutOpen() throws IOException {
-		if (this.shareProducer) {
-			producer = KafkaProducerRegistry.getInstance().getSemanticallyEqualProducer(this);
-			if (this.producer == null) {
-				config = new ProducerConfig(props);
-				producer = new Producer<String, String>(config);
-			}
-			KafkaProducerRegistry.getInstance().addProducer(this, producer);
-		} else {
-			config = new ProducerConfig(props);
-			producer = new Producer<String, String>(config);
-		}
+		// Nothing to do
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		if (this.shareProducer) {
-			KafkaProducerRegistry.getInstance().removeProducer(this);
-		} else {
-			producer.close();
+		if (producer.isPresent()) {
+			producer.get().close();
 		}
 	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		String msg = new String(message);
+		// TODO Auto-generated method stub
 
-		JsonParser parser = new JsonParser();
-		JsonObject jsonO = (JsonObject) parser.parse(msg);
-
-		String key = jsonO.get(keyname).getAsString();
-		KeyedMessage<String, String> data = new KeyedMessage<String, String>(this.topicName, key, msg);
-		List<KeyedMessage<String, String>> list = messages.get(key);
-		if (list == null) {
-			messages.put(key, new ArrayList<KeyedMessage<String, String>>());
-			list = messages.get(key);
-		}
-		list.add(data);
-
-		if (list.size() >= this.sampleSize) {
-			producer.send(list);
-			list.clear();
-		}
-
-	}
-
-	@Override
-	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-		if (!(other instanceof KafkaTransportHandler))
-			return false;
-		KafkaTransportHandler handler = (KafkaTransportHandler) other;
-		for (Enumeration<?> p = this.props.propertyNames(); p.hasMoreElements();) {
-			String propertyName = p.nextElement().toString();
-			if (!this.props.get(propertyName).toString().equals(handler.props.get(propertyName).toString()))
-				return false;
-		}
-		for (Enumeration<?> p = handler.props.propertyNames(); p.hasMoreElements();) {
-			String propertyName = p.nextElement().toString();
-			if (!this.props.get(propertyName).toString().equals(handler.props.get(propertyName).toString()))
-				return false;
-		}
-		return true;
 	}
 
 	@Override
 	public void processInOpen() throws IOException {
+		// TODO To be implemented
 
 	}
 
 	@Override
 	public void processInClose() throws IOException {
+		// TODO To be implemented
 
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		// TODO To be implemented
+		return null;
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		throw new IllegalArgumentException("Not a pulling transport handler in output mode");
+	}
+
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
+		// TODO To be implemented
+		return false;
 	}
 
 }

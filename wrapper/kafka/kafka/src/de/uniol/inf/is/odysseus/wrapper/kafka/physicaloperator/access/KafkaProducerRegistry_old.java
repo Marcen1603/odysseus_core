@@ -14,18 +14,18 @@ import kafka.javaapi.producer.Producer;
  * @author Dennis
  *
  */
-public class KafkaProducerRegistry {
+public class KafkaProducerRegistry_old {
 
-	private static KafkaProducerRegistry INSTANCE;
+	private static KafkaProducerRegistry_old INSTANCE;
 
-	Map<KafkaTransportHandler, Producer<String, String>> producers;
+	Map<KafkaTransportHandler_old, Producer<String, String>> producers;
 
-	private KafkaProducerRegistry() {
-		producers = new HashMap<KafkaTransportHandler, Producer<String, String>>();
+	private KafkaProducerRegistry_old() {
+		producers = new HashMap<KafkaTransportHandler_old, Producer<String, String>>();
 	}
 
-	protected Producer<String, String> getSemanticallyEqualProducer(KafkaTransportHandler handler) {
-		for (KafkaTransportHandler h : producers.keySet()) {
+	protected Producer<String, String> getSemanticallyEqualProducer(KafkaTransportHandler_old handler) {
+		for (KafkaTransportHandler_old h : producers.keySet()) {
 			if (handler.isSemanticallyEqualImpl(h)) {
 				LoggerFactory.getLogger(getClass()).info("Found sematically equal kafka producer.");
 				return producers.get(h);
@@ -35,20 +35,20 @@ public class KafkaProducerRegistry {
 		return null;
 	}
 
-	protected void addProducer(KafkaTransportHandler handler, Producer<String, String> producer) {
+	protected void addProducer(KafkaTransportHandler_old handler, Producer<String, String> producer) {
 		producers.put(handler, producer);
 	}
 
-	protected void removeProducer(KafkaTransportHandler handler) {
+	protected void removeProducer(KafkaTransportHandler_old handler) {
 		Producer<String, String> removed = this.producers.remove(handler);
 		if (!producers.containsValue(removed)) {
 			removed.close();
 		}
 	}
 
-	public static KafkaProducerRegistry getInstance() {
+	public static KafkaProducerRegistry_old getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new KafkaProducerRegistry();
+			INSTANCE = new KafkaProducerRegistry_old();
 		}
 		return INSTANCE;
 	}
