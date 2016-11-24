@@ -304,12 +304,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	}
 
 	public void setAttributes(Tuple<T> object) {
+		int attributeLength = object.attributes.length;
 		if (!requiresDeepClone) {
-			int attributeLength = object.attributes.length;
-			this.attributes = new Object[attributeLength];
 			System.arraycopy(object.attributes, 0, this.attributes, 0, attributeLength);
 		} else {
-			this.attributes = cloneAttributes(object.attributes);
+			System.arraycopy(cloneAttributes(object.attributes), 0, this.attributes, 0, attributeLength);
 		}
 
 	}
