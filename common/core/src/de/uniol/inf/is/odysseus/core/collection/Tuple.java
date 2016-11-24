@@ -303,6 +303,17 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		this.valueChanged = true;
 	}
 
+	public void setAttributes(Tuple<T> object) {
+		if (!requiresDeepClone) {
+			int attributeLength = object.attributes.length;
+			this.attributes = new Object[attributeLength];
+			System.arraycopy(object.attributes, 0, this.attributes, 0, attributeLength);
+		} else {
+			this.attributes = cloneAttributes(object.attributes);
+		}
+
+	}
+
 	public final int size() {
 		return this.attributes.length;
 	}
@@ -701,5 +712,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		return ret;
 	}
+
+
 
 }

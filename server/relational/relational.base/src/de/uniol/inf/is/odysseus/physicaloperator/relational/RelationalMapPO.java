@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +42,9 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 			.getLogger(RelationalMapPO.class);
 
 	protected RelationalExpression<T>[] expressions;
-	private final SDFSchema inputSchema;
+	final private SDFSchema inputSchema;
+	final private boolean keepInput;
+	final private int[] restrictList;
 	final private boolean allowNull;
 	final private boolean suppressErrors;
 
@@ -53,7 +55,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
 			boolean allowNullInOutput, boolean evaluateOnPunctuation,
-			boolean suppressErrors) {
+			boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
@@ -65,18 +67,22 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				requiresDeepClone = true;
 			}
 		}
+		this.keepInput = keepInput;
+		this.restrictList = restrictList;
 	}
 
 	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput,
-			boolean evaluateOnPunctuation, boolean suppressErrors) {
+			boolean evaluateOnPunctuation, boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
 		this.suppressErrors = suppressErrors;
+		this.keepInput = keepInput;
+		this.restrictList = restrictList;
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void init(SDFSchema schema, SDFExpression[] expr) {		
+	protected void init(SDFSchema schema, SDFExpression[] expr) {
 		this.expressions = new RelationalExpression[expr.length];
 		for (int i = 0; i < expr.length; ++i) {
 			this.expressions[i] = new RelationalExpression<T>(expr[i]);
@@ -88,9 +94,9 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
-	
-	@Override public boolean deliversStoredElement(int outputPort) { 
-		return false; 
+
+	@Override public boolean deliversStoredElement(int outputPort) {
+		return false;
 	}
 
 	@Override
@@ -100,21 +106,35 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		}
 		boolean nullValueOccured = false;
 		List<Tuple<T>> preProcessResult = preProcess(object);
-		
+
 		Tuple<T> outputVal = Tuple.createEmptyTupleWithMeta(this.getOutputSchema().size(), object, requiresDeepClone);
 
 		synchronized (this.expressions) {
+
+			final int offset;
+			if (keepInput){
+				if (restrictList == null){
+					offset = getInputSchema().size();
+					outputVal.setAttributes(object);
+				}else{
+					offset = restrictList.length;
+					outputVal.setAttributes(object.restrict(restrictList, true));
+				}
+			}else{
+				offset = 0;
+			}
+
 			for (int i = 0; i < this.expressions.length; ++i) {
 
 				try {
 					Object expr = this.expressions[i].evaluate(object, getSessions(), preProcessResult);
 
-					outputVal.setAttribute(i, expr);
+					outputVal.setAttribute(offset+i, expr);
 					if (expr == null) {
 						nullValueOccured = true;
 					}
 
-		
+
 				} catch (Exception e) {
 					nullValueOccured = true;
 					if (!suppressErrors) {
@@ -127,14 +147,14 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 									+ " with expression " + expressions[i], e);
 						}
 					}
-				} 
+				}
 			}
 		}
 		if (!nullValueOccured || (nullValueOccured && allowNull)) {
 			transfer(outputVal);
 		}
 	}
-	
+
 	public List<Tuple<T>> preProcess(Tuple<T> object) {
 		return null;
 	}

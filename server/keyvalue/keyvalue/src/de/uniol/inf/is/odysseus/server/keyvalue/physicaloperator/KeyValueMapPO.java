@@ -56,6 +56,9 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		this.inputSchema = mapAO.getInputSchema();
 		initExpressions(mapAO.getExpressions());
 		this.allowNull = false;
+		if (mapAO.isKeepInput()){
+			throw new RuntimeException("KeepInput is not possible for KeyValueMap. Use $ as expression instead");
+		}
 	}
 
 	@SuppressWarnings({ "unchecked"})
