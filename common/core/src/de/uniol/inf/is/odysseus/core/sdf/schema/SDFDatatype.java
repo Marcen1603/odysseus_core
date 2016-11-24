@@ -121,9 +121,11 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.SHORT);
 	public static final SDFDatatype LIST_TUPLE = new SDFDatatype("List_Tuple",
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.TUPLE);
+	public static final SDFDatatype LIST_LIST = new SDFDatatype("List_List",
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.LIST);
 	public static final SDFDatatype[] LISTS = new SDFDatatype[] { LIST,
 			LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_CHAR,
-			LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN, LIST_SHORT, LIST_TUPLE };
+			LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN, LIST_SHORT, LIST_TUPLE, LIST_LIST };
 
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix",
 			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
