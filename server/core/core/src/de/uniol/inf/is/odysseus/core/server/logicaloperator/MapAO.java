@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -33,6 +34,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 
 /**
  * @author Jonas Jacobi
@@ -49,6 +52,9 @@ public class MapAO extends UnaryLogicalOp {
 	private boolean allowNullValue = true;
 	private boolean suppressErrors = false;
 
+	private boolean keepInput = false;
+	private List<SDFAttribute> removeAttributes;
+
 	public MapAO() {
 		super();
 	}
@@ -60,6 +66,8 @@ public class MapAO extends UnaryLogicalOp {
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 		this.allowNullValue = ao.allowNullValue;
 		this.suppressErrors = ao.suppressErrors;
+		this.keepInput = ao.keepInput;
+		this.removeAttributes = ao.removeAttributes;
 	}
 
 	public List<SDFExpression> getExpressionList() {
@@ -67,8 +75,22 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	private void calcOutputSchema() {
+
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+		if (keepInput){
+			if (removeAttributes == null || removeAttributes.size() == 0){
+				attrs.addAll(getInputSchema().getAttributes());
+			}else{
+				for (SDFAttribute keepAttribute: getInputSchema().getAttributes()){
+					if (!removeAttributes.contains(keepAttribute)){
+						attrs.add(keepAttribute);
+					}
+				}
+			}
+		}
+
+
 		if (namedExpressions != null) {
-			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpression expr : namedExpressions) {
 
 				// TODO: Maybe here should an attribute resolver be used?
@@ -182,9 +204,17 @@ public class MapAO extends UnaryLogicalOp {
 				}
 
 			}
+
+
 			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory
 					.createNewWithAttributes(attrs, getInputSchema()),
 					getInputSchema().getURI(), false);
+			// check if all attributes are distinct
+			Set<String> amNames = s.checkNames();
+			if (amNames.size() > 0){
+				throw new TransformationException("Output schema of "+this.getName()+" contains multiple occurences of attributes "+amNames);
+			}
+
 			setOutputSchema(s);
 		}
 	}
@@ -203,6 +233,25 @@ public class MapAO extends UnaryLogicalOp {
 
 	public List<NamedExpression> getExpressions() {
 		return this.namedExpressions;
+	}
+
+
+	@Parameter(type=BooleanParameter.class, name="keepInput", optional = true, doc="If set to true, all attributes of the input are also part of the output, so there is no need to repeat all attributes.")
+	public void setKeepInput(boolean keepInput) {
+		this.keepInput = keepInput;
+	}
+
+	public boolean isKeepInput() {
+		return keepInput;
+	}
+
+	@Parameter(type=ResolvedSDFAttributeParameter.class, name="removeAttributes", optional=true, isList = true, doc="If keepInput is set to true, you can here provides attributes that should not be part of the output.")
+	public void setRemoveAttributes(List<SDFAttribute> removeAttributes){
+		this.removeAttributes = removeAttributes;
+	}
+
+	public List<SDFAttribute> getRemoveAttributes() {
+		return removeAttributes;
 	}
 
 	/**
@@ -270,6 +319,17 @@ public class MapAO extends UnaryLogicalOp {
 	@Override
 	public MapAO clone() {
 		return new MapAO(this);
+	}
+
+	@Override
+	public boolean isValid() {
+		boolean valid = true;
+		if (removeAttributes != null &&	removeAttributes.size()>0 && !keepInput){
+			addError("When using removeAttributes, keepInput must be set to true!");
+			valid = false;
+		}
+
+		return valid && super.isValid();
 	}
 
 }
