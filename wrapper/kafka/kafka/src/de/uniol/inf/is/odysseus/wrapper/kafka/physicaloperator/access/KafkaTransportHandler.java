@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -16,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import kafka.producer.ProducerConfig;
 
 /**
  * Transport handler to push data to Kafka as well as to consume data from
@@ -49,16 +50,14 @@ public class KafkaTransportHandler extends AbstractTransportHandler implements B
 	private static final String messageTypeKey = "messagetype";
 
 	/**
-	 * The options key for the sample size (how many messages to sample before
-	 * sending them).
+	 * The Kafka config key for the key serializer.
 	 */
-	private static final String sampleSizeKey = "samplesize";
+	public static final String keySerializerKey = "key.serializer";
 
 	/**
-	 * The default sample size (how many messages to sample before sending
-	 * them).
+	 * The Kafka config key for the value serializer.
 	 */
-	private static final int defaultSampleSize = 1;
+	public static final String valueSerializerKey = "value.serializer";
 
 	/**
 	 * The default properties for Kafka producers.
@@ -107,9 +106,19 @@ public class KafkaTransportHandler extends AbstractTransportHandler implements B
 	}
 
 	/**
-	 * The concrete handler for byte[] or String messages.
+	 * The Kafka producer.
 	 */
-	private ITransportHandler delegate;
+	private KafkaProducer<String, ?> producer;
+
+	/**
+	 * The Kafka topic to publish in.
+	 */
+	private String topic;
+
+	/**
+	 * The message type to publish with.
+	 */
+	private MessageType messageType;
 
 	/**
 	 * Default constructor for OSGi service.
@@ -158,23 +167,31 @@ public class KafkaTransportHandler extends AbstractTransportHandler implements B
 
 		// replace default properties with options set by user
 		options.getKeySet().stream().forEach(key -> properties.put(key, options.get(key)));
-		ProducerConfig producerConfig = new ProducerConfig(properties);
 
 		// set topic
-		String topic = options.get(topicKey);
-
-		// set sample size
-		int sampleSize = options.getInt(sampleSizeKey, defaultSampleSize);
+		topic = options.get(topicKey);
 
 		// may throw Nullpointer or IllegalArgument, if message
 		// type is not correct
-		MessageType messageType = MessageType.valueOf(options.get(messageTypeKey).toLowerCase());
+		messageType = MessageType.valueOf(options.get(messageTypeKey).toLowerCase());
 		switch (messageType) {
 		case bytearray:
-			delegate = new ByteArrayKafkaTransportHandler(protocolHandler, options, topic, sampleSize, producerConfig);
+			// delegate = new ByteArrayKafkaTransportHandler(protocolHandler,
+			// options, topic, properties);
+			properties.put(KafkaTransportHandler.keySerializerKey,
+					"org.apache.kafka.common.serialization.ByteArraySerializer");
+			properties.put(KafkaTransportHandler.valueSerializerKey,
+					"org.apache.kafka.common.serialization.ByteArraySerializer");
+			this.producer = new KafkaProducer<String, byte[]>(properties);
 			break;
 		case string:
-			delegate = new StringKafkaTransportHandler(protocolHandler, options, topic, sampleSize, producerConfig);
+			// delegate = new StringKafkaTransportHandler(protocolHandler,
+			// options, topic, properties);
+			properties.put(KafkaTransportHandler.keySerializerKey,
+					"org.apache.kafka.common.serialization.StringSerializer");
+			properties.put(KafkaTransportHandler.valueSerializerKey,
+					"org.apache.kafka.common.serialization.StringSerializer");
+			this.producer = new KafkaProducer<String, String>(properties);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported message type!");
@@ -185,18 +202,10 @@ public class KafkaTransportHandler extends AbstractTransportHandler implements B
 			log.debug("+ Kafka Transport Handler Properties +");
 			log.debug("++++++++++++++++++++++++++++++++++++++");
 			log.debug("Topic: {}", topic);
-			log.debug("Sample Size: {}", sampleSize);
 			log.debug("Message Type: {}", messageType);
 			log.debug("Kafka Producer Properties:");
 			properties.keySet().stream().forEach(key -> log.debug("{}: {}", key, properties.get(key)));
 		}
-	}
-
-	/**
-	 * Creates either a string producer or a byte array producer.
-	 */
-	protected void createProducer(final ProducerConfig config) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -211,32 +220,28 @@ public class KafkaTransportHandler extends AbstractTransportHandler implements B
 
 	@Override
 	public void processOutOpen() throws IOException {
-		delegate.processOutOpen();
+		// Nothing to do.
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		delegate.processOutClose();
+		producer.close();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void send(byte[] message) throws IOException {
-		delegate.send(message);
-	}
-
-	@Override
-	public void processInOpen() throws IOException {
-		delegate.processInOpen();
-	}
-
-	@Override
-	public void processInClose() throws IOException {
-		delegate.processInClose();
-	}
-
-	@Override
-	public InputStream getInputStream() {
-		return delegate.getInputStream();
+		switch (messageType) {
+		case bytearray:
+			((KafkaProducer<String, byte[]>) producer).send(new ProducerRecord<String, byte[]>(topic, message));
+			break;
+		case string:
+			((KafkaProducer<String, String>) producer)
+					.send(new ProducerRecord<String, String>(topic, new String(message)));
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported message type!");
+		}
 	}
 
 	@Override
@@ -245,8 +250,25 @@ public class KafkaTransportHandler extends AbstractTransportHandler implements B
 	}
 
 	@Override
+	public void processInOpen() throws IOException {
+		// TODO To be implemented
+	}
+
+	@Override
+	public void processInClose() throws IOException {
+		// TODO To be implemented
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		// TODO To be implemented
+		return null;
+	}
+
+	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-		return delegate.isSemanticallyEqual(other);
+		// TODO To be implemented
+		return false;
 	}
 
 }
