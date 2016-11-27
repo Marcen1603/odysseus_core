@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.wrapper.kafka.physicaloperator.access;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import kafka.javaapi.producer.Producer;
 import kafka.producer.ProducerConfig;
 
 /**
@@ -27,12 +26,12 @@ import kafka.producer.ProducerConfig;
  * @version 0.10.1.0
  * @see <a href="https://kafka.apache.org">kafka.apache.org</a>
  */
-public class KafkaTransportHandler extends AbstractTransportHandler {
+public class KafkaTransportHandler extends AbstractTransportHandler implements BundleActivator {
 
 	/**
 	 * The logger for this class
 	 */
-	private static final Logger log = LoggerFactory.getLogger("KafkaTransportHandler");
+	public static final Logger log = LoggerFactory.getLogger("KafkaTransportHandler");
 
 	/**
 	 * The name of the transport handler for usage in a query language.
@@ -50,31 +49,54 @@ public class KafkaTransportHandler extends AbstractTransportHandler {
 	private static final String messageTypeKey = "messagetype";
 
 	/**
+	 * The options key for the sample size (how many messages to sample before
+	 * sending them).
+	 */
+	private static final String sampleSizeKey = "samplesize";
+
+	/**
+	 * The default sample size (how many messages to sample before sending
+	 * them).
+	 */
+	private static final int defaultSampleSize = 1;
+
+	/**
 	 * The default properties for Kafka producers.
 	 */
-	private static final Properties defaultProducerProperties = initProperties("producer.properties");
+	private static Properties defaultProducerProperties;
 
 	/**
 	 * The default properties for Kafka consumers.
 	 */
-	private static final Properties defaultConsumerProperties = initProperties("consumer.properties");
+	private static Properties defaultConsumerProperties;
 
 	/**
 	 * Loads properties from a file.
 	 *
-	 * @param filename
-	 *            Name of properties file relative to bundle root.
+	 * @param resource
+	 *            URL of properties file relative to bundle root.
 	 * @return The loaded properties or empty properties, if something went
 	 *         wrong.
 	 */
-	private static Properties initProperties(String filename) {
+	private static Properties initProperties(URL resource) {
 		Properties properties = new Properties();
 		try {
-			properties.load(new FileInputStream(new File(filename)));
+			properties.load(resource.openStream());
 		} catch (IOException e) {
-			log.error("Could not load Kafka properties from file ' {}'!", filename);
+			log.error("Could not load Kafka properties from file ' {}'!", resource);
 		}
 		return properties;
+	}
+
+	@Override
+	public void start(BundleContext context) throws Exception {
+		defaultProducerProperties = initProperties(context.getBundle().getResource("producer.properties"));
+		defaultConsumerProperties = initProperties(context.getBundle().getResource("consumer.properties"));
+	}
+
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		// Nothing to do
 	}
 
 	/**
@@ -85,14 +107,9 @@ public class KafkaTransportHandler extends AbstractTransportHandler {
 	}
 
 	/**
-	 * The Kafka topic to publish in.
+	 * The concrete handler for byte[] or String messages.
 	 */
-	private String topic;
-
-	/**
-	 * The Kafka producer, if this transport handler is used to send data.
-	 */
-	private Optional<Producer<String, ?>> producer = Optional.empty();
+	private ITransportHandler delegate;
 
 	/**
 	 * Default constructor for OSGi service.
@@ -110,18 +127,18 @@ public class KafkaTransportHandler extends AbstractTransportHandler {
 	 *            The options set by the user. Used to exchange default settings
 	 *            for Kafka.
 	 */
-	private KafkaTransportHandler(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
+	protected KafkaTransportHandler(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
 		super(protocolHandler, options);
-		init(options);
+		init(protocolHandler, options);
 	}
 
 	/**
-	 * Initializes the properties for Kafka producer/consumer, topic and message
-	 * type.
+	 * Initializes topic and message type.
 	 *
+	 * @param protocolHandler
+	 *            The protocol handler to use.
 	 * @param options
-	 *            The options set by the user. Used to exchange default settings
-	 *            for Kafka.
+	 *            The options set by the user.
 	 * @throws IllegalArgumentException
 	 *             if options does not contain {@link #topicKey} or
 	 *             {@link #messageTypeKey}. If value of {@link #messageTypeKey}
@@ -129,7 +146,8 @@ public class KafkaTransportHandler extends AbstractTransportHandler {
 	 * @throws NullPointerException
 	 *             if options is null.
 	 */
-	private void init(final OptionMap options) throws IllegalArgumentException, NullPointerException {
+	private void init(final IProtocolHandler<?> protocolHandler, final OptionMap options)
+			throws IllegalArgumentException, NullPointerException {
 		Objects.requireNonNull(options);
 		options.checkRequiredException(topicKey, messageTypeKey);
 
@@ -139,30 +157,46 @@ public class KafkaTransportHandler extends AbstractTransportHandler {
 		properties.putAll(defaultConsumerProperties);
 
 		// replace default properties with options set by user
-		options.getKeySet().stream().filter(key -> properties.containsKey(key))
-				.forEach(key -> properties.put(key, options.get(key)));
+		options.getKeySet().stream().forEach(key -> properties.put(key, options.get(key)));
+		ProducerConfig producerConfig = new ProducerConfig(properties);
 
 		// set topic
-		topic = options.get(topicKey);
+		String topic = options.get(topicKey);
 
-		// create producer: may throw Nullpointer or IllegalArgument, if message
+		// set sample size
+		int sampleSize = options.getInt(sampleSizeKey, defaultSampleSize);
+
+		// may throw Nullpointer or IllegalArgument, if message
 		// type is not correct
-		producer = Optional.of(createProducer(new ProducerConfig(properties),
-				MessageType.valueOf(options.get(messageTypeKey).toLowerCase())));
+		MessageType messageType = MessageType.valueOf(options.get(messageTypeKey).toLowerCase());
+		switch (messageType) {
+		case bytearray:
+			delegate = new ByteArrayKafkaTransportHandler(protocolHandler, options, topic, sampleSize, producerConfig);
+			break;
+		case string:
+			delegate = new StringKafkaTransportHandler(protocolHandler, options, topic, sampleSize, producerConfig);
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported message type!");
+		}
+
+		if (log.isDebugEnabled()) {
+			log.debug("++++++++++++++++++++++++++++++++++++++");
+			log.debug("+ Kafka Transport Handler Properties +");
+			log.debug("++++++++++++++++++++++++++++++++++++++");
+			log.debug("Topic: {}", topic);
+			log.debug("Sample Size: {}", sampleSize);
+			log.debug("Message Type: {}", messageType);
+			log.debug("Kafka Producer Properties:");
+			properties.keySet().stream().forEach(key -> log.debug("{}: {}", key, properties.get(key)));
+		}
 	}
 
 	/**
 	 * Creates either a string producer or a byte array producer.
 	 */
-	private static Producer<String, ?> createProducer(final ProducerConfig config, MessageType messageType) {
-		switch (messageType) {
-		case bytearray:
-			return new Producer<String, byte[]>(config);
-		case string:
-			return new Producer<String, String>(config);
-		default:
-			throw new IllegalArgumentException("Unknown message type!");
-		}
+	protected void createProducer(final ProducerConfig config) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -177,38 +211,32 @@ public class KafkaTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processOutOpen() throws IOException {
-		// Nothing to do
+		delegate.processOutOpen();
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		if (producer.isPresent()) {
-			producer.get().close();
-		}
+		delegate.processOutClose();
 	}
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		// TODO Auto-generated method stub
-
+		delegate.send(message);
 	}
 
 	@Override
 	public void processInOpen() throws IOException {
-		// TODO To be implemented
-
+		delegate.processInOpen();
 	}
 
 	@Override
 	public void processInClose() throws IOException {
-		// TODO To be implemented
-
+		delegate.processInClose();
 	}
 
 	@Override
 	public InputStream getInputStream() {
-		// TODO To be implemented
-		return null;
+		return delegate.getInputStream();
 	}
 
 	@Override
@@ -218,8 +246,7 @@ public class KafkaTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-		// TODO To be implemented
-		return false;
+		return delegate.isSemanticallyEqual(other);
 	}
 
 }
