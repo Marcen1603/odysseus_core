@@ -28,10 +28,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.evaluation.plot.MeasurementFileUtil;
 import de.uniol.inf.is.odysseus.rcp.evaluation.processing.logicaloperator.MeasureThroughputAO;
+import de.uniol.inf.is.odysseus.systemload.SystemLoad;
 import de.uniol.inf.is.odysseus.systemload.logicaloperator.SystemLoadAO;
 
 public class EvaluationTransformationHandler implements IPreTransformationHandler {
@@ -63,13 +65,9 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 
 	}
 
-	private static MapAO createMapOperatorForSimpleMetaAttribute(String attribute_str, ILogicalOperator source) {
+	private static MapAO createMapOperatorForSimpleMetaAttribute(SDFAttribute attribute, ILogicalOperator source) {
 		MapAO map = new MapAO();
 		ArrayList<NamedExpression> expressions = new ArrayList<>();
-		SDFAttribute attribute = source.getOutputSchema().findAttribute(attribute_str);
-		if (attribute == null){
-			throw new IllegalArgumentException("Cannot find attribute "+attribute_str+" in operator "+source+" with output schema "+source.getOutputSchema());
-		}
 		expressions.add(new NamedExpression(
 				attribute.getAttributeName(), new SDFExpression(attribute.getAttributeName(),
 						new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance()),
@@ -90,7 +88,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				ILogicalOperator root = subscription.getTarget();
 				CalcLatencyAO latency = new CalcLatencyAO();
 				latency.subscribeToSource(root, 0, 0, root.getOutputSchema());
-				MapAO latencyOnly = createMapOperatorForSimpleMetaAttribute("Latency.latency", latency);
+				MapAO latencyOnly = createMapOperatorForSimpleMetaAttribute(Latency.schema.get(0).getAttribute(3), latency);
 				CSVFileSink fileAO = new CSVFileSink();
 				fileAO.setWriteMetaData(false);
 				fileAO.setNumberFormatter("##################################");
@@ -165,7 +163,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 				}
 				SystemLoadAO systemload = new SystemLoadAO();
 				systemload.subscribeToSource(root, 0, 0, root.getOutputSchema());
-				MapAO sysloadOnly = createMapOperatorForSimpleMetaAttribute("SystemLoad.EntryList", systemload);
+				MapAO sysloadOnly = createMapOperatorForSimpleMetaAttribute(SystemLoad.schema.get(0).getAttribute(0), systemload);
 
 				MapAO cpuOnly = createMapOperatorForSystemLoadAttribute("cpu", 1, sysloadOnly);
 				CSVFileSink fileCPU = new CSVFileSink();
