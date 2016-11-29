@@ -67,6 +67,9 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 		MapAO map = new MapAO();
 		ArrayList<NamedExpression> expressions = new ArrayList<>();
 		SDFAttribute attribute = source.getOutputSchema().findAttribute(attribute_str);
+		if (attribute == null){
+			throw new IllegalArgumentException("Cannot find attribute "+attribute_str+" in operator "+source+" with output schema "+source.getOutputSchema());
+		}
 		expressions.add(new NamedExpression(
 				attribute.getAttributeName(), new SDFExpression(attribute.getAttributeName(),
 						new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance()),
