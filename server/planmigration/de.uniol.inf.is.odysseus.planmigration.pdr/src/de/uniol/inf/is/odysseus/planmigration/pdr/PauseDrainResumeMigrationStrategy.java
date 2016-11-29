@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.planmigration.gpt;
+package de.uniol.inf.is.odysseus.planmigration.pdr;
 
 import de.uniol.inf.is.odysseus.planmigration.AbstractPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
@@ -10,9 +10,9 @@ import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
  * @author Dennis Nowak
  *
  */
-public class GeneralizedParallelTracksMigrationStrategy extends AbstractPlanMigrationStrategy {
+public class PauseDrainResumeMigrationStrategy extends AbstractPlanMigrationStrategy {
 	
-	private static final String NAME = "GeneralizedParallelTracksMigrationStrategy";
+	private static final String NAME = "PauseDrainResumeMigrationStrategy";
 
 	@Override
 	public String getName() {
@@ -21,7 +21,7 @@ public class GeneralizedParallelTracksMigrationStrategy extends AbstractPlanMigr
 
 	@Override
 	public IPlanMigrationStrategy getNewInstance() {
-		return new GeneralizedParallelTracksMigrationStrategy();
+		return new PauseDrainResumeMigrationStrategy();
 	}
 
 }

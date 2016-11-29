@@ -10,5 +10,7 @@ package de.uniol.inf.is.odysseus.planmigration;
 public interface IPlanMigrationStrategy {
 	
 	public String getName();
+	
+	public IPlanMigrationStrategy getNewInstance();
 
 }
