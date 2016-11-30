@@ -9,11 +9,11 @@ public class KvStoreReadFunction extends AbstractFunction<Object> {
 
 	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
 		{SDFDatatype.STRING}};
-	
+
 	public KvStoreReadFunction(){
 		super("kvread",1,accTypes, SDFDatatype.OBJECT, false);
 	}
-	
+
 	@Override
 	public Object getValue() {
 		String key = getInputValue(0);
