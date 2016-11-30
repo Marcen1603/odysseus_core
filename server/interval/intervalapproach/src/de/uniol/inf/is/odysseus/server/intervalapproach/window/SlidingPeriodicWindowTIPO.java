@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,8 +39,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 /**
  * This is the physical sliding delta window po. This window is used to change
  * the granularity of the time stamps. THIS IS THE LATENCY OPTIMIZED NON BLOCKING VERSION
- * 
- * 
+ *
+ *
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>, Marco
  *         Grawunder
  */
@@ -58,14 +58,14 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 		this.windowSlide = logical.getBaseTimeUnit().convert(logical.getWindowSlide().getTime(), logical.getWindowSlide().getUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
-	
+
 	 public SlidingPeriodicWindowTIPO(TimeUnit baseTimeUnit,TimeValueItem windowSize, TimeValueItem windowSlide, SDFSchema inputSchema) {
 		super(WindowType.TIME,baseTimeUnit,windowSize, null,windowSlide,false, null,inputSchema);
 		this.windowSlide = baseTimeUnit.convert(windowSlide.getTime(), windowSlide.getUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
 
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -89,10 +89,10 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 			transfer(object);
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// FIXME: Implement me
+		sendPunctuation(punctuation);
 	}
 
 }
