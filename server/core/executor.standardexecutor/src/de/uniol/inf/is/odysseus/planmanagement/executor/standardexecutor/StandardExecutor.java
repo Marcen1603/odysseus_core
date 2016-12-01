@@ -337,7 +337,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				ParameterQueryName queryName = parameters.get(ParameterQueryName.class);
 
 				if (queryName != null && queryName.getValue() != null && queryName.getValue().toString().length() > 0) {
-					if (getExecutionPlan().getQueryByName(queryName.getValue()) != null) {
+					if (executionPlan.getQueryByName(queryName.getValue()) != null) {
 						throw new PlanManagementException(
 								"Query with name " + queryName.getValue() + " already defined.");
 					}
@@ -491,7 +491,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		try {
 			// optimize queries and set resulting execution plan
 			LOG.debug("Starting optimization and transformation for " + newQueries.size() + " logical queries...");
-			optimizedQueries = getOptimizer().optimize(this, getExecutionPlan(), newQueries, conf,
+			optimizedQueries = getOptimizer().optimize(this, executionPlan, newQueries, conf,
 					getDataDictionary(session));
 			LOG.debug("Optimization and transformation for  " + newQueries.size() + " logical queries done.");
 			LOG.debug("Changing execution plan for optimized queries...");
@@ -560,7 +560,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			}
 			// add the queries by themselves instead in bulk, the rcp-view
 			// doesn't update properly otherwise
-			getExecutionPlan().addQuery(query);
+			executionPlan.addQuery(query);
 			firePlanModificationEvent(
 					new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, query));
 		}
@@ -750,7 +750,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public Integer addIdenticalQuery(Integer idOfRunningQuery, ILogicalQuery q, ISession user, String confName) {
-		IPhysicalQuery oldQuery = this.getExecutionPlan().getQueryById(idOfRunningQuery);
+		IPhysicalQuery oldQuery = this.executionPlan.getQueryById(idOfRunningQuery);
 		List<IPhysicalOperator> oldOps = new ArrayList<IPhysicalOperator>();
 		oldOps.addAll(oldQuery.getAllOperators());
 		IPhysicalQuery newQuery = new PhysicalQuery(oldOps);
@@ -762,7 +762,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		queries.add(newQuery);
 		LOG.debug("Adding identical Query");
 		getDataDictionary(user).addQuery(newQuery.getLogicalQuery(), newQuery.getSession(), confName);
-		getExecutionPlan().addQuery(newQuery);
+		executionPlan.addQuery(newQuery);
 		firePlanModificationEvent(
 				new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, newQuery));
 		this.executionPlanLock.unlock();
@@ -1501,7 +1501,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public void setScheduler(String scheduler, String schedulerStrategy, ISession session) {
 		// TODO: Check access rights
 		try {
-			getSchedulerManager().setActiveScheduler(scheduler, schedulerStrategy, this.getExecutionPlan());
+			getSchedulerManager().setActiveScheduler(scheduler, schedulerStrategy, executionPlan);
 		} catch (SchedulerException e) {
 			LOG.error("Error while using schedulerManager. Setting Scheduler. " + e.getMessage());
 		}
@@ -1624,7 +1624,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public Collection<Integer> getLogicalQueryIds(ISession session) {
 		Collection<Integer> result = new ArrayList<Integer>();
-		for (IPhysicalQuery pq : getExecutionPlan().getQueries()) {
+		for (IPhysicalQuery pq : executionPlan.getQueries()) {
 			// TODO: Show queries of other users...
 			if (pq.getSession().getUser() == session.getUser()) {
 				result.add(pq.getID());

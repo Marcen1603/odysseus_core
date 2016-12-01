@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 
@@ -33,8 +35,8 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 	private TreeViewer treeViewer;
 	private Action addConnectionAction;
 	private Action removeConnectionAction;
-	
-	
+
+
 	@Override
 	public void setFocus() {
 
@@ -106,7 +108,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 
 					if (executor instanceof IServerExecutor) {
 						serverExecutor = (IServerExecutor) executor;
-						Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan().getQueries();
+						Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession()).getQueries();
 
 						// for (IPhysicalQuery iPhysicalQuery : queries) {
 						// List<IPhysicalOperator> ops =
@@ -180,13 +182,13 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 						// dlg..setInitialSelections(dirtyEditors);
 						dlg.setTitle("Select Map Stream Connections");
 						dlg.open();
-						
+
 						if(dlg.getReturnCode() == Window.OK){
 							Object[] sel = dlg.getResult();
 							for (Object object : sel) {
 								IPhysicalQuery op = (IPhysicalQuery) object;
 								editor.addConnection(op);
-	
+
 							}
 						}
 					}

@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.OperatorCollector;
 import de.uniol.inf.is.odysseus.recovery.checkpointing.CheckpointManagerRegistry;
@@ -28,12 +29,15 @@ import de.uniol.inf.is.odysseus.recovery.checkpointing.ICheckpointListener;
  * The processing image recovery component backs up operator and queue
  * (subscription) states if a checkpoint is reached, and recovers them if
  * needed.
- * 
+ *
  * @author Michael Brand
  *
  */
 public class ProcessingImageRecoveryComponent
 		implements IRecoveryComponent, IPlanModificationListener, ICheckpointListener {
+
+
+	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	/**
 	 * The version of this class for serialization.
@@ -79,7 +83,7 @@ public class ProcessingImageRecoveryComponent
 	 * The ids and creator sessions of all queries backup is activated for.
 	 */
 	private static final Map<Integer, ISession> queryIdsForBackup = new HashMap<>();
-	
+
 	@Override
 	public void initialize(Properties config) {
 		// Nothing to do.
@@ -109,7 +113,7 @@ public class ProcessingImageRecoveryComponent
 	public void onCheckpointReached() throws Exception {
 		for (int queryId : queryIdsForBackup.keySet()) {
 			LOG.info("Backing up processing image of query {} ...", queryId);
-			IPhysicalQuery physQuery = executor.getExecutionPlan().getQueryById(queryId);
+			IPhysicalQuery physQuery = executor.getExecutionPlan(superUser).getQueryById(queryId);
 			ProcessingImageStore.storeOperators(OperatorCollector.collect(physQuery.getRoots()), queryId);
 			ProcessingImageStore.storeQueues(OperatorCollector.collectSubcriptions(physQuery.getRoots()), queryId);
 			LOG.info("... done.");

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2015 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,8 +39,8 @@ import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.KeyValueTICompareSin
 import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.TICompareSink;
 
 /**
- * 
- * @author Christian Kuka 
+ *
+ * @author Christian Kuka
  *
  * @param <T>
  * @param <S>
@@ -49,7 +49,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
     protected static Logger LOG = LoggerFactory.getLogger(AbstractQueryExpectedOutputTestComponent.class);
 
 	public AbstractQueryExpectedOutputTestComponent() {
-		super(true);		
+		super(true);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -57,7 +57,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 	protected StatusCode prepareQueries(Collection<Integer> ids, S set) {
 		try {
 			for (Integer queryId : ids) {
-				IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryId);
+				IPhysicalQuery physicalQuery = executor.getExecutionPlan(session).getQueryById(queryId);
 				if (physicalQuery.getState() == QueryState.RUNNING){
 					executor.stopQuery(queryId, session);
 					LOG.warn("Query manually stopped! Test component queries are not allowed to start!");
@@ -66,7 +66,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 				for (IPhysicalOperator operator : physicalQuery.getRoots()) {
 					// TODO: this assumes same output for all sinks -> maybe
 					// there are multiple sinks with different outputs
-					List<Pair<String, String>> expected = set.getExpectedOutput();	
+					List<Pair<String, String>> expected = set.getExpectedOutput();
 					String dataHandler = set.getDataHandler();
 					AbstractCompareSink sink;
 					if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT") || dataHandler.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
@@ -89,8 +89,8 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
         catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return StatusCode.ERROR_EXCEPTION_DURING_TEST;
-        } 
+        }
 		return StatusCode.OK;
 
-	}	
+	}
 }

@@ -8,12 +8,14 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.recovery.checkpointing.CheckpointUnit;
-import de.uniol.inf.is.odysseus.recovery.checkpointing.ICheckpointListener;
-import de.uniol.inf.is.odysseus.recovery.checkpointing.ICheckpointManager;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.recovery.checkpointing.CheckpointUnit;
+import de.uniol.inf.is.odysseus.recovery.checkpointing.ICheckpointListener;
+import de.uniol.inf.is.odysseus.recovery.checkpointing.ICheckpointManager;
 
 /**
  * Entity to manage checkpoints. After a checkpoint manager is configured
@@ -25,11 +27,14 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * This implementation uses the system time to determine the period between
  * checkpoints, so checkpoint units to use must fulfill
  * {@link CheckpointUnit#isTimeUnit()}.
- * 
+ *
  * @author Michael Brand
  *
  */
 public class SystemTimeCheckpointManager implements ICheckpointManager {
+
+	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+
 
 	/**
 	 * The version of this class for serialization.
@@ -157,7 +162,7 @@ public class SystemTimeCheckpointManager implements ICheckpointManager {
 	public void start() {
 		Set<IPhysicalQuery> physicalQueries = new HashSet<>();
 		for (Integer queryId : this.logicalQueries) {
-			physicalQueries.add(executor.getExecutionPlan().getQueryById(queryId.intValue()));
+			physicalQueries.add(executor.getExecutionPlan(superUser).getQueryById(queryId.intValue()));
 		}
 		long period = this.period * this.unit.getConversionFactor();
 		this.timer = new Timer(this.getClass().getSimpleName(), true);
@@ -218,7 +223,7 @@ public class SystemTimeCheckpointManager implements ICheckpointManager {
 
 	/**
 	 * Suspends or resumes physical queries.
-	 * 
+	 *
 	 * @param queries
 	 *            The queries to suspend or resume.
 	 * @param suspend

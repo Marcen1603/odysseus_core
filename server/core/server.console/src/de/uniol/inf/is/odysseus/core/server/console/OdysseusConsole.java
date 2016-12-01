@@ -505,7 +505,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _schedule(CommandInterpreter ci) {
 		addCommand();
 		try {
-			this.executor.startExecution();
+			this.executor.startExecution(currentUser);
 		} catch (PlanManagementException e) {
 			ci.println(e.getMessage());
 			ci.printStackTrace(e);
@@ -516,7 +516,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _stopschedule(CommandInterpreter ci) {
 		addCommand();
 		try {
-			this.executor.stopExecution();
+			this.executor.stopExecution(currentUser);
 		} catch (PlanManagementException e) {
 			ci.println(e.getMessage());
 			ci.printStackTrace(e);
@@ -558,7 +558,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	@Help(description = "dump all physical operators of the current execution plan")
 	public void _dumpe(CommandInterpreter ci) {
 		addCommand();
-		IExecutionPlan plan = this.executor.getExecutionPlan();
+		IExecutionPlan plan = this.executor.getExecutionPlan(currentUser);
 
 		int i = 1;
 		// ci.println("Registered source:");
@@ -593,7 +593,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			StringBuffer buff = new StringBuffer();
 			ci.println("Physical plan of all roots: ");
 			int count = 1;
-			for (IPhysicalOperator root : this.executor.getExecutionPlan().getRoots()) {
+			for (IPhysicalOperator root : this.executor.getExecutionPlan(currentUser).getRoots()) {
 				buff = new StringBuffer();
 				if (root.isSink()) {
 					support.dumpPlan((ISink) root, depth, buff);
@@ -623,7 +623,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			}
 
 			try {
-				IPhysicalQuery query = this.executor.getExecutionPlan().getQueryById(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan(currentUser).getQueryById(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -655,7 +655,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				IPhysicalQuery query = this.executor.getExecutionPlan().getQueryById(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan(currentUser).getQueryById(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -803,7 +803,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	/**
 	 * This method is used by _addQuery and _addFromFile
-	 * 
+	 *
 	 * @param args
 	 *            The arguments that have been passed to the above methods by
 	 *            the CommandInterpreter.
@@ -873,9 +873,9 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		DateFormat dateFormat = DateFormat.getDateTimeInstance();
 		try {
 			ci.println("Current registered queries (ID | NAME | STATE | START DATE/TIME | LAST QUERY STATE CHANGE):");
-			for (IPhysicalQuery query : this.executor.getExecutionPlan().getQueries()) {
+			for (IPhysicalQuery query : this.executor.getExecutionPlan(currentUser).getQueries()) {
 				ci.println(query.getID() + " | " + query.getName() + " | " + query.getState().name() +
-						" | " + dateFormat.format(new Date(query.getQueryStartTS())) + 
+						" | " + dateFormat.format(new Date(query.getQueryStartTS())) +
 						" | " + dateFormat.format(new Date(query.getLastQueryStateChangeTS())));
 			}
 		} catch (PlanManagementException e) {
@@ -1333,7 +1333,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	/**
 	 * Reads a file from the current working directory and executes each line as
 	 * if it comes from the console
-	 * 
+	 *
 	 * @param ci
 	 *            the CommandInterpreter of the console
 	 */

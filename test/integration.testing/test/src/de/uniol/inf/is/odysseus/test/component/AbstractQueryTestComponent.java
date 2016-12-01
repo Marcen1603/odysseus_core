@@ -62,7 +62,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 					for (int id : ids) {
 						SimplePlanPrinter<IPhysicalOperator> planPrinter = new SimplePlanPrinter<IPhysicalOperator>(
 								true);
-						for (IPhysicalOperator op : executor.getExecutionPlan().getQueryById(id).getRoots()) {
+						for (IPhysicalOperator op : executor.getExecutionPlan(session).getQueryById(id).getRoots()) {
 							String output = planPrinter.createString(op);
 							LOG.debug(output);
 						}

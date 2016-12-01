@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
@@ -124,7 +125,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn
 				.getServerExecutor();
 		if (executor != null) {
-			Collection<IPhysicalQuery> queries = executor.getExecutionPlan()
+			Collection<IPhysicalQuery> queries = executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
 					.getQueries();
 			for (IPhysicalQuery query : queries) {
 				view.addData(create(query));
@@ -147,7 +148,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 				.getServerExecutor();
 		executor.removePlanModificationListener(this);
 
-		Collection<IPhysicalQuery> queries = executor.getExecutionPlan()
+		Collection<IPhysicalQuery> queries = executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
 				.getQueries();
 		for (IPhysicalQuery query : queries) {
 			view.addData(create(query));

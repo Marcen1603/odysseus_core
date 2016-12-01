@@ -29,12 +29,12 @@ public class RetrieveQueryIDsFunction extends AbstractQueryIDsFunction {
 	public List<Integer> getValue() {
 
 		IServerExecutor exec = ExecutorBinder.getExecutor();
-		IExecutionPlan plan = exec.getExecutionPlan();
+		IExecutionPlan plan = exec.getExecutionPlan(getSessions().get(0));
 		Collection<IPhysicalQuery> queries = plan.getQueries();
 		String predicateString = (String) getInputValue(0);
 		return getValue(queries, predicateString);
 	}
-	
+
 
 
 }

@@ -16,6 +16,8 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
 import de.uniol.inf.is.odysseus.net.communication.IOdysseusNodeCommunicator;
@@ -25,6 +27,8 @@ import de.uniol.inf.is.odysseus.net.resource.IOdysseusNodeResourceUsageManager;
 import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
 
 public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeResourceUsageManager, IOdysseusNodeCommunicatorListener {
+
+	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeResourceUsageManager.class);
 
@@ -50,7 +54,7 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 	private final Map<IOdysseusNode, Long> timestampMap = Maps.newHashMap();
 	private final UsageStatisticCollector usageCollector = new UsageStatisticCollector();
 	private final Map<IOdysseusNode, Long> askingNodeMap = Maps.newHashMap();
-	
+
 	private long lastUsageUpdateTimestamp;
 
 	// called by OSGi-DS
@@ -113,12 +117,12 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 			Long askTS = askingNodeMap.get(odysseusNode);
 			if (askTS != null && System.currentTimeMillis() - askTS < MAX_ASK_WAITING_TIME) {
 				LOG.debug("Already asking...");
-				
+
 				IResourceUsage usage = null;
 				synchronized (usageMap) {
 					usage = usageMap.get(odysseusNode);
 				}
-				
+
 				if (usage == null) {
 					return FUTURE_SERVICE.submit(EMPTY_RESOURCE_USAGE);
 				}
@@ -148,9 +152,9 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 					synchronized (askingNodeMap) {
 						askingNodeMap.put(odysseusNode, System.currentTimeMillis());
 					}
-					
+
 					LOG.debug("ASKING NODE {}", odysseusNode);
-					
+
 					nodeCommunicator.send(odysseusNode, new AskUsageMessage(forceNetwork));
 				} else {
 					LOG.debug("Use cached resource usage");
@@ -203,7 +207,7 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 	public void receivedMessage(IOdysseusNodeCommunicator communicator, IOdysseusNode senderNode, IMessage message) {
 		if (message instanceof AskUsageMessage) {
 			LOG.debug("Getting local resource usage for remote node");
-			
+
 			AskUsageMessage msg = (AskUsageMessage)message;
 			IResourceUsage localUsage = getLocalResourceUsage(msg.isForce());
 			AnswerUsageMessage answer = new AnswerUsageMessage(localUsage);
@@ -232,7 +236,7 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 	public IResourceUsage getLocalResourceUsage() {
 		return getLocalResourceUsage(false);
 	}
-	
+
 	private IResourceUsage getLocalResourceUsage(boolean force ) {
 		synchronized (usageCollector) {
 
@@ -240,7 +244,7 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 				lastUsageUpdateTimestamp = System.currentTimeMillis();
 				updateLocalUsage();
 			}
-		
+
 			return usageCollector.getCurrentResourceUsage();
 		}
 	}
@@ -262,7 +266,7 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 				return;
 			}
 
-			for (IPhysicalQuery physicalQuery : serverExecutor.getExecutionPlan().getQueries()) {
+			for (IPhysicalQuery physicalQuery : serverExecutor.getExecutionPlan(superUser).getQueries()) {
 				if (physicalQuery.isOpened()) {
 					runningQueries++;
 				} else {

@@ -567,7 +567,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		case PLAN_REOPTIMIZE:
 		case QUERY_REOPTIMIZE:
 			LOG.info("Refresh Scheduling");
-			getSchedulerManager().refreshScheduling(this.getExecutionPlan());
+			getSchedulerManager().refreshScheduling(executionPlan);
 			fireGenericEvent(IUpdateEventListener.SCHEDULING);
 			break;
 		case QUERY_ADDED:
@@ -766,7 +766,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * startExecution()
 	 */
 	@Override
-	public void startExecution() throws SchedulerException {
+	public void startExecution(ISession session) throws SchedulerException {
+		// TODO: Is scheduling manager
+
 		if (isRunning()) {
 			LOG.trace("Scheduler already running.");
 			return;
@@ -791,7 +793,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * stopExecution()
 	 */
 	@Override
-	public void stopExecution() throws SchedulerException {
+	public void stopExecution(ISession session) throws SchedulerException {
+		// TODO: SCHEDULING RIGHTS
 		if (!isRunning()) {
 			LOG.trace("Scheduler not running.");
 			return;
@@ -836,7 +839,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * getExecutionPlan()
 	 */
 	@Override
-	public IExecutionPlan getExecutionPlan() {
+	public IExecutionPlan getExecutionPlan(ISession session) {
+		// TODO: CHECK ACCESS RIGHTS
 		return this.executionPlan;
 	}
 
