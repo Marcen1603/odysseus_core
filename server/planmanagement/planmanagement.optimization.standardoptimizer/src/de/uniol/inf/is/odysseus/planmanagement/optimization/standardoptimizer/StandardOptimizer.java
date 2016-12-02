@@ -79,7 +79,6 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 			// Add new queries to the execution plan and optimize new plan
 			currentExecPlan.addQueries(optimizedQueries, superUser);
-			currentExecPlan.updateLeafSources(superUser);
 		}
 		IElementCloningUpdater equ = getElementCloningUpdater();
 		if (equ != null){

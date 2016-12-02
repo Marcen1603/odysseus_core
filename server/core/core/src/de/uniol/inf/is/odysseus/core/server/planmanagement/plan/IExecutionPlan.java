@@ -33,7 +33,7 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 
 	boolean isEmpty();
 
-	void updateLeafSources(ISession session);
+	//void updateLeafSources(ISession session);
 
 	List<IIterableSource<?>> getLeafSources(ISession session);
 

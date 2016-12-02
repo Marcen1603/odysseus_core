@@ -116,15 +116,8 @@ public class ExecutionPlan implements IExecutionPlan {
 		return this.queries == null || this.queries.size() == 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IExecutionPlan
-	 * #setSources(java.util.List)
-	 */
-	@Override
-	public void updateLeafSources(ISession session) {
+
+	private void updateLeafSources() {
 		this.open = false;
 		this.leafSources.clear();
 		for (IPhysicalQuery query : this.queries.values()) {
@@ -148,6 +141,10 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	@Override
 	public synchronized boolean addQuery(IPhysicalQuery query, ISession session) {
+		return addQuery(query, session, true);
+	}
+
+	private synchronized boolean addQuery(IPhysicalQuery query, ISession session, boolean updateLeafSources) {
 		if (this.queries.containsKey(query.getID())) {
 			_logger.error("Query id {} already set!", query.getID());
 		}
@@ -155,14 +152,19 @@ public class ExecutionPlan implements IExecutionPlan {
 		if (query.getName() != null) {
 			this.namedQueries.put(query.getName(), query);
 		}
+		if (updateLeafSources){
+			updateLeafSources();
+		}
 		return true;
 	}
+
 
 	@Override
 	public void addQueries(List<IPhysicalQuery> allQueries, ISession session) {
 		for (IPhysicalQuery q : allQueries) {
-			addQuery(q, session);
+			addQuery(q, session, false);
 		}
+		updateLeafSources();
 	}
 
 	/*
@@ -177,7 +179,7 @@ public class ExecutionPlan implements IExecutionPlan {
 		if (removed != null) {
 			namedQueries.remove(removed.getName());
 		}
-		updateLeafSources(session);
+		updateLeafSources();
 		return removed;
 	}
 
