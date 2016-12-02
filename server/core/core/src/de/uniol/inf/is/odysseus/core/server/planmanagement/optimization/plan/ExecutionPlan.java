@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.AbstractPlanReoptimizeRule;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeListener;
@@ -63,8 +64,6 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * List of all leaf sources that need to be scheduled periodically.
 	 */
 	final List<IIterableSource<?>> leafSources;
-
-	///private Set<IPhysicalOperator> roots = null;
 
 	/**
 	 * Map of all registered queries.
@@ -116,7 +115,6 @@ public class ExecutionPlan implements IExecutionPlan {
 		return this.queries == null || this.queries.size() == 0;
 	}
 
-
 	private void updateLeafSources() {
 		this.open = false;
 		this.leafSources.clear();
@@ -152,12 +150,11 @@ public class ExecutionPlan implements IExecutionPlan {
 		if (query.getName() != null) {
 			this.namedQueries.put(query.getName(), query);
 		}
-		if (updateLeafSources){
+		if (updateLeafSources) {
 			updateLeafSources();
 		}
 		return true;
 	}
-
 
 	@Override
 	public void addQueries(List<IPhysicalQuery> allQueries, ISession session) {
@@ -175,12 +172,15 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public synchronized IPhysicalQuery removeQuery(int queryID, ISession session) {
-		IPhysicalQuery removed = this.queries.remove(queryID);
-		if (removed != null) {
-			namedQueries.remove(removed.getName());
+		IPhysicalQuery toRemove = this.queries.remove(queryID);
+
+		ExecutorPermission.validateUserRight(toRemove, session, ExecutorPermission.REMOVE_QUERY);
+
+		if (toRemove != null) {
+			namedQueries.remove(toRemove.getName());
 		}
 		updateLeafSources();
-		return removed;
+		return toRemove;
 	}
 
 	/*
@@ -192,12 +192,16 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public synchronized IPhysicalQuery getQueryById(int queryID, ISession session) {
-		return this.queries.get(queryID);
+		IPhysicalQuery toReturn = this.queries.get(queryID);
+		ExecutorPermission.validateUserRight(toReturn, session, ExecutorPermission.GET_QUERY);
+		return toReturn;
 	}
 
 	@Override
 	public IPhysicalQuery getQueryByName(Resource name, ISession session) {
-		return this.namedQueries.get(name);
+		IPhysicalQuery toReturn = this.namedQueries.get(name);
+		ExecutorPermission.validateUserRight(toReturn, session, ExecutorPermission.GET_QUERY);
+		return toReturn;
 	}
 
 	/*
@@ -209,7 +213,18 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public synchronized Collection<IPhysicalQuery> getQueries(ISession session) {
-		return Collections.unmodifiableCollection(this.queries.values());
+		// User can have right to get all queries
+		if (ExecutorPermission.hasUserRight(session, ExecutorPermission.GET_ALL_QUERIES)) {
+			return Collections.unmodifiableCollection(this.queries.values());
+		}
+		// else return only queries, where user is owner or has access right
+		List<IPhysicalQuery> queries = new ArrayList<>();
+		for (IPhysicalQuery q : this.queries.values()) {
+			if (ExecutorPermission.hasUserRight(session, ExecutorPermission.GET_QUERY)) {
+				queries.add(q);
+			}
+		}
+		return queries;
 	}
 
 	/*
