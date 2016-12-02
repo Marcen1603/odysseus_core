@@ -551,7 +551,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			}
 		}
 
-		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan(currentUser).getQueries();
+		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan(currentUser).getQueries(currentUser);
 		Collection<IPhysicalOperator> foundOperators = Lists.newArrayList();
 		for (IPhysicalQuery physicalQuery : physicalQueries) {
 			if (queryID == -1 || physicalQuery.getID() == queryID) {
@@ -576,7 +576,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 	}
 
 	private static Optional<IPhysicalOperator> findOperatorByHash(int operatorHash) {
-		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan(currentUser).getQueries();
+		Collection<IPhysicalQuery> physicalQueries = executor.getExecutionPlan(currentUser).getQueries(currentUser);
 		for (IPhysicalQuery physicalQuery : physicalQueries) {
 			List<IPhysicalOperator> physicalOperators = physicalQuery.getPhysicalChilds();
 			for (IPhysicalOperator physicalOperator : physicalOperators) {
@@ -603,7 +603,7 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 			ci.println("usage: dumpPlan <queryid>");
 		}
 
-		IPhysicalQuery query = executor.getExecutionPlan(currentUser).getQueryById(queryID);
+		IPhysicalQuery query = executor.getExecutionPlan(currentUser).getQueryById(queryID, currentUser);
 		if (query != null) {
 			for (int i = 0; i < query.getRoots().size(); i++) {
 				IPhysicalOperator curRoot = query.getRoots().get(i);

@@ -162,7 +162,7 @@ public class SystemTimeCheckpointManager implements ICheckpointManager {
 	public void start() {
 		Set<IPhysicalQuery> physicalQueries = new HashSet<>();
 		for (Integer queryId : this.logicalQueries) {
-			physicalQueries.add(executor.getExecutionPlan(superUser).getQueryById(queryId.intValue()));
+			physicalQueries.add(executor.getExecutionPlan(superUser).getQueryById(queryId.intValue(), superUser));
 		}
 		long period = this.period * this.unit.getConversionFactor();
 		this.timer = new Timer(this.getClass().getSimpleName(), true);

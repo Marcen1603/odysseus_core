@@ -570,7 +570,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		ci.println("");
 		i = 1;
 		ci.println("Registered Physical Queries:");
-		for (IPhysicalQuery p : plan.getQueries()) {
+		for (IPhysicalQuery p : plan.getQueries(currentUser)) {
 			ci.println(i++ + ": ");
 			ci.println(p.toString());
 		}
@@ -593,7 +593,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			StringBuffer buff = new StringBuffer();
 			ci.println("Physical plan of all roots: ");
 			int count = 1;
-			for (IPhysicalOperator root : this.executor.getExecutionPlan(currentUser).getRoots()) {
+			for (IPhysicalOperator root : this.executor.getExecutionPlan(currentUser).getRoots(currentUser)) {
 				buff = new StringBuffer();
 				if (root.isSink()) {
 					support.dumpPlan((ISink) root, depth, buff);
@@ -623,7 +623,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			}
 
 			try {
-				IPhysicalQuery query = this.executor.getExecutionPlan(currentUser).getQueryById(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan(currentUser).getQueryById(qnum, currentUser);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -655,7 +655,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				IPhysicalQuery query = this.executor.getExecutionPlan(currentUser).getQueryById(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan(currentUser).getQueryById(qnum, currentUser);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -873,7 +873,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		DateFormat dateFormat = DateFormat.getDateTimeInstance();
 		try {
 			ci.println("Current registered queries (ID | NAME | STATE | START DATE/TIME | LAST QUERY STATE CHANGE):");
-			for (IPhysicalQuery query : this.executor.getExecutionPlan(currentUser).getQueries()) {
+			for (IPhysicalQuery query : this.executor.getExecutionPlan(currentUser).getQueries(currentUser)) {
 				ci.println(query.getID() + " | " + query.getName() + " | " + query.getState().name() +
 						" | " + dateFormat.format(new Date(query.getQueryStartTS())) +
 						" | " + dateFormat.format(new Date(query.getLastQueryStateChangeTS())));

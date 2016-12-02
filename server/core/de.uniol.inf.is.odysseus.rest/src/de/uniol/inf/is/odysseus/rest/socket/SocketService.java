@@ -329,7 +329,7 @@ public class SocketService extends Observable {
 	private SocketInfo getConnectionInformationWithPorts(ISession session, String queryName, int minPort, int maxPort,
 			IPhysicalOperator operator, int operatorOutputPort, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser())).getID();
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session).getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, operatorOutputPort,
 				withMetaData);
 	}
@@ -337,7 +337,7 @@ public class SocketService extends Observable {
 	private Map<Integer, SocketInfo> getConnectionInformationWithPorts(ISession session, String queryName, int minPort,
 			int maxPort, IPhysicalOperator operator, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser())).getID();
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session).getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, withMetaData);
 	}
 
@@ -476,7 +476,7 @@ public class SocketService extends Observable {
 
 	private List<IPhysicalOperator> getRootOperators(int queryId ,ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		IPhysicalQuery query = plan.getQueryById(queryId);
+		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		return query.getRoots();
 	}
 
@@ -501,7 +501,7 @@ public class SocketService extends Observable {
 
 	private List<IPhysicalOperator> getRootOperators(String queryName, ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		IPhysicalQuery query = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()));
+		IPhysicalQuery query = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()),session);
 		return query.getRoots();
 	}
 
@@ -523,7 +523,7 @@ public class SocketService extends Observable {
 	private SocketSinkPO addSocketSink(int queryId, int minPort, int maxPort, IPhysicalOperator root, int rootPort,
 			String token, boolean withMetaData, ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		IPhysicalQuery query = plan.getQueryById(queryId);
+		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		return addSocketSink(query, minPort, maxPort, root, rootPort, token, withMetaData);
 	}
 

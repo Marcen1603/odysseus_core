@@ -30,7 +30,7 @@ public class RetrieveQueryIDsFunction extends AbstractQueryIDsFunction {
 
 		IServerExecutor exec = ExecutorBinder.getExecutor();
 		IExecutionPlan plan = exec.getExecutionPlan(getSessions().get(0));
-		Collection<IPhysicalQuery> queries = plan.getQueries();
+		Collection<IPhysicalQuery> queries = plan.getQueries(getSessions().get(0));
 		String predicateString = (String) getInputValue(0);
 		return getValue(queries, predicateString);
 	}

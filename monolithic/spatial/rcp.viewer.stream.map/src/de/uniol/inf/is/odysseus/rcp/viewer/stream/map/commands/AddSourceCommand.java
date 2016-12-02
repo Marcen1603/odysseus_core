@@ -40,7 +40,7 @@ public class AddSourceCommand extends AbstractHandler implements IHandler {
 
 		if (executor instanceof IServerExecutor) {
 			serverExecutor = (IServerExecutor) executor;
-			Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan(user).getQueries();
+			Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan(user).getQueries(user);
 
 //			for (IPhysicalQuery iPhysicalQuery : queries) {
 //				List<IPhysicalOperator> ops = serverExecutor.getPhysicalRoots(iPhysicalQuery.getID());

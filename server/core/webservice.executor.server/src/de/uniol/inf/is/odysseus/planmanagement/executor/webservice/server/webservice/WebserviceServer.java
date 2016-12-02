@@ -276,7 +276,7 @@ public class WebserviceServer {
 		StringListResponse response = new StringListResponse(true);
 
 		ISession session = loginWithSecurityToken(securityToken);
-		for (IPhysicalQuery q : ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueries()) {
+		for (IPhysicalQuery q : ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueries(session)) {
 			if (q.getLogicalQuery() != null) {
 				response.addResponseValue(q.getLogicalQuery().getQueryText());
 			}
@@ -285,12 +285,12 @@ public class WebserviceServer {
 
 	}
 
-	public QueryState getQueryState(int queryID) {
-		return ExecutorServiceBinding.getExecutor().getQueryState(queryID);
+	public QueryState getQueryState(int queryID, ISession user) {
+		return ExecutorServiceBinding.getExecutor().getQueryState(queryID, user);
 	}
 
-	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs) {
-		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs));
+	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs, List<ISession> sessions) {
+		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs, sessions));
 	}
 
 	protected ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException {
@@ -521,7 +521,7 @@ public class WebserviceServer {
 		ISession session = loginWithSecurityToken(securityToken);
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
 		int idCounter = 0;
-		for (IPhysicalOperator op : plan.getRoots()) {
+		for (IPhysicalOperator op : plan.getRoots(session)) {
 			GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();
 			visitor.setIdCounter(idCounter);
 			@SuppressWarnings("rawtypes")
@@ -568,7 +568,7 @@ public class WebserviceServer {
 		ISession user = loginWithSecurityToken(securityToken);
 
 		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan(user)
-				.getQueryById(Integer.valueOf(id));
+				.getQueryById(Integer.valueOf(id), user);
 		LogicalQuery logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor()
 				.getLogicalQueryById(Integer.valueOf(id), user);
 		if (queryById == null || logicalQuery == null) {
@@ -585,7 +585,7 @@ public class WebserviceServer {
 	public QueryResponse getLogicalQueryByName(@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "name") String name) throws InvalidUserDataException {
 		ISession session = loginWithSecurityToken(securityToken);
-		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryByName(Resource.specialCreateResource(name, session.getUser()));
+		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryByName(Resource.specialCreateResource(name, session.getUser()), session);
 		List<String> roots = new ArrayList<String>();
 		for (IPhysicalOperator operator : queryById.getRoots()) {
 			roots.add(operator.getName());
@@ -712,7 +712,7 @@ public class WebserviceServer {
 	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port, boolean nullValues, boolean ssl,
 			boolean sslClientAuthentication, boolean withMetadata, ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		IPhysicalQuery query = plan.getQueryById(queryId);
+		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		List<IPhysicalOperator> roots = query.getRoots();
 		final IPhysicalOperator root = roots.get(rootPort);
 		final ISource<?> rootAsSource;
@@ -830,7 +830,7 @@ public class WebserviceServer {
 		ISession session = loginWithSecurityToken(securityToken);
 		SDFSchema schema;
 		try {
-			IPhysicalOperator operator = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryById(queryId)
+			IPhysicalOperator operator = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryById(queryId, session)
 					.getRoots().get(port);
 			schema = operator.getOutputSchema();
 		} catch (Exception e) {

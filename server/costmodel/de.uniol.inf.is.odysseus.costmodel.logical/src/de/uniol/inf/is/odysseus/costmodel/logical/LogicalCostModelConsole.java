@@ -77,7 +77,7 @@ public class LogicalCostModelConsole implements CommandProvider {
 			return;
 		}
 
-		IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan(superUser).getQueryById(queryID);
+		IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		if( physicalQuery != null ) {
 			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 

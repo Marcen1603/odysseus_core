@@ -19,6 +19,6 @@ abstract public class AbstractQueryInformationFunction<T> extends AbstractFuncti
 
 	protected IPhysicalQuery getQuery(int queryId){
 		IServerExecutor exec = ExecutorBinder.getExecutor();
-		return exec.getExecutionPlan(this.getSessions().get(0)).getQueryById(queryId);
+		return exec.getExecutionPlan(this.getSessions().get(0)).getQueryById(queryId, getSessions().get(0));
 	}
 }

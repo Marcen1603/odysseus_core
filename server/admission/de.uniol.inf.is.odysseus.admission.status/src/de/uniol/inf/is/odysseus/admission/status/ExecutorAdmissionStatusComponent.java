@@ -16,7 +16,7 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	public int getQueryCount() {
-		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries().size();
+		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser).size();
 	}
 
 	public int getRunningQueryCount() {
@@ -56,7 +56,7 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 
 		Collection<Integer> selected = Lists.newArrayList();
 
-		for( IPhysicalQuery query : AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries()) {
+		for( IPhysicalQuery query : AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser)) {
 			if( selector.isSelected(query)) {
 				selected.add(query.getID());
 			}
@@ -91,11 +91,11 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 	}
 
 	private static IPhysicalQuery getQuery(int queryID) {
-		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID);
+		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
 	}
 
 	private static Collection<Integer> getQueryIDsOfState(QueryState state) {
-		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries();
+		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
 		Collection<Integer> runningQueryIDs = Lists.newArrayList();
 		for( IPhysicalQuery query : queries ) {
 			if( query.getState() == state ) {
@@ -107,7 +107,7 @@ public class ExecutorAdmissionStatusComponent implements IAdmissionStatusCompone
 	}
 
 	private boolean hasQueriesOfState(QueryState state) {
-		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries();
+		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
 		for( IPhysicalQuery query : queries ) {
 			if( query.getState() == state ) {
 				return true;

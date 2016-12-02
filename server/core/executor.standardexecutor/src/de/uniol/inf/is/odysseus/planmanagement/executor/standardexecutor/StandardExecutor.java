@@ -337,7 +337,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				ParameterQueryName queryName = parameters.get(ParameterQueryName.class);
 
 				if (queryName != null && queryName.getValue() != null && queryName.getValue().toString().length() > 0) {
-					if (executionPlan.getQueryByName(queryName.getValue()) != null) {
+					if (executionPlan.getQueryByName(queryName.getValue(), user) != null) {
 						throw new PlanManagementException(
 								"Query with name " + queryName.getValue() + " already defined.");
 					}
@@ -474,7 +474,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				Collection<Integer> result = cmd.getCreatedQueryIds();
 				if (result != null) {
 					for (Integer qId : result) {
-						optimizedQueries.add(executionPlan.getQueryById(qId));
+						optimizedQueries.add(executionPlan.getQueryById(qId, cmd.getCaller()));
 					}
 				}
 			}
@@ -560,7 +560,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			}
 			// add the queries by themselves instead in bulk, the rcp-view
 			// doesn't update properly otherwise
-			executionPlan.addQuery(query);
+			executionPlan.addQuery(query, session);
 			firePlanModificationEvent(
 					new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, query));
 		}
@@ -750,7 +750,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public Integer addIdenticalQuery(Integer idOfRunningQuery, ILogicalQuery q, ISession user, String confName) {
-		IPhysicalQuery oldQuery = this.executionPlan.getQueryById(idOfRunningQuery);
+		IPhysicalQuery oldQuery = this.executionPlan.getQueryById(idOfRunningQuery, user);
 		List<IPhysicalOperator> oldOps = new ArrayList<IPhysicalOperator>();
 		oldOps.addAll(oldQuery.getAllOperators());
 		IPhysicalQuery newQuery = new PhysicalQuery(oldOps);
@@ -762,7 +762,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		queries.add(newQuery);
 		LOG.debug("Adding identical Query");
 		getDataDictionary(user).addQuery(newQuery.getLogicalQuery(), newQuery.getSession(), confName);
-		executionPlan.addQuery(newQuery);
+		executionPlan.addQuery(newQuery, user);
 		firePlanModificationEvent(
 				new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, newQuery));
 		this.executionPlanLock.unlock();
@@ -949,7 +949,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public void removeQuery(int queryID, ISession caller) throws PlanManagementException {
 		LOG.info("Start remove a query (ID: " + queryID + ").");
-		IPhysicalQuery queryToRemove = this.executionPlan.getQueryById(queryID);
+		IPhysicalQuery queryToRemove = this.executionPlan.getQueryById(queryID, caller);
 		if (queryToRemove != null) {
 			removeQuery(caller, queryToRemove);
 		} else {
@@ -960,7 +960,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public void removeQuery(Resource queryName, ISession caller) throws PlanManagementException {
 		LOG.info("Start remove a query (Name: " + queryName + ").");
-		IPhysicalQuery queryToRemove = this.executionPlan.getQueryByName(queryName);
+		IPhysicalQuery queryToRemove = this.executionPlan.getQueryByName(queryName, caller);
 		if (queryToRemove != null) {
 			removeQuery(caller, queryToRemove);
 		} else {
@@ -983,7 +983,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE, queryToRemove);
 				LOG.info("Removing Query " + queryToRemove.getID());
-				this.executionPlan.removeQuery(queryToRemove.getID());
+				this.executionPlan.removeQuery(queryToRemove.getID(), caller);
 				LOG.debug("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.removeOwnerschip();
 				// A query can now be without owner, but connected to a source
@@ -1054,7 +1054,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		boolean success = true;
 		try {
 			executionPlanLock.lock();
-			List<IPhysicalQuery> queries = new ArrayList<>(executionPlan.getQueries());
+			List<IPhysicalQuery> queries = new ArrayList<>(executionPlan.getQueries(caller));
 			for (IPhysicalQuery q : queries) {
 				try {
 					removeQuery(caller, q);
@@ -1080,7 +1080,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 */
 	@Override
 	public void startQuery(int queryID, ISession caller) {
-		IPhysicalQuery queryToStart = this.executionPlan.getQueryById(queryID);
+		IPhysicalQuery queryToStart = this.executionPlan.getQueryById(queryID, caller);
 		if (queryToStart != null) {
 			startQuery(caller, queryToStart);
 		} else {
@@ -1090,7 +1090,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public void startQuery(Resource queryName, ISession caller) {
-		IPhysicalQuery queryToStart = this.executionPlan.getQueryByName(queryName);
+		IPhysicalQuery queryToStart = this.executionPlan.getQueryByName(queryName, caller);
 		if (queryToStart != null) {
 			startQuery(caller, queryToStart);
 		} else {
@@ -1132,7 +1132,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public Collection<Integer> startAllClosedQueries(ISession user) {
 		List<Integer> started = new LinkedList<Integer>();
-		for (IPhysicalQuery q : executionPlan.getQueries()) {
+		for (IPhysicalQuery q : executionPlan.getQueries(user)) {
 			if (!q.isOpened()) {
 				startQuery(q.getID(), user);
 				started.add(q.getID());
@@ -1143,7 +1143,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public void stopAllQueries(ISession user) {
-		for (IPhysicalQuery q : executionPlan.getQueries()) {
+		for (IPhysicalQuery q : executionPlan.getQueries(user)) {
 			if (!q.isOpened()) {
 				stopQuery(q.getID(), user);
 			}
@@ -1192,7 +1192,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		LOG.info("Stopping query (ID: " + queryID + ")....");
 
-		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
+		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID, caller);
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
 		stopQuery(queryToStop);
 	}
@@ -1202,16 +1202,16 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		LOG.info("Stopping query (ID: " + queryID + ")....");
 
-		IPhysicalQuery queryToStop = this.executionPlan.getQueryByName(queryID);
+		IPhysicalQuery queryToStop = this.executionPlan.getQueryByName(queryID, caller);
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
 		stopQuery(queryToStop);
 	}
 
-	// for internal stopping
-	void stopQuery(int queryID) {
-		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
-		stopQuery(queryToStop);
-	}
+//	// for internal stopping
+//	void stopQuery(int queryID, ISession caller) {
+//		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID, caller);
+//		stopQuery(queryToStop);
+//	}
 
 	private void stopQuery(IPhysicalQuery queryToStop) {
 		synchronized (queryToStop) {
@@ -1264,7 +1264,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public void suspendQuery(int queryID, ISession caller) throws PlanManagementException {
 		LOG.info("Suspending query (ID: " + queryID + ")....");
 
-		IPhysicalQuery queryToSuspend = this.executionPlan.getQueryById(queryID);
+		IPhysicalQuery queryToSuspend = this.executionPlan.getQueryById(queryID, caller);
 		suspendQuery(caller, queryToSuspend);
 	}
 
@@ -1272,7 +1272,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public void suspendQuery(Resource queryID, ISession caller) throws PlanManagementException {
 		LOG.info("Suspending query (ID: " + queryID + ")....");
 
-		IPhysicalQuery queryToSuspend = this.executionPlan.getQueryByName(queryID);
+		IPhysicalQuery queryToSuspend = this.executionPlan.getQueryByName(queryID, caller);
 		suspendQuery(caller, queryToSuspend);
 	}
 
@@ -1300,7 +1300,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public void resumeQuery(int queryID, ISession caller) throws PlanManagementException {
 		LOG.info("Resuming query (ID: " + queryID + ")....");
 
-		IPhysicalQuery queryToResume = this.executionPlan.getQueryById(queryID);
+		IPhysicalQuery queryToResume = this.executionPlan.getQueryById(queryID, caller);
 		resumeQuery(caller, queryToResume);
 	}
 
@@ -1308,7 +1308,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public void resumeQuery(Resource queryID, ISession caller) throws PlanManagementException {
 		LOG.info("Resuming query (ID: " + queryID + ")....");
 
-		IPhysicalQuery queryToResume = this.executionPlan.getQueryByName(queryID);
+		IPhysicalQuery queryToResume = this.executionPlan.getQueryByName(queryID, caller);
 		resumeQuery(caller, queryToResume);
 	}
 
@@ -1336,7 +1336,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public void partialQuery(int queryID, int sheddingFactor, ISession caller) throws PlanManagementException {
 		LOG.info("Set query (ID: " + queryID + ") to patial....");
 
-		IPhysicalQuery queryToPartial = this.executionPlan.getQueryById(queryID);
+		IPhysicalQuery queryToPartial = this.executionPlan.getQueryById(queryID, caller);
 		partialQuery(sheddingFactor, caller, queryToPartial);
 	}
 
@@ -1344,7 +1344,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public void partialQuery(Resource queryID, int sheddingFactor, ISession caller) throws PlanManagementException {
 		LOG.info("Set query (ID: " + queryID + ") to patial....");
 
-		IPhysicalQuery queryToPartial = this.executionPlan.getQueryByName(queryID);
+		IPhysicalQuery queryToPartial = this.executionPlan.getQueryByName(queryID, caller);
 		partialQuery(sheddingFactor, caller, queryToPartial);
 	}
 
@@ -1624,7 +1624,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public Collection<Integer> getLogicalQueryIds(ISession session) {
 		Collection<Integer> result = new ArrayList<Integer>();
-		for (IPhysicalQuery pq : executionPlan.getQueries()) {
+		for (IPhysicalQuery pq : executionPlan.getQueries(session)) {
 			// TODO: Show queries of other users...
 			if (pq.getSession().getUser() == session.getUser()) {
 				result.add(pq.getID());

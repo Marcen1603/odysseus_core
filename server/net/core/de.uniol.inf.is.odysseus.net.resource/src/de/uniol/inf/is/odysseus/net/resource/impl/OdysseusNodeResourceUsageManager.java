@@ -266,7 +266,7 @@ public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeReso
 				return;
 			}
 
-			for (IPhysicalQuery physicalQuery : serverExecutor.getExecutionPlan(superUser).getQueries()) {
+			for (IPhysicalQuery physicalQuery : serverExecutor.getExecutionPlan(superUser).getQueries(superUser)) {
 				if (physicalQuery.isOpened()) {
 					runningQueries++;
 				} else {

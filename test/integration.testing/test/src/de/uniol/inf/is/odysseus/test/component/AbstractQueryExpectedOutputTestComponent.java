@@ -57,7 +57,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 	protected StatusCode prepareQueries(Collection<Integer> ids, S set) {
 		try {
 			for (Integer queryId : ids) {
-				IPhysicalQuery physicalQuery = executor.getExecutionPlan(session).getQueryById(queryId);
+				IPhysicalQuery physicalQuery = executor.getExecutionPlan(session).getQueryById(queryId, session);
 				if (physicalQuery.getState() == QueryState.RUNNING){
 					executor.stopQuery(queryId, session);
 					LOG.warn("Query manually stopped! Test component queries are not allowed to start!");

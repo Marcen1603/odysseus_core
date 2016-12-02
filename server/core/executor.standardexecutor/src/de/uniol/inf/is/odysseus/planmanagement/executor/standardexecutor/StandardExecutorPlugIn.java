@@ -22,9 +22,9 @@ public class StandardExecutorPlugIn implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		StandardExecutor executor = StandardExecutor.getInstance();
 
-		Collection<IPhysicalQuery> queries = executor.getExecutionPlan(superUser).getQueries();
+		Collection<IPhysicalQuery> queries = executor.getExecutionPlan(superUser).getQueries(superUser);
 		for( IPhysicalQuery query : queries ) {
-			executor.stopQuery(query.getID());
+			executor.stopQuery(query.getID(), superUser);
 		}
 	}
 }

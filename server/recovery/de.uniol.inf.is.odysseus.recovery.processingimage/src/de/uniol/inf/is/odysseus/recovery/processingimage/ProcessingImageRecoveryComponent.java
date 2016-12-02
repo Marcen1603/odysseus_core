@@ -113,7 +113,7 @@ public class ProcessingImageRecoveryComponent
 	public void onCheckpointReached() throws Exception {
 		for (int queryId : queryIdsForBackup.keySet()) {
 			LOG.info("Backing up processing image of query {} ...", queryId);
-			IPhysicalQuery physQuery = executor.getExecutionPlan(superUser).getQueryById(queryId);
+			IPhysicalQuery physQuery = executor.getExecutionPlan(superUser).getQueryById(queryId, superUser);
 			ProcessingImageStore.storeOperators(OperatorCollector.collect(physQuery.getRoots()), queryId);
 			ProcessingImageStore.storeQueues(OperatorCollector.collectSubcriptions(physQuery.getRoots()), queryId);
 			LOG.info("... done.");

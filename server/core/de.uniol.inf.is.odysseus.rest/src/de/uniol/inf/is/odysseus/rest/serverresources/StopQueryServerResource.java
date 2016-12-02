@@ -20,11 +20,10 @@ public class StopQueryServerResource extends AbstractSessionServerResource  {
 		ISession session = this.loginWithToken(genericSessionRequestDTO.getToken());
 		int queryId = genericSessionRequestDTO.getValue();
 		ExecutorServiceBinding.getExecutor().stopQuery(queryId,session);
-		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId) == QueryState.INACTIVE;
+		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId, session) == QueryState.INACTIVE;
 		return new GenericResponseDTO<Boolean>(result);
 	}
 
-	
+
 
 }
-	

@@ -74,7 +74,7 @@ public class PhysicalCostModelConsole implements CommandProvider {
 			return;
 		}
 
-		IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan(currentUser).getQueryById(queryID);
+		IPhysicalQuery physicalQuery = serverExecutor.getExecutionPlan(currentUser).getQueryById(queryID, currentUser);
 		if( physicalQuery != null ) {
 			List<IPhysicalOperator> operators = physicalQuery.getPhysicalChilds();
 			IPhysicalCost physicalCost = physicalCostModel.estimateCost(operators);

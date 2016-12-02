@@ -20,10 +20,10 @@ public class RemoveQueryServerResource extends AbstractSessionServerResource  {
 		ISession session = this.loginWithToken(genericSessionRequestDTO.getToken());
 		int queryId = genericSessionRequestDTO.getValue();
 		ExecutorServiceBinding.getExecutor().removeQuery(queryId,session);
-		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId) == QueryState.UNDEF;
+		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId, session) == QueryState.UNDEF;
 		return new GenericResponseDTO<Boolean>(result);
 	}
 
-	
+
 
 }

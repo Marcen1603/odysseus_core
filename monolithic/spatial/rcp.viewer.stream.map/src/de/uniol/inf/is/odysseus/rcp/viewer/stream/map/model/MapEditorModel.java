@@ -162,7 +162,7 @@ public class MapEditorModel extends ModelObject {
 					boolean exists = false;
 					// No multiple definition of a Stream.
 					for (IPhysicalQuery phyQuery : executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
-							.getQueries()) {
+							.getQueries(OdysseusRCPPlugIn.getActiveSession())) {
 						if (phyQuery.getLogicalQuery().getQueryText()
 								.equals(query.text)) {
 							exists = true;
@@ -173,7 +173,7 @@ public class MapEditorModel extends ModelObject {
 					}
 
 					for (IPhysicalQuery phyQuery : executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
-							.getQueries()) {
+							.getQueries(OdysseusRCPPlugIn.getActiveSession())) {
 						if (phyQuery.getLogicalQuery().getQueryText()
 								.equals(query.text)) {
 							List<IPhysicalOperator> ops = phyQuery.getRoots();

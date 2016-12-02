@@ -126,7 +126,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 				.getServerExecutor();
 		if (executor != null) {
 			Collection<IPhysicalQuery> queries = executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
-					.getQueries();
+					.getQueries(OdysseusRCPPlugIn.getActiveSession());
 			for (IPhysicalQuery query : queries) {
 				view.addData(create(query));
 			}
@@ -149,7 +149,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 		executor.removePlanModificationListener(this);
 
 		Collection<IPhysicalQuery> queries = executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
-				.getQueries();
+				.getQueries(OdysseusRCPPlugIn.getActiveSession());
 		for (IPhysicalQuery query : queries) {
 			view.addData(create(query));
 		}

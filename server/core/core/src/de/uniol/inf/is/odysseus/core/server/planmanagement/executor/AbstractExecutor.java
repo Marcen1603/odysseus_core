@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -847,7 +848,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
 		// TODO: Check access rights
-		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
+		IPhysicalQuery pq = executionPlan.getQueryById(queryID, session);
 		if (pq != null) {
 			return pq.getRoots();
 		} else {
@@ -858,7 +859,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public ILogicalQuery getLogicalQueryById(int id, ISession session) {
 		// TODO: Check access rights
-		IPhysicalQuery pq = executionPlan.getQueryById(id);
+		IPhysicalQuery pq = executionPlan.getQueryById(id, session);
 		if (pq.getSession().getUser() == session.getUser()) {
 			ILogicalQuery lq = null;
 			if (pq != null) {
@@ -874,7 +875,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public ILogicalQuery getLogicalQueryByName(Resource name, ISession session) {
 		// TODO: Check access rights
-		IPhysicalQuery pq = executionPlan.getQueryByName(name);
+		IPhysicalQuery pq = executionPlan.getQueryByName(name, session);
 		ILogicalQuery lq = null;
 		if (pq != null) {
 			lq = pq.getLogicalQuery();
@@ -882,27 +883,22 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return lq;
 	}
 
-	@Override
-	public QueryState getQueryState(int queryID, ISession session) {
-		// For local processing, currently no session is needed
-		return getQueryState(queryID);
-	}
 
 	@Override
-	public QueryState getQueryState(int queryID) {
-		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
+	public QueryState getQueryState(int queryID, ISession session) {
+		IPhysicalQuery pq = executionPlan.getQueryById(queryID, session);
 		return getQueryState(pq);
 	}
 
 	@Override
 	public QueryState getQueryState(String queryName, ISession session) {
 		// For local processing, currently no session is needed
-		return getQueryState(Resource.specialCreateResource(queryName, session.getUser()));
+		return getQueryState(Resource.specialCreateResource(queryName, session.getUser()), session);
 	}
 
 	@Override
-	public QueryState getQueryState(Resource queryID) {
-		IPhysicalQuery pq = executionPlan.getQueryByName(queryID);
+	public QueryState getQueryState(Resource queryID, ISession session) {
+		IPhysicalQuery pq = executionPlan.getQueryByName(queryID, session);
 		return getQueryState(pq);
 	}
 
@@ -914,17 +910,13 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 	}
 
-	@Override
-	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session) {
-		// For local processing, currently no session is needed
-		return getQueryStates(id);
-	}
 
 	@Override
-	public List<QueryState> getQueryStates(List<Integer> id) {
+	public List<QueryState> getQueryStates(List<Integer> id,  List<ISession> session) {
 		List<QueryState> ret = new ArrayList<QueryState>();
+		Iterator<ISession> sessionIter = session.iterator();
 		for (Integer qid : id) {
-			ret.add(getQueryState(qid));
+			ret.add(getQueryState(qid, sessionIter.next()));
 		}
 		return ret;
 	}

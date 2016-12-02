@@ -88,7 +88,7 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>
 	}
 
 	private void tryExecuteCommand(String command, Integer queryID) {
-		IPhysicalQuery physicalQuery = executor.getExecutionPlan(superUser).getQueryById(queryID);
+		IPhysicalQuery physicalQuery = executor.getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		if (physicalQuery == null) {
 			LOG.error("Query id {} does not exist", queryID);
 			return;

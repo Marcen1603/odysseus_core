@@ -32,7 +32,7 @@ public abstract class CpuTimeUpdateThread extends Thread {
 	@Override
 	public void run() {
 		while( isRunning ) {
-			Collection<IPhysicalQuery> physicalQueries = Lists.newArrayList(executor.getExecutionPlan(superUser).getQueries());
+			Collection<IPhysicalQuery> physicalQueries = Lists.newArrayList(executor.getExecutionPlan(superUser).getQueries(superUser));
 			for( IPhysicalQuery physicalQuery : physicalQueries ) {
 				for( IPhysicalOperator physicalOperator : physicalQuery.getPhysicalChilds() ) {
 					IMonitoringData<Double> cpuTime = physicalOperator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);

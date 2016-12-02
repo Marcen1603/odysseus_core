@@ -108,7 +108,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 
 					if (executor instanceof IServerExecutor) {
 						serverExecutor = (IServerExecutor) executor;
-						Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession()).getQueries();
+						Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession()).getQueries(OdysseusRCPPlugIn.getActiveSession());
 
 						// for (IPhysicalQuery iPhysicalQuery : queries) {
 						// List<IPhysicalOperator> ops =
