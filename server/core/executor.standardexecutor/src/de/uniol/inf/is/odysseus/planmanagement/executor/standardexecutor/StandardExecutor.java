@@ -101,7 +101,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -647,7 +646,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			Context context, List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
 		LOG.debug("Adding textual query using " + parserID + " for user " + user.getUser().getName() + "...");
 		LOG.debug("Adding following query: " + query);
-		validateUserRight(user, ExecutorPermission.ADD_QUERY);
+		ExecutorPermission.validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName,
 				overwriteSetting, context);
 		params.set(new ParameterParserID(parserID));
@@ -702,7 +701,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public Integer addQuery(ILogicalOperator logicalPlan, ISession user, String buildConfigurationName,
 			List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
 		LOG.info("Start adding a logical query plan!");
-		validateUserRight(user, ExecutorPermission.ADD_QUERY);
+		ExecutorPermission.validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName,
 				overwriteSetting, Context.empty());
 		return addQuery(logicalPlan, user, params);
@@ -779,7 +778,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user, String buildConfigurationName,
 			List<IQueryBuildSetting<?>> overwriteSetting) throws PlanManagementException {
 		LOG.info("Start adding a physical query plan!");
-		validateUserRight(user, ExecutorPermission.ADD_QUERY);
+		ExecutorPermission.validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		try {
 			QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(
 					buildConfigurationName, overwriteSetting, null);
@@ -971,7 +970,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	private void removeQuery(ISession caller, IPhysicalQuery queryToRemove) {
 		if (queryToRemove != null && getOptimizer() != null) {
-			validateUserRight(queryToRemove, caller, ExecutorPermission.REMOVE_QUERY);
+			ExecutorPermission.validateUserRight(queryToRemove, caller, ExecutorPermission.REMOVE_QUERY);
 			try {
 				LOG.debug("Try to get lock on execution plan " + executionPlanLock);
 				executionPlanLock.lock();
@@ -1100,7 +1099,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	private void startQuery(ISession caller, IPhysicalQuery queryToStart) {
 		synchronized (queryToStart) {
-			validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
+			ExecutorPermission.validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
 			if (queryToStart.isOpened() || queryToStart.isStarting()) {
 				LOG.info("Query (ID: " + queryToStart.getID() + ") is already started.");
 				return;
@@ -1150,36 +1149,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		}
 	}
 
-	private void validateUserRight(IPhysicalQuery query, ISession caller, ExecutorPermission executorAction) {
-		if (!(
-		// User has right
-		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID())
-				||
-				// User is owner
-				query.isOwner(caller) ||
-				// User has higher right
-				UserManagementProvider.getUsermanagement(true).hasPermission(caller,
-						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI))) {
-			throw new PermissionException("No Right to execute " + executorAction + " on Query " + query.getID()
-					+ " for " + caller.getUser().getName());
-		}
-
-	}
-
-	private void validateUserRight(ISession caller, ExecutorPermission executorAction) {
-		if (!(
-		// User has right
-		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction,
-				ExecutorPermission.objectURI) ||
-				// User has higher right
-				UserManagementProvider.getUsermanagement(true).hasPermission(caller,
-						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI))) {
-			throw new PermissionException(
-					"No Right to execute " + executorAction + " for " + caller.getUser().getName());
-		}
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -1193,7 +1162,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.info("Stopping query (ID: " + queryID + ")....");
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID, caller);
-		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
+		ExecutorPermission.validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
 		stopQuery(queryToStop);
 	}
 
@@ -1203,7 +1172,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.info("Stopping query (ID: " + queryID + ")....");
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryByName(queryID, caller);
-		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
+		ExecutorPermission.validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
 		stopQuery(queryToStop);
 	}
 
@@ -1279,7 +1248,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	private void suspendQuery(ISession caller, IPhysicalQuery queryToSuspend) {
 		try {
 			QueryState.next(queryToSuspend.getState(), QueryFunction.SUSPEND);
-			validateUserRight(queryToSuspend, caller, ExecutorPermission.SUSPEND_QUERY);
+			ExecutorPermission.validateUserRight(queryToSuspend, caller, ExecutorPermission.SUSPEND_QUERY);
 			executionPlanChanged(PlanModificationEventType.QUERY_SUSPEND, queryToSuspend);
 
 			if (isRunning()) {
@@ -1315,7 +1284,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	private void resumeQuery(ISession caller, IPhysicalQuery queryToResume) {
 		try {
 			QueryState.next(queryToResume.getState(), QueryFunction.RESUME);
-			validateUserRight(queryToResume, caller, ExecutorPermission.RESUME_QUERY);
+			ExecutorPermission.validateUserRight(queryToResume, caller, ExecutorPermission.RESUME_QUERY);
 			executionPlanChanged(PlanModificationEventType.QUERY_RESUME, queryToResume);
 
 			if (isRunning()) {
@@ -1357,7 +1326,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			} else {
 				newState = QueryState.next(queryToPartial.getState(), QueryFunction.FULL);
 			}
-			validateUserRight(queryToPartial, caller, ExecutorPermission.PARTIAL_QUERY);
+			ExecutorPermission.validateUserRight(queryToPartial, caller, ExecutorPermission.PARTIAL_QUERY);
 			executionPlanChanged(PlanModificationEventType.QUERY_PARTIAL, queryToPartial);
 
 			if (isRunning()) {
