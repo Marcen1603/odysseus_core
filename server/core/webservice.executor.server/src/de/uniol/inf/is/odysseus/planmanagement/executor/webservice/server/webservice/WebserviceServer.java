@@ -285,11 +285,16 @@ public class WebserviceServer {
 
 	}
 
-	public QueryState getQueryState(int queryID, ISession user) {
-		return ExecutorServiceBinding.getExecutor().getQueryState(queryID, user);
+	public QueryState getQueryState(int queryID, String securityToken) {
+		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		return ExecutorServiceBinding.getExecutor().getQueryState(queryID, session);
 	}
 
-	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs, List<ISession> sessions) {
+	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs, List<String> securityTokens) {
+		List<ISession> sessions = new ArrayList<>();
+		for (String securityToken:securityTokens){
+			sessions.add(UserManagementProvider.getSessionmanagement().login(securityToken));
+		}
 		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs, sessions));
 	}
 

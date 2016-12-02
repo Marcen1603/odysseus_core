@@ -22,8 +22,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public enum ExecutorPermission implements IPermission {
-	ADD_QUERY, START_QUERY, STOP_QUERY, REMOVE_QUERY, SUSPEND_QUERY, RESUME_QUERY, PARTIAL_QUERY,
-	START_ALL_QUERIES, STOP_ALL_QUERIES, REMOVE_ALL_QUERIES, GET_ALL_QUERIES;
+	ADD_QUERY, GET_QUERY, START_QUERY, STOP_QUERY, REMOVE_QUERY, SUSPEND_QUERY, RESUME_QUERY, PARTIAL_QUERY, START_ALL_QUERIES, STOP_ALL_QUERIES, REMOVE_ALL_QUERIES, GET_ALL_QUERIES;
 
 	public final static String objectURI = "queryexecutor";
 
@@ -55,7 +54,15 @@ public enum ExecutorPermission implements IPermission {
 	}
 
 	public static void validateUserRight(IPhysicalQuery query, ISession caller, ExecutorPermission executorAction) {
-		if (!(
+		if (!(hasUserRight(query, caller, executorAction))) {
+			throw new PermissionException("No Right to execute " + executorAction + " on Query " + query.getID()
+					+ " for " + caller.getUser().getName());
+		}
+
+	}
+
+	public static boolean hasUserRight(IPhysicalQuery query, ISession caller, ExecutorPermission executorAction) {
+		return
 		// User has right
 		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID())
 				||
@@ -63,26 +70,24 @@ public enum ExecutorPermission implements IPermission {
 				query.isOwner(caller) ||
 				// User has higher right
 				UserManagementProvider.getUsermanagement(true).hasPermission(caller,
-						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI))) {
-			throw new PermissionException("No Right to execute " + executorAction + " on Query " + query.getID()
-					+ " for " + caller.getUser().getName());
-		}
-
+						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI);
 	}
 
 	public static void validateUserRight(ISession caller, ExecutorPermission executorAction) {
-		if (!(
-		// User has right
-		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction,
-				ExecutorPermission.objectURI) ||
-				// User has higher right
-				UserManagementProvider.getUsermanagement(true).hasPermission(caller,
-						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI))) {
+		if (!(hasUserRight(caller, executorAction))) {
 			throw new PermissionException(
 					"No Right to execute " + executorAction + " for " + caller.getUser().getName());
 		}
 
 	}
 
+	public static boolean hasUserRight(ISession caller, ExecutorPermission executorAction) {
+		return // User has right
+		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction,
+				ExecutorPermission.objectURI) ||
+		// User has higher right
+				UserManagementProvider.getUsermanagement(true).hasPermission(caller,
+						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI);
+	}
 
 }
