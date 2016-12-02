@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,18 +44,22 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEven
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * Standard {@link ISchedulerManager} for odysseus. The manger uses OSGi
  * services for scheduling modules. Only one {@link IScheduler} is active at the
  * same time.
- * 
+ *
  * @author Wolf Bauer, Marco Grawunder
- * 
+ *
  */
 public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		IInfoProvider, IPlanModificationListener {
+
+	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	static Logger logger = LoggerFactory
 			.getLogger(SingleSchedulerManager.class);
@@ -145,7 +149,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * setActiveScheduler(java.lang.String, java.lang.String,
 	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
@@ -154,9 +158,9 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	public void setActiveScheduler(String schedulerToSet,
 			String schedulingStrategyToSet, IExecutionPlan executionPlan) {
 		List<IIterableSource<?>> leafSources = executionPlan != null ? executionPlan
-				.getLeafSources() : null;
+				.getLeafSources(superUser) : null;
 		Collection<IPhysicalQuery> partialPlans = executionPlan != null ? executionPlan
-				.getQueries() : null;
+				.getQueries(superUser) : null;
 		setActiveScheduler(schedulerToSet, schedulingStrategyToSet,
 				leafSources, partialPlans);
 	}
@@ -222,7 +226,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos
 	 * ()
@@ -244,7 +248,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
 	 * #isRunning()
@@ -256,7 +260,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * setTimeSlicePerStrategy(long)
 	 */
@@ -268,7 +272,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
 	 * #startScheduling ()
@@ -282,13 +286,13 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 				logger.debug("Start scheduling.");
 				this.activeScheduler.startScheduling();
 				logger.debug("Scheduling started.");
-			}			
+			}
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
 	 * #stopScheduling ()
@@ -305,7 +309,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * refreshScheduling
 	 * (de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
@@ -315,10 +319,10 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 			throws NoSchedulerLoadedException {
 		// Update Source/Query assignment
 		sourceUsage.clear();
-		for (IPhysicalQuery p : execPlan.getQueries()) {
+		for (IPhysicalQuery p : execPlan.getQueries(superUser)) {
 			increaseSourceUsage(p);
 		}
-		refreshScheduling(execPlan.getLeafSources(), execPlan.getQueries());
+		refreshScheduling(execPlan.getLeafSources(superUser), execPlan.getQueries(superUser));
 	}
 
 	private void refreshScheduling(List<IIterableSource<?>> leafSources,
@@ -405,7 +409,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * setSchedulerCount(int)
 	 */
@@ -416,7 +420,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * getActiveScheduler()
 	 */
@@ -432,7 +436,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * getActiveSchedulingStrategy()
 	 */

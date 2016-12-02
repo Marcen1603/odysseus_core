@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,14 +18,15 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * IPlanScheduling beschreibt die Möglichkeit das Scheduling innerhalb von
  * Odysseus zu beeinflussen. Und Informationenen darüber abzurufen. Dies ist
  * neben IPlanManager eine der beiden Grundlagen für die Ausführungsumgebung.
- * 
+ *
  * @author wolf
- * 
+ *
  */
 public interface IPlanScheduling extends IPlanExecutionHandler {
 
@@ -33,19 +34,19 @@ public interface IPlanScheduling extends IPlanExecutionHandler {
 	 * liefert den aktuellen physischen Ausführungsplan.
 	 * @return den aktuellen physischen Ausführungsplan
 	 */
-	public IExecutionPlan getExecutionPlan();
+	public IExecutionPlan getExecutionPlan(ISession session);
 
 	/**
 	 * startExecution startet die Ausführung von Odysseus.
 	 * @throws PlanManagementException
 	 */
-	public void startExecution() throws PlanManagementException;
+	public void startExecution(ISession session) throws PlanManagementException;
 
 	/**
 	 * stopExecution stopped die Ausführung von Odysseus.
 	 * @throws PlanManagementException
 	 */
-	public void stopExecution() throws PlanManagementException;
+	public void stopExecution(ISession session) throws PlanManagementException;
 
 	/**
 	 * isRunning gibt an, ob die Ausführung innerhalb von Odysseus läuft.

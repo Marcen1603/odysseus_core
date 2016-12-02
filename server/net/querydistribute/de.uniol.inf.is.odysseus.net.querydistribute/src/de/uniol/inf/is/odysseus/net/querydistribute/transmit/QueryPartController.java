@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.communication.IMessage;
@@ -33,6 +34,8 @@ import de.uniol.inf.is.odysseus.net.querydistribute.activator.QueryDistributionP
 
 // TODO javaDoc M.B.
 public class QueryPartController implements IPlanModificationListener, IOdysseusNodeCommunicatorListener, IQueryPartController {
+
+	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartController.class);
 
@@ -127,7 +130,7 @@ public class QueryPartController implements IPlanModificationListener, IOdysseus
 
 		try {
 			inEvent = true;
-			
+
 			if (PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
 				IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 
@@ -137,7 +140,7 @@ public class QueryPartController implements IPlanModificationListener, IOdysseus
 					return; // query was not shared
 				}
 				Collection<IOdysseusNode> nodes = nodesMap.get(sharedQueryID);
-				
+
 				if( nodes != null ) {
 					for( IOdysseusNode node : nodes ) {
 						StartQueryMessage msg = new StartQueryMessage(sharedQueryID);
@@ -157,7 +160,7 @@ public class QueryPartController implements IPlanModificationListener, IOdysseus
 					return; // query was not shared
 				}
 				Collection<IOdysseusNode> nodes = nodesMap.get(sharedQueryID);
-				
+
 				if( nodes != null ) {
 					for( IOdysseusNode node : nodes ) {
 						StopQueryMessage msg = new StopQueryMessage(sharedQueryID);
@@ -168,8 +171,8 @@ public class QueryPartController implements IPlanModificationListener, IOdysseus
 						}
 					}
 				}
-				
-				
+
+
 			} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 				IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 
@@ -217,25 +220,25 @@ public class QueryPartController implements IPlanModificationListener, IOdysseus
 			removeSharedQuery(removeMessage.getSharedQueryID());
 		} else if( message instanceof StartQueryMessage ) {
 			StartQueryMessage startMessage = (StartQueryMessage) message;
-			
+
 			Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, startMessage.getSharedQueryID());
-			
+
 			for( Integer idToStart : ids ) {
-				if( executor.getQueryState(idToStart) != QueryState.RUNNING ) {
+				if( executor.getQueryState(idToStart, superUser) != QueryState.RUNNING ) {
 					executor.startQuery(idToStart, QueryDistributionPlugIn.getActiveSession());
 				}
 			}
 		} else if( message instanceof StopQueryMessage ) {
 			StopQueryMessage stopMessage = (StopQueryMessage) message;
-			
+
 			Collection<Integer> ids = determineLocalIDs(sharedQueryIDMap, stopMessage.getSharedQueryID());
-			
+
 			for( Integer idToStop : ids ) {
-				if( executor.getQueryState(idToStop) != QueryState.INACTIVE ) {
+				if( executor.getQueryState(idToStop, superUser) != QueryState.INACTIVE ) {
 					executor.stopQuery(idToStop, QueryDistributionPlugIn.getActiveSession());
 				}
 			}
-		} 
+		}
 	}
 
 	public void removeSharedQuery(UUID sharedQueryID) {

@@ -20,10 +20,10 @@ public class StartQueryServerResource extends AbstractSessionServerResource  {
 		ISession session = this.loginWithToken(genericSessionRequestDTO.getToken());
 		int queryId = genericSessionRequestDTO.getValue();
 		ExecutorServiceBinding.getExecutor().startQuery(queryId,session);
-		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId) == QueryState.RUNNING;
+		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId, session) == QueryState.RUNNING;
 		return new GenericResponseDTO<Boolean>(result);
 	}
 
-	
+
 
 }

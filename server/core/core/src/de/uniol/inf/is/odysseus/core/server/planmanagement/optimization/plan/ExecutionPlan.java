@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,13 +34,14 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.AbstractPlanReop
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * This class is used to keep information about queries and partial plans
  * together
- * 
+ *
  * @author Wolf Bauer, Marco Grawunder
- * 
+ *
  */
 public class ExecutionPlan implements IExecutionPlan {
 
@@ -100,13 +101,13 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IExecutionPlan
 	 * #getSources ()
 	 */
 	@Override
-	public List<IIterableSource<?>> getLeafSources() {
+	public List<IIterableSource<?>> getLeafSources(ISession session) {
 		return Collections.unmodifiableList(this.leafSources);
 	}
 
@@ -117,13 +118,13 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IExecutionPlan
 	 * #setSources(java.util.List)
 	 */
 	@Override
-	public void updateLeafSources() {
+	public void updateLeafSources(ISession session) {
 		this.open = false;
 		this.leafSources.clear();
 		for (IPhysicalQuery query : this.queries.values()) {
@@ -132,9 +133,9 @@ public class ExecutionPlan implements IExecutionPlan {
 	}
 
 	@Override
-	public Set<IPhysicalOperator> getRoots() {
+	public Set<IPhysicalOperator> getRoots(ISession session) {
 		HashSet<IPhysicalOperator> roots = new HashSet<IPhysicalOperator>();
-		for (IPhysicalQuery q : getQueries()) {
+		for (IPhysicalQuery q : getQueries(session)) {
 			roots.addAll(q.getRoots());
 		}
 		return Collections.unmodifiableSet(roots);
@@ -146,7 +147,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	}
 
 	@Override
-	public synchronized boolean addQuery(IPhysicalQuery query) {
+	public synchronized boolean addQuery(IPhysicalQuery query, ISession session) {
 		if (this.queries.containsKey(query.getID())) {
 			_logger.error("Query id {} already set!", query.getID());
 		}
@@ -158,60 +159,60 @@ public class ExecutionPlan implements IExecutionPlan {
 	}
 
 	@Override
-	public void addQueries(List<IPhysicalQuery> allQueries) {
+	public void addQueries(List<IPhysicalQuery> allQueries, ISession session) {
 		for (IPhysicalQuery q : allQueries) {
-			addQuery(q);
+			addQuery(q, session);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan#
 	 * removeQuery (int)
 	 */
 	@Override
-	public synchronized IPhysicalQuery removeQuery(int queryID) {
+	public synchronized IPhysicalQuery removeQuery(int queryID, ISession session) {
 		IPhysicalQuery removed = this.queries.remove(queryID);
 		if (removed != null) {
 			namedQueries.remove(removed.getName());
 		}
-		updateLeafSources();
+		updateLeafSources(session);
 		return removed;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan#getQuery
 	 * (int)
 	 */
 	@Override
-	public synchronized IPhysicalQuery getQueryById(int queryID) {
+	public synchronized IPhysicalQuery getQueryById(int queryID, ISession session) {
 		return this.queries.get(queryID);
 	}
 
 	@Override
-	public IPhysicalQuery getQueryByName(Resource name) {
+	public IPhysicalQuery getQueryByName(Resource name, ISession session) {
 		return this.namedQueries.get(name);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan#getQueries
 	 * ()
 	 */
 	@Override
-	public synchronized Collection<IPhysicalQuery> getQueries() {
+	public synchronized Collection<IPhysicalQuery> getQueries(ISession session) {
 		return Collections.unmodifiableCollection(this.queries.values());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester
 	 * #reoptimize()
@@ -225,7 +226,7 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler#
 	 * addReoptimizeListener(java.lang.Object)
@@ -241,7 +242,7 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler#
 	 * removeReoptimizeListener(java.lang.Object)
@@ -255,7 +256,7 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester
 	 * #addReoptimzeRule
@@ -273,7 +274,7 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester#
 	 * removeReoptimzeRule
