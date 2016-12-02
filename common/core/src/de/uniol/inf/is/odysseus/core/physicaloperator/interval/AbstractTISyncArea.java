@@ -254,7 +254,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 					if (curHB == null || heartbeat.after(curHB)) {
 						minTs.put(inPort, heartbeat);
 					} else {
-						logger.debug("Heart beat "+heartbeat+" ignored. Was older than last heartbeat "+curHB);
+						logger.trace("Heart beat "+heartbeat+" ignored. Was older than last heartbeat "+curHB);
 					}
 				}
 				sendData();
