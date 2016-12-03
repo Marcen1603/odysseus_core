@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,22 +19,23 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientPlanManager;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * IPlanManager bildet mit IPlanScheduling die Grundlage für die
  * Ausführungumgebung von Odysseus. Diese Schnittstelle bietet die Möglichkeit
  * Informationen über registrierte Anfragen abzufragen bzw. zu bearbeiten.
- * 
+ *
  * @author wolf
- * 
+ *
  */
 public interface IPlanManager extends IClientPlanManager, IPlanModificationHandler{
 
 	/**
 	 * getPlan liefert alle in Odysseus registrierten Anfragen.
-	 * 
+	 *
 	 * @return alle in Odysseus registrierten Anfragen
 	 * @throws PlanManagementException
 	 */
-	public IExecutionPlan getExecutionPlan() throws PlanManagementException;
+	public IExecutionPlan getExecutionPlan(ISession currentUser) throws PlanManagementException;
 }

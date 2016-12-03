@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
  * Protocol handler to read the complete content of an input stream
@@ -221,6 +222,13 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 	@Override
 	public boolean isDone() {
 		return isDone;
+	}
+
+	@Override
+	public void onDisonnect(ITransportHandler caller) {
+		if (!oneDocPerCall){
+			super.onDisonnect(caller);
+		}
 	}
 
 	@Override

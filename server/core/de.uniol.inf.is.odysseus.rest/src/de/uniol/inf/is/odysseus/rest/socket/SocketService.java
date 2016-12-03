@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
 /**
  * This service creates sockets for outputs. The sockets (SocketSinkPO) get
  * stored to use them multiple times if necessary.
- * 
+ *
  * @author Thore, Tobias Brandt
  *
  */
@@ -61,7 +61,7 @@ public class SocketService extends Observable {
 	/**
 	 * Legacy support for old versions. Returns a SocketInformation of the first
 	 * output port from the given operator.
-	 * 
+	 *
 	 * @param session
 	 *            Session to create a socket
 	 * @param queryId
@@ -73,7 +73,7 @@ public class SocketService extends Observable {
 	public SocketInfo getConnectionInformation(ISession session, int queryId, int outputOperator) {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
-		IPhysicalOperator rootOperator = getRootOperator(queryId, outputOperator);
+		IPhysicalOperator rootOperator = getRootOperator(queryId, outputOperator, session);
 		SocketInfo info = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, rootOperator, 0, false);
 		return info;
 	}
@@ -81,7 +81,7 @@ public class SocketService extends Observable {
 	/**
 	 * Legacy support for old versions. Returns a SocketInformation of the first
 	 * output port from the given operator.
-	 * 
+	 *
 	 * @param session
 	 *            Session to create a socket
 	 * @param queryId
@@ -100,7 +100,7 @@ public class SocketService extends Observable {
 	/**
 	 * Creates sockets for all outputs of the given query and returns the
 	 * information needed to connect to this socket
-	 * 
+	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryName
@@ -128,7 +128,7 @@ public class SocketService extends Observable {
 	/**
 	 * Creates sockets for all output ports of the given operator in the given
 	 * query and returns the information needed to connect to this socket
-	 * 
+	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryName
@@ -161,7 +161,7 @@ public class SocketService extends Observable {
 	/**
 	 * Creates a socket for the given output port of the given operator in the
 	 * given query and returns the information needed to connect to this socket
-	 * 
+	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryName
@@ -189,7 +189,7 @@ public class SocketService extends Observable {
 	/**
 	 * Creates sockets for all outputs of the given query and returns the
 	 * information needed to connect to this socket
-	 * 
+	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryId
@@ -202,7 +202,7 @@ public class SocketService extends Observable {
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId,
 			boolean withMetaData) {
-		List<IPhysicalOperator> rootOperators = getRootOperators(queryId);
+		List<IPhysicalOperator> rootOperators = getRootOperators(queryId, session);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		Map<String, Map<Integer, SocketInfo>> allInfos = new HashMap<>();
@@ -217,7 +217,7 @@ public class SocketService extends Observable {
 	/**
 	 * Creates sockets for all output ports of the given operator in the given
 	 * query and returns the information needed to connect to this socket
-	 * 
+	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryId
@@ -233,7 +233,7 @@ public class SocketService extends Observable {
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId, String operatorName,
 			boolean withMetaData) {
-		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName);
+		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName, session);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		Map<Integer, SocketInfo> socketInfos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort,
@@ -246,7 +246,7 @@ public class SocketService extends Observable {
 	/**
 	 * Creates a socket for the given output port of the given operator in the
 	 * given query and returns the information needed to connect to this socket
-	 * 
+	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryId
@@ -260,7 +260,7 @@ public class SocketService extends Observable {
 	 */
 	public SocketInfo getConnectionInformation(ISession session, int queryId, String operatorName,
 			int operatorOutputPort, boolean withMetaData) {
-		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName);
+		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName, session);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		SocketInfo socketInfo = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, rootOperator,
@@ -271,7 +271,7 @@ public class SocketService extends Observable {
 	/**
 	 * Creates a socket for the given output port of the given operator in the
 	 * given query and returns the information needed to connect to this socket
-	 * 
+	 *
 	 * @param session
 	 *            The session (for the user/rights management)
 	 * @param queryId
@@ -292,7 +292,7 @@ public class SocketService extends Observable {
 
 	/**
 	 * Inform listeners about a new client socket.
-	 * 
+	 *
 	 * @param queryId
 	 *            The id of the query
 	 * @param clientIp
@@ -311,7 +311,7 @@ public class SocketService extends Observable {
 	/**
 	 * Searches for the connection information for the given operator. If there
 	 * is no socket for this operator, the socket will be created.
-	 * 
+	 *
 	 * @param session
 	 *            The session for user / right management
 	 * @param queryName
@@ -328,23 +328,23 @@ public class SocketService extends Observable {
 	 */
 	private SocketInfo getConnectionInformationWithPorts(ISession session, String queryName, int minPort, int maxPort,
 			IPhysicalOperator operator, int operatorOutputPort, boolean withMetaData) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser())).getID();
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session).getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, operatorOutputPort,
 				withMetaData);
 	}
 
 	private Map<Integer, SocketInfo> getConnectionInformationWithPorts(ISession session, String queryName, int minPort,
 			int maxPort, IPhysicalOperator operator, boolean withMetaData) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser())).getID();
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session).getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, withMetaData);
 	}
 
 	/**
 	 * Searches for the connection information for the given operator. If there
 	 * is no socket for this operator, the socket will be created.
-	 * 
+	 *
 	 * @param session
 	 *            The session for user / right management
 	 * @param queryId
@@ -393,7 +393,7 @@ public class SocketService extends Observable {
 		SocketSinkPO socketSink = mapForOperatorPort.get(operatorOutputPort);
 		if (socketSink == null) {
 			socketSink = addSocketSink(queryId, minPort, maxPort, operator, operatorOutputPort, session.getToken(),
-					withMetaData);
+					withMetaData, session);
 			mapForOperatorPort.put(operatorOutputPort, socketSink);
 		}
 
@@ -469,19 +469,19 @@ public class SocketService extends Observable {
 		return port;
 	}
 
-	private IPhysicalOperator getRootOperator(int queryId, int rootPort) {
-		List<IPhysicalOperator> roots = getRootOperators(queryId);
+	private IPhysicalOperator getRootOperator(int queryId, int rootPort, ISession session) {
+		List<IPhysicalOperator> roots = getRootOperators(queryId, session);
 		return roots.get(rootPort);
 	}
 
-	private List<IPhysicalOperator> getRootOperators(int queryId) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		IPhysicalQuery query = plan.getQueryById(queryId);
+	private List<IPhysicalOperator> getRootOperators(int queryId ,ISession session) {
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
+		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		return query.getRoots();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param queryId
 	 *            The id of the query you want to search in
 	 * @param operatorName
@@ -489,8 +489,8 @@ public class SocketService extends Observable {
 	 * @return The operator with the given name in the query or null, if such an
 	 *         operator is not found
 	 */
-	private IPhysicalOperator getRootOperator(int queryId, String operatorName) {
-		List<IPhysicalOperator> allOps = getRootOperators(queryId);
+	private IPhysicalOperator getRootOperator(int queryId, String operatorName, ISession session) {
+		List<IPhysicalOperator> allOps = getRootOperators(queryId, session);
 		for (IPhysicalOperator op : allOps) {
 			if (op.getName().equals(operatorName)) {
 				return op;
@@ -500,8 +500,8 @@ public class SocketService extends Observable {
 	}
 
 	private List<IPhysicalOperator> getRootOperators(String queryName, ISession session) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		IPhysicalQuery query = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()));
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
+		IPhysicalQuery query = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()),session);
 		return query.getRoots();
 	}
 
@@ -521,9 +521,9 @@ public class SocketService extends Observable {
 	}
 
 	private SocketSinkPO addSocketSink(int queryId, int minPort, int maxPort, IPhysicalOperator root, int rootPort,
-			String token, boolean withMetaData) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		IPhysicalQuery query = plan.getQueryById(queryId);
+			String token, boolean withMetaData, ISession session) {
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
+		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		return addSocketSink(query, minPort, maxPort, root, rootPort, token, withMetaData);
 	}
 

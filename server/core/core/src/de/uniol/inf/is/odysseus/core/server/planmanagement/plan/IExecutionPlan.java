@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,78 +26,79 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IExecutionPlan extends IClone, IReoptimizeRequester<AbstractPlanReoptimizeRule>,
 IReoptimizeHandler<IPlanReoptimizeListener> {
 
 	boolean isEmpty();
-	
-	void updateLeafSources();
 
-	List<IIterableSource<?>> getLeafSources();
+	//void updateLeafSources(ISession session);
+
+	List<IIterableSource<?>> getLeafSources(ISession session);
 
 	/**
 	 * Returns a set of all registered roots. The size can be different to the
 	 * count of registered queries because a root could be used by more then one
 	 * query.
-	 * 
+	 *
 	 * @return A list of all registered roots.
 	 */
-	Set<IPhysicalOperator> getRoots();
+	Set<IPhysicalOperator> getRoots(ISession session);
 
 	@Override
 	IExecutionPlan clone();
 
 	/**
 	 * Returns a list of all registered queries.
-	 * 
+	 *
 	 * @return A list of all registered queries.
 	 */
-	Collection<IPhysicalQuery> getQueries();
+	Collection<IPhysicalQuery> getQueries(ISession session);
 
 	/**
 	 * Adds a new query to the global plan.
-	 * 
+	 *
 	 * @param query
 	 *            The query which should be added.
 	 * @return TRUE: The query is added. FALSE: else
 	 */
-	public boolean addQuery(IPhysicalQuery query);
+	public boolean addQuery(IPhysicalQuery query, ISession session);
 
 	/**
 	 * Add the queries to the global plan
-	 * 
+	 *
 	 * @param allQueries
 	 */
-	void addQueries(List<IPhysicalQuery> allQueries);
-	
-	
+	void addQueries(List<IPhysicalQuery> allQueries, ISession session);
+
+
 	/**
 	 * Returns a modifiable query with the defined ID.
-	 * 
+	 *
 	 * @param queryID  ID of the searched modifiable query
 	 * @return The query with the defined ID or null if no query is found.
 	 */
-	IPhysicalQuery getQueryById(int queryID);
-	
+	IPhysicalQuery getQueryById(int queryID, ISession session);
+
 
 	/**
 	 * Returns a query with the defined name.
-	 * 
+	 *
 	 * @param name name of the searched query
-	 *            
+	 *
 	 * @return The query with the name or null if no query is found.
 	 */
-	IPhysicalQuery getQueryByName(Resource name);
+	IPhysicalQuery getQueryByName(Resource name, ISession session);
 
 	/**
 	 * Returns a query with the defined ID.
-	 * 
+	 *
 	 * @param queryID
 	 *            ID of the query to remove.
 	 * @return The query with the defined ID or null if no query is found.
 	 */
-	IPhysicalQuery removeQuery(int queryID);
+	IPhysicalQuery removeQuery(int queryID, ISession session);
 
 
 

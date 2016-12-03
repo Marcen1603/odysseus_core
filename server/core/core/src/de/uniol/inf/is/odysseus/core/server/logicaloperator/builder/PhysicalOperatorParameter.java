@@ -37,8 +37,8 @@ public class PhysicalOperatorParameter extends AbstractParameter<IPhysicalOperat
 	private IPhysicalOperator findOperator(String queryName, String opName) {
 		IServerExecutor executor = getServerExecutor();
 
-		IPhysicalQuery query = executor.getExecutionPlan()
-				.getQueryByName(Resource.specialCreateResource(queryName, getCaller().getUser()));
+		IPhysicalQuery query = executor.getExecutionPlan(getCaller())
+				.getQueryByName(Resource.specialCreateResource(queryName, getCaller().getUser()), getCaller());
 		if (query == null) {
 			throw new ParameterException("Query with name " + queryName + " not found for operator ");
 		}
