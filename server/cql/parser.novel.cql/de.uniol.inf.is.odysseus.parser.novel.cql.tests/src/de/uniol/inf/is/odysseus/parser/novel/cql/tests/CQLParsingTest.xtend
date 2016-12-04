@@ -188,7 +188,7 @@ class CQLParsingTest
 		, new CQLDictionaryDummy)
 	}
 	
-	@Test def void CreateStream1()
+	@Test def void CreateStream1Channel()
 	{
 		assertCorrectGenerated
 		(
@@ -196,19 +196,44 @@ class CQLParsingTest
 			,
 			keyword0+"stream1 := ACCESS
 			(
-				{ Source = 'stream1', 
-				  Wrapper = 'GenericPush',
-				  Schema = [['attr1', 'INTEGER']],
+				{ source = 'stream1', 
+				  wrapper = 'GenericPush',
+				  schema = [['attr1', 'INTEGER']],
 				  transport = 'NonBlockingTcp',
 				  protocol = 'SizeByteBuffer',
 				  dataHandler ='Tuple',
-				  Options =[['port', '54321'],['host', 'localhost']]
+				  options =[['port', '54321'],['host', 'localhost']]
 				}
 			)"
 		, null)
 	}
 	
-	@Test def void CreateStream2()
+	@Test def void CreateStream1AccessFramework()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) 
+    		WRAPPER 'GenericPush'
+    		PROTOCOL 'CSV'
+    		TRANSPORT 'File'
+    		DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '54321', 'host' 'localhost')"
+			,
+			keyword2+"stream1 := ACCESS
+			(
+				{ source = 'stream1', 
+				  wrapper = 'GenericPush',
+				  protocol = 'CSV',
+				  transport = 'File',
+				  dataHandler ='Tuple',
+				  schema = [['attr1', 'INTEGER']],
+				  options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+		, null)
+	}
+	
+	@Test def void CreateStream2Channel()
 	{
 		assertCorrectGenerated
 		(
@@ -216,20 +241,19 @@ class CQLParsingTest
 			,
 			keyword0+"stream1 := ACCESS
 			(
-				{ Source = 'stream1', 
-				  Wrapper = 'GenericPush',
-				  Schema = [['attr1', 'INTEGER'],
+				{ source = 'stream1', 
+				  wrapper = 'GenericPush',
+				  schema = [['attr1', 'INTEGER'],
 							['attr2', 'STRING'],
 							['attr3', 'BOOLEAN']],
 				transport = 'NonBlockingTcp',
 				protocol = 'SizeByteBuffer',
 				dataHandler ='Tuple',
-				Options =[['port', '54321'],['host', 'localhost']]
+				options =[['port', '54321'],['host', 'localhost']]
 				}
 			)"
 		, null)
 	}
-	
 	
 	@Test def void CreateSink1()
 	{
@@ -245,6 +269,7 @@ class CQLParsingTest
 			keyword2+"stream1 := SENDER
 			(
 				{ 
+					sink = 'stream1'
 			  		wrapper = 'GenericPush',
 					protocol = 'CSV',
 					transport = 'File',

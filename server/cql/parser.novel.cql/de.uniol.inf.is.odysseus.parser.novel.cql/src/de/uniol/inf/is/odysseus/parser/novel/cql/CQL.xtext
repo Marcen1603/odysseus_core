@@ -164,11 +164,11 @@ Scalar_Function:
 ;
 
 Create_Statement:
-	'CREATE' (stream=Create_Stream | sink=Create_Sink)
+	'CREATE' (channel=Create_Channel | accessframework=Create_AccessFramework)
 ;
 
-Create_Sink:
-	'SINK'
+Create_AccessFramework:
+	type=('STREAM' | 'VIEW' | 'SINK')
 	name = ID
 	'('
 	attributes+= Attribute+ 
@@ -185,8 +185,8 @@ Create_Sink:
 		')'
 ;
 
-Create_Stream:
-	('STREAM' | 'VIEW')
+Create_Channel:
+	type=('STREAM' | 'VIEW')
 	name = ID
 	'('
 	attributes+= Attribute+ 

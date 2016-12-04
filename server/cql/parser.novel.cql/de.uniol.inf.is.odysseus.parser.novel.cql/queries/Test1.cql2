@@ -1,5 +1,9 @@
-CREATE STREAM stream1 (timestamp STARTTIMESTAMP, transaction_id INTEGER, name STRING, value INTEGER)
-  CHANNEL localhost : 54321;
+CREATE STREAM stream1 (id INTEGER, first_name STRING, last_name STRING, email STRING, gender STRING, ip_adress STRING)
+  WRAPPER 'GenericPush'
+  PROTOCOL 'CSV'
+  TRANSPORT 'TCPClient'
+  DATAHANDLER 'Tuple'
+  OPTIONS('filename' 'data1');
   
 SELECT value FROM stream1
 WHERE value > 10

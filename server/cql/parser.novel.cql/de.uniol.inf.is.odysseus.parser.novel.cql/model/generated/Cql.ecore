@@ -75,12 +75,13 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Create_Statement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="stream" eType="#//Create_Stream"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="channel" eType="#//Create_Channel"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="sink" eType="#//Create_Sink"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="accessframework" eType="#//Create_AccessFramework"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Create_Sink">
+  <eClassifiers xsi:type="ecore:EClass" name="Create_AccessFramework">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
         eType="#//Attribute" containment="true"/>
@@ -95,7 +96,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" unique="false"
         upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Create_Stream">
+  <eClassifiers xsi:type="ecore:EClass" name="Create_Channel">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
         eType="#//Attribute" containment="true"/>

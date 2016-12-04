@@ -35,7 +35,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Stream;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_AccessFramework;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Channel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider;
@@ -128,18 +130,44 @@ public class CQLParser implements IQueryParser
 //		System.out.println("ERROS:: " + resource.getErrors().toString());
 		Model model = (Model) resource.getContents().get(0);
 
-		for(Create_Stream stmt : EcoreUtil2.eAllOfType(model, Create_Stream.class))
+		for(Create_Statement stmt : EcoreUtil2.eAllOfType(model, Create_Statement.class))
 		{
-			int s = stmt.getAttributes().size();
-			SDFAttribute[] attributes = new SDFAttribute[s];
-			for(int i = 0; i < s; i++)
+			if(stmt.getAccessframework() != null && stmt.getAccessframework().getType().equals("SINK"))//TODO Refactore
 			{
-				String name = stmt.getAttributes().get(i).getName();
-				SDFDatatype type = new SDFDatatype(stmt.getDatatypes().get(i));
-				attributes[i] = new SDFAttribute(stmt.getName(), name, type);
+				// do nothing
+				System.out.println("SINK found !!");
 			}
-			dic.add(attributes);
+			else
+			{
+				if(stmt.getAccessframework() != null)
+				{
+					Create_AccessFramework create = stmt.getAccessframework();
+					int s = create.getAttributes().size();
+					SDFAttribute[] attributes = new SDFAttribute[s];
+					for(int i = 0; i < s; i++)
+					{
+						String name = create.getAttributes().get(i).getName();
+						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i));
+						attributes[i] = new SDFAttribute(create.getName(), name, type);
+					}
+					dic.add(attributes);
+				}
+				else
+				{
+					Create_Channel create = stmt.getChannel();
+					int s = create.getAttributes().size();
+					SDFAttribute[] attributes = new SDFAttribute[s];
+					for(int i = 0; i < s; i++)
+					{
+						String name = create.getAttributes().get(i).getName();
+						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i));
+						attributes[i] = new SDFAttribute(create.getName(), name, type);
+					}
+					dic.add(attributes);
+				}
+			}
 		}
+		System.out.println(dic.toString());
 		//Get schemata from PQl queries
 		Set<SDFSchema> schemata = executor.getExecutionPlan()
 										  .getQueries()

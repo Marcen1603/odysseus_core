@@ -83,41 +83,63 @@ class CQLGenerator extends AbstractGenerator
 	
 	def parseCreate(Create_Statement stmt)
 	{
-		if(stmt.stream != null)
+		if(stmt.channel != null)
 		{
-			println("HELLLOO!!")
 			var args = ''
-			var size = stmt.stream.attributes.size
-			for(var i = 0; i < size -1; i++)
+			var size = stmt.channel.attributes.size
+			for(var i = 0; i < size -1; i++)//TODO Make a function of the schema creation!
 			{
-				args += "['" + stmt.stream.attributes.get(i).name + "','" + stmt.stream.datatypes.get(i) + "'],\n"
+				args += "['" + stmt.channel.attributes.get(i).name + "','" + stmt.channel.datatypes.get(i) + "'],\n"
 			}
-			args += "['" + stmt.stream.attributes.get(size - 1).name + "','" + stmt.stream.datatypes.get(size - 1) + "']"
+			args += "['" + stmt.channel.attributes.get(size - 1).name + "','" + stmt.channel.datatypes.get(size - 1) + "']"
 			'''
-			«getKeyword(0) + stmt.stream.name» := ACCESS({Source = '«stmt.stream.name»', 
-			Wrapper = 'GenericPush',
-			Schema = [«args»],
+			«getKeyword(0) + stmt.channel.name» := ACCESS({source = '«stmt.channel.name»', 
+			wrapper = 'GenericPush',
+			schema = [«args»],
 			transport = 'NonBlockingTcp',
 			protocol = 'SizeByteBuffer',
 			dataHandler ='Tuple',
-			Options =[['port', '«stmt.stream.port»'],['host', '«stmt.stream.host»']]})
+			options =[['port', '«stmt.channel.port»'],['host', '«stmt.channel.host»']]})
 			'''
 		}
 		else
 		{//TODO Something wrong here ...
+		 	var type = ''
+			switch stmt.accessframework.type
+			{
+				case "VIEW",
+				case "STREAM":
+					type = "ACCESS"
+				case "SINK":
+					type = "SENDER"	
+			}
+			var args = ''
+			var bool = type.equals('ACCESS')
+			if(bool)
+			{
+				var size = stmt.accessframework.attributes.size
+				for(var i = 0; i < size -1; i++)
+				{
+					args += "['" + stmt.accessframework.attributes.get(i).name + "','" + stmt.accessframework.datatypes.get(i) + "'],\n"
+				}
+				args += "['" + stmt.accessframework.attributes.get(size - 1).name + "','" + stmt.accessframework.datatypes.get(size - 1) + "']"
+			}
 			var options = ''
-			var size = stmt.sink.keys.size
+			var size = stmt.accessframework.keys.size
 			for(var i = 0; i < size - 1; i++)
 			{
-				options += "['" + stmt.sink.keys.get(i) + "','" + stmt.sink.values.get(i) + "'],"	
+				options += "['" + stmt.accessframework.keys.get(i) + "','" + stmt.accessframework.values.get(i) + "'],"	
 			}
-			options += "['" + stmt.sink.keys.get(size - 1) + "','" + stmt.sink.values.get(size - 1) + "']"
+			options += "['" + stmt.accessframework.keys.get(size - 1) + "','" + stmt.accessframework.values.get(size - 1) + "']"
 			'''
-			«getKeyword(2) + stmt.sink.name» := SENDER (
-			{wrapper='«stmt.sink.wrapper»',
-			protocol='«stmt.sink.protocol»',
-			transport='«stmt.sink.transport»',
-			dataHandler='«stmt.sink.datahandler»',
+			«getKeyword(2) + stmt.accessframework.name» := «type» (
+			{«IF bool»source ='«stmt.accessframework.name»',«ENDIF»
+			«IF !bool»sink='«stmt.accessframework.name»'«ENDIF»
+			wrapper='«stmt.accessframework.wrapper»',
+			protocol='«stmt.accessframework.protocol»',
+			transport='«stmt.accessframework.transport»',
+			dataHandler='«stmt.accessframework.datahandler»',
+			«IF bool»schema=[«args»],«ENDIF»
 			options=[«options»]})
 			'''	
 		}

@@ -1,11 +1,11 @@
-pql_stream1 := ACCESS({Source='pql_stream2', Wrapper='GenericPush',
+pql_stream1 := ACCESS({Source='pql_stream1', Wrapper='GenericPush',
         Schema=[['timestamp ','Starttimestamp'],
                 ['transaction_id','INTEGER'],
-                ['name','String'],
-                ['value','Integer']],
+                ['name','STRING'],
+                ['value','INTEGER']],
                 transport='NonBlockingTcp',
                 protocol='SizeByteBuffer',
                 dataHandler='Tuple',
-                Options=[['port','54321'], ['host','localhost']]})
+                Options=[['port','135'], ['host','localhost']]})
                 
 select_1 = SELECT({predicate='value > 10'}, pql_stream1)               
