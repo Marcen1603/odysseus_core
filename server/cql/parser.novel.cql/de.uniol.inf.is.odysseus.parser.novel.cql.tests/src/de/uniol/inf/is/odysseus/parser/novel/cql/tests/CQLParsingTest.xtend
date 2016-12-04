@@ -39,13 +39,10 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1;"
 			,
-			keyword0 + "stream1 := ACCESS
+			"stream1 := ACCESS
 			(
 				{
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
+					source      = '"+keyword0+"stream1',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -62,28 +59,21 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1, stream2;"
 			,
-			keyword0 +" stream1 := ACCESS
+			" stream1 := ACCESS
 			(
 				{
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
+					source      = '"+keyword0+"stream1',
 					schema = 
 					[
 						['attr1', 'Integer'],
 						['attr2', 'String']
 					]
 				}
-			)
-			"		
-			+keyword0+ "stream2 := ACCESS
+			),
+			stream2 := ACCESS
 			(
 				{
-					source      = 'stream2',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
+					source      = '"+keyword0+"stream2',
 					schema = 
 					[
 						['attr4', 'String'],
@@ -100,26 +90,26 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 WHERE (attr1 < 125);" 
 			,
-			keyword0 +
-			"
-			stream1 := ACCESS
-			(
-				{ 
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']	
-					]
-				}
-			)
-			"
-			+keyword3+"stream1 := SELECT({ predicate='(attr1 < 125)' }, stream1)"
+			"select_ := SELECT({ predicate='(attr1 < 125)'}, 
+				ACCESS
+				(
+					{ 
+						source = '"+keyword0+"stream1',
+						schema = 
+						[
+							['attr1', 'Integer'],
+							['attr2', 'String']	
+						]
+					}
+				)
+			)"
 		, new CQLDictionaryDummy)
 	}
+	
+	
+//						wrapper     = 'GenericPush',
+//						transport   = 'TCPClient',
+//						dataHandler = 'Tuple',
 	
 	@Test def void SelectAttr1Attr2() 
 	{ 
@@ -127,24 +117,19 @@ class CQLParsingTest
 		(
 			"SELECT attr1, attr2 FROM stream1 WHERE (attr1 < 125);" 
 			,
-			keyword0 +
-			"
-			stream1 := ACCESS
-			(
-				{ 
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']	
-					]
-				}
-			)
-			"
-			+keyword3+"stream1 := SELECT({ predicate='(attr1 < 125)'}, stream1)"
+			"select_ := SELECT({ predicate='(attr1 < 125)'}, 
+				ACCESS
+				(
+					{ 
+						source = '"+keyword0+"stream1',
+						schema = 
+						[
+							['attr1', 'Integer'],
+							['attr2', 'String']	
+						]
+					}
+				)
+			)"
 		, new CQLDictionaryDummy)
 	}
 	
@@ -154,307 +139,300 @@ class CQLParsingTest
 		(
 			"SELECT attr1, attr2, attr4 FROM stream1, stream2 WHERE (attr1 < 125 AND attr4 == 'Test');" 
 			,
-			keyword0 +"stream1 := ACCESS
-			(
-				{ 
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']	
-					]
-				}
-			)
-			"
-			+keyword0+"stream2 := ACCESS
-			(
-				{ 
-					source      = 'stream2',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr4', 'String'],	
-						['attr3', 'Integer']
-					]
-				}
-			)
-			"
-			+ keyword3 +"stream1stream2 := SELECT({ predicate='(attr1 < 125 && attr4 == 'Test')'}, stream1, stream2)"
+			" select_ := SELECT({ predicate='(attr1 < 125 && attr4 == 'Test')'}, 
+					ACCESS
+					(
+						{ 
+							source      = '"+keyword0+"stream1',
+							schema = 
+							[
+								['attr1', 'Integer'],
+								['attr2', 'String']	
+							]
+						}
+					), 
+					ACCESS
+					(
+						{ 
+							source      = '"+keyword0+"stream2',
+							schema = 
+							[
+								['attr4', 'String'],	
+								['attr3', 'Integer']
+							]
+						}
+					)
+			)"
 		, new CQLDictionaryDummy)
 	}
 	
-	@Test def void CreateStream1Channel()
-	{
-		assertCorrectGenerated
-		(
-			"CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;"
-			,
-			keyword0+"stream1 := ACCESS
-			(
-				{ source = 'stream1', 
-				  wrapper = 'GenericPush',
-				  schema = [['attr1', 'INTEGER']],
-				  transport = 'NonBlockingTcp',
-				  protocol = 'SizeByteBuffer',
-				  dataHandler ='Tuple',
-				  options =[['port', '54321'],['host', 'localhost']]
-				}
-			)"
-		, null)
-	}
-	
-	@Test def void CreateStream1AccessFramework()
-	{
-		assertCorrectGenerated
-		(
-			"CREATE STREAM stream1 (attr1 INTEGER) 
-    		WRAPPER 'GenericPush'
-    		PROTOCOL 'CSV'
-    		TRANSPORT 'File'
-    		DATAHANDLER 'Tuple'
-    		OPTIONS ('port' '54321', 'host' 'localhost')"
-			,
-			keyword2+"stream1 := ACCESS
-			(
-				{ source = 'stream1', 
-				  wrapper = 'GenericPush',
-				  protocol = 'CSV',
-				  transport = 'File',
-				  dataHandler ='Tuple',
-				  schema = [['attr1', 'INTEGER']],
-				  options =[['port', '54321'],['host', 'localhost']]
-				}
-			)"
-		, null)
-	}
-	
-	@Test def void CreateStream2Channel()
-	{
-		assertCorrectGenerated
-		(
-			"CREATE STREAM stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) CHANNEL localhost : 54321;"
-			,
-			keyword0+"stream1 := ACCESS
-			(
-				{ source = 'stream1', 
-				  wrapper = 'GenericPush',
-				  schema = [['attr1', 'INTEGER'],
-							['attr2', 'STRING'],
-							['attr3', 'BOOLEAN']],
-				transport = 'NonBlockingTcp',
-				protocol = 'SizeByteBuffer',
-				dataHandler ='Tuple',
-				options =[['port', '54321'],['host', 'localhost']]
-				}
-			)"
-		, null)
-	}
-	
-	@Test def void CreateSink1()
-	{
-		assertCorrectGenerated
-		(
-			"CREATE SINK stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) 
-    		WRAPPER 'GenericPush'
-    		PROTOCOL 'CSV'
-    		TRANSPORT 'File'
-    		DATAHANDLER 'Tuple'
-    		OPTIONS ('filename' 'E:\test')"
-			,
-			keyword2+"stream1 := SENDER
-			(
-				{ 
-					sink = 'stream1'
-			  		wrapper = 'GenericPush',
-					protocol = 'CSV',
-					transport = 'File',
-					dataHandler ='Tuple',
-					options =[['filename', 'E:\test']]
-				}
-			)"
-		, null)
-	}
-	
-	
-	@Test def void WindowUnbounded() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT * FROM stream1 [UNBOUNDED];"
-			,
-			keyword0+"stream1 := ACCESS
-			(
-				{
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']
-					]
-				}
-			)"
-		, new CQLDictionaryDummy())
-	}
-	
-	@Test def void WindowTimeBased() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME]; "
-			,
-			keyword0+"stream1 := ACCESS
-			(
-				{
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']
-					]
-				}
-			)"
-			+keyword1+"stream1 := TIMEWINDOW
-			(
-				{ size = [5, 'MINUTES']},"
-				+keyword0+"stream1
-			)"
-		, new CQLDictionaryDummy())
-	}
-	
-	@Test def void WindowElementBased1() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT * FROM stream1 [SIZE 5 TUPLE]; "
-			,
-			keyword0+"stream1 := ACCESS
-			(
-				{
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']
-					]
-				}
-			)"
-			+keyword1+"stream1 := ELEMENTWINDOW
-			(
-				{ size = 5,
-				  advance = 1},"
-				+keyword0+"stream1
-			)"
-		, new CQLDictionaryDummy())
-	}
-	
-	@Test def void WindowElementBased2() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT * FROM stream1 [SIZE 5 TUPLE PARTITION BY attr1]; "
-			,
-			keyword0+"stream1 := ACCESS
-			(
-				{
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']
-					]
-				}
-			)"
-			+keyword1+"stream1 := ELEMENTWINDOW
-			(
-				{ size = 5,
-				  advance = 1,
-				  partition = 'attr1'
-				},"
-				+keyword0+"stream1
-			)"
-		, new CQLDictionaryDummy())
-	}
-	
-	@Test def void WindowElementTimeUnbounded() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 12 SECONDS TIME], stream3 [UNBOUNDED]; "
-			,
-			keyword0+"stream1 := ACCESS
-			(
-				{
-					source      = 'stream1',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr1', 'Integer'],
-						['attr2', 'String']
-					]
-				}
-			)
-			"
-			+keyword1+"stream1 := ELEMENTWINDOW
-			(
-				{ size = 5,
-				  advance = 1},"
-				+keyword0+"stream1
-			)
-			"
-			+keyword0+"stream2 := ACCESS
-			(
-				{
-					source      = 'stream2',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr4', 'String'],
-						['attr3', 'Integer']
-					]
-				}
-			)"
-			+keyword1+"stream2 := TIMEWINDOW
-			(
-				{ size = [12, 'SECONDS']},"
-				+keyword0+"stream2
-			)"
-			+keyword0+"stream3 := ACCESS
-			(
-				{
-					source      = 'stream3',
-					wrapper     = 'GenericPush',
-					transport   = 'TCPClient',
-					dataHandler = 'Tuple',
-					schema = 
-					[
-						['attr5', 'Integer'],
-						['attr6', 'String']
-					]
-				}
-			)"
-		, new CQLDictionaryDummy())
-	}
+//	@Test def void CreateStream1Channel()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;"
+//			,
+//			keyword0+"stream1 := ACCESS
+//			(
+//				{ source = 'stream1', 
+//				  wrapper = 'GenericPush',
+//				  schema = [['attr1', 'INTEGER']],
+//				  transport = 'NonBlockingTcp',
+//				  protocol = 'SizeByteBuffer',
+//				  dataHandler ='Tuple',
+//				  options =[['port', '54321'],['host', 'localhost']]
+//				}
+//			)"
+//		, null)
+//	}
+//	
+//	@Test def void CreateStream1AccessFramework()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"CREATE STREAM stream1 (attr1 INTEGER) 
+//    		WRAPPER 'GenericPush'
+//    		PROTOCOL 'CSV'
+//    		TRANSPORT 'File'
+//    		DATAHANDLER 'Tuple'
+//    		OPTIONS ('port' '54321', 'host' 'localhost')"
+//			,
+//			keyword2+"stream1 := ACCESS
+//			(
+//				{ source = 'stream1', 
+//				  wrapper = 'GenericPush',
+//				  protocol = 'CSV',
+//				  transport = 'File',
+//				  dataHandler ='Tuple',
+//				  schema = [['attr1', 'INTEGER']],
+//				  options =[['port', '54321'],['host', 'localhost']]
+//				}
+//			)"
+//		, null)
+//	}
+//	
+//	@Test def void CreateStream2Channel()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"CREATE STREAM stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) CHANNEL localhost : 54321;"
+//			,
+//			keyword0+"stream1 := ACCESS
+//			(
+//				{ source = 'stream1', 
+//				  wrapper = 'GenericPush',
+//				  schema = [['attr1', 'INTEGER'],
+//							['attr2', 'STRING'],
+//							['attr3', 'BOOLEAN']],
+//				transport = 'NonBlockingTcp',
+//				protocol = 'SizeByteBuffer',
+//				dataHandler ='Tuple',
+//				options =[['port', '54321'],['host', 'localhost']]
+//				}
+//			)"
+//		, null)
+//	}
+//	
+//	@Test def void CreateSink1()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"CREATE SINK stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) 
+//    		WRAPPER 'GenericPush'
+//    		PROTOCOL 'CSV'
+//    		TRANSPORT 'File'
+//    		DATAHANDLER 'Tuple'
+//    		OPTIONS ('filename' 'E:\test')"
+//			,
+//			keyword2+"stream1 := SENDER
+//			(
+//				{ 
+//					sink = 'stream1'
+//			  		wrapper = 'GenericPush',
+//					protocol = 'CSV',
+//					transport = 'File',
+//					dataHandler ='Tuple',
+//					options =[['filename', 'E:\test']]
+//				}
+//			)"
+//		, null)
+//	}
+//	
+//	
+//	@Test def void WindowUnbounded() 
+//	{ 
+//		assertCorrectGenerated
+//		(
+//			"SELECT * FROM stream1 [UNBOUNDED];"
+//			,
+//			keyword0+"stream1 := ACCESS
+//			(
+//				{
+//					source      = 'stream1',
+//					wrapper     = 'GenericPush',
+//					transport   = 'TCPClient',
+//					dataHandler = 'Tuple',
+//					schema = 
+//					[
+//						['attr1', 'Integer'],
+//						['attr2', 'String']
+//					]
+//				}
+//			)"
+//		, new CQLDictionaryDummy())
+//	}
+//	
+//	@Test def void WindowTimeBased() 
+//	{ 
+//		assertCorrectGenerated
+//		(
+//			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME]; "
+//			,
+//			keyword0+"stream1 := ACCESS
+//			(
+//				{
+//					source      = 'stream1',
+//					wrapper     = 'GenericPush',
+//					transport   = 'TCPClient',
+//					dataHandler = 'Tuple',
+//					schema = 
+//					[
+//						['attr1', 'Integer'],
+//						['attr2', 'String']
+//					]
+//				}
+//			)"
+//			+keyword1+"stream1 := TIMEWINDOW
+//			(
+//				{ size = [5, 'MINUTES']},"
+//				+keyword0+"stream1
+//			)"
+//		, new CQLDictionaryDummy())
+//	}
+//	
+//	@Test def void WindowElementBased1() 
+//	{ 
+//		assertCorrectGenerated
+//		(
+//			"SELECT * FROM stream1 [SIZE 5 TUPLE]; "
+//			,
+//			keyword0+"stream1 := ACCESS
+//			(
+//				{
+//					source      = 'stream1',
+//					wrapper     = 'GenericPush',
+//					transport   = 'TCPClient',
+//					dataHandler = 'Tuple',
+//					schema = 
+//					[
+//						['attr1', 'Integer'],
+//						['attr2', 'String']
+//					]
+//				}
+//			)"
+//			+keyword1+"stream1 := ELEMENTWINDOW
+//			(
+//				{ size = 5,
+//				  advance = 1},"
+//				+keyword0+"stream1
+//			)"
+//		, new CQLDictionaryDummy())
+//	}
+//	
+//	@Test def void WindowElementBased2() 
+//	{ 
+//		assertCorrectGenerated
+//		(
+//			"SELECT * FROM stream1 [SIZE 5 TUPLE PARTITION BY attr1]; "
+//			,
+//			keyword0+"stream1 := ACCESS
+//			(
+//				{
+//					source      = 'stream1',
+//					wrapper     = 'GenericPush',
+//					transport   = 'TCPClient',
+//					dataHandler = 'Tuple',
+//					schema = 
+//					[
+//						['attr1', 'Integer'],
+//						['attr2', 'String']
+//					]
+//				}
+//			)"
+//			+keyword1+"stream1 := ELEMENTWINDOW
+//			(
+//				{ size = 5,
+//				  advance = 1,
+//				  partition = 'attr1'
+//				},"
+//				+keyword0+"stream1
+//			)"
+//		, new CQLDictionaryDummy())
+//	}
+//	
+//	@Test def void WindowElementTimeUnbounded() 
+//	{ 
+//		assertCorrectGenerated
+//		(
+//			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 12 SECONDS TIME], stream3 [UNBOUNDED]; "
+//			,
+//			keyword0+"stream1 := ACCESS
+//			(
+//				{
+//					source      = 'stream1',
+//					wrapper     = 'GenericPush',
+//					transport   = 'TCPClient',
+//					dataHandler = 'Tuple',
+//					schema = 
+//					[
+//						['attr1', 'Integer'],
+//						['attr2', 'String']
+//					]
+//				}
+//			)
+//			"
+//			+keyword1+"stream1 := ELEMENTWINDOW
+//			(
+//				{ size = 5,
+//				  advance = 1},"
+//				+keyword0+"stream1
+//			)
+//			"
+//			+keyword0+"stream2 := ACCESS
+//			(
+//				{
+//					source      = 'stream2',
+//					wrapper     = 'GenericPush',
+//					transport   = 'TCPClient',
+//					dataHandler = 'Tuple',
+//					schema = 
+//					[
+//						['attr4', 'String'],
+//						['attr3', 'Integer']
+//					]
+//				}
+//			)"
+//			+keyword1+"stream2 := TIMEWINDOW
+//			(
+//				{ size = [12, 'SECONDS']},"
+//				+keyword0+"stream2
+//			)"
+//			+keyword0+"stream3 := ACCESS
+//			(
+//				{
+//					source      = 'stream3',
+//					wrapper     = 'GenericPush',
+//					transport   = 'TCPClient',
+//					dataHandler = 'Tuple',
+//					schema = 
+//					[
+//						['attr5', 'Integer'],
+//						['attr6', 'String']
+//					]
+//				}
+//			)"
+//		, new CQLDictionaryDummy())
+//	}
 	
 	
 	def void assertCorrectGenerated(String s, String t, CQLDictionaryDummy dictionary) 
@@ -471,7 +449,7 @@ class CQLParsingTest
 		{
 			query += e.value
 		}
-		println("result: " + query)
+//		println("result: " + query)
 		format(t).assertEquals(format(query))
 	} 
 	

@@ -160,27 +160,15 @@ class CQLGenerator extends AbstractGenerator
 		if(stmt.predicates == null)//Without a WHERE clause
 		{
 			'''
-			«FOR src : stmt.sources»
-				«getKeyword(0) + src.name» := «buildAccessOP(stmt.attributes, src)»
-			«ENDFOR»
+			«buildAccessOP(stmt.attributes, stmt.sources, true)»
 			'''
 		}
 		else
 		{ 
-			var srcs =''
-			for(var i = 0; i < stmt.sources.size - 1; i++)
-			{
-				srcs += stmt.sources.get(i).name + ','
-			}
-			srcs += stmt.sources.get(stmt.sources.size - 1).name
-			var srcs_names = srcs.replace(',', '')
 			'''
-			«FOR src : stmt.sources»
-				«getKeyword(0) + src.name» := «buildAccessOP(stmt.attributes, src)»
-			«ENDFOR»
-			«getKeyword(3) + srcs_names» := SELECT({predicate='
+			«getKeyword(3)» := SELECT({predicate='
 			«buildPredicate(stmt.predicates.elements.get(0))»'},
-			«srcs»)
+			«buildAccessOP(stmt.attributes, stmt.sources, false)»)
 			'''					
 		}
 	}
@@ -266,22 +254,37 @@ class CQLGenerator extends AbstractGenerator
 		}
 	}
 	
-	def CharSequence buildAccessOP(List<Attribute> attr, Source src)
+	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)
 	{
-		'''
-		ACCESS
+		var str = ''
+		for(var i = 0; i < src.size - 1; i++)
+		{
+			if(b) str += src.get(i).name + ":= "
+			str +=
+			"ACCESS
+			(
+				{	
+					source = '"+getKeyword(0) + src.get(i).name+"',
+					schema = ["+buildSchema(attr, src.get(i))+"]
+				}
+			)	
+			"
+			+buildWindowOP(src.get(i), src.get(i).name)
+			+","
+		}
+		if(b) str += src.get(src.size - 1).name + ":= "
+		str +=
+		"ACCESS
 		(
 			{	
-				source      = '«src.name»',
-				wrapper     = 'GenericPush',
-				transport   = 'TCPClient',
-				dataHandler = 'Tuple',
-				schema = [«buildSchema(attr, src)»]
+				source = '"+getKeyword(0) + src.get(src.size - 1).name+"',
+				schema = ["+buildSchema(attr, src.get(src.size - 1))+"]
 			}
 		)
+		"
+		+buildWindowOP(src.get(src.size - 1), src.get(src.size - 1).name)
 		
-		«buildWindowOP(src, src.name)»
-		'''
+		return str
 	}
 
 	def CharSequence buildWindowOP(Source w, CharSequence name)
@@ -329,7 +332,10 @@ class CQLGenerator extends AbstractGenerator
 		{
 			''''''
 		}
-			
+		else
+		{
+			''''''
+		}
 	}
 		
 	//TODO Refactore	
