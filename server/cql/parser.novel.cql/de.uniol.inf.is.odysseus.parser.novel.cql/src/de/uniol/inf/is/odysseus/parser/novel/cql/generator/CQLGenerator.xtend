@@ -123,7 +123,7 @@ class CQLGenerator extends AbstractGenerator
 		}
 	}
 
-	val static CharSequence[] keywords = #['input_', 'window_', 'output_']
+	val static CharSequence[] keywords = #['input_', 'window_', 'output_', 'select_']
 
 	def static CharSequence getKeyword(int i)
 	{
@@ -151,12 +151,13 @@ class CQLGenerator extends AbstractGenerator
 				srcs += stmt.sources.get(i).name + ','
 			}
 			srcs += stmt.sources.get(stmt.sources.size - 1).name
+			var srcs_names = srcs.replace(',', '')
 			'''
 			«FOR src : stmt.sources»
 				«getKeyword(0) + src.name» := «buildAccessOP(stmt.attributes, src)»
 			«ENDFOR»
-			SELECT({predicate=
-			«buildPredicate(stmt.predicates.elements.get(0))»},
+			«getKeyword(3) + srcs_names» := SELECT({predicate='
+			«buildPredicate(stmt.predicates.elements.get(0))»'},
 			«srcs»)
 			'''					
 		}
@@ -249,10 +250,10 @@ class CQLGenerator extends AbstractGenerator
 		ACCESS
 		(
 			{	
-				source      = '«src.name»'
-				wrapper     = 'GenericPush'
-				transport   = 'TCPClient'
-				dataHandler = 'Tuple'
+				source      = '«src.name»',
+				wrapper     = 'GenericPush',
+				transport   = 'TCPClient',
+				dataHandler = 'Tuple',
 				schema = [«buildSchema(attr, src)»]
 			}
 		)

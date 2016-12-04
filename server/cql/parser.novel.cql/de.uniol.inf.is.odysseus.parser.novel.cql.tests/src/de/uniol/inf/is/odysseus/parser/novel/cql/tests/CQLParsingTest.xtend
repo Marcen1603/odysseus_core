@@ -31,6 +31,7 @@ class CQLParsingTest
 	val keyword0 = CQLGenerator.getKeyword(0)
 	val keyword1 = CQLGenerator.getKeyword(1)
 	val keyword2 = CQLGenerator.getKeyword(2)
+	val keyword3 = CQLGenerator.getKeyword(3)
 	
 	@Test def void SelectAllTest1() 
 	{ 
@@ -41,10 +42,10 @@ class CQLParsingTest
 			keyword0 + "stream1 := ACCESS
 			(
 				{
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -64,10 +65,10 @@ class CQLParsingTest
 			keyword0 +" stream1 := ACCESS
 			(
 				{
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -79,10 +80,10 @@ class CQLParsingTest
 			+keyword0+ "stream2 := ACCESS
 			(
 				{
-					source      = 'stream2'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream2',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr4', 'String'],
@@ -104,10 +105,10 @@ class CQLParsingTest
 			stream1 := ACCESS
 			(
 				{ 
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -115,8 +116,8 @@ class CQLParsingTest
 					]
 				}
 			)
-
-			SELECT({ predicate=(attr1 < 125) }, stream1)"
+			"
+			+keyword3+"stream1 := SELECT({ predicate='(attr1 < 125)' }, stream1)"
 		, new CQLDictionaryDummy)
 	}
 	
@@ -131,10 +132,10 @@ class CQLParsingTest
 			stream1 := ACCESS
 			(
 				{ 
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -142,8 +143,8 @@ class CQLParsingTest
 					]
 				}
 			)
-
-			SELECT({ predicate=(attr1 < 125) }, stream1)"
+			"
+			+keyword3+"stream1 := SELECT({ predicate='(attr1 < 125)'}, stream1)"
 		, new CQLDictionaryDummy)
 	}
 	
@@ -156,10 +157,10 @@ class CQLParsingTest
 			keyword0 +"stream1 := ACCESS
 			(
 				{ 
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -171,10 +172,10 @@ class CQLParsingTest
 			+keyword0+"stream2 := ACCESS
 			(
 				{ 
-					source      = 'stream2'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream2',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr4', 'String'],	
@@ -182,8 +183,8 @@ class CQLParsingTest
 					]
 				}
 			)
-
-			SELECT({ predicate=(attr1 < 125 && attr4 == 'Test') }, stream1, stream2)"
+			"
+			+ keyword3 +"stream1stream2 := SELECT({ predicate='(attr1 < 125 && attr4 == 'Test')'}, stream1, stream2)"
 		, new CQLDictionaryDummy)
 	}
 	
@@ -264,10 +265,10 @@ class CQLParsingTest
 			keyword0+"stream1 := ACCESS
 			(
 				{
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -287,10 +288,10 @@ class CQLParsingTest
 			keyword0+"stream1 := ACCESS
 			(
 				{
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -315,10 +316,10 @@ class CQLParsingTest
 			keyword0+"stream1 := ACCESS
 			(
 				{
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -344,10 +345,10 @@ class CQLParsingTest
 			keyword0+"stream1 := ACCESS
 			(
 				{
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -375,10 +376,10 @@ class CQLParsingTest
 			keyword0+"stream1 := ACCESS
 			(
 				{
-					source      = 'stream1'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -397,10 +398,10 @@ class CQLParsingTest
 			+keyword0+"stream2 := ACCESS
 			(
 				{
-					source      = 'stream2'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream2',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr4', 'String'],
@@ -416,10 +417,10 @@ class CQLParsingTest
 			+keyword0+"stream3 := ACCESS
 			(
 				{
-					source      = 'stream3'
-					wrapper     = 'GenericPush'
-					transport   = 'TCPClient'
-					dataHandler = 'Tuple'
+					source      = 'stream3',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr5', 'Integer'],

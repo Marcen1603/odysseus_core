@@ -1,0 +1,5 @@
+CREATE STREAM stream1 (timestamp STARTTIMESTAMP, transaction_id INTEGER, name STRING, value INTEGER)
+  CHANNEL localhost : 54321;
+  
+SELECT value FROM stream1
+WHERE value > 10
