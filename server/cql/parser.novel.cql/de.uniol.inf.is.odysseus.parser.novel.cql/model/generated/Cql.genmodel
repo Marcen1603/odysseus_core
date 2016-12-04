@@ -28,6 +28,9 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Source">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/unbounded"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Source/time"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Source/tuple"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Attribute">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Attribute/name"/>
@@ -39,18 +42,18 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Select_Statement/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/attributes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/sources"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/windows"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/predicates"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Window">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Window/type"/>
+    <genClasses ecoreClass="CQL.ecore#//Window_Timebased">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/unit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/advance_size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/advance_unit"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//WindowType">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/size"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/unit"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/advance_size"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//WindowType/advance_unit"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//WindowType/partition_attribute"/>
+    <genClasses ecoreClass="CQL.ecore#//Window_Tuplebased">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Tuplebased/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Tuplebased/advance_size"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Window_Tuplebased/partition_attribute"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Operator">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Operator/name"/>
@@ -66,12 +69,26 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Scalar_Function/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Create_Statement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Statement/attributes"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/datatypes"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/host"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Statement/port"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Statement/stream"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Statement/sink"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Create_Sink">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Sink/attributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/datatypes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/wrapper"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/protocol"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/transport"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/datahandler"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/keys"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Sink/values"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Create_Stream">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Stream/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Stream/attributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Stream/datatypes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Stream/host"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Stream/port"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//IntConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//IntConstant/value"/>

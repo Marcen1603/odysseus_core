@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-import java.io.File
 import java.util.HashSet
 import java.util.List
 import java.util.Map
@@ -84,34 +83,65 @@ class CQLGenerator extends AbstractGenerator
 	
 	def parseCreate(Create_Statement stmt)
 	{
-		var args = ''
-		var size = stmt.attributes.size
-		for(var i = 0; i < size -1; i++)
+		if(stmt.stream != null)
 		{
-			args += "['" + stmt.attributes.get(i).name + "','" + stmt.datatypes.get(i) + "'],\n"
+			println("HELLLOO!!")
+			var args = ''
+			var size = stmt.stream.attributes.size
+			for(var i = 0; i < size -1; i++)
+			{
+				args += "['" + stmt.stream.attributes.get(i).name + "','" + stmt.stream.datatypes.get(i) + "'],\n"
+			}
+			args += "['" + stmt.stream.attributes.get(size - 1).name + "','" + stmt.stream.datatypes.get(size - 1) + "']"
+			'''
+			«getKeyword(0) + stmt.stream.name» := ACCESS({Source = '«stmt.stream.name»', 
+			Wrapper = 'GenericPush',
+			Schema = [«args»],
+			transport = 'NonBlockingTcp',
+			protocol = 'SizeByteBuffer',
+			dataHandler ='Tuple',
+			Options =[['port', '«stmt.stream.port»'],['host', '«stmt.stream.host»']]})
+			'''
 		}
-		args += "['" + stmt.attributes.get(size - 1).name + "','" + stmt.datatypes.get(size - 1) + "']"
-		'''
-		«stmt.name» := ACCESS({Source = '«stmt.name»', 
-		Wrapper = 'GenericPush',
-		Schema = [«args»],
-		transport = 'NonBlockingTcp',
-		protocol = 'SizeByteBuffer',
-		dataHandler ='Tuple',
-		Options =[['port', '«stmt.port»'],['host', '«stmt.host»']]})
-		'''
+		else
+		{//TODO Something wrong here ...
+			var options = ''
+			var size = stmt.sink.keys.size
+			for(var i = 0; i < size - 1; i++)
+			{
+				options += "['" + stmt.sink.keys.get(i) + "','" + stmt.sink.values.get(i) + "'],"	
+			}
+			options += "['" + stmt.sink.keys.get(size - 1) + "','" + stmt.sink.values.get(size - 1) + "']"
+			'''
+			«getKeyword(2) + stmt.sink.name» := SENDER (
+			{wrapper='«stmt.sink.wrapper»',
+			protocol='«stmt.sink.protocol»',
+			transport='«stmt.sink.transport»',
+			dataHandler='«stmt.sink.datahandler»',
+			options=[«options»]})
+			'''	
+		}
+	}
+
+	val static CharSequence[] keywords = #['input_', 'window_', 'output_']
+
+	def static CharSequence getKeyword(int i)
+	{
+		if(i >= keywords.length || i < 0)
+			return 'WRONG_INDEX_NO_KEYWORD'
+		return keywords.get(i);
 	}
 
 	def CharSequence parseSelect(Select_Statement stmt)
 	{
 		predicate = ''
-		if(stmt.predicates == null)
+		if(stmt.predicates == null)//Without a WHERE clause
 		{
 			'''
 			«FOR src : stmt.sources»
-				«src.name» := «buildAccessOP(stmt.attributes, src)»
+				«getKeyword(0) + src.name» := «buildAccessOP(stmt.attributes, src)»
 			«ENDFOR»
-			'''		
+			'''
 		}
 		else
 		{ 
@@ -123,7 +153,7 @@ class CQLGenerator extends AbstractGenerator
 			srcs += stmt.sources.get(stmt.sources.size - 1).name
 			'''
 			«FOR src : stmt.sources»
-				«src.name» := «buildAccessOP(stmt.attributes, src)»
+				«getKeyword(0) + src.name» := «buildAccessOP(stmt.attributes, src)»
 			«ENDFOR»
 			SELECT({predicate=
 			«buildPredicate(stmt.predicates.elements.get(0))»},
@@ -226,9 +256,59 @@ class CQLGenerator extends AbstractGenerator
 				schema = [«buildSchema(attr, src)»]
 			}
 		)
+		
+		«buildWindowOP(src, src.name)»
 		'''
 	}
 
+	def CharSequence buildWindowOP(Source w, CharSequence name)
+	{
+	
+		if(w.time != null)
+		{
+			'''
+			«getKeyword(1)»«name» := TIMEWINDOW
+			({size = [«w.time.size», '«w.time.unit»']},
+			«getKeyword(0)»«name»
+			)
+			'''
+		}
+		else if(w.tuple != null)
+		{
+			var var1 = if(w.tuple.advance_size != 0) w.tuple.advance_size else 1
+			if(w.tuple.partition_attribute == null)
+			{
+				'''
+				«getKeyword(1)»«name» := ELEMENTWINDOW
+				(
+					{size = «w.tuple.size»,
+					advance = «var1»
+					},
+				«getKeyword(0)»«name»
+				)
+				'''
+			}
+			else
+			{
+				'''
+				«getKeyword(1)»«name» := ELEMENTWINDOW
+				(
+					{size = «w.tuple.size»,
+					advance = «var1»,
+					partition = '«w.tuple.partition_attribute.name»'
+					},
+				«getKeyword(0)»«name»
+				)
+				'''
+			}			
+		}
+		else if(w.unbounded != null)
+		{
+			''''''
+		}
+			
+	}
+		
 	//TODO Refactore	
 	def CharSequence buildSchema(List<Attribute> attr, Source src)
 	{

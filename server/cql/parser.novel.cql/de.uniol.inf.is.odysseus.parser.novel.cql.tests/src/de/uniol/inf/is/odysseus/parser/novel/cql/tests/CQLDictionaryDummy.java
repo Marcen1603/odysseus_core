@@ -15,13 +15,16 @@ public class CQLDictionaryDummy extends CQLDictionary
 		super.attributes = new HashMap<>();
 		String src1 = "stream1";
 		String src2 = "stream2";
+		String src3 = "stream3";
 		
 		SDFAttribute[] attributes = 
 			{
 					new SDFAttribute(src1, "attr1", new SDFDatatype("Integer")),
 					new SDFAttribute(src1, "attr2", new SDFDatatype("String")),
 					new SDFAttribute(src2, "attr3", new SDFDatatype("Integer")),
-					new SDFAttribute(src2, "attr4", new SDFDatatype("String"))
+					new SDFAttribute(src2, "attr4", new SDFDatatype("String")),
+					new SDFAttribute(src3, "attr5", new SDFDatatype("Integer")),
+					new SDFAttribute(src3, "attr6", new SDFDatatype("String"))
 					// ...
 			};
 		

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +15,6 @@ import javax.inject.Inject;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.generator.GeneratorDelegate;
-import org.eclipse.xtext.generator.IGeneratorContext;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.resource.XtextResource;
@@ -25,15 +22,12 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.inject.Injector;
-import com.ibm.icu.util.CharsTrie.Iterator;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
@@ -41,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Stream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider;
@@ -134,7 +128,7 @@ public class CQLParser implements IQueryParser
 //		System.out.println("ERROS:: " + resource.getErrors().toString());
 		Model model = (Model) resource.getContents().get(0);
 
-		for(Create_Statement stmt : EcoreUtil2.eAllOfType(model, Create_Statement.class))
+		for(Create_Stream stmt : EcoreUtil2.eAllOfType(model, Create_Stream.class))
 		{
 			int s = stmt.getAttributes().size();
 			SDFAttribute[] attributes = new SDFAttribute[s];

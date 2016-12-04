@@ -28,6 +28,7 @@ Alias:
 
 Source: 
 	name=ID
+	('[' (unbounded=Window_Unbounded|time=Window_Timebased|tuple=Window_Tuplebased)']')?
 ;
 
 //TODO Add more data types
@@ -112,46 +113,29 @@ Select_Statement:
 	('DISTINCT')?
 	( '*' | attributes+=Attribute+ (',' attributes+=Attribute)*)
 	'FROM'
-	(sources+=Source+ (windows+=Window)? (',' sources+=Source (windows+=Window)?)*)
+	(sources+=Source+ (',' sources+=Source)*)
 	('WHERE' (predicates=ExpressionsModel))?//| attribute=[Attribute] 'IN' '(' values+=Value ')'))?
 //	(('ORDER' 'BY' | 'order' 'by') ordering+=[Attribute]+ ('ASC' | 'asc' | 'DESC' | 'desc')? )?
 //	(('HAVING' | 'having') havingFunction=[Parameter] havingOperator=Operator havingValue=Value)?
 //	';'
 ;
 
-Window : '['
-	(   type=Window_Unbounded | 
-		type=Window_Timebased | 
-		type=Window_Tuplebased
-	) 
+Window_Unbounded:  
+	'UNBOUNDED'
 ;
 
-Window_Unbounded returns WindowType: 
-	{WindowType} 
-	('[' 'UNBOUNDED' ']')?
-;
-
-Window_Timebased returns WindowType:
-	{WindowType}
-	'['
-	'SIZE' size=INT unit=STRING
-	('ADVANCE' advance_size=INT advance_unit=STRING)?
+Window_Timebased: 
+	'SIZE' size=INT unit=ID
+	('ADVANCE' advance_size=INT advance_unit=ID)?
 	'TIME'
-	('PARTITION' 'BY' partition_attribute=Attribute)?
-	']'
 ;
 
-Window_Tuplebased returns WindowType:
-	{WindowType}
-	'['
+Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
 	'SIZE' size=INT
 	('ADVANCE' advance_size=INT)?
 	'TUPLE'
 	('PARTITION' 'BY' partition_attribute=Attribute)?
-	']'	
 ;
-
-
 
 Operator:
 	name=ID
@@ -180,7 +164,29 @@ Scalar_Function:
 ;
 
 Create_Statement:
-	'CREATE' type=('STREAM' | 'VIEW' | 'SINK')
+	'CREATE' (stream=Create_Stream | sink=Create_Sink)
+;
+
+Create_Sink:
+	'SINK'
+	name = ID
+	'('
+	attributes+= Attribute+ 
+	datatypes+= DataType+
+	(',' attributes+=Attribute datatypes+= DataType)*
+	')'
+	'WRAPPER' wrapper=STRING
+	'PROTOCOL' protocol=STRING
+	'TRANSPORT' transport=STRING
+	'DATAHANDLER' datahandler=STRING
+	'OPTIONS' 
+		'(' 
+			(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
+		')'
+;
+
+Create_Stream:
+	('STREAM' | 'VIEW')
 	name = ID
 	'('
 	attributes+= Attribute+ 
@@ -192,5 +198,4 @@ Create_Statement:
 	':'
 	port=INT
 ;
-
 
