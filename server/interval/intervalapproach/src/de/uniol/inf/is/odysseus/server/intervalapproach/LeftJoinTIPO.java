@@ -212,7 +212,6 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 						T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(elem);
 						this.transferFunction.transfer(out);
 					});
-			this.areas[0].clear();
 		}
 		super.process_done(port);
 	}

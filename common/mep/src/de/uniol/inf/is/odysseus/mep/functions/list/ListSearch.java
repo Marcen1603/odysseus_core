@@ -20,7 +20,7 @@ public class ListSearch extends AbstractFunction<Object> {
 	@Override
 	public Object getValue() {
 		List<?> l = (List<?>) getInputValue(0);
-		
+
 		Comparable toFind = (Comparable) getInputValue(1);
 		Boolean useNext = (Boolean) getInputValue(2);
 		// Let java throw exception?
@@ -34,15 +34,23 @@ public class ListSearch extends AbstractFunction<Object> {
 			elem = (Comparable)iter.next();
 			@SuppressWarnings("unchecked")
 			int compare = elem.compareTo(toFind);
+			// current element is smaller
 			if (compare < 0){
 				last = (Comparable)elem;
+		    // element found
 			}else if (compare == 0){
 				return elem;
+			// element is higher
 			}else{
 				return send(useNext, last, elem);
 			}
 		}
-		
+
+		// case: element not found, and useNext = true --> return null
+		if (useNext == true){
+			return null;
+		}
+
 		return send(useNext, last, elem);
 	}
 

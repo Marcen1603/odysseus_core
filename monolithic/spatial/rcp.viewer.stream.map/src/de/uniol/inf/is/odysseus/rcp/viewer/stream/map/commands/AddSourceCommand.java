@@ -27,20 +27,20 @@ public class AddSourceCommand extends AbstractHandler implements IHandler {
 
 	@Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		StreamMapEditorPart editor = (StreamMapEditorPart) HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getActiveEditor();
-		
+
 		@SuppressWarnings("unused")
-		Shell shell = editor.getScreenManager().getDisplay().getActiveShell(); 
-		
+		Shell shell = editor.getScreenManager().getDisplay().getActiveShell();
+
 		@SuppressWarnings("unused")
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		IServerExecutor serverExecutor = null;
-		
+
 		if (executor instanceof IServerExecutor) {
 			serverExecutor = (IServerExecutor) executor;
-			Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan().getQueries();
+			Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan(user).getQueries(user);
 
 //			for (IPhysicalQuery iPhysicalQuery : queries) {
 //				List<IPhysicalOperator> ops = serverExecutor.getPhysicalRoots(iPhysicalQuery.getID());
@@ -69,7 +69,7 @@ public class AddSourceCommand extends AbstractHandler implements IHandler {
 					return this.operator.toArray();
 				}
 			};
-			
+
 			ILabelProvider labelprovider = new ILabelProvider() {
 
 				@Override

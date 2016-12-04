@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,13 +32,17 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementc
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
- * 
+ *
  * @author Wolf Bauer, Tobias Witt, Marco Grawunder
- * 
+ *
  */
 public class StandardOptimizer extends AbstractOptimizer {
+
+	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	protected static Logger LOG = LoggerFactory.getLogger(StandardOptimizer.class);;
 
@@ -51,11 +55,11 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public List<IPhysicalQuery> optimize(IServerExecutor executor, IExecutionPlan currentExecPlan,  List<ILogicalQuery> queries,
 			OptimizationConfiguration parameter, IDataDictionaryWritable dd)
 			{
-		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();		
+		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 		if (!queries.isEmpty()) {
 			ParameterDoPlanAdaption adaption = parameter.getParameterDoPlanAdaption();
-			for (ILogicalQuery query : queries) {								
-				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);		
+			for (ILogicalQuery query : queries) {
+				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);
 				doPostOptimizationActions(optimized, parameter, currentExecPlan);
 				optimizedQueries.add(optimized);
 				// set the adaption parameter for each query
@@ -70,12 +74,11 @@ public class StandardOptimizer extends AbstractOptimizer {
 			if (qso != null
 					&& parameter.getParameterPerformQuerySharing() != null
 					&& parameter.getParameterPerformQuerySharing().getValue()) {
-				qso.applyQuerySharing(currentExecPlan.getQueries(), optimizedQueries, parameter, dd);
+				qso.applyQuerySharing(currentExecPlan.getQueries(superUser), optimizedQueries, parameter, dd);
 			}
-			
+
 			// Add new queries to the execution plan and optimize new plan
-			currentExecPlan.addQueries(optimizedQueries);
-			currentExecPlan.updateLeafSources();
+			currentExecPlan.addQueries(optimizedQueries, superUser);
 		}
 		IElementCloningUpdater equ = getElementCloningUpdater();
 		if (equ != null){
@@ -93,7 +96,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	@Override
 	public void handleFinishedMigration(IPhysicalQuery query) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

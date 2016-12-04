@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.log4j.Level;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -48,7 +49,7 @@ public class LogTable implements IRCPLogContainerListener {
 
 	private final LevelImageMap imageMap;
 
-	private final List<ILogTableListener> listeners = Lists.newArrayList();
+	private final List<ILogTableListener> listeners = new CopyOnWriteArrayList<ILogTableListener>();
 
 	public LogTable(Composite parent, RCPLogContainer logContainer) {
 		Preconditions.checkNotNull(parent, "Parent composite must not be null!");

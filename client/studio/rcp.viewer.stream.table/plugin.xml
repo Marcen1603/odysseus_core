@@ -61,7 +61,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.SelectAllFromSource"
                icon="icons/zoom.gif"
-               label="Show data"
+               label="Query source"
                style="push">
             <visibleWhen
                   checkEnabled="true">
