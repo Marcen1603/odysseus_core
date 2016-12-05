@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
 
 /**
  * Generates code from your model files on save.
@@ -83,29 +84,30 @@ class CQLGenerator extends AbstractGenerator
 	
 	def parseCreate(Create_Statement stmt)
 	{
-		if(stmt.channel != null)
+		var ch = stmt.channel
+		if(ch!= null)
 		{
-			var args = ''
-			var size = stmt.channel.attributes.size
-			for(var i = 0; i < size -1; i++)//TODO Make a function of the schema creation!
-			{
-				args += "['" + stmt.channel.attributes.get(i).name + "','" + stmt.channel.datatypes.get(i) + "'],\n"
-			}
-			args += "['" + stmt.channel.attributes.get(size - 1).name + "','" + stmt.channel.datatypes.get(size - 1) + "']"
+			var args = generateKeyValueString(
+				ch.attributes.map[e|e.name],
+				ch.datatypes.map[e|e.value]
+			)
+			
+			return
 			'''
-			«getKeyword(0) + stmt.channel.name» := ACCESS({source = '«stmt.channel.name»', 
+			«getKeyword(0) + ch.name» := ACCESS({source = '«ch.name»', 
 			wrapper = 'GenericPush',
 			schema = [«args»],
 			transport = 'NonBlockingTcp',
 			protocol = 'SizeByteBuffer',
 			dataHandler ='Tuple',
-			options =[['port', '«stmt.channel.port»'],['host', '«stmt.channel.host»']]})
+			options =[['port', '«ch.port»'],['host', '«ch.host»']]})
 			'''
 		}
 		else
-		{//TODO Something wrong here ...
+		{
+			var af = stmt.accessframework
 		 	var type = ''
-			switch stmt.accessframework.type
+			switch af.type
 			{
 				case "VIEW",
 				case "STREAM":
@@ -117,28 +119,25 @@ class CQLGenerator extends AbstractGenerator
 			var bool = type.equals('ACCESS')
 			if(bool)
 			{
-				var size = stmt.accessframework.attributes.size
-				for(var i = 0; i < size -1; i++)
-				{
-					args += "['" + stmt.accessframework.attributes.get(i).name + "','" + stmt.accessframework.datatypes.get(i) + "'],\n"
-				}
-				args += "['" + stmt.accessframework.attributes.get(size - 1).name + "','" + stmt.accessframework.datatypes.get(size - 1) + "']"
+				args = generateKeyValueString(
+					af.attributes.map[e|e.name],
+					af.datatypes.map[e|e.value]
+				)
 			}
-			var options = ''
-			var size = stmt.accessframework.keys.size
-			for(var i = 0; i < size - 1; i++)
-			{
-				options += "['" + stmt.accessframework.keys.get(i) + "','" + stmt.accessframework.values.get(i) + "'],"	
-			}
-			options += "['" + stmt.accessframework.keys.get(size - 1) + "','" + stmt.accessframework.values.get(size - 1) + "']"
+			var options = generateKeyValueString(
+				af.keys,
+				af.values
+			)
+			
+			return 
 			'''
-			«getKeyword(2) + stmt.accessframework.name» := «type» (
-			{«IF bool»source ='«stmt.accessframework.name»',«ENDIF»
-			«IF !bool»sink='«stmt.accessframework.name»'«ENDIF»
-			wrapper='«stmt.accessframework.wrapper»',
-			protocol='«stmt.accessframework.protocol»',
-			transport='«stmt.accessframework.transport»',
-			dataHandler='«stmt.accessframework.datahandler»',
+			«getKeyword(2) + af.name» := «type» (
+			{«IF bool»source ='«af.name»',«ENDIF»
+			«IF !bool»sink='«af.name»'«ENDIF»
+			wrapper='«af.wrapper»',
+			protocol='«af.protocol»',
+			transport='«af.transport»',
+			dataHandler='«af.datahandler»',
 			«IF bool»schema=[«args»],«ENDIF»
 			options=[«options»]})
 			'''	
@@ -159,12 +158,14 @@ class CQLGenerator extends AbstractGenerator
 		predicate = ''
 		if(stmt.predicates == null)//Without a WHERE clause
 		{
+			return
 			'''
 			«buildAccessOP(stmt.attributes, stmt.sources, true)»
 			'''
 		}
 		else
 		{ 
+			return
 			'''
 			«getKeyword(3)» := SELECT({predicate='
 			«buildPredicate(stmt.predicates.elements.get(0))»'},
@@ -254,6 +255,9 @@ class CQLGenerator extends AbstractGenerator
 		}
 	}
 	
+	var wrapper = 'GenericPush'
+	var transport = 'TCPClient'
+	var dataHandler = 'Tuple'
 	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)
 	{
 		var str = ''
@@ -265,6 +269,9 @@ class CQLGenerator extends AbstractGenerator
 			(
 				{	
 					source = '"+getKeyword(0) + src.get(i).name+"',
+					wrapper = '"+wrapper+"',
+					transport = '"+transport+"',
+					dataHandler = '"+dataHandler+"',
 					schema = ["+buildSchema(attr, src.get(i))+"]
 				}
 			)	
@@ -278,6 +285,9 @@ class CQLGenerator extends AbstractGenerator
 		(
 			{	
 				source = '"+getKeyword(0) + src.get(src.size - 1).name+"',
+				wrapper = '"+wrapper+"',
+				transport = '"+transport+"',
+				dataHandler = '"+dataHandler+"',
 				schema = ["+buildSchema(attr, src.get(src.size - 1))+"]
 			}
 		)
@@ -336,6 +346,19 @@ class CQLGenerator extends AbstractGenerator
 		{
 			''''''
 		}
+	}
+		
+		
+	def String generateKeyValueString(List<String> l1, List<String> l2)
+	{
+		var args = ''
+		var size = l1.size
+		for(var i = 0; i < size -1; i++)
+		{
+			args += "['" + l1.get(i)+ "','" + l2.get(i) + "'],\n"
+		}
+		args += "['" + l1.get(size - 1) + "','" + l2.get(size - 1) + "']"
+		return args
 	}
 		
 	//TODO Refactore	

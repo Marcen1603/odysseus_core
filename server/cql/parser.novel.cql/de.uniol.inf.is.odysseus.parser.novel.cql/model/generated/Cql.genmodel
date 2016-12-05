@@ -32,6 +32,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Source/time"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Source/tuple"/>
     </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//DataType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DataType/value"/>
+    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Attribute">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Attribute/name"/>
     </genClasses>
@@ -76,7 +79,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_AccessFramework/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_AccessFramework/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_AccessFramework/attributes"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_AccessFramework/datatypes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_AccessFramework/datatypes"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_AccessFramework/wrapper"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_AccessFramework/protocol"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_AccessFramework/transport"/>
@@ -88,9 +91,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Channel/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Channel/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Channel/attributes"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Channel/datatypes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Channel/datatypes"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Channel/host"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Create_Channel/port"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//StreamTo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//StreamTo/statement"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//IntConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//IntConstant/value"/>

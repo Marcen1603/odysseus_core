@@ -32,7 +32,8 @@ Source:
 ;
 
 //TODO Add more data types
-DataType: ('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN' 
+DataType: 
+	value=('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN' 
 	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
 );
 
@@ -197,5 +198,11 @@ Create_Channel:
 	host=ID
 	':'
 	port=INT
+;
+
+StreamTo:
+	'STREAM' 'TO'
+	name=ID
+	statement=Select_Statement
 ;
 

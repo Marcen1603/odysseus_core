@@ -43,6 +43,9 @@ class CQLParsingTest
 			(
 				{
 					source      = '"+keyword0+"stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -63,6 +66,9 @@ class CQLParsingTest
 			(
 				{
 					source      = '"+keyword0+"stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr1', 'Integer'],
@@ -74,6 +80,9 @@ class CQLParsingTest
 			(
 				{
 					source      = '"+keyword0+"stream2',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
 					schema = 
 					[
 						['attr4', 'String'],
@@ -95,6 +104,9 @@ class CQLParsingTest
 				(
 					{ 
 						source = '"+keyword0+"stream1',
+						wrapper     = 'GenericPush',
+						transport   = 'TCPClient',
+						dataHandler = 'Tuple',
 						schema = 
 						[
 							['attr1', 'Integer'],
@@ -107,10 +119,6 @@ class CQLParsingTest
 	}
 	
 	
-//						wrapper     = 'GenericPush',
-//						transport   = 'TCPClient',
-//						dataHandler = 'Tuple',
-	
 	@Test def void SelectAttr1Attr2() 
 	{ 
 		assertCorrectGenerated
@@ -122,6 +130,9 @@ class CQLParsingTest
 				(
 					{ 
 						source = '"+keyword0+"stream1',
+						wrapper     = 'GenericPush',
+						transport   = 'TCPClient',
+						dataHandler = 'Tuple',
 						schema = 
 						[
 							['attr1', 'Integer'],
@@ -144,6 +155,9 @@ class CQLParsingTest
 					(
 						{ 
 							source      = '"+keyword0+"stream1',
+							wrapper = 'GenericPush',
+							transport = 'TCPClient',
+							dataHandler = 'Tuple',
 							schema = 
 							[
 								['attr1', 'Integer'],
@@ -155,6 +169,9 @@ class CQLParsingTest
 					(
 						{ 
 							source      = '"+keyword0+"stream2',
+							wrapper = 'GenericPush',
+							transport = 'TCPClient',
+							dataHandler = 'Tuple',
 							schema = 
 							[
 								['attr4', 'String'],	
@@ -233,7 +250,7 @@ class CQLParsingTest
 //		, null)
 //	}
 //	
-//	@Test def void CreateSink1()
+//	@Test def void CreateSink1()//TODO Input operator missing!
 //	{
 //		assertCorrectGenerated
 //		(

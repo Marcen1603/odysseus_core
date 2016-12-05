@@ -147,7 +147,7 @@ public class CQLParser implements IQueryParser
 					for(int i = 0; i < s; i++)
 					{
 						String name = create.getAttributes().get(i).getName();
-						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i));
+						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i).getValue());
 						attributes[i] = new SDFAttribute(create.getName(), name, type);
 					}
 					dic.add(attributes);
@@ -160,7 +160,7 @@ public class CQLParser implements IQueryParser
 					for(int i = 0; i < s; i++)
 					{
 						String name = create.getAttributes().get(i).getName();
-						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i));
+						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i).getValue());
 						attributes[i] = new SDFAttribute(create.getName(), name, type);
 					}
 					dic.add(attributes);
