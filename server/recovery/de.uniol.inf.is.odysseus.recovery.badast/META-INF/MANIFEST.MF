@@ -16,7 +16,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.recovery;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational_interval,
  de.uniol.inf.is.odysseus.server.intervalapproach,
- com.google.guava_20;bundle-version="18.0.0",
+ com.google.guava;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.recovery.recoverytime
 Service-Component: OSGI-INF/SubscriberControllerProvider.xml,
  OSGI-INF/FullReplayRecoveryExecutor.xml

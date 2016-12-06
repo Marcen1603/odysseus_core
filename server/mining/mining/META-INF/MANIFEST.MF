@@ -20,7 +20,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.logicaloperator.builder;bundle-version=
  org.apache.commons.math3;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0",
- com.google.guava_20;bundle-version="14.0.0",
+ com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
 Service-Component: OSGI-INF/DataDictionaryService.xml,OSGI-INF/OperatorBuilderFactory.xml

@@ -12,7 +12,7 @@ Import-Package: de.uniol.inf.is.odysseus.processmining.common,
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- com.google.guava_20,
+ com.google.guava,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.processmining.dataanalyser
 Bundle-ClassPath: .,
