@@ -15,5 +15,5 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.parser.pql.generator
 Export-Package: de.uniol.inf.is.odysseus.script.generator
 Service-Component: OSGI-INF/OdysseusScriptGenerator.xml
-Require-Bundle: com.google.guava;bundle-version="14.0.0",
+Require-Bundle: com.google.guava_20;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"

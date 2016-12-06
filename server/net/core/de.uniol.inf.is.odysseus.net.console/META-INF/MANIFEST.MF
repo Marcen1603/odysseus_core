@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.net.console.OdysseusNetConsolePlugIn
 Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
- com.google.guava;bundle-version="18.0.0",
+ com.google.guava_20;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.net.config;bundle-version="1.0.0",

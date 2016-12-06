@@ -12,7 +12,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.net;bundle-version="1.0.0",
  org.json,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- com.google.guava;bundle-version="18.0.0",
+ com.google.guava_20;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.net.querydistribute;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.net.recovery.backupinfo
 Bundle-ActivationPolicy: lazy
