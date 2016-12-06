@@ -21,7 +21,7 @@ public interface IAutoregressionForecaster<T> extends IClone {
 
 	/**
 	 * Forecasts variance of new time period (t+1). The stochastic process will
-	 * not be recalculated.
+	 * not be recalculated. Forecasting is based on the lag variables.
 	 * 
 	 * @param lagResiduals
 	 *            sorted last q residuals. First element is the oldest element.

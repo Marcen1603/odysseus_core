@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.timeseries.autoregression.model;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 
 /**
@@ -18,6 +21,8 @@ import de.uniol.inf.is.odysseus.core.IClone;
  */
 public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 
+	protected static Logger logger = LoggerFactory.getLogger(GARCHForecaster.class);
+	
 	/**
 	 * Number of residuals. also called number of autoregressive parameter
 	 */
@@ -119,7 +124,10 @@ public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 		// length condition
 		if (lagResiduals.size() == this.q && lagVariances.size() == p) {
 
+			// stating with omega.
 			Double varianceNextPeriod = this.omega;
+
+			// continue with lag residuals, weights are the alphas.
 			@SuppressWarnings("unchecked")
 			LinkedList<Double> residualsClone = (LinkedList<Double>) lagResiduals.clone();
 			for (Iterator<Double> nextAlphaIterator = this.alphas.descendingIterator(); nextAlphaIterator.hasNext();) {
@@ -127,6 +135,7 @@ public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 				varianceNextPeriod += (nextAlphaIterator.next() * lastResidual * lastResidual);
 			}
 
+			// add lag variance, weights are the betas.
 			@SuppressWarnings("unchecked")
 			LinkedList<Double> variancesClone = (LinkedList<Double>) lagVariances.clone();
 			for (Iterator<Double> nextBetaIterator = this.betas.descendingIterator(); nextBetaIterator.hasNext();) {
@@ -135,7 +144,7 @@ public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 
 			return varianceNextPeriod;
 		} else {
-			throw new IllegalArgumentException("Length of residuals and/or varinces is not equal q/p.");
+			throw new IllegalArgumentException("Length of residuals and/or variances is not equal q/p.");
 		}
 	}
 
@@ -148,7 +157,7 @@ public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 
 	@Override
 	public Double forecast(LinkedList<Double> residuals, Integer timeHorizon) {
-		// TODO Auto-generated method stub
+		// TODO time Horizon formula
 		return this.forecast(residuals);
 	}
 
@@ -159,7 +168,15 @@ public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 			LinkedList<Double> lagVariances = new LinkedList<Double>();
 			for (Iterator<Double> nextBetaIterator = this.betas.descendingIterator(); nextBetaIterator.hasNext();) {
 				nextBetaIterator.next();
-				lagVariances.add(0.0);
+
+				// at first time, when no lag variances are known,
+				// the variances are equal to r_0^2
+				if (sampleResiduals.get(0) != null) {
+					double firstResidual = sampleResiduals.get(0);
+					lagVariances.add(firstResidual * firstResidual);
+				} else {
+					lagVariances.add(0.0);
+				}
 			}
 
 			LinkedList<Double> lagResiduals = new LinkedList<Double>();
@@ -184,7 +201,8 @@ public class GARCHForecaster implements IAutoregressionForecaster<Double> {
 
 			return varianceNextPeriod;
 		} else {
-			throw new IllegalArgumentException("Size of sampleResiduals have to be at least q (" + this.q + ").");
+			throw new IllegalArgumentException("Size of sampleResiduals have to be at least q (" + this.q
+					+ "). Current Size: " + sampleResiduals.size());
 		}
 
 	}

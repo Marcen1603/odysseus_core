@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.probabilistic.common.simulation.ISimulationFunct
 import de.uniol.inf.is.odysseus.timeseries.IHasEstimationData;
 
 /**
+ * This class represents a estimator by historical simulation with a volatility
+ * integrated simulation function.
  * 
  * @author Christoph Schröer
  *
@@ -39,7 +41,10 @@ public class VolatilityIntegratedHistoricalSimulationEstimator extends Historica
 		ISimulation<Tuple<ITimeInterval>, Double> numericalSimulator = new HistoricalSimulation(this.historicalData);
 
 		// get newest estimated Volatility
-		Tuple<ITimeInterval> newestTuple = this.historicalData.get(this.historicalData.size() - 1);
+		Tuple<ITimeInterval> newestTuple = null;
+		if(this.historicalData.size() > 0){
+			newestTuple = this.historicalData.get(this.historicalData.size() - 1);
+		}
 
 		if (newestTuple != null) {
 			double volatilityT1 = newestTuple.getAttribute(this.volatilityIndex);
@@ -60,6 +65,5 @@ public class VolatilityIntegratedHistoricalSimulationEstimator extends Historica
 		} else {
 			this.isEstimated = true;
 		}
-
 	}
 }

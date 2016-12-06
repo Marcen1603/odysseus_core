@@ -57,6 +57,12 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 	public final static String FORECASTED_TIME_HORIZON_PARAMETER_NAME = "time_horizon";
 
+	public final static String RESIDUAL_PARAMETER_NAME = "residual_attribute";
+
+	public final static String MODEL_PARAMETER_NAME = "model_attribute";
+
+	public final static String DO_STOCHASTIC_PROCESS_PARAMETER_NAME = "do_stochastic_process";
+
 	/**
 	 * 
 	 */
@@ -84,13 +90,20 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 	private LinkedList<Double> lagVariances;
 
 	/**
-	 * To detect, wether a model is changed.
+	 * To detect, whether a model is changed.
 	 */
 	private IAutoregressionForecaster<Double> oldModel;
+
+	/**
+	 * This parameter indicates, that the stochastic process should always
+	 * processed.
+	 */
+	private boolean doStochasticProcess;
 
 	public ForecastVariance() {
 		super();
 		this.outputAttributes = new ArrayList<>();
+		this.doStochasticProcess = false;
 	}
 
 	public ForecastVariance(final int[] inputAttributesIndices, final String[] outputAttribute,
@@ -101,6 +114,18 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 		this.lagResiduals = new LinkedList<>();
 		this.lagVariances = new LinkedList<>();
 		this.forecastHorizon = forecastHorizon;
+		this.doStochasticProcess = false;
+	}
+
+	public ForecastVariance(final int[] inputAttributesIndices, final String[] outputAttribute,
+			Collection<SDFAttribute> outputAttributes, int forecastHorizon, boolean doStochasticProcess) {
+		super(inputAttributesIndices, outputAttribute);
+		this.outputAttributes = outputAttributes;
+		this.sampleResiduals = new LinkedList<>();
+		this.lagResiduals = new LinkedList<>();
+		this.lagVariances = new LinkedList<>();
+		this.forecastHorizon = forecastHorizon;
+		this.doStochasticProcess = doStochasticProcess;
 	}
 
 	public ForecastVariance(ForecastVariance<M, T> modelVariance) {
@@ -111,6 +136,7 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 		this.lagVariances = modelVariance.lagVariances;
 		this.oldModel = modelVariance.oldModel;
 		this.forecastHorizon = modelVariance.forecastHorizon;
+		this.doStochasticProcess = modelVariance.doStochasticProcess;
 	}
 
 	@Override
@@ -129,6 +155,7 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 		Object[] elementsValues = getAttributes(trigger);
 
 		double residual = (double) elementsValues[0]; // resiudal
+		@SuppressWarnings("unchecked")
 		IAutoregressionForecaster<Double> forecaster = (IAutoregressionForecaster<Double>) elementsValues[1]; // model
 
 		// new model?
@@ -150,14 +177,17 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 		double forecastedVariance = 0.0;
 
 		if (countOfResiudals > this.lagResiduals.size() || countOfVariances > this.lagVariances.size()) {
-			// not enough data yet
+			// not enough data yet to estimate variance
 			// transfer default variance
 			this.updateLagVariances(countOfVariances, forecastedVariance);
 		} else {
 
-			// recalculation of whole stochastic process
-			LinkedList<Double> sampleResidualsDouble = new LinkedList<Double>();
-			if (hasModelChanged) {
+			// if model not changed, lag data can be used,
+			// else new recalculation
+			if (hasModelChanged || this.doStochasticProcess) {
+
+				// recalculation of whole stochastic process
+				LinkedList<Double> sampleResidualsDouble = new LinkedList<Double>();
 
 				for (T tuple : this.sampleResiduals) {
 
@@ -167,16 +197,15 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 
 					sampleResidualsDouble.add(residualTuple);
 				}
-			}
 
-			// for (int currentForecastHorizon = 1; currentForecastHorizon <=
-			// this.forecastHorizon; currentForecastHorizon++) {
-
-			// if model not changed, lagged data can be used, else new
-			// recalculation
-			if (hasModelChanged) {
 				// new stochastic process with new model
-				forecastedVariance = forecaster.forecast(sampleResidualsDouble, this.forecastHorizon);
+				try {
+					forecastedVariance = forecaster.forecast(sampleResidualsDouble, this.forecastHorizon);
+				} catch (IllegalArgumentException e) {
+					logger.debug(e.getMessage());
+					forecastedVariance = Double.NaN;
+				}
+
 			} else {
 				forecastedVariance = forecaster.forecast(this.lagResiduals, this.lagVariances, this.forecastHorizon);
 			}
@@ -186,8 +215,6 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 				// updated.
 				this.updateLagVariances(countOfVariances, forecastedVariance);
 			}
-
-			// }
 
 		}
 
@@ -224,14 +251,14 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 		// get index of input attributes
 		// in this case, the residual attribute is the important one.
 		int[] residualInputAttributesIndexArray = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, "residual_attribute");
+				attributeResolver, ForecastVariance.RESIDUAL_PARAMETER_NAME);
 		Integer residualInputAttributesIndex = null;
 		if (residualInputAttributesIndexArray != null) {
 			residualInputAttributesIndex = residualInputAttributesIndexArray[0];
 		}
 
 		int[] modelInputAttributesIndexArray = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, "model_attribute");
+				attributeResolver, ForecastVariance.MODEL_PARAMETER_NAME);
 		Integer modelInputAttributesIndex = null;
 		if (modelInputAttributesIndexArray != null) {
 			modelInputAttributesIndex = modelInputAttributesIndexArray[0];
@@ -284,9 +311,12 @@ public class ForecastVariance<M extends ITimeInterval, T extends Tuple<M>>
 		int time_horizon = AggregationFunctionParseOptionsHelper.getFunctionParameterAsInt(parameters,
 				ForecastVariance.FORECASTED_TIME_HORIZON_PARAMETER_NAME, 1);
 
+		boolean doStochasticProcess = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters,
+				ForecastVariance.DO_STOCHASTIC_PROCESS_PARAMETER_NAME, false);
+
 		// create the aggregation function
 		ForecastVariance<M, T> forecastVarianceFunction = new ForecastVariance<>(inputAttributesIndices,
-				outputAttributesNames, outputAttributesLocal, time_horizon);
+				outputAttributesNames, outputAttributesLocal, time_horizon, doStochasticProcess);
 
 		return forecastVarianceFunction;
 	}

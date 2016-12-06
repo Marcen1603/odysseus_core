@@ -7,10 +7,14 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * 
  * Calculates an end timestamp by a given time horizon and metadata.
  * 
+ * 
+ * This is useful, when the original timestamp of the estimation date should be
+ * reset.
+ * 
  * @author Christoph Schröer
  *
  */
-public class ForecastedEndFunction extends AbstractFunction<Long> {
+public class EstimatedEndFunction extends AbstractFunction<Long> {
 
 	/**
 	 * 
@@ -20,8 +24,8 @@ public class ForecastedEndFunction extends AbstractFunction<Long> {
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.INTEGER },
 			{ SDFDatatype.TIMESTAMP }, { SDFDatatype.TIMESTAMP } };
 
-	public ForecastedEndFunction() {
-		super("getForecastedEnd", 3, accTypes, SDFDatatype.TIMESTAMP, false, 1, 1);
+	public EstimatedEndFunction() {
+		super("getEstimatedEnd", 3, accTypes, SDFDatatype.TIMESTAMP, false, 1, 1);
 	}
 
 	@Override
@@ -30,9 +34,9 @@ public class ForecastedEndFunction extends AbstractFunction<Long> {
 		long start = this.getInputValue(1);
 		long end = this.getInputValue(2);
 
-		long forecastedEnd = (long) (end + ((end - start) * timeHorizon));
+		long estimatedEnd = (long) (end - ((end - start) * timeHorizon));
 
-		return forecastedEnd;
+		return estimatedEnd;
 
 	}
 

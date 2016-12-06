@@ -25,11 +25,11 @@ public class ForecastedStartFunction extends AbstractFunction<Long> {
 
 	@Override
 	public Long getValue() {
-		int timeHorizon = (int) (long) this.getInputValue(0);
+		Double  timeHorizon = this.getNumericalInputValue(0);
 		long start = this.getInputValue(1);
 		long end = this.getInputValue(2);
 
-		long forecastedStart = start + ((end - start) * timeHorizon);
+		long forecastedStart = (long) (start + ((end - start) * timeHorizon));
 
 		return forecastedStart;
 

@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.finance.simulation.ReturnSimulationFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.simulation.HistoricalSimulation;
 import de.uniol.inf.is.odysseus.probabilistic.common.simulation.ISimulation;
 import de.uniol.inf.is.odysseus.probabilistic.common.simulation.ISimulationFunction;
-import de.uniol.inf.is.odysseus.timeseries.IHasEstimationData;
 
 /**
  * 
@@ -38,8 +37,6 @@ public class ReturnHistoricalSimulationEstimator extends HistoricalSimulationEst
 
 	@Override
 	public void estimateModel() {
-
-		logger.debug("estimateModel");
 
 		ISimulation<Tuple<ITimeInterval>, Double> numericalSimulator = new HistoricalSimulation(this.historicalData);
 

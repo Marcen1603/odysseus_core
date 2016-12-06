@@ -1,15 +1,12 @@
 package de.uniol.inf.is.odysseus.timeseries.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.timeseries.imputation.IImputation;
 import de.uniol.inf.is.odysseus.timeseries.imputation.ImputationRegistry;
-import de.uniol.inf.is.odysseus.timeseries.imputation.TupleBasedImputationFactory;
 import de.uniol.inf.is.odysseus.timeseries.logicaloperator.ImputationAO;
 import de.uniol.inf.is.odysseus.timeseries.physicaloperator.ImputationPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -39,14 +36,11 @@ public class TImputationAORule extends AbstractTransformationRule<ImputationAO> 
 
 	@Override
 	public boolean isExecutable(final ImputationAO operator, final TransformationConfiguration config) {
-		// QN: Welche Bedeutung hat dies?
 		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-
-		// QN: Welche Bedeutung hat dies?
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 }

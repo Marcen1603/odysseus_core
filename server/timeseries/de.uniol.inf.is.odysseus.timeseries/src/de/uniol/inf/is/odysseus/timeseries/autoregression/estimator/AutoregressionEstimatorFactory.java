@@ -39,7 +39,8 @@ public class AutoregressionEstimatorFactory {
 				return new ParametrizedGARCHEstimator(parametrizedEWMAHModel);
 			}
 
-			throw new IllegalArgumentException("Model does not exist.");
+			throw new IllegalArgumentException("Model does not exist. Possible values are e. g.: "
+					+ GARCH11Forecaster.NAME + ", " + EWMAForecaster.NAME);
 
 		} else {
 			throw new IllegalArgumentException("Estimation methods not implemented yet.");

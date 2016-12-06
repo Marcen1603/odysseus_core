@@ -3,9 +3,10 @@ package de.uniol.inf.is.odysseus.timeseries.autoregression.model;
 import java.util.LinkedList;
 
 /**
- * Special GARCH(1,1) with p = 1 and q = 1 and weight lambda and (1-lambda).
  * 
- * and EWMA weights.
+ * Exponentially weight moving average.
+ * 
+ * This is a special GARCH(1,1) with p = 1 and q = 1 and weight lambda and (1-lambda).
  * 
  * @author Christoph Schröer
  *

@@ -2,6 +2,12 @@ package de.uniol.inf.is.odysseus.finance.risk.var.model;
 
 import org.apache.commons.math3.distribution.RealDistribution;
 
+/**
+ * This interface represents a Value-at-Risk-model.
+ * 
+ * @author Christoph Schröer
+ *
+ */
 public interface IVaRForecaster {
 
 	/**

@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.timeseries.mep.EstimatedEndFunction;
+import de.uniol.inf.is.odysseus.timeseries.mep.EstimatedStartFunction;
 import de.uniol.inf.is.odysseus.timeseries.mep.ForecastedEndFunction;
 import de.uniol.inf.is.odysseus.timeseries.mep.ForecastedStartFunction;
 
@@ -45,6 +47,8 @@ public class TimeSeriesFunctionProvider implements IFunctionProvider {
 
 		functions.add(new ForecastedStartFunction());
 		functions.add(new ForecastedEndFunction());
+		functions.add(new EstimatedStartFunction());
+		functions.add(new EstimatedEndFunction());
 		TimeSeriesFunctionProvider.LOG.info(String.format("Register functions: %s", functions));
 		return functions;
 	}

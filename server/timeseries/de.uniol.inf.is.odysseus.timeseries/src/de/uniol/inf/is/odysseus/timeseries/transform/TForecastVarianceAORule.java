@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christoph Schröer
  *
  */
+@Deprecated
 public class TForecastVarianceAORule extends AbstractTransformationRule<ForecastVarianceAO> {
 
 	public TForecastVarianceAORule() {

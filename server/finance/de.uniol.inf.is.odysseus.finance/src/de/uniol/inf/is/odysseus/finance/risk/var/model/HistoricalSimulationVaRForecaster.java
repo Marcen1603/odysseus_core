@@ -30,7 +30,8 @@ public class HistoricalSimulationVaRForecaster extends NumericalVaRForecaster im
 
 	@Override
 	public String toString() {
-		return HistoricalSimulationVaRForecaster.NAME + ", Distribution: " + this.distribution.toString();
+		return HistoricalSimulationVaRForecaster.NAME + ", Distribution: " + this.distribution.toString()
+				+ ", SampleSize: " + this.sample.size();
 	}
 
 	public IClone clone() {
