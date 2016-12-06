@@ -89,6 +89,7 @@ public class ModelValueAtRisk<M extends ITimeInterval, T extends Tuple<M>>
 		this.outputAttributes = varModelEstimator.outputAttributes;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addNew(T newElement) {
 		if (this.varModelEstimator instanceof IHasEstimationData<?>) {
@@ -98,6 +99,7 @@ public class ModelValueAtRisk<M extends ITimeInterval, T extends Tuple<M>>
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
 		if (this.varModelEstimator instanceof IHasEstimationData<?>) {
