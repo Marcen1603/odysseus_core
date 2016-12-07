@@ -9,11 +9,11 @@ public class KvStoreWriteFunction extends AbstractFunction<Boolean> {
 
 	public static SDFDatatype[][] accTypes = new SDFDatatype[][]{
 		{SDFDatatype.STRING}, SDFDatatype.SIMPLE_TYPES};
-	
+
 	public KvStoreWriteFunction(){
-		super("kvwrite",2,accTypes, SDFDatatype.OBJECT, false);
+		super("kvwrite",2,accTypes, SDFDatatype.BOOLEAN, false);
 	}
-	
+
 	@Override
 	public Boolean getValue() {
 		String key = getInputValue(0);
