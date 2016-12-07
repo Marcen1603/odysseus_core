@@ -85,6 +85,9 @@ public class LogicalQuery implements ILogicalQuery {
 	
 	@XmlTransient
 	private List<ILogicalOperator> alternativeLogicalPlans;
+	
+	@XmlTransient
+	private ILogicalOperator initialLogicalPlan;
 
 	private boolean containsCycles = false;
 
@@ -241,6 +244,16 @@ public class LogicalQuery implements ILogicalQuery {
 	@Override
 	public List<ILogicalOperator> getAlternativeLogicalPlans() {
 		return this.alternativeLogicalPlans;
+	}
+	
+	@Override
+	public void setInitialLogicalPlan(ILogicalOperator initialPlan) {
+		this.initialLogicalPlan = initialPlan;
+	}
+	
+	@Override
+	public ILogicalOperator getInitialLogicalPlan() {
+		return this.initialLogicalPlan;
 	}
 
 	/*

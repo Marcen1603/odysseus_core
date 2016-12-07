@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intrao
 public class Planrewriter {
 
 	private final static Logger LOG = LoggerFactory.getLogger(Planrewriter.class);
+	private static int parallelizationdegree = 2;
 
 	public void rewritePlan(ILogicalQuery query, QueryBuildConfiguration config,
 			List<Pair<String, String>> handlerParameters) {
@@ -46,7 +47,7 @@ public class Planrewriter {
 		List<IParallelizationIndividualConfiguration> possibleParallelizations = planAnalyzer
 				.getParalisableOperators(query);
 		LOG.debug("Parallizable operators / regions: " + possibleParallelizations.size());
-		chooseParallelizationRandom(possibleParallelizations, config.values());
+		chooseParallelizationAllIncreasing(possibleParallelizations, config.values());
 	}
 
 	private void chooseParallelizationRandom(List<IParallelizationIndividualConfiguration> possibleParallelizations, Collection<IQueryBuildSetting<?>> settings) {
@@ -79,7 +80,18 @@ public class Planrewriter {
 			config.setParallelizationDegree(2);
 			config.setBufferSize(10000);
 			LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier()
-					+ " to " + PerformanceDetectionHelper.getNumberOfCores() + ".");
+					+ " to " + 2 + ".");
+			LOG.debug("Partitioning strategy: " + config.getClass());
+			config.execute(settings);
+		}
+	}
+	
+	private void chooseParallelizationAllIncreasing(List<IParallelizationIndividualConfiguration> possibleParallelizations, Collection<IQueryBuildSetting<?>> settings) {
+		for(IParallelizationIndividualConfiguration config: possibleParallelizations){
+			config.setParallelizationDegree(parallelizationdegree++);
+			config.setBufferSize(10000);
+			LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier()
+					+ " to " + parallelizationdegree + ".");
 			LOG.debug("Partitioning strategy: " + config.getClass());
 			config.execute(settings);
 		}

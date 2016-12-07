@@ -23,6 +23,9 @@ public class IntraOperatorIndividualInitializer {
 			}
 		}
 		ParallelIntraOperatorSettingValueElement individualElement = new ParallelIntraOperatorSettingValueElement(degree, bufferSize);
+		if(parallelIntraOperatorSetting.getValue().hasIndividualSettingsForOperator(operatorId)) {
+			parallelIntraOperatorSetting.getValue().removeIndividualSettings(operatorId);
+		}
 		parallelIntraOperatorSetting.getValue().addIndividualSettings(operatorId, individualElement);
 	}
 

@@ -19,25 +19,25 @@ public class MigrationStrategyRegistry {
 	
 	private static Logger LOG = LoggerFactory.getLogger(MigrationStrategyRegistry.class);
 	
-	Map<String,IPlanMigrationStrategy> strategyRegistry = new HashMap<>();
+	private static Map<String,IPlanMigrationStrategy> strategyRegistry = new HashMap<>();
 	
-	public void registerStrategy(IPlanMigrationStrategy migrationStrategy) {
+	public static void registerStrategy(IPlanMigrationStrategy migrationStrategy) {
 		LOG.debug("Register new PlanMigrationStrategy " + migrationStrategy.getName() + ".");
 		String name = migrationStrategy.getName().toLowerCase();
-		if(this.strategyRegistry.containsKey(name)){
+		if(strategyRegistry.containsKey(name)){
 			LOG.error("Plan migration strategy with name "+ name + " already registered.");
 		} else {
-			this.strategyRegistry.put(name, migrationStrategy);
+			strategyRegistry.put(name, migrationStrategy);
 		}
 	}
 	
-	public void unregisterStrategy(IPlanMigrationStrategy migrationStrategy) {
+	public static void unregisterStrategy(IPlanMigrationStrategy migrationStrategy) {
 		LOG.debug("Unregister PlanMigrationStrategy " + migrationStrategy.getName() + ".");
-		this.strategyRegistry.remove(migrationStrategy.getName().toLowerCase());
+		strategyRegistry.remove(migrationStrategy.getName().toLowerCase());
 	}
 	
-	public IPlanMigrationStrategy getPlanMigrationStrategyById(String id) throws PlanMigrationStrategyException{
-		IPlanMigrationStrategy strategy = this.strategyRegistry.get(id);
+	public static IPlanMigrationStrategy getPlanMigrationStrategyById(String id) throws PlanMigrationStrategyException{
+		IPlanMigrationStrategy strategy = strategyRegistry.get(id.toLowerCase());
 		if(strategy == null) {
 			throw new PlanMigrationStrategyException("Plan migration strategy is not registered.");
 		}

@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.Para
  *
  */
 public class InterOperatorIndividualInitializer {
-	
+
 	public static void createInterIndividualConfiguration(Collection<IQueryBuildSetting<?>> settings, String operatorId,
 			int degree, int bufferSize, String parallelizationStrategy, String fragmentationStrategy)
 			throws ParallelizationTransormationException {
@@ -23,28 +23,29 @@ public class InterOperatorIndividualInitializer {
 		newConfiguration.setDegreeOfParallelization(degree);
 		newConfiguration.setBufferSize(bufferSize);
 		newConfiguration.setStartParallelizationId(operatorId);
-		//TODO add possibility to build parallel region
+		// TODO add possibility to build parallel region
 		newConfiguration.setEndParallelizationId(null);
 		newConfiguration.setMultithreadingStrategy(parallelizationStrategy);
 		newConfiguration.setFragementationType(fragmentationStrategy);
-		
+
 		newConfiguration.setAssureSemanticCorrectness(true);
 		newConfiguration.setUseParallelOperators(false);
 		newConfiguration.setUseThreadedBuffer(true);
-		
-		ParallelInterOperatorSetting existing =null;
-		for(IQueryBuildSetting<?> setting:settings) {
-			if(setting.getClass().equals(ParallelInterOperatorSetting.class)) {
+
+		ParallelInterOperatorSetting existing = null;
+		for (IQueryBuildSetting<?> setting : settings) {
+			if (setting.getClass().equals(ParallelInterOperatorSetting.class)) {
 				existing = (ParallelInterOperatorSetting) setting;
 			}
 		}
-		
-		if(existing.getConfigurationForOperator(operatorId) == null) {
-		existing.addConfigurationForOperator(operatorId, newConfiguration);
+
+		if (existing.getConfigurationForOperator(operatorId) == null) {
+			existing.addConfigurationForOperator(operatorId, newConfiguration);
 		} else {
-			throw new ParallelizationTransormationException("No Configuration existing.");
+			existing.removeConfigurationForOperator(operatorId);
+			existing.addConfigurationForOperator(operatorId, newConfiguration);
 		}
-		
+
 	}
 
 }

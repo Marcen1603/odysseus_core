@@ -12,10 +12,12 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParallelizationIndividualConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.interoperator.InterOperatorParallelizationConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intraoperator.IntraOperatorParallelizationConfiguration;
+
 /**
  * @author Dennis Nowak
  *
@@ -40,12 +42,14 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 	public void nodeAction(P node) {
 		// set unique identifier
 		if (node.getUniqueIdentifier() == null || node.getUniqueIdentifier().length() == 0) {
-			String identifier = new String(UNIQUE_ID_PREFIX);
-			identifier += this.queryIdentifier;
-			identifier += ".";
-			identifier += counter++;
-			identifier += UNIQUE_ID_PREFIX;
-			node.setUniqueIdentifier(identifier);
+			if (!(node instanceof StreamAO)) {
+				String identifier = new String(UNIQUE_ID_PREFIX);
+				identifier += this.queryIdentifier;
+				identifier += ".";
+				identifier += counter++;
+				identifier += UNIQUE_ID_PREFIX;
+				node.setUniqueIdentifier(identifier);
+			}
 		}
 		if (isIntraParallizable(node)) {
 			LOG.debug("Node " + node.getUniqueIdentifier() + " is intraoperator parallizable.");

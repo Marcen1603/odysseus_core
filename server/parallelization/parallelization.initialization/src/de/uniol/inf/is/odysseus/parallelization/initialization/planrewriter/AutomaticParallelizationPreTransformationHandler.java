@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransfor
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.parallelization.optimization.ParallelizationOptimizer;
 
 /**
  * @author Dennis Nowak
@@ -37,6 +38,8 @@ public class AutomaticParallelizationPreTransformationHandler implements IPreTra
 		LOG.info("Starting automatic configuration of parallelization.");
 		Planrewriter rewriter = new Planrewriter();
 		rewriter.rewritePlan(query, config, handlerParameters);
+		//FIXME will initialize on each new query
+		ParallelizationOptimizer.getInstance().initialize(caller);
 	}
 
 }

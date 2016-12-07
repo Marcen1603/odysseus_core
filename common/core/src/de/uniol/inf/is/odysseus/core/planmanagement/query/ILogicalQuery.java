@@ -170,4 +170,8 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	String getNotice();
 
+	ILogicalOperator getInitialLogicalPlan();
+
+	void setInitialLogicalPlan(ILogicalOperator initialPlan);
+
 }

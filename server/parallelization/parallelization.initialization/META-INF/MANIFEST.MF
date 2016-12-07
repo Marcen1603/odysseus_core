@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.parallelization.initialization.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.collect,
+ de.uniol.inf.is.odysseus.parallelization.optimization,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server,

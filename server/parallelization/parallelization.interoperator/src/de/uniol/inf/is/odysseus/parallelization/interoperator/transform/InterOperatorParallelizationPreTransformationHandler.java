@@ -73,6 +73,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	/**
 	 * do the transformation of the logical plan
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void preTransform(IServerExecutor executor, ISession caller,
 			ILogicalQuery query, QueryBuildConfiguration config,
@@ -87,6 +88,12 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		// Get logical plan and copy it, needed for revert if transformation
 		// fails
 		ILogicalOperator logicalPlan = query.getLogicalPlan();
+		
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor(query);
+		GenericGraphWalker walker = new GenericGraphWalker();
+		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
+		
+		query.setInitialLogicalPlan(copyVisitor.getResult());
 
 		// do transformations
 		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
