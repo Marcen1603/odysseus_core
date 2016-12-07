@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +27,9 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -77,11 +78,11 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 		if (element instanceof SDFConstraint){
 			return OdysseusRCPViewerPlugIn.getImageManager().get("constraint");
 		}
-		
+
 		if (element instanceof SDFUnit){
 			return OdysseusRCPViewerPlugIn.getImageManager().get("unit");
 		}
-		
+
 		if (element instanceof NamedList) {
 			NamedList e = (NamedList) element;
 			if (e.getValues().isEmpty()) {
@@ -144,7 +145,7 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 				styledString.append(""+s.getTarget());
 			}
 			styledString.append(" In("+s.getSinkInPort()).append(") out ("+s.getSourceOutPort()).append(")");
-			
+
 			if (s.getTarget() instanceof IPhysicalOperator){
 				int open = ((AbstractPhysicalSubscription<?>) s).getOpenCalls();
 				if (open > 0){
@@ -154,10 +155,24 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 
 			if (s instanceof AbstractPhysicalSubscription){
 				if (((AbstractPhysicalSubscription)s).isNeedsClone()){
-					styledString.append(" <c> ");
+					styledString.append(" <clone> ");
+				};
+				if (((AbstractPhysicalSubscription)s).isDone()){
+					styledString.append(" <done> ");
 				};
 			}
-			
+
+			if (s instanceof ControllablePhysicalSubscription){
+				ControllablePhysicalSubscription csub =  (ControllablePhysicalSubscription)s;
+				if (csub.isShedding()){
+					styledString.append(" <s="+csub.getSheddingFactor()+"> ");
+				}
+
+				if (csub.getBufferSize() > 0){
+					styledString.append(" b= "+csub.getBufferSize()+" ");
+				}
+
+			};
 			return styledString;
 		}
 		if (element instanceof SDFSchema) {
@@ -196,17 +211,17 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 					StyledString.QUALIFIER_STYLER);
 			return styledString;
 		}
-		
+
 		if (element instanceof SDFConstraint){
 			SDFConstraint dt = (SDFConstraint)element;
 			return styledString.append(dt.getURI()).append(" = "+dt.getValue());
 		}
-		
+
 		if (element instanceof SDFUnit){
 			SDFUnit unit = (SDFUnit) element;
 			return styledString.append(unit.getClass().getSimpleName()+": "+unit.getURI());
 		}
-		
+
 		if (element instanceof IMonitoringData<?>) {
 			final IMonitoringData<?> monData = (IMonitoringData<?>) element;
 			final String type = monData.getType();
