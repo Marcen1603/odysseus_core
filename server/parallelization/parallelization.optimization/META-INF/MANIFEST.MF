@@ -13,5 +13,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.planmigration,
  de.uniol.inf.is.odysseus.parallelization.interoperator,
  de.uniol.inf.is.odysseus.slf4j
-Service-Component: GeneralizedParallelTracksMigrationStrategy.xml
+Service-Component: OSGI-INF/GeneralizedParallelTracksMigrationStrategy.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.optimization
+Bundle-ActivationPolicy: lazy
