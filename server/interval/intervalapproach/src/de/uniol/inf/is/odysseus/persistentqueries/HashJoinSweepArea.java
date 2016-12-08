@@ -397,6 +397,9 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public PointInTime getMinStartTs() {
+		if (startTimeIndex.isEmpty()){
+			return null;
+		}
 		return startTimeIndex.peek().getMetadata().getStart();
 	}
 
