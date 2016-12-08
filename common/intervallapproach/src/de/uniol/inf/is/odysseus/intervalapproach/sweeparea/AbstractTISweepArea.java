@@ -398,7 +398,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	 *         linked list.
 	 */
 	@Override
-	public PointInTime getMaxTs() {
+	public PointInTime getMaxStartTs() {
 		if (!this.getElements().isEmpty()) {
 			return this.getElements().get(getElements().size() - 1).getMetadata().getStart();
 		}
@@ -411,7 +411,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 	 *         linked list.
 	 */
 	@Override
-	public PointInTime getMinTs() {
+	public PointInTime getMinStartTs() {
 		synchronized (getElements()) {
 			if (!this.getElements().isEmpty()) {
 				return this.getElements().get(0).getMetadata().getStart();
@@ -422,9 +422,9 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 
 	@Override
 	public int compareTo(AbstractTISweepArea<T> other) {
-		if (this.getMinTs().before(other.getMinTs())) {
+		if (this.getMinStartTs().before(other.getMinStartTs())) {
 			return -1;
-		} else if (this.getMinTs().after(other.getMinTs())) {
+		} else if (this.getMinStartTs().after(other.getMinStartTs())) {
 			return 1;
 		} else {
 			return 0;

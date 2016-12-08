@@ -107,7 +107,7 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 			ne.setAttribute(1, intercept);
 			@SuppressWarnings("unchecked")
 			M meta = (M) object.getMetadata().clone();
-			meta.setStart(sweepArea.getMinTs());
+			meta.setStart(sweepArea.getMinStartTs());
 			meta.setEnd(object.getMetadata().getEnd());
 			ne.setMetadata(meta);
 
