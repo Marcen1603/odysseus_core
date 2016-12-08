@@ -48,7 +48,7 @@ public class SpatialDataStructureProvider {
 	 * @return A spatial data structure
 	 */
 	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition) {
-		if (getDataStructure(name) == null) {
+		if (!dataStructureExists(name)) {
 			Class<?> dataStructureClass = MovingObjectDataStructuresRegistry.getDataStructureClass(type);
 			IMovingObjectDataStructure dataStrucure = null;
 			try {
@@ -87,6 +87,17 @@ public class SpatialDataStructureProvider {
 	 */
 	public IMovingObjectDataStructure getDataStructure(String name) {
 		return this.dataStructureMap.get(name);
+	}
+
+	/**
+	 * Checks if the data structure already exists
+	 * 
+	 * @param name
+	 *            Name of the data structure you want to check
+	 * @return true, if data structure already exists, false if not
+	 */
+	public boolean dataStructureExists(String name) {
+		return getDataStructure(name) != null;
 	}
 
 }

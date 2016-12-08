@@ -14,20 +14,20 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author Tobias Brandt
  *
  */
-public class SpatialUtils {
+public class MetrticSpatialUtils {
 
 	private CoordinateReferenceSystem defaultCrs;
 
-	private static SpatialUtils instance;
+	private static MetrticSpatialUtils instance;
 
-	public static SpatialUtils getInstance() {
+	public static MetrticSpatialUtils getInstance() {
 		if (instance == null) {
-			instance = new SpatialUtils();
+			instance = new MetrticSpatialUtils();
 		}
 		return instance;
 	}
 
-	private SpatialUtils() {
+	private MetrticSpatialUtils() {
 		try {
 			// Just to make it explicit: We want lat/lng as the normal case
 

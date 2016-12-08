@@ -101,4 +101,6 @@ public interface IMovingObjectDataStructure {
 	 * @return A list of tuples which lie within the given polygon
 	 */
 	public List<Tuple<?>> queryBoundingBox(List<Point> coordinates, ITimeInterval t);
+
+	int getGeometryPosition();
 }
