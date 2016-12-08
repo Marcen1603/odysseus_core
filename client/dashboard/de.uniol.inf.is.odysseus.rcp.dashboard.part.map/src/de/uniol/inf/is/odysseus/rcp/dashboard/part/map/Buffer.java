@@ -62,7 +62,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 			long timeRangeInMs = userDefinedTimeRange * 1000;
 			long userDefinedTimeStamp = 0;
 			if (!buffer.isEmpty()) {
-				userDefinedTimeStamp = buffer.getMaxTs().getMainPoint() - timeRangeInMs;
+				userDefinedTimeStamp = buffer.getMaxStartTs().getMainPoint() - timeRangeInMs;
 			}
 
 			if (userDefinedTimeStamp > 0) {
@@ -71,7 +71,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 
 				// Update "current-list", timeSlider and all the other things
 				// which rely on the startTimeStamp
-				mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinTs());
+				mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinStartTs());
 				synchronized (elementList) {
 					this.elementList = this.buffer
 							.queryOverlapsAsList(this.mapDashboardPart.getScreenManager().getInterval());
@@ -84,7 +84,7 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 		// then delete the oldest tuples, so we prevent an overflow
 		while (buffer.size() > maxNumberOfElements) {
 			// Remove old element(s)
-			Iterator<Tuple<? extends ITimeInterval>> oldestElements = buffer.peekElementsContaing(buffer.getMinTs(),
+			Iterator<Tuple<? extends ITimeInterval>> oldestElements = buffer.peekElementsContaing(buffer.getMinStartTs(),
 					false);
 
 			PointInTime deleteTime = null;
@@ -108,8 +108,8 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp
-			if (buffer.getMinTs() != null) {
-				mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinTs());
+			if (buffer.getMinStartTs() != null) {
+				mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinStartTs());
 			}
 
 			synchronized (elementList) {
@@ -136,16 +136,16 @@ public class Buffer extends ArrayList<ILayer> implements Serializable, PropertyC
 		boolean changedSomething = false;
 
 		// Start
-		if (buffer.getMinTs() != null
-				&& (mapDashboardPart.getScreenManager().getMaxIntervalStart().after(buffer.getMinTs()) || first)) {
-			mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinTs());
+		if (buffer.getMinStartTs() != null
+				&& (mapDashboardPart.getScreenManager().getMaxIntervalStart().after(buffer.getMinStartTs()) || first)) {
+			mapDashboardPart.getScreenManager().setMaxIntervalStart(buffer.getMinStartTs());
 			changedSomething = true;
 		}
 
 		// End
-		if (buffer.getMaxTs() != null
-				&& (mapDashboardPart.getScreenManager().getMaxIntervalEnd().before(buffer.getMaxTs()) || first)) {
-			mapDashboardPart.getScreenManager().setMaxIntervalEnd(buffer.getMaxTs());
+		if (buffer.getMaxStartTs() != null
+				&& (mapDashboardPart.getScreenManager().getMaxIntervalEnd().before(buffer.getMaxStartTs()) || first)) {
+			mapDashboardPart.getScreenManager().setMaxIntervalEnd(buffer.getMaxStartTs());
 			changedSomething = true;
 		}
 

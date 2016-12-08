@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.Order;
 
@@ -89,6 +90,16 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		// Default implementation will not restrict input
 		return hashCode();
 	}
+
+	@Override
+	public int hashCode(boolean calcWithMeta){
+		if (!calcWithMeta){
+			return this.hashCode();
+		}
+		return Objects.hash(this.getMetadata(),this);
+	}
+
+
 
 	@Override
 	public boolean equalsTolerance(Object o, double tolerance) {
