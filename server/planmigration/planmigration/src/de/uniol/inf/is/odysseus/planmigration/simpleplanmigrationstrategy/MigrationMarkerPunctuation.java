@@ -1,10 +1,12 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.core.physicaloperator;
+package de.uniol.inf.is.odysseus.planmigration.simpleplanmigrationstrategy;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -47,7 +49,7 @@ public class MigrationMarkerPunctuation extends AbstractPunctuation {
 
 	@Override
 	public AbstractPunctuation clone(PointInTime newTime) {
-		return new MigrationMarkerPunctuation(point, getSource());
+		return new MigrationMarkerPunctuation(newTime, getSource());
 	}
 
 	public ISource<?> getSource() {

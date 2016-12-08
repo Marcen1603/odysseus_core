@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
 import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.MigrationStrategyRegistry;
-import de.uniol.inf.is.odysseus.planmigration.exception.PlanMigrationStrategyException;
+import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;
 
 /**
  * @author Dennis Nowak
@@ -55,7 +55,7 @@ public class ParallelizationOptimizer {
 		IPlanMigrationStrategy planMigrationStrategy = null;
 		try {
 			planMigrationStrategy = MigrationStrategyRegistry.getPlanMigrationStrategyById(migrationStrategy);
-		} catch (PlanMigrationStrategyException e) {
+		} catch (MigrationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;

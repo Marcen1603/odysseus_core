@@ -9,7 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.planmigration.exception.PlanMigrationStrategyException;
+import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;
 
 /**
  * @author Dennis Nowak
@@ -36,10 +36,10 @@ public class MigrationStrategyRegistry {
 		strategyRegistry.remove(migrationStrategy.getName().toLowerCase());
 	}
 	
-	public static IPlanMigrationStrategy getPlanMigrationStrategyById(String id) throws PlanMigrationStrategyException{
+	public static IPlanMigrationStrategy getPlanMigrationStrategyById(String id) throws MigrationException{
 		IPlanMigrationStrategy strategy = strategyRegistry.get(id.toLowerCase());
 		if(strategy == null) {
-			throw new PlanMigrationStrategyException("Plan migration strategy is not registered.");
+			throw new MigrationException("Plan migration strategy is not registered.");
 		}
 		return strategy;
 	}

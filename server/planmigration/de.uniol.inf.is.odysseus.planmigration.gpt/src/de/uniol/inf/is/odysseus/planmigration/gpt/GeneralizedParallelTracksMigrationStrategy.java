@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy.SimplePlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.AbstractPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
+import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;
+import de.uniol.inf.is.odysseus.planmigration.simpleplanmigrationstrategy.SimplePlanMigrationStrategy;
 
 /**
  * @author Dennis Nowak

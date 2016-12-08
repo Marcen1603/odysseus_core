@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration;
+package de.uniol.inf.is.odysseus.planmigration;
 
 
 /**

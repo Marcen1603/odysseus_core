@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.noplanmigrationstrategie;
+package de.uniol.inf.is.odysseus.planmigration.noplanmigrationstrategie;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,11 +21,11 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmigration.IMigrationEventSource;
+import de.uniol.inf.is.odysseus.planmigration.IMigrationListener;
+import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
 
 //import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 //import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
@@ -117,7 +117,7 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy#isMigratable(de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery)
+	 * @see de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy#isMigratable(de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery)
 	 */
 	@Override
 	public boolean isMigratable(IPhysicalQuery query) {

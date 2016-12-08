@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy;
+package de.uniol.inf.is.odysseus.planmigration.simpleplanmigrationstrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,11 +44,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationEventSource;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IMigrationListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.MigrationHelper;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
@@ -59,6 +54,11 @@ import de.uniol.inf.is.odysseus.core.server.util.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
+import de.uniol.inf.is.odysseus.planmigration.IMigrationEventSource;
+import de.uniol.inf.is.odysseus.planmigration.IMigrationListener;
+import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
+import de.uniol.inf.is.odysseus.planmigration.MigrationHelper;
+import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;
 
 /**
  * SimplePlanMigrationStrategy transfers a currently running physical plan into
@@ -102,7 +102,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.planmigration.IPlanMigrationStrategy#isMigratable(java.util.List)
+	 * @see de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy#isMigratable(java.util.List)
 	 */
 	@Override
 	public boolean isMigratable(IPhysicalQuery query) {
@@ -256,7 +256,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			sender.executionPlanChanged(PlanModificationEventType.PLAN_REOPTIMIZE,(IPhysicalQuery)null);
 
 		} catch (SchedulerException | NoSchedulerLoadedException e) {
-			throw new MigrationException(e);
+			throw new MigrationException("Scheduling parallel plans was not successful",e);
 		}
 
 		LOG.debug("Marking migration starts");
@@ -666,7 +666,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			LOG.debug("Initialize new plan root as physical root");
 			context.getRunningQuery().initializePhysicalRoots(newRoots);
 		} catch (Exception ex) {
-			throw new MigrationException(ex);
+			throw new MigrationException("Removing MigrationBuffer was not successful.", ex);
 		} finally {
 			// unblocking of sources must be ensured
 			LOG.debug("Unblocking sources");
@@ -678,7 +678,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		try {
 			context.getExecutor().executionPlanChanged(PlanModificationEventType.PLAN_REOPTIMIZE,(IPhysicalQuery)null);
 		} catch (SchedulerException | NoSchedulerLoadedException e) {
-			throw new MigrationException(e);
+			throw new MigrationException("Scheduling plan failed after migration.", e);
 		}
 
 		LOG.debug("Result:\n"

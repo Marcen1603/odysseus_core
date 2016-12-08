@@ -37,7 +37,7 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy"
+         id="de.uniol.inf.is.odysseus.planmigration.simpleplanmigrationstrategy"
          download-size="0"
          install-size="0"
          version="0.0.0"
