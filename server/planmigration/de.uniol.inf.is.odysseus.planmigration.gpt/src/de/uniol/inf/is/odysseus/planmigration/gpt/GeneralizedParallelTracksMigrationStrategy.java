@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exceptio
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
 import de.uniol.inf.is.odysseus.planmigration.AbstractPlanMigrationStrategy;
-import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
+import de.uniol.inf.is.odysseus.planmigration.IMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;
 import de.uniol.inf.is.odysseus.planmigration.simpleplanmigrationstrategy.SimplePlanMigrationStrategy;
 
@@ -33,7 +33,7 @@ public class GeneralizedParallelTracksMigrationStrategy extends AbstractPlanMigr
 	}
 
 	@Override
-	public IPlanMigrationStrategy getNewInstance() {
+	public IMigrationStrategy getNewInstance() {
 		return new GeneralizedParallelTracksMigrationStrategy();
 	}
 	

@@ -12,11 +12,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * @author Dennis Nowak
  *
  */
-public interface IPlanMigrationStrategy {
+public interface IMigrationStrategy {
 	
 	public String getName();
 	
-	public IPlanMigrationStrategy getNewInstance();
+	public IMigrationStrategy getNewInstance();
 	
 	public void migrateQuery(IPhysicalQuery runningQuery, List<IPhysicalOperator> newPlanRoot);
 

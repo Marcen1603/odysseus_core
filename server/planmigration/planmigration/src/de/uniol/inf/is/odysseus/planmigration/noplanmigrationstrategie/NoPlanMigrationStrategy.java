@@ -117,7 +117,7 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy#isMigratable(de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery)
+	 * @see de.uniol.inf.is.odysseus.planmigration.IMigrationStrategy#isMigratable(de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery)
 	 */
 	@Override
 	public boolean isMigratable(IPhysicalQuery query) {

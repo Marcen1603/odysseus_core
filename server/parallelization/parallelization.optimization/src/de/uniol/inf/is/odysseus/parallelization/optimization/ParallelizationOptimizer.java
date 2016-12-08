@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.util.AppendUniqueIdLogicalGraphVisit
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
-import de.uniol.inf.is.odysseus.planmigration.IPlanMigrationStrategy;
+import de.uniol.inf.is.odysseus.planmigration.IMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.MigrationStrategyRegistry;
 import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;
 
@@ -52,7 +52,7 @@ public class ParallelizationOptimizer {
 				user);
 		// TODO select migration strategy
 		String migrationStrategy = "GeneralizedParallelTracksMigrationStrategy";
-		IPlanMigrationStrategy planMigrationStrategy = null;
+		IMigrationStrategy planMigrationStrategy = null;
 		try {
 			planMigrationStrategy = MigrationStrategyRegistry.getPlanMigrationStrategyById(migrationStrategy);
 		} catch (MigrationException e) {
