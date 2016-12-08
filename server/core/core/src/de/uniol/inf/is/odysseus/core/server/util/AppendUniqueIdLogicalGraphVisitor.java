@@ -43,7 +43,7 @@ public class AppendUniqueIdLogicalGraphVisitor<T extends ILogicalOperator> imple
 	 */
 	@Override
 	public void nodeAction(T node) {
-		if (node.getUniqueIdentifier() != null) {
+		if (node.getUniqueIdentifier() != null && !changedOperators.contains(node)) {
 			node.setUniqueIdentifier(node.getUniqueIdentifier() + this.appendix);
 			this.changedOperators.add(node);
 		}
@@ -57,8 +57,7 @@ public class AppendUniqueIdLogicalGraphVisitor<T extends ILogicalOperator> imple
 	 */
 	@Override
 	public void beforeFromSinkToSourceAction(T sink, T source) {
-		// TODO Auto-generated method stub
-
+		// noop
 	}
 
 	/*
@@ -69,8 +68,7 @@ public class AppendUniqueIdLogicalGraphVisitor<T extends ILogicalOperator> imple
 	 */
 	@Override
 	public void afterFromSinkToSourceAction(T sink, T source) {
-		// TODO Auto-generated method stub
-
+		// noop
 	}
 
 	/*
@@ -81,7 +79,7 @@ public class AppendUniqueIdLogicalGraphVisitor<T extends ILogicalOperator> imple
 	 */
 	@Override
 	public void beforeFromSourceToSinkAction(T source, T sink) {
-		// TODO Auto-generated method stub
+		// noop
 
 	}
 
@@ -93,7 +91,7 @@ public class AppendUniqueIdLogicalGraphVisitor<T extends ILogicalOperator> imple
 	 */
 	@Override
 	public void afterFromSourceToSinkAction(T source, T sink) {
-		// TODO Auto-generated method stub
+		// noop
 
 	}
 

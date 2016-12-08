@@ -126,7 +126,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		this.physicalQuery = runningQuery;
 
 		// install both plans for parallel execution
-		//TODO warning
+		if(runningQuery.getRoots().size()>1) {
+			LOG.warn("There is more than 1 root in the query to be migrated.");
+		}
 		IPhysicalOperator oldPlanRoot = runningQuery.getRoots().get(0);
 		List<ISource<?>> oldPlanSources = MigrationHelper
 				.getPseudoSources(oldPlanRoot);
@@ -178,7 +180,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			LOG.debug("Insert Blocking-Buffer after source "
 					+ source.getClass().getSimpleName() + " ("
 					+ source.hashCode() + ")");
-//TODO insert "buffer" in query"
 			MigrationBuffer buffer = new MigrationBuffer();
 			try {
 				buffer.open(null);
@@ -194,6 +195,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			// set the source for this buffer in case it is empty
 			buffer.setSource((ISource<?>) source);
 			context.addBufferPO(buffer);
+			//TODO search downstream for equivalent operators that don't have to be migrated
 
 			insertBuffer(buffer, (ISource<?>) source, newPlanOperatorsBeforeSources, oldPlanOperatorsBeforeSources);
 
@@ -238,7 +240,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// open auf dem neuen Plan aufrufen
 		LOG.debug("Calling open on new Plan ");
 		try {
-			((ISink) root).open(null);
+			((ISink) root).open(this.physicalQuery);
 		} catch (OpenFailedException e1) {
 			LOG.error("Open root failed", e1);
 		}
@@ -282,6 +284,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	 * @param oldPlanOperatorsBeforeSources Operators which are after the metadataUpdatePO in the old plan
 	 */
 	private void insertBuffer(BufferPO buffer, ISource metadataUpdatePO, List<IPhysicalOperator> newPlanOperatorsBeforeSources, List<IPhysicalOperator> oldPlanOperatorsBeforeSources) {
+		//TODO check port nummbers
 		buffer.subscribeToSource(metadataUpdatePO, 0, 0,
 				metadataUpdatePO.getOutputSchema());
 		
@@ -657,7 +660,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			
 			LOG.debug("Calling open on all plan roots");
 			for(IPhysicalOperator root : newRoots) {
-				((ISink) root).open(null);
+				((ISink) root).open(this.physicalQuery);
 			}
 
 			LOG.debug("Initialize new plan root as physical root");

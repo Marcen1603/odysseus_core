@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.AppendNameLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.AppendUniqueIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -27,30 +26,30 @@ public class ParallelizationOptimizer {
 
 	private static ParallelizationOptimizer instance;
 
-	private ISession caller;
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void reoptimzeQuery(int queryId) {
+	public void reoptimzeQuery(int queryId, ISession user) {
 		// change logicalPlan
-		IPhysicalQuery physicalQuery = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryById(queryId, caller);
-		
+		IPhysicalQuery physicalQuery = StandardExecutor.getInstance().getExecutionPlan(user).getQueryById(queryId,
+				user);
+
 		ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
-		AppendUniqueIdLogicalGraphVisitor<ILogicalOperator> appendVisitor = new AppendUniqueIdLogicalGraphVisitor("_migrate");
+		AppendUniqueIdLogicalGraphVisitor<ILogicalOperator> appendVisitor = new AppendUniqueIdLogicalGraphVisitor(
+				"_migrate");
 		GenericGraphWalker walker0 = new GenericGraphWalker();
 		walker0.prefixWalk(logicalQuery.getInitialLogicalPlan(), appendVisitor);
-		
+
 		// parallelize (change BuildConfiguration and perform preTransformation)
 		logicalQuery.setLogicalPlan(logicalQuery.getInitialLogicalPlan(), false);
 		List<ILogicalQuery> logicalQueryList = new ArrayList<>();
 		logicalQueryList.add(logicalQuery);
-		StandardExecutor.getInstance().executePreTransformationHandlers(caller,
+		StandardExecutor.getInstance().executePreTransformationHandlers(user,
 				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery), logicalQueryList, Context.empty());
 		// rewrite
 
 		// transform
 		IPhysicalQuery newPhysicalQuery = StandardExecutor.getInstance().transform(logicalQuery,
 				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery).getTransformationConfiguration(),
-				caller);
+				user);
 		// TODO select migration strategy
 		String migrationStrategy = "GeneralizedParallelTracksMigrationStrategy";
 		IPlanMigrationStrategy planMigrationStrategy = null;
@@ -73,11 +72,6 @@ public class ParallelizationOptimizer {
 			instance = new ParallelizationOptimizer();
 		}
 		return instance;
-	}
-	
-	//FIXME allow multiple users
-	public void initialize(ISession user) {
-		this.caller = user;
 	}
 
 }

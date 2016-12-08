@@ -11,6 +11,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.planmigration,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
- de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy
+ de.uniol.inf.is.odysseus.planmanagement.optimization.migration.simpleplanmigrationstrategy,
+ de.uniol.inf.is.odysseus.slf4j
 Service-Component: OSGI-INF/GeneralizedParallelTracksMigrationStrategy.xml
 Bundle-ActivationPolicy: lazy

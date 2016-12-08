@@ -8,6 +8,9 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+
 /**
  * @author Dennis Nowak
  *
@@ -32,9 +35,11 @@ public class ReoptimzeParallelizationOsgiConsoleCommand implements CommandProvid
 		if (queryId == null) {
 			throw new IllegalArgumentException("No queryId given.");
 		}
+		ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 		try {
-			//TODO 
-			ParallelizationOptimizer.getInstance().reoptimzeQuery(Integer.parseInt(queryId));
+			new Thread(() -> {
+				ParallelizationOptimizer.getInstance().reoptimzeQuery(Integer.parseInt(queryId), currentUser);
+			},"ParallelizationOptimizer").start();
 		} catch (Exception e) {
 			LOG.error("Optimization of Parallelizationn was not successfull", e);
 		}

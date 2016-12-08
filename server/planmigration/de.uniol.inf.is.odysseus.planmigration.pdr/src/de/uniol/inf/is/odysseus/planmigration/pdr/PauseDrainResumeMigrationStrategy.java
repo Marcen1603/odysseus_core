@@ -50,7 +50,6 @@ public class PauseDrainResumeMigrationStrategy extends AbstractPlanMigrationStra
 				oldSources.add(op);
 			}
 		}
-		List<IPhysicalOperator> newSources;
 		//TODO change sinks
 		
 		//TODO remove old plan
