@@ -107,8 +107,8 @@ public interface ITimeIntervalSweepArea<T> extends ISweepArea<T>{
 
 	List<T> queryContains(PointInTime point);
 
-	PointInTime getMaxTs();
-	PointInTime getMinTs();
+	PointInTime getMaxStartTs();
+	PointInTime getMinStartTs();
 	PointInTime getMaxEndTs();
 
 	@Override
