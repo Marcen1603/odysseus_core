@@ -65,14 +65,14 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 		} else if (port == 1) {
 			List<Tuple<?>> neighbors = queryObject(tuple);
 
-			IAttributeResolver attributeResolver = new DirectAttributeResolver(this.getOutputSchema());
-			IPredicate test = OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE")
-					.createPredicate(attributeResolver, "MMSI != 316652310");
+//			IAttributeResolver attributeResolver = new DirectAttributeResolver(this.getOutputSchema());
+//			IPredicate test = OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE")
+//					.createPredicate(attributeResolver, "MMSI != 316652310");
 
-			Tuple[] tuples = neighbors.stream().filter(e -> test.evaluate(e)).toArray(size -> new Tuple[size]);
-			List<Tuple> filteredNeighbors = new ArrayList<Tuple>(Arrays.asList(tuples));
+//			Tuple[] tuples = neighbors.stream().filter(e -> test.evaluate(e)).toArray(size -> new Tuple[size]);
+//			List<Tuple> filteredNeighbors = new ArrayList<Tuple>(Arrays.asList(tuples));
 
-			Tuple<?> newTuple = tuple.append(filteredNeighbors);
+			Tuple<?> newTuple = tuple.append(neighbors);
 			transfer((T) newTuple);
 		}
 	}
