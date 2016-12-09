@@ -48,8 +48,8 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 	}
 
 	@Override
-	public String getSupportedParser() {
-		return "CQL";
+	public String getSupportedParser() {//TODO Changed from CQL to CQL_old to avoid errors during development of the new CQLParser
+		return "CQL_old";
 	}
 
 	@Override

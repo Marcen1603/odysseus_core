@@ -138,7 +138,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public String getLanguage() {
-		return "CQL";
+		return "CQL_old";
 	}
 
 	@Override

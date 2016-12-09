@@ -6,4 +6,4 @@ CREATE STREAM stream1 (id INTEGER, first_name STRING, last_name STRING, email ST
   OPTIONS('filename' 'data1');
   
 SELECT value FROM stream1
-WHERE value > 10
+WHERE 10 > value;

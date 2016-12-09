@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+import java.util.ArrayList
 import java.util.HashSet
 import java.util.List
 import java.util.Map
@@ -34,7 +35,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
 
 /**
  * Generates code from your model files on save.
@@ -46,15 +46,33 @@ class CQLGenerator extends AbstractGenerator
 
 //	@Inject extension IQualifiedNameProvider
 
-	var Set<SDFAttribute> attributes = new HashSet
-	var Map<String, SDFAttribute> map
+	var Set<SDFAttribute> outerattributes = new HashSet
+	var Set<SDFAttribute> innerattributes = new HashSet
+	
+	var static List<String> sources = new ArrayList
 
-	def void setSchema(Set<SDFSchema> s)
+	def void clear()
+	{
+		outerattributes.clear()
+		innerattributes.clear()
+		sources.clear()
+	}
+
+	def void setOuterschema(Set<SDFSchema> s)
 	{
 		for(SDFSchema t : s)
 		{
 //			print(t)//TODO Remove after debugging
-			attributes.addAll(t.attributes)
+			outerattributes.addAll(t.attributes)
+		}
+	}
+
+	def void setInnerschema(Set<SDFSchema> s)
+	{
+		for(SDFSchema t : s)
+		{
+//			print(t)//TODO Remove after debugging
+			innerattributes.addAll(t.attributes)
 		}
 	}
 
@@ -82,7 +100,7 @@ class CQLGenerator extends AbstractGenerator
 	»
 	'''
 	
-	def parseCreate(Create_Statement stmt)
+	def parseCreate(Create_Statement stmt)//TODO Use buildAccessOP()
 	{
 		var ch = stmt.channel
 		if(ch!= null)
@@ -92,9 +110,10 @@ class CQLGenerator extends AbstractGenerator
 				ch.datatypes.map[e|e.value]
 			)
 			
+			sources.add(ch.name)
 			return
 			'''
-			«getKeyword(0) + ch.name» := ACCESS({source = '«ch.name»', 
+			«ch.name» := ACCESS({source = '«getKeyword(0) +  ch.name»', 
 			wrapper = 'GenericPush',
 			schema = [«args»],
 			transport = 'NonBlockingTcp',
@@ -129,11 +148,12 @@ class CQLGenerator extends AbstractGenerator
 				af.values
 			)
 			
+			if(bool) sources.add(af.name)
 			return 
 			'''
-			«getKeyword(2) + af.name» := «type» (
-			{«IF bool»source ='«af.name»',«ENDIF»
-			«IF !bool»sink='«af.name»'«ENDIF»
+			«af.name» := «type» (
+			{«IF bool»source ='«getKeyword(0) + af.name» ',«ENDIF»
+			«IF !bool»sink='«getKeyword(2) +  af.name»'«ENDIF»
 			wrapper='«af.wrapper»',
 			protocol='«af.protocol»',
 			transport='«af.transport»',
@@ -258,42 +278,86 @@ class CQLGenerator extends AbstractGenerator
 	var wrapper = 'GenericPush'
 	var transport = 'TCPClient'
 	var dataHandler = 'Tuple'
-	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)
+	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)//TODO Refactore
 	{
 		var str = ''
+		var bool = false
 		for(var i = 0; i < src.size - 1; i++)
 		{
-			if(b) str += src.get(i).name + ":= "
-			str +=
-			"ACCESS
-			(
-				{	
-					source = '"+getKeyword(0) + src.get(i).name+"',
-					wrapper = '"+wrapper+"',
-					transport = '"+transport+"',
-					dataHandler = '"+dataHandler+"',
-					schema = ["+buildSchema(attr, src.get(i))+"]
+			
+			for(a : outerattributes)
+			{
+				if(a.sourceName.equals(src.get(i).name))
+				{
+					str += src.get(i).name + ','
+					bool = true
 				}
-			)	
-			"
-			+buildWindowOP(src.get(i), src.get(i).name)
-			+","
-		}
-		if(b) str += src.get(src.size - 1).name + ":= "
-		str +=
-		"ACCESS
-		(
-			{	
-				source = '"+getKeyword(0) + src.get(src.size - 1).name+"',
-				wrapper = '"+wrapper+"',
-				transport = '"+transport+"',
-				dataHandler = '"+dataHandler+"',
-				schema = ["+buildSchema(attr, src.get(src.size - 1))+"]
 			}
-		)
-		"
-		+buildWindowOP(src.get(src.size - 1), src.get(src.size - 1).name)
 		
+			if(!bool)
+			{
+				if(sources.contains(src.get(i).name))
+				{
+					str += src.get(i).name + ','
+				}
+				else
+				{
+					if(b) str += src.get(i).name + ":= "			
+					str +=
+					"ACCESS
+					(
+						{	
+							source = '"+getKeyword(0) + src.get(i).name+"',
+							wrapper = '"+wrapper+"',
+							transport = '"+transport+"',
+							dataHandler = '"+dataHandler+"',
+							schema = ["+buildSchema(attr, src.get(i))+"]
+						}
+					)	
+					"
+					+buildWindowOP(src.get(i), src.get(i).name)
+					+","
+					sources.add(src.get(i).name)
+				}
+				bool = false
+				}
+		}
+		
+		
+		for(a : outerattributes)
+		{
+			if(a.sourceName.equals(src.get(src.size - 1).name))
+			{
+				str += src.get(src.size - 1).name
+				bool = true
+			}
+		}
+		
+		if(!bool)
+		{
+			if(sources.contains(src.get(src.size - 1).name))
+			{
+				str += src.get(src.size - 1).name 		
+			}
+			else
+			{
+				if(b) str += src.get(src.size - 1).name + ":= "
+				str +=
+				"ACCESS
+				(
+					{	
+						source = '"+getKeyword(0) + src.get(src.size - 1).name+"',
+						wrapper = '"+wrapper+"',
+						transport = '"+transport+"',
+						dataHandler = '"+dataHandler+"',
+						schema = ["+buildSchema(attr, src.get(src.size - 1))+"]
+					}
+				)
+				"
+				+buildWindowOP(src.get(src.size - 1), src.get(src.size - 1).name)
+				sources.add(src.get(src.size - 1).name)
+			}
+		}				
 		return str
 	}
 
@@ -366,10 +430,10 @@ class CQLGenerator extends AbstractGenerator
 	{
 		var str = '\n'
 		var SDFDatatype type
-		var String alias
+		var String alias		
 		if(attr.size == 0)
 		{
-			for(a : attributes)
+			for(a : innerattributes)
 			{
 				if(a.sourceName.equals(src.name))
 				{
@@ -382,7 +446,7 @@ class CQLGenerator extends AbstractGenerator
 		}
 		else
 		{
-			for(a : attributes)
+			for(a : innerattributes)
 			{
 				if(a.sourceName.equals(src.name))
 				{

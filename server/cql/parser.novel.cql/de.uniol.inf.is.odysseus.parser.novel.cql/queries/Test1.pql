@@ -8,4 +8,4 @@ pql_stream1 := ACCESS({Source='pql_stream1', Wrapper='GenericPush',
                 dataHandler='Tuple',
                 Options=[['port','135'], ['host','localhost']]})
                 
-select_1 = SELECT({predicate='value > 10'}, pql_stream1)               
+select_1 = SELECT({predicate='value > 10'}, pql_stream1)           

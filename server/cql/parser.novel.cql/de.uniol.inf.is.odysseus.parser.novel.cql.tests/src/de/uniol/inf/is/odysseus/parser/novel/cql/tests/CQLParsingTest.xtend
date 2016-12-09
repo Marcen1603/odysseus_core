@@ -33,6 +33,30 @@ class CQLParsingTest
 	val keyword2 = CQLGenerator.getKeyword(2)
 	val keyword3 = CQLGenerator.getKeyword(3)
 	
+	def void assertCorrectGenerated(String s, String t, CQLDictionaryDummy dictionary) 
+	{
+		
+		s.parse.assertNoErrors
+		var model = s.parse 
+		val fsa = new InMemoryFileSystemAccess()
+		if(dictionary != null)
+		innerschema = dictionary.schema as Set<SDFSchema>
+//		outerschema = dictionary.schema as Set<SDFSchema>
+        doGenerate(model.eResource(), fsa, null)
+        clear
+        var query = ''
+		for(e : fsa.textFiles.entrySet)
+		{
+			query += e.value
+		}
+//		println("result: " + query)
+		format(t).assertEquals(format(query))
+	} 
+	
+	//TODO \t should also be removed
+	//TODO ecspace symbols should retrived with System.getProperties(linesperator)
+	def String format(String s) { s.replaceAll("\\s*[\\r\\n]+\\s*", "").trim().replace(" ","") }
+	
 	@Test def void SelectAllTest1() 
 	{ 
 		assertCorrectGenerated
@@ -144,6 +168,36 @@ class CQLParsingTest
 		, new CQLDictionaryDummy)
 	}
 	
+	
+	@Test def void CreateStream1SelectAttr1Attr2() 
+	{ 
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) 
+    		WRAPPER 'GenericPush'
+    		PROTOCOL 'CSV'
+    		TRANSPORT 'File'
+    		DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '54321', 'host' 'localhost');
+				
+			SELECT attr1, attr2 FROM stream1 WHERE (attr1 < 125);" 
+			,
+			"
+			stream1 := ACCESS
+						(
+							{ source = 'input_stream1', 
+							  wrapper = 'GenericPush',
+							  protocol = 'CSV',
+							  transport = 'File',
+							  dataHandler ='Tuple',
+							  schema = [['attr1', 'INTEGER']],
+							  options =[['port', '54321'],['host', 'localhost']]
+							}
+						)
+			select_ := SELECT({ predicate='(attr1 < 125)'}, stream1)"
+		, new CQLDictionaryDummy)
+	}
+	
 	@Test def void SelectAttr1Attr2Attr3() 
 	{ 
 		assertCorrectGenerated
@@ -183,73 +237,73 @@ class CQLParsingTest
 		, new CQLDictionaryDummy)
 	}
 	
-//	@Test def void CreateStream1Channel()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;"
-//			,
-//			keyword0+"stream1 := ACCESS
-//			(
-//				{ source = 'stream1', 
-//				  wrapper = 'GenericPush',
-//				  schema = [['attr1', 'INTEGER']],
-//				  transport = 'NonBlockingTcp',
-//				  protocol = 'SizeByteBuffer',
-//				  dataHandler ='Tuple',
-//				  options =[['port', '54321'],['host', 'localhost']]
-//				}
-//			)"
-//		, null)
-//	}
-//	
-//	@Test def void CreateStream1AccessFramework()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"CREATE STREAM stream1 (attr1 INTEGER) 
-//    		WRAPPER 'GenericPush'
-//    		PROTOCOL 'CSV'
-//    		TRANSPORT 'File'
-//    		DATAHANDLER 'Tuple'
-//    		OPTIONS ('port' '54321', 'host' 'localhost')"
-//			,
-//			keyword2+"stream1 := ACCESS
-//			(
-//				{ source = 'stream1', 
-//				  wrapper = 'GenericPush',
-//				  protocol = 'CSV',
-//				  transport = 'File',
-//				  dataHandler ='Tuple',
-//				  schema = [['attr1', 'INTEGER']],
-//				  options =[['port', '54321'],['host', 'localhost']]
-//				}
-//			)"
-//		, null)
-//	}
-//	
-//	@Test def void CreateStream2Channel()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"CREATE STREAM stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) CHANNEL localhost : 54321;"
-//			,
-//			keyword0+"stream1 := ACCESS
-//			(
-//				{ source = 'stream1', 
-//				  wrapper = 'GenericPush',
-//				  schema = [['attr1', 'INTEGER'],
-//							['attr2', 'STRING'],
-//							['attr3', 'BOOLEAN']],
-//				transport = 'NonBlockingTcp',
-//				protocol = 'SizeByteBuffer',
-//				dataHandler ='Tuple',
-//				options =[['port', '54321'],['host', 'localhost']]
-//				}
-//			)"
-//		, null)
-//	}
-//	
+	@Test def void CreateStream1Channel()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;"
+			,
+			"stream1 := ACCESS
+			(
+				{ source = 'input_stream1', 
+				  wrapper = 'GenericPush',
+				  schema = [['attr1', 'INTEGER']],
+				  transport = 'NonBlockingTcp',
+				  protocol = 'SizeByteBuffer',
+				  dataHandler ='Tuple',
+				  options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+		, null)
+	}
+	
+	@Test def void CreateStream1AccessFramework()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) 
+    		WRAPPER 'GenericPush'
+    		PROTOCOL 'CSV'
+    		TRANSPORT 'File'
+    		DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '54321', 'host' 'localhost')"
+			,
+			"stream1 := ACCESS
+			(
+				{ source = 'input_stream1', 
+				  wrapper = 'GenericPush',
+				  protocol = 'CSV',
+				  transport = 'File',
+				  dataHandler ='Tuple',
+				  schema = [['attr1', 'INTEGER']],
+				  options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+		, null)
+	}
+	
+	@Test def void CreateStream2Channel()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) CHANNEL localhost : 54321;"
+			,
+			"stream1 := ACCESS
+			(
+				{ source = 'input_stream1', 
+				  wrapper = 'GenericPush',
+				  schema = [['attr1', 'INTEGER'],
+							['attr2', 'STRING'],
+							['attr3', 'BOOLEAN']],
+				transport = 'NonBlockingTcp',
+				protocol = 'SizeByteBuffer',
+				dataHandler ='Tuple',
+				options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+		, null)
+	}
+
 //	@Test def void CreateSink1()//TODO Input operator missing!
 //	{
 //		assertCorrectGenerated
@@ -274,31 +328,30 @@ class CQLParsingTest
 //			)"
 //		, null)
 //	}
-//	
-//	
-//	@Test def void WindowUnbounded() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1 [UNBOUNDED];"
-//			,
-//			keyword0+"stream1 := ACCESS
-//			(
-//				{
-//					source      = 'stream1',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr1', 'Integer'],
-//						['attr2', 'String']
-//					]
-//				}
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
-//	
+	
+	@Test def void WindowUnbounded() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [UNBOUNDED];"
+			,
+			"stream1 := ACCESS
+			(
+				{
+					source      = 'input_stream1',
+					wrapper     = 'GenericPush',
+					transport   = 'TCPClient',
+					dataHandler = 'Tuple',
+					schema = 
+					[
+						['attr1', 'Integer'],
+						['attr2', 'String']
+					]
+				}
+			)"
+		, new CQLDictionaryDummy())
+	}
+	
 //	@Test def void WindowTimeBased() 
 //	{ 
 //		assertCorrectGenerated
@@ -326,7 +379,7 @@ class CQLParsingTest
 //			)"
 //		, new CQLDictionaryDummy())
 //	}
-//	
+	
 //	@Test def void WindowElementBased1() 
 //	{ 
 //		assertCorrectGenerated
@@ -355,7 +408,7 @@ class CQLParsingTest
 //			)"
 //		, new CQLDictionaryDummy())
 //	}
-//	
+	
 //	@Test def void WindowElementBased2() 
 //	{ 
 //		assertCorrectGenerated
@@ -386,7 +439,7 @@ class CQLParsingTest
 //			)"
 //		, new CQLDictionaryDummy())
 //	}
-//	
+	
 //	@Test def void WindowElementTimeUnbounded() 
 //	{ 
 //		assertCorrectGenerated
@@ -452,26 +505,6 @@ class CQLParsingTest
 //	}
 	
 	
-	def void assertCorrectGenerated(String s, String t, CQLDictionaryDummy dictionary) 
-	{
-		
-		s.parse.assertNoErrors
-		var model = s.parse 
-		val fsa = new InMemoryFileSystemAccess()
-		if(dictionary != null)
-			schema = dictionary.schema as Set<SDFSchema>
-        doGenerate(model.eResource(), fsa, null)
-        var query = ''
-		for(e : fsa.textFiles.entrySet)
-		{
-			query += e.value
-		}
-//		println("result: " + query)
-		format(t).assertEquals(format(query))
-	} 
-	
-	//TODO \t should also be removed
-	//TODO ecspace symbols should retrived with System.getProperties(linesperator)
-	def String format(String s) { s.replaceAll("\\s*[\\r\\n]+\\s*", "").trim().replace(" ","") }
+
 	
 }

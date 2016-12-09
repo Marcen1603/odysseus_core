@@ -1,4 +1,4 @@
-#PARSER CQL2
+#PARSER CQL
 #QUERY
 CREATE STREAM stream1 (id INTEGER, first_name STRING, last_name STRING, email STRING, gender STRING, ip_adress STRING)
   WRAPPER 'GenericPush'
@@ -10,14 +10,7 @@ CREATE STREAM stream1 (id INTEGER, first_name STRING, last_name STRING, email ST
                 
 #PARSER PQL                
 #RUNQUERY
-select_1 = SELECT({predicate='id > 10'}, output_stream1)
+select_1 = SELECT({predicate='id > 10'}, stream1)
 
-#PARSER CQL2
-#QUERY
-CREATE SINK out (id INTEGER, first_name STRING, last_name STRING, email STRING, gender STRING, ip_adress STRING)
-  WRAPPER 'GenericPush'
-  PROTOCOL 'CSV'
-  TRANSPORT 'File'
-  DATAHANDLER 'Tuple'
-  OPTIONS('filename' 'C:\\Users\\jp\\Documents\\repositories\\odysseus\\server\\cql\\parser.novel.cql\\de.uniol.inf.is.odysseus.parser.novel.cql\\queries\\data_out1.csv');
+
                              

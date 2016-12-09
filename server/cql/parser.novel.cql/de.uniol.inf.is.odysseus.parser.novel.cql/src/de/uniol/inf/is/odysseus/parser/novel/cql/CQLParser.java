@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,16 +170,16 @@ public class CQLParser implements IQueryParser
 		}
 		System.out.println(dic.toString());
 		//Get schemata from PQl queries
-		Set<SDFSchema> schemata = executor.getExecutionPlan()
+		Set<SDFSchema> outerschema = executor.getExecutionPlan()
 										  .getQueries()
 										  .stream()
 										  .map(e -> e.getLogicalQuery().getLogicalPlan())
 										  .map(e -> e.getOutputSchema())
 										  .collect(Collectors.toSet());
 		//Get schemata from CQLDictionary and merge:
-		schemata.addAll(dic.getSchema());
+		Set<SDFSchema> innerschema = (Set<SDFSchema>) dic.getSchema();
 		
-		return generate(query.toString(), model, schemata);
+		return generate(query.toString(), model, outerschema, innerschema);
 	}
 	
 	@Override
@@ -190,15 +191,15 @@ public class CQLParser implements IQueryParser
 		return new PQLParser().parse(pqlQuery, user, dd, context, metaAttribute, executor);
 	}
 	
-	public synchronized String generate(String str, Model model, Set<SDFSchema> schemata) throws QueryParseException
+	public synchronized String generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema) throws QueryParseException
 	{
 		
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-//		System.out.println(schemata.toString());
-		generator.setSchema(schemata);
+		generator.setOuterschema(outerschema);
+		generator.setInnerschema(innerschema);
 		generator.doGenerate(model.eResource(), fsa, null);
 		String pqlString = "";
-		
+		generator.clear();
 		for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
 		{
 			pqlString += e.getValue().toString();
@@ -206,31 +207,31 @@ public class CQLParser implements IQueryParser
 		
 		if (pqlString != null)
 		{
-			System.out.println("PQL: " + pqlString);
+			System.out.println("PQL: " + pqlString);//TODO Remove after debugging
 			return pqlString;
 		}
 //		else
 //			new QueryParseException("given cql query was empty and could not be transformed to a pql query");
 		
-		return null;
+		return "";
 	}
 
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) 
 	{
 		// TODO Auto-generated method stub
-		return null;
+		return new HashMap();
 	}
 
 	@Override
 	public List<String> getSuggestions(String hint, ISession user) 
 	{
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override
-	public String getLanguage() { return "CQL2"; }//TODO return "CQL"; } 
+	public String getLanguage() { return "CQL"; } 
 
 	public static void addQueryParameter(IParameter<?> parameter) 
 	{

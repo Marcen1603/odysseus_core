@@ -1,0 +1,4 @@
+#PARSER PQL
+#RUNQUERY
+
+select_1 = SELECT({predicate='value > 10'}, pql_stream1)    
