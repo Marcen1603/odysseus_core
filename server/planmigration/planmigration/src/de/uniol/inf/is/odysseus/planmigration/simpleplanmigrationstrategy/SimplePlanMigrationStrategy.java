@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -127,7 +128,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		// install both plans for parallel execution
 		if(runningQuery.getRoots().size()>1) {
-			LOG.warn("There is more than 1 root in the query to be migrated.");
+			throw new MigrationException("There is more than 1 root in the query to be migrated.");
 		}
 		IPhysicalOperator oldPlanRoot = runningQuery.getRoots().get(0);
 		List<ISource<?>> oldPlanSources = MigrationHelper
@@ -190,6 +191,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			buffer.setName(source.getOutputSchema().getAttribute(0).getSourceName());
 			
 			buffer.block();
+			
 			buffer.setOutputSchema(source.getOutputSchema());
 
 			// set the source for this buffer in case it is empty
@@ -246,7 +248,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 		LOG.debug("Calling open on new Plan ... done");
 
-		LOG.debug("Result:\n"
+		LOG.trace("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(root,
 						new PhysicalPlanToStringVisitor()));
 
@@ -260,9 +262,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 
 		LOG.debug("Marking migration starts");
+		
+		PointInTime maxEndTs = MigrationHelper.findMaxEndTimestaminPlan(root);
 		// resume by unblocking buffers
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			((MigrationBuffer)buffer).markMigrationStart(root);
+			((MigrationBuffer)buffer).markMigrationStart(maxEndTs);
 		}
 		LOG.debug("Unblocking buffers");
 		for(BufferPO<?> buffer : context.getBufferPOs()) {
@@ -614,7 +618,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				LOG.debug("Unblocking buffer to drain it");
 				LOG.debug("Buffer contains {} elements", buffer.size());
 				int elementCOunt = buffer.size();
-				buffer.unblock();
+				//buffer.unblock();
 				LOG.debug("Empty buffer");
 				while (buffer.hasNext()) {
 					LOG.debug("Elements to send "+(elementCOunt--));
@@ -681,7 +685,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			throw new MigrationException("Scheduling plan failed after migration.", e);
 		}
 
-		LOG.debug("Result:\n"
+		LOG.trace("Result:\n"
 				+ AbstractTreeWalker.prefixWalk2(newRoots.get(0),
 						new PhysicalPlanToStringVisitor()));
 

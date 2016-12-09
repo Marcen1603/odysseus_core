@@ -63,7 +63,7 @@ public class ParallelizationOptimizer {
 		// replace physical plan
 		planMigrationStrategy.getNewInstance().migrateQuery(physicalQuery, newPhysicalQuery.getRoots());
 		// update logical plan
-		physicalQuery.getLogicalQuery().setLogicalPlan(logicalQuery.getLogicalPlan(), true);
+		
 		// physicaloperators get logicaloperators
 	}
 

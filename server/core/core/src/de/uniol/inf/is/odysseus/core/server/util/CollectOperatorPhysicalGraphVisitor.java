@@ -58,7 +58,6 @@ public class CollectOperatorPhysicalGraphVisitor<T extends IPhysicalOperator> im
 	 */
 	@Override
 	public void beforeFromSinkToSourceAction(T sink, T source) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -67,7 +66,6 @@ public class CollectOperatorPhysicalGraphVisitor<T extends IPhysicalOperator> im
 	 */
 	@Override
 	public void afterFromSinkToSourceAction(T sink, T source) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -76,7 +74,6 @@ public class CollectOperatorPhysicalGraphVisitor<T extends IPhysicalOperator> im
 	 */
 	@Override
 	public void beforeFromSourceToSinkAction(T source, T sink) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -85,7 +82,6 @@ public class CollectOperatorPhysicalGraphVisitor<T extends IPhysicalOperator> im
 	 */
 	@Override
 	public void afterFromSourceToSinkAction(T source, T sink) {
-		// TODO Auto-generated method stub
 		
 	}
 

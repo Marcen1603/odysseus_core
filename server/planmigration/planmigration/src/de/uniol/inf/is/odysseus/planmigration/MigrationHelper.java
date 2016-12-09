@@ -16,16 +16,21 @@ package de.uniol.inf.is.odysseus.planmigration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
+import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 
 /**
@@ -213,6 +218,24 @@ public class MigrationHelper {
 				}
 			}
 		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static PointInTime findMaxEndTimestaminPlan(IPhysicalOperator root) {
+		PointInTime latest = null;
+		//TODO add support for additional operator types
+		GenericGraphWalker walker = new GenericGraphWalker();
+		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(JoinTIPO.class);
+		walker.prefixWalkPhysical(root, visitor);
+		Set<IPhysicalOperator> joins = visitor.getResult();
+		for(IPhysicalOperator join : joins) {
+			PointInTime end = ((JoinTIPO) join).getLatestEndTimestamp();
+			if(latest == null || (end != null && latest.before(end))) {
+				latest = end;
+			}
+		}
+		
+		return latest;
 	}
 
 }
