@@ -12,7 +12,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  de.uniol.inf.is.odysseus.planmigration,
  de.uniol.inf.is.odysseus.parallelization.interoperator,
- de.uniol.inf.is.odysseus.slf4j
-Service-Component: OSGI-INF/GeneralizedParallelTracksMigrationStrategy.xml
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.script.parser
+Service-Component: OSGI-INF/GeneralizedParallelTracksMigrationStrategy.xml,
+ OSGI-INF/ParallelizationOptimizationPreParserKeywordProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.optimization
 Bundle-ActivationPolicy: lazy
