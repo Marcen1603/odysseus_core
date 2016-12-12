@@ -5,4 +5,6 @@ CREATE VIEW view2 FROM(
 	  TRANSPORT 'File'
 	  DATAHANDLER 'Tuple'
 	  OPTIONS('readfirstline' 'false','filename' 'C:\\Users\\jp\\Documents\\repositories\\odysseus\\server\\cql\\parser.novel.cql\\de.uniol.inf.is.odysseus.parser.novel.cql\\queries\\data1.csv');
-)  
+)
+
+SELECT id FROM view2 WHERE 0 < FALSE 

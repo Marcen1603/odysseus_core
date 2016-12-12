@@ -3,12 +3,14 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.validation
 
+import org.eclipse.xtext.validation.ComposedChecks
 
 /**
  * This class contains custom validation rules. 
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
+@ComposedChecks(validators = CQLExpressionsValidator)
 class CQLValidator extends AbstractCQLValidator {
 	
 //	public static val INVALID_NAME = 'invalidName'

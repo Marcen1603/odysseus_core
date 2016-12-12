@@ -30,7 +30,7 @@ class CQLExpressionsValidator extends AbstractCQLValidator
 	
     @Inject
 	@Override
-    override register(EValidatorRegistrar registrar) 
+    override register(EValidatorRegistrar register) 
     {
         /* 
          *  Have to be empty, otherwise the main validator cannot call
