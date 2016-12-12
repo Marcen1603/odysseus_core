@@ -7,4 +7,7 @@ CREATE VIEW view2 FROM(
 	  OPTIONS('readfirstline' 'false','filename' 'C:\\Users\\jp\\Documents\\repositories\\odysseus\\server\\cql\\parser.novel.cql\\de.uniol.inf.is.odysseus.parser.novel.cql\\queries\\data1.csv');
 )
 
-SELECT id FROM view2 WHERE 0 < FALSE 
+
+SELECT id FROM view2 WHERE 0 > 1
+
+SELECT * FROM Name WHERE (10 > 0)

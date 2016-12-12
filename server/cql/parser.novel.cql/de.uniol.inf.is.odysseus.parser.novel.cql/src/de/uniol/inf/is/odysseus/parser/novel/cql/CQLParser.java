@@ -113,6 +113,11 @@ public class CQLParser implements IQueryParser
 //		regex = ".*create[ ]*["+queryType+"][ ]*[a-z0-9]*[ ]+([a-z0-9]+){1}[ ]*[(]([a-z0-9]+[ ]+["+types+"]+[ ]*(, [a-z0-9]+[ ]+["+types+"]+)*)[)].*";
 	}
 	
+	public synchronized CQLDictionary createDictionary()
+	{
+		return null;
+	}
+	
 	public synchronized String translate(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
@@ -169,7 +174,6 @@ public class CQLParser implements IQueryParser
 					}
 					else// CREATE VIEW
 					{
-						//TODO Add view to sources
 					}
 				}
 			}

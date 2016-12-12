@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.typing
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
-import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionary
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
@@ -16,10 +15,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement
-import de.uniol.inf.is.odysseus.core.server.usermanagement.Session
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementPermissionProvider
 
 class ExpressionsTypeProvider 
 {
@@ -88,12 +83,7 @@ class ExpressionsTypeProvider
 	
 	def dispatch ExpressionsType typeFor(Attribute e)
 	{
-
-//		UserManagementProvider::usermanagent.sessionManagement.
-//		UserManagementProvider::sessionmanagement.login()
-			
-//		CQLDictionary.dictionary.getOutputSchema(user);
-			
+		
 	}
 	
 	def dispatch ExpressionsType typeFor(SDFDatatype e)
@@ -105,30 +95,4 @@ class ExpressionsTypeProvider
 			intType
 
 	}
-	
-//	def static attributesDefinedBefore(Expression e)
-//	{
-//		val allElements = e.getContainerOfType(typeof(ExpressionsModel)).elements
-//		
-//		println("size: "+ allElements.size + " , list:" + allElements) //TODO Remove after debugging
-//		         
-//		val contained = allElements.findFirst[isAncestor(it, e)]
-//		println("contained: " + contained)		         
-//		
-//		val sublist = allElements.subList(0, allElements.indexOf(contained))
-//		
-//		println("sub list: " + sublist)
-//	}
-	
-//	def dispatch ExpressionsType typeFor(Minus e)
-//	{
-//		if (e.left?.typeFor == stringType ||  e.right?.typeFor == stringType) 
-//			stringType
-//		else
-//			intType
-//	}
-	
-	
 }
-
-
