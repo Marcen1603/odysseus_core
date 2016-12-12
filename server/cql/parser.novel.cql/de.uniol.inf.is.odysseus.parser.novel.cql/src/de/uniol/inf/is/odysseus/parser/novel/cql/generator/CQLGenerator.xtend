@@ -106,15 +106,15 @@ class CQLGenerator implements IGenerator2
 	'''
 	«switch stmt.type 
 	{
-	Select_Statement : parseSelect(stmt.type as Select_Statement, false)
-	Create_Statement : parseCreate(stmt.type as Create_Statement)
+	Select_Statement : parseSelectStatement(stmt.type as Select_Statement, false)
+	Create_Statement : parseCreateStatement(stmt.type as Create_Statement)
 	}
 	»
 	'''
 		
 	var localOP = ' = '
 	var globalOP = ' := '	
-	def parseCreate(Create_Statement stmt)
+	def parseCreateStatement(Create_Statement stmt)
 	{
 		var ch = stmt.channelformat
 		if(ch!= null)
@@ -146,7 +146,7 @@ class CQLGenerator implements IGenerator2
 				}
 				else
 				{
-					return parseSelect(ch.view.statement, true)
+					return parseSelectStatement(ch.view.statement, true)
 				}
 		}
 		else
@@ -245,23 +245,35 @@ class CQLGenerator implements IGenerator2
 		return keywords.get(i);
 	}
 
+	/**
+	 * Builds a join operator with a given {@link ExpressionsModel} and list of {@link Source}
+	 * elements. If the predicate is null, there will be no join predicate in the operation.
+	 * If the list contains only one source, an {@link IllegalArgumentException} will be thrown.
+	 */
 	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs)
 	{
+		if(srcs.size < 2)
+		{ 
+			throw new IllegalArgumentException(
+				"Invalid number of source elements: There have to be at least two elements"
+			)
+		}
 		var List<Source> list = srcs
 		var src = list.get(0)
 		if(list.size == 2)
+		{
 			return '''JOIN(«list.get(0).name»,«list.get(1).name»)'''
+		}
 		list.remove(0)
 		if(predicate != null)
 		{
 			var predicateString = '''{predicate='«buildPredicate(predicate.elements.get(0))»'}'''
 			return '''JOIN(«predicateString»,«src.name»,«buildJoin(null, list)»)'''
 		}
-		else 
-			return '''JOIN(«src.name»,«buildJoin(null, list)»)''' 	
+		else { return '''JOIN(«src.name»,«buildJoin(null, list)»)''' } 	
 	}
 
-	def CharSequence parseSelect(Select_Statement stmt, boolean isView)
+	def CharSequence parseSelectStatement(Select_Statement stmt, boolean isView)
 	{
 		predicate = ''
 		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
@@ -270,18 +282,18 @@ class CQLGenerator implements IGenerator2
 			{
 				if(stmt.sources.size == 1)//.. FROM src1;
 				{
-					return '''project_«getID()» = «buildProjection(stmt.attributes, stmt.sources.get(0))»'''										
+					return '''project_«getID()» = «buildProjectOP(stmt.attributes, stmt.sources.get(0))»'''										
 				}
 				else//.. FROM src1, src2, ...;
 				{
-					return '''project_«getID()» = «buildProjection(stmt.attributes, buildJoin(null, stmt.sources))»'''	
+					return '''project_«getID()» = «buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources))»'''	
 				}
 			}
 			else//SELECT * ..
 			{
 				if(stmt.sources.size == 1)//.. FROM src1;
 				{
-					return '''project_«getID()» = «buildProjection(null, stmt.sources.get(0))»'''												
+					return '''project_«getID()» = «buildProjectOP(null, stmt.sources.get(0))»'''												
 				}
 				else//.. FROM src1, src2, ...;
 				{
@@ -293,21 +305,30 @@ class CQLGenerator implements IGenerator2
 		{ 
 			if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
 			{
-				return '''select_«getID()» = «buildSelect(stmt.predicates, buildProjection(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
+				return '''select_«getID()» = «buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
 			}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
-			return '''select_«getID()» = «buildSelect(stmt.predicates, stmt.sources)»'''// are the same!!
+			return '''select_«getID()» = «buildSelectOP(stmt.predicates, stmt.sources)»'''// are the same!!
 		}
 	}
 
-
-	def CharSequence buildSelect(ExpressionsModel predicate, List<Source> srcs)
+	/**
+	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
+	 * and a list of {@link Source} elements. If the list contains more then one element,
+	 * the {@link CQLGenerator#buildJoin(..)} method will be called to define the input
+	 * operator.
+	 */
+	def CharSequence buildSelectOP(ExpressionsModel predicate, List<Source> srcs)
 	{
 		if(srcs.size == 1)
 			return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«srcs.get(0).name»)'''
 		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«buildJoin(null, srcs)»)'''
 	}
 
-	def CharSequence buildSelect(ExpressionsModel predicate, CharSequence operator)
+	/**
+	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
+	 * and a char sequence to define the input operator. 
+	 */
+	def CharSequence buildSelectOP(ExpressionsModel predicate, CharSequence operator)
 	{
 		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«operator»)'''
 	}
@@ -320,8 +341,14 @@ class CQLGenerator implements IGenerator2
 		return count_ID.toString
 	}
 
-	def CharSequence buildProjection(List<Attribute> attributes, Source src)
+	/**
+	 * Builds a project operator with a list of {@link Attribute} and {@link Source}
+	 * element. If the list is null, all attributes to the corresponding source will be
+	 * added to the attributes parameter.
+	 */
+	def CharSequence buildProjectOP(List<Attribute> attributes, Source src)
 	{
+		if(src == null) { throw new NullPointerException("Given source was null") }
 		if(attributes == null)
 		{
 			return '''PROJECT(
@@ -335,7 +362,11 @@ class CQLGenerator implements IGenerator2
 				  	},«src.name»)'''
 	}
 	
-	def CharSequence buildProjection(List<Attribute> attributes, CharSequence operator)
+	/**
+	 * Builds a project operator with a list of {@link Attribute} and char sequence
+	 * to define the input operator.
+	 */
+	def CharSequence buildProjectOP(List<Attribute> attributes, CharSequence operator)
 	{
 		return '''PROJECT(
 				  	{
@@ -343,6 +374,9 @@ class CQLGenerator implements IGenerator2
 				  	},«operator»)'''
 	}
 	
+	/**
+	 * Returns all {@link Attribute} elements to the corresponding source.
+	 */
 	def getAttributeNamesFrom(String src) 
 	{
 		/*
@@ -350,10 +384,6 @@ class CQLGenerator implements IGenerator2
 		 * Hence, there should be no duplicated entries while iterating 
 		 * through both lists.
 		 */
-		 
-		 println("inner: " + innerattributes)
-		 println("outer: " + outerattributes)
-		 
 		var List<String> l = new ArrayList 
 		for(SDFAttribute a : outerattributes)
 			if(a.sourceName.equals(src))
@@ -365,6 +395,9 @@ class CQLGenerator implements IGenerator2
 	}
 	
 	var predicate = ''
+	/**
+	 * Builds a predicate string from a given {@link Expression}.
+	 */
 	def CharSequence buildPredicate(Expression e)
 	{
 		if(!e.eContents.empty)

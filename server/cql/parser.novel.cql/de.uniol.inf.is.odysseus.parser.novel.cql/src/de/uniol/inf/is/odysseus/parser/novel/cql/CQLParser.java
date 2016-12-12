@@ -96,7 +96,6 @@ public class CQLParser implements IQueryParser
 //		dictionary.add(user, tmp);
 //	}
 
-	
 	public CQLParser() 
 	{
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
