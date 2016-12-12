@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -181,7 +182,7 @@ public class CQLParser implements IQueryParser
 										  .map(e -> e.getLogicalQuery().getLogicalPlan())
 										  .map(e -> e.getOutputSchema())
 										  .collect(Collectors.toSet());
-		//Get schemata from CQLDictionary and merge:
+		//Get schemata from CQLDictionary
 		Set<SDFSchema> innerschema = (Set<SDFSchema>) dic.getSchema();
 		
 		return generate(query.toString(), model, outerschema, innerschema);
@@ -198,6 +199,7 @@ public class CQLParser implements IQueryParser
 	
 	public synchronized String generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema) throws QueryParseException
 	{
+		System.out.println("Generate PQL query text: ");//TODO Remover afer debugging
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
@@ -214,7 +216,6 @@ public class CQLParser implements IQueryParser
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) 
 	{
-		// TODO Auto-generated method stub
 		return new HashMap();
 	}
 

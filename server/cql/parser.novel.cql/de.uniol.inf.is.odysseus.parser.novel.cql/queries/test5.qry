@@ -1,13 +1,13 @@
 #PARSER PQL
 #RUNQUERY
 
-input = ACCESS({
+input := ACCESS({
             source='Source',
             wrapper='GenericPull',
             transport='File',
             protocol='CSV',
             datahandler='Tuple',
-            options=[
+            options=[['readfirstline', 'false'],
               ['filename', 'C:\Users\jp\Documents\repositories\odysseus\server\cql\parser.novel.cql\de.uniol.inf.is.odysseus.parser.novel.cql\queries\data1.csv']
             ],
             schema=[
@@ -21,5 +21,8 @@ input = ACCESS({
           }                
         )
         
-        
+#PARSER CQL
+#RUNQUERY
+
+SELECT id FROM input [SIZE 5 SECONDS TIME] WHERE id > 50;
         
