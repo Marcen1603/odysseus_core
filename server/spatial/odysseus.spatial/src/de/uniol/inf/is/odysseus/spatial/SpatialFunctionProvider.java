@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialIntersection;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIsLine;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIsPolygon;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIsWithinDistance;
+import de.uniol.inf.is.odysseus.spatial.functions.SpatialOrthodromicMetricDistance;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialTouches;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnion;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
@@ -122,6 +123,8 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new GetXFromSpatial());
 		functions.add(new GetYFromSpatial());
 
+		functions.add(new SpatialOrthodromicMetricDistance());
+		
 		return functions;
 	}
 

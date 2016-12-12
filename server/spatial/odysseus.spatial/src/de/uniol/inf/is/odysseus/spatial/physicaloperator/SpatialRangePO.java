@@ -1,19 +1,11 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
