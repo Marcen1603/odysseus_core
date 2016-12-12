@@ -103,7 +103,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 > 2;"
 			,
-			"select_1 = SELECT({predicate='attr1 > 2'}, stream1)"
+			"select_1 = SELECT({predicate='attr1 > 2'}, PROJECT({attributes=['attr1']},stream1))"
 		, new CQLDictionaryDummy())
 	}
 	
@@ -131,9 +131,9 @@ class CQLParsingTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT attr1 FROM stream1, stream2, stream3;"
+			"SELECT attr1, attr2, attr3 FROM stream1, stream2, stream3;"
 			,
-			"project_1 = PROJECT({attributes=['attr1']},JOIN(stream1, JOIN(stream2, stream3)))"
+			"project_1 = PROJECT({attributes=['attr1', 'attr2', 'attr3']},JOIN(stream1, JOIN(stream2, stream3)))"
 		, new CQLDictionaryDummy())
 	}
 	
@@ -259,7 +259,7 @@ class CQLParsingTest
 			DATAHANDLER 'TUPLE'
 			OPTIONS('filename' 'outfile1') 			
 
-			STREAM TO out1 SELECT * FROM stream1;"
+			STREAM TO out1 SELECT attr1, attr2 FROM stream1 WHERE attr2 != attr1;"
 			,
 			"output2 = SENDER
 			(
@@ -271,8 +271,7 @@ class CQLParsingTest
 					dataHandler='TUPLE',
 					options=[['filename','outfile1']]
 				},
-					PROJECT({attributes=['attr1','attr2']}, stream1)
-			)"
+				SELECT({predicate='attr2!=attr1'}, PROJECT({attributes=['attr1','attr2']},stream1)))"
 			, new CQLDictionaryDummy()	
 		)	
 	}

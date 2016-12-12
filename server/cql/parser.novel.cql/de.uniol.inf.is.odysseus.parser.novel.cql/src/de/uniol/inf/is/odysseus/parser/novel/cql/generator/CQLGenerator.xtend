@@ -120,7 +120,11 @@ class CQLGenerator implements IGenerator2
 			{
 				return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
 			}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
-			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''// are the same!!
+			if(stmt.attributes.empty)
+			{
+				return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''
+			}
+			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, stmt.sources.get(0)))»'''
 		}
 	}
 	
