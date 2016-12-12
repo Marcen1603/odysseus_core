@@ -100,7 +100,8 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//ChannelFormatView">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//ChannelFormatView/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ChannelFormatView/statement"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ChannelFormatView/select"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ChannelFormatView/create"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//StreamTo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/name"/>

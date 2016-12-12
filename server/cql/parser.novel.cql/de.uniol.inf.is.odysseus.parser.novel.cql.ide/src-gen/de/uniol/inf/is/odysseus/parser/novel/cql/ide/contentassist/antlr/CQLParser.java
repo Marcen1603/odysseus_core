@@ -50,6 +50,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getCreate_StatementAccess().getAlternatives_1(), "rule__Create_Statement__Alternatives_1");
 					put(grammarAccess.getAccessFrameworkAccess().getTypeAlternatives_0_0(), "rule__AccessFramework__TypeAlternatives_0_0");
 					put(grammarAccess.getChannelFormatAccess().getAlternatives(), "rule__ChannelFormat__Alternatives");
+					put(grammarAccess.getChannelFormatViewAccess().getAlternatives_4(), "rule__ChannelFormatView__Alternatives_4");
 					put(grammarAccess.getFunctionTypeAccess().getAlternatives(), "rule__FunctionType__Alternatives");
 					put(grammarAccess.getStatementAccess().getGroup(), "rule__Statement__Group__0");
 					put(grammarAccess.getAtomicAccess().getGroup_0(), "rule__Atomic__Group_0__0");
@@ -171,7 +172,8 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getChannelFormatStreamAccess().getHostAssignment_8(), "rule__ChannelFormatStream__HostAssignment_8");
 					put(grammarAccess.getChannelFormatStreamAccess().getPortAssignment_10(), "rule__ChannelFormatStream__PortAssignment_10");
 					put(grammarAccess.getChannelFormatViewAccess().getNameAssignment_1(), "rule__ChannelFormatView__NameAssignment_1");
-					put(grammarAccess.getChannelFormatViewAccess().getStatementAssignment_4(), "rule__ChannelFormatView__StatementAssignment_4");
+					put(grammarAccess.getChannelFormatViewAccess().getSelectAssignment_4_0(), "rule__ChannelFormatView__SelectAssignment_4_0");
+					put(grammarAccess.getChannelFormatViewAccess().getCreateAssignment_4_1(), "rule__ChannelFormatView__CreateAssignment_4_1");
 					put(grammarAccess.getStreamToAccess().getNameAssignment_2(), "rule__StreamTo__NameAssignment_2");
 					put(grammarAccess.getStreamToAccess().getStatementAssignment_3(), "rule__StreamTo__StatementAssignment_3");
 				}

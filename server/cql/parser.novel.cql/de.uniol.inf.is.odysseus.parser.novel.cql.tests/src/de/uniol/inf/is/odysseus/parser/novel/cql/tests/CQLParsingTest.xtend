@@ -67,30 +67,13 @@ class CQLParsingTest
 		, new CQLDictionaryDummy())
 	}
 	
-	
-	/*
-	 * CREATE STREAM stream1 (attr1 INTEGER) 
-    		WRAPPER 'GenericPush'
-    		PROTOCOL 'CSV'
-    		TRANSPORT 'File'
-    		DATAHANDLER 'Tuple'
-    		OPTIONS ('port' '54321', 'host' 'localhost');
-
-			CREATE STREAM stream2 (attr1 INTEGER) 
-    		WRAPPER 'GenericPush'
-    		PROTOCOL 'CSV'
-    		TRANSPORT 'File'
-    		DATAHANDLER 'Tuple'
-    		OPTIONS ('port' '54321', 'host' 'localhost');
-	 */
-	
 	@Test def void SelectAllTest2() 
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT * FROM stream1, stream2;"
+			"SELECT * FROM stream1, stream2, stream3;"
 			,
-			"join_1 = JOIN(stream1, stream2)"
+			"join_1 = JOIN(stream1, JOIN(stream2, stream3))"
 		, new CQLDictionaryDummy())
 	}
 	
@@ -104,6 +87,15 @@ class CQLParsingTest
 		, new CQLDictionaryDummy())
 	}
 	
+	@Test def void SelectAllTest4() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 WHERE attr1 > 2 AND attr2 == 'Test';"
+			,
+			"select_1 = SELECT({predicate='attr1 > 2 && attr2 == 'Test''}, stream1)"
+		, new CQLDictionaryDummy())
+	}
 	
 	@Test def void SelectAttr1Test1() 
 	{ 
@@ -129,9 +121,9 @@ class CQLParsingTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT attr1 FROM stream1, stream2, stream3;"
+			"SELECT attr1 FROM stream1;"
 			,
-			"project_1 = PROJECT({attributes=['attr1']},JOIN(stream1, JOIN(stream2, stream3)))"
+			"project_1 = PROJECT({attributes=['attr1']}, stream1)"
 		, new CQLDictionaryDummy())
 	}
 	
@@ -139,214 +131,100 @@ class CQLParsingTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT attr1 FROM stream1;"
+			"SELECT attr1 FROM stream1, stream2, stream3;"
 			,
-			"project_1 = PROJECT({attributes=['attr1']}, stream1)"
+			"project_1 = PROJECT({attributes=['attr1']},JOIN(stream1, JOIN(stream2, stream3)))"
 		, new CQLDictionaryDummy())
 	}
 	
-//	
-//	@Test def void SelectAllTest11() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1;"
-//			,
-//			"stream1 = ACCESS
-//			(
-//				{ source = 'input_stream1', 
-//				  wrapper = 'GenericPush',
-//				  protocol = 'CSV',
-//				  transport = 'File',
-//				  dataHandler ='Tuple',
-//				  schema = [['attr1', 'INTEGER']],
-//				  options =[['port', '54321'],['host', 'localhost']]
-//				}
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
-//
-//	@Test def void SelectAllTest2() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1, stream2;"
-//			,
-//			" stream1 := ACCESS
-//			(
-//				{
-//					source      = '"+keyword0+"stream1',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr1', 'Integer'],
-//						['attr2', 'String']
-//					]
-//				}
-//			),
-//			stream2 := ACCESS
-//			(
-//				{
-//					source      = '"+keyword0+"stream2',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr4', 'String'],
-//						['attr3', 'Integer']
-//					]
-//				}
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
-//
-//	@Test def void SelectAllTest3() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1 WHERE (attr1 < 125);" 
-//			,
-//			"select_ = SELECT({ predicate='(attr1 < 125)'}, 
-//				ACCESS
-//				(
-//					{ 
-//						source = '"+keyword0+"stream1',
-//						wrapper     = 'GenericPush',
-//						transport   = 'TCPClient',
-//						dataHandler = 'Tuple',
-//						schema = 
-//						[
-//							['attr1', 'Integer'],
-//							['attr2', 'String']	
-//						]
-//					}
-//				)
-//			)"
-//		, new CQLDictionaryDummy)
-//	}
-//	
-//	
-//	@Test def void SelectAttr1Attr2() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT attr1, attr2 FROM stream1 WHERE (attr1 < 125);" 
-//			,
-//			"select_ = SELECT({ predicate='(attr1 < 125)'}, 
-//				ACCESS
-//				(
-//					{ 
-//						source = '"+keyword0+"stream1',
-//						wrapper     = 'GenericPush',
-//						transport   = 'TCPClient',
-//						dataHandler = 'Tuple',
-//						schema = 
-//						[
-//							['attr1', 'Integer'],
-//							['attr2', 'String']	
-//						]
-//					}
-//				)
-//			)"
-//		, new CQLDictionaryDummy)
-//	}
-//	
-//	@Test def void CreateViewChannelFormat() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"CREATE VIEW stream1 FROM (
-//				SELECT attr1, attr2 FROM stream1 WHERE (attr1 < 125)
-//			);" 
-//			,
-//			"
-//			stream1 := SELECT({ predicate='(attr1 < 125)'}, 
-//				ACCESS
-//				(
-//					{ source = 'input_stream1', 
-//					  wrapper = 'GenericPush',
-//					  protocol = 'CSV',
-//					  transport = 'File',
-//					  dataHandler ='Tuple',
-//					  schema = [['attr1', 'INTEGER']],
-//					  options =[['port', '54321'],['host', 'localhost']]
-//					}
-//				)
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
-//	
-//	@Test def void CreateStream1SelectAttr1Attr2() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"CREATE STREAM stream1 (attr1 INTEGER) 
-//    		WRAPPER 'GenericPush'
-//    		PROTOCOL 'CSV'
-//    		TRANSPORT 'File'
-//    		DATAHANDLER 'Tuple'
-//    		OPTIONS ('port' '54321', 'host' 'localhost');
-//				
-//			SELECT attr1, attr2 FROM stream1 WHERE (attr1 < 125);" 
-//			,
-//			"
-//			stream1 = ACCESS
-//						(
-//							{ source = 'input_stream1', 
-//							  wrapper = 'GenericPush',
-//							  protocol = 'CSV',
-//							  transport = 'File',
-//							  dataHandler ='Tuple',
-//							  schema = [['attr1', 'INTEGER']],
-//							  options =[['port', '54321'],['host', 'localhost']]
-//							}
-//						)
-//			select_ = SELECT({ predicate='(attr1 < 125)'}, stream1)"
-//		, new CQLDictionaryDummy)
-//	}
-//	
-//	@Test def void SelectAttr1Attr2Attr3() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT attr1, attr2, attr4 FROM stream1, stream2 WHERE (attr1 < 125 AND attr4 == 'Test');" 
-//			,
-//			" select_ = SELECT({ predicate='(attr1 < 125 && attr4 == 'Test')'}, 
-//					ACCESS
-//					(
-//						{ 
-//							source      = '"+keyword0+"stream1',
-//							wrapper = 'GenericPush',
-//							transport = 'TCPClient',
-//							dataHandler = 'Tuple',
-//							schema = 
-//							[
-//								['attr1', 'Integer'],
-//								['attr2', 'String']	
-//							]
-//						}
-//					), 
-//					ACCESS
-//					(
-//						{ 
-//							source      = '"+keyword0+"stream2',
-//							wrapper = 'GenericPush',
-//							transport = 'TCPClient',
-//							dataHandler = 'Tuple',
-//							schema = 
-//							[
-//								['attr4', 'String'],	
-//								['attr3', 'Integer']
-//							]
-//						}
-//					)
-//			)"
-//		, new CQLDictionaryDummy)
-//	}
-//	
+	@Test def void CreateViewTest1()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE VIEW view1 FROM (
+				SELECT * FROM stream1
+			)"
+			,
+			"
+			view1 := PROJECT({attributes=['attr1', 'attr2']}, stream1)
+			"
+			, new CQLDictionaryDummy	
+		)
+	}
+	
+	@Test def void CreateViewTest2()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE VIEW view1 FROM (
+				CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321
+			)"
+			,
+			"
+			view1 := ACCESS
+			(
+				{ source = 'input_stream1', 
+				  wrapper = 'GenericPush',
+				  protocol = 'SizeByteBuffer',
+				  transport = 'NonBlockingTcp',
+				  dataHandler ='Tuple',
+				  schema = [['attr1', 'INTEGER']],
+				  options =[['port', '54321'],['host', 'localhost']]
+				}
+			)
+			"
+			, new CQLDictionaryDummy	
+		)
+	}
+	
+	
+	@Test def void CreateStreamTest1()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) 
+    		WRAPPER 'GenericPush'
+    		PROTOCOL 'CSV'
+    		TRANSPORT 'File'
+    		DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '54321', 'host' 'localhost')"
+			,
+			"stream1 = ACCESS
+			(
+				{ source = 'input_stream1', 
+				  wrapper = 'GenericPush',
+				  protocol = 'CSV',
+				  transport = 'File',
+				  dataHandler ='Tuple',
+				  schema = [['attr1', 'INTEGER']],
+				  options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+			, null
+		)
+	}
+	
+	@Test def void CreateStreamTest2()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;"
+			,
+			"stream1 = ACCESS
+			(
+				{ source = 'input_stream1', 
+				  wrapper = 'GenericPush',
+				  protocol = 'SizeByteBuffer',
+				  transport = 'NonBlockingTcp',
+				  dataHandler ='Tuple',
+				  schema = [['attr1', 'INTEGER']],
+				  options =[['port', '54321'],['host', 'localhost']]
+				}
+			)"
+			, null
+		)
+	}
+
 //	@Test def void CreateStream1Channel()
 //	{
 //		assertCorrectGenerated

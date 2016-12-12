@@ -1015,6 +1015,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__ChannelFormatView__Alternatives_4
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getChannelFormatViewAccess().getSelectAssignment_4_0()); }
+		(rule__ChannelFormatView__SelectAssignment_4_0)
+		{ after(grammarAccess.getChannelFormatViewAccess().getSelectAssignment_4_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getChannelFormatViewAccess().getCreateAssignment_4_1()); }
+		(rule__ChannelFormatView__CreateAssignment_4_1)
+		{ after(grammarAccess.getChannelFormatViewAccess().getCreateAssignment_4_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Statement__Group__0
 	@init {
 		int stackSize = keepStackSize();
@@ -4896,9 +4917,9 @@ rule__ChannelFormatView__Group__4__Impl
 	}
 :
 (
-	{ before(grammarAccess.getChannelFormatViewAccess().getStatementAssignment_4()); }
-	(rule__ChannelFormatView__StatementAssignment_4)
-	{ after(grammarAccess.getChannelFormatViewAccess().getStatementAssignment_4()); }
+	{ before(grammarAccess.getChannelFormatViewAccess().getAlternatives_4()); }
+	(rule__ChannelFormatView__Alternatives_4)
+	{ after(grammarAccess.getChannelFormatViewAccess().getAlternatives_4()); }
 )
 ;
 finally {
@@ -5911,15 +5932,30 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__ChannelFormatView__StatementAssignment_4
+rule__ChannelFormatView__SelectAssignment_4_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getChannelFormatViewAccess().getStatementSelect_StatementParserRuleCall_4_0()); }
+		{ before(grammarAccess.getChannelFormatViewAccess().getSelectSelect_StatementParserRuleCall_4_0_0()); }
 		ruleSelect_Statement
-		{ after(grammarAccess.getChannelFormatViewAccess().getStatementSelect_StatementParserRuleCall_4_0()); }
+		{ after(grammarAccess.getChannelFormatViewAccess().getSelectSelect_StatementParserRuleCall_4_0_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ChannelFormatView__CreateAssignment_4_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getChannelFormatViewAccess().getCreateCreate_StatementParserRuleCall_4_1_0()); }
+		ruleCreate_Statement
+		{ after(grammarAccess.getChannelFormatViewAccess().getCreateCreate_StatementParserRuleCall_4_1_0()); }
 	)
 ;
 finally {

@@ -207,7 +207,7 @@ ChannelFormatView:
 	name=ID
 	'FROM'
 	'('
-	statement=Select_Statement
+	(select=Select_Statement|create=Create_Statement) (';')?
 	')'
 ;
 

@@ -35,10 +35,10 @@ import java.util.Map
 import java.util.Set
 import java.util.stream.Collectors
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat
 
 /**
  * Generates code from your model files on save.
@@ -107,47 +107,58 @@ class CQLGenerator implements IGenerator2
 	«switch stmt.type 
 	{
 	Select_Statement : parseSelectStatement(stmt.type as Select_Statement, false)
-	Create_Statement : parseCreateStatement(stmt.type as Create_Statement)
+	Create_Statement : parseCreateStatement(stmt.type as Create_Statement, false)
 	}
 	»
 	'''
 		
-	var localOP = ' = '
-	var globalOP = ' := '	
-	def parseCreateStatement(Create_Statement stmt)
+	def CharSequence buildAccessOP(ChannelFormat channel)
 	{
+		
+		var wrapper     = 'GenericPush'
+		var protocol    = 'SizeByteBuffer'
+		var transport   = 'NonBlockingTcp'
+		var dataHandler = 'Tuple'		
+		var args 		= generateKeyValueString(
+							channel.stream.attributes.map[e|e.name],
+							channel.stream.datatypes.map[e|e.value]
+						  )
+						  
+		return '''ACCESS
+				  (
+					{	  
+						source      = '«getKeyword(0) +  channel.stream.name»', 
+						wrapper     = '«wrapper»',
+						protocol    = '«protocol»',
+						transport   = '«transport»',
+						dataHandler = '«dataHandler»',
+						schema = [«args»],
+						options =[['port', '«channel.stream.port»'],
+								  ['host', '«channel.stream.host»']]
+					 }
+				   )'''
+	}	
+		
+	def CharSequence parseCreateStatement(Create_Statement stmt, boolean isView)
+	{
+		var symbol1 = if(isView) ' := ' else ' = '
 		var ch = stmt.channelformat
 		if(ch!= null)
 		{
 			if(ch.stream != null)
 			{
-				var args = generateKeyValueString(
-					ch.stream.attributes.map[e|e.name],
-					ch.stream.datatypes.map[e|e.value]
-				)
-				
-				sources.add(ch.stream.name)
-				
-				var wrapper = 'GenericPush'
-				var protocol = 'SizeByteBuffer'
-				var transport = 'NonBlockingTcp'
-				var dataHandler = 'Tuple'
-				
-				registerAO(ch.stream.name, wrapper, protocol, transport, dataHandler)
-				
-				return '''«ch.stream.name»«localOP»ACCESS({source = '«getKeyword(0) +  ch.stream.name»', 
-				wrapper = '«wrapper»',
-				protocol = '«protocol»',
-				transport = '«transport»',
-				dataHandler ='«dataHandler»',
-				schema = [«args»],
-				options =[['port', '«ch.stream.port»'],['host', '«ch.stream.host»']]})
-				'''
-				}
-				else
-				{
-					return parseSelectStatement(ch.view.statement, true)
-				}
+				return '''«ch.stream.name + symbol1»«buildAccessOP(ch)»'''
+			}
+			if(ch.view.select != null) 
+			{
+				var str = parseSelectStatement(ch.view.select, true).toString
+				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
+			}
+			else					   
+			{ 
+				var str = parseCreateStatement(ch.view.create, true).toString
+				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
+			}
 		}
 		else
 		{
@@ -181,7 +192,7 @@ class CQLGenerator implements IGenerator2
 			} 
 			return 
 			'''
-			«af.name»«localOP»«type» (
+			«af.name + symbol1»«type» (
 			{«IF bool»source ='«getKeyword(0) + af.name» ',«ENDIF»
 			«IF !bool»sink='«getKeyword(2) +  af.name»'«ENDIF»
 			wrapper='«af.wrapper»',
@@ -276,28 +287,29 @@ class CQLGenerator implements IGenerator2
 	def CharSequence parseSelectStatement(Select_Statement stmt, boolean isView)
 	{
 		predicate = ''
+		var symbol1 = if(isView) ' := ' else ' = '
 		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
 		{
 			if(!stmt.attributes.empty)//SELECT attr1, ...
 			{
 				if(stmt.sources.size == 1)//.. FROM src1;
 				{
-					return '''project_«getID()» = «buildProjectOP(stmt.attributes, stmt.sources.get(0))»'''										
+					return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, stmt.sources.get(0))»'''										
 				}
 				else//.. FROM src1, src2, ...;
 				{
-					return '''project_«getID()» = «buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources))»'''	
+					return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources))»'''	
 				}
 			}
 			else//SELECT * ..
 			{
 				if(stmt.sources.size == 1)//.. FROM src1;
 				{
-					return '''project_«getID()» = «buildProjectOP(null, stmt.sources.get(0))»'''												
+					return '''project_«getID() + symbol1»«buildProjectOP(null, stmt.sources.get(0))»'''												
 				}
 				else//.. FROM src1, src2, ...;
 				{
-					return '''join_«getID()» = «buildJoin(null, stmt.sources)»'''
+					return '''join_«getID() + symbol1»«buildJoin(null, stmt.sources)»'''
 				}				
 			}
 		}
@@ -305,9 +317,9 @@ class CQLGenerator implements IGenerator2
 		{ 
 			if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
 			{
-				return '''select_«getID()» = «buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
+				return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
 			}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
-			return '''select_«getID()» = «buildSelectOP(stmt.predicates, stmt.sources)»'''// are the same!!
+			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''// are the same!!
 		}
 	}
 
@@ -478,57 +490,57 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 	
-	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)//TODO Refactore
-	{
-		var str = ''
-		var bool = false
-		for(var i = 0; i < src.size; i++)
-		{
-			var name = src.get(i).name
-			
-			for(a : outerattributes)
-			{
-				if(a.sourceName.equals(name))
-				{
-					str += name
-					if(i != src.size - 1) { str += ',' }
-					bool = true
-				}
-			}
-		
-			if(!bool)
-			{
-				if(sources.contains(name))
-				{
-					str += name
-					if(i != src.size - 1) { str += ',' }
-				}
-				else
-				{
-					
-					if(b) str += name + ":= "			
-					str +=
-					"ACCESS
-					(
-						{	
-							source = '"+getKeyword(0) + name+"',
-							wrapper = '"+getWrapper(name)+"',
-							protocol = '"+getProtocol(name)+"',
-							transport = '"+getTransport(name)+"',
-							dataHandler = '"+getDataHandler(name)+"',
-							schema = ["+buildSchema(attr, src.get(i))+"]
-						}
-					)	
-					"
-					+buildWindowOP(src.get(i), name)
-					
-					if(i != src.size - 1) { str += ',' }
-					
-					sources.add(name)
-				}
-			}
-			bool = false
-		}
+//	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)//TODO Refactore
+//	{
+//		var str = ''
+//		var bool = false
+//		for(var i = 0; i < src.size; i++)
+//		{
+//			var name = src.get(i).name
+//			
+//			for(a : outerattributes)
+//			{
+//				if(a.sourceName.equals(name))
+//				{
+//					str += name
+//					if(i != src.size - 1) { str += ',' }
+//					bool = true
+//				}
+//			}
+//		
+//			if(!bool)
+//			{
+//				if(sources.contains(name))
+//				{
+//					str += name
+//					if(i != src.size - 1) { str += ',' }
+//				}
+//				else
+//				{
+//					
+//					if(b) str += name + ":= "			
+//					str +=
+//					"ACCESS
+//					(
+//						{	
+//							source = '"+getKeyword(0) + name+"',
+//							wrapper = '"+getWrapper(name)+"',
+//							protocol = '"+getProtocol(name)+"',
+//							transport = '"+getTransport(name)+"',
+//							dataHandler = '"+getDataHandler(name)+"',
+//							schema = ["+buildSchema(attr, src.get(i))+"]
+//						}
+//					)	
+//					"
+//					+buildWindowOP(src.get(i), name)
+//					
+//					if(i != src.size - 1) { str += ',' }
+//					
+//					sources.add(name)
+//				}
+//			}
+//			bool = false
+//		}
 		
 //		var name = src.get(src.size - 1).name
 //		for(a : outerattributes)
@@ -566,8 +578,8 @@ class CQLGenerator implements IGenerator2
 //				sources.add(name)
 //			}
 //		}				
-		return str
-	}
+//		return str
+//	}
 
 	def CharSequence buildWindowOP(Source w, CharSequence name)
 	{
