@@ -135,7 +135,6 @@ public class CQLParser implements IQueryParser
 			if(stmt.getAccessframework() != null && stmt.getAccessframework().getType().equals("SINK"))//TODO Refactore
 			{
 				// do nothing
-				System.out.println("SINK found !!");
 			}
 			else
 			{
@@ -143,7 +142,6 @@ public class CQLParser implements IQueryParser
 				{
 					AccessFramework create = stmt.getAccessframework();
 					int s = create.getAttributes().size();
-					System.out.println("ACCESSFRAMEWORK with "+s+" attributes");
 					SDFAttribute[] attributes = new SDFAttribute[s];
 					for(int i = 0; i < s; i++)
 					{
@@ -170,7 +168,7 @@ public class CQLParser implements IQueryParser
 					}
 					else// CREATE VIEW
 					{
-						
+						//TODO Add view to sources
 					}
 				}
 			}
@@ -200,7 +198,6 @@ public class CQLParser implements IQueryParser
 	
 	public synchronized String generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema) throws QueryParseException
 	{
-		
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
@@ -210,17 +207,8 @@ public class CQLParser implements IQueryParser
 		{
 			pqlString += e.getValue().toString();
 		}
-		
-		if (pqlString != null)
-		{
-			System.out.println("PQL: " + pqlString);//TODO Remove after debugging
-			return pqlString;
-		}
 		generator.clear();
-//		else
-//			new QueryParseException("given cql query was empty and could not be transformed to a pql query");
-		
-		return "";
+		return pqlString;
 	}
 
 	@Override

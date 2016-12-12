@@ -264,7 +264,7 @@ class CQLParsingTest
 			"output2 = SENDER
 			(
 				{
-					source='input_out1',
+					sink='input_out1',
 					wrapper='GenericPush',
 					protocol='CSV',
 					transport='FILE',
@@ -294,7 +294,7 @@ class CQLParsingTest
 			"output1 = SENDER
 			(
 				{
-					source='input_out1',
+					sink='input_out1',
 					wrapper='GenericPush',
 					protocol='CSV',
 					transport='FILE',
@@ -306,208 +306,101 @@ class CQLParsingTest
 			, new CQLDictionaryDummy()	
 		)	
 	}
-
-//	@Test def void CreateSink1()//TODO Input operator missing!
-//	{
-//		assertCorrectGenerated
-//		(
-//			"CREATE SINK stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) 
-//    		WRAPPER 'GenericPush'
-//    		PROTOCOL 'CSV'
-//    		TRANSPORT 'File'
-//    		DATAHANDLER 'Tuple'
-//    		OPTIONS ('filename' 'E:\test')"
-//			,
-//			keyword2+"stream1 := SENDER
-//			(
-//				{ 
-//					sink = 'stream1'
-//			  		wrapper = 'GenericPush',
-//					protocol = 'CSV',
-//					transport = 'File',
-//					dataHandler ='Tuple',
-//					options =[['filename', 'E:\test']]
-//				}
-//			)"
-//		, null)
-//	}
 	
-//	@Test def void WindowUnbounded() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1 [UNBOUNDED];"
-//			,
-//			"stream1 := ACCESS
-//			(
-//				{
-//					source      = 'input_stream1',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr1', 'Integer'],
-//						['attr2', 'String']
-//					]
-//				}
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
+	@Test def void WindowUnboundedTest1() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [UNBOUNDED];"
+			,
+			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, stream1)"
+		, new CQLDictionaryDummy())
+	}
 	
-//	@Test def void WindowTimeBased() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME]; "
-//			,
-//			keyword0+"stream1 := ACCESS
-//			(
-//				{
-//					source      = 'stream1',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr1', 'Integer'],
-//						['attr2', 'String']
-//					]
-//				}
-//			)"
-//			+keyword1+"stream1 := TIMEWINDOW
-//			(
-//				{ size = [5, 'MINUTES']},"
-//				+keyword0+"stream1
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
+	@Test def void WindowTimeTest1() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME];"
+			,
+			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES']}, stream1))"
+		, new CQLDictionaryDummy())
+	}
 	
-//	@Test def void WindowElementBased1() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1 [SIZE 5 TUPLE]; "
-//			,
-//			keyword0+"stream1 := ACCESS
-//			(
-//				{
-//					source      = 'stream1',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr1', 'Integer'],
-//						['attr2', 'String']
-//					]
-//				}
-//			)"
-//			+keyword1+"stream1 := ELEMENTWINDOW
-//			(
-//				{ size = 5,
-//				  advance = 1},"
-//				+keyword0+"stream1
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
+	@Test def void WindowElementTest1() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [SIZE 5 TUPLE];"
+			,
+			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
+		, new CQLDictionaryDummy())
+	}
 	
-//	@Test def void WindowElementBased2() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1 [SIZE 5 TUPLE PARTITION BY attr1]; "
-//			,
-//			keyword0+"stream1 := ACCESS
-//			(
-//				{
-//					source      = 'stream1',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr1', 'Integer'],
-//						['attr2', 'String']
-//					]
-//				}
-//			)"
-//			+keyword1+"stream1 := ELEMENTWINDOW
-//			(
-//				{ size = 5,
-//				  advance = 1,
-//				  partition = 'attr1'
-//				},"
-//				+keyword0+"stream1
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
+	@Test def void WindowUnboundedTest2() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [UNBOUNDED], stream2 [UNBOUNDED];"
+			,
+			"join_1 = JOIN(stream1, stream2)"
+		, new CQLDictionaryDummy())
+	}
 	
-//	@Test def void WindowElementTimeUnbounded() 
-//	{ 
-//		assertCorrectGenerated
-//		(
-//			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 12 SECONDS TIME], stream3 [UNBOUNDED]; "
-//			,
-//			keyword0+"stream1 := ACCESS
-//			(
-//				{
-//					source      = 'stream1',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr1', 'Integer'],
-//						['attr2', 'String']
-//					]
-//				}
-//			)
-//			"
-//			+keyword1+"stream1 := ELEMENTWINDOW
-//			(
-//				{ size = 5,
-//				  advance = 1},"
-//				+keyword0+"stream1
-//			)
-//			"
-//			+keyword0+"stream2 := ACCESS
-//			(
-//				{
-//					source      = 'stream2',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr4', 'String'],
-//						['attr3', 'Integer']
-//					]
-//				}
-//			)"
-//			+keyword1+"stream2 := TIMEWINDOW
-//			(
-//				{ size = [12, 'SECONDS']},"
-//				+keyword0+"stream2
-//			)"
-//			+keyword0+"stream3 := ACCESS
-//			(
-//				{
-//					source      = 'stream3',
-//					wrapper     = 'GenericPush',
-//					transport   = 'TCPClient',
-//					dataHandler = 'Tuple',
-//					schema = 
-//					[
-//						['attr5', 'Integer'],
-//						['attr6', 'String']
-//					]
-//				}
-//			)"
-//		, new CQLDictionaryDummy())
-//	}
+	@Test def void WindowTimeWindowElementTest1() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME];"
+			,
+			"join_1 = JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), TIMEWINDOW({size=[5, 'MINUTES']}, stream2))"
+		, new CQLDictionaryDummy())
+	}
+	
+	@Test def void WindowTimeWindowElementTest2() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3;"
+			,
+			"project_1 = PROJECT({attributes=['attr1','attr2','attr4']}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
+														 				 JOIN(TIMEWINDOW({size=[5, 'MINUTES']}, stream2), stream3)))"
+		, new CQLDictionaryDummy())
+	}
+	
+	@Test def void WindowTimeWindowElementTest3() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3 WHERE attr4 != attr1;"
+			,
+			"select_1 = SELECT({predicate='attr4 != attr1'}, PROJECT({attributes=['attr1','attr2','attr4']},
+																		 JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
+																		 JOIN(TIMEWINDOW({size=[5, 'MINUTES']}, stream2), stream3))))"
+		, new CQLDictionaryDummy())
+	}
+	
+	@Test def void WindowTimeWindowElementTest4() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME] WHERE attr4 != attr1;"
+			,
+			"select_1 = SELECT({predicate='attr4 != attr1'}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1),
+																  TIMEWINDOW({size=[5, 'MINUTES']}, stream2)))"
+		, new CQLDictionaryDummy())
+	}
+	
+	@Test def void WindowElement2() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1 [SIZE 5 TUPLE];"
+			,
+			"project_1 = PROJECT({attributes=['attr1']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
+		, new CQLDictionaryDummy())
+	}
 	
 	
-
-	
+		
 }

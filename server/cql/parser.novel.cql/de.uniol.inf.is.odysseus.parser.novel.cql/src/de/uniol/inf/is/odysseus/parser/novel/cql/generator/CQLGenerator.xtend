@@ -6,11 +6,13 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
@@ -26,6 +28,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 import java.util.ArrayList
 import java.util.HashMap
@@ -38,10 +41,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
-import java.awt.datatransfer.Clipboard
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 
 /**
  * Generates code from your model files on save.
@@ -51,54 +50,24 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 class CQLGenerator implements IGenerator2
 {
 
-//	@Inject extension IQualifiedNameProvider
-
 	var Set<SDFAttribute> outerattributes = new HashSet
 	var Set<SDFAttribute> innerattributes = new HashSet
 	var Set<SDFSchema>    innerschema;
 	var Set<SDFSchema>    outerschema;
+	var Map<String, String> sinks = new HashMap	
+	var Map<String, String> streamto = new HashMap	
+	var count_ID = 0
+	var predicate = ''
+
+	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context)  {}
+	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {}
 	
-	var Map<String, Map<String, String>> accessoperator = new HashMap
-	
-	var static List<String> sources = new ArrayList
-
-	def void clear()
-	{
-		outerattributes.clear()
-		innerattributes.clear()
-		sources.clear()
-		accessoperator.clear()
-		count_ID = 0
-	}
-
-	def void setOuterschema(Set<SDFSchema> s)
-	{
-		outerschema = s
-		for(SDFSchema t : s)
-		{
-//			print(t)//TODO Remove after debugging
-			outerattributes.addAll(t.attributes)
-		}
-	}
-
-	def void setInnerschema(Set<SDFSchema> s)
-	{
-		innerschema = s
-		for(SDFSchema t : s)
-		{
-//			print(t)//TODO Remove after debugging
-			innerattributes.addAll(t.attributes)
-		}
-	}
-
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) 
 	{
 		var i = 0 ;
 		for(e : resource.allContents.toIterable.filter(typeof(Statement)))
 		{
 			fsa.generateFile(
-//				e.fullyQualifiedName.toString() + '.pql',
-//				 i + " " + resource.URI.lastSegment.replace('.cql', '.pql'),
 				""+ i++,	
 				e.parseStatement()
 			)
@@ -114,6 +83,93 @@ class CQLGenerator implements IGenerator2
 			StreamTo		 : parseStreamtoStatement(stmt.type as StreamTo)
 		}
 		
+	}
+	
+	def CharSequence parseSelectStatement(Select_Statement stmt, boolean isView)
+	{
+		predicate = ''
+		var symbol1 = if(isView) ' := ' else ' = '
+		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
+		{
+			if(!stmt.attributes.empty)//SELECT attr1, ...
+			{
+				if(stmt.sources.size == 1)//.. FROM src1;
+				{
+					return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, stmt.sources.get(0))»'''										
+				}
+				else//.. FROM src1, src2, ...;
+				{
+					return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources))»'''	
+				}
+			}
+			else//SELECT * ..
+			{
+				if(stmt.sources.size == 1)//.. FROM src1;
+				{
+					return '''project_«getID() + symbol1»«buildProjectOP(null, stmt.sources.get(0))»'''												
+				}
+				else//.. FROM src1, src2, ...;
+				{
+					return '''join_«getID() + symbol1»«buildJoin(null, stmt.sources)»'''
+				}				
+			}
+		}
+		else
+		{ 
+			if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
+			{
+				return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
+			}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
+			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''// are the same!!
+		}
+	}
+	
+	def CharSequence parseCreateStatement(Create_Statement stmt, boolean isView)
+	{
+		var symbol1 = if(isView) ' := ' else ' = '
+		var ch = stmt.channelformat
+		if(ch!= null)
+		{
+			if(ch.stream != null)
+			{
+				return '''«ch.stream.name + symbol1»«buildAccessOP(ch)»'''
+			}
+			if(ch.view.select != null) 
+			{
+				var str = parseSelectStatement(ch.view.select, true).toString
+				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
+			}
+			var str = parseCreateStatement(ch.view.create, true).toString
+			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
+		}
+		else
+		{
+			var af = stmt.accessframework
+			if(af.type.equals("STREAM"))
+			{
+				return '''«af.name + symbol1»«buildAccessOP(af)»'''
+			}
+			buildSenderOP(af)
+			return ''''''
+		}
+	}
+		
+	def parseStreamtoStatement(StreamTo stmt)
+	{
+		if(stmt.statement != null)
+		{
+			var s = parseSelectStatement(stmt.statement, false).toString
+			streamto.put(stmt.name, s.subSequence(s.indexOf('=') + 1, s.length).toString)		
+		}
+		else
+		{
+			streamto.put(stmt.name, stmt.inputname)
+		}
+		if(!sinks.keySet.contains(stmt.name)) 
+		{ 
+			return ''
+		}
+		return '''output«getID() + " = " + sinks.get(stmt.name).replace("_INPUT_", streamto.get(stmt.name))»'''			
 	}
 		
 	def CharSequence buildAccessOP(ChannelFormat channel)
@@ -171,51 +227,13 @@ class CQLGenerator implements IGenerator2
 					 }
 				   )'''
 	}		
-		
 	
-	var Map<String, String> sinks = new HashMap	
-	var Map<String, String> streamto = new HashMap	
-		
-	def CharSequence parseCreateStatement(Create_Statement stmt, boolean isView)
-	{
-		var symbol1 = if(isView) ' := ' else ' = '
-		var ch = stmt.channelformat
-		if(ch!= null)
-		{
-			if(ch.stream != null)
-			{
-				return '''«ch.stream.name + symbol1»«buildAccessOP(ch)»'''
-			}
-			if(ch.view.select != null) 
-			{
-				var str = parseSelectStatement(ch.view.select, true).toString
-				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
-			}
-			var str = parseCreateStatement(ch.view.create, true).toString
-			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
-		}
-		else
-		{
-			var af = stmt.accessframework
-			if(af.type.equals("STREAM"))
-			{
-				return '''«af.name + symbol1»«buildAccessOP(af)»'''
-			}
-			buildSinkOP(af)
-			return ''''''
-		}
-	}
-	
-	def buildSinkOP(AccessFramework access) 
+	def buildSenderOP(AccessFramework access) 
 	{
 		var wrapper     = access.wrapper
 		var protocol    = access.protocol
 		var transport   = access.transport
 		var dataHandler = access.datahandler
-//		var args 		= generateKeyValueString(
-//							access.attributes.map[e|e.name],
-//							access.datatypes.map[e|e.value]
-//						  )
 						  
 		var options 	= generateKeyValueString(
 							access.keys,
@@ -225,7 +243,7 @@ class CQLGenerator implements IGenerator2
 		var str = '''SENDER
 				  (
 					{	  
-						source      = '«getKeyword(0) +  access.name»', 
+						sink        = '«getKeyword(0) +  access.name»', 
 						wrapper     = '«wrapper»',
 						protocol    = '«protocol»',
 						transport   = '«transport»',
@@ -240,75 +258,6 @@ class CQLGenerator implements IGenerator2
 		}
 		sinks.put(access.name, str);
 		return ''
-	}
-
-	def parseStreamtoStatement(StreamTo stmt)
-	{
-		if(stmt.statement != null)
-		{
-			var s = parseSelectStatement(stmt.statement, false).toString
-			streamto.put(stmt.name, s.subSequence(s.indexOf('=') + 1, s.length).toString)		
-		}
-		else
-		{
-			streamto.put(stmt.name, stmt.inputname)
-		}
-		if(!sinks.keySet.contains(stmt.name)) 
-		{ 
-			return ''
-		}
-		return '''output«getID() + " = " + sinks.get(stmt.name).replace("_INPUT_", streamto.get(stmt.name))»'''			
-	}
-
-	def String getWrapper(String name)
-	{
-		if(accessoperator.keySet.contains(name))
-			return accessoperator.get(name).get('wrapper')
-		else 
-			return 'NO_WRAPPER_FOUND'
-	}
-	
-	def String getProtocol(String name)
-	{
-		if(accessoperator.keySet.contains(name))
-			return accessoperator.get(name).get('protocol')
-		else 
-			return 'NO_PROTOCOL_FOUND'
-	}	
-
-	def String getTransport(String name)
-	{
-		if(accessoperator.keySet.contains(name))
-			return accessoperator.get(name).get('transport')
-		else 
-			return 'NO_TRANSPORT_FOUND'
-	}
-
-	def String getDataHandler(String name)
-	{
-		if(accessoperator.keySet.contains(name))
-			return accessoperator.get(name).get('dataHandler')
-		else 
-			return 'NO_DATAHANDLER_FOUND'
-	}	
-
-	def registerAO(String name, String wrapper, String protocol, String transport, String dataHandler)
-	{
-		var Map<String, String> m = new HashMap
-		m.put('wrapper', wrapper)
-		m.put('protocol', protocol)
-		m.put('transport', transport)
-		m.put('dataHandler', dataHandler)
-		accessoperator.put(name, m)
-	}
-
-	val static CharSequence[] keywords = #['input_', 'window_', 'output_', 'select_']
-
-	def static CharSequence getKeyword(int i)
-	{
-		if(i >= keywords.length || i < 0)
-			return 'WRONG_INDEX_NO_KEYWORD'
-		return keywords.get(i);
 	}
 
 	/**
@@ -328,54 +277,15 @@ class CQLGenerator implements IGenerator2
 		var src = list.get(0)
 		if(list.size == 2)
 		{
-			return '''JOIN(«list.get(0).name»,«list.get(1).name»)'''
+			return '''JOIN(«buildWindowOP(list.get(0))»,«buildWindowOP(list.get(1))»)'''
 		}
 		list.remove(0)
 		if(predicate != null)
 		{
 			var predicateString = '''{predicate='«buildPredicate(predicate.elements.get(0))»'}'''
-			return '''JOIN(«predicateString»,«src.name»,«buildJoin(null, list)»)'''
+			return '''JOIN(«predicateString»,«buildWindowOP(src)»,«buildJoin(null, list)»)'''
 		}
-		else { return '''JOIN(«src.name»,«buildJoin(null, list)»)''' } 	
-	}
-
-	def CharSequence parseSelectStatement(Select_Statement stmt, boolean isView)
-	{
-		predicate = ''
-		var symbol1 = if(isView) ' := ' else ' = '
-		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
-		{
-			if(!stmt.attributes.empty)//SELECT attr1, ...
-			{
-				if(stmt.sources.size == 1)//.. FROM src1;
-				{
-					return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, stmt.sources.get(0))»'''										
-				}
-				else//.. FROM src1, src2, ...;
-				{
-					return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources))»'''	
-				}
-			}
-			else//SELECT * ..
-			{
-				if(stmt.sources.size == 1)//.. FROM src1;
-				{
-					return '''project_«getID() + symbol1»«buildProjectOP(null, stmt.sources.get(0))»'''												
-				}
-				else//.. FROM src1, src2, ...;
-				{
-					return '''join_«getID() + symbol1»«buildJoin(null, stmt.sources)»'''
-				}				
-			}
-		}
-		else
-		{ 
-			if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
-			{
-				return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
-			}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
-			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''// are the same!!
-		}
+		else { return '''JOIN(«buildWindowOP(src)»,«buildJoin(null, list)»)''' } 	
 	}
 
 	/**
@@ -400,14 +310,6 @@ class CQLGenerator implements IGenerator2
 		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«operator»)'''
 	}
 
-	var static count_ID = 0
-
-	def CharSequence getID()
-	{
-		count_ID++
-		return count_ID.toString
-	}
-
 	/**
 	 * Builds a project operator with a list of {@link Attribute} and {@link Source}
 	 * element. If the list is null, all attributes to the corresponding source will be
@@ -416,17 +318,18 @@ class CQLGenerator implements IGenerator2
 	def CharSequence buildProjectOP(List<Attribute> attributes, Source src)
 	{
 		if(src == null) { throw new NullPointerException("Given source was null") }
+		
 		if(attributes == null)
 		{
 			return '''PROJECT(
 						{
 							attributes=[«generateListString(getAttributeNamesFrom(src.name))»]
-						},«src.name»)'''
+						},«buildWindowOP(src)»)'''
 		}
 		return '''PROJECT(
 				  	{
 				  		attributes=[«generateListString(attributes.stream.map(e|e.name).collect(Collectors.toList))»]
-				  	},«src.name»)'''
+				  	},«buildWindowOP(src)»)'''
 	}
 	
 	/**
@@ -441,30 +344,8 @@ class CQLGenerator implements IGenerator2
 				  	},«operator»)'''
 	}
 	
-	/**
-	 * Returns all {@link Attribute} elements to the corresponding source.
-	 */
-	def getAttributeNamesFrom(String src) 
-	{
-		/*
-		 * A source is either from outerattributes» or from innerattributes.
-		 * Hence, there should be no duplicated entries while iterating 
-		 * through both lists.
-		 */
-		var List<String> l = new ArrayList 
-		for(SDFAttribute a : outerattributes)
-			if(a.sourceName.equals(src))
-				l.add(a.attributeName)
-		for(SDFAttribute a : innerattributes)
-			if(a.sourceName.equals(src))
-				l.add(a.attributeName)
-		return l
-	}
-	
-	var predicate = ''
-	/**
-	 * Builds a predicate string from a given {@link Expression}.
-	 */
+	//TODO String have to be encupseld between '
+	/**Builds a predicate string from a given {@link Expression}. */
 	def CharSequence buildPredicate(Expression e)
 	{
 		if(!e.eContents.empty)
@@ -545,213 +426,145 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 	
-//	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)//TODO Refactore
-//	{
-//		var str = ''
-//		var bool = false
-//		for(var i = 0; i < src.size; i++)
-//		{
-//			var name = src.get(i).name
-//			
-//			for(a : outerattributes)
-//			{
-//				if(a.sourceName.equals(name))
-//				{
-//					str += name
-//					if(i != src.size - 1) { str += ',' }
-//					bool = true
-//				}
-//			}
-//		
-//			if(!bool)
-//			{
-//				if(sources.contains(name))
-//				{
-//					str += name
-//					if(i != src.size - 1) { str += ',' }
-//				}
-//				else
-//				{
-//					
-//					if(b) str += name + ":= "			
-//					str +=
-//					"ACCESS
-//					(
-//						{	
-//							source = '"+getKeyword(0) + name+"',
-//							wrapper = '"+getWrapper(name)+"',
-//							protocol = '"+getProtocol(name)+"',
-//							transport = '"+getTransport(name)+"',
-//							dataHandler = '"+getDataHandler(name)+"',
-//							schema = ["+buildSchema(attr, src.get(i))+"]
-//						}
-//					)	
-//					"
-//					+buildWindowOP(src.get(i), name)
-//					
-//					if(i != src.size - 1) { str += ',' }
-//					
-//					sources.add(name)
-//				}
-//			}
-//			bool = false
-//		}
-		
-//		var name = src.get(src.size - 1).name
-//		for(a : outerattributes)
-//		{
-//			if(a.sourceName.equals(name))
-//			{
-//				str += name
-//				bool = true
-//			}
-//		}
-//		
-//		if(!bool)
-//		{
-//			if(sources.contains(name))
-//			{
-//				str += name 		
-//			}
-//			else
-//			{
-//				if(b) str += name + ":= "
-//				str +=
-//				"ACCESS
-//				(
-//					{	
-//						source = '"+getKeyword(0) + name+"',
-//						wrapper = '"+getWrapper(name)+"',
-//						protocol = '"+getProtocol(name)+"',
-//						transport = '"+getTransport(name)+"',
-//						dataHandler = '"+getDataHandler(name)+"',
-//						schema = ["+buildSchema(attr, src.get(src.size - 1))+"]
-//					}
-//				)
-//				"
-//				+buildWindowOP(src.get(src.size - 1), name)
-//				sources.add(name)
-//			}
-//		}				
-//		return str
-//	}
-
-	def CharSequence buildWindowOP(Source w, CharSequence name)
+	def CharSequence buildWindowOP(Source src)
 	{
-	
-		if(w.time != null)
+		if(src.time != null)
 		{
-			'''
-			«getKeyword(1)»«name» := TIMEWINDOW
-			({size = [«w.time.size», '«w.time.unit»']},
-			«getKeyword(0)»«name»
-			)
-			'''
+			return '''TIMEWINDOW
+					  (
+					  	{
+					  		size = [«src.time.size»,'«src.time.unit»']
+						},
+						«src.name»
+					 )'''
 		}
-		else if(w.tuple != null)
+		else if(src.tuple != null)
 		{
-			var var1 = if(w.tuple.advance_size != 0) w.tuple.advance_size else 1
-			if(w.tuple.partition_attribute == null)
+			var var1 = if(src.tuple.advance_size != 0) src.tuple.advance_size else 1
+			if(src.tuple.partition_attribute == null)
 			{
-				'''
-				«getKeyword(1)»«name» := ELEMENTWINDOW
-				(
-					{size = «w.tuple.size»,
-					advance = «var1»
-					},
-				«getKeyword(0)»«name»
-				)
-				'''
+				return  '''ELEMENTWINDOW
+						   (
+						   	{
+								size = «src.tuple.size»,
+								advance = «var1»
+						   	},
+						   	«src.name»
+						   )'''
+
 			}
 			else
 			{
-				'''
-				«getKeyword(1)»«name» := ELEMENTWINDOW
-				(
-					{size = «w.tuple.size»,
-					advance = «var1»,
-					partition = '«w.tuple.partition_attribute.name»'
-					},
-				«getKeyword(0)»«name»
-				)
-				'''
+				return  '''ELEMENTWINDOW
+						   (
+						   	{
+								size = «src.tuple.size»,
+								advance = «var1»,
+								partition = '«src.tuple.partition_attribute.name»'
+						   	},
+						   	«src.name»
+						   )'''
 			}			
 		}
-		else if(w.unbounded != null)
-		{
-			''''''
-		}
-		else
-		{
-			''''''
-		}
+		else { return src.name }
 	}
+		
+	def String generateKeyValueString(String s1, String s2)
+	{
+		return "['" + s1 + "','" + s2 + "']"
+	}	
 		
 	def String generateKeyValueString(List<String> l1, List<String> l2)
 	{
-		var args = ''
-		var size = l1.size
-		for(var i = 0; i < size -1; i++)
+		var str = ''
+		for(var i = 0; i < l1.size - 1; i++)
 		{
-			args += "['" + l1.get(i)+ "','" + l2.get(i) + "'],\n"
+			str += generateKeyValueString(l1.get(i), l2.get(i)) + ","
 		}
-		args += "['" + l1.get(size - 1) + "','" + l2.get(size - 1) + "']"
-		return args
+		return (str += generateKeyValueString(l1.get(l1.size - 1), l2.get(l1.size - 1)))
 	}
-		
+	
+	def String generateListString(String s1)
+	{
+		return "'" + s1 + "'"
+	}
 		
 	def String generateListString(List<String> l1)
 	{
-		var args = ''
-		var size = l1.size
-		for(var i = 0; i < size - 1; i++)
+		var str = ''
+		for(var i = 0; i < l1.size - 1; i++)
 		{
-			args += "'" + l1.get(i)+"',"
+			str += generateListString(l1.get(i)) + ","
 		}
-		args += "'" + l1.get(size - 1)+"'"
-		return args
+		return (str += generateListString(l1.get(l1.size - 1)))
 	}
 		
-	//TODO Refactore	
 	def CharSequence buildSchema(List<Attribute> attr, Source src)
 	{
-		var str = '\n'
-		var SDFDatatype type
-		var String alias		
-		if(attr.size == 0)
-		{
-			for(a : innerattributes)
-			{
-				if(a.sourceName.equals(src.name))
-				{
-					alias = a.attributeName
-					type = a.datatype
-					str += "['" + alias + "', '" + type.toString + "'],\n"
-				}
-			}
-			str = str.substring(0, str.length - 2)
-		}
-		else
-		{
-			for(a : innerattributes)
-			{
-				if(a.sourceName.equals(src.name))
-				{
-					type = a.datatype
-					str += "['" + a.attributeName + "', '" + type.toString + "'],\n"
-				}
-			}
-			str = str.substring(0, str.length - 2)
-		}
-		str
+		var str = ''
+		for(a : innerattributes)
+			if(a.sourceName.equals(src.name))
+				str += generateKeyValueString(a.attributeName, a.datatype.toString) + ","
+		return (str = str.substring(0, str.length - 2))
 	}
 	
-	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	def CharSequence getID()
+	{
+		count_ID++
+		return count_ID.toString
 	}
 	
-	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	def void clear()
+	{
+		outerattributes.clear()
+		innerattributes.clear()
+		count_ID = 0
+		sinks.clear()
+		streamto.clear()
+	}
+
+	def void setOuterschema(Set<SDFSchema> s)
+	{
+		outerschema = s
+		for(SDFSchema t : s)
+		{
+			outerattributes.addAll(t.attributes)
+		}
+	}
+
+	def void setInnerschema(Set<SDFSchema> s)
+	{
+		innerschema = s
+		for(SDFSchema t : s)
+		{
+			innerattributes.addAll(t.attributes)
+		}
+	}
+	
+	val static CharSequence[] keywords = #['input_', 'window_', 'output_', 'select_']
+	def static CharSequence getKeyword(int i)
+	{
+		if(i >= keywords.length || i < 0)
+			return 'WRONG_INDEX_NO_KEYWORD'
+		return keywords.get(i);
+	}
+	
+	/** Returns all {@link Attribute} elements to the corresponding source. */
+	def getAttributeNamesFrom(String src) 
+	{
+		/*
+		 * A source is either from outerattributes» or from innerattributes.
+		 * Hence, there should be no duplicated entries while iterating 
+		 * through both lists.
+		 */
+		var List<String> l = new ArrayList 
+		for(SDFAttribute a : outerattributes)
+			if(a.sourceName.equals(src))
+				l.add(a.attributeName)
+		for(SDFAttribute a : innerattributes)
+			if(a.sourceName.equals(src))
+				l.add(a.attributeName)
+		return l
 	}
 	
 }
