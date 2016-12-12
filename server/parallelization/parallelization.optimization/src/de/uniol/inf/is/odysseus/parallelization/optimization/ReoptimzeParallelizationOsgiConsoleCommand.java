@@ -35,11 +35,12 @@ public class ReoptimzeParallelizationOsgiConsoleCommand implements CommandProvid
 		if (queryId == null) {
 			throw new IllegalArgumentException("No queryId given.");
 		}
-		ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
+				.loginSuperUser(null);
 		try {
 			new Thread(() -> {
 				ParallelizationOptimizer.getInstance().reoptimzeQuery(Integer.parseInt(queryId), currentUser);
-			},"ParallelizationOptimizer").start();
+			}, "ParallelizationOptimizer").start();
 		} catch (Exception e) {
 			LOG.error("Optimization of Parallelizationn was not successfull", e);
 		}

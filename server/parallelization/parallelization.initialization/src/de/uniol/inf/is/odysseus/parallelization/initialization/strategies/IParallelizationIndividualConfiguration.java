@@ -13,9 +13,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  *
  */
 public interface IParallelizationIndividualConfiguration {
-	
+
 	public ILogicalOperator getOperator();
-	
+
 	public void setParallelizationDegree(int degree);
 
 	void execute(Collection<IQueryBuildSetting<?>> settings);

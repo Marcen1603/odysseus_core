@@ -14,16 +14,18 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  *
  */
 public class IntraOperatorIndividualInitializer {
-	
-	public static void createIndividualIntraOperatorConfiguration(Collection<IQueryBuildSetting<?>> settings, String operatorId, int degree, int bufferSize){
+
+	public static void createIndividualIntraOperatorConfiguration(Collection<IQueryBuildSetting<?>> settings,
+			String operatorId, int degree, int bufferSize) {
 		ParallelIntraOperatorSetting parallelIntraOperatorSetting = null;
-		for(IQueryBuildSetting<?> setting:settings){
-			if(setting.getClass().equals(ParallelIntraOperatorSetting.class)) {
+		for (IQueryBuildSetting<?> setting : settings) {
+			if (setting.getClass().equals(ParallelIntraOperatorSetting.class)) {
 				parallelIntraOperatorSetting = (ParallelIntraOperatorSetting) setting;
 			}
 		}
-		ParallelIntraOperatorSettingValueElement individualElement = new ParallelIntraOperatorSettingValueElement(degree, bufferSize);
-		if(parallelIntraOperatorSetting.getValue().hasIndividualSettingsForOperator(operatorId)) {
+		ParallelIntraOperatorSettingValueElement individualElement = new ParallelIntraOperatorSettingValueElement(
+				degree, bufferSize);
+		if (parallelIntraOperatorSetting.getValue().hasIndividualSettingsForOperator(operatorId)) {
 			parallelIntraOperatorSetting.getValue().removeIndividualSettings(operatorId);
 		}
 		parallelIntraOperatorSetting.getValue().addIndividualSettings(operatorId, individualElement);

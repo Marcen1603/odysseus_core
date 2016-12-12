@@ -19,11 +19,19 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  *
  */
 public class ParallelizationOptimizationPreParserKeyword extends AbstractPreParserKeyword {
-	
+
 	public final static String KEYWORD = "REPARALLELIZE";
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword#validate(java.util.Map, java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.collection.Context, de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword#validate(java.
+	 * util.Map, java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession,
+	 * de.uniol.inf.is.odysseus.core.collection.Context,
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.
+	 * IServerExecutor)
 	 */
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
@@ -32,8 +40,16 @@ public class ParallelizationOptimizationPreParserKeyword extends AbstractPrePars
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword#execute(java.util.Map, java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.collection.Context, de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword#execute(java.
+	 * util.Map, java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession,
+	 * de.uniol.inf.is.odysseus.core.collection.Context,
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.
+	 * IServerExecutor)
 	 */
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,

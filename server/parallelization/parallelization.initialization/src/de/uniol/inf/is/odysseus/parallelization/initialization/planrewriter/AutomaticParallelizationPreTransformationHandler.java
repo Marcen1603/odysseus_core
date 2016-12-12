@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  *
  */
 public class AutomaticParallelizationPreTransformationHandler implements IPreTransformationHandler {
-	
+
 	private final static Logger LOG = LoggerFactory.getLogger(AutomaticParallelizationPreTransformationHandler.class);
 
 	public final static String HANDLER_NAME = "AutomaticParallelizationPreTransformatinHandler";

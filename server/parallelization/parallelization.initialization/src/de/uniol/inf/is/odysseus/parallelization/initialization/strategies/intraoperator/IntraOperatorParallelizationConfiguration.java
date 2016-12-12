@@ -13,11 +13,10 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.Abstra
  * @author Dennis Nowak
  *
  */
-public class IntraOperatorParallelizationConfiguration extends AbstractParallelizationConfiguration{
-	
+public class IntraOperatorParallelizationConfiguration extends AbstractParallelizationConfiguration {
+
 	private int degree;
 	private int bufferSize;
-	
 
 	public IntraOperatorParallelizationConfiguration(ILogicalOperator operator) {
 		super(operator);
@@ -25,19 +24,20 @@ public class IntraOperatorParallelizationConfiguration extends AbstractParalleli
 
 	@Override
 	public void setParallelizationDegree(int degree) {
-		this.degree = degree;		
+		this.degree = degree;
 	}
 
 	@Override
 	public void execute(Collection<IQueryBuildSetting<?>> settings) {
-		IntraOperatorIndividualInitializer.createIndividualIntraOperatorConfiguration(settings, getOperator().getUniqueIdentifier(), degree, bufferSize);
-		
+		IntraOperatorIndividualInitializer.createIndividualIntraOperatorConfiguration(settings,
+				getOperator().getUniqueIdentifier(), degree, bufferSize);
+
 	}
 
 	@Override
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
-		
+
 	}
 
 }

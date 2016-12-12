@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.AppendUniqueIdLogicalGraphVisitor;
@@ -29,7 +30,9 @@ import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;
 public class ParallelizationOptimizer {
 
 	private static ParallelizationOptimizer instance;
-	
+
+	private static int parallelizationNumber;
+
 	private static final Logger LOG = LoggerFactory.getLogger(ParallelizationOptimizer.class);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -40,14 +43,15 @@ public class ParallelizationOptimizer {
 
 		// copy initial logical plan an rename it to avoid duplicate uniqu ids
 		GenericGraphWalker walker0 = new GenericGraphWalker();
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<>(physicalQuery.getLogicalQuery());
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<>(logicalQuery);
 		walker0.prefixWalk(logicalQuery.getInitialLogicalPlan(), copyVisitor);
 		logicalQuery.setLogicalPlan(copyVisitor.getResult(), false);
 		walker0.clearVisited();
 		AppendUniqueIdLogicalGraphVisitor<ILogicalOperator> appendVisitor = new AppendUniqueIdLogicalGraphVisitor(
-				"_migrate");
+				"_migrate" + parallelizationNumber);
+		parallelizationNumber++;
 		walker0.prefixWalk(logicalQuery.getLogicalPlan(), appendVisitor);
-		
+
 		// parallelize (change BuildConfiguration and perform preTransformation)
 		List<ILogicalQuery> logicalQueryList = new ArrayList<>();
 		logicalQueryList.add(logicalQuery);
@@ -71,8 +75,9 @@ public class ParallelizationOptimizer {
 		}
 		// replace physical plan
 		planMigrationStrategy.getNewInstance().migrateQuery(physicalQuery, newPhysicalQuery.getRoots());
-		// update logical plan
-		
+		for (IPhysicalOperator op : newPhysicalQuery.getPhysicalChilds()) {
+			op.removeOwner(newPhysicalQuery);
+		}
 		// physicaloperators get logicaloperators
 	}
 

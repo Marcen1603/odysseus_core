@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  *
  */
 public class IntraOperatorStrategyInitializer extends AbstractParallelizationStrategyInitializer {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(IntraOperatorStrategyInitializer.class);
 
 	// default to 0 avoids parallelizing all operators
@@ -30,22 +30,22 @@ public class IntraOperatorStrategyInitializer extends AbstractParallelizationStr
 	public void initialize(List<IQueryBuildSetting<?>> settings) throws OdysseusScriptException {
 		checkIfIntraOperatorSettingAlreadyExists(settings);
 
-		ParallelIntraOperatorSettingValue value = new ParallelIntraOperatorSettingValue(
-				globalDegreeOfParallelization, globalBuffersize);
-		ParallelIntraOperatorSetting intraOperatorSetting = new ParallelIntraOperatorSetting(
-				value);
+		ParallelIntraOperatorSettingValue value = new ParallelIntraOperatorSettingValue(globalDegreeOfParallelization,
+				globalBuffersize);
+		ParallelIntraOperatorSetting intraOperatorSetting = new ParallelIntraOperatorSetting(value);
 		settings.add(intraOperatorSetting);
 		LOG.debug("Added initial settings for automatic Intra_Operator parallelization");
 	}
 
-	private void checkIfIntraOperatorSettingAlreadyExists(List<IQueryBuildSetting<?>> settings) throws OdysseusScriptException {
-		for(IQueryBuildSetting<?> setting:settings) {
-			if(setting.getClass().equals(ParallelIntraOperatorSetting.class)){
-				throw new OdysseusScriptException("AUTOMATIC parallelization initializes other parallelization types. Do not use #PARALLELIZATION INTRA_OPERATOR.");
+	private void checkIfIntraOperatorSettingAlreadyExists(List<IQueryBuildSetting<?>> settings)
+			throws OdysseusScriptException {
+		for (IQueryBuildSetting<?> setting : settings) {
+			if (setting.getClass().equals(ParallelIntraOperatorSetting.class)) {
+				throw new OdysseusScriptException(
+						"AUTOMATIC parallelization initializes other parallelization types. Do not use #PARALLELIZATION INTRA_OPERATOR.");
 			}
 		}
-		
+
 	}
 
-	
 }

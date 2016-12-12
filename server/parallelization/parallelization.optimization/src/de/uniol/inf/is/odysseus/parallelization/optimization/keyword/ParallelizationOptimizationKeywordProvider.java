@@ -18,7 +18,8 @@ public class ParallelizationOptimizationKeywordProvider implements IPreParserKey
 	@Override
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywordProviderMap = new HashMap<>();
-		keywordProviderMap.put(ParallelizationOptimizationPreParserKeyword.KEYWORD, ParallelizationOptimizationPreParserKeyword.class);
+		keywordProviderMap.put(ParallelizationOptimizationPreParserKeyword.KEYWORD,
+				ParallelizationOptimizationPreParserKeyword.class);
 		return keywordProviderMap;
 	}
 

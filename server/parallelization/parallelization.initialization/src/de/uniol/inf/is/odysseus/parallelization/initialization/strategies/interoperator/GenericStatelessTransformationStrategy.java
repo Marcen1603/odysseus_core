@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  *
  */
 public class GenericStatelessTransformationStrategy<T extends ILogicalOperator>
-		extends  AbstractFragmentUnionTransformationStrategy<T> {
+		extends AbstractFragmentUnionTransformationStrategy<T> {
 
 	private static final String NAME = "GenericStatelessTransformationStrategy";
 
@@ -61,7 +61,7 @@ public class GenericStatelessTransformationStrategy<T extends ILogicalOperator>
 
 	@Override
 	protected void prepareTransformation() {
-		
+
 	}
 
 	@Override
@@ -78,8 +78,7 @@ public class GenericStatelessTransformationStrategy<T extends ILogicalOperator>
 			AbstractStaticFragmentAO fragmentAO = null;
 			try {
 				fragmentAO = createFragmentAO(configuration.getFragementationType(),
-						configuration.getDegreeOfParallelization(), numberOfFragments + "", null, null,
-						null);
+						configuration.getDegreeOfParallelization(), numberOfFragments + "", null, null, null);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new ParallelizationStrategyException("");
 			}

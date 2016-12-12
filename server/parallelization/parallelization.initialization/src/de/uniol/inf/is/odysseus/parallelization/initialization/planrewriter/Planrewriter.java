@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intrao
 public class Planrewriter {
 
 	private final static Logger LOG = LoggerFactory.getLogger(Planrewriter.class);
-	
+
 	public void rewritePlan(ILogicalQuery query, QueryBuildConfiguration config,
 			List<Pair<String, String>> handlerParameters) {
 		// TODO remove test configs
@@ -42,10 +42,10 @@ public class Planrewriter {
 		List<IParallelizationIndividualConfiguration> possibleParallelizations = planAnalyzer
 				.getParalisableOperators(query);
 		LOG.debug("Parallizable operators / regions: " + possibleParallelizations.size());
-		
+
 		IPlanRewriteFunction rewriteFunction = new IncreasingParallelization();
 		rewriteFunction.chooseAndExecuteParallelization(possibleParallelizations, config.values());
-		
+
 	}
 
 }

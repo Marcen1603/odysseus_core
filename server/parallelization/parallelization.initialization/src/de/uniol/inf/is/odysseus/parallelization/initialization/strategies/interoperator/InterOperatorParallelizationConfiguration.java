@@ -16,43 +16,41 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.Abstra
  */
 public class InterOperatorParallelizationConfiguration extends AbstractParallelizationConfiguration {
 
-
 	private int degree;
 	private int bufferSize;
 	private String parallelizationStrategy;
 	private String fragmentationStrategy;
 
-
-	public InterOperatorParallelizationConfiguration(ILogicalOperator operator, String parallelizationStrategy, String fragmentationStrategy) {
+	public InterOperatorParallelizationConfiguration(ILogicalOperator operator, String parallelizationStrategy,
+			String fragmentationStrategy) {
 		super(operator);
 		this.parallelizationStrategy = parallelizationStrategy;
 		this.fragmentationStrategy = fragmentationStrategy;
 	}
 
-
 	@Override
 	public void setParallelizationDegree(int degree) {
 		this.degree = degree;
-		
+
 	}
-	
+
 	@Override
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
-		
-	}
 
+	}
 
 	@Override
 	public void execute(Collection<IQueryBuildSetting<?>> settings) {
 		try {
-			InterOperatorIndividualInitializer.createInterIndividualConfiguration(settings, getOperator().getUniqueIdentifier(), degree, bufferSize, parallelizationStrategy, fragmentationStrategy);
+			InterOperatorIndividualInitializer.createInterIndividualConfiguration(settings,
+					getOperator().getUniqueIdentifier(), degree, bufferSize, parallelizationStrategy,
+					fragmentationStrategy);
 		} catch (ParallelizationTransormationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	}
 
+	}
 
 }

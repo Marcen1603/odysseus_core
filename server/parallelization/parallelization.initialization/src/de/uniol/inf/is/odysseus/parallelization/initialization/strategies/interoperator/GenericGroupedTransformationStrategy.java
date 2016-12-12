@@ -27,10 +27,10 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  *
  */
 public class GenericGroupedTransformationStrategy<T extends ILogicalOperator>
-		extends  AbstractFragmentUnionTransformationStrategy<T> {
+		extends AbstractFragmentUnionTransformationStrategy<T> {
 
 	public static final String NAME = "GenericGroupedTransformationStrategy";
-	
+
 	public Map<Integer, List<SDFAttribute>> groupingAttributes = new HashMap<>();
 
 	@Override
@@ -53,9 +53,10 @@ public class GenericGroupedTransformationStrategy<T extends ILogicalOperator>
 	private void getGroupAttributes(T operator) {
 		if (operator instanceof JoinAO) {
 			JoinAO join = (JoinAO) operator;
-			this.groupingAttributes = SDFAttributeHelper.getInstance().getSDFAttributesFromEqualPredicates(this.groupingAttributes, join);
+			this.groupingAttributes = SDFAttributeHelper.getInstance()
+					.getSDFAttributesFromEqualPredicates(this.groupingAttributes, join);
 		} else if (operator instanceof AggregateAO) {
-			this.groupingAttributes.put(0,((AggregateAO) operator).getGroupingAttributes());
+			this.groupingAttributes.put(0, ((AggregateAO) operator).getGroupingAttributes());
 		} else {
 			throw new IllegalArgumentException("Operator " + operator.getClass() + " not supported.");
 		}
@@ -81,7 +82,7 @@ public class GenericGroupedTransformationStrategy<T extends ILogicalOperator>
 	@Override
 	protected void prepareTransformation() {
 		getGroupAttributes(operator);
-		
+
 	}
 
 	@Override
@@ -96,8 +97,9 @@ public class GenericGroupedTransformationStrategy<T extends ILogicalOperator>
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 
 			AbstractStaticFragmentAO fragmentAO = null;
-			
-			List<SDFAttribute> attributesForSource = groupingAttributes.get(upstreamOperatorSubscription.getSinkInPort());
+
+			List<SDFAttribute> attributesForSource = groupingAttributes
+					.get(upstreamOperatorSubscription.getSinkInPort());
 			try {
 				fragmentAO = createFragmentAO(configuration.getFragementationType(),
 						configuration.getDegreeOfParallelization(), numberOfFragments + "", attributesForSource, null,

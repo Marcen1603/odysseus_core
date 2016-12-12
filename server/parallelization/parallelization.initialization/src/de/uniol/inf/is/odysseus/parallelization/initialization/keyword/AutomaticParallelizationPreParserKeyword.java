@@ -21,15 +21,15 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  *
  */
 public class AutomaticParallelizationPreParserKeyword extends AbstractPreParserKeyword {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(AutomaticParallelizationPreParserKeyword.class);
-	
+
 	public static final String KEYWORD = "PARALLELIZATION_AUTOMATIC";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
-		
+
 	}
 
 	@Override
@@ -39,6 +39,5 @@ public class AutomaticParallelizationPreParserKeyword extends AbstractPreParserK
 		LOG.info("Keyword " + KEYWORD + " parsed.");
 		return null;
 	}
-
 
 }

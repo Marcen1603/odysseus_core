@@ -14,9 +14,10 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParal
  *
  */
 public interface IPlanRewriteFunction {
-	
+
 	public String getName();
-	
-	public void chooseAndExecuteParallelization(List<IParallelizationIndividualConfiguration> possibleParallelizations, Collection<IQueryBuildSetting<?>> settings);
+
+	public void chooseAndExecuteParallelization(List<IParallelizationIndividualConfiguration> possibleParallelizations,
+			Collection<IQueryBuildSetting<?>> settings);
 
 }

@@ -19,21 +19,30 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParal
  *
  */
 public class RandomParallelization implements IPlanRewriteFunction {
-	
+
 	private final static Logger LOG = LoggerFactory.getLogger(RandomParallelization.class);
-	
+
 	public final static String NAME = "RandomParallelization";
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.IPlanRewriteFunction#getName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.
+	 * IPlanRewriteFunction#getName()
 	 */
 	@Override
 	public String getName() {
 		return NAME;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.IPlanRewriteFunction#chooseAndExecuteParallelization(java.util.List, java.util.Collection)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.
+	 * IPlanRewriteFunction#chooseAndExecuteParallelization(java.util.List,
+	 * java.util.Collection)
 	 */
 	@Override
 	public void chooseAndExecuteParallelization(List<IParallelizationIndividualConfiguration> possibleParallelizations,

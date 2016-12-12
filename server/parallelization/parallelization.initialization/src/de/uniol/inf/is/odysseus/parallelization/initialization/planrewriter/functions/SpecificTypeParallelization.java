@@ -20,23 +20,32 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.intrao
  *
  */
 public class SpecificTypeParallelization implements IPlanRewriteFunction {
-	
+
 	private final static Logger LOG = LoggerFactory.getLogger(SpecificTypeParallelization.class);
 
 	private final static String NAME = "SpecificTypeParallelization";
 
 	private final Class<? extends IParallelizationIndividualConfiguration> specifiedClass = IntraOperatorParallelizationConfiguration.class;
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.IPlanRewriteFunction#getName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.
+	 * IPlanRewriteFunction#getName()
 	 */
 	@Override
 	public String getName() {
 		return NAME;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.IPlanRewriteFunction#chooseAndExecuteParallelization(java.util.List, java.util.Collection)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.
+	 * IPlanRewriteFunction#chooseAndExecuteParallelization(java.util.List,
+	 * java.util.Collection)
 	 */
 	@Override
 	public void chooseAndExecuteParallelization(List<IParallelizationIndividualConfiguration> possibleParallelizations,
