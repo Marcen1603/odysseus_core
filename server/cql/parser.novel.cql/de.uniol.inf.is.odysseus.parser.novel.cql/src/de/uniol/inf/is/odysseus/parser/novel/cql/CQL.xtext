@@ -165,11 +165,11 @@ Scalar_Function:
 ;
 
 Create_Statement:
-	'CREATE' (channel=Create_Channel | accessframework=Create_AccessFramework)
+	'CREATE' (channelformat=ChannelFormat|accessframework=AccessFramework)
 ;
 
-Create_AccessFramework:
-	type=('STREAM' | 'VIEW' | 'SINK')
+AccessFramework:
+	type=('STREAM'|'SINK')
 	name = ID
 	'('
 	attributes+= Attribute+ 
@@ -186,18 +186,29 @@ Create_AccessFramework:
 		')'
 ;
 
-Create_Channel:
-	type=('STREAM' | 'VIEW')
+ChannelFormat: (stream=ChannelFormatStream|view=ChannelFormatView);
+
+ChannelFormatStream:
+	'STREAM'
 	name = ID
 	'('
 	attributes+= Attribute+ 
 	datatypes+= DataType+
 	(',' attributes+=Attribute datatypes+= DataType)*
 	')'
-	'CHANNEL'
+	'CHANNEL'//TODO Add FILE as possible parameter --> and even more ..
 	host=ID
 	':'
 	port=INT
+;
+
+ChannelFormatView:
+	'VIEW' 
+	name=ID
+	'FROM'
+	'('
+	statement=Select_Statement
+	')'
 ;
 
 StreamTo:

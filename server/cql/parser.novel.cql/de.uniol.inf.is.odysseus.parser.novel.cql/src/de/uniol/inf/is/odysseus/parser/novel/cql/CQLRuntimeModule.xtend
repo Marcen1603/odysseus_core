@@ -3,13 +3,18 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql
 
-import com.google.inject.Binder
+import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator
+import org.eclipse.xtext.generator.IGenerator2
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 class CQLRuntimeModule extends AbstractCQLRuntimeModule {
 
-	
+		
+	def Class<? extends IGenerator2> bindGenerator() 
+	{
+		return CQLGenerator;
+	}
 	
 }

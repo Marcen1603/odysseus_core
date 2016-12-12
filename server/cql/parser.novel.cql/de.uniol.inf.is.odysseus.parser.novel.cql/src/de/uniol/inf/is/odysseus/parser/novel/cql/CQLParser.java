@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_AccessFramework;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Channel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
@@ -142,8 +142,9 @@ public class CQLParser implements IQueryParser
 			{
 				if(stmt.getAccessframework() != null)
 				{
-					Create_AccessFramework create = stmt.getAccessframework();
+					AccessFramework create = stmt.getAccessframework();
 					int s = create.getAttributes().size();
+					System.out.println("ACCESSFRAMEWORK with "+s+" attributes");
 					SDFAttribute[] attributes = new SDFAttribute[s];
 					for(int i = 0; i < s; i++)
 					{
@@ -153,22 +154,29 @@ public class CQLParser implements IQueryParser
 					}
 					dic.add(attributes);
 				}
-				else
+				else//CHANNEL FORMAT
 				{
-					Create_Channel create = stmt.getChannel();
-					int s = create.getAttributes().size();
-					SDFAttribute[] attributes = new SDFAttribute[s];
-					for(int i = 0; i < s; i++)
+					ChannelFormat create = stmt.getChannelformat();
+					if(create.getStream() != null)//CREATE STREAN
 					{
-						String name = create.getAttributes().get(i).getName();
-						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i).getValue());
-						attributes[i] = new SDFAttribute(create.getName(), name, type);
+						int s = create.getStream().getAttributes().size();
+						SDFAttribute[] attributes = new SDFAttribute[s];
+						for(int i = 0; i < s; i++)
+						{
+							String name = create.getStream().getAttributes().get(i).getName();
+							SDFDatatype type = new SDFDatatype(create.getStream().getDatatypes().get(i).getValue());
+							attributes[i] = new SDFAttribute(create.getStream().getName(), name, type);
+						}
+						dic.add(attributes);
 					}
-					dic.add(attributes);
+					else// CREATE VIEW
+					{
+						
+					}
 				}
 			}
 		}
-		System.out.println(dic.toString());
+//		System.out.println(dic.toString());
 		//Get schemata from PQl queries
 		Set<SDFSchema> outerschema = executor.getExecutionPlan()
 										  .getQueries()
@@ -199,7 +207,6 @@ public class CQLParser implements IQueryParser
 		generator.setInnerschema(innerschema);
 		generator.doGenerate(model.eResource(), fsa, null);
 		String pqlString = "";
-		generator.clear();
 		for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
 		{
 			pqlString += e.getValue().toString();
@@ -210,6 +217,7 @@ public class CQLParser implements IQueryParser
 			System.out.println("PQL: " + pqlString);//TODO Remove after debugging
 			return pqlString;
 		}
+		generator.clear();
 //		else
 //			new QueryParseException("given cql query was empty and could not be transformed to a pql query");
 		

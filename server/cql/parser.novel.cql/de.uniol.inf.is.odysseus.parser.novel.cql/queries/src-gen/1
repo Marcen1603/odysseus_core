@@ -1,3 +1,0 @@
-select_ := SELECT({predicate='
-10>value'},
-stream1)

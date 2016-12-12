@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus
@@ -27,13 +28,16 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 import java.util.ArrayList
+import java.util.HashMap
 import java.util.HashSet
 import java.util.List
 import java.util.Map
 import java.util.Set
+import java.util.stream.Collectors
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.AbstractGenerator
+import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IFileSystemAccess2
+import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 
 /**
@@ -41,13 +45,17 @@ import org.eclipse.xtext.generator.IGeneratorContext
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
-class CQLGenerator extends AbstractGenerator 
+class CQLGenerator implements IGenerator2
 {
 
 //	@Inject extension IQualifiedNameProvider
 
 	var Set<SDFAttribute> outerattributes = new HashSet
 	var Set<SDFAttribute> innerattributes = new HashSet
+	var Set<SDFSchema>    innerschema;
+	var Set<SDFSchema>    outerschema;
+	
+	var Map<String, Map<String, String>> accessoperator = new HashMap
 	
 	var static List<String> sources = new ArrayList
 
@@ -56,10 +64,13 @@ class CQLGenerator extends AbstractGenerator
 		outerattributes.clear()
 		innerattributes.clear()
 		sources.clear()
+		accessoperator.clear()
+		count_ID = 0
 	}
 
 	def void setOuterschema(Set<SDFSchema> s)
 	{
+		outerschema = s
 		for(SDFSchema t : s)
 		{
 //			print(t)//TODO Remove after debugging
@@ -69,6 +80,7 @@ class CQLGenerator extends AbstractGenerator
 
 	def void setInnerschema(Set<SDFSchema> s)
 	{
+		innerschema = s
 		for(SDFSchema t : s)
 		{
 //			print(t)//TODO Remove after debugging
@@ -94,33 +106,48 @@ class CQLGenerator extends AbstractGenerator
 	'''
 	«switch stmt.type 
 	{
-	Select_Statement : parseSelect(stmt.type as Select_Statement)
+	Select_Statement : parseSelect(stmt.type as Select_Statement, false)
 	Create_Statement : parseCreate(stmt.type as Create_Statement)
 	}
 	»
 	'''
-	
-	def parseCreate(Create_Statement stmt)//TODO Use buildAccessOP()
+		
+	var localOP = ' = '
+	var globalOP = ' := '	
+	def parseCreate(Create_Statement stmt)
 	{
-		var ch = stmt.channel
+		var ch = stmt.channelformat
 		if(ch!= null)
 		{
-			var args = generateKeyValueString(
-				ch.attributes.map[e|e.name],
-				ch.datatypes.map[e|e.value]
-			)
-			
-			sources.add(ch.name)
-			return
-			'''
-			«ch.name» := ACCESS({source = '«getKeyword(0) +  ch.name»', 
-			wrapper = 'GenericPush',
-			schema = [«args»],
-			transport = 'NonBlockingTcp',
-			protocol = 'SizeByteBuffer',
-			dataHandler ='Tuple',
-			options =[['port', '«ch.port»'],['host', '«ch.host»']]})
-			'''
+			if(ch.stream != null)
+			{
+				var args = generateKeyValueString(
+					ch.stream.attributes.map[e|e.name],
+					ch.stream.datatypes.map[e|e.value]
+				)
+				
+				sources.add(ch.stream.name)
+				
+				var wrapper = 'GenericPush'
+				var protocol = 'SizeByteBuffer'
+				var transport = 'NonBlockingTcp'
+				var dataHandler = 'Tuple'
+				
+				registerAO(ch.stream.name, wrapper, protocol, transport, dataHandler)
+				
+				return '''«ch.stream.name»«localOP»ACCESS({source = '«getKeyword(0) +  ch.stream.name»', 
+				wrapper = '«wrapper»',
+				protocol = '«protocol»',
+				transport = '«transport»',
+				dataHandler ='«dataHandler»',
+				schema = [«args»],
+				options =[['port', '«ch.stream.port»'],['host', '«ch.stream.host»']]})
+				'''
+				}
+				else
+				{
+					return parseSelect(ch.view.statement, true)
+				}
 		}
 		else
 		{
@@ -128,7 +155,6 @@ class CQLGenerator extends AbstractGenerator
 		 	var type = ''
 			switch af.type
 			{
-				case "VIEW",
 				case "STREAM":
 					type = "ACCESS"
 				case "SINK":
@@ -148,10 +174,14 @@ class CQLGenerator extends AbstractGenerator
 				af.values
 			)
 			
-			if(bool) sources.add(af.name)
+			if(bool)
+			{
+				sources.add(af.name)
+				registerAO(af.name, af.wrapper, af.protocol, af.transport, af.datahandler)
+			} 
 			return 
 			'''
-			«af.name» := «type» (
+			«af.name»«localOP»«type» (
 			{«IF bool»source ='«getKeyword(0) + af.name» ',«ENDIF»
 			«IF !bool»sink='«getKeyword(2) +  af.name»'«ENDIF»
 			wrapper='«af.wrapper»',
@@ -164,6 +194,48 @@ class CQLGenerator extends AbstractGenerator
 		}
 	}
 
+	def String getWrapper(String name)
+	{
+		if(accessoperator.keySet.contains(name))
+			return accessoperator.get(name).get('wrapper')
+		else 
+			return 'NO_WRAPPER_FOUND'
+	}
+	
+	def String getProtocol(String name)
+	{
+		if(accessoperator.keySet.contains(name))
+			return accessoperator.get(name).get('protocol')
+		else 
+			return 'NO_PROTOCOL_FOUND'
+	}	
+
+	def String getTransport(String name)
+	{
+		if(accessoperator.keySet.contains(name))
+			return accessoperator.get(name).get('transport')
+		else 
+			return 'NO_TRANSPORT_FOUND'
+	}
+
+	def String getDataHandler(String name)
+	{
+		if(accessoperator.keySet.contains(name))
+			return accessoperator.get(name).get('dataHandler')
+		else 
+			return 'NO_DATAHANDLER_FOUND'
+	}	
+
+	def registerAO(String name, String wrapper, String protocol, String transport, String dataHandler)
+	{
+		var Map<String, String> m = new HashMap
+		m.put('wrapper', wrapper)
+		m.put('protocol', protocol)
+		m.put('transport', transport)
+		m.put('dataHandler', dataHandler)
+		accessoperator.put(name, m)
+	}
+
 	val static CharSequence[] keywords = #['input_', 'window_', 'output_', 'select_']
 
 	def static CharSequence getKeyword(int i)
@@ -173,27 +245,125 @@ class CQLGenerator extends AbstractGenerator
 		return keywords.get(i);
 	}
 
-	def CharSequence parseSelect(Select_Statement stmt)
+	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs)
+	{
+		var List<Source> list = srcs
+		var src = list.get(0)
+		if(list.size == 2)
+			return '''JOIN(«list.get(0).name»,«list.get(1).name»)'''
+		list.remove(0)
+		if(predicate != null)
+		{
+			var predicateString = '''{predicate='«buildPredicate(predicate.elements.get(0))»'}'''
+			return '''JOIN(«predicateString»,«src.name»,«buildJoin(null, list)»)'''
+		}
+		else 
+			return '''JOIN(«src.name»,«buildJoin(null, list)»)''' 	
+	}
+
+	def CharSequence parseSelect(Select_Statement stmt, boolean isView)
 	{
 		predicate = ''
-		if(stmt.predicates == null)//Without a WHERE clause
+		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
 		{
-			return
-			'''
-			«buildAccessOP(stmt.attributes, stmt.sources, true)»
-			'''
+			if(!stmt.attributes.empty)//SELECT attr1, ...
+			{
+				if(stmt.sources.size == 1)//.. FROM src1;
+				{
+					return '''project_«getID()» = «buildProjection(stmt.attributes, stmt.sources.get(0))»'''										
+				}
+				else//.. FROM src1, src2, ...;
+				{
+					return '''project_«getID()» = «buildProjection(stmt.attributes, buildJoin(null, stmt.sources))»'''	
+				}
+			}
+			else//SELECT * ..
+			{
+				if(stmt.sources.size == 1)//.. FROM src1;
+				{
+					return '''project_«getID()» = «buildProjection(null, stmt.sources.get(0))»'''												
+				}
+				else//.. FROM src1, src2, ...;
+				{
+					return '''join_«getID()» = «buildJoin(null, stmt.sources)»'''
+				}				
+			}
 		}
 		else
 		{ 
-			return
-			'''
-			«getKeyword(3)» := SELECT({predicate='
-			«buildPredicate(stmt.predicates.elements.get(0))»'},
-			«buildAccessOP(stmt.attributes, stmt.sources, false)»)
-			'''					
+			if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
+			{
+				return '''select_«getID()» = «buildSelect(stmt.predicates, buildProjection(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
+			}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
+			return '''select_«getID()» = «buildSelect(stmt.predicates, stmt.sources)»'''// are the same!!
 		}
 	}
 
+
+	def CharSequence buildSelect(ExpressionsModel predicate, List<Source> srcs)
+	{
+		if(srcs.size == 1)
+			return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«srcs.get(0).name»)'''
+		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«buildJoin(null, srcs)»)'''
+	}
+
+	def CharSequence buildSelect(ExpressionsModel predicate, CharSequence operator)
+	{
+		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«operator»)'''
+	}
+
+	var static count_ID = 0
+
+	def CharSequence getID()
+	{
+		count_ID++
+		return count_ID.toString
+	}
+
+	def CharSequence buildProjection(List<Attribute> attributes, Source src)
+	{
+		if(attributes == null)
+		{
+			return '''PROJECT(
+						{
+							attributes=[«generateListString(getAttributeNamesFrom(src.name))»]
+						},«src.name»)'''
+		}
+		return '''PROJECT(
+				  	{
+				  		attributes=[«generateListString(attributes.stream.map(e|e.name).collect(Collectors.toList))»]
+				  	},«src.name»)'''
+	}
+	
+	def CharSequence buildProjection(List<Attribute> attributes, CharSequence operator)
+	{
+		return '''PROJECT(
+				  	{
+				  		attributes=[«generateListString(attributes.stream.map(e|e.name).collect(Collectors.toList))»]
+				  	},«operator»)'''
+	}
+	
+	def getAttributeNamesFrom(String src) 
+	{
+		/*
+		 * A source is either from outerattributes» or from innerattributes.
+		 * Hence, there should be no duplicated entries while iterating 
+		 * through both lists.
+		 */
+		 
+		 println("inner: " + innerattributes)
+		 println("outer: " + outerattributes)
+		 
+		var List<String> l = new ArrayList 
+		for(SDFAttribute a : outerattributes)
+			if(a.sourceName.equals(src))
+				l.add(a.attributeName)
+		for(SDFAttribute a : innerattributes)
+			if(a.sourceName.equals(src))
+				l.add(a.attributeName)
+		return l
+	}
+	
 	var predicate = ''
 	def CharSequence buildPredicate(Expression e)
 	{
@@ -275,89 +445,94 @@ class CQLGenerator extends AbstractGenerator
 		}
 	}
 	
-	var wrapper = 'GenericPush'
-	var transport = 'TCPClient'
-	var dataHandler = 'Tuple'
 	def CharSequence buildAccessOP(List<Attribute> attr, List<Source> src, boolean b)//TODO Refactore
 	{
 		var str = ''
 		var bool = false
-		for(var i = 0; i < src.size - 1; i++)
+		for(var i = 0; i < src.size; i++)
 		{
+			var name = src.get(i).name
 			
 			for(a : outerattributes)
 			{
-				if(a.sourceName.equals(src.get(i).name))
+				if(a.sourceName.equals(name))
 				{
-					str += src.get(i).name + ','
+					str += name
+					if(i != src.size - 1) { str += ',' }
 					bool = true
 				}
 			}
 		
 			if(!bool)
 			{
-				if(sources.contains(src.get(i).name))
+				if(sources.contains(name))
 				{
-					str += src.get(i).name + ','
+					str += name
+					if(i != src.size - 1) { str += ',' }
 				}
 				else
 				{
-					if(b) str += src.get(i).name + ":= "			
+					
+					if(b) str += name + ":= "			
 					str +=
 					"ACCESS
 					(
 						{	
-							source = '"+getKeyword(0) + src.get(i).name+"',
-							wrapper = '"+wrapper+"',
-							transport = '"+transport+"',
-							dataHandler = '"+dataHandler+"',
+							source = '"+getKeyword(0) + name+"',
+							wrapper = '"+getWrapper(name)+"',
+							protocol = '"+getProtocol(name)+"',
+							transport = '"+getTransport(name)+"',
+							dataHandler = '"+getDataHandler(name)+"',
 							schema = ["+buildSchema(attr, src.get(i))+"]
 						}
 					)	
 					"
-					+buildWindowOP(src.get(i), src.get(i).name)
-					+","
-					sources.add(src.get(i).name)
+					+buildWindowOP(src.get(i), name)
+					
+					if(i != src.size - 1) { str += ',' }
+					
+					sources.add(name)
 				}
-				bool = false
-				}
+			}
+			bool = false
 		}
 		
-		
-		for(a : outerattributes)
-		{
-			if(a.sourceName.equals(src.get(src.size - 1).name))
-			{
-				str += src.get(src.size - 1).name
-				bool = true
-			}
-		}
-		
-		if(!bool)
-		{
-			if(sources.contains(src.get(src.size - 1).name))
-			{
-				str += src.get(src.size - 1).name 		
-			}
-			else
-			{
-				if(b) str += src.get(src.size - 1).name + ":= "
-				str +=
-				"ACCESS
-				(
-					{	
-						source = '"+getKeyword(0) + src.get(src.size - 1).name+"',
-						wrapper = '"+wrapper+"',
-						transport = '"+transport+"',
-						dataHandler = '"+dataHandler+"',
-						schema = ["+buildSchema(attr, src.get(src.size - 1))+"]
-					}
-				)
-				"
-				+buildWindowOP(src.get(src.size - 1), src.get(src.size - 1).name)
-				sources.add(src.get(src.size - 1).name)
-			}
-		}				
+//		var name = src.get(src.size - 1).name
+//		for(a : outerattributes)
+//		{
+//			if(a.sourceName.equals(name))
+//			{
+//				str += name
+//				bool = true
+//			}
+//		}
+//		
+//		if(!bool)
+//		{
+//			if(sources.contains(name))
+//			{
+//				str += name 		
+//			}
+//			else
+//			{
+//				if(b) str += name + ":= "
+//				str +=
+//				"ACCESS
+//				(
+//					{	
+//						source = '"+getKeyword(0) + name+"',
+//						wrapper = '"+getWrapper(name)+"',
+//						protocol = '"+getProtocol(name)+"',
+//						transport = '"+getTransport(name)+"',
+//						dataHandler = '"+getDataHandler(name)+"',
+//						schema = ["+buildSchema(attr, src.get(src.size - 1))+"]
+//					}
+//				)
+//				"
+//				+buildWindowOP(src.get(src.size - 1), name)
+//				sources.add(name)
+//			}
+//		}				
 		return str
 	}
 
@@ -412,7 +587,6 @@ class CQLGenerator extends AbstractGenerator
 		}
 	}
 		
-		
 	def String generateKeyValueString(List<String> l1, List<String> l2)
 	{
 		var args = ''
@@ -422,6 +596,19 @@ class CQLGenerator extends AbstractGenerator
 			args += "['" + l1.get(i)+ "','" + l2.get(i) + "'],\n"
 		}
 		args += "['" + l1.get(size - 1) + "','" + l2.get(size - 1) + "']"
+		return args
+	}
+		
+		
+	def String generateListString(List<String> l1)
+	{
+		var args = ''
+		var size = l1.size
+		for(var i = 0; i < size - 1; i++)
+		{
+			args += "'" + l1.get(i)+"',"
+		}
+		args += "'" + l1.get(size - 1)+"'"
 		return args
 	}
 		
@@ -457,5 +644,14 @@ class CQLGenerator extends AbstractGenerator
 			str = str.substring(0, str.length - 2)
 		}
 		str
-	}	
+	}
+	
+	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+//		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
+	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+//		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
 }

@@ -1,4 +1,25 @@
 #PARSER PQL
 #RUNQUERY
 
-select_1 = SELECT({predicate='value > 10'}, pql_stream1)    
+input = ACCESS({
+            source='Source',
+            wrapper='GenericPull',
+            transport='File',
+            protocol='CSV',
+            datahandler='Tuple',
+            options=[
+              ['filename', 'C:\Users\jp\Documents\repositories\odysseus\server\cql\parser.novel.cql\de.uniol.inf.is.odysseus.parser.novel.cql\queries\data1.csv']
+            ],
+            schema=[
+              ['id', 'INTEGER'],
+              ['first', 'String'],
+              ['last', 'String'],
+              ['email','String'],
+              ['gender','String'],
+              ['ip_adr','String']
+            ]                    
+          }                
+        )
+        
+        
+        
