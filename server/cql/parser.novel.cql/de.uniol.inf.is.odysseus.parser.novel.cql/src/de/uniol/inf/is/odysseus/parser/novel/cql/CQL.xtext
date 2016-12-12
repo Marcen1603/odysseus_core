@@ -4,7 +4,7 @@ generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
 Model: statements+=Statement*;
 	
-Statement:  (type=Select_Statement | type=Create_Statement) (';')? ; 
+Statement:  (type=Select_Statement | type=Create_Statement | type=StreamTo) (';')? ; 
 
 //Nested_Statement: '(' Select_Statement ')' ;
 
@@ -214,6 +214,6 @@ ChannelFormatView:
 StreamTo:
 	'STREAM' 'TO'
 	name=ID
-	statement=Select_Statement
+	(statement=Select_Statement|inputname=ID)
 ;
 

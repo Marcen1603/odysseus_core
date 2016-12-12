@@ -225,72 +225,87 @@ class CQLParsingTest
 		)
 	}
 
-//	@Test def void CreateStream1Channel()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;"
-//			,
-//			"stream1 = ACCESS
-//			(
-//				{ source = 'input_stream1', 
-//				  wrapper = 'GenericPush',
-//				  schema = [['attr1', 'INTEGER']],
-//				  transport = 'NonBlockingTcp',
-//				  protocol = 'SizeByteBuffer',
-//				  dataHandler ='Tuple',
-//				  options =[['port', '54321'],['host', 'localhost']]
-//				}
-//			)"
-//		, null)
-//	}
-//	
-//	@Test def void CreateStream1AccessFramework()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"CREATE STREAM stream1 (attr1 INTEGER) 
-//    		WRAPPER 'GenericPush'
-//    		PROTOCOL 'CSV'
-//    		TRANSPORT 'File'
-//    		DATAHANDLER 'Tuple'
-//    		OPTIONS ('port' '54321', 'host' 'localhost')"
-//			,
-//			"stream1 = ACCESS
-//			(
-//				{ source = 'input_stream1', 
-//				  wrapper = 'GenericPush',
-//				  protocol = 'CSV',
-//				  transport = 'File',
-//				  dataHandler ='Tuple',
-//				  schema = [['attr1', 'INTEGER']],
-//				  options =[['port', '54321'],['host', 'localhost']]
-//				}
-//			)"
-//		, null)
-//	}
-//	
-//	@Test def void CreateStream2Channel()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"CREATE STREAM stream1 (attr1 INTEGER, attr2 STRING, attr3 BOOLEAN) CHANNEL localhost : 54321;"
-//			,
-//			"stream1 = ACCESS
-//			(
-//				{ source = 'input_stream1', 
-//				  wrapper = 'GenericPush',
-//				  schema = [['attr1', 'INTEGER'],
-//							['attr2', 'STRING'],
-//							['attr3', 'BOOLEAN']],
-//				transport = 'NonBlockingTcp',
-//				protocol = 'SizeByteBuffer',
-//				dataHandler ='Tuple',
-//				options =[['port', '54321'],['host', 'localhost']]
-//				}
-//			)"
-//		, null)
-//	}
+	@Test def void StreamtoTest1()
+	{
+		assertCorrectGenerated
+		(
+			"STREAM TO out1 SELECT * FROM stream1;"
+			,
+			""
+			, new CQLDictionaryDummy()	
+		)	
+	}
+	
+	@Test def void StreamtoTest2()
+	{
+		assertCorrectGenerated
+		(
+			"STREAM TO out1 input1;"
+			,
+			""
+			, new CQLDictionaryDummy()	
+		)	
+	}
+
+	@Test def void StreamtoTest3()
+	{
+		assertCorrectGenerated
+		(
+			"
+			CREATE SINK out1 (attr1 INTEGER, attr2 STRING)
+			WRAPPER 'GenericPush'
+			PROTOCOL 'CSV'
+			TRANSPORT 'FILE'
+			DATAHANDLER 'TUPLE'
+			OPTIONS('filename' 'outfile1') 			
+
+			STREAM TO out1 SELECT * FROM stream1;"
+			,
+			"output2 = SENDER
+			(
+				{
+					source='input_out1',
+					wrapper='GenericPush',
+					protocol='CSV',
+					transport='FILE',
+					dataHandler='TUPLE',
+					options=[['filename','outfile1']]
+				},
+					PROJECT({attributes=['attr1','attr2']}, stream1)
+			)"
+			, new CQLDictionaryDummy()	
+		)	
+	}
+
+	@Test def void StreamtoTest4()
+	{
+		assertCorrectGenerated
+		(
+			"
+			CREATE SINK out1 (attr1 INTEGER, attr2 STRING)
+			WRAPPER 'GenericPush'
+			PROTOCOL 'CSV'
+			TRANSPORT 'FILE'
+			DATAHANDLER 'TUPLE'
+			OPTIONS('filename' 'outfile1') 			
+
+			STREAM TO out1 stream1;"
+			,
+			"output1 = SENDER
+			(
+				{
+					source='input_out1',
+					wrapper='GenericPush',
+					protocol='CSV',
+					transport='FILE',
+					dataHandler='TUPLE',
+					options=[['filename','outfile1']]
+				},
+				stream1
+			)"
+			, new CQLDictionaryDummy()	
+		)	
+	}
 
 //	@Test def void CreateSink1()//TODO Input operator missing!
 //	{

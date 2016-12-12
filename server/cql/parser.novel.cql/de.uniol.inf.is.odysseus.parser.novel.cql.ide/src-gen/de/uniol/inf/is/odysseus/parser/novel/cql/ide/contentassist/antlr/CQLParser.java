@@ -51,6 +51,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAccessFrameworkAccess().getTypeAlternatives_0_0(), "rule__AccessFramework__TypeAlternatives_0_0");
 					put(grammarAccess.getChannelFormatAccess().getAlternatives(), "rule__ChannelFormat__Alternatives");
 					put(grammarAccess.getChannelFormatViewAccess().getAlternatives_4(), "rule__ChannelFormatView__Alternatives_4");
+					put(grammarAccess.getStreamToAccess().getAlternatives_3(), "rule__StreamTo__Alternatives_3");
 					put(grammarAccess.getFunctionTypeAccess().getAlternatives(), "rule__FunctionType__Alternatives");
 					put(grammarAccess.getStatementAccess().getGroup(), "rule__Statement__Group__0");
 					put(grammarAccess.getAtomicAccess().getGroup_0(), "rule__Atomic__Group_0__0");
@@ -102,6 +103,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelAccess().getStatementsAssignment(), "rule__Model__StatementsAssignment");
 					put(grammarAccess.getStatementAccess().getTypeAssignment_0_0(), "rule__Statement__TypeAssignment_0_0");
 					put(grammarAccess.getStatementAccess().getTypeAssignment_0_1(), "rule__Statement__TypeAssignment_0_1");
+					put(grammarAccess.getStatementAccess().getTypeAssignment_0_2(), "rule__Statement__TypeAssignment_0_2");
 					put(grammarAccess.getAtomicAccess().getValueAssignment_0_1(), "rule__Atomic__ValueAssignment_0_1");
 					put(grammarAccess.getAtomicAccess().getValueAssignment_1_1(), "rule__Atomic__ValueAssignment_1_1");
 					put(grammarAccess.getAtomicAccess().getValueAssignment_2_1(), "rule__Atomic__ValueAssignment_2_1");
@@ -175,7 +177,8 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getChannelFormatViewAccess().getSelectAssignment_4_0(), "rule__ChannelFormatView__SelectAssignment_4_0");
 					put(grammarAccess.getChannelFormatViewAccess().getCreateAssignment_4_1(), "rule__ChannelFormatView__CreateAssignment_4_1");
 					put(grammarAccess.getStreamToAccess().getNameAssignment_2(), "rule__StreamTo__NameAssignment_2");
-					put(grammarAccess.getStreamToAccess().getStatementAssignment_3(), "rule__StreamTo__StatementAssignment_3");
+					put(grammarAccess.getStreamToAccess().getStatementAssignment_3_0(), "rule__StreamTo__StatementAssignment_3_0");
+					put(grammarAccess.getStreamToAccess().getInputnameAssignment_3_1(), "rule__StreamTo__InputnameAssignment_3_1");
 				}
 			};
 		}

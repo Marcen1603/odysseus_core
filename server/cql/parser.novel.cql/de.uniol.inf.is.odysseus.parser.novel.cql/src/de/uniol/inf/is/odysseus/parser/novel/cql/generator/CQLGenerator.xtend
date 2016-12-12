@@ -39,6 +39,9 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
+import java.awt.datatransfer.Clipboard
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 
 /**
  * Generates code from your model files on save.
@@ -103,18 +106,18 @@ class CQLGenerator implements IGenerator2
 	}
 	
 	def CharSequence parseStatement(Statement stmt)
-	'''
-	«switch stmt.type 
 	{
-	Select_Statement : parseSelectStatement(stmt.type as Select_Statement, false)
-	Create_Statement : parseCreateStatement(stmt.type as Create_Statement, false)
+		switch stmt.type 
+		{
+			Select_Statement : parseSelectStatement(stmt.type as Select_Statement, false)
+			Create_Statement : parseCreateStatement(stmt.type as Create_Statement, false)
+			StreamTo		 : parseStreamtoStatement(stmt.type as StreamTo)
+		}
+		
 	}
-	»
-	'''
 		
 	def CharSequence buildAccessOP(ChannelFormat channel)
 	{
-		
 		var wrapper     = 'GenericPush'
 		var protocol    = 'SizeByteBuffer'
 		var transport   = 'NonBlockingTcp'
@@ -139,6 +142,40 @@ class CQLGenerator implements IGenerator2
 				   )'''
 	}	
 		
+	def CharSequence buildAccessOP(AccessFramework access)
+	{
+		var wrapper     = access.wrapper
+		var protocol    = access.protocol
+		var transport   = access.transport
+		var dataHandler = access.datahandler
+		var args 		= generateKeyValueString(
+							access.attributes.map[e|e.name],
+							access.datatypes.map[e|e.value]
+						  )
+						  
+		var options 	= generateKeyValueString(
+							access.keys,
+							access.values
+						  )						  
+						  
+		return '''ACCESS
+				  (
+					{	  
+						source      = '«getKeyword(0) +  access.name»', 
+						wrapper     = '«wrapper»',
+						protocol    = '«protocol»',
+						transport   = '«transport»',
+						dataHandler = '«dataHandler»',
+						schema = [«args»],
+						options =[«options»]
+					 }
+				   )'''
+	}		
+		
+	
+	var Map<String, String> sinks = new HashMap	
+	var Map<String, String> streamto = new HashMap	
+		
 	def CharSequence parseCreateStatement(Create_Statement stmt, boolean isView)
 	{
 		var symbol1 = if(isView) ' := ' else ' = '
@@ -154,55 +191,73 @@ class CQLGenerator implements IGenerator2
 				var str = parseSelectStatement(ch.view.select, true).toString
 				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
 			}
-			else					   
-			{ 
-				var str = parseCreateStatement(ch.view.create, true).toString
-				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
-			}
+			var str = parseCreateStatement(ch.view.create, true).toString
+			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
 		}
 		else
 		{
 			var af = stmt.accessframework
-		 	var type = ''
-			switch af.type
+			if(af.type.equals("STREAM"))
 			{
-				case "STREAM":
-					type = "ACCESS"
-				case "SINK":
-					type = "SENDER"	
+				return '''«af.name + symbol1»«buildAccessOP(af)»'''
 			}
-			var args = ''
-			var bool = type.equals('ACCESS')
-			if(bool)
-			{
-				args = generateKeyValueString(
-					af.attributes.map[e|e.name],
-					af.datatypes.map[e|e.value]
-				)
-			}
-			var options = generateKeyValueString(
-				af.keys,
-				af.values
-			)
-			
-			if(bool)
-			{
-				sources.add(af.name)
-				registerAO(af.name, af.wrapper, af.protocol, af.transport, af.datahandler)
-			} 
-			return 
-			'''
-			«af.name + symbol1»«type» (
-			{«IF bool»source ='«getKeyword(0) + af.name» ',«ENDIF»
-			«IF !bool»sink='«getKeyword(2) +  af.name»'«ENDIF»
-			wrapper='«af.wrapper»',
-			protocol='«af.protocol»',
-			transport='«af.transport»',
-			dataHandler='«af.datahandler»',
-			«IF bool»schema=[«args»],«ENDIF»
-			options=[«options»]})
-			'''	
+			buildSinkOP(af)
+			return ''''''
 		}
+	}
+	
+	def buildSinkOP(AccessFramework access) 
+	{
+		var wrapper     = access.wrapper
+		var protocol    = access.protocol
+		var transport   = access.transport
+		var dataHandler = access.datahandler
+//		var args 		= generateKeyValueString(
+//							access.attributes.map[e|e.name],
+//							access.datatypes.map[e|e.value]
+//						  )
+						  
+		var options 	= generateKeyValueString(
+							access.keys,
+							access.values
+						  )						  
+						  
+		var str = '''SENDER
+				  (
+					{	  
+						source      = '«getKeyword(0) +  access.name»', 
+						wrapper     = '«wrapper»',
+						protocol    = '«protocol»',
+						transport   = '«transport»',
+						dataHandler = '«dataHandler»',
+						options =[«options»]
+					 }, _INPUT_
+				   )'''	
+
+		if(streamto.keySet.contains(access.name))
+		{
+			return str.replace("_INPUT_", streamto.get(access.name))
+		}
+		sinks.put(access.name, str);
+		return ''
+	}
+
+	def parseStreamtoStatement(StreamTo stmt)
+	{
+		if(stmt.statement != null)
+		{
+			var s = parseSelectStatement(stmt.statement, false).toString
+			streamto.put(stmt.name, s.subSequence(s.indexOf('=') + 1, s.length).toString)		
+		}
+		else
+		{
+			streamto.put(stmt.name, stmt.inputname)
+		}
+		if(!sinks.keySet.contains(stmt.name)) 
+		{ 
+			return ''
+		}
+		return '''output«getID() + " = " + sinks.get(stmt.name).replace("_INPUT_", streamto.get(stmt.name))»'''			
 	}
 
 	def String getWrapper(String name)
