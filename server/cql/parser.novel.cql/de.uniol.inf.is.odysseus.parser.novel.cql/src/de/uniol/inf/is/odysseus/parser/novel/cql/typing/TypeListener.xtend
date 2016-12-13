@@ -1,13 +1,8 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.typing
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.validation.AbstractCQLValidator
-import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
 import com.google.inject.Inject
-import org.eclipse.xtext.validation.Check
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession
-import org.eclipse.xtext.EcoreUtil2
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
+import de.uniol.inf.is.odysseus.parser.novel.cql.validation.AbstractCQLValidator
 
 class TypeListener extends AbstractCQLValidator
 {
