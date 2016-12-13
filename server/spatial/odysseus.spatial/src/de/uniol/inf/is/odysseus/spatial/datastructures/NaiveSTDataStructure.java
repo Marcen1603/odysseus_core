@@ -29,8 +29,6 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	public static final String TYPE = "naive";
 
-	public final static double AVERAGE_RADIUS_OF_EARTH = 6378137;
-
 	private int geometryPosition;
 	private String name;
 
@@ -60,7 +58,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public List<Tuple<?>> getKNN(Geometry geometry, int k, ITimeInterval t) {
 
-		List<Tuple<ITimeInterval>> elements = this.sweepArea.extractOverlapsAsList(t);
+		List<Tuple<ITimeInterval>> elements = this.sweepArea.queryOverlapsAsList(t);
 		// Just copy the list ...
 		List<Tuple<?>> sortedTuples = new ArrayList<Tuple<?>>(elements);
 		// and sort the list by the distance to the given point
@@ -111,7 +109,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range, ITimeInterval t) {
 
-		List<Tuple<ITimeInterval>> elements = this.sweepArea.extractOverlapsAsList(t);
+		List<Tuple<ITimeInterval>> elements = this.sweepArea.queryOverlapsAsList(t);
 
 		List<Tuple<?>> rangeTuples = new ArrayList<Tuple<?>>();
 

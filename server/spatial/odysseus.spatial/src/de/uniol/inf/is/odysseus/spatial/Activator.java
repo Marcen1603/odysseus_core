@@ -6,6 +6,7 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.spatial.datastructures.MovingObjectDataStructuresRegistry;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.QuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.access.transport.SpatioTemporalDataStructureTransportHandler;
 
 public class Activator implements BundleActivator {
@@ -24,8 +25,8 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		TransportHandlerRegistry.register(new SpatioTemporalDataStructureTransportHandler());
-		//DataHandlerRegistry.registerDataHandler(new GraphDataHandler());
 		MovingObjectDataStructuresRegistry.register(NaiveSTDataStructure.class, NaiveSTDataStructure.TYPE);
+		MovingObjectDataStructuresRegistry.register(QuadTreeSTDataStructure.class, QuadTreeSTDataStructure.TYPE);
 	
 	}
 
