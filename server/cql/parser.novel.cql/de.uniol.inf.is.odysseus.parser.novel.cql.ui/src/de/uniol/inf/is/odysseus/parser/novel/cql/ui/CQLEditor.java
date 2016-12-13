@@ -20,10 +20,8 @@ public class CQLEditor extends XtextEditor
 	{
 		// TODO Auto-generated method stub
 		super.updateState(input);
-		
 //		System.out.println("currentUser: " + UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName()));
 		
 	}
-	
 	
 }

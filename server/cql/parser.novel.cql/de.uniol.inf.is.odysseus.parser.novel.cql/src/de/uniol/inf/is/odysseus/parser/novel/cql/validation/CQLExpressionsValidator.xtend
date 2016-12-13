@@ -7,6 +7,7 @@ import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus
@@ -19,6 +20,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
+import org.eclipse.xtext.EcoreUtil2
 
 /**
  * This class contains custom validation rules. 
@@ -60,7 +63,6 @@ class CQLExpressionsValidator extends AbstractCQLValidator
 			error("expected " +  e +" type, but was actually " + actualType, ref, WRONG_TYPE)
 		}
 	}
-	
 	def ExpressionsType getTypeAndNotNull(Expression e, EReference ref) 
 	{
 		var type = e?.typeFor

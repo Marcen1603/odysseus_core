@@ -9,21 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CQLDictionary 
 {
 	
 	protected Map<String, Collection<SDFAttribute>> attributes;
 	
-	private ISession user;
+	private String user;
 	
-	private CQLDictionary(ISession user) 
+	private CQLDictionary(String user) 
 	{
 		this.user = user;
 		attributes = new HashMap<>();
@@ -42,8 +41,16 @@ public class CQLDictionary
 		for(int i = 0; i < attr.length; i++)
 		{
 			String src = attr[i].getSourceName();
-			if(attributes.containsKey(src))
+			if(attributes.containsKey(src))//TODO QUICKFIX
 			{
+				for(Collection<SDFAttribute> a : attributes.values())
+				{
+					if(a.stream().map(e -> e.getAttributeName()).collect(Collectors.toList()).contains(attr[i].getAttributeName()))
+					{
+						return;
+					}
+				}
+				///
 				coll = new ArrayList<SDFAttribute>(attributes.get(src));
 				coll.add(attr[i]);
 				attributes.put(src, coll);
@@ -60,7 +67,7 @@ public class CQLDictionary
 	{
 		return attributes;
 	}
-	
+
 	public Collection<SDFSchema> getSchema()
 	{
 		Set<SDFSchema> set = new HashSet<>();
@@ -78,8 +85,8 @@ public class CQLDictionary
 	}
 	
 	@Override
-	public String toString() { return "CQLDictionary:: "+user.getUser().getName() + this.attributes.toString(); }
+	public String toString() { return this.attributes.toString(); }
 
-	static CQLDictionary create(ISession user) { return new CQLDictionary(user); }
+	static CQLDictionary create(String user) { return new CQLDictionary(user); }
 
 }

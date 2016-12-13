@@ -15,6 +15,14 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionaryProvider
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
+import java.util.List
+import java.util.stream.DoubleStream.Builder
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 
 class ExpressionsTypeProvider 
 {
@@ -81,18 +89,32 @@ class ExpressionsTypeProvider
 	
 	
 	
-	def dispatch ExpressionsType typeFor(Attribute e)
+	def dispatch ExpressionsType typeFor(AttributeRef e)
 	{
-		
+		var ISession u = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
+			UserManagementProvider.getDefaultTenant().getName())
+		for(SDFSchema s : CQLDictionaryProvider.getDictionary(u).schema)
+		{
+			for(SDFAttribute a : s.attributes)
+			{
+				if(a.attributeName.equals(e.value.name))
+					return typeFor(a.datatype)
+			}	
+		}
+		return null
 	}
 	
-	def dispatch ExpressionsType typeFor(SDFDatatype e)
+	def dispatch ExpressionsType typeFor(SDFDatatype e)	
 	{
+//		println("data type " + e.toString+", URI= "+e.URI)
 		
-		if(e.string)
-			stringType
-		else if(e.integer)
-			intType
-
+		switch e.URI	
+		{
+			case "INTEGER": intType
+			case "STRING" : stringType
+			case "BOOLEAN": boolType
+			case "DOUBLE" : floatType
+			default : stringType
+		}
 	}
 }

@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -64,6 +63,7 @@ public class CQLParser implements IQueryParser
 	private CQLGenerator generator;
 	private XtextResourceSet resourceSet;
 	private Resource resource;
+	private Model model;
 	 
 	private String types;
 	private String regex;
@@ -113,30 +113,10 @@ public class CQLParser implements IQueryParser
 //		regex = ".*create[ ]*["+queryType+"][ ]*[a-z0-9]*[ ]+([a-z0-9]+){1}[ ]*[(]([a-z0-9]+[ ]+["+types+"]+[ ]*(, [a-z0-9]+[ ]+["+types+"]+)*)[)].*";
 	}
 	
-	public synchronized CQLDictionary createDictionary()
-	{
-		return null;
-	}
-	
-	public synchronized String translate(String query, ISession user, IDataDictionary dd, Context context,
-			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
+	public synchronized void createDictionary(List<Create_Statement> list, ISession user)
 	{
 		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
-		
-		// check if all sources in the cql query are contained in the IDataDictionary!
-		try(InputStream in = new ByteArrayInputStream(query.toString().getBytes())) 
-		{
-			resource.load(in, resourceSet.getLoadOptions());
-		} 
-		catch (IOException e) 
-		{ 
-			throw new QueryParseException("internal error while loading the cql model" + e.getMessage(), e); 
-		}
-		
-//		System.out.println("ERROS:: " + resource.getErrors().toString());
-		Model model = (Model) resource.getContents().get(0);
-
-		for(Create_Statement stmt : EcoreUtil2.eAllOfType(model, Create_Statement.class))
+		for(Create_Statement stmt : list)
 		{
 			if(stmt.getAccessframework() != null && stmt.getAccessframework().getType().equals("SINK"))//TODO Refactore
 			{
@@ -178,6 +158,24 @@ public class CQLParser implements IQueryParser
 				}
 			}
 		}
+	}
+	
+	public synchronized String translate(String query, ISession user, IDataDictionary dd, Context context,
+			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
+	{
+//		System.out.println("ERROS:: " + resource.getErrors().toString());
+		try(InputStream in = new ByteArrayInputStream(query.getBytes())) 
+		{
+			resource.load(in, resourceSet.getLoadOptions());
+		} 
+		catch (IOException e) 
+		{ 
+			throw new QueryParseException("internal error while loading the cql model" + e.getMessage(), e); 
+		}
+		
+		model = (Model) resource.getContents().get(0);
+		createDictionary(EcoreUtil2.eAllOfType(model, Create_Statement.class), user);
+		
 //		System.out.println(dic.toString());
 		//Get schemata from PQl queries
 		Set<SDFSchema> outerschema = executor.getExecutionPlan()
@@ -187,8 +185,7 @@ public class CQLParser implements IQueryParser
 										  .map(e -> e.getOutputSchema())
 										  .collect(Collectors.toSet());
 		//Get schemata from CQLDictionary
-		Set<SDFSchema> innerschema = (Set<SDFSchema>) dic.getSchema();
-		
+		Set<SDFSchema> innerschema = (Set<SDFSchema>) CQLDictionaryProvider.getDictionary(user).getSchema();
 		return generate(query.toString(), model, outerschema, innerschema);
 	}
 	
