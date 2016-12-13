@@ -38,6 +38,11 @@
             name="Center Node">
       </command>
       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.CopyNodeSchemaCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CopyNodeSchema"
+            name="Copy Node Schema">
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.RefreshGraphEditor"
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphEditor"
             name="Refresh Graph Editor">
@@ -166,6 +171,12 @@
                label="Center"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CopyNodeSchema"
+               label="Copy Node Schema"
+               style="push">
+         </command>
+
       </menuContribution>
       <menuContribution
             allPopups="false"
