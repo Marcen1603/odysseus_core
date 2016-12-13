@@ -149,6 +149,11 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 				returnValues.add(value);
 			}
 		}
+		// It could be that the list contains of one element with value null
+		// this in an empty list and should be treated as empty list
+		if (returnValues.size() == 1 && returnValues.get(0)==null){
+			returnValues.clear();
+		}
 		return returnValues;
 	}
 
