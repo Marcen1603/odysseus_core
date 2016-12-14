@@ -51,6 +51,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final IKeyFinder keyFinder;
 	private final IMessageCreator messageCreator;
 	private final IMessageManipulator messageManipulator;
+
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 
 	public WSEnrichPO(String serviceMethod, String method, String contentType, String url, Boolean urlIsTemplate,
