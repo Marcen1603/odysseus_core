@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wsenrich.physicaloperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,9 +53,10 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final IMessageManipulator messageManipulator;
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 
-	public WSEnrichPO(String serviceMethod, String method, String contentType, String url, Boolean urlIsTemplate, String urlsuffix, List<Option> arguments,
-			List<Option> header, String operation, List<SDFAttribute> receivedData, String charset,
-			String parsingMethod, boolean outerJoin, boolean keyValueOutput, boolean multiTupleOutput, int[] uniqueKey,
+	public WSEnrichPO(String serviceMethod, String method, String contentType, String url, Boolean urlIsTemplate,
+			String urlsuffix, List<Option> arguments, List<Option> header, String operation,
+			List<SDFAttribute> receivedData, String charset, String parsingMethod, boolean outerJoin,
+			boolean keyValueOutput, boolean multiTupleOutput, int[] uniqueKey,
 			IDataMergeFunction<Tuple<M>, M> dataMergeFunction, ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
 			IMetadataMergeFunction<M> metaMergeFunction, IConnectionForWebservices connection,
 			IRequestBuilder requestBuilder, HttpEntityToStringConverter converter, IKeyFinder keyFinder,
@@ -111,25 +113,36 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		requestBuilder.buildUri();
 		// String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
-		if (urlIsTemplate){
+		if (urlIsTemplate) {
 			uri = replace(queryParameters, uri);
 		}
-		logger.trace("URI: "+uri);
-		logger.trace("PostData :"+postData);
+		logger.trace("URI: " + uri);
+		logger.trace("PostData :" + postData);
 		// Connect to the Url
 		connection.setUri(uri);
 		connection.setArguments(requestBuilder.getPostData());
-		logger.trace("Connection arguments "+requestBuilder.getPostData());
+		logger.trace("Connection arguments " + requestBuilder.getPostData());
 		if (header != null) {
-			logger.trace("Header:"+header);
+			logger.trace("Header:" + header);
 			connection.setHeaders(header);
 		}
-		connection.connect(charset, method, contentType);
+		try {
+			connection.connect(charset, method, contentType);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		HttpEntity entity = connection.retrieveBody();
 		// Convert the Http Entity into a String, finally close the Http
 		// Connection
 		converter.setInput(entity);
-		converter.convert();
+		try {
+			converter.convert();
+		} catch (IllegalStateException | IOException e) {
+			throw new RuntimeException(e);
+		}
+		if (logger.isTraceEnabled()) {
+			logger.trace(converter.getOutput());
+		}
 		// Set the Message for the Key (Element) Finder an find the defined
 		// Elements and paste
 		// them to the tuple(s)
@@ -157,7 +170,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 	private String replace(List<Option> queryParameters, String uri) {
 		String newUri = uri;
-		for (Option o:queryParameters){
+		for (Option o : queryParameters) {
 			newUri = newUri.replaceAll(o.getName(), o.getValue());
 		}
 
