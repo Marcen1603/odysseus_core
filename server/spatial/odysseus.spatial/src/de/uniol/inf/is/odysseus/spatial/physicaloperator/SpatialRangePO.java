@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.QuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;

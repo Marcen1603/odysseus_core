@@ -14,6 +14,7 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
@@ -25,18 +26,40 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 	private Quadtree quadTree;
 	private int geometryPosition;
 	private String name;
+	private ExtendedTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	public QuadTreeSTDataStructure(String name, int geometryPosition) {
 		this.quadTree = new Quadtree();
 		this.geometryPosition = geometryPosition;
 		this.name = name;
+		this.sweepArea = new ExtendedTISweepArea<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Object o) {
+
+		// TODO We need to remove old tuples when they are not in the right time
+		// range -> use an additional index? -> sweepArea?
+
 		if (o instanceof Tuple<?>) {
+
+			// Insert in QuadTree
 			Geometry geom = getGeometry((Tuple<?>) o);
-			quadTree.insert(geom.getEnvelopeInternal(), o);
+			this.quadTree.insert(geom.getEnvelopeInternal(), o);
+
+			// Insert in SweepArea
+			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) o;
+			this.sweepArea.insert(tuple);
+			List<Tuple<ITimeInterval>> removed = this.sweepArea
+					.extractElementsBeforeAsList(tuple.getMetadata().getStart());
+			
+			if (removed.size() > 100) {
+				System.out.println("big: " + removed.size());
+			}
+
+			// Remove the extracted elements from the quadTree
+			removed.parallelStream().forEach(e -> this.quadTree.remove(getGeometry(e).getEnvelopeInternal(), e));
 		}
 	}
 
@@ -73,7 +96,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 		// Query the quadTree for all objects that may be in the envelope
 		List<?> envelopeItems = quadTree.query(env);
 
-		List<?> result = envelopeItems.parallelStream().filter(e -> MetrticSpatialUtils.getInstance()
+		List<?> result = envelopeItems.parallelStream().filter(e -> e != null && MetrticSpatialUtils.getInstance()
 				.calculateDistance(geometry.getCoordinate(), getGeometry((Tuple<?>) e).getCoordinate()) <= rangeMeters)
 				.collect(Collectors.toList());
 
