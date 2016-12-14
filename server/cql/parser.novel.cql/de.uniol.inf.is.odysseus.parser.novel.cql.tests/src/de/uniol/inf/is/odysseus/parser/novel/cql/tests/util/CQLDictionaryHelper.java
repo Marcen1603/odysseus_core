@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.parser.novel.cql.tests;
+package de.uniol.inf.is.odysseus.parser.novel.cql.tests.util;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,10 +7,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionary;
 
-public class CQLDictionaryDummy extends CQLDictionary 
+public class CQLDictionaryHelper extends CQLDictionary 
 {
 
-	public CQLDictionaryDummy() 
+	public CQLDictionaryHelper() 
 	{
 		super.attributes = new HashMap<>();
 		String src1 = "stream1";
@@ -32,7 +32,7 @@ public class CQLDictionaryDummy extends CQLDictionary
 	}
 	
 	
-	public CQLDictionaryDummy(String src, String ... datatypes) 
+	public CQLDictionaryHelper(String src, String ... datatypes) 
 	{
 		super.attributes = new HashMap<>();
 		SDFAttribute[] attributes = new SDFAttribute[datatypes.length];

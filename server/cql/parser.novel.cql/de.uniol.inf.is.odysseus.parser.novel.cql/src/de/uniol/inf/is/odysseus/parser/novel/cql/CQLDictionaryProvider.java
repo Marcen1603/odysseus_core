@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.parser.novel.cql;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CQLDictionaryProvider 
@@ -28,6 +30,17 @@ public class CQLDictionaryProvider
 	public static CQLDictionary removeDictionary(ISession user)
 	{
 		return map.remove(user.getUser().getName());
+	}
+	
+	public static CQLDictionary getCurrentUsersDictionary()
+	{
+		return getDictionary(getCurrentUser());
+	}
+	
+	public static ISession getCurrentUser()
+	{
+		return UserManagementProvider.getSessionmanagement().loginSuperUser(null, 
+				UserManagementProvider.getDefaultTenant().getName());
 	}
 	
 }

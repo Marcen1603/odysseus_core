@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.typing
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionaryProvider
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
@@ -15,14 +18,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider
-import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionaryProvider
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
-import java.util.List
-import java.util.stream.DoubleStream.Builder
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
+import com.google.inject.Inject
+import java.util.Collection
 
 class ExpressionsTypeProvider 
 {
@@ -86,14 +83,20 @@ class ExpressionsTypeProvider
 		else if (left == intType && right == intType) 
 			intType
 	}
+
+	def dispatch ExpressionsType typeFor(Void e)
+	{
+		//TODO Implement typeFor(Void e)
+	}
 	
-	
+	def Collection<SDFSchema> getSchemas()
+	{
+		return CQLDictionaryProvider.getCurrentUsersDictionary.schema
+	}
 	
 	def dispatch ExpressionsType typeFor(AttributeRef e)
 	{
-		var ISession u = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
-			UserManagementProvider.getDefaultTenant().getName())
-		for(SDFSchema s : CQLDictionaryProvider.getDictionary(u).schema)
+		for(SDFSchema s : getSchemas())
 		{
 			for(SDFAttribute a : s.attributes)
 			{

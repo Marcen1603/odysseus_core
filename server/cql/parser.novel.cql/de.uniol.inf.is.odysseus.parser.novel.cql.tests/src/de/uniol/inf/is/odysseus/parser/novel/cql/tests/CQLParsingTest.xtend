@@ -7,6 +7,7 @@ import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator
+import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.CQLDictionaryHelper
 import java.util.Set
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
 import org.eclipse.xtext.junit4.InjectWith
@@ -32,7 +33,7 @@ class CQLParsingTest
 	val keyword2 = CQLGenerator.getKeyword(2)
 	val keyword3 = CQLGenerator.getKeyword(3)
 	
-	def void assertCorrectGenerated(String s, String t, CQLDictionaryDummy dictionary) 
+	def void assertCorrectGenerated(String s, String t, CQLDictionaryHelper dictionary) 
 	{
 		
 //		s.parse.assertNoErrors//TODO Validator not working because no CQLDictionary can be found
@@ -63,7 +64,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1;"
 			,
 			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, stream1)"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void SelectAllTest2() 
@@ -73,7 +74,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1, stream2, stream3;"
 			,
 			"join_1 = JOIN(stream1, JOIN(stream2, stream3))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void SelectAllTest3() 
@@ -83,7 +84,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1, stream2, stream3 WHERE attr1 > 2 AND attr2 == 'Test';"
 			,
 			"select_1 = SELECT({predicate='attr1 > 2 && attr2 == 'Test''}, JOIN(stream1, JOIN(stream2, stream3)))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void SelectAllTest4() 
@@ -93,7 +94,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1 WHERE attr1 > 2 AND attr2 == 'Test';"
 			,
 			"select_1 = SELECT({predicate='attr1 > 2 && attr2 == 'Test''}, stream1)"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void SelectAttr1Test1() 
@@ -103,7 +104,7 @@ class CQLParsingTest
 			"SELECT attr1 FROM stream1 WHERE attr1 > 2;"
 			,
 			"select_1 = SELECT({predicate='attr1 > 2'}, PROJECT({attributes=['attr1']},stream1))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void SelectAttr1Test2() 
@@ -113,7 +114,7 @@ class CQLParsingTest
 			"SELECT attr1 FROM stream1, stream2, stream3 WHERE attr1 > 2;"
 			,
 			"select_1 = SELECT({predicate='attr1 > 2'},PROJECT({attributes=['attr1']},JOIN(stream1, JOIN(stream2, stream3))))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void SelectAttr1Test3() 
@@ -123,7 +124,7 @@ class CQLParsingTest
 			"SELECT attr1 FROM stream1;"
 			,
 			"project_1 = PROJECT({attributes=['attr1']}, stream1)"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void SelectAttr1Test4() 
@@ -133,7 +134,7 @@ class CQLParsingTest
 			"SELECT attr1, attr2, attr3 FROM stream1, stream2, stream3;"
 			,
 			"project_1 = PROJECT({attributes=['attr1', 'attr2', 'attr3']},JOIN(stream1, JOIN(stream2, stream3)))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void CreateViewTest1()
@@ -147,7 +148,7 @@ class CQLParsingTest
 			"
 			view1 := PROJECT({attributes=['attr1', 'attr2']}, stream1)
 			"
-			, new CQLDictionaryDummy	
+			, new CQLDictionaryHelper	
 		)
 	}
 	
@@ -172,7 +173,7 @@ class CQLParsingTest
 				}
 			)
 			"
-			, new CQLDictionaryDummy	
+			, new CQLDictionaryHelper	
 		)
 	}
 	
@@ -231,7 +232,7 @@ class CQLParsingTest
 			"STREAM TO out1 SELECT * FROM stream1;"
 			,
 			""
-			, new CQLDictionaryDummy()	
+			, new CQLDictionaryHelper()	
 		)	
 	}
 	
@@ -242,7 +243,7 @@ class CQLParsingTest
 			"STREAM TO out1 input1;"
 			,
 			""
-			, new CQLDictionaryDummy()	
+			, new CQLDictionaryHelper()	
 		)	
 	}
 
@@ -271,7 +272,7 @@ class CQLParsingTest
 					options=[['filename','outfile1']]
 				},
 				SELECT({predicate='attr2!=attr1'}, PROJECT({attributes=['attr1','attr2']},stream1)))"
-			, new CQLDictionaryDummy()	
+			, new CQLDictionaryHelper()	
 		)	
 	}
 
@@ -301,7 +302,7 @@ class CQLParsingTest
 				},
 				stream1
 			)"
-			, new CQLDictionaryDummy()	
+			, new CQLDictionaryHelper()	
 		)	
 	}
 	
@@ -312,7 +313,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1 [UNBOUNDED];"
 			,
 			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, stream1)"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowTimeTest1() 
@@ -322,7 +323,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
 			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES']}, stream1))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowElementTest1() 
@@ -332,7 +333,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1 [SIZE 5 TUPLE];"
 			,
 			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowUnboundedTest2() 
@@ -342,7 +343,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1 [UNBOUNDED], stream2 [UNBOUNDED];"
 			,
 			"join_1 = JOIN(stream1, stream2)"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowTimeWindowElementTest1() 
@@ -352,7 +353,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME];"
 			,
 			"join_1 = JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), TIMEWINDOW({size=[5, 'MINUTES']}, stream2))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowTimeWindowElementTest2() 
@@ -363,7 +364,7 @@ class CQLParsingTest
 			,
 			"project_1 = PROJECT({attributes=['attr1','attr2','attr4']}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
 														 				 JOIN(TIMEWINDOW({size=[5, 'MINUTES']}, stream2), stream3)))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowTimeWindowElementTest3() 
@@ -375,7 +376,7 @@ class CQLParsingTest
 			"select_1 = SELECT({predicate='attr4 != attr1'}, PROJECT({attributes=['attr1','attr2','attr4']},
 																		 JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
 																		 JOIN(TIMEWINDOW({size=[5, 'MINUTES']}, stream2), stream3))))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowTimeWindowElementTest4() 
@@ -386,7 +387,7 @@ class CQLParsingTest
 			,
 			"select_1 = SELECT({predicate='attr4 != attr1'}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1),
 																  TIMEWINDOW({size=[5, 'MINUTES']}, stream2)))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	@Test def void WindowElement2() 
@@ -396,7 +397,7 @@ class CQLParsingTest
 			"SELECT attr1 FROM stream1 [SIZE 5 TUPLE];"
 			,
 			"project_1 = PROJECT({attributes=['attr1']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
-		, new CQLDictionaryDummy())
+		, new CQLDictionaryHelper())
 	}
 	
 	

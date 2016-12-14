@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests
 
 import com.google.inject.Inject
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Select_StatementImpl
+import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.ExpressionsTypeProviderHelper
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsType
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -19,11 +21,10 @@ import static extension org.junit.Assert.*
 class ExpressionsTypeProviderTest 
 {
 	@Inject extension ParseHelper<Model>
-	@Inject extension ExpressionsTypeProvider
+	@Inject extension ExpressionsTypeProviderHelper
 	
-	private Select_Statement s
-
-	@Test def void stringConstant() 	{ "'hippo'".assertStringType }
+	@Test def void stringConstant1() 	{ "'hippo'".assertStringType }
+//	@Test def void stringConstant2() 	{ (""+"hippo"+"").assertStringType }
 	@Test def void boolConstant() 		{ "FALSE".assertBoolType }
 	
 	@Test def void notExp()				{ "NOT TRUE".assertBoolType}
@@ -53,7 +54,7 @@ class ExpressionsTypeProviderTest
 	
 	@Test def void equality1()			{ "12 == 1".assertBoolType}
 	@Test def void equality2()			{ "TRUE == FALSE".assertBoolType}
-	@Test def void equality3()			{ "'caat'== 'Cat'".assertBoolType}
+	@Test def void equality3()			{ "'caat' != 'Cat'".assertBoolType}
 
 //	@Test def void attribute1()			{ "attr2 < attr".assertIntType }
 
@@ -62,28 +63,10 @@ class ExpressionsTypeProviderTest
 	def assertStringType(CharSequence input) { input.assertType(ExpressionsTypeProvider::stringType) }
 	def assertBoolType(CharSequence input) 	 { input.assertType(ExpressionsTypeProvider::boolType) }
 	
-	
-	
 	def void assertType(CharSequence input, ExpressionsType type)	
 	{
-		if (assertStmt(input))
-		{ 
-//			println(s.predicates.elements)
-			type.assertSame(s.predicates.elements.last.typeFor)
-		}
+		var model = ("SELECT * FROM stream1 WHERE " + input).parse
+		type.assertSame(EcoreUtil2.eAllOfType(model, Expression).get(0).typeFor)
 	}
-	
-	def assertStmt(CharSequence input)
-	{
-		var stmt = "SELECT attr, attr2 FROM R1 WHERE "
-		if((stmt + input).parse.statements.get(0).type.eClass.name.equals(Select_Statement.simpleName))
-		{
-			s = (stmt + input).parse.statements.get(0).type as Select_StatementImpl
-			true
-		}
-		else 
-			false
-	}
-	
 	
 }

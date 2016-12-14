@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.typing
 
 import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionaryProvider
 import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.validation.AbstractCQLValidator
@@ -12,13 +11,13 @@ import org.eclipse.xtext.validation.Check
 class TypeListener extends AbstractCQLValidator
 {
 	
-	@Inject CQLParser parser
-	
+	@Inject extension CQLParser
 	@Check def foo(Create_Statement m)
 	{
-		var ISession u = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
-			UserManagementProvider.getDefaultTenant().getName())
-		parser.createDictionary(EcoreUtil2.eAllOfType(m.eContainer, Create_Statement), u)
+		createDictionary(
+			EcoreUtil2.eAllOfType(m.eContainer, Create_Statement),
+			CQLDictionaryProvider.currentUser
+		)
 	}
 	
 }

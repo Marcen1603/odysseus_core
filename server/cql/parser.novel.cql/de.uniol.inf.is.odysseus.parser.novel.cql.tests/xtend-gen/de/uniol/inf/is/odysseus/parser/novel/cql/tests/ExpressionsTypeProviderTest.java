@@ -2,23 +2,18 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.tests;
 
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Select_StatementImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
+import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.ExpressionsTypeProviderHelper;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
+import java.util.List;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +28,10 @@ public class ExpressionsTypeProviderTest {
   
   @Inject
   @Extension
-  private ExpressionsTypeProvider _expressionsTypeProvider;
-  
-  private Select_Statement s;
+  private ExpressionsTypeProviderHelper _expressionsTypeProviderHelper;
   
   @Test
-  public void stringConstant() {
+  public void stringConstant1() {
     this.assertStringType("\'hippo\'");
   }
   
@@ -159,7 +152,7 @@ public class ExpressionsTypeProviderTest {
   
   @Test
   public void equality3() {
-    this.assertBoolType("\'caat\'== \'Cat\'");
+    this.assertBoolType("\'caat\' != \'Cat\'");
   }
   
   public void assertFloatType(final CharSequence input) {
@@ -179,47 +172,12 @@ public class ExpressionsTypeProviderTest {
   }
   
   public void assertType(final CharSequence input, final ExpressionsType type) {
-    boolean _assertStmt = this.assertStmt(input);
-    if (_assertStmt) {
-      ExpressionsModel _predicates = this.s.getPredicates();
-      EList<Expression> _elements = _predicates.getElements();
-      Expression _last = IterableExtensions.<Expression>last(_elements);
-      ExpressionsType _typeFor = this._expressionsTypeProvider.typeFor(_last);
-      Assert.assertSame(type, _typeFor);
-    }
-  }
-  
-  public boolean assertStmt(final CharSequence input) {
     try {
-      boolean _xblockexpression = false;
-      {
-        String stmt = "SELECT attr, attr2 FROM R1 WHERE ";
-        boolean _xifexpression = false;
-        Model _parse = this._parseHelper.parse((stmt + input));
-        EList<Statement> _statements = _parse.getStatements();
-        Statement _get = _statements.get(0);
-        EObject _type = _get.getType();
-        EClass _eClass = _type.eClass();
-        String _name = _eClass.getName();
-        String _simpleName = Select_Statement.class.getSimpleName();
-        boolean _equals = _name.equals(_simpleName);
-        if (_equals) {
-          boolean _xblockexpression_1 = false;
-          {
-            Model _parse_1 = this._parseHelper.parse((stmt + input));
-            EList<Statement> _statements_1 = _parse_1.getStatements();
-            Statement _get_1 = _statements_1.get(0);
-            EObject _type_1 = _get_1.getType();
-            this.s = ((Select_StatementImpl) _type_1);
-            _xblockexpression_1 = true;
-          }
-          _xifexpression = _xblockexpression_1;
-        } else {
-          _xifexpression = false;
-        }
-        _xblockexpression = _xifexpression;
-      }
-      return _xblockexpression;
+      Model model = this._parseHelper.parse(("SELECT * FROM stream1 WHERE " + input));
+      List<Expression> _eAllOfType = EcoreUtil2.<Expression>eAllOfType(model, Expression.class);
+      Expression _get = _eAllOfType.get(0);
+      ExpressionsType _typeFor = this._expressionsTypeProviderHelper.typeFor(_get);
+      Assert.assertSame(type, _typeFor);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
