@@ -24,7 +24,6 @@
 	<classpathentry kind="lib" path="lib/httpcore-4.2.4.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime-4.2.5.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.11.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/resolver.jar"/>
 	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/soapui-4.5.0.jar"/>
