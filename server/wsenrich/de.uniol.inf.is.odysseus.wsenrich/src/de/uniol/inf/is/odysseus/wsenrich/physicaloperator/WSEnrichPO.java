@@ -159,7 +159,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 				if ((value == null || value.equals("")) && !outerJoin) {
 					return null;
 				} else if ((value == null || value.equals("")) && outerJoin) {
-					wsTuple.setAttribute(j, "null");
+					wsTuple.setAttribute(j, null);
 				} else {
 					wsTuple.setAttribute(j, value);
 				}
