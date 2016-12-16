@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -105,7 +105,12 @@ public class StringHandler extends AbstractDataHandler<String> {
 			text.append(options.getTextSeperator());
 			output.add(text.toString());
 		} else {
-			output.add((String) data);
+			if (data != null){
+				output.add(data.toString());
+			}else{
+				output.add(null);
+			}
+
 		}
 	}
 

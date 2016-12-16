@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
 
+	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory.getLogger(AbstractToListFunction.class);
     /**
      *
@@ -67,12 +68,12 @@ abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
     public SDFDatatype determineType(IExpression<?>[] args) {
     	SDFDatatype subtype = args[0].getReturnType();
 
-    	for(SDFDatatype datatype : SDFDatatype.LISTS) {
-			if(datatype.getSubType().equals(subtype)) {
-				return datatype;
-			}
-    	}
+//    	for(SDFDatatype datatype : SDFDatatype.LISTS) {
+//			if(datatype.getSubType().equals(subtype)) {
+//				return datatype;
+//			}
+//    	}
 
-    	return new SDFDatatype("LIST_"+subtype.getURI(),SDFDatatype.KindOfDatatype.LIST,subtype);
+    	return new SDFDatatype("LIST",SDFDatatype.KindOfDatatype.LIST,subtype);
     }
 }
