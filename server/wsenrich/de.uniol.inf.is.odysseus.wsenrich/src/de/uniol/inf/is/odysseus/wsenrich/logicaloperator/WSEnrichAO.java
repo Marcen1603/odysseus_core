@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.wsenrich.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -17,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
@@ -189,9 +191,21 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	@Override
 	public void initialize() {
-		SDFSchema webserviceData = SDFSchemaFactory.createNewWithAttributes(receivedData, getInputSchema());
+		SDFSchema webserviceData = SDFSchemaFactory.createNewWithAttributes(fixOutputNames(receivedData), getInputSchema());
 		SDFSchema outputSchema = SDFSchema.union(getInputSchema(), webserviceData);
 		setOutputSchema(outputSchema);
+	}
+
+	private Collection<SDFAttribute> fixOutputNames(List<SDFAttribute> receivedData2) {
+		List<SDFAttribute> ret = new ArrayList<SDFAttribute>();
+		for (SDFAttribute a: receivedData2){
+			String oldAttributeName = a.getAttributeName();
+			// TODO: find a common place for this (same in KeyValueToTuple)
+			oldAttributeName = oldAttributeName.replace("$", "root").replace("*", "_").replace(".", "_").replace("[", "_").replace("]", "_")
+					.replace("'", "_").replace(")", "_").replace("(", "_").replace("?", "_");
+			ret.add(new SDFAttribute(a.getSourceName(), oldAttributeName, a));
+		}
+		return ret;
 	}
 
 	@Override
