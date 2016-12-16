@@ -76,7 +76,7 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 		List<T> removedElements = null;
 
 		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>();
-		tuple.setMetadata(new TimeInterval(time, time));
+		tuple.setMetadata(new TimeInterval(time.plus(1), time.plus(1)));
 
 		synchronized (getElements()) {
 
@@ -114,7 +114,7 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 					// end-timestamp later in the list
 					while (purgeComparator.compare(getElements().get(delTo), (T) tuple) == -1) {
 						// There is another element which is totally
-						// before, hence, we have to go a step further
+						// before. We have to go a step further
 						delTo++;
 					}
 
@@ -132,7 +132,9 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 
 				} else {
 					// We can remove everything
+					List<T> removedElements = new ArrayList<>(getElements());
 					getElements().clear();
+					return removedElements;
 				}
 			}
 		}

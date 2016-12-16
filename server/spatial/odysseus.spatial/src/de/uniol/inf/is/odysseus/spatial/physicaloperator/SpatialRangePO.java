@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.QuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
@@ -25,7 +25,7 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 		int rand = (int) (Math.random() * 1000);
 		this.dataStructure = SpatialDataStructureProvider.getInstance().getOrCreateDataStructure("spatialRange" + rand,
-				QuadTreeSTDataStructure.TYPE, geometryPosition);
+				FastQuadTreeSTDataStructure.TYPE, geometryPosition);
 	}
 
 	public SpatialRangePO(IMovingObjectDataStructure dataStructure, int geometryPosition, double range) {

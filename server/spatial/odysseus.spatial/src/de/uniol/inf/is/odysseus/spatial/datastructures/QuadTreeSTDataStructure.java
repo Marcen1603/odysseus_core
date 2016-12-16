@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.spatial.datastructures;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -14,7 +17,6 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
@@ -23,10 +25,12 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 
 	public static final String TYPE = "quadtree";
 
-	private Quadtree quadTree;
+	protected Quadtree quadTree;
 	private int geometryPosition;
 	private String name;
-	private ExtendedTISweepArea<Tuple<ITimeInterval>> sweepArea;
+	protected ExtendedTISweepArea<Tuple<ITimeInterval>> sweepArea;
+
+	private static Logger _logger = LoggerFactory.getLogger(FastQuadTreeSTDataStructure.class);
 
 	public QuadTreeSTDataStructure(String name, int geometryPosition) {
 		this.quadTree = new Quadtree();
@@ -38,28 +42,27 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Object o) {
-
-		// TODO We need to remove old tuples when they are not in the right time
-		// range -> use an additional index? -> sweepArea?
-
 		if (o instanceof Tuple<?>) {
+			
+			// Remove old elements from sweepArea
+			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) o;			
+			List<Tuple<ITimeInterval>> removed = this.sweepArea
+					.extractElementsBeforeAsList(tuple.getMetadata().getStart());
+
+			// Warn
+			if (removed.size() > 50000) {
+				_logger.warn("Remove " + removed.size() + " elements from QuadTree. This can take a while!");
+			}
+
+			// Remove the extracted elements from the quadTree
+			removed.parallelStream().forEach(e -> this.quadTree.remove(getGeometry(e).getEnvelopeInternal(), e));
 
 			// Insert in QuadTree
 			Geometry geom = getGeometry((Tuple<?>) o);
 			this.quadTree.insert(geom.getEnvelopeInternal(), o);
 
 			// Insert in SweepArea
-			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) o;
 			this.sweepArea.insert(tuple);
-			List<Tuple<ITimeInterval>> removed = this.sweepArea
-					.extractElementsBeforeAsList(tuple.getMetadata().getStart());
-			
-			if (removed.size() > 100) {
-				System.out.println("big: " + removed.size());
-			}
-
-			// Remove the extracted elements from the quadTree
-			removed.parallelStream().forEach(e -> this.quadTree.remove(getGeometry(e).getEnvelopeInternal(), e));
 		}
 	}
 
@@ -134,7 +137,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 		return this.geometryPosition;
 	}
 
-	private Geometry getGeometry(Tuple<?> tuple) {
+	protected Geometry getGeometry(Tuple<?> tuple) {
 		Object o = tuple.getAttribute(geometryPosition);
 		GeometryWrapper geometryWrapper = null;
 		if (o instanceof GeometryWrapper) {
