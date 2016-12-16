@@ -30,7 +30,7 @@ public class InterOperatorIndividualInitializer {
 
 		newConfiguration.setAssureSemanticCorrectness(true);
 		newConfiguration.setUseParallelOperators(false);
-		newConfiguration.setUseThreadedBuffer(true);
+		newConfiguration.setUseThreadedBuffer(false);
 
 		ParallelInterOperatorSetting existing = null;
 		for (IQueryBuildSetting<?> setting : settings) {

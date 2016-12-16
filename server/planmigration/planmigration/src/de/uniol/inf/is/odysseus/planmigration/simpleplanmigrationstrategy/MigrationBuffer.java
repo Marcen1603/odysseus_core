@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 
@@ -70,8 +69,8 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 
 			// create new punctuation and insert it at the last position in the
 			// buffer.
-			IPunctuation punctuation = new MigrationMarkerPunctuation(this.newestTimestamp, this.source);
-			((MigrationMarkerPunctuation) punctuation).setSourceName(getName());
+			MigrationMarkerPunctuation punctuation = new MigrationMarkerPunctuation(this.newestTimestamp, this.source);
+			punctuation.setSourceName(getName());
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Insert MigrationMarkerPunctuation in Buffer for {} with timestamp {}", getName(),
 						punctuation.getTime());
@@ -89,7 +88,10 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 			this.buffer.add(object);
 			if (this.migrationStarted) {
 				if (this.latestEndTimestamp == null) {
-					this.latestEndTimestamp = object.getMetadata().getStart();
+					this.latestEndTimestamp = object.getMetadata().getEnd();
+					if(this.latestEndTimestamp.isInfinite()){
+						LOG.error("Maximum endtimestamp is infinite. No state migration possible.");
+					}
 					LOG.debug("Setting latestEndTimestamp to current element {}", this.latestEndTimestamp);
 				}
 				// if the received objects starttimestamp is after the

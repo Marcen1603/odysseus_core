@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
@@ -42,7 +43,8 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 	public void nodeAction(P node) {
 		// set unique identifier
 		if (node.getUniqueIdentifier() == null || node.getUniqueIdentifier().length() == 0) {
-			if (!(node instanceof StreamAO)) {
+			// source operators are identified by source name and shared automatically
+			if (!(node instanceof StreamAO || node instanceof AbstractAccessAO)) {
 				String identifier = new String(UNIQUE_ID_PREFIX);
 				identifier += this.queryIdentifier;
 				identifier += ".";

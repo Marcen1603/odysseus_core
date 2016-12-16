@@ -28,14 +28,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
@@ -558,7 +555,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	 * 
 	 * @param context
 	 */
-	void finishedParallelExecution(StrategyContext context)
+	private void finishedParallelExecution(StrategyContext context)
 			throws MigrationException {
 		LOG.debug("Handling finished migration");
 
@@ -619,12 +616,13 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				}
 
 				LOG.debug("Unblocking buffer to drain it");
+//				buffer.unblock();
+
 				LOG.debug("Buffer contains {} elements", buffer.size());
 				int elementCOunt = buffer.size();
-				//buffer.unblock();
 				LOG.debug("Empty buffer");
 				while (buffer.hasNext()) {
-					LOG.debug("Elements to send "+(elementCOunt--));
+					LOG.trace("Elements to send "+(elementCOunt--));
 					buffer.transferNext();
 				}
 
@@ -822,13 +820,22 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		LOG.debug("Migration finished for: "
 				+ sender.getClass().getSimpleName() + " (#" + sender.hashCode()
 				+ ")");
-		MigrationRouterPO<?> router = (MigrationRouterPO<?>) sender;
 		// finishedParallelExecution(this.routerStrategy.get(router));
-		try {
-			finishedParallelExecution(this.routerStrategy.get(router));
-		} catch (MigrationException ex) {
-			fireMigrationFailedEvent(sender, ex);
-		}
+		Thread finisher = (new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				MigrationRouterPO<?> router = (MigrationRouterPO<?>) sender;
+				try {
+					finishedParallelExecution(routerStrategy.get(router));
+				} catch (MigrationException ex) {
+					fireMigrationFailedEvent(sender, ex);
+				}
+			}
+			
+		},"Migration Finisher"));
+		finisher.start();
+
 	}
 
 	@Override
