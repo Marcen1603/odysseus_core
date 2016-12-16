@@ -42,6 +42,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final String charset;
 	private final String parsingMethod;
 	private final boolean outerJoin;
+	private final boolean allowNullValues;
 	private final boolean keyValueOutput;
 	private final boolean multiTupleOutput;
 	private final int[] parameterPositions;
@@ -56,7 +57,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 	public WSEnrichPO(String serviceMethod, String method, String contentType, String url, Boolean urlIsTemplate,
 			String urlsuffix, List<Option> arguments, List<Option> header, String operation,
-			List<SDFAttribute> receivedData, String charset, String parsingMethod, boolean outerJoin,
+			List<SDFAttribute> receivedData, String charset, String parsingMethod, boolean outerJoin, boolean allowNullValues,
 			boolean keyValueOutput, boolean multiTupleOutput, int[] uniqueKey,
 			IDataMergeFunction<Tuple<M>, M> dataMergeFunction, ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
 			IMetadataMergeFunction<M> metaMergeFunction, IConnectionForWebservices connection,
@@ -77,6 +78,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		this.charset = charset;
 		this.parsingMethod = parsingMethod;
 		this.outerJoin = outerJoin;
+		this.allowNullValues = allowNullValues;
 		this.keyValueOutput = keyValueOutput;
 		this.multiTupleOutput = multiTupleOutput;
 		this.parameterPositions = new int[arguments.size()];
@@ -154,11 +156,17 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		for (int i = 0; i < keyFinder.getTupleCount(); i++) {
 			Tuple<M> wsTuple = new Tuple<>(receivedData.size(), false);
 			for (int j = 0; j < receivedData.size(); j++) {
-				keyFinder.setSearch(receivedData.get(j).getAttributeName());
-				Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
-				if ((value == null || value.equals("")) && !outerJoin) {
+				Object value = null;
+				try {
+					keyFinder.setSearch(receivedData.get(j).getAttributeName());
+					value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
+				} catch (Exception e) {
+					logger.warn("Error setting attribute "+j,e);
+				}
+
+				if ((value == null || value.equals("")) && !outerJoin && !allowNullValues) {
 					return null;
-				} else if ((value == null || value.equals("")) && outerJoin) {
+				} else if ((value == null || value.equals("")) && (outerJoin || allowNullValues)) {
 					wsTuple.setAttribute(j, null);
 				} else {
 					wsTuple.setAttribute(j, value);
