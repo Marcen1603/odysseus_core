@@ -178,8 +178,8 @@ public class CQLParser implements IQueryParser
 		
 //		System.out.println(dic.toString());
 		//Get schemata from PQl queries
-		Set<SDFSchema> outerschema = executor.getExecutionPlan()
-										  .getQueries()
+		Set<SDFSchema> outerschema = executor.getExecutionPlan(user)
+										  .getQueries(user)
 										  .stream()
 										  .map(e -> e.getLogicalQuery().getLogicalPlan())
 										  .map(e -> e.getOutputSchema())
