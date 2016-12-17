@@ -12,5 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/physicalQueryViewDataProvider.xml, OSGI-INF/executor.xml
-Import-Package: de.uniol.inf.is.odysseus.rcp.views.query,
+Import-Package: de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.views.query,
  org.slf4j

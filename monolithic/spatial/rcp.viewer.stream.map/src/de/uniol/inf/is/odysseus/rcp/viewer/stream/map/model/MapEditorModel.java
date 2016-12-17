@@ -161,8 +161,8 @@ public class MapEditorModel extends ModelObject {
 
 					boolean exists = false;
 					// No multiple definition of a Stream.
-					for (IPhysicalQuery phyQuery : executor.getExecutionPlan()
-							.getQueries()) {
+					for (IPhysicalQuery phyQuery : executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
+							.getQueries(OdysseusRCPPlugIn.getActiveSession())) {
 						if (phyQuery.getLogicalQuery().getQueryText()
 								.equals(query.text)) {
 							exists = true;
@@ -172,8 +172,8 @@ public class MapEditorModel extends ModelObject {
 						execute(qLines);
 					}
 
-					for (IPhysicalQuery phyQuery : executor.getExecutionPlan()
-							.getQueries()) {
+					for (IPhysicalQuery phyQuery : executor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession())
+							.getQueries(OdysseusRCPPlugIn.getActiveSession())) {
 						if (phyQuery.getLogicalQuery().getQueryText()
 								.equals(query.text)) {
 							List<IPhysicalOperator> ops = phyQuery.getRoots();
@@ -258,7 +258,7 @@ public class MapEditorModel extends ModelObject {
 	/**
 	 * Saves the map as JSON in the file. All parts of the LayerConfigurations
 	 * have to be serializable
-	 * 
+	 *
 	 * @param file
 	 */
 	public void save(IFile file) {
@@ -421,7 +421,7 @@ public class MapEditorModel extends ModelObject {
 
 	/**
 	 * Adds an HeatmapLayer to the map
-	 * 
+	 *
 	 * @param layerConfiguration
 	 * @return The layer
 	 */
@@ -448,7 +448,7 @@ public class MapEditorModel extends ModelObject {
 
 	/**
 	 * Adds a LinemapLayer to the map
-	 * 
+	 *
 	 * @param layerConfiguration
 	 * @return The layer
 	 */
@@ -530,7 +530,7 @@ public class MapEditorModel extends ModelObject {
 	public static void execute(final String[] text) {
 		try {
 			ISession user = OdysseusRCPPlugIn.getActiveSession();
-			OdysseusRCPEditorTextPlugIn.getExecutor().addQuery(concat(text), "OdysseusScript", user, Context.empty());					
+			OdysseusRCPEditorTextPlugIn.getExecutor().addQuery(concat(text), "OdysseusScript", user, Context.empty());
 		} catch (PlanManagementException ex) {
 			LOG.error("Exception during executing script", ex);
 			if (!ex.getRootMessage().contains("multiple")) {

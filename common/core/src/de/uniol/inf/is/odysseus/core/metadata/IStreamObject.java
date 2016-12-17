@@ -24,20 +24,7 @@ import de.uniol.inf.is.odysseus.core.Order;
  * @author Jonas Jacobi, Marco Grawunder
  */
 public interface IStreamObject<M extends IMetaAttribute> extends
-		IClone, Serializable, IStreamable {
-	/**
-	 * Gets the default meta data used processing purposes (e.g. timestamps, priority or latency)
-	 * This meta data is assigned to each object in the meta data creation po
-	 *
-	 * @return
-	 */
-	public M getMetadata();
-
-	/**
-	 * Set the metadata object of this tuple. Typically done from the meta data creation po
-	 * @param metadata
-	 */
-	public void setMetadata(M metadata);
+		IClone, Serializable, IStreamable, IProvidesMetadata<M> {
 
 	boolean isTimeProgressMarker();
 	void setTimeProgressMarker(boolean timeProgressMarker);
@@ -56,6 +43,13 @@ public interface IStreamObject<M extends IMetaAttribute> extends
      * @return A new instance of the streaming object class.
      */
     IStreamable newInstance();
+
+    /**
+     * Hash code using metadata too
+     * @param b
+     * @return
+     */
+	public int hashCode(boolean b);
 
 	int restrictedHashCode(int[] attributeNumbers);
 
@@ -99,4 +93,5 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 	 * @return
 	 */
 	Object getTransientMarker(String key);
+
 }

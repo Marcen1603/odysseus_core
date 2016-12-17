@@ -275,8 +275,8 @@ public class WebserviceServer {
 			throws InvalidUserDataException {
 		StringListResponse response = new StringListResponse(true);
 
-		loginWithSecurityToken(securityToken);
-		for (IPhysicalQuery q : ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueries()) {
+		ISession session = loginWithSecurityToken(securityToken);
+		for (IPhysicalQuery q : ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueries(session)) {
 			if (q.getLogicalQuery() != null) {
 				response.addResponseValue(q.getLogicalQuery().getQueryText());
 			}
@@ -285,12 +285,17 @@ public class WebserviceServer {
 
 	}
 
-	public QueryState getQueryState(int queryID) {
-		return ExecutorServiceBinding.getExecutor().getQueryState(queryID);
+	public QueryState getQueryState(int queryID, String securityToken) {
+		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		return ExecutorServiceBinding.getExecutor().getQueryState(queryID, session);
 	}
 
-	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs) {
-		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs));
+	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs, List<String> securityTokens) {
+		List<ISession> sessions = new ArrayList<>();
+		for (String securityToken:securityTokens){
+			sessions.add(UserManagementProvider.getSessionmanagement().login(securityToken));
+		}
+		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs, sessions));
 	}
 
 	protected ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException {
@@ -366,16 +371,16 @@ public class WebserviceServer {
 
 	public Response startExecution(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		ExecutorServiceBinding.getExecutor().startExecution();
+		ISession session = loginWithSecurityToken(securityToken);
+		ExecutorServiceBinding.getExecutor().startExecution(session);
 		return new Response(true);
 
 	}
 
 	public Response stopExecution(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		ExecutorServiceBinding.getExecutor().stopExecution();
+		ISession session = loginWithSecurityToken(securityToken);
+		ExecutorServiceBinding.getExecutor().stopExecution(session);
 		return new Response(true);
 
 	}
@@ -518,10 +523,10 @@ public class WebserviceServer {
 	@SuppressWarnings("unchecked")
 	public SimpleGraph getPlan(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		SimpleGraph graph = new SimpleGraph();
-		loginWithSecurityToken(securityToken);
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
+		ISession session = loginWithSecurityToken(securityToken);
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
 		int idCounter = 0;
-		for (IPhysicalOperator op : plan.getRoots()) {
+		for (IPhysicalOperator op : plan.getRoots(session)) {
 			GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();
 			visitor.setIdCounter(idCounter);
 			@SuppressWarnings("rawtypes")
@@ -567,8 +572,8 @@ public class WebserviceServer {
 			@WebParam(name = "id") String id) throws InvalidUserDataException, QueryNotExistsException {
 		ISession user = loginWithSecurityToken(securityToken);
 
-		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan()
-				.getQueryById(Integer.valueOf(id));
+		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan(user)
+				.getQueryById(Integer.valueOf(id), user);
 		LogicalQuery logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor()
 				.getLogicalQueryById(Integer.valueOf(id), user);
 		if (queryById == null || logicalQuery == null) {
@@ -585,7 +590,7 @@ public class WebserviceServer {
 	public QueryResponse getLogicalQueryByName(@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "name") String name) throws InvalidUserDataException {
 		ISession session = loginWithSecurityToken(securityToken);
-		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryByName(Resource.specialCreateResource(name, session.getUser()));
+		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryByName(Resource.specialCreateResource(name, session.getUser()), session);
 		List<String> roots = new ArrayList<String>();
 		for (IPhysicalOperator operator : queryById.getRoots()) {
 			roots.add(operator.getName());
@@ -646,7 +651,7 @@ public class WebserviceServer {
 			int queryId, int rootPort, int minPort, int maxPort, boolean nullValues, boolean ssl,
 			boolean sslClientAuthentication, boolean withMetadata) throws InvalidUserDataException {
 		try {
-			loginWithSecurityToken(securityToken);
+			ISession session = loginWithSecurityToken(securityToken);
 			int port = 0;
 			SocketSinkPO po;
 			Map<Integer, Integer> socketPortMapEntry = socketPortMap.get(queryId);
@@ -655,7 +660,7 @@ public class WebserviceServer {
 			if (socketSinkMapEntry != null) {
 				if (socketSinkMapEntry.get(rootPort) == null) {
 					port = getNextFreePort(minPort, maxPort);
-					po = addSocketSink(queryId, rootPort, port, nullValues, ssl, sslClientAuthentication, withMetadata);
+					po = addSocketSink(queryId, rootPort, port, nullValues, ssl, sslClientAuthentication, withMetadata, session);
 					socketSinkMapEntry.put(rootPort, po);
 					socketPortMapEntry.put(rootPort, port);
 				} else {
@@ -668,7 +673,7 @@ public class WebserviceServer {
 				socketPortMap.put(queryId, socketPortMapEntry);
 				socketSinkMap.put(queryId, socketSinkMapEntry);
 				port = getNextFreePort(minPort, maxPort);
-				po = addSocketSink(queryId, rootPort, port, nullValues, ssl, sslClientAuthentication, withMetadata);
+				po = addSocketSink(queryId, rootPort, port, nullValues, ssl, sslClientAuthentication, withMetadata, session);
 				socketSinkMapEntry.put(rootPort, po);
 				socketPortMapEntry.put(rootPort, port);
 			}
@@ -710,9 +715,9 @@ public class WebserviceServer {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private SocketSinkPO addSocketSink(int queryId, int rootPort, int port, boolean nullValues, boolean ssl,
-			boolean sslClientAuthentication, boolean withMetadata) {
-		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
-		IPhysicalQuery query = plan.getQueryById(queryId);
+			boolean sslClientAuthentication, boolean withMetadata, ISession session) {
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
+		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		List<IPhysicalOperator> roots = query.getRoots();
 		final IPhysicalOperator root = roots.get(rootPort);
 		final ISource<?> rootAsSource;
@@ -827,10 +832,10 @@ public class WebserviceServer {
 	public SDFSchemaResponse getOutputSchemaByQueryIdAndPort(@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId, @WebParam(name = "port") int port)
 					throws InvalidUserDataException, QueryNotExistsException {
-		loginWithSecurityToken(securityToken);
+		ISession session = loginWithSecurityToken(securityToken);
 		SDFSchema schema;
 		try {
-			IPhysicalOperator operator = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(queryId)
+			IPhysicalOperator operator = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryById(queryId, session)
 					.getRoots().get(port);
 			schema = operator.getOutputSchema();
 		} catch (Exception e) {

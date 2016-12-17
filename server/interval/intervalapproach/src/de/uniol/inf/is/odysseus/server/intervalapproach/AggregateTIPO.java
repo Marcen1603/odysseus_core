@@ -361,7 +361,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					}
 				}
 
-				PointInTime sa_min_ts = sa.getMinTs();
+				PointInTime sa_min_ts = sa.getMinStartTs();
 
 				if (sa_min_ts != null) {
 					if (sa_min_ts.before(border)) {
