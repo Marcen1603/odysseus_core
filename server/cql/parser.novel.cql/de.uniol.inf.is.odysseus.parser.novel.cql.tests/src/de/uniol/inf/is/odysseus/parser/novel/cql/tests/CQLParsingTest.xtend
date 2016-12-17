@@ -13,7 +13,6 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -24,14 +23,13 @@ import static extension org.junit.Assert.*
 class CQLParsingTest
 {
 
-	@Inject extension ValidationTestHelper
 	@Inject extension CQLGenerator
 	@Inject extension ParseHelper<Model>
 	
-	val keyword0 = CQLGenerator.getKeyword(0)
-	val keyword1 = CQLGenerator.getKeyword(1)
-	val keyword2 = CQLGenerator.getKeyword(2)
-	val keyword3 = CQLGenerator.getKeyword(3)
+//	val keyword0 = CQLGenerator.getKeyword(0)
+//	val keyword1 = CQLGenerator.getKeyword(1)
+//	val keyword2 = CQLGenerator.getKeyword(2)
+//	val keyword3 = CQLGenerator.getKeyword(3)
 	
 	def void assertCorrectGenerated(String s, String t, CQLDictionaryHelper dictionary) 
 	{
@@ -400,6 +398,16 @@ class CQLParsingTest
 		, new CQLDictionaryHelper())
 	}
 	
-	
+	@Test def void AggregationTest1()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1), SUM(attr2), AVG(attr3) FROM stream1;"
+			,
+			"project_1 = AGGREGATION({AGGREGATIONS=[['FUNCTIONN' = 'Count'],['INPUT_ATTRIBUTES' = 'attr1']]},
+				PROJECT({attributes=['attr1']}, stream1))"
+			, new CQLDictionaryHelper()
+		)
+	}
 		
 }

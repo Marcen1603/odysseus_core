@@ -6,16 +6,6 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.12">
   <genPackages prefix="CQL" basePackage="de.uniol.inf.is.odysseus.parser.novel.cql"
       disposableProviderFactory="true" fileExtensions="cql" ecorePackage="CQL.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="CQL.ecore#//FunctionType">
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/SUM"/>
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/ADD"/>
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/MAX"/>
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/MIN"/>
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/COUNT"/>
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/AVG"/>
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/LAST"/>
-      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//FunctionType/FIRST"/>
-    </genEnums>
     <genClasses ecoreClass="CQL.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Model/statements"/>
     </genClasses>
@@ -23,9 +13,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Statement/type"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Expression"/>
-    <genClasses ecoreClass="CQL.ecore#//Alias">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Alias/name"/>
-    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Source">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/unbounded"/>
@@ -44,32 +31,15 @@
     <genClasses ecoreClass="CQL.ecore#//Select_Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Select_Statement/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/attributes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/aggregations"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/sources"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/predicates"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/order"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/having"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Window_Timebased">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/size"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/unit"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/advance_size"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/advance_unit"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Window_Tuplebased">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Tuplebased/size"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Tuplebased/advance_size"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Window_Tuplebased/partition_attribute"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Operator">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Operator/name"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Condition">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CQL.ecore#//Condition/left"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Condition/right"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Value">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Value/name"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Scalar_Function">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Scalar_Function/name"/>
+    <genClasses ecoreClass="CQL.ecore#//Aggregation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Aggregation/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Aggregation/attribute"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Create_Statement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Statement/channelformat"/>
@@ -107,6 +77,20 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//StreamTo/statement"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/inputname"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Window_Timebased">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/unit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/advance_size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/advance_unit"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Window_Tuplebased">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Tuplebased/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Tuplebased/advance_size"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Window_Tuplebased/partition_attribute"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Scalar_Function">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Scalar_Function/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//IntConstant">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//IntConstant/value"/>

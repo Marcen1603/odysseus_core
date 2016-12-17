@@ -8,6 +8,6 @@ CREATE STREAM stream1 (id INTEGER, first_name STRING, last_name STRING, email ST
 
   
   
-SELECT * FROM stream1 WHERE 1 > id 
+SELECT id FROM stream1 WHERE 1 > id
 
-SELECT id FROM stream1 WHERE 10 == id
+Scalar asd;

@@ -22,16 +22,12 @@ Atomic returns Expression:
 
 terminal FLOAT_NUMBER:  INT '.' INT ;
 
-Alias: 
-	name=ID
-;
-
 Source: 
 	name=ID
 	('[' (unbounded=Window_Unbounded|time=Window_Timebased|tuple=Window_Tuplebased)']')?
 ;
 
-//TODO Add more data types
+//TODO have to dynamic -> use scope provider
 DataType: 
 	value=('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN' 
 	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
@@ -39,14 +35,7 @@ DataType:
 
 Attribute: name=ID;
  
-//TODO Validator: do not allow "Source1 AS Alias1.attr1"
-
-enum FunctionType: SUM | ADD | MAX | MIN | COUNT | AVG | LAST | FIRST ;
-
-//Function: functionType=FunctionType '(' value=Attribute ')' ;
-
 // Expressions //////////////////////////////////////////////////////////
-
 ExpressionsModel: {ExpressionsModel} elements+=Expression+;
 
 Expression: Or;
@@ -58,15 +47,6 @@ Or returns Expression:
 And returns Expression:
 	Equalitiy ({And.left=current} 'AND' right=Equalitiy)*
 ;
-
-
-//Or returns Expression:
-//	And ({Or.left=current} 'OR' right=And)*
-//;
-//
-//And returns Expression:
-//	Equalitiy ({And.left=current} 'AND' right=Equalitiy)*
-//;
 
 Equalitiy returns Expression:
 	Comparison (
@@ -101,67 +81,25 @@ Primary returns Expression:
 	{NOT} 'NOT' expression=Primary |
 	Atomic
 ;
-
-//	Atomic (
-//		{Plus.left=current} '+' | {Minus.left=current} '-' 
-//		right=Atomic
-//	)*
-
 ////////////////////////////////////////////////////////////////////////
 
 Select_Statement:
 	name='SELECT'
 	('DISTINCT')?
-	( '*' | attributes+=Attribute+ (',' attributes+=Attribute)*)
+	( '*' | ( (attributes+=Attribute | aggregations+=Aggregation)+ & (',' attributes+=Attribute)* & (',' aggregations+=Aggregation)*))
 	'FROM'
 	(sources+=Source+ (',' sources+=Source)*)
-	('WHERE' (predicates=ExpressionsModel))?//| attribute=[Attribute] 'IN' '(' values+=Value ')'))?
-//	(('ORDER' 'BY' | 'order' 'by') ordering+=[Attribute]+ ('ASC' | 'asc' | 'DESC' | 'desc')? )?
-//	(('HAVING' | 'having') havingFunction=[Parameter] havingOperator=Operator havingValue=Value)?
+	('WHERE' predicates=ExpressionsModel)?
+	('ORDER' 'BY' order=Attribute)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?
+	('HAVING' having=ExpressionsModel)?
 //	';'
 ;
 
-Window_Unbounded:  
-	'UNBOUNDED'
-;
-
-Window_Timebased: 
-	'SIZE' size=INT unit=ID
-	('ADVANCE' advance_size=INT advance_unit=ID)?
-	'TIME'
-;
-
-Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
-	'SIZE' size=INT
-	('ADVANCE' advance_size=INT)?
-	'TUPLE'
-	('PARTITION' 'BY' partition_attribute=Attribute)?
-;
-
-Operator:
+Aggregation:
 	name=ID
-;
-
-Condition:
-	left=[Attribute] right=Expression |
-	right=Expression left=[Attribute]
-;
-
-//Parameter:
-//	Attribute //| Function
-//	(('AS' | 'as') alias=ID)?
-//;
-
-Value:
-	name=ID
-;
-
-Scalar_Function:
-	name=ID
-//	('UCASE(' | 'ucase(' | 'LCASE(' | 'lcase(' | 'MID(' | 'mid(' |
-//	 'LEN(' | 'len(' | 'ROUND(' | 'round(' | 'NOW(' | 'now(' |
-//	 'FORMAT(' | 'format('
-//	)
+	'('
+	attribute=Attribute
+	')'
 ;
 
 Create_Statement:
@@ -216,4 +154,31 @@ StreamTo:
 	name=ID
 	(statement=Select_Statement|inputname=ID)
 ;
+
+Window_Unbounded:  
+	'UNBOUNDED'
+;
+
+Window_Timebased: 
+	'SIZE' size=INT unit=ID
+	('ADVANCE' advance_size=INT advance_unit=ID)?
+	'TIME'
+;
+
+Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
+	'SIZE' size=INT
+	('ADVANCE' advance_size=INT)?
+	'TUPLE'
+	('PARTITION' 'BY' partition_attribute=Attribute)?
+;
+
+Scalar_Function:
+	'Scalar'
+	name=ID
+	';'
+;
+
+
+
+
 

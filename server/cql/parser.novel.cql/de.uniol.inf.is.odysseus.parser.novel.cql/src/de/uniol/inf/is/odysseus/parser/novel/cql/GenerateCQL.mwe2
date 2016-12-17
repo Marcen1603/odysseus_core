@@ -9,7 +9,7 @@ Workflow {
 	
 	component = XtextGenerator {
 		configuration = {
-			project = StandardProjectConfig {
+		project = StandardProjectConfig {
 				baseName = "de.uniol.inf.is.odysseus.parser.novel.cql"
 				rootPath = rootPath
 				runtimeTest = {
@@ -31,13 +31,15 @@ Workflow {
 		language = StandardLanguage {
 			name = "de.uniol.inf.is.odysseus.parser.novel.cql.CQL"
 			fileExtensions = "cql"
-
+			
 			serializer = {
 				generateStub = false
 			}
 			validator = {
-				// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+//				 composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 			}
+//			fragment = scoping.ImportNamespacesScopingFragment2 auto-inject {}
+//			fragment = exporting.SimpleNamesFragment2 auto-inject {}
 		}
 	}
 }

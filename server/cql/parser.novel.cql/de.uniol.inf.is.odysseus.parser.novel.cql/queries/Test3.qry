@@ -12,7 +12,8 @@ CREATE VIEW view1 FROM(
                 
 #PARSER PQL                
 #RUNQUERY
-select_1 = SELECT({predicate='id > 10'}, view2)
+counted1 = AGGREGATE({AGGREGATIONS = [['COUNT', 'id', 'sum']]}, view1)
+counted2 = AGGREGATION({AGGREGATIONS = [['FUNCTION' = 'Count']]}, view1)
 
 
                              

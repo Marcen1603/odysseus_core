@@ -3,8 +3,11 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.validation
 
-import org.eclipse.xtext.validation.ComposedChecks
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Scalar_Function
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.TypeListener
+import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.ComposedChecks
+import org.eclipse.xtext.scoping.Scopes
 
 /**
  * This class contains custom validation rules. 
@@ -12,17 +15,16 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.typing.TypeListener
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 @ComposedChecks(validators = #[CQLExpressionsValidator, TypeListener])
-class CQLValidator extends AbstractCQLValidator {
+class CQLValidator extends AbstractCQLValidator 
+{
 	
-//	public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					CQLPackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
+
+	@Check
+	def checkGreetingStartsWithCapital(Scalar_Function e) 
+	{
+		
+//		Scopes.scopeFor()		
+		
+	}
 	
 }
