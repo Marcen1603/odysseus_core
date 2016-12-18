@@ -415,5 +415,84 @@ class CQLParsingTest
 			, new CQLDictionaryHelper()
 		)
 	}
-		
+	
+	@Test def void AggregationTest2()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 GROUP BY attr1, attr2;"
+			,
+			"project_1 = AGGREGATION
+			(
+				{
+					AGGREGATIONS=[
+									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
+									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
+								 ],
+					GROUP_BY =['attr1', 'attr2']
+				}, stream1)"
+			, new CQLDictionaryHelper()
+		)
+	}	
+	
+	@Test def void AggregationTest3()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1, stream2 GROUP BY attr1, attr2;"
+			,
+			"project_1 = AGGREGATION
+			(
+				{
+					AGGREGATIONS=[
+									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
+									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
+								 ],
+					GROUP_BY =['attr1', 'attr2']
+				}, JOIN(stream1, stream2)
+			)"
+			, new CQLDictionaryHelper()
+		)
+	}
+
+	@Test def void AggregationTest4()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1;"
+			,
+			"project_1 = AGGREGATION
+			(
+				{
+					AGGREGATIONS=[
+									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
+									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
+								 ],
+					GROUP_BY =['attr1', 'attr2']
+				}, JOIN(stream1, stream2)
+			)"
+			, new CQLDictionaryHelper()
+		)
+	}	
+	
+	@Test def void AggregationTest5()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1, stream2;"
+			,
+			"project_1 = AGGREGATION
+			(
+				{
+					AGGREGATIONS=[
+									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
+									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
+								 ],
+					GROUP_BY =['attr1', 'attr2']
+				}, JOIN(stream1, stream2)
+			)"
+			, new CQLDictionaryHelper()
+		)
+	}	
+	
 }

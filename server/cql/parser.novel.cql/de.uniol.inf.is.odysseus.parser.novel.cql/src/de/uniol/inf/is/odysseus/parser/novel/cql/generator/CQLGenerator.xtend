@@ -92,35 +92,47 @@ class CQLGenerator implements IGenerator2
 		var symbol1 = if(isView) ' := ' else ' = '
 		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
 		{
-			println("1")
 			if(!stmt.attributes.empty)//SELECT attr1, ...
 			{
-				println("2.1")
 				if(stmt.sources.size == 1)//.. FROM src1;
 				{
+					var src = stmt.sources.get(0)
 					if(stmt.aggregations.empty)
 					{
-						return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, stmt.sources.get(0))»'''										
+						return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, src)»'''										
 					}
 					else// case 2 for aggregations with one source
 					{
-						println("buildAggregationOP()")
-						var agg = buildAggregrationOP(stmt.aggregations, stmt.order,'')
-						return '''project_«getID() + symbol1»«»'''
+						var result = buildAggregrationOP(stmt.aggregations, stmt.order, src)
+						var List<String> attributes = result.get(0) as List<String>
+						var String operator 		= result.get(1).toString
+					
+						attributes.addAll(
+							stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+						)												
+						
+						return '''join_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, buildWindowOP(src), operator))»'''
 					}
 				}
 				else//.. FROM src1, src2, ...;
 				{
-					println("2.2")
 					if(stmt.aggregations.empty)
 					{
 						return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources))»'''	
 					}	
 					else
 					{
-						println("buildAggregationOP()")
-						var agg = buildAggregrationOP(stmt.aggregations, stmt.order,'')
-						return ''''''// case 2 for aggregations with several sources
+						var join_name = '''join_«getID()»'''
+						var join   = '''«join_name + symbol1 + buildJoin(null, stmt.sources)»'''
+						var result = buildAggregrationOP(stmt.aggregations, stmt.order, join_name)
+						var List<String> attributes = result.get(0) as List<String>
+						var String operator 		= result.get(1).toString
+					
+						attributes.addAll(
+							stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+						)												
+						//TODO In progress! -> too many joins?
+						return '''«join»aggregation_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, join_name, operator))»'''
 					}
 				}
 			}
@@ -131,16 +143,13 @@ class CQLGenerator implements IGenerator2
 					var Source src = stmt.sources.get(0);
 					if(stmt.aggregations.empty)
 					{
-						return '''project_«getID() + symbol1»«buildProjectOP(null, src)»'''
+						return '''project_«getID() + symbol1»«buildProjectOP(#[] as String[], src)»'''
 					}
 					else
 					{
-						println("buildAggregationOP()2")
 						var result = buildAggregrationOP(stmt.aggregations, stmt.order, src)
-						var List<String> attributes = result.get(0) as List<String>
-						var String operator   = result.get(1).toString
-//						println(agg.get(1).toString)
-						return '''project_«getID() + symbol1 + operator»'''
+//						var List<String> attributes = result.get(0) as List<String>
+						return '''project_«getID() + symbol1 + result.get(1).toString»'''
 					}												
 				}
 				else//.. FROM src1, src2, ...;
@@ -151,10 +160,8 @@ class CQLGenerator implements IGenerator2
 					}
 					else
 					{
-						println("buildAggregationOP()")
-var agg = buildAggregrationOP(stmt.aggregations, stmt.order,'')
-						println(agg)
-						return ''''''												
+						var operator = buildAggregrationOP(stmt.aggregations, stmt.order, stmt.sources)
+						return '''project_«getID() + symbol1 + operator.get(1).toString»'''
 					}
 				}				
 			}
@@ -235,7 +242,7 @@ var agg = buildAggregrationOP(stmt.aggregations, stmt.order,'')
 	
 	def Object[] buildAggregrationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, Source src) 
 	{
-		return buildAggregrationOP(aggAttr, orderAttr, src.name)
+		return buildAggregrationOP(aggAttr, orderAttr, buildWindowOP(src))
 	}
 
 	def Object[] buildAggregrationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, List<Source> src) 
@@ -411,6 +418,15 @@ var agg = buildAggregrationOP(stmt.aggregations, stmt.order,'')
 		else { return '''JOIN(«buildWindowOP(src)»,«buildJoin(null, list)»)''' } 	
 	}
 
+	def CharSequence buildJoin(ExpressionsModel predicate, CharSequence input1, CharSequence input2)
+	{
+		if(predicate == null)
+		{
+			return '''JOIN(«input1»,«input2»)'''
+		}
+		return '''JOIN({predicate=«buildPredicate(predicate.elements.get(0))»},«input1»,«input2»)'''
+	}
+
 	/**
 	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
 	 * and a list of {@link Source} elements. If the list contains more then one element,
@@ -440,19 +456,7 @@ var agg = buildAggregrationOP(stmt.aggregations, stmt.order,'')
 	 */
 	def CharSequence buildProjectOP(List<Attribute> attributes, Source src)
 	{
-		if(src == null) { throw new NullPointerException("Given source was null") }
-		
-		if(attributes == null)
-		{
-			return '''PROJECT(
-						{
-							attributes=[«generateListString(getAttributeNamesFrom(src.name))»]
-						},«buildWindowOP(src)»)'''
-		}
-		return '''PROJECT(
-				  	{
-				  		attributes=[«generateListString(attributes.stream.map(e|e.name).collect(Collectors.toList))»]
-				  	},«buildWindowOP(src)»)'''
+		return buildProjectOP(attributes.stream.map(e|e.name).collect(Collectors.toList), src)
 	}
 	
 	/**
@@ -467,17 +471,29 @@ var agg = buildAggregrationOP(stmt.aggregations, stmt.order,'')
 				  	},«operator»)'''
 	}
 	
-	
-	/**
-	 * Builds a project operator with a list of {@link Attribute} and char sequence
-	 * to define the input operator.
-	 */
 	def CharSequence buildProjectOP(String[] attributes, CharSequence operator)
 	{
 		return '''PROJECT(
 				  	{
 				  		attributes=[«generateListString(attributes)»]
 				  	},«operator»)'''
+	}
+	
+	def CharSequence buildProjectOP(String[] attributes, Source src)
+	{
+		if(src == null) { throw new NullPointerException("Given source was null") }
+		
+		if(attributes.empty)
+		{
+			return '''PROJECT(
+						{
+							attributes=[«generateListString(getAttributeNamesFrom(src.name))»]
+						},«buildWindowOP(src)»)'''
+		}
+		return '''PROJECT(
+				  	{
+				  		attributes=[«generateListString(attributes)»]
+				  	},«buildWindowOP(src)»)'''
 	}
 	
 	//TODO String have to be encupseld between '
