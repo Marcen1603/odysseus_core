@@ -27,11 +27,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.ThreadedBufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
-
 
 /**
  * Helper class that provides useful methods on physical plans for an
@@ -59,12 +59,11 @@ public class MigrationHelper {
 		visited = null;
 		return sources;
 	}
-	
+
 	private static List<IPhysicalOperator> visited;
 
-	private static void getPseudoSources(List<ISource<?>> sources,
-			IPhysicalOperator op, IPhysicalOperator last) {
-		if(visited.contains(op)){
+	private static void getPseudoSources(List<ISource<?>> sources, IPhysicalOperator op, IPhysicalOperator last) {
+		if (visited.contains(op)) {
 			return;
 		}
 		visited.add(op);
@@ -83,8 +82,7 @@ public class MigrationHelper {
 			last = null;
 		}
 
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op)
-				.getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
 			getPseudoSources(sources, (IPhysicalOperator) sub.getTarget(), last);
 		}
 	}
@@ -98,23 +96,21 @@ public class MigrationHelper {
 	 * @return {@link List} of {@link IPhysicalOperator}s that are before
 	 *         sources.
 	 */
-	public static List<IPhysicalOperator> getOperatorsBeforeSources(
-			IPhysicalOperator op, List<ISource<?>> sources) {
+	public static List<IPhysicalOperator> getOperatorsBeforeSources(IPhysicalOperator op, List<ISource<?>> sources) {
 		List<IPhysicalOperator> list = new ArrayList<IPhysicalOperator>();
 		getOperatorsBeforeSources(list, op, sources);
 		return list;
 	}
 
-	private static void getOperatorsBeforeSources(List<IPhysicalOperator> list,
-			IPhysicalOperator op, List<ISource<?>> sources) {
+	private static void getOperatorsBeforeSources(List<IPhysicalOperator> list, IPhysicalOperator op,
+			List<ISource<?>> sources) {
 		for (ISource<?> source : sources) {
 			for (AbstractPhysicalSubscription<?> sub : source.getSubscriptions()) {
 				IPhysicalOperator target = (IPhysicalOperator) sub.getTarget();
 				// prevent from casting DataSourceObserverSink to Source
 				if (target.isSource()) {
 					if (op.hasOwner() == target.hasOwner()) {
-						if (op.hasOwner()
-								&& op.getOwner().containsAll(target.getOwner())) {
+						if (op.hasOwner() && op.getOwner().containsAll(target.getOwner())) {
 							list.add(target);
 							continue;
 						}
@@ -185,11 +181,9 @@ public class MigrationHelper {
 		if (root instanceof IWindow) {
 			wMax = (IWindow) root;
 		}
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) root)
-				.getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) root).getSubscribedToSource()) {
 			IWindow w = getLongestWindow((IPhysicalOperator) sub.getTarget());
-			if (wMax == null
-					|| (w != null && w.getWindowSize() > wMax.getWindowSize())) {
+			if (wMax == null || (w != null && w.getWindowSize() > wMax.getWindowSize())) {
 				wMax = w;
 			}
 		}
@@ -207,11 +201,9 @@ public class MigrationHelper {
 		if (op instanceof BufferPO<?>) {
 			return;
 		}
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op)
-				.getSubscribedToSource()) {
+		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
 			drainTuples((IPhysicalOperator) sub.getTarget());
-			if (op instanceof IIterableSource<?>
-					&& !(op instanceof BufferPO<?>) && op.isSink()) {
+			if (op instanceof IIterableSource<?> && !(op instanceof BufferPO<?>) && op.isSink()) {
 				IIterableSource<?> iterableSource = (IIterableSource<?>) op;
 				while (iterableSource.hasNext()) {
 					iterableSource.transferNext();
@@ -219,22 +211,45 @@ public class MigrationHelper {
 			}
 		}
 	}
-	
+
+	public static void blockAllBuffers(IPhysicalOperator op) {
+		if (op instanceof ISink<?>) {
+			for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
+				blockAllBuffers((IPhysicalOperator) sub.getTarget());
+				if (op instanceof ThreadedBufferPO) {
+					((ThreadedBufferPO<?>) op).pauseRunner();
+				}
+			}
+		}
+	}
+
+	public static void unblockAllBuffers(IPhysicalOperator op) {
+		if (op instanceof ISink<?>) {
+			for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
+				unblockAllBuffers((IPhysicalOperator) sub.getTarget());
+				if (op instanceof ThreadedBufferPO) {
+					((ThreadedBufferPO<?>) op).unpauseRunner();
+				}
+			}
+		}
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static PointInTime findMaxEndTimestaminPlan(IPhysicalOperator root) {
 		PointInTime latest = null;
-		//TODO add support for additional operator types
+		// TODO add support for additional operator types
 		GenericGraphWalker walker = new GenericGraphWalker();
-		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(JoinTIPO.class);
+		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(
+				JoinTIPO.class);
 		walker.prefixWalkPhysical(root, visitor);
 		Set<IPhysicalOperator> joins = visitor.getResult();
-		for(IPhysicalOperator join : joins) {
+		for (IPhysicalOperator join : joins) {
 			PointInTime end = ((JoinTIPO) join).getLatestEndTimestamp();
-			if(latest == null || (end != null && latest.before(end))) {
+			if (latest == null || (end != null && latest.before(end))) {
 				latest = end;
 			}
 		}
-		
+
 		return latest;
 	}
 

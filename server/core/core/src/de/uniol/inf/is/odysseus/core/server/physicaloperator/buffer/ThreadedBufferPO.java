@@ -28,11 +28,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * 
  * @param <R>
  */
-public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
-		extends AbstractPipe<R, R> implements IPhysicalOperatorKeyValueProvider {
+public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<R, R>
+		implements IPhysicalOperatorKeyValueProvider {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ThreadedBufferPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ThreadedBufferPO.class);
 
 	private long elementsRead;
 	private long puncRead;
@@ -53,6 +52,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 		private boolean terminate = false;
 		private boolean started = false;
+		private boolean paused = false;
 
 		public Runner(String name) {
 			super(name);
@@ -62,11 +62,27 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			this.terminate = true;
 		}
 
+		public void pause() {
+			paused = true;
+		}
+
+		synchronized void unpause() {
+			paused = false;
+			notify();
+		}
+
 		@Override
 		public void run() {
 			started = true;
 			while (!terminate) {
 				synchronized (runner) {
+					while (paused) {
+						try {
+							runner.wait();
+						} catch (InterruptedException e) {
+							LOG.error("Paused ThreadedBuffer was interupted.", e);
+						}
+					}
 					try {
 						if (inputBuffer.isEmpty()) {
 							runner.wait(100);
@@ -79,6 +95,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 					}
 				}
 				// inputBuffer to outputBuffer
+
 				lockInput.lock();
 				List<IStreamable> tmp = outputBuffer;
 				outputBuffer = inputBuffer;
@@ -248,6 +265,18 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
+	}
+
+	public void pauseRunner() {
+		synchronized (runner) {
+			runner.paused = true;
+		}
+	}
+	
+	public void unpauseRunner() {
+		synchronized(runner) {
+			runner.paused = false;
+		}
 	}
 
 	@Override

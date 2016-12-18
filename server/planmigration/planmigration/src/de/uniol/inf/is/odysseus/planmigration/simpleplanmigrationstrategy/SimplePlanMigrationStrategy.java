@@ -662,15 +662,22 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				walker.prefixWalkPhysical(oldRoot, removeVisitor);
 			}
 
+			// block all Iterablesources to open the plan
 			
-			LOG.debug("Calling open on all plan roots");
-			for(IPhysicalOperator root : newRoots) {
-				((ISink) root).open(this.physicalQuery);
-			}
+			
+//			for(IPhysicalOperator root : newRoots) {
+//				LOG.debug("Suspending iterable sources.");
+//				MigrationHelper.blockAllBuffers(root);
+//				LOG.debug("Calling open on all plan roots");
+//				((ISink) root).open(this.physicalQuery);
+//				LOG.debug("Resuming iterable sources.");
+//				MigrationHelper.unblockAllBuffers(root);
+//			}
 
 			LOG.debug("Initialize new plan root as physical root");
 			context.getRunningQuery().initializePhysicalRoots(newRoots);
 		} catch (Exception ex) {
+			LOG.error("Finishing Migration failed.",ex);
 			throw new MigrationException("Removing MigrationBuffer was not successful.", ex);
 		} finally {
 			// unblocking of sources must be ensured

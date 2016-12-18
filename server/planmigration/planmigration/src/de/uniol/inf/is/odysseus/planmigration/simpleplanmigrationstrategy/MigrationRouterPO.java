@@ -130,7 +130,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		// happens if process_next is called while the migration is already
 		// finished but the router is not yet removed.
 		if (this.onlyNew && port == this.inPortNew) {
-			LOG.debug("Migration finished processing last tuples");
+			LOG.trace("Migration finished processing last tuples");
 			transfer(object);
 			return;
 		}
@@ -183,7 +183,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	// return false;
 	// }
 
-	private void process_migrationMarkerPunctuation(MigrationMarkerPunctuation p, int port) throws MigrationException {
+	private synchronized void process_migrationMarkerPunctuation(MigrationMarkerPunctuation p, int port) throws MigrationException {
 		Pair<IPunctuation, IPunctuation> pair = this.sourcesToPunctuations.get(p.getSource());
 		Pair<Integer, Integer> pathesPair = this.pathesFromSource.get(p.getSource());
 		LOG.debug("Receiced punctuation for {} ", p.toString());
