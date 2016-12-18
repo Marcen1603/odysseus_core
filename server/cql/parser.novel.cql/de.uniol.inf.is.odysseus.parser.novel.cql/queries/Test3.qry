@@ -12,8 +12,21 @@ CREATE VIEW view1 FROM(
                 
 #PARSER PQL                
 #RUNQUERY
-counted1 = AGGREGATE({AGGREGATIONS = [['COUNT', 'id', 'sum']]}, view1)
-counted2 = AGGREGATION({AGGREGATIONS = [['FUNCTION' = 'Count']]}, view1)
+counted1 = AGGREGATE({
+                aggregations = [['COUNT', 'id', 'sum']]              
+              },
+              view1
+            )
+counted2 = AGGREGATION({
+                aggregations=[
+                  ['FUNCTION'='COUNT','INPUT_ATTRIBUTES'='id','OUTPUT_ATTRIBUTES'='COUNT_attr1'],
+                  ['FUNCTION'='SUM','INPUT_ATTRIBUTES'='id','OUTPUT_ATTRIBUTES'='SUM_attr2'],
+                  ['FUNCTION'='AVG','INPUT_ATTRIBUTES'='id','OUTPUT_ATTRIBUTES'='AVG_attr3']
+                ],
+                group_by=['id']
+              },
+              view1
+            )
 
 
                              

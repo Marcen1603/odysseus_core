@@ -402,10 +402,16 @@ class CQLParsingTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT COUNT(attr1), SUM(attr2), AVG(attr3) FROM stream1;"
+			"SELECT COUNT(attr1) AS Counter FROM stream1 GROUP BY attr1;"
 			,
-			"project_1 = AGGREGATION({AGGREGATIONS=[['FUNCTIONN' = 'Count'],['INPUT_ATTRIBUTES' = 'attr1']]},
-				PROJECT({attributes=['attr1']}, stream1))"
+			"project_1 = AGGREGATION
+			(
+				{
+					AGGREGATIONS=[
+									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter']
+								 ],
+					GROUP_BY =['attr1']
+				}, stream1)"
 			, new CQLDictionaryHelper()
 		)
 	}

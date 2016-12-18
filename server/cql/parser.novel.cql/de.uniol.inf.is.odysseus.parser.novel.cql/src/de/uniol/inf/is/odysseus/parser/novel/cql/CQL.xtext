@@ -33,7 +33,10 @@ DataType:
 	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
 );
 
-Attribute: name=ID;
+Attribute: 
+	name=ID
+	('AS' alias=Alias)?
+;
  
 // Expressions //////////////////////////////////////////////////////////
 ExpressionsModel: {ExpressionsModel} elements+=Expression+;
@@ -86,20 +89,36 @@ Primary returns Expression:
 Select_Statement:
 	name='SELECT'
 	('DISTINCT')?
-	( '*' | ( (attributes+=Attribute | aggregations+=Aggregation)+ & (',' attributes+=Attribute)* & (',' aggregations+=Aggregation)*))
+	( '*' |
+		( 
+			(attributes+=Attribute | aggregations+=Aggregation)+  
+			& (',' attributes+=Attribute)* 
+			& (',' aggregations+=Aggregation)*
+		)
+	)
 	'FROM'
 	(sources+=Source+ (',' sources+=Source)*)
 	('WHERE' predicates=ExpressionsModel)?
-	('ORDER' 'BY' order=Attribute)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?
+	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?
 	('HAVING' having=ExpressionsModel)?
 //	';'
 ;
 
-Aggregation:
+Order:
+	attribute=Attribute
+	direction=('ASC'|'DESC')
+;
+
+Aggregation://TODO Validator -> forbid an alias for the attribute in the aggregation
 	name=ID
 	'('
 	attribute=Attribute
 	')'
+	('AS' alias=Alias)?
+;
+
+Alias:
+	name=ID
 ;
 
 Create_Statement:

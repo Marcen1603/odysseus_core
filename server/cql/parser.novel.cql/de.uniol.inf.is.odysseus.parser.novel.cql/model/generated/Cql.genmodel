@@ -24,6 +24,7 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Attribute">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Attribute/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Attribute/alias"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//ExpressionsModel">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ExpressionsModel/elements"/>
@@ -37,9 +38,17 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/order"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/having"/>
     </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Order">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Order/attribute"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Order/direction"/>
+    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Aggregation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Aggregation/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Aggregation/attribute"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Aggregation/alias"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Alias">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Alias/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Create_Statement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Create_Statement/channelformat"/>
