@@ -181,13 +181,13 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		 * must be specified 
 		 * https://dev.twitter.com/docs/api/1.1/post/statuses/filter
 		 */
-		if(searchKeys.length > 0 || locations.length > 0){
+		if(searchKeys != null || locations != null){
 			//set filter
 			FilterQuery fq = new FilterQuery();
-			if(searchKeys.length > 0){
+			if(searchKeys != null && searchKeys.length > 0){
 				fq.track(searchKeys);
 			}
-			if(locations != null){
+			if(locations != null && locations.length > 0){
 				fq.locations(locations);
 			}
 			

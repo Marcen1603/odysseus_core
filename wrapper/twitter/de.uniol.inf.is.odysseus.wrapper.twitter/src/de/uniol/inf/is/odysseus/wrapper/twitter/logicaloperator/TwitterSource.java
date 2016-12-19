@@ -66,7 +66,7 @@ public class TwitterSource extends AbstractAccessAO {
 		addOption(TwitterTransportHandler.ACCESSTOKENSECRET, accessTokenSecret);
 	}
 
-	@Parameter(type = StringParameter.class, isList = true, name = TwitterTransportHandler.SEARCHKEYS, optional = false, doc = "Twitter search keys. See documentation.")
+	@Parameter(type = StringParameter.class, isList = true, name = TwitterTransportHandler.SEARCHKEYS, optional = true, doc = "Twitter search keys. See documentation.")
 	public void setSearchKeys(List<String> searchKeys) {
 		addOption(TwitterTransportHandler.SEARCHKEYS,
 				buildString(searchKeys, ","));
