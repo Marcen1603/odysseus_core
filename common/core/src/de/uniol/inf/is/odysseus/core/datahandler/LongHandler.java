@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,19 +32,19 @@ public class LongHandler extends AbstractDataHandler<Long> {
 		types.add(SDFDatatype.START_TIMESTAMP.getURI());
 		types.add(SDFDatatype.END_TIMESTAMP.getURI());
 	}
-	
+
 	@Override
 	public IDataHandler<Long> getInstance(SDFSchema schema) {
 		return new LongHandler();
 	}
-	
+
 	@Override
 	public Long readData(ByteBuffer buffer) {
 		long l = buffer.getLong();
 		//System.out.println("read Long Data: "+l);
 		return l;
 	}
-	
+
 	@Override
 	public Long readData(String string) {
         if ((string == null) || (string.equals(""))|| ("null".equalsIgnoreCase(string))) {
@@ -58,26 +58,26 @@ public class LongHandler extends AbstractDataHandler<Long> {
 		if (options.hasNumberFormatter()){
 			output.add(options.getNumberFormatter().format(data) );
 		}else{
-			output.add(((Number) data).toString());
+			output.add(data.toString());
 		}
 	}
-    
+
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		//System.out.println("write Long Data "+((Number)data).longValue());
 		buffer.putLong(((Number)data).longValue());
-	}	
+	}
 
 	@Override
 	final public List<String> getSupportedDataTypes() {
 		return types;
 	}
-	
+
 	@Override
 	public int memSize(Object attribute) {
 		return Long.SIZE / 8;
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return Long.class;
