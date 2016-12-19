@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,9 +30,9 @@ import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 /**
  * This class represent an immutable attribute. each attribute must have two
  * parts: A global unique source name and a source unique attribute name.
- * 
+ *
  * @author Marco Grawunder, Andre Bolles
- * 
+ *
  */
 
 public class SDFAttribute extends SDFElement implements
@@ -41,7 +41,7 @@ public class SDFAttribute extends SDFElement implements
 	private static final long serialVersionUID = -5128455072793206061L;
 
 	public static final String THIS = "THIS";
-	
+
 	/**
 	 * additional info that can be added to this attribute
 	 */
@@ -70,7 +70,7 @@ public class SDFAttribute extends SDFElement implements
 
 //	/**
 //	 * Create a new SDFAttribute
-//	 * 
+//	 *
 //	 * @param sourceName
 //	 *            The source name of the attribute
 //	 * @param attributeName
@@ -87,14 +87,14 @@ public class SDFAttribute extends SDFElement implements
 			SDFDatatype datatype) {
 		this(sourceName, attributeName, datatype, null, (Collection<SDFConstraint>) null);
 	}
-	
+
 	public SDFAttribute(SDFAttribute toCopyFrom, SDFDatatype newDatatype){
 		this(toCopyFrom.getSourceName(), toCopyFrom.getAttributeName(), newDatatype,toCopyFrom.getUnit(), new LinkedList<>(toCopyFrom.dtConstraints.values()));
 	}
 
 	/**
 	 * Creates a new SDFAttribute
-	 * 
+	 *
 	 * @param sourceName
 	 *            The source name of the attribute
 	 * @param attributeName
@@ -111,7 +111,7 @@ public class SDFAttribute extends SDFElement implements
 			Collection<SDFConstraint> dtConstraints) {
 		this(sourceName, attributeName, datatype, unit, dtConstraints, null);
 	}
-	
+
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype datatype, SDFUnit unit,
 			Map<String,SDFConstraint> dtConstraints) {
@@ -120,7 +120,7 @@ public class SDFAttribute extends SDFElement implements
 
 	/**
 	 * Create a new SDFAttribute
-	 * 
+	 *
 	 * @param sourceName
 	 *            The source name of the attribute
 	 * @param attributeName
@@ -152,7 +152,7 @@ public class SDFAttribute extends SDFElement implements
 	/**
 	 * Creates a new Attribute from another attribute, preserving everything but
 	 * the names
-	 * 
+	 *
 	 * @param newSourceName
 	 *            The new source name of the attribute
 	 * @param newAttributeName
@@ -184,7 +184,7 @@ public class SDFAttribute extends SDFElement implements
 
 	/**
 	 * Get Sourcename-Part of the Attribute
-	 * 
+	 *
 	 * @return
 	 */
 	public String getSourceName() {
@@ -194,7 +194,7 @@ public class SDFAttribute extends SDFElement implements
 	/**
 	 * Returns the name of the attribute without source information. To get the
 	 * complete name use getURI oder getSourceName()
-	 * 
+	 *
 	 * @see SDFElement
 	 * @return
 	 */
@@ -204,7 +204,7 @@ public class SDFAttribute extends SDFElement implements
 
 	/**
 	 * Returns the additional informations of this attribute
-	 * 
+	 *
 	 * @return
 	 */
 	public List<?> getAddInfo() {
@@ -213,7 +213,7 @@ public class SDFAttribute extends SDFElement implements
 
 	/**
 	 * returns the data type of this attribute
-	 * 
+	 *
 	 * @return
 	 */
 	public SDFDatatype getDatatype() {
@@ -222,7 +222,7 @@ public class SDFAttribute extends SDFElement implements
 
 	/**
 	 * returns a specific data type constraint
-	 * 
+	 *
 	 * @param uri
 	 * @return
 	 */
@@ -232,7 +232,7 @@ public class SDFAttribute extends SDFElement implements
 
 	/**
 	 * returns the set of all data type constraints
-	 * 
+	 *
 	 * @return
 	 */
 	public Collection<SDFConstraint> getDtConstraints() {
@@ -241,7 +241,7 @@ public class SDFAttribute extends SDFElement implements
 
 	/**
 	 * Return the unit of this attribute, can be null
-	 * 
+	 *
 	 * @return
 	 */
 	public SDFUnit getUnit() {
@@ -252,7 +252,7 @@ public class SDFAttribute extends SDFElement implements
 	 * Compares current attribute with attr, returns true if both sourceNames
 	 * are not null and equals and attributeNames are equals If one of the
 	 * sourceName is null, only attributeNames are compared
-	 * 
+	 *
 	 * @param attr
 	 * @return true if attributeNames/sourceNames are equal
 	 */
@@ -321,7 +321,7 @@ public class SDFAttribute extends SDFElement implements
 	 * Creates a new SDFAttribute with a new source name and a new attribute
 	 * name from this attribute, keeping all other information (like data type
 	 * or unit)
-	 * 
+	 *
 	 * @param newSourceName
 	 * @param newAttributeName
 	 * @return
@@ -342,15 +342,15 @@ public class SDFAttribute extends SDFElement implements
 		this(attr.getSourceName(), attr.getAttributeName(), attr);
 		this.number = number;
 	}
-	
+
 	public int getNumber() {
 		return number;
 	}
-	
+
 	public SDFAttribute clone(int pos){
 		return new SDFAttribute(this,pos);
 	}
-	
+
 	@Override
 	public int compareTo(SDFAttribute o) {
 		int comp = 0;
@@ -367,7 +367,7 @@ public class SDFAttribute extends SDFElement implements
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
 		if (getSourceName() != null) {
-			ret.append(getSourceName()); 
+			ret.append(getSourceName());
 		}
 		ret.append(".").append(getAttributeName());
 		if (unit != null){
@@ -376,8 +376,13 @@ public class SDFAttribute extends SDFElement implements
 		if (number >= 0){
 			ret.append(" ").append(number);
 		}
-		
+
 		return ret.toString();
+	}
+
+	public static final String replaceSpecialChars(String input){
+		return input.replace("$", "root").replace("*", "_").replace(".", "_").replace("[", "_").replace("]", "_")
+				.replace("'", "_").replace(")", "_").replace("(", "_").replace("?", "_");
 	}
 
 }

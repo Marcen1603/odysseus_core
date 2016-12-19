@@ -98,10 +98,7 @@ public class KeyValueToTupleAO extends UnaryLogicalOp {
 			} else {
 				name = att.getAttribute().getQualName();
 			}
-			// replace JSONPATH_SPECIFIC_VALUES
-			name = name.replace("$", "root").replace("*", "_").replace(".", "_").replace("[", "_").replace("]", "_")
-					.replace("'", "_").replace(")", "_").replace("(", "_").replace("?", "_");
-
+			name = SDFAttribute.replaceSpecialChars(name);
 			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(),
 					sdfAtt.getDtConstraints()));
 		}
