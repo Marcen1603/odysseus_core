@@ -24,6 +24,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  org.sesame,
  org.geotools;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
- org.junit;bundle-version="4.12.0"
+ org.junit;bundle-version="4.12.0",
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.sweeparea
 Bundle-Activator: de.uniol.inf.is.odysseus.spatial.Activator
 Bundle-ActivationPolicy: lazy

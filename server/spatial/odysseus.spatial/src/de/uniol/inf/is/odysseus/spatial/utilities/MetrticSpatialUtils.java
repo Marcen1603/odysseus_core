@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.spatial.utilities;
 
+import java.awt.geom.Point2D;
+
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -7,6 +9,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * This class provides methods used for spatial calculations.
@@ -14,20 +17,20 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author Tobias Brandt
  *
  */
-public class SpatialUtils {
+public class MetrticSpatialUtils {
 
 	private CoordinateReferenceSystem defaultCrs;
 
-	private static SpatialUtils instance;
+	private static MetrticSpatialUtils instance;
 
-	public static SpatialUtils getInstance() {
+	public static MetrticSpatialUtils getInstance() {
 		if (instance == null) {
-			instance = new SpatialUtils();
+			instance = new MetrticSpatialUtils();
 		}
 		return instance;
 	}
 
-	private SpatialUtils() {
+	private MetrticSpatialUtils() {
 		try {
 			// Just to make it explicit: We want lat/lng as the normal case
 
@@ -121,6 +124,42 @@ public class SpatialUtils {
 
 		return distance;
 
+	}
+
+	public Envelope getEnvelopeForRadius(Coordinate center, double rangeMeters) {
+
+		org.geotools.referencing.GeodeticCalculator calc = new org.geotools.referencing.GeodeticCalculator();
+		// mind, this is lon/lat
+		calc.setStartingGeographicPoint(center.y, center.x);
+		
+		
+		// get upper left point
+		// go to the north
+		calc.setDirection(0 /* azimuth */, rangeMeters/* distance */);
+		calc.setStartingGeographicPoint(calc.getDestinationGeographicPoint());
+		// go to the west
+		calc.setDirection(270, rangeMeters);
+		Point2D upperLeft = calc.getDestinationGeographicPoint();
+			
+		// go to upper right point
+		calc.setStartingGeographicPoint(upperLeft);
+		// from the top left go 2 times the range to the upper right
+		calc.setDirection(90, 2 * rangeMeters); 
+		Point2D upperRight = calc.getDestinationGeographicPoint();
+		
+		// go to lower right point
+		calc.setStartingGeographicPoint(upperRight);
+		// from the upper right go 2 times the range to the lower right
+		calc.setDirection(180, 2 * rangeMeters); 
+		Point2D lowerRight = calc.getDestinationGeographicPoint();
+
+		// Create an envelope from these three points
+		Envelope env = new Envelope();
+		env.expandToInclude(upperLeft.getY(), upperLeft.getX());
+		env.expandToInclude(upperRight.getY(), upperRight.getX());
+		env.expandToInclude(lowerRight.getY(), lowerRight.getX());
+		
+		return env;
 	}
 
 }

@@ -34,6 +34,7 @@ public class STDataStructureAO extends UnaryLogicalOp {
 		super(ao);
 		setDataStructureName(ao.dataStructureName);
 		setDataStructureType(ao.dataStructureType);
+		setGeometryPosition(ao.geometryPosition);
 	}
 
 	@Override
