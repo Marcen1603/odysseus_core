@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 
 public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends DefaultTISweepArea<T> {
 
 	private static final long serialVersionUID = -3472731370495830967L;
+	public static final String NAME = "ExtendedTISweepArea";
 
 	transient Comparator<T> purgeComparator = new Comparator<T>() {
 
@@ -29,12 +34,27 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 		}
 	};
 
+	@Override
+	public ISweepArea<T> newInstance(OptionMap options) {
+		return new ExtendedTISweepArea<T>();
+	}
+
 	public List<T> queryAllElementsAsList() {
 		List<T> result = new ArrayList<T>(getElements());
 		return result;
 
 	}
 
+	/*
+	 * The difference to the default implementation is that windows (sweepareas)
+	 * with equal end-timestamps are also considered as sorted wherefore the way
+	 * faster binary search can be used in more cases. (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AbstractTISweepArea#
+	 * isStillInEndTsOrderAfterInsert(de.uniol.inf.is.odysseus.core.metadata.
+	 * IStreamObject, int)
+	 */
 	@Override
 	protected boolean isStillInEndTsOrderAfterInsert(T element, int pos) {
 		if (this.getElements().size() == 0) {
@@ -69,6 +89,25 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 		}
 	}
 
+	/**
+	 * Removes all elements from this sweep area that are totally before
+	 * "element". The while loop in this method can be broken, if the next
+	 * element has a start timestamp that is after or equals to the start
+	 * timestamp of "element", because the elements in the sweep area are
+	 * ordered by their start timestamps.
+	 */
+	@Override
+	public void purgeElements(T element, Order order) {
+		synchronized (getElements()) {
+
+			if (getElements().size() > 5 && hasEndTsOrder) {
+				binarySearch(element, false);
+			} else {
+				iterativeSearch(element, false);
+			}
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> extractElementsBeforeAsList(PointInTime time) {
@@ -81,27 +120,40 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 		synchronized (getElements()) {
 
 			if (getElements().size() > 10 && hasEndTsOrder) {
-				removedElements = binarySearchPurge((T) tuple);
+				removedElements = binarySearch((T) tuple, true);
 			} else {
-				removedElements = iterativePurge((T) tuple);
+				removedElements = iterativeSearch((T) tuple, true);
 			}
 		}
 
 		return removedElements;
 	}
 
-	private List<T> binarySearchPurge(T tuple) {
+	/**
+	 * Removes the elements in an binary search approach.
+	 * 
+	 * @param tuple
+	 *            The tuple to compare the elements with. Used for the
+	 *            timestamps.
+	 * @param extract
+	 *            If set to true, it will return a list of the extracted
+	 *            elements. If set to false, it will just purge them and return
+	 *            null. False may be a bit faster.
+	 * @return A list of the removed elements or null, depending on the boolean
+	 *         parameter
+	 */
+	private List<T> binarySearch(T tuple, final boolean extract) {
 
-		// binary search returns the index of the search key, if it is
-		// contained in the list;
-		// otherwise, (-(insertion point) - 1). The insertion point is
-		// defined as the point at which the key would be inserted into
-		// the list: the index of the first element greater than the
-		// key, or list.size() if all elements in the list are less than
-		// the specified key. Note that this guarantees that the return
-		// value will be >= 0 if and only if the key is found.
-		// Remark: purgeComparator will never return equals!
-
+		/*
+		 * binary search returns the index of the search key, if it is contained
+		 * in the list; otherwise, (-(insertion point) - 1). The insertion point
+		 * is defined as the point at which the key would be inserted into the
+		 * list: the index of the first element greater than the key, or
+		 * list.size() if all elements in the list are less than the specified
+		 * key. Note that this guarantees that the return value will be >= 0 if
+		 * and only if the key is found. Remark: purgeComparator will never
+		 * return equals!
+		 */
 		int delTo = Collections.binarySearch(getElements(), (T) tuple, purgeComparator);
 		// Only remove if before
 		if (delTo < 0) {
@@ -119,10 +171,13 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 					}
 
 					// Get a view of the elements which are going to be removed
-					List<T> subListView = getElements().subList(0, delTo - 1);
+					List<T> subListView = getElements().subList(0, delTo);
 
-					// Copy this list so that we can return it
-					List<T> removedElements = new ArrayList<>(subListView);
+					List<T> removedElements = null;
+					if (extract) {
+						// Copy this list so that we can return it
+						removedElements = new ArrayList<>(subListView);
+					}
 
 					// Remove the elements from the original list
 					subListView.clear();
@@ -132,28 +187,56 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 
 				} else {
 					// We can remove everything
-					List<T> removedElements = new ArrayList<>(getElements());
+					List<T> removedElements = null;
+					if (extract) {
+						removedElements = new ArrayList<>(getElements());
+					}
 					getElements().clear();
 					return removedElements;
 				}
 			}
 		}
 		// We can return an empty list
-		return new ArrayList<>();
+		if (extract) {
+			return new ArrayList<>();
+		}
+		return null;
+
 	}
 
-	private List<T> iterativePurge(T tuple) {
-		List<T> removedElements = new ArrayList<>(getElements().size());
+	/**
+	 * Removes the elements in an iterative approach.
+	 * 
+	 * @param tuple
+	 *            The tuple to compare the elements with. Used for the
+	 *            timestamps.
+	 * @param extract
+	 *            If set to true, it will return a list of the extracted
+	 *            elements. If set to false, it will just purge them and return
+	 *            null. False may be a bit faster.
+	 * @return A list of the removed elements or null, depending on the boolean
+	 *         parameter
+	 */
+	private List<T> iterativeSearch(T tuple, final boolean extract) {
+		List<T> removedElements = null;
+		if (extract) {
+			removedElements = new ArrayList<>(getElements().size());
+		}
 		Iterator<T> it = this.getElements().iterator();
 
 		while (it.hasNext()) {
 			T cur = it.next();
 			if (getRemovePredicate().evaluate(cur, tuple)) {
-				removedElements.add(cur);
+				if (extract) {
+					// We only need to collect the tuples if we want to extract
+					// them
+					removedElements.add(cur);
+				}
 				it.remove();
 			}
 
 			if (cur.getMetadata().getStart().afterOrEquals(tuple.getMetadata().getStart())) {
+				// We can end the loop cause the start-timestamp is ordered
 				return removedElements;
 			}
 		}
@@ -161,4 +244,57 @@ public class ExtendedTISweepArea<T extends IStreamObject<? extends ITimeInterval
 		return removedElements;
 	}
 
+	// Copied from the JoinTISweepArea
+	@Override
+	public Iterator<T> queryCopy(T element, Order order, boolean extract) {
+		LinkedList<T> result = new LinkedList<T>();
+		Iterator<T> iter;
+		synchronized (this.getElements()) {
+			switch (order) {
+			case LeftRight:
+				iter = this.getElements().iterator();
+				while (iter.hasNext()) {
+					T next = iter.next();
+					if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
+						continue;
+					}
+					if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
+						break;
+					}
+					if (getQueryPredicate().evaluate(element, next)) {
+						result.add(next);
+						if (extract) {
+							iter.remove();
+						}
+					}
+
+				}
+				break;
+			case RightLeft:
+				iter = this.getElements().iterator();
+				while (iter.hasNext()) {
+					T next = iter.next();
+					if (TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())) {
+						continue;
+					}
+					if (TimeInterval.totallyAfter(next.getMetadata(), element.getMetadata())) {
+						break;
+					}
+					if (getQueryPredicate().evaluate(next, element)) {
+						result.add(next);
+						if (extract) {
+							iter.remove();
+						}
+					}
+				}
+				break;
+			}
+		}
+		return result.iterator();
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
 }

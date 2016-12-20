@@ -64,7 +64,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		boolean check = JoinTransformationHelper.canBeUsedWithHashJoin(predicate, ownSchema, otherSchema, areas);
 
 		// Automatically set HashJoinSA if predicate is pure equals predicate
-		if (areaName == "" && check){
+		if (areaName.isEmpty() && check){
 			areaName = HASH_JOIN_SA;
 		}
 
@@ -75,10 +75,14 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 				throw new TransformationException("Cannot use " + areaName + " with this predicate "
 						+ joinPO.getPredicate() + ". Only equals predicates are possible!");
 			}
+		} else {
+			// The user does not want to use a HashSweepArea but something else. As the areas are already created, we will remove them here
+			areas[0] = null;
+			areas[1] = null;
 		}
 
 		if (areas[0] == null || areas[1] == null) {
-			if (areaName == null || areaName == "") {
+			if (areaName == null || areaName.isEmpty()) {
 				areaName = "TIJoinSA";
 			}
 			try {
