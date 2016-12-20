@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 
 /**
@@ -24,6 +25,14 @@ public interface IMovingObjectDataStructure {
 	 *            The object to add to the data structure
 	 */
 	public void add(Object o);
+
+	/**
+	 * Cleans the data structure and removed elements which are not valid any
+	 * longer.
+	 * 
+	 * @param timestamp The timestamp for which all elements which end-timestamp is smaller are removed.
+	 */
+	public void cleanUp(PointInTime timestamp);
 
 	/**
 	 * Add a listener to the data structure. The listener is notified when the
@@ -69,7 +78,7 @@ public interface IMovingObjectDataStructure {
 	 * @return A list of tuples which are the nearest neighbors of the given
 	 *         geometry
 	 */
-	public List<Tuple<?>> getKNN(Geometry geometry, int k, ITimeInterval t);
+	public List<Tuple<?>> queryKNN(Geometry geometry, int k, ITimeInterval t);
 
 	/**
 	 * Calculates all neighbors within the given range around the geometry.
@@ -85,7 +94,7 @@ public interface IMovingObjectDataStructure {
 	 * @return A list with all tuples for which their geometry is in the
 	 *         neighborhood around the given geometry
 	 */
-	public List<Tuple<?>> getNeighborhood(Geometry geometry, double range, ITimeInterval t);
+	public List<Tuple<?>> queryNeighborhood(Geometry geometry, double range, ITimeInterval t);
 
 	/**
 	 * Queries the data structure and returns all data points which are in a
@@ -102,5 +111,9 @@ public interface IMovingObjectDataStructure {
 	 */
 	public List<Tuple<?>> queryBoundingBox(List<Point> coordinates, ITimeInterval t);
 
-	int getGeometryPosition();
+	/**
+	 * 
+	 * @return The position in the tuple where the geometry can be found
+	 */
+	public int getGeometryPosition();
 }

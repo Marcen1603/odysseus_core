@@ -231,7 +231,7 @@ public class SpatialDataStructureTest extends TestCase {
 	@Test
 	public void testkNN() {
 		int k = neighbors.size();
-		List<Tuple<?>> kNN = dataStructure.getKNN(kNNTestCenter, k, testSearchInterval);
+		List<Tuple<?>> kNN = dataStructure.queryKNN(kNNTestCenter, k, testSearchInterval);
 		assertEqualList(kNN, neighbors);
 	}
 
@@ -241,7 +241,7 @@ public class SpatialDataStructureTest extends TestCase {
 	 */
 	@Test
 	public void testRange() {
-		List<Tuple<?>> rangeResult = dataStructure.getNeighborhood(rangeTestCenter, range, testSearchInterval);
+		List<Tuple<?>> rangeResult = dataStructure.queryNeighborhood(rangeTestCenter, range, testSearchInterval);
 		assertEqualList(rangeResult, rangeNeighbors);
 	}
 

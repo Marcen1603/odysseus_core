@@ -54,7 +54,7 @@ public class SpatialKNNPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 			GeometryWrapper geometryWrapper = null;
 			if (o instanceof GeometryWrapper) {
 				geometryWrapper = (GeometryWrapper) o;
-				List<Tuple<?>> neighbors = this.dataStructure.getKNN(geometryWrapper.getGeometry(), this.k,
+				List<Tuple<?>> neighbors = this.dataStructure.queryKNN(geometryWrapper.getGeometry(), this.k,
 						new TimeInterval(tuple.getMetadata().getStart(), tuple.getMetadata().getEnd()));
 				Tuple<?> newTuple = ((Tuple<?>) object).append(neighbors);
 				transfer((T) newTuple);
