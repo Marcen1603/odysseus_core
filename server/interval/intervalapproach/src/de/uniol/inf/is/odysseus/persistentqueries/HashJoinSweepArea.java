@@ -15,11 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.persistentqueries;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +34,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.server.intervalapproach.comparator.EndTsComparator;
+import de.uniol.inf.is.odysseus.server.intervalapproach.comparator.StartTsComparator;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  * @author Andre Bolles, Cornelius Ludmann, Marco Grawunder
  *
  */
-// @SuppressWarnings({"unchecked","rawtypes"})
 public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> {
 
 	private static final long serialVersionUID = -8331551296317426445L;
@@ -56,30 +55,20 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	 */
 	private Map<Object, Set<Tuple<? extends ITimeInterval>>> elements;
 
-	protected class QueueComparator implements Comparator<Tuple<? extends ITimeInterval>>, Serializable {
-
-		private static final long serialVersionUID = 5321893137959979782L;
-
-		@Override
-		public int compare(Tuple<? extends ITimeInterval> left, Tuple<? extends ITimeInterval> right) {
-			PointInTime l = left.getMetadata().getEnd();
-			PointInTime r = right.getMetadata().getEnd();
-
-			int c = l.compareTo(r);
-			if (c == 0) {
-				return Long.compare(l.tiBreaker, r.tiBreaker);
-			}
-			return c;
-		}
-
-	}
-
-	protected final QueueComparator queueComp = new QueueComparator();
+	static protected final EndTsComparator endTsComp = new EndTsComparator();
+	static protected final StartTsComparator startTsComp = new StartTsComparator();
 
 	/**
-	 * Access elements by time index
+	 * Access elements by start time index
 	 */
-	final private PriorityQueue<Tuple<? extends ITimeInterval>> timeIndex;
+	final private PriorityQueue<StreamObjectWrapper<Tuple<ITimeInterval>, ITimeInterval>> startTimeIndex;
+	private PointInTime maxStartTs;
+
+	/**
+	 * Access elements by end time index
+	 */
+	final private PriorityQueue<StreamObjectWrapper<Tuple<ITimeInterval>, ITimeInterval>> endTimeIndex;
+	private PointInTime maxEndTs;
 
 	/**
 	 * This list is used for projecting new elements that are to be inserted
@@ -98,9 +87,6 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	private boolean inputOrderedByTime;
 
-	private PointInTime minMaxTs = null;
-	private PointInTime maxMaxTs = null;
-
 	private String areaName;
 
 	@Override
@@ -115,15 +101,16 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		this.queryRestrictList = queryRestrictList;
 		this.inputOrderedByTime = inputOrderedByTime;
 		if (inputOrderedByTime) {
-			this.timeIndex = new PriorityQueue<>();
+			this.startTimeIndex = new PriorityQueue<>();
 		} else {
-			this.timeIndex = new PriorityQueue<>(11, queueComp);
+			this.startTimeIndex = new PriorityQueue<>(11, startTsComp);
 		}
+		endTimeIndex = new PriorityQueue<>(11, endTsComp);
 	}
 
 	private void check(int[] insertRestrictList) {
-		for (int v: insertRestrictList){
-			if (v == -1){
+		for (int v : insertRestrictList) {
+			if (v == -1) {
 				throw new IllegalArgumentException("Restrictlist cannot not contain -1");
 			}
 		}
@@ -136,11 +123,13 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		this.queryRestrictList = original.queryRestrictList;
 		this.inputOrderedByTime = original.inputOrderedByTime;
 		if (inputOrderedByTime) {
-			this.timeIndex = new PriorityQueue<>();
+			this.startTimeIndex = new PriorityQueue<>();
 		} else {
-			this.timeIndex = new PriorityQueue<>(11, queueComp);
+			this.startTimeIndex = new PriorityQueue<>(11, startTsComp);
 		}
-		this.timeIndex.addAll(original.timeIndex);
+		this.startTimeIndex.addAll(original.startTimeIndex);
+		endTimeIndex = new PriorityQueue<>(11, endTsComp);
+		this.endTimeIndex.addAll(original.endTimeIndex);
 	}
 
 	protected static Object getKey(Tuple<? extends ITimeInterval> element, int[] restrictList) {
@@ -164,7 +153,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	private void putToElements(Object key, Tuple<? extends ITimeInterval> element) {
 		Set<Tuple<? extends ITimeInterval>> set = this.elements.get(key);
-		if(set == null) {
+		if (set == null) {
 			set = Sets.newIdentityHashSet();
 			this.elements.put(key, set);
 		}
@@ -175,21 +164,21 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	public Iterator<Tuple<? extends ITimeInterval>> queryCopy(Tuple<? extends ITimeInterval> element, Order order,
 			boolean extract) {
 		if (this.elements.isEmpty()) {
-			return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
+			return Collections.<Tuple<? extends ITimeInterval>>emptyList().iterator();
 		}
 
 		List<Tuple<? extends ITimeInterval>> result;
 		synchronized (this.elements) {
 			Object key = getKey(element, queryRestrictList);
 			if (!this.elements.containsKey(key))
-				return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
+				return Collections.<Tuple<? extends ITimeInterval>>emptyList().iterator();
 
 			result = new ArrayList<>();
 			Collection<Tuple<? extends ITimeInterval>> matchingTuples = this.elements.get(key);
 
 			for (Iterator<Tuple<? extends ITimeInterval>> iter = matchingTuples.iterator(); iter.hasNext();) {
 				Tuple<? extends ITimeInterval> matchingTuple = iter.next();
-				if(TimeInterval.overlaps(matchingTuple.getMetadata(), element.getMetadata())) {
+				if (TimeInterval.overlaps(matchingTuple.getMetadata(), element.getMetadata())) {
 					if (extract) {
 						result.add(matchingTuple);
 						removeFromTimeIndex(matchingTuple);
@@ -202,48 +191,57 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 			}
 		}
 
-		Collections.sort(result, new Comparator<Tuple<? extends ITimeInterval>>() {
-
-			@Override
-			public int compare(Tuple<? extends ITimeInterval> left, Tuple<? extends ITimeInterval> right) {
-				PointInTime l = left.getMetadata().getStart();
-				PointInTime r = right.getMetadata().getStart();
-
-				int c = l.compareTo(r);
-				if (c == 0) {
-					return Long.compare(l.tiBreaker, r.tiBreaker);
-				}
-				return c;
-			}
-		});
-
+		Collections.sort(result, startTsComp);
 		return result.iterator();
 	}
 
-	private void removeFromTimeIndex(Tuple<? extends ITimeInterval> tuple) {
-		// TODO: Find a better solution?
-		// TODO: Update MIN/MAX
-		if (tuple.getMetadata().getEnd() != PointInTime.INFINITY) {
-			// FIXME: this removes _one_ tuple that is equal (same attributes)
-			timeIndex.remove(tuple);
-		}
-	}
-
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addToTimeIndex(Tuple<? extends ITimeInterval> element) {
-		// TODO: Update MIN/MAX
+		// TODO: is the initial setting of max usefull?
+		// update maxTS-Values
+		if (maxStartTs != null) {
+			PointInTime p = element.getMetadata().getStart();
+			if (maxStartTs.before(p)) {
+				maxStartTs = p;
+			}
+		} else if (startTimeIndex.isEmpty()) {
+			maxStartTs = element.getMetadata().getStart();
+		}
+
+		if (maxEndTs != null) {
+			PointInTime p = element.getMetadata().getEnd();
+			if (maxEndTs.before(p)) {
+				maxEndTs = p;
+			}
+		} else if (endTimeIndex.isEmpty()) {
+			maxEndTs = element.getMetadata().getEnd();
+		}
+
+		this.startTimeIndex.add(new StreamObjectWrapper(element));
 		if (element.getMetadata().getEnd() != PointInTime.INFINITY) {
-			this.timeIndex.add(element);
+			this.endTimeIndex.add(new StreamObjectWrapper(element));
 		}
 	}
 
-	/*
-	 * non-windowed data needs no purging.
-	 *
-	 */
+	private void removeFromTimeIndex(Tuple<? extends ITimeInterval> tuple) {
+		// if bigger element is removed, then max values needs to be reset!
+		// find new value on request
+		if (tuple.getMetadata().getStart().after(maxStartTs)) {
+			maxStartTs = null;
+		}
+		if (tuple.getMetadata().getEnd().after(maxEndTs)) {
+			maxEndTs = null;
+		}
+		if (tuple.getMetadata().getEnd() != PointInTime.INFINITY) {
+			startTimeIndex.remove(new StreamObjectWrapper<>(tuple));
+			endTimeIndex.remove(new StreamObjectWrapper<>(tuple));
+		}
+	}
+
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractElements(Tuple<? extends ITimeInterval> element,
 			Order order) {
-		return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -267,26 +265,26 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		for (Tuple<? extends ITimeInterval> r : toBeInserted) {
 			this.insert(r);
 		}
-
 	}
 
 	@Override
 	public void clear() {
 		this.elements.clear();
-		this.timeIndex.clear();
+		this.startTimeIndex.clear();
+		this.endTimeIndex.clear();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> query(Tuple<? extends ITimeInterval> element,
 			de.uniol.inf.is.odysseus.core.Order order) {
 		if (this.elements.isEmpty()) {
-			return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
+			return Collections.<Tuple<? extends ITimeInterval>>emptyList().iterator();
 		}
 
 		synchronized (this.elements) {
 			Object key = getKey(element, queryRestrictList);
 			if (!this.elements.containsKey(key))
-				return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
+				return Collections.<Tuple<? extends ITimeInterval>>emptyList().iterator();
 
 			Collection<Tuple<? extends ITimeInterval>> matchingTuples = this.elements.get(key);
 			// TODO: check time overlap
@@ -296,22 +294,12 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public Tuple<? extends ITimeInterval> peek() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Tuple<? extends ITimeInterval> poll() {
 		throw new UnsupportedOperationException();
-//		Tuple<? extends ITimeInterval> retVal = null;
-//		Iterator<Tuple<? extends ITimeInterval>> iter = this.elements.values().iterator();
-//		if (iter.hasNext()) {
-//			retVal = iter.next();
-//			iter.remove();
-//
-//		}
-//
-//		return retVal;
 	}
 
 	@Override
@@ -330,11 +318,11 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	 */
 	private boolean removeFromElements(Object key, Tuple<? extends ITimeInterval> element) {
 		Set<Tuple<? extends ITimeInterval>> set = this.elements.get(key);
-		if(set == null) {
+		if (set == null) {
 			return false;
 		}
 		boolean result = set.remove(element);
-		if(set.isEmpty()) {
+		if (set.isEmpty()) {
 			this.elements.remove(key);
 		}
 		return result;
@@ -385,37 +373,79 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	public void purgeElementsBefore(PointInTime time) {
 		// Attention: Priority Queue iterator does not retrieve values in
 		// sort order
-		Tuple<? extends ITimeInterval> top = timeIndex.peek();
+		StreamObjectWrapper<Tuple<ITimeInterval>, ITimeInterval> top = endTimeIndex.peek();
 		while (top != null && top.getMetadata().getEnd().beforeOrEquals(time)) {
-			timeIndex.poll();
-			Object key = getKey(top, insertRestrictList);
+			endTimeIndex.poll();
+			Object key = getKey(top.getWrappedObject(), insertRestrictList);
 			synchronized (this.elements) {
-				removeFromElements(key, top);
+				removeFromElements(key, top.getWrappedObject());
+				startTimeIndex.remove(top);
 			}
-			top = timeIndex.peek();
+			top = endTimeIndex.peek();
 		}
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractElementsBefore(PointInTime time) {
-		return Collections.<Tuple<? extends ITimeInterval>> emptyList().iterator();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<Tuple<? extends ITimeInterval>> extractElementsBeforeAsList(PointInTime time) {
-		return new ArrayList<Tuple<? extends ITimeInterval>>();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public PointInTime getMaxTs() {
-		// TODO: FIXME
-		return maxMaxTs;
+	public PointInTime getMinStartTs() {
+		if (startTimeIndex.isEmpty()){
+			return null;
+		}
+		return startTimeIndex.peek().getMetadata().getStart();
 	}
 
 	@Override
-	public PointInTime getMinTs() {
-		// TODO: FIXME
-		return minMaxTs;
+	public PointInTime getMaxStartTs() {
+		if (maxStartTs == null) {
+			// Priority queue does not give elements in any order
+			// so iterate over queue and determine max element is necessary
+			Iterator<StreamObjectWrapper<Tuple<ITimeInterval>, ITimeInterval>> iter = startTimeIndex.iterator();
+			PointInTime currentMax = null;
+			if (iter.hasNext()) {
+				currentMax = iter.next().getMetadata().getStart();
+				while (iter.hasNext()) {
+					PointInTime toTest = iter.next().getMetadata().getStart();
+					if (toTest.after(currentMax)){
+						currentMax = toTest;
+					}
+				}
+
+			}
+			maxStartTs = currentMax;
+		}
+		return maxStartTs;
+	}
+
+
+	@Override
+	public PointInTime getMaxEndTs() {
+		if (maxEndTs == null) {
+			// Priority queue does not give elements in any order
+			// so iterate over queue and determine max element is necessary
+			Iterator<StreamObjectWrapper<Tuple<ITimeInterval>, ITimeInterval>> iter = endTimeIndex.iterator();
+			PointInTime currentMax = null;
+			if (iter.hasNext()) {
+				currentMax = iter.next().getMetadata().getEnd();
+				while (iter.hasNext()) {
+					PointInTime toTest = iter.next().getMetadata().getEnd();
+					if (toTest.after(currentMax)){
+						currentMax = toTest;
+					}
+				}
+
+			}
+			maxEndTs = currentMax;
+		}
+		return maxEndTs;
 	}
 
 	@Override
@@ -434,16 +464,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 		return s;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getMaxEndTs()
-	 */
-	@Override
-	public PointInTime getMaxEndTs() {
-		return PointInTime.INFINITY;
-	}
+
 
 	@Override
 	public String getName() {
@@ -452,87 +473,73 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public Tuple<? extends ITimeInterval> peekLast() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractAllElements() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<Tuple<? extends ITimeInterval>> extractAllElementsAsList() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractElementsStartingBefore(PointInTime time) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> queryElementsStartingBefore(PointInTime validity) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractElementsStartingBeforeOrEquals(PointInTime time) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractElementsStartingEquals(PointInTime validity) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<Tuple<? extends ITimeInterval>> queryOverlapsAsList(ITimeInterval interval) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> queryOverlaps(ITimeInterval interval) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<Tuple<? extends ITimeInterval>> queryContains(PointInTime point) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> extractOverlaps(ITimeInterval t) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<Tuple<? extends ITimeInterval>> extractOverlapsAsList(ITimeInterval t) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getSweepAreaAsString(String tab, int max, boolean tail) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<Tuple<? extends ITimeInterval>> queryOverlapsAsListExtractOutdated(ITimeInterval interval,
 			List<Tuple<? extends ITimeInterval>> outdated) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

@@ -92,7 +92,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(logical.getServiceMethod(),
 				logical.getMethod(), logical.getContentType(), logical.getUrl(), logical.isUrlIsTemplate() ,logical.getUrlSuffix(), arguments,
 				logical.getHeader(), logical.getOperation(), logical.getReceivedData(), logical.getCharset(),
-				logical.getParsingMethod(), logical.getOuterJoin(), logical.getKeyValueOutput(),
+				logical.getParsingMethod(), logical.getOuterJoin(), logical.isAllowNullValues(), logical.getKeyValueOutput(),
 				logical.getMultiTupleOutput(), logical.getUniqueKeysAsArray(), dataMergeFunction, dataLeftMergeFunction,
 				metaMerge, connection, requestBuilder, converter, keyFinder, messageCreator, messageManipulator,
 				cacheManager);

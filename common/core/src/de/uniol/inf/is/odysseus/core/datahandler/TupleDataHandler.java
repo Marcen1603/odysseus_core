@@ -340,7 +340,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			}
 
 			if (!DataHandlerRegistry.containsDataHandler(uri)) {
-				throw new IllegalArgumentException("Datatype cannot be used in transport!" + uri);
+				throw new IllegalArgumentException("Datatype "+uri+" of Attribute "+attribute+" cannot be used in transport!" );
 			}
 
 			SDFSchema subSchema;

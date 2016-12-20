@@ -628,6 +628,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public String toString() {
 		if (type == KindOfDatatype.GENERIC) {
 			return super.toString() + "<" + getSubType() + ">";
+		} else if (type == KindOfDatatype.LIST){
+			return KindOfDatatype.LIST+ "<" + getSubType() + ">";
 		} else {
 			return super.toString();
 		}
