@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.QuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
@@ -56,14 +55,19 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 		if (port == 0) {
 			this.dataStructure.add(tuple);
 		} else if (port == 1) {
+			this.dataStructure.cleanUp(tuple.getMetadata().getStart());
 			List<Tuple<?>> neighbors = queryObject(tuple);
 
-//			IAttributeResolver attributeResolver = new DirectAttributeResolver(this.getOutputSchema());
-//			IPredicate test = OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE")
-//					.createPredicate(attributeResolver, "MMSI != 316652310");
+			// IAttributeResolver attributeResolver = new
+			// DirectAttributeResolver(this.getOutputSchema());
+			// IPredicate test =
+			// OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE")
+			// .createPredicate(attributeResolver, "MMSI != 316652310");
 
-//			Tuple[] tuples = neighbors.stream().filter(e -> test.evaluate(e)).toArray(size -> new Tuple[size]);
-//			List<Tuple> filteredNeighbors = new ArrayList<Tuple>(Arrays.asList(tuples));
+			// Tuple[] tuples = neighbors.stream().filter(e ->
+			// test.evaluate(e)).toArray(size -> new Tuple[size]);
+			// List<Tuple> filteredNeighbors = new
+			// ArrayList<Tuple>(Arrays.asList(tuples));
 
 			Tuple<?> newTuple = tuple.append(neighbors);
 			transfer((T) newTuple);
@@ -84,7 +88,7 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 		GeometryWrapper geometryWrapper = null;
 		if (o instanceof GeometryWrapper) {
 			geometryWrapper = (GeometryWrapper) o;
-			return this.dataStructure.getNeighborhood(geometryWrapper.getGeometry(), this.range,
+			return this.dataStructure.queryNeighborhood(geometryWrapper.getGeometry(), this.range,
 					new TimeInterval(tuple.getMetadata().getStart(), tuple.getMetadata().getEnd()));
 		}
 		return null;
