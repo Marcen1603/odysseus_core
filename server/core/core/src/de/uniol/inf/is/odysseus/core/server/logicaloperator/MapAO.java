@@ -104,7 +104,7 @@ public class MapAO extends UnaryLogicalOp {
 				exprString = expr.expression.toString();
 				// Replace '(' and ')' so the expression will not be recognized
 				// as expression in the next operator (e.g. if it is a map)
-				exprString = exprString.replace('(', '_').replace(')', '_');
+				exprString = SDFAttribute.replaceSpecialChars(exprString);
 
 				// Variable could be source.name oder name, we are looking
 				// for

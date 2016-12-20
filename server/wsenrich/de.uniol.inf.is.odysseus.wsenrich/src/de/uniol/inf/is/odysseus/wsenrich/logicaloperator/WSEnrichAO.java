@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.wsenrich.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -17,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
@@ -147,6 +149,8 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	private boolean urlIsTemplate = false;
 
+	private boolean allowNullValues = true;
+
 	/**
 	 * Default-Constructor for the WSEnrichAO
 	 */
@@ -177,7 +181,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		this.getOrPost = wsEnrichAO.setGetOrPost();
 		this.keyValueOutput = wsEnrichAO.keyValueOutput;
 		this.wsdlLocation = wsEnrichAO.wsdlLocation;
-
+		this.allowNullValues = wsEnrichAO.allowNullValues;
 	}
 
 	@Override
@@ -187,9 +191,19 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	@Override
 	public void initialize() {
-		SDFSchema webserviceData = SDFSchemaFactory.createNewWithAttributes(receivedData, getInputSchema());
+		SDFSchema webserviceData = SDFSchemaFactory.createNewWithAttributes(fixOutputNames(receivedData), getInputSchema());
 		SDFSchema outputSchema = SDFSchema.union(getInputSchema(), webserviceData);
 		setOutputSchema(outputSchema);
+	}
+
+	private Collection<SDFAttribute> fixOutputNames(List<SDFAttribute> receivedData2) {
+		List<SDFAttribute> ret = new ArrayList<SDFAttribute>();
+		for (SDFAttribute a: receivedData2){
+			String oldAttributeName = a.getAttributeName();
+			oldAttributeName = SDFAttribute.replaceSpecialChars(oldAttributeName);
+			ret.add(new SDFAttribute(a.getSourceName(), oldAttributeName, a));
+		}
+		return ret;
 	}
 
 	@Override
@@ -209,7 +223,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param serviceMethod
 	 */
-	@Parameter(type = StringParameter.class, name = "serviceMethod")
+	@Parameter(type = StringParameter.class, name = "serviceMethod", doc="Method by which the web service should be accessed: Possible Values 'REST' and 'SOAP'")
 	public void setServiceMethod(String serviceMethod) {
 		this.serviceMethod = serviceMethod;
 	}
@@ -226,12 +240,12 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param method
 	 */
-	@Parameter(type = StringParameter.class, name = "method")
+	@Parameter(type = StringParameter.class, name = "method", doc = "How to access the web service. For REST this is typically GET. Other methods are POST_ARGUMENTS, POST_DOCUMENT")
 	public void setMethod(String method) {
 		this.method = method;
 	}
 
-	@Parameter(type = StringParameter.class, name = "contentType", optional = true)
+	@Parameter(type = StringParameter.class, name = "contentType", optional = true, doc  = "The http request header content type.")
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
@@ -252,7 +266,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param url
 	 */
-	@Parameter(type = StringParameter.class, name = "url")
+	@Parameter(type = StringParameter.class, name = "url", doc="static part of the url, will be used in request. Remark: Must contain ? to seperate arguments")
 	public void setUrl(String url) {
 		this.url = url;
 	}
@@ -269,12 +283,21 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return urlIsTemplate;
 	}
 
-	@Parameter(type = BooleanParameter.class, name="templateURL", optional = true)
+	@Parameter(type = BooleanParameter.class, name="templateURL", optional = true, doc = "If the url is a template, set to true.")
 	public void setUrlIsTemplate(boolean urlIsTemplate) {
 		this.urlIsTemplate = urlIsTemplate;
 	}
 
-	@Parameter(type = StringParameter.class, optional = true)
+	@Parameter(type = BooleanParameter.class, optional = true, doc="In some case, e.g. when receiving complex documents, single attributes could be empty but the result should not be empty. Set to false if this is not desired")
+	public void setAllowNullValues(boolean allowNullValues) {
+		this.allowNullValues = allowNullValues;
+	}
+
+	public boolean isAllowNullValues() {
+		return allowNullValues;
+	}
+
+	@Parameter(type = StringParameter.class, optional = true, doc="A template that should be used in a post request as content. Elements are replaced from arguments.")
 	public void setTemplate(String template) {
 		this.template = template;
 	}
@@ -288,7 +311,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param urlSuffix
 	 */
-	@Parameter(type = StringParameter.class, name = "urlSuffix", optional = true)
+	@Parameter(type = StringParameter.class, name = "urlSuffix", optional = true, doc="url part after argument, will be appended at the end of the url (e.g for further static parts)")
 	public void setUrlSuffix(String urlSuffix) {
 		this.urlsuffix = urlSuffix;
 	}
@@ -305,7 +328,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param arguments
 	 */
-	@Parameter(type = OptionParameter.class, name = "arguments", isList = true, optional = true)
+	@Parameter(type = OptionParameter.class, name = "arguments", isList = true, optional = true, doc ="This is a key value map, first element is the name of the attribute in web service, the second the name of the attribute from the input stream that delivers the input element")
 	public void setArguments(List<Option> arguments) {
 		this.arguments = arguments;
 	}
@@ -315,7 +338,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param arguments
 	 */
-	@Parameter(type = OptionParameter.class, name = "header", isList = true, optional = true)
+	@Parameter(type = OptionParameter.class, name = "header", isList = true, optional = true, doc ="Additional headers for the http request.")
 	public void setHeader(List<Option> header) {
 		this.header = header;
 	}
@@ -341,7 +364,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param operation
 	 */
-	@Parameter(type = StringParameter.class, name = "operation", optional = true)
+	@Parameter(type = StringParameter.class, name = "operation", optional = true, doc ="operation used to call a SOAP-Webservice")
 	public void setOperation(String operation) {
 		this.operation = operation;
 	}
@@ -353,7 +376,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		return receivedData;
 	}
 
-	@Parameter(type = CreateSDFAttributeParameter.class, name = "datafields", isList = true)
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "datafields", isList = true, doc ="the datafields received through the webservice, given as path expressions")
 	public void setReceivedData(List<SDFAttribute> receivedData) {
 		this.receivedData = receivedData;
 	}
@@ -371,7 +394,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 * @param charset
 	 *            The charset. Standard ist UTF-8
 	 */
-	@Parameter(type = StringParameter.class, name = "charset", optional = true)
+	@Parameter(type = StringParameter.class, name = "charset", optional = true, doc = "the charset, e.g. UTF-8")
 	public void setCharset(String charset) {
 		this.charset = charset;
 	}
@@ -389,7 +412,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 * @param parsingMethod
 	 *            the return type
 	 */
-	@Parameter(type = StringParameter.class, name = "parsingMethod")
+	@Parameter(type = StringParameter.class, name = "parsingMethod", doc ="How to extract the values from the returned document: Currently available: 'JSONEXPERIMENTAL','JSONPATH','XMLEXPERIMENTAL','XPATH'")
 	public void setParsingMethod(String parsingMethod) {
 		this.parsingMethod = parsingMethod;
 	}
@@ -416,7 +439,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param keyValueOutput
 	 */
-	@Parameter(type = BooleanParameter.class, optional = true, name = "keyValueOutput")
+	@Parameter(type = BooleanParameter.class, optional = true, name = "keyValueOutput", doc = "If true, received Data from a Webservice are returned as keyValuePair.")
 	public void setKeyValueOutput(boolean keyValueOutput) {
 		this.keyValueOutput = keyValueOutput;
 	}
@@ -440,7 +463,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 	 *
 	 * @param wsdlLocation
 	 */
-	@Parameter(type = StringParameter.class, optional = true, name = "wsdlLocation")
+	@Parameter(type = StringParameter.class, optional = true, name = "wsdlLocation", doc ="url to the location of the wsdl file, i.e. what is the address of the web service for soap")
 	public void setWsdlLocaton(String wsdlLocation) {
 		this.wsdlLocation = wsdlLocation;
 	}
