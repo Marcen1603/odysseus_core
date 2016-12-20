@@ -88,7 +88,6 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			try {
 				areas[0] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
 				areas[1] = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(areaName);
-				;
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new TransformationException("Cannot find sweep area of type " + areaName);
 			}

@@ -4,13 +4,11 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-import de.uniol.inf.is.odysseus.spatial.datastructures.ExtendedTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.MovingObjectDataStructuresRegistry;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.QuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.access.transport.SpatioTemporalDataStructureTransportHandler;
-import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class Activator implements BundleActivator {
 
@@ -31,7 +29,6 @@ public class Activator implements BundleActivator {
 		MovingObjectDataStructuresRegistry.register(NaiveSTDataStructure.class, NaiveSTDataStructure.TYPE);
 		MovingObjectDataStructuresRegistry.register(QuadTreeSTDataStructure.class, QuadTreeSTDataStructure.TYPE);
 		MovingObjectDataStructuresRegistry.register(FastQuadTreeSTDataStructure.class, FastQuadTreeSTDataStructure.TYPE);
-	
 	}
 
 	/*
