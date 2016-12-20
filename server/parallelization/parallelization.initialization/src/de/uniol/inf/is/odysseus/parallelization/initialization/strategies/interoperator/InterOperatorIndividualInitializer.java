@@ -39,12 +39,10 @@ public class InterOperatorIndividualInitializer {
 			}
 		}
 
-		if (existing.getConfigurationForOperator(operatorId) == null) {
-			existing.addConfigurationForOperator(operatorId, newConfiguration);
-		} else {
+		if (existing.getConfigurationForOperator(operatorId) != null) {
 			existing.removeConfigurationForOperator(operatorId);
-			existing.addConfigurationForOperator(operatorId, newConfiguration);
 		}
+		existing.addConfigurationForOperator(operatorId, newConfiguration);
 
 	}
 

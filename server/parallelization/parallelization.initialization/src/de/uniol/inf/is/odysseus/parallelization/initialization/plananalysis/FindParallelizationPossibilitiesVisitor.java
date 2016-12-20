@@ -30,7 +30,7 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 
 	public static final String UNIQUE_ID_PREFIX = ".pid.";
 
-	private static int counter = 0;
+	private int counter = 0;
 
 	private List<IParallelizationIndividualConfiguration> possibleParallelizations = new ArrayList<>();
 	private String queryIdentifier;
