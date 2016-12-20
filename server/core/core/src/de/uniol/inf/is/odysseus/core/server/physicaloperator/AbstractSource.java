@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,22 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// Only active subscription are served on transfer
 	final private List<AbstractPhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
 	final private List<AbstractPhysicalSubscription<ISink<? super T>>> connectedSinks = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
+
+	final private Comparator<AbstractPhysicalSubscription<?>> sortByCloneComparator = new Comparator<AbstractPhysicalSubscription<?>>() {
+
+		@Override
+		public int compare(AbstractPhysicalSubscription<?> left, AbstractPhysicalSubscription<?> right) {
+			if (left.isNeedsClone() == right.isNeedsClone()){
+				return 0;
+			}
+			if (left.isNeedsClone() && !right.isNeedsClone()){
+				return -1;
+			}
+			return 1;
+		}
+
+	};
+
 	private boolean readdedConnectedSinks = false;
 	final private Map<Integer, Integer> consumerCount = new HashMap<>();
 
@@ -405,6 +422,10 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 				currentCount = 0;
 			}
 			consumerCount.put(sub.getSourceOutPort(), currentCount + 1);
+
+			// the subscriptions must be ordered. All elements that clone need to be the first in the list
+			Collections.sort(activeSinkSubscriptions, this.sortByCloneComparator);
+
 			newReceiver(sub);
 		}
 	}
@@ -775,6 +796,9 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
+		// All connected sinks needs a cloned version as the sinks are connected without
+		// running the query translation phase
+		sub.setNeedsClone(true);
 		sink.addOwner(this.getOwner());
 		addActiveSubscription(sub);
 		connectedSinks.add(sub);
