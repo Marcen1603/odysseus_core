@@ -5,9 +5,12 @@ package de.uniol.inf.is.odysseus.parallelization.initialization.strategies.inter
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.parallelization.initialization.exception.ParallelizationTransormationException;
+import de.uniol.inf.is.odysseus.parallelization.initialization.exception.ParallelizationTransformationException;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.AbstractParallelizationConfiguration;
 
 /**
@@ -15,6 +18,8 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.Abstra
  *
  */
 public class InterOperatorParallelizationConfiguration extends AbstractParallelizationConfiguration {
+	
+	private static Logger LOG = LoggerFactory.getLogger(InterOperatorParallelizationConfiguration.class);
 
 	private int degree;
 	private int bufferSize;
@@ -46,9 +51,8 @@ public class InterOperatorParallelizationConfiguration extends AbstractParalleli
 			InterOperatorIndividualInitializer.createInterIndividualConfiguration(settings,
 					getOperator().getUniqueIdentifier(), degree, bufferSize, parallelizationStrategy,
 					fragmentationStrategy);
-		} catch (ParallelizationTransormationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ParallelizationTransformationException e) {
+			LOG.error("Creating individual parallelization configuration for operator " + operator + " failed.", e);
 		}
 
 	}

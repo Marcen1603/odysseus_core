@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParal
  * @author Dennis Nowak
  *
  */
-public interface IPlanAnalyser {
+public interface IPlanAnalyzer {
 
 	public List<IParallelizationIndividualConfiguration> getParalisableOperators(ILogicalQuery query);
 

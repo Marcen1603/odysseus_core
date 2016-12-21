@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialPattern;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialPatternAO;
-import de.uniol.inf.is.odysseus.spatial.utilities.SpatialUtils;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 @SuppressWarnings("rawtypes")
 public class SpatialAreaPatternPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
@@ -185,7 +185,7 @@ public class SpatialAreaPatternPO<T extends Tuple<M>, M extends ITimeInterval> e
 		Coordinate coord2 = new Coordinate(latTarget, lngTarget);
 		
 		// TODO Use correct Coordinate Reference system
-		SpatialUtils spatialUtils = SpatialUtils.getInstance();
+		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
 		return spatialUtils.calculateDistance(coord1, coord2);
 	}
 

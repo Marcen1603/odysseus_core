@@ -11,17 +11,17 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParallelizationIndividualConfiguration;
 
 /**
- * @author Dennis
+ * @author Dennis Nowak
  *
  */
-public class StandardPlanAnalyser extends AbstractPlanAnalyser {
+public class StandardPlanAnalyzer implements IPlanAnalyzer {
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.parallelization.initialization.plananalysis.
-	 * IPlanAnalyser#getParalisableOperators(de.uniol.inf.is.odysseus.core.
+	 * IPlanAnalyzer#getParalisableOperators(de.uniol.inf.is.odysseus.core.
 	 * planmanagement.query.ILogicalQuery)
 	 */
 	@Override

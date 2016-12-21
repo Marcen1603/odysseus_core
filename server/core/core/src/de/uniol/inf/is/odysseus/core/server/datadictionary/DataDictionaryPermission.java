@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,22 +39,24 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
  */
 public enum DataDictionaryPermission implements IPermission {
 	ADD_ENTITY, GET_ENTITY, REMOVE_ENTITY,
-	
+
 	ADD_DATATYPE,
 
-	ADD_SOURCETYPE, 
+	ADD_SOURCETYPE,
 
 	ADD_STREAM, REMOVE_STREAM, REMOVE_VIEW, ADD_VIEW, READ,
-	
+
 	ADD_STORED_PROCEDURE, REMOVE_STORED_PROCEDURE, EXECUTE,
+
+	ADD_STORE, REMOVE_STORE,
 
 	GET_ALL, REMOVE_ALL;
 
 	public final static String objectURI ="datadictionary";
-	
+
 	/**
 	 * returns the higher action (permission) for a given action.
-	 * 
+	 *
 	 * @param action
 	 * @return IPermission
 	 */
@@ -76,7 +78,7 @@ public enum DataDictionaryPermission implements IPermission {
 	/**
 	 * returns whether the given action (permission) operates with an objecturi
 	 * or the action class alias.
-	 * 
+	 *
 	 * @param action
 	 * @return
 	 */
@@ -92,7 +94,7 @@ public enum DataDictionaryPermission implements IPermission {
 			return false;
 		}
 	}
-	
-	
+
+
 
 }

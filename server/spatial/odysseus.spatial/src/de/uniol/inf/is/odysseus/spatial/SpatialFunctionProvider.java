@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.GetXFromSpatial;
 import de.uniol.inf.is.odysseus.spatial.functions.GetYFromSpatial;
+import de.uniol.inf.is.odysseus.spatial.functions.OrthodromicDistance;
 import de.uniol.inf.is.odysseus.spatial.functions.ST_SetSRID;
 import de.uniol.inf.is.odysseus.spatial.functions.ST_Transform;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialBuffer;
@@ -53,6 +54,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialIntersection;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIsLine;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIsPolygon;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialIsWithinDistance;
+import de.uniol.inf.is.odysseus.spatial.functions.SpatialOrthodromicMetricDistance;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialTouches;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnion;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
@@ -106,19 +108,22 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new AsCartesianCoordinates());
 		functions.add(new ToPolarCoordinate());
 		functions.add(new ToCartesianCoordinate());
-		
+
 		functions.add(new ToPoint());
-		
+
 		functions.add(new SpatialDistance());
-		
+		functions.add(new OrthodromicDistance());
+
 		functions.add(new CalculateBearing());
 		functions.add(new CalculateEndingCoordinates());
 		functions.add(new CalculateDistance());
 		functions.add(new ToEllipsoid());
 		functions.add(new GetCoordinate());
-		
+
 		functions.add(new GetXFromSpatial());
 		functions.add(new GetYFromSpatial());
+
+		functions.add(new SpatialOrthodromicMetricDistance());
 		
 		return functions;
 	}
