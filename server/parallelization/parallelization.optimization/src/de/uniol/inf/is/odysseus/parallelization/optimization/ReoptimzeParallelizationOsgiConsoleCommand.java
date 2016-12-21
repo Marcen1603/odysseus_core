@@ -39,7 +39,7 @@ public class ReoptimzeParallelizationOsgiConsoleCommand implements CommandProvid
 				.loginSuperUser(null);
 		try {
 			new Thread(() -> {
-				ParallelizationOptimizer.getInstance().reoptimzeQuery(Integer.parseInt(queryId), currentUser);
+				ParallelizationOptimizer.getInstance().reoptimizeQuery(Integer.parseInt(queryId), currentUser);
 			}, "ParallelizationOptimizer").start();
 		} catch (Exception e) {
 			LOG.error("Optimization of Parallelizationn was not successfull", e);

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -36,9 +37,7 @@ public class ParallelizationOptimizer {
 	private static final Logger LOG = LoggerFactory.getLogger(ParallelizationOptimizer.class);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void reoptimzeQuery(int queryId, ISession user) {
-		IPhysicalQuery physicalQuery = StandardExecutor.getInstance().getExecutionPlan(user).getQueryById(queryId,
-				user);
+	public void reoptimizeQuery(IPhysicalQuery physicalQuery, ISession user) {
 		ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 
 		// copy initial logical plan an rename it to avoid duplicate uniqu ids
@@ -86,6 +85,17 @@ public class ParallelizationOptimizer {
 			instance = new ParallelizationOptimizer();
 		}
 		return instance;
+	}
+	
+	public void reoptimizeQuery(String queryName, ISession caller) {
+		Resource queryResource = new Resource(caller.getUser(), queryName);
+		IPhysicalQuery query = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryByName(queryResource, caller);
+		this.reoptimizeQuery(query, caller);
+	}
+	
+	public void reoptimizeQuery(int queryId, ISession caller) {
+		IPhysicalQuery query = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryById(queryId, caller);
+		this.reoptimizeQuery(query, caller);
 	}
 
 }

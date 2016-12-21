@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.optimization.keyword;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parallelization.optimization.ParallelizationOptimizer;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -54,9 +54,16 @@ public class ParallelizationOptimizationPreParserKeyword extends AbstractPrePars
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
 			Context context, IServerExecutor executor) throws OdysseusScriptException {
-		int queryNumber = Integer.parseInt(parameter);
-		ParallelizationOptimizer.getInstance().reoptimzeQuery(queryNumber, caller);
-		return null;
+		List<IExecutorCommand> commandList = new ArrayList<>();
+		IExecutorCommand command;
+		try{
+			int queryNumber = Integer.parseInt(parameter);
+			command = new ReoptimizeParallelizationCommand(caller, queryNumber);
+		} catch (NumberFormatException e) {
+			command = new ReoptimizeParallelizationCommand(caller, parameter);
+		}
+		commandList.add(command);
+		return commandList;
 	}
 
 }

@@ -200,6 +200,9 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public IPhysicalQuery getQueryByName(Resource name, ISession session) {
 		IPhysicalQuery toReturn = this.namedQueries.get(name);
+		if(toReturn == null) {
+			return null;
+		}
 		ExecutorPermission.validateUserRight(toReturn, session, ExecutorPermission.GET_QUERY);
 		return toReturn;
 	}
