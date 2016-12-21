@@ -297,6 +297,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 				if (lastLine == lineCounter) {
 					// System.out.println(measurements);
 					ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
+					noDone = false;
 					isDone = true;
 				}
 			}
