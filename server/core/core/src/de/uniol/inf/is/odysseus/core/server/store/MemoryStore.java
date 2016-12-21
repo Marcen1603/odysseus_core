@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,8 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 
 public class MemoryStore<IDType extends Comparable<?>, STORETYPE> extends
 		AbstractStore<IDType, STORETYPE> {
+
+	private static final long serialVersionUID = -2537662750842928016L;
 
 	public static final String TYPE = "MemoryStore";
 

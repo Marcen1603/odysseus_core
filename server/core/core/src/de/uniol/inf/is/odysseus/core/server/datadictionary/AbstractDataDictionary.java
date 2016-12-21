@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -91,6 +91,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	private IStore<Resource, StoredProcedure> storedProcedures;
 	private IStore<Resource, IUser> storedProceduresFromUser;
 
+	private IStore<Resource, IStore<String, Object>> stores;
+	private IStore<Resource, IUser> storesFromUser;
+
 	// --------------------------------------------------------------------------
 	// Transient fields
 	// --------------------------------------------------------------------------
@@ -143,6 +146,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				"Store for storedProcedures must not be null.");
 		storedProceduresFromUser = Preconditions.checkNotNull(createStoredProceduresFromUserStore(),
 				"Store for storedProceduresFromUser must not be null.");
+
+		stores =  Preconditions.checkNotNull(createStoresStore(),
+				"Store for stores must not be null.");
+		storesFromUser = Preconditions.checkNotNull(createStoresFromUserStore(),
+				"Store for storesFromUser must not be null.");
 	}
 
 	// Methods that must be overwritten to create stores
@@ -172,13 +180,18 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	protected abstract IStore<Resource, IUser> createStoredProceduresFromUserStore();
 
+	protected abstract IStore<Resource, IStore<String, Object>> createStoresStore();
+
+	protected abstract IStore<Resource, IUser> createStoresFromUserStore();
+
+
 	// -----------------------------------------------------------------
 	// Help method
 	// -----------------------------------------------------------------
 
 	/**
 	 * Creates a new Resource object
-	 * 
+	 *
 	 * @param resource
 	 * @param caller
 	 * @return
@@ -189,7 +202,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	/**
 	 * Retrieves a user name for an entity
-	 * 
+	 *
 	 * @param entityuri
 	 * @return
 	 */
@@ -201,7 +214,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	/**
 	 * This method return the full name for a registered source if it exists
 	 * (e.g. System.nexmark:bid
-	 * 
+	 *
 	 * @param resourceName
 	 *            The name of the resource to be search (e.g. System.nexmark:bid
 	 *            or nexmark:bid)
@@ -233,7 +246,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	// ----------------------------------------------------------------------------
 
 	/**
-	 * 
+	 *
 	 * @param plan
 	 * @param identifier
 	 * @param entityType
@@ -276,7 +289,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	/**
-	 * 
+	 *
 	 * @param uri
 	 * @param caller
 	 * @param type
@@ -294,7 +307,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	/**
-	 * 
+	 *
 	 * @param plan
 	 * @param identifier
 	 * @param entityType
@@ -917,11 +930,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		removeEntityForPlan(q.getLogicalPlan(), createResource(Integer.toString(q.getID()), caller), EntityType.QUERY,
 				caller);
 	}
-	
+
 	// ----------------------------------------------------------------------------
 	// Store Management
 	// ----------------------------------------------------------------------------
-	
+
 	@Override
 	public List<IStreamObject<?>> getOrCreateStore(Resource name){
 		List<IStreamObject<?>>  store = getStore(name);
@@ -930,12 +943,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		}
 		return store;
 	}
-	
+
 	@Override
 	public List<IStreamObject<?>>  getStore(Resource name){
 		return this.listStores.get(name);
 	}
-	
+
 	@Override
 	public List<IStreamObject<?>>  createStore(Resource name){
 		if (listStores.containsKey(name)){
@@ -945,12 +958,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		this.listStores.put(name, list);
 		return list;
 	}
-	
+
 	@Override
 	public void deleteStore(Resource name){
 		this.listStores.clear();
 	}
-	
+
 	// ----------------------------------------------------------------------------
 	// Listener Management
 	// ----------------------------------------------------------------------------
@@ -1060,7 +1073,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	/**
 	 * return true if the given user has permission to access the given view in
 	 * a certain way (action).
-	 * 
+	 *
 	 * @param uri
 	 *            --> Fully qualified with user name --> user.name
 	 * @param caller
@@ -1106,7 +1119,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	/**
 	 * checks if the given user has higher permission as the given action. Calls
 	 * the corresponding method in the action class.
-	 * 
+	 *
 	 * @param action
 	 * @param objecturi
 	 * @param user
@@ -1119,7 +1132,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	/**
 	 * returns true if username equals creator of the given objecturi
-	 * 
+	 *
 	 * @param username
 	 * @param objecturi
 	 * @return
@@ -1148,7 +1161,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	/**
 	 * returns true if username euqlas creator of the given view
-	 * 
+	 *
 	 * @param username
 	 * @param viewname
 	 * @return
@@ -1339,7 +1352,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				return this.storedProcedures.get(procedure);
 			} else {
 				throw new PermissionException(
-						"User " + user.getUser().getName() + "has no permission to remove procedures.");
+						"User " + user.getUser().getName() + "has no permission to access procedures.");
 			}
 		} else {
 			throw new DataDictionaryException("Stored procedure " + name + " does not exist");
@@ -1353,6 +1366,79 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			if (e.getValue().equals(caller.getUser())) {
 				StoredProcedure sp = this.storedProcedures.get(e.getKey());
 				list.add(sp);
+			}
+		}
+		return list;
+	}
+
+
+	// Stores
+
+	// -------------------------------------------------------------------------
+	// Stored Procedure Management
+	// -------------------------------------------------------------------------
+	@Override
+	public void addStore(String name, IStore<String, Object> store, ISession caller) {
+		if (hasPermission(caller, DataDictionaryPermission.ADD_STORE)) {
+			Resource nameNormalized = createResource(name, caller);
+			if (!this.stores.containsKey(nameNormalized)) {
+				this.stores.put(nameNormalized, store);
+				this.storesFromUser.put(nameNormalized, caller.getUser());
+				fireDataDictionaryChangedEvent();
+			} else {
+				throw new DataDictionaryException("Store with name \"" + nameNormalized + "\" already used");
+			}
+		} else {
+			throw new PermissionException(
+					"User " + caller.getUser().getName() + "has no permission to add procedures.");
+		}
+	}
+
+	@Override
+	public void removeStore(String storeName, ISession caller) {
+		if (hasPermission(caller, DataDictionaryPermission.REMOVE_STORE)) {
+			Resource store = getResourceName(storeName, caller, stores);
+			if (store != null) {
+				this.stores.remove(store);
+				this.storesFromUser.remove(store);
+				fireDataDictionaryChangedEvent();
+			} else {
+				throw new DataDictionaryException("Store name does not exist");
+			}
+		} else {
+			throw new PermissionException(
+					"User " + caller.getUser().getName() + "has no permission to remove store.");
+		}
+
+	}
+
+	@Override
+	public boolean containsStore(String name, ISession user) {
+		return getResourceName(name, user, stores) != null;
+	}
+
+	@Override
+	public IStore<String, Object> getStore(String name, ISession user) {
+		Resource store = getResourceName(name, user, stores);
+		if (store != null) {
+			if (hasAccessRights(store, user, DataDictionaryPermission.EXECUTE)) {
+				return this.stores.get(store);
+			} else {
+				throw new PermissionException(
+						"User " + user.getUser().getName() + "has no permission to access store.");
+			}
+		} else {
+			throw new DataDictionaryException("Store " + name + " does not exist");
+		}
+	}
+
+	@Override
+	public List<IStore<String, Object>> getStores(ISession caller) {
+		List<IStore<String, Object>> list = new ArrayList<>();
+		for (Entry<Resource, IUser> e : this.storesFromUser.entrySet()) {
+			if (e.getValue().equals(caller.getUser())) {
+				IStore<String, Object> st = this.stores.get(e.getKey());
+				list.add(st);
 			}
 		}
 		return list;

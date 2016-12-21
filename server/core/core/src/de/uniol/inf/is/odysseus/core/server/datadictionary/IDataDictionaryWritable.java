@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
@@ -22,7 +23,7 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 
 	ILogicalOperator removeViewOrStream(String viewname, ISession caller);
 	ILogicalOperator removeViewOrStream(Resource viewname, ISession caller);
-	
+
 	// -------------------------------------------------------------------------
 	// View Management
 	// -------------------------------------------------------------------------
@@ -43,12 +44,12 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 
 	void addSink(String sinkname, ILogicalOperator sink, ISession caller)
 			throws DataDictionaryException;
-	
+
 	void addSink(Resource sinkname, ILogicalOperator sink, ISession caller)
 			throws DataDictionaryException;
 
 	ILogicalOperator removeSink(String name, ISession caller);
-	
+
 	ILogicalOperator removeSink(Resource name, ISession caller);
 
 	// -------------------------------------------------------------------------
@@ -86,7 +87,7 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	void removeClosedSinks();
 
 	void putSinkplan(Resource name, ISink<?> sinkPO);
-	
+
 	ISource<?> getAccessAO(Resource name);
 
 	void putAccessAO(Resource name, ISource<?> access);
@@ -99,6 +100,12 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 
 	void removeStoredProcedure(String name, ISession user);
 
+	// -------------------------------------------------------------------------
+	// Stores
+	// -------------------------------------------------------------------------
+	void addStore(String name, IStore<String, Object> store, ISession user);
+
+	void removeStore(String name, ISession user);
 
 	// -------------------------------------------------------------------------
 	// Datatypes

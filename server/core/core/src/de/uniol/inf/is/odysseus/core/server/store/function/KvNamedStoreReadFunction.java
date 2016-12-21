@@ -1,11 +1,10 @@
-package de.uniol.inf.is.odysseus.mep.functions.kvstore;
-
-import java.util.Map;
+package de.uniol.inf.is.odysseus.core.server.store.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
 
-public class KvNamedStoreReadFunction extends AbstractFunction<Object> {
+public class KvNamedStoreReadFunction extends AbstractNamedStoreFunction<Object> {
+
 
 	private static final long serialVersionUID = -3263090969225261507L;
 
@@ -18,9 +17,11 @@ public class KvNamedStoreReadFunction extends AbstractFunction<Object> {
 
 	@Override
 	public Object getValue() {
+
 		String storeKey = getInputValue(0);
 		String valueKey = getInputValue(1);
-		Map<String, Object> store = namedkeyValueStore.get(storeKey);
+
+		IStore<String, Object> store = getStore(storeKey);
 
 		if (store != null){
 			return store.get(valueKey);
