@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,29 +37,29 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 public class DataDictionary extends AbstractDataDictionary {
 
 	private static Logger LOG = LoggerFactory.getLogger(DataDictionary.class);
-	
+
 	static private boolean useFilestore(){
 		return OdysseusConfiguration.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
 	}
-	
+
 	static private boolean saveQueries(){
 		return OdysseusConfiguration.getBoolean("Filestore.StoreQueries");
 	}
-	
+
 	public DataDictionary(){
 		super(null);
 	}
-	
+
 	public DataDictionary(ITenant t){
 		super(t);
 	}
-	
+
 	@Override
 	public IDataDictionary createInstance(ITenant t) {
 		IDataDictionary dd = new DataDictionary(t);
 		return dd;
 	}
-	
+
 	@Override
 	protected IStore<Resource, ILogicalOperator> createStreamDefinitionsStore() {
 		return createStore("streamDefinitionsFilename", tenant);
@@ -125,11 +125,22 @@ public class DataDictionary extends AbstractDataDictionary {
 	protected IStore<Resource, IUser> createStoredProceduresFromUserStore() {
 		return createStore("storedProceduresFromUserFilename", tenant);
 	}
-	
+
+	@Override
+	protected IStore<Resource, IStore<String, Object>> createStoresStore() {
+		return createStore("storesFilename", tenant);
+	}
+
+	@Override
+	protected IStore<Resource, IUser> createStoresFromUserStore() {
+		return createStore("storesFomUserFilename", tenant);
+	}
+
+
 	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> createStore (String key, ITenant tenant){
 		return createStore(key, tenant, useFilestore());
 	}
-	
+
 	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> createStore (String key, ITenant tenant, boolean useFileStore){
 		if (useFileStore){
 			return tryCreateFileStore(key, tenant);
@@ -137,12 +148,12 @@ public class DataDictionary extends AbstractDataDictionary {
 			return newMemoryStore();
 		}
 	}
-	
-	
+
+
 	private static <T extends Comparable<?>,U> MemoryStore<T,U> newMemoryStore(){
 		return new MemoryStore<T, U>();
 	}
-	
+
 	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> tryCreateFileStore(String key, ITenant tenant){
 		try {
 			return new FileStore<T, U>(OdysseusConfiguration.getFileProperty(key,tenant.getName()));

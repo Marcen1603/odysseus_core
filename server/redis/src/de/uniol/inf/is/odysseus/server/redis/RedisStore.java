@@ -18,6 +18,7 @@ import redis.clients.jedis.Jedis;
 
 public class RedisStore<STORETYPE> implements IStore<String, STORETYPE> {
 
+	private static final long serialVersionUID = -6268065816400539741L;
 	final static String HOST = "host";
 	final static String PORT = "port";
 	final static String TYPE = "REDIS";
