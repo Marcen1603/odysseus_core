@@ -57,7 +57,8 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	private List<ISession> sessions;
 
 	protected static final Map<String, Object> keyValueStore = new HashMap<String, Object>();
-	protected static final Map<String, Map<String, Object>> namedkeyValueStore = new HashMap<String, Map<String,Object>>();
+	// Replaced with general Key Value Store concept
+	//	protected static final Map<String, Map<String, Object>> namedkeyValueStore = new HashMap<String, Map<String,Object>>();
 
 
 	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
