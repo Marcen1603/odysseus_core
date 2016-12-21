@@ -1397,7 +1397,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	@Override
 	public void removeStore(String storeName, ISession caller) {
 		if (hasPermission(caller, DataDictionaryPermission.REMOVE_STORE)) {
-			Resource store = getResourceName(storeName, caller, storedProcedures);
+			Resource store = getResourceName(storeName, caller, stores);
 			if (store != null) {
 				this.stores.remove(store);
 				this.storesFromUser.remove(store);

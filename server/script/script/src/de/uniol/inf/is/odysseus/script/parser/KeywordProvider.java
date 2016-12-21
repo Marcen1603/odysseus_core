@@ -18,8 +18,10 @@ package de.uniol.inf.is.odysseus.script.parser;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropKVStoreCommand;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ConfigPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.CreateKVStorePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.DropKVStorePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MaxSheddingFactorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MetadataPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.NoMetadataPreParserKeyword;
@@ -60,6 +62,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(MaxSheddingFactorPreParserKeyword.SHEDDING_FACTOR_NAME, MaxSheddingFactorPreParserKeyword.class);
 		keywords.put(RecoveryConfigKeyword.getName(), RecoveryConfigKeyword.class);
 		keywords.put(CreateKVStorePreParserKeyword.KEYWORD, CreateKVStorePreParserKeyword.class);
+		keywords.put(DropKVStorePreParserKeyword.KEYWORD, DropKVStorePreParserKeyword.class);
 		return keywords;
 	}
 
