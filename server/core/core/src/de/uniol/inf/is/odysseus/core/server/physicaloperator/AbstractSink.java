@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,7 +70,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
 	private Map<IOperatorOwner, Resource> uniqueIds = new TreeMap<>();
-	
+
 	private ILogicalOperator definingOp;
 
 	// private boolean allInputsDone = false;
@@ -84,8 +84,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	protected boolean debug = false;
 
-	
-	
+
+
 	@Override
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -209,7 +209,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		}
 		return null;
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
@@ -331,7 +331,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	@Override
 	public abstract void processPunctuation(IPunctuation punctuation, int port);
-	
+
 	@Override
 	public void setSuppressPunctuations(boolean suppressPunctuation) {}
 
@@ -695,7 +695,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
 	}
-	
+
 	@Override
 	public List<ISession> getSessions() {
 		return ownerHandler.getSessions();
@@ -749,7 +749,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			// getLogger().trace(
 			// this.getInstance() + " Subscribe To Source " + source
 			// + " to " + sinkInPort + " from " + sourceOutPort);
-			this.subscribedToSource.add(sub);
+			while (this.subscribedToSource.size() < sub.getSinkInPort()+1){
+				this.subscribedToSource.add(null);
+			}
+			this.subscribedToSource.set(sub.getSinkInPort(),sub);
+
 			source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 					schema);
 			newSourceSubscribed(sub);
@@ -880,7 +884,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public boolean hasInput() {
 		return getSubscribedToSource().size() > 0;
 	}
-	
+
 	// -----------------------
 	// Provenance
 	// -----------------------
@@ -888,7 +892,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public void setLogicalOperator(ILogicalOperator op){
 		this.definingOp = op;
 	}
-	
+
 	@Override
 	public ILogicalOperator getLogicalOperator(){
 		return this.definingOp;

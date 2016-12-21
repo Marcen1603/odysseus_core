@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,9 +41,10 @@ import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
 public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
 		extends AbstractStore<IDType, STORETYPE> {
 
+	private static final long serialVersionUID = -1840600055097437910L;
 	public static final String FILENAME = "filename";
 	public static final String TYPE = "filestore";
-	
+
 	Logger logger = LoggerFactory.getLogger(FileStore.class);
 
 	private String path;
@@ -55,7 +56,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	@Override
 	public IStore<IDType, STORETYPE> newInstance(OptionMap options) throws StoreException {
 		options.checkRequiredException(FILENAME);
-		
+
 		FileStore<IDType, STORETYPE> store;
 		try {
 			store = new FileStore<IDType, STORETYPE>(options.get(FILENAME));
@@ -64,10 +65,10 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		}
 		return store;
 	}
-	
+
 	public FileStore(){
 	}
-	
+
 	public FileStore(String path) throws IOException {
 		this.path = path;
 		initialzed = false;
@@ -78,7 +79,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void loadCache() throws IOException {
 		File f = FileUtils.openOrCreateFile(path);
@@ -147,7 +148,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		}
 		return cache.get(id);
 	}
-	
+
 	@Override
 	public List<Entry<IDType, STORETYPE>> getOrderedByKey(long limit) {
 		if (!initialzed) {
