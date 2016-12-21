@@ -53,11 +53,13 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 				node.setUniqueIdentifier(identifier);
 			}
 		}
-		if (isIntraParallizable(node)) {
+		// check intra-operator parallelization
+		if (isIntraParallelizable(node)) {
 			LOG.debug("Node " + node.getUniqueIdentifier() + " is intraoperator parallizable.");
 			IParallelizationIndividualConfiguration config = new IntraOperatorParallelizationConfiguration(node);
 			possibleParallelizations.add(config);
 		}
+		// check inter-operator parallelization
 		if (node instanceof IParallelizableOperator) {
 			switch (node.getStateType()) {
 			case UNKNOWN:
@@ -88,25 +90,21 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 
 	@Override
 	public void beforeFromSinkToSourceAction(P sink, P source) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void afterFromSinkToSourceAction(P sink, P source) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void beforeFromSourceToSinkAction(P source, P sink) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void afterFromSourceToSinkAction(P source, P sink) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -115,7 +113,7 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 		return this.possibleParallelizations;
 	}
 
-	private boolean isIntraParallizable(ILogicalOperator operator) {
+	private boolean isIntraParallelizable(ILogicalOperator operator) {
 		// FIXME ask Operator if it is parallelizable with current configuration
 		// TODO make it configurable
 		if (operator instanceof AggregateAO) {

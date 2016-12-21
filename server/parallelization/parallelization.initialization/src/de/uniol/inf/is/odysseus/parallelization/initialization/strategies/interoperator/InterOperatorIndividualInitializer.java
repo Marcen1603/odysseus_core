@@ -6,7 +6,7 @@ package de.uniol.inf.is.odysseus.parallelization.initialization.strategies.inter
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.parallelization.initialization.exception.ParallelizationTransormationException;
+import de.uniol.inf.is.odysseus.parallelization.initialization.exception.ParallelizationTransformationException;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelInterOperatorSetting;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
 
@@ -18,7 +18,7 @@ public class InterOperatorIndividualInitializer {
 
 	public static void createInterIndividualConfiguration(Collection<IQueryBuildSetting<?>> settings, String operatorId,
 			int degree, int bufferSize, String parallelizationStrategy, String fragmentationStrategy)
-			throws ParallelizationTransormationException {
+			throws ParallelizationTransformationException {
 		ParallelOperatorConfiguration newConfiguration = new ParallelOperatorConfiguration();
 		newConfiguration.setDegreeOfParallelization(degree);
 		newConfiguration.setBufferSize(bufferSize);
