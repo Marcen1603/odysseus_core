@@ -301,4 +301,12 @@
          id="de.uniol.inf.is.odysseus.server.redis.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.planmigration.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.parallelization.dynamic.feature"
+         version="0.0.0"/>
+
 </feature>
