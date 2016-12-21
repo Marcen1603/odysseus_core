@@ -12,6 +12,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProv
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+/**
+ * Class implementing a keyword for removing all versions of a graph from provider.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphdatastructureDropKeyword extends AbstractPreParserKeyword {
 
 	public static final String GRAPHDATASTRUCTURE = "DROPGRAPHDATASTRUCTURE";

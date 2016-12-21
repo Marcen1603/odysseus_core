@@ -23,6 +23,11 @@ import de.uniol.inf.is.odysseus.incubation.graph.graphobject.GraphNode;
 import de.uniol.inf.is.odysseus.incubation.graph.provider.GraphDataStructureProvider;
 import de.uniol.inf.is.odysseus.incubation.graph.sdf.schema.SDFGraphDatatype;
 
+/**
+ * Non-incremental Aggregation-Function for calculating intersection of all graph versions in a time interval.
+ * 
+ * @author Kristian Bruns
+ */
 public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
 	private static final long serialVersionUID = -4772454825738888335L;
@@ -46,33 +51,65 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 		
 		IGraphDataStructure<IMetaAttribute> intersection = null;
 		
+		String intersectionName = "";
+		Long minTs = null;
+		String minGraphVersion = "";
+		
 		for (Object element : elements) {
 			tuple = (T) element;
 			Graph graph = ((Graph) tuple.getAttribute(0));
 			
-			IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
-			Map<String, GraphNode> graphNodes = structure.getGraphNodes();
+			Long ts = Long.valueOf(graph.getName().split("_")[1]);
 			
+			if (minTs == null || ts < minTs) {
+				minTs = ts;
+				minGraphVersion = graph.getName();
+			}
+			
+			// Get GraphDataStructure
+			IGraphDataStructure<IMetaAttribute> structure = GraphDataStructureProvider.getInstance().getGraphDataStructure(graph.getName());
+			List<GraphNode> nodes = new ArrayList<GraphNode>(structure.getGraphNodes().values());
+			
+			// Name of intersection graph.
+			intersectionName = "intersection" + structure.getName();
+			
+			// If actual intersection == null, intersection = graphstructure. Else calculate intersection.
 			if (intersection == null) {
 				intersection = structure.cloneDataStructure();
 			} else {		
 				Map<Pair<String, String>, GraphEdge> relations = structure.getRelations();
 				Map<Pair<String, String>, GraphEdge> relIntersect = intersection.getRelations();
+				List<GraphNode> intersectNodes = new ArrayList<GraphNode>(intersection.getGraphNodes().values());
+				
 				intersection.clearDataStructure();
 				
 				for (Map.Entry<Pair<String, String>, GraphEdge> relation : relations.entrySet()) {
 					if (relIntersect.containsKey(relation.getKey()) && (relIntersect.get(relation.getKey()).equals(relation.getValue()))) {
-						GraphNode startingNode = graphNodes.get(relation.getKey().getE1());
+						GraphNode startingNode = structure.getGraphNode(relation.getKey().getE1());
 						startingNode.clearEdges();
 						
-						GraphNode endingNode = structure.getGraphNodes().get(relation.getKey().getE2());
+						GraphNode endingNode = structure.getGraphNode(relation.getKey().getE2());
 						endingNode.clearEdges();
 						
 						intersection.addRelation(startingNode, endingNode, relation.getValue());
+						nodes.remove(startingNode);
+						nodes.remove(endingNode);
+						intersectNodes.remove(startingNode);
+						intersectNodes.remove(endingNode);
+					}
+				}
+				
+				for (GraphNode node : nodes) {
+					if (intersectNodes.contains(node)) {
+						intersection.addGraphNode(node);
 					}
 				}
 			}
 		}
+		
+		GraphDataStructureProvider.getInstance().setGraphVersionRead(minGraphVersion, "graphIntersection");
+		
+		intersection.setName(intersectionName);
 		
 		String name = GraphDataStructureProvider.getInstance().addGraphDataStructure(intersection, pointInTime);
 		Graph graph = new Graph(name);
@@ -90,7 +127,6 @@ public class GraphIntersection <M extends ITimeInterval, T extends Tuple<M>> ext
 		final List<SDFAttribute> res = new ArrayList<>(1);
 		res.add(new SDFAttribute(null, "graph", SDFGraphDatatype.GRAPH, null, null, null));
 		return res;
-//		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0], SDFGraphDatatype.GRAPH, null, null, null));
 	}
 
 	@Override

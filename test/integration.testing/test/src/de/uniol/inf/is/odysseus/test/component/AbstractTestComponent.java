@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2015 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.test.context.ITestContext;
 import de.uniol.inf.is.odysseus.test.set.ITestSet;
 
 /**
- * 
- * @author Christian Kuka 
+ *
+ * @author Christian Kuka
  *
  * @param <T>
  * @param <S>
@@ -53,6 +53,9 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	public void setupTest(T context) {
 		executor = ExecutorProvider.getExeuctor();
 		session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
+		if (context.getDataRootPath() == null){
+			LOG.error("Error in context "+context);
+		}
 		testsets = createTestSets(context);
 	}
 
@@ -83,42 +86,42 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 
 	/**
 	 * Taken from de.uniol.inf.is.odysseus.test.TestComponent
-	 * 
+	 *
 	 * @param executor
 	 */
-	private static void tryStartExecutor(IServerExecutor executor) {
+	private static void tryStartExecutor(IServerExecutor executor, ISession session) {
 		try {
-			LOG.debug("Starting executor...");		
-			
-			executor.startExecution();
+			LOG.debug("Starting executor...");
+
+			executor.startExecution(session);
 		} catch (PlanManagementException e1) {
 			throw new RuntimeException(e1);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Taken from de.uniol.inf.is.odysseus.test.TestComponent
-	 * 
+	 *
 	 * @param executor
 	 */
-	private static void tryStopExecutor(IServerExecutor executor) {
+	private static void tryStopExecutor(IServerExecutor executor, ISession session) {
 		try {
 			LOG.debug("Stopping executor");
-			executor.stopExecution();
+			executor.stopExecution(session);
 		} catch (PlanManagementException e) {
 			LOG.error("Exception during stopping executor", e);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
 	public TestReport runTest(T context) {
 		int i = 0;
-		tryStartExecutor(executor);
+		tryStartExecutor(executor, session);
 		TestReport report = new TestReport(getName(), testsets.size());
 		for (S set : testsets) {
 		    report.set(i, set.getName(), set.getQuery());
@@ -131,6 +134,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
             }
             catch (Throwable e) {
                 report.setError(i, e);
+                e.printStackTrace();
                 //throw e;
             }
             report.setDuration(i, System.nanoTime()-start);
@@ -139,7 +143,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 			LOG.debug("***************************************************************************************");
 			i++;
 		}
-		tryStopExecutor(executor);
+		tryStopExecutor(executor, session);
 		return report;
 	}
 
@@ -149,14 +153,14 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	public String getName() {
 		return getClass().getSimpleName();
 	}
-    
+
 	@Override
 	public String toString() {
 		return getName();
 	}
-	
+
 	@Override
-	public boolean isActivated() {	
+	public boolean isActivated() {
 		return true;
 	}
 }

@@ -31,7 +31,7 @@ public class Compiler {
 	static StandardJavaFileManager standardFileManager = null;
 	static BundleJavaManager bundleFileManager = null;
 	static List<String> options = new ArrayList<String>();
-
+	
 	@SuppressWarnings("rawtypes")
 	public synchronized static Class compile(StringBuffer classCode, String className) throws Exception {
 
@@ -50,6 +50,10 @@ public class Compiler {
 		///options.add("-verbose");
 
 		javaCompiler = ToolProvider.getSystemJavaCompiler();
+		
+		if (javaCompiler == null){
+			throw new RuntimeException("No Compiler found. Must use JDK not JRE!");
+		}
 
 		StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(diagnostics, null, null);
 

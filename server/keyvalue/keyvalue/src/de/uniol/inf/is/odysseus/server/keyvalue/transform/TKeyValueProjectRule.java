@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -20,14 +19,13 @@ public class TKeyValueProjectRule extends AbstractTransformationRule<ProjectAO>{
 
 	@Override
 	public void execute(ProjectAO operator, TransformationConfiguration config) throws RuleException {
-		KeyValueProjectPO<KeyValueObject<IMetaAttribute>> projectPO = new KeyValueProjectPO<KeyValueObject<IMetaAttribute>>(operator.getPaths());
+		KeyValueProjectPO<KeyValueObject<IMetaAttribute>> projectPO = new KeyValueProjectPO<KeyValueObject<IMetaAttribute>>(operator.getAttributes());
 		defaultExecute(operator, projectPO, config, true, false);
 	}
 
 	@Override
 	public boolean isExecutable(ProjectAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == KeyValueObject.class || 
-				operator.getInputSchema().getType() == NestedKeyValueObject.class) &&
+		if ((operator.getInputSchema().getType() == KeyValueObject.class ) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}

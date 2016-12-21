@@ -218,13 +218,13 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	}
 
 	@Override
-	public PointInTime getMaxTs() {
+	public PointInTime getMaxStartTs() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public PointInTime getMinTs() {
+	public PointInTime getMinStartTs() {
 		// TODO Auto-generated method stub
 		return null;
 	}

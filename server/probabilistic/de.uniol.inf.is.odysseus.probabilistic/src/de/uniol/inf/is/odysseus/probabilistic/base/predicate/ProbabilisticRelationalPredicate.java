@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -52,7 +52,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.AbstractRelationalPred
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicate<ProbabilisticTuple<?>>
 		implements IProbabilisticRelationalPredicate<ProbabilisticTuple<?>> {
@@ -258,7 +258,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 			meta[i] = this.fromRightChannel[i] ? left.getMetadata() : right.getMetadata();
 			positions[i] = pos;
 		}
-		
+
 		final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
 		probabilisticExpression.bindVariables(positions, values);
@@ -313,21 +313,21 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		return null;
 	}
 
-	public boolean evaluate(final ProbabilisticTuple<?> input, final KeyValueObject<?> additional) {
-		final Object[] values = new Object[this.neededAttributes.size()];
-
-		for (int i = 0; i < this.neededAttributes.size(); ++i) {
-			if (!this.fromRightChannel[i]) {
-				values[i] = input.getAttribute(this.attributePositions[i].getE2());
-			} else {
-				values[i] = additional.getAttribute(this.neededAttributes.get(i).getURI());
-			}
-		}
-		// this.expression.bindMetaAttribute(input.getMetadata());
-		// this.expression.bindAdditionalContent(input.getAdditionalContent());
-		this.expression.bindVariables(values);
-		return (Boolean) this.expression.getValue();
-	}
+//	public boolean evaluate(final ProbabilisticTuple<?> input, final KeyValueObject<?> additional) {
+//		final Object[] values = new Object[this.neededAttributes.size()];
+//
+//		for (int i = 0; i < this.neededAttributes.size(); ++i) {
+//			if (!this.fromRightChannel[i]) {
+//				values[i] = input.getAttribute(this.attributePositions[i].getE2());
+//			} else {
+//				values[i] = additional.getAttribute(this.neededAttributes.get(i).getURI());
+//			}
+//		}
+//		// this.expression.bindMetaAttribute(input.getMetadata());
+//		// this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindVariables(values);
+//		return (Boolean) this.expression.getValue();
+//	}
 
 	/**
 	 * {@inheritDoc}
@@ -465,8 +465,8 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		pred.initVars(schema);
 		final Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
 		tuple.setAttribute(0, 8);
-		final KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
-		additional.setAttribute("b", 5);
+//		final KeyValueObject<IMetaAttribute> additional = new KeyValueObject<IMetaAttribute>();
+//		additional.setAttribute("b", 5);
 		// REMARK: COULD THIS EVER WORK CORRECTLY??
 		//System.out.println(pred.evaluate(tuple, additional));
 	}

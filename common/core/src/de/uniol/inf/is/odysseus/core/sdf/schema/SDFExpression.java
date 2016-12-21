@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,7 +50,7 @@ public class SDFExpression implements Serializable, IClone {
 	private Object value;
 
 	private List<SDFAttribute> attributes;
-	
+
 	private IAttributeResolver attributeResolver;
 	/** The schema */
 	private List<SDFSchema> schema;
@@ -327,7 +327,7 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The attribute resolver
 	 */
 	public IAttributeResolver getAttributeResolver() {
@@ -335,7 +335,7 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The expression parser
 	 */
 	public IExpressionParser getExpressionParser() {
@@ -343,7 +343,7 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The expression string
 	 */
 	public String getExpressionString() {

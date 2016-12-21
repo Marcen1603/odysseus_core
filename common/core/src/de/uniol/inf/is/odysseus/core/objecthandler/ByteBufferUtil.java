@@ -7,7 +7,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -46,17 +45,17 @@ public class ByteBufferUtil {
 						.bytesToObject(metadataBytes);
 				retval.setMetadata(metadata);
 
-				if (byteBuffer.remaining() > 0) {
-					int metadataMapBytesLength = byteBuffer.getInt();
-					byte[] metadataMapBytes = new byte[metadataMapBytesLength];
-					byteBuffer.get(metadataMapBytes);
-
-					Map<String, Object> metadataMap = (Map<String, Object>) ObjectByteConverter
-							.bytesToObject(metadataMapBytes);
-					System.err.println(metadataMap);
-
-					retval.setKeyValueMap(metadataMap);
-				}
+//				if (byteBuffer.remaining() > 0) {
+//					int metadataMapBytesLength = byteBuffer.getInt();
+//					byte[] metadataMapBytes = new byte[metadataMapBytesLength];
+//					byteBuffer.get(metadataMapBytes);
+//
+//					Map<String, Object> metadataMap = (Map<String, Object>) ObjectByteConverter
+//							.bytesToObject(metadataMapBytes);
+//					System.err.println(metadataMap);
+//
+//					retval.setKeyValueMap(metadataMap);
+//				}
 			}
 		} finally {
 			byteBuffer.clear();
@@ -79,19 +78,19 @@ public class ByteBufferUtil {
 				buffer.put(metadataBytes);
 			}
 
-			Map<String, Object> metadataMap = object.getGetValueMap();
-			if (!metadataMap.isEmpty()) {
-				byte[] metadataMapBytes = ObjectByteConverter
-						.objectToBytes(metadataMap);
-				buffer.putInt(metadataMapBytes.length);
-				buffer.put(metadataMapBytes);
-			}
+//			Map<String, Object> metadataMap = object.getGetValueMap();
+//			if (!metadataMap.isEmpty()) {
+//				byte[] metadataMapBytes = ObjectByteConverter
+//						.objectToBytes(metadataMap);
+//				buffer.putInt(metadataMapBytes.length);
+//				buffer.put(metadataMapBytes);
+//			}
 		}
 	}
-	
+
 	/**
 	 * Encode an object to a byte array.
-	 * 
+	 *
 	 * @param obj
 	 *            The object to encode.
 	 * @return A byte array.
@@ -107,7 +106,7 @@ public class ByteBufferUtil {
 
 	/**
 	 * Decode an object from a byte array using {@code OsgiObjectInputStream}.
-	 * 
+	 *
 	 * @param bytes
 	 *            A byte array to decode.
 	 * @return The decoded object.
@@ -119,5 +118,5 @@ public class ByteBufferUtil {
 			return (Serializable) oois.readObject();
 		}
 	}
-	
+
 }

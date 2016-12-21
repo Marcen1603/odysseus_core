@@ -97,7 +97,7 @@ public class SoapMessageManipulator implements IMessageManipulator {
 		this.argumentsOfMesssage = new StringBuffer();
 		for(Option argument : arguments) {
 			this.argumentsOfMesssage.append(STARTTAG + argument.getName() + ENDTAG);
-			this.argumentsOfMesssage.append(argument.getValue());
+			this.argumentsOfMesssage.append(""+argument.getValue());
 			this.argumentsOfMesssage.append(STARTTAG + SLASH.toString() + argument.getName() +  ENDTAG);	
 		}
 		return this.argumentsOfMesssage;

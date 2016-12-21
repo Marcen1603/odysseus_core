@@ -16,6 +16,8 @@ public interface ITransfer<T> extends IHasName{
 
 	void propagateDone();
 
+	boolean isDone();
+
 	void sendPunctuation(IPunctuation punctuation);
 
 	void sendPunctuation(IPunctuation punctuation, int outPort);

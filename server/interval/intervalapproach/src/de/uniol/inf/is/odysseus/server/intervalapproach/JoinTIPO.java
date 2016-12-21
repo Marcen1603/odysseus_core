@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AbstractTISweepArea;
@@ -298,8 +298,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 					break;
 				}
 			}
-			PointInTime a = areas[port].getMinTs();
-			PointInTime b = areas[otherport].getMinTs();
+			PointInTime a = areas[port].getMinStartTs();
+			PointInTime b = areas[otherport].getMinStartTs();
 			PointInTime heartbeat = PointInTime.max(a, b);
 			if(heartbeat != null) {
 				transferFunction.newHeartbeat(heartbeat, port);

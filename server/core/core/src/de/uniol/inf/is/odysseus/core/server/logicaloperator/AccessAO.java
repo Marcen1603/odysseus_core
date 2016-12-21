@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
-import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -26,7 +26,7 @@ public class AccessAO extends AbstractAccessAO {
 	}
 	
 	public AccessAO(Resource resource, String wrapper, String transport,
-			String protocol, String datahandler, Map<String, String> options) {
+			String protocol, String datahandler, OptionMap options) {
 		super(resource, wrapper, transport, protocol,datahandler,options);
 	}
 

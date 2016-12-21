@@ -52,11 +52,11 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 			.getLogger(TrainRecSysModelPO.class);
 
 	private boolean transferModelOnlyOnPunctuation;
-	
-	private Tuple<M> modelTuple; 
+
+	private Tuple<M> modelTuple;
 	private Tuple<M> recommCandTuple;
 	private PointInTime previousSystemPointInTimeOnPunctuation = new PointInTime(System.currentTimeMillis());
-	
+
 	/**
 	 * The point in time of the interval start of these learning tuples that
 	 * were currently buffered. When a tuple arrives, whose interval start is
@@ -180,7 +180,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * getOutputMode()
 	 */
@@ -191,7 +191,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
@@ -319,7 +319,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 				/*
 				 * init a new learning tuple buffering set for the new tuples
 				 * and add the new learning tuple
-				 * 
+				 *
 				 * We do not just clear this set because we passed it to the
 				 * learner. I guess, the learner would be upset when we meddle
 				 * with this set.
@@ -428,8 +428,8 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		}
 		modelTuple.setMetadata(metadataCopy);
 		modelTuple.getMetadata().setStartAndEnd(startP, endP);
-		modelTuple
-				.setKeyValue("model learning duration", modelLearningDuration);
+//		modelTuple
+//				.setKeyValue("model learning duration", modelLearningDuration);
 		if(!transferModelOnlyOnPunctuation) {
 			transfer(modelTuple);
 		}
@@ -445,8 +445,8 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		}
 		recommCandTuple.setMetadata(metadataCopy2);
 		recommCandTuple.getMetadata().setStartAndEnd(startP, endP);
-		recommCandTuple.setKeyValue("recomm cand model learning",
-				recomCandModelLearningDuration);
+//		recommCandTuple.setKeyValue("recomm cand model learning",
+//				recomCandModelLearningDuration);
 		if(!transferModelOnlyOnPunctuation) {
 			transfer(recommCandTuple, 1);
 		}
@@ -473,7 +473,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_close()
 	 */
@@ -492,7 +492,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.physicaloperator.ISink#processPunctuation
 	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation, int)
@@ -500,7 +500,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	@Override
 	public void processPunctuation(final IPunctuation punctuation,
 			final int port) {
-		
+
 		long currentSystemTime = System.currentTimeMillis();
 		PointInTime systemPointInTime = new PointInTime(currentSystemTime);
 		if(this.modelTuple!=null){
@@ -513,12 +513,12 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 		}
 		previousSystemPointInTimeOnPunctuation = systemPointInTime;
 		sendPunctuation(Heartbeat.createNewHeartbeat(systemPointInTime), 2);
-		
+
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
 	 * getName()
@@ -545,7 +545,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.
 	 * IPhysicalOperatorKeyValueProvider#getKeyValues()
 	 */

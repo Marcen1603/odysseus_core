@@ -1,17 +1,14 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.google.gson.Gson;
-
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 
 /**
@@ -22,10 +19,9 @@ import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLS
  */
 public abstract class AbstractNoSQLJsonSinkPO<T extends IStreamObject<?>> extends AbstractNoSQLSinkPO<T> {
 
-    final protected static Gson gson = new Gson();
     final private boolean tupleMode;
     final private List<String> attributes;
-    
+
     public AbstractNoSQLJsonSinkPO(AbstractNoSQLSinkAO abstractNoSQLSinkAO) {
         super(abstractNoSQLSinkAO);
         SDFSchema inputSchema = abstractNoSQLSinkAO.getInputSchema(0);
@@ -41,7 +37,8 @@ public abstract class AbstractNoSQLJsonSinkPO<T extends IStreamObject<?>> extend
         }
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected final synchronized void process_next_tuple_to_write(List<T> elementsToWrite) {
 
         ArrayList<String> jsons = new ArrayList<>();
@@ -49,9 +46,9 @@ public abstract class AbstractNoSQLJsonSinkPO<T extends IStreamObject<?>> extend
         for (T elem : elementsToWrite) {
         	final String json;
         	if (tupleMode){
-        		json = toJsonString((Tuple<?>) elem);
+        		json = KeyValueObject.fromTuple(((Tuple<IMetaAttribute>) elem), getInputSchema(0)).toString();
         	}else{
-        		json = toJsonString((KeyValueObject<?>)elem);
+        		json =( (KeyValueObject<?>)elem).toString();
         	}
             jsons.add(json);
         }
@@ -67,17 +64,4 @@ public abstract class AbstractNoSQLJsonSinkPO<T extends IStreamObject<?>> extend
      */
     protected abstract void process_next_json_to_write(List<String> jsonToWrite);
 
-    private String toJsonString(KeyValueObject<?> tuple){
-        Map<String,Object> attributes = tuple.getAttributes();
-        return gson.toJson(attributes);
-    }
-    
-    private String toJsonString(Tuple<?> tuple){
-    	Map<String,Object> e = new HashMap<String, Object>();
-    	for (int i=0;i<attributes.size();i++){
-    		e.put(attributes.get(i), tuple.getAttribute(i));
-    	}
-        return gson.toJson(e);
-    }
-    
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -30,7 +30,7 @@ public class KeyValueUnnestPO<T extends KeyValueObject<IMetaAttribute>> extends 
 
 	@Override
 	protected void process_next(T object, int port) {
-		Map<String, Object> attributes = object.getAttributes();
+		Map<String, Object> attributes = object.getAsKeyValueMap();
 
 		// find each attribute starting with attribute
 
@@ -60,7 +60,6 @@ public class KeyValueUnnestPO<T extends KeyValueObject<IMetaAttribute>> extends 
 			e.getValue().putAll(remaing);
 			@SuppressWarnings("unchecked")
 			T kv = (T) object.newInstance();
-			kv.setKeyValueMap(e.getValue());
 			kv.setMetadata(object.getMetadata().clone());
 			transfer((T) kv);
 		}

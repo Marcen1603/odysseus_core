@@ -11,8 +11,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.server.keyvalue;bundle-version="1.0.0",
  org.eclipse.core.runtime;bundle-version="3.11.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Service-Component: OSGI-INF/KeyValueTestOperatorComponent.xml,
- OSGI-INF/NestedKeyValueTestOperatorComponent.xml
+Service-Component: OSGI-INF/*
 Import-Package: org.osgi.framework;version="1.6.0",
  org.slf4j
 Eclipse-BundleShape: dir

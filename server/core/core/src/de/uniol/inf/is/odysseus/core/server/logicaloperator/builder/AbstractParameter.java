@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpressionParseException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -28,8 +28,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
- * This is an abstract parameter. In this abstract base class all attributes are defined, that a common for all parameters
- * 
+ * This is an abstract parameter. In this abstract base class all attributes are
+ * defined, that a common for all parameters
+ *
  * @author Jonas Jacobi, Marco Grawunder
  */
 public abstract class AbstractParameter<T> implements IParameter<T> {
@@ -38,11 +39,12 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	private static final long serialVersionUID = -5259685918656067407L;
 	private String name;
+	private String aliasName;
 	private String doc;
 	private REQUIREMENT requirement = REQUIREMENT.OPTIONAL;
 	private USAGE usage = USAGE.RECENT;
 	private T value;
-	private IAttributeResolver resolver;
+	private DirectAttributeResolver resolver;
 	private IDataDictionary dd;
 	private IServerExecutor serverExecutor;
 	private ISession caller;
@@ -53,7 +55,6 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	private String possibleValueMethod = "";
 	private boolean possibleValuesAreDynamic = false;
-
 
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage) {
 		this(name, requirement, usage, null);
@@ -86,6 +87,15 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.name = name.toUpperCase();
 	}
 
+	public void setAliasName(String aliasName) {
+		this.aliasName = aliasName.toUpperCase();
+	}
+
+	@Override
+	public String getAliasName() {
+		return aliasName;
+	}
+
 	@Override
 	public void setDoc(String doc) {
 		this.doc = doc;
@@ -110,7 +120,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public String getDoc() {
 		if (this.doc == null || this.doc.isEmpty()) {
 			return DEFAULT_DOC_TEXT;
-		} 
+		}
 		return this.doc;
 	}
 
@@ -145,11 +155,11 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.errors.clear();
 		this.warnings.clear();
 		if (this.requirement == REQUIREMENT.MANDATORY && inputValue == null) {
-			this.errors.add("Required Parameter "+this.getName()+" is missing");
+			this.errors.add("Required Parameter " + this.getName() + " is missing");
 			return false;
 		}
 		if (isDeprecated()) {
-			this.warnings.add(this.getName()+" is deprecated!");
+			this.warnings.add(this.getName() + " is deprecated!");
 		}
 		try {
 			if (inputValue != null) {
@@ -159,16 +169,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 					return false;
 				}
 			}
-		}catch (ValidationException e){
+		} catch (ValidationException e) {
 			this.errors.add("Validation error for parameter " + getName());
 			this.errors.add(e.getMessage());
 			return false;
-		}catch(SDFExpressionParseException e){
+		} catch (SDFExpressionParseException e) {
 			this.errors.add("Could not parse parameter value " + getName());
 			this.errors.add(e.getMessage());
-			//e.printStackTrace();
-			return false;			
-		}catch (Exception e) {
+			// e.printStackTrace();
+			return false;
+		} catch (Exception e) {
 			this.errors.add("illegal value for parameter " + getName());
 			this.errors.add(e.getMessage());
 			return false;
@@ -185,22 +195,23 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public final T getValue() {
 		if (!validate()) {
-			throw new RuntimeException("Parameter could not be validated due to following errors:\n" + toErrorString(getErrors()));
+			throw new RuntimeException(
+					"Parameter could not be validated due to following errors:\n" + toErrorString(getErrors()));
 		}
 		return value;
 	}
 
 	private static String toErrorString(List<String> errors) {
-		if( errors == null || errors.isEmpty() ) {
+		if (errors == null || errors.isEmpty()) {
 			return "[No error message available]";
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
-		
-		for( String error : errors) {
+
+		for (String error : errors) {
 			sb.append("\t").append(error).append("\n");
 		}
-		
+
 		return sb.toString();
 	}
 
@@ -223,15 +234,15 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	@Override
-	public IAttributeResolver getAttributeResolver() {
+	public DirectAttributeResolver getAttributeResolver() {
 		return this.resolver;
 	}
 
 	@Override
-	public void setAttributeResolver(IAttributeResolver resolver) {
+	public void setAttributeResolver(DirectAttributeResolver resolver) {
 		this.resolver = resolver;
 	}
-	
+
 	@Override
 	public IDataDictionary getDataDictionary() {
 		return dd;
@@ -241,12 +252,12 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public void setDataDictionary(IDataDictionary dd) {
 		this.dd = dd;
 	}
-	
+
 	@Override
 	public void setServerExecutor(IServerExecutor serverExecutor) {
 		this.serverExecutor = serverExecutor;
 	}
-	
+
 	@Override
 	public IServerExecutor getServerExecutor() {
 		return serverExecutor;
@@ -256,22 +267,22 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	public void setCaller(ISession caller) {
 		this.caller = caller;
 	}
-	
+
 	@Override
 	public ISession getCaller() {
 		return caller;
 	}
-	
+
 	@Override
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
+
 	@Override
 	public Context getContext() {
 		return context;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -307,22 +318,22 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	}
 
 	protected abstract String getPQLStringInternal();
-	
+
 	@Override
-	public String getPossibleValueMethod() {	
+	public String getPossibleValueMethod() {
 		return possibleValueMethod;
 	}
-	
+
 	@Override
 	public void setPossibleValueMethod(String possibleValueMethod) {
-		this.possibleValueMethod = possibleValueMethod;	
+		this.possibleValueMethod = possibleValueMethod;
 	}
-	
+
 	@Override
-	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic){
-		this.possibleValuesAreDynamic =possibleValuesAreDynamic;
+	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic) {
+		this.possibleValuesAreDynamic = possibleValuesAreDynamic;
 	}
-	
+
 	@Override
 	public boolean arePossibleValuesDynamic() {
 		return possibleValuesAreDynamic;

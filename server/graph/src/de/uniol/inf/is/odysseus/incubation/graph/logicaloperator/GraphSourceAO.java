@@ -11,6 +11,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.incubation.graph.physicaloperator.access.transport.GraphTransportHandler;
 
+/**
+ * Logical GraphSource operator.
+ * 
+ * @author Kristian Bruns
+ */
 @LogicalOperator(maxInputPorts=0, minInputPorts=0, name="GRAPHSOURCE", doc="Operator to use GraphStructure in another Query than Graphbuilder.", category={LogicalOperatorCategory.SOURCE})
 public class GraphSourceAO extends AbstractAccessAO {
 	

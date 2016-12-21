@@ -41,8 +41,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  */
 public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? extends IMetaAttribute>> {
 
-	static final private Logger logger = LoggerFactory
-			.getLogger(TupleDataHandler.class);
+	static final private Logger logger = LoggerFactory.getLogger(TupleDataHandler.class);
 
 	static protected List<String> types = new ArrayList<String>();
 	static {
@@ -85,8 +84,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		if (dataHandlers == null) {
 			createDataHandler(schema);
 		} else {
-			throw new RuntimeException(
-					"TupleDataHandler is immutable. Values already set");
+			throw new RuntimeException("TupleDataHandler is immutable. Values already set");
 		}
 	}
 
@@ -94,24 +92,22 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		if (dataHandlers == null) {
 			createDataHandler(schema);
 		} else {
-			throw new RuntimeException(
-					"TupleDataHandler is immutable. Values already set");
+			throw new RuntimeException("TupleDataHandler is immutable. Values already set");
 		}
 	}
 
 	@Override
-	public Tuple<? extends IMetaAttribute> readData(InputStream inputStream, boolean handleMetaData) throws IOException {
+	public Tuple<? extends IMetaAttribute> readData(InputStream inputStream, boolean handleMetaData)
+			throws IOException {
 		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
 			try {
 				attributes[i] = dataHandlers[i].readData(inputStream);
 			} catch (Exception e) {
 				if (dataHandlers.length > i) {
-					logger.warn("Error parsing stream with "
-							+ dataHandlers[i].getClass() + " " + e.getMessage());
+					logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
 				} else {
-					logger.warn("Error parsing stream with no data handler defined "
-							+ e.getMessage());
+					logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
 				}
 				attributes[i] = null;
 			}
@@ -129,20 +125,22 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		throw new UnsupportedOperationException("Currently not avaialable");
 	}
 
-
 	@Override
 	public Tuple<? extends IMetaAttribute> readData(Iterator<String> input, boolean handleMetaData) {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(dataHandlers.length,
-				false);
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(dataHandlers.length, false);
 		int i = 0;
 		for (i = 0; i < dataHandlers.length; i++) {
-			String nextElem = input.hasNext()?input.next():null;
-			try {
-					tuple.setAttribute(i,
-							this.dataHandlers[i].readData(nextElem));
-			} catch (Exception e) {
-				logger.warn("Error parsing " + nextElem
-							+ " with data handler "+ dataHandlers[i] +". Cause: " + e.getMessage());
+			String nextElem = input.hasNext() ? input.next() : null;
+			// Avoid errors when reading null
+			if (nextElem != null) {
+				try {
+					tuple.setAttribute(i, this.dataHandlers[i].readData(nextElem));
+				} catch (Exception e) {
+					logger.warn("Error parsing " + nextElem + " with data handler " + dataHandlers[i] + ". Cause: "
+							+ e.getMessage());
+					tuple.setAttribute(i, (Object) null);
+				}
+			}else{
 				tuple.setAttribute(i, (Object) null);
 			}
 		}
@@ -167,7 +165,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		synchronized (buffer) {
 			// buffer.flip(); // DO NOT FLIP THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
-			//System.err.println("ByteBuffer "+buffer);
+			// System.err.println("ByteBuffer "+buffer);
 			Object[] attributes = new Object[dataHandlers.length];
 			for (int i = 0; i < dataHandlers.length; i++) {
 				byte type = -1;
@@ -179,12 +177,10 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 						attributes[i] = dataHandlers[i].readData(buffer);
 					} catch (Exception e) {
 						if (dataHandlers.length > i) {
-							logger.warn("Error parsing stream with "
-									+ dataHandlers[i].getClass() + " "
-									+ e.getMessage()+" "+e);
+							logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage()
+									+ " " + e);
 						} else {
-							logger.warn("Error parsing stream with no data handler defined "
-									+ e.getMessage());
+							logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
 						}
 						attributes[i] = null;
 					}
@@ -203,20 +199,20 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 
 	@Override
 	public Tuple<? extends IMetaAttribute> readData(String string) {
-		if (string.startsWith("[")){
+		if (string.startsWith("[")) {
 			StringTokenizer tokens = new StringTokenizer(string, "[|]");
 			List<Object> objects = new ArrayList<Object>();
 			int dhPos = 0;
-			while(tokens.hasMoreTokens() && dhPos < dataHandlers.length ){
+			while (tokens.hasMoreTokens() && dhPos < dataHandlers.length) {
 				objects.add(dataHandlers[dhPos++].readData(tokens.nextToken()));
 			}
-			if(tokens.hasMoreTokens()){
-				logger.warn("Ignoring additional part of "+string);
+			if (tokens.hasMoreTokens()) {
+				logger.warn("Ignoring additional part of " + string);
 			}
 			Tuple<?> tuple = new Tuple<IMetaAttribute>(objects, false);
 			return tuple;
 
-		}else{
+		} else {
 			List<String> str = new ArrayList<String>();
 			str.add(string);
 			return readData(str.iterator());
@@ -239,9 +235,9 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			for (int i = 0; i < dataHandlers.length; i++) {
 
 				Object attribute = r.getAttribute(i);
-				if (attribute != null){
+				if (attribute != null) {
 					dataHandlers[i].writeData(output, attribute, options);
-				}else{
+				} else {
 					output.add(options.getNullValueString());
 				}
 			}
@@ -282,15 +278,14 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 	 */
 	@Override
 	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData) {
-		if (data instanceof Tuple){
+		if (data instanceof Tuple) {
 			Tuple<?> r = (Tuple<?>) data;
 			writeData(buffer, r, handleMetaData);
 		}
 	}
 
 	@Override
-	public void writeData(ByteBuffer buffer, Tuple<? extends IMetaAttribute> object,
-			boolean handleMetaData) {
+	public void writeData(ByteBuffer buffer, Tuple<? extends IMetaAttribute> object, boolean handleMetaData) {
 		synchronized (buffer) {
 			for (int i = 0; i < dataHandlers.length; i++) {
 				Object v = object.getAttribute(i);
@@ -340,28 +335,25 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				uri = "TUPLE";
 			} else if (type.isMultiValue()) {
 				uri = "MULTI_VALUE";
-			} else if (type.isListValue()){
+			} else if (type.isListValue()) {
 				uri = "LIST";
 			}
 
 			if (!DataHandlerRegistry.containsDataHandler(uri)) {
-				throw new IllegalArgumentException("Datatype cannot be used in transport!"
-						+ uri);
+				throw new IllegalArgumentException("Datatype "+uri+" of Attribute "+attribute+" cannot be used in transport!" );
 			}
 
 			SDFSchema subSchema;
 			if (type.isTuple()) {
 				subSchema = attribute.getDatatype().getSchema();
 			} else {
-				subSchema = SDFSchemaFactory
-						.createNewTupleSchema("", attribute);
-				if (schema.getConstraints() != null){
+				subSchema = SDFSchemaFactory.createNewTupleSchema("", attribute);
+				if (schema.getConstraints() != null) {
 					subSchema = SDFSchemaFactory.createNewWithContraints(schema.getConstraints(), subSchema);
 				}
 			}
 
-			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri,
-					subSchema);
+			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, subSchema);
 
 		}
 	}
@@ -371,12 +363,10 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 		int i = 0;
 		for (SDFDatatype attribute : schema) {
 
-			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(
-					attribute.toString(), (SDFSchema) null);
+			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(attribute.toString(), (SDFSchema) null);
 
 			if (handler == null) {
-				throw new IllegalArgumentException("Unregistered datatype "
-						+ attribute);
+				throw new IllegalArgumentException("Unregistered datatype " + attribute);
 			}
 
 			this.dataHandlers[i++] = handler;

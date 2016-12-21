@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.Order;
 
@@ -11,18 +10,16 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	private static final long serialVersionUID = 1480009485404803793L;
 
-	private Map<String, Object> keyValueMap;
 	private T metadata = null;
 	private boolean timeOrderMarker = true;
-	
+	// will only be initialized when needed
+	transient private Map<String, Object> transientMarker;
+
 	public AbstractStreamObject() {
 	}
 
 	@SuppressWarnings("unchecked")
 	protected AbstractStreamObject(AbstractStreamObject<T> other) {
-		if (other.keyValueMap != null) {
-			this.keyValueMap = new HashMap<>(other.keyValueMap);
-		}
 		if (other.metadata != null) {
 			this.metadata = (T) other.metadata.clone();
 		}
@@ -30,38 +27,8 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	}
 
 	@Override
-	final public Object getKeyValue(String name) {
-		return keyValueMap.get(name);
-	}
-	
-	@Override
-	final public boolean hasKeyValue(String name) {
-		return this.keyValueMap.containsKey(name);
-	}
-
-	@Override
-	final public void setKeyValue(String name, Object content) {
-		if (keyValueMap == null) {
-			keyValueMap = new HashMap<>();
-		}
-		keyValueMap.put(name, content);
-	}
-
-	@Override
-	final public void setKeyValueMap(Map<String, Object> metaMap) {
-		keyValueMap = new HashMap<>();
-		if (metaMap != null) {
-			this.keyValueMap.putAll(metaMap);
-		}
-	}
-
-	@Override
-	final public Map<String, Object> getGetValueMap() {
-		if (keyValueMap != null){
-			return Collections.unmodifiableMap(keyValueMap);
-		}else{
-			return null;
-		}
+	public boolean isSchemaLess() {
+		return true;
 	}
 
 	@Override
@@ -88,41 +55,16 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		IStreamObject<T> ret = process_merge(left, right, order);
 		ret.setMetadata(metamerge.mergeMetadata(metadateleft, metadateright));
 
-		// Use from right and overwrite with left
-		if (order == Order.LeftRight) {
-			mergeInternal(left, right, ret);
-		} else if (order == Order.RightLeft) { // Use from Left and overwrite
-												// with right
-			mergeInternal(right, left, ret);
-		}
-
 		this.timeOrderMarker = left.isTimeProgressMarker() && right.isTimeProgressMarker();
-		
+
 		return ret;
 	}
 
-	private void mergeInternal(IStreamObject<T> left, IStreamObject<T> right, IStreamObject<T> ret) {
-		// TODO: Merge function in cases where key is same!!
-
-		if (right.getGetValueMap() != null) {
-			ret.setKeyValueMap(right.getGetValueMap());
-		}
-		if (left.getGetValueMap() != null) {
-			if (right.getGetValueMap() == null) {
-				ret.setKeyValueMap(left.getGetValueMap());
-			} else {
-				for (Entry<String, Object> a : left.getGetValueMap().entrySet()) {
-					ret.setKeyValue(a.getKey(), a.getValue());
-				}
-			}
-		}
-	}
-	
 	@Override
 	public boolean isTimeProgressMarker() {
 		return timeOrderMarker;
 	}
-	
+
 	@Override
 	public void setTimeProgressMarker(boolean timeOrderMarker) {
 		this.timeOrderMarker = timeOrderMarker;
@@ -150,11 +92,21 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	}
 
 	@Override
+	public int hashCode(boolean calcWithMeta){
+		if (!calcWithMeta){
+			return this.hashCode();
+		}
+		return Objects.hash(this.getMetadata(),this);
+	}
+
+
+
+	@Override
 	public boolean equalsTolerance(Object o, double tolerance) {
 		// Default with no restriction
 		return equals(o);
 	}
-	
+
 	@Override
 	public boolean equals(IStreamObject<IMetaAttribute> o, boolean compareMeta) {
 		boolean ret = equals(o);
@@ -164,4 +116,23 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		return ret;
 	}
 
+	// --------------------------------------------------------------------------------------------
+	// Methods for Marker
+	// ---------------------------------------------------------------------------------------------
+	public boolean hasTransientMarker(String key) {
+		return transientMarker != null && transientMarker.containsKey(key);
+	};
+
+	@Override
+	public void setTransientMarker(String key, Object value) {
+		if (transientMarker == null){
+			transientMarker = new HashMap<>();
+		}
+		this.transientMarker.put(key, value);
+	}
+
+	@Override
+	public Object getTransientMarker(String key) {
+		return transientMarker!=null?transientMarker.get(key):null;
+	}
 }

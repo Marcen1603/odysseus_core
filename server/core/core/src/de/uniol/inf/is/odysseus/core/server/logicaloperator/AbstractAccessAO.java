@@ -62,7 +62,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	private String protocolHandler = "none";
 	private String transportHandler;
 
-	private final Map<String, String> optionsMap = new HashMap<>();
+	private final OptionMap optionsMap = new OptionMap();
 	private List<Option> optionsList;
 
 	private String dateFormat;
@@ -88,7 +88,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	public AbstractAccessAO(AbstractAccessAO po) {
 		super(po);
 		wrapper = po.wrapper;
-		optionsMap.putAll(po.optionsMap);
+		optionsMap.addAll(po.optionsMap);
 		inputSchema = po.inputSchema;
 		dataHandler = po.dataHandler;
 		protocolHandler = po.protocolHandler;
@@ -105,14 +105,14 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
-			String dataHandler, Map<String, String> optionsMap) {
+			String dataHandler, OptionMap optionsMap) {
 		setAccessAOName(name);
 		this.wrapper = wrapper;
 		this.transportHandler = transportHandler;
 		this.protocolHandler = protocolHandler;
 		this.dataHandler = dataHandler;
 		if (optionsMap != null) {
-			this.optionsMap.putAll(optionsMap);
+			this.optionsMap.addAll(optionsMap);
 		}
 	}
 
@@ -193,7 +193,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
 	public void setOptions(List<Option> value) {
 		for (Option option : value) {
-			optionsMap.put(option.getName().toLowerCase(), option.getValue());
+			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
 		}
 		optionsList = value;
 	}
@@ -203,19 +203,19 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	}
 
 	protected void addOption(String key, String value) {
-		optionsMap.put(key, value);
+		optionsMap.overwriteOption(key, value);
 	}
 
 	protected String getOption(String key) {
 		return optionsMap.get(key);
 	}
 
-	public void setOptionMap(Map<String, String> options) {
+	public void setOptionMap(OptionMap options) {
 		this.optionsMap.clear();
-		this.optionsMap.putAll(options);
+		this.optionsMap.addAll(options);
 	}
 
-	public Map<String, String> getOptionsMap() {
+	public OptionMap getOptionsMap() {
 		return optionsMap;
 	}
 

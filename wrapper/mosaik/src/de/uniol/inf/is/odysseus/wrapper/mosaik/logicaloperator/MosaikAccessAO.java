@@ -15,9 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.wrapper.mosaik.logicaloperator;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
@@ -43,7 +41,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 	}
 	
 	public MosaikAccessAO(Resource resource, String wrapper, String transport,
-			String protocol, String datahandler, Map<String, String> options) {
+			String protocol, String datahandler, OptionMap options) {
 		super(resource, wrapper, transport, protocol, datahandler, options);
 		this.init();
 	}
@@ -65,7 +63,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 	}
 	
 	private void init() {
-		Map<String, String> options = new HashMap<String, String>();
+		OptionMap options = new OptionMap();
 		if(this.type != null && this.type.equalsIgnoreCase("simapi")) {
 			this.setWrapper("GenericPush");
 			this.setTransportHandler("TCPServer");
@@ -73,7 +71,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 			this.setDataHandler("KeyValueObject");
 			
 			if(!options.containsKey("port")) {
-				options.put("port", "5554");
+				options.setOption("port", "5554");
 			}
 		} else {
 			this.setWrapper("GenericPush");
@@ -82,29 +80,29 @@ public class MosaikAccessAO extends AbstractAccessAO {
 			this.setDataHandler("KeyValueObject");
 
 			if(!options.containsKey("host")) {
-				options.put("host","127.0.0.1");
+				options.setOption("host","127.0.0.1");
 			}
 			if(!options.containsKey("readport")) {
-				options.put("readport", "5558");
+				options.setOption("readport", "5558");
 			}
 			if(!options.containsKey("writeport")) {
-				options.put("writeport", "5559");
+				options.setOption("writeport", "5559");
 			}
 			if(!options.containsKey("delayofmsg")) {
-				options.put("delayofmsg", "0");
+				options.setOption("delayofmsg", "0");
 			}
 			if(!options.containsKey("threads")) {
-				options.put("threads", "1");
+				options.setOption("threads", "1");
 			}
 			if(!options.containsKey("subscriptionfilter")) {
-				options.put("subscriptionfilter", "");
+				options.setOption("subscriptionfilter", "");
 			}
 			if(!options.containsKey("basetimeunit")) {
-				options.put("basetimeunit", "SECONDS");
+				options.setOption("basetimeunit", "SECONDS");
 			}
 		}
 		if(!options.containsKey("byteorder")) {
-			options.put("byteorder", "LittleEndian");		
+			options.setOption("byteorder", "LittleEndian");		
 		}
 		this.setOptionMap(options);
 		

@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.metadata.UseLeftInputMetadata;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
@@ -92,7 +92,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(logical.getServiceMethod(),
 				logical.getMethod(), logical.getContentType(), logical.getUrl(), logical.isUrlIsTemplate() ,logical.getUrlSuffix(), arguments,
 				logical.getHeader(), logical.getOperation(), logical.getReceivedData(), logical.getCharset(),
-				logical.getParsingMethod(), logical.getOuterJoin(), logical.getKeyValueOutput(),
+				logical.getParsingMethod(), logical.getOuterJoin(), logical.isAllowNullValues(), logical.getKeyValueOutput(),
 				logical.getMultiTupleOutput(), logical.getUniqueKeysAsArray(), dataMergeFunction, dataLeftMergeFunction,
 				metaMerge, connection, requestBuilder, converter, keyFinder, messageCreator, messageManipulator,
 				cacheManager);

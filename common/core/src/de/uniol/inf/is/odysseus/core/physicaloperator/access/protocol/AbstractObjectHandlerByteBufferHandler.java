@@ -57,7 +57,6 @@ public abstract class AbstractObjectHandlerByteBufferHandler<T extends IStreamOb
 		default:
 			byte[] data = ObjectByteConverter.objectToBytes(punctuation);
 			buffer = ByteBuffer.allocate(data.length+4);
-			buffer.put(punctuation.getNumber());
 			buffer.putInt(data.length);
 			buffer.put(data);
 		}

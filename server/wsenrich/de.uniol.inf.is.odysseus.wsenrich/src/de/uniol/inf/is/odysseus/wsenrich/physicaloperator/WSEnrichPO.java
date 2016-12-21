@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wsenrich.physicaloperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IConnectionForWebservices;
@@ -41,6 +42,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final String charset;
 	private final String parsingMethod;
 	private final boolean outerJoin;
+	private final boolean allowNullValues;
 	private final boolean keyValueOutput;
 	private final boolean multiTupleOutput;
 	private final int[] parameterPositions;
@@ -50,11 +52,13 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	private final IKeyFinder keyFinder;
 	private final IMessageCreator messageCreator;
 	private final IMessageManipulator messageManipulator;
+
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 
-	public WSEnrichPO(String serviceMethod, String method, String contentType, String url, Boolean urlIsTemplate, String urlsuffix, List<Option> arguments,
-			List<Option> header, String operation, List<SDFAttribute> receivedData, String charset,
-			String parsingMethod, boolean outerJoin, boolean keyValueOutput, boolean multiTupleOutput, int[] uniqueKey,
+	public WSEnrichPO(String serviceMethod, String method, String contentType, String url, Boolean urlIsTemplate,
+			String urlsuffix, List<Option> arguments, List<Option> header, String operation,
+			List<SDFAttribute> receivedData, String charset, String parsingMethod, boolean outerJoin, boolean allowNullValues,
+			boolean keyValueOutput, boolean multiTupleOutput, int[] uniqueKey,
 			IDataMergeFunction<Tuple<M>, M> dataMergeFunction, ILeftMergeFunction<Tuple<M>, M> dataLeftMergeFunction,
 			IMetadataMergeFunction<M> metaMergeFunction, IConnectionForWebservices connection,
 			IRequestBuilder requestBuilder, HttpEntityToStringConverter converter, IKeyFinder keyFinder,
@@ -74,6 +78,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		this.charset = charset;
 		this.parsingMethod = parsingMethod;
 		this.outerJoin = outerJoin;
+		this.allowNullValues = allowNullValues;
 		this.keyValueOutput = keyValueOutput;
 		this.multiTupleOutput = multiTupleOutput;
 		this.parameterPositions = new int[arguments.size()];
@@ -111,25 +116,36 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		requestBuilder.buildUri();
 		// String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
-		if (urlIsTemplate){
+		if (urlIsTemplate) {
 			uri = replace(queryParameters, uri);
 		}
-		logger.trace("URI: "+uri);
-		logger.trace("PostData :"+postData);
+		logger.trace("URI: " + uri);
+		logger.trace("PostData :" + postData);
 		// Connect to the Url
 		connection.setUri(uri);
 		connection.setArguments(requestBuilder.getPostData());
-		logger.trace("Connection arguments "+requestBuilder.getPostData());
+		logger.trace("Connection arguments " + requestBuilder.getPostData());
 		if (header != null) {
-			logger.trace("Header:"+header);
+			logger.trace("Header:" + header);
 			connection.setHeaders(header);
 		}
-		connection.connect(charset, method, contentType);
+		try {
+			connection.connect(charset, method, contentType);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		HttpEntity entity = connection.retrieveBody();
 		// Convert the Http Entity into a String, finally close the Http
 		// Connection
 		converter.setInput(entity);
-		converter.convert();
+		try {
+			converter.convert();
+		} catch (IllegalStateException | IOException e) {
+			throw new RuntimeException(e);
+		}
+		if (logger.isTraceEnabled()) {
+			logger.trace(converter.getOutput());
+		}
 		// Set the Message for the Key (Element) Finder an find the defined
 		// Elements and paste
 		// them to the tuple(s)
@@ -140,12 +156,18 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 		for (int i = 0; i < keyFinder.getTupleCount(); i++) {
 			Tuple<M> wsTuple = new Tuple<>(receivedData.size(), false);
 			for (int j = 0; j < receivedData.size(); j++) {
-				keyFinder.setSearch(receivedData.get(j).getAttributeName());
-				Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
-				if ((value == null || value.equals("")) && !outerJoin) {
+				Object value = null;
+				try {
+					keyFinder.setSearch(receivedData.get(j).getAttributeName());
+					value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
+				} catch (Exception e) {
+					logger.warn("Error setting attribute "+j,e);
+				}
+
+				if ((value == null || value.equals("")) && !outerJoin && !allowNullValues) {
 					return null;
-				} else if ((value == null || value.equals("")) && outerJoin) {
-					wsTuple.setAttribute(j, "null");
+				} else if ((value == null || value.equals("")) && (outerJoin || allowNullValues)) {
+					wsTuple.setAttribute(j, null);
 				} else {
 					wsTuple.setAttribute(j, value);
 				}
@@ -157,7 +179,7 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 
 	private String replace(List<Option> queryParameters, String uri) {
 		String newUri = uri;
-		for (Option o:queryParameters){
+		for (Option o : queryParameters) {
 			newUri = newUri.replaceAll(o.getName(), o.getValue());
 		}
 

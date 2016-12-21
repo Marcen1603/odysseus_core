@@ -86,7 +86,7 @@ public class UriGetBuilder implements IRequestBuilder {
 		for(Option argument : this.arguments) {
 			//replaces whitespaces if present
 			String name = argument.getName().replace(BLANK, BLANKDELMITTER);
-			String value = argument.getValue().replace(BLANK, BLANKDELMITTER);
+			String value = (""+argument.getValue()).replace(BLANK, BLANKDELMITTER);
 			this.uri.append(name + KEYVALUEDELMITER
 				+ value + ARGUMENTDELMITER);
 		}

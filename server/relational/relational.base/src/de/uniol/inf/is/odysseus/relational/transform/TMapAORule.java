@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
@@ -40,9 +41,12 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 			throws RuleException {
 		IPhysicalOperator mapPO;
 		if ((mapAO.getThreads() >= 0) && (mapAO.getThreads() <= 1)) {
+
+			int[] restrictList = SDFSchema.calcRestrictList(mapAO.getInputSchema(), mapAO.getRemoveAttributes());
+
 			mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(),
 					mapAO.getExpressionList().toArray(new SDFExpression[0]),
-					mapAO.isAllowNullValue(), mapAO.isEvaluateOnPunctuation(), mapAO.isSuppressErrors());
+					mapAO.isAllowNullValue(), mapAO.isEvaluateOnPunctuation(), mapAO.isSuppressErrors(), mapAO.isKeepInput(), restrictList);
 		} else {
 			mapPO = new RelationalThreadedMapPO<IMetaAttribute>(
 					mapAO.getInputSchema(), mapAO.getExpressionList().toArray(

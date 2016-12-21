@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 /**
  * Helper class to send commands to BaDaSt per TCP. Host and port are set in
  * badast.conf.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -40,7 +40,7 @@ public class BaDaStSender {
 
 	/**
 	 * Checks, if the BaDaSt application is available.
-	 * 
+	 *
 	 * @return True, if the server is up.
 	 */
 	public static boolean isBaDaStServerAvailable() {
@@ -56,7 +56,7 @@ public class BaDaStSender {
 
 	/**
 	 * Sends a command to the BaDaSt application.
-	 * 
+	 *
 	 * @param command
 	 *            The command to send.
 	 * @return The answer from the BaDaSt server.
@@ -78,7 +78,7 @@ public class BaDaStSender {
 	/**
 	 * Sends a command to the BaDaSt application in order to create a recorder
 	 * for a data source.
-	 * 
+	 *
 	 * @param config
 	 *            The configuration for the BaDaSt recorder.
 	 * @return The name of the created BaDaSt recorder.
@@ -89,14 +89,14 @@ public class BaDaStSender {
 			String[] split = answer.split(" ");
 			return split[split.length - 1];
 		}
-		cLog.error("Could not create BaDaSt recorder!");
+		cLog.error("Could not create BaDaSt recorder: {}", answer);
 		return null;
 	}
 
 	/**
 	 * Creates a command for the BaDaSt application in order to create a
 	 * recorder for a data source.
-	 * 
+	 *
 	 * @param config
 	 *            The configuration for the BaDaSt recorder.
 	 * @return A string to be sent to BaDaSt.
@@ -117,7 +117,7 @@ public class BaDaStSender {
 	/**
 	 * Sends a command to the BaDaSt application in order to start a recorder
 	 * for a data source.
-	 * 
+	 *
 	 * @param recorder
 	 *            The name of the BaDaSt recorder.
 	 */
@@ -128,7 +128,7 @@ public class BaDaStSender {
 	/**
 	 * Creates a command for the BaDaSt application in order to start the
 	 * recorder a the data source.
-	 * 
+	 *
 	 * @param recorder
 	 *            The name of the BaDaSt recorder.
 	 * @return A string to be sent to BaDaSt.
@@ -142,7 +142,7 @@ public class BaDaStSender {
 	/**
 	 * Sends a command to the BaDaSt application in order to close a recorder
 	 * for a data source.
-	 * 
+	 *
 	 * @param recorder
 	 *            The name of the BaDaSt recorder.
 	 */
@@ -153,7 +153,7 @@ public class BaDaStSender {
 	/**
 	 * Creates a command for the BaDaSt application in order to close the
 	 * recorder a the data source.
-	 * 
+	 *
 	 * @param recorder
 	 *            The name of the BaDaSt recorder.
 	 * @return A string to be sent to BaDaSt.
@@ -167,7 +167,7 @@ public class BaDaStSender {
 	/**
 	 * Sends a command to the BaDaSt application in order to list all existing
 	 * recorders.
-	 * 
+	 *
 	 * @return A set of all existing recorders, with the following pattern for
 	 *         each set entry: <br />
 	 *         recordertype_sourcename.

@@ -29,16 +29,16 @@ public class FilterQueryIDsFunction extends AbstractQueryIDsFunction {
 	@Override
 	public List<Integer> getValue() {
 		IServerExecutor exec = ExecutorBinder.getExecutor();
-		IExecutionPlan plan = exec.getExecutionPlan();
+		IExecutionPlan plan = exec.getExecutionPlan(getSessions().get(0));
 		List<Integer> queryIDs = getInputValue(0);
 		Collection<IPhysicalQuery> queries = new ArrayList<IPhysicalQuery>();
 		for (Integer i:queryIDs){
-			queries.add(plan.getQueryById(i));
+			queries.add(plan.getQueryById(i, getSessions().get(0)));
 		}
 		String predicateString = (String) getInputValue(1);
 		return getValue(queries, predicateString);
 	}
-	
+
 
 
 }

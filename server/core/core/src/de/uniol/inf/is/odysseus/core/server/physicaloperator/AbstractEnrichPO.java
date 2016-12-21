@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider {
 
-	static final Logger logger = LoggerFactory
+	static final private Logger logger = LoggerFactory
 			.getLogger(AbstractEnrichPO.class);
 
 	private final ICache cache;
@@ -41,7 +42,7 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 		this.metaMergeFunction = metaMergeFunction;
 		this.uniqueKeys = uniqueKeys;
 	}
-	
+
 	public AbstractEnrichPO(ICache cache,
 			IDataMergeFunction<T, M> dataMergeFunction,
 			IMetadataMergeFunction<M> metaMergeFunction, int[] uniqueKeys) {
@@ -114,9 +115,9 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 				transfer(output);
 			}
 		}
-		
+
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);

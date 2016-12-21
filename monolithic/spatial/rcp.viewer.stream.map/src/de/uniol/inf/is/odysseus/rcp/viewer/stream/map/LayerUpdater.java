@@ -138,7 +138,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			long timeRangeInMs = userDefinedTimeRange * 1000;
 			long userDefinedTimeStamp = 0;
 			if (!puffer.isEmpty()) {
-				userDefinedTimeStamp = puffer.getMaxTs().getMainPoint()
+				userDefinedTimeStamp = puffer.getMaxStartTs().getMainPoint()
 						- timeRangeInMs;
 			}
 
@@ -149,7 +149,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 				// Update "current-list", timeSlider and all the other things
 				// which rely on the startTimeStamp
 				streamMapEditor.getScreenManager().setMaxIntervalStart(
-						puffer.getMinTs());
+						puffer.getMinStartTs());
 				this.elementList = this.puffer
 						.queryOverlapsAsList(this.streamMapEditor
 								.getScreenManager().getInterval());
@@ -162,7 +162,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		while (puffer.size() > maxNumerOfElements) {
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer
-					.peekElementsContaing(puffer.getMinTs(), false);
+					.peekElementsContaing(puffer.getMinStartTs(), false);
 
 			PointInTime deleteTime = null;
 			if (oldestElements.hasNext()) {
@@ -182,7 +182,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp
 			streamMapEditor.getScreenManager().setMaxIntervalStart(
-					puffer.getMinTs());
+					puffer.getMinStartTs());
 			this.elementList = this.puffer
 					.queryOverlapsAsList(this.streamMapEditor
 							.getScreenManager().getInterval());
@@ -206,20 +206,20 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		boolean changedSomething = false;
 
 		// Start
-		if (puffer.getMinTs() != null
+		if (puffer.getMinStartTs() != null
 				&& (streamMapEditor.getScreenManager().getMaxIntervalStart()
-						.after(puffer.getMinTs()) || first)) {
+						.after(puffer.getMinStartTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalStart(
-					puffer.getMinTs());
+					puffer.getMinStartTs());
 			changedSomething = true;
 		}
 
 		// End
-		if (puffer.getMaxTs() != null
+		if (puffer.getMaxStartTs() != null
 				&& (streamMapEditor.getScreenManager().getMaxIntervalEnd()
-						.before(puffer.getMaxTs()) || first)) {
+						.before(puffer.getMaxStartTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalEnd(
-					puffer.getMaxTs());
+					puffer.getMaxStartTs());
 			changedSomething = true;
 		}
 

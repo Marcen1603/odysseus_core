@@ -24,8 +24,8 @@ public class WaitForQueryCommand extends AbstractQueryCommand {
 	public synchronized void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
 		try {
 			long start = System.currentTimeMillis();
-			while ((executor.getQueryState(getQueryName()) != QueryState.INACTIVE
-					&& executor.getQueryState(getQueryName()) != QueryState.UNDEF)
+			while ((executor.getQueryState(getQueryName(), getCaller()) != QueryState.INACTIVE
+					&& executor.getQueryState(getQueryName(), getCaller()) != QueryState.UNDEF)
 					&& !(maxWaitingTime > 0 && System.currentTimeMillis() > start + maxWaitingTime)) {
 				this.wait(testPeriod);
 			}

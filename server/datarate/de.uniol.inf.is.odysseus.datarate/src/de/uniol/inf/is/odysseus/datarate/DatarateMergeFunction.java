@@ -7,16 +7,17 @@ import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 public class DatarateMergeFunction implements IInlineMetadataMergeFunction<IDatarate>, Cloneable {
 
 	public DatarateMergeFunction() {
-		
+
 	}
-	
+
 	public DatarateMergeFunction( DatarateMergeFunction func ) {
-		
+
 	}
-	
+
 	@Override
 	public void mergeInto(IDatarate result, IDatarate inLeft, IDatarate inRight) {
-		result.setDatarate(inRight.getDatarate());
+		result.setDatarates(inLeft.getDatarates());
+		result.setDatarates(inRight.getDatarates());
 	}
 
 	@Override
