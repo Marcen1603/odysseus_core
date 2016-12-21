@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public abstract class AbstractNamedStoreFunction<T> extends AbstractFunction<T> {
 
 	private static final long serialVersionUID = 8618484144361039066L;
+	private IStore<String, Object> store;
 
 	public AbstractNamedStoreFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
 			boolean optimizeConstantParameter) {
@@ -18,10 +19,13 @@ public abstract class AbstractNamedStoreFunction<T> extends AbstractFunction<T> 
 	}
 
 	protected IStore<String, Object> getStore(String storeKey) {
-		IServerExecutor exec = ExecutorBinder.getExecutor();
-		ISession session = getSessions().get(0);
-		IDataDictionary dd = exec.getDataDictionary(getSessions().get(0));
-		return dd.getStore(storeKey, session);
+		if (store == null) {
+			IServerExecutor exec = ExecutorBinder.getExecutor();
+			ISession session = getSessions().get(0);
+			IDataDictionary dd = exec.getDataDictionary(getSessions().get(0));
+			store = dd.getStore(storeKey, session);
+		}
+		return store;
 	}
 
 }
