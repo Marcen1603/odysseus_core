@@ -1,18 +1,13 @@
 package de.uniol.inf.is.odysseus.spatial.datastructures;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.github.davidmoten.geo.Base32;
-import com.github.davidmoten.geo.Coverage;
-import com.github.davidmoten.geo.GeoHash;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -20,6 +15,10 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import ch.hsr.geohash.BoundingBox;
+import ch.hsr.geohash.GeoHash;
+import ch.hsr.geohash.WGS84Point;
+import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -30,7 +29,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	private int geometryPosition;
 
-	private NavigableMap<Long, Tuple<?>> geoHashes;
+	private NavigableMap<GeoHash, Tuple<?>> geoHashes;
 
 	public GeoHashSTDataStructure(int geometryPosition) {
 		this.geometryPosition = geometryPosition;
@@ -44,11 +43,9 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		if (o instanceof Tuple<?>) {
 			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) o;
 
-			// TODO If you fork the library you could directly get long instead
-			// of encode and decode with string
-
 			// Insert into map
-			long geoHash = Base32.decodeBase32(GeoHash.encodeHash(1, 1));
+			GeoHash geoHash = GeoHash.withBitPrecision(getGeometry(tuple).getCentroid().getX(),
+					getGeometry(tuple).getCentroid().getY(), 64);
 			geoHashes.put(geoHash, tuple);
 
 			// Insert in SweepArea
@@ -112,19 +109,21 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		Geometry envelope = polygon.getEnvelope();
 
 		// Get hashes that we have to search for
-
-		// TODO This is a complete guess. See which coordinate is which.
-		Coverage coverage = GeoHash.coverBoundingBox(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y,
-				envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
-		Set<String> hashes = coverage.getHashes();
+		// TODO This is a complete guess. See which coordinate is which. ->
+		// First test seems to be ok. Other possibility: expand BoundingBoxQuery
+		// with all polygonPoints
+		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
+		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
+		BoundingBox bBox = new BoundingBox(point1, point2);
+		GeoHashBoundingBoxQuery bbQuery = new GeoHashBoundingBoxQuery(bBox);
+		List<GeoHash> searchHashes = bbQuery.getSearchHashes();
 
 		// Get all hashes that we have to calculate the distance for
-		Map<Long, Tuple<?>> allHashes = new HashMap<>();
-		Iterator<String> iter = hashes.iterator();
-		while (iter.hasNext()) {
+		Map<GeoHash, Tuple<?>> allHashes = new HashMap<>();
+		for (GeoHash hash : searchHashes) {
 			// Query all our hashes and use those which have the same prefix
 			// The whole list of hashes is used in "getByPrefix"
-			allHashes.putAll(getByPreffix(Base32.decodeBase32(iter.next())));
+			allHashes.putAll(getByPreffix(hash));
 		}
 
 		// For every point in our list ask JTS if the points lies within the
@@ -153,8 +152,10 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		}
 	}
 
-	private SortedMap<Long, Tuple<?>> getByPreffix(long preffix) {
-		return this.geoHashes.subMap(preffix, preffix + Character.MAX_VALUE);
+	private SortedMap<GeoHash, Tuple<?>> getByPreffix(GeoHash preffix) {
+		// We have to add 1 to the given hash, as we search all between the
+		// given hash and the next one
+		return this.geoHashes.subMap(preffix, preffix.next());
 	}
 
 }
