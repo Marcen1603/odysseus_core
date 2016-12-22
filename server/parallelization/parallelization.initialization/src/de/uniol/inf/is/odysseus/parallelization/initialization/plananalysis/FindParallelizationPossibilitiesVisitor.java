@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
@@ -42,15 +43,17 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 	@Override
 	public void nodeAction(P node) {
 		// set unique identifier
-		if (node.getUniqueIdentifier() == null || node.getUniqueIdentifier().length() == 0) {
+		if (node.getUniqueIdentifier() == null) {
 			// source operators are identified by source name and shared automatically
-			if (!(node instanceof StreamAO || node instanceof AbstractAccessAO)) {
+			if (!(node instanceof AbstractAccessAO || node instanceof StreamAO || node instanceof AbstractSenderAO)) {
 				String identifier = new String(UNIQUE_ID_PREFIX);
 				identifier += this.queryIdentifier;
 				identifier += ".";
 				identifier += counter++;
 				identifier += UNIQUE_ID_PREFIX;
 				node.setUniqueIdentifier(identifier);
+			} else {
+				LOG.debug("No unique id set for Logical Operator {}", node.getName());
 			}
 		}
 		// check intra-operator parallelization
