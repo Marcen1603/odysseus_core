@@ -81,12 +81,12 @@ public interface IMovingObjectDataStructure {
 	public List<Tuple<?>> queryKNN(Geometry geometry, int k, ITimeInterval t);
 
 	/**
-	 * Calculates all neighbors within the given range around the geometry.
+	 * Calculates all neighbors within the given radius around the geometry.
 	 * 
 	 * @param geometry
 	 *            The geometry around which you want to know the neighborhood
-	 * @param range
-	 *            The range in meters around the geometry
+	 * @param radius
+	 *            The radius in meters around the geometry
 	 * @param t
 	 *            The time interval of the element where we search the neighbors
 	 *            for. Only neighbors are considered which intervals overlap
@@ -94,7 +94,7 @@ public interface IMovingObjectDataStructure {
 	 * @return A list with all tuples for which their geometry is in the
 	 *         neighborhood around the given geometry
 	 */
-	public List<Tuple<?>> queryNeighborhood(Geometry geometry, double range, ITimeInterval t);
+	public List<Tuple<?>> queryCircle(Geometry geometry, double radius, ITimeInterval t);
 
 	/**
 	 * Queries the data structure and returns all data points which are in a

@@ -143,7 +143,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Tuple<?>> queryNeighborhood(Geometry geometry, double rangeMeters, ITimeInterval t) {
+	public List<Tuple<?>> queryCircle(Geometry geometry, double rangeMeters, ITimeInterval t) {
 
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCoordinate(), rangeMeters);

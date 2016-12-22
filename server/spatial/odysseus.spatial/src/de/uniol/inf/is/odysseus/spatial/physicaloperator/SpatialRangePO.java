@@ -88,7 +88,7 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 		GeometryWrapper geometryWrapper = null;
 		if (o instanceof GeometryWrapper) {
 			geometryWrapper = (GeometryWrapper) o;
-			return this.dataStructure.queryNeighborhood(geometryWrapper.getGeometry(), this.range,
+			return this.dataStructure.queryCircle(geometryWrapper.getGeometry(), this.range,
 					new TimeInterval(tuple.getMetadata().getStart(), tuple.getMetadata().getEnd()));
 		}
 		return null;

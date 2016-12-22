@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
@@ -66,6 +68,8 @@ public class SpatialDataStructureTest extends TestCase {
 		// Create the data structure that needs to be tested
 		try {
 			dataStructure = new NaiveSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
+			dataStructure = new FastQuadTreeSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
+			dataStructure = new GeoHashSTDataStructure(GEOMETRY_POSITION);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -241,7 +245,7 @@ public class SpatialDataStructureTest extends TestCase {
 	 */
 	@Test
 	public void testRange() {
-		List<Tuple<?>> rangeResult = dataStructure.queryNeighborhood(rangeTestCenter, range, testSearchInterval);
+		List<Tuple<?>> rangeResult = dataStructure.queryCircle(rangeTestCenter, range, testSearchInterval);
 		assertEqualList(rangeResult, rangeNeighbors);
 	}
 

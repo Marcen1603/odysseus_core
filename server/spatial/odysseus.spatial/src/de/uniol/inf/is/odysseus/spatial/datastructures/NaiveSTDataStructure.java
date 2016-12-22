@@ -113,7 +113,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	}
 
-	public List<Tuple<?>> queryNeighborhood(Geometry geometry, double range, ITimeInterval t) {
+	public List<Tuple<?>> queryCircle(Geometry geometry, double range, ITimeInterval t) {
 
 		List<Tuple<ITimeInterval>> elements = this.sweepArea.queryOverlapsAsList(t);
 
