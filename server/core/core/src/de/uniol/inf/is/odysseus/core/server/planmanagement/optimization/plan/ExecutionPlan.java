@@ -173,6 +173,9 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public synchronized IPhysicalQuery removeQuery(int queryID, ISession session) {
 		IPhysicalQuery toRemove = this.queries.remove(queryID);
+		if (toRemove == null){
+			return null;
+		}
 
 		ExecutorPermission.validateUserRight(toRemove, session, ExecutorPermission.REMOVE_QUERY);
 
@@ -193,14 +196,18 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public synchronized IPhysicalQuery getQueryById(int queryID, ISession session) {
 		IPhysicalQuery toReturn = this.queries.get(queryID);
-		ExecutorPermission.validateUserRight(toReturn, session, ExecutorPermission.GET_QUERY);
+		if (toReturn != null) {
+			ExecutorPermission.validateUserRight(toReturn, session, ExecutorPermission.GET_QUERY);
+		}
 		return toReturn;
 	}
 
 	@Override
 	public IPhysicalQuery getQueryByName(Resource name, ISession session) {
 		IPhysicalQuery toReturn = this.namedQueries.get(name);
-		ExecutorPermission.validateUserRight(toReturn, session, ExecutorPermission.GET_QUERY);
+		if (toReturn != null) {
+			ExecutorPermission.validateUserRight(toReturn, session, ExecutorPermission.GET_QUERY);
+		}
 		return toReturn;
 	}
 
