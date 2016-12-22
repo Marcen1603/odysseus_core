@@ -162,6 +162,8 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 
+		// Use time
+
 		// Create an envelope with all the coordinates of the polygon
 		Envelope env = new Envelope();
 		polygonPoints.stream().forEach(c -> env.expandToInclude(c.getCoordinate()));

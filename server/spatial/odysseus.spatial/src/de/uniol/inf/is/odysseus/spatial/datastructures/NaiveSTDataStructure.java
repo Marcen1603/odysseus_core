@@ -52,7 +52,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 			notifyListeners();
 		}
 	}
-	
+
 	@Override
 	public void cleanUp(PointInTime timestamp) {
 		this.sweepArea.extractElementsBefore(timestamp);
@@ -120,21 +120,15 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 		List<Tuple<?>> rangeTuples = new ArrayList<Tuple<?>>();
 
 		for (Tuple<?> tuple : elements) {
-			Object o = tuple.getAttribute(geometryPosition);
-			GeometryWrapper geometryWrapper = null;
-			if (o instanceof GeometryWrapper) {
-				geometryWrapper = (GeometryWrapper) o;
-				Geometry tupleGeometry = geometryWrapper.getGeometry();
+			Geometry tupleGeometry = getGeometry(tuple);
 
-				// TODO Use the right coordinate reference system
-				MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
-				double realDistance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
-						tupleGeometry.getCentroid().getCoordinate());
+			// TODO Use the right coordinate reference system
+			MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+			double realDistance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+					tupleGeometry.getCentroid().getCoordinate());
 
-				if (realDistance <= range) {
-					rangeTuples.add(tuple);
-				}
-
+			if (realDistance <= range) {
+				rangeTuples.add(tuple);
 			}
 		}
 		return rangeTuples;

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.spatial.datastructures;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -24,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
@@ -86,11 +89,55 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public List<Tuple<?>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
 
-		return null;
+		// This is basically a bounding box but for a circle
+
+		// Get the rectangular envelope for the circle
+		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCoordinate(), radius);
+		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
+		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
+		Point lowerRigt = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+
+		// Get all elements within that bounding box
+		List<Tuple<?>> candidates = queryBoundingBox(topLeft, lowerRigt, t);
+
+		// Check the candidates if they are in the circle
+		List<Tuple<?>> rangeTuples = new ArrayList<Tuple<?>>();
+
+		for (Tuple<?> tuple : candidates) {
+			Geometry tupleGeometry = getGeometry(tuple);
+
+			// TODO Use the right coordinate reference system
+			MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+			double realDistance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+					tupleGeometry.getCentroid().getCoordinate());
+
+			if (realDistance <= radius) {
+				rangeTuples.add(tuple);
+			}
+		}
+		return rangeTuples;
+	}
+
+	public List<Tuple<?>> queryBoundingBox(Point topLeft, Point lowerRight, ITimeInterval t) {
+		// Create the polygon to query
+		GeometryFactory factory = new GeometryFactory(topLeft.getPrecisionModel(), topLeft.getSRID());
+		Point topRight = factory.createPoint(new Coordinate(lowerRight.getX(), topLeft.getY()));
+		Point lowerLeft = factory.createPoint(new Coordinate(topLeft.getX(), lowerRight.getY()));
+
+		List<Point> polygonPoints = new ArrayList<>(5);
+		polygonPoints.add(topLeft);
+		polygonPoints.add(topRight);
+		polygonPoints.add(lowerRight);
+		polygonPoints.add(lowerLeft);
+		polygonPoints.add(topLeft);
+
+		return queryBoundingBox(polygonPoints, t);
 	}
 
 	@Override
 	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
+
+		// TODO Use time interval
 
 		// Check if the first and the last point is equal. If not, we have to
 		// add the first point at the end to have a closed ring.
