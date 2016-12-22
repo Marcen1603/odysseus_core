@@ -12,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.AppendUniqueIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
@@ -35,12 +37,14 @@ public class ParallelizationOptimizer {
 	private static int parallelizationNumber;
 
 	private static final Logger LOG = LoggerFactory.getLogger(ParallelizationOptimizer.class);
+	
+	private static final String MIGRATION_STRATEGY = "GeneralizedParallelTracksMigrationStrategy";
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void reoptimizeQuery(IPhysicalQuery physicalQuery, ISession user) {
 		ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 
-		// copy initial logical plan an rename it to avoid duplicate uniqu ids
+		// copy initial logical plan an rename it to avoid duplicate uniqueids
 		GenericGraphWalker walker0 = new GenericGraphWalker();
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<>(logicalQuery);
 		walker0.prefixWalk(logicalQuery.getInitialLogicalPlan(), copyVisitor);
@@ -50,6 +54,30 @@ public class ParallelizationOptimizer {
 				"_migrate" + parallelizationNumber);
 		parallelizationNumber++;
 		walker0.prefixWalk(logicalQuery.getLogicalPlan(), appendVisitor);
+		
+		//remove sinks and make the operator which it is subscribed to the new root
+		// only works if the sink is subscribed to only one sink
+		ILogicalOperator top = logicalQuery.getLogicalPlan();
+		if(!(top instanceof TopAO)) {
+			LOG.error("The top of the plan is not of Type TopAO");
+			return;
+		}
+		if(top.getSubscribedToSource().size()!=1) {
+			LOG.error("Top must be subscribed to exactly one operator.");
+			return;
+		}
+		LogicalSubscription topSubscription = top.getSubscribedToSource().iterator().next();
+		ILogicalOperator sinkToRemove = topSubscription.getTarget();
+		if(sinkToRemove.getSubscribedToSource().size() != 1){
+			LOG.error("The sink must be subscribed to  exactly one operator.");
+			return;
+		}
+		LogicalSubscription sinkSubscription = sinkToRemove.getSubscribedToSource().iterator().next();
+		ILogicalOperator newRoot = sinkSubscription.getTarget();
+		top.unsubscribeFromSource(topSubscription);
+		sinkToRemove.unsubscribeFromSource(sinkSubscription);
+		sinkToRemove.removeOwner(logicalQuery);
+		newRoot.subscribeSink(top, 0, 0, top.getOutputSchema());
 
 		// parallelize (change BuildConfiguration and perform preTransformation)
 		List<ILogicalQuery> logicalQueryList = new ArrayList<>();
@@ -63,13 +91,12 @@ public class ParallelizationOptimizer {
 				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery).getTransformationConfiguration(),
 				user);
 		// TODO select migration strategy
-		String migrationStrategy = "GeneralizedParallelTracksMigrationStrategy";
 		IMigrationStrategy planMigrationStrategy = null;
 		try {
-			planMigrationStrategy = MigrationStrategyRegistry.getPlanMigrationStrategyById(migrationStrategy);
+			planMigrationStrategy = MigrationStrategyRegistry.getPlanMigrationStrategyById(MIGRATION_STRATEGY);
 		} catch (MigrationException e) {
 			// TODO Auto-generated catch block
-			LOG.error("Migration strategy \"" + migrationStrategy + "\" could not be loaded.", e);
+			LOG.error("Migration strategy \"" + MIGRATION_STRATEGY + "\" could not be loaded.", e);
 			return;
 		}
 		// replace physical plan
