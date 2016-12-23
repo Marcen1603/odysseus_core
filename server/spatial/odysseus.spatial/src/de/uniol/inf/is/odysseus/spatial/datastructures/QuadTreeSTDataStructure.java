@@ -70,7 +70,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 			checkStartTSOrder(tuple);
 
 			// Insert in QuadTree
-			Geometry geom = getGeometry((Tuple<?>) o);
+			Geometry geom = getGeometry((Tuple<ITimeInterval>) o);
 			this.quadTree.insert(geom.getEnvelopeInternal(), o);
 
 			// Insert in SweepArea
@@ -136,31 +136,32 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 	}
 
 	@Override
-	public List<Tuple<?>> queryKNN(Geometry geometry, int k, ITimeInterval t) {
+	public List<Tuple<ITimeInterval>> queryKNN(Geometry geometry, int k, ITimeInterval t) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Tuple<?>> queryCircle(Geometry geometry, double rangeMeters, ITimeInterval t) {
+	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double rangeMeters, ITimeInterval t) {
 
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCoordinate(), rangeMeters);
 
 		// Query the quadTree for all objects that may be in the envelope
-		List<?> envelopeItems = quadTree.query(env);
+		List<Tuple<ITimeInterval>> envelopeItems = quadTree.query(env);
 
-		List<?> result = envelopeItems.parallelStream().filter(e -> e != null && MetrticSpatialUtils.getInstance()
-				.calculateDistance(geometry.getCoordinate(), getGeometry((Tuple<?>) e).getCoordinate()) <= rangeMeters)
+		List<Tuple<ITimeInterval>> result = envelopeItems.parallelStream()
+				.filter(e -> e != null && MetrticSpatialUtils.getInstance().calculateDistance(geometry.getCoordinate(),
+						getGeometry((Tuple<ITimeInterval>) e).getCoordinate()) <= rangeMeters)
 				.collect(Collectors.toList());
 
-		return (List<Tuple<?>>) result;
+		return (List<Tuple<ITimeInterval>>) result;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
+	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 
 		// Use time
 
@@ -169,7 +170,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 		polygonPoints.stream().forEach(c -> env.expandToInclude(c.getCoordinate()));
 
 		// Query the quadTree for all objects that may be in the envelope
-		List<?> envelopeItems = quadTree.query(env);
+		List<Tuple<ITimeInterval>> envelopeItems = quadTree.query(env);
 
 		/*
 		 * Create the actual polygon we search for: 1. We already have
@@ -197,10 +198,10 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 
 		final Polygon queryPolygon = polygon;
 		// Filter for the objects which are really in the polygon
-		List<?> result = envelopeItems.parallelStream().filter(e -> queryPolygon.contains(getGeometry((Tuple<?>) e)))
-				.collect(Collectors.toList());
+		List<Tuple<ITimeInterval>> result = envelopeItems.parallelStream()
+				.filter(e -> queryPolygon.contains(getGeometry(e))).collect(Collectors.toList());
 
-		return (List<Tuple<?>>) result;
+		return (List<Tuple<ITimeInterval>>) result;
 	}
 
 	@Override
@@ -208,7 +209,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 		return this.geometryPosition;
 	}
 
-	protected Geometry getGeometry(Tuple<?> tuple) {
+	protected Geometry getGeometry(Tuple<ITimeInterval> tuple) {
 		Object o = tuple.getAttribute(geometryPosition);
 		GeometryWrapper geometryWrapper = null;
 		if (o instanceof GeometryWrapper) {

@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
@@ -68,8 +67,8 @@ public class SpatialDataStructureTest extends TestCase {
 		// Create the data structure that needs to be tested
 		try {
 			dataStructure = new NaiveSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
-			dataStructure = new FastQuadTreeSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
-			dataStructure = new GeoHashSTDataStructure(GEOMETRY_POSITION);
+//			dataStructure = new FastQuadTreeSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
+			dataStructure = new GeoHashSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -235,7 +234,7 @@ public class SpatialDataStructureTest extends TestCase {
 	@Test
 	public void testkNN() {
 		int k = neighbors.size();
-		List<Tuple<?>> kNN = dataStructure.queryKNN(kNNTestCenter, k, testSearchInterval);
+		List<Tuple<ITimeInterval>> kNN = dataStructure.queryKNN(kNNTestCenter, k, testSearchInterval);
 		assertEqualList(kNN, neighbors);
 	}
 
@@ -245,13 +244,13 @@ public class SpatialDataStructureTest extends TestCase {
 	 */
 	@Test
 	public void testRange() {
-		List<Tuple<?>> rangeResult = dataStructure.queryCircle(rangeTestCenter, range, testSearchInterval);
+		List<Tuple<ITimeInterval>> rangeResult = dataStructure.queryCircle(rangeTestCenter, range, testSearchInterval);
 		assertEqualList(rangeResult, rangeNeighbors);
 	}
 
 	@Test
 	public void testBoundingBoxQuery() {
-		List<Tuple<?>> boundingBoxResult = dataStructure.queryBoundingBox(polygon, testSearchInterval);
+		List<Tuple<ITimeInterval>> boundingBoxResult = dataStructure.queryBoundingBox(polygon, testSearchInterval);
 		assertEqualList(boundingBoxResult, correctQueryResults);
 	}
 
@@ -266,7 +265,7 @@ public class SpatialDataStructureTest extends TestCase {
 	 * @param correctSolution
 	 *            The points which we know are correct
 	 */
-	private void assertEqualList(List<Tuple<?>> queryResult, List<Point> correctSolution) {
+	private void assertEqualList(List<Tuple<ITimeInterval>> queryResult, List<Point> correctSolution) {
 		// Copy the list with the original neighbors that need to be found
 		List<Point> correctSolutionCopy = new ArrayList<>(correctSolution);
 

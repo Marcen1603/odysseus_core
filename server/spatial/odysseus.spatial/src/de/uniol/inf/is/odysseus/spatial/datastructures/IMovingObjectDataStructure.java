@@ -78,7 +78,7 @@ public interface IMovingObjectDataStructure {
 	 * @return A list of tuples which are the nearest neighbors of the given
 	 *         geometry
 	 */
-	public List<Tuple<?>> queryKNN(Geometry geometry, int k, ITimeInterval t);
+	public List<Tuple<ITimeInterval>> queryKNN(Geometry geometry, int k, ITimeInterval t);
 
 	/**
 	 * Calculates all neighbors within the given radius around the geometry.
@@ -94,7 +94,7 @@ public interface IMovingObjectDataStructure {
 	 * @return A list with all tuples for which their geometry is in the
 	 *         neighborhood around the given geometry
 	 */
-	public List<Tuple<?>> queryCircle(Geometry geometry, double radius, ITimeInterval t);
+	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double radius, ITimeInterval t);
 
 	/**
 	 * Queries the data structure and returns all data points which are in a
@@ -109,7 +109,7 @@ public interface IMovingObjectDataStructure {
 	 *            this time interval.
 	 * @return A list of tuples which lie within the given polygon
 	 */
-	public List<Tuple<?>> queryBoundingBox(List<Point> coordinates, ITimeInterval t);
+	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> coordinates, ITimeInterval t);
 
 	/**
 	 * 

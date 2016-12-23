@@ -56,7 +56,7 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 			this.dataStructure.add(tuple);
 		} else if (port == 1) {
 			this.dataStructure.cleanUp(tuple.getMetadata().getStart());
-			List<Tuple<?>> neighbors = queryObject(tuple);
+			List<Tuple<ITimeInterval>> neighbors = queryObject(tuple);
 
 			// IAttributeResolver attributeResolver = new
 			// DirectAttributeResolver(this.getOutputSchema());
@@ -83,7 +83,7 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 	 * @return The neighbors (full tuples) or null, if no geometry can be found
 	 *         in the given tuple.
 	 */
-	private List<Tuple<?>> queryObject(Tuple<ITimeInterval> tuple) {
+	private List<Tuple<ITimeInterval>> queryObject(Tuple<ITimeInterval> tuple) {
 		Object o = tuple.getAttribute(geometryPosition);
 		GeometryWrapper geometryWrapper = null;
 		if (o instanceof GeometryWrapper) {

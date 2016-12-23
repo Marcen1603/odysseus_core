@@ -62,16 +62,16 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	// TODO Different distance functions should be possible (e.g. city distance
 	// metric, Haversine, ellipsoid, Euklidean, ...)
 	@Override
-	public List<Tuple<?>> queryKNN(Geometry geometry, int k, ITimeInterval t) {
+	public List<Tuple<ITimeInterval>> queryKNN(Geometry geometry, int k, ITimeInterval t) {
 
 		List<Tuple<ITimeInterval>> elements = this.sweepArea.queryOverlapsAsList(t);
 		// Just copy the list ...
-		List<Tuple<?>> sortedTuples = new ArrayList<Tuple<?>>(elements);
+		List<Tuple<ITimeInterval>> sortedTuples = new ArrayList<Tuple<ITimeInterval>>(elements);
 		// and sort the list by the distance to the given point
-		sortedTuples.sort(new Comparator<Tuple<?>>() {
+		sortedTuples.sort(new Comparator<Tuple<ITimeInterval>>() {
 
 			@Override
-			public int compare(Tuple<?> o1, Tuple<?> o2) {
+			public int compare(Tuple<ITimeInterval> o1, Tuple<ITimeInterval> o2) {
 				// Calculate the distance of both tuples to the center (here we
 				// can use this distance calculation, as we are only interested
 				// in the distance comparison, not in the real distances)
@@ -109,17 +109,17 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 			return sortedTuples;
 		}
 		// Very important: Do not return the subList itself as it is only a view
-		return new ArrayList<Tuple<?>>(sortedTuples.subList(0, k));
+		return new ArrayList<Tuple<ITimeInterval>>(sortedTuples.subList(0, k));
 
 	}
 
-	public List<Tuple<?>> queryCircle(Geometry geometry, double range, ITimeInterval t) {
+	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double range, ITimeInterval t) {
 
 		List<Tuple<ITimeInterval>> elements = this.sweepArea.queryOverlapsAsList(t);
 
-		List<Tuple<?>> rangeTuples = new ArrayList<Tuple<?>>();
+		List<Tuple<ITimeInterval>> rangeTuples = new ArrayList<Tuple<ITimeInterval>>();
 
-		for (Tuple<?> tuple : elements) {
+		for (Tuple<ITimeInterval> tuple : elements) {
 			Geometry tupleGeometry = getGeometry(tuple);
 
 			// TODO Use the right coordinate reference system
@@ -135,7 +135,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	}
 
 	@Override
-	public List<Tuple<?>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
+	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 
 		// Get all elements that are in the given time interval
 		List<Tuple<ITimeInterval>> elements = this.sweepArea.queryOverlapsAsList(t);
@@ -156,7 +156,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 		// For every point in our list ask JTS if the points lies within the
 		// polygon
-		List<Tuple<?>> result = null;
+		List<Tuple<ITimeInterval>> result = null;
 		result = elements.parallelStream().filter(e -> polygon.contains(getGeometry(e))).collect(Collectors.toList());
 
 		// Collect the points and return them
