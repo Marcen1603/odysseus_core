@@ -121,6 +121,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 		// The max radius not totally necessary but useful to avoid an endless
 		// search
+		// TODO This maybe leads to wrong results 
 		int maxRadius = 1000000;
 
 		// Query the guessed radius
