@@ -41,7 +41,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeImpl
 
 /**
  * Generates code from your model files on save.
@@ -103,7 +102,7 @@ class CQLGenerator implements IGenerator2
 					}
 					else// case 2 for aggregations with one source
 					{
-						var result = buildAggregrationOP(stmt.aggregations, stmt.order, src)
+						var result = buildAggregateOP(stmt.aggregations, stmt.order, src)
 						var List<String> attributes = result.get(0) as List<String>
 						var String operator 		= result.get(1).toString
 					
@@ -122,9 +121,7 @@ class CQLGenerator implements IGenerator2
 					}	
 					else
 					{
-						var join_name = '''join_«getID()»'''
-						var join   = '''«join_name + symbol1 + buildJoin(null, stmt.sources)»'''
-						var result = buildAggregrationOP(stmt.aggregations, stmt.order, join_name)
+						var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
 						var List<String> attributes = result.get(0) as List<String>
 						var String operator 		= result.get(1).toString
 					
@@ -132,7 +129,7 @@ class CQLGenerator implements IGenerator2
 							stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
 						)												
 						//TODO In progress! -> too many joins?
-						return '''«join»aggregation_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, join_name, operator))»'''
+						return '''aggregate_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, stmt.sources, operator))»'''
 					}
 				}
 			}
@@ -147,7 +144,7 @@ class CQLGenerator implements IGenerator2
 					}
 					else
 					{
-						var result = buildAggregrationOP(stmt.aggregations, stmt.order, src)
+						var result = buildAggregateOP(stmt.aggregations, stmt.order, src)
 //						var List<String> attributes = result.get(0) as List<String>
 						return '''project_«getID() + symbol1 + result.get(1).toString»'''
 					}												
@@ -160,7 +157,7 @@ class CQLGenerator implements IGenerator2
 					}
 					else
 					{
-						var operator = buildAggregrationOP(stmt.aggregations, stmt.order, stmt.sources)
+						var operator = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
 						return '''project_«getID() + symbol1 + operator.get(1).toString»'''
 					}
 				}				
@@ -180,54 +177,38 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 	
-	//TODO In progress!
-	def Object[] buildAggregrationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input) 
+	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
 	{
-		//Produces a string array with strings like 'FUNCTION' = 'COUNT' 
-		var functions = generateKeyValueString(
-			'FUNCTION',
-			aggAttr.stream.map(e|e.name).collect(Collectors.toList),
-			'='
-		).split(',').stream.map(e|e.replace("[","").replace("]", "")).collect(Collectors.toList)
-		//Produces a string array with strings like 'INPUT_ATTRIBUTES' = 'attr1'
-		var input_attr = generateKeyValueString(
-			'INPUT_ATTRIBUTES',
-			aggAttr.stream.map(e|e.attribute.name).collect(Collectors.toList),
-			'='
-		).split(',').stream.map(e|e.replace("[","").replace("]", "")).collect(Collectors.toList)
-		
-		//Creates a list with aliases from the given argument and adds missing aliases
+		return buildAggregateOP(list, list2, buildJoin(null, srcs))
+	}
+	
+	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, Source src)
+	{
+		return buildAggregateOP(list, list2, buildWindowOP(src))
+	}
+	
+	def Object[] buildAggregateOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input)
+	{
+		var argsstr 				 = ''
+		var List<String> args    = newArrayList()
 		var List<String> aliases = newArrayList()
 		for(var i = 0; i < aggAttr.length; i++)
 		{
+			args.add(aggAttr.get(i).name)
+			args.add(aggAttr.get(i).attribute.name)
+			var alias = ''
 			if(aggAttr.get(i).alias != null)
-				aliases.add(aggAttr.get(i).alias.name)
+				alias= aggAttr.get(i).alias.name
 			else
-				aliases.add(aggAttr.get(i).name + '_' + aggAttr.get(i).attribute.name)
+				alias = aggAttr.get(i).name + '_' + aggAttr.get(i).attribute.name
+			args.add(alias)
+			aliases.add(alias)
+			args.add(getDataTypeFrom(aggAttr.get(i).attribute))
+			args.add(',')
+			argsstr += generateKeyValueString(args)
+			if(i != aggAttr.length - 1) argsstr += ','
+			args.clear
 		}
-		//Produces a string array with strings like 'OUTPUT_ATTRIBUTES' = 'COUNT_attr1'
-		//or with a corresponding alias for the attribute
-		var output_attr = generateKeyValueString(
-			'OUTPUT_ATTRIBUTES',
-			aliases,
-			'='
-		).split(',').stream.map(e|e.replace("[","").replace("]", "")).collect(Collectors.toList)
-		
-		var List<String> lll = newArrayList()
-		for(var i = 0; i < functions.size; i++)
-		{
-			lll.add(functions.get(i) + ',' + input_attr.get(i))
-		}
-		//Generates the finally argument string that is formed like 
-		// ['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'COUNT_attr1'] , [...]
-		var args = generateKeyValueString(
-			lll,
-			output_attr,
-			','
-		).replace("[''", "['")
-		.replace("'']", "']")
-		.replace("'',''", "','")
-
 		//Generates the group by argument that is formed like ['attr1', attr2', ...]
 		var groupby = ''
 		if(!orderAttr.empty)
@@ -237,18 +218,22 @@ class CQLGenerator implements IGenerator2
 				orderAttr.stream.map(e|e.name).collect(Collectors.toList)
 			) + ']'
 		}
-		return (#[aliases, '''AGGREGATION({AGGREGATIONS=[«args»]«groupby»}, «input»)'''])
+		return (#[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «input»)'''])
 	}
 	
-	def Object[] buildAggregrationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, Source src) 
+	def String getDataTypeFrom(Attribute attribute) 
 	{
-		return buildAggregrationOP(aggAttr, orderAttr, buildWindowOP(src))
+		if(attribute == null) throw new NullPointerException("given attribute was null")
+		for(SDFAttribute a : innerattributes)
+			if(a.attributeName.equals(attribute.name))
+				return a.datatype.toString
+		for(SDFAttribute a : outerattributes)
+			if(a.attributeName.equals(attribute.name))
+				return a.datatype.toString
+		throw new IllegalArgumentException("given attribute" + attribute.name + "unknown")		
 	}
+	
 
-	def Object[] buildAggregrationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, List<Source> src) 
-	{
-		return buildAggregrationOP(aggAttr, orderAttr, buildJoin(null, src))
-	}
 	
 	def CharSequence parseCreateStatement(Create_Statement stmt, boolean isView)
 	{
@@ -425,6 +410,19 @@ class CQLGenerator implements IGenerator2
 			return '''JOIN(«input1»,«input2»)'''
 		}
 		return '''JOIN({predicate=«buildPredicate(predicate.elements.get(0))»},«input1»,«input2»)'''
+	}
+
+	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs, CharSequence input2)
+	{
+		if(predicate == null)
+		{
+			var join = buildJoin(null, srcs)
+			var index = join.toString.length
+			return (join.toString.substring(index - 1, index)) + ',' + input2 + ')'
+		}
+		var join = buildJoin(predicate, srcs)
+		var index = join.toString.length
+		return (join.toString.substring(index - 1, index)) + ',' + input2 + ')'
 	}
 
 	/**
@@ -627,6 +625,8 @@ class CQLGenerator implements IGenerator2
 	def String generateKeyValueString(String ... s)
 	{
 		var str = "["
+		if(s.length == 1) 
+			return str += "'" + s.get(0) + "']"
 		for(var i = 0; i < s.length - 2; i++)
 			str += "'" + s.get(i) + "'" + s.get(s.length - 1)			
 		return str += "'" + s.get(s.length - 2) + "']"
@@ -640,28 +640,6 @@ class CQLGenerator implements IGenerator2
 			str += generateKeyValueString(l1.get(i), l2.get(i), s) + ","
 		}
 		return (str += generateKeyValueString(l1.get(l1.size - 1), l2.get(l1.size - 1), s))
-	}
-	
-	def String generateKeyValueString(String s, List<String> ... l1)
-	{
-		var str = ''
-		for(var i = 0; i < l1.size; i++)
-		{
-			if(i != l1.size - 1)
-			{
-				for(var j = 0; j < l1.get(i).size; j++)
-				{
-					str += generateKeyValueString(l1.get(i).get(j), s) + ","
-				}
-			}
-			else
-			{
-				for(var j = 0; j < l1.get(i).size - 1; j++)
-					str += generateKeyValueString(l1.get(i).get(j), s) + ","
-				str += generateKeyValueString(l1.get(i).get(l1.get(i).size - 1), s)
-			}
-		}
-		return str
 	}
 	
 	def String generateKeyValueString(String s1, List<String> l2, String s2)
@@ -757,4 +735,75 @@ class CQLGenerator implements IGenerator2
 		return l
 	}
 	
+	
+	/* Builds an AggregationOP -> was replaced by buildAggregateOP(..)
+	def Object[] buildAggregationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input) 
+	{
+		//Produces a string array with strings like 'FUNCTION' = 'COUNT' 
+		var functions = generateKeyValueString(
+			'FUNCTION',
+			aggAttr.stream.map(e|e.name).collect(Collectors.toList),
+			'='
+		).split(',').stream.map(e|e.replace("[","").replace("]", "")).collect(Collectors.toList)
+		//Produces a string array with strings like 'INPUT_ATTRIBUTES' = 'attr1'
+		var input_attr = generateKeyValueString(
+			'INPUT_ATTRIBUTES',
+			aggAttr.stream.map(e|e.attribute.name).collect(Collectors.toList),
+			'='
+		).split(',').stream.map(e|e.replace("[","").replace("]", "")).collect(Collectors.toList)
+		
+		//Creates a list with aliases from the given argument and adds missing aliases
+		var List<String> aliases = newArrayList()
+		for(var i = 0; i < aggAttr.length; i++)
+		{
+			if(aggAttr.get(i).alias != null)
+				aliases.add(aggAttr.get(i).alias.name)
+			else
+				aliases.add(aggAttr.get(i).name + '_' + aggAttr.get(i).attribute.name)
+		}
+		//Produces a string array with strings like 'OUTPUT_ATTRIBUTES' = 'COUNT_attr1'
+		//or with a corresponding alias for the attribute
+		var output_attr = generateKeyValueString(
+			'OUTPUT_ATTRIBUTES',
+			aliases,
+			'='
+		).split(',').stream.map(e|e.replace("[","").replace("]", "")).collect(Collectors.toList)
+		
+		var List<String> lll = newArrayList()
+		for(var i = 0; i < functions.size; i++)
+		{
+			lll.add(functions.get(i) + ',' + input_attr.get(i))
+		}
+		//Generates the finally argument string that is formed like 
+		// ['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'COUNT_attr1'] , [...]
+		var args = generateKeyValueString(
+			lll,
+			output_attr,
+			','
+		).replace("[''", "['")
+		.replace("'']", "']")
+		.replace("'',''", "','")
+
+		//Generates the group by argument that is formed like ['attr1', attr2', ...]
+		var groupby = ''
+		if(!orderAttr.empty)
+		{
+			groupby += ',GROUP_BY=['
+			groupby += generateListString(
+				orderAttr.stream.map(e|e.name).collect(Collectors.toList)
+			) + ']'
+		}
+		return (#[aliases, '''AGGREGATION({AGGREGATIONS=[«args»]«groupby»}, «input»)'''])
+	}
+	
+	def Object[] buildAggregationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, Source src) 
+	{
+		return buildAggregationOP(aggAttr, orderAttr, buildWindowOP(src))
+	}
+
+	def Object[] buildAggregationOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, List<Source> src) 
+	{
+		return buildAggregationOP(aggAttr, orderAttr, buildJoin(null, src))
+	}
+	 */
 }

@@ -404,11 +404,11 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter FROM stream1 GROUP BY attr1;"
 			,
-			"project_1 = AGGREGATION
+			"project_1 = AGGREGATE
 			(
 				{
 					AGGREGATIONS=[
-									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter']
+									['COUNT','attr1','Counter','Integer']
 								 ],
 					GROUP_BY =['attr1']
 				}, stream1)"
@@ -422,12 +422,12 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 GROUP BY attr1, attr2;"
 			,
-			"project_1 = AGGREGATION
+			"project_1 = AGGREGATE
 			(
 				{
 					AGGREGATIONS=[
-									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
-									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
+									['COUNT','attr1','Counter','Integer'],
+									['AVG','attr2','AVG_attr2','String']
 								 ],
 					GROUP_BY =['attr1', 'attr2']
 				}, stream1)"
@@ -441,12 +441,12 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1, stream2 GROUP BY attr1, attr2;"
 			,
-			"project_1 = AGGREGATION
+			"project_1 = AGGREGATE
 			(
 				{
 					AGGREGATIONS=[
-									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
-									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
+									['COUNT', 'attr1', 'Counter', 'Integer'],
+									['AVG', 'attr2', 'AVG_attr2', 'String']
 								 ],
 					GROUP_BY =['attr1', 'attr2']
 				}, JOIN(stream1, stream2)
@@ -461,15 +461,18 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1;"
 			,
-			"project_1 = AGGREGATION
-			(
-				{
-					AGGREGATIONS=[
-									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
-									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
-								 ],
-					GROUP_BY =['attr1', 'attr2']
-				}, JOIN(stream1, stream2)
+			"join_1 = PROJECT
+			({attributes=['Counter', 'attr3']}, 
+				JOIN(stream1, 
+					AGGREGATE
+					(
+						{
+							AGGREGATIONS=[
+											['COUNT', 'attr1', 'Counter', 'Integer']
+										 ]
+						}, stream1
+					)
+				)
 			)"
 			, new CQLDictionaryHelper()
 		)
@@ -481,15 +484,15 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1, stream2;"
 			,
-			"project_1 = AGGREGATION
-			(
-				{
-					AGGREGATIONS=[
-									['FUNCTION' = 'COUNT', 'INPUT_ATTRIBUTES' = 'attr1', 'OUTPUT_ATTRIBUTES' = 'Counter'],
-									['FUNCTION' = 'AVG', 'INPUT_ATTRIBUTES' = 'attr2', 'OUTPUT_ATTRIBUTES' = 'AVG_attr2']
-								 ],
-					GROUP_BY =['attr1', 'attr2']
-				}, JOIN(stream1, stream2)
+			"aggreagate_2 = PROJECT
+			({attributes=['Counter', 'attr3']}, JOIN(stream1, JOIN(stream2, 
+				AGGREGATION
+				(
+					{
+						AGGREGATIONS=[
+										['COUNT', 'attr1', 'Counter', 'Integer']
+									 ],
+					}, JOIN(stream1, stream2))))
 			)"
 			, new CQLDictionaryHelper()
 		)

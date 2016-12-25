@@ -22,22 +22,23 @@ CREATE VIEW view2 FROM(
              
 #PARSER PQL                
 #RUNQUERY
-join_1 = JOIN(TIMEWINDOW({size=[4, 'SECONDS'], advance=4}, view1), TIMEWINDOW({size=[1, 'SECONDS'], advance=4}, view2))
+join_1 = JOIN(view1, view2                    
+          )
+
+aggregation_2 = PROJECT({
+                    attributes=['Counter','id2']                                            
+                  },
+                  JOIN(join_1, AGGREGATION({
+                        aggregations=[
+                          ['FUNCTION'='COUNT','INPUT_ATTRIBUTES'='id','OUTPUT_ATTRIBUTES'='Counter']
+                        ]                                                        
+                      },
+                      join_1
+                    )                                            
+                  )                                      
+                )
         
-aggregation_2 = AGGREGATION({
-                      aggregations=[
-                        ['FUNCTION'='COUNT','INPUT_ATTRIBUTES'='id','OUTPUT_ATTRIBUTES'='Counter']
-                      ]      
-                    },
-                    join_1
-                  )  
+
                                     
-proj_1 = PROJECT({
-      attributes=['id2']  
-    },
-		join_1
-  )      
-              
-result_1 = JOIN(proj_1, aggregation_2)
-              
+
               
