@@ -603,13 +603,16 @@ class CQLGenerator implements IGenerator2
 	{
 		if(src.time != null)
 		{
+			var var1 = if(src.time.advance_size != 0) src.time.advance_size else 1
+			var var2 = if(src.time.advance_size != 0) src.time.advance_unit else src.time.unit
 			return '''TIMEWINDOW
 					  (
 					  	{
-					  		size = [«src.time.size»,'«src.time.unit»']
+					  		size = [«src.time.size»,'«src.time.unit»'],
+					  		advance = [«var1»,'«var2»']
 						},
 						«src.name»
-					 )'''
+					 )'''			 
 		}
 		else if(src.tuple != null)
 		{

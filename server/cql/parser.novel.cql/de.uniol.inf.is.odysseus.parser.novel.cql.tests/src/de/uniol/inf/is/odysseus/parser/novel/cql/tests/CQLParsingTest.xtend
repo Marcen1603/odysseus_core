@@ -320,7 +320,17 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
-			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES']}, stream1))"
+			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream1))"
+		, new CQLDictionaryHelper())
+	}
+	
+	@Test def void WindowTimeTest2() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 [SIZE 5 MINUTES ADVANCE 1 SECONDS TIME];"
+			,
+			"project_1 = PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'SECONDS']}, stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -350,7 +360,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME];"
 			,
-			"join_1 = JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), TIMEWINDOW({size=[5, 'MINUTES']}, stream2))"
+			"join_1 = JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -361,7 +371,7 @@ class CQLParsingTest
 			"SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3;"
 			,
 			"project_1 = PROJECT({attributes=['attr1','attr2','attr4']}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
-														 				 JOIN(TIMEWINDOW({size=[5, 'MINUTES']}, stream2), stream3)))"
+														 				 JOIN(TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2), stream3)))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -373,7 +383,7 @@ class CQLParsingTest
 			,
 			"select_1 = SELECT({predicate='attr4 != attr1'}, PROJECT({attributes=['attr1','attr2','attr4']},
 																		 JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
-																		 JOIN(TIMEWINDOW({size=[5, 'MINUTES']}, stream2), stream3))))"
+																		 JOIN(TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2), stream3))))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -384,7 +394,7 @@ class CQLParsingTest
 			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME] WHERE attr4 != attr1;"
 			,
 			"select_1 = SELECT({predicate='attr4 != attr1'}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1),
-																  TIMEWINDOW({size=[5, 'MINUTES']}, stream2)))"
+																  TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2)))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -449,7 +459,7 @@ class CQLParsingTest
 									['AVG', 'attr2', 'AVG_attr2', 'String']
 								 ],
 					GROUP_BY =['attr1', 'attr2']
-				}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), stream2)
+				}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream1), stream2)
 			)"
 			, new CQLDictionaryHelper()
 		)
@@ -463,14 +473,14 @@ class CQLParsingTest
 			,
 			"project_1 = PROJECT
 			({attributes=['Counter', 'attr3']}, 
-				JOIN(TIMEWINDOW({size=[5,'MINUTES']}, stream1), 
+				JOIN(TIMEWINDOW({size=[5,'MINUTES'], advance=[1, 'MINUTES']}, stream1), 
 					AGGREGATE
 					(
 						{
 							AGGREGATIONS=[
 											['COUNT', 'attr1', 'Counter', 'Integer']
 										 ]
-						}, TIMEWINDOW({size=[5,'MINUTES']}, stream1)
+						}, TIMEWINDOW({size=[5,'MINUTES'], advance=[1, 'MINUTES']}, stream1)
 					)
 				)
 			)"
@@ -505,14 +515,14 @@ class CQLParsingTest
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 , stream2 [SIZE 10 MINUTES TIME];"
 			,
 			"project_1 = PROJECT
-			({attributes=['Counter', 'attr3']}, JOIN(stream1, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream2), 
+			({attributes=['Counter', 'attr3']}, JOIN(stream1, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2), 
 				AGGREGATE
 				(
 					{
 						AGGREGATIONS=[
 										['COUNT', 'attr1', 'Counter', 'Integer']
 									 ]
-					}, JOIN(stream1, TIMEWINDOW({size=[10, 'MINUTES']},stream2)))))
+					}, JOIN(stream1, TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2)))))
 			)"
 			, new CQLDictionaryHelper()
 		)
@@ -522,17 +532,17 @@ class CQLParsingTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;"
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;"
 			,
 			"select_1 = SELECT({predicate='attr3 > 100'}, PROJECT
-			({attributes=['Counter', 'attr3']}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream2), 
+			({attributes=['Counter', 'attr3']}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[2, 'SECONDS']},stream1), JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2), 
 				AGGREGATE
 				(
 					{
 						AGGREGATIONS=[
 										['COUNT', 'attr1', 'Counter', 'Integer']
 									 ]
-					}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), TIMEWINDOW({size=[10, 'MINUTES']},stream2)))))
+					}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[2, 'SECONDS']},stream1), TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2)))))
 			))"
 			, new CQLDictionaryHelper()
 		)
