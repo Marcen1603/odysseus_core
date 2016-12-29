@@ -439,7 +439,7 @@ class CQLParsingTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1, stream2 GROUP BY attr1, attr2;"
+			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 [SIZE 10 MINUTES TIME] , stream2 GROUP BY attr1, attr2;"
 			,
 			"project_1 = AGGREGATE
 			(
@@ -449,7 +449,7 @@ class CQLParsingTest
 									['AVG', 'attr2', 'AVG_attr2', 'String']
 								 ],
 					GROUP_BY =['attr1', 'attr2']
-				}, JOIN(stream1, stream2)
+				}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), stream2)
 			)"
 			, new CQLDictionaryHelper()
 		)
@@ -459,18 +459,18 @@ class CQLParsingTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1;"
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
-			"join_1 = PROJECT
+			"project_1 = PROJECT
 			({attributes=['Counter', 'attr3']}, 
-				JOIN(stream1, 
+				JOIN(TIMEWINDOW({size=[5,'MINUTES']}, stream1), 
 					AGGREGATE
 					(
 						{
 							AGGREGATIONS=[
 											['COUNT', 'attr1', 'Counter', 'Integer']
 										 ]
-						}, stream1
+						}, TIMEWINDOW({size=[5,'MINUTES']}, stream1)
 					)
 				)
 			)"
@@ -484,18 +484,38 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1, stream2;"
 			,
-			"aggreagate_2 = PROJECT
+			"project_1 = PROJECT
 			({attributes=['Counter', 'attr3']}, JOIN(stream1, JOIN(stream2, 
-				AGGREGATION
+				AGGREGATE
 				(
 					{
 						AGGREGATIONS=[
 										['COUNT', 'attr1', 'Counter', 'Integer']
-									 ],
+									 ]
 					}, JOIN(stream1, stream2))))
 			)"
 			, new CQLDictionaryHelper()
 		)
 	}	
+	
+	@Test def void AggregationTest6()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES TIME] , stream2 [SIZE 10 MINUTES TIME];"
+			,
+			"project_1 = PROJECT
+			({attributes=['Counter', 'attr3']}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream2), 
+				AGGREGATE
+				(
+					{
+						AGGREGATIONS=[
+										['COUNT', 'attr1', 'Counter', 'Integer']
+									 ]
+					}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), TIMEWINDOW({size=[10, 'MINUTES']},stream2)))))
+			)"
+			, new CQLDictionaryHelper()
+		)
+	}
 	
 }

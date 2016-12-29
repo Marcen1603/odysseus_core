@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
+import java.util.Arrays
 
 /**
  * Generates code from your model files on save.
@@ -91,95 +92,66 @@ class CQLGenerator implements IGenerator2
 		var symbol1 = if(isView) ' := ' else ' = '
 		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
 		{
-			if(!stmt.attributes.empty)//SELECT attr1, ...
-			{
-				if(stmt.sources.size == 1)//.. FROM src1;
-				{
-					var src = stmt.sources.get(0)
-					if(stmt.aggregations.empty)
-					{
-						return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, src)»'''										
-					}
-					else// case 2 for aggregations with one source
-					{
-						var result = buildAggregateOP(stmt.aggregations, stmt.order, src)
-						var List<String> attributes = result.get(0) as List<String>
-						var String operator 		= result.get(1).toString
-					
-						attributes.addAll(
-							stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
-						)												
-						
-						return '''join_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, buildWindowOP(src), operator))»'''
-					}
-				}
-				else//.. FROM src1, src2, ...;
-				{
-					if(stmt.aggregations.empty)
-					{
-						return '''project_«getID() + symbol1»«buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources))»'''	
-					}	
-					else
-					{
-						var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-						var List<String> attributes = result.get(0) as List<String>
-						var String operator 		= result.get(1).toString
-					
-						attributes.addAll(
-							stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
-						)												
-						//TODO In progress! -> too many joins?
-						return '''aggregate_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, stmt.sources, operator))»'''
-					}
-				}
-			}
-			else//SELECT * ..
-			{
-				if(stmt.sources.size == 1)//.. FROM src1;
-				{
-					var Source src = stmt.sources.get(0);
-					if(stmt.aggregations.empty)
-					{
-						return '''project_«getID() + symbol1»«buildProjectOP(#[] as String[], src)»'''
-					}
-					else
-					{
-						var result = buildAggregateOP(stmt.aggregations, stmt.order, src)
-//						var List<String> attributes = result.get(0) as List<String>
-						return '''project_«getID() + symbol1 + result.get(1).toString»'''
-					}												
-				}
-				else//.. FROM src1, src2, ...;
-				{
-					if(stmt.aggregations.empty)
-					{
-						return '''join_«getID() + symbol1»«buildJoin(null, stmt.sources)»'''
-					}
-					else
-					{
-						var operator = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-						return '''project_«getID() + symbol1 + operator.get(1).toString»'''
-					}
-				}				
-			}
+			parseStatement1(stmt, symbol1)
 		}
 		else
 		{ 
-			if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
-			{
-				return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
-			}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
-			if(stmt.attributes.empty)
-			{
-				return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''
-			}
-			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, stmt.sources.get(0)))»'''
+			parseStatement2(stmt, symbol1)
 		}
+	}
+	
+	def CharSequence parseStatement1(Select_Statement stmt, String symbol1)
+	{
+		if(!stmt.attributes.empty)//SELECT attr1, ...
+			{
+			    var String operator = null
+			    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+				if(!stmt.aggregations.empty)
+				{
+					var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
+					attributes = result.get(0) as List<String>
+				    operator   = result.get(1).toString
+				
+					attributes.addAll(
+						stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+					)
+				}												
+				
+				println("parseStatement1s")
+				
+				return '''project_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, stmt.sources, operator))»'''
+			}
+			else//SELECT * ..
+			{
+				if(stmt.aggregations.empty)
+				{
+					if(stmt.sources.size == 1)
+					{
+						return '''project_«getID() + symbol1»«buildProjectOP(stmt.sources.get(0))»'''
+					}
+					return '''join_«getID() + symbol1»«buildJoin(stmt.sources)»'''
+				}
+				var operator = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
+				return '''project_«getID() + symbol1 + operator.get(1).toString»'''
+			}
+	}
+	
+	def CharSequence parseStatement2(Select_Statement stmt, String symbol1)
+	{
+		if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
+		{
+			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
+		}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
+		if(stmt.attributes.empty)
+		{
+			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''
+		}
+		return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, stmt.sources.get(0)))»'''
 	}
 	
 	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
 	{
-		return buildAggregateOP(list, list2, buildJoin(null, srcs))
+		return buildAggregateOP(list, list2, buildJoin(srcs))
 	}
 	
 	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, Source src)
@@ -230,7 +202,7 @@ class CQLGenerator implements IGenerator2
 		for(SDFAttribute a : outerattributes)
 			if(a.attributeName.equals(attribute.name))
 				return a.datatype.toString
-		throw new IllegalArgumentException("given attribute" + attribute.name + "unknown")		
+		throw new IllegalArgumentException("given attribute " + attribute.name + "unknown")		
 	}
 	
 
@@ -375,54 +347,68 @@ class CQLGenerator implements IGenerator2
 		return ''
 	}
 
-	/**
-	 * Builds a join operator with a given {@link ExpressionsModel} and list of {@link Source}
-	 * elements. If the predicate is null, there will be no join predicate in the operation.
-	 * If the list contains only one source, an {@link IllegalArgumentException} will be thrown.
-	 */
-	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs)
+//	/**
+//	 * Builds a join operator with a given {@link ExpressionsModel} and list of {@link Source}
+//	 * elements. If the predicate is null, there will be no join predicate in the operation.
+//	 * If the list contains only one source, an {@link IllegalArgumentException} will be thrown.
+//	 */
+	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs, CharSequence input2)
 	{
-		if(srcs.size < 2)
+		var args = srcs.stream.map(
+			e|buildWindowOP(e).toString
+		).collect(Collectors.toList)
+		
+		if(input2 != null)
+			args.add(input2.toString)
+		var join = buildJoin(predicate, args)
+		return join
+	}
+
+	def CharSequence buildJoin(ExpressionsModel predicate, String[] srcs)
+	{
+		
+		if(srcs.size < 1)
 		{ 
 			throw new IllegalArgumentException(
-				"Invalid number of source elements: There have to be at least two elements"
+				"Invalid number of source elements: There have to be at least two sources"
 			)
 		}
-		var List<Source> list = srcs
+		if(srcs.size == 1)//Will only be considered if the first call of this method provides a single source
+		{
+			return srcs.get(0)
+		}
+		var List<String> list = new ArrayList(Arrays.asList(srcs))
 		var src = list.get(0)
 		if(list.size == 2)
 		{
-			return '''JOIN(«buildWindowOP(list.get(0))»,«buildWindowOP(list.get(1))»)'''
+			return '''JOIN(«list.get(0)»,«list.get(1)»)'''
 		}
 		list.remove(0)
 		if(predicate != null)
 		{
 			var predicateString = '''{predicate='«buildPredicate(predicate.elements.get(0))»'}'''
-			return '''JOIN(«predicateString»,«buildWindowOP(src)»,«buildJoin(null, list)»)'''
+			return '''JOIN(«predicateString»,«src»,«buildJoin(null, list)»)'''
 		}
-		else { return '''JOIN(«buildWindowOP(src)»,«buildJoin(null, list)»)''' } 	
+		else 
+		{ 
+			return '''JOIN(«src»,«buildJoin(null, list)»)'''
+		} 
+
 	}
 
-	def CharSequence buildJoin(ExpressionsModel predicate, CharSequence input1, CharSequence input2)
+	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> scrs)
 	{
-		if(predicate == null)
-		{
-			return '''JOIN(«input1»,«input2»)'''
-		}
-		return '''JOIN({predicate=«buildPredicate(predicate.elements.get(0))»},«input1»,«input2»)'''
+		return buildJoin(predicate, scrs, null) 	
 	}
 
-	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs, CharSequence input2)
+	def buildJoin(List<Source> scrs)
 	{
-		if(predicate == null)
-		{
-			var join = buildJoin(null, srcs)
-			var index = join.toString.length
-			return (join.toString.substring(index - 1, index)) + ',' + input2 + ')'
-		}
-		var join = buildJoin(predicate, srcs)
-		var index = join.toString.length
-		return (join.toString.substring(index - 1, index)) + ',' + input2 + ')'
+		
+		var args = scrs.stream.map(
+			e|buildWindowOP(e).toString
+		).collect(Collectors.toList)
+
+		return buildJoin(null, args)
 	}
 
 	/**
@@ -475,6 +461,27 @@ class CQLGenerator implements IGenerator2
 				  	{
 				  		attributes=[«generateListString(attributes)»]
 				  	},«operator»)'''
+	}
+	
+	def CharSequence buildProjectOP(String[] attributes, List<Source> sources)
+	{
+		return '''PROJECT(
+				  	{
+				  		attributes=[«generateListString(attributes)»]
+				  	},«buildJoin(sources)»)'''
+	}
+	
+	def CharSequence buildProjectOP(List<Attribute> attributes, List<Source> srcs)
+	{
+		return '''PROJECT(
+				  	{
+				  		attributes=[«generateListString(attributes.stream.map(e|e.name).collect(Collectors.toList))»]
+				  	},«buildJoin(srcs)»)'''
+	}
+	
+	def CharSequence buildProjectOP(Source src)
+	{
+		return buildProjectOP(#[] as String[], src)
 	}
 	
 	def CharSequence buildProjectOP(String[] attributes, Source src)
