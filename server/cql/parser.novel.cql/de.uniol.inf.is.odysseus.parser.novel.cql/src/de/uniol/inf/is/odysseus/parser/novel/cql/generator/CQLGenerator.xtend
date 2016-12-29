@@ -153,15 +153,22 @@ class CQLGenerator implements IGenerator2
 			
 		}
 		
+		var List<ExpressionsModel> predicates = newArrayList
+		predicates.add(stmt.predicates)
+		if(stmt.having != null)
+		{
+			predicates.add(stmt.having)
+		}
+		println(predicates.size)
 		if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
 		{
-			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''	
+			return '''select_«getID() + symbol1»«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''	
 		}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
 		if(stmt.attributes.empty)
 		{
-			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildJoin(null, stmt.sources, operator))»'''
+			return '''select_«getID() + symbol1»«buildSelectOP(predicates, buildJoin(null, stmt.sources, operator))»'''
 		}
-		return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''
+		return '''select_«getID() + symbol1»«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''
 	}
 	
 	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
@@ -433,12 +440,12 @@ class CQLGenerator implements IGenerator2
 	 * the {@link CQLGenerator#buildJoin(..)} method will be called to define the input
 	 * operator.
 	 */
-	def CharSequence buildSelectOP(ExpressionsModel predicate, List<Source> srcs)
-	{
-		if(srcs.size == 1)
-			return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«srcs.get(0).name»)'''
-		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«buildJoin(null, srcs)»)'''
-	}
+//	def CharSequence buildSelectOP(ExpressionsModel predicate, List<Source> srcs)
+//	{
+	//	if(srcs.size == 1)
+	//		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«srcs.get(0).name»)'''
+	//	return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«buildJoin(null, srcs)»)'''
+//	}
 
 	/**
 	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
@@ -446,7 +453,25 @@ class CQLGenerator implements IGenerator2
 	 */
 	def CharSequence buildSelectOP(ExpressionsModel predicate, CharSequence operator)
 	{
+		predicate = ''
 		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«operator»)'''
+	}
+
+	/**
+	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
+	 * and a char sequence to define the input operator. 
+	 */
+	def CharSequence buildSelectOP(List<ExpressionsModel> predicate, CharSequence operator)
+	{	
+		var predicates = ''
+		for(var i = 0; i < predicate.size - 1; i++)
+		{
+			predicate = ''
+			predicates += buildPredicate(predicate.get(i).elements.get(0)) + ' && '	
+		}	
+		predicate = ''
+		predicates += buildPredicate(predicate.get(predicate.size - 1).elements.get(0))	
+		return '''SELECT({predicate='«predicates»'},«operator»)'''
 	}
 
 	/**

@@ -548,4 +548,24 @@ class CQLParsingTest
 		)
 	}
 	
+	@Test def void AggregationTest8()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;"
+			,
+			"select_1 = SELECT({predicate='attr3 > 100 && Counter > 1000'}, PROJECT
+			({attributes=['Counter', 'attr3']}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[2, 'SECONDS']},stream1), JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2), 
+				AGGREGATE
+				(
+					{
+						AGGREGATIONS=[
+										['COUNT', 'attr1', 'Counter', 'Integer']
+									 ]
+					}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[2, 'SECONDS']},stream1), TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2)))))
+			))"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
 }
