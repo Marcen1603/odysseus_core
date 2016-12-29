@@ -112,12 +112,11 @@ class CQLGenerator implements IGenerator2
 					attributes = result.get(0) as List<String>
 				    operator   = result.get(1).toString
 				
+					//Not necessary, it has been done before!
 					attributes.addAll(
 						stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
 					)
 				}												
-				
-				println("parseStatement1s")
 				
 				return '''project_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, stmt.sources, operator))»'''
 			}
@@ -138,15 +137,31 @@ class CQLGenerator implements IGenerator2
 	
 	def CharSequence parseStatement2(Select_Statement stmt, String symbol1)
 	{
+		
+	    var String operator = null
+	    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+		if(!stmt.aggregations.empty)
+		{
+			var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
+			attributes = result.get(0) as List<String>
+		    operator   = result.get(1).toString
+		
+			//Not necessary, it has been done before!
+			attributes.addAll(
+				stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+			)
+			
+		}
+		
 		if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
 		{
-			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, buildJoin(null, stmt.sources)))»'''	
+			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''	
 		}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
 		if(stmt.attributes.empty)
 		{
-			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, stmt.sources)»'''
+			return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildJoin(null, stmt.sources, operator))»'''
 		}
-		return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(stmt.attributes, stmt.sources.get(0)))»'''
+		return '''select_«getID() + symbol1»«buildSelectOP(stmt.predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''
 	}
 	
 	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
@@ -175,6 +190,7 @@ class CQLGenerator implements IGenerator2
 				alias = aggAttr.get(i).name + '_' + aggAttr.get(i).attribute.name
 			args.add(alias)
 			aliases.add(alias)
+//			aliases.add(aggAttr.get(i).attribute.name)
 			args.add(getDataTypeFrom(aggAttr.get(i).attribute))
 			args.add(',')
 			argsstr += generateKeyValueString(args)

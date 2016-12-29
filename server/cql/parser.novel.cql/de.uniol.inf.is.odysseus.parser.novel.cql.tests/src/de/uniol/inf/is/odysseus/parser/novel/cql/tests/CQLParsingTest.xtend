@@ -502,9 +502,29 @@ class CQLParsingTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES TIME] , stream2 [SIZE 10 MINUTES TIME];"
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 , stream2 [SIZE 10 MINUTES TIME];"
 			,
 			"project_1 = PROJECT
+			({attributes=['Counter', 'attr3']}, JOIN(stream1, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream2), 
+				AGGREGATE
+				(
+					{
+						AGGREGATIONS=[
+										['COUNT', 'attr1', 'Counter', 'Integer']
+									 ]
+					}, JOIN(stream1, TIMEWINDOW({size=[10, 'MINUTES']},stream2)))))
+			)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void AggregationTest7()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;"
+			,
+			"select_1 = SELECT({predicate='attr3 > 100'}, PROJECT
 			({attributes=['Counter', 'attr3']}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream2), 
 				AGGREGATE
 				(
@@ -513,7 +533,7 @@ class CQLParsingTest
 										['COUNT', 'attr1', 'Counter', 'Integer']
 									 ]
 					}, JOIN(TIMEWINDOW({size=[10, 'MINUTES']},stream1), TIMEWINDOW({size=[10, 'MINUTES']},stream2)))))
-			)"
+			))"
 			, new CQLDictionaryHelper()
 		)
 	}
