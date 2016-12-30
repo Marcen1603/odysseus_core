@@ -97,20 +97,28 @@ class CQLGenerator implements IGenerator2
 	def CharSequence parseSelectStatement(Select_Statement stmt)
 	{
 		predicate = ''
-		//var symbol1 = if(isView) ' := ' else ' = '
-		var symbol1 = ' := '
+		var CharSequence s = ''
 		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
 		{
-			parseStatement1(stmt, symbol1)
+			s = parseStatement1(stmt)
 		}
 		else
 		{ 
-			parseStatement2(stmt, symbol1)
+			s = parseStatement2(stmt)
 		}
+		
+		var symbol1 = "operator_"+ getID() +" = "
+		if(stmt.distinct != null) 
+			symbol1 += "DISTINCT(" + s + ")"
+		else
+			symbol1 += s
+		
+		return symbol1
 	}
 	
-	def CharSequence parseStatement1(Select_Statement stmt, String symbol1)
+	def CharSequence parseStatement1(Select_Statement stmt)
 	{
+
 		if(!stmt.attributes.empty)//SELECT attr1, ...
 			{
 			    var String operator = null
@@ -127,7 +135,7 @@ class CQLGenerator implements IGenerator2
 					)
 				}												
 				
-				return '''project_«getID() + symbol1 + buildProjectOP(attributes, buildJoin(null, stmt.sources, operator))»'''
+				return '''«buildProjectOP(attributes, buildJoin(null, stmt.sources, operator))»'''
 			}
 			else//SELECT * ..
 			{
@@ -135,16 +143,16 @@ class CQLGenerator implements IGenerator2
 				{
 					if(stmt.sources.size == 1)
 					{
-						return '''project_«getID() + symbol1»«buildProjectOP(stmt.sources.get(0))»'''
+						return '''«»«buildProjectOP(stmt.sources.get(0))»'''
 					}
-					return '''join_«getID() + symbol1»«buildJoin(stmt.sources)»'''
+					return '''«buildJoin(stmt.sources)»'''
 				}
 				var operator = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-				return '''project_«getID() + symbol1 + operator.get(1).toString»'''
+				return '''«operator.get(1).toString»'''
 			}
 	}
 	
-	def CharSequence parseStatement2(Select_Statement stmt, String symbol1)
+	def CharSequence parseStatement2(Select_Statement stmt)
 	{
 		
 	    var String operator = null
@@ -171,13 +179,13 @@ class CQLGenerator implements IGenerator2
 		println(predicates.size)
 		if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
 		{
-			return '''select_«getID() + symbol1»«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''	
+			return '''«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''	
 		}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
 		if(stmt.attributes.empty)
 		{
-			return '''select_«getID() + symbol1»«buildSelectOP(predicates, buildJoin(null, stmt.sources, operator))»'''
+			return '''«buildSelectOP(predicates, buildJoin(null, stmt.sources, operator))»'''
 		}
-		return '''select_«getID() + symbol1»«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''
+		return '''«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''
 	}
 	
 	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
@@ -253,7 +261,7 @@ class CQLGenerator implements IGenerator2
 			if(ch.view.select != null) 
 			{
 				var str = parseSelectStatement(ch.view.select).toString
-				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
+				return str.replace(str.substring(0, str.indexOf("=")), ch.view.name + ":")
 			}
 //			var str = parseCreateStatement(ch.view.create).toString
 //			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")

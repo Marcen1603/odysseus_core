@@ -97,6 +97,7 @@ Primary returns Expression:
 
 Select_Statement:
 	name='SELECT'
+	(distinct='DISTINCT')?
 	( '*' |
 		( 
 			(attributes+=Attribute | aggregations+=Aggregation)+  

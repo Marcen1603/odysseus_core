@@ -19,6 +19,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/unbounded"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Source/time"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Source/tuple"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Source/alias"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//DataType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DataType/value"/>
@@ -32,6 +33,7 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Select_Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Select_Statement/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Select_Statement/distinct"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/attributes"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/aggregations"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select_Statement/sources"/>
@@ -83,7 +85,6 @@
     <genClasses ecoreClass="CQL.ecore#//ChannelFormatView">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//ChannelFormatView/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ChannelFormatView/select"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ChannelFormatView/create"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//StreamTo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/name"/>

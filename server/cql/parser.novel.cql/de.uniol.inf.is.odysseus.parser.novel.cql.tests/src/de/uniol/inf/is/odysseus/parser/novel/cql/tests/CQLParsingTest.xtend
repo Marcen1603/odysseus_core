@@ -61,7 +61,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1;"
 			,
-			"project_1 := PROJECT({attributes=['attr1', 'attr2']}, stream1)"
+			"operator_1 = PROJECT({attributes=['attr1', 'attr2']}, stream1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -71,7 +71,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1, stream2, stream3;"
 			,
-			"join_1 := JOIN(stream1, JOIN(stream2, stream3))"
+			"operator_1 = JOIN(stream1, JOIN(stream2, stream3))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -81,7 +81,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1, stream2, stream3 WHERE attr1 > 2 AND attr2 == 'Test';"
 			,
-			"select_1 := SELECT({predicate='attr1 > 2 && attr2 == 'Test''}, JOIN(stream1, JOIN(stream2, stream3)))"
+			"operator_1 = SELECT({predicate='attr1 > 2 && attr2 == 'Test''}, JOIN(stream1, JOIN(stream2, stream3)))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -91,7 +91,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 WHERE attr1 > 2 AND attr2 == 'Test';"
 			,
-			"select_1 := SELECT({predicate='attr1 > 2 && attr2 == 'Test''}, stream1)"
+			"operator_1 = SELECT({predicate='attr1 > 2 && attr2 == 'Test''}, stream1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -101,7 +101,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 > 2;"
 			,
-			"select_1 := SELECT({predicate='attr1 > 2'}, PROJECT({attributes=['attr1']},stream1))"
+			"operator_1 = SELECT({predicate='attr1 > 2'}, PROJECT({attributes=['attr1']},stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -111,7 +111,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1 FROM stream1, stream2, stream3 WHERE attr1 > 2;"
 			,
-			"select_1 := SELECT({predicate='attr1 > 2'},PROJECT({attributes=['attr1']},JOIN(stream1, JOIN(stream2, stream3))))"
+			"operator_1 = SELECT({predicate='attr1 > 2'},PROJECT({attributes=['attr1']},JOIN(stream1, JOIN(stream2, stream3))))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -121,7 +121,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1 FROM stream1;"
 			,
-			"project_1 := PROJECT({attributes=['attr1']}, stream1)"
+			"operator_1 = PROJECT({attributes=['attr1']}, stream1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -131,7 +131,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1, attr2, attr3 FROM stream1, stream2, stream3;"
 			,
-			"project_1 := PROJECT({attributes=['attr1', 'attr2', 'attr3']},JOIN(stream1, JOIN(stream2, stream3)))"
+			"operator_1 = PROJECT({attributes=['attr1', 'attr2', 'attr3']},JOIN(stream1, JOIN(stream2, stream3)))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -149,32 +149,6 @@ class CQLParsingTest
 			, new CQLDictionaryHelper	
 		)
 	}
-	
-	@Test def void CreateViewTest2()
-	{
-		assertCorrectGenerated
-		(
-			"CREATE VIEW view1 FROM (
-				CREATE STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321
-			)"
-			,
-			"
-			view1 := ACCESS
-			(
-				{ source = 'input_stream1', 
-				  wrapper = 'GenericPush',
-				  protocol = 'SizeByteBuffer',
-				  transport = 'NonBlockingTcp',
-				  dataHandler ='Tuple',
-				  schema = [['attr1', 'INTEGER']],
-				  options =[['port', '54321'],['host', 'localhost']]
-				}
-			)
-			"
-			, new CQLDictionaryHelper	
-		)
-	}
-	
 	
 	@Test def void CreateStreamTest1()
 	{
@@ -310,7 +284,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [UNBOUNDED];"
 			,
-			"project_1 := PROJECT({attributes=['attr1', 'attr2']}, stream1)"
+			"operator_1 = PROJECT({attributes=['attr1', 'attr2']}, stream1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -320,7 +294,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
-			"project_1 := PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream1))"
+			"operator_1 = PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -330,7 +304,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 MINUTES ADVANCE 1 SECONDS TIME];"
 			,
-			"project_1 := PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'SECONDS']}, stream1))"
+			"operator_1 = PROJECT({attributes=['attr1', 'attr2']}, TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'SECONDS']}, stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -340,7 +314,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 TUPLE];"
 			,
-			"project_1 := PROJECT({attributes=['attr1', 'attr2']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
+			"operator_1 = PROJECT({attributes=['attr1', 'attr2']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -350,7 +324,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [UNBOUNDED], stream2 [UNBOUNDED];"
 			,
-			"join_1 := JOIN(stream1, stream2)"
+			"operator_1 = JOIN(stream1, stream2)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -360,7 +334,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME];"
 			,
-			"join_1 := JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2))"
+			"operator_1 = JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -370,7 +344,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3;"
 			,
-			"project_1 := PROJECT({attributes=['attr1','attr2','attr4']}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
+			"operator_1 = PROJECT({attributes=['attr1','attr2','attr4']}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
 														 				 JOIN(TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2), stream3)))"
 		, new CQLDictionaryHelper())
 	}
@@ -381,7 +355,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3 WHERE attr4 != attr1;"
 			,
-			"select_1 := SELECT({predicate='attr4 != attr1'}, PROJECT({attributes=['attr1','attr2','attr4']},
+			"operator_1 = SELECT({predicate='attr4 != attr1'}, PROJECT({attributes=['attr1','attr2','attr4']},
 																		 JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
 																		 JOIN(TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2), stream3))))"
 		, new CQLDictionaryHelper())
@@ -393,7 +367,7 @@ class CQLParsingTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME] WHERE attr4 != attr1;"
 			,
-			"select_1 := SELECT({predicate='attr4 != attr1'}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1),
+			"operator_1 = SELECT({predicate='attr4 != attr1'}, JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1),
 																  TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2)))"
 		, new CQLDictionaryHelper())
 	}
@@ -404,7 +378,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1 FROM stream1 [SIZE 5 TUPLE];"
 			,
-			"project_1 := PROJECT({attributes=['attr1']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
+			"operator_1 = PROJECT({attributes=['attr1']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -414,7 +388,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter FROM stream1 GROUP BY attr1;"
 			,
-			"project_1 := AGGREGATE
+			"operator_1 = AGGREGATE
 			(
 				{
 					AGGREGATIONS=[
@@ -432,7 +406,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 GROUP BY attr1, attr2;"
 			,
-			"project_1 := AGGREGATE
+			"operator_1 = AGGREGATE
 			(
 				{
 					AGGREGATIONS=[
@@ -451,7 +425,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 [SIZE 10 MINUTES TIME] , stream2 GROUP BY attr1, attr2;"
 			,
-			"project_1 := AGGREGATE
+			"operator_1 = AGGREGATE
 			(
 				{
 					AGGREGATIONS=[
@@ -471,7 +445,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
-			"project_1 := PROJECT
+			"operator_1 = PROJECT
 			({attributes=['Counter', 'attr3']}, 
 				JOIN(TIMEWINDOW({size=[5,'MINUTES'], advance=[1, 'MINUTES']}, stream1), 
 					AGGREGATE
@@ -494,7 +468,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1, stream2;"
 			,
-			"project_1 := PROJECT
+			"operator_1 = PROJECT
 			({attributes=['Counter', 'attr3']}, JOIN(stream1, JOIN(stream2, 
 				AGGREGATE
 				(
@@ -514,7 +488,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 , stream2 [SIZE 10 MINUTES TIME];"
 			,
-			"project_1 := PROJECT
+			"operator_1 = PROJECT
 			({attributes=['Counter', 'attr3']}, JOIN(stream1, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2), 
 				AGGREGATE
 				(
@@ -534,7 +508,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;"
 			,
-			"select_1 := SELECT({predicate='attr3 > 100'}, PROJECT
+			"operator_1 = SELECT({predicate='attr3 > 100'}, PROJECT
 			({attributes=['Counter', 'attr3']}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[2, 'SECONDS']},stream1), JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2), 
 				AGGREGATE
 				(
@@ -554,7 +528,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;"
 			,
-			"select_1 := SELECT({predicate='attr3 > 100 && Counter > 1000'}, PROJECT
+			"operator_1 = SELECT({predicate='attr3 > 100 && Counter > 1000'}, PROJECT
 			({attributes=['Counter', 'attr3']}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[2, 'SECONDS']},stream1), JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream2), 
 				AGGREGATE
 				(
@@ -575,6 +549,17 @@ class CQLParsingTest
 			"SELECT attr1 FROM (SELECT attr1 FROM stream1)"
 			,
 			""
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void DistinctTest()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DISTINCT * FROM stream1;"
+			,
+			"operator_1 = DISTINCT(PROJECT({attributes=['attr1', 'attr2']}, stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}
