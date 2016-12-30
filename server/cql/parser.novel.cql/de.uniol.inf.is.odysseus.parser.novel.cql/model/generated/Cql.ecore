@@ -10,6 +10,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Nested_Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Source">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -31,7 +32,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
         eType="#//Expression" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Select_Statement">
+  <eClassifiers xsi:type="ecore:EClass" name="Select_Statement" eSuperTypes="#//Nested_Statement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
         eType="#//Attribute" containment="true"/>
@@ -39,6 +40,10 @@
         eType="#//Aggregation" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="sources" upperBound="-1"
         eType="#//Source" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nested" upperBound="-1"
+        eType="#//Nested_Statement" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nestedAliases" upperBound="-1"
+        eType="#//Alias" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="predicates" eType="#//ExpressionsModel"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="order" upperBound="-1"
@@ -110,6 +115,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="statement" eType="#//Select_Statement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputname" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Drop">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Window_Timebased">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

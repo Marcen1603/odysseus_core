@@ -568,4 +568,15 @@ class CQLParsingTest
 		)
 	}
 	
+	@Test def void NestedStatementTest1()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM (SELECT attr1 FROM stream1)"
+			,
+			""
+			, new CQLDictionaryHelper()
+		)
+	}
+	
 }

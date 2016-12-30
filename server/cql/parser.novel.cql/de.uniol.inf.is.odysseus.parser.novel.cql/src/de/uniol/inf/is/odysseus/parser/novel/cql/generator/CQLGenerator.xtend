@@ -42,6 +42,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import java.util.Arrays
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop
 
 /**
  * Generates code from your model files on save.
@@ -82,8 +83,15 @@ class CQLGenerator implements IGenerator2
 			Select_Statement : parseSelectStatement(stmt.type as Select_Statement, false)
 			Create_Statement : parseCreateStatement(stmt.type as Create_Statement, false)
 			StreamTo		 : parseStreamtoStatement(stmt.type as StreamTo)
+			Drop			 : parseDrop(stmt.type as Drop)
 		}
 		
+	}
+	
+	def CharSequence parseDrop(Drop drop) 
+	{
+		//TODO Implement Drop
+		return ''
 	}
 	
 	def CharSequence parseSelectStatement(Select_Statement stmt, boolean isView)

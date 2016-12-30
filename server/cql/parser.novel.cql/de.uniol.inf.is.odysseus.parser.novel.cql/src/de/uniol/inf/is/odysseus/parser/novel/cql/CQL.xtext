@@ -4,9 +4,9 @@ generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
 Model: statements+=Statement*;
 	
-Statement:  (type=Select_Statement | type=Create_Statement | type=StreamTo) (';')? ; 
+Statement:  (type=Select_Statement | type=Create_Statement | type=StreamTo | type=Drop) (';')? ; 
 
-//Nested_Statement: '(' Select_Statement ')' ;
+Nested_Statement: '(' Select_Statement ')' ;
 
 // Data types //////////////////////////////////////////////////////////
 
@@ -88,7 +88,6 @@ Primary returns Expression:
 
 Select_Statement:
 	name='SELECT'
-	('DISTINCT')?
 	( '*' |
 		( 
 			(attributes+=Attribute | aggregations+=Aggregation)+  
@@ -97,11 +96,14 @@ Select_Statement:
 		)
 	)
 	'FROM'
-	(sources+=Source+ (',' sources+=Source)*)
+	(
+		(sources+=Source | nested+=Nested_Statement)+ 
+		& (',' sources+=Source)*
+		& (',' nested+=Nested_Statement ('AS')? nestedAliases+=Alias)*
+	)
 	('WHERE' predicates=ExpressionsModel)?
 	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?
 	('HAVING' having=ExpressionsModel)?
-//	';'
 ;
 
 Order:
@@ -122,7 +124,7 @@ Alias:
 ;
 
 Create_Statement:
-	'CREATE' (channelformat=ChannelFormat|accessframework=AccessFramework)
+	('CREATE'|'ATTACH') (channelformat=ChannelFormat|accessframework=AccessFramework)
 ;
 
 AccessFramework:
@@ -172,6 +174,12 @@ StreamTo:
 	'STREAM' 'TO'
 	name=ID
 	(statement=Select_Statement|inputname=ID)
+;
+
+Drop:
+	'DROP'
+	(name='SINK'|name='STREAM')
+	('IF' 'EXISTS')?
 ;
 
 Window_Unbounded:  
