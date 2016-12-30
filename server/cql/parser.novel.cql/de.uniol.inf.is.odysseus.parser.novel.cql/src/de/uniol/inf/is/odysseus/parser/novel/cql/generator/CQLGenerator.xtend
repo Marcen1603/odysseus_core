@@ -80,8 +80,8 @@ class CQLGenerator implements IGenerator2
 	{
 		switch stmt.type 
 		{
-			Select_Statement : parseSelectStatement(stmt.type as Select_Statement, false)
-			Create_Statement : parseCreateStatement(stmt.type as Create_Statement, false)
+			Select_Statement : parseSelectStatement(stmt.type as Select_Statement)
+			Create_Statement : parseCreateStatement(stmt.type as Create_Statement)
 			StreamTo		 : parseStreamtoStatement(stmt.type as StreamTo)
 			Drop			 : parseDrop(stmt.type as Drop)
 		}
@@ -94,10 +94,11 @@ class CQLGenerator implements IGenerator2
 		return ''
 	}
 	
-	def CharSequence parseSelectStatement(Select_Statement stmt, boolean isView)
+	def CharSequence parseSelectStatement(Select_Statement stmt)
 	{
 		predicate = ''
-		var symbol1 = if(isView) ' := ' else ' = '
+		//var symbol1 = if(isView) ' := ' else ' = '
+		var symbol1 = ' := '
 		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
 		{
 			parseStatement1(stmt, symbol1)
@@ -238,9 +239,10 @@ class CQLGenerator implements IGenerator2
 	
 
 	
-	def CharSequence parseCreateStatement(Create_Statement stmt, boolean isView)
+	def CharSequence parseCreateStatement(Create_Statement stmt)
 	{
-		var symbol1 = if(isView) ' := ' else ' = '
+		var symbol1 = ' := '
+		//var symbol1 = if(isView) ' := ' else ' = '
 		var ch = stmt.channelformat
 		if(ch!= null)
 		{
@@ -250,11 +252,11 @@ class CQLGenerator implements IGenerator2
 			}
 			if(ch.view.select != null) 
 			{
-				var str = parseSelectStatement(ch.view.select, true).toString
+				var str = parseSelectStatement(ch.view.select).toString
 				return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
 			}
-			var str = parseCreateStatement(ch.view.create, true).toString
-			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
+//			var str = parseCreateStatement(ch.view.create).toString
+//			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
 		}
 		else
 		{
@@ -272,7 +274,7 @@ class CQLGenerator implements IGenerator2
 	{
 		if(stmt.statement != null)
 		{
-			var s = parseSelectStatement(stmt.statement, false).toString
+			var s = parseSelectStatement(stmt.statement).toString
 			streamto.put(stmt.name, s.subSequence(s.indexOf('=') + 1, s.length).toString)		
 		}
 		else
@@ -283,7 +285,7 @@ class CQLGenerator implements IGenerator2
 		{ 
 			return ''
 		}
-		return '''output«getID() + " = " + sinks.get(stmt.name).replace("_INPUT_", streamto.get(stmt.name))»'''			
+		return '''output«getID() + " := " + sinks.get(stmt.name).replace("_INPUT_", streamto.get(stmt.name))»'''			
 	}
 		
 	def CharSequence buildAccessOP(ChannelFormat channel)

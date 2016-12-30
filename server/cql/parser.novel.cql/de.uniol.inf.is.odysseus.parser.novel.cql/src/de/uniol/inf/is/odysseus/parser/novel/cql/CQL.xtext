@@ -24,7 +24,16 @@ terminal FLOAT_NUMBER:  INT '.' INT ;
 
 Source: 
 	name=ID
-	('[' (unbounded=Window_Unbounded|time=Window_Timebased|tuple=Window_Tuplebased)']')?
+	(	
+		'[' 
+		(
+			unbounded=Window_Unbounded|
+			time=Window_Timebased|
+			tuple=Window_Tuplebased
+		)
+		']'
+	)?
+	('AS' alias=Alias)?
 ;
 
 //TODO have to dynamic -> use scope provider
@@ -166,7 +175,7 @@ ChannelFormatView:
 	name=ID
 	'FROM'
 	'('
-	(select=Select_Statement|create=Create_Statement) (';')?
+	(select=Select_Statement) (';')?
 	')'
 ;
 
