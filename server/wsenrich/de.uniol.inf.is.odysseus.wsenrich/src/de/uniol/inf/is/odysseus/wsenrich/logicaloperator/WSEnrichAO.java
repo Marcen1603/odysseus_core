@@ -200,9 +200,7 @@ public class WSEnrichAO extends AbstractEnrichAO {
 		List<SDFAttribute> ret = new ArrayList<SDFAttribute>();
 		for (SDFAttribute a: receivedData2){
 			String oldAttributeName = a.getAttributeName();
-			// TODO: find a common place for this (same in KeyValueToTuple)
-			oldAttributeName = oldAttributeName.replace("$", "root").replace("*", "_").replace(".", "_").replace("[", "_").replace("]", "_")
-					.replace("'", "_").replace(")", "_").replace("(", "_").replace("?", "_");
+			oldAttributeName = SDFAttribute.replaceSpecialChars(oldAttributeName);
 			ret.add(new SDFAttribute(a.getSourceName(), oldAttributeName, a));
 		}
 		return ret;

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class OdysseusConfiguration {
-	
+
 	public static final String CLONING_UPDATER = "CloningUpdater";
 	public static final String DEFAULT_UPDATE_SITE = "Update.DefaultUpdateSite";
 
@@ -123,6 +123,11 @@ public class OdysseusConfiguration {
 		props.setProperty("storedProceduresFilename", "procedures.store");
 		props.setProperty("storedProceduresFromUserFilename",
 				"proceduresUser.store");
+
+		props.setProperty("storesFilename", "stores.store");
+		props.setProperty("storesFromUserFilename",
+				"storesUser.store");
+
 		props.setProperty("datatypesFromDatatypesFilename", "datatypes.store");
 
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
@@ -178,7 +183,7 @@ public class OdysseusConfiguration {
 		// Plan Adaption
 		props.setProperty("adaption_timer", "5000");
 		props.setProperty("adaption_blockingTime", "30000");
-		
+
 		// Web-Service
 		props.setProperty("WebService.Server","0.0.0.0");
 		props.setProperty("WebService.Port","9669");
@@ -189,17 +194,17 @@ public class OdysseusConfiguration {
 		props.setProperty("Webservice.SSL_Client_Authentication", "false");
 		props.setProperty("webservice.queryconnect.sink.minport","10000");
 		props.setProperty("webservice.queryconnect.sink.maxport","20000");
-		
-		
+
+
 		// security and crypto stuff, e.g. for creating self-signed certificates
 		props.setProperty("security.applicationName", "Odysseus");
-		props.setProperty("security.organization","University of Oldenburg");		
+		props.setProperty("security.organization","University of Oldenburg");
 		props.setProperty("security.dir", odysseusHome+"certificates"+File.separator);
 		// the private information exchange (PKCS#12) pfx file, containing the private key and an according certificate
 		props.setProperty("security.default.pfx", "odysseus.default.pfx");
-		// the alias within the key store that contains the default key 
+		// the alias within the key store that contains the default key
 		props.setProperty("security.default.pfx.alias", "odysseus.default");
-		// destination for the X.509 certificate that will be automatically exported from the pfx file 
+		// destination for the X.509 certificate that will be automatically exported from the pfx file
 		props.setProperty("security.default.der", "odysseus.default.der");
 		// truststore
 		props.setProperty("security.default.tst", "odysseus.default.tst");
@@ -207,11 +212,11 @@ public class OdysseusConfiguration {
 		// TODO: find a way to hide this?!
 		props.setProperty("security.default.password", "ithaka");
 		props.setProperty("systemLoadInterval", "3000");
-		
+
 		props.setProperty(CLONING_UPDATER, "standard");
-		
+
 		props.setProperty(DEFAULT_UPDATE_SITE, "http://odysseus.informatik.uni-oldenburg.de/update/");
-		
+
 		// Recovery, Kafka and BaDaSt
 		props.setProperty("systemlogThresholdMilliseconds", String.valueOf((long) (Math.pow(10, 3)
 				* Math.pow(60, 2) * 24 * 30))); // 30 days in milliseconds
@@ -236,7 +241,7 @@ public class OdysseusConfiguration {
 			e2.printStackTrace();
 		}
 	}
-	
+
 	public static boolean exists(String key) {
 		return props.getProperty(key) != null;
 	}
@@ -258,7 +263,7 @@ public class OdysseusConfiguration {
 		return ret;
 	}
 
-	
+
 	public static String getFileProperty(String key, String tenantName) {
 		String home = getHomeDir();
 		if(!home.endsWith(File.separator)){
@@ -267,7 +272,7 @@ public class OdysseusConfiguration {
 		if (tenantName != null && tenantName.length() > 0) {
 			return home + "store"
 					+ File.separator + tenantName + File.separator + get(key);
-		} 
+		}
 		return home + "store" + File.separator +"_default"+ File.separator+ get(key);
 	}
 
@@ -280,7 +285,7 @@ public class OdysseusConfiguration {
 					+ File.separator + get(key);
 	}
 
-	
+
 	public static long getLong(String key, long defaultValue) {
 		String val = props.getProperty(key);
 		return val != null ? Long.parseLong(val) : defaultValue;

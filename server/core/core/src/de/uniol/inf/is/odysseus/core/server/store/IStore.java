@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.store;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
@@ -29,8 +30,8 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
  * @param <IDType> The type of the key
  * @param <STORETYPE> The type of the elements that should be stored
  */
-public interface IStore<IDType extends Comparable<?>, STORETYPE> {
-	
+public interface IStore<IDType extends Comparable<?>, STORETYPE> extends Serializable{
+
 	/**
 	 * Create a new instance of the store. Every storetype can have different options
 	 * so this is packed into an OptionMap
@@ -39,22 +40,22 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	 * @throws StoreException If the store cannot be created, an exception is thrown
 	 */
 	IStore<IDType, STORETYPE> newInstance(OptionMap options) throws StoreException;
-	
+
 	/**
 	 * Retrieve value for key id
 	 * @param id the key to the value
 	 * @return the value or null if value not available
 	 */
 	STORETYPE get(IDType id);
-	
+
 	/**
 	 * Retrieve elements in ascending order and limit
-	 * to the first limit results 
+	 * to the first limit results
 	 * @param limit
 	 * @return
 	 */
 	List<Entry<IDType, STORETYPE>> getOrderedByKey(long limit);
-	
+
 	/**
 	 * Put key value pair to store
 	 * @param id The key of the value
@@ -62,7 +63,7 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	 * @throws StoreException If the storing fails, an exception is thrown
 	 */
 	void put(IDType id, STORETYPE element) throws StoreException;
-	
+
 	/**
 	 * Remove element from store
 	 * @param id The key of the element that should be removed
@@ -70,61 +71,61 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	 * @throws StoreException If the removal fails, an exception is thrown
 	 */
 	STORETYPE remove(IDType id) throws StoreException;
-	
+
 	/**
-	 * Retrieve all values from the store as entrySet (same as in java.util.Map) 
+	 * Retrieve all values from the store as entrySet (same as in java.util.Map)
 	 * @return
 	 */
 	Set<Entry<IDType, STORETYPE>> entrySet();
-	
+
 	/**
-	 * Retrieve all keys from the store (same as in java.util.Map) 
+	 * Retrieve all keys from the store (same as in java.util.Map)
 	 * @return
 	 */
 	Set<IDType> keySet();
-	
+
 	/**
-	 * Retrieve all values from the store (same as in java.util.Map) 
+	 * Retrieve all values from the store (same as in java.util.Map)
 	 * @return
 	 */
 	Collection<STORETYPE> values();
-	
+
 	/**
-	 * Return true, if the given key is stored 
+	 * Return true, if the given key is stored
 	 * @param key
 	 * @return
 	 */
 	boolean containsKey(IDType key);
-	
+
 	/**
 	 * Returns true, if the store is empty
 	 * @return
 	 */
 	boolean isEmpty();
-	
+
 	/**
 	 * Clear the whole store
 	 * @throws StoreException
 	 */
 	void clear() throws StoreException;
-	
+
 	/**
 	 * Commit all changes
 	 */
 	void commit();
-	
+
 	/**
 	 * The number of elements stored
 	 * @return
 	 */
 	int size();
-	
+
 	/**
 	 * Dump all elements that are stored to a string buffer (typically only used for debugging)
 	 * @param buffer
 	 */
 	void dumpTo(StringBuffer buffer);
-	
+
 	/**
 	 * Get the global unique type of the store
 	 * @return
