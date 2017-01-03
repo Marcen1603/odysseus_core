@@ -14,10 +14,16 @@ public class TSpatialRangeAOTransformRule extends AbstractTransformationRule<Spa
 
 	@Override
 	public void execute(SpatialRangeAO operator, TransformationConfiguration config) throws RuleException {
-		IMovingObjectDataStructure dataStructure = SpatialDataStructureProvider.getInstance()
-				.getDataStructure(operator.getDataStructureName());
-		defaultExecute(operator, new SpatialRangePO<>(dataStructure, operator.getGeometryPosition(), operator.getRange()),
-				config, true, true);
+		if (operator.getDataStructureName() != null && !operator.getDataStructureName().isEmpty()) {
+			IMovingObjectDataStructure dataStructure = SpatialDataStructureProvider.getInstance()
+					.getDataStructure(operator.getDataStructureName());
+			defaultExecute(operator,
+					new SpatialRangePO<>(dataStructure, operator.getGeometryPosition(), operator.getRange()), config,
+					true, true);
+		} else {
+			defaultExecute(operator, new SpatialRangePO<>(operator.getGeometryPosition(), operator.getRange()), config,
+					true, true);
+		}
 	}
 
 	@Override

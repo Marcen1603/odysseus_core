@@ -16,7 +16,9 @@ public class TSpatialQueryAOTransformRule extends AbstractTransformationRule<Spa
 	public void execute(SpatialQueryAO operator, TransformationConfiguration config) throws RuleException {
 		IMovingObjectDataStructure dataStructure = SpatialDataStructureProvider.getInstance()
 				.getDataStructure(operator.getDataStructureName());
-		defaultExecute(operator, new SpatialQueryPO<>(dataStructure, operator.getPolygonPoints()), config, true, true);
+		defaultExecute(operator,
+				new SpatialQueryPO<>(dataStructure, operator.getPolygonPoints(), operator.getGeometryPosition()),
+				config, true, true);
 
 	}
 

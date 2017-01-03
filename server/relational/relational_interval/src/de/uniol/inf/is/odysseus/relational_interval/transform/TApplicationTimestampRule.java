@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,14 +45,14 @@ public class TApplicationTimestampRule extends
 		SDFSchema schema = timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
 		int pos = schema.indexOf(timestampAO.getStartTimestamp());
+		int posEnd = timestampAO.hasEndTimestamp() ? timestampAO
+				.getInputSchema()
+				.indexOf(timestampAO.getEndTimestamp()) : -1;
 
 		IMetadataUpdater mUpdater;
 		if (Tuple.class
 				.isAssignableFrom(timestampAO.getInputSchema().getType())) {
-			if (pos >= 0) {
-				int posEnd = timestampAO.hasEndTimestamp() ? timestampAO
-						.getInputSchema()
-						.indexOf(timestampAO.getEndTimestamp()) : -1;
+			if (pos >= 0 || posEnd >= 0) {
 				mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(
 						pos, posEnd, clearEnd, timestampAO.getDateFormat(),
 						timestampAO.getTimezone(), timestampAO.getLocale(),
