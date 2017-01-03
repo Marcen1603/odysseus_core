@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.nlp.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -29,27 +31,28 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	private int attributePosition;
 	private NLPToolkit toolkit;
 	private String toolkitName;
-	private List<String> information;
-	
-	
+	private List<String> information;	
+	private HashMap<String, Option> configuration;
+
 	public int getAttributePosition(){
 		return attributePosition;
 	}
 
     public AnnotatePO(AnnotatePO<M> splitPO) {
         super();
-		init(splitPO.toolkitName, splitPO.toolkit, splitPO.information, splitPO.attribute);
+		init(splitPO.toolkitName, splitPO.toolkit, splitPO.information, splitPO.attribute, splitPO.configuration);
     }
      
-    public AnnotatePO(String toolkit, NLPToolkit nlpToolkit, List<String> information, SDFAttribute attribute) {
-		init(toolkit, nlpToolkit, information, attribute);
+    public AnnotatePO(String toolkit, NLPToolkit nlpToolkit, List<String> information, SDFAttribute attribute, HashMap<String, Option> configuration) {
+		init(toolkit, nlpToolkit, information, attribute, configuration);
 	}
 
-	private void init(String toolkit, NLPToolkit nlpToolkit, List<String> information, SDFAttribute attribute) {
+	private void init(String toolkit, NLPToolkit nlpToolkit, List<String> information, SDFAttribute attribute, HashMap<String, Option> configuration) {
         this.toolkitName = toolkit;
         this.toolkit = nlpToolkit;
         this.information = information;
         this.attribute = attribute;
+        this.configuration = configuration;
     }
     
     

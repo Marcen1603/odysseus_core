@@ -1,9 +1,14 @@
 package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -18,8 +23,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.nlp.toolkits.NLPToolkit;
 import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitFactory;
@@ -31,8 +39,9 @@ import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitFactory;
  */
 @LogicalOperator(name="ANNOTATE", minInputPorts=1, maxInputPorts=1, doc = "Annotates a specific attribute of an input stream with natural language processing methods.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
 public class AnnotateAO extends UnaryLogicalOp {
-	private static final long serialVersionUID = -1462065636002048986L;
 	
+	private static final long serialVersionUID = 2937642785475519576L;
+
 	//List of information included in output stream (eg. tokens, sentences, pos-tags...)
 	private List<String> information;
 	
@@ -51,8 +60,11 @@ public class AnnotateAO extends UnaryLogicalOp {
 	//user-specified nlp-toolkit (eg. OpenNLPToolkit)
 	private NLPToolkit nlpToolkit;
 	
+	private HashMap<String, Option> configuration;
+	
 	public AnnotateAO(){
-        super();
+        super();		
+
     }
      
     public AnnotateAO(AnnotateAO annotateAO){
@@ -63,6 +75,7 @@ public class AnnotateAO extends UnaryLogicalOp {
         this.nlpToolkit = annotateAO.nlpToolkit;
         this.sentencesAttribute = annotateAO.sentencesAttribute;
         this.tokensAttribute = annotateAO.tokensAttribute;
+        this.configuration = annotateAO.configuration;
     }
     
     /**
@@ -73,7 +86,7 @@ public class AnnotateAO extends UnaryLogicalOp {
      */
     public NLPToolkit getNlpToolkit(){
     	if(nlpToolkit == null){
-    		nlpToolkit = ToolkitFactory.get(toolkit, information);
+    		nlpToolkit = ToolkitFactory.get(toolkit, information, configuration);
     	}
     	
     	return nlpToolkit;
@@ -93,10 +106,23 @@ public class AnnotateAO extends UnaryLogicalOp {
 	public void setInformation(List<String> information) {
 		this.information = information;
 	}
-	
+    
 	public List<String> getInformation(){
 		return this.information;
 	}
+    
+    @Parameter(name="options", type = OptionParameter.class, isList = true, optional = true)
+    public void setOptions(List<Option> options){
+    	this.configuration = new HashMap<String, Option>();
+    	for(Option option : options){
+    		this.configuration.put(option.getName().toLowerCase(), option);
+    	}    	
+    	//TODO check if required models are specified
+    }
+    
+    public HashMap<String, Option> getConfiguration(){
+    	return this.configuration;
+    }
 
 	@Parameter(name="attribute", type = ResolvedSDFAttributeParameter.class, optional = false)
 	public void setAttribute(SDFAttribute attribute) {

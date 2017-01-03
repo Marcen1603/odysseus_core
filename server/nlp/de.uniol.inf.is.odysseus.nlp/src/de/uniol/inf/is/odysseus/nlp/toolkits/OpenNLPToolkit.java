@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
@@ -22,13 +23,16 @@ import opennlp.tools.tokenize.TokenizerModel;
 
 
 public class OpenNLPToolkit extends NLPToolkit{
+	
+
 	private List<Class<? extends IAnnotation>> internalPipeline = Arrays.asList(
 			SentenceAnnotation.class, 
 			TokenAnnotation.class
 			);
 	
-	public OpenNLPToolkit(List<String> information) {
-		super(information);
+
+	public OpenNLPToolkit(List<String> information, HashMap<String, Option> configuration) {
+		super(information, configuration);
 	}
 	
 	//TODO ERROR HANDLING (Model not found?)
@@ -54,9 +58,8 @@ public class OpenNLPToolkit extends NLPToolkit{
 	}
 
 	private void annotateSentences(Annotation annotation) throws IOException{
-		File model = new File("/Users/yannickhabecker/en-sent.bin");
 		try (
-				 InputStream sentenceModelIn = new FileInputStream(model);
+				 InputStream sentenceModelIn = getModelAsStream(SentenceAnnotation.class);
 	         ){
 			SentenceModel sentenceModel = new SentenceModel(sentenceModelIn);
 			SentenceDetector sentenceDetector = new SentenceDetectorME(sentenceModel);
@@ -69,9 +72,8 @@ public class OpenNLPToolkit extends NLPToolkit{
 	}
 	
 	private void annotateTokens(Annotation annotation) throws IOException{
-		File file = new File("/Users/yannickhabecker/en-token.bin");
 		try (
-				 InputStream modelIn = new FileInputStream(file);
+				 InputStream modelIn = getModelAsStream(TokenAnnotation.class);
 	         ){
 			TokenizerModel model = new TokenizerModel(modelIn);
 			Tokenizer detector = new TokenizerME(model);

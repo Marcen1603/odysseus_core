@@ -12,7 +12,7 @@ public class TAnnotateAORule extends AbstractTransformationRule<AnnotateAO> {
 
 	@Override
 	public void execute(AnnotateAO operator, TransformationConfiguration config) throws RuleException {
-		 defaultExecute(operator, new AnnotatePO(operator.getToolkit(), operator.getNlpToolkit(), operator.getInformation(), operator.getAttribute()), config, true, true);		
+		 defaultExecute(operator, new AnnotatePO(operator.getToolkit(), operator.getNlpToolkit(), operator.getInformation(), operator.getAttribute(), operator.getConfiguration()), config, true, true);		
 	}
 
 	@Override
