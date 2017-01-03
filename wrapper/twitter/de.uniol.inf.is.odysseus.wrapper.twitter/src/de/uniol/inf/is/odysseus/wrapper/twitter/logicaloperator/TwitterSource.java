@@ -71,6 +71,14 @@ public class TwitterSource extends AbstractAccessAO {
 		addOption(TwitterTransportHandler.SEARCHKEYS,
 				buildString(searchKeys, ","));
 	}
+	
+	@Parameter(type = StringParameter.class, isList = true, name = TwitterTransportHandler.LANGUAGEKEYS, optional = true, doc = "Twitter language keys. See documentation.")
+	public void setLanguageKeys(List<String> languages) {
+		addOption(TwitterTransportHandler.LANGUAGEKEYS,
+				buildString(languages, ","));
+	}
+	
+	
 
 	@Override
 	public TwitterSource clone() {

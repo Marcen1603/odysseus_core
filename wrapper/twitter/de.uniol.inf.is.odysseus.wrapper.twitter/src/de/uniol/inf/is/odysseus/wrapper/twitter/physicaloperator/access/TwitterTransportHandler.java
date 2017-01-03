@@ -51,6 +51,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	public static final String ACCESSTOKEN = "accesstoken";
 	public static final String CONSUMERSECRET = "consumersecret";
 	public static final String CONSUMERKEY = "consumerkey";
+	public static final String LANGUAGEKEYS = "languages";
 	
 	private TwitterStream twitterStream;
 	private Twitter twitter;
@@ -60,6 +61,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	private String accessTokenSecret;
 	private String[] searchKeys;
 	private double[][] locations;
+	private String[] languageKeys;
 
 	public TwitterTransportHandler() {
 		super();
@@ -114,6 +116,9 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		}
 		if (options.containsKey(LOCATIONS)){
 			setLocations(options.get(LOCATIONS));
+		}
+		if (options.containsKey(LANGUAGEKEYS)){
+			setLanguageKeys(options.get(LANGUAGEKEYS));
 		}
 	}
 
@@ -181,7 +186,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		 * must be specified 
 		 * https://dev.twitter.com/docs/api/1.1/post/statuses/filter
 		 */
-		if(searchKeys != null || locations != null){
+		if(searchKeys != null || locations != null || languageKeys != null){
 			//set filter
 			FilterQuery fq = new FilterQuery();
 			if(searchKeys != null && searchKeys.length > 0){
@@ -189,6 +194,9 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 			}
 			if(locations != null && locations.length > 0){
 				fq.locations(locations);
+			}
+			if(languageKeys != null && languageKeys.length > 0){
+				fq.language(languageKeys);
 			}
 			
 			twitterStream.filter(fq);
@@ -317,6 +325,9 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
     	} else if((this.locations == null && other.locations != null) ||
     			(this.locations != null && other.locations == null)) {
     		return false;
+    	}  else if((this.languageKeys == null && other.languageKeys != null) ||
+    			(this.languageKeys != null && other.languageKeys == null)) {
+    		return false;
     	} 
     	if(this.searchKeys != null) {
     		for(int i = 0; i < this.searchKeys.length; i++) {
@@ -325,6 +336,15 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
     			}
     		}
     	}
+
+    	if(this.languageKeys != null) {
+    		for(int i = 0; i < this.languageKeys.length; i++) {
+    			if(!languageKeys[i].equals(other.languageKeys[i])) {
+    				return false;
+    			}
+    		}
+    	}
+    	
     	if(this.locations != null) {
     		for(int i = 0; i < this.locations.length; i++) {
     			for(int j = 0; i < this.locations[i].length; j++) {
@@ -337,4 +357,12 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
     	}
     	return true;
     }
+
+	public String[] getLanguageKeys() {
+		return languageKeys;
+	}
+
+	public void setLanguageKeys(String languageKeys) {
+		this.languageKeys = languageKeys.split(",");
+	}
 }
