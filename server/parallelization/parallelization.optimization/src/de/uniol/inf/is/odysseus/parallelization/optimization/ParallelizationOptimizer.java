@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.AppendUniqueIdLogicalGraphVisitor;
@@ -37,7 +38,7 @@ public class ParallelizationOptimizer {
 	private static int parallelizationNumber;
 
 	private static final Logger LOG = LoggerFactory.getLogger(ParallelizationOptimizer.class);
-	
+
 	private static final String MIGRATION_STRATEGY = "GeneralizedParallelTracksMigrationStrategy";
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -56,7 +57,7 @@ public class ParallelizationOptimizer {
 		walker0.prefixWalk(logicalQuery.getLogicalPlan(), appendVisitor);
 		
 		//remove sinks and make the operator which it is subscribed to the new root
-		// only works if the sink is subscribed to only one sink
+		// only works if the sink is subscribed to only one source
 		ILogicalOperator top = logicalQuery.getLogicalPlan();
 		if(!(top instanceof TopAO)) {
 			LOG.error("The top of the plan is not of Type TopAO");
@@ -72,12 +73,18 @@ public class ParallelizationOptimizer {
 			LOG.error("The sink must be subscribed to  exactly one operator.");
 			return;
 		}
-		LogicalSubscription sinkSubscription = sinkToRemove.getSubscribedToSource().iterator().next();
-		ILogicalOperator newRoot = sinkSubscription.getTarget();
-		top.unsubscribeFromSource(topSubscription);
-		sinkToRemove.unsubscribeFromSource(sinkSubscription);
-		sinkToRemove.removeOwner(logicalQuery);
-		newRoot.subscribeSink(top, 0, 0, top.getOutputSchema());
+		if(sinkToRemove instanceof AbstractSenderAO) {
+			AbstractSenderAO sink = ((AbstractSenderAO) sinkToRemove);
+			Resource oldName = sink.getSinkname();
+			Resource newName = new Resource(oldName.getUser(),oldName.getResourceName()+"_temp");
+			sink.setSink(newName);
+		}
+//		LogicalSubscription sinkSubscription = sinkToRemove.getSubscribedToSource().iterator().next();
+//		ILogicalOperator newRoot = sinkSubscription.getTarget();
+//		top.unsubscribeFromSource(topSubscription);
+//		sinkToRemove.unsubscribeFromSource(sinkSubscription);
+//		sinkToRemove.removeOwner(logicalQuery);
+//		newRoot.subscribeSink(top, 0, 0, top.getOutputSchema());
 
 		// parallelize (change BuildConfiguration and perform preTransformation)
 		List<ILogicalQuery> logicalQueryList = new ArrayList<>();
@@ -90,7 +97,7 @@ public class ParallelizationOptimizer {
 		IPhysicalQuery newPhysicalQuery = StandardExecutor.getInstance().transform(logicalQuery,
 				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery).getTransformationConfiguration(),
 				user);
-		// TODO select migration strategy
+		// load migration strategy
 		IMigrationStrategy planMigrationStrategy = null;
 		try {
 			planMigrationStrategy = MigrationStrategyRegistry.getPlanMigrationStrategyById(MIGRATION_STRATEGY);
@@ -113,13 +120,14 @@ public class ParallelizationOptimizer {
 		}
 		return instance;
 	}
-	
+
 	public void reoptimizeQuery(String queryName, ISession caller) {
 		Resource queryResource = new Resource(caller.getUser(), queryName);
-		IPhysicalQuery query = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryByName(queryResource, caller);
+		IPhysicalQuery query = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryByName(queryResource,
+				caller);
 		this.reoptimizeQuery(query, caller);
 	}
-	
+
 	public void reoptimizeQuery(int queryId, ISession caller) {
 		IPhysicalQuery query = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryById(queryId, caller);
 		this.reoptimizeQuery(query, caller);

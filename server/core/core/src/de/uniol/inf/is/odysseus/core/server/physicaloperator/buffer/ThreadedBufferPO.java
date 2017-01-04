@@ -63,12 +63,16 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		}
 
 		public void pause() {
-			paused = true;
+			synchronized (runner) {
+				paused = true;
+			}
 		}
 
-		synchronized void unpause() {
-			paused = false;
-			notify();
+		public void unpause() {
+			synchronized (runner) {
+				paused = false;
+				runner.notifyAll();
+			}
 		}
 
 		@Override
@@ -78,7 +82,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				synchronized (runner) {
 					while (paused) {
 						try {
-							runner.wait();
+							runner.wait(100);
 						} catch (InterruptedException e) {
 							LOG.error("Paused ThreadedBuffer was interupted.", e);
 						}
@@ -268,15 +272,11 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	public void pauseRunner() {
-		synchronized (runner) {
-			runner.paused = true;
-		}
+		runner.pause();
 	}
-	
+
 	public void unpauseRunner() {
-		synchronized(runner) {
-			runner.paused = false;
-		}
+		runner.unpause();
 	}
 
 	@Override

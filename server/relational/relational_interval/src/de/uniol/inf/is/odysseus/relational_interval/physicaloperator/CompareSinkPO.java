@@ -37,7 +37,8 @@ public class CompareSinkPO
 			// 1. find elements in other area that cannot be joined
 			// these are error elements!
 			Iterator<Tuple<? extends ITimeInterval>> elems = sweepArea[otherport]
-					.extractElementsBefore(object.getMetadata().getStart());
+					//.extractElementsBefore(object.getMetadata().getStart());
+					.extractElementsStartingBefore(object.getMetadata().getStart());
 			while (elems.hasNext()) {
 				Tuple<? extends ITimeInterval> e = elems.next();
 				if (sameOutputAsInputPort) {
@@ -45,8 +46,8 @@ public class CompareSinkPO
 				} else {
 					transfer(e);
 				}
-				System.err.println(e + " from port " + otherport
-						+ " has not counterpart");
+				//System.err.println(e + " from port " + otherport
+				//		+ " has not counterpart");
 			}
 			List<Tuple<? extends ITimeInterval>> startSame = sweepArea[otherport]
 					.extractEqualElementsStartingEquals(object,0,true);
@@ -111,15 +112,15 @@ public class CompareSinkPO
 				Iterator<Tuple<? extends ITimeInterval>> iter = sweepArea[i]
 						.extractAllElements();
 				while (iter.hasNext()) {
-					System.err.print("UNASSIGNED TUPLES FROM PORT " + i);
+					//System.err.println("UNASSIGNED TUPLES FROM PORT " + i);
 					Tuple<? extends ITimeInterval> e = iter.next();
 					if (sameOutputAsInputPort) {
 						transfer(e, i);
 					} else {
 						transfer(e);
 					}
-					System.err.print("UNASSIGNED TUPLES FROM PORT " + i + " "
-							+ e);
+					//System.err.println("UNASSIGNED TUPLES FROM PORT " + i + " "
+					//		+ e);
 				}
 			}
 
