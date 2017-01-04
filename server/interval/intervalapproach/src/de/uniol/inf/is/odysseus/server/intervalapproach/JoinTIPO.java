@@ -450,7 +450,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				}
 			}
 		}
-		return max;
+		return PointInTime.max(max, transferFunction.calcMaxEndTs());
 	}
 
 	@Override
