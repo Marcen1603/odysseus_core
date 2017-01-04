@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,21 +29,21 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
  * Effizientere Implementierung eines SlidingAdvanceTimeWindow
  * @author Jonas Jacobi
  */
-public class SlidingTimeWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
-		AbstractNonBlockingWindowTIPO<T> {
+public class SlidingTimeWindowTIPO<M extends ITimeInterval, T extends IStreamObject<M>> extends
+		AbstractNonBlockingWindowTIPO<M,T> {
 
 	public SlidingTimeWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
-	
+
 	public SlidingTimeWindowTIPO(TimeUnit baseTimeUnit,
 			TimeValueItem windowSize, SDFSchema inputSchema){
 		super(WindowType.TIME, baseTimeUnit, windowSize, null ,null, false, null, inputSchema);
 	}
-	
+
 	@Override
-	protected PointInTime calcWindowEnd(ITimeInterval time) {
-		return time.getStart().sum(windowSize);
+	protected PointInTime calcWindowEnd(PointInTime time) {
+		return time.sum(windowSize);
 	}
-	
+
 }
