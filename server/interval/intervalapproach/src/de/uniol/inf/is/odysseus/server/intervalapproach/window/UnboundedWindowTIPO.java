@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 
-public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T> {
+public class UnboundedWindowTIPO <M extends ITimeInterval, T extends IStreamObject<M>> extends AbstractNonBlockingWindowTIPO<M, T> {
 
 	public UnboundedWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
@@ -31,11 +31,11 @@ public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval
 	public UnboundedWindowTIPO(SDFSchema inputSchema){
 		super(WindowType.TIME, null, null , null ,null, false, null, inputSchema);
 	}
-	
+
 	@Override
-	protected PointInTime calcWindowEnd(ITimeInterval interval) {
+	protected PointInTime calcWindowEnd(PointInTime interval) {
 		return PointInTime.getInfinityTime();
 	}
-	
+
 
 }
