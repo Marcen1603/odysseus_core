@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,17 +25,17 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 /**
  * Diese Klasse verarbeitet den in einem Operator u.U. notwendigen Heap, der die richtige Sortierung
  * der Elemente vor der Weitergabe in den Ausgabedatenstrom des Operators wiederherstellt.
- * 
+ *
  *
  * @param <R> Datentyp der Elemente, die Verarbeitet werden sollen.
  */
 public interface ISyncArea<R extends IStreamObject<?>, W extends IStreamObject<?>> extends IClone, Serializable {
-	
+
 	/**
 	 * Anhand eines neuen Elementes, welches typischerweise aktuell aus dem
 	 * Eingabedatenstrom des Operators stammen sollte, werden alle Elemente in den
 	 * Ausgabedatenstrom des Operarors geschrieben, fuer die das moeglich ist.
-	 * 
+	 *
 	 * @param object Das neue Objekt aus dem Eingabedatenstrom des Operators
 	 * @param port Port, auf dem das neue Objekt im Operator angekommen ist
 	 */
@@ -56,23 +56,24 @@ public interface ISyncArea<R extends IStreamObject<?>, W extends IStreamObject<?
 	void newHeartbeat(PointInTime heartbeat, int inPort);
 
 	PointInTime getMinTs(int inPort);
-	
+	PointInTime calcMaxEndTs();
+
 	/** Wenn eine Punctuation kommt, muss diese auch korrekt verwaltet werden
-	 * 
+	 *
 	 * @param punctuation
 	 */
-	void sendPunctuation(IPunctuation punctuation);		
+	void sendPunctuation(IPunctuation punctuation);
 	void sendPunctuation(IPunctuation punctuation, int toPort);
 
 	void done(int port);
-	
+
 	void addNewInput(int port);
 	void removeInput(int port);
 
-	
+
 	int size();
 	PointInTime getWatermark();
-	
+
 
 	@Override
 	ISyncArea<R,W> clone();
@@ -82,12 +83,12 @@ public interface ISyncArea<R extends IStreamObject<?>, W extends IStreamObject<?
 	 */
 	void setInOrder(boolean isInOrder);
 	boolean isInOrder();
-	
+
 	/**
 	 * Debug
 	 */
 	void dump();
-	
+
 	long getElementsRead();
 
 	long getElementsWritten();
@@ -97,5 +98,5 @@ public interface ISyncArea<R extends IStreamObject<?>, W extends IStreamObject<?
 	long getPunctuationsRead();
 
 	long getPunctuationsSuppressed();
-		
+
 }

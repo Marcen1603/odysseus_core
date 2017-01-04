@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,10 +76,15 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
 		transferArea.removeInput(sub.getSinkInPort());
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		transferArea.init(this, getSubscribedToSource().size());
+	}
+
+	@Override
+	public PointInTime getLatestEndTimestamp() {
+		return transferArea.calcMaxEndTs();
 	}
 
 	@Override
@@ -142,7 +147,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		state.setTransferArea(this.transferArea);
 		return state;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setStateInternal(Serializable s) {
