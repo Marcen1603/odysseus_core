@@ -10,6 +10,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
+/**
+ * Measures the queue lengths for each active query.
+ * 
+ * @author Jannes
+ *
+ */
 public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	
 	static private final int QUEUE_MEASUREMENT_SIZE = 5;
@@ -17,18 +23,21 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	
 	private HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>> queuelengths = new HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>>();
 	
+	@Override
 	public void addQuery(IPhysicalQuery query) {
 		if(!queuelengths.containsKey(query)) {
 			getSubscriptionsForQuery(query);
 		}
 	}
 	
+	@Override
 	public void removeQuery(IPhysicalQuery query) {
 		if(queuelengths.containsKey(query)) {
 			queuelengths.remove(query);
 		}
 	}
 	
+	@Override
 	public void updateMeasurements() {
 		if (queuelengths.isEmpty()) {
 			return;
@@ -45,7 +54,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 		}
 	}
 	
-	
+	@Override
 	public ArrayList<IPhysicalQuery> getQuerysWithIncreasingTendency() {
 		ArrayList<IPhysicalQuery> increasingLengths = new ArrayList<>();
 		for (IPhysicalQuery query : queuelengths.keySet()) {
@@ -64,6 +73,10 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 		return increasingLengths;
 	}
 	
+	/**
+	 * Adds a new map for the given query to queuelengths.
+	 * @param query
+	 */
 	private void getSubscriptionsForQuery(IPhysicalQuery query) {
 		HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>> map = new HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>();
 		queuelengths.put(query, map);
@@ -72,6 +85,11 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 		}
 	}
 	
+	/**
+	 * Adds all subscriptions from the given query to the map in queuelengths.
+	 * @param operator
+	 * @param query
+	 */
 	private void getOutgoingSubscriptions(IPhysicalOperator operator, IPhysicalQuery query) {
 		if (operator.isSource()) {
 			// follow outgoing paths 
@@ -89,6 +107,11 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 		}
 	}
 	
+	/**
+	 * Returns the tendency for the given list as int.
+	 * @param list
+	 * @return
+	 */
 	private int estimateTendency(ArrayList<Integer> list) {
 		int tendency = 0;
 		for (int i = 0; i < (list.size() - 1); i++) {
