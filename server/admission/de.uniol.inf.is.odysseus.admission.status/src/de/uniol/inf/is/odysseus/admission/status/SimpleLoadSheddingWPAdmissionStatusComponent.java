@@ -6,6 +6,14 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
+/**
+ * Provides the status for simple load shedding in consideration of priorities.
+ * 
+ * Only the CPU load is used in this status component.
+ * 
+ * @author Jannes
+ *
+ */
 public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 
 	private int minPriority = -1;

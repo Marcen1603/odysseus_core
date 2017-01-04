@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.admission.status.LoadShedding">
    <implementation class="de.uniol.inf.is.odysseus.admission.status.SimpleLoadSheddingAdmissionStatusComponent"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.admission.status.ILoadSheddingAdmissionStatusComponent"/>
+      <provide interface="de.uniol.inf.is.odysseus.admission.IAdmissionStatusComponent"/>
    </service>
 </scr:component>

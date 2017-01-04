@@ -5,12 +5,18 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
+/**
+ * Interface for all LoadSheddingAdmissionStatusComponents.
+ * 
+ * @author Jannes
+ *
+ */
 public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusComponent {
 	
 	static public final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 	
+	// TODO: get max shedding factor from each query.
 	public final int MAX_SHEDDING_FACTOR = 50;
-	
 	
 	/**
 	 * Adds the query to the StatusComponent.

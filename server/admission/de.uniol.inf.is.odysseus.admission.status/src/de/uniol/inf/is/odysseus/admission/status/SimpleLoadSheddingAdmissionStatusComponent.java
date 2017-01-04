@@ -6,6 +6,14 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
+/**
+ * Provides the status for simple load shedding.
+ * 
+ * Only the CPU load is used in this status component.
+ * 
+ * @author Jannes
+ *
+ */
 public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 	
 	/**
@@ -33,13 +41,19 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 	@Override
 	public void runLoadShedding() {
 		int queryID = getRandomPossibleQueryID();
+		
+		//It was not possible to find a queryID for load shedding.
 		if (queryID < 0) {
 			return;
 		}
 		
 		int sheddingFactor;
+		
+		//The load shedding of this query is already active 
 		if (activeQueries.containsKey(queryID)) {
 			sheddingFactor = activeQueries.get(queryID) + 10;
+			
+			//The maximal shedding factor is reached.
 			if (sheddingFactor >= MAX_SHEDDING_FACTOR) {
 				maxSheddingQueries.add(queryID);
 			}
@@ -48,6 +62,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 			sheddingFactor = 10;
 			activeQueries.put(queryID, sheddingFactor);
 		}
+		
 		AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
 	}
 	
