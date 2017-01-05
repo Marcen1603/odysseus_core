@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.NoMetadataPreParserKeyword
 import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.OptimizePredicatesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.QueryParamPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ReloadFromLogPreParserKeyword;
@@ -51,17 +52,19 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(UseDistributePreParserKeyword.DODISTRIBUTE, UseDistributePreParserKeyword.class);
 		keywords.put(UseAdaptionPreParserKeyword.DOADAPT, UseAdaptionPreParserKeyword.class);
 		keywords.put(QueryNamePreParserKeyword.QNAME, QueryNamePreParserKeyword.class);
+		keywords.put(QueryParamPreParserKeyword.NAME, QueryParamPreParserKeyword.class);
 		keywords.put(ResumeOnErrorPreParserKeyword.KEYWORD, ResumeOnErrorPreParserKeyword.class);
 		keywords.put(ConfigPreParserKeyword.KEYWORD, ConfigPreParserKeyword.class);
+		keywords.put(QueryPriorityPreParserKeyword.NAME, QueryPriorityPreParserKeyword.class);
 		//keywords.put(IncludePreParserKeyword.KEYWORD, IncludePreParserKeyword.class);
 		keywords.put(MetadataPreParserKeyword.METADATA, MetadataPreParserKeyword.class);
 		keywords.put(NoMetadataPreParserKeyword.NO_METADATA, NoMetadataPreParserKeyword.class);
 		keywords.put(TrafoOptionPreParserKeyword.TRAFOOPTION, TrafoOptionPreParserKeyword.class);
-		keywords.put(QueryPriorityPreParserKeyword.NAME, QueryPriorityPreParserKeyword.class);
 		keywords.put(MaxSheddingFactorPreParserKeyword.SHEDDING_FACTOR_NAME, MaxSheddingFactorPreParserKeyword.class);
 		keywords.put(RecoveryConfigKeyword.getName(), RecoveryConfigKeyword.class);
 		keywords.put(CreateKVStorePreParserKeyword.KEYWORD, CreateKVStorePreParserKeyword.class);
 		keywords.put(DropKVStorePreParserKeyword.KEYWORD, DropKVStorePreParserKeyword.class);
+
 		return keywords;
 	}
 
