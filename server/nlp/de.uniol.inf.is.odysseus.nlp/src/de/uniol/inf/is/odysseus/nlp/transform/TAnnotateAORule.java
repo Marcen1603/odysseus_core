@@ -1,4 +1,5 @@
 package de.uniol.inf.is.odysseus.nlp.transform;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.nlp.logicaloperator.*;
 import de.uniol.inf.is.odysseus.nlp.physicaloperator.AnnotatePO;
@@ -7,12 +8,11 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({"unchecked","rawtypes"})
 public class TAnnotateAORule extends AbstractTransformationRule<AnnotateAO> {
 
 	@Override
 	public void execute(AnnotateAO operator, TransformationConfiguration config) throws RuleException {
-		 defaultExecute(operator, new AnnotatePO(operator.getToolkit(), operator.getNlpToolkit(), operator.getInformation(), operator.getAttribute(), operator.getConfiguration()), config, true, true);		
+		 defaultExecute(operator, new AnnotatePO<IMetaAttribute>(operator.getToolkit(), operator.getNlpToolkit(), operator.getInformation(), operator.getAttribute(), operator.getConfiguration()), config, true, true);		
 	}
 
 	@Override

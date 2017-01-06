@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.nlp.toolkits;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
+import de.uniol.inf.is.odysseus.nlp.toolkits.bundle.classannotation.NLPToolkitWrapper;
 import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
@@ -22,6 +21,7 @@ import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 
 
+@NLPToolkitWrapper(name="opennlp")
 public class OpenNLPToolkit extends NLPToolkit{
 	
 

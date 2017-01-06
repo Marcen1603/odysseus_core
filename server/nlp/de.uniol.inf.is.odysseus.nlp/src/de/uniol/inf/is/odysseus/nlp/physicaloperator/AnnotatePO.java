@@ -4,16 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -79,7 +73,7 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	    if(!(ipo instanceof AnnotatePO)) {
 	        return false;
 	    }
-	    AnnotatePO spo = (AnnotatePO) ipo;
+	    AnnotatePO<?> spo = (AnnotatePO<?>) ipo;
 	    if(this.hasSameSources(spo) &&
 	            this.max == spo.max && this.min == spo.min) {
 	        return true;
@@ -91,7 +85,6 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	protected void process_next(Tuple<M> object, int port) {
 		Tuple<M> output;
 		Annotation annotation = toolkit.annotate(object.getAttribute(attributePosition).toString());
-		SentenceAnnotation sentences = (SentenceAnnotation) annotation.getAnnotation(SentenceAnnotation.class);
 		List<Object> append = new ArrayList<>();
 		
     	if(information.contains("token"))
@@ -118,12 +111,6 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 		}
 		
 		return tokens;		
-	}
-	
-	private int getRandomValue(){
-		double range = max - min + 0.5;
-		int random = (int) (Math.random()*range+min);
-		return random;
 	}
 }
 

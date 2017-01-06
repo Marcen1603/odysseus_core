@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.nlp.toolkits.annotations;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class TokenAnnotation implements IAnnotation {
