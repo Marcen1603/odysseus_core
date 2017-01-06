@@ -116,44 +116,61 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			LOG.debug("FIRST TUPLE WITH PARALLEL EXECUTION {} TIMESTAMP {}", object, System.currentTimeMillis());
 			setPrintNextTuple(false);
 		}
-
+		// for marking if object should be transfered, not synchronized
+		boolean transfer = false;
+		boolean migrationFinished = false;
 		// check if new has caught up on old.
-		if (punctuationsReceived && !finished) {
-			finished = true;
-			// if the punctuations are here before any other tuple lastSend must
-			// be set
-			if (lastSend == null) {
-				lastSend = object;
+		synchronized (this) {
+			if (punctuationsReceived && !finished) {
+				finished = true;
+				// if the punctuations are here before any other tuple lastSend
+				// must
+				// be set
+				if (lastSend == null) {
+					lastSend = object;
+				}
+			}
+
+			// happens if process_next is called while the migration is already
+			// finished but the router is not yet removed.
+			if (this.onlyNew && port == this.inPortNew) {
+				LOG.trace("Migration finished processing last tuples");
+				transfer = true;
+			} else {
+
+				// transfer old objects if the port is correct. or check if
+				// element
+				// is
+				// newer than the lastSend-Element from the old plan.
+				if (port == this.inPortOld) {
+					// transfer normally if not finished yet.
+					// if finished only transfer if starttimestamp is equal to
+					// the
+					// lastSend.starttimestamp
+					if ((finished && lastSend != null
+							&& lastSend.getMetadata().getStart().equals(object.getMetadata().getStart()))
+							|| !finished) {
+						lastSend = object;
+						transfer = true;
+					}
+				} else if (finished && lastSend != null
+						&& object.getMetadata().getStart().after(lastSend.getMetadata().getStart())) {
+					transfer = true;
+					LOG.debug("LAST TUPLE WITH PARALLEL EXECUTION {} TIMESTAMP {}", object, System.currentTimeMillis());
+					this.onlyNew = true;
+					migrationFinished = true;
+				}
 			}
 		}
-
-		// happens if process_next is called while the migration is already
-		// finished but the router is not yet removed.
-		if (this.onlyNew && port == this.inPortNew) {
-			LOG.trace("Migration finished processing last tuples");
+		if (transfer) {
 			transfer(object);
-			return;
-		}
+			LOG.debug("Transfered by thread {}.", Thread.currentThread().getId());
+			if (migrationFinished) {
+				LOG.debug("Fire migration finished event by Thread {}.", Thread.currentThread().getId());
+				fireMigrationFinishedEvent(this);
 
-		// transfer old objects if the port is correct. or check if element is
-		// newer than the lastSend-Element from the old plan.
-		if (port == this.inPortOld) {
-			// transfer normally if not finished yet.
-			// if finished only transfer if starttimestamp is equal to the
-			// lastSend.starttimestamp
-			if ((finished && lastSend != null
-					&& lastSend.getMetadata().getStart().equals(object.getMetadata().getStart())) || !finished) {
-				lastSend = object;
-				transfer(object);
 			}
-		} else if (finished && lastSend != null
-				&& object.getMetadata().getStart().after(lastSend.getMetadata().getStart())) {
-			transfer(object);
-			LOG.debug("LAST TUPLE WITH PARALLEL EXECUTION {} TIMESTAMP {}", object, System.currentTimeMillis());
-			this.onlyNew = true;
-			fireMigrationFinishedEvent(this);
 		}
-
 	}
 
 	// @SuppressWarnings("unused")
@@ -183,7 +200,8 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	// return false;
 	// }
 
-	private synchronized void process_migrationMarkerPunctuation(MigrationMarkerPunctuation p, int port) throws MigrationException {
+	private synchronized void process_migrationMarkerPunctuation(MigrationMarkerPunctuation p, int port)
+			throws MigrationException {
 		Pair<IPunctuation, IPunctuation> pair = this.sourcesToPunctuations.get(p.getSource());
 		Pair<Integer, Integer> pathesPair = this.pathesFromSource.get(p.getSource());
 		LOG.debug("Receiced punctuation for {} ", p.toString());
@@ -292,7 +310,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		this.printNextTuple = printNextTuple;
 	}
 
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void process_open() {
 		super.process_open();

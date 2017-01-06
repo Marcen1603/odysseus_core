@@ -23,7 +23,7 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 	private static final Logger LOG = LoggerFactory.getLogger(MigrationBuffer.class);
 
 	private boolean waitForFirst = false;
-	private boolean migrationStarted = true;
+	private boolean migrationStarted = false;
 	private boolean markerInserted = false;
 	private PointInTime newestTimestamp = null;
 	private PointInTime latestEndTimestamp = null;
@@ -31,9 +31,12 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 	private ISource<?> source = null;
 
 	public void markMigrationStart(PointInTime maxEndTs) {
-		this.migrationStarted = true;
-		this.latestEndTimestamp = maxEndTs;
-		LOG.debug("Migrationstart marked for {}", this.latestEndTimestamp);
+		long time = System.currentTimeMillis();
+		synchronized (buffer) {
+			this.migrationStarted = true;
+			this.latestEndTimestamp = maxEndTs;
+		}
+		LOG.debug("Migrationstart marked for {} at {}", this.latestEndTimestamp, time);
 	}
 
 	/**
@@ -88,11 +91,13 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 			this.buffer.add(object);
 			if (this.migrationStarted) {
 				if (this.latestEndTimestamp == null) {
-					this.latestEndTimestamp = object.getMetadata().getEnd();
-					if(this.latestEndTimestamp.isInfinite()){
+					long time = System.currentTimeMillis();
+					PointInTime endTs = object.getMetadata().getEnd();
+					if (endTs.isInfinite()) {
 						LOG.error("Maximum endtimestamp is infinite. No state migration possible.");
 					}
-					LOG.debug("Setting latestEndTimestamp to current element {}", this.latestEndTimestamp);
+					this.latestEndTimestamp = endTs;
+					LOG.debug("Setting latestEndTimestamp to current element {} at {}", this.latestEndTimestamp, time);
 				}
 				// if the received objects starttimestamp is after the
 				// latestEndTimestamp the MigrationMarkerPunctuation can be

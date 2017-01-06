@@ -252,11 +252,16 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		LOG.debug("Marking migration starts");
 
+		MigrationHelper.blockAllBuffers(lastOperatorOldPlan);
+
 		PointInTime maxEndTs = MigrationHelper.findMaxEndTimestaminPlan(root);
 		// resume by unblocking buffers
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
 			((MigrationBuffer) buffer).markMigrationStart(maxEndTs);
 		}
+
+		MigrationHelper.unblockAllBuffers(lastOperatorOldPlan);
+
 		LOG.debug("Unblocking buffers");
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
 			buffer.unblock();

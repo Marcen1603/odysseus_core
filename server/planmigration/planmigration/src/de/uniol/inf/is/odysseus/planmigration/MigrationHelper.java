@@ -18,9 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
@@ -31,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.ThreadedBuff
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 /**
  * Helper class that provides useful methods on physical plans for an
@@ -41,6 +44,8 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
  * 
  */
 public class MigrationHelper {
+	
+	private static Logger LOG = LoggerFactory.getLogger(MigrationHelper.class);
 
 	/**
 	 * Finds so called pseudo sources in a subplan with op as root. Potentially
@@ -240,14 +245,15 @@ public class MigrationHelper {
 		// TODO add support for additional operator types
 		GenericGraphWalker walker = new GenericGraphWalker();
 		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(
-				JoinTIPO.class);
+				IStatefulOperator.class,true);
 		walker.prefixWalkPhysical(root, visitor);
-		Set<IPhysicalOperator> joins = visitor.getResult();
-		for (IPhysicalOperator join : joins) {
-			PointInTime end = ((JoinTIPO) join).getLatestEndTimestamp();
+		Set<IPhysicalOperator> statefulPos = visitor.getResult();
+		for (IPhysicalOperator po : statefulPos) {
+			PointInTime end = ((IStatefulOperator) po).getLatestEndTimestamp();
 			if (latest == null || (end != null && latest.before(end))) {
 				latest = end;
 			}
+			LOG.info("Max timestamp for operator {} was {}",po.getName(),end);
 		}
 
 		return latest;

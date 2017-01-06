@@ -42,7 +42,7 @@ public class CompareSinkPO
 			while (elems.hasNext()) {
 				Tuple<? extends ITimeInterval> e = elems.next();
 				if (sameOutputAsInputPort) {
-					transfer(e, port);
+					transfer(e, otherport);
 				} else {
 					transfer(e);
 				}

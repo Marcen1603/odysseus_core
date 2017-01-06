@@ -27,65 +27,95 @@ import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
  */
 public class CollectOperatorPhysicalGraphVisitor<T extends IPhysicalOperator> implements IGraphNodeVisitor<T, Set<T>> {
 
-	private Set<Class<T>> operatorClasses;
-	
+	private final Set<Class<T>> operatorClasses;
+	private final boolean addSubclasses;
+
 	private Set<T> result;
-	
-	public CollectOperatorPhysicalGraphVisitor(Class<T> clazz) {
+
+	public CollectOperatorPhysicalGraphVisitor(Class<T> clazz, boolean addSubclasses) {
 		this.result = new HashSet<T>();
 		this.operatorClasses = new HashSet<Class<T>>();
 		this.operatorClasses.add(clazz);
+		this.addSubclasses = addSubclasses;
 	}
-	
-	public CollectOperatorPhysicalGraphVisitor(Set<Class<T>> classes) {
+
+	public CollectOperatorPhysicalGraphVisitor(Set<Class<T>> classes, boolean addSubclasses) {
 		this.result = new HashSet<T>();
 		this.operatorClasses = classes;
+		this.addSubclasses = addSubclasses;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#nodeAction(java.lang.Object)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#nodeAction(java.lang
+	 * .Object)
 	 */
 	@Override
 	public void nodeAction(T node) {
-		if(this.operatorClasses.contains(node.getClass())) {
-			this.result.add(node);
+		if (this.addSubclasses) {
+			for(Class<T> claz:this.operatorClasses) {
+				if(claz.isAssignableFrom(node.getClass())) {
+					this.result.add(node);
+					return;
+				}
+			}
+		} else {
+			if (this.operatorClasses.contains(node.getClass())) {
+				this.result.add(node);
+			}
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#beforeFromSinkToSourceAction(java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#
+	 * beforeFromSinkToSourceAction(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void beforeFromSinkToSourceAction(T sink, T source) {
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#afterFromSinkToSourceAction(java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#
+	 * afterFromSinkToSourceAction(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void afterFromSinkToSourceAction(T sink, T source) {
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#beforeFromSourceToSinkAction(java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#
+	 * beforeFromSourceToSinkAction(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void beforeFromSourceToSinkAction(T source, T sink) {
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#afterFromSourceToSinkAction(java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#
+	 * afterFromSourceToSinkAction(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void afterFromSourceToSinkAction(T source, T sink) {
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor#getResult()
 	 */
 	@Override
