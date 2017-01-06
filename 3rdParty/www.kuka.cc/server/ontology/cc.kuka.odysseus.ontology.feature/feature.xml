@@ -316,7 +316,6 @@ POSSIBILITY OF SUCH DAMAGES.
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core.server"/>
       <import plugin="de.uniol.inf.is.odysseus.core"/>
-      <import plugin="com.google.guava"/>
       <import plugin="de.uniol.inf.is.odysseus.mep"/>
       <import plugin="de.uniol.inf.is.odysseus.rewrite"/>
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
@@ -325,12 +324,15 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.apache.commons.math3"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="de.uniol.inf.is.odysseus.rcp.base" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.renjin"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="javax.validation"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
    <plugin
