@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,33 +17,42 @@ import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
 public abstract class NLPToolkit {
 	protected List<String> information;
 	private HashMap<String, Option> configuration;
-
-	
-	
-	private List<Class<? extends IAnnotation>> annotationClasses = Arrays.asList(
-			SentenceAnnotation.class, 
-			TokenAnnotation.class
-			);
+	protected List<Class<? extends IAnnotation>> internalPipeline;
+	protected HashMap<Class<? extends IAnnotation>, Object> models;
+	private List<Class<? extends IAnnotation>> annotationClasses;
 
 
 	
-	public NLPToolkit(List<String> information, HashMap<String, Option> configuration){
+	public NLPToolkit(List<String> information, HashMap<String, Option> configuration, List<Class<? extends IAnnotation>> pipeline) throws NLPInformationNotSupportedException, NLPModelNotFoundException{
+		this.annotationClasses = Arrays.asList(
+				SentenceAnnotation.class, 
+				TokenAnnotation.class
+				);
+		this.models = new HashMap<>();
+		this.internalPipeline = pipeline;
 		this.information = information;
 		this.configuration = configuration;
+		this.init();
 	}
 	
+	public abstract void init() throws NLPInformationNotSupportedException, NLPModelNotFoundException;
+
 	public abstract Annotation annotate(String text);
 
 	abstract Class<? extends IAnnotation> getHighestAnnotation();
 	
 
-	protected InputStream getModelAsStream(Class<? extends IAnnotation> annotationGoal) throws FileNotFoundException{
+	protected InputStream getModelAsStream(Class<? extends IAnnotation> annotationGoal) throws FileNotFoundException, NLPModelNotFoundException{
 		String identifier = null;
 		try {
 			identifier = (String) annotationGoal.getField("NAME").get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ignored) {
 		}
-		File file = new File((String)configuration.get("model."+identifier).getValue());
+		Option option = configuration.get("model."+identifier);
+		if(option == null)
+			throw new NLPModelNotFoundException("model."+identifier);
+		
+		File file = new File((String)option.getValue());
 		
 		return new FileInputStream(file);
 	}

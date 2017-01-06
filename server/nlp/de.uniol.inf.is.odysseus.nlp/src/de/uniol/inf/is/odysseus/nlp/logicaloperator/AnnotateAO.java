@@ -3,34 +3,27 @@ package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.nlp.toolkits.NLPInformationNotSupportedException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.NLPModelNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.toolkits.NLPToolkit;
 import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitFactory;
+import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitNotFoundException;
 
 /**
  * Logical operator component of the ANNOTATE operator.
@@ -54,9 +47,11 @@ public class AnnotateAO extends UnaryLogicalOp {
 	//output-attribute that represents the sentences 
 	private SDFAttribute sentencesAttribute = new SDFAttribute(null, "sentence",
             SDFDatatype.LIST_STRING, null, null, null);
+	
 	//output-attribute that represents the tokens 
 	private SDFAttribute tokensAttribute = new SDFAttribute(null, "token",
             SDFDatatype.LIST_STRING, null, null, null);
+	
 	//user-specified nlp-toolkit (eg. OpenNLPToolkit)
 	private NLPToolkit nlpToolkit;
 	
@@ -78,24 +73,23 @@ public class AnnotateAO extends UnaryLogicalOp {
         this.configuration = annotateAO.configuration;
     }
     
-    /**
-     * Getter for Field nlpToolkit, if it's already set. Otherwise it gets the user-specified NLP-Toolkit.
-     * @return NLPToolkit user-specified Toolkit
-     * @see NLPToolkit
-     * @see ToolkitFactory#get(String, List)
-     */
     public NLPToolkit getNlpToolkit(){
-    	if(nlpToolkit == null){
-    		nlpToolkit = ToolkitFactory.get(toolkit, information, configuration);
-    	}
-    	
     	return nlpToolkit;
     }
 
     
     @Parameter(name="toolkit", type = StringParameter.class, optional = false)
 	public void setToolkit(String toolkit) {
-		this.toolkit = toolkit;
+		this.toolkit = toolkit;	
+		try {
+			nlpToolkit = ToolkitFactory.get(toolkit, information, configuration);
+		} catch (ToolkitNotFoundException ignored) {
+			throw new ParameterException(toolkit + " not found.");
+		} catch (NLPInformationNotSupportedException e) {
+			throw new ParameterException("Specified options in information parameter not supported.");
+		} catch (NLPModelNotFoundException e) {			
+			throw new ParameterException("Configuration not supported.");
+		}    	
 	}
 
     public String getToolkit(){
