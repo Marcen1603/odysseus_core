@@ -259,6 +259,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
 			((MigrationBuffer) buffer).markMigrationStart(maxEndTs);
 		}
+		((MigrationRouterPO<?>) context.getRouter()).setMigrationStartPoint(maxEndTs);
 
 		MigrationHelper.unblockAllBuffers(lastOperatorOldPlan);
 

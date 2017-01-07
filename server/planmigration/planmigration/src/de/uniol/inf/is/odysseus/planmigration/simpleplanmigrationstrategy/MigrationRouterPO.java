@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.planmigration.simpleplanmigrationstrategy;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -59,9 +61,9 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	private int inPortOld;
 	private int inPortNew;
 	private boolean punctuationsReceived;
-	private boolean onlyNew;
 	private boolean finished;
-	private R lastSend = null;
+	private PointInTime migrationStart;
+	private List<R> newPlanBuffer;
 
 	// Evaluation
 	private boolean printNextTuple = false;
@@ -81,9 +83,8 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		this.inPortOld = inPortOld;
 		this.inPortNew = inPortNew;
 		this.punctuationsReceived = false;
-		this.onlyNew = false;
-		this.finished = false;
 		this.listener = new HashSet<IMigrationListener>();
+		this.newPlanBuffer = new LinkedList<>();
 	}
 
 	public MigrationRouterPO(Set<ISource<?>> sources, int inPortOld, int inPortNew) {
@@ -99,8 +100,6 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		this.inPortOld = inPortOld;
 		this.inPortNew = inPortNew;
 		this.punctuationsReceived = false;
-		this.onlyNew = false;
-		this.finished = false;
 		this.listener = new HashSet<IMigrationListener>();
 	}
 
@@ -111,6 +110,9 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	protected void process_next(R object, int port) {
+		if (this.migrationStart == null) {
+			LOG.error("Migrationstart not set.");
+		}
 		if (isPrintNextTuple()) {
 			// Evaluation
 			LOG.debug("FIRST TUPLE WITH PARALLEL EXECUTION {} TIMESTAMP {}", object, System.currentTimeMillis());
@@ -121,55 +123,44 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		boolean migrationFinished = false;
 		// check if new has caught up on old.
 		synchronized (this) {
-			if (punctuationsReceived && !finished) {
-				finished = true;
-				// if the punctuations are here before any other tuple lastSend
-				// must
-				// be set
-				if (lastSend == null) {
-					lastSend = object;
-				}
-			}
 
 			// happens if process_next is called while the migration is already
 			// finished but the router is not yet removed.
-			if (this.onlyNew && port == this.inPortNew) {
-				LOG.trace("Migration finished processing last tuples");
-				transfer = true;
-			} else {
-
-				// transfer old objects if the port is correct. or check if
-				// element
-				// is
-				// newer than the lastSend-Element from the old plan.
-				if (port == this.inPortOld) {
-					// transfer normally if not finished yet.
-					// if finished only transfer if starttimestamp is equal to
-					// the
-					// lastSend.starttimestamp
-					if ((finished && lastSend != null
-							&& lastSend.getMetadata().getStart().equals(object.getMetadata().getStart()))
-							|| !finished) {
-						lastSend = object;
-						transfer = true;
+			if (port == this.inPortNew && object.getMetadata().getStart().after(migrationStart)) {
+				if (!this.finished) {
+					synchronized (this.newPlanBuffer) {
+						this.newPlanBuffer.add(object);
 					}
-				} else if (finished && lastSend != null
-						&& object.getMetadata().getStart().after(lastSend.getMetadata().getStart())) {
+					if (this.punctuationsReceived) {
+						migrationFinished = true;
+						this.finished = true;
+					}
+				} else {
 					transfer = true;
-					LOG.debug("LAST TUPLE WITH PARALLEL EXECUTION {} TIMESTAMP {}", object, System.currentTimeMillis());
-					this.onlyNew = true;
-					migrationFinished = true;
+				}
+			} else
+
+			// transfer old objects if the port is correct. or check if
+			// element
+			// is
+			// newer than the lastSend-Element from the old plan.
+			if (port == this.inPortOld) {
+				// transfer normally if not finished yet.
+				// if finished only transfer if starttimestamp is equal to
+				// the
+				// lastSend.starttimestamp
+				if (object.getMetadata().getStart().beforeOrEquals(migrationStart)) {
+					transfer = true;
 				}
 			}
 		}
 		if (transfer) {
 			transfer(object);
-			LOG.debug("Transfered by thread {}.", Thread.currentThread().getId());
-			if (migrationFinished) {
-				LOG.debug("Fire migration finished event by Thread {}.", Thread.currentThread().getId());
-				fireMigrationFinishedEvent(this);
-
-			}
+		}
+		if (migrationFinished) {
+			this.drainBuffer();
+			LOG.debug("Fire migration finished event by Thread {}.", Thread.currentThread().getId());
+			fireMigrationFinishedEvent(this);
 		}
 	}
 
@@ -239,7 +230,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			try {
 				process_migrationMarkerPunctuation((MigrationMarkerPunctuation) punctuation, port);
 			} catch (MigrationException ex) {
-				LOG.error("Processing migration marker punctuation failed");
+				LOG.error("Processing migration marker punctuation failed", ex);
 				fireMigrationFailedEvent(this, ex);
 			}
 		} else {
@@ -323,5 +314,29 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			this.pathesFromSource.put(source, new Pair<>(0, pathes));
 		}
 
+	}
+
+	@Override
+	public void process_done(int port) {
+		drainBuffer();
+		synchronized (this) {
+			if (port == this.inPortOld) {
+				this.finished = true;
+			}
+		}
+		super.process_done(port);
+	}
+
+	private void drainBuffer() {
+		synchronized (this.newPlanBuffer) {
+			for (R e : this.newPlanBuffer) {
+				transfer(e);
+			}
+			this.newPlanBuffer.clear();
+		}
+	}
+
+	public void setMigrationStartPoint(PointInTime point) {
+		this.migrationStart = point;
 	}
 }
