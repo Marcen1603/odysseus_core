@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.nlp.physicaloperator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
