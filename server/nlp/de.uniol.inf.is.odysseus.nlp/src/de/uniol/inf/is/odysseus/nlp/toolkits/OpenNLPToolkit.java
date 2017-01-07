@@ -30,34 +30,16 @@ public class OpenNLPToolkit extends NLPToolkit{
 	}
 	
 	@Override
-	public Annotation annotate(String text) {
-		Annotation annotation = new Annotation(text);
-		Class<? extends IAnnotation> highestAnnotation = getHighestAnnotation();
-		
-		if(highestAnnotation != null){
-			try {
-				switch((String)highestAnnotation.getField("NAME").get(null)){
-				case "sentence":
-					annotateSentences(annotation);
-				case "token":
-					annotateSentences(annotation);
-					annotateTokens(annotation);
-				}
-			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return annotation;
-	}
-
-	private void annotateSentences(Annotation annotation) throws IOException{
+	void annotateSentences(Annotation annotation){
 		SentenceDetector detector = (SentenceDetector) models.get(SentenceAnnotation.class);
 		String[] sentences = detector.sentDetect(annotation.getText());
 		annotation.setAnnotation(SentenceAnnotation.class, new SentenceAnnotation(sentences));
 	
 	}
+
 	
-	private void annotateTokens(Annotation annotation) throws IOException{
+	@Override
+	void annotateTokens(Annotation annotation){
 		Tokenizer tokenizer = (Tokenizer) models.get(TokenAnnotation.class);
 		tokenizer.tokenize(annotation.getText());
 		SentenceAnnotation sentences = (SentenceAnnotation) annotation.getAnnotation(SentenceAnnotation.class);
@@ -71,24 +53,6 @@ public class OpenNLPToolkit extends NLPToolkit{
 		//String[] sentences = detector.sentDetect(annotation.getText());
 	}
 
-	@Override
-	Class<? extends IAnnotation> getHighestAnnotation() {
-		List<Class<? extends IAnnotation>> pipeline = new ArrayList<>(internalPipeline);
-		Collections.reverse(pipeline);
-		for(Class<? extends IAnnotation> clazz : pipeline){
-			try {
-				String name = (String) clazz.getField("NAME").get(null);
-				for(String inclName : information){
-					if(inclName.equals(name)){
-						return clazz;
-					}
-				}
-			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException  e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public void init() throws NLPInformationNotSupportedException, NLPModelNotFoundException {

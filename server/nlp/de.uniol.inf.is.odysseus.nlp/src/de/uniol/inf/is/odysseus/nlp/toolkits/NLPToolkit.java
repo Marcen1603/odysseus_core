@@ -3,9 +3,11 @@ package de.uniol.inf.is.odysseus.nlp.toolkits;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,10 +39,47 @@ public abstract class NLPToolkit {
 	
 	public abstract void init() throws NLPInformationNotSupportedException, NLPModelNotFoundException;
 
-	public abstract Annotation annotate(String text);
+	public Annotation annotate(String text) {
+		Annotation annotation = new Annotation(text);
+		Class<? extends IAnnotation> highestAnnotation = getHighestAnnotation();
+		
+		if(highestAnnotation != null){
+			try {
+				switch((String)highestAnnotation.getField("NAME").get(null)){
+				case "sentence":
+					annotateSentences(annotation);
+				case "token":
+					annotateSentences(annotation);
+					annotateTokens(annotation);
+				}
+			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		return annotation;
+	}
 
-	abstract Class<? extends IAnnotation> getHighestAnnotation();
 	
+	abstract void annotateSentences(Annotation annotation);
+	abstract void annotateTokens(Annotation annotation);
+
+	protected Class<? extends IAnnotation> getHighestAnnotation() {
+		List<Class<? extends IAnnotation>> pipeline = new ArrayList<>(internalPipeline);
+		Collections.reverse(pipeline);
+		for(Class<? extends IAnnotation> clazz : pipeline){
+			try {
+				String name = (String) clazz.getField("NAME").get(null);
+				for(String inclName : information){
+					if(inclName.equals(name)){
+						return clazz;
+					}
+				}
+			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException  e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 	protected InputStream getModelAsStream(Class<? extends IAnnotation> annotationGoal) throws FileNotFoundException, NLPModelNotFoundException{
 		String identifier = null;

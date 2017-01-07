@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.physicaloperator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.nlp.toolkits.*;
+import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
 
@@ -27,6 +29,8 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	private String toolkitName;
 	private List<String> information;	
 	private HashMap<String, Option> configuration;
+	private boolean appendTokens = false;
+	private boolean appendSentences = false;
 
 	public int getAttributePosition(){
 		return attributePosition;
@@ -47,6 +51,8 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
         this.information = information;
         this.attribute = attribute;
         this.configuration = configuration;
+        this.appendTokens = information.contains("token");
+        this.appendSentences = information.contains("sentence");
     }
     
     
@@ -84,18 +90,19 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
 		Tuple<M> output;
-		Annotation annotation = toolkit.annotate(object.getAttribute(attributePosition).toString());
-		List<Object> append = new ArrayList<>();
+		Annotation annotation;
+		annotation = toolkit.annotate(object.getAttribute(attributePosition).toString());
 		
-    	if(information.contains("token"))
+		List<Object> append = new ArrayList<>();
+    	if(this.appendTokens)
     		append.add(getTokens(annotation));
-    	
-    	if(information.contains("sentence"))
+    	if(this.appendSentences)
     		append.add(getSentences(annotation));
     	
     	output = object.appendList(append, true);
 		transfer(output);
 	}
+		
 	
 	private List<String> getSentences(Annotation annotation){
 		SentenceAnnotation sentences = (SentenceAnnotation) annotation.getAnnotation(SentenceAnnotation.class);
