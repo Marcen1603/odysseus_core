@@ -9,6 +9,7 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.ComposedChecks
 import org.eclipse.xtext.scoping.Scopes
 
+
 /**
  * This class contains custom validation rules. 
  *

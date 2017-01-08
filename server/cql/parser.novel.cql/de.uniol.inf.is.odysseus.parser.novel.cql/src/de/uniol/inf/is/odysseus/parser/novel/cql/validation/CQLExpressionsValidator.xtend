@@ -23,6 +23,7 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
 import org.eclipse.xtext.EcoreUtil2
 
+
 /**
  * This class contains custom validation rules. 
  *

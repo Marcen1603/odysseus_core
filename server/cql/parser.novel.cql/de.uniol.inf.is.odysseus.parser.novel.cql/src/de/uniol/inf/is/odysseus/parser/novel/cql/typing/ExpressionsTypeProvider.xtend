@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 import com.google.inject.Inject
 import java.util.Collection
 
+
 class ExpressionsTypeProvider 
 {
 

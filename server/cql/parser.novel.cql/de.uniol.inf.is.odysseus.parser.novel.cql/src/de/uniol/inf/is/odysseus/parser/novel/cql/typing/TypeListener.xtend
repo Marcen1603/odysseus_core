@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.validation.AbstractCQLValidator
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 
+
 class TypeListener extends AbstractCQLValidator
 {
 	

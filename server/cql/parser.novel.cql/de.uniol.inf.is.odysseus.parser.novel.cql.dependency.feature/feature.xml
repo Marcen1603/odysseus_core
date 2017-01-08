@@ -20,42 +20,42 @@
          id="org.eclipse.ant.core"
          download-size="0"
          install-size="0"
-         version="3.4.100.v20160505-0642"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.updatesite"
          download-size="0"
          install-size="0"
-         version="1.0.600.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.client.common"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.publisher.eclipse"
          download-size="0"
          install-size="0"
-         version="1.2.100.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.osgi.util"
          download-size="0"
          install-size="0"
-         version="3.3.100.v20150423-1351"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.swt.win32.win32.x86_64"
          download-size="0"
          install-size="0"
-         version="3.105.1.v20160907-0248"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -63,168 +63,168 @@
          id="org.eclipse.ui.intro.quicklinks"
          download-size="0"
          install-size="0"
-         version="1.0.0.v20160515-0255"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.swt"
          download-size="0"
          install-size="0"
-         version="3.105.1.v20160907-0248"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.views.properties.tabbed"
          download-size="0"
          install-size="0"
-         version="3.7.0.v20160310-0903"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.databinding.observable"
          download-size="0"
          install-size="0"
-         version="1.6.0.v20160511-1747"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.simpleconfigurator.manipulator"
          download-size="0"
          install-size="0"
-         version="2.0.200.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.script.executor"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.ui"
          download-size="0"
          install-size="0"
-         version="3.12.1.v20160822-0645"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xsd"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.updater"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.workbench.texteditor"
          download-size="0"
          install-size="0"
-         version="3.10.1.v20160818-1626"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.w3c.css.sac"
          download-size="0"
          install-size="0"
-         version="1.3.1.v200903091627"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.touchpoint.natives"
          download-size="0"
          install-size="0"
-         version="1.2.100.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.console.executor"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.lang"
          download-size="0"
          install-size="0"
-         version="2.6.0.v201404270220"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.latency"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.mwe2.runtime"
          download-size="0"
          install-size="0"
-         version="2.9.0.v201605261103"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.metadata.repository"
          download-size="0"
          install-size="0"
-         version="1.2.300.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.junit.runtime"
          download-size="0"
          install-size="0"
-         version="3.4.600.v20160505-0715"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jetty.io"
          download-size="0"
          install-size="0"
-         version="9.3.9.v20160517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.jsp.jasper"
          download-size="0"
          install-size="0"
-         version="1.0.500.v20150119-1358"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ant.ui"
          download-size="0"
          install-size="0"
-         version="3.6.200.v20160525-1820"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"
          download-size="0"
          install-size="0"
-         version="1.0.1.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.database.cql"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -232,27 +232,27 @@
          id="org.eclipse.equinox.http.servlet"
          download-size="0"
          install-size="0"
-         version="1.3.1.v20160808-1329"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.themes"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20160815-0536"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.ui.views.log"
          download-size="0"
          install-size="0"
-         version="1.2.1.v20160829-0826"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ecf.ssl"
          download-size="0"
          install-size="0"
-         version="1.2.0.v20160823-2221"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -260,35 +260,35 @@
          id="org.eclipse.equinox.p2.core"
          download-size="0"
          install-size="0"
-         version="2.4.100.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.json"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.runtime"
          download-size="0"
          install-size="0"
-         version="3.12.0.v20160606-1342"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rewrite"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ecf.provider.filetransfer.ssl"
          download-size="0"
          install-size="0"
-         version="1.0.0.v20160823-2221"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -296,48 +296,48 @@
          id="org.eclipse.osgi"
          download-size="0"
          install-size="0"
-         version="3.11.1.v20160708-1632"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.externaltools"
          download-size="0"
          install-size="0"
-         version="1.0.400.v20160509-1057"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.ui"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160518-1906"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.aggregation"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.wst.xml.core"
          download-size="0"
          install-size="0"
-         version="1.1.1000.v201605120036"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.intervalapproach"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.compiler.tool"
          download-size="0"
          install-size="0"
-         version="1.1.100.v20160418-1457"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -345,247 +345,241 @@
          id="org.eclipse.ui.intro"
          download-size="0"
          install-size="0"
-         version="3.5.1.v20160829-1558"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.editor.text.pql"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jetty.continuation"
          download-size="0"
          install-size="0"
-         version="9.3.9.v20160517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jsch.core"
          download-size="0"
          install-size="0"
-         version="1.3.0.v20160422-1917"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="javax.servlet.jsp"
          download-size="0"
          install-size="0"
-         version="2.2.0.v201112011158"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.databinding.property"
          download-size="0"
          install-size="0"
-         version="1.6.0.v20160427-0852"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.jobs"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160509-0411"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.touchpoint.eclipse"
          download-size="0"
          install-size="0"
-         version="2.1.400.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="com.jcraft.jsch"
          download-size="0"
          install-size="0"
-         version="0.1.53.v201508180515"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jface.text"
          download-size="0"
          install-size="0"
-         version="3.11.1.v20160819-1517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.hamcrest.core"
          download-size="0"
          install-size="0"
-         version="1.3.0.v201303031735"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.nebula"
          download-size="0"
          install-size="0"
-         version="1.0.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.equinox.app"
          download-size="0"
          install-size="0"
-         version="1.3.400.v20150715-1528"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.common.core"
          download-size="0"
          install-size="0"
-         version="1.2.0.v200908251833"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.sat4j.core"
          download-size="0"
          install-size="0"
-         version="2.3.5.v201308161310"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.antlr.runtime"
          download-size="0"
          install-size="0"
-         version="3.2.0.v201101311130"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.mihalis.opal"
          download-size="0"
          install-size="0"
-         version="1.0.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.core.expressions"
          download-size="0"
          install-size="0"
-         version="3.5.100.v20160418-1621"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.draw2d"
          download-size="0"
          install-size="0"
-         version="3.10.100.201606061308"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.common.types.edit"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.debug"
          download-size="0"
          install-size="0"
-         version="3.10.1.v20160811-0441"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.wst.validation"
          download-size="0"
          install-size="0"
-         version="1.2.700.v201508251749"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtend"
          download-size="0"
          install-size="0"
-         version="2.2.0.v201605260315"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.databinding.beans"
          download-size="0"
          install-size="0"
-         version="1.3.100.v20160509-1025"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="javax.xml"
          download-size="0"
          install-size="0"
-         version="1.3.4.v201005080400"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.logging"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="io.netty"
          download-size="0"
          install-size="0"
-         version="4.0.33"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.w3c.dom.svg"
          download-size="0"
          install-size="0"
-         version="1.1.0.v201011041433"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.script.generator"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.frameworkadmin"
          download-size="0"
          install-size="0"
-         version="2.0.300.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.widgets"
          download-size="0"
          install-size="0"
-         version="1.1.100.v20160506-0759"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.sse.core"
          download-size="0"
          install-size="0"
-         version="1.1.1000.v201608061842"
+         version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="com.google.guava"
-         download-size="0"
-         install-size="0"
-         version="18.0.0"/>
 
    <plugin
          id="org.eclipse.e4.ui.workbench.renderers.swt"
          download-size="0"
          install-size="0"
-         version="0.14.0.v20160525-0940"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.monitoring"
          download-size="0"
          install-size="0"
-         version="1.1.0.v20160131-1628"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.win32"
          download-size="0"
          install-size="0"
-         version="3.3.0.v20160505-1310"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -593,167 +587,167 @@
          id="org.eclipse.xtend.lib.macro"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.wizard"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.codegen"
          download-size="0"
          install-size="0"
-         version="2.11.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.osgi.services"
          download-size="0"
          install-size="0"
-         version="3.5.100.v20160504-1419"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.editor.text.sase"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.batik.css"
          download-size="0"
          install-size="0"
-         version="1.7.0.v201011041433"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.sat4j.pb"
          download-size="0"
          install-size="0"
-         version="2.3.5.v201404071733"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.ui.sdk"
          download-size="0"
          install-size="0"
-         version="1.0.400.v20150423-1455"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.css.swt"
          download-size="0"
          install-size="0"
-         version="0.12.100.v20160517-1505"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.common.types"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.common"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160509-1230"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ecf"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160823-2221"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.model.workbench"
          download-size="0"
          install-size="0"
-         version="1.2.0.v20160229-1459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.gef"
          download-size="0"
          install-size="0"
-         version="3.11.0.201606061308"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.queryview.physical"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.ecore.editor"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.concurrent"
          download-size="0"
          install-size="0"
-         version="1.1.0.v20130327-1442"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.lang3"
          download-size="0"
          install-size="0"
-         version="3.1.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.logicaloperator.builder"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.workspace.cli"
          download-size="0"
          install-size="0"
-         version="0.3.1"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.net"
          download-size="0"
          install-size="0"
-         version="1.3.0.v20160418-1534"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.dashboard.part"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.objectweb.asm"
          download-size="0"
          install-size="0"
-         version="5.0.1.v201404251740"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.priority.cql"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -761,62 +755,62 @@
          id="org.apache.felix.gogo.shell"
          download-size="0"
          install-size="0"
-         version="0.10.0.v201212101605"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.viewer.server"
          download-size="0"
          install-size="0"
-         version="1.0.0.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.mwe2.lib"
          download-size="0"
          install-size="0"
-         version="2.9.0.v201605261103"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.mwe.utils"
          download-size="0"
          install-size="0"
-         version="1.3.20.v201605261103"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.server.autostart"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.jetty.security"
          download-size="0"
          install-size="0"
-         version="9.3.9.v20160517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rcp"
          download-size="0"
          install-size="0"
-         version="4.6.1.v20160907-1200"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.repository"
          download-size="0"
          install-size="0"
-         version="2.3.200.v20160421-0324"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.security.win32.x86_64"
          download-size="0"
          install-size="0"
-         version="1.0.100.v20130327-1442"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -824,112 +818,112 @@
          id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"
          download-size="0"
          install-size="0"
-         version="2.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.xbase.lib"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="com.rits.cloning"
          download-size="0"
          install-size="0"
-         version="1.8.5"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.lucene.core"
          download-size="0"
          install-size="0"
-         version="3.5.0.v20120725-1805"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.w3c.dom.smil"
          download-size="0"
          install-size="0"
-         version="1.0.1.v200903091627"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.viewer.stream.interval"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jface.databinding"
          download-size="0"
          install-size="0"
-         version="1.8.0.v20160420-2231"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.editor.text"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.report.general"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.compare"
          download-size="0"
          install-size="0"
-         version="3.6.0.v20160418-1534"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.viewer.stream.table"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.platform.doc.user"
          download-size="0"
          install-size="0"
-         version="4.6.1.v20160727-2009"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.trace"
          download-size="0"
          install-size="0"
-         version="1.0.400.v20160509-1055"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.batik.util"
          download-size="0"
          install-size="0"
-         version="1.7.0.v201011041433"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.compiler.apt"
          download-size="0"
          install-size="0"
-         version="1.2.100.v20160418-1457"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -937,305 +931,305 @@
          id="org.eclipse.m2e.model.edit"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1933"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.help.webapp"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160504-0839"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="javax.servlet"
          download-size="0"
          install-size="0"
-         version="3.1.0.v201410161800"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.extensionlocation"
          download-size="0"
          install-size="0"
-         version="1.2.300.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.intro.universal"
          download-size="0"
          install-size="0"
-         version="3.3.1.v20160829-1558"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.interval_latency"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.relational_interval"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.compiler"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.core"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.emf.xpath"
          download-size="0"
          install-size="0"
-         version="0.1.200.v20160506-0804"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.workbench.addons.swt"
          download-size="0"
          install-size="0"
-         version="1.2.100.v20160831-1151"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.platform"
          download-size="0"
          install-size="0"
-         version="4.6.1.v20160907-1200"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.apache.commons.logging"
          download-size="0"
          install-size="0"
-         version="1.1.1.v201101211721"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.search"
          download-size="0"
          install-size="0"
-         version="3.11.0.v20160519-1501"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.core.di"
          download-size="0"
          install-size="0"
-         version="1.6.1.v20160712-0927"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ecf.filetransfer"
          download-size="0"
          install-size="0"
-         version="5.0.0.v20160823-2221"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.batik.util.gui"
          download-size="0"
          install-size="0"
-         version="1.7.0.v200903091627"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.forms"
          download-size="0"
          install-size="0"
-         version="3.7.0.v20160518-1929"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="fastutil"
          download-size="0"
          install-size="0"
-         version="7.0.2"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.equinox.p2.reconciler.dropins"
          download-size="0"
          install-size="0"
-         version="1.1.400.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.smap"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.ecore.change"
          download-size="0"
          install-size="0"
-         version="2.11.0.v20160420-0247"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.junit.core"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160421-1701"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.io"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ltk.ui.refactoring"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160518-1817"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.mwe.core"
          download-size="0"
          install-size="0"
-         version="1.3.20.v201605261103"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.filebuffers"
          download-size="0"
          install-size="0"
-         version="3.6.0.v20160503-1849"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.tukaani.xz"
          download-size="0"
          install-size="0"
-         version="1.3.0.v201308270617"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.client.starter"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.jarprocessor"
          download-size="0"
          install-size="0"
-         version="1.0.500.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.cli"
          download-size="0"
          install-size="0"
-         version="1.2.0.v201404270220"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jetty.http"
          download-size="0"
          install-size="0"
-         version="9.3.9.v20160517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.archetype.common"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1931"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.w3c.dom.events"
          download-size="0"
          install-size="0"
-         version="3.0.0.draft20060413_v201105210656"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.base"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.metadata"
          download-size="0"
          install-size="0"
-         version="2.3.100.v20160427-2220"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.console"
          download-size="0"
          install-size="0"
-         version="3.6.200.v20160518-1858"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.commands"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160316-1921"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.director.app"
          download-size="0"
          install-size="0"
-         version="1.0.500.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.navigator"
          download-size="0"
          install-size="0"
-         version="3.6.100.v20160518-1929"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.osgi.compatibility.state"
          download-size="0"
          install-size="0"
-         version="1.0.200.v20160504-1419"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -1243,84 +1237,84 @@
          id="de.uniol.inf.is.odysseus.rcp.config"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.core.server.datadictionary"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.console"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="javax.el"
          download-size="0"
          install-size="0"
-         version="2.2.0.v201303151357"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.repository.tools"
          download-size="0"
          install-size="0"
-         version="2.1.300.v20160421-0324"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.database"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.launcher.win32.win32.x86_64"
          download-size="0"
          install-size="0"
-         version="1.1.400.v20160518-1444"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
          id="org.eclipse.equinox.p2.ui.importexport"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20160521-1138"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.editors"
          download-size="0"
          install-size="0"
-         version="3.10.0.v20160505-0931"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.transform"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.mep"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.net.win32.x86_64"
          download-size="0"
          install-size="0"
-         version="1.1.0.v20160323-1650"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -1328,14 +1322,14 @@
          id="org.eclipse.e4.ui.css.core"
          download-size="0"
          install-size="0"
-         version="0.12.0.v20160505-1310"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="com.google.inject.multibindings"
          download-size="0"
          install-size="0"
-         version="3.0.0.v201605172100"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -1343,364 +1337,364 @@
          id="org.eclipse.jface"
          download-size="0"
          install-size="0"
-         version="3.12.0.v20160518-1929"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.editor.script"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.event"
          download-size="0"
          install-size="0"
-         version="1.3.200.v20160324-1850"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ltk.core.refactoring"
          download-size="0"
          install-size="0"
-         version="3.7.0.v20160419-0705"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.novel.cql"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.editor.graph"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.core.server"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.debug.core"
          download-size="0"
          install-size="0"
-         version="3.10.100.v20160419-1720"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.xml.resolver"
          download-size="0"
          install-size="0"
-         version="1.2.0.v201005080400"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ecf.provider.filetransfer"
          download-size="0"
          install-size="0"
-         version="3.2.200.v20160823-2221"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtend.typesystem.emf"
          download-size="0"
          install-size="0"
-         version="2.2.0.v201605260315"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.transport.ecf"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20160606-1311"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.common.environment"
          download-size="0"
          install-size="0"
-         version="1.0.400.v200912181831"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.console"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20150929-1405"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.ecore.edit"
          download-size="0"
          install-size="0"
-         version="2.9.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.core.di.extensions"
          download-size="0"
          install-size="0"
-         version="0.14.0.v20160211-1614"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.workbench"
          download-size="0"
          install-size="0"
-         version="1.4.0.v20160517-1624"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.common.frameworks"
          download-size="0"
          install-size="0"
-         version="1.2.200.v201304241450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.common.emf"
          download-size="0"
          install-size="0"
-         version="1.2.400.v201505132009"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.core.di.annotations"
          download-size="0"
          install-size="0"
-         version="1.5.0.v20151127-1241"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.felix.gogo.command"
          download-size="0"
          install-size="0"
-         version="0.10.0.v201209301215"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.core.manipulation"
          download-size="0"
          install-size="0"
-         version="1.7.0.v20160419-0705"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.codec"
          download-size="0"
          install-size="0"
-         version="1.6.0.v201305230611"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jem.util"
          download-size="0"
          install-size="0"
-         version="2.1.200.v201404021757"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.cql"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.server.intervalapproach"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="javax.annotation"
          download-size="0"
          install-size="0"
-         version="1.2.0.v201602091430"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.help"
          download-size="0"
          install-size="0"
-         version="3.7.0.v20160602-1307"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.frameworkadmin.equinox"
          download-size="0"
          install-size="0"
-         version="1.0.700.v20160102-2223"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.math3"
          download-size="0"
          install-size="0"
-         version="3.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.launcher"
          download-size="0"
          install-size="0"
-         version="1.3.200.v20160318-1642"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui"
          download-size="0"
          install-size="0"
-         version="3.108.0.v20160518-1929"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.externaltools"
          download-size="0"
          install-size="0"
-         version="3.3.100.v20160518-1858"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.registry"
          download-size="0"
          install-size="0"
-         version="3.6.100.v20160223-2218"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.common.uriresolver"
          download-size="0"
          install-size="0"
-         version="1.2.200.v201505132009"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.builder"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.edit"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.core.contexts"
          download-size="0"
          install-size="0"
-         version="1.5.0.v20160504-0909"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.xerces"
          download-size="0"
          install-size="0"
-         version="2.9.0.v201101211617"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.launching"
          download-size="0"
          install-size="0"
-         version="3.8.100.v20160505-0636"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.ecore.xmi"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160420-0247"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.console"
          download-size="0"
          install-size="0"
-         version="1.0.500.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jsch.ui"
          download-size="0"
          install-size="0"
-         version="1.3.0.v20160323-1650"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.trust"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.compare.core"
          download-size="0"
          install-size="0"
-         version="3.6.0.v20160418-1534"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.pql"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.operations"
          download-size="0"
          install-size="0"
-         version="2.4.200.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.contenttype"
          download-size="0"
          install-size="0"
-         version="3.5.100.v20160418-1621"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.common.emfworkbench.integration"
          download-size="0"
          install-size="0"
-         version="1.2.101.v201107081800"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.logging"
          download-size="0"
          install-size="0"
-         version="1.2.15.v201605250459"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -1708,139 +1702,139 @@
          id="org.eclipse.core.databinding"
          download-size="0"
          install-size="0"
-         version="1.6.0.v20160412-0910"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="TestNG6.8"
          download-size="0"
          install-size="0"
-         version="1.0.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.relational.base"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ecf.identity"
          download-size="0"
          install-size="0"
-         version="3.7.0.v20160823-2221"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.datatype.interval"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.mep.commons.math"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.update.configurator"
          download-size="0"
          install-size="0"
-         version="3.3.400.v20160506-0750"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.pql.generator"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.edit.ui"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.http.registry"
          download-size="0"
          install-size="0"
-         version="1.1.400.v20150715-1528"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.security"
          download-size="0"
          install-size="0"
-         version="1.2.200.v20150715-1528"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.publisher"
          download-size="0"
          install-size="0"
-         version="1.4.100.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.core.server.console"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.objenesis"
          download-size="0"
          install-size="0"
-         version="1.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.util"
          download-size="0"
          install-size="0"
-         version="1.0.500.v20130404-1337"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.core.commands"
          download-size="0"
          install-size="0"
-         version="0.11.100.v20160506-0804"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.script.parser"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.common.types.ui"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.latency_relational"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="ch.qos.logback.slf4j"
          download-size="0"
          install-size="0"
-         version="1.0.7.v201505121915"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -1848,389 +1842,389 @@
          id="de.uniol.inf.is.odysseus.sweeparea"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.ant"
          download-size="0"
          install-size="0"
-         version="1.9.6.v201510161327"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.xtext.util"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.common"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160420-0247"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.cheatsheets"
          download-size="0"
          install-size="0"
-         version="3.5.0.v20160504-0839"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.core.ui"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1933"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.ide"
          download-size="0"
          install-size="0"
-         version="3.12.1.v20160823-0925"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="ch.qos.logback.core"
          download-size="0"
          install-size="0"
-         version="1.0.7.v20121108-1250"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.xbase"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.lucene.analysis"
          download-size="0"
          install-size="0"
-         version="3.5.0.v20120725-1805"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.dashboard"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.debug.ui"
          download-size="0"
          install-size="0"
-         version="3.11.201.v20160825-1412"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.directorywatcher"
          download-size="0"
          install-size="0"
-         version="1.1.100.v20150423-1455"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.filesystem"
          download-size="0"
          install-size="0"
-         version="1.6.0.v20160503-1608"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.security.ui"
          download-size="0"
          install-size="0"
-         version="1.1.300.v20150803-1225"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.maven.indexer"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1931"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.e4.core.services"
          download-size="0"
          install-size="0"
-         version="2.0.100.v20160509-1032"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.ide"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.garbagecollector"
          download-size="0"
          install-size="0"
-         version="1.0.300.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.resources"
          download-size="0"
          install-size="0"
-         version="3.11.0.v20160503-1608"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.pql.relational"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.report.console"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jetty.util"
          download-size="0"
          install-size="0"
-         version="9.3.9.v20160517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.ide.application"
          download-size="0"
          install-size="0"
-         version="1.1.101.v20160829-0827"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.director"
          download-size="0"
          install-size="0"
-         version="2.3.300.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="com.google.inject"
          download-size="0"
          install-size="0"
-         version="3.0.0.v201312141243"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.workbench3"
          download-size="0"
          install-size="0"
-         version="0.13.100.v20160506-0759"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jetty.servlet"
          download-size="0"
          install-size="0"
-         version="9.3.9.v20160517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.ruleengine"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.services"
          download-size="0"
          install-size="0"
-         version="1.2.100.v20160506-0759"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.mep.matrix"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.debug.ui"
          download-size="0"
          install-size="0"
-         version="3.7.201.v20160811-0450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.updatechecker"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20131119-0908"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ant.launching"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20160418-1631"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.viewer"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.memstore.mdastore"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.usermanagement.filestore"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.artifact.repository"
          download-size="0"
          install-size="0"
-         version="1.1.500.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.report.executor"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.core"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160418-1534"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.workbench.swt"
          download-size="0"
          install-size="0"
-         version="0.14.1.v20160829-0832"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.navigator.resources"
          download-size="0"
          install-size="0"
-         version="3.5.100.v20160518-1929"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.text"
          download-size="0"
          install-size="0"
-         version="3.6.0.v20160503-1849"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.editor.text.cql"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.equinox.http.jetty"
          download-size="0"
          install-size="0"
-         version="3.3.0.v20160324-1850"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jetty.server"
          download-size="0"
          install-size="0"
-         version="9.3.9.v20160517"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.priority"
          download-size="0"
          install-size="0"
-         version="1.0.1.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.security"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.info"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="ch.qos.logback.classic"
          download-size="0"
          install-size="0"
-         version="1.0.7.v20121108-1250"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.css.swt.theme"
          download-size="0"
          install-size="0"
-         version="0.10.100.v20160523-0836"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="javax.inject"
          download-size="0"
          install-size="0"
-         version="1.0.0.v20091030"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.engine"
          download-size="0"
          install-size="0"
-         version="2.4.100.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.logback.appender"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1933"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -2238,303 +2232,303 @@
          id="de.uniol.inf.is.odysseus.rcp.dashboard.part.greenmatrix"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.common.project.facet.core"
          download-size="0"
          install-size="0"
-         version="1.4.300.v201111030423"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.maven.runtime.slf4j.simple"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1931"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.e4.ui.dialogs"
          download-size="0"
          install-size="0"
-         version="1.1.0.v20151127-1218"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtend.lib"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.report"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.xml.serializer"
          download-size="0"
          install-size="0"
-         version="2.7.1.v201005080400"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.junit"
          download-size="0"
          install-size="0"
-         version="4.12.0.v201504281640"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.jdt.junit"
          download-size="0"
          install-size="0"
-         version="3.9.0.v20160421-1701"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.jxpath"
          download-size="0"
          install-size="0"
-         version="1.3.0.v200911051830"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.ui"
          download-size="0"
          install-size="0"
-         version="2.4.100.v20160419-0834"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.p2.ui.sdk.scheduler"
          download-size="0"
          install-size="0"
-         version="1.2.200.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.common.ui"
          download-size="0"
          install-size="0"
-         version="2.11.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.maven.runtime"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1931"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.emf.ecore"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160420-0247"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.di"
          download-size="0"
          install-size="0"
-         version="1.1.100.v20160506-0759"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.m2e.core"
          download-size="0"
          install-size="0"
-         version="1.7.0.20160603-1933"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.simpleframework.xml"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="com.ibm.icu"
          download-size="0"
          install-size="0"
-         version="56.1.0.v201601250100"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.dashboard.canvas"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.browser"
          download-size="0"
          install-size="0"
-         version="3.5.1.v20160712-0914"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.variables"
          download-size="0"
          install-size="0"
-         version="3.3.0.v20160419-1720"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.help.ui"
          download-size="0"
          install-size="0"
-         version="4.0.200.v20160510-0758"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.compare.win32"
          download-size="0"
          install-size="0"
-         version="1.1.0.v20160418-1534"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.dashboard.part.example"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.help.base"
          download-size="0"
          install-size="0"
-         version="4.1.0.v20160907-1200"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.ui.views"
          download-size="0"
          install-size="0"
-         version="3.8.101.v20160816-1954"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="Commons.Math"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.ds"
          download-size="0"
          install-size="0"
-         version="1.4.400.v20160226-2036"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.simpleconfigurator"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20160504-1450"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.report.rcp"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.wst.xsd.core"
          download-size="0"
          install-size="0"
-         version="1.1.900.v201401141857"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.ui"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.server.replication"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
          download-size="0"
          install-size="0"
-         version="1.7.16"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.equinox.bidi"
          download-size="0"
          install-size="0"
-         version="1.0.0.v20160307-1318"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.jdt.core"
          download-size="0"
          install-size="0"
-         version="3.12.1.v20160829-0950"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.login"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.jasper.glassfish"
          download-size="0"
          install-size="0"
-         version="2.2.2.v201501141630"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.resources.win32.x86_64"
          download-size="0"
          install-size="0"
-         version="3.5.0.v20140124-1940"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -2542,42 +2536,42 @@
          id="org.eclipse.ui.workbench"
          download-size="0"
          install-size="0"
-         version="3.108.1.v20160819-2118"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.jsp.jasper.registry"
          download-size="0"
          install-size="0"
-         version="1.0.300.v20130327-1442"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.emf.codegen.ecore"
          download-size="0"
          install-size="0"
-         version="2.12.0.v20160526-0356"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.xtext.ui.shared"
          download-size="0"
          install-size="0"
-         version="2.10.0.v201605250459"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.felix.gogo.runtime"
          download-size="0"
          install-size="0"
-         version="0.10.0.v201209301036"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.filesystem.win32.x86_64"
          download-size="0"
          install-size="0"
-         version="1.4.0.v20140124-1940"
+         version="0.0.0"
          fragment="true"
          unpack="false"/>
 
@@ -2585,48 +2579,48 @@
          id="org.eclipse.equinox.preferences"
          download-size="0"
          install-size="0"
-         version="3.6.1.v20160815-1406"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.jfreechart"
          download-size="0"
          install-size="0"
-         version="1.0.0"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.ui.net"
          download-size="0"
          install-size="0"
-         version="1.3.0.v20160426-1633"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.e4.ui.bindings"
          download-size="0"
          install-size="0"
-         version="0.11.100.v20160509-1025"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="com.sun.el"
          download-size="0"
          install-size="0"
-         version="2.2.0.v201303151357"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.apache.log4j"
          download-size="0"
          install-size="0"
-         version="1.2.15.v201012070815"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
@@ -2666,6 +2660,19 @@
 
    <plugin
          id="org.eclipse.xtext.ui.codetemplates"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.google.guava.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
