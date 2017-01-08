@@ -87,7 +87,7 @@ public class FindParallelizationPossibilitiesVisitor<P extends ILogicalOperator>
 				LOG.info("State type can not be handled by automatic parallelization");
 			}
 		} else {
-			LOG.debug("Node " + node.getUniqueIdentifier() + " is not interaoperator parallizable.");
+			LOG.debug("Node " + node.getUniqueIdentifier() + " is not interoperator parallizable.");
 		}
 	}
 

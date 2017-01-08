@@ -318,6 +318,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	public void process_done(int port) {
+		LOG.info("Sources propagated done before migration finished.");
 		drainBuffer();
 		synchronized (this) {
 			if (port == this.inPortOld) {

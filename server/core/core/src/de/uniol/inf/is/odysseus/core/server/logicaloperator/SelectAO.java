@@ -20,6 +20,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", doc = "The select operator filters the incoming data stream according to the given predicate.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Select+operator", category = {
 		LogicalOperatorCategory.BASE })
-public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
+public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallelizableOperator {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int rate;
 
@@ -90,6 +91,11 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate {
 		// FIXME check if predicate is stateful
 		return IOperatorState.OperatorStateType.STATELESS;
 
+	}
+
+	@Override
+	public boolean isParallelizable() {
+		return true;
 	}
 
 }

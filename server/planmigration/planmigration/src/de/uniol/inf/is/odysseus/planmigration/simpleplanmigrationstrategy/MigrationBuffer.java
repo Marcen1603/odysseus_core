@@ -112,6 +112,14 @@ public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> e
 			}
 		}
 	}
+	
+	@Override
+	protected void process_done(int port){
+		if(!this.markerInserted){
+			LOG.info("Sources propagated done before MigrationMarkerPunctuation could be inserted.");
+		}
+		super.process_done(port);
+	}
 
 	public void setSource(ISource<?> source) {
 		this.source = source;

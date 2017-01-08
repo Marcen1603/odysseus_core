@@ -23,7 +23,7 @@ public class IncreasingParallelization implements IPlanRewriteFunction {
 
 	private final static String NAME = "IncreasingParallelization";
 
-	private static int parallelizationDegree = 1;
+	private static int parallelizationDegree = 2;
 
 	/*
 	 * (non-Javadoc)
