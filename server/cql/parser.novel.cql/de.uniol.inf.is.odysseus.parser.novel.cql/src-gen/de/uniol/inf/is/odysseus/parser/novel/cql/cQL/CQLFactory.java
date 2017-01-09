@@ -42,31 +42,13 @@ public interface CQLFactory extends EFactory
   Statement createStatement();
 
   /**
-   * Returns a new object of class '<em>Nested Statement</em>'.
+   * Returns a new object of class '<em>Select</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Nested Statement</em>'.
+   * @return a new object of class '<em>Select</em>'.
    * @generated
    */
-  Nested_Statement createNested_Statement();
-
-  /**
-   * Returns a new object of class '<em>Expression</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Expression</em>'.
-   * @generated
-   */
-  Expression createExpression();
-
-  /**
-   * Returns a new object of class '<em>Source</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Source</em>'.
-   * @generated
-   */
-  Source createSource();
+  Select createSelect();
 
   /**
    * Returns a new object of class '<em>Data Type</em>'.
@@ -78,6 +60,15 @@ public interface CQLFactory extends EFactory
   DataType createDataType();
 
   /**
+   * Returns a new object of class '<em>Source</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Source</em>'.
+   * @generated
+   */
+  Source createSource();
+
+  /**
    * Returns a new object of class '<em>Attribute</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -85,33 +76,6 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   Attribute createAttribute();
-
-  /**
-   * Returns a new object of class '<em>Expressions Model</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Expressions Model</em>'.
-   * @generated
-   */
-  ExpressionsModel createExpressionsModel();
-
-  /**
-   * Returns a new object of class '<em>Select Statement</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Select Statement</em>'.
-   * @generated
-   */
-  Select_Statement createSelect_Statement();
-
-  /**
-   * Returns a new object of class '<em>Order</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Order</em>'.
-   * @generated
-   */
-  Order createOrder();
 
   /**
    * Returns a new object of class '<em>Aggregation</em>'.
@@ -132,13 +96,13 @@ public interface CQLFactory extends EFactory
   Alias createAlias();
 
   /**
-   * Returns a new object of class '<em>Create Statement</em>'.
+   * Returns a new object of class '<em>Create</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Create Statement</em>'.
+   * @return a new object of class '<em>Create</em>'.
    * @generated
    */
-  Create_Statement createCreate_Statement();
+  Create createCreate();
 
   /**
    * Returns a new object of class '<em>Access Framework</em>'.
@@ -213,58 +177,22 @@ public interface CQLFactory extends EFactory
   Window_Tuplebased createWindow_Tuplebased();
 
   /**
-   * Returns a new object of class '<em>Scalar Function</em>'.
+   * Returns a new object of class '<em>Expressions Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Scalar Function</em>'.
+   * @return a new object of class '<em>Expressions Model</em>'.
    * @generated
    */
-  Scalar_Function createScalar_Function();
+  ExpressionsModel createExpressionsModel();
 
   /**
-   * Returns a new object of class '<em>Int Constant</em>'.
+   * Returns a new object of class '<em>Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Int Constant</em>'.
+   * @return a new object of class '<em>Expression</em>'.
    * @generated
    */
-  IntConstant createIntConstant();
-
-  /**
-   * Returns a new object of class '<em>Float Constant</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Float Constant</em>'.
-   * @generated
-   */
-  FloatConstant createFloatConstant();
-
-  /**
-   * Returns a new object of class '<em>String Constant</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>String Constant</em>'.
-   * @generated
-   */
-  StringConstant createStringConstant();
-
-  /**
-   * Returns a new object of class '<em>Bool Constant</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Bool Constant</em>'.
-   * @generated
-   */
-  BoolConstant createBoolConstant();
-
-  /**
-   * Returns a new object of class '<em>Attribute Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Attribute Ref</em>'.
-   * @generated
-   */
-  AttributeRef createAttributeRef();
+  Expression createExpression();
 
   /**
    * Returns a new object of class '<em>Or</em>'.
@@ -346,6 +274,51 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   NOT createNOT();
+
+  /**
+   * Returns a new object of class '<em>Int Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Constant</em>'.
+   * @generated
+   */
+  IntConstant createIntConstant();
+
+  /**
+   * Returns a new object of class '<em>Float Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Float Constant</em>'.
+   * @generated
+   */
+  FloatConstant createFloatConstant();
+
+  /**
+   * Returns a new object of class '<em>String Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>String Constant</em>'.
+   * @generated
+   */
+  StringConstant createStringConstant();
+
+  /**
+   * Returns a new object of class '<em>Bool Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Bool Constant</em>'.
+   * @generated
+   */
+  BoolConstant createBoolConstant();
+
+  /**
+   * Returns a new object of class '<em>Attribute Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Attribute Ref</em>'.
+   * @generated
+   */
+  AttributeRef createAttributeRef();
 
   /**
    * Returns the package supported by this factory.

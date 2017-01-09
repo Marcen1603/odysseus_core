@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl#getType <em>Type</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl#getName <em>Name</em>}</li>
@@ -44,6 +43,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl#getKeys <em>Keys</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl#getValues <em>Values</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */

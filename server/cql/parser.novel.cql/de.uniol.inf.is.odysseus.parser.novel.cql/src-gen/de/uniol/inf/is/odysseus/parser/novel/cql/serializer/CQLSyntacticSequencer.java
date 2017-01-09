@@ -11,7 +11,6 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
-import org.eclipse.xtext.serializer.analysis.GrammarAlias.AlternativeAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.GroupAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
@@ -23,20 +22,16 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected CQLGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_ChannelFormatView_SemicolonKeyword_5_q;
-	protected AbstractElementAlias match_Create_Statement_ATTACHKeyword_0_1_or_CREATEKeyword_0_0;
 	protected AbstractElementAlias match_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q;
-	protected AbstractElementAlias match_Select_Statement_ASKeyword_4_2_2_q;
-	protected AbstractElementAlias match_Select_Statement_AsteriskKeyword_2_0_q;
+	protected AbstractElementAlias match_Select_AsteriskKeyword_2_0_q;
 	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (CQLGrammarAccess) access;
 		match_ChannelFormatView_SemicolonKeyword_5_q = new TokenAlias(false, true, grammarAccess.getChannelFormatViewAccess().getSemicolonKeyword_5());
-		match_Create_Statement_ATTACHKeyword_0_1_or_CREATEKeyword_0_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getCreate_StatementAccess().getATTACHKeyword_0_1()), new TokenAlias(false, false, grammarAccess.getCreate_StatementAccess().getCREATEKeyword_0_0()));
 		match_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getDropAccess().getIFKeyword_2_0()), new TokenAlias(false, false, grammarAccess.getDropAccess().getEXISTSKeyword_2_1()));
-		match_Select_Statement_ASKeyword_4_2_2_q = new TokenAlias(false, true, grammarAccess.getSelect_StatementAccess().getASKeyword_4_2_2());
-		match_Select_Statement_AsteriskKeyword_2_0_q = new TokenAlias(false, true, grammarAccess.getSelect_StatementAccess().getAsteriskKeyword_2_0());
+		match_Select_AsteriskKeyword_2_0_q = new TokenAlias(false, true, grammarAccess.getSelectAccess().getAsteriskKeyword_2_0());
 		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
 	}
 	
@@ -54,14 +49,10 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
 			if (match_ChannelFormatView_SemicolonKeyword_5_q.equals(syntax))
 				emit_ChannelFormatView_SemicolonKeyword_5_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Create_Statement_ATTACHKeyword_0_1_or_CREATEKeyword_0_0.equals(syntax))
-				emit_Create_Statement_ATTACHKeyword_0_1_or_CREATEKeyword_0_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q.equals(syntax))
 				emit_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Select_Statement_ASKeyword_4_2_2_q.equals(syntax))
-				emit_Select_Statement_ASKeyword_4_2_2_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Select_Statement_AsteriskKeyword_2_0_q.equals(syntax))
-				emit_Select_Statement_AsteriskKeyword_2_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Select_AsteriskKeyword_2_0_q.equals(syntax))
+				emit_Select_AsteriskKeyword_2_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Statement_SemicolonKeyword_1_q.equals(syntax))
 				emit_Statement_SemicolonKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
@@ -73,21 +64,9 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     ';'?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     select=Select_Statement (ambiguity) ')' (rule end)
+	 *     select=Select (ambiguity) ')' (rule end)
 	 */
 	protected void emit_ChannelFormatView_SemicolonKeyword_5_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Ambiguous syntax:
-	 *     'CREATE' | 'ATTACH'
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     (rule start) (ambiguity) accessframework=AccessFramework
-	 *     (rule start) (ambiguity) channelformat=ChannelFormat
-	 */
-	protected void emit_Create_Statement_ATTACHKeyword_0_1_or_CREATEKeyword_0_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -105,40 +84,13 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Ambiguous syntax:
-	 *     'AS'?
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     nested+=Nested_Statement (ambiguity) nestedAliases+=Alias
-	 */
-	protected void emit_Select_Statement_ASKeyword_4_2_2_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Ambiguous syntax:
 	 *     '*'?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' ')' (rule end)
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' ',' nested+=Nested_Statement
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' ',' sources+=Source
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' 'GROUP' 'BY' order+=Attribute
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' 'HAVING' having=ExpressionsModel
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' 'WHERE' predicates=ExpressionsModel
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' (rule end)
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' nested+=Nested_Statement
 	 *     distinct='DISTINCT' (ambiguity) 'FROM' sources+=Source
-	 *     name='SELECT' (ambiguity) 'FROM' ')' (rule end)
-	 *     name='SELECT' (ambiguity) 'FROM' ',' nested+=Nested_Statement
-	 *     name='SELECT' (ambiguity) 'FROM' ',' sources+=Source
-	 *     name='SELECT' (ambiguity) 'FROM' 'GROUP' 'BY' order+=Attribute
-	 *     name='SELECT' (ambiguity) 'FROM' 'HAVING' having=ExpressionsModel
-	 *     name='SELECT' (ambiguity) 'FROM' 'WHERE' predicates=ExpressionsModel
-	 *     name='SELECT' (ambiguity) 'FROM' (rule end)
-	 *     name='SELECT' (ambiguity) 'FROM' nested+=Nested_Statement
 	 *     name='SELECT' (ambiguity) 'FROM' sources+=Source
 	 */
-	protected void emit_Select_Statement_AsteriskKeyword_2_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_Select_AsteriskKeyword_2_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -147,9 +99,9 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     ';'?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     type=Create_Statement (ambiguity) (rule end)
+	 *     type=Create (ambiguity) (rule end)
 	 *     type=Drop (ambiguity) (rule end)
-	 *     type=Select_Statement (ambiguity) (rule end)
+	 *     type=Select (ambiguity) (rule end)
 	 *     type=StreamTo (ambiguity) (rule end)
 	 */
 	protected void emit_Statement_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {

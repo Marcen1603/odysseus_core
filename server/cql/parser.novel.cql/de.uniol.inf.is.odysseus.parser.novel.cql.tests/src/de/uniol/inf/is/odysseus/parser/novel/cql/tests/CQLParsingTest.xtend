@@ -109,7 +109,7 @@ class CQLParsingTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT attr1 FROM stream1, stream2, stream3 WHERE attr1 > 2;"
+			"SELECT attr1 FROM stream1, stream2, stream3 WHERE attr1 > 2"
 			,
 			"operator_1 = SELECT({predicate='attr1 > 2'},PROJECT({attributes=['attr1']},JOIN(stream1, JOIN(stream2, stream3))))"
 		, new CQLDictionaryHelper())
@@ -548,7 +548,7 @@ class CQLParsingTest
 		(
 			"SELECT attr1 FROM (SELECT attr1 FROM stream1)"
 			,
-			""
+			"operator_1 = PROJECT({attributes=['attr1']}, PROJECT({attributes=['attr1']}, stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}

@@ -2,39 +2,14 @@ grammar de.uniol.inf.is.odysseus.parser.novel.cql.CQL with org.eclipse.xtext.com
 
 generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
-Model: statements+=Statement*;
+Model: statements+=(Statement)*;
 	
-Statement:  (type=Select_Statement | type=Create_Statement | type=StreamTo | type=Drop) (';')? ; 
+Statement:	
+	(type=Select | type=Create | type=StreamTo | type=Drop) 
+	(';')?
+; 
 
-Nested_Statement: '(' Select_Statement ')' ;
-
-// Data types //////////////////////////////////////////////////////////
-
-Atomic returns Expression:
-//	{NumberConstant} (value=INT | value=INT '.' INT) |
-	{IntConstant} value=INT |
-	{FloatConstant} value=FLOAT_NUMBER |
-	{StringConstant} value= STRING |
-	{BoolConstant} value=('TRUE' | 'FALSE') |
-	{AttributeRef} value=Attribute//TODO A SELECT * query offers no reference for an attribute.
-								  //At the moment is no actual referencing possible!  
-;
-
-terminal FLOAT_NUMBER:  INT '.' INT ;
-
-Source: 
-	name=ID
-	(	
-		'[' 
-		(
-			unbounded=Window_Unbounded|
-			time=Window_Timebased|
-			tuple=Window_Tuplebased
-		)
-		']'
-	)?
-	('AS' alias=Alias)?
-;
+NestedStatement returns Select: '(' Select ')' ;
 
 //TODO have to dynamic -> use scope provider
 DataType: 
@@ -42,13 +17,209 @@ DataType:
 	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
 );
 
+Source: 
+	(
+		name=ID
+		(	
+			'[' 
+			(
+				unbounded=Window_Unbounded|
+				time=Window_Timebased|
+				tuple=Window_Tuplebased
+			)
+			']'
+		)?
+		|
+		(
+			nested=NestedStatement
+		)
+	)
+	('AS' alias=Alias)?
+;
+
 Attribute: 
 	name=ID
 	('AS' alias=Alias)?
 ;
  
-// Expressions //////////////////////////////////////////////////////////
-ExpressionsModel: {ExpressionsModel} elements+=Expression+;
+AttributeWithoutAlias returns Attribute: 
+	name=ID
+; 
+
+AttributeAsNestedStatement returns Attribute:
+	nested=NestedStatement
+;
+ 
+Aggregation:
+	name=ID
+	'(' attribute=AttributeWithoutAlias ')'
+	('AS' alias=Alias)?
+;
+
+Alias:
+	name=ID
+; 
+ 
+Select:
+	name='SELECT'
+	(distinct='DISTINCT')?
+	( '*' |
+		( 
+			(attributes+=Attribute | aggregations+=Aggregation)+  
+			& (',' attributes+=Attribute)* 
+			& (',' aggregations+=Aggregation)*
+		)
+	)
+	('FROM' sources+=Source+ (',' sources+=Source)*)
+	('WHERE' predicates=ExpressionsModel)?
+	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?)
+	('HAVING' having=ExpressionsModel)?
+;
+
+//SelectWithoutWhere returns Select:
+//	name='SELECT'
+//	(distinct='DISTINCT')?
+//	( '*' |
+//		( 
+//			(attributes+=Attribute | aggregations+=Aggregation)+  
+//			& (',' attributes+=Attribute)* 
+//			& (',' aggregations+=Aggregation)*
+//		)
+//	)
+//	('FROM' sources+=Source+ (',' sources+=Source)*)
+//	'GROUP' 'BY' order+=Attribute+ (',' order+=Attribute) //ordering+=Attribute+ ('ASC' | 'DESC')?)?
+//	'HAVING' having=ExpressionsModel
+//;
+//
+//SelectWithoutWhere returns Select:
+//	name='SELECT'
+//	(distinct='DISTINCT')?
+//	( '*' |
+//		( 
+//			(attributes+=Attribute | aggregations+=Aggregation)+  
+//			& (',' attributes+=Attribute)* 
+//			& (',' aggregations+=Aggregation)*
+//		)
+//	)
+//	('FROM' sources+=Source+ (',' sources+=Source)*)
+//	'GROUP' 'BY' order+=Attribute+ (',' order+=Attribute) //ordering+=Attribute+ ('ASC' | 'DESC')?)?
+//	'HAVING' having=ExpressionsModel
+//;
+//
+//SelectWithoutGroupBy returns Select:
+//	name='SELECT'
+//	(distinct='DISTINCT')?
+//	( '*' |
+//		( 
+//			(attributes+=Attribute | aggregations+=Aggregation)+  
+//			& (',' attributes+=Attribute)* 
+//			& (',' aggregations+=Aggregation)*
+//		)
+//	)
+//	('FROM' sources+=Source+ (',' sources+=Source)*)
+//	'WHERE' predicates=ExpressionsModel
+//;
+//
+//SelectWithoutWhereAndGroupBy returns Select:
+//	name='SELECT'
+//	(distinct='DISTINCT')?
+//	( '*' |
+//		( 
+//			(attributes+=Attribute | aggregations+=Aggregation)+  
+//			& (',' attributes+=Attribute)* 
+//			& (',' aggregations+=Aggregation)*
+//		)
+//	)
+//	('FROM' sources+=Source+ (',' sources+=Source)*)
+//;
+
+
+//Order:
+//	attribute=Attribute
+//	direction=('ASC'|'DESC')
+//;
+
+
+Create:
+	name=('CREATE'|'ATTACH') (channelformat=ChannelFormat|accessframework=AccessFramework)
+;
+
+AccessFramework:
+	type=('STREAM'|'SINK')
+	name = ID
+	'('
+	attributes+= Attribute+ 
+	datatypes+= DataType+
+	(',' attributes+=Attribute datatypes+= DataType)*
+	')'
+	'WRAPPER' wrapper=STRING
+	'PROTOCOL' protocol=STRING
+	'TRANSPORT' transport=STRING
+	'DATAHANDLER' datahandler=STRING
+	'OPTIONS' 
+		'(' 
+			(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
+		')'
+;
+
+ChannelFormat: (stream=ChannelFormatStream|view=ChannelFormatView);
+
+ChannelFormatStream:
+	'STREAM'
+	name = ID
+	'('
+	attributes+= Attribute+ 
+	datatypes+= DataType+
+	(',' attributes+=Attribute datatypes+= DataType)*
+	')'
+	'CHANNEL'//TODO Add FILE as possible parameter --> and even more ..
+	host=ID
+	':'
+	port=INT
+;
+
+ChannelFormatView:
+	'VIEW' 
+	name=ID
+	'FROM'
+	'('
+	(select=Select) (';')?
+	')'
+;
+
+StreamTo:
+	'STREAM' 'TO'
+	name=ID
+	(statement=Select|inputname=ID)
+;
+
+Drop:
+	'DROP'
+	(name='SINK'|name='STREAM')
+	('IF' 'EXISTS')?
+;
+
+Window_Unbounded:  
+	'UNBOUNDED'
+;
+
+Window_Timebased: 
+	'SIZE' size=INT unit=ID
+	('ADVANCE' advance_size=INT advance_unit=ID)?
+	'TIME'
+;
+
+Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
+	'SIZE' size=INT
+	('ADVANCE' advance_size=INT)?
+	'TUPLE'
+	('PARTITION' 'BY' partition_attribute=Attribute)?
+;
+
+// Expression DSL ///////////////////////////////////////////////////////
+terminal FLOAT_NUMBER:  INT '.' INT ;
+
+ExpressionsModel: {ExpressionsModel} elements+=Expression;
 
 Expression: Or;
 
@@ -93,129 +264,13 @@ Primary returns Expression:
 	{NOT} 'NOT' expression=Primary |
 	Atomic
 ;
-////////////////////////////////////////////////////////////////////////
 
-Select_Statement:
-	name='SELECT'
-	(distinct='DISTINCT')?
-	( '*' |
-		( 
-			(attributes+=Attribute | aggregations+=Aggregation)+  
-			& (',' attributes+=Attribute)* 
-			& (',' aggregations+=Aggregation)*
-		)
-	)
-	'FROM'
-	(
-		(sources+=Source | nested+=Nested_Statement)+ 
-		& (',' sources+=Source)*
-		& (',' nested+=Nested_Statement ('AS')? nestedAliases+=Alias)*
-	)
-	('WHERE' predicates=ExpressionsModel)?
-	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?
-	('HAVING' having=ExpressionsModel)?
+Atomic returns Expression:
+//	{NumberConstant} (value=INT | value=INT '.' INT) |
+	{IntConstant} value=INT |
+	{FloatConstant} value=FLOAT_NUMBER |
+	{StringConstant} value= STRING |
+	{BoolConstant} value=('TRUE' | 'FALSE') |
+	{AttributeRef} value=AttributeWithoutAlias//TODO A SELECT * query offers no reference for an attribute.
+								  			  //At the moment is no actual referencing possible!  
 ;
-
-Order:
-	attribute=Attribute
-	direction=('ASC'|'DESC')
-;
-
-Aggregation://TODO Validator -> forbid an alias for the attribute in the aggregation
-	name=ID
-	'('
-	attribute=Attribute
-	')'
-	('AS' alias=Alias)?
-;
-
-Alias:
-	name=ID
-;
-
-Create_Statement:
-	('CREATE'|'ATTACH') (channelformat=ChannelFormat|accessframework=AccessFramework)
-;
-
-AccessFramework:
-	type=('STREAM'|'SINK')
-	name = ID
-	'('
-	attributes+= Attribute+ 
-	datatypes+= DataType+
-	(',' attributes+=Attribute datatypes+= DataType)*
-	')'
-	'WRAPPER' wrapper=STRING
-	'PROTOCOL' protocol=STRING
-	'TRANSPORT' transport=STRING
-	'DATAHANDLER' datahandler=STRING
-	'OPTIONS' 
-		'(' 
-			(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
-		')'
-;
-
-ChannelFormat: (stream=ChannelFormatStream|view=ChannelFormatView);
-
-ChannelFormatStream:
-	'STREAM'
-	name = ID
-	'('
-	attributes+= Attribute+ 
-	datatypes+= DataType+
-	(',' attributes+=Attribute datatypes+= DataType)*
-	')'
-	'CHANNEL'//TODO Add FILE as possible parameter --> and even more ..
-	host=ID
-	':'
-	port=INT
-;
-
-ChannelFormatView:
-	'VIEW' 
-	name=ID
-	'FROM'
-	'('
-	(select=Select_Statement) (';')?
-	')'
-;
-
-StreamTo:
-	'STREAM' 'TO'
-	name=ID
-	(statement=Select_Statement|inputname=ID)
-;
-
-Drop:
-	'DROP'
-	(name='SINK'|name='STREAM')
-	('IF' 'EXISTS')?
-;
-
-Window_Unbounded:  
-	'UNBOUNDED'
-;
-
-Window_Timebased: 
-	'SIZE' size=INT unit=ID
-	('ADVANCE' advance_size=INT advance_unit=ID)?
-	'TIME'
-;
-
-Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
-	'SIZE' size=INT
-	('ADVANCE' advance_size=INT)?
-	'TUPLE'
-	('PARTITION' 'BY' partition_attribute=Attribute)?
-;
-
-Scalar_Function:
-	'Scalar'
-	name=ID
-	';'
-;
-
-
-
-
-

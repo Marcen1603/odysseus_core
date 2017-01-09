@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -22,11 +22,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatViewImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatViewImpl#getSelect <em>Select</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */
@@ -60,7 +60,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
    * @generated
    * @ordered
    */
-  protected Select_Statement select;
+  protected Select select;
 
   /**
    * <!-- begin-user-doc -->
@@ -111,7 +111,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select_Statement getSelect()
+  public Select getSelect()
   {
     return select;
   }
@@ -121,9 +121,9 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetSelect(Select_Statement newSelect, NotificationChain msgs)
+  public NotificationChain basicSetSelect(Select newSelect, NotificationChain msgs)
   {
-    Select_Statement oldSelect = select;
+    Select oldSelect = select;
     select = newSelect;
     if (eNotificationRequired())
     {
@@ -138,7 +138,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setSelect(Select_Statement newSelect)
+  public void setSelect(Select newSelect)
   {
     if (newSelect != select)
     {
@@ -202,7 +202,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
         setName((String)newValue);
         return;
       case CQLPackage.CHANNEL_FORMAT_VIEW__SELECT:
-        setSelect((Select_Statement)newValue);
+        setSelect((Select)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -222,7 +222,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
         setName(NAME_EDEFAULT);
         return;
       case CQLPackage.CHANNEL_FORMAT_VIEW__SELECT:
-        setSelect((Select_Statement)null);
+        setSelect((Select)null);
         return;
     }
     super.eUnset(featureID);

@@ -11,12 +11,12 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
  *
  * <p>
  * The following features are supported:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv#getLeft <em>Left</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv#getOp <em>Op</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv#getRight <em>Right</em>}</li>
  * </ul>
+ * </p>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getMulOrDiv()
  * @model

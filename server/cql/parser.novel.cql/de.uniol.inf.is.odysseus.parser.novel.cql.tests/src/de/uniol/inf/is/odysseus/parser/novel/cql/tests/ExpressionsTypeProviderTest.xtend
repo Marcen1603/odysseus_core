@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.tests
 import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.ExpressionsTypeProviderHelper
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsType
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider

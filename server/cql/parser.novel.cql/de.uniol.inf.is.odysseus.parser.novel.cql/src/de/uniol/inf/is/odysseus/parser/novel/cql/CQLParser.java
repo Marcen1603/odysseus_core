@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider;
@@ -113,10 +113,10 @@ public class CQLParser implements IQueryParser
 //		regex = ".*create[ ]*["+queryType+"][ ]*[a-z0-9]*[ ]+([a-z0-9]+){1}[ ]*[(]([a-z0-9]+[ ]+["+types+"]+[ ]*(, [a-z0-9]+[ ]+["+types+"]+)*)[)].*";
 	}
 	
-	public synchronized void createDictionary(List<Create_Statement> list, ISession user)
+	public synchronized void createDictionary(List<Create> list, ISession user)
 	{
 		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
-		for(Create_Statement stmt : list)
+		for(Create stmt : list)
 		{
 			if(stmt.getAccessframework() != null && stmt.getAccessframework().getType().equals("SINK"))//TODO Refactore
 			{
@@ -174,7 +174,7 @@ public class CQLParser implements IQueryParser
 		}
 		
 		model = (Model) resource.getContents().get(0);
-		createDictionary(EcoreUtil2.eAllOfType(model, Create_Statement.class), user);
+		createDictionary(EcoreUtil2.eAllOfType(model, Create.class), user);
 		
 //		System.out.println(dic.toString());
 		//Get schemata from PQl queries

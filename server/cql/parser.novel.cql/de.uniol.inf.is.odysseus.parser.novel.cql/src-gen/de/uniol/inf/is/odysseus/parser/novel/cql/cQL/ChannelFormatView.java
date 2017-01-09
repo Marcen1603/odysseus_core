@@ -12,11 +12,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView#getSelect <em>Select</em>}</li>
  * </ul>
+ * </p>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getChannelFormatView()
  * @model
@@ -59,12 +59,12 @@ public interface ChannelFormatView extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Select</em>' containment reference.
-   * @see #setSelect(Select_Statement)
+   * @see #setSelect(Select)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getChannelFormatView_Select()
    * @model containment="true"
    * @generated
    */
-  Select_Statement getSelect();
+  Select getSelect();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView#getSelect <em>Select</em>}' containment reference.
@@ -74,6 +74,6 @@ public interface ChannelFormatView extends EObject
    * @see #getSelect()
    * @generated
    */
-  void setSelect(Select_Statement value);
+  void setSelect(Select value);
 
 } // ChannelFormatView

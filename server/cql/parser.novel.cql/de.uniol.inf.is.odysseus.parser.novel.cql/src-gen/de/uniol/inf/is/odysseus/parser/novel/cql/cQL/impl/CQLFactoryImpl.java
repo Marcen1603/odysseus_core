@@ -67,17 +67,13 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
     {
       case CQLPackage.MODEL: return createModel();
       case CQLPackage.STATEMENT: return createStatement();
-      case CQLPackage.NESTED_STATEMENT: return createNested_Statement();
-      case CQLPackage.EXPRESSION: return createExpression();
-      case CQLPackage.SOURCE: return createSource();
+      case CQLPackage.SELECT: return createSelect();
       case CQLPackage.DATA_TYPE: return createDataType();
+      case CQLPackage.SOURCE: return createSource();
       case CQLPackage.ATTRIBUTE: return createAttribute();
-      case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
-      case CQLPackage.SELECT_STATEMENT: return createSelect_Statement();
-      case CQLPackage.ORDER: return createOrder();
       case CQLPackage.AGGREGATION: return createAggregation();
       case CQLPackage.ALIAS: return createAlias();
-      case CQLPackage.CREATE_STATEMENT: return createCreate_Statement();
+      case CQLPackage.CREATE: return createCreate();
       case CQLPackage.ACCESS_FRAMEWORK: return createAccessFramework();
       case CQLPackage.CHANNEL_FORMAT: return createChannelFormat();
       case CQLPackage.CHANNEL_FORMAT_STREAM: return createChannelFormatStream();
@@ -86,12 +82,8 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.DROP: return createDrop();
       case CQLPackage.WINDOW_TIMEBASED: return createWindow_Timebased();
       case CQLPackage.WINDOW_TUPLEBASED: return createWindow_Tuplebased();
-      case CQLPackage.SCALAR_FUNCTION: return createScalar_Function();
-      case CQLPackage.INT_CONSTANT: return createIntConstant();
-      case CQLPackage.FLOAT_CONSTANT: return createFloatConstant();
-      case CQLPackage.STRING_CONSTANT: return createStringConstant();
-      case CQLPackage.BOOL_CONSTANT: return createBoolConstant();
-      case CQLPackage.ATTRIBUTE_REF: return createAttributeRef();
+      case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
+      case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.OR: return createOr();
       case CQLPackage.AND: return createAnd();
       case CQLPackage.EQUALITY: return createEquality();
@@ -101,6 +93,11 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.MUL_OR_DIV: return createMulOrDiv();
       case CQLPackage.BRACKET: return createBracket();
       case CQLPackage.NOT: return createNOT();
+      case CQLPackage.INT_CONSTANT: return createIntConstant();
+      case CQLPackage.FLOAT_CONSTANT: return createFloatConstant();
+      case CQLPackage.STRING_CONSTANT: return createStringConstant();
+      case CQLPackage.BOOL_CONSTANT: return createBoolConstant();
+      case CQLPackage.ATTRIBUTE_REF: return createAttributeRef();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -133,32 +130,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Nested_Statement createNested_Statement()
+  public Select createSelect()
   {
-    Nested_StatementImpl nested_Statement = new Nested_StatementImpl();
-    return nested_Statement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Expression createExpression()
-  {
-    ExpressionImpl expression = new ExpressionImpl();
-    return expression;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Source createSource()
-  {
-    SourceImpl source = new SourceImpl();
-    return source;
+    SelectImpl select = new SelectImpl();
+    return select;
   }
 
   /**
@@ -177,43 +152,21 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Source createSource()
+  {
+    SourceImpl source = new SourceImpl();
+    return source;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Attribute createAttribute()
   {
     AttributeImpl attribute = new AttributeImpl();
     return attribute;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ExpressionsModel createExpressionsModel()
-  {
-    ExpressionsModelImpl expressionsModel = new ExpressionsModelImpl();
-    return expressionsModel;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Select_Statement createSelect_Statement()
-  {
-    Select_StatementImpl select_Statement = new Select_StatementImpl();
-    return select_Statement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Order createOrder()
-  {
-    OrderImpl order = new OrderImpl();
-    return order;
   }
 
   /**
@@ -243,10 +196,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Create_Statement createCreate_Statement()
+  public Create createCreate()
   {
-    Create_StatementImpl create_Statement = new Create_StatementImpl();
-    return create_Statement;
+    CreateImpl create = new CreateImpl();
+    return create;
   }
 
   /**
@@ -342,10 +295,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Scalar_Function createScalar_Function()
+  public ExpressionsModel createExpressionsModel()
   {
-    Scalar_FunctionImpl scalar_Function = new Scalar_FunctionImpl();
-    return scalar_Function;
+    ExpressionsModelImpl expressionsModel = new ExpressionsModelImpl();
+    return expressionsModel;
   }
 
   /**
@@ -353,54 +306,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IntConstant createIntConstant()
+  public Expression createExpression()
   {
-    IntConstantImpl intConstant = new IntConstantImpl();
-    return intConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public FloatConstant createFloatConstant()
-  {
-    FloatConstantImpl floatConstant = new FloatConstantImpl();
-    return floatConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public StringConstant createStringConstant()
-  {
-    StringConstantImpl stringConstant = new StringConstantImpl();
-    return stringConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public BoolConstant createBoolConstant()
-  {
-    BoolConstantImpl boolConstant = new BoolConstantImpl();
-    return boolConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public AttributeRef createAttributeRef()
-  {
-    AttributeRefImpl attributeRef = new AttributeRefImpl();
-    return attributeRef;
+    ExpressionImpl expression = new ExpressionImpl();
+    return expression;
   }
 
   /**
@@ -500,6 +409,61 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     NOTImpl not = new NOTImpl();
     return not;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IntConstant createIntConstant()
+  {
+    IntConstantImpl intConstant = new IntConstantImpl();
+    return intConstant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public FloatConstant createFloatConstant()
+  {
+    FloatConstantImpl floatConstant = new FloatConstantImpl();
+    return floatConstant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public StringConstant createStringConstant()
+  {
+    StringConstantImpl stringConstant = new StringConstantImpl();
+    return stringConstant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public BoolConstant createBoolConstant()
+  {
+    BoolConstantImpl boolConstant = new BoolConstantImpl();
+    return boolConstant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public AttributeRef createAttributeRef()
+  {
+    AttributeRefImpl attributeRef = new AttributeRefImpl();
+    return attributeRef;
   }
 
   /**

@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased;
@@ -24,14 +25,15 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl#getUnbounded <em>Unbounded</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl#getTime <em>Time</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl#getTuple <em>Tuple</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl#getNested <em>Nested</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl#getAlias <em>Alias</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */
@@ -96,6 +98,16 @@ public class SourceImpl extends MinimalEObjectImpl.Container implements Source
    * @ordered
    */
   protected Window_Tuplebased tuple;
+
+  /**
+   * The cached value of the '{@link #getNested() <em>Nested</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getNested()
+   * @generated
+   * @ordered
+   */
+  protected Select nested;
 
   /**
    * The cached value of the '{@link #getAlias() <em>Alias</em>}' containment reference.
@@ -275,6 +287,54 @@ public class SourceImpl extends MinimalEObjectImpl.Container implements Source
    * <!-- end-user-doc -->
    * @generated
    */
+  public Select getNested()
+  {
+    return nested;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetNested(Select newNested, NotificationChain msgs)
+  {
+    Select oldNested = nested;
+    nested = newNested;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.SOURCE__NESTED, oldNested, newNested);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setNested(Select newNested)
+  {
+    if (newNested != nested)
+    {
+      NotificationChain msgs = null;
+      if (nested != null)
+        msgs = ((InternalEObject)nested).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SOURCE__NESTED, null, msgs);
+      if (newNested != null)
+        msgs = ((InternalEObject)newNested).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SOURCE__NESTED, null, msgs);
+      msgs = basicSetNested(newNested, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SOURCE__NESTED, newNested, newNested));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Alias getAlias()
   {
     return alias;
@@ -332,6 +392,8 @@ public class SourceImpl extends MinimalEObjectImpl.Container implements Source
         return basicSetTime(null, msgs);
       case CQLPackage.SOURCE__TUPLE:
         return basicSetTuple(null, msgs);
+      case CQLPackage.SOURCE__NESTED:
+        return basicSetNested(null, msgs);
       case CQLPackage.SOURCE__ALIAS:
         return basicSetAlias(null, msgs);
     }
@@ -356,6 +418,8 @@ public class SourceImpl extends MinimalEObjectImpl.Container implements Source
         return getTime();
       case CQLPackage.SOURCE__TUPLE:
         return getTuple();
+      case CQLPackage.SOURCE__NESTED:
+        return getNested();
       case CQLPackage.SOURCE__ALIAS:
         return getAlias();
     }
@@ -383,6 +447,9 @@ public class SourceImpl extends MinimalEObjectImpl.Container implements Source
         return;
       case CQLPackage.SOURCE__TUPLE:
         setTuple((Window_Tuplebased)newValue);
+        return;
+      case CQLPackage.SOURCE__NESTED:
+        setNested((Select)newValue);
         return;
       case CQLPackage.SOURCE__ALIAS:
         setAlias((Alias)newValue);
@@ -413,6 +480,9 @@ public class SourceImpl extends MinimalEObjectImpl.Container implements Source
       case CQLPackage.SOURCE__TUPLE:
         setTuple((Window_Tuplebased)null);
         return;
+      case CQLPackage.SOURCE__NESTED:
+        setNested((Select)null);
+        return;
       case CQLPackage.SOURCE__ALIAS:
         setAlias((Alias)null);
         return;
@@ -438,6 +508,8 @@ public class SourceImpl extends MinimalEObjectImpl.Container implements Source
         return time != null;
       case CQLPackage.SOURCE__TUPLE:
         return tuple != null;
+      case CQLPackage.SOURCE__NESTED:
+        return nested != null;
       case CQLPackage.SOURCE__ALIAS:
         return alias != null;
     }

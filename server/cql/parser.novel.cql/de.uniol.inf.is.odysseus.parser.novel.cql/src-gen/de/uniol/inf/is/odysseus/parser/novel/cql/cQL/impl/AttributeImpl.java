@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -22,11 +23,12 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeImpl#getAlias <em>Alias</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeImpl#getNested <em>Nested</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */
@@ -61,6 +63,16 @@ public class AttributeImpl extends MinimalEObjectImpl.Container implements Attri
    * @ordered
    */
   protected Alias alias;
+
+  /**
+   * The cached value of the '{@link #getNested() <em>Nested</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getNested()
+   * @generated
+   * @ordered
+   */
+  protected Select nested;
 
   /**
    * <!-- begin-user-doc -->
@@ -159,6 +171,54 @@ public class AttributeImpl extends MinimalEObjectImpl.Container implements Attri
    * <!-- end-user-doc -->
    * @generated
    */
+  public Select getNested()
+  {
+    return nested;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetNested(Select newNested, NotificationChain msgs)
+  {
+    Select oldNested = nested;
+    nested = newNested;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.ATTRIBUTE__NESTED, oldNested, newNested);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setNested(Select newNested)
+  {
+    if (newNested != nested)
+    {
+      NotificationChain msgs = null;
+      if (nested != null)
+        msgs = ((InternalEObject)nested).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.ATTRIBUTE__NESTED, null, msgs);
+      if (newNested != null)
+        msgs = ((InternalEObject)newNested).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.ATTRIBUTE__NESTED, null, msgs);
+      msgs = basicSetNested(newNested, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.ATTRIBUTE__NESTED, newNested, newNested));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -166,6 +226,8 @@ public class AttributeImpl extends MinimalEObjectImpl.Container implements Attri
     {
       case CQLPackage.ATTRIBUTE__ALIAS:
         return basicSetAlias(null, msgs);
+      case CQLPackage.ATTRIBUTE__NESTED:
+        return basicSetNested(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -184,6 +246,8 @@ public class AttributeImpl extends MinimalEObjectImpl.Container implements Attri
         return getName();
       case CQLPackage.ATTRIBUTE__ALIAS:
         return getAlias();
+      case CQLPackage.ATTRIBUTE__NESTED:
+        return getNested();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -203,6 +267,9 @@ public class AttributeImpl extends MinimalEObjectImpl.Container implements Attri
         return;
       case CQLPackage.ATTRIBUTE__ALIAS:
         setAlias((Alias)newValue);
+        return;
+      case CQLPackage.ATTRIBUTE__NESTED:
+        setNested((Select)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -224,6 +291,9 @@ public class AttributeImpl extends MinimalEObjectImpl.Container implements Attri
       case CQLPackage.ATTRIBUTE__ALIAS:
         setAlias((Alias)null);
         return;
+      case CQLPackage.ATTRIBUTE__NESTED:
+        setNested((Select)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -242,6 +312,8 @@ public class AttributeImpl extends MinimalEObjectImpl.Container implements Attri
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.ATTRIBUTE__ALIAS:
         return alias != null;
+      case CQLPackage.ATTRIBUTE__NESTED:
+        return nested != null;
     }
     return super.eIsSet(featureID);
   }

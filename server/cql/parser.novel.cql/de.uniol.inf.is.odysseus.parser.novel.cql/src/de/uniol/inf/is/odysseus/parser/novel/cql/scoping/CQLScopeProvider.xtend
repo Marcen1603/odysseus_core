@@ -6,7 +6,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.scoping
 import com.google.inject.Inject
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
 import org.eclipse.xtext.scoping.IScope
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Scalar_Function
 import org.eclipse.emf.ecore.EReference
 import java.sql.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
@@ -22,17 +21,17 @@ class CQLScopeProvider extends AbstractDeclarativeScopeProvider
 
 
 
-	// re-implementation of the original one, using Xtend's collection extensions:
-	def IScope scope_Scalar_Function(Scalar_Function reference, EReference eRef) 
-	{
-		
-		println("asdsad")
-		null	
-
-		/*
-		 * Note the use of the ?-operator to provide an empty scope for the opposite
-		 * feature in case the Reference specifies an invalid target type.
-		 */
-}	
+//	// re-implementation of the original one, using Xtend's collection extensions:
+//	def IScope scope_Scalar_Function(Scalar_Function reference, EReference eRef) 
+//	{
+//		
+//		println("asdsad")
+//		null	
+//
+//		/*
+//		 * Note the use of the ?-operator to provide an empty scope for the opposite
+//		 * feature in case the Reference specifies an invalid target type.
+//		 */
+//  	}	
 
 }

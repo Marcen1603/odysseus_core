@@ -12,12 +12,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo#getStatement <em>Statement</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo#getInputname <em>Inputname</em>}</li>
  * </ul>
+ * </p>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getStreamTo()
  * @model
@@ -60,12 +60,12 @@ public interface StreamTo extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Statement</em>' containment reference.
-   * @see #setStatement(Select_Statement)
+   * @see #setStatement(Select)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getStreamTo_Statement()
    * @model containment="true"
    * @generated
    */
-  Select_Statement getStatement();
+  Select getStatement();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo#getStatement <em>Statement</em>}' containment reference.
@@ -75,7 +75,7 @@ public interface StreamTo extends EObject
    * @see #getStatement()
    * @generated
    */
-  void setStatement(Select_Statement value);
+  void setStatement(Select value);
 
   /**
    * Returns the value of the '<em><b>Inputname</b></em>' attribute.

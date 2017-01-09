@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -22,12 +22,12 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StreamToImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StreamToImpl#getStatement <em>Statement</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StreamToImpl#getInputname <em>Inputname</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */
@@ -61,7 +61,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * @generated
    * @ordered
    */
-  protected Select_Statement statement;
+  protected Select statement;
 
   /**
    * The default value of the '{@link #getInputname() <em>Inputname</em>}' attribute.
@@ -132,7 +132,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select_Statement getStatement()
+  public Select getStatement()
   {
     return statement;
   }
@@ -142,9 +142,9 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetStatement(Select_Statement newStatement, NotificationChain msgs)
+  public NotificationChain basicSetStatement(Select newStatement, NotificationChain msgs)
   {
-    Select_Statement oldStatement = statement;
+    Select oldStatement = statement;
     statement = newStatement;
     if (eNotificationRequired())
     {
@@ -159,7 +159,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setStatement(Select_Statement newStatement)
+  public void setStatement(Select newStatement)
   {
     if (newStatement != statement)
     {
@@ -248,7 +248,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
         setName((String)newValue);
         return;
       case CQLPackage.STREAM_TO__STATEMENT:
-        setStatement((Select_Statement)newValue);
+        setStatement((Select)newValue);
         return;
       case CQLPackage.STREAM_TO__INPUTNAME:
         setInputname((String)newValue);
@@ -271,7 +271,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
         setName(NAME_EDEFAULT);
         return;
       case CQLPackage.STREAM_TO__STATEMENT:
-        setStatement((Select_Statement)null);
+        setStatement((Select)null);
         return;
       case CQLPackage.STREAM_TO__INPUTNAME:
         setInputname(INPUTNAME_EDEFAULT);

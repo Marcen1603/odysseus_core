@@ -3,7 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.validation
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Scalar_Function
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.TypeListener
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.ComposedChecks
@@ -18,14 +17,5 @@ import org.eclipse.xtext.scoping.Scopes
 @ComposedChecks(validators = #[CQLExpressionsValidator, TypeListener])
 class CQLValidator extends AbstractCQLValidator 
 {
-	
-
-	@Check
-	def checkGreetingStartsWithCapital(Scalar_Function e) 
-	{
-		
-//		Scopes.scopeFor()		
-		
-	}
 	
 }

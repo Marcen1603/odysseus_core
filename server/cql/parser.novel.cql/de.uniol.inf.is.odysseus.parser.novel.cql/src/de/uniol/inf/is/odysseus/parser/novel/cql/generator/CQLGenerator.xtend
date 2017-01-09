@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement
+ 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel
@@ -25,10 +25,10 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement
+ 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
+
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 import java.util.ArrayList
 import java.util.HashMap
@@ -42,8 +42,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import java.util.Arrays
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop
 
+//import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
+
+//TODO Documentation
 /**
  * Generates code from your model files on save.
  * 
@@ -78,12 +84,18 @@ class CQLGenerator implements IGenerator2
 	
 	def CharSequence parseStatement(Statement stmt)
 	{
-		switch stmt.type 
+		switch stmt.type
 		{
-			Select_Statement : parseSelectStatement(stmt.type as Select_Statement)
-			Create_Statement : parseCreateStatement(stmt.type as Create_Statement)
-			StreamTo		 : parseStreamtoStatement(stmt.type as StreamTo)
-			Drop			 : parseDrop(stmt.type as Drop)
+			Select :
+			{
+				return parseSelect1(stmt.type as Select)
+			}
+			Create : 
+			{
+			return parseCreate(stmt.type as Create)
+			}
+			StreamTo		 : return parseStreamtoStatement(stmt.type as StreamTo)
+			Drop			 : return parseDrop(stmt.type as Drop)
 		}
 		
 	}
@@ -94,29 +106,27 @@ class CQLGenerator implements IGenerator2
 		return ''
 	}
 	
-	def CharSequence parseSelectStatement(Select_Statement stmt)
+	def CharSequence parseSelect1(Select stmt)
 	{
-		predicate = ''
-		var CharSequence s = ''
-		if(stmt.predicates == null)//SELECT attr1, ... / * FROM ...;
-		{
-			s = parseStatement1(stmt)
-		}
-		else
-		{ 
-			s = parseStatement2(stmt)
-		}
-		
-		var symbol1 = "operator_"+ getID() +" = "
+		var s = parseSelect2(stmt)
+		var result = "operator_"+ getID() +" = "
 		if(stmt.distinct != null) 
-			symbol1 += "DISTINCT(" + s + ")"
+			return result += "DISTINCT(" + s + ")"
 		else
-			symbol1 += s
-		
-		return symbol1
+			return result += s
 	}
 	
-	def CharSequence parseStatement1(Select_Statement stmt)
+	def CharSequence parseSelect2(Select stmt)
+	{
+		predicate = ''
+		
+		if(null == stmt.predicates)
+			return parseSelectWithoutPredicate(stmt)
+		else
+			return parseSelectWithPredicate(stmt)
+	}
+	
+	private def CharSequence parseSelectWithoutPredicate(Select stmt)
 	{
 
 		if(!stmt.attributes.empty)//SELECT attr1, ...
@@ -129,7 +139,7 @@ class CQLGenerator implements IGenerator2
 					attributes = result.get(0) as List<String>
 				    operator   = result.get(1).toString
 				
-					//Not necessary, it has been done before!
+					//FIXME Not necessary, it has been done before!
 					attributes.addAll(
 						stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
 					)
@@ -143,7 +153,7 @@ class CQLGenerator implements IGenerator2
 				{
 					if(stmt.sources.size == 1)
 					{
-						return '''«»«buildProjectOP(stmt.sources.get(0))»'''
+						return '''«buildProjectOP(stmt.sources.get(0))»'''
 					}
 					return '''«buildJoin(stmt.sources)»'''
 				}
@@ -152,7 +162,7 @@ class CQLGenerator implements IGenerator2
 			}
 	}
 	
-	def CharSequence parseStatement2(Select_Statement stmt)
+	private def CharSequence parseSelectWithPredicate(Select stmt)
 	{
 		
 	    var String operator = null
@@ -170,13 +180,12 @@ class CQLGenerator implements IGenerator2
 			
 		}
 		
-		var List<ExpressionsModel> predicates = newArrayList
-		predicates.add(stmt.predicates)
+		var List<Expression> predicates = newArrayList
+		predicates.add(stmt.predicates.elements.get(0))
 		if(stmt.having != null)
 		{
-			predicates.add(stmt.having)
+			predicates.add(stmt.having.elements.get(0))
 		}
-		println(predicates.size)
 		if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
 		{
 			return '''«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''	
@@ -195,7 +204,7 @@ class CQLGenerator implements IGenerator2
 	
 	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, Source src)
 	{
-		return buildAggregateOP(list, list2, buildWindowOP(src))
+		return buildAggregateOP(list, list2, checkForNestedStatement(src))
 	}
 	
 	def Object[] buildAggregateOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input)
@@ -244,10 +253,8 @@ class CQLGenerator implements IGenerator2
 				return a.datatype.toString
 		throw new IllegalArgumentException("given attribute " + attribute.name + "unknown")		
 	}
-	
-
-	
-	def CharSequence parseCreateStatement(Create_Statement stmt)
+		
+	def CharSequence parseCreate(Create stmt)
 	{
 		var symbol1 = ' := '
 		//var symbol1 = if(isView) ' := ' else ' = '
@@ -260,8 +267,12 @@ class CQLGenerator implements IGenerator2
 			}
 			if(ch.view.select != null) 
 			{
-				var str = parseSelectStatement(ch.view.select).toString
-				return str.replace(str.substring(0, str.indexOf("=")), ch.view.name + ":")
+				var str = parseSelect1(ch.view.select)
+					.toString
+//					.replaceAll("\\s*[\\r\\n]+\\s*", "")
+//					.trim()
+//					.replace(" ","")
+				return str.replace(("operator_" + count_ID + " = "), (ch.view.name + ":="))
 			}
 //			var str = parseCreateStatement(ch.view.create).toString
 //			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
@@ -282,7 +293,7 @@ class CQLGenerator implements IGenerator2
 	{
 		if(stmt.statement != null)
 		{
-			var s = parseSelectStatement(stmt.statement).toString
+			var s = parseSelect1(stmt.statement).toString
 			streamto.put(stmt.name, s.subSequence(s.indexOf('=') + 1, s.length).toString)		
 		}
 		else
@@ -396,7 +407,7 @@ class CQLGenerator implements IGenerator2
 	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs, CharSequence input2)
 	{
 		var args = srcs.stream.map(
-			e|buildWindowOP(e).toString
+			e|checkForNestedStatement(e).toString
 		).collect(Collectors.toList)
 		
 		if(input2 != null)
@@ -446,7 +457,7 @@ class CQLGenerator implements IGenerator2
 	{
 		
 		var args = scrs.stream.map(
-			e|buildWindowOP(e).toString
+			e|checkForNestedStatement(e).toString
 		).collect(Collectors.toList)
 
 		return buildJoin(null, args)
@@ -469,28 +480,38 @@ class CQLGenerator implements IGenerator2
 	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
 	 * and a char sequence to define the input operator. 
 	 */
-	def CharSequence buildSelectOP(ExpressionsModel predicate, CharSequence operator)
+	def CharSequence buildSelectOP(Expression predicate, CharSequence operator)
 	{
 		predicate = ''
-		return '''SELECT({predicate='«buildPredicate(predicate.elements.get(0))»'},«operator»)'''
+		return '''SELECT({predicate='«buildPredicate(predicate)»'},«operator»)'''
 	}
-
+	
 	/**
 	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
 	 * and a char sequence to define the input operator. 
 	 */
-	def CharSequence buildSelectOP(List<ExpressionsModel> predicate, CharSequence operator)
-	{	
-		var predicates = ''
-		for(var i = 0; i < predicate.size - 1; i++)
-		{
-			predicate = ''
-			predicates += buildPredicate(predicate.get(i).elements.get(0)) + ' && '	
-		}	
+	def CharSequence buildSelectOP(List<Expression> predicate, CharSequence operator)
+	{
 		predicate = ''
-		predicates += buildPredicate(predicate.get(predicate.size - 1).elements.get(0))	
-		return '''SELECT({predicate='«predicates»'},«operator»)'''
+		return '''SELECT({predicate='«buildPredicate(predicate)»'},«operator»)'''
 	}
+
+//	/**
+//	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
+//	 * and a char sequence to define the input operator. 
+//	 */
+//	def CharSequence buildSelectOP(List<ExpressionsModel> predicate, CharSequence operator)
+//	{	
+//		var predicates = ''
+//		for(var i = 0; i < predicate.size - 1; i++)
+//		{
+//			predicate = ''
+//			predicates += buildPredicate(predicate.get(i).elements.get(0)) + ' && '	
+//		}	
+//		predicate = ''
+//		predicates += buildPredicate(predicate.get(predicate.size - 1).elements.get(0))	
+//		return '''SELECT({predicate='«predicates»'},«operator»)'''
+//	}
 
 	/**
 	 * Builds a project operator with a list of {@link Attribute} and {@link Source}
@@ -552,12 +573,12 @@ class CQLGenerator implements IGenerator2
 			return '''PROJECT(
 						{
 							attributes=[«generateListString(getAttributeNamesFrom(src.name))»]
-						},«buildWindowOP(src)»)'''
+						},«checkForNestedStatement(src)»)'''
 		}
 		return '''PROJECT(
 				  	{
 				  		attributes=[«generateListString(attributes)»]
-				  	},«buildWindowOP(src)»)'''
+				  	},«checkForNestedStatement(src)»)'''
 	}
 	
 	//TODO String have to be encupseld between '
@@ -642,6 +663,31 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 	
+	def CharSequence buildPredicate(List<Expression> expressions)
+	{
+		var s = ''
+		for(var i = 0 ; i < expressions.size - 1; i++)
+		{
+			predicate = ''
+			s += buildPredicate(expressions.get(i)) + '&&'
+		}
+		predicate = ''
+		s += buildPredicate(expressions.get(expressions.size - 1))
+		return s
+	}
+	
+	def CharSequence checkForNestedStatement(Source src)
+	{
+		if(src.nested != null)
+		{
+			return parseSelect2(src.nested)
+		}
+		else
+		{
+			return buildWindowOP(src)
+		}
+	}
+
 	def CharSequence buildWindowOP(Source src)
 	{
 		if(src.time != null)
@@ -685,7 +731,11 @@ class CQLGenerator implements IGenerator2
 						   )'''
 			}			
 		}
-		else { return src.name }
+		else 
+		{ 
+			return src.name
+		}
+		
 	}
 
 	/**

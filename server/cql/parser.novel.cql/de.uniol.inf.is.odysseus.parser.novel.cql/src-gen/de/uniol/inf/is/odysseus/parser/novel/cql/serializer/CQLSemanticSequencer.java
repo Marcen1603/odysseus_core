@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
@@ -29,10 +29,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Order;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Scalar_Function;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select_Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
@@ -78,8 +76,19 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				sequence_And(context, (And) semanticObject); 
 				return; 
 			case CQLPackage.ATTRIBUTE:
-				sequence_Attribute(context, (Attribute) semanticObject); 
-				return; 
+				if (rule == grammarAccess.getAttributeAsNestedStatementRule()) {
+					sequence_AttributeAsNestedStatement(context, (Attribute) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getAttributeWithoutAliasRule()) {
+					sequence_AttributeWithoutAlias(context, (Attribute) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getAttributeRule()) {
+					sequence_Attribute(context, (Attribute) semanticObject); 
+					return; 
+				}
+				else break;
 			case CQLPackage.ATTRIBUTE_REF:
 				sequence_Atomic(context, (AttributeRef) semanticObject); 
 				return; 
@@ -101,8 +110,8 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.COMPARISION:
 				sequence_Comparison(context, (Comparision) semanticObject); 
 				return; 
-			case CQLPackage.CREATE_STATEMENT:
-				sequence_Create_Statement(context, (Create_Statement) semanticObject); 
+			case CQLPackage.CREATE:
+				sequence_Create(context, (Create) semanticObject); 
 				return; 
 			case CQLPackage.DATA_TYPE:
 				sequence_DataType(context, (DataType) semanticObject); 
@@ -137,17 +146,11 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.OR:
 				sequence_Or(context, (Or) semanticObject); 
 				return; 
-			case CQLPackage.ORDER:
-				sequence_Order(context, (Order) semanticObject); 
-				return; 
 			case CQLPackage.PLUS:
 				sequence_PlusOrMinus(context, (Plus) semanticObject); 
 				return; 
-			case CQLPackage.SCALAR_FUNCTION:
-				sequence_Scalar_Function(context, (Scalar_Function) semanticObject); 
-				return; 
-			case CQLPackage.SELECT_STATEMENT:
-				sequence_Select_Statement(context, (Select_Statement) semanticObject); 
+			case CQLPackage.SELECT:
+				sequence_Select(context, (Select) semanticObject); 
 				return; 
 			case CQLPackage.SOURCE:
 				sequence_Source(context, (Source) semanticObject); 
@@ -201,7 +204,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Aggregation returns Aggregation
 	 *
 	 * Constraint:
-	 *     (name=ID attribute=Attribute alias=Alias?)
+	 *     (name=ID attribute=AttributeWithoutAlias alias=Alias?)
 	 */
 	protected void sequence_Aggregation(ISerializationContext context, Aggregation semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -253,7 +256,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Atomic returns AttributeRef
 	 *     Expression returns AttributeRef
 	 *     Or returns AttributeRef
 	 *     Or.Or_1_0 returns AttributeRef
@@ -269,9 +271,10 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     MulOrDiv returns AttributeRef
 	 *     MulOrDiv.MulOrDiv_1_0 returns AttributeRef
 	 *     Primary returns AttributeRef
+	 *     Atomic returns AttributeRef
 	 *
 	 * Constraint:
-	 *     value=Attribute
+	 *     value=AttributeWithoutAlias
 	 */
 	protected void sequence_Atomic(ISerializationContext context, AttributeRef semanticObject) {
 		if (errorAcceptor != null) {
@@ -279,14 +282,13 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_REF__VALUE));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAtomicAccess().getValueAttributeParserRuleCall_4_1_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getAtomicAccess().getValueAttributeWithoutAliasParserRuleCall_4_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     Atomic returns BoolConstant
 	 *     Expression returns BoolConstant
 	 *     Or returns BoolConstant
 	 *     Or.Or_1_0 returns BoolConstant
@@ -302,6 +304,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     MulOrDiv returns BoolConstant
 	 *     MulOrDiv.MulOrDiv_1_0 returns BoolConstant
 	 *     Primary returns BoolConstant
+	 *     Atomic returns BoolConstant
 	 *
 	 * Constraint:
 	 *     (value='TRUE' | value='FALSE')
@@ -313,7 +316,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Atomic returns FloatConstant
 	 *     Expression returns FloatConstant
 	 *     Or returns FloatConstant
 	 *     Or.Or_1_0 returns FloatConstant
@@ -329,6 +331,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     MulOrDiv returns FloatConstant
 	 *     MulOrDiv.MulOrDiv_1_0 returns FloatConstant
 	 *     Primary returns FloatConstant
+	 *     Atomic returns FloatConstant
 	 *
 	 * Constraint:
 	 *     value=FLOAT_NUMBER
@@ -346,7 +349,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Atomic returns IntConstant
 	 *     Expression returns IntConstant
 	 *     Or returns IntConstant
 	 *     Or.Or_1_0 returns IntConstant
@@ -362,6 +364,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     MulOrDiv returns IntConstant
 	 *     MulOrDiv.MulOrDiv_1_0 returns IntConstant
 	 *     Primary returns IntConstant
+	 *     Atomic returns IntConstant
 	 *
 	 * Constraint:
 	 *     value=INT
@@ -379,7 +382,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Atomic returns StringConstant
 	 *     Expression returns StringConstant
 	 *     Or returns StringConstant
 	 *     Or.Or_1_0 returns StringConstant
@@ -395,6 +397,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     MulOrDiv returns StringConstant
 	 *     MulOrDiv.MulOrDiv_1_0 returns StringConstant
 	 *     Primary returns StringConstant
+	 *     Atomic returns StringConstant
 	 *
 	 * Constraint:
 	 *     value=STRING
@@ -406,6 +409,42 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getAtomicAccess().getValueSTRINGTerminalRuleCall_2_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AttributeAsNestedStatement returns Attribute
+	 *
+	 * Constraint:
+	 *     nested=NestedStatement
+	 */
+	protected void sequence_AttributeAsNestedStatement(ISerializationContext context, Attribute semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE__NESTED) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE__NESTED));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAttributeAsNestedStatementAccess().getNestedNestedStatementParserRuleCall_0(), semanticObject.getNested());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AttributeWithoutAlias returns Attribute
+	 *
+	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_AttributeWithoutAlias(ISerializationContext context, Attribute semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAttributeWithoutAliasAccess().getNameIDTerminalRuleCall_0(), semanticObject.getName());
 		feeder.finish();
 	}
 	
@@ -446,7 +485,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     ChannelFormatView returns ChannelFormatView
 	 *
 	 * Constraint:
-	 *     (name=ID select=Select_Statement)
+	 *     (name=ID select=Select)
 	 */
 	protected void sequence_ChannelFormatView(ISerializationContext context, ChannelFormatView semanticObject) {
 		if (errorAcceptor != null) {
@@ -457,7 +496,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getChannelFormatViewAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getChannelFormatViewAccess().getSelectSelect_StatementParserRuleCall_4_0(), semanticObject.getSelect());
+		feeder.accept(grammarAccess.getChannelFormatViewAccess().getSelectSelectParserRuleCall_4_0(), semanticObject.getSelect());
 		feeder.finish();
 	}
 	
@@ -496,12 +535,12 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Create_Statement returns Create_Statement
+	 *     Create returns Create
 	 *
 	 * Constraint:
-	 *     (channelformat=ChannelFormat | accessframework=AccessFramework)
+	 *     ((name='CREATE' | name='ATTACH') (channelformat=ChannelFormat | accessframework=AccessFramework))
 	 */
-	protected void sequence_Create_Statement(ISerializationContext context, Create_Statement semanticObject) {
+	protected void sequence_Create(ISerializationContext context, Create semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -561,7 +600,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     ExpressionsModel returns ExpressionsModel
 	 *
 	 * Constraint:
-	 *     elements+=Expression+
+	 *     elements+=Expression
 	 */
 	protected void sequence_ExpressionsModel(ISerializationContext context, ExpressionsModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -625,18 +664,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		feeder.accept(grammarAccess.getOrAccess().getOrLeftAction_1_0(), semanticObject.getLeft());
 		feeder.accept(grammarAccess.getOrAccess().getRightAndParserRuleCall_1_2_0(), semanticObject.getRight());
 		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Order returns Order
-	 *
-	 * Constraint:
-	 *     (attribute=Attribute (direction='ASC' | direction='DESC'))
-	 */
-	protected void sequence_Order(ISerializationContext context, Order semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -770,40 +797,22 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Scalar_Function returns Scalar_Function
-	 *
-	 * Constraint:
-	 *     name=ID
-	 */
-	protected void sequence_Scalar_Function(ISerializationContext context, Scalar_Function semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.SCALAR_FUNCTION__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.SCALAR_FUNCTION__NAME));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getScalar_FunctionAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Nested_Statement returns Select_Statement
-	 *     Select_Statement returns Select_Statement
+	 *     NestedStatement returns Select
+	 *     Select returns Select
 	 *
 	 * Constraint:
 	 *     (
 	 *         name='SELECT' 
 	 *         distinct='DISTINCT'? 
-	 *         attributes+=Attribute? 
-	 *         ((aggregations+=Aggregation | attributes+=Attribute | aggregations+=Aggregation)? attributes+=Attribute?)* 
-	 *         ((sources+=Source | nested+=Nested_Statement | sources+=Source)? (nested+=Nested_Statement nestedAliases+=Alias)?)+ 
+	 *         (attributes+=Attribute | aggregations+=Aggregation | attributes+=Attribute | aggregations+=Aggregation)* 
+	 *         sources+=Source+ 
+	 *         sources+=Source* 
 	 *         predicates=ExpressionsModel? 
 	 *         (order+=Attribute+ order+=Attribute*)? 
 	 *         having=ExpressionsModel?
 	 *     )
 	 */
-	protected void sequence_Select_Statement(ISerializationContext context, Select_Statement semanticObject) {
+	protected void sequence_Select(ISerializationContext context, Select semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -813,7 +822,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Source returns Source
 	 *
 	 * Constraint:
-	 *     (name=ID (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)? alias=Alias?)
+	 *     (((name=ID (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)?) | nested=NestedStatement) alias=Alias?)
 	 */
 	protected void sequence_Source(ISerializationContext context, Source semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -825,7 +834,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Statement returns Statement
 	 *
 	 * Constraint:
-	 *     (type=Select_Statement | type=Create_Statement | type=StreamTo | type=Drop)
+	 *     (type=Select | type=Create | type=StreamTo | type=Drop)
 	 */
 	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -837,7 +846,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     StreamTo returns StreamTo
 	 *
 	 * Constraint:
-	 *     (name=ID (statement=Select_Statement | inputname=ID))
+	 *     (name=ID (statement=Select | inputname=ID))
 	 */
 	protected void sequence_StreamTo(ISerializationContext context, StreamTo semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
