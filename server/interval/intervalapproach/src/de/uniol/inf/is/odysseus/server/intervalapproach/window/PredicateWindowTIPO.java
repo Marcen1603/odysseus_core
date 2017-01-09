@@ -20,9 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -99,10 +102,10 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			// end is not set --> use negated start predicate
 			// maximum window size reached
 
-			if ((end != null && end.evaluate(object))
-					|| (end == null && !startEval)
-					|| (maxWindowTime > 0 && PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).afterOrEquals(object.getMetadata().getStart()))) {
-				if (keepEndElement){
+			if ((end != null && end.evaluate(object)) || (end == null && !startEval)
+					|| (maxWindowTime > 0 && PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
+							.afterOrEquals(object.getMetadata().getStart()))) {
+				if (keepEndElement) {
 					appendData(object, bufferId, buffer);
 				}
 				openedWindow.put(bufferId, false);
@@ -160,6 +163,31 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		// maxWindowTime).afterOrEquals(punctuation.getTime())) {
 		// produceData(punctuation.getTime());
 		// }
+
+	}
+
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof PredicateWindowTIPO)) {
+			return false;
+		}
+		PredicateWindowTIPO<IStreamObject<ITimeInterval>> other = (PredicateWindowTIPO<IStreamObject<ITimeInterval>>) ipo;
+		if (!Objects.equal(this.start,other.start)) {
+			return false;
+		}
+		if (!Objects.equal(this.end, other.end)){
+			return false;
+		}
+		if (this.maxWindowTime != other.maxWindowTime){
+			return false;
+		}
+		if (this.sameStarttime != other.sameStarttime){
+			return false;
+		}
+		if (this.keepEndElement != other.keepEndElement){
+			return false;
+		}
+		return super.isSemanticallyEqual(ipo);
 
 	}
 
