@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.openmbean.OpenDataException;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -74,6 +72,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			this.maxWindowTime = 0;
 		}
 		this.sameStarttime = windowao.isSameStarttime();
+		// needed, so all elements in the process_done phase get the same start timestamp
+		this.usesSlideParam = this.sameStarttime;
 	}
 
 	@Override

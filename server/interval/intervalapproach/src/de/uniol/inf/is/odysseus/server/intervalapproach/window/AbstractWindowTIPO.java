@@ -38,7 +38,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected long windowAdvance;
 	protected final WindowType windowType;
 	protected final boolean partitioned;
-	final boolean usesSlideParam;
+	protected boolean usesSlideParam;
 
 	private final TimeUnit baseTimeUnit;
 	private final List<SDFAttribute> partitionedBy;
