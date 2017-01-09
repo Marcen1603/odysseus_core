@@ -275,7 +275,7 @@ public class MigrationHelper {
 			if (latest == null || (end != null && latest.before(end))) {
 				latest = end;
 			}
-			LOG.trace("Max timestamp for operator {} was {}", po.getName(), end);
+			LOG.debug("Max timestamp for operator {} was {}", po.getName(), end);
 		}
 
 		return latest;

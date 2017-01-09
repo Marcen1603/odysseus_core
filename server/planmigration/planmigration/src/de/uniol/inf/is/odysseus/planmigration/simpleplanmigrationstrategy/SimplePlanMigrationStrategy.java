@@ -199,6 +199,16 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			time = System.currentTimeMillis();
 			LOG.debug("Insert Blocking-Buffer after source ... done at {}", time);
 		}
+		
+		MigrationHelper.blockAllBuffers(lastOperatorOldPlan);
+
+		PointInTime maxEndTs = MigrationHelper.findMaxEndTimestaminPlan(oldPlanRoot);
+		
+		// resume by unblocking buffers
+//		for (BufferPO<?> buffer : context.getBufferPOs()) {
+//			((MigrationBuffer) buffer).markMigrationStart(maxEndTs);
+//		}
+
 
 		IPipe<?, ?> router = new MigrationRouterPO(oldPlanSources, 0, 1);
 
@@ -206,6 +216,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		context.setRouter(router);
 		context.setOldPlanRoot(oldPlanRoot);
+		
+		((MigrationRouterPO<?>) context.getRouter()).setMigrationStartPoint(maxEndTs);
 
 		this.routerStrategy.put((MigrationRouterPO<?>) router, context);
 		LOG.debug("Router: " + router.getClass().getSimpleName() + " (#" + router.hashCode() + ") has been put to map");
@@ -251,15 +263,6 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 
 		LOG.debug("Marking migration starts");
-
-		MigrationHelper.blockAllBuffers(lastOperatorOldPlan);
-
-		PointInTime maxEndTs = MigrationHelper.findMaxEndTimestaminPlan(root);
-		// resume by unblocking buffers
-//		for (BufferPO<?> buffer : context.getBufferPOs()) {
-//			((MigrationBuffer) buffer).markMigrationStart(maxEndTs);
-//		}
-		((MigrationRouterPO<?>) context.getRouter()).setMigrationStartPoint(maxEndTs);
 
 		MigrationHelper.unblockAllBuffers(lastOperatorOldPlan);
 

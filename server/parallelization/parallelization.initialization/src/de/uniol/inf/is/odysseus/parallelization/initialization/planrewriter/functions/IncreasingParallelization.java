@@ -24,6 +24,7 @@ public class IncreasingParallelization implements IPlanRewriteFunction {
 	private final static String NAME = "IncreasingParallelization";
 
 	private static int parallelizationDegree = 2;
+	private static final int bufferSize = 100000;
 
 	/*
 	 * (non-Javadoc)
@@ -50,7 +51,7 @@ public class IncreasingParallelization implements IPlanRewriteFunction {
 			Collection<IQueryBuildSetting<?>> settings) {
 		for (IParallelizationIndividualConfiguration config : possibleParallelizations) {
 			config.setParallelizationDegree(parallelizationDegree);
-			config.setBufferSize(10000);
+			config.setBufferSize(bufferSize);
 			LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier() + " to "
 					+ parallelizationDegree + ".");
 			LOG.debug("Partitioning strategy: " + config.getClass());

@@ -125,6 +125,15 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 						}
 					}
 					transferNext(outIter.next());
+					while (isPaused()) {
+						try {
+							synchronized (runner) {
+								runner.wait(100);
+							}
+						} catch (InterruptedException e) {
+							LOG.error("Paused ThreadedBuffer was interupted.", e);
+						}
+					}
 					outIter.remove();
 				}
 				lockOutput.unlock();

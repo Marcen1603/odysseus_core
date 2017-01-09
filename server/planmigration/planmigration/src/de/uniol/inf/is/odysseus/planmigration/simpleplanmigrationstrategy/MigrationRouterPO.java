@@ -107,6 +107,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	@Override
 	protected void process_next(R object, int port) {
 		if (this.migrationStart == null) {
+			this.migrationStart = object.getMetadata().getStart();
 			LOG.error("Migrationstart not set.");
 		}
 		if (isPrintNextTuple()) {
@@ -345,6 +346,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	public void setMigrationStartPoint(PointInTime point) {
+		LOG.debug("Set migration timestamp to {}.",point);
 		this.migrationStart = point;
 	}
 }
