@@ -108,7 +108,7 @@ class CQLGenerator implements IGenerator2
 	
 	def CharSequence parseSelect1(Select stmt)
 	{
-		var s = parseSelect2(stmt)
+		var s = parseSelect(stmt)
 		var result = "operator_"+ getID() +" = "
 		if(stmt.distinct != null) 
 			return result += "DISTINCT(" + s + ")"
@@ -116,7 +116,7 @@ class CQLGenerator implements IGenerator2
 			return result += s
 	}
 	
-	def CharSequence parseSelect2(Select stmt)
+	def CharSequence parseSelect(Select stmt)
 	{
 		predicate = ''
 		
@@ -680,7 +680,7 @@ class CQLGenerator implements IGenerator2
 	{
 		if(src.nested != null)
 		{
-			return parseSelect2(src.nested)
+			return parseSelect(src.nested)
 		}
 		else
 		{

@@ -553,6 +553,22 @@ class CQLParsingTest
 		)
 	}
 	
+	@Test def void NestedStatementTest2()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1, attr3 FROM (SELECT attr1 FROM stream1) AS s1, (SELECT * FROM stream2)"
+			,
+			"operator_1 = PROJECT({attributes=['attr1', 'attr3']}, 
+				JOIN(
+						PROJECT({attributes=['attr1']}, stream1),
+						PROJECT({attributes=['attr4', 'attr3']}, stream2)
+				    )
+			)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
 	@Test def void DistinctTest()
 	{
 		assertCorrectGenerated
