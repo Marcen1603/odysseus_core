@@ -51,7 +51,8 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	final private IPredicate<? super T> end;
 	final private long maxWindowTime;
 	final private boolean sameStarttime;
-	private Map<Object, Boolean> openedWindow = new HashMap<>();
+	final private Map<Object, Boolean> openedWindow = new HashMap<>();
+	final private boolean keepEndElement;
 
 	@SuppressWarnings("unchecked")
 	public PredicateWindowTIPO(AbstractWindowAO windowao) {
@@ -72,8 +73,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			this.maxWindowTime = 0;
 		}
 		this.sameStarttime = windowao.isSameStarttime();
-		// needed, so all elements in the process_done phase get the same start timestamp
+		// needed, so all elements in the process_done phase get the same start
+		// timestamp
 		this.usesSlideParam = this.sameStarttime;
+
+		this.keepEndElement = windowao.isKeepEndElement();
 	}
 
 	@Override
@@ -94,9 +98,13 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 			// Two cases: end is set --> use end predicate
 			// end is not set --> use negated start predicate
 			// maximum window size reached
-			if ((end != null && end.evaluate(object)) || (end == null && !startEval)
-					|| (maxWindowTime > 0 && PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
-							.afterOrEquals(object.getMetadata().getStart()))) {
+
+			if ((end != null && end.evaluate(object))
+					|| (end == null && !startEval)
+					|| (maxWindowTime > 0 && PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime).afterOrEquals(object.getMetadata().getStart()))) {
+				if (keepEndElement){
+					appendData(object, bufferId, buffer);
+				}
 				openedWindow.put(bufferId, false);
 				produceData(object.getMetadata().getStart(), bufferId, buffer);
 			} else {
