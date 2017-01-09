@@ -175,7 +175,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 			LOG.debug("Insert Blocking-Buffer after source " + source.getClass().getSimpleName() + " ("
 					+ source.hashCode() + ")");
-			MigrationBuffer buffer = new MigrationBuffer();
+			BufferPO buffer = new BufferPO();
 			try {
 				buffer.open(null);
 			} catch (OpenFailedException e) {
@@ -189,7 +189,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			buffer.setOutputSchema(source.getOutputSchema());
 
 			// set the source for this buffer in case it is empty
-			buffer.setSource((ISource<?>) source);
+			//buffer.setSource((ISource<?>) source);
 			context.addBufferPO(buffer);
 			// TODO search downstream for equivalent operators that don't have
 			// to be migrated
@@ -256,9 +256,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		PointInTime maxEndTs = MigrationHelper.findMaxEndTimestaminPlan(root);
 		// resume by unblocking buffers
-		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			((MigrationBuffer) buffer).markMigrationStart(maxEndTs);
-		}
+//		for (BufferPO<?> buffer : context.getBufferPOs()) {
+//			((MigrationBuffer) buffer).markMigrationStart(maxEndTs);
+//		}
 		((MigrationRouterPO<?>) context.getRouter()).setMigrationStartPoint(maxEndTs);
 
 		MigrationHelper.unblockAllBuffers(lastOperatorOldPlan);

@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
  * 
  */
 public class MigrationHelper {
-	
+
 	private static Logger LOG = LoggerFactory.getLogger(MigrationHelper.class);
 
 	/**
@@ -218,21 +218,43 @@ public class MigrationHelper {
 	}
 
 	public static void blockAllBuffers(IPhysicalOperator op) {
+		blockAllBuffers(op, new ArrayList<IPhysicalOperator>());
+	}
+	
+	private static void blockAllBuffers(IPhysicalOperator op, List<IPhysicalOperator> alreadyVisited){
+		if(alreadyVisited.contains(op)){
+			return;
+		}
+		alreadyVisited.add(op);
 		if (op instanceof ISink<?>) {
 			for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
-				blockAllBuffers((IPhysicalOperator) sub.getTarget());
+				blockAllBuffers((IPhysicalOperator) sub.getTarget(),alreadyVisited);
 				if (op instanceof ThreadedBufferPO) {
 					((ThreadedBufferPO<?>) op).pauseRunner();
+					LOG.trace("Paused ThreadedBufferPO {}. It contained {} elements", op.getName(),
+							((ThreadedBufferPO<?>) op).getInputBufferSize()
+									+ ((ThreadedBufferPO<?>) op).getOutputBufferSize());
 				}
 			}
 		}
 	}
-
+	
 	public static void unblockAllBuffers(IPhysicalOperator op) {
+		unblockAllBuffers(op, new ArrayList<IPhysicalOperator>());
+	}
+
+	private static void unblockAllBuffers(IPhysicalOperator op, List<IPhysicalOperator> alreadyVisited) {
 		if (op instanceof ISink<?>) {
+			if(alreadyVisited.contains(op)){
+				return;
+			}
+			alreadyVisited.add(op);
 			for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
-				unblockAllBuffers((IPhysicalOperator) sub.getTarget());
+				unblockAllBuffers((IPhysicalOperator) sub.getTarget(),alreadyVisited);
 				if (op instanceof ThreadedBufferPO) {
+					LOG.trace("Unpaused ThreadedBufferPO {}. It contained {} elements", op.getName(),
+							((ThreadedBufferPO<?>) op).getInputBufferSize()
+									+ ((ThreadedBufferPO<?>) op).getOutputBufferSize());
 					((ThreadedBufferPO<?>) op).unpauseRunner();
 				}
 			}
@@ -245,7 +267,7 @@ public class MigrationHelper {
 		// TODO add support for additional operator types
 		GenericGraphWalker walker = new GenericGraphWalker();
 		CollectOperatorPhysicalGraphVisitor<IPhysicalOperator> visitor = new CollectOperatorPhysicalGraphVisitor(
-				IStatefulOperator.class,true);
+				IStatefulOperator.class, true);
 		walker.prefixWalkPhysical(root, visitor);
 		Set<IPhysicalOperator> statefulPos = visitor.getResult();
 		for (IPhysicalOperator po : statefulPos) {
@@ -253,7 +275,7 @@ public class MigrationHelper {
 			if (latest == null || (end != null && latest.before(end))) {
 				latest = end;
 			}
-			LOG.info("Max timestamp for operator {} was {}",po.getName(),end);
+			LOG.trace("Max timestamp for operator {} was {}", po.getName(), end);
 		}
 
 		return latest;

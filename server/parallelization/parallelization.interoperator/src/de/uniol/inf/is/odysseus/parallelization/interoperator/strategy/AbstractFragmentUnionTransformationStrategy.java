@@ -103,7 +103,7 @@ public abstract class AbstractFragmentUnionTransformationStrategy<T extends ILog
 	private int doSubscriptions(int bufferCounter, int i, ILogicalOperator newOperator) {
 		// for every fragementation operator do subscriptions
 		for (Pair<AbstractStaticFragmentAO, Integer> pair : fragmentsSinkInPorts) {
-			BufferAO buffer = createBufferOperator(bufferCounter);
+			BufferAO buffer = createBufferOperator(bufferCounter,newOperator.getName());
 			bufferCounter++;
 
 			buffer.subscribeToSource(pair.getE1(), 0, i, pair.getE1().getOutputSchema());
@@ -113,9 +113,9 @@ public abstract class AbstractFragmentUnionTransformationStrategy<T extends ILog
 		return bufferCounter;
 	}
 
-	private BufferAO createBufferOperator(int bufferCounter) {
+	private BufferAO createBufferOperator(int bufferCounter, String targetName) {
 		BufferAO buffer = new BufferAO();
-		buffer.setName("Buffer_" + bufferCounter);
+		buffer.setName("Buffer_"+ targetName + "_" + bufferCounter);
 		buffer.setThreaded(configuration.isUseThreadedBuffer());
 		buffer.setMaxBufferSize(configuration.getBufferSize());
 
