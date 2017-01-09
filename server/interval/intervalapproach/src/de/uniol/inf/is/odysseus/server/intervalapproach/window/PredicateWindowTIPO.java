@@ -127,7 +127,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 		while (!buffer.isEmpty()) {
 			T toTransfer = buffer.remove(0);
 			if (start != null) {
-				toTransfer.getMetadata().setStart(start);
+				toTransfer.getMetadata().setStart(new PointInTime(start));
 			}
 			// We can produce tuple with no validity --> Do not send them
 			if (endTimestamp.after(toTransfer.getMetadata().getStart())) {

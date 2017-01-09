@@ -48,10 +48,10 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	public AbstractPartitionedWindowTIPO(AbstractWindowAO ao) {
 		super(ao);
 	}
-	
+
 	protected AbstractPartitionedWindowTIPO(WindowType windowType, TimeUnit baseTimeUnit,
 			TimeValueItem windowSize, TimeValueItem windowAdvance,
-			TimeValueItem windowSlide, 
+			TimeValueItem windowSlide,
 			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
 		super(windowType, baseTimeUnit, windowSize, windowAdvance, windowSlide, true, partitionedBy, inputSchema);
 	}
@@ -64,7 +64,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	public void setGroupProcessor(IGroupProcessor<T, T> groupProcessor) {
 		this.groupProcessor = groupProcessor;
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
@@ -154,8 +154,9 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 				bufferIter.remove();
 				// If slide param is used give all elements of the window
 				// the same start timestamp
+				// Remark: Copy to keep order with tibreak!
 				if (usesSlideParam) {
-					toReturn.getMetadata().setStart(start);
+					toReturn.getMetadata().setStart(new PointInTime(start));
 				}
 				// We can produce tuple with no validity --> Do not send them
 				if (toReturn.getMetadata().getStart().before(ts)) {
@@ -209,7 +210,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 			state.setBuffers(buffers);
 			state.setGroupProcessor(groupProcessor);
 			state.setLastTs(lastTs);
-			state.setTransferArea(transferArea);			
+			state.setTransferArea(transferArea);
 		}
 		return state;
 	}
@@ -224,13 +225,13 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 				groupProcessor = state.getGroupProcessor();
 				lastTs = state.getLastTs();
 				transferArea = state.getTransferArea();
-				transferArea.setTransfer(this);				
+				transferArea.setTransfer(this);
 			}
 		} catch (Throwable T) {
 			LOG.error("The serializable state to set for the SlidingElementWindowTIPO is not a valid SlidingElementWindowTIPOState!");
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider#getKeyValues()
 	 */
