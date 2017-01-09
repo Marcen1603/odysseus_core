@@ -50,8 +50,9 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	public static final Logger LOG = LoggerFactory.getLogger(MigrationRouterPO.class);
 
 	// left is old and right is new
-	//private Map<ISource<?>, Pair<IPunctuation, IPunctuation>> sourcesToPunctuations;
-	//private Map<ISource<?>, Pair<Integer, Integer>> pathesFromSource;
+	// private Map<ISource<?>, Pair<IPunctuation, IPunctuation>>
+	// sourcesToPunctuations;
+	// private Map<ISource<?>, Pair<Integer, Integer>> pathesFromSource;
 	private int inPortOld;
 	private int inPortNew;
 	private boolean finished;
@@ -68,11 +69,13 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			throw new IllegalArgumentException((inPortOld == inPortNew ? "Input ports of old and new plan are equal."
 					: "Sources are null or empty."));
 		}
-		//this.sourcesToPunctuations = new HashMap<ISource<?>, Pair<IPunctuation, IPunctuation>>();
-		//this.pathesFromSource = new HashMap<>();
-		//for (ISource<?> source : sources) {
-		//	this.sourcesToPunctuations.put(source, new Pair<IPunctuation, IPunctuation>(null, null));
-		//}
+		// this.sourcesToPunctuations = new HashMap<ISource<?>,
+		// Pair<IPunctuation, IPunctuation>>();
+		// this.pathesFromSource = new HashMap<>();
+		// for (ISource<?> source : sources) {
+		// this.sourcesToPunctuations.put(source, new Pair<IPunctuation,
+		// IPunctuation>(null, null));
+		// }
 		this.inPortOld = inPortOld;
 		this.inPortNew = inPortNew;
 		this.listener = new HashSet<IMigrationListener>();
@@ -84,11 +87,13 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			throw new IllegalArgumentException((inPortOld == inPortNew ? "Input ports of old and new plan are equal."
 					: "Sources are null or empty."));
 		}
-		//this.sourcesToPunctuations = new HashMap<ISource<?>, Pair<IPunctuation, IPunctuation>>();
-		//this.pathesFromSource = new HashMap<>();
-		//for (ISource<?> source : sources) {
-		//	this.sourcesToPunctuations.put(source, new Pair<IPunctuation, IPunctuation>(null, null));
-		//}
+		// this.sourcesToPunctuations = new HashMap<ISource<?>,
+		// Pair<IPunctuation, IPunctuation>>();
+		// this.pathesFromSource = new HashMap<>();
+		// for (ISource<?> source : sources) {
+		// this.sourcesToPunctuations.put(source, new Pair<IPunctuation,
+		// IPunctuation>(null, null));
+		// }
 		this.inPortOld = inPortOld;
 		this.inPortNew = inPortNew;
 		this.listener = new HashSet<IMigrationListener>();
@@ -127,23 +132,28 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 				}
 			} else
 
-			// transfer old objects if the port is correct. 
+			// transfer old objects if the port is correct.
 			if (port == this.inPortOld) {
-				// transfer if elements starttimestamp is not after migrationstart timestamp
+				// transfer if elements starttimestamp is not after
+				// migrationstart timestamp
 				if (object.getMetadata().getStart().beforeOrEquals(migrationStart)) {
 					transfer = true;
-				} else if(!this.finished){
+				} else if (!this.finished) {
+					LOG.debug("Latestendtimestamp was at migration start in old plan was {}", this.migrationStart);
+					LOG.debug("First element of old plan not transfered was {}", object);
 					this.finished = true;
 					migrationFinished = true;
 				}
 			}
 		}
 		if (transfer) {
-			transfer(object);
+			synchronized (this.newPlanBuffer) {
+				transfer(object);
+			}
 		}
 		if (migrationFinished) {
-			this.drainBuffer();
-			fireMigrationFinishedEvent(this);
+				this.drainBuffer();
+				fireMigrationFinishedEvent(this);
 		}
 	}
 
@@ -174,59 +184,70 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 	// return false;
 	// }
 
-//	private synchronized void process_migrationMarkerPunctuation(MigrationMarkerPunctuation p, int port)
-//			throws MigrationException {
-//		Pair<IPunctuation, IPunctuation> pair = this.sourcesToPunctuations.get(p.getSource());
-//		Pair<Integer, Integer> pathesPair = this.pathesFromSource.get(p.getSource());
-//		LOG.debug("Receiced punctuation for {} ", p.toString());
-//		if (pair == null) {
-//			throw new MigrationException("Source " + p.getSource().getClass().getSimpleName() + " ("
-//					+ p.getSource().hashCode() + ") is not known to the RouterPO (" + hashCode() + ")");
-//		}
-//		if (port == inPortOld) {
-//			pair = new Pair<IPunctuation, IPunctuation>(p, pair.getE2());
-//			this.sourcesToPunctuations.put(p.getSource(), pair);
-//			pathesPair = new Pair<Integer, Integer>(pathesPair.getE1() + 1, pathesPair.getE2());
-//			this.pathesFromSource.put(p.getSource(), pathesPair);
-//		} else if (port == inPortNew) {
-//			pair = new Pair<IPunctuation, IPunctuation>(pair.getE1(), p);
-//			this.sourcesToPunctuations.put(p.getSource(), pair);
-//			pathesPair = new Pair<Integer, Integer>(pathesPair.getE1() + 1, pathesPair.getE2());
-//			this.pathesFromSource.put(p.getSource(), pathesPair);
-//		}
-//		if (pair.getE2() != null && pair.getE1() != null && pathesPair.getE1() == pathesPair.getE2()) {
-//			// this source is satisfied.
-//			this.sourcesToPunctuations.remove(p.getSource());
-//			LOG.debug("Source: " + p.getSource().getName() + " is satisfied");
-//		}
-//		// are all sources satisfied?
-//		if (this.sourcesToPunctuations.isEmpty()) {
-//			LOG.debug("All sources are satisfied");
-//		}
-//	}
+	// private synchronized void
+	// process_migrationMarkerPunctuation(MigrationMarkerPunctuation p, int
+	// port)
+	// throws MigrationException {
+	// Pair<IPunctuation, IPunctuation> pair =
+	// this.sourcesToPunctuations.get(p.getSource());
+	// Pair<Integer, Integer> pathesPair =
+	// this.pathesFromSource.get(p.getSource());
+	// LOG.debug("Receiced punctuation for {} ", p.toString());
+	// if (pair == null) {
+	// throw new MigrationException("Source " +
+	// p.getSource().getClass().getSimpleName() + " ("
+	// + p.getSource().hashCode() + ") is not known to the RouterPO (" +
+	// hashCode() + ")");
+	// }
+	// if (port == inPortOld) {
+	// pair = new Pair<IPunctuation, IPunctuation>(p, pair.getE2());
+	// this.sourcesToPunctuations.put(p.getSource(), pair);
+	// pathesPair = new Pair<Integer, Integer>(pathesPair.getE1() + 1,
+	// pathesPair.getE2());
+	// this.pathesFromSource.put(p.getSource(), pathesPair);
+	// } else if (port == inPortNew) {
+	// pair = new Pair<IPunctuation, IPunctuation>(pair.getE1(), p);
+	// this.sourcesToPunctuations.put(p.getSource(), pair);
+	// pathesPair = new Pair<Integer, Integer>(pathesPair.getE1() + 1,
+	// pathesPair.getE2());
+	// this.pathesFromSource.put(p.getSource(), pathesPair);
+	// }
+	// if (pair.getE2() != null && pair.getE1() != null && pathesPair.getE1() ==
+	// pathesPair.getE2()) {
+	// // this source is satisfied.
+	// this.sourcesToPunctuations.remove(p.getSource());
+	// LOG.debug("Source: " + p.getSource().getName() + " is satisfied");
+	// }
+	// // are all sources satisfied?
+	// if (this.sourcesToPunctuations.isEmpty()) {
+	// LOG.debug("All sources are satisfied");
+	// }
+	// }
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-//		if (punctuation instanceof MigrationMarkerPunctuation) {
-//			// gotcha
-//			try {
-//				process_migrationMarkerPunctuation((MigrationMarkerPunctuation) punctuation, port);
-//			} catch (MigrationException ex) {
-//				LOG.error("Processing migration marker punctuation failed", ex);
-//				fireMigrationFailedEvent(this, ex);
-//			}
-//		} else {
-			sendPunctuation(punctuation);
-//		}
+		// if (punctuation instanceof MigrationMarkerPunctuation) {
+		// // gotcha
+		// try {
+		// process_migrationMarkerPunctuation((MigrationMarkerPunctuation)
+		// punctuation, port);
+		// } catch (MigrationException ex) {
+		// LOG.error("Processing migration marker punctuation failed", ex);
+		// fireMigrationFailedEvent(this, ex);
+		// }
+		// } else {
+		sendPunctuation(punctuation);
+		// }
 	}
 
-	//public Set<ISource<?>> getSources() {
-	//	return this.sourcesToPunctuations.keySet();
-	//}
+	// public Set<ISource<?>> getSources() {
+	// return this.sourcesToPunctuations.keySet();
+	// }
 
-	//public void setSourcesToPunctuations(Map<ISource<?>, Pair<IPunctuation, IPunctuation>> stp) {
-	//	this.sourcesToPunctuations = stp;
-	//}
+	// public void setSourcesToPunctuations(Map<ISource<?>, Pair<IPunctuation,
+	// IPunctuation>> stp) {
+	// this.sourcesToPunctuations = stp;
+	// }
 
 	@Override
 	public void addMigrationListener(IMigrationListener listener) {
@@ -283,20 +304,22 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		this.printNextTuple = printNextTuple;
 	}
 
-//	@SuppressWarnings({ "unchecked", "rawtypes" })
-//	@Override
-//	public void process_open() {
-//		super.process_open();
-//		for (ISource<?> source : this.sourcesToPunctuations.keySet()) {
-//			ExtendedGraphWalker walker = new ExtendedGraphWalker<>(false, true);
-//			CountPathesBetweenOperatorsVisitor pathVisitor = new CountPathesBetweenOperatorsVisitor(this);
-//			walker.prefixWalkPhysical(source, pathVisitor);
-//			int pathes = pathVisitor.getResult();
-//			LOG.debug("Counted {} pathes from source {} to root {}", pathes, source.getName(), this.getName());
-//			this.pathesFromSource.put(source, new Pair<>(0, pathes));
-//		}
-//
-//	}
+	// @SuppressWarnings({ "unchecked", "rawtypes" })
+	// @Override
+	// public void process_open() {
+	// super.process_open();
+	// for (ISource<?> source : this.sourcesToPunctuations.keySet()) {
+	// ExtendedGraphWalker walker = new ExtendedGraphWalker<>(false, true);
+	// CountPathesBetweenOperatorsVisitor pathVisitor = new
+	// CountPathesBetweenOperatorsVisitor(this);
+	// walker.prefixWalkPhysical(source, pathVisitor);
+	// int pathes = pathVisitor.getResult();
+	// LOG.debug("Counted {} pathes from source {} to root {}", pathes,
+	// source.getName(), this.getName());
+	// this.pathesFromSource.put(source, new Pair<>(0, pathes));
+	// }
+	//
+	// }
 
 	@Override
 	public void process_done(int port) {
