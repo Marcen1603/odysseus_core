@@ -205,34 +205,6 @@ public interface CQLPackage extends EPackage
   int SELECT_FEATURE_COUNT = 8;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl <em>Data Type</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDataType()
-   * @generated
-   */
-  int DATA_TYPE = 3;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DATA_TYPE__VALUE = 0;
-
-  /**
-   * The number of structural features of the '<em>Data Type</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DATA_TYPE_FEATURE_COUNT = 1;
-
-  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl <em>Source</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -240,7 +212,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSource()
    * @generated
    */
-  int SOURCE = 4;
+  int SOURCE = 3;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -313,7 +285,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttribute()
    * @generated
    */
-  int ATTRIBUTE = 5;
+  int ATTRIBUTE = 4;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -334,22 +306,50 @@ public interface CQLPackage extends EPackage
   int ATTRIBUTE__ALIAS = 1;
 
   /**
-   * The feature id for the '<em><b>Nested</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ATTRIBUTE__NESTED = 2;
-
-  /**
    * The number of structural features of the '<em>Attribute</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ATTRIBUTE_FEATURE_COUNT = 3;
+  int ATTRIBUTE_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeWithNestedStatementImpl <em>Attribute With Nested Statement</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeWithNestedStatementImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeWithNestedStatement()
+   * @generated
+   */
+  int ATTRIBUTE_WITH_NESTED_STATEMENT = 5;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE = 0;
+
+  /**
+   * The feature id for the '<em><b>Nested</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED = 1;
+
+  /**
+   * The number of structural features of the '<em>Attribute With Nested Statement</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATTRIBUTE_WITH_NESTED_STATEMENT_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl <em>Aggregation</em>}' class.
@@ -941,6 +941,34 @@ public interface CQLPackage extends EPackage
   int EXPRESSION_FEATURE_COUNT = 0;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl <em>Data Type</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDataType()
+   * @generated
+   */
+  int DATA_TYPE = 19;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATA_TYPE__VALUE = 0;
+
+  /**
+   * The number of structural features of the '<em>Data Type</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DATA_TYPE_FEATURE_COUNT = 1;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -948,7 +976,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getOr()
    * @generated
    */
-  int OR = 19;
+  int OR = 20;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -985,7 +1013,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAnd()
    * @generated
    */
-  int AND = 20;
+  int AND = 21;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1022,7 +1050,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getEquality()
    * @generated
    */
-  int EQUALITY = 21;
+  int EQUALITY = 22;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1068,7 +1096,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getComparision()
    * @generated
    */
-  int COMPARISION = 22;
+  int COMPARISION = 23;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1114,7 +1142,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getPlus()
    * @generated
    */
-  int PLUS = 23;
+  int PLUS = 24;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1151,7 +1179,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMinus()
    * @generated
    */
-  int MINUS = 24;
+  int MINUS = 25;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1188,7 +1216,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMulOrDiv()
    * @generated
    */
-  int MUL_OR_DIV = 25;
+  int MUL_OR_DIV = 26;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1234,7 +1262,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBracket()
    * @generated
    */
-  int BRACKET = 26;
+  int BRACKET = 27;
 
   /**
    * The feature id for the '<em><b>Inner</b></em>' containment reference.
@@ -1262,7 +1290,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getNOT()
    * @generated
    */
-  int NOT = 27;
+  int NOT = 28;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -1290,7 +1318,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getIntConstant()
    * @generated
    */
-  int INT_CONSTANT = 28;
+  int INT_CONSTANT = 29;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1318,7 +1346,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFloatConstant()
    * @generated
    */
-  int FLOAT_CONSTANT = 29;
+  int FLOAT_CONSTANT = 30;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1346,7 +1374,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStringConstant()
    * @generated
    */
-  int STRING_CONSTANT = 30;
+  int STRING_CONSTANT = 31;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1374,7 +1402,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBoolConstant()
    * @generated
    */
-  int BOOL_CONSTANT = 31;
+  int BOOL_CONSTANT = 32;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1402,7 +1430,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeRef()
    * @generated
    */
-  int ATTRIBUTE_REF = 32;
+  int ATTRIBUTE_REF = 33;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1564,27 +1592,6 @@ public interface CQLPackage extends EPackage
   EReference getSelect_Having();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType <em>Data Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Data Type</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
-   * @generated
-   */
-  EClass getDataType();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType#getValue()
-   * @see #getDataType()
-   * @generated
-   */
-  EAttribute getDataType_Value();
-
-  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source <em>Source</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1693,15 +1700,36 @@ public interface CQLPackage extends EPackage
   EReference getAttribute_Alias();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute#getNested <em>Nested</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement <em>Attribute With Nested Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Attribute With Nested Statement</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
+   * @generated
+   */
+  EClass getAttributeWithNestedStatement();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement#getValue()
+   * @see #getAttributeWithNestedStatement()
+   * @generated
+   */
+  EReference getAttributeWithNestedStatement_Value();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement#getNested <em>Nested</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Nested</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute#getNested()
-   * @see #getAttribute()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement#getNested()
+   * @see #getAttributeWithNestedStatement()
    * @generated
    */
-  EReference getAttribute_Nested();
+  EReference getAttributeWithNestedStatement_Nested();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation <em>Aggregation</em>}'.
@@ -2252,6 +2280,27 @@ public interface CQLPackage extends EPackage
   EClass getExpression();
 
   /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType <em>Data Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Data Type</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
+   * @generated
+   */
+  EClass getDataType();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType#getValue()
+   * @see #getDataType()
+   * @generated
+   */
+  EAttribute getDataType_Value();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or <em>Or</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2789,24 +2838,6 @@ public interface CQLPackage extends EPackage
     EReference SELECT__HAVING = eINSTANCE.getSelect_Having();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl <em>Data Type</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDataType()
-     * @generated
-     */
-    EClass DATA_TYPE = eINSTANCE.getDataType();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute DATA_TYPE__VALUE = eINSTANCE.getDataType_Value();
-
-    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl <em>Source</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2891,12 +2922,30 @@ public interface CQLPackage extends EPackage
     EReference ATTRIBUTE__ALIAS = eINSTANCE.getAttribute_Alias();
 
     /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeWithNestedStatementImpl <em>Attribute With Nested Statement</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeWithNestedStatementImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeWithNestedStatement()
+     * @generated
+     */
+    EClass ATTRIBUTE_WITH_NESTED_STATEMENT = eINSTANCE.getAttributeWithNestedStatement();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE = eINSTANCE.getAttributeWithNestedStatement_Value();
+
+    /**
      * The meta object literal for the '<em><b>Nested</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ATTRIBUTE__NESTED = eINSTANCE.getAttribute_Nested();
+    EReference ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED = eINSTANCE.getAttributeWithNestedStatement_Nested();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl <em>Aggregation</em>}' class.
@@ -3331,6 +3380,24 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EClass EXPRESSION = eINSTANCE.getExpression();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl <em>Data Type</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDataType()
+     * @generated
+     */
+    EClass DATA_TYPE = eINSTANCE.getDataType();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DATA_TYPE__VALUE = eINSTANCE.getDataType_Value();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.

@@ -7,15 +7,25 @@ Model: statements+=(Statement)*;
 Statement:	
 	(type=Select | type=Create | type=StreamTo | type=Drop) 
 	(';')?
-; 
+;
+ 
+Select:
+	name='SELECT'
+	(distinct='DISTINCT')?
+	( '*' |
+		( 
+			(attributes+=Attribute | aggregations+=Aggregation)+  
+			& (',' attributes+=Attribute)* 
+			& (',' aggregations+=Aggregation)*
+		)
+	)
+	('FROM' sources+=Source+ (',' sources+=Source)*)
+	('WHERE' predicates=ExpressionsModel)?
+	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?)
+	('HAVING' having=ExpressionsModel)?
+;
 
 NestedStatement returns Select: '(' Select ')' ;
-
-//TODO have to dynamic -> use scope provider
-DataType: 
-	value=('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN' 
-	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
-);
 
 Source: 
 	(
@@ -46,9 +56,11 @@ AttributeWithoutAlias returns Attribute:
 	name=ID
 ; 
 
-AttributeAsNestedStatement returns Attribute:
+AttributeWithNestedStatement:
+	value=AttributeWithoutAlias
+	'IN'
 	nested=NestedStatement
-;
+; 
  
 Aggregation:
 	name=ID
@@ -58,23 +70,7 @@ Aggregation:
 
 Alias:
 	name=ID
-; 
- 
-Select:
-	name='SELECT'
-	(distinct='DISTINCT')?
-	( '*' |
-		( 
-			(attributes+=Attribute | aggregations+=Aggregation)+  
-			& (',' attributes+=Attribute)* 
-			& (',' aggregations+=Aggregation)*
-		)
-	)
-	('FROM' sources+=Source+ (',' sources+=Source)*)
-	('WHERE' predicates=ExpressionsModel)?
-	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?)
-	('HAVING' having=ExpressionsModel)?
-;
+;  
 
 //SelectWithoutWhere returns Select:
 //	name='SELECT'
@@ -271,6 +267,13 @@ Atomic returns Expression:
 	{FloatConstant} value=FLOAT_NUMBER |
 	{StringConstant} value= STRING |
 	{BoolConstant} value=('TRUE' | 'FALSE') |
-	{AttributeRef} value=AttributeWithoutAlias//TODO A SELECT * query offers no reference for an attribute.
-								  			  //At the moment is no actual referencing possible!  
+	//TODO A SELECT * query offers no reference for an attribute.
+	//At the moment is no actual referencing possible!
+	{AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
 ;
+
+//TODO have to dynamic -> use scope provider
+DataType: 
+	value=('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN' 
+	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
+);

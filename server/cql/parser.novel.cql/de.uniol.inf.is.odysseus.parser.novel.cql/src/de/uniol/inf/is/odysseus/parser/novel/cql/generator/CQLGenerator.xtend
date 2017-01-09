@@ -46,6 +46,11 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
+import org.eclipse.xtext.EcoreUtil2
+import java.util.Collections
+import java.util.Collection
+import de.uniol.inf.is.odysseus.parser.novel.cql.util.CQLUtil
 
 //import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 
@@ -132,11 +137,11 @@ class CQLGenerator implements IGenerator2
 		if(!stmt.attributes.empty)//SELECT attr1, ...
 			{
 			    var String operator = null
-			    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+			    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toSet)
 				if(!stmt.aggregations.empty)
 				{
 					var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-					attributes = result.get(0) as List<String>
+					attributes = result.get(0) as HashSet<String>
 				    operator   = result.get(1).toString
 				
 					//FIXME Not necessary, it has been done before!
@@ -166,35 +171,62 @@ class CQLGenerator implements IGenerator2
 	{
 		
 	    var String operator = null
-	    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+	    var Set<String>     attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toSet)
+		var Set<Expression> predicates = newHashSet
+		var Set<Source>        sources = newHashSet
+	    
+
+		////WOKRING PROGRESS remove duplicates!!
+
+		predicates.add(stmt.predicates.elements.get(0))
+		
+		
+		sources.addAll(stmt.sources)
+		
+		println(predicates)
+		var nested = EcoreUtil2.eAllOfType(stmt, AttributeWithNestedStatement)
+		if(!nested.empty)
+		{
+			for(var i = 0; i < nested.size; i++)
+			{
+				attributes.addAll(nested.get(i).nested.attributes.stream.map(e|e.name).collect(Collectors.toSet))
+				var pred = nested.get(i).nested.predicates
+				var srcs = nested.get(i).nested.sources
+				predicates.addAll(pred.elements.get(0))
+				CQLUtil.merge(sources, srcs)
+			}
+		}
+		
+		////
+
+		if(stmt.having != null)
+		{
+			predicates.add(stmt.having.elements.get(0))
+		}
 		if(!stmt.aggregations.empty)
 		{
-			var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-			attributes = result.get(0) as List<String>
+			var result = buildAggregateOP(stmt.aggregations, stmt.order, sources as List<Source>)
+			attributes = result.get(0) as Set<String>
 		    operator   = result.get(1).toString
 		
 			//Not necessary, it has been done before!
 			attributes.addAll(
 				stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
 			)
-			
 		}
 		
-		var List<Expression> predicates = newArrayList
-		predicates.add(stmt.predicates.elements.get(0))
-		if(stmt.having != null)
-		{
-			predicates.add(stmt.having.elements.get(0))
-		}
+		println(predicates)
+		
+////////////////
 		if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
 		{
-			return '''«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''	
+			return '''«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, sources, operator)))»'''	
 		}// SELECT * FROM src1, src2, ... WHERE ...; | SELECT attr1, ... FROM src1 / src1, ... WHERE ...;
 		if(stmt.attributes.empty)
 		{
-			return '''«buildSelectOP(predicates, buildJoin(null, stmt.sources, operator))»'''
+			return '''«buildSelectOP(predicates, buildJoin(null, sources, operator))»'''
 		}
-		return '''«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, stmt.sources, operator)))»'''
+		return '''«buildSelectOP(predicates, buildProjectOP(attributes, buildJoin(null, sources, operator)))»'''
 	}
 	
 	def Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
@@ -210,8 +242,8 @@ class CQLGenerator implements IGenerator2
 	def Object[] buildAggregateOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input)
 	{
 		var argsstr 				 = ''
-		var List<String> args    = newArrayList()
-		var List<String> aliases = newArrayList()
+		var HashSet<String> args    = newHashSet()
+		var HashSet<String> aliases = newHashSet()
 		for(var i = 0; i < aggAttr.length; i++)
 		{
 			args.add(aggAttr.get(i).name)
@@ -239,7 +271,7 @@ class CQLGenerator implements IGenerator2
 				orderAttr.stream.map(e|e.name).collect(Collectors.toList)
 			) + ']'
 		}
-		return (#[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «input»)'''])
+		return #[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «input»)''']
 	}
 	
 	def String getDataTypeFrom(Attribute attribute) 
@@ -404,7 +436,7 @@ class CQLGenerator implements IGenerator2
 //	 * elements. If the predicate is null, there will be no join predicate in the operation.
 //	 * If the list contains only one source, an {@link IllegalArgumentException} will be thrown.
 //	 */
-	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> srcs, CharSequence input2)
+	def CharSequence buildJoin(ExpressionsModel predicate, Collection<Source> srcs, CharSequence input2)
 	{
 		var args = srcs.stream.map(
 			e|checkForNestedStatement(e).toString
@@ -438,7 +470,7 @@ class CQLGenerator implements IGenerator2
 		list.remove(0)
 		if(predicate != null)
 		{
-			var predicateString = '''{predicate='«buildPredicate(predicate.elements.get(0))»'}'''
+			var predicateString = '''{predicate='«parsePredicate(predicate.elements.get(0))»'}'''
 			return '''JOIN(«predicateString»,«src»,«buildJoin(null, list)»)'''
 		}
 		else 
@@ -483,17 +515,17 @@ class CQLGenerator implements IGenerator2
 	def CharSequence buildSelectOP(Expression predicate, CharSequence operator)
 	{
 		predicate = ''
-		return '''SELECT({predicate='«buildPredicate(predicate)»'},«operator»)'''
+		return '''SELECT({predicate='«parsePredicate(predicate)»'},«operator»)'''
 	}
 	
 	/**
 	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
 	 * and a char sequence to define the input operator. 
 	 */
-	def CharSequence buildSelectOP(List<Expression> predicate, CharSequence operator)
+	def CharSequence buildSelectOP(Set<Expression> predicate, CharSequence operator)
 	{
 		predicate = ''
-		return '''SELECT({predicate='«buildPredicate(predicate)»'},«operator»)'''
+		return '''SELECT({predicate='«parsePredicate(predicate)»'},«operator»)'''
 	}
 
 //	/**
@@ -583,7 +615,7 @@ class CQLGenerator implements IGenerator2
 	
 	//TODO String have to be encupseld between '
 	/**Builds a predicate string from a given {@link Expression}. */
-	def CharSequence buildPredicate(Expression e)
+	def CharSequence parsePredicate(Expression e)
 	{
 		if(!e.eContents.empty)
 		{
@@ -591,60 +623,67 @@ class CQLGenerator implements IGenerator2
 			{
 				Or:
 				{
-					buildPredicate(e.left)
+					parsePredicate(e.left)
 					predicate += '||'
-					buildPredicate(e.right)
+					parsePredicate(e.right)
 				}
 				And:
 				{
-					buildPredicate(e.left)
+					parsePredicate(e.left)
 					predicate += '&&'
-					buildPredicate(e.right)
+					parsePredicate(e.right)
 				}  
 				Equality:
 				{
-					buildPredicate(e.left)
+					parsePredicate(e.left)
 					predicate += e.op
-					buildPredicate(e.right)
+					parsePredicate(e.right)
 				}
 				Comparision:
 				{
-					buildPredicate(e.left)
+					parsePredicate(e.left)
 					predicate += e.op
-					buildPredicate(e.right)	
+					parsePredicate(e.right)	
 				}
 				Plus:
 				{
-					buildPredicate(e.left)
+					parsePredicate(e.left)
 					predicate += '+'
-					buildPredicate(e.right)
+					parsePredicate(e.right)
 				}
 				Minus:
 				{
-					buildPredicate(e.left)
+					parsePredicate(e.left)
 					predicate += '-'
-					buildPredicate(e.right)					
+					parsePredicate(e.right)					
 				}
 				MulOrDiv:
 				{
-					buildPredicate(e.left)
+					parsePredicate(e.left)
 					predicate += e.op
-					buildPredicate(e.right)
+					parsePredicate(e.right)
 				}
 				NOT:
 				{
 					predicate += '!'
-					buildPredicate(e.expression)
+					parsePredicate(e.expression)
 				}
 				Bracket:
 				{
 					predicate += '(' 
-					buildPredicate(e.inner)
+					parsePredicate(e.inner)
 					predicate += ')' 
 				}
 				AttributeRef:
 				{
-					predicate += e.value.name
+					if(e.value instanceof AttributeWithNestedStatement)
+					{
+////						println("something")
+						predicate += ''// (e.value as AttributeWithNestedStatement).value.name	
+					} 
+					else
+					if(e.value instanceof Attribute)
+						predicate += (e.value as Attribute).name
 				}  	 
 			}
 		} 
@@ -663,16 +702,23 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 	
-	def CharSequence buildPredicate(List<Expression> expressions)
+	def CharSequence parsePredicate(Set<Expression> expressions)
 	{
 		var s = ''
 		for(var i = 0 ; i < expressions.size - 1; i++)
 		{
-			predicate = ''
-			s += buildPredicate(expressions.get(i)) + '&&'
+			if((expressions.get(i) as AttributeRef).value instanceof AttributeWithNestedStatement)
+			{
+				// ignore it!
+			}
+			else
+			{
+				predicate = ''
+				s += parsePredicate(expressions.get(i)) + '&&'
+			}
 		}
 		predicate = ''
-		s += buildPredicate(expressions.get(expressions.size - 1))
+		s += parsePredicate(expressions.get(expressions.size - 1))
 		return s
 	}
 	
@@ -686,6 +732,11 @@ class CQLGenerator implements IGenerator2
 		{
 			return buildWindowOP(src)
 		}
+	}
+
+	def CharSequence checkForNestedStatemen(Select stmt)
+	{
+		
 	}
 
 	def CharSequence buildWindowOP(Source src)

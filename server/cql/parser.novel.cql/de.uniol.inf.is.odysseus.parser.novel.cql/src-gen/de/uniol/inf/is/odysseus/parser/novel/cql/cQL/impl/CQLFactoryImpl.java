@@ -68,9 +68,9 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.MODEL: return createModel();
       case CQLPackage.STATEMENT: return createStatement();
       case CQLPackage.SELECT: return createSelect();
-      case CQLPackage.DATA_TYPE: return createDataType();
       case CQLPackage.SOURCE: return createSource();
       case CQLPackage.ATTRIBUTE: return createAttribute();
+      case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
       case CQLPackage.AGGREGATION: return createAggregation();
       case CQLPackage.ALIAS: return createAlias();
       case CQLPackage.CREATE: return createCreate();
@@ -84,6 +84,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.WINDOW_TUPLEBASED: return createWindow_Tuplebased();
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
       case CQLPackage.EXPRESSION: return createExpression();
+      case CQLPackage.DATA_TYPE: return createDataType();
       case CQLPackage.OR: return createOr();
       case CQLPackage.AND: return createAnd();
       case CQLPackage.EQUALITY: return createEquality();
@@ -141,17 +142,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public DataType createDataType()
-  {
-    DataTypeImpl dataType = new DataTypeImpl();
-    return dataType;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public Source createSource()
   {
     SourceImpl source = new SourceImpl();
@@ -167,6 +157,17 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     AttributeImpl attribute = new AttributeImpl();
     return attribute;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public AttributeWithNestedStatement createAttributeWithNestedStatement()
+  {
+    AttributeWithNestedStatementImpl attributeWithNestedStatement = new AttributeWithNestedStatementImpl();
+    return attributeWithNestedStatement;
   }
 
   /**
@@ -310,6 +311,17 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     ExpressionImpl expression = new ExpressionImpl();
     return expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DataType createDataType()
+  {
+    DataTypeImpl dataType = new DataTypeImpl();
+    return dataType;
   }
 
   /**

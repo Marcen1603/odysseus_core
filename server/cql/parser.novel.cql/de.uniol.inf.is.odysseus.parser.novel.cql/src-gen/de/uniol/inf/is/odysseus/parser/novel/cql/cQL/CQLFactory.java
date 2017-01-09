@@ -51,15 +51,6 @@ public interface CQLFactory extends EFactory
   Select createSelect();
 
   /**
-   * Returns a new object of class '<em>Data Type</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Data Type</em>'.
-   * @generated
-   */
-  DataType createDataType();
-
-  /**
    * Returns a new object of class '<em>Source</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -76,6 +67,15 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   Attribute createAttribute();
+
+  /**
+   * Returns a new object of class '<em>Attribute With Nested Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Attribute With Nested Statement</em>'.
+   * @generated
+   */
+  AttributeWithNestedStatement createAttributeWithNestedStatement();
 
   /**
    * Returns a new object of class '<em>Aggregation</em>'.
@@ -193,6 +193,15 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   Expression createExpression();
+
+  /**
+   * Returns a new object of class '<em>Data Type</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Data Type</em>'.
+   * @generated
+   */
+  DataType createDataType();
 
   /**
    * Returns a new object of class '<em>Or</em>'.

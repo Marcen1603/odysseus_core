@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 import com.google.inject.Inject
 import java.util.Collection
-
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 
 class ExpressionsTypeProvider 
 {
@@ -101,7 +101,7 @@ class ExpressionsTypeProvider
 		{
 			for(SDFAttribute a : s.attributes)
 			{
-				if(a.attributeName.equals(e.value.name))
+				if(a.attributeName.equals((e.value as Attribute).name))
 					return typeFor(a.datatype)
 			}	
 		}

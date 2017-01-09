@@ -3,7 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 
@@ -11,6 +10,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -38,7 +38,7 @@ public class AttributeRefImpl extends ExpressionImpl implements AttributeRef
    * @generated
    * @ordered
    */
-  protected Attribute value;
+  protected EObject value;
 
   /**
    * <!-- begin-user-doc -->
@@ -66,7 +66,7 @@ public class AttributeRefImpl extends ExpressionImpl implements AttributeRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public Attribute getValue()
+  public EObject getValue()
   {
     return value;
   }
@@ -76,9 +76,9 @@ public class AttributeRefImpl extends ExpressionImpl implements AttributeRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetValue(Attribute newValue, NotificationChain msgs)
+  public NotificationChain basicSetValue(EObject newValue, NotificationChain msgs)
   {
-    Attribute oldValue = value;
+    EObject oldValue = value;
     value = newValue;
     if (eNotificationRequired())
     {
@@ -93,7 +93,7 @@ public class AttributeRefImpl extends ExpressionImpl implements AttributeRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setValue(Attribute newValue)
+  public void setValue(EObject newValue)
   {
     if (newValue != value)
     {
@@ -152,7 +152,7 @@ public class AttributeRefImpl extends ExpressionImpl implements AttributeRef
     switch (featureID)
     {
       case CQLPackage.ATTRIBUTE_REF__VALUE:
-        setValue((Attribute)newValue);
+        setValue((EObject)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -169,7 +169,7 @@ public class AttributeRefImpl extends ExpressionImpl implements AttributeRef
     switch (featureID)
     {
       case CQLPackage.ATTRIBUTE_REF__VALUE:
-        setValue((Attribute)null);
+        setValue((EObject)null);
         return;
     }
     super.eUnset(featureID);

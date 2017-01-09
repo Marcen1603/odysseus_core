@@ -91,11 +91,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createSelectAdapter();
       }
       @Override
-      public Adapter caseDataType(DataType object)
-      {
-        return createDataTypeAdapter();
-      }
-      @Override
       public Adapter caseSource(Source object)
       {
         return createSourceAdapter();
@@ -104,6 +99,11 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseAttribute(Attribute object)
       {
         return createAttributeAdapter();
+      }
+      @Override
+      public Adapter caseAttributeWithNestedStatement(AttributeWithNestedStatement object)
+      {
+        return createAttributeWithNestedStatementAdapter();
       }
       @Override
       public Adapter caseAggregation(Aggregation object)
@@ -169,6 +169,11 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseExpression(Expression object)
       {
         return createExpressionAdapter();
+      }
+      @Override
+      public Adapter caseDataType(DataType object)
+      {
+        return createDataTypeAdapter();
       }
       @Override
       public Adapter caseOr(Or object)
@@ -308,21 +313,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType <em>Data Type</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
-   * @generated
-   */
-  public Adapter createDataTypeAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source <em>Source</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -348,6 +338,21 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createAttributeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement <em>Attribute With Nested Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
+   * @generated
+   */
+  public Adapter createAttributeWithNestedStatementAdapter()
   {
     return null;
   }
@@ -543,6 +548,21 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createExpressionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType <em>Data Type</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
+   * @generated
+   */
+  public Adapter createDataTypeAdapter()
   {
     return null;
   }

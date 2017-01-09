@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
 
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -31,12 +32,12 @@ public interface AttributeRef extends Expression
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Value</em>' containment reference.
-   * @see #setValue(Attribute)
+   * @see #setValue(EObject)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getAttributeRef_Value()
    * @model containment="true"
    * @generated
    */
-  Attribute getValue();
+  EObject getValue();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef#getValue <em>Value</em>}' containment reference.
@@ -46,6 +47,6 @@ public interface AttributeRef extends Expression
    * @see #getValue()
    * @generated
    */
-  void setValue(Attribute value);
+  void setValue(EObject value);
 
 } // AttributeRef

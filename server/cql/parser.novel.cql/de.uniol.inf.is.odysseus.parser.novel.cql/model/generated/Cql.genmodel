@@ -22,9 +22,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select/order"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select/having"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//DataType">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DataType/value"/>
-    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Source">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Source/unbounded"/>
@@ -36,7 +33,10 @@
     <genClasses ecoreClass="CQL.ecore#//Attribute">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Attribute/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Attribute/alias"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Attribute/nested"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//AttributeWithNestedStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//AttributeWithNestedStatement/value"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//AttributeWithNestedStatement/nested"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Aggregation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Aggregation/name"/>
@@ -101,6 +101,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ExpressionsModel/elements"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Expression"/>
+    <genClasses ecoreClass="CQL.ecore#//DataType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DataType/value"/>
+    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Or">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Or/left"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Or/right"/>

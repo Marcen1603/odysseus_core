@@ -200,7 +200,7 @@ public class CQLParser implements IQueryParser
 	
 	public synchronized String generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema) throws QueryParseException
 	{
-		System.out.println("Generate PQL query text: ");//TODO Remover afer debugging
+		System.out.println("Generated PQL query text: ");//TODO Remove after debugging
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);

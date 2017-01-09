@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
@@ -76,11 +77,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				sequence_And(context, (And) semanticObject); 
 				return; 
 			case CQLPackage.ATTRIBUTE:
-				if (rule == grammarAccess.getAttributeAsNestedStatementRule()) {
-					sequence_AttributeAsNestedStatement(context, (Attribute) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getAttributeWithoutAliasRule()) {
+				if (rule == grammarAccess.getAttributeWithoutAliasRule()) {
 					sequence_AttributeWithoutAlias(context, (Attribute) semanticObject); 
 					return; 
 				}
@@ -91,6 +88,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				else break;
 			case CQLPackage.ATTRIBUTE_REF:
 				sequence_Atomic(context, (AttributeRef) semanticObject); 
+				return; 
+			case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT:
+				sequence_AttributeWithNestedStatement(context, (AttributeWithNestedStatement) semanticObject); 
 				return; 
 			case CQLPackage.BOOL_CONSTANT:
 				sequence_Atomic(context, (BoolConstant) semanticObject); 
@@ -274,16 +274,10 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Atomic returns AttributeRef
 	 *
 	 * Constraint:
-	 *     value=AttributeWithoutAlias
+	 *     (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
 	 */
 	protected void sequence_Atomic(ISerializationContext context, AttributeRef semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE_REF__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_REF__VALUE));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAtomicAccess().getValueAttributeWithoutAliasParserRuleCall_4_1_0(), semanticObject.getValue());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -415,18 +409,21 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     AttributeAsNestedStatement returns Attribute
+	 *     AttributeWithNestedStatement returns AttributeWithNestedStatement
 	 *
 	 * Constraint:
-	 *     nested=NestedStatement
+	 *     (value=Attribute nested=NestedStatement)
 	 */
-	protected void sequence_AttributeAsNestedStatement(ISerializationContext context, Attribute semanticObject) {
+	protected void sequence_AttributeWithNestedStatement(ISerializationContext context, AttributeWithNestedStatement semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE__NESTED) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE__NESTED));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAttributeAsNestedStatementAccess().getNestedNestedStatementParserRuleCall_0(), semanticObject.getNested());
+		feeder.accept(grammarAccess.getAttributeWithNestedStatementAccess().getValueAttributeParserRuleCall_0_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getAttributeWithNestedStatementAccess().getNestedNestedStatementParserRuleCall_2_0(), semanticObject.getNested());
 		feeder.finish();
 	}
 	
@@ -797,8 +794,8 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     NestedStatement returns Select
 	 *     Select returns Select
+	 *     NestedStatement returns Select
 	 *
 	 * Constraint:
 	 *     (
