@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 ///**
 // * @author Jonas Jacobi
@@ -173,6 +174,22 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
             transfer(returnBuffer.poll());
             tmpElement = returnBuffer.peek();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+	@Override
+    public PointInTime getLatestEndTimestamp() {
+		PointInTime max = null;
+		for (int i = 0; i < 2; i++) {
+			synchronized (this.sa[i]) {
+				PointInTime maxi = ((ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) this.sa[i])
+						.getMaxEndTs();
+				if (max == null || (maxi != null && maxi.after(max))) {
+					max = maxi;
+				}
+			}
+		}
+		return max;
     }
 
     @Override
