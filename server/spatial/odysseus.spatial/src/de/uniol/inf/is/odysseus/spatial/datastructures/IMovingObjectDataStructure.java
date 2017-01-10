@@ -8,7 +8,6 @@ import com.vividsolutions.jts.geom.Point;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 
 /**
  * Interface for all spatial data structures / moving object data structures.
@@ -33,23 +32,6 @@ public interface IMovingObjectDataStructure {
 	 * @param timestamp The timestamp for which all elements which end-timestamp is smaller are removed.
 	 */
 	public void cleanUp(PointInTime timestamp);
-
-	/**
-	 * Add a listener to the data structure. The listener is notified when the
-	 * data in the data structure changes.
-	 * 
-	 * @param listener
-	 */
-	public void addListener(ISpatialListener listener);
-
-	/**
-	 * Removes the given listener from the listeners so that it is no longer
-	 * notifies when changed in the data structure happen.
-	 * 
-	 * @param listener
-	 *            The listener that is removed.
-	 */
-	public void removeListener(ISpatialListener listener);
 
 	/**
 	 * The name of the data structure so that it can be accessed, e.g. via the

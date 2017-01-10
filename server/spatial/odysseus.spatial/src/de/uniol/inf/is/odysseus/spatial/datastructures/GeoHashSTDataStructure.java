@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
@@ -62,18 +61,6 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	@Override
 	public void cleanUp(PointInTime timestamp) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void addListener(ISpatialListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeListener(ISpatialListener listener) {
 		// TODO Auto-generated method stub
 
 	}
