@@ -56,7 +56,9 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 			while (System.currentTimeMillis() < waitUntil
 					&& !terminate) {
 				try {
-					this.wait(waitUntil-System.currentTimeMillis());
+					synchronized (this) {
+						this.wait(waitUntil-System.currentTimeMillis());
+					}
 				} catch (InterruptedException e) {
 				}
 			}
