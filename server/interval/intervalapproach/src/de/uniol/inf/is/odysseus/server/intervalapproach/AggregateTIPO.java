@@ -383,6 +383,20 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	@Override
+	public PointInTime getLatestEndTimestamp(){
+		return getLatestEndTimestamp(groups);
+	}
+
+	public PointInTime getLatestEndTimestamp(Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess){
+		PointInTime maxPoint = null;
+		for (Entry<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
+				.entrySet()) {
+			maxPoint = PointInTime.max(maxPoint,entry.getValue().getMaxEndTs());
+		}
+		return maxPoint;
+	}
+
+	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
 		// Keep punctuation order by sending to transfer area

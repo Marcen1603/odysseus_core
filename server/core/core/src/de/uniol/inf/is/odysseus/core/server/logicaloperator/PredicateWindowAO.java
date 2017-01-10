@@ -24,7 +24,7 @@ public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
 	public PredicateWindowAO() {
 		super(WindowType.PREDICATE);
 	}
-	
+
 	@Override
 	@Parameter(type = PredicateParameter.class, name = "START", optional = true)
 	public void setStartCondition(IPredicate<?> startCondition) {
@@ -36,23 +36,29 @@ public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
 	public void setEndCondition(IPredicate<?> endCondition) {
 		super.setEndCondition(endCondition);
 	}
-	
+
 	@Override
 	@Parameter(name = "PARTITION", type = ResolvedSDFAttributeParameter.class, optional = true, isList = true)
 	public void setPartitionBy(List<SDFAttribute> partitionedBy) {
 		super.setPartitionBy(partitionedBy);
 	}
-	
+
+	@Override
+	@Parameter(type = BooleanParameter.class, optional = true)
+	public void setKeepEndingElement(boolean keepEndElement) {
+		super.setKeepEndingElement(keepEndElement);
+	}
+
 	@Override
 	@Parameter(type = BooleanParameter.class, name = "SameStartTime", optional = true)
 	public void setSameStarttime(boolean sameStarttime) {
 		super.setSameStarttime(sameStarttime);
 	}
-	
+
 	@Override
 	public PredicateWindowAO clone() {
 		return new PredicateWindowAO(this);
 	}
 
-	
+
 }

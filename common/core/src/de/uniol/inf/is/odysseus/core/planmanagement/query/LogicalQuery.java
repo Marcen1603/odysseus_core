@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "logicalQueryInfo", propOrder = { "id", "queryText",
-		"parserID", "containsCycles", "priority", "name", "notice", "parameters"})
+		"parserID", "containsCycles", "priority", "name", "notice", "parameters", "userParameters"})
 public class LogicalQuery implements ILogicalQuery {
 
 	private static final long serialVersionUID = -7357156628145329724L;
@@ -82,7 +82,7 @@ public class LogicalQuery implements ILogicalQuery {
 	 */
 	@XmlTransient
 	private ILogicalOperator logicalPlan;
-	
+
 	@XmlTransient
 	private List<ILogicalOperator> alternativeLogicalPlans;
 
@@ -95,17 +95,20 @@ public class LogicalQuery implements ILogicalQuery {
 
 	// Parameter as List because of web service
 	final private ArrayList<Pair<String, Object>> parameters = new ArrayList<>();
+
+	final private HashMap<String, String> userParameters = new HashMap<>();
+
 	final transient Map<String, Object> transParams = new HashMap<>();
-	
+
 	final transient private Map<String, Object> serverParameters = new HashMap<>();
 
-	
+
 	private String notice;
 
 	// TODO: check in which constructors alternativeLogicalPlans have to be set!
-	
+
 	/**
-	 * 
+	 *
 	 * @param parserID
 	 * @param logicalPlan
 	 * @param priority
@@ -120,9 +123,9 @@ public class LogicalQuery implements ILogicalQuery {
 	}
 
 	/**
-	 * 
+	 *
 	 * Use this constructor only if a query is copied
-	 * 
+	 *
 	 * @param id
 	 * @param parserID
 	 * @param logicalPlan
@@ -149,20 +152,20 @@ public class LogicalQuery implements ILogicalQuery {
 		this(id,"", null, 0);
 	}
 
-	
+
 	@Override
 	public Resource getName() {
 		return name;
 	}
-	
+
 	@Override
 	public void setName(Resource name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Provides an info string which describes the query.
-	 * 
+	 *
 	 * @return info string which describes the query.
 	 */
 	public String getDebugInfo() {
@@ -175,7 +178,7 @@ public class LogicalQuery implements ILogicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
 	 * setLogicalPlan(de.uniol.inf.is.odysseus.core.server.ILogicalOperator)
 	 */
@@ -200,7 +203,7 @@ public class LogicalQuery implements ILogicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getPriority
 	 * ()
@@ -212,7 +215,7 @@ public class LogicalQuery implements ILogicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setPriority
 	 * (int)
@@ -224,7 +227,7 @@ public class LogicalQuery implements ILogicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
 	 * getLogicalPlan()
 	 */
@@ -232,12 +235,12 @@ public class LogicalQuery implements ILogicalQuery {
 	public ILogicalOperator getLogicalPlan() {
 		return this.logicalPlan;
 	}
-	
+
 	@Override
 	public void setAlternativeLogicalPlans(List<ILogicalOperator> altPlans) {
 		this.alternativeLogicalPlans = altPlans;
 	}
-	
+
 	@Override
 	public List<ILogicalOperator> getAlternativeLogicalPlans() {
 		return this.alternativeLogicalPlans;
@@ -245,7 +248,7 @@ public class LogicalQuery implements ILogicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IOperatorOwner#getID
 	 * ()
@@ -279,7 +282,7 @@ public class LogicalQuery implements ILogicalQuery {
 	public ISession getUser() {
 		return user;
 	}
-	
+
 	@Override
 	public ISession getSession() {
 		return user;
@@ -422,12 +425,17 @@ public class LogicalQuery implements ILogicalQuery {
 		parameters.add(p);
 		transParams.put(key,value);
 	}
-	
+
 	@Override
 	public void setServerParameter(String key, Object value) {
-		serverParameters.put(key,value);		
+		serverParameters.put(key,value);
 	}
-	
+
+	@Override
+	public void setUserParameter(String key, String value) {
+		userParameters.put(key, value);
+	}
+
 	@Override
 	public Object getParameter(String key) {
 		Object v = transParams.get(key);
@@ -439,13 +447,17 @@ public class LogicalQuery implements ILogicalQuery {
 		}
 		return v;
 	}
-	
+
 	@Override
 	public Object getServerParameter(String key) {
 		return serverParameters.get(key);
 	}
 
-	
+	@Override
+	public String getUserParameter(String key) {
+		return userParameters.get(key);
+	}
+
 	private Pair<String, Object> getP(String key){
 		// Avoid ConcurrentModificationExceptions
 		List<Pair<String, Object>> list = Lists.newArrayList(parameters);
@@ -456,19 +468,19 @@ public class LogicalQuery implements ILogicalQuery {
 		}
 		return null;
 	}
-	
+
 
 
 	@Override
 	public void done(IOwnedOperator op) {
 		// Ignore in logical query
 	}
-	
+
 	@Override
 	public String getNotice() {
 		return notice;
 	}
-	
+
 	@Override
 	public void setNotice(String notice) {
 		this.notice = notice;
