@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.ExtendedTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
@@ -23,11 +23,11 @@ public class SpatialQueryPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 	private Polygon polygon;
 	private int geometryPosition;
 
-	private ExtendedTISweepArea<Tuple<ITimeInterval>> sweepArea;
+	private DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	public SpatialQueryPO(IMovingObjectDataStructure dataStructure, List<Point> polygonPoints, int geometryPosition) {
 		this.dataStructure = dataStructure;
-		this.sweepArea = new ExtendedTISweepArea<>();
+		this.sweepArea = new DefaultTISweepArea<>();
 		this.geometryPosition = geometryPosition;
 		
 		// Create a polygon with the given points

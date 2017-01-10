@@ -15,6 +15,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
@@ -33,7 +34,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	private int geometryPosition;
 	private String name;
 
-	private ExtendedTISweepArea<Tuple<ITimeInterval>> sweepArea;
+	private DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	private List<ISpatialListener> listeners = new ArrayList<ISpatialListener>();
 
@@ -41,7 +42,7 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 			throws InstantiationException, IllegalAccessException {
 		this.name = name;
 		this.geometryPosition = geometryPosition;
-		this.sweepArea = new ExtendedTISweepArea<>();
+		this.sweepArea = new DefaultTISweepArea<>();
 	}
 
 	@SuppressWarnings("unchecked")

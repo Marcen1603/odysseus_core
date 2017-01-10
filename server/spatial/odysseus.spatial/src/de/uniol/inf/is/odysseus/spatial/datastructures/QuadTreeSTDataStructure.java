@@ -20,6 +20,7 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
@@ -33,7 +34,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 	private String name;
 	private PointInTime previousEndTS;
 	private PointInTime previousStartTS;
-	protected ExtendedTISweepArea<Tuple<ITimeInterval>> sweepArea;
+	protected DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	/*
 	 * We want to avoid to calculate the polygon on every query. Therefore we
@@ -55,7 +56,7 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 		this.quadTree = new Quadtree();
 		this.geometryPosition = geometryPosition;
 		this.name = name;
-		this.sweepArea = new ExtendedTISweepArea<>();
+		this.sweepArea = new DefaultTISweepArea<>();
 		this.queryPolygons = new HashMap<>();
 	}
 
