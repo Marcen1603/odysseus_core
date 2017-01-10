@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2012 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,38 +20,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * A window that can be initialized with one or two predicates
- * 
+ *
  * The start predicates opens a window and collects elements until a) the end
  * predicate is true or b) if the end predicate is not set, the start predicate
- * gets false, optionally respects a partition condition with attributes 
- * 
+ * gets false, optionally respects a partition condition with attributes
+ *
  * A optional size information can be used to set the maximum time to wait until
- * a window closes. 
- * 
- * 
+ * a window closes.
+ *
+ *
  * @author Marco Grawunder
- * 
+ *
  * @param <T>
  */
 
-public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
-		extends AbstractPartitionedWindowTIPO<T> {
+public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends AbstractPartitionedWindowTIPO<T> {
 
 	final private IPredicate<? super T> start;
 	final private IPredicate<? super T> end;
 	final private long maxWindowTime;
 	final private boolean sameStarttime;
-	private Map<Object, Boolean> openedWindow = new HashMap<>();
+	final private Map<Object, Boolean> openedWindow = new HashMap<>();
+	final private boolean keepEndElement;
 
 	@SuppressWarnings("unchecked")
 	public PredicateWindowTIPO(AbstractWindowAO windowao) {
@@ -59,20 +63,30 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		IPredicate<?> start = windowao.getStartCondition();
 		IPredicate<?> end = windowao.getEndCondition();
 		TimeValueItem maxWindowTime = windowao.getWindowSize();
-		
-		this.start =  (IPredicate<? super T>) start.clone();
+
+		this.start = (IPredicate<? super T>) start.clone();
 		if (end != null) {
 			this.end = (IPredicate<? super T>) end.clone();
 		} else {
 			this.end = null;
 		}
 		if (maxWindowTime != null) {
-			this.maxWindowTime = windowao.getBaseTimeUnit().convert(maxWindowTime.getTime(),
-					maxWindowTime.getUnit());
+			this.maxWindowTime = windowao.getBaseTimeUnit().convert(maxWindowTime.getTime(), maxWindowTime.getUnit());
 		} else {
 			this.maxWindowTime = 0;
 		}
 		this.sameStarttime = windowao.isSameStarttime();
+		// needed, so all elements in the process_done phase get the same start
+		// timestamp
+		this.usesSlideParam = this.sameStarttime;
+
+		this.keepEndElement = windowao.isKeepEndElement();
+	}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		openedWindow.clear();
+		super.process_open();
 	}
 
 	@Override
@@ -80,34 +94,37 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		// Test if elements need to be written
 		boolean startEval = start.evaluate(object);
 		Boolean opened = openedWindow.get(bufferId);
-		if (opened == null){
+		if (opened == null) {
 			openedWindow.put(bufferId, false);
 		}
 		if (openedWindow.get(bufferId)) {
 			// Two cases: end is set --> use end predicate
 			// end is not set --> use negated start predicate
 			// maximum window size reached
-			if ((end != null && end.evaluate(object))
-					|| (end == null && !startEval)
-					|| (maxWindowTime > 0 && PointInTime.plus(
-							buffer.get(0).getMetadata().getStart(),
-							maxWindowTime).afterOrEquals(
-							object.getMetadata().getStart()))) {
+
+			if ((end != null && end.evaluate(object)) || (end == null && !startEval)
+					|| (maxWindowTime > 0 && PointInTime.plus(buffer.get(0).getMetadata().getStart(), maxWindowTime)
+							.afterOrEquals(object.getMetadata().getStart()))) {
+				if (keepEndElement) {
+					appendData(object, bufferId, buffer);
+				}
+				openedWindow.put(bufferId, false);
 				produceData(object.getMetadata().getStart(), bufferId, buffer);
 			} else {
 				appendData(object, bufferId, buffer);
 			}
-		} else { // Test, if window needs to be opened
+		}
+		// the same tuple could be start and end, so do not use else
+		if (!openedWindow.get(bufferId)) {
 			if (startEval) {
 				appendData(object, bufferId, buffer);
 			} else {
 				transferArea.transfer(object, 1);
 			}
 		}
-		
+
 	}
-	
-	
+
 	private void appendData(T object, Object bufferId, List<T> buffer) {
 		openedWindow.put(bufferId, true);
 		buffer.add(object);
@@ -121,7 +138,7 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		while (!buffer.isEmpty()) {
 			T toTransfer = buffer.remove(0);
 			if (start != null) {
-				toTransfer.getMetadata().setStart(start);
+				toTransfer.getMetadata().setStart(new PointInTime(start));
 			}
 			// We can produce tuple with no validity --> Do not send them
 			if (endTimestamp.after(toTransfer.getMetadata().getStart())) {
@@ -138,19 +155,40 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-			// FIXME: Implement me again
+		// FIXME: Implement me again
 		// Need to iterate over all buffers
-		//		if (maxWindowTime > 0){
-//			
-//			PointInTime.plus(queue.get(0).getMetadata().getStart(),
-//						maxWindowTime).afterOrEquals(punctuation.getTime())) {
-//			produceData(punctuation.getTime());
-//		}
+		// if (maxWindowTime > 0){
+		//
+		// PointInTime.plus(queue.get(0).getMetadata().getStart(),
+		// maxWindowTime).afterOrEquals(punctuation.getTime())) {
+		// produceData(punctuation.getTime());
+		// }
 
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof PredicateWindowTIPO)) {
+			return false;
+		}
+		PredicateWindowTIPO<IStreamObject<ITimeInterval>> other = (PredicateWindowTIPO<IStreamObject<ITimeInterval>>) ipo;
+		if (!Objects.equal(this.start,other.start)) {
+			return false;
+		}
+		if (!Objects.equal(this.end, other.end)){
+			return false;
+		}
+		if (this.maxWindowTime != other.maxWindowTime){
+			return false;
+		}
+		if (this.sameStarttime != other.sameStarttime){
+			return false;
+		}
+		if (this.keepEndElement != other.keepEndElement){
+			return false;
+		}
+		return super.isSemanticallyEqual(ipo);
 
-
-
+	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.wrapper.mail.physicaloperator.access;
 
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	public static final String NAME = "SMTP";
@@ -55,7 +55,7 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 	private Transport transport;
 
 	/**
-	 * 
+	 *
 	 */
 	public SMTPTransportHandler() {
 		super();
@@ -75,6 +75,9 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 			mimeMessage.setText(str);
 			mimeMessage.setFrom(new InternetAddress(this.getFrom()));
 			mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(this.getTo()));
+			if (!this.transport.isConnected()){
+				reconnect();
+			}
 			this.transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
 		} catch (final MessagingException e) {
 			this.LOG.error(e.getMessage(), e);
@@ -236,6 +239,10 @@ public class SMTPTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public void processOutOpen() throws IOException {
+		reconnect();
+	}
+
+	private void reconnect() throws IOException {
 		final Properties properties = System.getProperties();
 		properties.setProperty("mail.smtp.auth", Boolean.toString(this.isAuth()));
 		properties.setProperty("mail.smtp.starttls.enable", Boolean.toString(this.isTLS()));

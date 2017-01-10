@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,17 +18,17 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
-public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? extends ITimeInterval>>
+public abstract class AbstractNonBlockingWindowTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
 		extends AbstractWindowTIPO<T> {
 
 	public AbstractNonBlockingWindowTIPO(AbstractWindowAO algebraOp) {
@@ -41,30 +41,34 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? ex
 			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
 		super(windowType, baseTimeUnit, windowSize, windowAdvance, windowSlide, partioned, partitionedBy, inputSchema);
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 //		System.err.println("MG WINDOW DEBUG: IN " + object);
 
-		ITimeInterval time = object.getMetadata();
-		PointInTime end = this.calcWindowEnd(time);
-		if (end.after(time.getStart())) {
-			time.setEnd(end);
+		PointInTime start = object.getMetadata().getStart();
+		PointInTime end = this.calcWindowEnd(start);
+
+		if (end.after(start)) {
+			M m = (M) object.getMetadata().clone();
+			m.setEnd(end);
+			object.setMetadata(m);
 			this.transfer(object);
 		}
 	}
-	
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
 
-	protected abstract PointInTime calcWindowEnd(ITimeInterval interval);
+	protected abstract PointInTime calcWindowEnd(PointInTime interval);
 
 
 }

@@ -1,12 +1,9 @@
-package de.uniol.inf.is.odysseus.mep.functions.kvstore;
-
-import java.util.HashMap;
-import java.util.Map;
+package de.uniol.inf.is.odysseus.core.server.store.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
 
-public class KvNamedStoreWriteFunction extends AbstractFunction<Boolean> {
+public class KvNamedStoreWriteFunction extends AbstractNamedStoreFunction<Boolean> {
 
 	private static final long serialVersionUID = -3263090969225261507L;
 
@@ -23,12 +20,7 @@ public class KvNamedStoreWriteFunction extends AbstractFunction<Boolean> {
 		String valueKey = getInputValue(1);
 		Object value = getInputValue(2);
 
-		Map<String, Object> store = namedkeyValueStore.get(storeKey);
-
-		if (store == null){
-			store = new HashMap<>();
-			namedkeyValueStore.put(storeKey, store);
-		}
+		IStore<String, Object> store = getStore(storeKey);
 
 		store.put(valueKey, value);
 		return true;
