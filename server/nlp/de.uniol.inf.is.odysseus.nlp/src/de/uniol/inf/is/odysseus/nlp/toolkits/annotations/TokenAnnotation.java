@@ -9,7 +9,6 @@ public class TokenAnnotation implements IAnnotation {
 	 * Includes tokens by sentence-index.
 	 */
 	private List<String[]> tokens;
-	private int sentence;
 
 	public TokenAnnotation(List<String[]> tokens){
 		this.tokens = tokens;
@@ -19,8 +18,4 @@ public class TokenAnnotation implements IAnnotation {
 		return tokens;
 	}
 
-	public int getSentence() {
-		return sentence;
-	}
-	
 }

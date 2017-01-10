@@ -5,6 +5,9 @@ import java.util.HashMap;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
 
 public class Annotation {
+	public static final String NERID = "namedentity";
+	public static final String SENTENCEID = "sentence";
+	public static final String TOKENID = "token";
 	private String text;
 	private HashMap<Class<? extends IAnnotation>, IAnnotation> annotations = new HashMap<>();
 
@@ -16,7 +19,7 @@ public class Annotation {
 		return annotations.get(clazz);
 	}
 
-	void setAnnotation(Class<? extends IAnnotation> clazz, IAnnotation annotation){
+	public void setAnnotation(Class<? extends IAnnotation> clazz, IAnnotation annotation){
 		annotations.put(clazz, annotation);
 	}
 

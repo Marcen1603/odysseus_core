@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.nlp.toolkits;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +12,11 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
+import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.NamedEntityAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPInformationNotSupportedException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPModelNotFoundException;
 
 public abstract class NLPToolkit {
 	protected List<String> information;
@@ -28,7 +30,8 @@ public abstract class NLPToolkit {
 	public NLPToolkit(List<String> information, HashMap<String, Option> configuration, List<Class<? extends IAnnotation>> pipeline) throws NLPInformationNotSupportedException, NLPModelNotFoundException{
 		this.annotationClasses = Arrays.asList(
 				SentenceAnnotation.class, 
-				TokenAnnotation.class
+				TokenAnnotation.class,
+				NamedEntityAnnotation.class
 				);
 		this.models = new HashMap<>();
 		this.internalPipeline = pipeline;
@@ -46,11 +49,20 @@ public abstract class NLPToolkit {
 		if(highestAnnotation != null){
 			try {
 				switch((String)highestAnnotation.getField("NAME").get(null)){
-				case "sentence":
+				case Annotation.SENTENCEID:
 					annotateSentences(annotation);
-				case "token":
+					break;
+				case Annotation.TOKENID:
 					annotateSentences(annotation);
 					annotateTokens(annotation);
+					break;
+				case Annotation.NERID:
+					annotateSentences(annotation);
+					annotateTokens(annotation);
+					annotateNamedEntities(annotation);
+					break;
+					
+					
 				}
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 				e.printStackTrace();
@@ -60,8 +72,9 @@ public abstract class NLPToolkit {
 	}
 
 	
-	abstract void annotateSentences(Annotation annotation);
-	abstract void annotateTokens(Annotation annotation);
+	protected abstract void annotateSentences(Annotation annotation);
+	protected abstract void annotateTokens(Annotation annotation);
+	protected abstract void annotateNamedEntities(Annotation annotation);
 
 	protected Class<? extends IAnnotation> getHighestAnnotation() {
 		List<Class<? extends IAnnotation>> pipeline = new ArrayList<>(internalPipeline);
@@ -110,4 +123,5 @@ public abstract class NLPToolkit {
 		}
 		return classes;
 	}
+
 }

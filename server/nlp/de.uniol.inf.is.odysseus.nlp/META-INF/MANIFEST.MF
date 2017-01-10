@@ -15,3 +15,6 @@ Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
 Bundle-ClassPath: lib/opennlp-tools-1.7.0.jar,
  .
 Bundle-Activator: de.uniol.inf.is.odysseus.nlp.Activator
+Export-Package: de.uniol.inf.is.odysseus.nlp.toolkits,
+ de.uniol.inf.is.odysseus.nlp.toolkits.annotations,
+ de.uniol.inf.is.odysseus.nlp.toolkits.exception

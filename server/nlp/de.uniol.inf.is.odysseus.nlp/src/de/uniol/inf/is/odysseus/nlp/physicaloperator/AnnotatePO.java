@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.nlp.toolkits.*;
-import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
+import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.NamedEntityAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
 
@@ -30,6 +30,7 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	private HashMap<String, Option> configuration;
 	private boolean appendTokens = false;
 	private boolean appendSentences = false;
+	private boolean appendNamedEntities = false;
 
 	public int getAttributePosition(){
 		return attributePosition;
@@ -50,8 +51,9 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
         this.information = information;
         this.attribute = attribute;
         this.configuration = configuration;
-        this.appendTokens = information.contains("token");
-        this.appendSentences = information.contains("sentence");
+        this.appendTokens = information.contains(Annotation.TOKENID);
+        this.appendSentences = information.contains(Annotation.SENTENCEID);
+        this.appendNamedEntities = information.contains(Annotation.NERID);
     }
     
     
@@ -97,6 +99,8 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
     		append.add(getTokens(annotation));
     	if(this.appendSentences)
     		append.add(getSentences(annotation));
+    	if(this.appendNamedEntities)
+    		append.add(getNamedEntities(annotation));
     	
     	output = object.appendList(append, true);
 		transfer(output);
@@ -117,6 +121,11 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 		}
 		
 		return tokens;		
+	}
+	
+	private List<String> getNamedEntities(Annotation annotation){
+		NamedEntityAnnotation namedEntityAnnotation = (NamedEntityAnnotation) annotation.getAnnotation(NamedEntityAnnotation.class);
+		return namedEntityAnnotation.getNamedEntities();
 	}
 }
 

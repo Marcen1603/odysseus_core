@@ -1,23 +1,31 @@
-package de.uniol.inf.is.odysseus.nlp.toolkits;
+package org.apache.opennlp;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.nlp.toolkits.Annotation;
+import de.uniol.inf.is.odysseus.nlp.toolkits.NLPToolkit;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
+import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.NamedEntityAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPInformationNotSupportedException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPModelNotFoundException;
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinder;
+import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
+import opennlp.tools.util.Span;
 
 
 public class OpenNLPToolkit extends NLPToolkit{
@@ -25,12 +33,13 @@ public class OpenNLPToolkit extends NLPToolkit{
 	public OpenNLPToolkit(List<String> information, HashMap<String, Option> configuration) throws NLPInformationNotSupportedException, NLPModelNotFoundException {
 		super(information, configuration, Arrays.asList(
 				SentenceAnnotation.class, 
-				TokenAnnotation.class
+				TokenAnnotation.class,
+				NamedEntityAnnotation.class
 				));
 	}
 	
 	@Override
-	void annotateSentences(Annotation annotation){
+	protected void annotateSentences(Annotation annotation){
 		SentenceDetector detector = (SentenceDetector) models.get(SentenceAnnotation.class);
 		String[] sentences = detector.sentDetect(annotation.getText());
 		annotation.setAnnotation(SentenceAnnotation.class, new SentenceAnnotation(sentences));
@@ -39,7 +48,7 @@ public class OpenNLPToolkit extends NLPToolkit{
 
 	
 	@Override
-	void annotateTokens(Annotation annotation){
+	protected void annotateTokens(Annotation annotation){
 		Tokenizer tokenizer = (Tokenizer) models.get(TokenAnnotation.class);
 		tokenizer.tokenize(annotation.getText());
 		SentenceAnnotation sentences = (SentenceAnnotation) annotation.getAnnotation(SentenceAnnotation.class);
@@ -52,6 +61,26 @@ public class OpenNLPToolkit extends NLPToolkit{
 		annotation.setAnnotation(TokenAnnotation.class, tokenAnnotation);
 		//String[] sentences = detector.sentDetect(annotation.getText());
 	}
+	
+	@Override
+	protected void annotateNamedEntities(Annotation annotation){
+		TokenNameFinder nameFinder = (TokenNameFinder) models.get(NamedEntityAnnotation.class);
+		List<String> namedEntities = new ArrayList<>();
+		TokenAnnotation tokenAnnotation = (TokenAnnotation)annotation.getAnnotation(TokenAnnotation.class);;
+		List<String[]> sentenceTokens = tokenAnnotation.getTokens();
+		for(String[] tokens : sentenceTokens){
+			Span[] neSpan = nameFinder.find(tokens);
+			for(Span span : neSpan){
+				String namedEntity = "";
+				for(int i = span.getStart(); i <= span.getEnd(); i++){
+					namedEntity += tokens[i];
+				}
+				namedEntities.add(namedEntity);
+			}
+		}
+		NamedEntityAnnotation neAnnotation = new NamedEntityAnnotation(namedEntities);
+		annotation.setAnnotation(NamedEntityAnnotation.class, neAnnotation);
+	}
 
 
 	@Override
@@ -61,9 +90,11 @@ public class OpenNLPToolkit extends NLPToolkit{
 		if(highestAnnotation != null){
 			try {
 				switch((String)highestAnnotation.getField("NAME").get(null)){
-					case "token":
+					case Annotation.NERID:
+						loadModel(NamedEntityAnnotation.class);
+					case Annotation.TOKENID:
 						loadModel(TokenAnnotation.class);
-					case "sentence":
+					case Annotation.SENTENCEID:
 						loadModel(SentenceAnnotation.class);
 						break;
 					default:
@@ -79,11 +110,16 @@ public class OpenNLPToolkit extends NLPToolkit{
 			try (InputStream modelIn = getModelAsStream(clazz)) {
 				name = (String)clazz.getField("NAME").get(null);
 				switch(name){
-				case "token":
+				case Annotation.TOKENID:
 					models.put(clazz, new TokenizerME(new TokenizerModel(modelIn)));
 					break;
-				case "sentence":
+				case Annotation.SENTENCEID:
 					models.put(clazz, new SentenceDetectorME(new SentenceModel(modelIn)));
+					break;
+				case Annotation.NERID:
+					models.put(clazz, new NameFinderME(new TokenNameFinderModel(modelIn)));
+					break;
+				default:
 					break;
 				}
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException

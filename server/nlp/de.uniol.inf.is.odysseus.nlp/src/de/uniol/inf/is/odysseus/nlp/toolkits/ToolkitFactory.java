@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPInformationNotSupportedException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.ToolkitNotFoundException;
 
 public class ToolkitFactory {
 	private static HashMap<String, Class<? extends NLPToolkit>> toolkits = new HashMap<>();

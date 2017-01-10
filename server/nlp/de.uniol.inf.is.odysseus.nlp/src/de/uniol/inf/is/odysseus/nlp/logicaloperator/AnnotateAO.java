@@ -19,11 +19,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.nlp.toolkits.NLPInformationNotSupportedException;
-import de.uniol.inf.is.odysseus.nlp.toolkits.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.Annotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.NLPToolkit;
 import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitFactory;
-import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPInformationNotSupportedException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.toolkits.exception.ToolkitNotFoundException;
 
 /**
  * Logical operator component of the ANNOTATE operator.
@@ -45,11 +46,13 @@ public class AnnotateAO extends UnaryLogicalOp {
 	private SDFAttribute attribute;
 	
 	//output-attribute that represents the sentences 
-	private SDFAttribute sentencesAttribute = new SDFAttribute(null, "sentence",
+	private SDFAttribute sentencesAttribute = new SDFAttribute(null, Annotation.SENTENCEID,
             SDFDatatype.LIST_STRING, null, null, null);
 	
 	//output-attribute that represents the tokens 
-	private SDFAttribute tokensAttribute = new SDFAttribute(null, "token",
+	private SDFAttribute tokensAttribute = new SDFAttribute(null, Annotation.TOKENID,
+            SDFDatatype.LIST_STRING, null, null, null);
+	private SDFAttribute namedEntityAttribute = new SDFAttribute(null, Annotation.NERID,
             SDFDatatype.LIST_STRING, null, null, null);
 	
 	//user-specified nlp-toolkit (eg. OpenNLPToolkit)
@@ -132,11 +135,15 @@ public class AnnotateAO extends UnaryLogicalOp {
     public SDFSchema getOutputSchemaIntern(int pos) {
     	List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 
-    	if(information.contains("token"))
+    	if(information.contains(Annotation.TOKENID))
     		attributes.add(tokensAttribute);
 
-    	if(information.contains("sentence"))
+    	if(information.contains(Annotation.SENTENCEID))
     		attributes.add(sentencesAttribute);
+    	
+    	if(information.contains(Annotation.NERID))
+    		attributes.add(namedEntityAttribute);
+    		
     	
         SDFSchema schema = SDFSchemaFactory.createNewAddAttributes(attributes, getInputSchema(0));
         return schema;
