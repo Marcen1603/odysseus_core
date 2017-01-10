@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
@@ -117,18 +116,6 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 
 		// Remove the extracted elements from the quadTree
 		removed.stream().forEach(e -> this.quadTree.remove(getGeometry(e).getEnvelopeInternal(), e));
-	}
-
-	@Override
-	public void addListener(ISpatialListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeListener(ISpatialListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
