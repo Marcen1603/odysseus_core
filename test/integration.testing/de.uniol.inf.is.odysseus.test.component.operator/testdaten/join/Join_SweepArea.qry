@@ -55,7 +55,7 @@ right = ACCESS({
         
 joinWithExtendedSweepArea = JOIN({
                                 predicate = 'x_1 = x_2',
-                                sweepareaname = 'ExtendedTISweepArea'
+                                sweepareaname = 'TIJoinSA'
                               },
                               left,
                               right
