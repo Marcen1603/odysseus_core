@@ -26,6 +26,7 @@ import com.google.inject.Injector;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -35,6 +36,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.RunCommandCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StartQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
@@ -64,9 +69,10 @@ public class CQLParser implements IQueryParser
 	private XtextResourceSet resourceSet;
 	private Resource resource;
 	private Model model;
+	private PQLParser pqlParser;
 	 
-	private String types;
-	private String regex;
+//	private String types;
+//	private String regex;
 	
 	/////
 	/*
@@ -160,7 +166,7 @@ public class CQLParser implements IQueryParser
 		}
 	}
 	
-	public synchronized String translate(String query, ISession user, IDataDictionary dd, Context context,
+	public synchronized List<IExecutorCommand> translate(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
 //		System.out.println("ERROS:: " + resource.getErrors().toString());
@@ -186,32 +192,37 @@ public class CQLParser implements IQueryParser
 										  .collect(Collectors.toSet());
 		//Get schemata from CQLDictionary
 		Set<SDFSchema> innerschema = (Set<SDFSchema>) CQLDictionaryProvider.getDictionary(user).getSchema();
-		return generate(query.toString(), model, outerschema, innerschema);
+		return generate(query.toString(), model, outerschema, innerschema, user, dd, context, metaAttribute, executor);
 	}
+	
+	private List<IExecutorCommand> commands = new ArrayList<>();
 	
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException 
 	{
-		String pqlQuery = translate(query, user, dd, context, metaAttribute, executor);
+		commands = translate(query, user, dd, context, metaAttribute, executor);
 		resource.unload();
-		return new PQLParser().parse(pqlQuery, user, dd, context, metaAttribute, executor);
+		
+		return commands;
 	}
 	
-	public synchronized String generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema) throws QueryParseException
+	public synchronized List<IExecutorCommand> generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema, ISession user, IDataDictionary dd, Context context,
+			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
-		System.out.println("Generated PQL query text: ");//TODO Remove after debugging
+//		System.out.println("Generated PQL query text: ");//TODO Remove after debugging
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
 		generator.doGenerate(model.eResource(), fsa, null);
-		String pqlString = "";
+		List<IExecutorCommand> list = new ArrayList<>();
 		for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
 		{
-			pqlString += e.getValue().toString();
+			
+			list.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), true));
 		}
 		generator.clear();
-		return pqlString;
+		return list;
 	}
 
 	@Override
@@ -229,7 +240,6 @@ public class CQLParser implements IQueryParser
 
 	@Override
 	public String getLanguage() { return "CQL"; } 
-
 	public static void addQueryParameter(IParameter<?> parameter) 
 	{
 		String parameterName = parameter.getName();

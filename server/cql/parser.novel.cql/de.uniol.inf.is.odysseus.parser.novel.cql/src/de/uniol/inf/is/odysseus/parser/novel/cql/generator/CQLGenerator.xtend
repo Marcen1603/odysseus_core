@@ -137,11 +137,11 @@ class CQLGenerator implements IGenerator2
 		if(!stmt.attributes.empty)//SELECT attr1, ...
 			{
 			    var String operator = null
-			    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toSet)
+			    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
 				if(!stmt.aggregations.empty)
 				{
 					var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-					attributes = result.get(0) as HashSet<String>
+					attributes = result.get(0) as List<String>
 				    operator   = result.get(1).toString
 				
 					//FIXME Not necessary, it has been done before!
@@ -171,9 +171,9 @@ class CQLGenerator implements IGenerator2
 	{
 		
 	    var String operator = null
-	    var Set<String>     attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toSet)
-		var Set<Expression> predicates = newHashSet
-		var Set<Source>        sources = newHashSet
+	    var List<String>     attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+		var List<Expression> predicates = newArrayList
+		var List<Source>        sources = newArrayList
 	    
 
 		////WOKRING PROGRESS remove duplicates!!
@@ -189,7 +189,9 @@ class CQLGenerator implements IGenerator2
 		{
 			for(var i = 0; i < nested.size; i++)
 			{
-				attributes.addAll(nested.get(i).nested.attributes.stream.map(e|e.name).collect(Collectors.toSet))
+				CQLUtil.merge(attributes, nested.get(i).nested.attributes.stream
+											.map(e|e.name).collect(Collectors.toSet)
+				)
 				var pred = nested.get(i).nested.predicates
 				var srcs = nested.get(i).nested.sources
 				predicates.addAll(pred.elements.get(0))
@@ -205,8 +207,8 @@ class CQLGenerator implements IGenerator2
 		}
 		if(!stmt.aggregations.empty)
 		{
-			var result = buildAggregateOP(stmt.aggregations, stmt.order, sources as List<Source>)
-			attributes = result.get(0) as Set<String>
+			var result = buildAggregateOP(stmt.aggregations, stmt.order, sources)
+			attributes = result.get(0) as List<String>
 		    operator   = result.get(1).toString
 		
 			//Not necessary, it has been done before!
@@ -242,8 +244,8 @@ class CQLGenerator implements IGenerator2
 	def Object[] buildAggregateOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input)
 	{
 		var argsstr 				 = ''
-		var HashSet<String> args    = newHashSet()
-		var HashSet<String> aliases = newHashSet()
+		var List<String> args    = newArrayList()
+		var List<String> aliases = newArrayList()
 		for(var i = 0; i < aggAttr.length; i++)
 		{
 			args.add(aggAttr.get(i).name)
@@ -480,12 +482,12 @@ class CQLGenerator implements IGenerator2
 
 	}
 
-	def CharSequence buildJoin(ExpressionsModel predicate, List<Source> scrs)
+	def CharSequence buildJoin(ExpressionsModel predicate, Collection<Source> scrs)
 	{
 		return buildJoin(predicate, scrs, null) 	
 	}
 
-	def buildJoin(List<Source> scrs)
+	def buildJoin(Collection<Source> scrs)
 	{
 		
 		var args = scrs.stream.map(
@@ -522,7 +524,7 @@ class CQLGenerator implements IGenerator2
 	 * Builds a select operator with a given {@link ExpressionsModel} object as predicate
 	 * and a char sequence to define the input operator. 
 	 */
-	def CharSequence buildSelectOP(Set<Expression> predicate, CharSequence operator)
+	def CharSequence buildSelectOP(List<Expression> predicate, CharSequence operator)
 	{
 		predicate = ''
 		return '''SELECT({predicate='«parsePredicate(predicate)»'},«operator»)'''
@@ -702,14 +704,17 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 	
-	def CharSequence parsePredicate(Set<Expression> expressions)
+	def CharSequence parsePredicate(List<Expression> expressions)
 	{
 		var s = ''
 		for(var i = 0 ; i < expressions.size - 1; i++)
 		{
-			if((expressions.get(i) as AttributeRef).value instanceof AttributeWithNestedStatement)
+			if(expressions.get(i) instanceof AttributeRef)
 			{
-				// ignore it!
+				if((expressions.get(i) as AttributeRef).value instanceof AttributeWithNestedStatement)
+				{
+					// ignore it!
+				}
 			}
 			else
 			{
