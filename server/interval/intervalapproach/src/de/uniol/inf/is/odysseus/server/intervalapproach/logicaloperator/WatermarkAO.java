@@ -20,7 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * @author Cornelius Ludmann
@@ -32,7 +33,7 @@ public class WatermarkAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -4282057482280455210L;
 
-	private long timespan;
+	private TimeValueItem timeParameter = null;
 
 	/**
 	 * Default constructor.
@@ -46,23 +47,16 @@ public class WatermarkAO extends UnaryLogicalOp {
 	 * @param other
 	 */
 	public WatermarkAO(WatermarkAO other) {
-		this.timespan = other.timespan;
+		this.timeParameter = other.getTimeParameter();
 	}
 
-	/**
-	 * @return the timespan
-	 */
-	public long getTimespan() {
-		return timespan;
+	@Parameter(type = TimeParameter.class, name = "TimespanValue", optional = false, doc = "How long the watermark lacks behind the data stream timestamps.")
+	public void setWindowSize(TimeValueItem timespan) {
+		this.timeParameter = timespan;
 	}
 
-	/**
-	 * @param timespan
-	 *            the timespan to set
-	 */
-	@Parameter(type = LongParameter.class, name = "Timespan", optional = false, doc = "Timespan to lag behind. Use same time unit as in the incoming elements.")
-	public void setTimespan(final long timespan) {
-		this.timespan = timespan;
+	public TimeValueItem getTimeParameter() {
+		return timeParameter;
 	}
 
 	/*

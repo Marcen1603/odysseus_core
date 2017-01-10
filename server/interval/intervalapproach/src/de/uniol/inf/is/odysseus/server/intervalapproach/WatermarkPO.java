@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -22,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -53,8 +56,10 @@ public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	 * @param timespan
 	 *            The time span the watermarkt / heartbeats have to lag behind
 	 */
-	public WatermarkPO(long timespan) {
-		this.timespan = timespan;
+	public WatermarkPO(TimeValueItem dragBegindTime, TimeUnit baseTimeUnit) {
+		long timeValue = dragBegindTime.getTime();
+		TimeUnit unit = dragBegindTime.getUnit();
+		this.timespan = baseTimeUnit.convert(timeValue, unit);
 	}
 
 	@Override
@@ -93,6 +98,7 @@ public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		 * watermark (out of order) we will use the watermark as we guarantee
 		 * that the watermark is in order
 		 */
+
 		long max = Math.max(time.getMainPoint() - timespan, watermark);
 		if (max > watermark) {
 			watermark = max;
