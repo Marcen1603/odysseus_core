@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
@@ -33,7 +34,9 @@ public class SpatialDataStructureTest extends TestCase {
 	private static final String DATA_STRUCTURE_NAME = "test";
 	private static final int GEOMETRY_POSITION = 0;
 
-	private IMovingObjectDataStructure dataStructure;
+	private IMovingObjectDataStructure dataStructureNaive;
+	private IMovingObjectDataStructure dataStructureFastQuadTree;
+	private IMovingObjectDataStructure dataStructureGeoHash;
 	private GeometryFactory factory;
 
 	private TimeInterval testSearchInterval = new TimeInterval(new PointInTime(5000), new PointInTime(5100));
@@ -66,9 +69,9 @@ public class SpatialDataStructureTest extends TestCase {
 
 		// Create the data structure that needs to be tested
 		try {
-			dataStructure = new NaiveSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
-//			dataStructure = new FastQuadTreeSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
-			dataStructure = new GeoHashSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
+			dataStructureNaive = new NaiveSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
+			dataStructureFastQuadTree = new FastQuadTreeSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
+			dataStructureGeoHash = new GeoHashSTDataStructure(DATA_STRUCTURE_NAME, GEOMETRY_POSITION);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -120,14 +123,19 @@ public class SpatialDataStructureTest extends TestCase {
 
 		// Add the coordinate which is timely before at the beginning
 		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(tooEarlyCoord), 0, 10);
-		dataStructure.add(tuple);
 
 		// And add the neighbors to the normal list as well
 		for (Point point : neighbors) {
 			tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
 					testSearchInterval.getEnd().getMainPoint());
-			dataStructure.add(tuple);
+			addToAll(tuple);
 		}
+	}
+
+	private void addToAll(Tuple<ITimeInterval> tuple) {
+		dataStructureNaive.add(tuple);
+		dataStructureFastQuadTree.add(tuple);
+		dataStructureGeoHash.add(tuple);
 	}
 
 	private void fillRangeTestData() {
@@ -166,15 +174,15 @@ public class SpatialDataStructureTest extends TestCase {
 		for (Point point : rangeNeighbors) {
 			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
 					testSearchInterval.getEnd().getMainPoint());
-			dataStructure.add(tuple);
+			addToAll(tuple);
 		}
 
 		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(coord6),
 				testSearchInterval.getStart().getMainPoint(), testSearchInterval.getEnd().getMainPoint());
-		dataStructure.add(tuple);
+		addToAll(tuple);
 		tuple = createTuple(factory.createPoint(coord7), testSearchInterval.getStart().getMainPoint(),
 				testSearchInterval.getEnd().getMainPoint());
-		dataStructure.add(tuple);
+		addToAll(tuple);
 	}
 
 	private void fillQueryBoundingBoxTestData() {
@@ -216,15 +224,15 @@ public class SpatialDataStructureTest extends TestCase {
 		for (Point point : correctQueryResults) {
 			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
 					testSearchInterval.getEnd().getMainPoint());
-			dataStructure.add(tuple);
+			addToAll(tuple);
 		}
 
 		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(noCoord1),
 				testSearchInterval.getStart().getMainPoint(), testSearchInterval.getEnd().getMainPoint());
-		dataStructure.add(tuple);
+		addToAll(tuple);
 		tuple = createTuple(factory.createPoint(noCoord2), testSearchInterval.getStart().getMainPoint(),
 				testSearchInterval.getEnd().getMainPoint());
-		dataStructure.add(tuple);
+		addToAll(tuple);
 	}
 
 	/**
@@ -232,9 +240,31 @@ public class SpatialDataStructureTest extends TestCase {
 	 * know the kNNs for the 5 nearest points.
 	 */
 	@Test
-	public void testkNN() {
+	public void testkNNNaive() {
 		int k = neighbors.size();
-		List<Tuple<ITimeInterval>> kNN = dataStructure.queryKNN(kNNTestCenter, k, testSearchInterval);
+		List<Tuple<ITimeInterval>> kNN = dataStructureNaive.queryKNN(kNNTestCenter, k, testSearchInterval);
+		assertEqualList(kNN, neighbors);
+	}
+
+	/**
+	 * Tests whether the kNN method from the data structure works correctly. We
+	 * know the kNNs for the 5 nearest points.
+	 */
+	@Test
+	public void testkNNFastQuadTree() {
+		int k = neighbors.size();
+		List<Tuple<ITimeInterval>> kNN = dataStructureFastQuadTree.queryKNN(kNNTestCenter, k, testSearchInterval);
+		assertEqualList(kNN, neighbors);
+	}
+
+	/**
+	 * Tests whether the kNN method from the data structure works correctly. We
+	 * know the kNNs for the 5 nearest points.
+	 */
+	@Test
+	public void testkNNGeoHash() {
+		int k = neighbors.size();
+		List<Tuple<ITimeInterval>> kNN = dataStructureGeoHash.queryKNN(kNNTestCenter, k, testSearchInterval);
 		assertEqualList(kNN, neighbors);
 	}
 
@@ -243,14 +273,51 @@ public class SpatialDataStructureTest extends TestCase {
 	 * We know the neighbors in 5,000m range
 	 */
 	@Test
-	public void testRange() {
-		List<Tuple<ITimeInterval>> rangeResult = dataStructure.queryCircle(rangeTestCenter, range, testSearchInterval);
+	public void testRangeNaive() {
+		List<Tuple<ITimeInterval>> rangeResult = dataStructureNaive.queryCircle(rangeTestCenter, range,
+				testSearchInterval);
+		assertEqualList(rangeResult, rangeNeighbors);
+	}
+
+	/**
+	 * Tests whether the range method from the data structure works correctly.
+	 * We know the neighbors in 5,000m range
+	 */
+	@Test
+	public void testRangeFastQuadTree() {
+		List<Tuple<ITimeInterval>> rangeResult = dataStructureFastQuadTree.queryCircle(rangeTestCenter, range,
+				testSearchInterval);
+		assertEqualList(rangeResult, rangeNeighbors);
+	}
+
+	/**
+	 * Tests whether the range method from the data structure works correctly.
+	 * We know the neighbors in 5,000m range
+	 */
+	@Test
+	public void testRangeGeoHash() {
+		List<Tuple<ITimeInterval>> rangeResult = dataStructureGeoHash.queryCircle(rangeTestCenter, range,
+				testSearchInterval);
 		assertEqualList(rangeResult, rangeNeighbors);
 	}
 
 	@Test
-	public void testBoundingBoxQuery() {
-		List<Tuple<ITimeInterval>> boundingBoxResult = dataStructure.queryBoundingBox(polygon, testSearchInterval);
+	public void testBoundingBoxQueryNaive() {
+		List<Tuple<ITimeInterval>> boundingBoxResult = dataStructureNaive.queryBoundingBox(polygon, testSearchInterval);
+		assertEqualList(boundingBoxResult, correctQueryResults);
+	}
+
+	@Test
+	public void testBoundingBoxQueryFastQuadTree() {
+		List<Tuple<ITimeInterval>> boundingBoxResult = dataStructureFastQuadTree.queryBoundingBox(polygon,
+				testSearchInterval);
+		assertEqualList(boundingBoxResult, correctQueryResults);
+	}
+
+	@Test
+	public void testBoundingBoxQueryGeoHash() {
+		List<Tuple<ITimeInterval>> boundingBoxResult = dataStructureGeoHash.queryBoundingBox(polygon,
+				testSearchInterval);
 		assertEqualList(boundingBoxResult, correctQueryResults);
 	}
 
