@@ -1,7 +1,8 @@
-package de.uniol.inf.is.odysseus.admission.status;
+package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -23,11 +24,6 @@ public interface IAdmissionMonitor {
 	 * @param query
 	 */
 	public void removeQuery(IPhysicalQuery query);
-	
-	/**
-	 * Measures something depending on the admission monitor.
-	 */
-	public void updateMeasurements();
 	
 	/**
 	 * Returns a list with all queries, which have an increasing tendency.

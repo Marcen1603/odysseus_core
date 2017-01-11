@@ -14,9 +14,11 @@ Require-Bundle: de.uniol.inf.is.odysseus.admission;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.costmodel.physical;bundle-version="1.0.0",
  sigar;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0"
-Service-Component: OSGI-INF/ExecutorAdmissionStatusComponent.xml,OSGI-INF/AdmissionStatusPlugIn.xml,OSGI-INF/costModelAdmissionStatusComponent.xml,OSGI-INF/systemLoadAdmissionStatusComponent.xml,
- OSGI-INF/LoadSheddingAdmissionStatusComponent.xml
+Service-Component: OSGI-INF/ExecutorAdmissionStatusComponent.xml,OSGI-INF/AdmissionStatusPlugIn.xml,OSGI-INF/costModelAdmissionStatusComponent.xml,OSGI-INF/systemLoadAdmissionStatusComponent.xml,OSGI-INF/SimpleLoadSheddingAdmissionStatusComponent.xml,OSGI-INF/admissionTransformationHandler.xml,OSGI-INF/SimpleLoadSheddingWPAdmissionStatusComponent.xml,OSGI-INF/ComplexLoadSheddingAdmissionStatusComponent.xml,OSGI-INF/ComplexLoadSheddingWPAdmissionStatusComponent.xml,
+ OSGI-INF/AdmissionFunctionProvider.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn
-Import-Package: org.osgi.framework
+Import-Package: de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.mep.functions.command,
+ org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.admission.status
