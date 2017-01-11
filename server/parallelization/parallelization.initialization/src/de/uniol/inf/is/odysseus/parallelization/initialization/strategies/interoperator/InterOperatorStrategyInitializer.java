@@ -28,16 +28,15 @@ public class InterOperatorStrategyInitializer extends AbstractParallelizationStr
 
 	private static final Logger LOG = LoggerFactory.getLogger(IntraOperatorStrategyInitializer.class);
 
-	// TODO default to 0 to avoid parallelization for all operators
-	private static int DEFAULT_DEGREE = 2;
-	private static int DEFAULT_BUFFERSIZE = 1000;
+	private static int DEFAULT_DEGREE = 0;
+	private static int DEFAULT_BUFFERSIZE = 0;
 	private static boolean DEFAULT_ALLOW_OPTIMIZATION = false;
 	private static boolean DEFUALT_USE_THREADEDBUFFER = true;
 
 	@Override
 	public void initialize(List<IQueryBuildSetting<?>> settings) throws OdysseusScriptException {
 		PreTransformationHandlerParameter newPreTransformationHandler = createPreTransformationHandlerParameter();
-		checkIfInterOperatorSettingAlreadyExists(settings, newPreTransformationHandler);
+		settingAlreadyExists(settings, newPreTransformationHandler);
 		PreTransformationHandlerParameter exists = null;
 		ParallelInterOperatorSetting exists2 = null;
 		for (IQueryBuildSetting<?> setting : settings) {
@@ -82,7 +81,7 @@ public class InterOperatorStrategyInitializer extends AbstractParallelizationStr
 		return newParameter;
 	}
 
-	private void checkIfInterOperatorSettingAlreadyExists(List<IQueryBuildSetting<?>> settings,
+	private void settingAlreadyExists(List<IQueryBuildSetting<?>> settings,
 			PreTransformationHandlerParameter newParameter) throws OdysseusScriptException {
 		for (IQueryBuildSetting<?> setting : settings) {
 			if (setting.getClass().equals(PreTransformationHandlerParameter.class)) {
