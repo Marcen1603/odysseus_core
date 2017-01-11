@@ -1,9 +1,13 @@
-package de.uniol.inf.is.odysseus.admission.status;
+package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -16,6 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 	
+	private final String NAME = "simple";
+	
 	/**
 	 * Contains all queries with active load shedding.
 	 */
@@ -26,12 +32,18 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 	 */
 	private ArrayList<Integer> maxSheddingQueries = new ArrayList<Integer>();
 	
-	@Override
-	public void addQuery(IPhysicalQuery query) {
+	public SimpleLoadSheddingAdmissionStatusComponent() {
+		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
 	}
 	
 	@Override
-	public void removeQuery(IPhysicalQuery query) {
+	public void addQuery(int queryID) {
+		LoggerFactory.getLogger(this.getClass()).info("addquerysimpleloadshedding");
+	}
+	
+	@Override
+	public void removeQuery(int queryID) {
+		LoggerFactory.getLogger(this.getClass()).info("removequerysimpleloadshedding");
 	}
 	
 	@Override
@@ -47,7 +59,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 			return;
 		}
 		
-		int sheddingFactor;
+		int sheddingFactor = 0;
 		
 		//The load shedding of this query is already active 
 		if (activeQueries.containsKey(queryID)) {
@@ -56,10 +68,19 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 			//The maximal shedding factor is reached.
 			if (sheddingFactor >= MAX_SHEDDING_FACTOR) {
 				maxSheddingQueries.add(queryID);
+				sheddingFactor = sheddingFactor - (sheddingFactor - MAX_SHEDDING_FACTOR);
 			}
+			
 			activeQueries.replace(queryID, sheddingFactor);
 		} else {
 			sheddingFactor = 10;
+			
+			//The maximal shedding factor is reached.
+			if (sheddingFactor >= MAX_SHEDDING_FACTOR) {
+				maxSheddingQueries.add(queryID);
+				sheddingFactor = sheddingFactor - (sheddingFactor - MAX_SHEDDING_FACTOR);
+			}
+			
 			activeQueries.put(queryID, sheddingFactor);
 		}
 		
@@ -79,6 +100,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 			}
 			int sheddingFactor = activeQueries.get(queryID) - 10;
 			if (sheddingFactor <= 0) {
+				sheddingFactor = 0;
 				activeQueries.remove(queryID);
 			}
 			AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
@@ -97,16 +119,16 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 			return -1;
 		}
 		
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		
 		// remove queries which already have their maximal shedding-factor
 		for (IPhysicalQuery query : queries) {
-			if (maxSheddingQueries.contains(query.getID())) {
-				queries.remove(query);
+			if (!maxSheddingQueries.contains(query.getID())) {
+				list.add(query.getID());
 			}
 		}
-		
-		double numQueries = (double) queries.size();
-		int place = (int) (Math.random() * numQueries);
-		return queries.toArray(new IPhysicalQuery[queries.size()])[place].getID();
+		Collections.shuffle(list);
+		return list.get(0);
 	}
 	
 	/**
@@ -117,9 +139,13 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 		if (activeQueries.isEmpty()) {
 			return -1;
 		}
-		
-		double numActiveQueries = (double) activeQueries.size();
-		int place = (int) (Math.random() * numActiveQueries);
-		return activeQueries.keySet().toArray(new Integer[activeQueries.size()])[place];
+		ArrayList<Integer> list = new ArrayList<Integer>(activeQueries.keySet());
+		Collections.shuffle(list);
+		return list.get(0);
+	}
+
+	@Override
+	public String getComponentName() {
+		return NAME;
 	}
 }

@@ -1,6 +1,4 @@
-package de.uniol.inf.is.odysseus.admission.status;
-
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 /**
  * Provides the status for complex load shedding in consideration of priorities.
@@ -12,14 +10,20 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class ComplexLoadSheddingWPAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 
+	private final String NAME = "complexWP";
+	
+	public ComplexLoadSheddingWPAdmissionStatusComponent() {
+		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
+	}
+	
 	@Override
-	public void addQuery(IPhysicalQuery query) {
+	public void addQuery(int queryID) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void removeQuery(IPhysicalQuery query) {
+	public void removeQuery(int queryID) {
 		// TODO Auto-generated method stub
 
 	}
@@ -40,6 +44,11 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent implements ILoadShedd
 	public void measureStatus() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String getComponentName() {
+		return NAME;
 	}
 
 }

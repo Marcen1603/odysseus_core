@@ -1,8 +1,11 @@
-package de.uniol.inf.is.odysseus.admission.status;
+package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -21,7 +24,8 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	static private final int QUEUE_MEASUREMENT_SIZE = 5;
 	static private final int TRESHOLD = 5;
 	
-	private HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>> queuelengths = new HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>>();
+	private HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>> queuelengths
+		= new HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>>();
 	
 	@Override
 	public void addQuery(IPhysicalQuery query) {
@@ -37,7 +41,9 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 		}
 	}
 	
-	@Override
+	/**
+	 * Updates the measurements of the queue lengths for each query. 
+	 */
 	public void updateMeasurements() {
 		if (queuelengths.isEmpty()) {
 			return;
@@ -56,21 +62,21 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	
 	@Override
 	public ArrayList<IPhysicalQuery> getQuerysWithIncreasingTendency() {
-		ArrayList<IPhysicalQuery> increasingLengths = new ArrayList<>();
+		HashMap<IPhysicalQuery, Integer> map = new HashMap<>();
 		for (IPhysicalQuery query : queuelengths.keySet()) {
 			for (ControllablePhysicalSubscription<ISink<?>> subscription : queuelengths.get(query).keySet()) {
 				
 				int tendency = estimateTendency(queuelengths.get(query).get(subscription));
 				if (tendency > TRESHOLD) {
-					if (!increasingLengths.contains(query)) {
-						increasingLengths.add(query);
+					if (!map.containsKey(query)) {
+						map.put(query, tendency);
 						break;
 					}
 				}
 			}
 		}
 		
-		return increasingLengths;
+		return getSortedListByValues(map);
 	}
 	
 	/**
@@ -118,5 +124,37 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 			tendency = tendency + (list.get(i + 1) - list.get(i));
 		}
 		return tendency;
+	}
+	
+	/**
+	 * Returns an arrayList with the queries sorted by their tendency in ascending order.
+	 * @param passedMap
+	 * @return
+	 */
+	private ArrayList<IPhysicalQuery> getSortedListByValues(HashMap<IPhysicalQuery, Integer> passedMap) {
+	    List<IPhysicalQuery> queries = new ArrayList<>(passedMap.keySet());
+	    List<Integer> tendencies = new ArrayList<>(passedMap.values());
+	    Collections.sort(tendencies);
+
+	    ArrayList<IPhysicalQuery> sortedList = new ArrayList<>();
+
+	    Iterator<Integer> tendencyIt = tendencies.iterator();
+	    while (tendencyIt.hasNext()) {
+	        long tendency = tendencyIt.next();
+	        Iterator<IPhysicalQuery> queriesIt = queries.iterator();
+
+	        while (queriesIt.hasNext()) {
+	        	IPhysicalQuery query = queriesIt.next();
+	            long comp1 = passedMap.get(query);
+	            long comp2 = tendency;
+
+	            if (comp1 == comp2) {
+	                queriesIt.remove();
+	                sortedList.add(query);
+	                break;
+	            }
+	        }
+	    }
+	    return sortedList;
 	}
 }

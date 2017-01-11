@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.admission.status;
+package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -16,6 +17,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 
+	private final String NAME = "simpleWP";
+	
 	private int minPriority = -1;
 	private int maxPriority = -1;
 	
@@ -29,8 +32,13 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 	 */
 	private ArrayList<Integer> maxSheddingQueries = new ArrayList<Integer>();
 	
+	public SimpleLoadSheddingWPAdmissionStatusComponent() {
+		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
+	}
+	
 	@Override
-	public void addQuery(IPhysicalQuery query) {
+	public void addQuery(int queryID) {
+		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		if(minPriority < 0) {
 			minPriority = query.getPriority();
 			maxPriority = query.getPriority();
@@ -44,7 +52,8 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 	}
 
 	@Override
-	public void removeQuery(IPhysicalQuery query) {
+	public void removeQuery(int queryID) {
+		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
 		if(!queries.isEmpty()) {
 			if (query.getPriority() <= minPriority) {
@@ -170,6 +179,11 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 		
 		actPriority--;
 		return getDecreasingRandomQueryID(actPriority);
+	}
+
+	@Override
+	public String getComponentName() {
+		return NAME;
 	}
 
 }
