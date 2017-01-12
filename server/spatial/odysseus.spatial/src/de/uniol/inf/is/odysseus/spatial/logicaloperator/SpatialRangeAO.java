@@ -22,6 +22,7 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 	private static final long serialVersionUID = 1771804202859128706L;
 
 	private String dataStructureName;
+	private String dataStructureType;
 	private int geometryPosition;
 	private double range;
 
@@ -45,7 +46,7 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 		return dataStructureName;
 	}
 
-	@Parameter(name = "dataStructureName", optional = true, type = StringParameter.class, isList = false, doc = "The name of the data structure to search in.")
+	@Parameter(name = "dataStructureName", optional = false, type = StringParameter.class, isList = false, doc = "The name of the data structure to search in.")
 	public void setDataStructureName(String dataStructureName) {
 		this.dataStructureName = dataStructureName;
 	}
@@ -68,6 +69,15 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 		this.range = range;
 	}
 
+	public String getDataStructureType() {
+		return dataStructureType;
+	}
+
+	@Parameter(name = "dataStructureType", optional = true, type = StringParameter.class, isList = false, doc = "If a data strucutre needs to be created, you can choose which type.")
+	public void setDataStructureType(String dataStructureType) {
+		this.dataStructureType = dataStructureType;
+	}
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		// Put out the original tuple with an extra field that contains a list
@@ -85,5 +95,4 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		return outputSchema;
 	}
-
 }

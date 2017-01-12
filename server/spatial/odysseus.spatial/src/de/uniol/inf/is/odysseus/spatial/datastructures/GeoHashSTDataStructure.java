@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
+	public static final String TYPE = "geohash";
+	
 	private static final int BIT_PRECISION = 64;
 
 	private int geometryPosition;

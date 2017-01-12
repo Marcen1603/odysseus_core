@@ -8,8 +8,11 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialKNNAO;
 
 /**
  * The operator calls the kNN (k nearest neighbors) method from the given data
@@ -29,6 +32,20 @@ public class SpatialKNNPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		this.dataStructure = dataStructure;
 		this.geometryPosition = geometryPosition;
 		this.k = k;
+	}
+
+	public SpatialKNNPO(SpatialKNNAO ao) {
+		this.geometryPosition = ao.getGeometryPosition();
+		this.k = ao.getK();
+
+		// Use geohash as default
+		String dataStructureType = GeoHashSTDataStructure.TYPE;
+		if (ao.getDataStructureType() != null && !ao.getDataStructureName().isEmpty()) {
+			// If a type is given use it
+			dataStructureType = ao.getDataStructureType();
+		}
+		this.dataStructure = SpatialDataStructureProvider.getInstance()
+				.getOrCreateDataStructure(ao.getDataStructureName(), dataStructureType, this.geometryPosition);
 	}
 
 	@Override
