@@ -27,7 +27,6 @@ public class SpatialKNNAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -7854900334883253801L;
 
 	private String dataStructureName;
-	private String dataStructureType;
 	private int geometryPosition;
 	private int k;
 
@@ -40,7 +39,6 @@ public class SpatialKNNAO extends UnaryLogicalOp {
 		this.dataStructureName = ao.getDataStructureName();
 		this.geometryPosition = ao.getGeometryPosition();
 		this.k = ao.getK();
-		this.dataStructureType = ao.getDataStructureType();
 	}
 
 	@Override
@@ -73,15 +71,6 @@ public class SpatialKNNAO extends UnaryLogicalOp {
 	@Parameter(name = "k", optional = false, type = IntegerParameter.class, isList = false, doc = "The number of neighbors you want to get for the given geometry.")
 	public void setK(int k) {
 		this.k = k;
-	}
-	
-	public String getDataStructureType() {
-		return dataStructureType;
-	}
-	
-	@Parameter(name = "dataStructureType", optional = true, type = StringParameter.class, isList = false, doc = "If a data strucutre needs to be created, you can choose which type.")
-	public void setDataStructureType(String dataStructureType) {
-		this.dataStructureType = dataStructureType;
 	}
 
 	@Override

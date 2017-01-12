@@ -8,14 +8,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialKNNAO;
 
 /**
- * The operator calls the kNN (k nearest neighbors) method from the given data
+ * The operator calls the kNN (k-nearest-neighbors) method from the given data
  * structure for the given input geometry and puts out the result in a list.
  * 
  * @author Tobias Brandt
@@ -28,24 +27,14 @@ public class SpatialKNNPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	private int geometryPosition;
 	private int k;
 
-	public SpatialKNNPO(IMovingObjectDataStructure dataStructure, int geometryPosition, int k) {
-		this.dataStructure = dataStructure;
-		this.geometryPosition = geometryPosition;
-		this.k = k;
-	}
-
 	public SpatialKNNPO(SpatialKNNAO ao) {
 		this.geometryPosition = ao.getGeometryPosition();
 		this.k = ao.getK();
-
-		// Use geohash as default
-		String dataStructureType = GeoHashSTDataStructure.TYPE;
-		if (ao.getDataStructureType() != null && !ao.getDataStructureName().isEmpty()) {
-			// If a type is given use it
-			dataStructureType = ao.getDataStructureType();
+		this.dataStructure = SpatialDataStructureProvider.getInstance().getDataStructure(ao.getDataStructureName());
+		if (this.dataStructure == null) {
+			throw new RuntimeException("The spatial data structure with the name " + ao.getDataStructureName()
+					+ " does not exist. Use a SpatialStore operator to create and fill one.");
 		}
-		this.dataStructure = SpatialDataStructureProvider.getInstance()
-				.getOrCreateDataStructure(ao.getDataStructureName(), dataStructureType, this.geometryPosition);
 	}
 
 	@Override
@@ -61,9 +50,6 @@ public class SpatialKNNPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	@Override
 	protected void process_next(T object, int port) {
 		if (object instanceof Tuple) {
-			// TODO Neighbors are the whole tuples, not only a list of points.
-			// How to do this best?
-
 			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) object;
 
 			// Get the point from which we want to get the neighbors
