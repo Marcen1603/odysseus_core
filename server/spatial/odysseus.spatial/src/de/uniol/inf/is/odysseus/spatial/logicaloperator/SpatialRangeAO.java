@@ -15,14 +15,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "SPATIALRANGE", doc = "Puts out all objects in the given range around the given spatial object in the given data structure.", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SPATIALRANGE", doc = "Puts out all objects in the given range around the given spatial object in the given data structure.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class SpatialRangeAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 1771804202859128706L;
 
 	private String dataStructureName;
-	private String dataStructureType;
 	private int geometryPosition;
 	private double range;
 
@@ -67,15 +66,6 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 	@Parameter(name = "range", optional = false, type = IntegerParameter.class, isList = false, doc = "Range around the given spatial object in meters.")
 	public void setRange(double range) {
 		this.range = range;
-	}
-
-	public String getDataStructureType() {
-		return dataStructureType;
-	}
-
-	@Parameter(name = "dataStructureType", optional = true, type = StringParameter.class, isList = false, doc = "If a data strucutre needs to be created, you can choose which type.")
-	public void setDataStructureType(String dataStructureType) {
-		this.dataStructureType = dataStructureType;
 	}
 
 	@Override
