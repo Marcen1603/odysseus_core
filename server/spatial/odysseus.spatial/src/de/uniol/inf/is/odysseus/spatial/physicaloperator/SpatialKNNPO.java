@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -21,7 +20,7 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialKNNAO;
  *
  * @param <T>
  */
-public class SpatialKNNPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
+public class SpatialKNNPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 	private IMovingObjectDataStructure dataStructure;
 	private int geometryPosition;
@@ -49,19 +48,18 @@ public class SpatialKNNPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
-		if (object instanceof Tuple) {
-			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) object;
+		Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) object;
+		this.dataStructure.cleanUp(tuple.getMetadata().getStart());
 
-			// Get the point from which we want to get the neighbors
-			Object o = ((Tuple<?>) object).getAttribute(geometryPosition);
-			GeometryWrapper geometryWrapper = null;
-			if (o instanceof GeometryWrapper) {
-				geometryWrapper = (GeometryWrapper) o;
-				List<Tuple<ITimeInterval>> neighbors = this.dataStructure.queryKNN(geometryWrapper.getGeometry(),
-						this.k, new TimeInterval(tuple.getMetadata().getStart(), tuple.getMetadata().getEnd()));
-				Tuple<ITimeInterval> newTuple = ((Tuple<ITimeInterval>) object).append(neighbors);
-				transfer((T) newTuple);
-			}
+		// Get the point from which we want to get the neighbors
+		Object o = ((Tuple<?>) object).getAttribute(geometryPosition);
+		GeometryWrapper geometryWrapper = null;
+		if (o instanceof GeometryWrapper) {
+			geometryWrapper = (GeometryWrapper) o;
+			List<Tuple<ITimeInterval>> neighbors = this.dataStructure.queryKNN(geometryWrapper.getGeometry(), this.k,
+					new TimeInterval(tuple.getMetadata().getStart(), tuple.getMetadata().getEnd()));
+			Tuple<ITimeInterval> newTuple = ((Tuple<ITimeInterval>) object).append(neighbors);
+			transfer((T) newTuple);
 		}
 	}
 }
