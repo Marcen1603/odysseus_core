@@ -70,6 +70,8 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 
 			if (listType.getSchema() != null) {
 				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE, listType.getSchema());
+			}else if (subType.getAttribute(0).getDatatype().getSchema() != null){
+				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE, subType.getAttribute(0).getDatatype().getSchema());
 			}else{
 				throw new IllegalArgumentException("ListDataHandler cannot be initialized with TUPLE without schema");
 			}
