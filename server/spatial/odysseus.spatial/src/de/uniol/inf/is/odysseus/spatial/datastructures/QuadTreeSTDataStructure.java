@@ -140,8 +140,12 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 		List<Tuple<ITimeInterval>> envelopeItems = quadTree.query(env);
 
 		List<Tuple<ITimeInterval>> result = envelopeItems.parallelStream()
+				// spatial filter
 				.filter(e -> e != null && MetrticSpatialUtils.getInstance().calculateDistance(geometry.getCoordinate(),
 						getGeometry((Tuple<ITimeInterval>) e).getCoordinate()) <= rangeMeters)
+				// temporal filter
+				.filter(f -> f.getMetadata().getStart().before(t.getEnd())
+						&& f.getMetadata().getEnd().after(t.getStart()))
 				.collect(Collectors.toList());
 
 		return (List<Tuple<ITimeInterval>>) result;
@@ -151,7 +155,13 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 
-		// Use time
+		// Check if the first and the last point is equal. If not, we have to
+		// add the first point at the end to have a closed ring.
+		Point firstPoint = polygonPoints.get(0);
+		Point lastPoint = polygonPoints.get(polygonPoints.size() - 1);
+		if (!firstPoint.equals(lastPoint)) {
+			polygonPoints.add(firstPoint);
+		}
 
 		// Create an envelope with all the coordinates of the polygon
 		Envelope env = new Envelope();
@@ -187,7 +197,12 @@ public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
 		final Polygon queryPolygon = polygon;
 		// Filter for the objects which are really in the polygon
 		List<Tuple<ITimeInterval>> result = envelopeItems.parallelStream()
-				.filter(e -> queryPolygon.contains(getGeometry(e))).collect(Collectors.toList());
+				// spatial filter
+				.filter(e -> queryPolygon.contains(getGeometry(e)))
+				// temporal filter
+				.filter(f -> f.getMetadata().getStart().before(t.getEnd())
+						&& f.getMetadata().getEnd().after(t.getStart()))
+				.collect(Collectors.toList());
 
 		return (List<Tuple<ITimeInterval>>) result;
 	}

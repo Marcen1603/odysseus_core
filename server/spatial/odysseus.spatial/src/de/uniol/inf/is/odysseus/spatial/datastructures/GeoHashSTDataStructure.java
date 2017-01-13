@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	public static final String TYPE = "geohash";
-	
+
 	private static final int BIT_PRECISION = 64;
 
 	private int geometryPosition;
@@ -87,12 +87,20 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		// Case 1: The total number of elements is smaller or equal to k -> We
 		// can return everything
 		if (geoHashes.size() <= k) {
-			// return everything
+
+			// get all tuples
 			List<Tuple<ITimeInterval>> result = new ArrayList<>();
 			result.addAll(geoHashes.values());
-			// TODO Nevertheless, we have to filter out the elements which do
+			
+			// Nevertheless, we have to filter out the elements which do
 			// not overlap on a timely level
-			return result;
+			List<Tuple<ITimeInterval>> filter = result.parallelStream()
+					// temporal filter
+					.filter(f -> f.getMetadata().getStart().before(t.getEnd())
+							&& f.getMetadata().getEnd().after(t.getStart()))
+					.collect(Collectors.toList());
+
+			return filter;
 		}
 
 		/*
@@ -110,7 +118,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 		// The max radius not totally necessary but useful to avoid an endless
 		// search
-		// TODO This maybe leads to wrong results 
+		// TODO This maybe leads to wrong results
 		int maxRadius = 1000000;
 
 		// Query the guessed radius
@@ -118,19 +126,6 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		do {
 			// Get the results for the current radius
 			circleResult = queryCircle(geometry, guessRadius, t);
-
-			// Filter the results for the right time-interval
-			// TODO This needs to be done in the underlying method, not here
-			List<Tuple<ITimeInterval>> toRemove = new ArrayList<>(circleResult.size());
-			for (Tuple<ITimeInterval> tuple : circleResult) {
-				if (tuple.getMetadata().getStart().after(t.getEnd())
-						|| tuple.getMetadata().getEnd().beforeOrEquals(t.getStart())) {
-					// This tuple does not overlap the given time. We have to
-					// remove it
-					toRemove.add(tuple);
-				}
-			}
-			circleResult.removeAll(toRemove);
 
 			// Double the radius. This is needed for the next round if the don't
 			// find enough elements
@@ -229,8 +224,6 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 
-		// TODO Use time interval
-
 		// Check if the first and the last point is equal. If not, we have to
 		// add the first point at the end to have a closed ring.
 		Point firstPoint = polygonPoints.get(0);
@@ -268,8 +261,12 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		// For every point in our list ask JTS if the points lies within the
 		// polygon
 		List<Tuple<ITimeInterval>> result = allHashes.keySet().parallelStream()
-				.filter(e -> polygon.contains(getGeometry(allHashes.get(e)))).map(e -> allHashes.get(e))
-				.collect(Collectors.toList());
+				// spatial filter
+				.filter(e -> polygon.contains(getGeometry(allHashes.get(e))))
+				// temporal filter
+				.filter(f -> allHashes.get(f).getMetadata().getStart().before(t.getEnd())
+						&& allHashes.get(f).getMetadata().getEnd().after(t.getStart()))
+				.map(e -> allHashes.get(e)).collect(Collectors.toList());
 
 		return result;
 	}
