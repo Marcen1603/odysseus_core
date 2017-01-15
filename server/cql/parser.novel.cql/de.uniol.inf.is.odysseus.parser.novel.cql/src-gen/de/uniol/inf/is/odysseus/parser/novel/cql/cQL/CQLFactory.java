@@ -150,13 +150,13 @@ public interface CQLFactory extends EFactory
   StreamTo createStreamTo();
 
   /**
-   * Returns a new object of class '<em>Drop</em>'.
+   * Returns a new object of class '<em>Command</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Drop</em>'.
+   * @return a new object of class '<em>Command</em>'.
    * @generated
    */
-  Drop createDrop();
+  Command createCommand();
 
   /**
    * Returns a new object of class '<em>Window Timebased</em>'.

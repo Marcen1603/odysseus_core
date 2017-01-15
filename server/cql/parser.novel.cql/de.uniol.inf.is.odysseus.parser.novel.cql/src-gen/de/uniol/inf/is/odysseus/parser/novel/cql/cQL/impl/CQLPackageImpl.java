@@ -17,10 +17,10 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
@@ -157,7 +157,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass dropEClass = null;
+  private EClass commandEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -990,9 +990,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getDrop()
+  public EClass getCommand()
   {
-    return dropEClass;
+    return commandEClass;
   }
 
   /**
@@ -1000,9 +1000,49 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDrop_Name()
+  public EAttribute getCommand_Keyword1()
   {
-    return (EAttribute)dropEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)commandEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCommand_Keyword2()
+  {
+    return (EAttribute)commandEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCommand_Value1()
+  {
+    return (EAttribute)commandEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCommand_Keyword3()
+  {
+    return (EAttribute)commandEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCommand_Value2()
+  {
+    return (EAttribute)commandEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1632,8 +1672,12 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEReference(streamToEClass, STREAM_TO__STATEMENT);
     createEAttribute(streamToEClass, STREAM_TO__INPUTNAME);
 
-    dropEClass = createEClass(DROP);
-    createEAttribute(dropEClass, DROP__NAME);
+    commandEClass = createEClass(COMMAND);
+    createEAttribute(commandEClass, COMMAND__KEYWORD1);
+    createEAttribute(commandEClass, COMMAND__KEYWORD2);
+    createEAttribute(commandEClass, COMMAND__VALUE1);
+    createEAttribute(commandEClass, COMMAND__KEYWORD3);
+    createEAttribute(commandEClass, COMMAND__VALUE2);
 
     window_TimebasedEClass = createEClass(WINDOW_TIMEBASED);
     createEAttribute(window_TimebasedEClass, WINDOW_TIMEBASED__SIZE);
@@ -1829,8 +1873,12 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEReference(getStreamTo_Statement(), this.getSelect(), null, "statement", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStreamTo_Inputname(), ecorePackage.getEString(), "inputname", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(dropEClass, Drop.class, "Drop", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDrop_Name(), ecorePackage.getEString(), "name", null, 0, 1, Drop.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCommand_Keyword1(), ecorePackage.getEString(), "keyword1", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCommand_Keyword2(), ecorePackage.getEString(), "keyword2", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCommand_Value1(), ecorePackage.getEString(), "value1", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCommand_Keyword3(), ecorePackage.getEString(), "keyword3", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCommand_Value2(), ecorePackage.getEString(), "value2", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(window_TimebasedEClass, Window_Timebased.class, "Window_Timebased", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getWindow_Timebased_Size(), ecorePackage.getEInt(), "size", null, 0, 1, Window_Timebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -83,8 +83,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//StreamTo/statement"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/inputname"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Drop">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Drop/name"/>
+    <genClasses ecoreClass="CQL.ecore#//Command">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/keyword1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/keyword2"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/value1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/keyword3"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/value2"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Window_Timebased">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/size"/>

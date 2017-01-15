@@ -45,7 +45,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAccessFrameworkAccess().getTypeAlternatives_0_0(), "rule__AccessFramework__TypeAlternatives_0_0");
 					put(grammarAccess.getChannelFormatAccess().getAlternatives(), "rule__ChannelFormat__Alternatives");
 					put(grammarAccess.getStreamToAccess().getAlternatives_3(), "rule__StreamTo__Alternatives_3");
-					put(grammarAccess.getDropAccess().getAlternatives_1(), "rule__Drop__Alternatives_1");
+					put(grammarAccess.getDropAccess().getKeyword2Alternatives_1_0(), "rule__Drop__Keyword2Alternatives_1_0");
 					put(grammarAccess.getEqualitiyAccess().getOpAlternatives_1_1_0(), "rule__Equalitiy__OpAlternatives_1_1_0");
 					put(grammarAccess.getComparisonAccess().getOpAlternatives_1_1_0(), "rule__Comparison__OpAlternatives_1_1_0");
 					put(grammarAccess.getPlusOrMinusAccess().getAlternatives_1_0(), "rule__PlusOrMinus__Alternatives_1_0");
@@ -84,8 +84,8 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getChannelFormatStreamAccess().getGroup_5(), "rule__ChannelFormatStream__Group_5__0");
 					put(grammarAccess.getChannelFormatViewAccess().getGroup(), "rule__ChannelFormatView__Group__0");
 					put(grammarAccess.getStreamToAccess().getGroup(), "rule__StreamTo__Group__0");
+					put(grammarAccess.getCommandAccess().getGroup(), "rule__Command__Group__0");
 					put(grammarAccess.getDropAccess().getGroup(), "rule__Drop__Group__0");
-					put(grammarAccess.getDropAccess().getGroup_2(), "rule__Drop__Group_2__0");
 					put(grammarAccess.getWindow_TimebasedAccess().getGroup(), "rule__Window_Timebased__Group__0");
 					put(grammarAccess.getWindow_TimebasedAccess().getGroup_3(), "rule__Window_Timebased__Group_3__0");
 					put(grammarAccess.getWindow_TuplebasedAccess().getGroup(), "rule__Window_Tuplebased__Group__0");
@@ -176,8 +176,16 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getStreamToAccess().getNameAssignment_2(), "rule__StreamTo__NameAssignment_2");
 					put(grammarAccess.getStreamToAccess().getStatementAssignment_3_0(), "rule__StreamTo__StatementAssignment_3_0");
 					put(grammarAccess.getStreamToAccess().getInputnameAssignment_3_1(), "rule__StreamTo__InputnameAssignment_3_1");
-					put(grammarAccess.getDropAccess().getNameAssignment_1_0(), "rule__Drop__NameAssignment_1_0");
-					put(grammarAccess.getDropAccess().getNameAssignment_1_1(), "rule__Drop__NameAssignment_1_1");
+					put(grammarAccess.getCommandAccess().getKeyword1Assignment_0(), "rule__Command__Keyword1Assignment_0");
+					put(grammarAccess.getCommandAccess().getKeyword2Assignment_1(), "rule__Command__Keyword2Assignment_1");
+					put(grammarAccess.getCommandAccess().getValue1Assignment_2(), "rule__Command__Value1Assignment_2");
+					put(grammarAccess.getCommandAccess().getKeyword3Assignment_3(), "rule__Command__Keyword3Assignment_3");
+					put(grammarAccess.getCommandAccess().getValue2Assignment_4(), "rule__Command__Value2Assignment_4");
+					put(grammarAccess.getDropAccess().getKeyword1Assignment_0(), "rule__Drop__Keyword1Assignment_0");
+					put(grammarAccess.getDropAccess().getKeyword2Assignment_1(), "rule__Drop__Keyword2Assignment_1");
+					put(grammarAccess.getDropAccess().getValue1Assignment_2(), "rule__Drop__Value1Assignment_2");
+					put(grammarAccess.getDropAccess().getKeyword3Assignment_3(), "rule__Drop__Keyword3Assignment_3");
+					put(grammarAccess.getDropAccess().getValue2Assignment_4(), "rule__Drop__Value2Assignment_4");
 					put(grammarAccess.getWindow_TimebasedAccess().getSizeAssignment_1(), "rule__Window_Timebased__SizeAssignment_1");
 					put(grammarAccess.getWindow_TimebasedAccess().getUnitAssignment_2(), "rule__Window_Timebased__UnitAssignment_2");
 					put(grammarAccess.getWindow_TimebasedAccess().getAdvance_sizeAssignment_3_1(), "rule__Window_Timebased__Advance_sizeAssignment_3_1");

@@ -79,7 +79,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.CHANNEL_FORMAT_STREAM: return createChannelFormatStream();
       case CQLPackage.CHANNEL_FORMAT_VIEW: return createChannelFormatView();
       case CQLPackage.STREAM_TO: return createStreamTo();
-      case CQLPackage.DROP: return createDrop();
+      case CQLPackage.COMMAND: return createCommand();
       case CQLPackage.WINDOW_TIMEBASED: return createWindow_Timebased();
       case CQLPackage.WINDOW_TUPLEBASED: return createWindow_Tuplebased();
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
@@ -263,10 +263,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Drop createDrop()
+  public Command createCommand()
   {
-    DropImpl drop = new DropImpl();
-    return drop;
+    CommandImpl command = new CommandImpl();
+    return command;
   }
 
   /**

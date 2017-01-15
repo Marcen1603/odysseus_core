@@ -851,9 +851,9 @@ ruleAttributeWithNestedStatement returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getAttributeWithNestedStatementAccess().getValueAttributeParserRuleCall_0_0());
+					newCompositeNode(grammarAccess.getAttributeWithNestedStatementAccess().getValueAttributeWithoutAliasParserRuleCall_0_0());
 				}
-				lv_value_0_0=ruleAttribute
+				lv_value_0_0=ruleAttributeWithoutAlias
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getAttributeWithNestedStatementRule());
@@ -862,7 +862,7 @@ ruleAttributeWithNestedStatement returns [EObject current=null]
 						$current,
 						"value",
 						lv_value_0_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAlias");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1850,51 +1850,97 @@ ruleDrop returns [EObject current=null]
 	leaveRule();
 }:
 	(
-		otherlv_0='DROP'
-		{
-			newLeafNode(otherlv_0, grammarAccess.getDropAccess().getDROPKeyword_0());
-		}
+		(
+			(
+				lv_keyword1_0_0='DROP'
+				{
+					newLeafNode(lv_keyword1_0_0, grammarAccess.getDropAccess().getKeyword1DROPKeyword_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getDropRule());
+					}
+					setWithLastConsumed($current, "keyword1", lv_keyword1_0_0, "DROP");
+				}
+			)
+		)
 		(
 			(
 				(
-					lv_name_1_0='SINK'
+					lv_keyword2_1_1='SINK'
 					{
-						newLeafNode(lv_name_1_0, grammarAccess.getDropAccess().getNameSINKKeyword_1_0_0());
+						newLeafNode(lv_keyword2_1_1, grammarAccess.getDropAccess().getKeyword2SINKKeyword_1_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getDropRule());
 						}
-						setWithLastConsumed($current, "name", lv_name_1_0, "SINK");
+						setWithLastConsumed($current, "keyword2", lv_keyword2_1_1, null);
 					}
-				)
-			)
-			    |
-			(
-				(
-					lv_name_2_0='STREAM'
+					    |
+					lv_keyword2_1_2='STREAM'
 					{
-						newLeafNode(lv_name_2_0, grammarAccess.getDropAccess().getNameSTREAMKeyword_1_1_0());
+						newLeafNode(lv_keyword2_1_2, grammarAccess.getDropAccess().getKeyword2STREAMKeyword_1_0_1());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getDropRule());
 						}
-						setWithLastConsumed($current, "name", lv_name_2_0, "STREAM");
+						setWithLastConsumed($current, "keyword2", lv_keyword2_1_2, null);
 					}
 				)
 			)
 		)
 		(
-			otherlv_3='IF'
-			{
-				newLeafNode(otherlv_3, grammarAccess.getDropAccess().getIFKeyword_2_0());
-			}
-			otherlv_4='EXISTS'
-			{
-				newLeafNode(otherlv_4, grammarAccess.getDropAccess().getEXISTSKeyword_2_1());
-			}
+			(
+				lv_value1_2_0=RULE_ID
+				{
+					newLeafNode(lv_value1_2_0, grammarAccess.getDropAccess().getValue1IDTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getDropRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"value1",
+						lv_value1_2_0,
+						"org.eclipse.xtext.common.Terminals.ID");
+				}
+			)
+		)
+		(
+			(
+				lv_keyword3_3_0='IF EXISTS'
+				{
+					newLeafNode(lv_keyword3_3_0, grammarAccess.getDropAccess().getKeyword3IFEXISTSKeyword_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getDropRule());
+					}
+					setWithLastConsumed($current, "keyword3", lv_keyword3_3_0, "IF EXISTS");
+				}
+			)
 		)?
+		(
+			(
+				lv_value2_4_0=RULE_ID
+				{
+					newLeafNode(lv_value2_4_0, grammarAccess.getDropAccess().getValue2IDTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getDropRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"value2",
+						lv_value2_4_0,
+						"org.eclipse.xtext.common.Terminals.ID");
+				}
+			)
+		)
 	)
 ;
 

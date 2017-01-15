@@ -146,9 +146,9 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createStreamToAdapter();
       }
       @Override
-      public Adapter caseDrop(Drop object)
+      public Adapter caseCommand(Command object)
       {
-        return createDropAdapter();
+        return createCommandAdapter();
       }
       @Override
       public Adapter caseWindow_Timebased(Window_Timebased object)
@@ -478,16 +478,16 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop <em>Drop</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command <em>Command</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command
    * @generated
    */
-  public Adapter createDropAdapter()
+  public Adapter createCommandAdapter()
   {
     return null;
   }

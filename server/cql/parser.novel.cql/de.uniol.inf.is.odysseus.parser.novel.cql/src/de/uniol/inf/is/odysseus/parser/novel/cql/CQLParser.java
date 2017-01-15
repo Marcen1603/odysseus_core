@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
@@ -39,12 +41,18 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.RunCommandCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropStreamCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StartQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CQLExpressionsValidator;
@@ -210,25 +218,70 @@ public class CQLParser implements IQueryParser
 	public synchronized List<IExecutorCommand> generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
-//		System.out.println("Generated PQL query text: ");//TODO Remove after debugging
+		List<EObject> lll = EcoreUtil2.eAllContentsAsList(model.eResource());
+ 		List<EObject> stuff = lll.stream().filter(e -> {
+ 			if(e instanceof StatementImpl)
+ 				return true;
+ 			if(e instanceof CommandImpl)
+ 				return true;
+ 			return false;
+ 		}).collect(Collectors.toList());
+ 		
+ 		System.out.println("lll= " + lll.toString());
+		System.out.println("stuff= " +  stuff.toString());
+		
+//		Systm.out.println("Generated PQL query text: ");//TODO Remove after debugging
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
-		generator.doGenerate(model.eResource(), fsa, null);
+//		generator.doGenerate(model.eResource(), fsa, null);
+		
 		List<IExecutorCommand> list = new ArrayList<>();
-		for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
+		for(EObject obj : stuff)
 		{
-			
-			list.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), true));
+			List<IExecutorCommand> l = new ArrayList<>();
+			if(obj instanceof CommandImpl)
+			{
+				CommandImpl cmd = (CommandImpl) obj;
+				IExecutorCommand exCmd = null; 
+				switch(cmd.getKeyword1().toUpperCase())
+				{
+				case("DROP"):
+					boolean ifExists = cmd.getKeyword3() != null ? true : false;
+					switch(cmd.getKeyword2().toUpperCase())
+					{
+					case("STREAM"):
+						exCmd = new DropStreamCommand(cmd.getValue1(), ifExists, user);
+					break;
+					case("SINK"):
+						exCmd = new DropSinkCommand(cmd.getValue1(), ifExists, user);
+					break;
+					}
+				break;
+				}
+				
+			list.add(exCmd);
+			}
+			else
+			{
+				generator.doGenerate(obj.eResource(), fsa, null);
+				for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
+				{
+					l.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), true));
+				}
+				list.addAll(l);
+			}
+			l.clear();
 		}
+		
 		generator.clear();
 		return list;
 	}
-
+	
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) 
 	{
-		return new HashMap();
+		return new HashMap<>();
 	}
 
 	@Override

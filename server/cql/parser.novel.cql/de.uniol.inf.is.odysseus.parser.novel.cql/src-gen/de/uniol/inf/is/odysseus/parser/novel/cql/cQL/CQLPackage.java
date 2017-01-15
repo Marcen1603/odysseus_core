@@ -765,32 +765,68 @@ public interface CQLPackage extends EPackage
   int STREAM_TO_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropImpl <em>Drop</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDrop()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCommand()
    * @generated
    */
-  int DROP = 14;
+  int COMMAND = 14;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * The feature id for the '<em><b>Keyword1</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DROP__NAME = 0;
+  int COMMAND__KEYWORD1 = 0;
 
   /**
-   * The number of structural features of the '<em>Drop</em>' class.
+   * The feature id for the '<em><b>Keyword2</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DROP_FEATURE_COUNT = 1;
+  int COMMAND__KEYWORD2 = 1;
+
+  /**
+   * The feature id for the '<em><b>Value1</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMMAND__VALUE1 = 2;
+
+  /**
+   * The feature id for the '<em><b>Keyword3</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMMAND__KEYWORD3 = 3;
+
+  /**
+   * The feature id for the '<em><b>Value2</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMMAND__VALUE2 = 4;
+
+  /**
+   * The number of structural features of the '<em>Command</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMMAND_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl <em>Window Timebased</em>}' class.
@@ -2131,25 +2167,69 @@ public interface CQLPackage extends EPackage
   EAttribute getStreamTo_Inputname();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop <em>Drop</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command <em>Command</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Drop</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop
+   * @return the meta object for class '<em>Command</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command
    * @generated
    */
-  EClass getDrop();
+  EClass getCommand();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop#getName <em>Name</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword1 <em>Keyword1</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop#getName()
-   * @see #getDrop()
+   * @return the meta object for the attribute '<em>Keyword1</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword1()
+   * @see #getCommand()
    * @generated
    */
-  EAttribute getDrop_Name();
+  EAttribute getCommand_Keyword1();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword2 <em>Keyword2</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Keyword2</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword2()
+   * @see #getCommand()
+   * @generated
+   */
+  EAttribute getCommand_Keyword2();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue1 <em>Value1</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value1</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue1()
+   * @see #getCommand()
+   * @generated
+   */
+  EAttribute getCommand_Value1();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword3 <em>Keyword3</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Keyword3</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword3()
+   * @see #getCommand()
+   * @generated
+   */
+  EAttribute getCommand_Keyword3();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue2 <em>Value2</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value2</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue2()
+   * @see #getCommand()
+   * @generated
+   */
+  EAttribute getCommand_Value2();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased <em>Window Timebased</em>}'.
@@ -3260,22 +3340,54 @@ public interface CQLPackage extends EPackage
     EAttribute STREAM_TO__INPUTNAME = eINSTANCE.getStreamTo_Inputname();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropImpl <em>Drop</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDrop()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCommand()
      * @generated
      */
-    EClass DROP = eINSTANCE.getDrop();
+    EClass COMMAND = eINSTANCE.getCommand();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Keyword1</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute DROP__NAME = eINSTANCE.getDrop_Name();
+    EAttribute COMMAND__KEYWORD1 = eINSTANCE.getCommand_Keyword1();
+
+    /**
+     * The meta object literal for the '<em><b>Keyword2</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute COMMAND__KEYWORD2 = eINSTANCE.getCommand_Keyword2();
+
+    /**
+     * The meta object literal for the '<em><b>Value1</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute COMMAND__VALUE1 = eINSTANCE.getCommand_Value1();
+
+    /**
+     * The meta object literal for the '<em><b>Keyword3</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute COMMAND__KEYWORD3 = eINSTANCE.getCommand_Keyword3();
+
+    /**
+     * The meta object literal for the '<em><b>Value2</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute COMMAND__VALUE2 = eINSTANCE.getCommand_Value2();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl <em>Window Timebased</em>}' class.

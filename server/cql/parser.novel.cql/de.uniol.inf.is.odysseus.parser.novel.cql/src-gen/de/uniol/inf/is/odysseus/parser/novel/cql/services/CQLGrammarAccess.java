@@ -462,25 +462,25 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithNestedStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cValueAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cValueAttributeParserRuleCall_0_0 = (RuleCall)cValueAssignment_0.eContents().get(0);
+		private final RuleCall cValueAttributeWithoutAliasParserRuleCall_0_0 = (RuleCall)cValueAssignment_0.eContents().get(0);
 		private final Keyword cINKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cNestedAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cNestedNestedStatementParserRuleCall_2_0 = (RuleCall)cNestedAssignment_2.eContents().get(0);
 		
 		//AttributeWithNestedStatement:
-		//	value=Attribute
+		//	value=AttributeWithoutAlias
 		//	'IN'
 		//	nested=NestedStatement;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//value=Attribute 'IN' nested=NestedStatement
+		//value=AttributeWithoutAlias 'IN' nested=NestedStatement
 		public Group getGroup() { return cGroup; }
 		
-		//value=Attribute
+		//value=AttributeWithoutAlias
 		public Assignment getValueAssignment_0() { return cValueAssignment_0; }
 		
-		//Attribute
-		public RuleCall getValueAttributeParserRuleCall_0_0() { return cValueAttributeParserRuleCall_0_0; }
+		//AttributeWithoutAlias
+		public RuleCall getValueAttributeWithoutAliasParserRuleCall_0_0() { return cValueAttributeWithoutAliasParserRuleCall_0_0; }
 		
 		//'IN'
 		public Keyword getINKeyword_1() { return cINKeyword_1; }
@@ -1099,52 +1099,123 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getInputnameIDTerminalRuleCall_3_1_0() { return cInputnameIDTerminalRuleCall_3_1_0; }
 	}
+	public class CommandElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Command");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cKeyword1Assignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cKeyword1IDTerminalRuleCall_0_0 = (RuleCall)cKeyword1Assignment_0.eContents().get(0);
+		private final Assignment cKeyword2Assignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cKeyword2IDTerminalRuleCall_1_0 = (RuleCall)cKeyword2Assignment_1.eContents().get(0);
+		private final Assignment cValue1Assignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cValue1IDTerminalRuleCall_2_0 = (RuleCall)cValue1Assignment_2.eContents().get(0);
+		private final Assignment cKeyword3Assignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cKeyword3IDTerminalRuleCall_3_0 = (RuleCall)cKeyword3Assignment_3.eContents().get(0);
+		private final Assignment cValue2Assignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cValue2IDTerminalRuleCall_4_0 = (RuleCall)cValue2Assignment_4.eContents().get(0);
+		
+		//// build generic rule for those commands
+		//Command:
+		//	keyword1=ID
+		//	keyword2=ID
+		//	value1=ID
+		//	keyword3=ID
+		//	value2=ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//keyword1=ID keyword2=ID value1=ID keyword3=ID value2=ID
+		public Group getGroup() { return cGroup; }
+		
+		//keyword1=ID
+		public Assignment getKeyword1Assignment_0() { return cKeyword1Assignment_0; }
+		
+		//ID
+		public RuleCall getKeyword1IDTerminalRuleCall_0_0() { return cKeyword1IDTerminalRuleCall_0_0; }
+		
+		//keyword2=ID
+		public Assignment getKeyword2Assignment_1() { return cKeyword2Assignment_1; }
+		
+		//ID
+		public RuleCall getKeyword2IDTerminalRuleCall_1_0() { return cKeyword2IDTerminalRuleCall_1_0; }
+		
+		//value1=ID
+		public Assignment getValue1Assignment_2() { return cValue1Assignment_2; }
+		
+		//ID
+		public RuleCall getValue1IDTerminalRuleCall_2_0() { return cValue1IDTerminalRuleCall_2_0; }
+		
+		//keyword3=ID
+		public Assignment getKeyword3Assignment_3() { return cKeyword3Assignment_3; }
+		
+		//ID
+		public RuleCall getKeyword3IDTerminalRuleCall_3_0() { return cKeyword3IDTerminalRuleCall_3_0; }
+		
+		//value2=ID
+		public Assignment getValue2Assignment_4() { return cValue2Assignment_4; }
+		
+		//ID
+		public RuleCall getValue2IDTerminalRuleCall_4_0() { return cValue2IDTerminalRuleCall_4_0; }
+	}
 	public class DropElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Drop");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cDROPKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cNameAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final Keyword cNameSINKKeyword_1_0_0 = (Keyword)cNameAssignment_1_0.eContents().get(0);
-		private final Assignment cNameAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final Keyword cNameSTREAMKeyword_1_1_0 = (Keyword)cNameAssignment_1_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
-		private final Keyword cIFKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Keyword cEXISTSKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
+		private final Assignment cKeyword1Assignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final Keyword cKeyword1DROPKeyword_0_0 = (Keyword)cKeyword1Assignment_0.eContents().get(0);
+		private final Assignment cKeyword2Assignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Alternatives cKeyword2Alternatives_1_0 = (Alternatives)cKeyword2Assignment_1.eContents().get(0);
+		private final Keyword cKeyword2SINKKeyword_1_0_0 = (Keyword)cKeyword2Alternatives_1_0.eContents().get(0);
+		private final Keyword cKeyword2STREAMKeyword_1_0_1 = (Keyword)cKeyword2Alternatives_1_0.eContents().get(1);
+		private final Assignment cValue1Assignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cValue1IDTerminalRuleCall_2_0 = (RuleCall)cValue1Assignment_2.eContents().get(0);
+		private final Assignment cKeyword3Assignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final Keyword cKeyword3IFEXISTSKeyword_3_0 = (Keyword)cKeyword3Assignment_3.eContents().get(0);
+		private final Assignment cValue2Assignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cValue2IDTerminalRuleCall_4_0 = (RuleCall)cValue2Assignment_4.eContents().get(0);
 		
-		//Drop:
-		//	'DROP' (name='SINK' | name='STREAM') ('IF' 'EXISTS')?;
+		//Drop Command:
+		//	keyword1='DROP'
+		//	keyword2=('SINK' | 'STREAM') value1=ID
+		//	keyword3='IF EXISTS'?
+		//	value2=ID
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'DROP' (name='SINK' | name='STREAM') ('IF' 'EXISTS')?
+		//keyword1='DROP' keyword2=('SINK' | 'STREAM') value1=ID keyword3='IF EXISTS'? value2=ID
 		public Group getGroup() { return cGroup; }
 		
+		//keyword1='DROP'
+		public Assignment getKeyword1Assignment_0() { return cKeyword1Assignment_0; }
+		
 		//'DROP'
-		public Keyword getDROPKeyword_0() { return cDROPKeyword_0; }
+		public Keyword getKeyword1DROPKeyword_0_0() { return cKeyword1DROPKeyword_0_0; }
 		
-		//(name='SINK' | name='STREAM')
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+		//keyword2=('SINK' | 'STREAM')
+		public Assignment getKeyword2Assignment_1() { return cKeyword2Assignment_1; }
 		
-		//name='SINK'
-		public Assignment getNameAssignment_1_0() { return cNameAssignment_1_0; }
+		//('SINK' | 'STREAM')
+		public Alternatives getKeyword2Alternatives_1_0() { return cKeyword2Alternatives_1_0; }
 		
 		//'SINK'
-		public Keyword getNameSINKKeyword_1_0_0() { return cNameSINKKeyword_1_0_0; }
-		
-		//name='STREAM'
-		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
+		public Keyword getKeyword2SINKKeyword_1_0_0() { return cKeyword2SINKKeyword_1_0_0; }
 		
 		//'STREAM'
-		public Keyword getNameSTREAMKeyword_1_1_0() { return cNameSTREAMKeyword_1_1_0; }
+		public Keyword getKeyword2STREAMKeyword_1_0_1() { return cKeyword2STREAMKeyword_1_0_1; }
 		
-		//('IF' 'EXISTS')?
-		public Group getGroup_2() { return cGroup_2; }
+		//value1=ID
+		public Assignment getValue1Assignment_2() { return cValue1Assignment_2; }
 		
-		//'IF'
-		public Keyword getIFKeyword_2_0() { return cIFKeyword_2_0; }
+		//ID
+		public RuleCall getValue1IDTerminalRuleCall_2_0() { return cValue1IDTerminalRuleCall_2_0; }
 		
-		//'EXISTS'
-		public Keyword getEXISTSKeyword_2_1() { return cEXISTSKeyword_2_1; }
+		//keyword3='IF EXISTS'?
+		public Assignment getKeyword3Assignment_3() { return cKeyword3Assignment_3; }
+		
+		//'IF EXISTS'
+		public Keyword getKeyword3IFEXISTSKeyword_3_0() { return cKeyword3IFEXISTSKeyword_3_0; }
+		
+		//value2=ID
+		public Assignment getValue2Assignment_4() { return cValue2Assignment_4; }
+		
+		//ID
+		public RuleCall getValue2IDTerminalRuleCall_4_0() { return cValue2IDTerminalRuleCall_4_0; }
 	}
 	public class Window_UnboundedElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Window_Unbounded");
@@ -1825,6 +1896,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final ChannelFormatStreamElements pChannelFormatStream;
 	private final ChannelFormatViewElements pChannelFormatView;
 	private final StreamToElements pStreamTo;
+	private final CommandElements pCommand;
 	private final DropElements pDrop;
 	private final Window_UnboundedElements pWindow_Unbounded;
 	private final Window_TimebasedElements pWindow_Timebased;
@@ -1867,6 +1939,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pChannelFormatStream = new ChannelFormatStreamElements();
 		this.pChannelFormatView = new ChannelFormatViewElements();
 		this.pStreamTo = new StreamToElements();
+		this.pCommand = new CommandElements();
 		this.pDrop = new DropElements();
 		this.pWindow_Unbounded = new Window_UnboundedElements();
 		this.pWindow_Timebased = new Window_TimebasedElements();
@@ -1990,7 +2063,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//AttributeWithNestedStatement:
-	//	value=Attribute
+	//	value=AttributeWithoutAlias
 	//	'IN'
 	//	nested=NestedStatement;
 	public AttributeWithNestedStatementElements getAttributeWithNestedStatementAccess() {
@@ -2168,8 +2241,26 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getStreamToAccess().getRule();
 	}
 	
-	//Drop:
-	//	'DROP' (name='SINK' | name='STREAM') ('IF' 'EXISTS')?;
+	//// build generic rule for those commands
+	//Command:
+	//	keyword1=ID
+	//	keyword2=ID
+	//	value1=ID
+	//	keyword3=ID
+	//	value2=ID;
+	public CommandElements getCommandAccess() {
+		return pCommand;
+	}
+	
+	public ParserRule getCommandRule() {
+		return getCommandAccess().getRule();
+	}
+	
+	//Drop Command:
+	//	keyword1='DROP'
+	//	keyword2=('SINK' | 'STREAM') value1=ID
+	//	keyword3='IF EXISTS'?
+	//	value2=ID
 	public DropElements getDropAccess() {
 		return pDrop;
 	}

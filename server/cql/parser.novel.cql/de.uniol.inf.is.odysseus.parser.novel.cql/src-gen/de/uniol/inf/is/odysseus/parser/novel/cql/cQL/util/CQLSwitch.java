@@ -171,10 +171,10 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.DROP:
+      case CQLPackage.COMMAND:
       {
-        Drop drop = (Drop)theEObject;
-        T result = caseDrop(drop);
+        Command command = (Command)theEObject;
+        T result = caseCommand(command);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -554,17 +554,17 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Drop</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Command</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Drop</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Command</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseDrop(Drop object)
+  public T caseCommand(Command object)
   {
     return null;
   }

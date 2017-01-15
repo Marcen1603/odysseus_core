@@ -45,7 +45,6 @@ import java.util.Arrays
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
 import org.eclipse.xtext.EcoreUtil2
 import java.util.Collections
@@ -100,16 +99,16 @@ class CQLGenerator implements IGenerator2
 			return parseCreate(stmt.type as Create)
 			}
 			StreamTo		 : return parseStreamtoStatement(stmt.type as StreamTo)
-			Drop			 : return parseDrop(stmt.type as Drop)
+			//Drop			 : return parseDrop(stmt.type as Drop)
 		}
 		
 	}
 	
-	def CharSequence parseDrop(Drop drop) 
-	{
-		//TODO Implement Drop
-		return ''
-	}
+//	def CharSequence parseDrop(Drop drop) 
+//	{
+//		//TODO Implement Drop
+//		return ''
+//	}
 	
 	def CharSequence parseSelect1(Select stmt)
 	{

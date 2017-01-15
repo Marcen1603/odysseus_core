@@ -11,7 +11,6 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
-import org.eclipse.xtext.serializer.analysis.GrammarAlias.GroupAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
@@ -22,7 +21,6 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected CQLGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_ChannelFormatView_SemicolonKeyword_5_q;
-	protected AbstractElementAlias match_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q;
 	protected AbstractElementAlias match_Select_AsteriskKeyword_2_0_q;
 	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
 	
@@ -30,7 +28,6 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (CQLGrammarAccess) access;
 		match_ChannelFormatView_SemicolonKeyword_5_q = new TokenAlias(false, true, grammarAccess.getChannelFormatViewAccess().getSemicolonKeyword_5());
-		match_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getDropAccess().getIFKeyword_2_0()), new TokenAlias(false, false, grammarAccess.getDropAccess().getEXISTSKeyword_2_1()));
 		match_Select_AsteriskKeyword_2_0_q = new TokenAlias(false, true, grammarAccess.getSelectAccess().getAsteriskKeyword_2_0());
 		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
 	}
@@ -49,8 +46,6 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
 			if (match_ChannelFormatView_SemicolonKeyword_5_q.equals(syntax))
 				emit_ChannelFormatView_SemicolonKeyword_5_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q.equals(syntax))
-				emit_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Select_AsteriskKeyword_2_0_q.equals(syntax))
 				emit_Select_AsteriskKeyword_2_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Statement_SemicolonKeyword_1_q.equals(syntax))
@@ -67,18 +62,6 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     select=Select (ambiguity) ')' (rule end)
 	 */
 	protected void emit_ChannelFormatView_SemicolonKeyword_5_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Ambiguous syntax:
-	 *     ('IF' 'EXISTS')?
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     name='SINK' (ambiguity) (rule end)
-	 *     name='STREAM' (ambiguity) (rule end)
-	 */
-	protected void emit_Drop___IFKeyword_2_0_EXISTSKeyword_2_1__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

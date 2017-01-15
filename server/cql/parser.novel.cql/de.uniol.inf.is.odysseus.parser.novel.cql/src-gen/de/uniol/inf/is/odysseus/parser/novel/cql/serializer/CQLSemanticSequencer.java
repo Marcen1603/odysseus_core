@@ -17,10 +17,10 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Drop;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant;
@@ -107,6 +107,16 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.CHANNEL_FORMAT_VIEW:
 				sequence_ChannelFormatView(context, (ChannelFormatView) semanticObject); 
 				return; 
+			case CQLPackage.COMMAND:
+				if (rule == grammarAccess.getCommandRule()) {
+					sequence_Command(context, (Command) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getDropRule()) {
+					sequence_Drop(context, (Command) semanticObject); 
+					return; 
+				}
+				else break;
 			case CQLPackage.COMPARISION:
 				sequence_Comparison(context, (Comparision) semanticObject); 
 				return; 
@@ -115,9 +125,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.DATA_TYPE:
 				sequence_DataType(context, (DataType) semanticObject); 
-				return; 
-			case CQLPackage.DROP:
-				sequence_Drop(context, (Drop) semanticObject); 
 				return; 
 			case CQLPackage.EQUALITY:
 				sequence_Equalitiy(context, (Equality) semanticObject); 
@@ -412,7 +419,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     AttributeWithNestedStatement returns AttributeWithNestedStatement
 	 *
 	 * Constraint:
-	 *     (value=Attribute nested=NestedStatement)
+	 *     (value=AttributeWithoutAlias nested=NestedStatement)
 	 */
 	protected void sequence_AttributeWithNestedStatement(ISerializationContext context, AttributeWithNestedStatement semanticObject) {
 		if (errorAcceptor != null) {
@@ -422,7 +429,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAttributeWithNestedStatementAccess().getValueAttributeParserRuleCall_0_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getAttributeWithNestedStatementAccess().getValueAttributeWithoutAliasParserRuleCall_0_0(), semanticObject.getValue());
 		feeder.accept(grammarAccess.getAttributeWithNestedStatementAccess().getNestedNestedStatementParserRuleCall_2_0(), semanticObject.getNested());
 		feeder.finish();
 	}
@@ -512,6 +519,36 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     Command returns Command
+	 *
+	 * Constraint:
+	 *     (keyword1=ID keyword2=ID value1=ID keyword3=ID value2=ID)
+	 */
+	protected void sequence_Command(ISerializationContext context, Command semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD1) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD1));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD2) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD2));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__VALUE1) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__VALUE1));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD3) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD3));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__VALUE2) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__VALUE2));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCommandAccess().getKeyword1IDTerminalRuleCall_0_0(), semanticObject.getKeyword1());
+		feeder.accept(grammarAccess.getCommandAccess().getKeyword2IDTerminalRuleCall_1_0(), semanticObject.getKeyword2());
+		feeder.accept(grammarAccess.getCommandAccess().getValue1IDTerminalRuleCall_2_0(), semanticObject.getValue1());
+		feeder.accept(grammarAccess.getCommandAccess().getKeyword3IDTerminalRuleCall_3_0(), semanticObject.getKeyword3());
+		feeder.accept(grammarAccess.getCommandAccess().getValue2IDTerminalRuleCall_4_0(), semanticObject.getValue2());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Expression returns Comparision
 	 *     Or returns Comparision
 	 *     Or.Or_1_0 returns Comparision
@@ -564,12 +601,12 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Drop returns Drop
+	 *     Drop returns Command
 	 *
 	 * Constraint:
-	 *     (name='SINK' | name='STREAM')
+	 *     (keyword1='DROP' (keyword2='SINK' | keyword2='STREAM') value1=ID keyword3='IF EXISTS'? value2=ID)
 	 */
-	protected void sequence_Drop(ISerializationContext context, Drop semanticObject) {
+	protected void sequence_Drop(ISerializationContext context, Command semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
